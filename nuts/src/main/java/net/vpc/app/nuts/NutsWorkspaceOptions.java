@@ -493,4 +493,13 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return  executor service used to create worker threads. when null, use default.
      */
     ExecutorService getExecutorService();
+
+    /**
+     * boot repositories ';' separated
+     *
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return  boot repositories ';' separated
+     */
+    String getBootRepositories();
 }

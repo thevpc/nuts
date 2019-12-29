@@ -40,7 +40,6 @@ import java.util.function.Supplier;
 import net.vpc.app.nuts.*;
 
 /**
- *
  * @author vpc
  */
 public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
@@ -311,5 +310,10 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     @Override
     public ExecutorService getExecutorService() {
         return options.getExecutorService();
+    }
+
+    @Override
+    public String getBootRepositories() {
+        return options.getBootRepositories();
     }
 }

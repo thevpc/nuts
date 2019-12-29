@@ -18,8 +18,11 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
      * workspace runtime id (group, name avec version)
      */
     private String runtimeId;
+
     private NutsBootWorkspaceFactory bootWorkspaceFactory;
+
     private URL[] bootClassWorldURLs;
+
     private ClassLoader workspaceClassLoader;
 
 
@@ -313,7 +316,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
     }
 
     public String getLib() {
-        return getStoreLocation(NutsStoreLocation.LIB)+ File.separator + NutsConstants.Folders.ID;
+        return getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID;
     }
 
     @Override

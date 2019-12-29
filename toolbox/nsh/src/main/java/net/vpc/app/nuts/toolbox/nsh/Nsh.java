@@ -138,7 +138,7 @@ public class Nsh extends NutsApplication {
             } catch (Exception notFound) {
                 //ignore!
             }
-            for (NutsWorkspaceCommandAlias command : cfg.findCommandAliases(applicationContext.getAppId())) {
+            for (NutsWorkspaceCommandAlias command : cfg.findCommandAliases(applicationContext.getAppId(), applicationContext.getSession())) {
                 try {
                     cfg.removeCommandAlias(command.getName(), new net.vpc.app.nuts.NutsRemoveOptions());
                 } catch (Exception ex) {

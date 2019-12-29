@@ -2,6 +2,7 @@ package net.vpc.app.nuts.toolbox.nutsserver;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsApplication;
+import net.vpc.app.nuts.toolbox.nutsserver.http.NutsHttpServerConfig;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
 
@@ -26,20 +27,23 @@ public class NutsServerMain extends NutsApplication {
         NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getWorkspace());
         NutsCommandLineFormat commandLineFormat = context.workspace().commandLine();
         NutsCommandLine cmdLine = context.commandLine().setCommandName("nuts-server");
-
         while (cmdLine.hasNext()) {
             if (cmdLine.next("start") != null) {
                 start(context, cmdLine);
+                return;
             } else if (cmdLine.next("stop") != null) {
                 stop(context, cmdLine);
+                return;
             } else if (cmdLine.next("list") != null) {
                 list(context, cmdLine);
+                return;
             } else if (context.configureFirst(cmdLine)) {
                 //okkay
             } else {
                 cmdLine.setCommandName("nuts-server").unexpectedArgument();
             }
         }
+        cmdLine.required();
     }
 
     private void list(NutsApplicationContext context, NutsCommandLine cmdLine) {

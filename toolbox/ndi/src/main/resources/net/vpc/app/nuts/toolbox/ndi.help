@@ -16,8 +16,10 @@ Only [[Linux]] operating systems si supported in the current version.
     enable embedded mode
  **--external** | **--spawn** | **-x**
     enable spawn process mode
- **--syscall** | **--native** | **-s**
-    enable system command mode
+ **--user-cmd**
+    enable user external command mode
+ **--root-cmd**
+    enable root external command mode
  **--exec-options** | **-X** <option>
     exec options
 
@@ -27,8 +29,10 @@ Only [[Linux]] operating systems si supported in the current version.
     enable embedded mode
  **--external** | **--spawn** | **-x**
     enable spawn process mode
- **--syscall** | **--native** | **-s**
-    enable system command mode
+ **--user-cmd**
+    enable user external command mode
+ **--root-cmd**
+    enable root external command mode
  **--exec-options** | **-X** <option>
     exec options
 

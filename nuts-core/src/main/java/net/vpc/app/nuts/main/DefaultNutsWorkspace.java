@@ -299,6 +299,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     configManager.setBootRuntimeId(cfg.getRuntimeId(), updateOptions);
                     configManager.setBootRuntimeDependencies(cfg.getRuntimeDependencies(), updateOptions);
                     configManager.setBootRepositories(cfg.getBootRepositories(), updateOptions);
+                    install().installed().getResult();
                 }
             }
             if (configManager.getRepositoryRefs().length == 0) {
@@ -952,7 +953,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             String commandName
     ) {
         if (commandName == null) {
-            commandName = resolveCommandName(def.getId());
+            commandName = resolveCommandName(def.getId(),session);
         }
         NutsDescriptor descriptor = def.getDescriptor();
         NutsArtifactCall installer = descriptor.getInstaller();
@@ -976,9 +977,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         return new DefaultNutsExecutionContext(def, aargs.toArray(new String[0]), eargs.toArray(new String[0]), env, props, installFolder.toString(), session, this, failFast, temporary, executionType, commandName);
     }
 
-    public String resolveCommandName(NutsId id) {
+    public String resolveCommandName(NutsId id,NutsSession session) {
         String nn = id.getArtifactId();
-        NutsWorkspaceCommandAlias c = config().findCommandAlias(nn);
+        NutsWorkspaceCommandAlias c = config().findCommandAlias(nn, session);
         if (c != null) {
             if (CoreNutsUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
                 return nn;
@@ -987,7 +988,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             return nn;
         }
         nn = id.getArtifactId() + "-" + id.getVersion();
-        c = config().findCommandAlias(nn);
+        c = config().findCommandAlias(nn, session);
         if (c != null) {
             if (CoreNutsUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
                 return nn;
@@ -996,7 +997,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             return nn;
         }
         nn = id.getGroupId() + "." + id.getArtifactId() + "-" + id.getVersion();
-        c = config().findCommandAlias(nn);
+        c = config().findCommandAlias(nn, session);
         if (c != null) {
             if (CoreNutsUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
                 return nn;

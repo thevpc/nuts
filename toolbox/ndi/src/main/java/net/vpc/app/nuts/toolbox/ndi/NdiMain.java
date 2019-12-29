@@ -78,9 +78,13 @@ public class NdiMain extends NutsApplication {
                         if (a.getBooleanValue()) {
                             execType = NutsExecutionType.EMBEDDED;
                         }
-                    } else if ((a = cmdLine.nextBoolean("-s", "--native", "--syscall")) != null) {
+                    } else if ((a = cmdLine.nextBoolean("--user-cmd")) != null) {
                         if (a.getBooleanValue()) {
-                            execType = NutsExecutionType.SYSCALL;
+                            execType = NutsExecutionType.USER_CMD;
+                        }
+                    } else if ((a = cmdLine.nextBoolean("--root-cmd")) != null) {
+                        if (a.getBooleanValue()) {
+                            execType = NutsExecutionType.ROOT_CMD;
                         }
                     } else if ((a = cmdLine.nextString("-X", "--exec-options")) != null) {
                         executorOptions.add(a.getStringValue());

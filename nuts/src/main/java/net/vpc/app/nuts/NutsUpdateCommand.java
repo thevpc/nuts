@@ -61,25 +61,25 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
     NutsId[] getIds();
 
-    NutsUpdateCommand frozenId(NutsId id);
+    NutsUpdateCommand lockedId(NutsId id);
 
-    NutsUpdateCommand frozenId(String id);
+    NutsUpdateCommand lockedId(String id);
 
-    NutsUpdateCommand addFrozenId(NutsId id);
+    NutsUpdateCommand addLockedId(NutsId id);
 
-    NutsUpdateCommand addFrozenId(String id);
+    NutsUpdateCommand addLockedId(String id);
 
-    NutsUpdateCommand frozenIds(NutsId... id);
+    NutsUpdateCommand lockedIds(NutsId... id);
 
-    NutsUpdateCommand frozenIds(String... id);
+    NutsUpdateCommand lockedIds(String... id);
 
-    NutsUpdateCommand addFrozenIds(NutsId... ids);
+    NutsUpdateCommand addLockedIds(NutsId... ids);
 
-    NutsUpdateCommand addFrozenIds(String... ids);
+    NutsUpdateCommand addLockedIds(String... ids);
 
-    NutsUpdateCommand clearFrozenIds();
+    NutsUpdateCommand clearLockedIds();
 
-    NutsId[] getFrozenIds();
+    NutsId[] getLockedIds();
 
     NutsUpdateCommand arg(String arg);
 

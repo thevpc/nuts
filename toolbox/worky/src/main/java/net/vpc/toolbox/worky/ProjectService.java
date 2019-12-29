@@ -174,13 +174,21 @@ public class ProjectService {
                 throw new NutsExecutionException(context.getWorkspace(), "Missing Repository. try 'worky set -r vpc-public-maven' or something like that", 2);
             }
             try {
-                NutsWorkspace ws2 = Nuts.openWorkspace(
-                        new NutsDefaultWorkspaceOptions()
-                                .setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING)
-                                .setReadOnly(true)
-                                .setWorkspace(a.getNutsWorkspace())
-                );
-                NutsSession s = ws2.createSession().silent();
+                NutsWorkspace ws2 = null;
+                NutsSession s = null;
+                if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(context.getWorkspace().config().getWorkspaceLocation().toString())) {
+                    ws2 = Nuts.openWorkspace(
+                            new NutsDefaultWorkspaceOptions()
+                                    .setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING)
+                                    .setReadOnly(true)
+                                    .setWorkspace(a.getNutsWorkspace())
+                    );
+                    s = ws2.createSession().silent();
+                    s.copyFrom(context.getSession());
+                } else {
+                    ws2 = context.getWorkspace();
+                    s = context.getSession();
+                }
                 List<NutsDefinition> found = ws2.search()
                         .id(sid)
                         .repository(nutsRepository)
@@ -218,6 +226,7 @@ public class ProjectService {
                     try {
                         Pom g = new PomXmlParser().parse(new File(f, "pom.xml"));
                         NutsWorkspace ws2 = null;
+                        NutsSession s = null;
                         if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(context.getWorkspace().config().getWorkspaceLocation().toString())) {
                             ws2 = Nuts.openWorkspace(
                                     new NutsDefaultWorkspaceOptions()
@@ -225,11 +234,12 @@ public class ProjectService {
                                             .setReadOnly(true)
                                             .setWorkspace(a.getNutsWorkspace())
                             );
-                        }else{
-                            ws2=context.getWorkspace();
+                            s = ws2.createSession().silent();
+                            s.copyFrom(context.getSession());
+                        } else {
+                            ws2 = context.getWorkspace();
+                            s = context.getSession();
                         }
-                        NutsSession s = ws2.createSession();
-                        s.copyFrom(context.getSession());
                         s.silent();
                         List<NutsId> found = ws2.search()
                                 .id(g.getGroupId() + ":" + g.getArtifactId())

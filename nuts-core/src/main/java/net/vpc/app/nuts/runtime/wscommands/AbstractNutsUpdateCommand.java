@@ -27,7 +27,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     protected String forceBootAPIVersion;
     protected List<String> args;
     protected final List<NutsDependencyScope> scopes = new ArrayList<>();
-    protected final List<NutsId> frozenIds = new ArrayList<>();
+    protected final List<NutsId> lockedIds = new ArrayList<>();
     protected final List<NutsId> ids = new ArrayList<>();
 
     protected NutsWorkspaceUpdateResult result;
@@ -204,8 +204,8 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsId[] getFrozenIds() {
-        return frozenIds == null ? new NutsId[0] : frozenIds.toArray(new NutsId[0]);
+    public NutsId[] getLockedIds() {
+        return lockedIds == null ? new NutsId[0] : lockedIds.toArray(new NutsId[0]);
     }
 
     @Override
@@ -449,43 +449,43 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsUpdateCommand frozenId(NutsId id) {
-        return addFrozenId(id);
+    public NutsUpdateCommand lockedId(NutsId id) {
+        return addLockedId(id);
     }
 
     @Override
-    public NutsUpdateCommand frozenId(String id) {
-        return addFrozenId(id);
+    public NutsUpdateCommand lockedId(String id) {
+        return addLockedId(id);
     }
 
     @Override
-    public NutsUpdateCommand addFrozenId(NutsId id) {
+    public NutsUpdateCommand addLockedId(NutsId id) {
         if (id != null) {
-            frozenIds.add(id);
+            lockedIds.add(id);
         }
         return this;
     }
 
     @Override
-    public NutsUpdateCommand addFrozenId(String id) {
+    public NutsUpdateCommand addLockedId(String id) {
         if (!CoreStringUtils.isBlank(id)) {
-            frozenIds.add(ws.id().parseRequired(id));
+            lockedIds.add(ws.id().parseRequired(id));
         }
         return this;
     }
 
     @Override
-    public NutsUpdateCommand frozenIds(NutsId... ids) {
-        return addFrozenIds(ids);
+    public NutsUpdateCommand lockedIds(NutsId... ids) {
+        return addLockedIds(ids);
     }
 
     @Override
-    public NutsUpdateCommand frozenIds(String... ids) {
-        return addFrozenIds(ids);
+    public NutsUpdateCommand lockedIds(String... ids) {
+        return addLockedIds(ids);
     }
 
     @Override
-    public NutsUpdateCommand addFrozenIds(NutsId... ids) {
+    public NutsUpdateCommand addLockedIds(NutsId... ids) {
         if (ids != null) {
             for (NutsId id : ids) {
                 addId(id);
@@ -495,7 +495,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsUpdateCommand addFrozenIds(String... ids) {
+    public NutsUpdateCommand addLockedIds(String... ids) {
         if (ids != null) {
             for (String id : ids) {
                 addId(id);
@@ -505,8 +505,8 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsUpdateCommand clearFrozenIds() {
-        this.frozenIds.clear();
+    public NutsUpdateCommand clearLockedIds() {
+        this.lockedIds.clear();
         return this;
     }
 

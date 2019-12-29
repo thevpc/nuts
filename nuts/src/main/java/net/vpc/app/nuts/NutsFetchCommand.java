@@ -298,13 +298,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand online();
 
     /**
-     * only installed artifacts
-     *
-     * @return {@code this} instance
-     */
-    NutsFetchCommand installed();
-
-    /**
      * all artifacts (local and remote). If local result found will any way
      * fetch remote.
      *
@@ -714,4 +707,35 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      */
     @Override
     NutsFetchCommand run();
+
+    /**
+     * search for non installed packages
+     * @return {@code this} instance
+     */
+    NutsFetchCommand installed();
+
+    /**
+     * search for non installed packages
+     * @return {@code this} instance
+     */
+    NutsFetchCommand notInstalled();
+
+    /**
+     * search for installed/non installed packages
+     * @return {@code this} instance
+     */
+    NutsFetchCommand installed(Boolean value);
+
+    /**
+     * search for installed/non installed packages
+     * @return {@code this} instance
+     */
+    NutsFetchCommand setInstalled(Boolean value);
+
+    /**
+     * return installed/non installed packages flag
+     * @return {@code this} instance
+     */
+    Boolean getInstalled();
+
 }

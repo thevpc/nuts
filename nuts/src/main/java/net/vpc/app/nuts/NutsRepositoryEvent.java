@@ -30,23 +30,53 @@
 package net.vpc.app.nuts;
 
 /**
- *
+ * Repository Event
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsRepositoryEvent {
 
+    /**
+     * current session
+     * @return current session
+     */
     NutsSession getSession();
 
+    /**
+     * current workspace
+     * @return current workspace
+     */
     NutsWorkspace getWorkspace();
 
+    /**
+     * Parent repository when this event is about creating
+     * a new repository with a parent one.
+     * @return Parent repository
+     */
     NutsRepository getParent();
 
+    /**
+     * repository that fires this event or the new repository
+     * when creating a new one with parent.
+     * @return current repository
+     */
     NutsRepository getRepository();
 
+    /**
+     * event property name
+     * @return event property name
+     */
     String getPropertyName();
 
+    /**
+     * event property old value
+     * @return event property old value
+     */
     Object getPropertyOldValue();
 
+    /**
+     * event property new value
+     * @return event property new value
+     */
     Object getPropertyValue();
 }

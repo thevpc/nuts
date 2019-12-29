@@ -95,6 +95,14 @@ final class PrivateNutsArgumentsParser {
                     // they will be persisted. If they are specified later they 
                     // will override persisted values without persisting the changes
 
+                    case "--boot-repos": {
+                        a = cmdLine.nextString();
+                        String bootRepos = a.getStringValue();
+                        if (enabled) {
+                            options.setBootRepositories(bootRepos);
+                        }
+                        break;
+                    }
                     case "-w":
                     case "--workspace": {
                         a = cmdLine.nextString();
@@ -780,12 +788,17 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--native":
-                    case "--syscall":
-                    case "-s": {
+                    case "--user-cmd":{
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            options.setExecutionType(NutsExecutionType.SYSCALL);
+                            options.setExecutionType(NutsExecutionType.USER_CMD);
+                        }
+                        break;
+                    }
+                    case "--root-cmd":{
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            options.setExecutionType(NutsExecutionType.ROOT_CMD);
                         }
                         break;
                     }

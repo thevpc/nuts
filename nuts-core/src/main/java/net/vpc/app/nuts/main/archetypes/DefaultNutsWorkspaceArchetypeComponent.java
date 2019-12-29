@@ -30,6 +30,11 @@
 package net.vpc.app.nuts.main.archetypes;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.main.config.DefaultNutsWorkspaceConfigManager;
+import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
+
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 /**
  * Created by vpc on 1/23/17.
@@ -58,12 +63,30 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
                 .setType(NutsConstants.RepoTypes.NUTS)
         );
 //        defaultRepo.addMirror("nuts-server", "http://localhost:8899", NutsConstants.REPOSITORY_TYPE_NUTS, true);
-
+        DefaultNutsWorkspaceConfigManager cc = (DefaultNutsWorkspaceConfigManager) rm;
+        LinkedHashSet<String> br = new LinkedHashSet<>(cc.resolveBootRepositories());
+        LinkedHashMap<String, NutsRepositoryDefinition> def = new LinkedHashMap<>();
+        int index=1;
         for (NutsRepositoryDefinition d : rm.getDefaultRepositories()) {
+            def.put(d.getLocation(), d);
+        }
+        for (String s : br) {
+            if (def.containsKey(s)) {
+                rm.addRepository(def.get(s));
+                def.remove(s);
+            } else {
+                rm.addRepository(
+                        new NutsRepositoryDefinition().setName("maven-custom-"+index)
+                                .setLocation(s).setType(NutsConstants.RepoTypes.MAVEN)
+                                .setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false))
+                                .setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL)
+                );
+                index++;
+            }
+        }
+        for (NutsRepositoryDefinition d : def.values()) {
             rm.addRepository(d);
         }
-
-//        workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_AUTOSAVE, "true");
         ws.config().addImports(new String[]{
                 "net.vpc.app.nuts.toolbox",
                 "net.vpc.app"

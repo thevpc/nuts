@@ -65,7 +65,7 @@
 //        if (descriptorFilter != null) {
 //            NutsDescriptor descriptor = null;
 //            try {
-//                descriptor = repository.fetchDescriptor().setId(id).session(this.session).run().getResult();
+//                descriptor = repository.fetchDescriptor().setId(id).session(this.session).getResult();
 //                if (!CoreNutsUtils.isEffectiveId(descriptor.getId())) {
 //                    NutsDescriptor nutsDescriptor = null;
 //                    try {

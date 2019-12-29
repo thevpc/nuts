@@ -15,14 +15,14 @@ import java.util.stream.Collectors;
  *
  * @author vpc
  */
-public class NutsFrozenIdExtensionFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
-    private NutsId[] frozen;
-    public NutsFrozenIdExtensionFilter(NutsId[] frozen) {
-        this.frozen=frozen;
+public class NutsLockedIdExtensionFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
+    private NutsId[] lockedIds;
+    public NutsLockedIdExtensionFilter(NutsId[] lockedIds) {
+        this.lockedIds =lockedIds;
     }
 
     public boolean acceptId(NutsId id, NutsSession session) {
-        for (NutsId nutsId : frozen) {
+        for (NutsId nutsId : lockedIds) {
             if(nutsId.getShortNameId().equalsShortName(id.getShortNameId())){
                 return (id.getVersion().filter().accept(nutsId.getVersion(),session));
             }
@@ -50,7 +50,7 @@ public class NutsFrozenIdExtensionFilter implements NutsDescriptorFilter, Simpli
 
     @Override
     public String toString() {
-        return "frozen("+ Arrays.stream(frozen).map(NutsId::getLongName).collect(Collectors.joining(","))+")";
+        return "LockedIds("+ Arrays.stream(lockedIds).map(NutsId::getLongName).collect(Collectors.joining(","))+")";
     }
 
 }

@@ -42,7 +42,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     protected boolean offline = false;
     protected List<String> args;
     protected final List<NutsId> ids = new ArrayList<>();
-    protected List<NutsId> frozenIds;
+    protected List<NutsId> lockedIds;
     protected String repository;
 
     public AbstractDefaultNutsPushCommand(NutsWorkspace ws) {
@@ -65,8 +65,8 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     }
 
     @Override
-    public NutsPushCommand addFrozenId(String id) {
-        return addFrozenId(id == null ? null : ws.id().parseRequired(id));
+    public NutsPushCommand addLockedId(String id) {
+        return addLockedId(id == null ? null : ws.id().parseRequired(id));
     }
 
     @Override
@@ -96,34 +96,34 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     }
 
     @Override
-    public NutsPushCommand removeFrozenId(NutsId id) {
+    public NutsPushCommand removeLockedId(NutsId id) {
         if (id != null) {
-            if (frozenIds != null) {
-                frozenIds.remove(id);
+            if (lockedIds != null) {
+                lockedIds.remove(id);
             }
         }
         return this;
     }
 
     @Override
-    public NutsPushCommand removeFrozenId(String id) {
+    public NutsPushCommand removeLockedId(String id) {
         if (id != null) {
-            if (frozenIds != null) {
-                frozenIds.remove(ws.id().parse(id));
+            if (lockedIds != null) {
+                lockedIds.remove(ws.id().parse(id));
             }
         }
         return this;
     }
 
     @Override
-    public NutsPushCommand addFrozenId(NutsId id) {
+    public NutsPushCommand addLockedId(NutsId id) {
         if (id == null) {
             throw new NutsNotFoundException(ws, id);
         } else {
-            if (frozenIds == null) {
-                frozenIds = new ArrayList<>();
+            if (lockedIds == null) {
+                lockedIds = new ArrayList<>();
             }
-            frozenIds.add(id);
+            lockedIds.add(id);
         }
         return this;
     }
@@ -155,17 +155,17 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     }
 
     @Override
-    public NutsPushCommand addFrozenIds(String... ids) {
-        for (String id : ids) {
-            addFrozenId(id);
+    public NutsPushCommand addLockedIds(String... values) {
+        for (String id : values) {
+            addLockedId(id);
         }
         return this;
     }
 
     @Override
-    public NutsPushCommand addFrozenIds(NutsId... ids) {
-        for (NutsId id : ids) {
-            addFrozenId(id);
+    public NutsPushCommand addLockedIds(NutsId... values) {
+        for (NutsId id : values) {
+            addLockedId(id);
         }
         return this;
     }
@@ -214,8 +214,8 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     }
 
     @Override
-    public NutsId[] getFrozenIds() {
-        return frozenIds == null ? new NutsId[0] : frozenIds.toArray(new NutsId[0]);
+    public NutsId[] getLockedIds() {
+        return lockedIds == null ? new NutsId[0] : lockedIds.toArray(new NutsId[0]);
     }
 
     @Override
@@ -246,23 +246,23 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     }
 
     @Override
-    public NutsPushCommand frozenId(NutsId id) {
-        return addFrozenId(id);
+    public NutsPushCommand lockedId(NutsId id) {
+        return addLockedId(id);
     }
 
     @Override
-    public NutsPushCommand frozenId(String id) {
-        return addFrozenId(id);
+    public NutsPushCommand lockedId(String id) {
+        return addLockedId(id);
     }
 
     @Override
-    public NutsPushCommand frozenIds(NutsId... ids) {
-        return addFrozenIds(ids);
+    public NutsPushCommand lockedIds(NutsId... values) {
+        return addLockedIds(values);
     }
 
     @Override
-    public NutsPushCommand frozenIds(String... ids) {
-        return addFrozenIds(ids);
+    public NutsPushCommand lockedIds(String... values) {
+        return addLockedIds(values);
     }
 
     @Override
@@ -293,8 +293,8 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     }
 
     @Override
-    public NutsPushCommand clearFrozenIds() {
-        frozenIds = null;
+    public NutsPushCommand clearLockedIds() {
+        lockedIds = null;
         return this;
     }
 
@@ -323,7 +323,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
             case "-x":
             case "--freeze": {
                 for (String id : cmdLine.nextString().getStringValue().split(",")) {
-                    frozenId(id);
+                    lockedId(id);
                 }
                 return true;
             }

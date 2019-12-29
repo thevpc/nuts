@@ -65,12 +65,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
      */
     @Override
     public T setSession(NutsSession session) {
-        if(this.session==null) {
-            this.session = ws.createSession();
-        }
-        if(session!=null) {
-            this.session.copyFrom(session);
-        }
+        this.session=session;
         return (T) this;
     }
 

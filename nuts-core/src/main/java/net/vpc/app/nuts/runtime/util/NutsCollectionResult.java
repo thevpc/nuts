@@ -18,7 +18,7 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
-import net.vpc.app.nuts.runtime.AbstractNutsSearchResult;
+import net.vpc.app.nuts.runtime.AbstractNutsResultList;
 import net.vpc.app.nuts.runtime.util.iter.IteratorUtils;
 
 /**
@@ -26,18 +26,18 @@ import net.vpc.app.nuts.runtime.util.iter.IteratorUtils;
  * @author vpc
  * @param <T>
  */
-public class NutsCollectionSearchResult<T> extends AbstractNutsSearchResult<T> {
+public class NutsCollectionResult<T> extends AbstractNutsResultList<T> {
 
     private final Object o;
     private final char type;
 
-    public NutsCollectionSearchResult(NutsWorkspace ws, String nutsBase) {
+    public NutsCollectionResult(NutsWorkspace ws, String nutsBase) {
         super(ws, nutsBase);
         this.o = null;
         this.type = 'n';
     }
 
-    public NutsCollectionSearchResult(NutsWorkspace ws, String nutsBase, Iterator<T> o) {
+    public NutsCollectionResult(NutsWorkspace ws, String nutsBase, Iterator<T> o) {
         super(ws, nutsBase);
         if (o == null) {
             this.o = null;
@@ -48,7 +48,7 @@ public class NutsCollectionSearchResult<T> extends AbstractNutsSearchResult<T> {
         }
     }
 
-    public NutsCollectionSearchResult(NutsWorkspace ws, String nutsBase, Collection<T> o) {
+    public NutsCollectionResult(NutsWorkspace ws, String nutsBase, Collection<T> o) {
         super(ws, nutsBase);
         if (o == null) {
             this.o = null;
@@ -59,7 +59,7 @@ public class NutsCollectionSearchResult<T> extends AbstractNutsSearchResult<T> {
         }
     }
 
-    public NutsCollectionSearchResult(NutsWorkspace ws, String nutsBase, List<T> o) {
+    public NutsCollectionResult(NutsWorkspace ws, String nutsBase, List<T> o) {
         super(ws, nutsBase);
         if (o == null) {
             this.o = null;
@@ -149,7 +149,7 @@ public class NutsCollectionSearchResult<T> extends AbstractNutsSearchResult<T> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final NutsCollectionSearchResult<?> other = (NutsCollectionSearchResult<?>) obj;
+        final NutsCollectionResult<?> other = (NutsCollectionResult<?>) obj;
         if (this.type != other.type) {
             return false;
         }

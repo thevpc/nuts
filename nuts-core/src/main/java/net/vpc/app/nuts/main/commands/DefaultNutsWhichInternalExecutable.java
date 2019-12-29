@@ -70,7 +70,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                     }
                     case ALIAS: {
                         out.printf("[[%s]] : ==nuts alias== (owner %s ) : %s%n", arg, p.getId() == null ? null : new NutsString(ws.id().value(p.getId()).format()),
-                                new NutsString(ws.commandLine().create(ws.config().findCommandAlias(p.getName()).getCommand()).toString())
+                                new NutsString(ws.commandLine().create(ws.config().findCommandAlias(p.getName(), getSession()).getCommand()).toString())
                         );
                         break;
                     }

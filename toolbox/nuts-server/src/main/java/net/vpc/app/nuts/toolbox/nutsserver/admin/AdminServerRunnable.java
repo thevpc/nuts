@@ -27,7 +27,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.toolbox.nutsserver;
+package net.vpc.app.nuts.toolbox.nutsserver.admin;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -40,12 +40,13 @@ import java.util.concurrent.Executor;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.NutsJavaShell;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.vpc.app.nuts.toolbox.nutsserver.NutsServer;
 
 /**
  *
  * @author vpc
  */
-class AdminServerRunnable implements NutsServer, Runnable {
+public class AdminServerRunnable implements NutsServer, Runnable {
 
     private final String serverId;
     int finalPort;

@@ -31,6 +31,8 @@ package net.vpc.app.nuts.extensions.servers;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nutsserver.*;
+import net.vpc.app.nuts.toolbox.nutsserver.http.AbstractNutsHttpServletFacadeContext;
+import net.vpc.app.nuts.toolbox.nutsserver.http.NutsHttpServletFacade;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.ListMap;
 
@@ -198,74 +200,7 @@ public class NutsHttpServlet extends HttpServlet {
     }
 
     protected void doService(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        facade.execute(new AbstractNutsHttpServletFacadeContext() {
-            @Override
-            public URI getRequestURI() throws IOException {
-                try {
-                    String cp = req.getContextPath();
-                    String uri = req.getRequestURI();
-                    if (uri.startsWith(cp)) {
-                        uri = uri.substring(cp.length());
-                        if (uri.startsWith(req.getServletPath())) {
-                            uri = uri.substring(req.getServletPath().length());
-                        }
-                    }
-                    return new URI(uri);
-                } catch (URISyntaxException e) {
-                    throw new IOException(e);
-                }
-            }
-
-            @Override
-            public OutputStream getResponseBody() throws IOException {
-                return resp.getOutputStream();
-            }
-
-            @Override
-            public void sendError(int code, String msg) throws IOException {
-                resp.sendError(code, msg);
-            }
-
-            @Override
-            public void sendResponseHeaders(int code, long length) throws IOException {
-                if (length > 0) {
-
-                    resp.setHeader("Content-length", Long.toString(length));
-                }
-                resp.setStatus(code);
-            }
-
-            @Override
-            public String getRequestHeaderFirstValue(String header) throws IOException {
-                return req.getHeader(header);
-            }
-
-            @Override
-            public Set<String> getRequestHeaderKeys(String header) throws IOException {
-                return new HashSet<>(Collections.list(req.getHeaderNames()));
-            }
-
-            @Override
-            public List<String> getRequestHeaderAllValues(String header) throws IOException {
-                return Collections.list(req.getHeaders(header));
-            }
-
-            @Override
-            public InputStream getRequestBody() throws IOException {
-                return req.getInputStream();
-            }
-
-            @Override
-            public ListMap<String, String> getParameters() throws IOException {
-                ListMap<String, String> m = new ListMap<String, String>();
-                for (String s : Collections.list(req.getParameterNames())) {
-                    for (String v : req.getParameterValues(s)) {
-                        m.add(s, v);
-                    }
-                }
-                return m;//HttpUtils.queryToMap(getRequestURI().getQuery());
-            }
-        });
+        facade.execute(new ServletNutsHttpServletFacadeContext(req, resp));
     }
 
     public static int parseInt(String v1, int defaultValue) {
@@ -279,4 +214,90 @@ public class NutsHttpServlet extends HttpServlet {
         }
     }
 
+    private static class ServletNutsHttpServletFacadeContext extends AbstractNutsHttpServletFacadeContext {
+        private final HttpServletRequest req;
+        private final HttpServletResponse resp;
+
+        public ServletNutsHttpServletFacadeContext(HttpServletRequest req, HttpServletResponse resp) {
+            this.req = req;
+            this.resp = resp;
+        }
+
+        @Override
+        public URI getRequestURI() throws IOException {
+            try {
+                String cp = req.getContextPath();
+                String uri = req.getRequestURI();
+                if (uri.startsWith(cp)) {
+                    uri = uri.substring(cp.length());
+                    if (uri.startsWith(req.getServletPath())) {
+                        uri = uri.substring(req.getServletPath().length());
+                    }
+                }
+                return new URI(uri);
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
+        }
+
+        @Override
+        public OutputStream getResponseBody() throws IOException {
+            return resp.getOutputStream();
+        }
+
+        @Override
+        public void sendError(int code, String msg) throws IOException {
+            resp.sendError(code, msg);
+        }
+
+        @Override
+        public void sendResponseHeaders(int code, long length) throws IOException {
+            if (length > 0) {
+
+                resp.setHeader("Content-length", Long.toString(length));
+            }
+            resp.setStatus(code);
+        }
+
+        @Override
+        public String getRequestHeaderFirstValue(String header) throws IOException {
+            return req.getHeader(header);
+        }
+
+        @Override
+        public Set<String> getRequestHeaderKeys(String header) throws IOException {
+            return new HashSet<>(Collections.list(req.getHeaderNames()));
+        }
+
+        @Override
+        public List<String> getRequestHeaderAllValues(String header) throws IOException {
+            return Collections.list(req.getHeaders(header));
+        }
+
+        @Override
+        public InputStream getRequestBody() throws IOException {
+            return req.getInputStream();
+        }
+
+        @Override
+        public ListMap<String, String> getParameters() throws IOException {
+            ListMap<String, String> m = new ListMap<String, String>();
+            for (String s : Collections.list(req.getParameterNames())) {
+                for (String v : req.getParameterValues(s)) {
+                    m.add(s, v);
+                }
+            }
+            return m;//HttpUtils.queryToMap(getRequestURI().getQuery());
+        }
+
+        @Override
+        public void addResponseHeader(String name, String value) throws IOException {
+            resp.addHeader(name, value);
+        }
+
+        @Override
+        public String getRequestMethod() throws IOException {
+            return req.getMethod();
+        }
+    }
 }

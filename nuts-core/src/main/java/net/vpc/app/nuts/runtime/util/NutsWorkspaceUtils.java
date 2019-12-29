@@ -496,7 +496,7 @@ public class NutsWorkspaceUtils {
         map.put("nuts.id.simpleName", id.getShortName());
         map.put("nuts.id.group", id.getGroupId());
         map.put("nuts.file", nutMainFile.getPath().toString());
-        String defaultJavaCommand = NutsJavaSdkUtils.of(ws).resolveJavaCommandByVersion("", false);
+        String defaultJavaCommand = NutsJavaSdkUtils.of(ws).resolveJavaCommandByVersion("", false, session);
 
         map.put("nuts.java", defaultJavaCommand);
         if (map.containsKey("nuts.jar")) {
@@ -528,13 +528,13 @@ public class NutsWorkspaceUtils {
                     if (CoreStringUtils.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    return NutsJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, false);
+                    return NutsJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, false, session);
                 } else if (skey.equals("javaw") || skey.startsWith("javaw#")) {
                     String javaVer = skey.substring(4);
                     if (CoreStringUtils.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    return NutsJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, true);
+                    return NutsJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, true, session);
                 } else if (skey.equals("nuts")) {
                     NutsDefinition nutsDefinition;
                     nutsDefinition = workspace.fetch().id(NutsConstants.Ids.NUTS_API)

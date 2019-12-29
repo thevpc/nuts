@@ -91,17 +91,17 @@ public interface NutsWorkspaceConfigManager {
 
     NutsSdkLocation removeSdk(NutsSdkLocation location, NutsRemoveOptions options);
 
-    NutsSdkLocation findSdkByName(String sdkType, String locationName);
+    NutsSdkLocation findSdkByName(String sdkType, String locationName, NutsSession session);
 
-    NutsSdkLocation findSdkByPath(String sdkType, Path path);
+    NutsSdkLocation findSdkByPath(String sdkType, Path path, NutsSession session);
 
     NutsSdkLocation findSdkByVersion(String sdkType, String version);
 
-    NutsSdkLocation findSdk(String sdkType, NutsSdkLocation location);
+    NutsSdkLocation findSdk(String sdkType, NutsSdkLocation location, NutsSession session);
 
-    NutsSdkLocation getSdk(String sdkType, String requestedVersion);
+    NutsSdkLocation getSdk(String sdkType, String requestedVersion, NutsSession session);
 
-    NutsSdkLocation[] getSdks(String sdkType);
+    NutsSdkLocation[] getSdks(String sdkType, NutsSession session);
 
     NutsSdkLocation[] searchSdkLocations(String sdkType, NutsSession session);
 
@@ -130,11 +130,11 @@ public interface NutsWorkspaceConfigManager {
 
     boolean removeCommandAlias(String name, NutsRemoveOptions options);
 
-    NutsWorkspaceCommandAlias findCommandAlias(String name);
+    NutsWorkspaceCommandAlias findCommandAlias(String name, NutsSession session);
 
-    List<NutsWorkspaceCommandAlias> findCommandAliases();
+    List<NutsWorkspaceCommandAlias> findCommandAliases(NutsSession session);
 
-    List<NutsWorkspaceCommandAlias> findCommandAliases(NutsId id);
+    List<NutsWorkspaceCommandAlias> findCommandAliases(NutsId id, NutsSession session);
 
     Path getHomeLocation(NutsStoreLocation folderType);
 

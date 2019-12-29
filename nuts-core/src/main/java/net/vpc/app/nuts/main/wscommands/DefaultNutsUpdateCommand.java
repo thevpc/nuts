@@ -271,9 +271,9 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             allUpdates.put(updated.getAvailable().getId().getShortName(), updated);
             regularUpdates.put(updated.getId().getShortName(), updated);
         }
-        NutsId[] frozenIds = this.getFrozenIds();
-        if (frozenIds.length > 0) {
-            for (NutsId d : new HashSet<>(Arrays.asList(frozenIds))) {
+        NutsId[] lockedIds = this.getLockedIds();
+        if (lockedIds.length > 0) {
+            for (NutsId d : new HashSet<>(Arrays.asList(lockedIds))) {
                 NutsDependency dd = CoreNutsUtils.parseNutsDependency(ws, d.toString());
                 if (regularUpdates.containsKey(dd.getSimpleName())) {
                     NutsUpdateResult updated = regularUpdates.get(dd.getSimpleName());
@@ -596,7 +596,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                             .addId(oldFile != null ? oldFile.getId().builder().version("").build().toString() : NutsConstants.Ids.NUTS_RUNTIME)
                             .runtime()
                             .targetApiVersion(bootApiVersion)
-                            .lockedIds(getFrozenIds())
+                            .lockedIds(getLockedIds())
                             .latest()
                             .anyWhere()
                             .session(session)
@@ -627,7 +627,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 try {
                     NutsSearchCommand se = ws.search().session(session).addId(id)
                             .targetApiVersion(bootApiVersion)
-                            .lockedIds(getFrozenIds())
+                            .lockedIds(getLockedIds())
                             .anyWhere()
                             .failFast(false)
                             .latest()

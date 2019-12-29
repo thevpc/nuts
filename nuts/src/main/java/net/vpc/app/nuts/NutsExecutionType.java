@@ -46,7 +46,14 @@ public enum NutsExecutionType {
      * delegate running to underlining operating system using standard
      * ProcessBuilder
      */
-    SYSCALL,
+    USER_CMD,
+
+    /**
+     * command will be resolved as an external native command. Nuts will
+     * delegate running to underlining operating system using standard
+     * ProcessBuilder
+     */
+    ROOT_CMD,
 
     /**
      * command will resolved as a class to run within the current Virtual

@@ -86,7 +86,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                List<NutsWorkspaceCommandAlias> r = context.getWorkspace().config().findCommandAliases()
+                List<NutsWorkspaceCommandAlias> r = context.getWorkspace().config().findCommandAliases(context.getSession())
                         .stream()
                         .filter(new Predicate<NutsWorkspaceCommandAlias>() {
                             @Override

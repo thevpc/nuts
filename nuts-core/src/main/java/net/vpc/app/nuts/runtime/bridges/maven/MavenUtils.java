@@ -420,12 +420,12 @@ public class MavenUtils {
     }
 
 
-    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid,Collection<String> bootRepositories) {
         String urlPath = CoreNutsUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
-        return loadDependenciesAndRepositoriesFromPomPath(urlPath);
+        return loadDependenciesAndRepositoriesFromPomPath(urlPath,bootRepositories);
     }
 
-    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath,Collection<String> bootRepositories) {
         DepsAndRepos depsAndRepos = null;
 //        if (!NO_M2) {
             File mavenNutsCorePom = new File(System.getProperty("user.home"), (".m2/repository/" + urlPath).replace("/", File.separator));
@@ -434,10 +434,7 @@ public class MavenUtils {
             }
 //        }
         if (depsAndRepos == null || depsAndRepos.deps.isEmpty()) {
-            for (String baseUrl : new String[]{
-                    NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT,
-                    NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL
-            }) {
+            for (String baseUrl : bootRepositories) {
                 depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(baseUrl + "/" + urlPath);
                 if (!depsAndRepos.deps.isEmpty()) {
                     break;

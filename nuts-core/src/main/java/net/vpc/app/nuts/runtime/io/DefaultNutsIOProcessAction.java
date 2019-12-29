@@ -2,7 +2,7 @@ package net.vpc.app.nuts.runtime.io;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.io.DefaultNutsProcessInfo;
-import net.vpc.app.nuts.runtime.util.NutsCollectionSearchResult;
+import net.vpc.app.nuts.runtime.util.NutsCollectionResult;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.io.ProcessBuilder2;
 import net.vpc.app.nuts.runtime.util.iter.IteratorBuilder;
@@ -86,7 +86,7 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
         NutsSession session = ws.createSession();
         NutsVersionFilter nvf = CoreStringUtils.isBlank(version) ? null : ws.version().parse(version).filter();
         List<NutsSdkLocation> availableJava = new ArrayList<>();
-        for (NutsSdkLocation java : ws.config().getSdks("java")) {
+        for (NutsSdkLocation java : ws.config().getSdks("java", session)) {
             if ("jdk".equals(java.getPackaging()) && (nvf == null || nvf.accept(ws.version().parse(java.getVersion()), session))) {
                 availableJava.add(java);
             }
@@ -118,7 +118,7 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
     }
 
     @Override
-    public NutsSearchResult<NutsProcessInfo> getResultList() {
+    public NutsResultList<NutsProcessInfo> getResultList() {
         String processType = CoreStringUtils.trim(getType());
         if (processType.toLowerCase().startsWith("java#")) {
             return getResultListJava(processType.substring("java#".length()));
@@ -128,11 +128,11 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
             if (isFailFast()) {
                 throw new NutsIllegalArgumentException(ws, "Unsupported list processes of type : " + processType);
             }
-            return new NutsCollectionSearchResult<>(ws, "process-" + processType, Collections.emptyList());
+            return new NutsCollectionResult<>(ws, "process-" + processType, Collections.emptyList());
         }
     }
 
-    private NutsSearchResult<NutsProcessInfo> getResultListJava(String version) {
+    private NutsResultList<NutsProcessInfo> getResultListJava(String version) {
         Iterator<NutsProcessInfo> it = IteratorBuilder.ofLazy(() -> {
             String cmd = "jps";
             ProcessBuilder2 b = null;
@@ -170,6 +170,6 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
                     pid, cls, null, args
             );
         }).build();
-        return new NutsCollectionSearchResult<NutsProcessInfo>(ws, "process-" + getType(), it);
+        return new NutsCollectionResult<NutsProcessInfo>(ws, "process-" + getType(), it);
     }
 }

@@ -40,6 +40,7 @@ import net.vpc.app.nuts.main.DefaultNutsWorkspace;
 import net.vpc.app.nuts.main.repos.NutsSimpleRepositoryWrapper;
 import net.vpc.app.nuts.runtime.log.NutsLogVerb;
 import net.vpc.app.nuts.core.config.NutsWorkspaceConfigManagerExt;
+import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.*;
@@ -68,6 +69,7 @@ import net.vpc.app.nuts.runtime.wscommands.DefaultNutsWorkspaceCommandAlias;
  * @author vpc
  */
 public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt {
+    public static final boolean NO_M2 = CoreCommonUtils.getSysBoolNutsProperty("no-m2", false);
 
     public static NutsLogger LOG;
 
@@ -101,6 +103,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     private Set<String> cachedImports;
     private Set<String> excludedRepositoriesSet = new HashSet<>();
     private NutsStoreLocationsMap preUpdateConfigStoreLocations;
+    private Set<String> parsedBootRepositories;
 
     public DefaultNutsWorkspaceConfigManager(final DefaultNutsWorkspace ws, NutsWorkspaceInitInformation initOptions) {
         this.ws = ws;
@@ -400,7 +403,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsSdkLocation findSdkByName(String type, String locationName) {
+    public NutsSdkLocation findSdkByName(String type, String locationName, NutsSession session) {
         type = toValidSdkName(type);
         if (locationName != null) {
             List<NutsSdkLocation> list = getSdk().get(type);
@@ -416,7 +419,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsSdkLocation findSdkByPath(String type, Path path) {
+    public NutsSdkLocation findSdkByPath(String type, Path path, NutsSession session) {
         type = toValidSdkName(type);
         if (path != null) {
             List<NutsSdkLocation> list = getSdk().get(type);
@@ -467,7 +470,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsSdkLocation findSdk(String type, NutsSdkLocation location) {
+    public NutsSdkLocation findSdk(String type, NutsSdkLocation location, NutsSession session) {
         type = toValidSdkName(type);
         if (location != null) {
             List<NutsSdkLocation> list = getSdk().get(type);
@@ -513,12 +516,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //        fireConfigurationChanged();
 //    }
     @Override
-    public NutsSdkLocation getSdk(String type, String requestedVersion) {
+    public NutsSdkLocation getSdk(String type, String requestedVersion, NutsSession session) {
         type = toValidSdkName(type);
         NutsVersionFilter javaVersionFilter = ws.version().parse(requestedVersion).filter();
         NutsSdkLocation best = null;
-        final NutsSession session = ws.createSession();
-        for (NutsSdkLocation jdk : getSdks(type)) {
+        session = CoreNutsUtils.checkSession(session);
+        for (NutsSdkLocation jdk : getSdks(type, session)) {
             String currVersion = jdk.getVersion();
             if (javaVersionFilter.accept(DefaultNutsVersion.valueOf(currVersion), session)) {
                 if (best == null || DefaultNutsVersion.compareVersions(best.getVersion(), currVersion) < 0) {
@@ -539,7 +542,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsSdkLocation[] getSdks(String type) {
+    public NutsSdkLocation[] getSdks(String type, NutsSession session) {
         type = toValidSdkName(type);
         List<NutsSdkLocation> list = getSdk().get(type);
         if (list == null) {
@@ -963,7 +966,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //        return CoreSecurityUtils.httpEncrypt(input, passphrase);
 //    }
     @Override
-    public NutsWorkspaceCommandAlias findCommandAlias(String name) {
+    public NutsWorkspaceCommandAlias findCommandAlias(String name, NutsSession session) {
         NutsCommandAliasConfig c = defaultCommandFactory.findCommand(name, ws);
         if (c == null) {
             for (NutsWorkspaceCommandFactory commandFactory : commandFactories) {
@@ -1049,7 +1052,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public List<NutsWorkspaceCommandAlias> findCommandAliases() {
+    public List<NutsWorkspaceCommandAlias> findCommandAliases(NutsSession session) {
         HashMap<String, NutsWorkspaceCommandAlias> all = new HashMap<>();
         for (NutsCommandAliasConfig command : defaultCommandFactory.findCommands(ws)) {
             all.put(command.getName(), toDefaultNutsWorkspaceCommand(command));
@@ -1147,7 +1150,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public List<NutsWorkspaceCommandAlias> findCommandAliases(NutsId id) {
+    public List<NutsWorkspaceCommandAlias> findCommandAliases(NutsId id, NutsSession session) {
         HashMap<String, NutsWorkspaceCommandAlias> all = new HashMap<>();
         for (NutsCommandAliasConfig command : defaultCommandFactory.findCommands(id, ws)) {
             all.put(command.getName(), toDefaultNutsWorkspaceCommand(command));
@@ -1266,7 +1269,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (def == null) {
             //selected repositories cannot reach runtime component
             //fallback to default
-            MavenUtils.DepsAndRepos dd = MavenUtils.of(ws).loadDependenciesAndRepositoriesFromPomPath(id);
+            MavenUtils.DepsAndRepos dd = MavenUtils.of(ws).loadDependenciesAndRepositoriesFromPomPath(id,resolveBootRepositories());
             if (dd == null) {
                 throw new NutsNotFoundException(ws, id);
             }
@@ -1322,10 +1325,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                         return;
                     }
                 }
-                for (String pp : new String[]{
-                        System.getProperty("user.home") + ("/.m2/repository".replace('/', File.separatorChar)),
-                        NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT,
-                        NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL}) {
+                for (String pp : resolveBootRepositories()) {
                     if (CoreIOUtils.isPathHttp(pp)) {
                         try {
                             if(!pp.endsWith("/")){
@@ -2426,5 +2426,47 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     public enum ConfigEventType {
         API, RUNTIME, BOOT, MAIN, SECURITY,
+    }
+
+    public Collection<String> resolveBootRepositories() {
+        if(parsedBootRepositories!=null){
+            return parsedBootRepositories;
+        }
+        String bootRepositories = options.getBootRepositories();
+        LinkedHashSet<String> repos = new LinkedHashSet<>();
+        for (String s : CoreStringUtils.split(bootRepositories, ",;", true)) {
+            switch (s) {
+                case ".m2":
+                case "m2":
+                case "maven-local": {
+                    repos.add(System.getProperty("user.home") + CoreIOUtils.syspath("/.m2/repository"));
+                    break;
+                }
+                case "maven-central": {
+                    repos.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL);
+                    break;
+                }
+                case "maven-git": {
+                    repos.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT);
+                    break;
+                }
+//                case "nuts-git": {
+//                    repos.add(NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT);
+//                    break;
+//                }
+                default: {
+                    repos.add(s);
+                }
+            }
+        }
+        if (repos.isEmpty()) {
+            if (!NO_M2) {
+                repos.add(System.getProperty("user.home") + CoreIOUtils.syspath("/.m2/repository"));
+            }
+            repos.add(NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT);
+            repos.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT);
+            repos.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL);
+        }
+        return parsedBootRepositories=repos;
     }
 }

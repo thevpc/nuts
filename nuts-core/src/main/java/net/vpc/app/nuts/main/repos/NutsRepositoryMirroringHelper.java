@@ -64,7 +64,7 @@ public class NutsRepositoryMirroringHelper {
                     list.add(IteratorUtils.safeIgnore(new LazyIterator<NutsId>() {
                         @Override
                         public Iterator<NutsId> iterator() {
-                            return repo.searchVersions().setId(id).setFilter(idFilter).setSession(session).run().getResult();
+                            return repo.searchVersions().setId(id).setFilter(idFilter).setSession(session).getResult();
                         }
                     }));
                 }
@@ -78,7 +78,7 @@ public class NutsRepositoryMirroringHelper {
         if (session.getSession().isTransitive() && repo.config().isSupportedMirroring()) {
             for (NutsRepository mirror : repo.config().getMirrors()) {
                 try {
-                    NutsContent c = mirror.fetchContent().setId(id).setDescriptor(descriptor).setLocalPath(cacheContent).setSession(session).run().getResult();
+                    NutsContent c = mirror.fetchContent().setId(id).setDescriptor(descriptor).setLocalPath(cacheContent).setSession(session).getResult();
                     if (c != null) {
                         if (localPath != null) {
                             getWorkspace().io().copy().session(session.getSession())
@@ -111,7 +111,7 @@ public class NutsRepositoryMirroringHelper {
             for (NutsRepository remote : repo.config().getMirrors()) {
                 NutsDescriptor nutsDescriptor = null;
                 try {
-                    nutsDescriptor = remote.fetchDescriptor().setId(id).setSession(session).run().getResult();
+                    nutsDescriptor = remote.fetchDescriptor().setId(id).setSession(session).getResult();
                 } catch (Exception ex) {
                     //ignore
                 }
@@ -143,7 +143,7 @@ public class NutsRepositoryMirroringHelper {
 
                 @Override
                 public Iterator<NutsId> iterator() {
-                    return remote.search().setFilter(filter).setSession(session).run().getResult();
+                    return remote.search().setFilter(filter).setSession(session).getResult();
                 }
 
             }));
@@ -159,8 +159,8 @@ public class NutsRepositoryMirroringHelper {
         String repository = cmd.getRepository();
         NutsRepositorySession nonTransitiveSession = session.copy();
         nonTransitiveSession.setSession(nonTransitiveSession.getSession().setTransitive(false));
-        NutsDescriptor desc = repo.fetchDescriptor().setId(id).setSession(nonTransitiveSession).run().getResult();
-        NutsContent local = repo.fetchContent().setId(id).setSession(nonTransitiveSession).run().getResult();
+        NutsDescriptor desc = repo.fetchDescriptor().setId(id).setSession(nonTransitiveSession).getResult();
+        NutsContent local = repo.fetchContent().setId(id).setSession(nonTransitiveSession).getResult();
         if (local == null) {
             throw new NutsNotFoundException(repo.getWorkspace(), id);
         }
@@ -211,7 +211,7 @@ public class NutsRepositoryMirroringHelper {
             for (NutsRepository remote : repo.config().getMirrors()) {
                 NutsDescriptor nutsDescriptor = null;
                 try {
-                    nutsDescriptor = remote.fetchDescriptor().setId(id).setSession(session).run().getResult();
+                    nutsDescriptor = remote.fetchDescriptor().setId(id).setSession(session).getResult();
                 } catch (Exception ex) {
                     //ignore
                 }

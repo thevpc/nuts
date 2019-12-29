@@ -145,7 +145,8 @@ public class DefaultNutsDefinition implements NutsDefinition {
 
     @Override
     public Path getPath() {
-        return getContent().getPath();
+        NutsContent c = getContent();
+        return c==null?null:c.getPath();
     }
 
     @Override

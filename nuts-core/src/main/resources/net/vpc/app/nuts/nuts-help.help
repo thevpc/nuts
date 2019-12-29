@@ -402,8 +402,11 @@ Java         Version: **${java.version} (${java.vm.name})**
  **--external**  or **--spawn** or **-x**
       when invoking a nuts artifact, it will always be executed in a newly created process (this is the default)
 
- **--native**  or **--syscall** or **-n**
+ **--user-cmd**
       the command is considered as a native command (not a nuts) and will be passed to the os as is.
+
+ **--root-cmd**
+      the command is considered as a native command (not a nuts) and will be passed to the os as is with root privileges (a password will be asked for).
 
  **--open-mode**  <mode>
       defines open mode of the workspace. three values are accepted :

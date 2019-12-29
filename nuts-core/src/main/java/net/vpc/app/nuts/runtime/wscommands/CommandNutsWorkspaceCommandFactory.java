@@ -114,7 +114,7 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
             NutsExecCommand b = workspace.exec().command(listCommand)
                     .redirectErrorStream()
                     .grabOutputString();
-            int r = b.run().getResult();
+            int r = b.getResult();
             if (r == 0) {
                 for (String s : b.getOutputString().split("\n")) {
                     s = s.trim();

@@ -258,7 +258,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      * execute installation and return result.
      * @return installation result
      */
-    NutsSearchResult<NutsDefinition> getResult();
+    NutsResultList<NutsDefinition> getResult();
 
     /**
      * update session

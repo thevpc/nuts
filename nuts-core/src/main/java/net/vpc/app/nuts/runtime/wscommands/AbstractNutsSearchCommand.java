@@ -59,16 +59,16 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     protected boolean distinct = false;
     protected boolean includeBasePackage = true;
     protected boolean sorted = false;
-    protected NutsInstallStatus installStatus = null;
     protected final List<String> arch = new ArrayList<>();
     protected final List<NutsId> ids = new ArrayList<>();
-    protected final List<NutsId> frozenIds = new ArrayList<>();
+    protected final List<NutsId> lockedIds = new ArrayList<>();
     protected final List<String> scripts = new ArrayList<>();
     protected final List<String> packaging = new ArrayList<>();
     protected Boolean defaultVersions = null;
     protected String execType = null;
     protected String targetApiVersion = null;
     protected boolean printResult = false;
+    protected NutsInstallStatus installStatus = null;
 
     public AbstractNutsSearchCommand(NutsWorkspace ws) {
         super(ws, "search");
@@ -215,7 +215,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         if (values != null) {
             for (String s : values) {
                 if (!CoreStringUtils.isBlank(s)) {
-                    frozenIds.add(ws.id().parseRequired(s));
+                    lockedIds.add(ws.id().parseRequired(s));
                 }
             }
         }
@@ -232,7 +232,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         if (values != null) {
             for (NutsId s : values) {
                 if (s != null) {
-                    frozenIds.add(s);
+                    lockedIds.add(s);
                 }
             }
         }
@@ -241,7 +241,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsSearchCommand clearLockedIds() {
-        frozenIds.clear();
+        lockedIds.clear();
         return this;
     }
 
@@ -376,6 +376,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             this.packaging.addAll(Arrays.asList(o.getPackaging()));
             this.repositoryFilter = o.getRepositoryFilter();
             this.printResult = o.isPrintResult();
+            this.installStatus = other.getInstallStatus();
         }
         return this;
     }
@@ -630,21 +631,21 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsSearchCommand removeLockedId(String id) {
-        frozenIds.remove(ws.id().parse(id));
+        lockedIds.remove(ws.id().parse(id));
         return this;
     }
 
     @Override
     public NutsSearchCommand addLockedId(String id) {
         if (!CoreStringUtils.isBlank(id)) {
-            frozenIds.add(ws.id().parseRequired(id));
+            lockedIds.add(ws.id().parseRequired(id));
         }
         return this;
     }
 
     @Override
     public NutsId[] getLockedIds() {
-        return this.frozenIds.toArray(new NutsId[0]);
+        return this.lockedIds.toArray(new NutsId[0]);
     }
 
     //    public NutsQuery setDependencyFilter(TypedObject filter) {
@@ -733,8 +734,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 //        if (ids.size() > 0) {
 //            sb.append(",ids=").append(ids);
 //        }
-//        if (frozenIds.size() > 0) {
-//            sb.append(",frozenIds=").append(frozenIds);
+//        if (lockedIds.size() > 0) {
+//            sb.append(",lockedIds=").append(lockedIds);
 //        }
 //        if (idFilter != null) {
 //            sb.append(",idFilter=").append(idFilter);
@@ -777,7 +778,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 ", sorted=" + isSorted() +
                 ", arch=" + Arrays.toString(getArch()) +
                 ", ids=" + Arrays.toString(getIds()) +
-                ", frozenIds=" + Arrays.toString(getLockedIds()) +
+                ", lockedIds=" + Arrays.toString(getLockedIds()) +
                 ", scripts=" + Arrays.toString(getScripts()) +
                 ", packaging=" + Arrays.toString(getPackaging()) +
                 ", defaultVersions=" + getDefaultVersions() +
@@ -1006,7 +1007,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 this.addId(cmdLine.nextString().getStringValue());
                 return true;
             }
-            case "--frozen-id": {
+            case "--locked-id": {
                 this.addLockedId(cmdLine.nextString().getStringValue());
                 return true;
             }
@@ -1017,6 +1018,11 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--installed-or-included": {
                 cmdLine.skip();
                 this.installedOrIncluded();
+                return true;
+            }
+            case "--not-installed": {
+                cmdLine.skip();
+                this.notInstalled();
                 return true;
             }
             case "-i":
@@ -1097,39 +1103,34 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return setIdFilter(filter);
     }
 
-    @Override
     public NutsInstallStatus getInstallStatus() {
         return installStatus;
     }
 
-    @Override
     public NutsSearchCommand setInstallStatus(NutsInstallStatus installStatus) {
         this.installStatus = installStatus;
         return this;
     }
 
-    @Override
     public NutsSearchCommand installStatus(NutsInstallStatus installStatus) {
         return setInstallStatus(installStatus);
     }
 
-    @Override
     public NutsSearchCommand installed() {
         return installStatus(NutsInstallStatus.INSTALLED);
     }
 
-    @Override
     public NutsSearchCommand included() {
         return installStatus(NutsInstallStatus.INCLUDED);
     }
 
-    @Override
     public NutsSearchCommand installedOrIncluded() {
         return installStatus(NutsInstallStatus.INSTALLED_OR_INCLUDED);
     }
 
-    @Override
     public NutsSearchCommand notInstalled() {
         return installStatus(NutsInstallStatus.NOT_INSTALLED);
     }
+
+
 }

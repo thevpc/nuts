@@ -29,22 +29,39 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.Collection;
-
 /**
- *
+ * Push Command
  * @author vpc
  */
 public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
 
+    /**
+     * local only (installed or not)
+     * @param offline enable offline mode
+     * @return {@code this} instance
+     */
     NutsPushRepositoryCommand setOffline(boolean offline);
 
+    /**
+     * set id to push.
+     *
+     * @param id id to push
+     * @return {@code this} instance
+     */
     NutsPushRepositoryCommand setId(NutsId id);
 
-    NutsPushRepositoryCommand id(NutsId id);
-
+    /**
+     * return id to push.
+     *
+     * @return id to push
+     */
     NutsId getId();
 
+    /**
+     * set session
+     * @param session session
+     * @return {@code this} instance
+     */
     @Override
     NutsPushRepositoryCommand setSession(NutsRepositorySession session);
 
@@ -55,19 +72,35 @@ public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
     @Override
     NutsPushRepositoryCommand run();
 
+    /**
+     * return all arguments to pass to the push command
+     * @return all arguments to pass to the push command
+     */
     String[] getArgs();
 
-    NutsPushRepositoryCommand addArg(String arg);
+    /**
+     * args args to push
+     * @param args args to push
+     * @return {@code this} instance
+     */
+    NutsPushRepositoryCommand setArgs(String[] args);
 
-    NutsPushRepositoryCommand addArgs(String... args);
-
-    NutsPushRepositoryCommand addArgs(Collection<String> args);
-
-    NutsPushRepositoryCommand clearArgs();
-
+    /**
+     * true if offline mode is activated
+     * @return true if offline mode is activated
+     */
     boolean isOffline();
 
+    /**
+     * repository to push from
+     * @param repository repository to push from
+     * @return {@code this} instance
+     */
     NutsPushRepositoryCommand setRepository(String repository);
 
+    /**
+     * repository to push from
+     * @return repository to push from
+     */
     String getRepository();
 }

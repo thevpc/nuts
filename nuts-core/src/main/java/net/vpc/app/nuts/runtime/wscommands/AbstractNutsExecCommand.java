@@ -432,8 +432,13 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommand syscall() {
-        return setExecutionType(NutsExecutionType.SYSCALL);
+    public NutsExecCommand usrCmd() {
+        return setExecutionType(NutsExecutionType.USER_CMD);
+    }
+
+    @Override
+    public NutsExecCommand rootCmd() {
+        return setExecutionType(NutsExecutionType.ROOT_CMD);
     }
 
     @Override
@@ -484,11 +489,14 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
                 setExecutionType(NutsExecutionType.EMBEDDED);
                 return true;
             }
-            case "--native":
-            case "--syscall":
-            case "-n": {
+            case "--user-cmd":{
                 cmdLine.skip();
-                setExecutionType(NutsExecutionType.SYSCALL);
+                setExecutionType(NutsExecutionType.USER_CMD);
+                return true;
+            }
+            case "--root-cmd":{
+                cmdLine.skip();
+                setExecutionType(NutsExecutionType.ROOT_CMD);
                 return true;
             }
             case "-dry":

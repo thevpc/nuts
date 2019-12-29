@@ -27,10 +27,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.toolbox.nutsserver;
+package net.vpc.app.nuts.toolbox.nutsserver.http;
 
 import com.sun.net.httpserver.*;
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.toolbox.nutsserver.*;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.ListMap;
 
@@ -197,56 +198,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             @Override
             public void handle(final HttpExchange httpExchange) throws IOException {
 
-                facade.execute(new AbstractNutsHttpServletFacadeContext() {
-                    @Override
-                    public URI getRequestURI() throws IOException {
-                        return httpExchange.getRequestURI();
-                    }
-
-                    @Override
-                    public OutputStream getResponseBody() {
-                        return httpExchange.getResponseBody();
-                    }
-
-                    @Override
-                    public void sendError(int code, String msg) throws IOException {
-                        if (msg == null) {
-                            msg = "Error";
-                        }
-                        byte[] bytes = msg.getBytes();
-                        httpExchange.sendResponseHeaders(code, bytes.length);
-                        httpExchange.getResponseBody().write(bytes);
-                    }
-
-                    @Override
-                    public void sendResponseHeaders(int code, long length) throws IOException {
-                        httpExchange.sendResponseHeaders(code, length);
-                    }
-
-                    @Override
-                    public String getRequestHeaderFirstValue(String header) throws IOException {
-                        return httpExchange.getRequestHeaders().getFirst(header);
-                    }
-
-                    @Override
-                    public Set<String> getRequestHeaderKeys(String header) throws IOException {
-                        return httpExchange.getRequestHeaders().keySet();
-                    }
-
-                    @Override
-                    public List<String> getRequestHeaderAllValues(String header) throws IOException {
-                        return httpExchange.getRequestHeaders().get(header);
-                    }
-
-                    @Override
-                    public InputStream getRequestBody() throws IOException {
-                        return httpExchange.getRequestBody();
-                    }
-
-                    public ListMap<String, String> getParameters() {
-                        return queryToMap(httpExchange.getRequestURI().getQuery());
-                    }
-                });
+                facade.execute(new EmbeddedNutsHttpServletFacadeContext(httpExchange));
             }
         });
         server.start();
@@ -341,4 +293,70 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         }
     }
 
+    private static class EmbeddedNutsHttpServletFacadeContext extends AbstractNutsHttpServletFacadeContext {
+        private final HttpExchange httpExchange;
+
+        public EmbeddedNutsHttpServletFacadeContext(HttpExchange httpExchange) {
+            this.httpExchange = httpExchange;
+        }
+
+        @Override
+        public URI getRequestURI() throws IOException {
+            return httpExchange.getRequestURI();
+        }
+
+        @Override
+        public OutputStream getResponseBody() {
+            return httpExchange.getResponseBody();
+        }
+
+        @Override
+        public void addResponseHeader(String name, String value) throws IOException {
+            httpExchange.getResponseHeaders().add(name,value);
+        }
+
+        @Override
+        public void sendError(int code, String msg) throws IOException {
+            if (msg == null) {
+                msg = "Error";
+            }
+            byte[] bytes = msg.getBytes();
+            httpExchange.sendResponseHeaders(code, bytes.length);
+            httpExchange.getResponseBody().write(bytes);
+        }
+
+        @Override
+        public void sendResponseHeaders(int code, long length) throws IOException {
+            httpExchange.sendResponseHeaders(code, length);
+        }
+
+        @Override
+        public String getRequestHeaderFirstValue(String header) throws IOException {
+            return httpExchange.getRequestHeaders().getFirst(header);
+        }
+
+        @Override
+        public Set<String> getRequestHeaderKeys(String header) throws IOException {
+            return httpExchange.getRequestHeaders().keySet();
+        }
+
+        @Override
+        public List<String> getRequestHeaderAllValues(String header) throws IOException {
+            return httpExchange.getRequestHeaders().get(header);
+        }
+
+        @Override
+        public InputStream getRequestBody() throws IOException {
+            return httpExchange.getRequestBody();
+        }
+
+        public ListMap<String, String> getParameters() {
+            return queryToMap(httpExchange.getRequestURI().getQuery());
+        }
+
+        @Override
+        public String getRequestMethod() throws IOException {
+            return httpExchange.getRequestMethod();
+        }
+    }
 }

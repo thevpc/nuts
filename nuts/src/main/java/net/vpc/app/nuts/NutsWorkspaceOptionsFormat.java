@@ -373,8 +373,12 @@ public class NutsWorkspaceOptionsFormat implements Serializable {
                 }
                 if (value instanceof NutsExecutionType) {
                     switch ((NutsExecutionType) value) {
-                        case SYSCALL: {
-                            arguments.add("-s");
+                        case USER_CMD: {
+                            arguments.add("--user-cmd");
+                            return true;
+                        }
+                        case ROOT_CMD: {
+                            arguments.add("--root-cmd");
                             return true;
                         }
                         case EMBEDDED: {

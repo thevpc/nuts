@@ -234,11 +234,7 @@ public class WorkspaceService {
             d.id = projectService.getConfig().getId();
             if (progress && appContext.session().isPlainOut()) {
                 maxSize = Math.max(maxSize, projectService.getConfig().getId().length());
-                if (i > 0) {
-                    appContext.session().out().printf("`move-line-start`");
-                    appContext.session().out().printf("`move-up`");
-                }
-                appContext.session().out().printf("(%s / %s) %s%n", (i + 1), all.size(), StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
+                appContext.session().out().printf("(%s / %s) %s  `later-reset-line`", (i + 1), all.size(), StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
             }
             d.local = projectService.detectLocalVersion();
             d.remote = d.local == null ? null : projectService.detectRemoteVersion();
@@ -275,6 +271,9 @@ public class WorkspaceService {
                 }
             }
             ddd.add(d);
+        }
+        if(all.size()>0){
+            appContext.session().out().println("");
         }
 
         Collections.sort(ddd);

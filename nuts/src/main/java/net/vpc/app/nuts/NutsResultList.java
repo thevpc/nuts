@@ -40,7 +40,7 @@ import java.util.stream.Stream;
  * @param <T> Result Type
  * @since 0.5.4
  */
-public interface NutsSearchResult<T> extends Iterable<T> {
+public interface NutsResultList<T> extends Iterable<T> {
 
     /**
      * return result as a  java.util.List .

@@ -990,13 +990,13 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * execute query and return result as ids
      * @return result as ids
      */
-    NutsSearchResult<NutsId> getResultIds();
+    NutsResultList<NutsId> getResultIds();
 
     /**
      * execute query and return result as definitions
      * @return result as definitions
      */
-    NutsSearchResult<NutsDefinition> getResultDefinitions();
+    NutsResultList<NutsDefinition> getResultDefinitions();
 
     /**
      * execute query and return result as class loader
@@ -1089,13 +1089,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsSearchCommand online();
-
-//    /**
-//     * only installed artifacts
-//     *
-//     * @return {@code this} instance
-//     */
-//    NutsSearchCommand installed();
 
     /**
      * all artifacts (local and remote). If local result found will any way
@@ -1581,39 +1574,39 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return result as content paths
      */
-    NutsSearchResult<String> getResultPaths();
+    NutsResultList<String> getResultPaths();
 
     /**
      * return result as content path names
      *
      * @return result as content path names
      */
-    NutsSearchResult<String> getResultPathNames();
+    NutsResultList<String> getResultPathNames();
 
     /**
      * execute query and return install dates
      * @return query result
      */
-    NutsSearchResult<Instant> getResultInstallDates();
+    NutsResultList<Instant> getResultInstallDates();
 
     /**
      * execute query and return install users
      * @return query result
      */
-    NutsSearchResult<String> getResultInstallUsers();
+    NutsResultList<String> getResultInstallUsers();
 
     /**
      * execute query and return install folders
      * @return query result
      */
-    NutsSearchResult<Path> getResultInstallFolders();
+    NutsResultList<Path> getResultInstallFolders();
 
     /**
      * execute query and return store location path
      * @param location location type to return
      * @return query result
      */
-    NutsSearchResult<Path> getResultStoreLocations(NutsStoreLocation location);
+    NutsResultList<Path> getResultStoreLocations(NutsStoreLocation location);
 
     /**
      * execute query and return the selected columns.
@@ -1647,56 +1640,56 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * </ul>
      * @return query result
      */
-    NutsSearchResult<String[]> getResultStrings(String[] columns);
+    NutsResultList<String[]> getResultStrings(String[] columns);
 
     /**
      * return result as artifact names
      *
      * @return result as artifact names
      */
-    NutsSearchResult<String> getResultNames();
+    NutsResultList<String> getResultNames();
 
     /**
      * return result as operating system names
      *
      * @return result as operating system names
      */
-    NutsSearchResult<String> getResultOses();
+    NutsResultList<String> getResultOses();
 
     /**
      * return result as execution entries
      *
      * @return result as execution entries
      */
-    NutsSearchResult<NutsExecutionEntry> getResultExecutionEntries();
+    NutsResultList<NutsExecutionEntry> getResultExecutionEntries();
 
     /**
      * return result as osdist names
      *
      * @return result as osdist names
      */
-    NutsSearchResult<String> getResultOsdists();
+    NutsResultList<String> getResultOsdists();
 
     /**
      * return result as packagings
      *
      * @return result as packagings
      */
-    NutsSearchResult<String> getResultPackagings();
+    NutsResultList<String> getResultPackagings();
 
     /**
      * return result as platforms
      *
      * @return result as platforms
      */
-    NutsSearchResult<String> getResultPlatforms();
+    NutsResultList<String> getResultPlatforms();
 
     /**
      * return result as archs
      *
      * @return result as archs
      */
-    NutsSearchResult<String> getResultArchs();
+    NutsResultList<String> getResultArchs();
 
     /**
      * enable print search result

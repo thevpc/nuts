@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.EnumSet;
-
 /**
  * Supported dependency scope pattern.
  * A dependency scope pattern

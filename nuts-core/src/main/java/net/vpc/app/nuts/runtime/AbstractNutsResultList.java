@@ -38,7 +38,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import net.vpc.app.nuts.NutsNotFoundException;
 import net.vpc.app.nuts.NutsTooManyElementsException;
-import net.vpc.app.nuts.NutsSearchResult;
+import net.vpc.app.nuts.NutsResultList;
 import net.vpc.app.nuts.NutsWorkspace;
 
 /**
@@ -46,12 +46,12 @@ import net.vpc.app.nuts.NutsWorkspace;
  * @author vpc
  * @param <T>
  */
-public abstract class AbstractNutsSearchResult<T> implements NutsSearchResult<T> {
+public abstract class AbstractNutsResultList<T> implements NutsResultList<T> {
 
     private String nutsBase;
     protected NutsWorkspace ws;
 
-    public AbstractNutsSearchResult(NutsWorkspace ws, String nutsBase) {
+    public AbstractNutsResultList(NutsWorkspace ws, String nutsBase) {
         this.ws = ws;
         this.nutsBase = nutsBase;
     }

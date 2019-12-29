@@ -132,7 +132,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
 
     @Override
     public NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
-        Iterator<NutsId> allVersions = searchVersions().setId(id).setFilter(filter).setSession(session).run().getResult();
+        Iterator<NutsId> allVersions = searchVersions().setId(id).setFilter(filter).setSession(session).getResult();
         NutsId a = null;
         while (allVersions.hasNext()) {
             NutsId next = allVersions.next();

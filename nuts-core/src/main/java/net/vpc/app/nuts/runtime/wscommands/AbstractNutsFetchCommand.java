@@ -65,7 +65,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
         if (other != null) {
             NutsFetchCommand o = other;
             this.id = o.getId();
-            this.installedOrNot = ((AbstractNutsFetchCommand)o).installedOrNot;
+            this.installedOrNot = o.getInstalled();
         }
         return this;
     }
@@ -90,13 +90,26 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
 
     @Override
     public NutsFetchCommand installed() {
-        installedOrNot=true;
+        return setInstalled(true);
+    }
+
+    @Override
+    public Boolean getInstalled() {
+        return installedOrNot;
+    }
+
+    public NutsFetchCommand setInstalled(Boolean enable) {
+        installedOrNot=enable;
         return this;
     }
 
     public NutsFetchCommand installed(Boolean enable) {
-        installedOrNot=enable;
-        return this;
+        return setInstalled(enable);
+    }
+
+    @Override
+    public NutsFetchCommand notInstalled() {
+        return setInstalled(false);
     }
 
     @Override
@@ -106,6 +119,17 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
             return false;
         }
         switch (a.getStringKey()) {
+            case "--not-installed": {
+                cmdLine.skip();
+                this.notInstalled();
+                return true;
+            }
+            case "-i":
+            case "--installed": {
+                cmdLine.skip();
+                this.installed();
+                return true;
+            }
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;

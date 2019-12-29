@@ -72,13 +72,25 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         NutsSession sessionCopy = session.copy();
         sessionCopy.setTerminal(terminal);
         switch (executionType) {
-            case SYSCALL: {
+            case USER_CMD: {
                 if (commandDefinition != null) {
-                    throw new NutsIllegalArgumentException(ws, "Unable to run nuts as syscall");
+                    throw new NutsIllegalArgumentException(ws, "Unable to run nuts as user-cmd");
                 }
                 exec = new DefaultNutsSystemExecutable(ts, getExecutorOptions(),
                         sessionCopy,
-                        this
+                        this,
+                        false
+                );
+                break;
+            }
+            case ROOT_CMD: {
+                if (commandDefinition != null) {
+                    throw new NutsIllegalArgumentException(ws, "Unable to run nuts as root-cmd");
+                }
+                exec = new DefaultNutsSystemExecutable(ts, getExecutorOptions(),
+                        sessionCopy,
+                        this,
+                        true
                 );
                 break;
             }
@@ -227,7 +239,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 cmdName=cmdName.substring(0,cmdName.length()-1);
                 forceInstalled=true;
             }
-            command = ws.config().findCommandAlias(cmdName);
+            command = ws.config().findCommandAlias(cmdName, session);
             if (command != null) {
                 NutsCommandExecOptions o = new NutsCommandExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                         .setExecutionType(executionType).setEnv(env);

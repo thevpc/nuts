@@ -47,7 +47,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 
     public DefaultNutsQueryBaseOptions(NutsWorkspace ws, String name) {
         super(ws, name);
-        this.session=ws.createSession();
+//        this.session=ws.createSession();
         displayOptions = new NutsFetchDisplayOptions(ws);
     }
 

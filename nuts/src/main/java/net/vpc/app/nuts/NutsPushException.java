@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * Created by vpc on 1/15/17.
+ * Push Exception
  *
  * @since 0.5.4
  */

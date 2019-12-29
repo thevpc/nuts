@@ -66,7 +66,7 @@ public interface NutsIOProcessAction {
      *
      * @return list all processes of type {@link #getType()}
      */
-    NutsSearchResult<NutsProcessInfo> getResultList();
+    NutsResultList<NutsProcessInfo> getResultList();
 
     /**
      * current session

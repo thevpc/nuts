@@ -63,6 +63,7 @@ public final class NutsBootWorkspace {
     private Supplier<ClassLoader> contextClassLoaderSupplier;
     private int newInstanceRequirements;
     private PrivateNutsWorkspaceInitInformation workspaceInformation;
+    private Set<String> parsedBootRepositories;
     private boolean preparedWorkspace;
     private static final String DELETE_FOLDERS_HEADER = "ATTENTION ! You are about to delete nuts workspace files.";
     private PrivateNutsLog LOG = new PrivateNutsLog();
@@ -139,6 +140,48 @@ public final class NutsBootWorkspace {
         return new ProcessBuilder(createProcessCommandLine());
     }
 
+    public Collection<String> resolveBootRepositories() {
+        if(parsedBootRepositories!=null){
+            return parsedBootRepositories;
+        }
+        String bootRepositories = options.getBootRepositories();
+        LinkedHashSet<String> repos = new LinkedHashSet<>();
+        for (String s : PrivateNutsUtils.split(bootRepositories, ",;", true)) {
+            switch (s) {
+                case ".m2":
+                case "m2":
+                case "maven-local": {
+                    repos.add(System.getProperty("user.home") + PrivateNutsUtils.syspath("/.m2/repository"));
+                    break;
+                }
+                case "maven-central": {
+                    repos.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL);
+                    break;
+                }
+                case "maven-git": {
+                    repos.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT);
+                    break;
+                }
+                case "nuts-git": {
+                    repos.add(NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT);
+                    break;
+                }
+                default: {
+                    repos.add(s);
+                }
+            }
+        }
+        if (repos.isEmpty()) {
+            if (!PrivateNutsUtils.NO_M2) {
+                repos.add(System.getProperty("user.home") + PrivateNutsUtils.syspath("/.m2/repository"));
+            }
+            repos.add(NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT);
+            repos.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT);
+            repos.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL);
+        }
+        return parsedBootRepositories=repos;
+    }
+
     public String[] createProcessCommandLine() {
         prepareWorkspace();
         LOG.log(Level.FINE, PrivateNutsLog.START, "running version {0}.  {1}", new Object[]{workspaceInformation.getApiVersion(), getRequirementsHelpString(true)});
@@ -146,13 +189,8 @@ public final class NutsBootWorkspace {
         String defaultWorkspaceLibFolder = workspaceInformation.getStoreLocation(NutsStoreLocation.LIB);
         List<String> repos = new ArrayList<>();
         repos.add(defaultWorkspaceLibFolder);
-        if (!PrivateNutsUtils.NO_M2) {
-            repos.add(System.getProperty("user.home") + PrivateNutsUtils.syspath("/.m2/repository"));
-        }
-        repos.addAll(Arrays.asList(NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT,
-                NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT,
-                NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL
-        ));
+        Collection<String> bootRepositories = resolveBootRepositories();
+        repos.addAll(bootRepositories);
         File file = PrivateNutsUtils.Mvn.resolveOrDownloadJar(NutsConstants.Ids.NUTS_API + "#" + workspaceInformation.getApiVersion(),
                 repos.toArray(new String[0]),
                 workspaceInformation.getLib(), LOG,
@@ -345,7 +383,7 @@ public final class NutsBootWorkspace {
             //after eventual clean up
             if (NutsConstants.Versions.LATEST.equalsIgnoreCase(workspaceInformation.getApiVersion())
                     || NutsConstants.Versions.RELEASE.equalsIgnoreCase(workspaceInformation.getApiVersion())) {
-                String s = PrivateNutsUtils.Mvn.resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_API), null, LOG);
+                String s = PrivateNutsUtils.Mvn.resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_API), null, LOG,resolveBootRepositories());
                 if (s == null) {
                     throw new NutsIllegalArgumentException(null, "Unable to load latest nuts version");
                 }
@@ -392,7 +430,7 @@ public final class NutsBootWorkspace {
                 //resolve extension id
                 if (workspaceInformation.getRuntimeId() == null) {
                     String apiVersion = workspaceInformation.getApiId().substring(workspaceInformation.getApiId().indexOf('#') + 1);
-                    String runtimeId = PrivateNutsUtils.Mvn.resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_RUNTIME), (rtVersion) -> rtVersion.startsWith(apiVersion + "."), LOG);
+                    String runtimeId = PrivateNutsUtils.Mvn.resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_RUNTIME), (rtVersion) -> rtVersion.startsWith(apiVersion + "."), LOG,resolveBootRepositories());
                     if (runtimeId != null) {
                         //LOG.log(Level.FINEST, "[success] Resolved latest runtime-id : {0}", new Object[]{runtimeId});
                     } else {
@@ -410,6 +448,7 @@ public final class NutsBootWorkspace {
                     workspaceInformation.setRuntimeId(NutsConstants.Ids.NUTS_RUNTIME + "#" + workspaceInformation.getRuntimeId());
                 }
 
+                Collection<String> bootRepositories0 = resolveBootRepositories();
                 //resolve runtime libraries
                 if (workspaceInformation.getRuntimeDependenciesSet() == null) {
                     Set<String> loadedDeps = null;
@@ -432,7 +471,7 @@ public final class NutsBootWorkspace {
                             cacheLoaded = true;
                         }
                         if (!cacheLoaded || loadedDeps == null) {
-                            PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(PrivateNutsId.parse(workspaceInformation.getRuntimeId()), LOG);
+                            PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(PrivateNutsId.parse(workspaceInformation.getRuntimeId()), LOG,bootRepositories0);
                             if (depsAndRepos != null) {
                                 loadedDeps = depsAndRepos.deps;
                                 extraBootRepositories = String.join(";", depsAndRepos.repos);
@@ -455,9 +494,7 @@ public final class NutsBootWorkspace {
                             }
                         }
                     }
-                    bootRepositories.add(NutsConstants.BootstrapURLs.LOCAL_MAVEN_CENTRAL);
-                    bootRepositories.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT);
-                    bootRepositories.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL);
+                    bootRepositories.addAll(bootRepositories0);
                     workspaceInformation.setBootRepositories(String.join(";", bootRepositories));
                 }
 
@@ -491,7 +528,7 @@ public final class NutsBootWorkspace {
                                     }
                                 }
                                 if (loadedDeps == null) {
-                                    PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(eid, LOG);
+                                    PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(eid, LOG,bootRepositories0);
                                     if (depsAndRepos != null) {
                                         loadedDeps = depsAndRepos.deps;
                                     }
@@ -685,7 +722,7 @@ public final class NutsBootWorkspace {
         PrivateNutsId vid = PrivateNutsId.parse(id);
         File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache);
         if (f == null) {
-            throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(), "Unable to load " + name + " " + vid+" from repositories "+Arrays.asList(repositories));
+            throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(), "Unable to load " + name + " " + vid + " from repositories " + Arrays.asList(repositories));
         }
         return f;
     }
@@ -793,7 +830,7 @@ public final class NutsBootWorkspace {
                         LOG.log(Level.CONFIG, PrivateNutsLog.CACHE, "recover cached " + ext + " file {0} to {1}", new Object[]{ff, to});
                     } else {
                         PrivateNutsUtils.copy(ff, to, LOG);
-                        LOG.log(Level.CONFIG , PrivateNutsLog.CACHE, "cached " + ext + " file {0} to {1}", new Object[]{ff, to});
+                        LOG.log(Level.CONFIG, PrivateNutsLog.CACHE, "cached " + ext + " file {0} to {1}", new Object[]{ff, to});
                     }
                     return to;
                 } catch (IOException ex) {
@@ -830,7 +867,7 @@ public final class NutsBootWorkspace {
                                     return false;
                                 }
                                 Class<?> aClass = contextClassLoader.loadClass(clz);
-                                LOG.log(Level.FINEST,PrivateNutsLog.SUCCESS, "class {0} loaded successfully from {1}", new Object[]{aClass, file});
+                                LOG.log(Level.FINEST, PrivateNutsLog.SUCCESS, "class {0} loaded successfully from {1}", new Object[]{aClass, file});
                                 return true;
                             } catch (ClassNotFoundException e) {
                                 return false;
@@ -885,7 +922,7 @@ public final class NutsBootWorkspace {
         String message = "Workspace started successfully";
 
         NutsWorkspaceOptions o = this.getOptions();
-        LOG.log(Level.CONFIG,PrivateNutsLog.SUCCESS, "running workspace in {0} mode", new Object[]{getWorkspaceRunModeString()});
+        LOG.log(Level.CONFIG, PrivateNutsLog.SUCCESS, "running workspace in {0} mode", new Object[]{getWorkspaceRunModeString()});
         if (workspace == null && o.getApplicationArguments().length > 0) {
             switch (o.getApplicationArguments()[0]) {
                 case "version": {
@@ -913,17 +950,23 @@ public final class NutsBootWorkspace {
             fallbackInstallActionUnavailable(message);
             throw new NutsExecutionException(null, "Workspace not available to run : " + new PrivateNutsCommandLine(o.getApplicationArguments()).toString(), 1);
         }
+        NutsSession session = workspace.createSession();
         if (o.getApplicationArguments().length == 0) {
             if (o.isSkipWelcome()) {
                 return;
             }
-            workspace.exec().command("welcome")
+            workspace.exec()
+                    .session(session)
+                    .command("welcome")
                     .executorOptions(o.getExecutorOptions())
                     .executionType(o.getExecutionType())
+                    .failFast()
                     .dry(options.isDry())
-                    .failFast().run();
+                    .run();
         } else {
-            workspace.exec().command(o.getApplicationArguments())
+            workspace.exec()
+                    .session(session)
+                    .command(o.getApplicationArguments())
                     .executorOptions(o.getExecutorOptions())
                     .executionType(o.getExecutionType())
                     .failFast()
@@ -941,7 +984,7 @@ public final class NutsBootWorkspace {
             throw new NutsExecutionException(null, "Unable to switch to interactive mode for non plain text output format. "
                     + "You need to provide default response (-y|-n) for resetting/recovering workspace", 243);
         }
-        LOG.log(Level.FINE,PrivateNutsLog.WARNING, "delete location : {0}", new Object[]{workspaceInformation.getWorkspaceLocation()});
+        LOG.log(Level.FINE, PrivateNutsLog.WARNING, "delete location : {0}", new Object[]{workspaceInformation.getWorkspaceLocation()});
         boolean force = false;
         switch (confirm) {
             case ASK: {
@@ -1046,6 +1089,7 @@ public final class NutsBootWorkspace {
 
     /**
      * build and return unsatisfied requirements
+     *
      * @param unsatisfiedOnly when true return requirements for new instance
      * @return unsatisfied requirements
      */
@@ -1067,6 +1111,7 @@ public final class NutsBootWorkspace {
 
     /**
      * return a string representing unsatisfied contrains
+     *
      * @param unsatisfiedOnly when true return requirements for new instance
      * @return a string representing unsatisfied contrains
      */

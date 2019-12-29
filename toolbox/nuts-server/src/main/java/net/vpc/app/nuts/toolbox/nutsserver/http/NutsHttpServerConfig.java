@@ -27,9 +27,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.toolbox.nutsserver;
+package net.vpc.app.nuts.toolbox.nutsserver.http;
 
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.toolbox.nutsserver.ServerConfig;
 
 import java.net.InetAddress;
 import java.util.HashMap;

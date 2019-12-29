@@ -32,88 +32,285 @@ package net.vpc.app.nuts;
 import java.util.Collection;
 
 /**
- *
+ * Push command
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsPushCommand extends NutsWorkspaceCommand {
 
+    /**
+     * add id to push.
+     *
+     * @param id id to push
+     * @return {@code this} instance
+     */
     NutsPushCommand id(NutsId id);
 
+    /**
+     * add id to push.
+     *
+     * @param id id to push
+     * @return {@code this} instance
+     */
     NutsPushCommand id(String id);
 
+    /**
+     * remove id to push.
+     *
+     * @param id id to push
+     * @return {@code this} instance
+     */
     NutsPushCommand removeId(NutsId id);
 
+    /**
+     * add id to push.
+     *
+     * @param id id to push
+     * @return {@code this} instance
+     */
     NutsPushCommand addId(NutsId id);
 
+    /**
+     * remove id to push.
+     *
+     * @param id id to push
+     * @return {@code this} instance
+     */
     NutsPushCommand removeId(String id);
 
+    /**
+     * add id to push.
+     *
+     * @param id id to push
+     * @return {@code this} instance
+     */
     NutsPushCommand addId(String id);
 
+    /**
+     * add ids to push.
+     *
+     * @param ids id to push
+     * @return {@code this} instance
+     */
     NutsPushCommand addIds(NutsId... ids);
 
+    /**
+     * add ids to push.
+     *
+     * @param ids id to push
+     * @return {@code this} instance
+     */
     NutsPushCommand addIds(String... ids);
 
+    /**
+     * add ids to push.
+     *
+     * @param ids id to push
+     * @return {@code this} instance
+     */
     NutsPushCommand ids(NutsId... ids);
 
+    /**
+     * add ids to push.
+     *
+     * @param ids id to push
+     * @return {@code this} instance
+     */
     NutsPushCommand ids(String... ids);
 
+    /**
+     * reset ids to push for
+     * @return {@code this} instance
+     */
     NutsPushCommand clearIds();
 
+    /**
+     * return ids to push for
+     * @return ids to push for
+     */
     NutsId[] getIds();
 
-    NutsPushCommand frozenId(NutsId id);
+    /**
+     * add locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * @param id id to lock
+     * @return {@code this} instance
+     */
+    NutsPushCommand lockedId(NutsId id);
 
-    NutsPushCommand frozenId(String id);
+    /**
+     * add locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * @param id id to lock
+     * @return {@code this} instance
+     */
+    NutsPushCommand lockedId(String id);
 
-    NutsPushCommand removeFrozenId(NutsId id);
+    /**
+     * remove locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * @param id id to unlock
+     * @return {@code this} instance
+     */
+    NutsPushCommand removeLockedId(NutsId id);
 
-    NutsPushCommand addFrozenId(NutsId id);
+    /**
+     * add locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * @param id id to lock
+     * @return {@code this} instance
+     */
+    NutsPushCommand addLockedId(NutsId id);
 
-    NutsPushCommand removeFrozenId(String id);
+    /**
+     * remove locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * @param id id to unlock
+     * @return {@code this} instance
+     */
+    NutsPushCommand removeLockedId(String id);
 
-    NutsPushCommand addFrozenId(String id);
+    /**
+     * add locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * @param id id to lock
+     * @return {@code this} instance
+     */
+    NutsPushCommand addLockedId(String id);
 
-    NutsPushCommand addFrozenIds(NutsId... ids);
+    /**
+     * add locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * @param values id to lock
+     * @return {@code this} instance
+     */
+    NutsPushCommand addLockedIds(NutsId... values);
 
-    NutsPushCommand addFrozenIds(String... ids);
+    /**
+     * define locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * @param values ids
+     * @return {@code this} instance
+     */
+    NutsPushCommand addLockedIds(String... values);
 
-    NutsPushCommand frozenIds(NutsId... ids);
+    /**
+     * define locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * @param values ids
+     * @return {@code this} instance
+     */
+    NutsPushCommand lockedIds(NutsId... values);
 
-    NutsPushCommand frozenIds(String... ids);
+    /**
+     * define locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * @param values ids
+     * @return {@code this} instance
+     */
+    NutsPushCommand lockedIds(String... values);
 
-    NutsPushCommand clearFrozenIds();
+    /**
+     * reset locked ids
+     * @return {@code this} instance
+     */
+    NutsPushCommand clearLockedIds();
 
-    NutsId[] getFrozenIds();
+    /**
+     * return locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * @return locked ids
+     */
+    NutsId[] getLockedIds();
 
+    /**
+     * add argument to pass to the push command
+     * @param arg argument
+     * @return {@code this} instance
+     */
     NutsPushCommand arg(String arg);
 
+    /**
+     * add argument to pass to the push command
+     * @param arg argument
+     * @return {@code this} instance
+     */
     NutsPushCommand addArg(String arg);
 
+    /**
+     * add arguments to pass to the push command
+     * @param args argument
+     * @return {@code this} instance
+     */
     NutsPushCommand args(String... args);
 
+    /**
+     * add arguments to pass to the push command
+     * @param args argument
+     * @return {@code this} instance
+     */
     NutsPushCommand addArgs(String... args);
 
+    /**
+     * add arguments to pass to the push command
+     * @param args argument
+     * @return {@code this} instance
+     */
     NutsPushCommand args(Collection<String> args);
 
+    /**
+     * add arguments to pass to the push command
+     * @param args argument
+     * @return {@code this} instance
+     */
     NutsPushCommand addArgs(Collection<String> args);
 
+    /**
+     * clear all arguments to pass to the push command
+     * @return {@code this} instance
+     */
     NutsPushCommand clearArgs();
 
+    /**
+     * return all arguments to pass to the push command
+     * @return all arguments to pass to the push command
+     */
     String[] getArgs();
 
+    /**
+     * local only (installed or not)
+     *
+     * @return {@code this} instance
+     */
     NutsPushCommand offline();
 
+    /**
+     * local only (installed or not)
+     * @param offline enable offline mode
+     * @return {@code this} instance
+     */
     NutsPushCommand offline(boolean offline);
 
+    /**
+     * local only (installed or not)
+     * @param offline enable offline mode
+     * @return {@code this} instance
+     */
     NutsPushCommand setOffline(boolean offline);
 
+    /**
+     * true when offline mode
+     * @return true when offline mode
+     */
     boolean isOffline();
 
+    /**
+     * repository to push from
+     * @param repository repository to push from
+     * @return {@code this} instance
+     */
     NutsPushCommand repository(String repository);
 
+    /**
+     * repository to push from
+     * @param repository repository to push from
+     * @return {@code this} instance
+     */
     NutsPushCommand setRepository(String repository);
 
+    /**
+     * repository to push from
+     * @return repository to push from
+     */
     String getRepository();
 
     /**

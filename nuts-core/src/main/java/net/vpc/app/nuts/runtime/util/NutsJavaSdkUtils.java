@@ -39,9 +39,9 @@ public class NutsJavaSdkUtils {
         LOG = ws.log().of(NutsJavaSdkUtils.class);
     }
 
-    public NutsSdkLocation resolveJdkLocation(NutsWorkspace ws, String requestedJavaVersion) {
+    public NutsSdkLocation resolveJdkLocation(String requestedJavaVersion, NutsSession session) {
         requestedJavaVersion = CoreStringUtils.trim(requestedJavaVersion);
-        NutsSdkLocation bestJava = ws.config().getSdk("java", requestedJavaVersion);
+        NutsSdkLocation bestJava = ws.config().getSdk("java", requestedJavaVersion, session);
         if (bestJava == null) {
             String appSuffix = ws.config().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
             String packaging = "jre";
@@ -219,7 +219,7 @@ public class NutsJavaSdkUtils {
         String product = null;
         String jdkVersion = null;
         try {
-            String s = session.workspace().exec().syscall().command(javaExePath.toString(), "-version")
+            String s = session.workspace().exec().usrCmd().command(javaExePath.toString(), "-version")
                     .redirectErrorStream()
                     .grabOutputString().failFast().run().getOutputString();
             if (s.length() > 0) {
@@ -294,8 +294,8 @@ public class NutsJavaSdkUtils {
                 .build();
     }
 
-    public String resolveJavaCommandByVersion(String requestedJavaVersion, boolean javaw) {
-        String bestJavaPath = resolveJdkLocation(ws, requestedJavaVersion).getPath();
+    public String resolveJavaCommandByVersion(String requestedJavaVersion, boolean javaw, NutsSession session) {
+        String bestJavaPath = resolveJdkLocation(requestedJavaVersion, session).getPath();
         if (bestJavaPath.contains("/") || bestJavaPath.contains("\\") || bestJavaPath.equals(".") || bestJavaPath.equals("..")) {
             Path file = ws.config().getWorkspaceLocation().resolve(bestJavaPath);
             if (Files.isDirectory(file) && Files.isDirectory(file.resolve("bin"))) {

@@ -893,28 +893,17 @@ final class PrivateNutsUtils {
             return null;
         }
 
-        static Deps loadDependencies(PrivateNutsId rid, PrivateNutsLog LOG) {
+        static Deps loadDependencies(PrivateNutsId rid, PrivateNutsLog LOG, Collection<String> repos) {
             String urlPath = idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
-            return loadDependencies(urlPath, LOG);
+            return loadDependencies(urlPath, LOG, repos);
         }
 
-        static Deps loadDependencies(String urlPath, PrivateNutsLog LOG) {
+        static Deps loadDependencies(String urlPath, PrivateNutsLog LOG, Collection<String> repos) {
             Deps depsAndRepos = null;
-            if (!NO_M2) {
-                File mavenNutsCorePom = new File(System.getProperty("user.home"), (".m2/repository/" + urlPath).replace("/", File.separator));
-                if (mavenNutsCorePom.isFile()) {
-                    depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(mavenNutsCorePom.getPath(), LOG);
-                }
-            }
-            if (depsAndRepos == null || depsAndRepos.deps.isEmpty()) {
-                for (String baseUrl : new String[]{
-                        NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT,
-                        NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL
-                }) {
-                    depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(baseUrl + "/" + urlPath, LOG);
-                    if (!depsAndRepos.deps.isEmpty()) {
-                        break;
-                    }
+            for (String baseUrl : repos) {
+                depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(baseUrl + "/" + urlPath, LOG);
+                if (!depsAndRepos.deps.isEmpty()) {
+                    break;
                 }
             }
             return depsAndRepos;
@@ -932,10 +921,10 @@ final class PrivateNutsUtils {
                         //do not need to log error
                         return depsAndRepos;
                     }
-                } else if(url.startsWith("file://")){
+                } else if (url.startsWith("file://")) {
                     URL url1 = new URL(url);
                     File file = toFile(url1);
-                    if(file==null) {
+                    if (file == null) {
                         // was not able to resolve to File
                         try {
                             xml = url1.openStream();
@@ -943,7 +932,7 @@ final class PrivateNutsUtils {
                             //do not need to log error
                             return depsAndRepos;
                         }
-                    }else if (file.isFile()) {
+                    } else if (file.isFile()) {
                         xml = Files.newInputStream(file.toPath());
                     } else {
                         return depsAndRepos;
@@ -1056,89 +1045,90 @@ final class PrivateNutsUtils {
          * @param filter filter
          * @return latest runtime version
          */
-        static String resolveLatestMavenId(PrivateNutsId zId, Predicate<String> filter, PrivateNutsLog LOG) {
+        static String resolveLatestMavenId(PrivateNutsId zId, Predicate<String> filter, PrivateNutsLog LOG, Collection<String> bootRepositories) {
             LOG.log(Level.FINEST, PrivateNutsLog.START, "looking for " + zId);
             String path = zId.getGroupId().replace('.', '/') + '/' + zId.getArtifactId();
             String bestVersion = null;
             String bestPath = null;
-            if (!NO_M2) {
-                File mavenNutsCoreFolder = new File(System.getProperty("user.home"), ".m2/repository/" + path + "/".replace("/", File.separator));
-                if (mavenNutsCoreFolder.isDirectory()) {
-                    File[] children = mavenNutsCoreFolder.listFiles();
-                    if (children != null) {
-                        for (File file : children) {
-                            if (file.isDirectory()) {
-                                String[] goodChildren = file.list(new FilenameFilter() {
-                                    @Override
-                                    public boolean accept(File dir, String name) {
-                                        return name.endsWith(".pom");
-                                    }
-                                });
-                                if (goodChildren != null && goodChildren.length > 0) {
-                                    String p = file.getName();
-                                    if (filter == null || filter.test(p)) {
-                                        if (bestVersion == null || compareRuntimeVersion(bestVersion, p) < 0) {
-                                            bestVersion = p;
-                                            bestPath = "Local location : " + file.getPath();
+            for (String repoUrl : bootRepositories) {
+                boolean found = false;
+                if (!repoUrl.contains("://")) {
+                    File mavenNutsCoreFolder = new File(repoUrl, path + "/".replace("/", File.separator));
+                    if (mavenNutsCoreFolder.isDirectory()) {
+                        File[] children = mavenNutsCoreFolder.listFiles();
+                        if (children != null) {
+                            for (File file : children) {
+                                if (file.isDirectory()) {
+                                    String[] goodChildren = file.list(new FilenameFilter() {
+                                        @Override
+                                        public boolean accept(File dir, String name) {
+                                            return name.endsWith(".pom");
+                                        }
+                                    });
+                                    if (goodChildren != null && goodChildren.length > 0) {
+                                        String p = file.getName();
+                                        if (filter == null || filter.test(p)) {
+                                            if (bestVersion == null || compareRuntimeVersion(bestVersion, p) < 0) {
+                                                bestVersion = p;
+                                                bestPath = "Local location : " + file.getPath();
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            }
-            for (String repoUrl : new String[]{NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT, NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL}) {
-                if (!repoUrl.endsWith("/")) {
-                    repoUrl = repoUrl + "/";
-                }
-                String mavenMetadata = repoUrl + path + "/maven-metadata.xml";
-                boolean found = false;
-                try {
-                    URL runtimeMetadata = new URL(mavenMetadata);
-                    found = true;
-                    DocumentBuilderFactory factory
-                            = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder builder = factory.newDocumentBuilder();
-                    InputStream is = null;
-                    try {
-                        is = runtimeMetadata.openStream();
-                    } catch (IOException ex) {
-                        //do not need to log error
-                        //ignore
+                } else {
+                    if (!repoUrl.endsWith("/")) {
+                        repoUrl = repoUrl + "/";
                     }
-                    if (is != null) {
-                        LOG.log(Level.FINEST, PrivateNutsLog.SUCCESS, "parsing " + mavenMetadata);
-                        Document doc = builder.parse(is);
-                        Element c = doc.getDocumentElement();
-                        for (int i = 0; i < c.getChildNodes().getLength(); i++) {
-                            if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("versioning")) {
-                                Element c2 = (Element) c.getChildNodes().item(i);
-                                for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
-                                    if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("versions")) {
-                                        Element c3 = (Element) c2.getChildNodes().item(j);
-                                        for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
-                                            if (c3.getChildNodes().item(k) instanceof Element && c3.getChildNodes().item(k).getNodeName().equals("version")) {
-                                                Element c4 = (Element) c3.getChildNodes().item(k);
-                                                String p = c4.getTextContent();
-                                                if (filter == null || filter.test(p)) {
-                                                    if (bestVersion == null || compareRuntimeVersion(bestVersion, p) < 0) {
-                                                        bestVersion = p;
-                                                        bestPath = "remote file " + mavenMetadata;
+                    String mavenMetadata = repoUrl + path + "/maven-metadata.xml";
+                    try {
+                        URL runtimeMetadata = new URL(mavenMetadata);
+                        found = true;
+                        DocumentBuilderFactory factory
+                                = DocumentBuilderFactory.newInstance();
+                        DocumentBuilder builder = factory.newDocumentBuilder();
+                        InputStream is = null;
+                        try {
+                            is = runtimeMetadata.openStream();
+                        } catch (IOException ex) {
+                            //do not need to log error
+                            //ignore
+                        }
+                        if (is != null) {
+                            LOG.log(Level.FINEST, PrivateNutsLog.SUCCESS, "parsing " + mavenMetadata);
+                            Document doc = builder.parse(is);
+                            Element c = doc.getDocumentElement();
+                            for (int i = 0; i < c.getChildNodes().getLength(); i++) {
+                                if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("versioning")) {
+                                    Element c2 = (Element) c.getChildNodes().item(i);
+                                    for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
+                                        if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("versions")) {
+                                            Element c3 = (Element) c2.getChildNodes().item(j);
+                                            for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
+                                                if (c3.getChildNodes().item(k) instanceof Element && c3.getChildNodes().item(k).getNodeName().equals("version")) {
+                                                    Element c4 = (Element) c3.getChildNodes().item(k);
+                                                    String p = c4.getTextContent();
+                                                    if (filter == null || filter.test(p)) {
+                                                        if (bestVersion == null || compareRuntimeVersion(bestVersion, p) < 0) {
+                                                            bestVersion = p;
+                                                            bestPath = "remote file " + mavenMetadata;
+                                                        }
                                                     }
                                                 }
                                             }
-                                        }
 
+                                        }
                                     }
                                 }
+                                //NutsConstants.Ids.NUTS_RUNTIME.replaceAll("[.:]", "/")
                             }
-                            //NutsConstants.Ids.NUTS_RUNTIME.replaceAll("[.:]", "/")
                         }
+                    } catch (Exception ex) {
+                        LOG.log(Level.FINE, "unable to parse " + mavenMetadata, ex);
+                        // ignore any error
                     }
-                } catch (Exception ex) {
-                    LOG.log(Level.FINE, "unable to parse " + mavenMetadata, ex);
-                    // ignore any error
                 }
                 if (found) {
                     break;

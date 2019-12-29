@@ -324,6 +324,11 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
     private ExecutorService executorService = null;
 
     /**
+     * option-type : runtime (available only for the current workspace instance)
+     */
+    private String bootRepositories = null;
+
+    /**
      * parse arguments
      *
      * @param args arguments
@@ -1101,5 +1106,14 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
 
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
+    }
+
+    @Override
+    public String getBootRepositories() {
+        return bootRepositories;
+    }
+
+    public void setBootRepositories(String bootRepositories) {
+        this.bootRepositories = bootRepositories;
     }
 }

@@ -96,7 +96,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                     NutsDescriptor descr = null;
                     NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE);
                     try {
-                        descr = repo.fetchDescriptor().setSession(rsession).setId(file.getId()).run().getResult();
+                        descr = repo.fetchDescriptor().setSession(rsession).setId(file.getId()).getResult();
                     } catch (Exception e) {
                         errors.add(CoreStringUtils.exceptionToString(e));
                         //
@@ -104,11 +104,10 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                     if (descr != null && repo.config().isSupportedMirroring()) {
                         NutsId id2 = ws.config().createContentFaceId(dws.resolveEffectiveId(descr,session), descr);
                         try {
-
-                            repo.push().id(id2)
+                            repo.push().setId(id2)
                                     .setOffline(offline)
                                     .setRepository(getRepository())
-                                    .addArgs(args)
+                                    .setArgs(args.toArray(new String[0]))
                                     .setSession(rsession)
                                     .run();
                             ok = true;

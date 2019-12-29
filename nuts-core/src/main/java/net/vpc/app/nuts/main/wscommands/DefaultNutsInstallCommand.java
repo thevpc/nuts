@@ -40,7 +40,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
-import net.vpc.app.nuts.runtime.util.NutsCollectionSearchResult;
+import net.vpc.app.nuts.runtime.util.NutsCollectionResult;
 
 /**
  *
@@ -63,11 +63,13 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         if(def!=null){
             return def;
         }
-        def = ws.fetch().id(id).session(CoreNutsUtils.silent(session))
+        NutsSession ss = CoreNutsUtils.silent(session).copy();
+        def = ws.fetch().id(id).session(ss)
                 .optional(false)
                 .content()
                 .effective()
                 .dependencies()
+                .notInstalled()
                 .scope(NutsDependencyScopePattern.RUN)
                 .failFast()
                 .getResultDefinition();
@@ -268,11 +270,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
     }
 
     @Override
-    public NutsSearchResult<NutsDefinition> getResult() {
+    public NutsResultList<NutsDefinition> getResult() {
         if (result == null) {
             run();
         }
-        return new NutsCollectionSearchResult<NutsDefinition>(ws,
+        return new NutsCollectionResult<NutsDefinition>(ws,
                 ids.isEmpty() ? null : ids.get(0).toString(),
                 Arrays.asList(result)
         );

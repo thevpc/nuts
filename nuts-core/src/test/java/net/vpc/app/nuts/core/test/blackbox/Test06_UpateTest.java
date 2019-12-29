@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
-import net.vpc.app.nuts.runtime.util.io.ProcessBuilder2;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -173,7 +172,7 @@ public class Test06_UpateTest {
         );
         TestUtils.println(uws.commandLine().create(b.createProcessCommandLine()).toString());
 
-        String ss = uws.exec().syscall().command(b.createProcessCommandLine()).grabOutputString().run().getOutputString();
+        String ss = uws.exec().usrCmd().command(b.createProcessCommandLine()).grabOutputString().run().getOutputString();
         TestUtils.println("================");
         TestUtils.println(ss);
         Map m = uws.json().parse(ss, Map.class);

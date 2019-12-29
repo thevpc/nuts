@@ -452,11 +452,18 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecCommand embedded();
 
     /**
-     * set syscall execution type
+     * set user command execution type
      *
      * @return {@code this} instance
      */
-    NutsExecCommand syscall();
+    NutsExecCommand usrCmd();
+
+    /**
+     * set root command execution type
+     *
+     * @return {@code this} instance
+     */
+    NutsExecCommand rootCmd();
 
     /**
      * set spawn execution type

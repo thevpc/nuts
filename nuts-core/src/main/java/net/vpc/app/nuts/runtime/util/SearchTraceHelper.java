@@ -5,14 +5,14 @@ import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.console.CProgressBar;
 import net.vpc.app.nuts.runtime.util.fprint.FPrintCommands;
 
+import java.io.IOException;
 import java.util.Stack;
 
 public class SearchTraceHelper {
-
     public static CProgressBar resolveCProgressBar(NutsSession s) {
         Stack<CProgressBar> tt = resolve(s);
         if (tt.isEmpty()) {
-            CProgressBar p = new CProgressBar(s).setSuffixMoveLineStart();
+            CProgressBar p = new CProgressBar(s).setSuffixMoveLineStart(true).setPrefixMoveLineStart(true);
             tt.push(p);
             return p;
         } else {
@@ -35,15 +35,7 @@ public class SearchTraceHelper {
 
     public static void progress(int percent, String msg, NutsSession s) {
         if (isProgress(s)) {
-//        TT t = resolve(s).peek();
-            CProgressBar bar = resolveCProgressBar(s);
-            String p = bar.progress(percent, msg);
-            if(p==null|| p.isEmpty()){
-                return;
-            }
-            s.out().print(p);
-            //Do not flush as this will clear line...
-//            s.out().flush();
+            resolveCProgressBar(s).printProgress(percent, msg,s.out());
         }
     }
 

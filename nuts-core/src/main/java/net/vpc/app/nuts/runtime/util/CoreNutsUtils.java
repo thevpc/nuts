@@ -225,7 +225,7 @@ public class CoreNutsUtils {
         }
     }
 
-    public static final NutsDefaultThreadFactory nutsDefaultThreadFactory = new NutsDefaultThreadFactory("nuts-pool",true);
+    public static final NutsDefaultThreadFactory nutsDefaultThreadFactory = new NutsDefaultThreadFactory("nuts-pool", true);
 
     public static String randomColorName() {
         return COLOR_NAMES[(int) (Math.random() * COLOR_NAMES.length)];
@@ -514,6 +514,39 @@ public class CoreNutsUtils {
 
     public static NutsCreateRepositoryOptions defToOptions(NutsRepositoryDefinition def) {
         NutsCreateRepositoryOptions o = new NutsCreateRepositoryOptions();
+        String type = def.getType();
+        String location = def.getLocation();
+        if(location!=null) {
+            if (location.startsWith("http+mvn://")) {
+                type = NutsConstants.RepoTypes.MAVEN;
+                location = "http://" + location.substring("http+mvn://".length());
+            } else if (location.startsWith("https+mvn://")) {
+                type = NutsConstants.RepoTypes.MAVEN;
+                location = "https://" + location.substring("https+mvn://".length());
+            } else if (location.startsWith("http+nuts://")) {
+                type = NutsConstants.RepoTypes.NUTS;
+                location = "http://" + location.substring("http+nuts://".length());
+            } else if (location.startsWith("https+nuts://")) {
+                type = NutsConstants.RepoTypes.NUTS;
+                location = "https://" + location.substring("https+nuts://".length());
+            } else if (location.startsWith("http+nutsrv://")) {
+                type = NutsConstants.RepoTypes.NUTS_SERVER;
+                location = "http://" + location.substring("http+nutsrv://".length());
+            } else if (location.startsWith("https+nutsrv://")) {
+                type = NutsConstants.RepoTypes.NUTS_SERVER;
+                location = "https://" + location.substring("https+nutsrv://".length());
+            } else if (location.startsWith("file+mvn://")) {
+                type = NutsConstants.RepoTypes.MAVEN;
+                location = "file://" + location.substring("file+mvn://".length());
+            } else if (location.startsWith("file+nuts://")) {
+                type = NutsConstants.RepoTypes.NUTS;
+                location = "file://" + location.substring("file+nuts://".length());
+            } else {
+                if (CoreStringUtils.isBlank(type)) {
+                    type = NutsConstants.RepoTypes.MAVEN;
+                }
+            }
+        }
         o.setName(def.getName());
         o.setCreate(def.isCreate());
         o.setFailSafe(def.isFailSafe());
@@ -526,8 +559,8 @@ public class CoreNutsUtils {
             o.setLocation(def.getName());
             o.setConfig(new NutsRepositoryConfig()
                     .setName(def.getName())
-                    .setType(def.getType())
-                    .setLocation(def.getLocation())
+                    .setType(type)
+                    .setLocation(location)
                     .setStoreLocationStrategy(def.getStoreLocationStrategy())
             );
         }
@@ -979,5 +1012,13 @@ public class CoreNutsUtils {
         }
         return monitorable;
     }
+
+    public static NutsSession checkSession(NutsSession session) {
+        if (session == null) {
+            throw new IllegalArgumentException("Missing Session");
+        }
+        return session;
+    }
+
 
 }

@@ -92,11 +92,14 @@ public class EnvCommand extends SimpleNshBuiltin {
                         options.executionType = (NutsExecutionType.EMBEDDED);
                         return true;
                     }
-                    case "--native":
-                    case "--syscall":
-                    case "-n": {
+                    case "--user-cmd":{
                         commandLine.skip();
-                        options.executionType = (NutsExecutionType.SYSCALL);
+                        options.executionType = (NutsExecutionType.USER_CMD);
+                        return true;
+                    }
+                    case "--root-cmd":{
+                        commandLine.skip();
+                        options.executionType = (NutsExecutionType.ROOT_CMD);
                         return true;
                     }
                     case "-C":

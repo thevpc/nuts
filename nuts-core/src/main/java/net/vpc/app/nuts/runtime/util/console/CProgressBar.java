@@ -7,6 +7,7 @@ import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.fprint.FPrintCommands;
 
+import java.io.PrintStream;
 import java.util.Calendar;
 
 public class CProgressBar {
@@ -18,7 +19,8 @@ public class CProgressBar {
     private NutsSession session;
     private int columns = 3;
     private int maxColumns = 133;
-    private int moveLineStart = 1;
+    private boolean suffixMoveLineStart = true;
+    private boolean prefixMoveLineStart = true;
     private long lastPrint = 0;
     private long minPeriod = 300;
     private IndeterminatePosition indeterminatePosition = DEFAULT_INDETERMINATE_POSITION;
@@ -27,8 +29,8 @@ public class CProgressBar {
     public CProgressBar(NutsSession session) {
         this.session = session;
         formatted = session != null;
-        if(session!=null){
-            optionNewline= NutsWorkspaceUtils.parseProgressOptions(session).contains("newline");
+        if (session != null) {
+            optionNewline = NutsWorkspaceUtils.parseProgressOptions(session).contains("newline");
         }
     }
 
@@ -104,51 +106,33 @@ public class CProgressBar {
     }
 
     public boolean isSuffixMoveLineStart() {
-        return moveLineStart == 1;
+        return suffixMoveLineStart;
     }
 
     public boolean isPrefixMoveLineStart() {
-        return moveLineStart == -1;
+        return prefixMoveLineStart;
     }
 
     public boolean isNoMoveLineStart() {
-        return moveLineStart == 0;
+        return !isPrefixMoveLineStart() && !isSuffixMoveLineStart();
     }
 
-    /**
-     * <li>
-     * <li>-1 before</li>
-     * <li>0 none</li>
-     * <li>1 after</li>
-     * </li>
-     *
-     * @return MoveLineStart position
-     */
-    public int getMoveLineStartPosition() {
-        return moveLineStart;
-    }
-
-    public CProgressBar setSuffixMoveLineStart() {
-        this.moveLineStart = 1;
+    public CProgressBar setSuffixMoveLineStart(boolean v) {
+        this.suffixMoveLineStart=v;
         return this;
     }
 
-    public CProgressBar setPrefixMoveLineStart() {
-        this.moveLineStart = -1;
-        return this;
-    }
-
-    public CProgressBar setNoMoveLineStart() {
-        this.moveLineStart = 0;
+    public CProgressBar setPrefixMoveLineStart(boolean v) {
+        this.prefixMoveLineStart=v;
         return this;
     }
 
     public String progress(int percent) {
-        long now=System.currentTimeMillis();
-        if(now<lastPrint+minPeriod){
+        long now = System.currentTimeMillis();
+        if (now < lastPrint + minPeriod) {
             return "";
         }
-        lastPrint=now;
+        lastPrint = now;
         boolean indeterminate = percent < 0;
         if (indeterminate) {
             StringBuilder formattedLine = new StringBuilder();
@@ -204,6 +188,14 @@ public class CProgressBar {
         }
     }
 
+    public void printProgress(int percent, String msg, PrintStream out) {
+        String p = progress(percent, msg);
+        if (p == null || p.isEmpty()) {
+            return;
+        }
+        out.print(p);
+    }
+
     public String progress(int percent, String msg) {
         StringBuilder sb = new StringBuilder();
         if (maxMessage < columns) {
@@ -211,19 +203,21 @@ public class CProgressBar {
         }
         int s2 = 0;
         if (formatted) {
-            if(msg==null){
-                msg="";
+            if (msg == null) {
+                msg = "";
             }
-            s2 = session==null? msg.length():session.workspace().io().terminalFormat().textLength(msg);
+            s2 = session == null ? msg.length() : session.workspace().io().terminalFormat().textLength(msg);
             if (isPrefixMoveLineStart()) {
-                if(optionNewline){
-                    sb.append("\n");
-                }else {
+                if (optionNewline) {
+                    if(!isSuffixMoveLineStart()) {
+                        sb.append("\n");
+                    }
+                } else {
                     sb.append("`" + FPrintCommands.MOVE_LINE_START + "`");
                 }
             }
             String p = progress(percent);
-            if(p==null|| p.isEmpty()){
+            if (p == null || p.isEmpty()) {
                 return "";
             }
             sb.append(p).append(" ");
@@ -237,16 +231,16 @@ public class CProgressBar {
 //            sb.append(" ");
 //            sb.append(maxMessage);
             if (isSuffixMoveLineStart()) {
-                if(optionNewline) {
+                if (optionNewline) {
                     sb.append("\n");
-                }else {
+                } else {
                     sb.append("`" + FPrintCommands.LATER_RESET_LINE + "`");
                 }
             }
         } else {
             s2 = msg.length();
             String p = progress(percent);
-            if(p==null|| p.isEmpty()){
+            if (p == null || p.isEmpty()) {
                 return "";
             }
             sb.append(p).append(" ");

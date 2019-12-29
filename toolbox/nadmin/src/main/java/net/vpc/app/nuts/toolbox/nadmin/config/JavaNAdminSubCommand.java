@@ -65,9 +65,9 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
         } else if (cmdLine.next("remove java") != null) {
             while (cmdLine.hasNext()) {
                 String name = cmdLine.next().getString();
-                NutsSdkLocation loc = conf.findSdkByName("java", name);
+                NutsSdkLocation loc = conf.findSdkByName("java", name, context.getSession());
                 if (loc == null) {
-                    loc = conf.findSdkByPath("java", Paths.get(name));
+                    loc = conf.findSdkByPath("java", Paths.get(name), context.getSession());
                     if (loc == null) {
                         loc = conf.findSdkByVersion("java", name);
                     }
@@ -93,7 +93,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                NutsSdkLocation[] sdks = conf.getSdks("java");
+                NutsSdkLocation[] sdks = conf.getSdks("java", context.getSession());
                 Arrays.sort(sdks, new Comparator<NutsSdkLocation>() {
                     @Override
                     public int compare(NutsSdkLocation o1, NutsSdkLocation o2) {

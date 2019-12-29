@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * Question is helpful object that permits user interaction by reading a type object from
+ * Question is helpful object that permits user interaction by reading a typed object from
  * standard input or an equivalent input system.
  * @param <T> value type returned by this question object
  * @author vpc

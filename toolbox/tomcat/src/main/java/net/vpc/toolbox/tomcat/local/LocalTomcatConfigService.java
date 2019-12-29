@@ -321,7 +321,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         //b.
 //        b.setOutput(context.getSession().out());
 //        b.setErr(context.getSession().err());
-        NutsExecCommand b = context.workspace().exec().command().executionType(NutsExecutionType.SYSCALL).session(context.getSession());
+        NutsExecCommand b = context.workspace().exec().command().executionType(NutsExecutionType.USER_CMD).session(context.getSession());
         b.addCommand(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaCommand);
 //        if (catalinaHome != null) {
@@ -446,7 +446,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                                     context.session().out().printf("==[%s]== Tomcat installed to catalina home ==%s==\n", getName(), event.getDefinition().getInstallInformation().getInstallFolder());
                                 }
                             }
-                        })).run().getResult().required();
+                        })).getResult().required();
             }
         }
         return catalinaNutsDefinition;

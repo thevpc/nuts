@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- *
  * @author vpc
  */
 public abstract class AbstractNutsPushRepositoryCommand extends NutsRepositoryCommandBase<NutsPushRepositoryCommand> implements NutsPushRepositoryCommand {
@@ -63,10 +62,10 @@ public abstract class AbstractNutsPushRepositoryCommand extends NutsRepositoryCo
         return this;
     }
 
-    @Override
-    public NutsPushRepositoryCommand id(NutsId id) {
-        return setId(id);
-    }
+//    @Override
+//    public NutsPushRepositoryCommand id(NutsId id) {
+//        return setId(id);
+//    }
 
     @Override
     public NutsId getId() {
@@ -78,42 +77,52 @@ public abstract class AbstractNutsPushRepositoryCommand extends NutsRepositoryCo
         return args == null ? new String[0] : args.toArray(new String[0]);
     }
 
-    @Override
-    public NutsPushRepositoryCommand clearArgs() {
-        this.args = null;
-        return this;
-    }
+//    @Override
+//    public NutsPushRepositoryCommand clearArgs() {
+//        this.args = null;
+//        return this;
+//    }
+
 
     @Override
-    public NutsPushRepositoryCommand addArg(String arg) {
-        if (this.args == null) {
-            this.args = new ArrayList<>();
-        }
-        if (arg == null) {
-            throw new NullPointerException();
-        }
-        this.args.add(arg);
-        return this;
-    }
-
-    @Override
-    public NutsPushRepositoryCommand addArgs(String... args) {
-        return addArgs(args == null ? null : Arrays.asList(args));
-    }
-
-    @Override
-    public NutsPushRepositoryCommand addArgs(Collection<String> args) {
-        if (this.args == null) {
-            this.args = new ArrayList<>();
-        }
+    public NutsPushRepositoryCommand setArgs(String[] args) {
+        this.args.clear();
         if (args != null) {
-            for (String arg : args) {
-                if (arg == null) {
-                    throw new NullPointerException();
-                }
-                this.args.add(arg);
-            }
+            this.args.addAll(Arrays.asList(args));
         }
         return this;
     }
+
+//    @Override
+//    public NutsPushRepositoryCommand addArg(String arg) {
+//        if (this.args == null) {
+//            this.args = new ArrayList<>();
+//        }
+//        if (arg == null) {
+//            throw new NullPointerException();
+//        }
+//        this.args.add(arg);
+//        return this;
+//    }
+
+//    @Override
+//    public NutsPushRepositoryCommand addArgs(String... args) {
+//        return addArgs(args == null ? null : Arrays.asList(args));
+//    }
+
+//    @Override
+//    public NutsPushRepositoryCommand addArgs(Collection<String> args) {
+//        if (this.args == null) {
+//            this.args = new ArrayList<>();
+//        }
+//        if (args != null) {
+//            for (String arg : args) {
+//                if (arg == null) {
+//                    throw new NullPointerException();
+//                }
+//                this.args.add(arg);
+//            }
+//        }
+//        return this;
+//    }
 }
