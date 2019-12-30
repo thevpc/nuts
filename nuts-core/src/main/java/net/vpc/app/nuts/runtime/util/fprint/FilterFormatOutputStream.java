@@ -7,12 +7,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class FilterFormatOutputStream extends FilterOutputStream implements ExtendedFormatAware {
-    FormatNodeHelper h;
+    FormatOutputStreamSupport h;
 
     public FilterFormatOutputStream(OutputStream out) {
         super(out);
-        h = new FormatNodeHelper(FPrint.RENDERER_ANSI_STRIPPER);
-        h.setRawer(new FormatNodeHelper.RawOutputStream() {
+        h = new FormatOutputStreamSupport(FPrint.RENDERER_ANSI_STRIPPER);
+        h.setRawer(new FormatOutputStreamSupport.RawOutputStream() {
             @Override
             public void writeRaw(byte[] buf, int off, int len) throws IOException {
                 writeRaw0(buf, off, len);

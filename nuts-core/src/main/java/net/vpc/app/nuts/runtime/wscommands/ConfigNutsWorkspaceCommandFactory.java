@@ -3,6 +3,7 @@ package net.vpc.app.nuts.runtime.wscommands;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
+
 import net.vpc.app.nuts.*;
 
 import java.nio.file.Path;
@@ -24,7 +25,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     public ConfigNutsWorkspaceCommandFactory(NutsWorkspaceConfigManager cnf) {
         this.configManager = cnf;
         this.configManagerExt = NutsWorkspaceConfigManagerExt.of(cnf);
-        LOG=configManagerExt.getWorkspace().log().of(ConfigNutsWorkspaceCommandFactory.class);
+        LOG = configManagerExt.getWorkspace().log().of(ConfigNutsWorkspaceCommandFactory.class);
     }
 
     @Override
@@ -47,12 +48,12 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     public void uninstallCommand(String name, NutsRemoveOptions options) {
-        options=CoreNutsUtils.validate(options,configManagerExt.getWorkspace());
+        options = CoreNutsUtils.validate(options, configManagerExt.getWorkspace());
         Path file = getStoreLocation().resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (Files.exists(file)) {
             try {
                 Files.delete(file);
-                configManagerExt.fireConfigurationChanged("command",options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+                configManagerExt.fireConfigurationChanged("command", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -60,10 +61,10 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     public void installCommand(NutsCommandAliasConfig command, NutsAddOptions options) {
-        options=CoreNutsUtils.validate(options,configManagerExt.getWorkspace());
+        options = CoreNutsUtils.validate(options, configManagerExt.getWorkspace());
         Path path = getStoreLocation().resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         configManagerExt.getWorkspace().json().value(command).print(path);
-        configManagerExt.fireConfigurationChanged("command",options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+        configManagerExt.fireConfigurationChanged("command", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
     }
 
     @Override
@@ -103,7 +104,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
                     try {
                         c = configManagerExt.getWorkspace().json().parse(file, NutsCommandAliasConfig.class);
                     } catch (Exception ex) {
-                        LOG.log(Level.FINE,"unable to parse "+file,ex);
+                        LOG.with().level(Level.FINE).error(ex).log("unable to parse {0}", file);
                         //
                     }
                     if (c != null) {

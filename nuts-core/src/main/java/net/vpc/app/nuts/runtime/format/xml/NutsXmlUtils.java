@@ -29,18 +29,11 @@
  */
 package net.vpc.app.nuts.runtime.format.xml;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.io.Writer;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -50,7 +43,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import net.vpc.app.nuts.NutsElement;
 import net.vpc.app.nuts.NutsException;
+import net.vpc.app.nuts.NutsNamedElement;
 import net.vpc.app.nuts.NutsWorkspace;
 
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
@@ -64,19 +60,19 @@ import org.w3c.dom.Element;
  */
 public class NutsXmlUtils {
 
-    public static void print(String name, Object object, Writer out, boolean compact, boolean headerDeclaration, NutsWorkspace ws) {
-        print(name, object, (Object) out, compact, headerDeclaration, ws);
+    public static void print(String name, Object object, long elemIndex, Writer out, boolean compact, boolean headerDeclaration, NutsWorkspace ws) {
+        print(name, object, elemIndex, (Object) out, compact, headerDeclaration, ws);
     }
 
-    public static void print(String name, Object object, PrintStream out, boolean compact, boolean headerDeclaration, NutsWorkspace ws) {
-        print(name, object, (Object) out, compact, headerDeclaration, ws);
+    public static void print(String name, Object object, long elemIndex, PrintStream out, boolean compact, boolean headerDeclaration, NutsWorkspace ws) {
+        print(name, object, elemIndex, (Object) out, compact, headerDeclaration, ws);
     }
 
-    private static void print(String name, Object object, Object out, boolean compact, boolean headerDeclaration, NutsWorkspace ws) {
+    private static void print(String name, Object object, long elemIndex, Object out, boolean compact, boolean headerDeclaration, NutsWorkspace ws) {
         try {
             Document document = NutsXmlUtils.createDocument();
             String rootName = name;
-            document.appendChild(createElement(CoreStringUtils.isBlank(rootName) ? "root" : rootName, object, document, ws));
+            document.appendChild(createElement(CoreStringUtils.isBlank(rootName) ? "root" : rootName, object, elemIndex,document, ws));
             StreamResult streamResult = null;
             if (out instanceof PrintStream) {
                 streamResult = new StreamResult((PrintStream) out);
@@ -100,80 +96,88 @@ public class NutsXmlUtils {
     public static Document createDocument(String name, Object object, NutsWorkspace ws) {
         try {
             Document document = createDocument();
-            document.appendChild(createElement(CoreStringUtils.isBlank(name) ? "root" : name, object, document, ws));
+            document.appendChild(createElement(CoreStringUtils.isBlank(name) ? "root" : name, object, -1,document, ws));
             return document;
         } catch (ParserConfigurationException ex) {
             throw new NutsException(null, ex);
         }
     }
 
-    public static Element createElement(String name, Object o, Document document, NutsWorkspace ws) {
+    public static Element createElement(String name, Object o,long elemIndex, Document document, NutsWorkspace ws) {
         // root element
         Element elem = document.createElement(createElementName(name));
-        if (o == null) {
-            elem.setAttribute("type", "null");
-        } else if (o instanceof JsonElement) {
-            JsonElement je = (JsonElement) o;
-            if (je.isJsonNull()) {
-                elem.setAttribute("type", "null");
-            } else if (je.isJsonPrimitive()) {
-                JsonPrimitive jr = je.getAsJsonPrimitive();
-                if (jr.isString()) {
-                    elem.setAttribute("type", "string");
-                } else if (jr.isNumber()) {
-                    elem.setAttribute("type", "number");
-                } else if (jr.isBoolean()) {
-                    elem.setAttribute("type", "boolean");
+        if(elemIndex>=0){
+            elem.setAttribute("index",CoreCommonUtils.stringValue(elemIndex));
+        }
+        NutsElement elem2 = ws.element().toElement(o);
+        switch (elem2.type()){
+            case STRING:{
+                elem.setAttribute("type", "string");
+                elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getString()));
+                break;
+            }
+            case FLOAT:{
+                Number n = elem2.primitive().getNumber();
+                if(n instanceof Double){
+                    elem.setAttribute("type", "double");
+                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getDouble()));
+                }else if(n instanceof Float){
+                    elem.setAttribute("type", "float");
+                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getFloat()));
+                }else{
+                    elem.setAttribute("type", "double");
+                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getDouble()));
                 }
-                elem.setTextContent(je.getAsString());
-            } else if (je.isJsonArray()) {
+                break;
+            }
+            case INTEGER:{
+                Number n = elem2.primitive().getNumber();
+                if(n instanceof Integer){
+                    elem.setAttribute("type", "int");
+                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getInt()));
+                }else if(n instanceof Long){
+                    elem.setAttribute("type", "long");
+                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getLong()));
+                }else{
+                    elem.setAttribute("type", "int");
+                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getInt()));
+                }
+                break;
+            }
+            case BOOLEAN:{
+                elem.setAttribute("type", "boolean");
+                elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getBoolean()));
+                break;
+            }
+            case DATE:{
+                elem.setAttribute("type", "date");
+                elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getDate()));
+                break;
+            }
+            case NULL:{
+                elem.setAttribute("type", "null");
+                break;
+            }
+            case OBJECT:{
+                elem.setAttribute("type", "object");
+                for (NutsNamedElement child : elem2.object().children()) {
+                    elem.appendChild(createElement(child.getName(), child.getValue(),-1, document, ws));
+                }
+                break;
+            }
+            case ARRAY:{
                 elem.setAttribute("type", "array");
-                JsonArray arr = je.getAsJsonArray();
-                int index = 0;
-                for (int i = 0; i < arr.size(); i++) {
-                    Element item = createElement("item", arr.get(i), document, ws);
-                    item.setAttribute("index", String.valueOf(index));
+                int index=0;
+                for (NutsElement child : elem2.array().children()) {
+                    Element item = createElement("item", child, (long)index,document, ws);
                     elem.appendChild(item);
                     index++;
                 }
-            } else if (je.isJsonObject()) {
-                elem.setAttribute("type", "object");
-                JsonObject arr = je.getAsJsonObject();
-                for (Map.Entry<String, JsonElement> entry : arr.entrySet()) {
-                    elem.appendChild(createElement(entry.getKey(), entry.getValue(), document, ws));
-                }
+                break;
             }
-        } else if (o instanceof Map) {
-            elem.setAttribute("type", "object");
-            Map<Object, Object> m = (Map) o;
-            for (Map.Entry<Object, Object> entry : m.entrySet()) {
-                elem.appendChild(createElement(CoreCommonUtils.stringValue(entry.getKey()), entry.getValue(), document, ws));
+            default:{
+                throw new IllegalArgumentException("Unsupported type"+elem2.type());
             }
-        } else if (o instanceof Collection) {
-            elem.setAttribute("type", "array");
-            Collection m = (Collection) o;
-            int index = 0;
-            for (Object entry : m) {
-                Element item = createElement("item", entry, document, ws);
-                item.setAttribute("index", String.valueOf(index));
-                elem.appendChild(item);
-                index++;
-            }
-        } else if (o instanceof String) {
-            elem.setAttribute("type", "string");
-            elem.setTextContent(CoreCommonUtils.stringValue(o));
-        } else if (o instanceof Number) {
-            elem.setAttribute("type", "number");
-            elem.setTextContent(CoreCommonUtils.stringValue(o));
-        } else if (o instanceof Boolean) {
-            elem.setAttribute("type", "boolean");
-            elem.setTextContent(CoreCommonUtils.stringValue(o));
-        } else if (o instanceof Date) {
-            elem.setAttribute("type", "date");
-            elem.setTextContent(CoreCommonUtils.stringValue(o));
-        } else {
-            elem.setTextContent(CoreCommonUtils.stringValue("string"));
-            elem.setTextContent(CoreCommonUtils.stringValue(o));
         }
         return elem;
     }

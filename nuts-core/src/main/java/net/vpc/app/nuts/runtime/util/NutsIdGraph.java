@@ -289,7 +289,7 @@ public class NutsIdGraph {
                                         stack.push(new NutsIdAndNutsDependencyFilterItem(nextNode));
                                     } catch (NutsNotFoundException ex) {
                                         if (dept.isOptional()) {
-                                            LOG.log(Level.FINE,"Unable to resolve optional dependency "+dept.getId()+" for "+curr.id,ex);
+                                            LOG.with().level(Level.FINE).error(ex).log("Unable to resolve optional dependency {0} for {1}",dept.getId(),curr.id);
                                         } else {
                                             stack.push(new NutsIdAndNutsDependencyFilterItem(nextNode));
                                         }

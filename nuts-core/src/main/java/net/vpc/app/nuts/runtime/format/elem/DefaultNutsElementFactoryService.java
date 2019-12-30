@@ -245,9 +245,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement create(Object o, NutsElementFactoryContext context) {
-            Node je = (Node) o;
-            if (je instanceof NutsDefinition) {
-                NutsDefinition def = (NutsDefinition) je;
+            if (o instanceof NutsDefinition) {
+                NutsDefinition def = (NutsDefinition) o;
                 Map<String, Object> x = new LinkedHashMap<>();
                 x.put("id", def.getId());
                 NutsContent content = def.getContent();

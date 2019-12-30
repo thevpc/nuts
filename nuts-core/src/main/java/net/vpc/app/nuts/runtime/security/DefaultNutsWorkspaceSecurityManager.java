@@ -117,7 +117,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         NutsUser adminSecurity = findUser(NutsConstants.Users.ADMIN);
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
             if (LOG.isLoggable(Level.CONFIG)) {
-                LOG.log(Level.CONFIG, NutsLogVerb.WARNING, NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
+                LOG.with().level(Level.CONFIG).verb(NutsLogVerb.WARNING).log( NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
             }
             NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(NutsConstants.Users.ADMIN);
             u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null)));

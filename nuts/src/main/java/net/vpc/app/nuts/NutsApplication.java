@@ -104,7 +104,7 @@ public abstract class NutsApplication {
      */
     public void runAndExit(String[] args) {
         try {
-            run((NutsWorkspace) null, args);
+            run((NutsSession) null, args);
         } catch (Exception ex) {
             System.exit(NutsApplications.processThrowable(ex, args, null));
             return;
@@ -120,7 +120,7 @@ public abstract class NutsApplication {
      * @param args application arguments. should not be null or contain nulls
      */
     public void run(String[] args) {
-        run((NutsWorkspace) null, args);
+        run((NutsSession) null, args);
     }
 
     /**
@@ -128,11 +128,12 @@ public abstract class NutsApplication {
      * If the first arguments is in the form of --nuts-exec-mode=... the
      * argument will be removed and the corresponding mode is activated.
      *
-     * @param ws workspace (can be null)
+     * @param session session (can be null)
      * @param args application arguments. should not be null or contain nulls
+     * @since 0.6.0, first parameter changed from NutsWorkspace to NutsSession to enable passing session options
      */
-    public void run(NutsWorkspace ws, String[] args) {
-        NutsApplications.runApplication(args, ws, getClass(), new NutsApplicationLifeCycleImpl(this));
+    public void run(NutsSession session, String[] args) {
+        NutsApplications.runApplication(args, session, getClass(), new NutsApplicationLifeCycleImpl(this));
     }
 
     /**

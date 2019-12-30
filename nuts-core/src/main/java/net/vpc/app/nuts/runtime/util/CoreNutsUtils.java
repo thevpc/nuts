@@ -662,10 +662,11 @@ public class CoreNutsUtils {
         long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
         String modeString = CoreStringUtils.alignLeft(session.getFetchMode().id(), 7);
         log.with().level(lvl).verb(tracePhase.name()).time(time).formatted()
-                .log("[{0}] {1} {2}" + (id == null ? "" : (" " + (session.getWorkspace().id().set(id).format()))) + " {3}",
+                .log("[{0}] {1} {2} {3} {4}",
                         modeString,
                         CoreStringUtils.alignLeft(name, 20),
                         CoreStringUtils.alignLeft(title, 18),
+                        (id == null ? "" : id),
                         extraMsg);
     }
 

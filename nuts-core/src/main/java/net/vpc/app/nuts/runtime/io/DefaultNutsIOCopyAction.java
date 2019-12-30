@@ -532,7 +532,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                         .create());
             }
         }
-        LOG.log(Level.FINEST, NutsLogVerb.START, "copy {0} to {1}", _source, target);
+        LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log("copy {0} to {1}", _source, target);
         try {
             if (safe) {
                 Path temp = null;
@@ -608,7 +608,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                 }
             }
         } catch (IOException ex) {
-            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "error copying {0} to {1} : {2}", _source.getSource(), target.getValue(), ex.toString());
+            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log( "error copying {0} to {1} : {2}", _source.getSource(), target.getValue(), ex.toString());
             throw new UncheckedIOException(ex);
         }
     }

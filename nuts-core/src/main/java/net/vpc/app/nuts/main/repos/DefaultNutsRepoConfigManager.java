@@ -389,9 +389,9 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
             configurationChanged = false;
             if (LOG.isLoggable(Level.CONFIG)) {
                 if (created) {
-                    LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, CoreStringUtils.alignLeft(repository.config().getName(), 20) + " Created repository " + repository.config().getName() + " at " + getStoreLocation());
+                    LOG.with().level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log( CoreStringUtils.alignLeft(repository.config().getName(), 20) + " Created repository " + repository.config().getName() + " at " + getStoreLocation());
                 } else {
-                    LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, CoreStringUtils.alignLeft(repository.config().getName(), 20) + " Updated repository " + repository.config().getName() + " at " + getStoreLocation());
+                    LOG.with().level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log( CoreStringUtils.alignLeft(repository.config().getName(), 20) + " Updated repository " + repository.config().getName() + " at " + getStoreLocation());
                 }
             }
             ok = true;

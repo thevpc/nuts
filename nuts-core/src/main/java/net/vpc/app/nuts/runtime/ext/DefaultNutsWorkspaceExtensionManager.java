@@ -127,8 +127,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                 NutsExtensionInformation[] s = new NutsExtensionInformation[0];
                 try (Reader rr = new InputStreamReader(u.openStream())) {
                     s = ws.json().parse(rr, DefaultNutsExtensionInformation[].class);
-                } catch (IOException e) {
-                    LOG.log(Level.FINE, "Failed to parse NutsExtensionInformation from " + u, e);
+                } catch (IOException ex) {
+                    LOG.with().level(Level.SEVERE).error(ex).log("Failed to parse NutsExtensionInformation from {0} : {1}", u,ex.toString());
                 }
                 if (s != null) {
                     for (NutsExtensionInformation nutsExtensionInfo : s) {
@@ -244,7 +244,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         if (wired != null) {
             throw new NutsExtensionAlreadyRegisteredException(ws, id.toString(), wired.toString());
         }
-        LOG.log(Level.FINE, NutsLogVerb.UPDATE, "Installing extension {0}", id);
+
+        LOG.with().level(Level.FINE).verb(NutsLogVerb.UPDATE).log( "Installing extension {0}", id);
         List<NutsDefinition> nutsDefinitions = ws.search()
                 .copyFrom(options)
                 .session(searchSession)
@@ -280,10 +281,10 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             }
         }
         extensions.put(id, workspaceExtension);
-        LOG.log(Level.FINE, NutsLogVerb.UPDATE, "Extension {0} installed successfully", id);
+        LOG.with().level(Level.FINE).verb(NutsLogVerb.UPDATE).log( "Extension {0} installed successfully", id);
         NutsSessionTerminal newTerminal = createTerminal(session.getTerminal() == null ? null : session.getTerminal().getClass());
         if (newTerminal != null) {
-            LOG.log(Level.FINE, NutsLogVerb.UPDATE, "Extension {0} changed Terminal configuration. Reloading Session Terminal", id);
+            LOG.with().level(Level.FINE).verb(NutsLogVerb.UPDATE).log("Extension {0} changed Terminal configuration. Reloading Session Terminal", id);
             session.setTerminal(newTerminal);
         }
         return workspaceExtension;
@@ -318,8 +319,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                     if (zipFile != null) {
                         try {
                             zipFile.close();
-                        } catch (IOException e) {
-                            LOG.log(Level.FINE, "Failed to close zip file " + file.getPath(), e);
+                        } catch (IOException ex) {
+                            LOG.with().level(Level.SEVERE).error(ex).log("Failed to close zip file {0} : {1}", file.getPath(),ex.toString());
                             //ignore return false;
                         }
                     }
@@ -337,7 +338,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             objectFactory.registerInstance(extensionPointType, extensionImpl);
             return true;
         }
-        LOG.log(Level.FINE, NutsLogVerb.WARNING, "Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionImpl.getClass().getName()});
+        LOG.with().level(Level.FINE).verb(NutsLogVerb.WARNING).log( "Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionImpl.getClass().getName()});
         return false;
     }
 
@@ -347,7 +348,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             objectFactory.registerType(extensionPointType, extensionType);
             return true;
         }
-        LOG.log(Level.FINE, NutsLogVerb.WARNING, "Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionType.getName()});
+        LOG.with().level(Level.FINE).verb(NutsLogVerb.WARNING).log("Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionType.getName()});
         return false;
     }
 

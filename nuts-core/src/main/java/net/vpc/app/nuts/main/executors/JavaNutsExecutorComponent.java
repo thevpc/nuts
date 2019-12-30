@@ -311,7 +311,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             Method mainMethod = null;
             Object nutsApp = null;
             try {
-                mainMethod = cls.getMethod("run", NutsWorkspace.class, String[].class);
+                mainMethod = cls.getMethod("run", NutsSession.class, String[].class);
                 mainMethod.setAccessible(true);
                 Class p = cls.getSuperclass();
                 while (p != null) {
@@ -333,7 +333,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             if (isNutsApp) {
                 //NutsWorkspace
                 NutsApplications.getSharedMap().put("nuts.embedded.application.id",id);
-                mainMethod.invoke(nutsApp, new Object[]{getSession().getWorkspace(), joptions.getApp().toArray(new String[0])});
+                mainMethod.invoke(nutsApp, new Object[]{getSession(), joptions.getApp().toArray(new String[0])});
             } else {
                 //NutsWorkspace
                 System.setProperty("nuts.boot.args", getSession().getWorkspace().config().options()

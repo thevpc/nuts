@@ -116,7 +116,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 try {
                     CoreIOUtils.delete(ws, tempFolder);
                 } catch (IOException e) {
-                    LOG.log(Level.FINEST, NutsLogVerb.FAIL, "Unable to delete temp folder created for execution : " + tempFolder);
+                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "Unable to delete temp folder created for execution : " + tempFolder);
                 }
             }
         }

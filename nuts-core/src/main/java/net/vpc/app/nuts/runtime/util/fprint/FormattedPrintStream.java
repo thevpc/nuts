@@ -11,9 +11,9 @@
 //
 //public abstract class FormattedPrintStream extends PrintStreamExt implements NutsPrintStreamExt, NutsWorkspaceAware {
 //
-//    private FormatNodeHelper formatNodeHelper = new FormatNodeHelper();
+//    private FormatOutputStreamSupport formatNodeHelper = new FormatOutputStreamSupport();
 //    private PrintStream ps;
-//    private FormatNodeHelper.RawOutputStream rawer = new FormatNodeHelper.RawOutputStream() {
+//    private FormatOutputStreamSupport.RawOutputStream rawer = new FormatOutputStreamSupport.RawOutputStream() {
 //        @Override
 //        public void writeRaw(byte[] buf, int off, int len) {
 //            writeRaw0(buf, off, len);

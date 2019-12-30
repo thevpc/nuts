@@ -982,7 +982,7 @@ public final class NutsBootWorkspace {
                 && this.getOptions().getOutputFormat() != null
                 && this.getOptions().getOutputFormat() != NutsOutputFormat.PLAIN) {
             throw new NutsExecutionException(null, "Unable to switch to interactive mode for non plain text output format. "
-                    + "You need to provide default response (-y|-n) for resetting/recovering workspace", 243);
+                    + "You need to provide default response (-y|-n) for resetting/recovering workspace. You was asked to confirm deleting folders as part as recover/reset option.", 243);
         }
         LOG.log(Level.FINE, PrivateNutsLog.WARNING, "delete location : {0}", new Object[]{workspaceInformation.getWorkspaceLocation()});
         boolean force = false;

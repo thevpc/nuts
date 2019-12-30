@@ -45,7 +45,7 @@ public class MvnClient {
                     }
                     status = Status.SUCCESS;
                 } catch (Exception ex) {
-                    LOG.log(Level.FINE, "Failed to load " + NET_VPC_APP_NUTS_MVN,ex);
+                    LOG.with().level(Level.SEVERE).error(ex).log("Failed to load {0} : {1}", NET_VPC_APP_NUTS_MVN,ex.toString());
                     ex.printStackTrace();
                     status = Status.FAIL;
                     return false;
@@ -76,7 +76,7 @@ public class MvnClient {
                     ).session(session).run();
             return (b.getResult() == 0);
         } catch (Exception ex) {
-            LOG.log(Level.FINE, "Failed to invoke " + NET_VPC_APP_NUTS_MVN,ex);
+            LOG.with().level(Level.SEVERE).error(ex).log("Failed to invoke {0} : {1}", NET_VPC_APP_NUTS_MVN,ex.toString());
             return false;
         }
     }

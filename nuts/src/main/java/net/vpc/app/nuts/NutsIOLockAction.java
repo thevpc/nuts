@@ -124,7 +124,7 @@ public interface NutsIOLockAction {
      * @param <T> result type
      * @return result
      */
-    <T> T run(Callable<T> runnable);
+    <T> T call(Callable<T> runnable);
 
     /**
      * create lock object for the given source and resource
@@ -134,5 +134,18 @@ public interface NutsIOLockAction {
      * @param unit unit
      * @return result
      */
-    <T> T run(Callable<T> runnable, long time, TimeUnit unit);
+    <T> T call(Callable<T> runnable, long time, TimeUnit unit);
+    /**
+     * create lock object for the given source and resource
+     * @param runnable runnable
+     */
+    void run(Runnable runnable);
+
+    /**
+     * create lock object for the given source and resource
+     * @param runnable runnable
+     * @param time time
+     * @param unit unit
+     */
+    void run(Runnable runnable, long time, TimeUnit unit);
 }

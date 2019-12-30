@@ -984,7 +984,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     private NutsWorkspaceCommandAlias toDefaultNutsWorkspaceCommand(NutsCommandAliasConfig c) {
         if (c.getCommand() == null || c.getCommand().length == 0) {
-            LOG.log(Level.WARNING, NutsLogVerb.FAIL, "Invalid Command Definition ''{0}''. Missing Command. Ignored", c.getName());
+
+            LOG.with().level(Level.WARNING).verb(NutsLogVerb.FAIL).log( "Invalid Command Definition ''{0}''. Missing Command. Ignored", c.getName());
             return null;
         }
 //        if (c.getOwner() == null) {
@@ -1663,7 +1664,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             throw new UncheckedIOException("Unable to load config file " + file.toString(), new IOException(ex));
         }
         String fileName = "nuts-workspace-" + Instant.now().toString();
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
+        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log( "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
         Path logError = wconfig.getStoreLocation(wconfig.getApiId(), NutsStoreLocation.LOG).resolve("invalid-config");
         try {
             Files.createDirectories(logError);
@@ -1671,7 +1672,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             throw new UncheckedIOException("Unable to log workspace error while loading config file " + file.toString() + " : " + ex1.toString(), new IOException(ex));
         }
         Path newfile = logError.resolve(fileName + ".json");
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "Erroneous config file will be replaced by a fresh one. Old config is copied to {0}", newfile.toString());
+        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log( "Erroneous config file will be replaced by a fresh one. Old config is copied to {0}", newfile.toString());
         try {
             Files.move(file, newfile);
         } catch (IOException e) {
@@ -1702,7 +1703,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             throw new UncheckedIOException("Error loading repository " + file.toString(), new IOException(ex));
         }
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
+        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log( "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
         Path logError = wconfig.getStoreLocation(wconfig.getApiId(), NutsStoreLocation.LOG).resolve("invalid-config");
         try {
             Files.createDirectories(logError);
@@ -1710,7 +1711,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             throw new UncheckedIOException("Unable to log repository error while loading config file " + file.toString() + " : " + ex1.toString(), new IOException(ex));
         }
         Path newfile = logError.resolve(fileName + ".json");
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "Erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile.toString());
+        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log( "Erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile.toString());
         try {
             Files.move(file, newfile);
         } catch (IOException e) {
@@ -2403,7 +2404,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
             return createNutsVersionCompat(version).parseConfig(bytes);
         } catch (Exception ex) {
-            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
+            LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log( "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
             throw new UncheckedIOException("Unable to load config file " + file.toString(), new IOException(ex));
         }
     }

@@ -64,11 +64,11 @@ public class NutsJavaSdkUtils {
             if (bestJava == null) {
                 if (!CoreStringUtils.isBlank(requestedJavaVersion)) {
                     if (LOG.isLoggable(Level.FINE)) {
-                        LOG.log(Level.FINE, NutsLogVerb.WARNING, "No valid JRE found. recommended {0} . Using default java.home at {1}", new Object[]{requestedJavaVersion, System.getProperty("java.home")});
+                        LOG.with().level(Level.FINE).verb(NutsLogVerb.WARNING).log("No valid JRE found. recommended {0} . Using default java.home at {1}", requestedJavaVersion, System.getProperty("java.home"));
                     }
                 } else {
                     if (LOG.isLoggable(Level.FINE)) {
-                        LOG.log(Level.FINE, NutsLogVerb.WARNING, "No valid JRE found. Using default java.home at {0}", System.getProperty("java.home"));
+                        LOG.with().level(Level.FINE).verb(NutsLogVerb.WARNING).log( "No valid JRE found. Using default java.home at {0}", System.getProperty("java.home"));
                     }
                 }
                 bestJava = current;
@@ -220,39 +220,48 @@ public class NutsJavaSdkUtils {
         }
         String product = null;
         String jdkVersion = null;
+        String cmdOutputString=null;
+        int cmdRresult=0;
+        boolean loggedError=false;
         try {
-            String s = session.workspace().exec().usrCmd().command(javaExePath.toString(), "-version")
+            NutsExecCommand cmd = session.workspace().exec().usrCmd().command(javaExePath.toString(), "-version")
                     .redirectErrorStream()
-                    .grabOutputString().failFast().run().getOutputString();
-            if (s.length() > 0) {
+                    .grabOutputString().failFast().run();
+            cmdRresult = cmd.getResult();
+            cmdOutputString = cmd.getOutputString();
+            if (cmdOutputString.length() > 0) {
                 String prefix = "java version \"";
-                int i = s.indexOf(prefix);
+                int i = cmdOutputString.indexOf(prefix);
                 if (i >= 0) {
                     i = i + prefix.length();
-                    int j = s.indexOf("\"", i);
+                    int j = cmdOutputString.indexOf("\"", i);
                     if (i >= 0) {
-                        jdkVersion = s.substring(i, j);
+                        jdkVersion = cmdOutputString.substring(i, j);
                         product = "JDK";
                     }
                 }
                 if (jdkVersion == null) {
 
                     prefix = "openjdk version \"";
-                    i = s.indexOf(prefix);
+                    i = cmdOutputString.indexOf(prefix);
                     if (i >= 0) {
                         i = i + prefix.length();
-                        int j = s.indexOf("\"", i);
+                        int j = cmdOutputString.indexOf("\"", i);
                         if (i > 0) {
-                            jdkVersion = s.substring(i, j);
+                            jdkVersion = cmdOutputString.substring(i, j);
                             product = "OpenJDK";
                         }
                     }
                 }
             }
         } catch (Exception ex) {
-            LOG.log(Level.SEVERE, "Unable to execute " + javaExePath.toString() + ". JDK Home ignored", ex);
+            loggedError=true;
+            LOG.with().error(ex).level(Level.SEVERE).verb(NutsLogVerb.WARNING).log("Unable to execute {0}. JDK Home ignored", javaExePath);
         }
         if (jdkVersion == null) {
+            if(!loggedError) {
+                LOG.with().level(Level.SEVERE).verb(NutsLogVerb.WARNING).log("Execute {0} failed with result code {1} and result string \"{2}\". JDK Home ignored", javaExePath.toString(),cmdRresult,cmdOutputString);
+            }
             return null;
         }
         String packaging = "jre";

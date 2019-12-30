@@ -62,6 +62,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
             executionContext.getWorkspace().exec()
+                    .session(executionContext.getSession())
                     //                    .executionType(NutsExecutionType.EMBEDDED)
                     .command(executionContext.getDefinition())
                     .command("--nuts-exec-mode=install")

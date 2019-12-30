@@ -40,14 +40,14 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
         try {
             List<Iterator<NutsId>> resultIterList=new ArrayList<>();
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
+                LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log( "{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
             }
             if (getSession().getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 Iterator<NutsId> o = null;
                 try {
                     o = xrepo.getIndexStore().search(filter, getSession());
                 } catch (NutsException ex) {
-                    LOG.log(Level.FINEST, NutsLogVerb.FAIL, "Error find operation using Indexer for {0} : {1}", new Object[]{getRepo().config().getName(), ex});
+                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "Error find operation using Indexer for {0} : {1}", getRepo().config().getName(), ex);
                 }
 
                 if (o != null) {
@@ -59,12 +59,12 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
             result = xrepo.searchImpl(filter, getSession());
         } catch (NutsNotFoundException | SecurityException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
+                LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
             }
             throw ex;
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.SEVERE)) {
-                LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
+                LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
             }
             throw ex;
         }

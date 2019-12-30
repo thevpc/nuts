@@ -23,23 +23,23 @@ public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
         this.base = base;
     }
 
-    public Iterator<NutsId> searchVersionsImpl2(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
         return base.searchVersions(id, idFilter, session);
     }
 
-    public NutsId searchLatestVersion2(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+    public NutsId searchLatestVersionCore(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
         return base.searchLatestVersion(id, filter, session);
     }
 
-    public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
+    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsRepositorySession session) {
         return base.fetchDescriptor(id, session);
     }
 
-    public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         return base.fetchContent(id, descriptor, localPath, session);
     }
 
-    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
+    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
         return base.search(filter, roots, session);
     }
 

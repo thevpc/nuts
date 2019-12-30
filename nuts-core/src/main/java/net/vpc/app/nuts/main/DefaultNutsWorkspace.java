@@ -78,7 +78,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         for (char c : s.toCharArray()) {
             switch (c) {
                 case '\\':
-                case '_': {
+                case '_':
+                case '=': {
                     sb.append('\\').append(c);
                     break;
                 }
@@ -100,15 +101,15 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsLoggerOp LOGCRF = LOG.with().level(Level.CONFIG).verb(NutsLogVerb.READ).formatted();
         NutsLoggerOp LOGCSF = LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).formatted();
         if (LOG.isLoggable(Level.CONFIG)) {
-            LOG.log(Level.CONFIG, NutsLogVerb.START, " ===============================================================================");
+            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).log(escapeText0(" ==============================================================================="));
             LOGCSF.log("==" + escapeText0("     _   __      __         ") + "==                                   ");
             LOGCSF.log("==" + escapeText0("    / | / /_  __/ /______   ") + "== ==N==etwork ==U==pdatable ==T==hings ==S==ervices");
             LOGCSF.log("==" + escapeText0("   /  |/ / / / / __/ ___/   ") + "== <<The Open Source Package Manager for __Java__ (TM)>>");
-            LOGCSF.log("==" + escapeText0("  / /|  / /_/ / /_(__  )    ") + "== <<and other Things>> ... by ==vpc==");
+            LOGCSF.log("==" + escapeText0("  / /|  / /_/ / /_(__  )    ") + "== <<and other Things>> ... by ==thevpc==");
             LOGCSF.log("==" + escapeText0(" /_/ |_/\\__,_/\\__/____/   ") + "==   __http://github.com/thevpc/nuts__");
-            LOG.log(Level.CONFIG, NutsLogVerb.START, " ");
-            LOG.log(Level.CONFIG, NutsLogVerb.START, " = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
-            LOG.log(Level.CONFIG, NutsLogVerb.START, " ");
+            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).log(" ");
+            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).log(escapeText0(" = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="));
+            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).log(" ");
             LOGCSF.log("start ==Nuts== **{0}** at {1}", Nuts.getVersion(), CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(info.getOptions().getCreationTime())));
             LOGCRF.log("open Nuts Workspace               : {0}", new NutsString(commandLine().value(info.getOptions().format().getBootCommand()).format()));
             LOGCRF.log("open Nuts Workspace (compact)     : {0}", new NutsString(commandLine().value(info.getOptions().format().compact().getBootCommand()).format()));
@@ -233,7 +234,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             if (!loadWorkspace(session, uoptions.getExcludedExtensions(), null)) {
                 //workspace wasn't loaded. Create new configuration...
                 NutsWorkspaceUtils.of(this).checkReadOnly();
-                LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "Creating NEW workspace at {0}", config().getWorkspaceLocation());
+                LOG.with().level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log("Creating NEW workspace at {0}", config().getWorkspaceLocation());
                 exists = false;
                 NutsWorkspaceConfigBoot bconfig = new NutsWorkspaceConfigBoot();
                 //load from config with resolution applied
@@ -279,7 +280,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
                 String nutsVersion = config().getRuntimeId().getVersion().toString();
                 if (LOG.isLoggable(Level.CONFIG)) {
-                    LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "nuts workspace v{0} created.", nutsVersion);
+                    LOG.with().level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log("nuts workspace v{0} created.", nutsVersion);
                 }
 
                 if (session.isPlainTrace()) {
@@ -303,7 +304,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
             }
             if (configManager.getRepositoryRefs().length == 0) {
-                LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "Workspace has no repositories. Will re-create defaults");
+                LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log("Workspace has no repositories. Will re-create defaults");
                 initializeWorkspace(uoptions.getArchetype(), session);
             }
             List<String> transientRepositoriesSet = uoptions.getTransientRepositories() == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(uoptions.getTransientRepositories()));
@@ -415,7 +416,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 );
             }
             try {
-                install().companions().session(session).run();
+                install().companions().session(session.copy().trace(session.isTrace() && session.isPlainOut())).run();
             } catch (Exception ex) {
                 LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("Unable to install companions");
                 if (session.isPlainTrace()) {
@@ -517,7 +518,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         } catch (NutsNotFoundException e) {
             return NutsInstallStatus.NOT_INSTALLED;
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Error", e);
+            LOG.with().level(Level.SEVERE).error(e).log("Error");
             return NutsInstallStatus.NOT_INSTALLED;
         }
         return getInstalledRepository().getInstallStatus(nutToInstall.getId(), session);
@@ -602,7 +603,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         return d;
                     }
                 } catch (Exception ex) {
-                    LOG.log(Level.FINE, "Failed to parse  " + eff, ex);
+                    LOG.with().level(Level.FINE).error(ex).log("Failed to parse {0}", eff);
                     //
                 }
             }
@@ -618,7 +619,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         try {
             descriptor().value(effectiveDescriptor).print(eff);
         } catch (Exception ex) {
-            LOG.log(Level.FINE, "Failed to print " + eff, ex);
+            LOG.with().level(Level.FINE).error(ex).log("Failed to print {0}", eff);
             //
         }
         return effectiveDescriptor;
@@ -626,7 +627,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     protected NutsDescriptor _resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session) {
         LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).formatted()
-                .log("resolve effective " + id().set(descriptor.getId()).format());
+                .log("resolve effective {0}", descriptor.getId());
         session = NutsWorkspaceUtils.of(this).validateSession(session);
         NutsId[] parents = descriptor.getParents();
         NutsDescriptor[] parentDescriptors = new NutsDescriptor[parents.length];
@@ -878,7 +879,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         try {
                             getInstalledRepository().uninstall(executionContext.getDefinition().getId(), session);
                         } catch (Exception ex2) {
-                            LOG.log(Level.FINE, "Failed to uninstall  " + executionContext.getDefinition().getId(), ex);
+                            LOG.with().level(Level.FINE).error(ex).log("Failed to uninstall  {0}", executionContext.getDefinition().getId());
                             //ignore if we could not uninstall
                         }
                         throw new NutsExecutionException(this, "Unable to install " + def.getId().toString(), ex);
@@ -1040,7 +1041,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             NutsUserConfig adminSecurity = NutsWorkspaceConfigManagerExt.of(config()).getUser(NutsConstants.Users.ADMIN);
             if (adminSecurity == null || CoreStringUtils.isBlank(adminSecurity.getCredentials())) {
                 if (LOG.isLoggable(Level.CONFIG)) {
-                    LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
+                    LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log(NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
                 }
                 security().updateUser(NutsConstants.Users.ADMIN).credentials("admin".toCharArray()).session(session).run();
             }
@@ -1048,7 +1049,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 try {
                     config().addCommandAliasFactory(commandFactory, new NutsAddOptions().session(session));
                 } catch (Exception e) {
-                    LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "Unable to instantiate Command Factory {0}", commandFactory);
+                    LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Unable to instantiate Command Factory {0}", commandFactory);
                 }
             }
             DefaultNutsWorkspaceEvent worksppaeReloadedEvent = new DefaultNutsWorkspaceEvent(session, null, null, null, null);

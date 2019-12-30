@@ -6,7 +6,7 @@
 package net.vpc.app.nuts.runtime.format.xml;
 
 import java.io.PrintStream;
-import java.io.PrintWriter;
+
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsOutputFormat;
@@ -39,7 +39,8 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     @Override
     public void next(Object object, long index) {
-        NutsXmlUtils.print(String.valueOf(index), object, getWriter(), compact, false, getWorkspace());
+//        NutsXmlUtils.print(String.valueOf(index), object, getWriter(), compact, false, getWorkspace());
+        NutsXmlUtils.print("item", object, index, getWriter(), compact, false, getWorkspace());
     }
 
     @Override

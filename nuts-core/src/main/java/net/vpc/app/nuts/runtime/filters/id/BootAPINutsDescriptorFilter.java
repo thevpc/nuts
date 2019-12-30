@@ -23,4 +23,9 @@ public class BootAPINutsDescriptorFilter implements NutsDescriptorFilter {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "BootAPI(" +bootApiVersion +')';
+    }
 }

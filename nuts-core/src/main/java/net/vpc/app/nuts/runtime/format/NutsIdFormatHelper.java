@@ -530,7 +530,7 @@ public class NutsIdFormatHelper {
                     this.fetched = true;
                 }
             } catch (Exception ex) {
-                LOG.log(Level.FINE, "Failed to build id format for "+ id,ex);
+                LOG.with().level(Level.FINE).error(ex).log( "Failed to build id format for {0}",id);
             }
 
             if (def != null) {

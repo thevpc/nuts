@@ -40,8 +40,14 @@ public class NutsLogConsoleHandler extends StreamHandler {
             NutsIOManager io = ws.io();
             NutsTerminalFormat tf = io==null?null:io.terminalFormat();
             if (tf!=null && tf.isFormatted(out)) {
+                if(!rr.isFormatted()) {
+                    record=((NutsLogRecord) record).escape();
+                }
                 setFormatter(NutsLogRichFormatter.RICH);
             } else {
+                if(rr.isFormatted()) {
+                    record=((NutsLogRecord) record).filter();
+                }
                 setFormatter(NutsLogPlainFormatter.PLAIN);
             }
         } else {

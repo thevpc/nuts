@@ -54,7 +54,7 @@ public class NutsFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
+    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsRepositorySession session) {
         if (session.getFetchMode() == NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
@@ -63,7 +63,7 @@ public class NutsFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         if (session.getFetchMode() == NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
@@ -72,12 +72,12 @@ public class NutsFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchImpl2(NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
+    public Iterator<NutsId> searchCore(NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
         return null;
     }
 
     @Override
-    public NutsId searchLatestVersion2(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+    public NutsId searchLatestVersionCore(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
         return null;
     }
 
@@ -86,7 +86,7 @@ public class NutsFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchVersionsImpl2(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
         return null;
     }
 

@@ -64,15 +64,15 @@ public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployReposi
                 try {
                     xrepo.getIndexStore().revalidate(this.getId());
                 } catch (NutsException ex) {
-                    LOG.log(Level.FINEST, NutsLogVerb.FAIL, "Error revalidating Indexer for {0} : {1}", getRepo().config().getName(), ex);
+                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "Error revalidating Indexer for {0} : {1}", getRepo().config().getName(), ex);
                 }
             }
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "{0} Deploy {1}", CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId());
+                LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log( "{0} Deploy {1}", CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId());
             }
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "{0} Deploy {1}", CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId());
+                LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "{0} Deploy {1}", CoreStringUtils.alignLeft(getRepo().config().getName(), 20), this.getId());
             }
             throw ex;
         }

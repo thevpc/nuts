@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.runtime.io;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -14,25 +15,49 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
     }
 
     @Override
-    public <T> T run(Callable<T> runnable, long time, TimeUnit unit){
+    public void run(Runnable runnable, long time, TimeUnit unit) {
         NutsLock lock = create();
         boolean b = false;
         try {
-            b=lock.tryLock(time, unit);
+            b = lock.tryLock(time, unit);
         } catch (InterruptedException e) {
             throw new NutsLockAcquireException(getWs(), null, getResource(), lock);
         }
-        if(!b){
+        if (!b) {
             throw new NutsLockAcquireException(getWs(), null, getResource(), lock);
         }
-        T value=null;
-        try{
-            value=runnable.call();
+        try {
+            runnable.run();
         } catch (Exception e) {
-            if(e instanceof NutsException){
+            if (e instanceof NutsException) {
                 throw (NutsException) e;
             }
-            throw new NutsException(getWs(),e);
+            throw new NutsException(getWs(), e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public <T> T call(Callable<T> runnable, long time, TimeUnit unit) {
+        NutsLock lock = create();
+        boolean b = false;
+        try {
+            b = lock.tryLock(time, unit);
+        } catch (InterruptedException e) {
+            throw new NutsLockAcquireException(getWs(), null, getResource(), lock);
+        }
+        if (!b) {
+            throw new NutsLockAcquireException(getWs(), null, getResource(), lock);
+        }
+        T value = null;
+        try {
+            value = runnable.call();
+        } catch (Exception e) {
+            if (e instanceof NutsException) {
+                throw (NutsException) e;
+            }
+            throw new NutsException(getWs(), e);
         } finally {
             lock.unlock();
         }
@@ -40,42 +65,60 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
     }
 
     @Override
-    public <T> T run(Callable<T> runnable){
+    public <T> T call(Callable<T> runnable) {
         NutsLock lock = create();
-        if(!lock.tryLock()){
+        if (!lock.tryLock()) {
             throw new NutsLockAcquireException(getWs(), null, getResource(), lock);
         }
-        T value=null;
-        try{
-            value=runnable.call();
+        T value = null;
+        try {
+            value = runnable.call();
         } catch (Exception e) {
-            if(e instanceof NutsException){
+            if (e instanceof NutsException) {
                 throw (NutsException) e;
             }
-            throw new NutsException(getWs(),e);
-        }finally {
+            throw new NutsException(getWs(), e);
+        } finally {
             lock.unlock();
         }
         return value;
     }
 
     @Override
+    public void run(Runnable runnable) {
+        NutsLock lock = create();
+        if (!lock.tryLock()) {
+            throw new NutsLockAcquireException(getWs(), null, getResource(), lock);
+        }
+        try {
+            runnable.run();
+        } catch (Exception e) {
+            if (e instanceof NutsException) {
+                throw (NutsException) e;
+            }
+            throw new NutsException(getWs(), e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
     public NutsLock create() {
         Object s = getSource();
         Object lr = getResource();
-        Path lrPath=null;
-        if(lr==null){
-            if(s==null){
+        Path lrPath = null;
+        if (lr == null) {
+            if (s == null) {
                 throw new NutsLockException(getWs(), "Unsupported lock for null", null, null);
             }
             Path p = toPath(s);
-            if(p==null){
+            if (p == null) {
                 throw new NutsLockException(getWs(), "Unsupported lock for " + s.getClass().getName(), null, s);
             }
-            lrPath= p.resolveSibling(p.getFileName().toString() + ".lock");
-        }else{
-            lrPath=toPath(lr);
-            if(lrPath==null){
+            lrPath = p.resolveSibling(p.getFileName().toString() + ".lock");
+        } else {
+            lrPath = toPath(lr);
+            if (lrPath == null) {
                 throw new NutsLockException(getWs(), "Unsupported lock " + lr.getClass().getName(), lr, s);
             }
         }
@@ -84,8 +127,13 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
 
     private Path toPath(Object lockedObject) {
         if (lockedObject instanceof NutsId) {
-            return getWs().config().getStoreLocation((NutsId) lockedObject,NutsStoreLocation.RUN).resolve("lock");
-        }else if (lockedObject instanceof Path) {
+            NutsId nid = (NutsId) lockedObject;
+            String face = nid.getFace();
+            if (CoreStringUtils.isBlank(face)) {
+                face = "content";
+            }
+            return getWs().config().getStoreLocation((NutsId) lockedObject, NutsStoreLocation.RUN).resolve("lock-" + face + ".lock");
+        } else if (lockedObject instanceof Path) {
             return (Path) lockedObject;
         } else if (lockedObject instanceof File) {
             return ((File) lockedObject).toPath();

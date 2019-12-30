@@ -40,7 +40,7 @@ public final class AnsiPrintStreamSupport {
         if (out instanceof PrintStreamExt && ((PrintStreamExt) out).getOut() instanceof NutsSystemOutputStream) {
             ((NutsSystemOutputStream) ((PrintStreamExt) out).getOut()).setType(type);
         } else {
-            io.setCurrentStdout(new PrintStreamExt(new NutsSystemOutputStream(io.getBootStdout(true), type,ws), true));
+            io.setCurrentStdout(new PrintStreamExt(new NutsSystemOutputStream(io.getBootStdout(true), type,ws)));
         }
     }
 
@@ -55,7 +55,7 @@ public final class AnsiPrintStreamSupport {
         if (err instanceof PrintStreamExt && ((PrintStreamExt) err).getOut() instanceof NutsSystemOutputStream) {
             ((NutsSystemOutputStream) ((PrintStreamExt) err).getOut()).setType(type);
         } else {
-            io.setCurrentStderr(new PrintStreamExt(new NutsSystemOutputStream(io.getBootStderr(true), type,ws), true));
+            io.setCurrentStderr(new PrintStreamExt(new NutsSystemOutputStream(io.getBootStderr(true), type,ws)));
         }
     }
 

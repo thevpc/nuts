@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class FormatOutputStream extends FilterOutputStream implements ExtendedFormatAware {
-    FormatNodeHelper h;
+    FormatOutputStreamSupport h;
 
     public FormatOutputStream(OutputStream out) {
         super(out);
@@ -16,12 +16,13 @@ public class FormatOutputStream extends FilterOutputStream implements ExtendedFo
         if (op != NutsTerminalModeOp.NOP) {
             throw new IllegalArgumentException("Expected Raw");
         }
-        h = new FormatNodeHelper(FPrint.RENDERER_ANSI);
-        h.setRawer(new FormatNodeHelper.RawOutputStream() {
+        h = new FormatOutputStreamSupport(FPrint.RENDERER_ANSI);
+        h.setRawer(new FormatOutputStreamSupport.RawOutputStream() {
             @Override
             public void writeRaw(byte[] buf, int off, int len) throws IOException {
                 writeRaw0(buf, off, len);
             }
+
             @Override
             public void flushRaw() throws IOException {
                 flushRaw0();
@@ -32,6 +33,7 @@ public class FormatOutputStream extends FilterOutputStream implements ExtendedFo
     private void writeRaw0(byte[] b, int off, int len) throws IOException {
         out.write(b, off, len);
     }
+
     public void flushRaw0() throws IOException {
         out.flush();
     }
@@ -83,5 +85,13 @@ public class FormatOutputStream extends FilterOutputStream implements ExtendedFo
     public void flush() throws IOException {
         h.flush();
         super.flush();
+    }
+
+    @Override
+    public String toString() {
+        return "FormatOutputStream{" +
+                "h=" + h +
+                "o=" + out +
+                '}';
     }
 }

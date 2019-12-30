@@ -10,21 +10,13 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsDependency;
-import net.vpc.app.nuts.NutsDependencyTreeNode;
-import net.vpc.app.nuts.NutsTreeFormat;
-import net.vpc.app.nuts.NutsTreeModel;
-import net.vpc.app.nuts.NutsTreeNodeFormat;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.format.NutsIdFormatHelper;
-import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.runtime.format.DefaultSearchFormatBase;
 import net.vpc.app.nuts.runtime.format.NutsFetchDisplayOptions;
 
 /**
- *
  * @author vpc
  */
 public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
@@ -32,7 +24,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
     private Object lastObject;
 
     public DefaultSearchFormatTree(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
-        super(session, writer, NutsOutputFormat.TREE,options);
+        super(session, writer, NutsOutputFormat.TREE, options);
     }
 
     @Override
@@ -110,11 +102,23 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
                 return Arrays.asList(object);
             } else if (o instanceof NutsDefinition) {
                 NutsDefinition d = (NutsDefinition) o;
-                NutsDependencyTreeNode[] z = d.getDependencyNodes();
+                NutsDependencyTreeNode[] z = null;
+                try {
+                    z = d.getDependencyNodes();
+                } catch (NutsElementNotFoundException ex) {
+                    //this exception will be raised if dependencyNodes(...) was not called.
+                    //so we will ignore dependencies.
+                }
                 if (z != null) {
                     return Arrays.asList(z);
                 }
-                NutsDependency[] dz = d.getDependencies();
+                NutsDependency[] dz = null;
+                try {
+                    dz = d.getDependencies();
+                } catch (NutsElementNotFoundException ex) {
+                    //this exception will be raised if dependencies(...) was not called.
+                    //so we will ignore dependencies.
+                }
                 if (dz != null) {
                     return Arrays.asList(dz);
                 }

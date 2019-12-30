@@ -110,8 +110,8 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                         public boolean accept(Path pathname) throws IOException {
                             try {
                                 return (deep && Files.isDirectory(pathname)) || model.isDescFile(pathname);
-                            } catch (Exception e) {
-                                session.getWorkspace().log().of(FolderNutIdIterator.class).log(Level.FINE,"Unable to test desk file "+pathname,e);
+                            } catch (Exception ex) {
+                                session.getWorkspace().log().of(FolderNutIdIterator.class).with().level(Level.FINE).error(ex).log("Unable to test desk file {0}",pathname);
                                 return false;
                             }
                         }

@@ -180,10 +180,11 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                 if (result != null) {
                     break;
                 }
-            } catch (NutsNotFoundException | UncheckedIOException ex) {
+            } catch (NutsNotFoundException ex) {
                 //ignore
             } catch (Exception ex) {
                 //ignore
+                LOG.with().error(ex).level(Level.SEVERE).log("Unexpected error while fetching descriptor for {0}",id);
                 if (LOG.isLoggable(Level.FINEST)) {
                     NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetch def", startTime);
                 }
@@ -241,7 +242,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         foundDefinition.setEffectiveDescriptor(dws.resolveEffectiveDescriptor(foundDefinition.getDescriptor(), options.getSession()));
                     } catch (NutsNotFoundException ex) {
                         //ignore
-                        LOG.log(Level.WARNING, NutsLogVerb.WARNING, "Nuts Descriptor Found, but its parent is not: {0} with parent {1}", new Object[]{id.getLongName(), Arrays.toString(foundDefinition.getDescriptor().getParents())});
+                        LOG.with().level(Level.WARNING).verb(NutsLogVerb.WARNING).log( "Nuts Descriptor Found, but its parent is not: {0} with parent {1}", new Object[]{id.getLongName(), Arrays.toString(foundDefinition.getDescriptor().getParents())});
                         foundDefinition = null;
                     }
                 }
@@ -366,6 +367,13 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                         .setSession(NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode))
                                         .getResult();
                                 if (content != null) {
+                                    if(content.getPath()==null){
+                                        content = repo.fetchContent()
+                                                .setId(id1).setDescriptor(foundDefinition.getDescriptor())
+                                                .setLocalPath(copyTo)
+                                                .setSession(NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode))
+                                                .getResult();
+                                    }
                                     foundDefinition.setContent(content);
                                     contentSuccessful = true;
                                     foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content.getPath()));

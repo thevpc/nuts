@@ -41,6 +41,7 @@ import java.util.function.Function;
 import java.util.logging.Level;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.WriteType;
 import net.vpc.app.nuts.core.repos.AbstractNutsRepository;
 import net.vpc.app.nuts.core.repos.NutsInstalledRepository;
 import net.vpc.app.nuts.NutsInstallStatus;
@@ -254,7 +255,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         }
         Path finalPath = path;
         if (Files.isRegularFile(path)) {
-            InstallInfoConfig c = workspace.io().lock().source(path).session(session).run(
+            InstallInfoConfig c = workspace.io().lock().source(path).session(session).call(
                     () -> workspace.json().parse(finalPath, InstallInfoConfig.class)
                     , CoreNutsUtils.LOCK_TIME, CoreNutsUtils.LOCK_TIME_UNIT
             );
@@ -283,9 +284,9 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                     }
                 }
                 if (changeStatus && !workspace.config().isReadOnly()) {
-                    workspace.io().lock().source(path).session(session).run(
+                    workspace.io().lock().source(path).session(session).call(
                             () -> {
-                                LOG.with().level(Level.CONFIG).log("Upgraded %s%n",finalPath.toString());
+                                LOG.with().level(Level.CONFIG).log("Upgraded {0}",finalPath.toString());
                                 c.setConfigVersion(workspace.config().getApiVersion());
                                 workspace.json().value(c).print(finalPath);
                                 return null;
@@ -318,7 +319,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                         return getInstallInformation(c, session);
                     }
                 } catch (Exception ex) {
-                    LOG.with().error(ex).log("Unable to parse %s", path);
+                    LOG.with().error(ex).log("Unable to parse {0}", path);
                 }
                 return null;
             }
@@ -529,7 +530,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         return new AbstractNutsDeployRepositoryCommand(this) {
             @Override
             public NutsDeployRepositoryCommand run() {
-                NutsDescriptor rep = deployments.deploy(this);
+                NutsDescriptor rep = deployments.deploy(this, WriteType.ERROR);
                 this.setDescriptor(rep);
                 this.setId(rep.getId());
                 return this;

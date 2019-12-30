@@ -67,12 +67,12 @@ public class DefaultNutsIODeleteAction extends AbstractNutsIODeleteAction {
                     try {
                         Files.delete(file);
                         if (LOG != null) {
-                            LOG.log(Level.FINEST, NutsLogVerb.WARNING, "delete file " + file);
+                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "delete file " + file);
                         }
                         deleted[0]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.log(Level.FINEST, NutsLogVerb.WARNING, "delete file Failed : " + file);
+                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "delete file Failed : " + file);
                         }
                         deleted[2]++;
                         grabException(e);
@@ -90,12 +90,12 @@ public class DefaultNutsIODeleteAction extends AbstractNutsIODeleteAction {
                     try {
                         Files.delete(dir);
                         if (LOG != null) {
-                            LOG.log(Level.FINEST, NutsLogVerb.WARNING, "delete folder " + dir);
+                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "delete folder " + dir);
                         }
                         deleted[1]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.log(Level.FINEST, NutsLogVerb.WARNING, "delete folder Failed : " + dir);
+                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "delete folder Failed : " + dir);
                         }
                         deleted[2]++;
                         grabException(e);

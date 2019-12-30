@@ -207,9 +207,9 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             size=getLength();
         }
 //        if (path.toLowerCase().startsWith("file://")) {
-//            LOG.log(Level.FINE, NutsLogVerb.START, "Downloading file {0}", new Object[]{path});
+//            LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log( "Downloading file {0}", new Object[]{path});
 //        } else {
-//            LOG.log(Level.FINEST, NutsLogVerb.START, "Download url {0}", new Object[]{path});
+//            LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log( "Download url {0}", new Object[]{path});
 //        }
 
         InputStream openedStream = stream.open();

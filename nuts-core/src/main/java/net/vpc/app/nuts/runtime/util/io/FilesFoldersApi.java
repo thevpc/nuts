@@ -90,7 +90,7 @@ public class FilesFoldersApi {
                 }
             }
         } catch (UncheckedIOException ex) {
-            session.workspace().log().of(FilesFoldersApi.class).log(Level.FINE, NutsLogVerb.FAIL, "unable to navigate : file not found : "+dotFilesUrl);
+            session.workspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}",dotFilesUrl);
         }
         if(versionString.compareTo("0.5.7")<0){
             if (folders) {
@@ -101,7 +101,7 @@ public class FilesFoldersApi {
                     foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(stream, true), "\n\r")
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException ex) {
-                    session.workspace().log().of(FilesFoldersApi.class).log(Level.FINE, NutsLogVerb.FAIL, "unable to navigate : file not found : "+dotFolderUrl);
+                    session.workspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}",dotFolderUrl);
                 }
                 if (foldersFileContent != null) {
                     for (String folder : foldersFileContent) {

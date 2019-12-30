@@ -234,7 +234,7 @@ public class ZipUtils {
                     newFile.mkdirs();
                 } else {
                     File newFile = new File(outputFolder + File.separator + fileName);
-                    ws.log().of(ZipUtils.class).log(Level.FINEST, NutsLogVerb.WARNING, "file unzip : " + newFile.getAbsoluteFile());
+                    ws.log().of(ZipUtils.class).with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("file unzip : {0}",newFile.getAbsoluteFile());
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     newFile.getParentFile().mkdirs();

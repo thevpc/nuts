@@ -76,7 +76,9 @@ final class PrivateNutsArgumentsParser {
         NutsLogConfig logConfig = null;
         List<String> applicationArguments = new ArrayList<>();
         NutsCommandLine cmdLine = new PrivateNutsCommandLine(bootArguments)
-                .setCommandName("nuts");
+                .setCommandName("nuts")
+                .setExpandSimpleOptions(true)
+                .registerSpecialSimpleOption("-version");
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
 
@@ -788,7 +790,8 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--user-cmd":{
+                    case "--user-cmd":
+                        {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setExecutionType(NutsExecutionType.USER_CMD);

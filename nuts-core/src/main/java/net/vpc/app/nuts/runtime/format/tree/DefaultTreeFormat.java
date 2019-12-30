@@ -143,7 +143,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
             out.print(prefix);
             out.print(linkFormatter.formatMain(type));
             out.print(formatter.format(o, depth));
-            out.println();
+//            out.println();
             out.flush();
         }
         List<Object> children = tree.getChildren(o);

@@ -71,7 +71,7 @@ public class PomIdResolver {
                 try {
                     all.add(new PomXmlParser().parse(new URL(s2)).getPomId());
                 } catch (Exception ex) {
-                    LOG.log(Level.FINE, "Failed to parse pom file " + s2, ex);
+                    LOG.with().level(Level.SEVERE).error(ex).log("Failed to parse pom file {0} : {1}", s2,ex.toString());
                 }
             }
         }
@@ -94,7 +94,7 @@ public class PomIdResolver {
                 all.addAll(Arrays.asList(resolvePomId(url, n)));
             }
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, null, ex);
+            LOG.with().level(Level.SEVERE).error(ex).log("Error : {0}",ex.toString());
         }
         return all.toArray(new PomId[0]);
     }

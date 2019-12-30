@@ -68,16 +68,17 @@ public final class NutsApplications {
      * run application with given life cycle.
      *
      * @param args application arguments
-     * @param ws workspace
+     * @param session session
      * @param appClass application class
      * @param lifeCycle application life cycle
      */
-    public static void runApplication(String[] args, NutsWorkspace ws, Class appClass,NutsApplicationLifeCycle lifeCycle) {
+    public static void runApplication(String[] args, NutsSession session, Class appClass,NutsApplicationLifeCycle lifeCycle) {
         long startTimeMillis = System.currentTimeMillis();
         if (lifeCycle == null) {
             throw new NullPointerException("Null Application");
         }
         boolean inherited = false;
+        NutsWorkspace ws=session==null?null:session.getWorkspace();
         if (ws == null) {
             inherited = true;
             ws = Nuts.openInheritedWorkspace(args);
@@ -93,6 +94,18 @@ public final class NutsApplications {
         applicationContext = lifeCycle.createApplicationContext(ws, args, startTimeMillis);
         if (applicationContext == null) {
             applicationContext = ws.io().createApplicationContext(args, appClass, null, startTimeMillis);
+        }
+        if(session!=null) {
+            //copy inter-process parameters only
+            NutsSession ctxSession = applicationContext.getSession();
+            ctxSession.setFetchStrategy(session.getFetchStrategy());
+            ctxSession.setOutputFormat(session.getOutputFormat());
+            ctxSession.setConfirm(session.getConfirm());
+            ctxSession.setTrace(session.isTrace());
+            ctxSession.setIndexed(session.isIndexed());
+            ctxSession.setCached(session.isCached());
+            ctxSession.setTransitive(session.isTransitive());
+            ctxSession.setTerminal(session.getTerminal());
         }
         switch (applicationContext.getMode()) {
             /**
@@ -173,7 +186,7 @@ public final class NutsApplications {
             try {
                 showTrace = ws.config().getOptions().isDebug();
             } catch (Exception ex2) {
-                ws.log().of(NutsApplications.class).log(Level.FINE,"unable to check if option debug is enabled",ex2);
+                ws.log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log("unable to check if option debug is enabled");
             }
         }
 //        if (showTrace) {
@@ -184,7 +197,7 @@ public final class NutsApplications {
                 out = ws.io().getSystemTerminal().getOut();
                 m = "@@" + m + "@@";
             } catch (Exception ex2) {
-                ws.log().of(NutsApplications.class).log(Level.FINE,"unable to get system terminal",ex2);
+                ws.log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log("unable to get system terminal");
                 //
             }
         }

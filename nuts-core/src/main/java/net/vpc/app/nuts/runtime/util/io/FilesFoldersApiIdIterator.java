@@ -111,16 +111,16 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                     t = model.parseDescriptor(file.path, workspace.io()
                             .monitor().source(file.path).session(session.getSession()).create(),
                             session);
-                } catch (Exception e) {
-                    session.getSession().workspace().log().of(FilesFoldersApi.class).log(Level.FINE,"Error parsing url : "+file.path+" : "+e.toString(),e);//e.printStackTrace();
+                } catch (Exception ex) {
+                    session.getSession().workspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).error(ex).log("Error parsing url : {0} : {1}",file.path,toString());//e.printStackTrace();
                 }
                 if (t != null) {
                     if (!CoreNutsUtils.isEffectiveId(t.getId())) {
                         NutsDescriptor nutsDescriptor = null;
                         try {
                             nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, session.getSession());
-                        } catch (Exception e) {
-                            session.getSession().workspace().log().of(FilesFoldersApi.class).log(Level.FINE,"Error resolving effective descriptor for '"+t.getId()+"' in url : "+file.path+" : "+e.toString(),e);//e.printStackTrace();
+                        } catch (Exception ex) {
+                            session.getSession().workspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).error(ex).log("Error resolving effective descriptor for {0} in url {1} : {2}",t.getId(),file.path,ex.toString());//e.printStackTrace();
                         }
                         t = nutsDescriptor;
                     }

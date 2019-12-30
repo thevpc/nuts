@@ -46,7 +46,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
                 try {
                     d = xrepo.getIndexStore().searchVersions(id, getSession());
                 } catch (NutsException ex) {
-                    LOG.log(Level.FINEST, NutsLogVerb.FAIL, "Error find version operation with Indexer for {0} : {1}", getRepo().config().getName(), ex);
+                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("Error find version operation with Indexer for {0} : {1}", getRepo().config().getName(), ex);
                 }
                 if (d != null && filter != null) {
                     resultList.add(
@@ -63,7 +63,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
             return this;
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "[{0}] {1} {2} {3}", CoreStringUtils.alignLeft(getSession().getFetchMode().toString(), 7), CoreStringUtils.alignLeft(getRepo().config().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id);
+                LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "[{0}] {1} {2} {3}", CoreStringUtils.alignLeft(getSession().getFetchMode().toString(), 7), CoreStringUtils.alignLeft(getRepo().config().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id);
             }
             throw ex;
         }

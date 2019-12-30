@@ -205,7 +205,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         if (isLogProgress() || getProgressMonitorFactory() != null) {
             //how to monitor???
         }
-        LOG.log(Level.FINEST, NutsLogVerb.START, "compress {0} to {1}", sources, target);
+        LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log( "compress {0} to {1}", sources, target);
         try {
             OutputStream fW = null;
             ZipOutputStream zip = null;
@@ -259,7 +259,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                 throw new NutsIllegalArgumentException(iom.getWorkspace(), "Unsupported target " + target);
             }
         } catch (IOException ex) {
-            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "Error compressing {0} to {1} : {2}", sources, target.getValue(), ex.toString());
+            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log( "Error compressing {0} to {1} : {2}", sources, target.getValue(), ex.toString());
             throw new UncheckedIOException(ex);
         }
     }

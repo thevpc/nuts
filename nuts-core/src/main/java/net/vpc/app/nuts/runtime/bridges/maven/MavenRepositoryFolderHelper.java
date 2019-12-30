@@ -231,7 +231,7 @@ public class MavenRepositoryFolderHelper {
                                     old = MavenMetadataParser.of(ws).parseMavenMetaData(metadataxml);
                                 }
                             } catch (Exception ex) {
-                                LOG.log(Level.FINE, "Failed to parse metadata xml for " + metadataxml,ex);
+                                LOG.with().level(Level.SEVERE).error(ex).log("Failed to parse metadata xml for {0} : {1}", metadataxml,ex.toString());
                                 //ignore any error!
                             }
                             MavenMetadata m = new MavenMetadata();

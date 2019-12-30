@@ -134,7 +134,7 @@ public class CoreIOUtils {
             NutsWorkspaceUtils.of(ws).setWorkspace(y);
             return y;
         }
-        PrintStreamExt s = new PrintStreamExt(os,true);
+        PrintStreamExt s = new PrintStreamExt(os,false);
         NutsWorkspaceUtils.of(ws).setWorkspace(s);
         return s;
     }
@@ -838,12 +838,12 @@ public class CoreIOUtils {
                 try {
                     Files.delete(file);
                     if (LOG != null) {
-                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete file " + file);
+                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "Delete file " + file);
                     }
                     deleted[0]++;
                 } catch (IOException e) {
                     if (LOG != null) {
-                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete file Failed : " + file);
+                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "Delete file Failed : " + file);
                     }
                     deleted[2]++;
                 }
@@ -860,12 +860,12 @@ public class CoreIOUtils {
                 try {
                     Files.delete(dir);
                     if (LOG != null) {
-                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete folder " + dir);
+                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "Delete folder " + dir);
                     }
                     deleted[1]++;
                 } catch (IOException e) {
                     if (LOG != null) {
-                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "Delete folder Failed : " + dir);
+                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "Delete folder Failed : " + dir);
                     }
                     deleted[2]++;
                 }

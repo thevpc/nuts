@@ -152,8 +152,8 @@ public class NutsWorkspaceUtils {
                     int t = 0;
                     try {
                         t = repository.config().getSupportLevel(fmode, id, mode, options.isTransitive());
-                    } catch (Exception e) {
-                        LOG.log(Level.FINE, "Unable to resolve support level for : " + repository.config().name(), e);
+                    } catch (Exception ex) {
+                        LOG.with().level(Level.FINE).error(ex).log("Unable to resolve support level for : {0}" , repository.config().name());
                     }
                     if (t > 0) {
                         repos2.add(new RepoAndLevel(repository, t, postComp));
@@ -426,8 +426,9 @@ public class NutsWorkspaceUtils {
             String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
             LOG.with().level(Level.FINEST)
                     .verb(tracePhase.toString()).formatted()
-                    .log("{0}{1} " + (ws.id().set(id).format()) + "{2}",
+                    .log("{0}{1} {2}{3}",
                             fetchString,
+                            id,
                             CoreStringUtils.alignLeft(message, 18)
                             , timeMessage);
         }
@@ -459,7 +460,7 @@ public class NutsWorkspaceUtils {
         }
 
         if (LOG.isLoggable(Level.FINE)) {
-            LOG.with().level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] " + pb.getFormattedCommandString(ws));
+            LOG.with().level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] {0}", new NutsString(pb.getFormattedCommandString(ws)));
         }
         if (showCommand || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
             if (ws.io().getTerminalFormat().isFormatted(terminal.out())) {
@@ -586,7 +587,7 @@ public class NutsWorkspaceUtils {
         try {
             mainClass = CorePlatformUtils.getMainClassType(classStream);
         } catch (Exception ex) {
-            LOG.log(Level.FINEST, "Invalid file format " + sourceName, ex);
+            LOG.with().level(Level.FINE).error(ex).log( "Invalid file format {0}",sourceName);
         }
         if (mainClass != null) {
             return new DefaultNutsExecutionEntry(
@@ -650,7 +651,7 @@ public class NutsWorkspaceUtils {
             }
         }
         if (defaultEntry != null && !defaultFound) {
-            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "invalid default entry " + defaultEntry + " in " + sourceName);
+            LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log( "invalid default entry " + defaultEntry + " in " + sourceName);
 //            entries.add(new DefaultNutsExecutionEntry(defaultEntry, true, false));
         }
         return entries.toArray(new NutsExecutionEntry[0]);

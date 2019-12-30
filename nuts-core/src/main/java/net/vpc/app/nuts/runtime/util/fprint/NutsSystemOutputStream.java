@@ -121,4 +121,8 @@ public class NutsSystemOutputStream extends FilterOutputStream implements Extend
         throw new IllegalArgumentException("Unsupported");
     }
 
+    @Override
+    public String toString() {
+        return "NutsSystemOutputStream(" +type +')';
+    }
 }

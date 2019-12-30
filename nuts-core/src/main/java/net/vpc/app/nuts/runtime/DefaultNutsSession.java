@@ -159,7 +159,14 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public NutsFetchStrategy getFetchStrategy() {
-        return fetchStrategy == null ? NutsFetchStrategy.ONLINE : fetchStrategy;
+        if (fetchStrategy != null) {
+            return fetchStrategy;
+        }
+        NutsFetchStrategy wfetchStrategy = ws.config().getOptions().getFetchStrategy();
+        if (wfetchStrategy != null) {
+            return wfetchStrategy;
+        }
+        return NutsFetchStrategy.ONLINE;
     }
 
     @Override

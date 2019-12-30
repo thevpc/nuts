@@ -154,7 +154,7 @@ public class MavenUtils {
             default:{
                 nds= NutsDependencyScopes.parseScope(s,true);
                 if(nds==null){
-                    LOG.log(Level.FINER, NutsLogVerb.FAIL, "unable to parse maven scope "+s+" for "+d);
+                    LOG.with().level(Level.FINER).verb(NutsLogVerb.FAIL).log( "unable to parse maven scope "+s+" for "+d);
                     nds=NutsDependencyScope.API;
                 }
             }
@@ -272,7 +272,7 @@ public class MavenUtils {
                 if (nutsDescriptor.getId().getArtifactId() == null) {
                     //why name is null ? should checkout!
                     if (LOG.isLoggable(Level.FINE)) {
-                        LOG.log(Level.FINE, NutsLogVerb.FAIL, "Unable to fetch Valid Nuts from " + path + " : resolved id was " + nutsDescriptor.getId());
+                        LOG.with().level(Level.FINE).verb(NutsLogVerb.FAIL).log( "Unable to fetch Valid Nuts from " + path + " : resolved id was " + nutsDescriptor.getId());
                     }
                     return null;
                 }
@@ -542,7 +542,7 @@ public class MavenUtils {
             }
 
         } catch (Exception ex) {
-            LOG.log(Level.FINE, "Failed to loadDependenciesAndRepositoriesFromPomUrl " + url,ex);
+            LOG.with().level(Level.SEVERE).error(ex).log("Failed to loadDependenciesAndRepositoriesFromPomUrl {0} : {1}", url,ex.toString());
             //ignore
         } finally {
             if (xml != null) {
@@ -630,7 +630,7 @@ public class MavenUtils {
                     //NutsConstants.Ids.NUTS_RUNTIME.replaceAll("[.:]", "/")
                 }
             } catch (Exception ex) {
-                LOG.log(Level.FINE, "Failed to load and parse " + mavenMetadataXml,ex);
+                LOG.with().level(Level.SEVERE).error(ex).log("Failed to load and parse {0} : {1}", mavenMetadataXml,ex.toString());
                 // ignore any error
             }
             if (found) {

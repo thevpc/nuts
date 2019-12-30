@@ -111,7 +111,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
+    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsRepositorySession session) {
         if (session.getFetchMode() == NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
@@ -119,7 +119,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         if (session.getFetchMode() == NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
@@ -147,7 +147,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchVersionsImpl2(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
 
         Iterator<NutsId> namedNutIdIterator = null;
 //        StringBuilder errors = new StringBuilder();
@@ -159,7 +159,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
                     try {
                         d = MavenUtils.of(session.getWorkspace()).parsePomXml(f, session);
                     } catch (Exception ex) {
-                        LOG.log(Level.FINE, "Failed to parse pom file " + f,ex);
+                        LOG.with().level(Level.SEVERE).error(ex).log("Failed to parse pom file {0} : {1}", f,ex.toString());
                         //
                     }
                     if (d != null) {
@@ -187,7 +187,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsId searchLatestVersion2(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+    public NutsId searchLatestVersionCore(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
         if (id.getVersion().isBlank() && filter == null) {
             Path file = getLocalGroupAndArtifactFile(id);
             NutsId bestId = null;
@@ -234,7 +234,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
+    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             Path locationFolder = getLocationAsPath();
             List<Iterator<NutsId>> list = new ArrayList<>();

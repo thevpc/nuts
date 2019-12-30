@@ -12,6 +12,7 @@ import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.fprint.FormattedPrintStreamParser;
 
 /**
@@ -21,8 +22,6 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
     private static final Logger LOG = Logger.getLogger(FormattedPrintStreamNodePartialParser.class.getName());
 
-    List<FDocNode> all = new ArrayList<>();
-    StringBuilder curr = new StringBuilder();
     Stack<ParseAction> statusStack = new Stack<>();
     private boolean lineMode = false;
 
@@ -36,6 +35,20 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
             return null;
         }
         return s.toFDocNode();
+    }
+
+    @Override
+    public boolean isIncomplete() {
+        ParseAction s = root().available.poll();
+        if (s == null) {
+            for (ParseAction parseAction : statusStack) {
+                if (!parseAction.isComplete()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
     }
 
     @Override
@@ -68,6 +81,13 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         return (AllParseAction) statusStack.get(0);
     }
 
+    public int size() {
+        if (statusStack.isEmpty()) {
+            return 0;
+        }
+        return statusStack.size() + root().available.size();
+    }
+
     public boolean isEmpty() {
         return statusStack.isEmpty() || root().available.isEmpty();
     }
@@ -79,9 +99,9 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
             ParseAction s = statusStack.peek();
             if (!(s instanceof AllParseAction)) {
                 if (s != null) {
-                    if(s.isComplete()){
+                    if (s.isComplete()) {
 
-                    }else {
+                    } else {
                         s.forceEnding();
                     }
                 }
@@ -129,7 +149,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
         @Override
         public String toString() {
-            return "START_STATUS{" + "available=" + available + '}';
+            return "Root(" + available + ')';
         }
 
         @Override
@@ -256,14 +276,17 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder("<Q>" + start);
-            sb.append(value);
-            sb.append("<").append(status).append(">");
+            StringBuilder sb = new StringBuilder("Quoted(" + CoreStringUtils.dblQuote(start.toString()));
+            sb.append(",");
+            sb.append(CoreStringUtils.dblQuote(value.toString()));
+            sb.append(",status=").append(status == 0 ? "EXPECT_START" : status == 1 ? "EXPECT_CONTENT" : status == 2 ? "EXPECT_END" : String.valueOf(status));
+            sb.append(",end=");
             sb.append(end);
             if (escape) {
-                sb.append("<ESCAPED>");
+                sb.append(",<ESCAPED>");
             }
-            return sb.toString();
+            sb.append(isComplete() ? "" : ",incomplete");
+            return sb.append(")").toString();
         }
 
         public boolean isComplete() {
@@ -350,15 +373,17 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder("<T>" + start);
+            StringBuilder sb = new StringBuilder("Typed(" + CoreStringUtils.dblQuote(start.toString()));
             if (!started) {
-                sb.append("<NEW>");
+                sb.append(",<NEW>");
             }
             for (ParseAction parseAction : children) {
+                sb.append(",");
                 sb.append(parseAction.toString());
             }
-            sb.append(end);
-            return sb.toString();
+            sb.append(",END(").append(CoreStringUtils.dblQuote(end.toString())).append(")");
+            sb.append(isComplete() ? "" : ",incomplete");
+            return sb.append(")").toString();
         }
 
         public boolean isComplete() {
@@ -519,10 +544,12 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder("<P>" + value);
+            StringBuilder sb = new StringBuilder("Plain(" + CoreStringUtils.dblQuote(value.toString()));
             if (wasEscape) {
-                sb.append("<EScCAPE>");
+                sb.append(",<ESCAPE>");
             }
+            sb.append(isComplete() ? "" : ",incomplete");
+            sb.append(")");
             return sb.toString();
         }
 
@@ -730,5 +757,14 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         }
         return sb.toString();
     }
+
+    @Override
+    public String toString() {
+        return "FormattedPrintStreamNodePartialParser{" + (isIncomplete() ? "incomplete" : isEmpty() ? "empty" : String.valueOf(size())) +
+                (lineMode ? ",lineMode" : "") +
+                "," + statusStack
+                + "}";
+    }
+
 
 }

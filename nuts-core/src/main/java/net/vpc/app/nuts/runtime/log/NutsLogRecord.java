@@ -57,4 +57,29 @@ public class NutsLogRecord extends LogRecord {
     public void setSession(NutsSession session) {
         this.session = session;
     }
+
+    public NutsLogRecord filter(){
+        if(isFormatted()) {
+            NutsLogRecord r = new NutsLogRecord(workspace, session,getLevel(), verb, workspace.io().getTerminalFormat().filterText(getMessage()),getParameters(),false,time,formatStyle);
+            r.setSequenceNumber(this.getSequenceNumber());
+            r.setThreadID(this.getThreadID());
+            r.setMillis(this.getMillis());
+            r.setThrown(this.getThrown());
+            return r;
+        }else{
+            return this;
+        }
+    }
+    public NutsLogRecord escape(){
+        if(isFormatted()) {
+            return this;
+        }else{
+            NutsLogRecord r = new NutsLogRecord(workspace, session,getLevel(), verb, workspace.io().getTerminalFormat().escapeText(getMessage()),getParameters(),false,time,formatStyle);
+            r.setSequenceNumber(this.getSequenceNumber());
+            r.setThreadID(this.getThreadID());
+            r.setMillis(this.getMillis());
+            r.setThrown(this.getThrown());
+            return r;
+        }
+    }
 }

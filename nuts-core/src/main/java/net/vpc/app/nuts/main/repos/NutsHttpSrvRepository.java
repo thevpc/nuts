@@ -62,7 +62,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         try {
             remoteId = NutsWorkspaceUtils.of(workspace).parseRequiredNutsId((options.getLocation() + "/version"));
         } catch (Exception ex) {
-            LOG.log(Level.WARNING, NutsLogVerb.FAIL, "Unable to initialize Repository NutsId for repository {0}", options.getLocation());
+            LOG.with().level(Level.WARNING).verb(NutsLogVerb.FAIL).log( "Unable to initialize Repository NutsId for repository {0}", options.getLocation());
         }
     }
 
@@ -75,7 +75,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             try {
                 remoteId = NutsWorkspaceUtils.of(getWorkspace()).parseRequiredNutsId( httpGetString(getUrl("/version")));
             } catch (Exception ex) {
-                LOG.log(Level.WARNING, NutsLogVerb.FAIL, "Unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
+                LOG.with().level(Level.WARNING).verb(NutsLogVerb.FAIL).log("Unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
             }
         }
         return remoteId;
@@ -105,7 +105,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
+    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
@@ -126,7 +126,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchVersionsImpl2(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
@@ -149,7 +149,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
+    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             return null;
         }
@@ -186,7 +186,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
@@ -214,12 +214,12 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     private String httpGetString(String url) {
-        LOG.log(Level.FINEST, NutsLogVerb.START, "Get URL{0}", url);
+        LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log( "Get URL{0}", url);
         return CoreIOUtils.loadString(CoreIOUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
     }
 
     private InputStream httpUpload(String url, NutsTransportParamPart... parts) {
-        LOG.log(Level.FINEST, NutsLogVerb.START, "Uploading URL {0}", url);
+        LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log( "Uploading URL {0}", url);
         return CoreIOUtils.getHttpClientFacade(getWorkspace(), url).upload(parts);
     }
 

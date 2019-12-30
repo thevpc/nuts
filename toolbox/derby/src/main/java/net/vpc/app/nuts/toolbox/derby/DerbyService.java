@@ -62,14 +62,14 @@ public class DerbyService {
             if (optional) {
                 Path r = appContext.getWorkspace().fetch().location(targetFile).id(id).failFast(false).getResultPath();
                 if (r != null) {
-                    LOG.log(Level.FINEST, "downloading {0} to {1}", id, targetFile);
+                    LOG.with().level(Level.FINEST).verb("READ").log("downloading {0} to {1}", id, targetFile);
                 }
             } else {
                 appContext.getWorkspace().fetch().location(targetFile).id(id).failFast().getResultPath();
-                LOG.log(Level.FINEST, "downloading {0} to {1}", id, targetFile);
+                LOG.with().level(Level.FINEST).verb("READ").log( "downloading {0} to {1}", id, targetFile);
             }
         } else {
-            LOG.log(Level.FINEST, "using {0} form {1}", id, targetFile);
+            LOG.with().level(Level.FINEST).verb("READ").log( "using {0} form {1}", id, targetFile);
         }
         return targetFile;
     }

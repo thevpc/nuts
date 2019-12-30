@@ -130,7 +130,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsDescriptor fetchDescriptorImpl2(NutsId id, NutsRepositorySession session) {
+    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
@@ -138,7 +138,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchVersionsImpl2(final NutsId id, NutsIdFilter idFilter, final NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersionsCore(final NutsId id, NutsIdFilter idFilter, final NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             return null;
         }
@@ -368,7 +368,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchImpl2(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
+    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             return null;
         }
@@ -438,7 +438,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsContent fetchContentImpl2(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
         }
@@ -497,7 +497,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     }
                 }).run();
             } catch (UncheckedIOException ex) {
-                LOG.log(Level.SEVERE, NutsLogVerb.FAIL, id.toString() + " : " + ex.getMessage());
+                LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log( id.toString() + " : " + ex.getMessage());
                 throw new NutsNotFoundException(getWorkspace(), id, null, ex);
             }
             return new NutsDefaultContent(localPath, false, false);

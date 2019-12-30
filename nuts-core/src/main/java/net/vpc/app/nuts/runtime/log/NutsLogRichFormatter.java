@@ -187,8 +187,11 @@ public class NutsLogRichFormatter extends Formatter {
             if(parameters2==null){
                 parameters2=new Object[0];
             }
+            String message = wRecord.getMessage();
+            // \\{[0-9]+\\}
+            message=message.replaceAll("\\\\\\{([0-9]+)\\\\}","{$1}");
             String msgStr =wRecord.getWorkspace().io().terminalFormat().formatText(
-                    style, wRecord.getMessage(),
+                    style, message,
                     parameters2
             );
 //                    formatMessage(wRecord);

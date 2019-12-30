@@ -51,8 +51,8 @@ public class NutsDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsId
                 try {
                     //NutsWorkspace ws = repository.getWorkspace();
                     nutsDescriptor = NutsWorkspaceExt.of(session.getWorkspace()).resolveEffectiveDescriptor(descriptor, session);
-                } catch (Exception e) {
-                    LOG.log(Level.FINE, "Failed to resolve effective desc "+ descriptor.getId()+" for "+id,e);
+                } catch (Exception ex) {
+                    LOG.with().level(Level.FINE).error(ex).log( "Failed to resolve effective desc {0} for {1}", descriptor.getId(),id);
                     //throw new NutsException(e);
                 }
                 descriptor = nutsDescriptor;
@@ -60,7 +60,7 @@ public class NutsDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsId
         } catch (Exception ex) {
             //suppose we cannot retrieve descriptor
             if (LOG.isLoggable(Level.FINER)) {
-                LOG.log(Level.FINER, NutsLogVerb.FAIL, "Unable to fetch Descriptor for " + id + " : " + ex.toString());
+                LOG.with().level(Level.FINER).verb(NutsLogVerb.FAIL).log( "Unable to fetch Descriptor for " + id + " : " + ex.toString());
             }
             return false;
         }
