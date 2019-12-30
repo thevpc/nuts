@@ -55,7 +55,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     protected LinkedList<String> args = new LinkedList<>();
     protected List<NutsArgument> lookahead = new ArrayList<>();
-    protected boolean expandSimpleOptions = false;
+    protected boolean expandSimpleOptions = true;
     protected Set<String> specialSimpleOptions = new HashSet<>();
     protected String commandName;
     protected NutsWorkspace ws;
