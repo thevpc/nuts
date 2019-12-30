@@ -79,7 +79,13 @@ public abstract class AbstractMavenRepositoryHelper {
             }
         }
         try {
-            String rhash = getStreamSHA1(id, session);
+            String rhash=null;
+            try {
+                rhash = getStreamSHA1(id, session);
+            }catch (UncheckedIOException ex){
+                //sha is not provided... so do not check anything!
+                return;
+            }
             String lhash = CoreIOUtils.evalSHA1Hex(stream, true);
             if (!rhash.equalsIgnoreCase(lhash)) {
                 throw new IOException("Invalid file hash " + id);

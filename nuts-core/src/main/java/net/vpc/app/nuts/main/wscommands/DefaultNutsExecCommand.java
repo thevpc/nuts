@@ -15,6 +15,7 @@ import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.runtime.wscommands.AbstractNutsExecCommand;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * type: Command Class
@@ -282,8 +283,11 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         }
         if (ff.isEmpty()) {
             throw new NutsNotFoundException(ws, nid);
-        } else if (ff.size() > 1) {
-            throw new NutsTooManyElementsException(ws, nid.toString()+" can be resolved to all of "+ff);
+        } else {
+            List<NutsVersion> versions = ff.stream().map(x -> x.getVersion()).distinct().collect(Collectors.toList());
+            if(versions.size() > 1) {
+                throw new NutsTooManyElementsException(ws, nid.toString() + " can be resolved to all of " + ff);
+            }
         }
         NutsId goodId = ff.get(0);
         def = ws.fetch().id(goodId)

@@ -174,9 +174,11 @@ public class NutsJavaSdkUtils {
                                     NutsSdkLocation r=null;
                                     try {
                                         r = resolveJdkLocation(d, null, session);
-                                        if (session.isPlainTrace()) {
-                                            synchronized (session.getWorkspace()) {
-                                                session.out().printf("detected java %s [[%s]] at ==%s==%n", r.getPackaging(), r.getVersion(), r.getPath());
+                                        if(r!=null) {
+                                            if (session.isPlainTrace()) {
+                                                synchronized (session.getWorkspace()) {
+                                                    session.out().printf("detected java %s [[%s]] at ==%s==%n", r.getPackaging(), r.getVersion(), r.getPath());
+                                                }
                                             }
                                         }
                                     } catch (Exception ex) {

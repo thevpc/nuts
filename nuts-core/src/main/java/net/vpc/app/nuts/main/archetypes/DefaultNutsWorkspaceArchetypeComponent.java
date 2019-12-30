@@ -55,20 +55,18 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
     @Override
     public void initialize(NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
-        NutsWorkspaceConfigManager rm = ws.config();
+        DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) ws.config();
         rm.addRepository(new NutsRepositoryDefinition()
                 .setDeployOrder(10)
                 .setCreate(true)
                 .setName(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
                 .setType(NutsConstants.RepoTypes.NUTS)
         );
-//        defaultRepo.addMirror("nuts-server", "http://localhost:8899", NutsConstants.REPOSITORY_TYPE_NUTS, true);
-        DefaultNutsWorkspaceConfigManager cc = (DefaultNutsWorkspaceConfigManager) rm;
-        LinkedHashSet<String> br = new LinkedHashSet<>(cc.resolveBootRepositories());
+        LinkedHashSet<String> br = new LinkedHashSet<>(rm.resolveBootRepositories());
         LinkedHashMap<String, NutsRepositoryDefinition> def = new LinkedHashMap<>();
         int index=1;
         for (NutsRepositoryDefinition d : rm.getDefaultRepositories()) {
-            def.put(d.getLocation(), d);
+            def.put(ws.io().expandPath(d.getLocation(),null), d);
         }
         for (String s : br) {
             if (def.containsKey(s)) {

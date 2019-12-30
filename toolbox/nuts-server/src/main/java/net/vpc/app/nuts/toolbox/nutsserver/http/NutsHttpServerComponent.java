@@ -316,6 +316,11 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         }
 
         @Override
+        public void sendResponseBytes(int code, byte[] bytes) throws IOException {
+            super.sendResponseBytes(code, bytes);
+        }
+
+        @Override
         public void sendError(int code, String msg) throws IOException {
             if (msg == null) {
                 msg = "Error";

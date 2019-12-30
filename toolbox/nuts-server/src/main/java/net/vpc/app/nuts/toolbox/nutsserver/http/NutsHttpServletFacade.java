@@ -114,7 +114,7 @@ public class NutsHttpServletFacade {
             if (GetMavenFacadeCommand.acceptUri(tokens[1])) {
                 ii.command = "get-mvn";
                 ii.path = requestURI;
-            }else {
+            } else {
                 ii.command = tokens[0];
                 ii.path = tokens[1];
             }
@@ -160,11 +160,13 @@ public class NutsHttpServletFacade {
                     context.sendError(500, ex.toString());
                 }
             } finally {
-                try {
-                    context.getResponseBody().flush();
-                    context.getResponseBody().close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (!context.isHeadMethod()) {
+                    try {
+                        context.getResponseBody().flush();
+                        context.getResponseBody().close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

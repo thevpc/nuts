@@ -92,6 +92,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                     if (d.getStandardDependencies().length > 0) {
                         //dependencyManagement
                         xml.push("dependencyManagement");
+                        xml.push("dependencies");
                         for (NutsDependency dependency : d.getStandardDependencies()) {
                             xml.push("dependency")
                                     .append("groupId", dependency.getGroupId())
@@ -101,6 +102,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                                     .pop();
 
                         }
+                        xml.pop();
                         xml.pop();
                     }
                     context.sendResponseBytes(200, xml.toXmlBytes());

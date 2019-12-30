@@ -118,7 +118,7 @@ public class NutsServerMain extends NutsApplication {
                 } else {
                     s.append(a.getString());
                 }
-                HostStr u = parseHostStr(s.toString(), context);
+                HostStr u = parseHostStr(s.toString(), context,true);
                 if (u.protocol.isEmpty()) {
                     u.protocol = "http";
                 }
@@ -147,8 +147,7 @@ public class NutsServerMain extends NutsApplication {
         }
         if (cmdLine.isExecMode()) {
             if (servers.all.isEmpty()) {
-                context.session().terminal().err().println("No Server config found.");
-                throw new NutsExecutionException(context.getWorkspace(), "No Server config found", 1);
+                servers.add().set(new HostStr("http","0.0.0.0",-1));
             }
             for (SrvInfo server : servers.all) {
                 for (Map.Entry<String, String> entry : server.workspaceLocations.entrySet()) {
@@ -249,12 +248,12 @@ public class NutsServerMain extends NutsApplication {
         }
     }
 
-    private HostStr parseHostStr(String host, NutsApplicationContext context) {
+    private HostStr parseHostStr(String host, NutsApplicationContext context,boolean srv) {
         try {
             Matcher pattern = HOST_PATTERN.matcher(host);
             HostStr v = new HostStr();
             v.protocol = "";
-            v.addr = "localhost";
+            v.addr = srv?"0.0.0.0":"localhost";
             v.port = -1;
             if (pattern.find()) {
                 if (pattern.group("protocol") != null) {
@@ -322,7 +321,7 @@ public class NutsServerMain extends NutsApplication {
                 } else {
                     s.append(a.getString());
                 }
-                HostStr u = parseHostStr(s.toString(), context);
+                HostStr u = parseHostStr(s.toString(), context,false);
                 servers.add().set(u);
             } else {
                 cmdLine.unexpectedArgument();

@@ -43,9 +43,9 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
 
     private static final NutsRepositoryDefinition[] DEFAULTS = {
         new NutsRepositoryDefinition().setName("maven-local").setLocation(System.getProperty("maven-local", "~/.m2/repository")).setType(NutsConstants.RepoTypes.MAVEN).setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false)).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL),
-        new NutsRepositoryDefinition().setName("maven-central").setLocation("http://repo.maven.apache.org/maven2/").setType(NutsConstants.RepoTypes.MAVEN).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),
-        new NutsRepositoryDefinition().setName("vpc-public-maven").setLocation("https://raw.githubusercontent.com/thevpc/vpc-public-maven/master").setType(NutsConstants.RepoTypes.MAVEN).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),
-        new NutsRepositoryDefinition().setName("vpc-public-nuts").setLocation("https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master").setType(NutsConstants.RepoTypes.NUTS).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE)
+        new NutsRepositoryDefinition().setName("maven-central").setLocation(NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL).setType(NutsConstants.RepoTypes.MAVEN).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),
+        new NutsRepositoryDefinition().setName("vpc-public-maven").setLocation(NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT).setType(NutsConstants.RepoTypes.MAVEN).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),
+        new NutsRepositoryDefinition().setName("vpc-public-nuts").setLocation(NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT).setType(NutsConstants.RepoTypes.NUTS).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE)
     };
 
     @Override
