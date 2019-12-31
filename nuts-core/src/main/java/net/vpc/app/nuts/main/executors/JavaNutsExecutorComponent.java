@@ -111,7 +111,18 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 }
 
                 HashMap<String, String> osEnv = new HashMap<>();
-                String bootArgumentsString = ws.config().options()
+                NutsWorkspaceOptionsBuilder options = ws.config().options().copy();
+
+                //copy session parameters to new created workspace
+                options.setTrace(executionContext.getSession().isTrace());
+                options.setCached(executionContext.getSession().isCached());
+                options.setIndexed(executionContext.getSession().isIndexed());
+                options.setConfirm(executionContext.getSession().getConfirm());
+                options.setTransitive(executionContext.getSession().isTransitive());
+                options.setOutputFormat(executionContext.getSession().getOutputFormat());
+                options.setTerminalMode(executionContext.getSession().getTerminal().getOutMode());
+
+                String bootArgumentsString = options
                         .format().exported().compact().getBootCommandLine();
                 if (!CoreStringUtils.isBlank(bootArgumentsString)) {
                     osEnv.put("nuts_boot_args", bootArgumentsString);

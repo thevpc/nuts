@@ -59,7 +59,7 @@ import java.util.zip.ZipFile;
 public final class NutsBootWorkspace {
 
     private final long creationTime = System.currentTimeMillis();
-    private NutsDefaultWorkspaceOptions options;
+    private NutsWorkspaceOptions options;
     private Supplier<ClassLoader> contextClassLoaderSupplier;
     private int newInstanceRequirements;
     private PrivateNutsWorkspaceInitInformation workspaceInformation;
@@ -113,11 +113,11 @@ public final class NutsBootWorkspace {
         }
         LOG.setOptions(options);
         if (options.getCreationTime() == 0) {
-            NutsDefaultWorkspaceOptions copy = options.copy();
+            NutsWorkspaceOptionsBuilder copy = options.copy();
             copy.setCreationTime(creationTime);
             options = copy;
         }
-        this.options = (options instanceof NutsDefaultWorkspaceOptions) ? ((NutsDefaultWorkspaceOptions) options) : options.copy();
+        this.options = (options instanceof NutsWorkspaceOptionsBuilder) ? ((NutsWorkspaceOptionsBuilder) options) : options.copy();
         newInstanceRequirements = 0;
     }
 
@@ -242,7 +242,7 @@ public final class NutsBootWorkspace {
     }
 
 
-    public NutsDefaultWorkspaceOptions getOptions() {
+    public NutsWorkspaceOptions getOptions() {
         return options;
     }
 

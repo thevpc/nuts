@@ -33,7 +33,6 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- *
  * @author vpc
  */
 public class NutsWorkspaceOptionsFormat implements Serializable {
@@ -160,13 +159,13 @@ public class NutsWorkspaceOptionsFormat implements Serializable {
             fillOption("--gui", null, options.isGui(), false, arguments, false);
             fillOption("--read-only", "-R", options.isReadOnly(), false, arguments, false);
             fillOption("--trace", "-t", options.isTrace(), true, arguments, false);
-            fillOption("--progress", "-P", options.getProgressOptions(),arguments, false);
+            fillOption("--progress", "-P", options.getProgressOptions(), arguments, false);
             fillOption("--skip-companions", "-k", options.isSkipCompanions(), false, arguments, false);
             fillOption("--skip-welcome", "-K", options.isSkipWelcome(), false, arguments, false);
             fillOption("--cached", null, options.isCached(), true, arguments, false);
             fillOption("--indexed", null, options.isIndexed(), true, arguments, false);
             fillOption("--transitive", null, options.isTransitive(), true, arguments, false);
-            if(options.getFetchStrategy()!=null && options.getFetchStrategy()!=NutsFetchStrategy.ONLINE) {
+            if (options.getFetchStrategy() != null && options.getFetchStrategy() != NutsFetchStrategy.ONLINE) {
                 fillOption("--fetch", "-f", options.getFetchStrategy(), NutsFetchStrategy.class, arguments, false);
             }
             fillOption(options.getConfirm(), arguments, false);

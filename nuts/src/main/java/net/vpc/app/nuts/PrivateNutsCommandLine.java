@@ -89,7 +89,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
     private final Set<String> specialSimpleOptions = new HashSet<>();
     private String commandName;
     private int wordIndex = 0;
-//    private NutsCommandAutoComplete autoComplete;
+    //    private NutsCommandAutoComplete autoComplete;
     private final char eq = '=';
     //Constructors
 
@@ -312,7 +312,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
             if (hasNext()) {
                 NutsArgument peeked = peek();
                 names = new String[]{
-                    peeked.getStringKey()
+                        peeked.getStringKey()
                 };
             }
         }
@@ -641,6 +641,20 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return false;
     }
 
+    private String createExpandedSimpleOption(char start, boolean negate, char val) {
+        return new String(negate ? new char[]{start, '!', val} : new char[]{start, '!', val});
+    }
+
+    private String createExpandedSimpleOption(char start, boolean negate, String val) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(start);
+        if (negate) {
+            sb.append('!');
+        }
+        sb.append(val);
+        return sb.toString();
+    }
+
     private boolean ensureNext(boolean expandSimpleOptions, boolean ignoreExistingExpanded) {
         if (!ignoreExistingExpanded) {
             if (!lookahead.isEmpty()) {
@@ -654,12 +668,12 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                 char[] chars = v.toCharArray();
                 boolean negate = false;
                 Character last = null;
-                String prefix = Character.toString(v.charAt(0)) + (negate ? "!" : "");
+                char start = v.charAt(0);
                 for (int i = 1; i < chars.length; i++) {
                     char c = chars[i];
                     if (c == '!') {
                         if (last != null) {
-                            lookahead.add(createArgument(prefix + last));
+                            lookahead.add(createArgument(createExpandedSimpleOption(start,negate,last)));
                             last = null;
                         }
                         negate = true;
@@ -669,17 +683,17 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                             nextArg = last + nextArg;
                             last = null;
                         }
-                        lookahead.add(createArgument(prefix + nextArg));
+                        lookahead.add(createArgument(createExpandedSimpleOption(start,negate,nextArg)));
                         i = chars.length;
                     } else {
                         if (last != null) {
-                            lookahead.add(createArgument(prefix + last));
+                            lookahead.add(createArgument(createExpandedSimpleOption(start,negate,last)));
                         }
                         last = chars[i];
                     }
                 }
                 if (last != null) {
-                    lookahead.add(createArgument(prefix + last));
+                    lookahead.add(createArgument(createExpandedSimpleOption(start,negate,last)));
                 }
             } else {
                 lookahead.add(createArgument(v));
@@ -695,12 +709,12 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 //        return autoComplete != null && getWordIndex() == autoComplete.getCurrentWordIndex();
     }
 
-//    @Override
+    //    @Override
     public NutsArgument createArgument(String argument) {
         return createArgument0(argument, eq);
     }
 
-    static NutsArgument createArgument0(String argument,char eq) {
+    static NutsArgument createArgument0(String argument, char eq) {
         return new ArgumentImpl(argument, eq);
     }
 
@@ -978,7 +992,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
          * Constructor
          *
          * @param expression expression
-         * @param eq equals
+         * @param eq         equals
          */
         public ArgumentImpl(String expression, char eq) {
             super(expression);
@@ -1008,6 +1022,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         /**
          * true if the expression is a an option (starts with '-' or '+')
          * but cannot not be evaluated.
+         *
          * @return true if option is not evaluable argument.
          */
         public boolean isUnsupported() {
@@ -1021,6 +1036,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         /**
          * true if expression starts with '-' or '+'
+         *
          * @return true if expression starts with '-' or '+'
          */
         @Override

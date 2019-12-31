@@ -50,6 +50,21 @@ public class NutsLogConfig implements Serializable{
     @Deprecated
     private boolean logInherited = false;
 
+    public NutsLogConfig() {
+    }
+
+    public NutsLogConfig(NutsLogConfig other) {
+        if(other!=null){
+            this.logFileLevel = other.logFileLevel;
+            this.logTermLevel = other.logTermLevel;
+            this.logFileSize = other.logFileSize;
+            this.logFileCount = other.logFileCount;
+            this.logFileName = other.logFileName;
+            this.logFileBase = other.logFileBase;
+            this.logInherited = other.logInherited;
+        }
+    }
+
     public Level getLogFileLevel() {
         return logFileLevel;
     }

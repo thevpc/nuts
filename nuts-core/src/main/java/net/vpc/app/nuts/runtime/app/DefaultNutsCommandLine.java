@@ -631,6 +631,20 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         return false;
     }
 
+    private String createExpandedSimpleOption(char start, boolean negate, char val) {
+        return new String(negate ? new char[]{start, '!', val} : new char[]{start, '!', val});
+    }
+
+    private String createExpandedSimpleOption(char start, boolean negate, String val) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(start);
+        if (negate) {
+            sb.append('!');
+        }
+        sb.append(val);
+        return sb.toString();
+    }
+
     private boolean ensureNext(boolean expandSimpleOptions, boolean ignoreExistingExpanded) {
         if (!ignoreExistingExpanded) {
             if (!lookahead.isEmpty()) {
@@ -644,12 +658,12 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 char[] chars = v.toCharArray();
                 boolean negate = false;
                 Character last = null;
-                String prefix = Character.toString(v.charAt(0)) + (negate ? "!" : "");
+                char start = v.charAt(0);
                 for (int i = 1; i < chars.length; i++) {
                     char c = chars[i];
                     if (c == '!') {
                         if (last != null) {
-                            lookahead.add(createArgument(prefix + last));
+                            lookahead.add(createArgument(createExpandedSimpleOption(start,negate,last)));
                             last = null;
                         }
                         negate = true;
@@ -659,17 +673,17 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                             nextArg = last + nextArg;
                             last = null;
                         }
-                        lookahead.add(createArgument(prefix + nextArg));
+                        lookahead.add(createArgument(createExpandedSimpleOption(start,negate,nextArg)));
                         i = chars.length;
                     } else {
                         if (last != null) {
-                            lookahead.add(createArgument(prefix + last));
+                            lookahead.add(createArgument(createExpandedSimpleOption(start,negate,last)));
                         }
                         last = chars[i];
                     }
                 }
                 if (last != null) {
-                    lookahead.add(createArgument(prefix + last));
+                    lookahead.add(createArgument(createExpandedSimpleOption(start,negate,last)));
                 }
             } else {
                 lookahead.add(createArgument(v));

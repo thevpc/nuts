@@ -51,7 +51,7 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public NutsDefaultWorkspaceOptions copy() {
+    public NutsWorkspaceOptionsBuilder copy() {
         return options.copy();
     }
 

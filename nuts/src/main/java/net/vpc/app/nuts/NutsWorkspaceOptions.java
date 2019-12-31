@@ -48,7 +48,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      *
      * @return a <strong>mutable</strong> copy of this instance
      */
-    NutsDefaultWorkspaceOptions copy();
+    NutsWorkspaceOptionsBuilder copy();
 
     /**
      * create a new instance of options formatter that help formatting this instance.

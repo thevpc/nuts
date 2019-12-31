@@ -110,9 +110,9 @@ public final class Nuts {
                 PrivateNutsUtils.trim(System.getProperty("nuts.boot.args"))
                         + " " + PrivateNutsUtils.trim(System.getProperty("nuts.args"))
         );
-        NutsDefaultWorkspaceOptions options;
+        NutsWorkspaceOptionsBuilder options;
         if (!PrivateNutsUtils.isBlank(nutsWorkspaceOptions)) {
-            options = (NutsDefaultWorkspaceOptions) PrivateNutsArgumentsParser.parseNutsArguments(PrivateNutsCommandLine.parseCommandLineArray(nutsWorkspaceOptions));
+            options = PrivateNutsArgumentsParser.parseNutsArguments(PrivateNutsCommandLine.parseCommandLineArray(nutsWorkspaceOptions));
         } else {
             options = new NutsDefaultWorkspaceOptions();
         }
