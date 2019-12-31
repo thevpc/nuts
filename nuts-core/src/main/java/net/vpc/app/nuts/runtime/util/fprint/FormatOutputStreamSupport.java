@@ -15,7 +15,7 @@ public class FormatOutputStreamSupport {
     private boolean enableBuffering = false;
     private FormattedPrintStreamParser parser = new FormattedPrintStreamNodePartialParser();
     private FormattedPrintStreamRenderer renderer = AnsiUnixTermPrintRenderer.ANSI_RENDERER;
-    private RawOutputStream rawer;
+    private RawOutputStream rawOutput;
     private RenderedRawStream renderedRawStream = new RenderedRawStream() {
         @Override
         public void writeRaw(byte[] buf, int off, int len) throws IOException {
@@ -56,12 +56,12 @@ public class FormatOutputStreamSupport {
         return parser;
     }
 
-    public RawOutputStream getRawer() {
-        return rawer;
+    public RawOutputStream getRawOutput() {
+        return rawOutput;
     }
 
-    public void setRawer(RawOutputStream rawer) {
-        this.rawer = rawer;
+    public void setRawOutput(RawOutputStream rawOutput) {
+        this.rawOutput = rawOutput;
     }
 
     //    @Override
@@ -195,7 +195,7 @@ public class FormatOutputStreamSupport {
 
     public void processBytes(byte[] buf, int off, int len) throws IOException {
         if (!isFormatEnabled()) {
-            rawer.writeRaw(buf, off, len);
+            rawOutput.writeRaw(buf, off, len);
             return;
         }
         if (len == 0) {
@@ -214,6 +214,7 @@ public class FormatOutputStreamSupport {
 
     public final void later(byte[] later) throws IOException {
         this.later = later;
+        rawOutput.flushRaw();
     }
 
     public final void flushLater() throws IOException {
@@ -227,15 +228,15 @@ public class FormatOutputStreamSupport {
                 } else {
                     flushBuffer();
                     if (b.length >= buffer.length) {
-                        rawer.writeRaw(b, 0, b.length);
+                        rawOutput.writeRaw(b, 0, b.length);
                     } else {
                         System.arraycopy(b, 0, buffer, bufferSize, b.length);
                         bufferSize += b.length;
                     }
                 }
             } else {
-                rawer.writeRaw(b, 0, b.length);
-                rawer.flushRaw();
+                rawOutput.writeRaw(b, 0, b.length);
+                rawOutput.flushRaw();
             }
             //flush();
         }
@@ -252,20 +253,20 @@ public class FormatOutputStreamSupport {
             } else {
                 flushBuffer();
                 if (b.length >= buffer.length) {
-                    rawer.writeRaw(b, 0, b.length);
+                    rawOutput.writeRaw(b, 0, b.length);
                 } else {
                     System.arraycopy(b, 0, buffer, bufferSize, b.length);
                     bufferSize += b.length;
                 }
             }
         } else {
-            rawer.writeRaw(b, 0, b.length);
+            rawOutput.writeRaw(b, 0, b.length);
         }
     }
 
     private final boolean flushBuffer() throws IOException {
         if (bufferSize > 0) {
-            rawer.writeRaw(buffer, 0, bufferSize);
+            rawOutput.writeRaw(buffer, 0, bufferSize);
             bufferSize = 0;
             return true;
         }

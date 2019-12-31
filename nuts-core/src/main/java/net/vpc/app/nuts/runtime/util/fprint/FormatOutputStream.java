@@ -17,7 +17,7 @@ public class FormatOutputStream extends FilterOutputStream implements ExtendedFo
             throw new IllegalArgumentException("Expected Raw");
         }
         h = new FormatOutputStreamSupport(FPrint.RENDERER_ANSI);
-        h.setRawer(new FormatOutputStreamSupport.RawOutputStream() {
+        h.setRawOutput(new FormatOutputStreamSupport.RawOutputStream() {
             @Override
             public void writeRaw(byte[] buf, int off, int len) throws IOException {
                 writeRaw0(buf, off, len);

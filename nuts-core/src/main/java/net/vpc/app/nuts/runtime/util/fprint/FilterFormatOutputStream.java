@@ -12,7 +12,7 @@ public class FilterFormatOutputStream extends FilterOutputStream implements Exte
     public FilterFormatOutputStream(OutputStream out) {
         super(out);
         h = new FormatOutputStreamSupport(FPrint.RENDERER_ANSI_STRIPPER);
-        h.setRawer(new FormatOutputStreamSupport.RawOutputStream() {
+        h.setRawOutput(new FormatOutputStreamSupport.RawOutputStream() {
             @Override
             public void writeRaw(byte[] buf, int off, int len) throws IOException {
                 writeRaw0(buf, off, len);
