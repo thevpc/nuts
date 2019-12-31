@@ -1,6 +1,9 @@
 #!include</net/vpc/app/nuts/includes/standard-header.help>
+__location__:${workspace}
 
 ##SYNOPSIS:##
 ==nuts== \[**<options>**\]... {{\<command\>}} \<args\> ...
 
 For Help, type ==nuts== {{help}}
+
+Welcome to ==nuts==. Yeah, it is ##working##...
