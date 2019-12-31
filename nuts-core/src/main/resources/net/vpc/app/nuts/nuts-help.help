@@ -9,7 +9,7 @@ or remote for accessing  remote artifacts (good examples  are  remote maven  rep
 also be a proxy __repository__ so that remote artifacts are fetched and cached locally to save network
 resources.
 One manages a set of repositories called a  __workspace__. Managed ==nuts==  (artifacts)  have descriptors
-that depicts dependencies between them. This dependency is seamlessly handled by  ==nuts==  (tool) to
+that depict dependencies between them. This dependency is seamlessly handled by  ==nuts==  (tool) to
 resolve and download on-need dependencies over the wire.
 
 ==nuts== is a swiss army knife tool as it acts like (and supports) maven __build tool__ to have an abstract
@@ -68,30 +68,33 @@ Java         Version: **${java.version} (${java.vm.name})**
  **--workspace** <workspace-location>
  **-w** <workspace-location>
       workspace location to open (or create).
-      this defaults to default-workspace. Typically this refers to ~/.nuts/default-workspace
-      (when **--system-config-home** is not specified). workspace location contains both config and artifact
-      data (from repositories).
+      this defaults to default-workspace. Typically this refers to ~/.config/nuts/default-workspace on \*NIX Platforms
+      (when **--system-config-home** is not specified). workspace location contains mainly config information.
 
  **--user**      <username>
  **-u**          <username>
       workspace username
-      if not specified, all access to ==nuts== will be with anonymous credentials. so to promote user privileges, one may
+      if not specified, all access to ==nuts== will be with anonymous identity. so to promote user privileges, one may
       specify user credentials (see **--password**)
 
  **--password**  <password>
  **-p**  <password>
       workspace password
-      if not specified, all access to ==nuts== will be with anonymous credentials. so to promote user privileges, one may
-      specify user credentials (see **--user**)
+      They must be provided when **--user** is present.
 
  **-V** <boot-api-version>
  **--boot-version** <boot-api-version>
  **--boot-api-version** <boot-api-version>
-      run a new instance of ==nuts== with the specified version
+      run a new/different instance of ==nuts== with the specified version
 
  **--boot-runtime** <runtime-id-or-version>
       load runtime (nuts-core) version. either version may be expressed or full nuts implementation
       (other than nuts-core) should be defined
+
+ **--boot-repos** <repos-list-comma-separated>
+      list (comma) separated of repository urls to boot from. When not specified, default boot repositories
+      will be used (mainly 'maven-central' and 'vpc-public-maven'). You can specify works like 'maven-central'
+      'vpc-public-maven' to include them in the list
 
  **--java**      <java-command>
  **--boot-java** <java-command>
@@ -101,10 +104,8 @@ Java         Version: **${java.version} (${java.vm.name})**
  **--java-home**      <java-home>
  **--boot-java-home** <java-home>
  **-J** <java-home>
-      java home to run new instance of ==nuts==
+      java home to run new instance of ==nuts==. When java command is present, this will be ignored.
 
- **--verbose** , **--log-finest**  , **--log-info** , **--log-fine** ,
- 
  **--java-options**      <java-options>
  **--boot-java-options** <java-options>
  **-O** <java-options>
@@ -125,8 +126,12 @@ Java         Version: **${java.version} (${java.vm.name})**
                     [[vpc-public-nuts]]  : referencing "https://.../vpc-public-nuts/master"  author\'s github ==nuts==  repo (cached).
                     [[system]]           : referencing global (root, system wide) repository if available.
           [[minimal]] : will create an almost empty workspace with a single ==nuts== local repository and no users.
+                        You should use it in conjunction with **--boot-repos** options to enable a valid location from
+                        which nuts would be downloaded as well.
           [[server]]  : will create an almost empty workspace with a single ==nuts== local repository 
                         and a couple of users __guest__ (read support) and __contributor__ (write support).
+                        You should use it in conjunction with **--boot-repos** options to enable a valid location from
+                                                which nuts would be downloaded as well.
 
  **--store-strategy** <store-strategy>
       Define store strategy used for persisting configuration and data of the workspace.
@@ -168,16 +173,18 @@ Java         Version: **${java.version} (${java.vm.name})**
     Equivalent of **--exploded-workspace**
 
  **--store-layout** <store-layout>
-      Defines store layout relatively to the running operating system. This resolve root locations of data folders.
-      that to say that all 'programs' folders for instance will be located at the location defined by the layout.
+      Defines store layout relatively to the running operating system. This resolves root locations of data folders.
+      That is to say that all 'config' folders for instance will be located at the location defined by the layout.
 
-      Valid values of <store-layout> are [[system]], [[windows]] and [[linux]]
+      Valid values of <store-layout> are [[system]], [[windows]], [[linux]], [[macos]] and [[unix]]
       [[system]]     : resolve the running operating system (windows, linux, ...) and select appropriate folder
       [[windows]]    : always use windows layout (even if running on iOS)
-      [[linux]]      : always use linux/unix layout (even if running on windows)
+      [[linux]]      : always use linux layout (even if running on windows)
+      [[unix]]       : always use linux/unix layout (even if running on windows)
+      [[macos]]      : always use macos layout (even if running on windows)
 
       Data folders of nuts are :
-        programs : executable binaries folder
+        apps     : executable binaries folder
         lib      : non executable binaries (libraries) folder
         config   : configuration/settings files folder
         var      : data files folder
@@ -186,7 +193,7 @@ Java         Version: **${java.version} (${java.vm.name})**
         cache    : cache folder
       
      In the Windows layout, default (home) locations resolve to ($HOME is the user\'s home folder)
-        programs : "$HOME/AppData/Roaming/nuts/programs"
+        apps     : "$HOME/AppData/Roaming/nuts/apps"
         lib      : "$HOME/AppData/Roaming/nuts/lib"
         config   : "$HOME/AppData/Roaming/nuts/config"
         var      : "$HOME/AppData/Roaming/nuts/var"
@@ -198,7 +205,7 @@ Java         Version: **${java.version} (${java.vm.name})**
      In the Linux/Unix/MacOS layout, default locations resolve (according to XDG Base Directory Specification) 
      to ($HOME is the user\'s home folder)
         config   : "$HOME/.config/nuts"
-        programs : "$HOME/.local/share/nuts/programs"
+        apps     : "$HOME/.local/share/nuts/apps"
         lib      : "$HOME/.local/share/nuts/lib"
         var      : "$HOME/.local/share/nuts/var"
         log      : "$HOME/.local/log/nuts"
@@ -207,7 +214,7 @@ Java         Version: **${java.version} (${java.vm.name})**
         run      : "/run/user/$USER_ID/nuts"
      
     These home locations are tuned individually using the following options
-            **--system-programs-home** <path>
+            **--system-apps-home** <path>
             **--system-lib-home** <path>
             **--system-config-home** <path>
             **--system-var-home** <path>
@@ -215,7 +222,7 @@ Java         Version: **${java.version} (${java.vm.name})**
             **--system-temp-home** <path>
             **--system-cache-home** <path>
 
-            **--<os-family>-programs-home** <path>
+            **--<os-family>-apps-home** <path>
             **--<os-family>-lib-home** <path>
             **--<os-family>-config-home** <path>
             **--<os-family>-var-home** <path>
@@ -228,20 +235,20 @@ Java         Version: **${java.version} (${java.vm.name})**
             when using [[system]] OS family, the effective OS family will be detected at runtime.
 
  **--system-layout** or **--system**
-       will use current system layout to resolve folder candidates for log,config,programs ...etc.
+       will use current system layout to resolve folder candidates for log,config,apps ...etc.
        same as  **--store-layout** <store-layout> **system**
  
  **--windows-layout**
-       will use windows layout to resolve folder candidates for log,config,programs ...etc.
+       will use windows layout to resolve folder candidates for log,config,apps ...etc.
        same as  **--store-layout** <store-layout> **windows**
 
  **--linux-layout**
-       will use linux/unix layout to resolve folder candidates for log,config,programs ...etc.
+       will use linux/unix layout to resolve folder candidates for log,config,apps ...etc.
        same as  **--store-layout** <store-layout> **linux**
 
  More tuning of these folders may be done by defining the folders location directly 
  instead of the folder\'s home locations using the following options :
-            **--programs-location** <path>
+            **--apps-location** <path>
             **--lib-location** <path>
             **--config-location** <path>
             **--var-location** <path>
@@ -269,7 +276,7 @@ Java         Version: **${java.version} (${java.vm.name})**
         temp     : "$TMP/nuts"
         cache    : "$ProgramFiles/nuts"
       Linux Layout    :
-        apps     : "/opt/nuts/programs"
+        apps     : "/opt/nuts/apps"
         lib      : "/opt/nuts/lib"
         config   : "/etc/opt/nuts"
         var      : "/var/opt/nuts"
@@ -288,7 +295,7 @@ Java         Version: **${java.version} (${java.vm.name})**
     **--color**=[[never]]|[[none]]|[[no]]|[[false]]|[[n]]
       equivalent to **--no-color**
     @@Attention@@ : --color argument, should it accept a value, it must be an immediate one (with '=')
-**-C**
+ **-C**
  **--no-color**
       disable formatted (colorful) terminal ([[filtered]] terminal).
 
@@ -298,7 +305,7 @@ Java         Version: **${java.version} (${java.vm.name})**
 
  **--progress**[=**<options>**]
  **-P**[=<options>]
-      configure progress monitor. valid values include [[no]]|[[false]]|[[n]]
+      configure progress monitor. valid values include [[no]]|[[false]]|[[n]]|[[newline]]
 
  **--plain**[=**<format-options>**]
       define plain text format as default output format (this is default)
@@ -423,18 +430,22 @@ Java         Version: **${java.version} (${java.vm.name})**
       will create non existing workspace of fail
 
 ##NUTS COMMAND:##
+==nuts== handles a set of command to manage nuts it sel and to run/exec other programs, mainly those its was responsible
+for installing. Commands supportes include internal commands, supported packages (installed or not, when not installed
+will search for it), aliases (a commodity mechanism to extend internal commands) and even any other executable.
+ Here is a lis of internal commands :
 
  {{version}}  \[**-options**\]... 
  or **--version** or **-version** or **-v**
-      show version
+      show version and exit.
       for more details, type : ==nuts== help version
        
  {{info}}  \[**-options**\]... 
-      show workspace detailed information (paths and libraries)
+      show workspace detailed information (paths and libraries) and exit.
       for more details, type : ==nuts== help info
 
  {{welcome}}  \[**-options**\]... 
-      show welcome message
+      show welcome message and exit.
       for more details, type : ==nuts== help welcome
 
  {{help}}  \[**-options**\]... <nuts-artifact>...
@@ -494,9 +505,9 @@ Java         Version: **${java.version} (${java.vm.name})**
             
  **--reset** \[**-options**\]... 
        reset (delete) ==nuts== workspace folder. Will bootstrap a new workspace unless **-K**
-       (**--skip-companions**) option is armed.
+       (**--skip-welcome**) option is armed.
        Actually this is a special command that is available only at boot time.
-       Available options are :
+       Available command options are :
        **-y** : to skip confirmation
 
  **-** <args>...

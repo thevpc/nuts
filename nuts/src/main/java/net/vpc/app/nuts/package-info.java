@@ -17,7 +17,7 @@
  * </p>
  * <p>
  * One manages a set of repositories called a  workspace. Managed <strong>nuts</strong>  (artifacts)  have descriptors
- * that depicts dependencies between them. This dependency is seamlessly handled by  <strong>nuts</strong>  (tool) to
+ * that depict dependencies between them. This dependency is seamlessly handled by  <strong>nuts</strong>  (tool) to
  * resolve and download on-need dependencies over the wire.
  * </p>
  * <p>
