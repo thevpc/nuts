@@ -224,7 +224,7 @@ public class NutsJavaSdkUtils {
         int cmdRresult=0;
         boolean loggedError=false;
         try {
-            NutsExecCommand cmd = session.workspace().exec().usrCmd().command(javaExePath.toString(), "-version")
+            NutsExecCommand cmd = session.workspace().exec().userCmd().command(javaExePath.toString(), "-version")
                     .redirectErrorStream()
                     .grabOutputString().failFast().run();
             cmdRresult = cmd.getResult();

@@ -106,7 +106,7 @@ public class JpsCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         List<JpsRow> results = new ArrayList<>();
 
-        NutsExecCommand e = context.getWorkspace().exec().usrCmd()
+        NutsExecCommand e = context.getWorkspace().exec().userCmd()
                 .command(resolveJpsCommand(context.getWorkspace()), "-l", "-v", "-m")
                 .redirectErrorStream()
                 .grabOutputString()
@@ -121,7 +121,7 @@ public class JpsCommand extends SimpleNshBuiltin {
                 r.id = s1 < 0 ? line : line.substring(0, s1);
                 r.fullName = s1 <= 0 ? "" : s2 <= 0 ? line.substring(s1 + 1).trim() : line.substring(s1 + 1, s2);
                 r.arguments = s2 < 0 ? "" : line.substring(s2 + 1);
-                r.name = r.fullName == null ? null : r.fullName.lastIndexOf('.') >= 0 ? r.fullName.substring(r.fullName.lastIndexOf('.') + 1) : r.fullName;
+                r.name = r.fullName.lastIndexOf('.') >= 0 ? r.fullName.substring(r.fullName.lastIndexOf('.') + 1) : r.fullName;
                 if (options.q) {
                     r.fullName = null;
                     r.arguments = null;

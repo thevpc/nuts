@@ -118,16 +118,21 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
         if (a == null) {
             return false;
         }
+        boolean enabled=a.isEnabled();
         switch (a.getStringKey()) {
             case "--not-installed": {
                 cmdLine.skip();
-                this.notInstalled();
+                if(enabled) {
+                    this.notInstalled();
+                }
                 return true;
             }
             case "-i":
             case "--installed": {
                 cmdLine.skip();
-                this.installed();
+                if(enabled) {
+                    this.installed();
+                }
                 return true;
             }
             default: {

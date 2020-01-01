@@ -7,6 +7,7 @@ package net.vpc.app.nuts.runtime;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.format.NutsFetchDisplayOptions;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -22,9 +23,8 @@ import net.vpc.app.nuts.runtime.util.NutsDependencyScopes;
 import net.vpc.app.nuts.runtime.wscommands.NutsWorkspaceCommandBase;
 
 /**
- *
- * @author vpc
  * @param <T>
+ * @author vpc
  */
 public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand> extends NutsWorkspaceCommandBase<T> {
 
@@ -203,7 +203,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         return (T) this;
     }
 
-//    //@Override
+    //    //@Override
 //    public T scopes(Collection<NutsDependencyScope> scope) {
 //        return DefaultNutsQueryBaseOptions.this.addScopes(scope);
 //    }
@@ -500,38 +500,58 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         if (a == null) {
             return false;
         }
+        boolean enabled = a.isEnabled();
         switch (a.getStringKey()) {
             case "--failfast": {
-                this.setFailFast(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.setFailFast(val);
+                }
                 return true;
             }
             case "-r":
             case "--repository": {
-                this.addRepository(cmdLine.nextString().getStringValue());
+                String val = cmdLine.nextString().getStringValue();
+                if (enabled) {
+                    this.addRepository(val);
+                }
                 return true;
             }
             case "-f":
             case "--fetch": {
-                this.setFetchStrategy(NutsFetchStrategy.valueOf(cmdLine.nextString().getStringValue().toUpperCase().replace("-", "_")));
+                String val = cmdLine.nextString().getStringValue();
+                if (enabled) {
+                    this.setFetchStrategy(NutsFetchStrategy.valueOf(val.toUpperCase().replace("-", "_")));
+                }
                 return true;
             }
             case "--dependencies": {
-                this.dependencies(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.dependencies(val);
+                }
                 return true;
             }
             case "--dependencies-tree": {
-                this.dependenciesTree(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.dependenciesTree(val);
+                }
                 return true;
             }
             case "--scope": {
-                this.addScope(CoreCommonUtils.parseEnumString(cmdLine.nextString().getStringValue(), NutsDependencyScope.class, false));
+                NutsDependencyScope val = CoreCommonUtils.parseEnumString(cmdLine.nextString().getStringValue(), NutsDependencyScope.class, false);
+                if (enabled) {
+                    this.addScope(val);
+                }
                 return true;
             }
-            case "-a": 
-            case "--anywhere": 
-            {
+            case "-a":
+            case "--anywhere": {
                 cmdLine.skip();
-                this.setFetchStrategy(NutsFetchStrategy.ANYWHERE);
+                if (enabled) {
+                    this.setFetchStrategy(NutsFetchStrategy.ANYWHERE);
+                }
                 return true;
             }
 //            case "-i":
@@ -542,50 +562,69 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 //                return true;
 //            }
             case "-F":
-            case "--offline":
-            {
+            case "--offline": {
                 cmdLine.skip();
-                this.setFetchStrategy(NutsFetchStrategy.OFFLINE);
+                if (enabled) {
+                    this.setFetchStrategy(NutsFetchStrategy.OFFLINE);
+                }
                 return true;
             }
-            case "-O": 
-            case "--online": 
-            {
+            case "-O":
+            case "--online": {
                 cmdLine.skip();
-                this.setFetchStrategy(NutsFetchStrategy.ONLINE);
+                if (enabled) {
+                    this.setFetchStrategy(NutsFetchStrategy.ONLINE);
+                }
                 return true;
             }
-            case "-R": 
-            case "--remote": 
-            {
+            case "-R":
+            case "--remote": {
                 cmdLine.skip();
-                this.setFetchStrategy(NutsFetchStrategy.REMOTE);
+                if (enabled) {
+                    this.setFetchStrategy(NutsFetchStrategy.REMOTE);
+                }
                 return true;
             }
             case "--optional": {
                 NutsArgument v = cmdLine.nextString();
-                this.setOptional(CoreCommonUtils.parseBoolean(v.getString(), null));
+                if (enabled) {
+                    this.setOptional(CoreCommonUtils.parseBoolean(v.getString(), null));
+                }
                 return true;
             }
             case "--cached": {
-                this.setCached(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.setCached(val);
+                }
                 return true;
             }
             case "--effective": {
-                this.setEffective(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.setEffective(val);
+                }
                 return true;
             }
             case "--indexed": {
-                this.setIndexed(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.setIndexed(val);
+                }
                 return true;
             }
             case "--content": {
-                this.setContent(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.setContent(val);
+                }
                 return true;
             }
             case "--location": {
                 String location = cmdLine.nextString().getStringValue();
-                this.setLocation(CoreStringUtils.isBlank(location) ? null : Paths.get(location));
+                if(enabled) {
+                    this.setLocation(CoreStringUtils.isBlank(location) ? null : Paths.get(location));
+                }
                 return true;
             }
         }
@@ -594,7 +633,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"(" +
+        return getClass().getSimpleName() + "(" +
                 "failFast=" + failFast +
                 ", optional=" + optional +
                 ", scope=" + scope +

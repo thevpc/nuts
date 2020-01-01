@@ -93,11 +93,11 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             }
             args = Arrays.copyOfRange(args, 1, args.length);
         }
-        NutsId _appId = (NutsId)NutsApplications.getSharedMap().get("nuts.embedded.application.id");
-        if(_appId!=null) {
+        NutsId _appId = (NutsId) NutsApplications.getSharedMap().get("nuts.embedded.application.id");
+        if (_appId != null) {
             //("=== Inherited "+_appId);
-        }else {
-            _appId=workspace.id().resolveId(appClass);
+        } else {
+            _appId = workspace.id().resolveId(appClass);
         }
         if (_appId == null) {
             throw new NutsExecutionException(workspace, "Invalid Nuts Application (" + appClass.getName() + "). Id cannot be resolved", 203);
@@ -182,32 +182,42 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         if (a == null) {
             return false;
         }
+        boolean enabled = a.isEnabled();
         switch (a.getStringKey()) {
             case "--help": {
                 cmd.skip();
-                if (cmd.isExecMode()) {
-                    printHelp();
+                if (enabled) {
+                    if (cmd.isExecMode()) {
+                        printHelp();
+                    }
                     cmd.skipAll();
+                    throw new NutsExecutionException(workspace, "Help", 0);
                 }
-                throw new NutsExecutionException(workspace, "Help", 0);
+                break;
             }
             case "--skip-event": {
-                switch (getMode()){
+                switch (getMode()) {
                     case INSTALL:
                     case UNINSTALL:
-                    case UPDATE:{
-                        cmd.skip();
-                        throw new NutsExecutionException(workspace, "skip-event", 0);
+                    case UPDATE: {
+                        if(enabled) {
+                            cmd.skip();
+                            throw new NutsExecutionException(workspace, "skip-event", 0);
+                        }
                     }
                 }
+                return true;
             }
             case "--version": {
                 cmd.skip();
-                if (cmd.isExecMode()) {
-                    getSession().out().printf("%s%n", getWorkspace().id().resolveId(getClass()).getVersion().toString());
-                    cmd.skipAll();
+                if(enabled) {
+                    if (cmd.isExecMode()) {
+                        getSession().out().printf("%s%n", getWorkspace().id().resolveId(getClass()).getVersion().toString());
+                        cmd.skipAll();
+                    }
+                    throw new NutsExecutionException(workspace, "Version", 0);
                 }
-                throw new NutsExecutionException(workspace, "Version", 0);
+                return true;
             }
             default: {
                 if (getSession() != null && getSession().configureFirst(cmd)) {

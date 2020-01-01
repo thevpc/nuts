@@ -172,7 +172,7 @@ public class Test06_UpateTest {
         );
         TestUtils.println(uws.commandLine().create(b.createProcessCommandLine()).toString());
 
-        String ss = uws.exec().usrCmd().command(b.createProcessCommandLine()).grabOutputString().run().getOutputString();
+        String ss = uws.exec().userCmd().command(b.createProcessCommandLine()).grabOutputString().run().getOutputString();
         TestUtils.println("================");
         TestUtils.println(ss);
         Map m = uws.json().parse(ss, Map.class);

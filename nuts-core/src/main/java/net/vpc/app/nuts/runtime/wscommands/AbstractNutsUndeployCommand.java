@@ -175,15 +175,22 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
         if (a == null) {
             return false;
         }
+        boolean enabled=a.isEnabled();
         switch (a.getStringKey()) {
             case "--offline": {
-                setOffline(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    setOffline(val);
+                }
                 return true;
             }
             case "-r":
             case "-repository":
             case "--from": {
-                setRepository(cmdLine.nextString().getStringValue());
+                String val = cmdLine.nextString().getStringValue();
+                if (enabled) {
+                    setRepository(val);
+                }
                 break;
             }
 

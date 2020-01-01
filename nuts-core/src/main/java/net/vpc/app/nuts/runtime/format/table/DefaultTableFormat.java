@@ -137,7 +137,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return new String(out.toByteArray());
     }
 
-     @Override
+    @Override
     public void print(PrintStream w) {
         PrintStream out = getValidPrintStream(w);
         StringBuilder2 line = new StringBuilder2();
@@ -969,7 +969,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         public void discardRow(int row) {
             for (Iterator<Pos> iterator = reserved.iterator(); iterator.hasNext(); ) {
                 Pos pos = iterator.next();
-                if(pos.row==row){
+                if (pos.row == row) {
                     iterator.remove();
                 }
             }
@@ -1106,32 +1106,40 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a;
         if ((a = cmdLine.nextBoolean("--no-header")) != null) {
-            setVisibleHeader(!a.getBooleanValue());
+            boolean val = a.getBooleanValue();
+            if (a.isEnabled()) {
+                setVisibleHeader(!val);
+            }
             return true;
         } else if ((a = cmdLine.nextBoolean("--header")) != null) {
-            setVisibleHeader(a.getBooleanValue());
+            boolean val = a.getBooleanValue();
+            if (a.isEnabled()) {
+                setVisibleHeader(val);
+            }
             return true;
         } else if ((a = cmdLine.nextString("--border")) != null) {
-            switch (a.getArgumentValue().getStringKey()) {
-                case "spaces": {
-                    setBorder(SPACE_BORDER);
-                    break;
-                }
-                case "simple": {
-                    setBorder(SIMPLE_BORDER);
-                    break;
-                }
-                case "fancy-rows": {
-                    setBorder(FANCY_ROWS_BORDER);
-                    break;
-                }
-                case "fancy-columns": {
-                    setBorder(FANCY_COLUMNS_BORDER);
-                    break;
-                }
-                case "none": {
-                    setBorder(NO_BORDER);
-                    break;
+            if(a.isEnabled()) {
+                switch (a.getArgumentValue().getStringKey()) {
+                    case "spaces": {
+                        setBorder(SPACE_BORDER);
+                        break;
+                    }
+                    case "simple": {
+                        setBorder(SIMPLE_BORDER);
+                        break;
+                    }
+                    case "fancy-rows": {
+                        setBorder(FANCY_ROWS_BORDER);
+                        break;
+                    }
+                    case "fancy-columns": {
+                        setBorder(FANCY_COLUMNS_BORDER);
+                        break;
+                    }
+                    case "none": {
+                        setBorder(NO_BORDER);
+                        break;
+                    }
                 }
             }
             return true;
@@ -1145,12 +1153,17 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     columns.put(v.toString().toLowerCase(), i);
                 }
             }
+            NutsArgument a2=null;
             for (Map.Entry<String, Integer> e : columns.entrySet()) {
-                if (cmdLine.next("--" + e.getKey()) != null) {
-                    setVisibleColumn(e.getValue(), true);
+                if ((a2=cmdLine.next("--" + e.getKey())) != null) {
+                    if(a2.isEnabled()) {
+                        setVisibleColumn(e.getValue(), true);
+                    }
                     return true;
-                } else if (cmdLine.next("--no-" + e.getKey()) != null) {
-                    setVisibleColumn(e.getValue(), false);
+                } else if ((a2=cmdLine.next("--no-" + e.getKey())) != null) {
+                    if(a2.isEnabled()) {
+                        setVisibleColumn(e.getValue(), false);
+                    }
                     return true;
                 }
             }

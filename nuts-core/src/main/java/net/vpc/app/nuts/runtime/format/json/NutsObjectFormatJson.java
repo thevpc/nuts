@@ -10,11 +10,11 @@ import net.vpc.app.nuts.*;
 import java.io.PrintStream;
 import java.io.Writer;
 import java.util.*;
+
 import net.vpc.app.nuts.runtime.format.props.DefaultPropertiesFormat;
 import net.vpc.app.nuts.runtime.format.NutsObjectFormatBase;
 
 /**
- *
  * @author vpc
  */
 public class NutsObjectFormatJson extends NutsObjectFormatBase {
@@ -35,13 +35,19 @@ public class NutsObjectFormatJson extends NutsObjectFormatBase {
     public boolean configureFirst(NutsCommandLine commandLine) {
         NutsArgument n = commandLine.peek();
         if (n != null) {
+            boolean enabled = n.isEnabled();
             NutsArgument a;
             if ((a = commandLine.nextString(DefaultPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
-                NutsArgument i = a.getArgumentValue();
-                extraConfig.add(a.getString());
-                addMultilineProperty(i.getStringKey(), i.getStringValue());
+                if (enabled) {
+                    NutsArgument i = a.getArgumentValue();
+                    extraConfig.add(a.getString());
+                    addMultilineProperty(i.getStringKey(), i.getStringValue());
+                }
             } else {
-                extraConfig.add(commandLine.next().getString());
+                a = commandLine.next();
+                if(!a.isOption() || a.isEnabled()) {
+                    extraConfig.add(a.getString());
+                }
             }
             return true;
         }

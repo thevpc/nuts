@@ -924,116 +924,186 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         if (a == null) {
             return false;
         }
+        boolean enabled = a.isEnabled();
         switch (a.getStringKey()) {
             case "--inline-dependencies": {
-                this.inlineDependencies(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if(enabled) {
+                    this.inlineDependencies(val);
+                }
                 return true;
             }
             case "-L":
             case "--latest":
             case "--latest-versions": {
                 cmdLine.skip();
-                this.latest();
+                if(enabled) {
+                    this.latest();
+                }
                 return true;
             }
             case "--distinct": {
-                this.distinct(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if(enabled) {
+                    this.distinct(val);
+                }
                 return true;
             }
             case "--default":
             case "--default-versions": {
-                this.defaultVersions(cmdLine.nextBoolean().getBoolean(null));
+                Boolean val = cmdLine.nextBoolean().getBoolean(null);
+                if(enabled) {
+                    this.defaultVersions(val);
+                }
                 return true;
             }
             case "--duplicates": {
-                this.distinct(!cmdLine.nextBoolean().getBooleanValue());
+                boolean val = !cmdLine.nextBoolean().getBooleanValue();
+                if(enabled) {
+                    this.distinct(val);
+                }
                 return true;
             }
             case "-s":
             case "--sort": {
-                this.sort(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if(enabled) {
+                    this.sort(val);
+                }
                 return true;
             }
             case "--base": {
-                this.includeBasePackage = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if(enabled) {
+                    this.includeBasePackage = val;
+                }
                 return true;
             }
             case "--libs": {
-                this.lib(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if(enabled) {
+                    this.lib(val);
+                }
                 return true;
             }
             case "--apps": {
-                this.exec(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if(enabled) {
+                    this.exec(val);
+                }
                 return true;
             }
             case "--companions": {
-                this.companion(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if(enabled) {
+                    this.companion(val);
+                }
                 return true;
             }
             case "--extensions": {
-                this.extensions(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if(enabled) {
+                    this.extensions(val);
+                }
                 return true;
             }
             case "--runtime": {
-                this.runtime(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if(enabled) {
+                    this.runtime(val);
+                }
                 return true;
             }
             case "--api-version": {
-                this.targetApiVersion(cmdLine.nextBoolean().getStringValue());
+                String val = cmdLine.nextBoolean().getStringValue();
+                if(enabled) {
+                    this.targetApiVersion(val);
+                }
                 return true;
             }
             case "--nuts-apps": {
-                this.applications(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if(enabled) {
+                    this.applications(val);
+                }
                 return true;
             }
             case "--arch": {
-                this.addArch(cmdLine.nextString().getStringValue());
+                String val = cmdLine.nextString().getStringValue();
+                if(enabled) {
+                    this.addArch(val);
+                }
                 return true;
             }
             case "--packaging": {
-                this.addPackaging(cmdLine.nextString().getStringValue());
+                String val = cmdLine.nextString().getStringValue();
+                if(enabled) {
+                    this.addPackaging(val);
+                }
                 return true;
             }
             case "--optional": {
-                NutsArgument s = cmdLine.nextString();
-                this.optional(CoreCommonUtils.parseBoolean(s.getStringValue(), null));
+                NutsArgument val = cmdLine.nextString();
+                if(enabled) {
+                    this.optional(CoreCommonUtils.parseBoolean(val.getStringValue(), null));
+                }
                 return true;
             }
             case "--script": {
-                this.addScript(cmdLine.nextString().getStringValue());
+                String val = cmdLine.nextString().getStringValue();
+                if(enabled) {
+                    this.addScript(val);
+                }
                 return true;
             }
             case "--id": {
-                this.addId(cmdLine.nextString().getStringValue());
+                String val = cmdLine.nextString().getStringValue();
+                if(enabled) {
+                    this.addId(val);
+                }
                 return true;
             }
             case "--locked-id": {
-                this.addLockedId(cmdLine.nextString().getStringValue());
+                String val = cmdLine.nextString().getStringValue();
+                if(enabled) {
+                    this.addLockedId(val);
+                }
                 return true;
             }
             case "--print": {
-                this.setPrintResult(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if(enabled) {
+                    this.setPrintResult(val);
+                }
                 return true;
             }
             case "--installed-or-included": {
                 cmdLine.skip();
-                this.installedOrIncluded();
+                if(enabled) {
+                    this.installedOrIncluded();
+                }
                 return true;
             }
             case "--not-installed": {
                 cmdLine.skip();
-                this.notInstalled();
+                if(enabled) {
+                    this.notInstalled();
+                }
                 return true;
             }
             case "-i":
             case "--installed": {
                 cmdLine.skip();
-                this.installed();
+                if(enabled) {
+                    this.installed();
+                }
                 return true;
             }
             case "--included": {
                 cmdLine.skip();
-                this.included();
+                if(enabled) {
+                    this.included();
+                }
                 return true;
             }
             default: {

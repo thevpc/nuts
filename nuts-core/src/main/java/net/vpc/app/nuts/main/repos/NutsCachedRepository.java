@@ -90,7 +90,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                         if (!id0.getLongName().equals(success.getId().getLongName())) {
                             success = success.builder().setId(id0).build();
                         }
-                        cache.deployDescriptor(success.getId(), success, WriteType.ERROR, session.copy().setSession(session.getSession().yes()));
+                        cache.deployDescriptor(success.getId(), success, WriteType.FORCE, session.copy().setSession(session.getSession().yes()));
                     }
                     return SuccessFailResult.success(success);
                 } else {
@@ -123,7 +123,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
     @Override
     public NutsDescriptor deployImpl(NutsDeployRepositoryCommand command) {
-        return lib.deploy(command, WriteType.ERROR);
+        return lib.deploy(command, WriteType.FORCE);
     }
 
     @Override

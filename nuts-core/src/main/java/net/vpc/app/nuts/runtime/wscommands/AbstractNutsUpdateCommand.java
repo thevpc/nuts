@@ -537,56 +537,81 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
         if (a == null) {
             return false;
         }
+        boolean enabled = a.isEnabled();
         switch (a.getStringKey()) {
             case "-a":
             case "--all": {
                 cmdLine.skip();
-                this.all();
+                if (enabled) {
+                    this.all();
+                }
                 return true;
             }
             case "-w":
             case "--ws":
             case "--workspace": {
                 cmdLine.skip();
-                this.workspace();
+                if (enabled) {
+                    this.workspace();
+                }
                 return true;
             }
             case "-i":
             case "--installed": {
-                this.installed(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.installed(val);
+                }
                 return true;
             }
             case "-r":
             case "--runtime": {
-                this.runtime(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.runtime(val);
+                }
                 return true;
             }
             case "-A":
             case "--api": {
-                this.api(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.api(val);
+                }
                 return true;
             }
 
             case "-e":
             case "--extensions": {
-                this.extensions(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.extensions(val);
+                }
                 return true;
             }
             case "-c":
             case "--companions": {
-                this.companions(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.companions(val);
+                }
                 return true;
             }
             case "-v":
             case "--api-version":
             case "--to-version": {
-                this.setApiVersion(cmdLine.nextString().getStringValue());
+                String val = cmdLine.nextString().getStringValue();
+                if (enabled) {
+                    this.setApiVersion(val);
+                }
                 return true;
             }
             case "-g":
             case "--args": {
                 cmdLine.skip();
-                this.addArgs(cmdLine.toArray());
+                if (enabled) {
+                    this.addArgs(cmdLine.toArray());
+                }
                 cmdLine.skipAll();
                 return true;
             }

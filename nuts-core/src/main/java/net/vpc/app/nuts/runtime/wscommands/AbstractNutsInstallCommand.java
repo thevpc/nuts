@@ -260,21 +260,30 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
         if (a == null) {
             return false;
         }
+        boolean enabled=a.isEnabled();
         switch (a.getStringKey()) {
             case "-c":
             case "--companions": {
-                this.setCompanions(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.setCompanions(val);
+                }
                 return true;
             }
             case "-i":
             case "--installed": {
-                this.installed(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.installed(val);
+                }
                 return true;
             }
             case "-g":
             case "--args": {
                 cmdLine.skip();
-                this.addArgs(cmdLine.toArray());
+                if (enabled) {
+                    this.addArgs(cmdLine.toArray());
+                }
                 cmdLine.skipAll();
                 return true;
             }

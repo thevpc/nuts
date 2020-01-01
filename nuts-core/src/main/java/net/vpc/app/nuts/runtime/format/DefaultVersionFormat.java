@@ -12,14 +12,13 @@ import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.runtime.DefaultNutsVersion;
 
 /**
- *
  * type: Command Class
  *
  * @author vpc
  */
 public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> implements NutsVersionFormat {
 
-    private final Map<String,String> extraProperties = new LinkedHashMap<>();
+    private final Map<String, String> extraProperties = new LinkedHashMap<>();
     private boolean all;
     private NutsVersion version;
 
@@ -54,17 +53,22 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
         if (a == null) {
             return false;
         }
+        boolean enabled = a.isEnabled();
         switch (a.getStringKey()) {
             case "-a":
-            case "--all":
-                {
-                this.all = cmdLine.nextBoolean().getBooleanValue();
+            case "--all": {
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if(enabled) {
+                    this.all = val;
+                }
                 return true;
             }
             case "--add": {
-                this.all = true;
                 NutsArgument r = cmdLine.nextString().getArgumentValue();
-                extraProperties.put(r.getStringKey(), r.getStringValue());
+                if(enabled) {
+                    this.all = true;
+                    extraProperties.put(r.getStringKey(), r.getStringValue());
+                }
                 return true;
             }
             default: {
@@ -78,19 +82,19 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
 
     @Override
     public NutsVersionFormat addProperty(String key, String value) {
-        if(value==null){
+        if (value == null) {
             extraProperties.remove(key);
-        }else {
+        } else {
             extraProperties.put(key, value);
         }
         return this;
     }
 
     @Override
-    public NutsVersionFormat addProperties(Map<String,String> p) {
+    public NutsVersionFormat addProperties(Map<String, String> p) {
         if (p != null) {
             for (Map.Entry<String, String> entry : p.entrySet()) {
-                addProperty(entry.getKey(),entry.getValue());
+                addProperty(entry.getKey(), entry.getValue());
             }
         }
         return this;

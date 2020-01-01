@@ -14,6 +14,7 @@ import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
+
 import net.vpc.app.nuts.runtime.format.props.DefaultPropertiesFormat;
 import net.vpc.app.nuts.runtime.format.NutsObjectFormatBase;
 import net.vpc.app.nuts.runtime.format.props.NutsObjectFormatProps;
@@ -23,7 +24,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- *
  * @author vpc
  */
 public class NutsObjectFormatPlain extends NutsObjectFormatBase {
@@ -43,12 +43,18 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
         NutsArgument n = commandLine.peek();
         if (n != null) {
             NutsArgument a;
+            boolean enabled = n.isEnabled();
             if ((a = commandLine.nextString(DefaultPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
                 NutsArgument i = a.getArgumentValue();
-                extraConfig.add(a.getString());
-                addMultilineProperty(i.getStringKey(), i.getStringValue());
+                if (enabled) {
+                    extraConfig.add(a.getString());
+                    addMultilineProperty(i.getStringKey(), i.getStringValue());
+                }
             } else {
-                extraConfig.add(commandLine.next().getString());
+                a = commandLine.next();
+                if(!a.isOption() || a.isEnabled()) {
+                    extraConfig.add(commandLine.next().getString());
+                }
             }
             return true;
         }
@@ -74,7 +80,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
 //            ws.props().setModel(((Map) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof org.w3c.dom.Document) {
             try {
-                NutsXmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w), false,true);
+                NutsXmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w), false, true);
             } catch (TransformerException ex) {
                 throw new UncheckedIOException(new IOException(ex));
             }
@@ -83,8 +89,8 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 Element elem = (org.w3c.dom.Element) value;
                 Document doc = NutsXmlUtils.createDocument();
                 doc.appendChild(doc.importNode(elem, true));
-                NutsXmlUtils.writeDocument(doc, new StreamResult(w), false,false);
-            } catch (TransformerException|ParserConfigurationException ex) {
+                NutsXmlUtils.writeDocument(doc, new StreamResult(w), false, false);
+            } catch (TransformerException | ParserConfigurationException ex) {
                 throw new UncheckedIOException(new IOException(ex));
             }
         } else {

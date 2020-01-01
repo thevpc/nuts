@@ -210,27 +210,36 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         if (a == null) {
             return false;
         }
+        boolean enabled = a.isEnabled();
         switch (a.getStringKey()) {
             case "--border": {
                 a = cmdLine.nextString("--border");
-                switch (a.getArgumentValue().getStringKey()) {
-                    case "simple": {
-                        setLinkFormat(LINK_ASCII_FORMATTER);
-                        break;
-                    }
-                    case "none": {
-                        setLinkFormat(LINK_SPACE_FORMATTER);
-                        break;
+                if(enabled) {
+                    switch (a.getArgumentValue().getStringKey()) {
+                        case "simple": {
+                            setLinkFormat(LINK_ASCII_FORMATTER);
+                            break;
+                        }
+                        case "none": {
+                            setLinkFormat(LINK_SPACE_FORMATTER);
+                            break;
+                        }
                     }
                 }
                 return true;
             }
             case "--omit-root": {
-                setOmitRoot(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if(enabled) {
+                    setOmitRoot(val);
+                }
                 return true;
             }
             case "--infinite": {
-                this.infinite = (cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if(enabled) {
+                    this.infinite = val;
+                }
                 return true;
             }
         }

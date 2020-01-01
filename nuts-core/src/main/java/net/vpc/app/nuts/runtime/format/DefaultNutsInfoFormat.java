@@ -18,19 +18,18 @@ import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 
 /**
- *
  * type: Command Class
  *
  * @author vpc
  */
 public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> implements NutsInfoFormat {
 
-    private final Map<String,String> extraProperties = new LinkedHashMap<>();
+    private final Map<String, String> extraProperties = new LinkedHashMap<>();
     private boolean showRepositories = false;
     private boolean fancy = false;
     private List<String> requests = new ArrayList<>();
     private Predicate<String> filter = s -> true;
-    private boolean lenient=false;
+    private boolean lenient = false;
 
     public DefaultNutsInfoFormat(NutsWorkspace ws) {
         super(ws, "info");
@@ -60,19 +59,19 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
 
     @Override
     public NutsInfoFormat addProperty(String key, String value) {
-        if(value==null){
+        if (value == null) {
             extraProperties.remove(key);
-        }else {
+        } else {
             extraProperties.put(key, value);
         }
         return this;
     }
 
     @Override
-    public NutsInfoFormat addProperties(Map<String,String> customProperties) {
+    public NutsInfoFormat addProperties(Map<String, String> customProperties) {
         if (customProperties != null) {
             for (Map.Entry<String, String> e : customProperties.entrySet()) {
-                addProperty(e.getKey(),e.getValue());
+                addProperty(e.getKey(), e.getValue());
             }
         }
         return this;
@@ -106,26 +105,26 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         Object result = null;
         if (requests.isEmpty()) {
             result = buildWorkspaceMap(isShowRepositories());
-        } else if(requests.size()==1){
+        } else if (requests.size() == 1) {
             final Map<String, Object> t = buildWorkspaceMap(true);
             String key = requests.get(0);
             Object v = t.get(key);
-            if(v!=null){
-                result=v;
-            }else{
-                if(!isLenient()) {
+            if (v != null) {
+                result = v;
+            } else {
+                if (!isLenient()) {
                     throw new NutsIllegalArgumentException(ws, "Property not found : " + key);
                 }
             }
         } else {
             final Map<String, Object> t = buildWorkspaceMap(true);
-            Map<String, Object> e=new LinkedHashMap<>();
+            Map<String, Object> e = new LinkedHashMap<>();
             result = e;
             for (String request : requests) {
                 if (t.containsKey(request)) {
                     e.put(request, t.get(request));
-                }else{
-                    if(!isLenient()) {
+                } else {
+                    if (!isLenient()) {
                         throw new NutsIllegalArgumentException(ws, "Property not found : " + request);
                     }
                 }
@@ -140,77 +139,94 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         if (a == null) {
             return false;
         }
+        boolean enabled = a.isEnabled();
         switch (a.getStringKey()) {
             case "-r":
-            case "--repos":
-                {
-                this.setShowRepositories(cmdLine.nextBoolean().getBooleanValue());
+            case "--repos": {
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.setShowRepositories(val);
+                }
                 return true;
             }
             case "--fancy": {
-                this.setFancy(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.setFancy(val);
+                }
                 return true;
             }
             case "-l":
-            case "--lenient":
-                {
-                this.setLenient(cmdLine.nextBoolean().getBooleanValue());
+            case "--lenient": {
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.setLenient(val);
+                }
                 return true;
             }
             case "--add": {
-                NutsArgument r = cmdLine.nextString().getArgumentValue();
-                extraProperties.put(r.getStringKey(), r.getStringValue());
+                NutsArgument val = cmdLine.nextString().getArgumentValue();
+                if (enabled) {
+                    extraProperties.put(val.getStringKey(), val.getStringValue());
+                }
                 return true;
             }
             case "-p":
-            case "--path":
-                {
+            case "--path": {
                 cmdLine.skip();
-                requests.add("nuts-workspace");
-                for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
-                    requests.add("nuts-workspace-" + folderType.id());
+                if(enabled) {
+                    requests.add("nuts-workspace");
+                    for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
+                        requests.add("nuts-workspace-" + folderType.id());
+                    }
+                    requests.add("user-home");
+                    requests.add("user-dir");
                 }
-                requests.add("user-home");
-                requests.add("user-dir");
                 return true;
             }
             case "-e":
-            case "--env":
-                {
+            case "--env": {
                 cmdLine.skip();
-                requests.add("platform");
-                requests.add("java-version");
-                requests.add("java-home");
-                requests.add("java-executable");
-                requests.add("java-classpath");
-                requests.add("os-name");
-                requests.add("os-family");
-                requests.add("os-dist");
-                requests.add("os-arch");
-                requests.add("user-name");
+                if(enabled) {
+                    requests.add("platform");
+                    requests.add("java-version");
+                    requests.add("java-home");
+                    requests.add("java-executable");
+                    requests.add("java-classpath");
+                    requests.add("os-name");
+                    requests.add("os-family");
+                    requests.add("os-dist");
+                    requests.add("os-arch");
+                    requests.add("user-name");
+                }
                 return true;
             }
             case "-c":
-            case "--cmd":
-                {
+            case "--cmd": {
                 cmdLine.skip();
-                requests.add("command-line-long");
-                requests.add("command-line-short");
-                requests.add("inherited");
-                requests.add("inherited-nuts-boot-args");
-                requests.add("inherited-nuts-args");
+                if(enabled) {
+                    requests.add("command-line-long");
+                    requests.add("command-line-short");
+                    requests.add("inherited");
+                    requests.add("inherited-nuts-boot-args");
+                    requests.add("inherited-nuts-args");
+                }
                 return true;
             }
             case "-g":
             case "--get": {
                 String r = cmdLine.nextString().getStringValue();
-                requests.add(r);
-                while(true){
+                if(enabled) {
+                    requests.add(r);
+                }
+                while (true) {
                     NutsArgument p = cmdLine.peek();
-                    if(p!=null && !p.isOption()){
+                    if (p != null && !p.isOption()) {
                         cmdLine.skip();
-                        requests.add(p.getString());
-                    }else{
+                        if(enabled) {
+                            requests.add(p.getString());
+                        }
+                    } else {
                         break;
                     }
                 }
@@ -232,7 +248,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         return prefix + "." + key;
     }
 
-//    @Override
+    //    @Override
     private Map<String, Object> buildWorkspaceMap(boolean deep) {
         String prefix = null;
         FilteredMap props = new FilteredMap(filter);
@@ -369,34 +385,36 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         this.lenient = lenient;
         return this;
     }
-    private static class FilteredMap{
+
+    private static class FilteredMap {
         private Predicate<String> filter;
-        private LinkedHashMap<String,Object> data=new LinkedHashMap<>();
+        private LinkedHashMap<String, Object> data = new LinkedHashMap<>();
 
         public FilteredMap(Predicate<String> filter) {
             this.filter = filter;
         }
 
-        public boolean accept(String s){
+        public boolean accept(String s) {
             return filter.test(s);
         }
 
-        public void put(String s, Supplier<Object> v){
-            if(filter.test(s)){
-                data.put(s,v.get());
+        public void put(String s, Supplier<Object> v) {
+            if (filter.test(s)) {
+                data.put(s, v.get());
             }
         }
 
-        public void putAnyway(String s,Object v){
-            data.put(s,v);
+        public void putAnyway(String s, Object v) {
+            data.put(s, v);
         }
-        public void put(String s,Object v){
-            if(filter.test(s)){
-                data.put(s,v);
+
+        public void put(String s, Object v) {
+            if (filter.test(s)) {
+                data.put(s, v);
             }
         }
 
-        public Map<String,Object> build(){
+        public Map<String, Object> build() {
             return data;
         }
     }

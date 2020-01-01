@@ -144,7 +144,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
      * <p>
      * <strong>option-type :</strong> create (used when creating new workspace. will not be
      * exported nor promoted to runtime).
-     *
+     * @param homeLocations home locations map
      * @return {@code this} instance
      */
     NutsWorkspaceOptionsBuilder setHomeLocations(Map<String, String> homeLocations);
@@ -154,6 +154,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
      * <p>
      * <strong>option-type :</strong> create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
+     * @param storeLocations store locations map
      * @return {@code this} instance
      */
     NutsWorkspaceOptionsBuilder setStoreLocations(Map<String, String> storeLocations);

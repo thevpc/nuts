@@ -456,7 +456,7 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      *
      * @return {@code this} instance
      */
-    NutsExecCommand usrCmd();
+    NutsExecCommand userCmd();
 
     /**
      * set root command execution type

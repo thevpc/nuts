@@ -59,9 +59,6 @@ import java.util.List;
  * simple option arguments : any argument that starts with a single '-' in the
  * form of
  * <pre>-[//][!]?[a-z][=.*]</pre> This is actually very similar to long options
- * if expandSimpleOptions=false. When activating expandSimpleOptions, multi
- * characters key will be expanded as multiple separate simple options Examples
- * :
  * <ul>
  * <li>-!enable (with expandSimpleOptions=false) : option 'enable' with 'false'
  * value</li>
@@ -71,11 +68,29 @@ import java.util.List;
  * </ul>
  *
  * </li>
+ * <li>
+ * condensed simple option arguments : any argument that starts with a single '-' in the
+ * form of
+ * <pre>-[//]([!]?[a-z])+[=.*]</pre> This is actually very similar to long options
+ * and is parsable when expandSimpleOptions=true. When activating expandSimpleOptions, multi
+ * characters key will be expanded as multiple separate simple options Examples
+ * :
+ * <ul>
+ * <li>-!enable (with expandSimpleOptions=false) : option 'enable' with 'false'
+ * value</li>
+ * <li>--enable=yes : option 'enable' with 'yes' value</li>
+ * <li>--!enable=yes : invalid option (no error will be thrown but the result
+ * is undefined)</li>
+ * </ul>
+ *
+ * </li>
  *
  * <li>long option arguments : any argument that starts with a '--' </li>
  * </ul>
  * option may start with '!' to switch armed flags expandSimpleOptions : when
  * activated
+ *
+ * 
  *
  * @author vpc
  * @since 0.5.5

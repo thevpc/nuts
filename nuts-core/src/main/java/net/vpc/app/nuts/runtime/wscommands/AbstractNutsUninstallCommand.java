@@ -175,16 +175,23 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
         if (a == null) {
             return false;
         }
+        boolean enabled=a.isEnabled();
         switch (a.getStringKey()) {
             case "-e":
             case "--earse": {
-                this.setErase(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    this.setErase(val);
+                }
                 return true;
             }
             case "-g":
             case "--args": {
                 while (cmdLine.hasNext()) {
-                    this.addArg(cmdLine.nextString().getStringValue());
+                    String val = cmdLine.nextString().getStringValue();
+                    if (enabled) {
+                        this.addArg(val);
+                    }
                 }
                 return true;
             }

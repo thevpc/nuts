@@ -378,43 +378,65 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         if (a == null) {
             return false;
         }
+        boolean enabled = a.isEnabled();
         switch (a.getStringKey()) {
             case "-d":
             case "--desc": {
-                setDescriptor(cmdLine.nextString().getStringValue());
+                String val = cmdLine.nextString().getStringValue();
+                if (enabled) {
+                    setDescriptor(val);
+                }
                 return true;
             }
             case "-s":
             case "--source":
             case "--from": {
-                from(cmdLine.nextString().getStringValue());
+                String val = cmdLine.nextString().getStringValue();
+                if (enabled) {
+                    from(val);
+                }
                 return true;
             }
             case "-r":
             case "--target":
             case "--to": {
-                to(cmdLine.nextString().getStringValue());
+                String val = cmdLine.nextString().getStringValue();
+                if (enabled) {
+                    to(val);
+                }
                 return true;
             }
             case "--desc-sha1": {
-                this.setDescSha1(cmdLine.nextString().getStringValue());
+                String val = cmdLine.nextString().getStringValue();
+                if (enabled) {
+                    this.setDescSha1(val);
+                }
                 return true;
             }
             case "--desc-sha1-file": {
                 try {
-                    this.setDescSha1(new String(Files.readAllBytes(Paths.get(cmdLine.nextString().getStringValue()))));
+                    String val = cmdLine.nextString().getStringValue();
+                    if (enabled) {
+                        this.setDescSha1(new String(Files.readAllBytes(Paths.get(val))));
+                    }
                 } catch (IOException ex) {
                     throw new UncheckedIOException(ex);
                 }
                 return true;
             }
             case "--sha1": {
-                this.setSha1(cmdLine.nextString().getStringValue());
+                String val = cmdLine.nextString().getStringValue();
+                if (enabled) {
+                    this.setSha1(val);
+                }
                 return true;
             }
             case "--sha1-file": {
                 try {
-                    this.setSha1(new String(Files.readAllBytes(Paths.get(cmdLine.nextString().getStringValue()))));
+                    String val = cmdLine.nextString().getStringValue();
+                    if (enabled) {
+                        this.setSha1(new String(Files.readAllBytes(Paths.get(val))));
+                    }
                 } catch (IOException ex) {
                     throw new UncheckedIOException(ex);
                 }

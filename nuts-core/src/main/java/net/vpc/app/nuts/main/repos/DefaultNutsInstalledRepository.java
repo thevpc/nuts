@@ -530,7 +530,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         return new AbstractNutsDeployRepositoryCommand(this) {
             @Override
             public NutsDeployRepositoryCommand run() {
-                NutsDescriptor rep = deployments.deploy(this, WriteType.ERROR);
+                NutsDescriptor rep = deployments.deploy(this, WriteType.FORCE);
                 this.setDescriptor(rep);
                 this.setId(rep.getId());
                 return this;

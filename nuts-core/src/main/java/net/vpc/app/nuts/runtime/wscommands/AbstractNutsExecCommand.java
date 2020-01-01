@@ -432,7 +432,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommand usrCmd() {
+    public NutsExecCommand userCmd() {
         return setExecutionType(NutsExecutionType.USER_CMD);
     }
 
@@ -475,33 +475,45 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             command.add(a.getString());
             return true;
         }
+        boolean enabled=a.isEnabled();
         switch (a.getStringKey()) {
             case "--external":
             case "--spawn":
             case "-x": {
                 cmdLine.skip();
-                setExecutionType(NutsExecutionType.SPAWN);
+                if (enabled) {
+                    setExecutionType(NutsExecutionType.SPAWN);
+                }
                 return true;
             }
             case "--embedded":
             case "-b": {
                 cmdLine.skip();
-                setExecutionType(NutsExecutionType.EMBEDDED);
+                if (enabled) {
+                    setExecutionType(NutsExecutionType.EMBEDDED);
+                }
                 return true;
             }
             case "--user-cmd":{
                 cmdLine.skip();
-                setExecutionType(NutsExecutionType.USER_CMD);
+                if (enabled) {
+                    setExecutionType(NutsExecutionType.USER_CMD);
+                }
                 return true;
             }
             case "--root-cmd":{
                 cmdLine.skip();
-                setExecutionType(NutsExecutionType.ROOT_CMD);
+                if (enabled) {
+                    setExecutionType(NutsExecutionType.ROOT_CMD);
+                }
                 return true;
             }
             case "-dry":
             case "-d": {
-                setDry(cmdLine.nextBoolean().getBooleanValue());
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                if (enabled) {
+                    setDry(val);
+                }
                 return true;
             }
             default: {

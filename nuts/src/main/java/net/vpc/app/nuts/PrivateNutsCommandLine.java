@@ -642,7 +642,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
     }
 
     private String createExpandedSimpleOption(char start, boolean negate, char val) {
-        return new String(negate ? new char[]{start, '!', val} : new char[]{start, '!', val});
+        return new String(negate ? new char[]{start, '!', val} : new char[]{start, val});
     }
 
     private String createExpandedSimpleOption(char start, boolean negate, String val) {

@@ -49,10 +49,15 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
             NutsArgument a;
             if ((a = commandLine.nextString(DefaultPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
                 NutsArgument i = a.getArgumentValue();
-                extraConfig.add(a.getString());
-                addMultilineProperty(i.getStringKey(), i.getStringValue());
+                if(a.isEnabled()) {
+                    extraConfig.add(a.getString());
+                    addMultilineProperty(i.getStringKey(), i.getStringValue());
+                }
             } else {
-                extraConfig.add(commandLine.next().getString());
+                a = commandLine.next();
+                if(!a.isOption() || a.isEnabled()) {
+                    extraConfig.add(commandLine.next().getString());
+                }
             }
             return true;
         }

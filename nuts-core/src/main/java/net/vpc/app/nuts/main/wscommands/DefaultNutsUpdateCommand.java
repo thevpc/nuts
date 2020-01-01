@@ -60,10 +60,13 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         if (a == null) {
             return false;
         }
+        boolean enabled=a.isEnabled();
         switch (a.getStringKey()) {
             case "--check-fixes": {
                 cmdLine.skip();
-                this.checkFixes = true;
+                if(enabled) {
+                    this.checkFixes = true;
+                }
                 return true;
             }
         }
