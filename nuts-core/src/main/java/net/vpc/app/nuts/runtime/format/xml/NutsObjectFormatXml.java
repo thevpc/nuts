@@ -23,13 +23,11 @@ import org.w3c.dom.Document;
  */
 public class NutsObjectFormatXml extends NutsObjectFormatBase {
 
-    private final NutsWorkspace ws;
     private final List<String> extraConfig = new ArrayList<>();
     private final Map<String, String> multilineProperties = new HashMap<>();
 
     public NutsObjectFormatXml(NutsWorkspace ws) {
         super(ws, NutsOutputFormat.XML.id() + "-format");
-        this.ws = ws;
     }
 
     @Override
@@ -58,10 +56,10 @@ public class NutsObjectFormatXml extends NutsObjectFormatBase {
     public void print(PrintStream w) {
         try {
             Document document = NutsXmlUtils.createDocument();
-            document.appendChild(ws.xml().toXmlElement(getValue(), document));
+            document.appendChild(getWorkspace().xml().toXmlElement(getValue(), document));
             NutsXmlUtils.writeDocument(document, new StreamResult(w), false,true);
         } catch (TransformerException | ParserConfigurationException ex) {
-            throw new NutsException(ws, ex);
+            throw new NutsException(getWorkspace(), ex);
         }
     }
 

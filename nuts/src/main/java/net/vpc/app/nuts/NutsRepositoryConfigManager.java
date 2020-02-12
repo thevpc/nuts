@@ -31,7 +31,6 @@ package net.vpc.app.nuts;
 
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * @author vpc
@@ -60,7 +59,7 @@ public interface NutsRepositoryConfigManager {
      */
     String getGlobalName();
 
-    Map<String,String> getEnv();
+    Map<String, String> getEnv();
 
     String getEnv(String property, String defaultValue);
 
@@ -70,7 +69,7 @@ public interface NutsRepositoryConfigManager {
 
     int getSpeed();
 
-    int getSpeed(boolean transitive);
+    int getSpeed(NutsSession session);
 
     void setEnv(String property, String value, NutsUpdateOptions options);
 
@@ -82,7 +81,7 @@ public interface NutsRepositoryConfigManager {
      * return repository configured location as string
      *
      * @param expand when true, location will be expanded (~ and $ params will
-     * be expanded)
+     *               be expanded)
      * @return repository location
      */
     String getLocation(boolean expand);
@@ -95,7 +94,7 @@ public interface NutsRepositoryConfigManager {
 
     void save(NutsSession session);
 
-    Map<String,String> getEnv(boolean inherit);
+    Map<String, String> getEnv(boolean inherit);
 
     String getEnv(String key, String defaultValue, boolean inherit);
 
@@ -113,37 +112,41 @@ public interface NutsRepositoryConfigManager {
 
     boolean isEnabled();
 
-    NutsRepositoryConfigManager subscribeIndex();
+    NutsRepositoryConfigManager subscribeIndex(NutsSession session);
 
-    NutsRepositoryConfigManager unsubscribeIndex();
+    NutsRepositoryConfigManager unsubscribeIndex(NutsSession session);
+
 
     boolean isSupportedMirroring();
 
-    NutsRepository findMirrorById(String repositoryNameOrId, boolean transitive);
+    NutsRepository findMirrorById(String repositoryNameOrId, NutsSession session);
 
-    NutsRepository findMirrorByName(String repositoryNameOrId, boolean transitive);
+    NutsRepository findMirrorByName(String repositoryNameOrId, NutsSession session);
 
-    NutsRepository[] getMirrors();
+    NutsRepository[] getMirrors(NutsSession session);
 
     /**
      * search for (or throw error) a repository with the given repository name or id.
+     *
      * @param repositoryIdOrName repository name or id
-     * @param transitive when true, check into mirrors
+     * @param session session
      * @return found repository or throw an exception
      * @throws NutsRepositoryNotFoundException if not found
      */
-    NutsRepository getMirror(String repositoryIdOrName, boolean transitive);
+    NutsRepository getMirror(String repositoryIdOrName, NutsSession session);
 
     /**
      * search for (or return null) a repository with the given repository name or id.
+     *
      * @param repositoryIdOrName repository name or id
-     * @param transitive when true, check into mirrors
+     * @param session session
      * @return found repository or return null
      */
-    NutsRepository findMirror(String repositoryIdOrName, boolean transitive);
+    NutsRepository findMirror(String repositoryIdOrName, NutsSession session);
 
     /**
      * add new repository
+     *
      * @param definition repository definition
      * @return {@code this} instance
      */
@@ -151,20 +154,18 @@ public interface NutsRepositoryConfigManager {
 
     /**
      * add new repository
+     *
      * @param options repository definition
      * @return {@code this} instance
      */
-    NutsRepository addMirror(NutsCreateRepositoryOptions options);
+    NutsRepository addMirror(NutsAddRepositoryOptions options);
 
     /**
-     *
      * @param repositoryId repository id pr id
-     * @param options remove options
+     * @param options      remove options
      * @return {@code this} instance
      */
     NutsRepositoryConfigManager removeMirror(String repositoryId, NutsRemoveOptions options);
-
-    int getSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode fetchMode, boolean transitive);
 
     NutsStoreLocationStrategy getStoreLocationStrategy();
 }

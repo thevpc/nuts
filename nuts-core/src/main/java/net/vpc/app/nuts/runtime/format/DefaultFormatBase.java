@@ -43,7 +43,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
         if (out == null) {
             out = getValidSession().getTerminal().getOut();
         }
-        return ws.io().getTerminalFormat().prepare(out);
+        return getWorkspace().io().getTerminalFormat().prepare(out);
     }
 
     @Override
@@ -131,7 +131,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
             print(pout);
             pout.flush();
         } else {
-            PrintStream pout = CoreIOUtils.toPrintStream(out, ws);
+            PrintStream pout = CoreIOUtils.toPrintStream(out, getWorkspace());
             print(pout);
             pout.flush();
         }
@@ -139,7 +139,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
 
     @Override
     public void print(OutputStream out) {
-        PrintStream p = CoreIOUtils.toPrintStream(out, ws);
+        PrintStream p = CoreIOUtils.toPrintStream(out, getWorkspace());
         if (p == null) {
             p = getValidPrintStream();
         }
@@ -162,7 +162,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
             println(pout);
             pout.flush();
         } else {
-            PrintStream pout = CoreIOUtils.toPrintStream(w, ws);
+            PrintStream pout = CoreIOUtils.toPrintStream(w, getWorkspace());
             println(pout);
             pout.flush();
         }

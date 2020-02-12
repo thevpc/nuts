@@ -138,7 +138,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
                 }
             }
         }
-        NutsIdFormat id1 = ws.id();
+        NutsIdFormat id1 = getWorkspace().id();
         for (String omitQueryProperty : getOmitQueryProperties()) {
             id1.omitProperty(omitQueryProperty);
         }
@@ -173,14 +173,14 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 
     @Override
     public NutsDependency parse(String dependency) {
-        return CoreNutsUtils.parseNutsDependency(ws, dependency);
+        return CoreNutsUtils.parseNutsDependency(getWorkspace(), dependency);
     }
 
     @Override
     public NutsDependency parseRequired(String dependency) {
         NutsDependency d = parse(dependency);
         if (d == null) {
-            throw new NutsParseException(ws, "Invalid Dependency format : " + dependency);
+            throw new NutsParseException(getWorkspace(), "Invalid Dependency format : " + dependency);
         }
         return d;
     }

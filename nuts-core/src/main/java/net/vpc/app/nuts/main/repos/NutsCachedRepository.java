@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.main.repos;
 
+import net.vpc.app.nuts.core.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.core.SuccessFailResult;
 import net.vpc.app.nuts.core.WriteType;
 import net.vpc.app.nuts.runtime.repocommands.AbstractNutsUpdateRepositoryStatisticsCommand;
@@ -57,7 +58,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     protected final NutsRepositoryFolderHelper cache;
     private final NutsRepositoryMirroringHelper mirroring;
 
-    public NutsCachedRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
+    public NutsCachedRepository(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
         super(options, workspace, parent, speed, supportedMirroring, repositoryType);
         LOG = workspace.log().of(DefaultNutsRepoConfigManager.class);
         cache = new NutsRepositoryFolderHelper(this, workspace, config().getStoreLocation(NutsStoreLocation.CACHE));
@@ -66,8 +67,8 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     }
 
     @Override
-    public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+    public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
+        if (fetchMode != NutsFetchMode.REMOTE) {
             NutsDescriptor libDesc = lib.fetchDescriptorImpl(id, session);
             if (libDesc != null) {
                 return libDesc;
@@ -83,14 +84,14 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
         SuccessFailResult<NutsDescriptor, RuntimeException> res = workspace.io().lock().source(id.builder().setFaceDescriptor().build()).call(() -> {
             try {
-                NutsDescriptor success = fetchDescriptorCore(id, session);
+                NutsDescriptor success = fetchDescriptorCore(id, fetchMode, session);
                 if (success != null) {
                     if (cache.isWriteEnabled()) {
-                        NutsId id0 = NutsWorkspaceExt.of(getWorkspace()).resolveEffectiveId(success, session.getSession());
+                        NutsId id0 = NutsWorkspaceExt.of(getWorkspace()).resolveEffectiveId(success, session);
                         if (!id0.getLongName().equals(success.getId().getLongName())) {
                             success = success.builder().setId(id0).build();
                         }
-                        cache.deployDescriptor(success.getId(), success, WriteType.FORCE, session.copy().setSession(session.getSession().yes()));
+                        cache.deployDescriptor(success.getId(), success, WriteType.FORCE, session.copy().yes());
                     }
                     return SuccessFailResult.success(success);
                 } else {
@@ -105,7 +106,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         }
         NutsDescriptor m = null;
         try {
-            m = mirroring.fetchDescriptorImplInMirrors(id, session);
+            m = mirroring.fetchDescriptorImplInMirrors(id, fetchMode, session);
         } catch (RuntimeException ex) {
             mirrorsEx = ex;
         }
@@ -132,13 +133,13 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     }
 
     @Override
-    public final Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsRepositorySession session) {
+    public final Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
         List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
         List<Iterator<NutsId>> li = new ArrayList<>();
         List<String> rootStrings = new ArrayList<>();
         for (CommonRootsHelper.PathBase root : roots) {
             li.add(lib.findInFolder(Paths.get(root.getName()), filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
-            if (cache.isReadEnabled() && session.getSession().isCached()) {
+            if (cache.isReadEnabled() && session.isCached()) {
                 li.add(cache.findInFolder(Paths.get(root.getName()), filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
             }
             if (root.isDeep()) {
@@ -149,7 +150,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         }
         Iterator<NutsId> p = null;
         try {
-            p = searchCore(filter, rootStrings.toArray(new String[0]), session);
+            p = searchCore(filter, rootStrings.toArray(new String[0]), fetchMode, session);
         } catch (NutsNotFoundException ex) {
             //ignore....
         } catch (Exception ex) {
@@ -159,12 +160,12 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         if (p != null) {
             li.add(p);
         }
-        return mirroring.search(IteratorBuilder.ofList(li).distinct(NutsId::getLongName).build(), filter, session);
+        return mirroring.search(IteratorBuilder.ofList(li).distinct(NutsId::getLongName).build(), filter, fetchMode, session);
     }
 
     @Override
-    public final NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+    public final NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsSession session) {
+        if (fetchMode != NutsFetchMode.REMOTE) {
             NutsContent c = lib.fetchContentImpl(id, localPath, session);
             if (c != null) {
                 return c;
@@ -182,14 +183,14 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         SuccessFailResult<NutsContent, RuntimeException> res = workspace.io().lock().source(id.builder().setFaceContent().build()).call(() -> {
             if (cache.isWriteEnabled()) {
                 Path cachePath = cache.getLongNameIdLocalFile(id);
-                NutsContent c2 = fetchContentCore(id, descriptor, cachePath, session);
+                NutsContent c2 = fetchContentCore(id, descriptor, cachePath, fetchMode, session);
                 if (c2 != null) {
                     Path localPath2 = localPath;
                     //already deployed because fetchContentImpl2 is run against cachePath
 //                cache.deployContent(id, c.getPath(), session);
                     if (localPath2 != null) {
                         getWorkspace().io().copy()
-                                .session(session.getSession())
+                                .session(session)
                                 .from(cachePath).to(localPath2).run();
                     } else {
                         localPath2 = cachePath;
@@ -202,7 +203,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 NutsContent c2 = null;
                 RuntimeException impl2Ex = null;
                 try {
-                    c2 = fetchContentCore(id, descriptor, localPath, session);
+                    c2 = fetchContentCore(id, descriptor, localPath, fetchMode, session);
                 } catch (RuntimeException ex) {
                     impl2Ex = ex;
                 }
@@ -220,7 +221,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
             return res.getSuccess();
         }
         try {
-            c = mirroring.fetchContent(id, descriptor, localPath, session);
+            c = mirroring.fetchContent(id, descriptor, localPath, fetchMode, session);
         } catch (RuntimeException ex) {
             mirrorsEx = ex;
         }
@@ -252,10 +253,10 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     }
 
     @Override
-    public final Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+    public final Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
 
         List<Iterator<NutsId>> all = new ArrayList<>();
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+        if (fetchMode != NutsFetchMode.REMOTE) {
             try {
                 all.add(lib.searchVersions(id, idFilter, true, session));
                 if (cache.isReadEnabled()) {
@@ -277,7 +278,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
         try {
             Iterator<NutsId> p = null;
-            p = searchVersionsCore(id, idFilter, session);
+            p = searchVersionsCore(id, idFilter, fetchMode, session);
             if (p != null) {
                 all.add(p);
             }
@@ -292,12 +293,12 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         if (namedNutIdIterator == null) {
             namedNutIdIterator = IteratorUtils.emptyIterator();
         }
-        return mirroring.searchVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, session);
+        return mirroring.searchVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, fetchMode, session);
 
     }
 
     @Override
-    public final NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+    public final NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
         if (id.getVersion().isBlank() && filter == null) {
             NutsId bestId = lib.searchLatestVersion(id, filter, session);
             NutsId c1 = null;
@@ -308,7 +309,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 }
             }
             try {
-                c1 = searchLatestVersionCore(id, filter, session);
+                c1 = searchLatestVersionCore(id, filter, fetchMode, session);
                 if (bestId == null || (c1 != null && c1.getVersion().compareTo(bestId.getVersion()) > 0)) {
                     bestId = c1;
                 }
@@ -318,9 +319,9 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 LOG.with().level(Level.SEVERE).error(ex).log("Search latest versions error : {0}",ex.toString());
                 //ignore....
             }
-            return mirroring.searchLatestVersion(bestId, id, filter, session);
+            return mirroring.searchLatestVersion(bestId, id, filter, fetchMode, session);
         }
-        return super.searchLatestVersion(id, filter, session);
+        return super.searchLatestVersion(id, filter, fetchMode, session);
     }
 
     @Override
@@ -332,37 +333,37 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 if (cache.isWriteEnabled()) {
                     cache.reindexFolder();
                 }
-                updateStatistics2();
+                updateStatistics2(getSession());
                 return this;
             }
         };
     }
 
-    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 
-    public NutsId searchLatestVersionCore(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+    public NutsId searchLatestVersionCore(NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 
-    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsRepositorySession session) {
+    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 
-    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
+    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 
-    public void updateStatistics2() {
+    public void updateStatistics2(NutsSession session) {
 
     }
 
-    public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode) {
+    public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode, NutsSession session) {
         String groups = config().getGroups();
         if (CoreStringUtils.isBlank(groups)) {
             return true;

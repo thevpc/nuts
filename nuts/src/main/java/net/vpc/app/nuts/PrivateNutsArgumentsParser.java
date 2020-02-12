@@ -407,6 +407,14 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
+                    case "--skip-boot":
+                    case "-Q": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            options.setSkipBoot(a.getBooleanValue());
+                        }
+                        break;
+                    }
 
                     //**********************************
                     //*

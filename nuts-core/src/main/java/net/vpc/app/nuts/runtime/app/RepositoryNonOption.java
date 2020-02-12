@@ -40,30 +40,27 @@ import java.util.List;
  */
 public class RepositoryNonOption extends DefaultNonOption {
 
-    private NutsRepository repository;
 
-    public RepositoryNonOption(NutsWorkspace workspace, String name) {
-        super(workspace,name);
+    public RepositoryNonOption(String name) {
+        super(name);
     }
 
-    public RepositoryNonOption(String name, NutsRepository repository) {
-        super(repository.getWorkspace(),name);
-        this.repository = repository;
-    }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates() {
+    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineFormat c = getWorkspace().commandLine();
+        NutsCommandLineFormat c = context.getWorkspace().commandLine();
+        NutsRepository repository=context.get(NutsRepository.class);
         if(repository!=null){
             if (repository.config().isSupportedMirroring()) {
-                for (NutsRepository repository : repository.config().getMirrors()) {
-                    all.add(c.createCandidate(repository.config().getName()));
+                for (NutsRepository repo : repository.config().getMirrors(context.getSession())) {
+                    all.add(c.createCandidate(repo.config().getName()));
                 }
             }
         }else{
-            for (NutsRepository repository : getWorkspace().config().getRepositories()) {
-                all.add(c.createCandidate(repository.config().getName()));
+            NutsSession session = context.getWorkspace().createSession();
+            for (NutsRepository repo : context.getWorkspace().config().getRepositories(session)) {
+                all.add(c.createCandidate(repo.config().getName()));
             }
 
         }

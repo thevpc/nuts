@@ -92,4 +92,7 @@ public interface NutsInstallInformation {
      */
     boolean isInstalledOrIncluded();
 
+    String getSourceRepositoryName();
+
+    String getSourceRepositoryUUID();
 }

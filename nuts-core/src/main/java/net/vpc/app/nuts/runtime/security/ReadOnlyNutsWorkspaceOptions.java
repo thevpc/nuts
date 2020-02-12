@@ -316,4 +316,9 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     public String getBootRepositories() {
         return options.getBootRepositories();
     }
+
+    @Override
+    public boolean isSkipBoot() {
+        return options.isSkipBoot();
+    }
 }

@@ -69,7 +69,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 if (loc == null) {
                     loc = conf.findSdkByPath("java", Paths.get(name), context.getSession());
                     if (loc == null) {
-                        loc = conf.findSdkByVersion("java", name);
+                        loc = conf.findSdkByVersion("java", name, context.getSession());
                     }
                 }
                 if (loc != null) {

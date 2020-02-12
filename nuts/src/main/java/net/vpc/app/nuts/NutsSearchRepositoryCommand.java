@@ -50,7 +50,20 @@ public interface NutsSearchRepositoryCommand extends NutsRepositoryCommand {
     NutsSearchRepositoryCommand run();
 
     @Override
-    NutsSearchRepositoryCommand setSession(NutsRepositorySession session);
+    NutsSearchRepositoryCommand setSession(NutsSession session);
+
+    /**
+     * fetchMode
+     * @param fetchMode fetchMode
+     * @return {@code this} instance
+     */
+    NutsSearchRepositoryCommand setFetchMode(NutsFetchMode fetchMode);
+
+    /**
+     * get fetchMode
+     * @return {@code this} instance
+     */
+    NutsFetchMode getFetchMode();
 
     /**
      * this method should return immediately and returns valid iterator.

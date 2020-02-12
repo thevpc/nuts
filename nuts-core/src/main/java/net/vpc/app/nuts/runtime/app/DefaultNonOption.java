@@ -29,11 +29,10 @@
  */
 package net.vpc.app.nuts.runtime.app;
 
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
+
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsArgumentCandidate;
-import net.vpc.app.nuts.NutsArgumentName;
 
 /**
  *
@@ -42,16 +41,12 @@ import net.vpc.app.nuts.NutsArgumentName;
 public class DefaultNonOption implements NutsArgumentName {
 
     private final String name;
-    private NutsWorkspace workspace;
 
-    public DefaultNonOption(NutsWorkspace workspace,String name) {
+    public DefaultNonOption(String name) {
         this.name = name;
-        this.workspace = workspace;
     }
 
-    public NutsWorkspace getWorkspace() {
-        return workspace;
-    }
+
 
     @Override
     public String getName() {
@@ -59,9 +54,9 @@ public class DefaultNonOption implements NutsArgumentName {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates() {
+    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> list = new ArrayList<>();
-        list.add(workspace.commandLine().createCandidate("<" + getName() + ">"));
+        list.add(context.getWorkspace().commandLine().createCandidate("<" + getName() + ">"));
         return list;
     }
 

@@ -67,7 +67,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
     }
     private final Stack<PathAndDepth> stack = new Stack<>();
     private final NutsIdFilter filter;
-    private final NutsRepositorySession session;
+    private final NutsSession session;
     private final NutsWorkspace workspace;
     private final FolderNutIdIteratorModel model;
     private long visitedFoldersCount;
@@ -76,10 +76,6 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
     private Path rootFolder;
 
     public FolderNutIdIterator(NutsWorkspace workspace, String repository, Path folder, NutsIdFilter filter, NutsSession session, FolderNutIdIteratorModel model, int maxDepth) {
-        this(workspace,repository,folder, filter,NutsWorkspaceHelper.createNoRepositorySession(session),model,maxDepth);
-    }
-
-    public FolderNutIdIterator(NutsWorkspace workspace, String repository, Path folder, NutsIdFilter filter, NutsRepositorySession session, FolderNutIdIteratorModel model, int maxDepth) {
         this.repository = repository;
         this.session = session;
         this.filter = filter;
@@ -101,7 +97,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (Files.isDirectory(file.path)) {
-                SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(file.path.toString()),session.getSession());
+                SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(file.path.toString()),session);
                 visitedFoldersCount++;
                 boolean deep = file.depth < maxDepth;
                 if(Files.isDirectory(file.path)) {
@@ -142,13 +138,13 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                     if (!CoreNutsUtils.isEffectiveId(t.getId())) {
                         NutsDescriptor nutsDescriptor = null;
                         try {
-                            nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, CoreNutsUtils.silent(session.getSession()));
+                            nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, CoreNutsUtils.silent(session));
                         } catch (Exception e) {
                             //throw new NutsException(e);
                         }
                         t = nutsDescriptor;
                     }
-                    if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), session.getSession()))) {
+                    if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), session))) {
                         NutsId nutsId = t.getId().builder().setNamespace(repository).build();
 //                        nutsId = nutsId.setAlternative(t.getAlternative());
                         last = nutsId;
@@ -185,10 +181,10 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
 
     public interface FolderNutIdIteratorModel {
 
-        void undeploy(NutsId id, NutsRepositorySession session) throws NutsExecutionException;
+        void undeploy(NutsId id, NutsSession session) throws NutsExecutionException;
 
         boolean isDescFile(Path pathname);
 
-        NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException;
+        NutsDescriptor parseDescriptor(Path pathname, NutsSession session) throws IOException;
     }
 }

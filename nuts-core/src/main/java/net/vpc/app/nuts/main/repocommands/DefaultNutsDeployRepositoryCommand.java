@@ -60,7 +60,7 @@ public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployReposi
             NutsDescriptor rep = xrepo.deployImpl(this);
             this.setDescriptor(rep);
             this.setId(rep.getId());
-            if (getSession().getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
+            if (getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 try {
                     xrepo.getIndexStore().revalidate(this.getId());
                 } catch (NutsException ex) {

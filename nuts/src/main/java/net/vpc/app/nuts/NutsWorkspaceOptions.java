@@ -404,6 +404,18 @@ public interface NutsWorkspaceOptions extends Serializable {
     boolean isSkipWelcome();
 
     /**
+     * if true, do not bootstrap workspace after reset/recover.
+     * When reset/recover is not active this option is not accepted and an error will be thrown
+     * <p>
+     * defaults to false.
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @return if true, do not run welcome when no application arguments were resolved
+     * @since 0.6.0
+     */
+    boolean isSkipBoot();
+
+    /**
      * when true, extra trace user-friendly information is written to standard output.
      * <p>
      * <strong>option-type :</strong> exported (inherited in child workspaces)

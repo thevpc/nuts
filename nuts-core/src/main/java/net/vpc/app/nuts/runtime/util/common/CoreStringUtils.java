@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
  */
 public class CoreStringUtils {
 
-    private static final Pattern PATTENR_ALL = Pattern.compile(".*");
+    private static final Pattern PATTERN_ALL = Pattern.compile(".*");
     public static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([^}]+))[}]");
 
     private static Pattern DOLLAR_PATTERN = Pattern.compile("\\$\\{(?<key>[^}]*)}");
@@ -68,7 +68,7 @@ public class CoreStringUtils {
 
     public static Pattern toPattern(String pattern) {
         if (isBlank(pattern)) {
-            return PATTENR_ALL;
+            return PATTERN_ALL;
         }
         return Pattern.compile(simpexpToRegexp(pattern, false));
     }

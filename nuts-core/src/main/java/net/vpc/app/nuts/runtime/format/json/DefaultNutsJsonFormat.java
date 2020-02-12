@@ -52,9 +52,9 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
     private Object value;
     private final NutsElementFactoryContext dummyContext;
 
-    public DefaultNutsJsonFormat(NutsWorkspace ws) {
-        super(ws, "json-format");
-        dummyContext = new DefaultNutsElementFactoryContext(ws) {
+    public DefaultNutsJsonFormat(NutsWorkspace workspace) {
+        super(workspace, "json-format");
+        dummyContext = new DefaultNutsElementFactoryContext(workspace) {
             @Override
             public NutsElement toElement(Object o) {
                 return fromJsonElement((JsonElement) o);
@@ -120,10 +120,10 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
             } catch (NutsException ex) {
                 throw ex;
             } catch (RuntimeException ex) {
-                throw new NutsParseException(ws, "Unable to parse url " + url, ex);
+                throw new NutsParseException(getWorkspace(), "Unable to parse url " + url, ex);
             }
         } catch (IOException ex) {
-            throw new NutsParseException(ws, "Unable to parse url " + url, ex);
+            throw new NutsParseException(getWorkspace(), "Unable to parse url " + url, ex);
         }
     }
 
@@ -438,12 +438,12 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
 
         @Override
         public org.w3c.dom.Element deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return ws.xml().toXmlElement(fromJsonElement(json), null);
+            return getWorkspace().xml().toXmlElement(fromJsonElement(json), null);
         }
 
         @Override
         public JsonElement serialize(org.w3c.dom.Element src, Type typeOfSrc, JsonSerializationContext context) {
-            return toJsonElement(ws.xml().fromXmlElement(src, NutsElement.class));
+            return toJsonElement(getWorkspace().xml().fromXmlElement(src, NutsElement.class));
         }
     }
 
@@ -459,7 +459,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
             } catch (ParserConfigurationException ex) {
                 throw new JsonParseException(ex.getMessage(), ex);
             }
-            Element ee = ws.xml().toXmlElement(fromJsonElement(json), doc);
+            Element ee = getWorkspace().xml().toXmlElement(fromJsonElement(json), doc);
             ee = (Element) doc.importNode(ee, true);
             doc.appendChild(ee);
             return doc;
@@ -467,7 +467,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
 
         @Override
         public JsonElement serialize(org.w3c.dom.Document src, Type typeOfSrc, JsonSerializationContext context) {
-            NutsElement element = ws.xml().fromXmlElement(src.getDocumentElement(), NutsElement.class);
+            NutsElement element = getWorkspace().xml().fromXmlElement(src.getDocumentElement(), NutsElement.class);
             return toJsonElement(element);
         }
     }

@@ -56,7 +56,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     private final NutsLogger LOG;
     private NutsId remoteId;
 
-    public NutsHttpSrvRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
+    public NutsHttpSrvRepository(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
         LOG=workspace.log().of(NutsHttpSrvRepository.class);
         try {
@@ -89,9 +89,6 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             throw new NutsNotFoundException(getWorkspace(), command.getId());
         }
         NutsWorkspaceUtils.of(getWorkspace()).checkSession(command.getSession());
-        if (command.getSession().getFetchMode() != NutsFetchMode.REMOTE) {
-            throw new NutsIllegalArgumentException(getWorkspace(), "Offline");
-        }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
         getWorkspace().descriptor().value(desc).print(new OutputStreamWriter(descStream));
         httpUpload(CoreIOUtils.buildUrl(config().getLocation(true), "/deploy?" + resolveAuthURLPart()),
@@ -100,17 +97,17 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
                 new NutsTransportParamBinaryFilePart("content", content.getPath().getFileName().toString(), content.getPath()),
                 new NutsTransportParamParamPart("descriptor-hash", getWorkspace().io().hash().sha1().source(desc).computeString()),
                 new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(content.getPath())),
-                new NutsTransportParamParamPart("force", String.valueOf(command.getSession().getSession().isYes()))
+                new NutsTransportParamParamPart("force", String.valueOf(command.getSession().isYes()))
         );
     }
 
     @Override
-    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsRepositorySession session) {
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
+    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
+        if (fetchMode != NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
         }
-        boolean transitive = session.getSession().isTransitive();
-        SearchTraceHelper.progressIndeterminate("Loading "+session.getWorkspace().id().set(id.getLongNameId()).format(),session.getSession());
+        boolean transitive = session.isTransitive();
+        SearchTraceHelper.progressIndeterminate("Loading "+session.getWorkspace().id().set(id.getLongNameId()).format(),session);
         try (InputStream stream = CoreIOUtils.getHttpClientFacade(getWorkspace(), getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open()) {
             NutsDescriptor descriptor = getWorkspace().descriptor().parse(stream);
             if (descriptor != null) {
@@ -126,14 +123,14 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
+    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
+        if (fetchMode != NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
         }
-        boolean transitive = session.getSession().isTransitive();
+        boolean transitive = session.isTransitive();
         InputStream ret = null;
         try {
-            SearchTraceHelper.progressIndeterminate("search "+session.getWorkspace().id().set(id.getLongNameId()).format(),session.getSession());
+            SearchTraceHelper.progressIndeterminate("search "+session.getWorkspace().id().set(id.getLongNameId()).format(),session);
             ret = CoreIOUtils.getHttpClientFacade(getWorkspace(), getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open();
         } catch (UncheckedIOException e) {
             return IteratorUtils.emptyIterator();
@@ -143,19 +140,19 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
                 new NutsPatternIdFilter(id.getShortNameId())
         ).simplify();
         if (filter2 != null) {
-            it = IteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(filter2, session.getSession())).iterator();
+            it = IteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(filter2, session)).iterator();
         }
         return it;
     }
 
     @Override
-    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
+        if (fetchMode != NutsFetchMode.REMOTE) {
             return null;
         }
 
-        SearchTraceHelper.progressIndeterminate("search "+ Arrays.toString(roots),session.getSession());
-        boolean transitive = session.getSession().isTransitive();
+        SearchTraceHelper.progressIndeterminate("search "+ Arrays.toString(roots),session);
+        boolean transitive = session.isTransitive();
         InputStream ret = null;
         String[] ulp = resolveEncryptedAuth();
         if (filter instanceof NutsScriptAwareIdFilter) {
@@ -167,7 +164,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
                         new NutsTransportParamParamPart("up", ulp[1]),
                         new NutsTransportParamTextReaderPart("js", "search.js", new StringReader(js))
                 );
-                return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter, session.getSession())).iterator();
+                return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter, session)).iterator();
             }
         } else {
             ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()),
@@ -181,16 +178,16 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         if (filter == null) {
             return new NamedNutIdFromStreamIterator(ret);
         }
-        return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter, session.getSession())).iterator();
+        return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter, session)).iterator();
 
     }
 
     @Override
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsSession session) {
+        if (fetchMode != NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
         }
-        boolean transitive = session.getSession().isTransitive();
+        boolean transitive = session.isTransitive();
         boolean temp = false;
         if (localPath == null) {
             temp = true;
@@ -200,7 +197,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 
         try {
             String location = getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart());
-            getWorkspace().io().copy().session(session.getSession()).from(location).to(localPath).safe().logProgress().run();
+            getWorkspace().io().copy().session(session).from(location).to(localPath).safe().logProgress().run();
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
             String lhash = CoreIOUtils.evalSHA1Hex(localPath);
             if (rhash.equalsIgnoreCase(lhash)) {
@@ -275,7 +272,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 //        throw new NutsUnsupportedOperationException(getWorkspace());
 //    }
 //    @Override
-//    public void checkAllowedFetch(NutsId parse, NutsRepositorySession session) {
+//    public void checkAllowedFetch(NutsId parse, NutsSession session) {
 //        super.checkAllowedFetch(parse, session);
 //        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
 //            throw new NutsNotFoundException(getWorkspace(), parse);

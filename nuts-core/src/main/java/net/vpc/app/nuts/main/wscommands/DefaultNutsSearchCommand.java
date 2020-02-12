@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.main.wscommands;
 
+import net.vpc.app.nuts.core.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.runtime.AbstractNutsResultList;
 import net.vpc.app.nuts.runtime.DefaultNutsSearch;
 import net.vpc.app.nuts.runtime.ext.DefaultNutsWorkspaceExtensionManager;
@@ -697,7 +698,9 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             )) {
                                 if (sRepositoryFilter == null || sRepositoryFilter.accept(repo)) {
                                     all.add(IteratorBuilder.ofLazyNamed("searchVersions(" + repo.config().name() + "," + mode + "," + sRepositoryFilter + "," + finalSession + ")", () ->
-                                            repo.searchVersions().setId(nutsId1).setFilter(filter).setSession(NutsWorkspaceHelper.createRepositorySession(finalSession, repo, mode))
+                                            repo.searchVersions().setId(nutsId1).setFilter(filter)
+                                                    .setSession(finalSession)
+                                                    .setFetchMode(mode)
                                                     .getResult()).safeIgnore().iterator()
                                     );
                                 }
@@ -733,10 +736,12 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         nutsInstallStatusFilter!=NutsInstallStatus.INSTALLED_OR_INCLUDED &&
                                 nutsInstallStatusFilter!=NutsInstallStatus.INCLUDED &&
                                 nutsInstallStatusFilter!=NutsInstallStatus.INSTALLED)) {
-                    NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, mode);
+                    NutsSession finalSession1 = session;
                     all.add(
                             IteratorBuilder.ofLazyNamed("search(" + repo.config().name() + "," + mode + "," + sRepositoryFilter + "," + session + ")",
-                                    () -> repo.search().setFilter(filter).setSession(rsession).getResult()).safeIgnore().iterator()
+                                    () -> repo.search().setFilter(filter).setSession(finalSession1)
+                                            .setFetchMode(mode)
+                                            .getResult()).safeIgnore().iterator()
                     );
                 }
                 coalesce.add(IteratorUtils.concat(all));

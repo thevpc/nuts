@@ -29,12 +29,10 @@
  */
 package net.vpc.app.nuts.runtime.app;
 
-import net.vpc.app.nuts.NutsCommandLineFormat;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsArgumentCandidate;
 
 /**
  *
@@ -42,14 +40,14 @@ import net.vpc.app.nuts.NutsArgumentCandidate;
  */
 public class ArchitectureNonOption extends DefaultNonOption {
 
-    public ArchitectureNonOption(String name, NutsWorkspace workspace) {
-        super(workspace,name);
+    public ArchitectureNonOption(String name) {
+        super(name);
     }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates() {
+    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineFormat c = getWorkspace().commandLine();
+        NutsCommandLineFormat c = context.getWorkspace().commandLine();
         all.add(c.createCandidate("\"linux x86\""));
         all.add(c.createCandidate("\"linux x64\""));
         all.add(c.createCandidate("\"win x86\""));

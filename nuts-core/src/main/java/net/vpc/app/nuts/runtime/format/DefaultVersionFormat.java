@@ -105,7 +105,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
         if (getValidSession().isPlainOut() && !all) {
             if (isWorkspaceVersion()) {
                 PrintStream pout = getValidPrintStream(out);
-                NutsWorkspaceConfigManager rtcontext = ws.config();
+                NutsWorkspaceConfigManager rtcontext = getWorkspace().config();
                 pout.printf("%s/%s", rtcontext.getApiVersion(), rtcontext.getRuntimeId().getVersion());
             } else {
                 PrintStream pout = getValidPrintStream(out);
@@ -122,7 +122,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
 
     public Map<String, String> buildProps() {
         LinkedHashMap<String, String> props = new LinkedHashMap<>();
-        NutsWorkspaceConfigManager configManager = ws.config();
+        NutsWorkspaceConfigManager configManager = getWorkspace().config();
         Set<String> extraKeys = new TreeSet<>();
         if (extraProperties != null) {
             extraKeys = new TreeSet(extraProperties.keySet());
@@ -131,7 +131,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
         props.put("nuts-runtime-version", configManager.getRuntimeId().getVersion().toString());
         if (all) {
             props.put("java-version", System.getProperty("java.version"));
-            props.put("os-version", ws.config().getOs().getVersion().toString());
+            props.put("os-version", getWorkspace().config().getOs().getVersion().toString());
         }
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));

@@ -28,14 +28,12 @@ import org.w3c.dom.Element;
  */
 public class NutsObjectFormatPlain extends NutsObjectFormatBase {
 
-    private final NutsWorkspace ws;
     private final String rootName = "";
     private final List<String> extraConfig = new ArrayList<>();
     private final Map<String, String> multilineProperties = new HashMap<>();
 
     public NutsObjectFormatPlain(NutsWorkspace ws) {
         super(ws, NutsOutputFormat.PLAIN.id() + "-format");
-        this.ws = ws;
     }
 
     @Override
@@ -64,7 +62,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
     private String getFormattedPrimitiveValue(NutsElement value) {
         switch (value.type()) {
             default: {
-                throw new NutsUnsupportedArgumentException(ws, value.type().toString());
+                throw new NutsUnsupportedArgumentException(getWorkspace(), value.type().toString());
             }
         }
     }
@@ -73,9 +71,9 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
     public void print(PrintStream w) {
         Object value = getValue();
         if (value instanceof NutsTableModel) {
-            ws.table().setModel(((NutsTableModel) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
+            getWorkspace().table().setModel(((NutsTableModel) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof NutsTreeModel) {
-            ws.tree().setModel(((NutsTreeModel) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
+            getWorkspace().tree().setModel(((NutsTreeModel) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
 //        } else if (value instanceof Map) {
 //            ws.props().setModel(((Map) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof org.w3c.dom.Document) {
@@ -94,7 +92,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 throw new UncheckedIOException(new IOException(ex));
             }
         } else {
-            printElement(w, ws.element().toElement(value));
+            printElement(w, getWorkspace().element().toElement(value));
         }
     }
 
@@ -118,7 +116,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 break;
             }
             case DATE: {
-                out.print(ws.io().getTerminalFormat().escapeText(value.primitive().getDate().toString()));
+                out.print(getWorkspace().io().getTerminalFormat().escapeText(value.primitive().getDate().toString()));
                 out.flush();
                 break;
             }
@@ -126,19 +124,19 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 break;
             }
             case ARRAY: {
-                NutsObjectFormatTable table = new NutsObjectFormatTable(ws);
+                NutsObjectFormatTable table = new NutsObjectFormatTable(getWorkspace());
                 table.configure(true, "--no-header", "--border=spaces");
                 table.value(value).print(w);
                 break;
             }
             case OBJECT: {
-                NutsObjectFormatProps tree = new NutsObjectFormatProps(ws);
+                NutsObjectFormatProps tree = new NutsObjectFormatProps(getWorkspace());
                 tree.configure(true, extraConfig.toArray(new String[0]));
                 tree.value(value).print(w);
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(ws, value.type().toString());
+                throw new NutsUnsupportedArgumentException(getWorkspace(), value.type().toString());
             }
         }
     }

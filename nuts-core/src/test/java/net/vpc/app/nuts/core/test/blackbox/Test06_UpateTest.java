@@ -56,7 +56,8 @@ public class Test06_UpateTest {
                 "--progress=newline",
                 "--skip-companions"
         );
-        NutsRepository updateRepo1 = uws.config().getRepository("local", false);
+        NutsSession session = uws.createSession();
+        NutsRepository updateRepo1 = uws.config().getRepository("local", session);
         String updateRepoPath = updateRepo1.config().getStoreLocation().toString();
         TestUtils.println(updateRepo1.config().getStoreLocationStrategy());
         uws.info().println();
@@ -69,13 +70,13 @@ public class Test06_UpateTest {
                 "--yes",
                 "--skip-companions"
         );
-        nws.config().addRepository(new NutsCreateRepositoryOptions().setTemporary(true).setName("temp").setLocation(updateRepoPath)
+        nws.config().addRepository(new NutsAddRepositoryOptions().setTemporary(true).setName("temp").setLocation(updateRepoPath)
                 .setConfig(new NutsRepositoryConfig().setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE))
         );
         nws.info().showRepositories().println();
         TestUtils.println("\n------------------------------------------");
 
-        NutsRepository r = nws.config().getRepository("temp", false);
+        NutsRepository r = nws.config().getRepository("temp", session);
         NutsDefinition api = nws.fetch().content().nutsApi().getResultDefinition();
         NutsDefinition rt = nws.fetch().content().nutsRuntime().getResultDefinition();
 
@@ -108,17 +109,17 @@ public class Test06_UpateTest {
                 .run();
 
         TestUtils.println("[LOCAL]");
-        TestUtils.println(uws.config().getRepository("local", false).config().getStoreLocationStrategy());
-        TestUtils.println(uws.config().getRepository("local", false).config().getStoreLocation());
-        TestUtils.println(uws.config().getRepository("local", false).config().getStoreLocation(NutsStoreLocation.LIB));
+        TestUtils.println(uws.config().getRepository("local", session).config().getStoreLocationStrategy());
+        TestUtils.println(uws.config().getRepository("local", session).config().getStoreLocation());
+        TestUtils.println(uws.config().getRepository("local", session).config().getStoreLocation(NutsStoreLocation.LIB));
 
         TestUtils.println("[TEMP]");
-        TestUtils.println(nws.config().getRepository("temp", false).config().getStoreLocationStrategy());
-        TestUtils.println(nws.config().getRepository("temp", false).config().getStoreLocation());
-        TestUtils.println(nws.config().getRepository("temp", false).config().getStoreLocation(NutsStoreLocation.LIB));
+        TestUtils.println(nws.config().getRepository("temp", session).config().getStoreLocationStrategy());
+        TestUtils.println(nws.config().getRepository("temp", session).config().getStoreLocation());
+        TestUtils.println(nws.config().getRepository("temp", session).config().getStoreLocation(NutsStoreLocation.LIB));
         Assert.assertEquals(
-                uws.config().getRepository("local", false).config().getStoreLocation(NutsStoreLocation.LIB),
-                nws.config().getRepository("temp", false).config().getStoreLocation(NutsStoreLocation.LIB));
+                uws.config().getRepository("local", session).config().getStoreLocation(NutsStoreLocation.LIB),
+                nws.config().getRepository("temp", session).config().getStoreLocation(NutsStoreLocation.LIB));
 
         TestUtils.println(uws.search().id(api.getId().getShortNameId()).getResultIds().list());
         TestUtils.println(uws.search().id(rt.getId().getShortNameId()).getResultIds().list());

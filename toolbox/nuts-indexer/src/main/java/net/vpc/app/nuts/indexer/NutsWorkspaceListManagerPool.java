@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.indexer;
 
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceListManager;
 
 import java.util.LinkedHashMap;
@@ -17,7 +18,8 @@ public class NutsWorkspaceListManagerPool {
     public synchronized NutsWorkspaceListManager openListManager(String name) {
         NutsWorkspaceListManager o = pool.get(name);
         if (o == null) {
-            o = app.getApplicationContext().getWorkspace().config().createWorkspaceListManager(name);
+            NutsWorkspace ws = app.getApplicationContext().getWorkspace();
+            o = ws.config().createWorkspaceListManager(name, ws.createSession());
             pool.put(name, o);
         }
         return o;

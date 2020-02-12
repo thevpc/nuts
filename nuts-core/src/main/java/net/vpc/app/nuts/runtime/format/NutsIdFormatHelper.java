@@ -149,18 +149,18 @@ public class NutsIdFormatHelper {
         return b;
     }
 
-    private static FormatHelper getFormatHelper(NutsWorkspace ws) {
-        FormatHelper h = (FormatHelper) ws.userProperties().get(FormatHelper.class.getName());
+    private static FormatHelper getFormatHelper(NutsSession session) {
+        FormatHelper h = (FormatHelper) session.workspace().userProperties().get(FormatHelper.class.getName());
         if (h != null) {
             return h;
         }
-        FormatHelperResetListener h2 = (FormatHelperResetListener) ws.userProperties().get(FormatHelperResetListener.class.getName());
+        FormatHelperResetListener h2 = (FormatHelperResetListener) session.workspace().userProperties().get(FormatHelperResetListener.class.getName());
         if (h2 == null) {
             h2 = new FormatHelperResetListener();
-            ws.addWorkspaceListener(h2);
+            session.workspace().addWorkspaceListener(h2);
         }
-        h = new FormatHelper(ws);
-        ws.userProperties().put(FormatHelper.class.getName(), h);
+        h = new FormatHelper(session);
+        session.workspace().userProperties().put(FormatHelper.class.getName(), h);
         return h;
     }
 
@@ -216,10 +216,10 @@ public class NutsIdFormatHelper {
     }
 
     public static class FormatHelper {
-        NutsWorkspace ws;
+        NutsSession session;
 
-        public FormatHelper(NutsWorkspace ws) {
-            this.ws = ws;
+        public FormatHelper(NutsSession session) {
+            this.session = session;
         }
 
         private Integer maxRepoNameSize;
@@ -231,7 +231,7 @@ public class NutsIdFormatHelper {
             }
             int z = 0;
             Stack<NutsRepository> stack = new Stack<>();
-            for (NutsRepository repository : ws.config().getRepositories()) {
+            for (NutsRepository repository : session.workspace().config().getRepositories(session)) {
                 stack.push(repository);
             }
             while (!stack.isEmpty()) {
@@ -241,7 +241,7 @@ public class NutsIdFormatHelper {
                     z = n;
                 }
                 if (r.config().isSupportedMirroring()) {
-                    for (NutsRepository repository : r.config().getMirrors()) {
+                    for (NutsRepository repository : r.config().getMirrors(session)) {
                         stack.push(repository);
                     }
                 }
@@ -254,7 +254,7 @@ public class NutsIdFormatHelper {
                 return maxUserNameSize;
             }
             int z = "anonymous".length();
-            NutsWorkspaceConfigManagerExt wc = NutsWorkspaceConfigManagerExt.of(ws.config());
+            NutsWorkspaceConfigManagerExt wc = NutsWorkspaceConfigManagerExt.of(session.workspace().config());
             NutsUserConfig[] users = wc.getStoredConfigSecurity().getUsers();
             if (users != null) {
                 for (NutsUserConfig user : users) {
@@ -265,7 +265,7 @@ public class NutsIdFormatHelper {
                 }
             }
             Stack<NutsRepository> stack = new Stack<>();
-            for (NutsRepository repository : ws.config().getRepositories()) {
+            for (NutsRepository repository : session.workspace().config().getRepositories(session)) {
                 stack.push(repository);
             }
             while (!stack.isEmpty()) {
@@ -281,7 +281,7 @@ public class NutsIdFormatHelper {
                     }
                 }
                 if (r.config().isSupportedMirroring()) {
-                    for (NutsRepository repository : r.config().getMirrors()) {
+                    for (NutsRepository repository : r.config().getMirrors(session)) {
                         stack.push(repository);
                     }
                 }
@@ -302,7 +302,7 @@ public class NutsIdFormatHelper {
                     break;
                 }
                 case REPOSITORY: {
-                    z = getFormatHelper(session.getWorkspace()).maxRepoNameSize();
+                    z = getFormatHelper(session).maxRepoNameSize();
                     break;
                 }
                 case REPOSITORY_ID: {
@@ -310,7 +310,7 @@ public class NutsIdFormatHelper {
                     break;
                 }
                 case INSTALL_USER: {
-                    z = getFormatHelper(session.getWorkspace()).maxUserNameSize();
+                    z = getFormatHelper(session).maxUserNameSize();
                     break;
                 }
             }
@@ -399,7 +399,7 @@ public class NutsIdFormatHelper {
                         rname = def.getRepositoryName();
                     }
                     if (def.getRepositoryUuid() != null) {
-                        NutsRepository r = ws.config().findRepositoryById(def.getRepositoryUuid(), true);
+                        NutsRepository r = ws.config().findRepositoryById(def.getRepositoryUuid(), session.copy().transitive());
                         if (r != null) {
                             rname = r.config().getName();
                         }
@@ -419,7 +419,7 @@ public class NutsIdFormatHelper {
                 }
                 if (ruuid == null && id != null) {
                     String p = id.getNamespace();
-                    NutsRepository r = ws.config().findRepositoryByName(p, true);
+                    NutsRepository r = ws.config().findRepositoryByName(p, session.copy().transitive());
                     if (r != null) {
                         ruuid = r.uuid();
                     }

@@ -117,7 +117,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             if (wordIndex < 0) {
                 wordIndex = args.length;
             }
-            autoComplete = new AppCommandAutoComplete(workspace, args, wordIndex, getSession().out());
+            autoComplete = new AppCommandAutoComplete(session, args, wordIndex, getSession().out());
         } else {
             autoComplete = null;
         }
@@ -518,13 +518,18 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         private final ArrayList<String> words;
         private int wordIndex;
         private final PrintStream out0;
-        private final NutsWorkspace workspace;
+        private final NutsSession session;
 
-        public AppCommandAutoComplete(NutsWorkspace workspace, String[] args, int wordIndex, PrintStream out0) {
-            this.workspace = workspace;
+        public AppCommandAutoComplete(NutsSession session, String[] args, int wordIndex, PrintStream out0) {
+            this.session = session;
             words = new ArrayList<>(Arrays.asList(args));
             this.wordIndex = wordIndex;
             this.out0 = out0;
+        }
+
+        @Override
+        public NutsSession getSession(){
+            return session;
         }
 
         @Override
@@ -532,7 +537,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             NutsArgumentCandidate c = super.addCandidatesImpl(value);
             String v = value.getValue();
             if (v == null) {
-                throw new NutsExecutionException(workspace, "Candidate cannot be null", 2);
+                throw new NutsExecutionException(getWorkspace(), "Candidate cannot be null", 2);
             }
             String d = value.getDisplay();
             if (Objects.equals(v, d) || d == null) {
@@ -545,7 +550,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
         @Override
         public String getLine() {
-            return new DefaultNutsCommandLine(workspace).setArguments(getWords()).toString();
+            return new DefaultNutsCommandLine(getWorkspace()).setArguments(getWords()).toString();
         }
 
         @Override

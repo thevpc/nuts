@@ -38,7 +38,7 @@ public class DefaultNutsRepositoryUndeployCommand extends AbstractNutsRepository
         try {
             NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
             xrepo.undeployImpl(this);
-            if (getSession().getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
+            if (getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 try {
                     xrepo.getIndexStore().invalidate(this.getId());
                 } catch (NutsException ex) {

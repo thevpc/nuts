@@ -151,12 +151,6 @@ public abstract class AbstractNutsRepository implements NutsRepository{
         }
     }
 
-    protected void checkSession(NutsRepositorySession session) {
-        if (session == null) {
-            throw new NutsIllegalArgumentException(workspace, "Missing Session");
-        }
-    }
-
     @Override
     public NutsWorkspace getWorkspace() {
         return workspace;

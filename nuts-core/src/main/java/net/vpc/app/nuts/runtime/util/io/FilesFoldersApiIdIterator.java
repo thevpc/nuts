@@ -44,10 +44,10 @@ import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
  */
 class FilesFoldersApiIdIterator implements Iterator<NutsId> {
 //    private static final Logger LOG=Logger.getLogger(FilesFoldersApiIdIterator.class.getName());
-    private final String repository;
+    private final NutsRepository repository;
     private final Stack<PathAndDepth> stack = new Stack<>();
     private final NutsIdFilter filter;
-    private final NutsRepositorySession session;
+    private final NutsSession session;
     private final NutsWorkspace workspace;
     private final FilesFoldersApi.IteratorModel model;
     private final int maxDepth;
@@ -56,7 +56,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
     private long visitedFilesCount;
     private String rootUrl;
 
-    public FilesFoldersApiIdIterator(NutsWorkspace workspace, String repository, String rootUrl, String basePath, NutsIdFilter filter, NutsRepositorySession session, FilesFoldersApi.IteratorModel model, int maxDepth) {
+    public FilesFoldersApiIdIterator(NutsWorkspace workspace, NutsRepository repository, String rootUrl, String basePath, NutsIdFilter filter, NutsSession session, FilesFoldersApi.IteratorModel model, int maxDepth) {
         this.repository = repository;
         this.session = session;
         this.filter = filter;
@@ -86,8 +86,8 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (file.folder) {
-                FilesFoldersApi.Item[] children = FilesFoldersApi.getFilesAndFolders(true,true,file.path, session.getSession());
-//                String[] childrenFiles = FilesFoldersApi.getFiles(file.path, session.getSession());
+                FilesFoldersApi.Item[] children = FilesFoldersApi.getFilesAndFolders(true,true,file.path, session);
+//                String[] childrenFiles = FilesFoldersApi.getFiles(file.path, session);
                 visitedFoldersCount++;
                 boolean deep = file.depth < maxDepth;
                 for (FilesFoldersApi.Item child : children) {
@@ -109,23 +109,23 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                 NutsDescriptor t = null;
                 try {
                     t = model.parseDescriptor(file.path, workspace.io()
-                            .monitor().source(file.path).session(session.getSession()).create(),
-                            session);
+                            .monitor().source(file.path).session(session).create(),
+                            NutsFetchMode.LOCAL, repository, session);
                 } catch (Exception ex) {
-                    session.getSession().workspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).error(ex).log("Error parsing url : {0} : {1}",file.path,toString());//e.printStackTrace();
+                    session.workspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).error(ex).log("Error parsing url : {0} : {1}",file.path,toString());//e.printStackTrace();
                 }
                 if (t != null) {
                     if (!CoreNutsUtils.isEffectiveId(t.getId())) {
                         NutsDescriptor nutsDescriptor = null;
                         try {
-                            nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, session.getSession());
+                            nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, session);
                         } catch (Exception ex) {
-                            session.getSession().workspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).error(ex).log("Error resolving effective descriptor for {0} in url {1} : {2}",t.getId(),file.path,ex.toString());//e.printStackTrace();
+                            session.workspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).error(ex).log("Error resolving effective descriptor for {0} in url {1} : {2}",t.getId(),file.path,ex.toString());//e.printStackTrace();
                         }
                         t = nutsDescriptor;
                     }
-                    if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), session.getSession()))) {
-                        NutsId nutsId = t.getId().builder().setNamespace(repository).build();
+                    if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), session))) {
+                        NutsId nutsId = t.getId().builder().setNamespace(repository.name()).build();
 //                        nutsId = nutsId.setAlternative(t.getAlternative());
                         last = nutsId;
                         break;

@@ -187,7 +187,7 @@ public class MavenUtils {
         return false;
     }
 
-    public NutsDescriptor parsePomXml0(InputStream stream, NutsRepositorySession session, String urlDesc) {
+    public NutsDescriptor parsePomXml0(InputStream stream, NutsFetchMode fetchMode, String urlDesc, NutsRepository repository, NutsSession session) {
         long startTime = System.currentTimeMillis();
         try {
             if (stream == null) {
@@ -229,8 +229,7 @@ public class MavenUtils {
             }
 
             long time = System.currentTimeMillis() - startTime;
-            String fetchString = "[" + CoreStringUtils.alignLeft(session.getFetchMode().id(), 7) + "] ";
-            NutsRepository repository = session.getRepository();
+            String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.id(), 7) + "] ";
             LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).time(time).formatted()
                     .log("{0}{1} parse pom    {2}", fetchString
                             , CoreStringUtils.alignLeft(repository==null?"<no-repo>":repository.config().name(), 20)
@@ -264,11 +263,11 @@ public class MavenUtils {
         return version == null ? null : version.replace("(", "]").replace(")", "[");
     }
 
-    public NutsDescriptor parsePomXml(Path path, NutsRepositorySession session) throws IOException {
+    public NutsDescriptor parsePomXml(Path path, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) throws IOException {
         try {
-            SearchTraceHelper.progressIndeterminate("parse "+CoreIOUtils.compressUrl(path.toString()),session.getSession());
+            SearchTraceHelper.progressIndeterminate("parse "+CoreIOUtils.compressUrl(path.toString()),session);
             try (InputStream is = Files.newInputStream(path)) {
-                NutsDescriptor nutsDescriptor = parsePomXml(is, session, path.toString());
+                NutsDescriptor nutsDescriptor = parsePomXml(is, fetchMode, path.toString(), repository, session);
                 if (nutsDescriptor.getId().getArtifactId() == null) {
                     //why name is null ? should checkout!
                     if (LOG.isLoggable(Level.FINE)) {
@@ -283,7 +282,7 @@ public class MavenUtils {
         }
     }
 
-    public NutsDescriptor parsePomXml(InputStream stream, NutsRepositorySession session, String urlDesc) {
+    public NutsDescriptor parsePomXml(InputStream stream, NutsFetchMode fetchMode, String urlDesc, NutsRepository repository, NutsSession session) {
         NutsDescriptor nutsDescriptor = null;
 //        if (session == null) {
 //            session = ws.createSession();
@@ -291,7 +290,7 @@ public class MavenUtils {
         try {
             try {
 //            bytes = IOUtils.loadByteArray(stream, true);
-                nutsDescriptor = parsePomXml0(stream, session, urlDesc);
+                nutsDescriptor = parsePomXml0(stream, fetchMode, urlDesc, repository, session);
                 HashMap<String, String> properties = new HashMap<>();
                 NutsId parentId = null;
                 for (NutsId nutsId : nutsDescriptor.getParents()) {
@@ -302,10 +301,10 @@ public class MavenUtils {
                     if (!CoreNutsUtils.isEffectiveId(parentId)) {
                         try {
                             parentDescriptor = ws.fetch().id(parentId).setEffective(true)
-                                    .session(session.getSession())
+                                    .session(session)
                                     .transitive(true)
                                     .fetchStrategy(
-                                            session.getFetchMode() == NutsFetchMode.REMOTE ? NutsFetchStrategy.ONLINE
+                                            fetchMode == NutsFetchMode.REMOTE ? NutsFetchStrategy.ONLINE
                                             : NutsFetchStrategy.OFFLINE
                                     ).getResultDescriptor();
                         } catch (NutsException ex) {
@@ -346,7 +345,7 @@ public class MavenUtils {
                         NutsDescriptor d = cache.get(pid);
                         if (d == null) {
                             try {
-                                d = ws.fetch().id(pid).effective().session(session.getSession()).getResultDescriptor();
+                                d = ws.fetch().id(pid).effective().session(session).getResultDescriptor();
                             } catch (NutsException ex) {
                                 throw ex;
                             } catch (Exception ex) {

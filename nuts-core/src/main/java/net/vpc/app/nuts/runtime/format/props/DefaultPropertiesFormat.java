@@ -5,14 +5,11 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.*;
 
-import net.vpc.app.nuts.NutsArgument;
-import net.vpc.app.nuts.NutsPropertiesFormat;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.fprint.ExtendedFormatAwarePrintWriter;
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
-import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.runtime.format.DefaultFormatBase;
 import net.vpc.app.nuts.runtime.format.ObjectOutputFormatWriterHelper;
 
@@ -175,7 +172,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     private void printMap(PrintStream out, String prefix, Map<Object, Object> props) {
         int len = 1;
         for (Object extraKey : props.keySet()) {
-            int x = ws.io().getTerminalFormat().textLength(stringValue(extraKey));
+            int x = getWorkspace().io().getTerminalFormat().textLength(stringValue(extraKey));
             if (x > len) {
                 len = x;
             }
@@ -208,7 +205,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (prefix == null) {
             prefix = "";
         }
-        String ekey = ws.io().getTerminalFormat().escapeText(key);
+        String ekey = getWorkspace().io().getTerminalFormat().escapeText(key);
         int delta = key.length() - ekey.length();
         String formattedKey = compact ? key : CoreStringUtils.alignLeft(ekey, len - delta);
         if (fancySep != null) {

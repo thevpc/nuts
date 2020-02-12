@@ -80,32 +80,32 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
             String versionString = id.getVersion().getValue();
             NutsDescriptor d = null;
             if (DefaultNutsVersion.isBlank(versionString)) {
-                NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), null, getSession());
+                NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), null, getFetchMode(), getSession());
                 if (a == null) {
                     throw new NutsNotFoundException(ws, id.getLongNameId());
                 }
                 a = a.builder().setFaceDescriptor().build();
-                d = xrepo.fetchDescriptorImpl(a, getSession());
+                d = xrepo.fetchDescriptorImpl(a, getFetchMode(), getSession());
             } else if (DefaultNutsVersion.isStaticVersionPattern(versionString)) {
                 id = id.builder().setFaceDescriptor().build();
-                d = xrepo.fetchDescriptorImpl(id, getSession());
+                d = xrepo.fetchDescriptorImpl(id, getFetchMode(), getSession());
             } else {
                 NutsIdFilter filter = CoreFilterUtils.idFilterOf(id.getProperties(), new NutsPatternIdFilter(id), null);
-                NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), filter, getSession());
+                NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), filter, getFetchMode(), getSession());
                 if (a == null) {
                     throw new NutsNotFoundException(ws, id.getLongNameId());
                 }
                 a = a.builder().setFaceDescriptor().build();
-                d = xrepo.fetchDescriptorImpl(a, getSession());
+                d = xrepo.fetchDescriptorImpl(a, getFetchMode(), getSession());
             }
             if (d == null) {
                 throw new NutsNotFoundException(ws, id.getLongNameId());
             }
-            CoreNutsUtils.traceMessage(LOG, Level.FINER, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.SUCCESS, "fetch descriptor", startTime, null);
+            CoreNutsUtils.traceMessage(LOG, Level.FINER, getRepo().config().name(), getSession(), getFetchMode(), id.getLongNameId(), TraceResult.SUCCESS, "fetch descriptor", startTime, null);
             result = d;
         } catch (Exception ex) {
             if (!CoreNutsUtils.isUnsupportedFetchModeException(ex)) {
-                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.FAIL, "fetch descriptor", startTime, CoreNutsUtils.resolveMessageToTraceOrNullIfNutsNotFoundException(ex));
+                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().config().name(), getSession(), getFetchMode(), id.getLongNameId(), TraceResult.FAIL, "fetch descriptor", startTime, CoreNutsUtils.resolveMessageToTraceOrNullIfNutsNotFoundException(ex));
             }
             throw ex;
         }

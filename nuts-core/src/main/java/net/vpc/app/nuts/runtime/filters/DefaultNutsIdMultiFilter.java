@@ -22,9 +22,9 @@
 //
 //    private final NutsDescriptorFilter descriptorFilter;
 //    private final NutsRepository repository;
-//    private final NutsRepositorySession session;
+//    private final NutsSession session;
 //
-//    public DefaultNutsIdMultiFilter(Map<String, String> map, NutsIdFilter idFilter, NutsDescriptorFilter descriptorFilter, NutsRepository repository, NutsRepositorySession session) {
+//    public DefaultNutsIdMultiFilter(Map<String, String> map, NutsIdFilter idFilter, NutsDescriptorFilter descriptorFilter, NutsRepository repository, NutsSession session) {
 //        this.idFilter = CoreNutsUtils.simplify(idFilter);
 //        this.descriptorFilter = CoreNutsUtils.simplify(CoreFilterUtils.And(
 //                CoreNutsUtils.createNutsDescriptorFilter(map), descriptorFilter));
@@ -70,7 +70,7 @@
 //                    NutsDescriptor nutsDescriptor = null;
 //                    try {
 //                        //NutsWorkspace ws = repository.getWorkspace();
-//                        nutsDescriptor = NutsWorkspaceExt.of(ws).resolveEffectiveDescriptor(descriptor, this.session.getSession());
+//                        nutsDescriptor = NutsWorkspaceExt.of(ws).resolveEffectiveDescriptor(descriptor, this.session);
 //                    } catch (Exception e) {
 //                        //throw new NutsException(e);
 //                    }

@@ -109,6 +109,19 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     NutsWorkspaceOptionsBuilder setSkipCompanions(boolean skipInstallCompanions);
 
+    /**
+     * if true, do not bootstrap workspace after reset/recover.
+     * When reset/recover is not active this option is not accepted and an error will be thrown
+     * <p>
+     * defaults to false.
+     * <p>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     * @param skipBoot skipBoot
+     * @return if true, do not run welcome when no application arguments were resolved
+     * @since 0.6.0
+     */
+    NutsWorkspaceOptionsBuilder setSkipBoot(boolean skipBoot);
+
     NutsWorkspaceOptionsBuilder setSkipWelcome(boolean skipWelcome);
 
     NutsWorkspaceOptionsBuilder setOpenMode(NutsWorkspaceOpenMode openMode);

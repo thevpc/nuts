@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 
 import net.vpc.app.nuts.NutsObjectFormat;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.runtime.util.fprint.ExtendedFormatAwarePrintWriter;

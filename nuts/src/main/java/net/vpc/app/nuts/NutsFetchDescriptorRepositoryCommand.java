@@ -64,7 +64,18 @@ public interface NutsFetchDescriptorRepositoryCommand extends NutsRepositoryComm
     NutsId getId();
 
     @Override
-    NutsFetchDescriptorRepositoryCommand setSession(NutsRepositorySession session);
+    NutsFetchDescriptorRepositoryCommand setSession(NutsSession session);
 
+    /**
+     * fetchMode
+     * @param fetchMode fetchMode
+     * @return {@code this} instance
+     */
+    NutsFetchDescriptorRepositoryCommand setFetchMode(NutsFetchMode fetchMode);
 
+    /**
+     * get fetchMode
+     * @return {@code this} instance
+     */
+    NutsFetchMode getFetchMode();
 }

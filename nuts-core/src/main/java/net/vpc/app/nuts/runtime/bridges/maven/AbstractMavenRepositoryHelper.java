@@ -57,17 +57,17 @@ public abstract class AbstractMavenRepositoryHelper {
 
     protected abstract String getIdPath(NutsId id);
 
-    protected InputSource getStream(NutsId id, NutsRepositorySession session) {
+    protected InputSource getStream(NutsId id, NutsSession session) {
         String url = getIdPath(id);
         return openStream(id, url, id, session);
     }
 
-    protected String getStreamAsString(NutsId id, NutsRepositorySession session) {
+    protected String getStreamAsString(NutsId id, NutsSession session) {
         String url = getIdPath(id);
         return CoreIOUtils.loadString(openStream(id, url, id, session).open(), true);
     }
 
-    protected void checkSHA1Hash(NutsId id, InputStream stream, NutsRepositorySession session) throws IOException {
+    protected void checkSHA1Hash(NutsId id, InputStream stream, NutsSession session) throws IOException {
         switch (CoreStringUtils.trim(id.getFace())) {
             case NutsConstants.QueryFaces.CONTENT_HASH:
             case NutsConstants.QueryFaces.DESCRIPTOR_HASH: {
@@ -95,7 +95,7 @@ public abstract class AbstractMavenRepositoryHelper {
         }
     }
 
-    protected String getStreamSHA1(NutsId id, NutsRepositorySession session) {
+    protected String getStreamSHA1(NutsId id, NutsSession session) {
         String hash = getStreamAsString(id, session).toUpperCase();
         for (String s : hash.split("[ \n\r]")) {
             if (s.length() > 0) {
@@ -105,9 +105,9 @@ public abstract class AbstractMavenRepositoryHelper {
         return hash.split("[ \n\r]")[0];
     }
 
-    protected abstract InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session);
+    protected abstract InputSource openStream(NutsId id, String path, Object source, NutsSession session);
 
-    public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
+    public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
         InputSource stream = null;
         try {
             NutsDescriptor nutsDescriptor = null;
@@ -118,7 +118,7 @@ public abstract class AbstractMavenRepositoryHelper {
                 stream = getStream(idDesc, session);
                 bytes = CoreIOUtils.loadByteArray(stream.open(), true);
                 name = stream.getName();
-                nutsDescriptor = MavenUtils.of(session.getWorkspace()).parsePomXml(new NamedByteArrayInputStream(bytes, name), session, getIdPath(id));
+                nutsDescriptor = MavenUtils.of(session.getWorkspace()).parsePomXml(new NamedByteArrayInputStream(bytes, name), fetchMode, getIdPath(id), repository, session);
             } finally {
                 if (stream != null) {
                     stream.close();

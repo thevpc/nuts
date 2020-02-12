@@ -64,13 +64,13 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         }
         if (org.w3c.dom.Node.class.isAssignableFrom(cls)) {
             if (org.w3c.dom.Document.class.isAssignableFrom(cls)) {
-                return (T) ws.xml().toXmlDocument(element);
+                return (T) getWorkspace().xml().toXmlDocument(element);
             }
             if (org.w3c.dom.Element.class.isAssignableFrom(cls)) {
-                return (T) ws.xml().toXmlElement(element, null);
+                return (T) getWorkspace().xml().toXmlElement(element, null);
             }
         }
-        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) ws.json();
+        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) getWorkspace().json();
         return json.convert(element, cls);
     }
 
@@ -99,7 +99,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     public NutsElementPath compilePath(String pathExpression) {
         NutsSession session = getSession();
         if (session == null) {
-            session = ws.createSession();
+            session = getWorkspace().createSession();
         }
         return NutsElementPathFilter.compile(pathExpression, session);
     }

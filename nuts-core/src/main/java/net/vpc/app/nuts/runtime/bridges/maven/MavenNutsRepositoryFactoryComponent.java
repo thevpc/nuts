@@ -76,7 +76,7 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
     }
 
     @Override
-    public NutsRepository create(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
+    public NutsRepository create(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         final NutsRepositoryConfig config = options.getConfig();
         if (NutsConstants.RepoTypes.MAVEN.equals(config.getType())) {
             if (CoreIOUtils.isPathHttp(config.getLocation())) {

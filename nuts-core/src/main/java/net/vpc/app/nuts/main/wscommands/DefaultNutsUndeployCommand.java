@@ -33,12 +33,10 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
                     .distinct()
                     .failFast()
                     .getResultDefinitions().required();
-            NutsRepository repository1 = ws.config().getRepository(p.getRepositoryUuid(), true);
-            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getSession(),
-                    repository1,
-                    NutsFetchMode.LOCAL);
+            NutsRepository repository1 = ws.config().getRepository(p.getRepositoryUuid(), session.copy().transitive());
             repository1.undeploy()
-                    .setId(p.getId()).setSession(rsession)
+                    .setId(p.getId()).setSession(getSession())
+//                    .setFetchMode(NutsFetchMode.LOCAL)
                     .run();
             addResult(id);
         }

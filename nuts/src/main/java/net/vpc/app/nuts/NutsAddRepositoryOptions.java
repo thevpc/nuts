@@ -37,7 +37,7 @@ import java.util.Objects;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsCreateRepositoryOptions implements Serializable {
+public class NutsAddRepositoryOptions implements Serializable {
     private static final long serialVersionUID = 1;
 
     /**
@@ -94,7 +94,7 @@ public class NutsCreateRepositoryOptions implements Serializable {
     /**
      * default constructor
      */
-    public NutsCreateRepositoryOptions() {
+    public NutsAddRepositoryOptions() {
         this.enabled = true;
     }
 
@@ -102,7 +102,7 @@ public class NutsCreateRepositoryOptions implements Serializable {
      * copy constructor
      * @param other other
      */
-    public NutsCreateRepositoryOptions(NutsCreateRepositoryOptions other) {
+    public NutsAddRepositoryOptions(NutsAddRepositoryOptions other) {
         this.name = other.name;
         this.location = other.location;
         this.enabled = other.enabled;
@@ -128,7 +128,7 @@ public class NutsCreateRepositoryOptions implements Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCreateRepositoryOptions setSession(NutsSession value) {
+    public NutsAddRepositoryOptions setSession(NutsSession value) {
         this.session = value;
         return this;
     }
@@ -138,7 +138,7 @@ public class NutsCreateRepositoryOptions implements Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCreateRepositoryOptions session(NutsSession value) {
+    public NutsAddRepositoryOptions session(NutsSession value) {
         return setSession(value);
     }
 
@@ -155,7 +155,7 @@ public class NutsCreateRepositoryOptions implements Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCreateRepositoryOptions setTemporary(boolean value) {
+    public NutsAddRepositoryOptions setTemporary(boolean value) {
         this.temporary = value;
         return this;
     }
@@ -173,7 +173,7 @@ public class NutsCreateRepositoryOptions implements Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCreateRepositoryOptions setName(String value) {
+    public NutsAddRepositoryOptions setName(String value) {
         this.name = value;
         return this;
     }
@@ -191,7 +191,7 @@ public class NutsCreateRepositoryOptions implements Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCreateRepositoryOptions setLocation(String value) {
+    public NutsAddRepositoryOptions setLocation(String value) {
         this.location = value;
         return this;
     }
@@ -209,7 +209,7 @@ public class NutsCreateRepositoryOptions implements Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCreateRepositoryOptions setEnabled(boolean value) {
+    public NutsAddRepositoryOptions setEnabled(boolean value) {
         this.enabled = value;
         return this;
     }
@@ -229,7 +229,7 @@ public class NutsCreateRepositoryOptions implements Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCreateRepositoryOptions setFailSafe(boolean value) {
+    public NutsAddRepositoryOptions setFailSafe(boolean value) {
         this.failSafe = value;
         return this;
     }
@@ -247,7 +247,7 @@ public class NutsCreateRepositoryOptions implements Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCreateRepositoryOptions setCreate(boolean value) {
+    public NutsAddRepositoryOptions setCreate(boolean value) {
         this.create = value;
         return this;
     }
@@ -265,7 +265,7 @@ public class NutsCreateRepositoryOptions implements Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCreateRepositoryOptions setConfig(NutsRepositoryConfig value) {
+    public NutsAddRepositoryOptions setConfig(NutsRepositoryConfig value) {
         this.config = value;
         return this;
     }
@@ -283,7 +283,7 @@ public class NutsCreateRepositoryOptions implements Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCreateRepositoryOptions setProxy(boolean value) {
+    public NutsAddRepositoryOptions setProxy(boolean value) {
         this.proxy = value;
         return this;
     }
@@ -301,7 +301,7 @@ public class NutsCreateRepositoryOptions implements Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCreateRepositoryOptions setDeployOrder(int value) {
+    public NutsAddRepositoryOptions setDeployOrder(int value) {
         this.deployOrder = value;
         return this;
     }
@@ -310,15 +310,15 @@ public class NutsCreateRepositoryOptions implements Serializable {
      * create a copy of this instance
      * @return a copy of this instance
      */
-    public NutsCreateRepositoryOptions copy() {
-        return new NutsCreateRepositoryOptions(this);
+    public NutsAddRepositoryOptions copy() {
+        return new NutsAddRepositoryOptions(this);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        NutsCreateRepositoryOptions that = (NutsCreateRepositoryOptions) o;
+        NutsAddRepositoryOptions that = (NutsAddRepositoryOptions) o;
         return enabled == that.enabled &&
                 failSafe == that.failSafe &&
                 create == that.create &&
@@ -338,7 +338,7 @@ public class NutsCreateRepositoryOptions implements Serializable {
 
     @Override
     public String toString() {
-        return "NutsCreateRepositoryOptions{" +
+        return "NutsAddRepositoryOptions{" +
                 "name='" + name + '\'' +
                 ", location='" + location + '\'' +
                 ", enabled=" + enabled +

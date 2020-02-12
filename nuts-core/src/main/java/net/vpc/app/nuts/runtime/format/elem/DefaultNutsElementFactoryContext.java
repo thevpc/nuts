@@ -33,6 +33,7 @@ import net.vpc.app.nuts.NutsElementBuilder;
 import java.util.HashMap;
 import java.util.Map;
 import net.vpc.app.nuts.NutsElement;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 
 /**
@@ -44,22 +45,21 @@ public class DefaultNutsElementFactoryContext implements NutsElementFactoryConte
     private NutsElementFactoryService factory;
     private NutsElementFactory fallback;
     private final Map<String, Object> properties = new HashMap<String, Object>();
-    private final NutsWorkspace ws;
+    private final NutsWorkspace workspace;
     private final NutsElementBuilder builder;
 
-    public DefaultNutsElementFactoryContext(NutsWorkspace ws) {
-        this.ws = ws;
+    public DefaultNutsElementFactoryContext(NutsWorkspace workspace) {
+        this.workspace = workspace;
         builder = new DefaultNutsElementBuilder();
+    }
+
+    public NutsWorkspace getWorkspace() {
+        return workspace;
     }
 
     @Override
     public NutsElementBuilder builder() {
         return builder;
-    }
-
-    @Override
-    public NutsWorkspace getWorkspace() {
-        return ws;
     }
 
     public NutsElementFactoryService getFactory() {

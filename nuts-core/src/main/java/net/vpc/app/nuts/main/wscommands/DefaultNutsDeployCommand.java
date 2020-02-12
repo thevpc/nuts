@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.main.wscommands;
 
+import net.vpc.app.nuts.core.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.wscommands.AbstractNutsDeployCommand;
 import net.vpc.app.nuts.runtime.CoreNutsConstants;
@@ -21,7 +22,6 @@ import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 import net.vpc.app.nuts.runtime.util.common.CorePlatformUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.io.InputSource;
-import net.vpc.app.nuts.runtime.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import static net.vpc.app.nuts.runtime.util.io.CoreIOUtils.createInputSource;
 import static net.vpc.app.nuts.runtime.util.io.CoreIOUtils.resolveNutsDescriptorFromFileContent;
@@ -154,33 +154,33 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     if (CoreStringUtils.isBlank(repository)) {
                         NutsRepositoryFilter repositoryFilter = null;
                         //TODO CHECK ME, why offline
-                        for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories(NutsRepositorySupportedAction.DEPLOY, effId, repositoryFilter, NutsFetchMode.LOCAL, getSession(), false, true)) {
-                            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getSession(), repo, NutsFetchMode.LOCAL);
+                        for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositoriesDeploy(effId, repositoryFilter, getSession())) {
 
                             effId = ws.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor)
 //                                    .setAlternative(CoreStringUtils.trim(descriptor.getAlternative()))
                             ;
                             repo.deploy()
-                                    .setSession(rsession)
+                                    .setSession(getSession())
+                                    //.setFetchMode(NutsFetchMode.LOCAL)
                                     .setId(effId).setContent(contentFile).setDescriptor(descriptor)
                                     .run();
                             addResult(effId);
                             return this;
                         }
                     } else {
-                        NutsRepository repo = ws.config().getRepository(repository, true);
+                        NutsRepository repo = ws.config().getRepository(repository, session.copy().transitive());
                         if (repo == null) {
                             throw new NutsRepositoryNotFoundException(ws, repository);
                         }
                         if (!repo.config().isEnabled()) {
                             throw new NutsRepositoryNotFoundException(ws, "Repository " + repository + " is disabled.");
                         }
-                        NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getSession(), repo, NutsFetchMode.LOCAL);
                         effId = ws.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor)
 //                                .setAlternative(CoreStringUtils.trim(descriptor.getAlternative()))
                         ;
                         repo.deploy()
-                                .setSession(rsession)
+                                .setSession(getSession())
+                                //.setFetchMode(NutsFetchMode.LOCAL)
                                 .setId(effId)
                                 .setContent(contentFile)
                                 .setDescriptor(descriptor)

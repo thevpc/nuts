@@ -1,7 +1,5 @@
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.*;
-
 import java.nio.file.Path;
 import java.util.Iterator;
 
@@ -43,8 +41,8 @@ public interface NutsRepositoryModel {
         return "custom";
     }
 
-    default NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
-        Iterator<NutsId> allVersions = searchVersions(id, filter, session);
+    default NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
+        Iterator<NutsId> allVersions = searchVersions(id, filter, fetchMode, repository, session);
         NutsId a = null;
         while (allVersions != null && allVersions.hasNext()) {
             NutsId next = allVersions.next();
@@ -55,27 +53,31 @@ public interface NutsRepositoryModel {
         return a;
     }
 
-    default Iterator<NutsId> searchVersions(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+    default Iterator<NutsId> searchVersions(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
         return null;
     }
 
-    default NutsDescriptor fetchDescriptor(NutsId id, NutsRepositorySession session) {
+    default NutsDescriptor fetchDescriptor(NutsId id, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
         return null;
     }
 
-    default NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
+    default NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
         return null;
     }
 
-    default Iterator<NutsId> search(NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
+    default Iterator<NutsId> search(NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
         return null;
     }
 
-    default void updateStatistics() {
+    default void updateStatistics(NutsRepository repository, NutsSession session) {
 
     }
 
-    default boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode) {
+    default boolean acceptFetch(NutsId id, NutsFetchMode mode, NutsRepository repository, NutsSession session) {
+        return true;
+    }
+
+    default boolean acceptDeploy(NutsId id, NutsFetchMode mode, NutsRepository repository, NutsSession session) {
         return true;
     }
 }

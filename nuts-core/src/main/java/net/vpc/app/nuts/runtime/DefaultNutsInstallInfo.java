@@ -50,14 +50,18 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
     private Instant installDate;
     private String installUser;
     private final Path installFolder;
+    private String sourceRepositoryName;
+    private String sourceRepositoryUUID;
 
-    public DefaultNutsInstallInfo(NutsId id, NutsInstallStatus installStatus, boolean defaultVersion, Path installFolder, Instant installDate, String installUser) {
+    public DefaultNutsInstallInfo(NutsId id, NutsInstallStatus installStatus, boolean defaultVersion, Path installFolder, Instant installDate, String installUser,String sourceRepositoryName,String sourceRepositoryUUID) {
         this.id = id;
         this.installStatus = installStatus;
         this.installFolder = installFolder;
         this.defaultVersion = defaultVersion;
         this.installDate = installDate;
         this.installUser = installUser;
+        this.sourceRepositoryName = sourceRepositoryName;
+        this.sourceRepositoryUUID = sourceRepositoryUUID;
     }
 
     public static DefaultNutsInstallInfo notInstalled(NutsId id) {
@@ -66,7 +70,8 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
                 false,
                 null,
                 null,
-                null
+                null,
+                null,null
         );
     }
 
@@ -124,6 +129,16 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
     @Override
     public boolean isJustReInstalled() {
         return justReInstalled;
+    }
+
+    @Override
+    public String getSourceRepositoryName() {
+        return sourceRepositoryName;
+    }
+
+    @Override
+    public String getSourceRepositoryUUID() {
+        return sourceRepositoryUUID;
     }
 
     public void setJustReInstalled(boolean justReInstalled) {

@@ -32,11 +32,8 @@ package net.vpc.app.nuts.toolbox.nsh.options;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsArgumentCandidate;
-import net.vpc.app.nuts.NutsCommandLineFormat;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.NutsShellContext;
-import net.vpc.app.nuts.NutsArgumentName;
 import net.vpc.common.javashell.JShellBuiltin;
 
 /**
@@ -59,10 +56,10 @@ public class CommandNonOption implements NutsArgumentName {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates() {
+    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineFormat c = context.getWorkspace().commandLine();
-        for (JShellBuiltin command : context.builtins().getAll()) {
+        NutsCommandLineFormat c = this.context.getWorkspace().commandLine();
+        for (JShellBuiltin command : this.context.builtins().getAll()) {
             all.add(c.createCandidate(command.getName()));
         }
         return all;

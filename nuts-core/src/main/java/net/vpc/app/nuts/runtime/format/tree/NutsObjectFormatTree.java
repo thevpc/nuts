@@ -21,7 +21,6 @@ import net.vpc.app.nuts.runtime.format.NutsObjectFormatBase;
 public class NutsObjectFormatTree extends NutsObjectFormatBase {
 
     final NutsOutputFormat t;
-    final NutsWorkspace ws;
     private String rootName = "";
     private List<String> extraConfig = new ArrayList<>();
     private Map<String, String> multilineProperties = new HashMap<>();
@@ -29,12 +28,11 @@ public class NutsObjectFormatTree extends NutsObjectFormatBase {
     public NutsObjectFormatTree(NutsWorkspace ws) {
         super(ws, NutsOutputFormat.TREE.id() + "-format");
         this.t = NutsOutputFormat.TREE;
-        this.ws = ws;
     }
 
     @Override
     public NutsObjectFormat setValue(Object value) {
-        return super.setValue(ws.element().toElement(value));
+        return super.setValue(getWorkspace().element().toElement(value));
     }
 
     @Override
@@ -66,9 +64,9 @@ public class NutsObjectFormatTree extends NutsObjectFormatBase {
 
     @Override
     public void print(PrintStream w) {
-        NutsTreeFormat t = ws.tree();
+        NutsTreeFormat t = getWorkspace().tree();
         t.configure(true, getExtraConfigArray());
-        t.setModel(new NutsElementTreeModel(ws, rootName, getValue(), getValidSession()) {
+        t.setModel(new NutsElementTreeModel(getWorkspace(), rootName, getValue(), getValidSession()) {
             @Override
             protected String[] getMultilineArray(String key, NutsElement value) {
                 return NutsObjectFormatTree.this.getMultilineArray(key, value);

@@ -224,6 +224,11 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
         JShellBuiltin command = this.builtins().find(commandName);
         NutsCommandAutoComplete autoComplete = new NutsCommandAutoCompleteBase() {
             @Override
+            public NutsSession getSession() {
+                return session;
+            }
+
+            @Override
             public String getLine() {
                 return autoCompleteLine;
             }
@@ -237,6 +242,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
             public int getCurrentWordIndex() {
                 return wordIndex;
             }
+
         };
 
         if (command != null && command instanceof NshBuiltin) {

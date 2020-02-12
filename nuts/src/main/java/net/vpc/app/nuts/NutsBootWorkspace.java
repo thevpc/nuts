@@ -577,7 +577,7 @@ public final class NutsBootWorkspace {
         }
         //if recover or reset mode with -K option (SkipWelcome)
         //as long as there are no applications to run, wil exit before creating workspace
-        if (options.getApplicationArguments().length == 0 && options.isSkipWelcome()
+        if (options.getApplicationArguments().length == 0 && options.isSkipBoot()
                 && (options.isRecover() || options.isReset())) {
             throw new NutsExecutionException(null, 0);
         }

@@ -31,7 +31,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.next("--repo", "-r") != null) {
-                    repository = workspace.config().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
+                    repository = workspace.config().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString(), context.getSession());
                 }
             }
             if (repository == null) {
@@ -65,7 +65,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = workspace.config().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("repository")).getString());
+                        repository = workspace.config().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("repository")).getString(), context.getSession());
                     }
                 }
                 if (cmdLine.isExecMode()) {
@@ -93,7 +93,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = workspace.config().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
+                        repository = workspace.config().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString(), context.getSession());
                     }
                 }
 
@@ -141,7 +141,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = workspace.config().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
+                        repository = workspace.config().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString(), context.getSession());
                     }
                 }
 
@@ -269,7 +269,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = workspace.config().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
+                        repository = workspace.config().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString(), context.getSession());
                     }
                 }
                 //unsecure-box
@@ -299,7 +299,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = workspace.config().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
+                        repository = workspace.config().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString(), context.getSession());
                     }
                 }
                 //secure-box

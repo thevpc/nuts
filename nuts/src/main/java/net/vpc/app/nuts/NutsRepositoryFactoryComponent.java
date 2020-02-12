@@ -38,6 +38,6 @@ public interface NutsRepositoryFactoryComponent extends NutsComponent<NutsReposi
 
     NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace);
 
-    NutsRepository create(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository);
+    NutsRepository create(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository);
 
 }

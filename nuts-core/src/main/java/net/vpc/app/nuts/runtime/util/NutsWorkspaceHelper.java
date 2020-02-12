@@ -32,41 +32,21 @@ package net.vpc.app.nuts.runtime.util;
 import net.vpc.app.nuts.*;
 import java.util.*;
 
-import net.vpc.app.nuts.runtime.repos.DefaultNutsRepositorySession;
-
 /**
  *
  * @author vpc
  */
 public class NutsWorkspaceHelper {
-
-    public static NutsRepositorySession createNoRepositorySession(NutsSession session) {
-        return createNoRepositorySession(session,NutsFetchMode.LOCAL);
-    }
-
-    public static NutsRepositorySession createNoRepositorySession(NutsSession session, NutsFetchMode mode) {
-        return new DefaultNutsRepositorySession(null,session).setFetchMode(mode);
-    }
-
-    public static NutsRepositorySession createRepositorySession(NutsSession session, NutsRepository repo, NutsFetchMode mode) {
-        return new DefaultNutsRepositorySession(repo,session).setFetchMode(mode);
-    }
-
-    public static NutsFetchMode[] resolveFetchModes(boolean offline) {
-        return offline ? new NutsFetchMode[]{NutsFetchMode.LOCAL} : new NutsFetchMode[]{NutsFetchMode.LOCAL, NutsFetchMode.REMOTE};
-    }
-
     public static NutsFetchStrategy validate(NutsFetchStrategy mode) {
         return mode == null ? NutsFetchStrategy.ONLINE : mode;
     }
 
-    public static List<NutsRepository> _getEnabledRepositories(NutsRepository parent, NutsRepositoryFilter repositoryFilter) {
+    public static List<NutsRepository> _getEnabledRepositories(NutsRepository parent, NutsRepositoryFilter repositoryFilter, NutsSession session) {
         List<NutsRepository> repos = new ArrayList<>();
-        NutsRepository repo = (NutsRepository) parent;
-        if (repo.config().isSupportedMirroring()) {
+        if (parent.config().isSupportedMirroring()) {
             List<NutsRepository> subrepos = new ArrayList<>();
             boolean ok = false;
-            for (NutsRepository repository : repo.config().getMirrors()) {
+            for (NutsRepository repository : parent.config().getMirrors(session)) {
                 if (repository.config().isEnabled()) {
                     if (repositoryFilter == null || repositoryFilter.accept(repository)) {
                         repos.add(repository);
@@ -78,7 +58,7 @@ public class NutsWorkspaceHelper {
                 }
             }
             for (NutsRepository subrepo : subrepos) {
-                repos.addAll(_getEnabledRepositories(subrepo, repositoryFilter));
+                repos.addAll(_getEnabledRepositories(subrepo, repositoryFilter, session));
             }
         }
         return repos;

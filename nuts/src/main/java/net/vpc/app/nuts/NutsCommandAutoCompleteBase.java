@@ -54,6 +54,16 @@ public abstract class NutsCommandAutoCompleteBase implements NutsCommandAutoComp
         return new ArrayList<>(candidates.values());
     }
 
+    @Override
+    public NutsWorkspace getWorkspace() {
+        return getSession().workspace();
+    }
+
+    @Override
+    public <T> T get(Class<T> t) {
+        return null;
+    }
+
     /**
      * add candidate
      * @param value candidate

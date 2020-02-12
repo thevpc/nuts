@@ -60,7 +60,7 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
     }
 
     @Override
-    public NutsRepository create(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
+    public NutsRepository create(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         NutsRepositoryConfig config = options.getConfig();
         if (CoreStringUtils.isBlank(config.getType())) {
             if (CoreStringUtils.isBlank(config.getLocation())) {

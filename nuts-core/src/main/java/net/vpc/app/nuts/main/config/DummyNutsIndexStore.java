@@ -15,12 +15,12 @@ public class DummyNutsIndexStore extends AbstractNutsIndexStore {
     }
 
     @Override
-    public Iterator<NutsId> searchVersions(NutsId id, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersions(NutsId id, NutsSession session) {
         return Collections.emptyIterator();
     }
 
     @Override
-    public Iterator<NutsId> search(NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> search(NutsIdFilter filter, NutsSession session) {
         return Collections.emptyIterator();
     }
 

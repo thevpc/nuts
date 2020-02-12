@@ -303,7 +303,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     install().installed().getResult();
                 }
             }
-            if (configManager.getRepositoryRefs().length == 0) {
+            if (configManager.getRepositoryRefs(session).length == 0) {
                 LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log("Workspace has no repositories. Will re-create defaults");
                 initializeWorkspace(uoptions.getArchetype(), session);
             }
@@ -312,7 +312,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 String uuid = "transient_" + UUID.randomUUID().toString().replace("-", "");
                 config()
                         .addRepository(
-                                new NutsCreateRepositoryOptions()
+                                new NutsAddRepositoryOptions()
                                         .setTemporary(true)
                                         .setName(uuid)
                                         .setFailSafe(false)
@@ -358,7 +358,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         String nutsVersion = config().getRuntimeId().getVersion().toString();
         session = NutsWorkspaceUtils.of(this).validateSession(session);
         //should install default
-        if (session.isPlainTrace()) {
+        if (session.isPlainTrace() && !config().options().isSkipWelcome()) {
             PrintStream out = session.out();
 
             StringBuilder version = new StringBuilder(nutsVersion);
@@ -373,8 +373,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //        MavenUtils mvn = MavenUtils.of(DefaultNutsWorkspace.this);
         for (URL bootClassWorldURL : config().getBootClassWorldURLs()) {
             NutsDeployRepositoryCommand desc = getInstalledRepository().deploy()
-                    .setContent(bootClassWorldURL).setSession(
-                            NutsWorkspaceHelper.createRepositorySession(session.copy().copy().yes(), getInstalledRepository(), NutsFetchMode.LOCAL))
+                    .setContent(bootClassWorldURL)
+                    //.setFetchMode(NutsFetchMode.LOCAL)
+                    .setSession(session.copy().copy().yes())
                     .run();
             if (
                     desc.getId().getLongNameId().equals(config().getApiId().getLongNameId())
@@ -422,7 +423,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 if (session.isPlainTrace()) {
                     PrintStream out = session.out();
                     out.printf("@@Unable to install companion tools@@. This happens when none of the following repositories are able to locate them : %s\n",
-                            Arrays.stream(config().getRepositories()).map(x -> x.config().name()).collect(Collectors.joining(","))
+                            Arrays.stream(config().getRepositories(session)).map(x -> x.config().name()).collect(Collectors.joining(","))
                     );
                 }
             }
@@ -833,7 +834,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 if (ndf == null || ndf.accept(def.getId(), dependency, session)) {
                     if (!getInstalledRepository().
                             searchVersions().setId(dependency.getId())
-                            .setSession(NutsWorkspaceHelper.createRepositorySession(session, getInstalledRepository(), NutsFetchMode.LOCAL)).getResult()
+                            .setFetchMode(NutsFetchMode.LOCAL)
+                            .setSession(session)
+                            .getResult()
                             .hasNext()
                     ) {
                         NutsDefinition dd = search().id(dependency.getId()).content().latest().getResultDefinitions().first();
@@ -841,7 +844,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                             getInstalledRepository().deploy()
                                     .setId(dd.getId())
                                     .setContent(dd.getPath())
-                                    .setSession(NutsWorkspaceHelper.createNoRepositorySession(session, NutsFetchMode.LOCAL))
+                                    //.setFetchMode(NutsFetchMode.LOCAL)
+                                    .setSession(session)
                                     .setDescriptor(dd.getDescriptor())
                                     .run()
                             ;
@@ -1045,7 +1049,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
                 security().updateUser(NutsConstants.Users.ADMIN).credentials("admin".toCharArray()).session(session).run();
             }
-            for (NutsCommandAliasFactoryConfig commandFactory : config().getCommandFactories()) {
+            for (NutsCommandAliasFactoryConfig commandFactory : config().getCommandFactories(session)) {
                 try {
                     config().addCommandAliasFactory(commandFactory, new NutsAddOptions().session(session));
                 } catch (Exception e) {

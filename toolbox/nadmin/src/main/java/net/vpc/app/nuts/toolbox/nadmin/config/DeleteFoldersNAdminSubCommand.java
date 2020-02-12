@@ -18,7 +18,6 @@ import java.util.Set;
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.NutsSupportLevelContext;
 
 /**
  * @author vpc
@@ -77,7 +76,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
         }
-        for (NutsRepository repository : context.getWorkspace().config().getRepositories()) {
+        for (NutsRepository repository : context.getWorkspace().config().getRepositories(context.getSession())) {
             deleteRepoFolder(repository, context, folder, force);
         }
     }
@@ -100,7 +99,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
             }
         }
         if (repository.config().isSupportedMirroring()) {
-            for (NutsRepository subRepository : repository.config().getMirrors()) {
+            for (NutsRepository subRepository : repository.config().getMirrors(context.getSession())) {
                 deleteRepoCache(subRepository, context, force);
             }
         }
@@ -117,7 +116,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
                     throw new UncheckedIOException(ex);
                 }
             }
-            for (NutsRepository repository : context.getWorkspace().config().getRepositories()) {
+            for (NutsRepository repository : context.getWorkspace().config().getRepositories(context.getSession())) {
                 deleteRepoCache(repository, context, force);
             }
         }
@@ -141,7 +140,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
             }
         }
         if (repository.config().isSupportedMirroring()) {
-            for (NutsRepository mirror : repository.config().getMirrors()) {
+            for (NutsRepository mirror : repository.config().getMirrors(context.getSession())) {
                 deleteRepoCache(mirror, context, force);
             }
         }

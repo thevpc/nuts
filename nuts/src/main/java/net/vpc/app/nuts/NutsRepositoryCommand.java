@@ -40,13 +40,14 @@ public interface NutsRepositoryCommand extends NutsConfigurable {
      * @param session session
      * @return {@code this} instance
      */
-    NutsRepositoryCommand setSession(NutsRepositorySession session);
+    NutsRepositoryCommand setSession(NutsSession session);
+
 
     /**
      * return session
      * @return {@code this} instance
      */
-    NutsRepositorySession getSession();
+    NutsSession getSession();
 
     /**
      * run this command and return {@code this} instance

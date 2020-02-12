@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.main.repos;
 
+import net.vpc.app.nuts.core.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.core.repos.AbstractNutsRepository;
 import net.vpc.app.nuts.core.repos.NutsRepositoryExt;
 import net.vpc.app.nuts.main.repocommands.*;
@@ -54,7 +55,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
 
     private final NutsLogger LOG;
 
-    public AbstractNutsRepositoryBase(NutsCreateRepositoryOptions options,
+    public AbstractNutsRepositoryBase(NutsAddRepositoryOptions options,
                                       NutsWorkspace workspace, NutsRepository parentRepository,
                                       int speed, boolean supportedMirroring, String repositoryType) {
         LOG=workspace.log().of(AbstractNutsRepositoryBase.class);
@@ -66,7 +67,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         return nutsIndexStore;
     }
 
-    protected void init(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
+    protected void init(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
         NutsRepositoryConfig optionsConfig = options.getConfig();
         if (optionsConfig == null) {
             throw new NutsIllegalArgumentException(workspace, "Null Config");
@@ -88,7 +89,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     }
 
     @Override
-    public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode) {
+    public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode, NutsSession session) {
         String groups = config().getGroups();
         if (CoreStringUtils.isBlank(groups)) {
             return true;
@@ -121,7 +122,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     }
 
     @Override
-    public void checkAllowedFetch(NutsId id, NutsRepositorySession session) {
+    public void checkAllowedFetch(NutsId id, NutsSession session) {
     }
 
 
@@ -131,8 +132,10 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     }
 
     @Override
-    public NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
-        Iterator<NutsId> allVersions = searchVersions().setId(id).setFilter(filter).setSession(session).getResult();
+    public NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
+        Iterator<NutsId> allVersions = searchVersions().setId(id).setFilter(filter)
+                .setFetchMode(fetchMode)
+                .setSession(session).getResult();
         NutsId a = null;
         while (allVersions.hasNext()) {
             NutsId next = allVersions.next();
@@ -143,8 +146,8 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         return a;
     }
 
-    protected void traceMessage(NutsRepositorySession session, Level lvl, NutsId id, TraceResult tracePhase, String title, long startTime,String extraMessage) {
-        CoreNutsUtils.traceMessage(LOG, lvl,config().name(), session, id, tracePhase, title, startTime,extraMessage);
+    protected void traceMessage(NutsSession session, NutsFetchMode fetchMode,Level lvl, NutsId id, TraceResult tracePhase, String title, long startTime,String extraMessage) {
+        CoreNutsUtils.traceMessage(LOG, lvl,config().name(), session, fetchMode, id, tracePhase, title, startTime,extraMessage);
     }
 
     @Override

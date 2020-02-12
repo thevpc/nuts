@@ -103,9 +103,9 @@ public class DefaultNutsStringFormat extends DefaultFormatBase<NutsStringFormat>
 
     private String format0() {
         if (style == NutsTextFormatStyle.CSTYLE) {
-            return FormattedPrintStreamUtils.formatCStyle(ws, Locale.getDefault(), sb.toString(), getParameters());
+            return FormattedPrintStreamUtils.formatCStyle(getWorkspace(), Locale.getDefault(), sb.toString(), getParameters());
         } else {
-            return FormattedPrintStreamUtils.formatPositionalStyle(ws, Locale.getDefault(), sb.toString(), getParameters());
+            return FormattedPrintStreamUtils.formatPositionalStyle(getWorkspace(), Locale.getDefault(), sb.toString(), getParameters());
         }
     }
 

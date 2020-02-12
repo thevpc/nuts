@@ -39,13 +39,13 @@ import java.util.List;
  */
 public class ExtensionNonOption extends DefaultNonOption {
 
-    public ExtensionNonOption(String name, NutsWorkspace workspace) {
-        super(workspace,name);
+    public ExtensionNonOption(String name, NutsSession session) {
+        super(name);
     }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates() {
-        NutsCommandLineFormat c=getWorkspace().commandLine();
+    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
+        NutsCommandLineFormat c=context.getWorkspace().commandLine();
         List<NutsArgumentCandidate> all = new ArrayList<>();
         all.add(c.createCandidate(NutsConstants.Ids.NUTS_RUNTIME));
         //should find all nuts with packaging "nuts-extension"

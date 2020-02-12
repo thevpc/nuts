@@ -31,10 +31,10 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
         NutsSession session = getSession();
         for (String repository : getRepositrories()) {
             processed = true;
-            NutsRepository repo = ws.config().getRepository(repository, true);
+            NutsRepository repo = ws.config().getRepository(repository, session.copy().transitive());
             repo.updateStatistics()
-                    .setSession(NutsWorkspaceHelper.createRepositorySession(session, repo, NutsFetchMode.LOCAL)
-                    )
+                    .setSession(session)
+//                    .setFetchMode(NutsFetchMode.LOCAL)
                     .run();
         }
         for (Path repositoryPath : getPaths()) {
@@ -79,13 +79,13 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
             if (session.isPlainTrace()) {
                 session.out().printf("[[%s]] Updating workspace stats%n", getWorkspace().config().getWorkspaceLocation());
             }
-            for (NutsRepository repo : getWorkspace().config().getRepositories()) {
+            for (NutsRepository repo : getWorkspace().config().getRepositories(session)) {
                 if (session.isPlainTrace()) {
                     session.out().printf("[[%s]] Updating stats %s%n", getWorkspace().config().getWorkspaceLocation(), repo);
                 }
                 repo.updateStatistics()
-                        .setSession(NutsWorkspaceHelper.createRepositorySession(session, repo, NutsFetchMode.LOCAL)
-                        )
+                        .setSession(session)
+//                        .setFetchMode(NutsFetchMode.LOCAL)
                         .run();
             }
         }

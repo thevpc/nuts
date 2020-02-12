@@ -73,8 +73,21 @@ public interface NutsFetchContentRepositoryCommand extends NutsRepositoryCommand
      * @return {@code this} instance
      */
     @Override
-    NutsFetchContentRepositoryCommand setSession(NutsRepositorySession session);
+    NutsFetchContentRepositoryCommand setSession(NutsSession session);
 
+
+    /**
+     * fetchMode
+     * @param fetchMode fetchMode
+     * @return {@code this} instance
+     */
+    NutsFetchContentRepositoryCommand setFetchMode(NutsFetchMode fetchMode);
+
+    /**
+     * get fetchMode
+     * @return {@code this} instance
+     */
+    NutsFetchMode getFetchMode();
 
     /**
      * path to store to

@@ -33,7 +33,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.main.config.DefaultNutsWorkspaceConfigManager;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
 /**
@@ -59,7 +58,7 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) ws.config();
 
-        NutsCreateRepositoryOptions localDef = new NutsCreateRepositoryOptions()
+        NutsAddRepositoryOptions localDef = new NutsAddRepositoryOptions()
                 .setName(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
                 .setLocation(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
                 .setDeployOrder(10)

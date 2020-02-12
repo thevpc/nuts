@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.runtime.app;
 
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsSession;
 
 /**
  *
@@ -37,8 +37,8 @@ import net.vpc.app.nuts.NutsWorkspace;
  */
 public class NutsIdNonOption extends DefaultNonOption {
 
-    public NutsIdNonOption(String name, NutsWorkspace workspace) {
-        super(workspace,name);
+    public NutsIdNonOption(String name) {
+        super(name);
     }
 
 }

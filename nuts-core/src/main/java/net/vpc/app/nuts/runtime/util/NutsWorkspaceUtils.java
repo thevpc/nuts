@@ -6,6 +6,7 @@
 package net.vpc.app.nuts.runtime.util;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.runtime.io.DefaultNutsExecutionEntry;
 import net.vpc.app.nuts.runtime.format.plain.DefaultSearchFormatPlain;
 import net.vpc.app.nuts.runtime.log.NutsLogVerb;
@@ -117,10 +118,10 @@ public class NutsWorkspaceUtils {
         return id;
     }
 
-    public List<NutsRepository> _getEnabledRepositories(NutsRepositoryFilter repositoryFilter) {
+    public List<NutsRepository> _getEnabledRepositories(NutsRepositoryFilter repositoryFilter, NutsSession session) {
         List<NutsRepository> repos = new ArrayList<>();
         List<NutsRepository> subrepos = new ArrayList<>();
-        for (NutsRepository repository : ws.config().getRepositories()) {
+        for (NutsRepository repository : ws.config().getRepositories(session)) {
             boolean ok = false;
             if (repository.config().isEnabled()) {
                 if (repositoryFilter == null || repositoryFilter.accept(repository)) {
@@ -133,27 +134,31 @@ public class NutsWorkspaceUtils {
             }
         }
         for (NutsRepository subrepo : subrepos) {
-            repos.addAll(NutsWorkspaceHelper._getEnabledRepositories(subrepo, repositoryFilter));
+            repos.addAll(NutsWorkspaceHelper._getEnabledRepositories(subrepo, repositoryFilter, session));
         }
         return repos;
     }
 
-    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchMode mode, NutsSession options, boolean includeInstalledRepository, boolean includeOtherRepositories) {
-        return filterRepositories(fmode, id, repositoryFilter, true, null, mode, options,includeInstalledRepository,includeOtherRepositories);
+    public List<NutsRepository> filterRepositoriesDeploy(NutsId id, NutsRepositoryFilter repositoryFilter, NutsSession session) {
+        return filterRepositories(NutsRepositorySupportedAction.DEPLOY, id, repositoryFilter, NutsFetchMode.LOCAL, session, false, true);
     }
 
-    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsSession options, boolean includeInstalledRepository, boolean includeOtherRepositories) {
+    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchMode mode, NutsSession session, boolean includeInstalledRepository, boolean includeOtherRepositories) {
+        return filterRepositories(fmode, id, repositoryFilter, true, null, mode, session, includeInstalledRepository, includeOtherRepositories);
+    }
+
+    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsSession session, boolean includeInstalledRepository, boolean includeOtherRepositories) {
 
         List<RepoAndLevel> repos2 = new ArrayList<>();
         //        List<Integer> reposLevels = new ArrayList<>();
         if (includeOtherRepositories) {
-            for (NutsRepository repository : ws.config().getRepositories()) {
+            for (NutsRepository repository : ws.config().getRepositories(session)) {
                 if (repository.config().isEnabled() && (repositoryFilter == null || repositoryFilter.accept(repository))) {
                     int t = 0;
                     try {
-                        t = repository.config().getSupportLevel(fmode, id, mode, options.isTransitive());
+                        t = CoreNutsUtils.getSupportLevel(repository, fmode, id, mode, session.isTransitive(), session);
                     } catch (Exception ex) {
-                        LOG.with().level(Level.FINE).error(ex).log("Unable to resolve support level for : {0}" , repository.config().name());
+                        LOG.with().level(Level.FINE).error(ex).log("Unable to resolve support level for : {0}", repository.config().name());
                     }
                     if (t > 0) {
                         repos2.add(new RepoAndLevel(repository, t, postComp));
@@ -245,7 +250,7 @@ public class NutsWorkspaceUtils {
         return null;
     }
 
-    public void checkSession(NutsRepositorySession session) {
+    public void checkSession(NutsSession session) {
         if (session == null) {
             throw new NutsIllegalArgumentException(ws, "Missing Session");
         }
@@ -587,7 +592,7 @@ public class NutsWorkspaceUtils {
         try {
             mainClass = CorePlatformUtils.getMainClassType(classStream);
         } catch (Exception ex) {
-            LOG.with().level(Level.FINE).error(ex).log( "Invalid file format {0}",sourceName);
+            LOG.with().level(Level.FINE).error(ex).log("Invalid file format {0}", sourceName);
         }
         if (mainClass != null) {
             return new DefaultNutsExecutionEntry(
@@ -651,7 +656,7 @@ public class NutsWorkspaceUtils {
             }
         }
         if (defaultEntry != null && !defaultFound) {
-            LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log( "invalid default entry " + defaultEntry + " in " + sourceName);
+            LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("invalid default entry " + defaultEntry + " in " + sourceName);
 //            entries.add(new DefaultNutsExecutionEntry(defaultEntry, true, false));
         }
         return entries.toArray(new NutsExecutionEntry[0]);

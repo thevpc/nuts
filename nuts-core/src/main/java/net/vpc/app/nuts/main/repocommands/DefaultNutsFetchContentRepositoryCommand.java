@@ -56,7 +56,9 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
         NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession( getSession());
         NutsDescriptor descriptor0 = descriptor;
         if (descriptor0 == null) {
-            descriptor0 = getRepo().fetchDescriptor().setId(id).setSession(getSession()).getResult();
+            descriptor0 = getRepo().fetchDescriptor().setId(id).setSession(getSession())
+                    .setFetchMode(getFetchMode())
+                    .getResult();
         }
         id = id.builder().setFaceContent().build();
         getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_CONTENT, "fetch-content");
@@ -64,15 +66,15 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
         xrepo.checkAllowedFetch(id, getSession());
         long startTime = System.currentTimeMillis();
         try {
-            NutsContent f = xrepo.fetchContentImpl(id, descriptor0, localPath, getSession());
+            NutsContent f = xrepo.fetchContentImpl(id, descriptor0, localPath, getFetchMode(), getSession());
             if (f == null) {
                 throw new NutsNotFoundException(getRepo().getWorkspace(), id);
             }
-                CoreNutsUtils.traceMessage(LOG,Level.FINER, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.SUCCESS, "fetch component", startTime,null);
+                CoreNutsUtils.traceMessage(LOG,Level.FINER, getRepo().config().name(), getSession(), getFetchMode(), id.getLongNameId(), TraceResult.SUCCESS, "fetch component", startTime,null);
             result = f;
         } catch (RuntimeException ex) {
             if(!CoreNutsUtils.isUnsupportedFetchModeException(ex)) {
-                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().config().name(), getSession(), id.getLongNameId(), TraceResult.FAIL, "fetch component", startTime, CoreNutsUtils.resolveMessageToTraceOrNullIfNutsNotFoundException(ex));
+                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().config().name(), getSession(), getFetchMode(), id.getLongNameId(), TraceResult.FAIL, "fetch component", startTime, CoreNutsUtils.resolveMessageToTraceOrNullIfNutsNotFoundException(ex));
             }
             throw ex;
         }

@@ -90,7 +90,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
             base = createObjectFormat();
             base.setValue(getValue());
             base.setSession(getValidSession());
-            base.configure(true, ws.config().options().getOutputFormatOptions());
+            base.configure(true, getWorkspace().config().options().getOutputFormatOptions());
             base.configure(true, getValidSession().getOutputFormatOptions());
         }
         return base;
@@ -99,25 +99,25 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     public NutsObjectFormat createObjectFormat() {
         switch (getOutputFormat()) {
             case JSON: {
-                return new NutsObjectFormatJson(ws);
+                return new NutsObjectFormatJson(getWorkspace());
             }
             case PROPS: {
-                return new NutsObjectFormatProps(ws);
+                return new NutsObjectFormatProps(getWorkspace());
             }
             case TREE: {
-                return new NutsObjectFormatTree(ws);
+                return new NutsObjectFormatTree(getWorkspace());
             }
             case PLAIN: {
-                return new NutsObjectFormatPlain(ws);
+                return new NutsObjectFormatPlain(getWorkspace());
             }
             case XML: {
-                return new NutsObjectFormatXml(ws);
+                return new NutsObjectFormatXml(getWorkspace());
             }
             case TABLE: {
-                return new NutsObjectFormatTable(ws);
+                return new NutsObjectFormatTable(getWorkspace());
             }
         }
-        throw new NutsException(ws, "Unsupported");
+        throw new NutsException(getWorkspace(), "Unsupported");
     }
 
     @Override

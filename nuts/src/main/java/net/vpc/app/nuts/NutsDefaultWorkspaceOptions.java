@@ -112,6 +112,14 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
     private boolean skipWelcome;
 
     /**
+     * if true, do not bootstrap workspace after reset/recover.
+     * When reset/recover is not active this option is not accepted and an error will be thrown
+     *
+     * @since 0.6.0
+     */
+    private boolean skipBoot;
+
+    /**
      * if true consider global/system repository
      * <p>
      * option-type : exported (inherited in child workspaces)
@@ -351,6 +359,7 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
         this.setName(other.getName());
         this.setSkipCompanions(other.isSkipCompanions());
         this.setSkipWelcome(other.isSkipWelcome());
+        this.setSkipBoot(other.isSkipBoot());
         this.setGlobal(other.isGlobal());
         this.setGui(other.isGui());
         this.setUsername(other.getUserName());
@@ -1051,6 +1060,24 @@ public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneabl
     @Override
     public NutsWorkspaceOptionsBuilder setSkipWelcome(boolean skipWelcome) {
         this.skipWelcome = skipWelcome;
+        return this;
+    }
+
+
+    @Override
+    public boolean isSkipBoot() {
+        return skipBoot;
+    }
+
+    /**
+     * set skipWelcome
+     *
+     * @param skipBoot new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setSkipBoot(boolean skipBoot) {
+        this.skipBoot = skipBoot;
         return this;
     }
 

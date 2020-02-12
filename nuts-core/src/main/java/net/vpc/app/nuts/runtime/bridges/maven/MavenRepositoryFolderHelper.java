@@ -85,7 +85,7 @@ public class MavenRepositoryFolderHelper {
                 .resolve(ws.config().getDefaultIdFilename(id));
     }
 
-    public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsRepositorySession session) {
+    public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsSession session) {
         Path cacheContent = getIdLocalFile(id);
         if (cacheContent != null && Files.exists(cacheContent)) {
             return new NutsDefaultContent(cacheContent, true, false);
@@ -110,7 +110,7 @@ public class MavenRepositoryFolderHelper {
         return groupFolder.resolve(id.getArtifactId());
     }
 
-    public Iterator<NutsId> searchVersions(NutsId id, final NutsIdFilter filter, boolean deep, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersions(NutsId id, final NutsIdFilter filter, boolean deep, NutsSession session) {
         if (id.getVersion().isSingleValue()) {
             NutsId id1 = id.builder().setFaceDescriptor().build();
             Path localFile = getIdLocalFile(id1);
@@ -124,7 +124,7 @@ public class MavenRepositoryFolderHelper {
                 session);
     }
 
-    public Iterator<NutsId> searchInFolder(Path folder, final NutsIdFilter filter, int maxDepth, NutsRepositorySession session) {
+    public Iterator<NutsId> searchInFolder(Path folder, final NutsIdFilter filter, int maxDepth, NutsSession session) {
         folder = rootPath.resolve(folder);
         if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
             //            return IteratorUtils.emptyIterator();
@@ -132,7 +132,7 @@ public class MavenRepositoryFolderHelper {
         }
         return new FolderNutIdIterator(getWorkspace(), repo == null ? null : repo.config().getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
-            public void undeploy(NutsId id, NutsRepositorySession session) {
+            public void undeploy(NutsId id, NutsSession session) {
                 throw new IllegalArgumentException("Unsupported");
             }
 
@@ -142,8 +142,8 @@ public class MavenRepositoryFolderHelper {
             }
 
             @Override
-            public NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException {
-                return MavenUtils.of(session.getWorkspace()).parsePomXml(pathname, session);
+            public NutsDescriptor parseDescriptor(Path pathname, NutsSession session) throws IOException {
+                return MavenUtils.of(session.getWorkspace()).parsePomXml(pathname, NutsFetchMode.LOCAL, repo, session);
             }
         }, maxDepth);
     }
@@ -152,7 +152,7 @@ public class MavenRepositoryFolderHelper {
         return rootPath;
     }
 
-    public NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+    public NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsSession session) {
         NutsId bestId = null;
         File file = getLocalGroupAndArtifactFile(id).toFile();
         if (file.exists()) {

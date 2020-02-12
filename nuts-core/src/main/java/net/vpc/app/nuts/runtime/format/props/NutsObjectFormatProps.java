@@ -22,22 +22,20 @@ import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 public class NutsObjectFormatProps extends NutsObjectFormatBase {
 
     private final NutsOutputFormat t;
-    private final NutsWorkspace ws;
     private final String rootName = "";
     private final boolean omitNull = true;
     private final boolean escapeText = false;
     private final List<String> extraConfig = new ArrayList<>();
     private final Map<String, String> multilineProperties = new HashMap<>();
 
-    public NutsObjectFormatProps(NutsWorkspace ws) {
-        super(ws, NutsOutputFormat.PROPS.id() + "-format");
+    public NutsObjectFormatProps(NutsWorkspace workspace) {
+        super(workspace, NutsOutputFormat.PROPS.id() + "-format");
         this.t = NutsOutputFormat.PROPS;
-        this.ws = ws;
     }
 
     @Override
     public NutsObjectFormat setValue(Object value) {
-        return super.setValue(ws.element().toElement(value));
+        return super.setValue(getWorkspace().element().toElement(value));
     }
 
     @Override
@@ -70,7 +68,7 @@ public class NutsObjectFormatProps extends NutsObjectFormatBase {
     @Override
     public void print(PrintStream w) {
         PrintStream out = getValidPrintStream(w);
-        NutsPropertiesFormat ff = ws.props().model(toMap());
+        NutsPropertiesFormat ff = getWorkspace().props().model(toMap());
         ff.configure(true, getExtraConfigArray());
         ff.configure(true, "--escape-text=false");
         ff.print(out);
@@ -123,7 +121,7 @@ public class NutsObjectFormatProps extends NutsObjectFormatBase {
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(ws, e.type().name());
+                throw new NutsUnsupportedArgumentException(getWorkspace(), e.type().name());
             }
         }
     }

@@ -9,11 +9,8 @@ import net.vpc.app.nuts.*;
 
 import java.io.PrintStream;
 import java.util.*;
-import net.vpc.app.nuts.NutsArgumentCandidate;
-import net.vpc.app.nuts.toolbox.nadmin.util.NAdminUtils;
 
 /**
- *
  * @author vpc
  */
 public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
@@ -42,7 +39,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             if (cmdLine.isExecMode()) {
                 NutsRepository repository = ws.config().addRepository(
-                        new NutsCreateRepositoryOptions()
+                        new NutsAddRepositoryOptions()
                                 .setName(repositoryName)
                                 .setLocation(repositoryName)
                                 .setConfig(
@@ -62,126 +59,195 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
             PrintStream out = context.session().out();
             if (cmdLine.next("add repo", "ar") != null) {
                 boolean proxy = false;
-                boolean pattern = false;
+                String location = null;
+                String repositoryName = null;
+                String repoType = null;
+                String parent = null;
                 while (cmdLine.hasNext()) {
-                    if (cmdLine.next("-p", "--proxy") != null) {
-                        proxy = true;
-                    } else if (cmdLine.next("-P", "--pattern") != null) {
-                        pattern = true;
-                    } else {
-                        final Map<String, NutsRepositoryDefinition> repoPatterns = new LinkedHashMap<String, NutsRepositoryDefinition>();
-                        for (NutsRepositoryDefinition repoPattern : context.getWorkspace().config().getDefaultRepositories()) {
-                            repoPatterns.put(repoPattern.getName(), repoPattern);
-                        }
-                        String repositoryName = cmdLine.required().nextNonOption(new NutsArgumentName() {
-                            @Override
-                            public String getName() {
-                                return "RepositoryName";
+                    NutsArgument a = cmdLine.peek();
+                    boolean enabled = a.isEnabled();
+                    switch (a.getStringKey()) {
+                        case "-p":
+                        case "--proxy": {
+                            boolean val = cmdLine.nextBoolean().getBooleanValue();
+                            if (enabled) {
+                                proxy = val;
                             }
-
-                            @Override
-                            public List<NutsArgumentCandidate> getCandidates() {
-                                ArrayList<NutsArgumentCandidate> arrayList = new ArrayList<>();
-
-                                for (Map.Entry<String, NutsRepositoryDefinition> e : repoPatterns.entrySet()) {
-                                    arrayList.add(commandLineFormat.createCandidate(e.getKey()));
+                            break;
+                        }
+                        case "-l":
+                        case "--location": {
+                            String val = cmdLine.nextString().getStringValue();
+                            if (enabled) {
+                                location = val;
+                            }
+                            break;
+                        }
+                        case "--name": {
+                            String val = cmdLine.nextString().getStringValue();
+                            if (enabled) {
+                                repositoryName = val;
+                            }
+                            break;
+                        }
+                        case "--type": {
+                            String val = cmdLine.nextString().getStringValue();
+                            if (enabled) {
+                                repoType = val;
+                            }
+                            break;
+                        }
+                        case "--parent": {
+                            String val = cmdLine.nextString().getStringValue();
+                            if (enabled) {
+                                parent = val;
+                            }
+                            break;
+                        }
+                        default: {
+                            if (!context.getSession().configureFirst(cmdLine)) {
+                                if (a.isOption()) {
+                                    cmdLine.unexpectedArgument();
+                                } else if (repositoryName == null) {
+                                    repositoryName = cmdLine.next().getString();
+                                } else if (location == null) {
+                                    location = cmdLine.next().getString();
+                                } else {
+                                    cmdLine.unexpectedArgument();
                                 }
-                                arrayList.add(commandLineFormat.createCandidate("<RepositoryName>"));
-                                return arrayList;
                             }
-
-                        }).getString();
-                        String location = null;
-                        String repoType = null;
-                        if (pattern) {
-                            NutsRepositoryDefinition found = repoPatterns.get(repositoryName);
-                            if (found == null) {
-                                throw new NutsIllegalArgumentException(context.getWorkspace(), "Repository Pattern not found " + repositoryName + ". Try one of " + repoPatterns.keySet());
-                            }
-                            location = found.getLocation();
-                            repoType = found.getType();
-                        } else {
-                            location = cmdLine.required().nextNonOption(commandLineFormat.createName("folder", "location")).getString();
-                            repoType = cmdLine.required().nextNonOption(commandLineFormat.createName("repository-type")).getString();
+                            break;
                         }
-                        if (cmdLine.isExecMode()) {
-                            NutsRepository repo = null;
-                            NutsCreateRepositoryOptions o = new NutsCreateRepositoryOptions()
-                                    .setName(repositoryName)
-                                    .setLocation(repositoryName)
-                                    .setProxy(proxy)
-                                    .setConfig(
-                                            new NutsRepositoryConfig()
-                                                    .setName(repositoryName)
-                                                    .setLocation(location)
-                                                    .setType(repoType));
-
-                            repo = ws.config().addRepository(o);
-                            out.printf("Repository added successfully%n");
-                            trySave(context, ws, repo, autoSave, null);
-                            trySave(context, ws, null, autoSave, null);
-                        }
-                        cmdLine.setCommandName("config add repo").unexpectedArgument();
                     }
                 }
-                return true;
+                if (location == null || repositoryName == null) {
+                    cmdLine.required();
+                }
 
-            } else if (cmdLine.next("remove repo", "rr") != null) {
-                String locationOrRepositoryName = cmdLine.required().nextNonOption(commandLineFormat.createName("repository")).getString();
                 if (cmdLine.isExecMode()) {
-                    ws.config().removeRepository(locationOrRepositoryName, new NutsRemoveOptions().session(context.getSession()));
-                    trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
+                    NutsRepository repo = null;
+                    NutsAddRepositoryOptions o = new NutsAddRepositoryOptions()
+                            .setSession(context.getSession())
+                            .setName(repositoryName)
+                            .setLocation(location)
+                            .setProxy(proxy)
+                            .setConfig(
+                                    new NutsRepositoryConfig()
+                                            .setName(repositoryName)
+                                            .setLocation(location)
+                                            .setType(repoType));
+                    if (parent == null) {
+                        repo = ws.config().addRepository(o);
+                        out.printf("Repository added successfully%n");
+                        trySave(context, ws, repo, autoSave, null);
+                        trySave(context, ws, null, autoSave, null);
+                    } else {
+                        NutsRepository p = ws.config().getRepository(parent, context.getSession());
+                        repo = p.config().addMirror(o);
+                        out.printf("Repository added successfully%n");
+                        trySave(context, ws, repo, autoSave, null);
+                        trySave(context, ws, p, autoSave, null);
+                        trySave(context, ws, null, autoSave, null);
+                    }
+                }
+                cmdLine.setCommandName("config add repo").unexpectedArgument();
+                return true;
+            } else if (cmdLine.next("remove repo", "rr") != null) {
+                String repositoryName = null;
+                String parent = null;
+                while (cmdLine.hasNext()) {
+                    NutsArgument a = cmdLine.peek();
+                    boolean enabled = a.isEnabled();
+                    switch (a.getStringKey()) {
+                        case "--name": {
+                            String val = cmdLine.nextString().getStringValue();
+                            if (enabled) {
+                                repositoryName = val;
+                            }
+                            break;
+                        }
+                        case "--parent": {
+                            String val = cmdLine.nextString().getStringValue();
+                            if (enabled) {
+                                parent = val;
+                            }
+                            break;
+                        }
+                        default: {
+                            if (!context.getSession().configureFirst(cmdLine)) {
+                                if (a.isOption()) {
+                                    cmdLine.unexpectedArgument();
+                                } else if (repositoryName != null) {
+                                    cmdLine.unexpectedArgument();
+                                } else {
+                                    repositoryName = cmdLine.next().getString();
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+                if (repositoryName == null) {
+                    cmdLine.required();
+                }
+                if (cmdLine.isExecMode()) {
+                    if (parent == null) {
+                        ws.config().removeRepository(repositoryName, new NutsRemoveOptions().session(context.getSession()));
+                        trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
+                    } else {
+                        NutsRepository p = ws.config().getRepository(parent, context.getSession());
+                        p.config().removeMirror(repositoryName, new NutsRemoveOptions().session(context.getSession()));
+                        trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
+                    }
                 }
                 return true;
 
             } else if (cmdLine.next("list repos", "lr") != null) {
-                if (cmdLine.isExecMode()) {
-                    NutsTableFormat t = ws.table();
-                    NutsMutableTableModel m = t.createModel();
-                    t.setModel(m);
-                    m.addHeaderCells("Id", "Enabled", "Type", "Location");
+                cmdLine.setCommandName("config list repos");
+                String parent = null;
+                while (cmdLine.hasNext()) {
                     while (cmdLine.hasNext()) {
-                        if (!t.configureFirst(cmdLine)) {
-                            cmdLine.setCommandName("config list repos").unexpectedArgument();
+                        NutsArgument a = cmdLine.peek();
+                        boolean enabled = a.isEnabled();
+                        switch (a.getStringKey()) {
+                            case "--parent": {
+                                String val = cmdLine.nextString().getStringValue();
+                                if (enabled) {
+                                    parent = val;
+                                }
+                                break;
+                            }
+                            default: {
+                                if (!context.getSession().configureFirst(cmdLine)) {
+                                    if (a.isOption()) {
+                                        cmdLine.unexpectedArgument();
+                                    } else if (parent != null) {
+                                        cmdLine.unexpectedArgument();
+                                    } else {
+                                        parent = cmdLine.next().getString();
+                                    }
+                                }
+                                break;
+                            }
                         }
                     }
-                    for (NutsRepository repository : ws.config().getRepositories()) {
-                        m.addRow(
-                                "==" + repository.config().getName() + "==",
-                                repository.config().isEnabled() ? "ENABLED" : "@@<DISABLED>@@",
-                                repository.getRepositoryType(),
-                                repository.config().getLocation(false)
-                        );
-                    }
-                    out.print(t.toString());
                 }
-                return true;
-
-            } else if (cmdLine.next("tree repos", "tr") != null) {
                 if (cmdLine.isExecMode()) {
-
-                    for (NutsRepository repository : ws.config().getRepositories()) {
-                        NAdminUtils.showRepoTree(context, repository, "");
-                    }
+                    NutsRepository[] r=parent==null?ws.config().getRepositories(context.getSession()):ws.config().getRepository(parent,context.getSession()).config().getMirrors(context.getSession());
+                    context.getSession().formatObject(
+                            Arrays.stream(ws.config().getRepositories(context.getSession()))
+                                    .map(x -> repoInfo(x, context.getSession().getOutputFormat() != NutsOutputFormat.TABLE && context.getSession().getOutputFormat() != NutsOutputFormat.PLAIN,context.getSession())
+                                    )
+                                    .toArray()
+                    ).println(out);
                 }
                 return true;
 
             } else if (cmdLine.next("enable repo", "er") != null) {
-                String localId = cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryName")).getString();
-                if (cmdLine.isExecMode()) {
-
-                    NutsRepository editedRepo = ws.config().getRepository(localId);
-                    editedRepo.config().setEnabled(true, new NutsUpdateOptions().session(context.getSession()));
-                    trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
-                }
+                enableRepo(cmdLine, autoSave, context, ws,true);
                 return true;
-            } else if (cmdLine.next("disable repo", "rr") != null) {
-                String localId = cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryName")).getString();
-                if (cmdLine.isExecMode()) {
-                    NutsRepository editedRepo = ws.config().getRepository(localId);
-                    editedRepo.config().setEnabled(false, new NutsUpdateOptions().session(context.getSession()));
-                    trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
-                }
+            } else if (cmdLine.next("disable repo", "er") != null) {
+                enableRepo(cmdLine, autoSave, context, ws,true);
                 return true;
             } else if (cmdLine.next("edit repo", "er") != null) {
                 String repoId = cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryName")).getString();
@@ -190,9 +256,9 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     String location = cmdLine.required().nextNonOption(commandLineFormat.createName("folder")).getString();
                     String repoType = cmdLine.nextNonOption(commandLineFormat.createName("repository-type")).getString();
 
-                    NutsRepository editedRepo = ws.config().getRepository(repoId);
+                    NutsRepository editedRepo = ws.config().getRepository(repoId, context.getSession());
                     NutsRepository repo = editedRepo.config().addMirror(
-                            new NutsCreateRepositoryOptions().setName(repositoryName).setLocation(repositoryName)
+                            new NutsAddRepositoryOptions().setName(repositoryName).setLocation(repositoryName)
                                     .setConfig(
                                             new NutsRepositoryConfig()
                                                     .setName(repositoryName)
@@ -203,22 +269,22 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
 
                 } else if (cmdLine.next("remove repo", "rr") != null) {
                     String location = cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryName")).getString();
-                    NutsRepository editedRepo = ws.config().getRepository(repoId);
+                    NutsRepository editedRepo = ws.config().getRepository(repoId, context.getSession());
                     editedRepo.config().removeMirror(location, new NutsRemoveOptions().session(context.getSession()));
                     trySave(context, ws, editedRepo, autoSave, null);
 
                 } else if (cmdLine.next("enable", "br") != null) {
-                    NutsRepository editedRepo = ws.config().getRepository(repoId);
+                    NutsRepository editedRepo = ws.config().getRepository(repoId, context.getSession());
                     editedRepo.config().setEnabled(true, new NutsUpdateOptions().session(context.getSession()));
                     trySave(context, ws, editedRepo, autoSave, null);
 
                 } else if (cmdLine.next("disable", "dr") != null) {
-                    NutsRepository editedRepo = ws.config().getRepository(repoId);
+                    NutsRepository editedRepo = ws.config().getRepository(repoId, context.getSession());
                     editedRepo.config().setEnabled(true, new NutsUpdateOptions().session(context.getSession()));
                     trySave(context, ws, editedRepo, autoSave, null);
                 } else if (cmdLine.next("list repos", "lr") != null) {
-                    NutsRepository editedRepo = ws.config().getRepository(repoId);
-                    NutsRepository[] linkRepositories = editedRepo.config().isSupportedMirroring() ? editedRepo.config().getMirrors() : new NutsRepository[0];
+                    NutsRepository editedRepo = ws.config().getRepository(repoId, context.getSession());
+                    NutsRepository[] linkRepositories = editedRepo.config().isSupportedMirroring() ? editedRepo.config().getMirrors(context.getSession()) : new NutsRepository[0];
                     out.printf("%s sub repositories.%n", linkRepositories.length);
                     NutsTableFormat t = ws.table();
                     NutsMutableTableModel m = t.createModel();
@@ -243,7 +309,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     out.printf("edit repository %s remove repo ...%n", repoId);
                     out.printf("edit repository %s list repos ...%n", repoId);
                 } else {
-                    NutsRepository editedRepo = ws.config().getRepository(repoId);
+                    NutsRepository editedRepo = ws.config().getRepository(repoId, context.getSession());
                     if (UserNAdminSubCommand.exec(editedRepo, cmdLine, autoSave, context)) {
                         //okkay
                     } else {
@@ -256,5 +322,101 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
         return false;
     }
 
+    private void enableRepo(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context, NutsWorkspace ws,boolean enableRepo) {
+        String repositoryName=null;
+        while (cmdLine.hasNext()) {
+            NutsArgument a = cmdLine.peek();
+            boolean enabled = a.isEnabled();
+            switch (a.getStringKey()) {
+                case "--name": {
+                    String val = cmdLine.nextString().getStringValue();
+                    if (enabled) {
+                        repositoryName = val;
+                    }
+                    break;
+                }
+                default: {
+                    if (!context.getSession().configureFirst(cmdLine)) {
+                        if (a.isOption()) {
+                            cmdLine.unexpectedArgument();
+                        } else if (repositoryName == null) {
+                            repositoryName = cmdLine.next().getString();
+                        } else {
+                            cmdLine.unexpectedArgument();
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        if (repositoryName == null) {
+            cmdLine.required();
+        }
+        if (cmdLine.isExecMode()) {
+            NutsRepository editedRepo = ws.config().getRepository(repositoryName, context.getSession());
+            editedRepo.config().setEnabled(enableRepo, new NutsUpdateOptions().session(context.getSession()));
+            trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
+        }
+    }
 
+    public static RepoInfo repoInfo(NutsRepository x, boolean tree,NutsSession session) {
+        return new RepoInfo(x.name(), x.config().getType(), x.config().getLocation(true), x.config().isEnabled()
+                , tree ? Arrays.stream(x.config().getMirrors(session)).map(e -> repoInfo(e, tree,session)).toArray(RepoInfo[]::new) : null
+        );
+    }
+
+    public static class RepoInfo {
+        String name;
+        String type;
+        String location;
+        boolean enabled;
+        RepoInfo[] mirrors;
+
+        public RepoInfo(String name, String type, String location, boolean enabled, RepoInfo[] mirrors) {
+            this.name = name;
+            this.type = type;
+            this.location = location;
+            this.enabled = enabled;
+            this.mirrors = mirrors;
+        }
+
+        public RepoInfo[] getMirrors() {
+            return mirrors;
+        }
+
+        public RepoInfo() {
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getLocation() {
+            return location;
+        }
+
+        public void setLocation(String location) {
+            this.location = location;
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
 }

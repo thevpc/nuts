@@ -109,7 +109,7 @@ public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
      * @return {@code this} instance
      */
     @Override
-    NutsDeployRepositoryCommand setSession(NutsRepositorySession session);
+    NutsDeployRepositoryCommand setSession(NutsSession session);
 
     /**
      * run deploy command

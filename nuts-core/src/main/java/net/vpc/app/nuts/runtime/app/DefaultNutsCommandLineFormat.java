@@ -4,10 +4,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.format.DefaultFormatBase;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 
-import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UncheckedIOException;
-import java.io.Writer;
 import java.util.List;
 
 public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandLineFormat> implements NutsCommandLineFormat {
@@ -45,18 +42,18 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
 
     @Override
     public NutsCommandLine parse(String line) {
-        return new DefaultNutsCommandLine(ws, NutsCommandLineUtils.parseCommandLine(ws, line));
+        return new DefaultNutsCommandLine(getWorkspace(), NutsCommandLineUtils.parseCommandLine(getWorkspace(), line));
     }
 
     @Override
     public NutsCommandLine create(String... args) {
-        return new DefaultNutsCommandLine(ws, args);
+        return new DefaultNutsCommandLine(getWorkspace(), args);
     }
 
     @Override
     public NutsCommandLine create(List<String> args) {
 
-        return new DefaultNutsCommandLine(ws, args, null);
+        return new DefaultNutsCommandLine(getWorkspace(), args, null);
     }
 
     @Override
@@ -68,7 +65,7 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
     public void print(PrintStream out) {
         if (value != null) {
             int index = 0;
-            NutsCommandLine cmd = new DefaultNutsCommandLine(ws, value.toArray());
+            NutsCommandLine cmd = new DefaultNutsCommandLine(getWorkspace(), value.toArray());
             while (cmd.hasNext()) {
                 NutsArgument n = cmd.next();
                 if (index > 0) {
@@ -92,26 +89,26 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
                     sb.append("@@//@@");
                 }
                 sb.append("[[!]]");
-                sb.append("**" + escapeArgument(ws, name) + "**");
+                sb.append("**" + escapeArgument(getWorkspace(), name) + "**");
             } else {
                 if (!arg.isEnabled()) {
-                    sb.append("**" + escapeArgument(ws, prefix) + "**");
+                    sb.append("**" + escapeArgument(getWorkspace(), prefix) + "**");
                     sb.append("@@//@@");
-                    sb.append("**" + escapeArgument(ws, name) + "**");
+                    sb.append("**" + escapeArgument(getWorkspace(), name) + "**");
                 } else {
-                    sb.append("**" + escapeArgument(ws, prefix + name) + "**");
+                    sb.append("**" + escapeArgument(getWorkspace(), prefix + name) + "**");
                 }
             }
             if (arg.isKeyValue()) {
                 sb.append("{{\\=}}");
-                sb.append(escapeArgument(ws, arg.getStringValue()));
+                sb.append(escapeArgument(getWorkspace(), arg.getStringValue()));
             }
             return sb.toString();
         } else {
             if (!arg.isEnabled()) {
-                return "@@" + escapeArgument(ws, arg.getString()) + "@@";
+                return "@@" + escapeArgument(getWorkspace(), arg.getString()) + "@@";
             }
-            return escapeArgument(ws, arg.getString());
+            return escapeArgument(getWorkspace(), arg.getString());
         }
     }
 
@@ -151,17 +148,17 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
 
     @Override
     public NutsArgument createArgument(String argument) {
-        return Factory.createArgument0(ws, argument, '=');
+        return Factory.createArgument0(getWorkspace(), argument, '=');
     }
 
     @Override
     public NutsArgumentCandidate createCandidate(String value, String label) {
-        return Factory.createCandidate0(ws, value, label);
+        return Factory.createCandidate0(getWorkspace(), value, label);
     }
 
     @Override
     public NutsArgumentName createName(String type, String label) {
-        return Factory.createName0(ws, type, label);
+        return Factory.createName0(getSession(), type, label);
     }
 
     @Override
@@ -178,7 +175,7 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
             return new NutsDefaultArgumentCandidate(value, CoreStringUtils.isBlank(label) ? value : label);
         }
 
-        public static NutsArgumentName createName0(NutsWorkspace ws, String type, String label) {
+        public static NutsArgumentName createName0(NutsSession ws, String type, String label) {
             if (type == null) {
                 type = "";
             }
@@ -187,37 +184,37 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
             }
             switch (type) {
                 case "arch": {
-                    return new ArchitectureNonOption(label, ws);
+                    return new ArchitectureNonOption(label);
                 }
                 case "packaging": {
-                    return new PackagingNonOption(ws, label);
+                    return new PackagingNonOption(label);
                 }
                 case "extension": {
                     return new ExtensionNonOption(type, null);
                 }
                 case "file": {
-                    return new FileNonOption(ws, type);
+                    return new FileNonOption(type);
                 }
                 case "boolean": {
-                    return new ValueNonOption(ws, type, "true", "false");
+                    return new ValueNonOption( type, "true", "false");
                 }
                 case "repository": {
-                    return new RepositoryNonOption(ws, label);
+                    return new RepositoryNonOption( label);
                 }
                 case "repository-type": {
-                    return new RepositoryTypeNonOption(label, ws);
+                    return new RepositoryTypeNonOption(label);
                 }
                 case "right": {
-                    return new PermissionNonOption(label, ws, null, null, false);
+                    return new PermissionNonOption(label,  null, false);
                 }
                 case "user": {
-                    return new UserNonOption(label, ws);
+                    return new UserNonOption(label);
                 }
                 case "group": {
-                    return new GroupNonOption(label, ws);
+                    return new GroupNonOption(label);
                 }
                 default: {
-                    return new DefaultNonOption(ws, label);
+                    return new DefaultNonOption(label);
                 }
             }
         }

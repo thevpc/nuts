@@ -53,7 +53,20 @@ public interface NutsSearchVersionsRepositoryCommand extends NutsRepositoryComma
     NutsSearchVersionsRepositoryCommand run();
 
     @Override
-    NutsSearchVersionsRepositoryCommand setSession(NutsRepositorySession session);
+    NutsSearchVersionsRepositoryCommand setSession(NutsSession session);
+
+    /**
+     * fetchMode
+     * @param fetchMode fetchMode
+     * @return {@code this} instance
+     */
+    NutsSearchVersionsRepositoryCommand setFetchMode(NutsFetchMode fetchMode);
+
+    /**
+     * get fetchMode
+     * @return {@code this} instance
+     */
+    NutsFetchMode getFetchMode();
 
     Iterator<NutsId> getResult();
 }

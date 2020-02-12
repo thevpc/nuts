@@ -213,7 +213,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             idBuilder.setProperty(NutsConstants.IdProperties.FACE, null);
         }
         id = idBuilder.build();
-        NutsTerminalFormat tf = ws.io().getTerminalFormat();
+        NutsTerminalFormat tf = getWorkspace().io().getTerminalFormat();
         StringBuilder sb = new StringBuilder();
         if (!isOmitNamespace()) {
             if (!CoreStringUtils.isBlank(id.getNamespace())) {
@@ -225,7 +225,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         if (!isOmitGroupId()) {
             if (!CoreStringUtils.isBlank(id.getGroupId())) {
                 boolean importedGroup2 = "net.vpc.app.nuts".equals(id.getGroupId());
-                boolean importedGroup = ws.config().getImports().contains(id.getGroupId());
+                boolean importedGroup = getWorkspace().config().getImports().contains(id.getGroupId());
                 if (!(importedGroup && isOmitImportedGroupId())) {
                     if (importedGroup || importedGroup2) {
                         sb.append("<<");
@@ -363,7 +363,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     public NutsId parseRequired(String nutFormat) {
         NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
         if (id == null) {
-            throw new NutsParseException(ws, "Invalid Id format : " + nutFormat);
+            throw new NutsParseException(getWorkspace(), "Invalid Id format : " + nutFormat);
         }
         return id;
     }
@@ -380,7 +380,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 
     @Override
     public NutsId resolveId(Class clazz) {
-        PomId u = PomIdResolver.of(ws).resolvePomId(clazz, null);
+        PomId u = PomIdResolver.of(getWorkspace()).resolvePomId(clazz, null);
         if (u == null) {
             return null;
         }
@@ -389,7 +389,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 
     @Override
     public NutsId[] resolveIds(Class clazz) {
-        PomId[] u = PomIdResolver.of(ws).resolvePomIds(clazz);
+        PomId[] u = PomIdResolver.of(getWorkspace()).resolvePomIds(clazz);
         NutsId[] all = new NutsId[u.length];
         for (int i = 0; i < all.length; i++) {
             all[i] = parse(u[i].getGroupId() + ":" + u[i].getArtifactId() + "#" + u[i].getVersion());

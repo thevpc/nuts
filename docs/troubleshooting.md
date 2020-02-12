@@ -24,14 +24,14 @@ To run nuts in reset mode type :
 nuts --reset
 ```
 
-## kill mode
-**kill mode** is a special variant of reset mode where workspace will not be recreated after deletion. 
-This can be achieved by using a combination of reset mode and --skip-welcome option. Do not ever
+## Kill mode
+**Kill mode** is a special variant of reset mode where workspace will not be recreated after deletion. 
+This can be achieved by using a combination of reset mode and --skip-boot (-Q)option. Do not ever
 invoke it unless your are really knowing what you are doing. To run nuts in reset mode type :
 
 To run nuts in prune mode type :
 ```
-nuts --reset -K
+nuts --reset -Q
 ```
 
 ## After invoking reset mode

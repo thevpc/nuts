@@ -7,18 +7,9 @@ package net.vpc.app.nuts.core.repos;
 
 import java.nio.file.Path;
 import java.util.Iterator;
-import net.vpc.app.nuts.NutsContent;
-import net.vpc.app.nuts.NutsFetchMode;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIndexStore;
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsRepositorySupportedAction;
-import net.vpc.app.nuts.NutsDeployRepositoryCommand;
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsIdFilter;
-import net.vpc.app.nuts.NutsPushRepositoryCommand;
-import net.vpc.app.nuts.NutsRepositorySession;
-import net.vpc.app.nuts.NutsRepositoryUndeployCommand;
+
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.NutsRepositorySupportedAction;
 
 /**
  *
@@ -38,17 +29,17 @@ public interface NutsRepositoryExt extends NutsRepositoryExt0{
 
     void undeployImpl(NutsRepositoryUndeployCommand command);
 
-    void checkAllowedFetch(NutsId id, NutsRepositorySession session);
+    void checkAllowedFetch(NutsId id, NutsSession session);
 
-    NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session);
+    NutsDescriptor fetchDescriptorImpl(NutsId id, NutsFetchMode fetchMode, NutsSession session);
 
-    Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session);
+    Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session);
 
-    NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session);
+    NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsSession session);
 
-    Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsRepositorySession session);
+    Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session);
 
-    NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session);
+    NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session);
 
-    boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode);
+    boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode, NutsSession session);
 }

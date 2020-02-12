@@ -25,7 +25,7 @@ public class NutsIndexerUtils {
         return new File(m).toPath();
     }
 
-    public static Map<String, String> nutsRepositoryToMap(NutsRepository repository, int level) {
+    public static Map<String, String> nutsRepositoryToMap(NutsRepository repository, int level, NutsSession session) {
         if (repository == null) {
             return new HashMap<>();
         }
@@ -38,10 +38,10 @@ public class NutsIndexerUtils {
         NutsWorkspace ws = repository.getWorkspace();
         if (level == 0) {
             entity.put("mirrors", Arrays.toString(
-                    Arrays.stream(repository.config().getMirrors())
-                            .map(nutsRepository -> mapToJson(nutsRepositoryToMap(nutsRepository, level + 1), ws))
+                    Arrays.stream(repository.config().getMirrors(session))
+                            .map(nutsRepository -> mapToJson(nutsRepositoryToMap(nutsRepository, level + 1, session), ws))
                             .toArray()));
-            entity.put("parents", mapToJson(nutsRepositoryToMap(repository.getParentRepository(), level + 1), ws));
+            entity.put("parents", mapToJson(nutsRepositoryToMap(repository.getParentRepository(), level + 1, session), ws));
         }
         return entity;
     }
@@ -52,8 +52,8 @@ public class NutsIndexerUtils {
         return s.toString();
     }
 
-    public static Map<String, String> nutsRepositoryToMap(NutsRepository repository) {
-        return nutsRepositoryToMap(repository, 0);
+    public static Map<String, String> nutsRepositoryToMap(NutsRepository repository, NutsSession session) {
+        return nutsRepositoryToMap(repository, 0, session);
     }
 
     public static Map<String, String> nutsIdToMap(NutsId id) {

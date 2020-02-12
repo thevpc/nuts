@@ -483,7 +483,7 @@ public class CoreIOUtils {
         return s.replace('/', File.separatorChar);
     }
 
-    public static String resolveRepositoryPath(NutsCreateRepositoryOptions options, Path rootFolder, NutsWorkspace ws) {
+    public static String resolveRepositoryPath(NutsAddRepositoryOptions options, Path rootFolder, NutsWorkspace ws) {
         String loc = options.getLocation();
         String goodName = options.getName();
         if (CoreStringUtils.isBlank(goodName)) {

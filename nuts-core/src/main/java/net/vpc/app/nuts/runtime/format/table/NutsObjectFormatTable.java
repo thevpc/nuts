@@ -21,7 +21,6 @@ import net.vpc.app.nuts.runtime.format.NutsObjectFormatBase;
 public class NutsObjectFormatTable extends NutsObjectFormatBase {
 
     final NutsOutputFormat t;
-    final NutsWorkspace ws;
     private String rootName = "";
     private List<String> extraConfig = new ArrayList<>();
     private Map<String, String> multilineProperties = new HashMap<>();
@@ -29,12 +28,11 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
     public NutsObjectFormatTable(NutsWorkspace ws) {
         super(ws, NutsOutputFormat.TABLE.id() + "-format");
         this.t = NutsOutputFormat.TABLE;
-        this.ws = ws;
     }
 
     @Override
     public NutsObjectFormat setValue(Object value) {
-        return super.setValue(ws.element().toElement(value));
+        return super.setValue(getWorkspace().element().toElement(value));
     }
 
     @Override
@@ -99,15 +97,15 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
             case NULL:{
                 List<NutsElement> a = new ArrayList<>();
                 a.add(value);
-                print(w, ws.element().toElement(a));
+                print(w, getWorkspace().element().toElement(a));
                 break;
             }
             case OBJECT: {
-                print(w, ws.element().toElement(value.object().children()));
+                print(w, getWorkspace().element().toElement(value.object().children()));
                 break;
             }
             case ARRAY: {
-                NutsTableFormat t = ws.table();
+                NutsTableFormat t = getWorkspace().table();
                 NutsMutableTableModel model = t.createModel();
                 t.setModel(model);
                 t.configure(true, getExtraConfigArray());
@@ -149,7 +147,7 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(ws, "Unsupported " + value.type());
+                throw new NutsUnsupportedArgumentException(getWorkspace(), "Unsupported " + value.type());
             }
         }
     }

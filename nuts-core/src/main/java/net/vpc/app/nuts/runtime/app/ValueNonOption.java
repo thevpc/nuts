@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import net.vpc.app.nuts.NutsArgumentCandidate;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsCommandAutoComplete;
 
 /**
  *
@@ -43,13 +43,13 @@ public class ValueNonOption extends DefaultNonOption {
 
     private String[] values;
 
-    public ValueNonOption(NutsWorkspace ws,String name, String... values) {
-        super(ws,name);
+    public ValueNonOption(String name, String... values) {
+        super(name);
         this.values = values;
     }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates() {
+    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         return new ArrayList(Arrays.asList(values));
     }
 

@@ -95,7 +95,7 @@ public interface NutsWorkspaceConfigManager {
 
     NutsSdkLocation findSdkByPath(String sdkType, Path path, NutsSession session);
 
-    NutsSdkLocation findSdkByVersion(String sdkType, String version);
+    NutsSdkLocation findSdkByVersion(String sdkType, String version, NutsSession session);
 
     NutsSdkLocation findSdk(String sdkType, NutsSdkLocation location, NutsSession session);
 
@@ -156,11 +156,11 @@ public interface NutsWorkspaceConfigManager {
 
     NutsId createContentFaceId(NutsId id, NutsDescriptor desc);
 
-    NutsCommandAliasFactoryConfig[] getCommandFactories();
+    NutsCommandAliasFactoryConfig[] getCommandFactories(NutsSession session);
 
-    NutsRepositoryRef[] getRepositoryRefs();
+    NutsRepositoryRef[] getRepositoryRefs(NutsSession session);
 
-    NutsWorkspaceListManager createWorkspaceListManager(String name);
+    NutsWorkspaceListManager createWorkspaceListManager(String name, NutsSession session);
 
     void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location, NutsUpdateOptions options);
 
@@ -176,37 +176,35 @@ public interface NutsWorkspaceConfigManager {
 
     NutsRepository addRepository(NutsRepositoryDefinition definition);
 
-    NutsRepository addRepository(NutsCreateRepositoryOptions options);
+    NutsRepository addRepository(NutsAddRepositoryOptions options);
 
-    NutsRepository findRepositoryById(String repositoryIdOrName, boolean transitive);
+    NutsRepository findRepositoryById(String repositoryIdOrName, NutsSession session);
 
-    NutsRepository findRepositoryByName(String repositoryIdOrName, boolean transitive);
+    NutsRepository findRepositoryByName(String repositoryIdOrName, NutsSession session);
 
     /**
      *
      * @param repositoryIdOrName repository id or name
-     * @param transitive if true find into repositories mirrors
+     * @param session session
      * @return null if not found
      */
-    NutsRepository findRepository(String repositoryIdOrName, boolean transitive);
+    NutsRepository findRepository(String repositoryIdOrName, NutsSession session);
 
-    NutsRepository getRepository(String repositoryIdOrName) throws NutsRepositoryNotFoundException;
-
-    NutsRepository getRepository(String repositoryIdOrName, boolean transitive) throws NutsRepositoryNotFoundException;
+    NutsRepository getRepository(String repositoryIdOrName, NutsSession session) throws NutsRepositoryNotFoundException;
 
     NutsWorkspaceConfigManager removeRepository(String locationOrRepositoryId, NutsRemoveOptions options);
 
-    NutsRepository[] getRepositories();
+    NutsRepository[] getRepositories(NutsSession session);
 
     NutsRepositoryDefinition[] getDefaultRepositories();
 
-    Set<String> getAvailableArchetypes();
+    Set<String> getAvailableArchetypes(NutsSession session);
 
     Path resolveRepositoryPath(String repositoryLocation);
 
     NutsIndexStoreFactory getIndexStoreClientFactory();
 
-    NutsRepository createRepository(NutsCreateRepositoryOptions options, Path rootFolder, NutsRepository parentRepository);
+    NutsRepository createRepository(NutsAddRepositoryOptions options, Path rootFolder, NutsRepository parentRepository);
 
     String getDefaultIdContentExtension(String packaging);
 

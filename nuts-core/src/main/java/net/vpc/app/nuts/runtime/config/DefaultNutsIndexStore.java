@@ -21,7 +21,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
     }
 
     @Override
-    public Iterator<NutsId> searchVersions(NutsId id, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersions(NutsId id, NutsSession session) {
         return IteratorUtils.supplier(
                 () -> {
                     if (isInaccessible()) {
@@ -51,7 +51,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
     }
 
     @Override
-    public Iterator<NutsId> search(NutsIdFilter filter, NutsRepositorySession session) {
+    public Iterator<NutsId> search(NutsIdFilter filter, NutsSession session) {
         return IteratorUtils.supplier(
                 () -> {
                     if (isInaccessible()) {
@@ -67,7 +67,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                                 .filter(filter != null ? new Predicate<NutsId>() {
                                     @Override
                                     public boolean test(NutsId t) {
-                                        return filter.acceptSearchId(new NutsSearchIdById(t), session.getSession());
+                                        return filter.acceptSearchId(new NutsSearchIdById(t), session);
                                     }
                                 } : (Predicate<NutsId>) id -> true)
                                 .iterator();

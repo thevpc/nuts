@@ -63,7 +63,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
 
     @Override
     public void print(PrintStream out) {
-        ws.json().compact(isCompact()).value(desc).print(out);
+        getWorkspace().json().compact(isCompact()).value(desc).print(out);
     }
 
     @Override
@@ -74,10 +74,10 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
             } catch (NutsException ex) {
                 throw ex;
             } catch (RuntimeException ex) {
-                throw new NutsParseException(ws, "Unable to parse url " + url, ex);
+                throw new NutsParseException(getWorkspace(), "Unable to parse url " + url, ex);
             }
         } catch (IOException ex) {
-            throw new NutsParseException(ws, "Unable to parse url " + url, ex);
+            throw new NutsParseException(getWorkspace(), "Unable to parse url " + url, ex);
         }
     }
 
@@ -89,14 +89,14 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
     @Override
     public NutsDescriptor parse(Path path) {
         if (!Files.exists(path)) {
-            throw new NutsNotFoundException(ws, "at file " + path);
+            throw new NutsNotFoundException(getWorkspace(), "at file " + path);
         }
         try {
             return parse(Files.newInputStream(path), true);
         } catch (NutsException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NutsParseException(ws, "Unable to parse file " + path, ex);
+            throw new NutsParseException(getWorkspace(), "Unable to parse file " + path, ex);
         }
     }
 
@@ -115,7 +115,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
 
     private NutsDescriptor parse(InputStream in, boolean closeStream) {
         try (Reader rr = new InputStreamReader(in)) {
-            return ws.json().parse(rr, NutsDescriptor.class);
+            return getWorkspace().json().parse(rr, NutsDescriptor.class);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }

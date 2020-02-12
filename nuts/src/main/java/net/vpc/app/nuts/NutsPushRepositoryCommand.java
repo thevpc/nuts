@@ -63,7 +63,7 @@ public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
      * @return {@code this} instance
      */
     @Override
-    NutsPushRepositoryCommand setSession(NutsRepositorySession session);
+    NutsPushRepositoryCommand setSession(NutsSession session);
 
     /**
      * run this command and return {@code this} instance

@@ -42,7 +42,7 @@ public class NutsFolderRepository extends NutsCachedRepository {
 
     public final NutsLogger LOG;
 
-    public NutsFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
+    public NutsFolderRepository(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(options, workspace, parentRepository, SPEED_FASTER, true, NutsConstants.RepoTypes.NUTS);
         LOG=workspace.log().of(NutsFolderRepository.class);
         extensions.put("src", "-src.zip");
@@ -54,39 +54,39 @@ public class NutsFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsRepositorySession session) {
-        if (session.getFetchMode() == NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
+    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
+        if (fetchMode == NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
         }
         NutsId id2 = id.builder().faceDescriptor().build();
         throw new NutsNotFoundException(getWorkspace(), id,new IOException("File Not Found : "+lib.getGoodPath(id2)));
     }
 
     @Override
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
-        if (session.getFetchMode() == NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,session.getFetchMode(),id.toString(),null));
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsSession session) {
+        if (fetchMode == NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
         }
         NutsId id2 = id.builder().faceContent().build();
         throw new NutsNotFoundException(getWorkspace(), id,new IOException("File Not Found : "+lib.getGoodPath(id2)));
     }
 
     @Override
-    public Iterator<NutsId> searchCore(NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
+    public Iterator<NutsId> searchCore(NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 
     @Override
-    public NutsId searchLatestVersionCore(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
+    public NutsId searchLatestVersionCore(NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 
     @Override
-    public void updateStatistics2() {
+    public void updateStatistics2(NutsSession session) {
     }
 
     @Override
-    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 

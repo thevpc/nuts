@@ -50,7 +50,8 @@ public interface NutsArgumentName extends Serializable {
     /**
      * argument candidate values
      *
+     * @param context autocomplete
      * @return candidates list
      */
-    List<NutsArgumentCandidate> getCandidates();
+    List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context);
 }

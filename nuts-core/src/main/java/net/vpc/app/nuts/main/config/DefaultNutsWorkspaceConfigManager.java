@@ -216,7 +216,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         removeAllRepositories(o0);
         if (this.storeModelMain.getRepositories() != null) {
             for (NutsRepositoryRef ref : this.storeModelMain.getRepositories()) {
-                NutsCreateRepositoryOptions o1 = CoreNutsUtils.refToOptions(ref);
+                NutsAddRepositoryOptions o1 = CoreNutsUtils.refToOptions(ref);
                 o1.session(options.getSession());
                 NutsRepository r = this.createRepository(o1, getRepositoriesRoot(), null);
                 NutsAddOptions o2 = CoreNutsUtils.toAddOptions(options);
@@ -435,7 +435,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsSdkLocation findSdkByVersion(String type, String version) {
+    public NutsSdkLocation findSdkByVersion(String type, String version, NutsSession session) {
         type = toValidSdkName(type);
         if (version != null) {
             List<NutsSdkLocation> list = getSdk().get(type);
@@ -665,7 +665,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             ok = true;
         }
         NutsException error = null;
-        for (NutsRepository repo : getRepositories()) {
+        for (NutsRepository repo : getRepositories(session)) {
             try {
                 ok |= repo.config().save(force, session);
             } catch (NutsException ex) {
@@ -790,7 +790,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsCommandAliasFactoryConfig[] getCommandFactories() {
+    public NutsCommandAliasFactoryConfig[] getCommandFactories(NutsSession session) {
         if (storeModelMain.getCommandFactories() != null) {
             return storeModelMain.getCommandFactories().toArray(new NutsCommandAliasFactoryConfig[0]);
         }
@@ -798,7 +798,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsRepositoryRef[] getRepositoryRefs() {
+    public NutsRepositoryRef[] getRepositoryRefs(NutsSession session) {
         return repositoryRegistryHelper.getRepositoryRefs();
     }
 
@@ -1779,7 +1779,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsWorkspaceListManager createWorkspaceListManager(String name) {
+    public NutsWorkspaceListManager createWorkspaceListManager(String name, NutsSession session) {
         return new DefaultNutsWorkspaceListManager(ws, name);
     }
 
@@ -1815,14 +1815,14 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsRepository findRepository(String repositoryNameOrId, boolean transitive) {
+    public NutsRepository findRepository(String repositoryNameOrId, NutsSession session) {
         NutsRepository y = repositoryRegistryHelper.findRepository(repositoryNameOrId);
         if (y != null) {
             return y;
         }
-        if (transitive) {
+        if (session.isTransitive()) {
             for (NutsRepository child : repositoryRegistryHelper.getRepositories()) {
-                final NutsRepository m = child.config().findMirror(repositoryNameOrId, true);
+                final NutsRepository m = child.config().findMirror(repositoryNameOrId, session.copy().transitive());
                 if (m != null) {
                     if (y == null) {
                         y = m;
@@ -1837,14 +1837,14 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsRepository findRepositoryById(String repositoryNameOrId, boolean transitive) {
+    public NutsRepository findRepositoryById(String repositoryNameOrId, NutsSession session) {
         NutsRepository y = repositoryRegistryHelper.findRepositoryById(repositoryNameOrId);
         if (y != null) {
             return y;
         }
-        if (transitive) {
+        if (session.isTransitive()) {
             for (NutsRepository child : repositoryRegistryHelper.getRepositories()) {
-                final NutsRepository m = child.config().findMirrorById(repositoryNameOrId, true);
+                final NutsRepository m = child.config().findMirrorById(repositoryNameOrId, session.copy().transitive());
                 if (m != null) {
                     if (y == null) {
                         y = m;
@@ -1859,14 +1859,14 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsRepository findRepositoryByName(String repositoryNameOrId, boolean transitive) {
+    public NutsRepository findRepositoryByName(String repositoryNameOrId, NutsSession session) {
         NutsRepository y = repositoryRegistryHelper.findRepositoryByName(repositoryNameOrId);
         if (y != null) {
             return y;
         }
-        if (transitive) {
+        if (session.isTransitive()) {
             for (NutsRepository child : repositoryRegistryHelper.getRepositories()) {
-                final NutsRepository m = child.config().findMirrorByName(repositoryNameOrId, true);
+                final NutsRepository m = child.config().findMirrorByName(repositoryNameOrId, session.copy().transitive());
                 if (m != null) {
                     if (y == null) {
                         y = m;
@@ -1881,21 +1881,16 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsRepository getRepository(String repositoryIdOrName) throws NutsRepositoryNotFoundException {
-        return getRepository(repositoryIdOrName, false);
-    }
-
-    @Override
-    public NutsRepository getRepository(String repositoryName, boolean transitive) {
-        NutsRepository r = findRepository(repositoryName, transitive);
+    public NutsRepository getRepository(String repositoryIdOrName, NutsSession session) throws NutsRepositoryNotFoundException {
+        NutsRepository r = findRepository(repositoryIdOrName, session);
         if (r != null) {
             return r;
         }
-        throw new NutsRepositoryNotFoundException(ws, repositoryName);
+        throw new NutsRepositoryNotFoundException(ws, repositoryIdOrName);
     }
 
     @Override
-    public NutsRepository[] getRepositories() {
+    public NutsRepository[] getRepositories(NutsSession session) {
         return repositoryRegistryHelper.getRepositories();
     }
 
@@ -1957,7 +1952,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         config.setType("custom");
         config.setUuid(uuid);
         config.setStoreLocationStrategy(repository.getStoreLocationStrategy());
-        NutsCreateRepositoryOptions options = new NutsCreateRepositoryOptions();
+        NutsAddRepositoryOptions options = new NutsAddRepositoryOptions();
         Path rootFolder = getRepositoriesRoot();
         options.setName(config.getName());
         options.setConfig(config);
@@ -1971,7 +1966,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsRepository addRepository(NutsCreateRepositoryOptions options) {
+    public NutsRepository addRepository(NutsAddRepositoryOptions options) {
         if (excludedRepositoriesSet != null && excludedRepositoriesSet.contains(options.getName())) {
             return null;
         }
@@ -1981,7 +1976,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (options.isProxy()) {
             if (options.getConfig() == null) {
                 NutsRepository proxy = addRepository(
-                        new NutsCreateRepositoryOptions()
+                        new NutsAddRepositoryOptions()
                                 .setName(options.getName())
                                 .setFailSafe(options.isFailSafe())
                                 .setLocation(options.getName())
@@ -2002,8 +1997,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 }
                 //Dont need to add mirror if repository is already loadable from config!
                 final String m2 = options.getName() + "-ref";
-                if (proxy.config().findMirror(m2, false) == null) {
-                    proxy.config().addMirror(new NutsCreateRepositoryOptions()
+                if (proxy.config().findMirror(m2, options.getSession().copy().transitive(false)) == null) {
+                    proxy.config().addMirror(new NutsAddRepositoryOptions()
                             .setName(m2)
                             .setFailSafe(options.isFailSafe())
                             .setEnabled(options.isEnabled())
@@ -2015,7 +2010,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 return proxy;
             } else {
                 NutsRepository proxy = addRepository(
-                        new NutsCreateRepositoryOptions()
+                        new NutsAddRepositoryOptions()
                                 .setName(options.getName())
                                 .setFailSafe(options.isFailSafe())
                                 .setEnabled(options.isEnabled())
@@ -2034,8 +2029,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 }
                 //Dont need to add mirror if repository is already loadable from config!
                 final String m2 = options.getName() + "-ref";
-                if (proxy.config().findMirror(m2, false) == null) {
-                    proxy.config().addMirror(new NutsCreateRepositoryOptions()
+                if (proxy.config().findMirror(m2, options.getSession().copy().transitive(false)) == null) {
+                    proxy.config().addMirror(new NutsAddRepositoryOptions()
                             .setName(m2)
                             .setFailSafe(options.isFailSafe())
                             .setEnabled(options.isEnabled())
@@ -2071,7 +2066,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public Set<String> getAvailableArchetypes() {
+    public Set<String> getAvailableArchetypes(NutsSession session) {
         Set<String> set = new HashSet<>();
         set.add("default");
         for (NutsWorkspaceArchetypeComponent extension : ws.extensions().createAllSupported(NutsWorkspaceArchetypeComponent.class, new DefaultNutsSupportLevelContext<>(ws, null))) {
@@ -2090,7 +2085,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsRepository createRepository(NutsCreateRepositoryOptions options, Path rootFolder, NutsRepository parentRepository) {
+    public NutsRepository createRepository(NutsAddRepositoryOptions options, Path rootFolder, NutsRepository parentRepository) {
         options = options.copy();
         try {
             NutsRepositoryConfig conf = options.getConfig();

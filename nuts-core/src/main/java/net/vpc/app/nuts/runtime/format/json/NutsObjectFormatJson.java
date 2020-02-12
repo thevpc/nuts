@@ -20,7 +20,6 @@ import net.vpc.app.nuts.runtime.format.NutsObjectFormatBase;
 public class NutsObjectFormatJson extends NutsObjectFormatBase {
 
     private final NutsOutputFormat t;
-    private final NutsWorkspace ws;
     private final String rootName = "";
     private final List<String> extraConfig = new ArrayList<>();
     private final Map<String, String> multilineProperties = new HashMap<>();
@@ -28,7 +27,6 @@ public class NutsObjectFormatJson extends NutsObjectFormatBase {
     public NutsObjectFormatJson(NutsWorkspace ws) {
         super(ws, NutsOutputFormat.JSON.id() + "-format");
         this.t = NutsOutputFormat.JSON;
-        this.ws = ws;
     }
 
     @Override
@@ -56,7 +54,7 @@ public class NutsObjectFormatJson extends NutsObjectFormatBase {
 
     @Override
     public void print(PrintStream w) {
-        ws.json().value(getValue()).print(w);
+        getWorkspace().json().value(getValue()).print(w);
     }
 
     public NutsObjectFormatBase addMultilineProperty(String property, String separator) {

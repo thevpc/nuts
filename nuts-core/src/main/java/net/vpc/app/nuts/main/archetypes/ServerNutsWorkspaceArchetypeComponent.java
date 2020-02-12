@@ -56,7 +56,7 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
         NutsWorkspace ws = session.getWorkspace();
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) ws.config();
 
-        NutsCreateRepositoryOptions localDef = new NutsCreateRepositoryOptions()
+        NutsAddRepositoryOptions localDef = new NutsAddRepositoryOptions()
                 .setName(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
                 .setLocation(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
                 .setEnabled(true)

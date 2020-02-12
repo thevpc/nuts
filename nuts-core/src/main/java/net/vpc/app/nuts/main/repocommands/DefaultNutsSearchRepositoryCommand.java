@@ -16,7 +16,6 @@ import net.vpc.app.nuts.runtime.repocommands.AbstractNutsSearchRepositoryCommand
 import net.vpc.app.nuts.core.repos.NutsRepositoryExt;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
-import net.vpc.app.nuts.runtime.util.iter.IteratorUtils;
 
 /**
  *
@@ -42,7 +41,7 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log( "{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));
             }
-            if (getSession().getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
+            if (getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 Iterator<NutsId> o = null;
                 try {
                     o = xrepo.getIndexStore().search(filter, getSession());
@@ -56,7 +55,7 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
                 }
             }
 
-            result = xrepo.searchImpl(filter, getSession());
+            result = xrepo.searchImpl(filter, getFetchMode(), getSession());
         } catch (NutsNotFoundException | SecurityException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "{0} Find components", CoreStringUtils.alignLeft(getRepo().config().getName(), 20));

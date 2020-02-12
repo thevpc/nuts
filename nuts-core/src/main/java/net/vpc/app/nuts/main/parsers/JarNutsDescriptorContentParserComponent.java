@@ -120,7 +120,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                             break;
                         default:
                             try {
-                                maven.set(MavenUtils.of(parserContext.getWorkspace()).parsePomXml(inputStream, NutsWorkspaceHelper.createNoRepositorySession(parserContext.getSession(), NutsFetchMode.REMOTE), path));
+                                maven.set(MavenUtils.of(parserContext.getWorkspace()).parsePomXml(inputStream, NutsFetchMode.REMOTE, path, null,parserContext.getSession()));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

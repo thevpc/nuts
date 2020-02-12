@@ -41,7 +41,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
         xrepo.checkAllowedFetch(id, getSession());
         try {
             List<Iterator<NutsId>> resultList = new ArrayList<>();
-            if (getSession().getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
+            if (getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 Iterator<NutsId> d = null;
                 try {
                     d = xrepo.getIndexStore().searchVersions(id, getSession());
@@ -51,11 +51,11 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
                 if (d != null && filter != null) {
                     resultList.add(
                             IteratorUtils.safeIgnore(
-                                    IteratorBuilder.of(d).filter(x -> filter.accept(x, getSession().getSession())).iterator())
+                                    IteratorBuilder.of(d).filter(x -> filter.accept(x, getSession())).iterator())
                             );
                 }
             }
-            Iterator<NutsId> rr = xrepo.searchVersionsImpl(id, getFilter(), getSession());
+            Iterator<NutsId> rr = xrepo.searchVersionsImpl(id, getFilter(), getFetchMode(), getSession());
             if (rr != null) {
                 resultList.add(rr);
             }
@@ -63,7 +63,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
             return this;
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "[{0}] {1} {2} {3}", CoreStringUtils.alignLeft(getSession().getFetchMode().toString(), 7), CoreStringUtils.alignLeft(getRepo().config().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id);
+                LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "[{0}] {1} {2} {3}", CoreStringUtils.alignLeft(getFetchMode().toString(), 7), CoreStringUtils.alignLeft(getRepo().config().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id);
             }
             throw ex;
         }

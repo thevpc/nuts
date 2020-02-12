@@ -12,8 +12,6 @@ import java.io.Writer;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.NutsCommandLine;
-import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.runtime.util.fprint.ExtendedFormatAwarePrintWriter;
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 
 /**
@@ -22,17 +20,17 @@ import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
  */
 public abstract class DefaultFormatBase0<T> implements NutsConfigurable {
 
-    protected NutsWorkspace ws;
+    private NutsWorkspace workspace;
     private NutsSession session;
     private String name;
 
-    public DefaultFormatBase0(NutsWorkspace ws, String name) {
-        this.ws = ws;
+    public DefaultFormatBase0(NutsWorkspace workspace, String name) {
+        this.workspace = workspace;
         this.name = name;
     }
 
     public NutsWorkspace getWorkspace() {
-        return ws;
+        return workspace;
     }
 
     public PrintWriter getValidPrintWriter(Writer out) {
@@ -50,7 +48,7 @@ public abstract class DefaultFormatBase0<T> implements NutsConfigurable {
         if (out == null) {
             out = getValidSession().getTerminal().getOut();
         }
-        return ws.io().getTerminalFormat().prepare(out);
+        return getWorkspace().io().getTerminalFormat().prepare(out);
     }
 
     public PrintStream getValidPrintStream() {
@@ -59,7 +57,7 @@ public abstract class DefaultFormatBase0<T> implements NutsConfigurable {
 
     public NutsSession getValidSession() {
         if (session == null) {
-            session = ws.createSession();
+            session = getWorkspace().createSession();
         }
         return session;
     }
@@ -92,7 +90,7 @@ public abstract class DefaultFormatBase0<T> implements NutsConfigurable {
      */
     @Override
     public T configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, getName());
+        return NutsConfigurableHelper.configure(this, getWorkspace(), skipUnsupported, args, getName());
     }
 
     /**
@@ -105,7 +103,7 @@ public abstract class DefaultFormatBase0<T> implements NutsConfigurable {
      */
     @Override
     public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
+        return NutsConfigurableHelper.configure(this, getWorkspace(), skipUnsupported, commandLine);
     }
 
 }

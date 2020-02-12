@@ -38,8 +38,8 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
     }
 
     @Override
-    public Iterator<NutsId> search(NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
-        if(session.getFetchMode()!=NutsFetchMode.REMOTE){
+    public Iterator<NutsId> search(NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
+        if(fetchMode!=NutsFetchMode.REMOTE){
             return null;
         }
         List<NutsId> all = new ArrayList<>();
@@ -72,13 +72,13 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                         String v0 = s3.substring(prefix.length(), s3.length() - 4);
                         NutsVersion v = ws.version().parse(v0);
                         NutsId id2 = idBuilder.setVersion(v).build();
-                        if (filter == null || filter.accept(id2, session.getSession())) {
+                        if (filter == null || filter.accept(id2, session)) {
                             all.add(id2);
                         }
                     }
                 }else{
                     NutsId id2 = idBuilder.setVersion(version).build();
-                    if (filter == null || filter.accept(id2, session.getSession())) {
+                    if (filter == null || filter.accept(id2, session)) {
                         all.add(id2);
                     }
                 }
@@ -89,12 +89,12 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
     }
 
     @Override
-    public Iterator<NutsId> searchVersions(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
-        if(session.getFetchMode()!=NutsFetchMode.REMOTE){
+    public Iterator<NutsId> searchVersions(NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
+        if(fetchMode!=NutsFetchMode.REMOTE){
             return null;
         }
         if ("org.apache.catalina:apache-tomcat".equals(id.getShortName())) {
-            return search(filter, new String[]{"/"}, session);
+            return search(filter, new String[]{"/"}, fetchMode, repository, session);
         }
         return null;
     }
@@ -112,8 +112,8 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
     }
 
     @Override
-    public NutsDescriptor fetchDescriptor(NutsId id, NutsRepositorySession session) {
-        if(session.getFetchMode()!=NutsFetchMode.REMOTE){
+    public NutsDescriptor fetchDescriptor(NutsId id, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
+        if(fetchMode!=NutsFetchMode.REMOTE){
             return null;
         }
         if ("org.apache.catalina:apache-tomcat".equals(id.getShortName())) {
@@ -142,15 +142,15 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
     }
 
     @Override
-    public NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
-        if(session.getFetchMode()!=NutsFetchMode.REMOTE){
+    public NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
+        if(fetchMode!=NutsFetchMode.REMOTE){
             return null;
         }
         if ("org.apache.catalina:apache-tomcat".equals(id.getShortName())) {
             NutsWorkspace ws = session.getWorkspace();
             String r = getUrl(id.getVersion(), ".zip");
             if (localPath == null) {
-                localPath = getIdLocalFile(id.builder().faceContent().build(), session);
+                localPath = getIdLocalFile(id.builder().faceContent().build(), fetchMode, repository, session);
             }
             ws.io().copy().from(r).to(localPath).safe(true).run();
             return new NutsDefaultContent(localPath, false, false);
@@ -158,18 +158,18 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         return null;
     }
 
-    public Path getIdLocalFile(NutsId id, NutsRepositorySession session) {
+    public Path getIdLocalFile(NutsId id, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
-        return session.getRepository().config().getStoreLocation().resolve(
+        return repository.config().getStoreLocation().resolve(
                 ws.config().getDefaultIdBasedir(id)
         ).resolve(ws.config().getDefaultIdFilename(id));
     }
 
-    private String[] list(String url, String regexp, NutsRepositorySession session) {
+    private String[] list(String url, String regexp, NutsSession session) {
         Pattern filterPattern = regexp == null ? null : Pattern.compile(regexp);
         List<String> all = new ArrayList<>();
         try {
-            //NutsWorkspace ws = session.getSession().getWorkspace();
+            //NutsWorkspace ws = session.getWorkspace();
             NutsWorkspace ws = session.getWorkspace();
             byte[] bytes = ws.io().copy().from(url).logProgress().getByteArrayResult();
             Document doc = null;

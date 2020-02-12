@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.main.repos;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.NutsRepositorySupportedAction;
 
 import java.nio.file.Path;
 import java.util.Iterator;
@@ -9,7 +10,7 @@ public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
     private NutsRepositoryModel base;
     private int mode;
 
-    public NutsSimpleRepositoryWrapper(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, NutsRepositoryModel base) {
+    public NutsSimpleRepositoryWrapper(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, NutsRepositoryModel base) {
         super(options, workspace, parent,
                 base.getSpeed(),
                 (base.getMode() & NutsRepositoryModel.MIRRORING) != 0,
@@ -23,28 +24,28 @@ public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
         this.base = base;
     }
 
-    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
-        return base.searchVersions(id, idFilter, session);
+    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
+        return base.searchVersions(id, idFilter, fetchMode, this, session);
     }
 
-    public NutsId searchLatestVersionCore(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
-        return base.searchLatestVersion(id, filter, session);
+    public NutsId searchLatestVersionCore(NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
+        return base.searchLatestVersion(id, filter, fetchMode, this, session);
     }
 
-    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsRepositorySession session) {
-        return base.fetchDescriptor(id, session);
+    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
+        return base.fetchDescriptor(id, fetchMode, this, session);
     }
 
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
-        return base.fetchContent(id, descriptor, localPath, session);
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsSession session) {
+        return base.fetchContent(id, descriptor, localPath, fetchMode, this, session);
     }
 
-    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsRepositorySession session) {
-        return base.search(filter, roots, session);
+    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
+        return base.search(filter, roots, fetchMode, this, session);
     }
 
-    public void updateStatistics2() {
-        base.updateStatistics();
+    public void updateStatistics2(NutsSession session) {
+        base.updateStatistics(this, session);
     }
 
     protected boolean isAllowedOverrideNut(NutsId id) {
@@ -52,10 +53,14 @@ public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
     }
 
     @Override
-    public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode) {
-        if(!super.acceptAction(id, supportedAction, mode)){
+    public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode, NutsSession session) {
+        if(!super.acceptAction(id, supportedAction, mode, session)){
             return false;
         }
-        return base.acceptAction(id, supportedAction, mode);
+        switch (supportedAction){
+            case DEPLOY: return base.acceptDeploy(id, mode, this, session);
+            case SEARCH: return base.acceptFetch(id, mode, this, session);
+        }
+        return false;
     }
 }

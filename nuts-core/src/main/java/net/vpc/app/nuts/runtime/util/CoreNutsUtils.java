@@ -31,6 +31,9 @@ package net.vpc.app.nuts.runtime.util;
 
 import java.io.*;
 
+import net.vpc.app.nuts.core.NutsRepositorySupportedAction;
+import net.vpc.app.nuts.core.repos.NutsInstalledRepository;
+import net.vpc.app.nuts.core.repos.NutsRepositoryExt;
 import net.vpc.app.nuts.runtime.*;
 import net.vpc.app.nuts.main.DefaultNutsWorkspace;
 import net.vpc.app.nuts.runtime.config.DefaultNutsArtifactCall;
@@ -493,7 +496,7 @@ public class CoreNutsUtils {
         return true;
     }
 
-    public static NutsRepositoryRef optionsToRef(NutsCreateRepositoryOptions options) {
+    public static NutsRepositoryRef optionsToRef(NutsAddRepositoryOptions options) {
         return new NutsRepositoryRef()
                 .setEnabled(options.isEnabled())
                 .setFailSafe(options.isFailSafe())
@@ -502,8 +505,8 @@ public class CoreNutsUtils {
                 .setDeployOrder(options.getDeployOrder());
     }
 
-    public static NutsCreateRepositoryOptions refToOptions(NutsRepositoryRef ref) {
-        return new NutsCreateRepositoryOptions()
+    public static NutsAddRepositoryOptions refToOptions(NutsRepositoryRef ref) {
+        return new NutsAddRepositoryOptions()
                 .setEnabled(ref.isEnabled())
                 .setFailSafe(ref.isFailSafe())
                 .setName(ref.getName())
@@ -512,8 +515,8 @@ public class CoreNutsUtils {
                 .setTemporary(false);
     }
 
-    public static NutsCreateRepositoryOptions defToOptions(NutsRepositoryDefinition def) {
-        NutsCreateRepositoryOptions o = new NutsCreateRepositoryOptions();
+    public static NutsAddRepositoryOptions defToOptions(NutsRepositoryDefinition def) {
+        NutsAddRepositoryOptions o = new NutsAddRepositoryOptions();
         String type = def.getType();
         String location = def.getLocation();
         if(location!=null) {
@@ -650,7 +653,7 @@ public class CoreNutsUtils {
         return f;
     }
 
-    public static void traceMessage(NutsLogger log, Level lvl, String name, NutsRepositorySession session, NutsId id, TraceResult tracePhase, String title, long startTime, String extraMsg) {
+    public static void traceMessage(NutsLogger log, Level lvl, String name, NutsSession session, NutsFetchMode fetchMode, NutsId id, TraceResult tracePhase, String title, long startTime, String extraMsg) {
         if (!log.isLoggable(lvl)) {
             return;
         }
@@ -660,7 +663,7 @@ public class CoreNutsUtils {
             extraMsg = " : " + extraMsg;
         }
         long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
-        String modeString = CoreStringUtils.alignLeft(session.getFetchMode().id(), 7);
+        String modeString = CoreStringUtils.alignLeft(fetchMode.id(), 7);
         log.with().level(lvl).verb(tracePhase.name()).time(time).formatted()
                 .log("[{0}] {1} {2} {3} {4}",
                         modeString,
@@ -1022,4 +1025,33 @@ public class CoreNutsUtils {
     }
 
 
+    public static int getSupportLevel(NutsRepository repository, NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode, boolean transitive, NutsSession session) {
+        if(repository instanceof NutsInstalledRepository){
+            return 0;
+        }
+        NutsRepositoryExt xrepo = NutsRepositoryExt.of(repository);
+        double result = 0;
+        if (xrepo.acceptAction(id, supportedAction, mode, session)) {
+            int r = repository.config().getSpeed();
+            if (r > 0) {
+                result += 1.0 / r;
+            }
+        }
+        if (transitive) {
+            for (NutsRepository remote : repository.config().getMirrors(session)) {
+                int r = getSupportLevel(remote,supportedAction, id, mode, transitive,session);
+                if (r > 0) {
+                    result += 1.0 / r;
+                }
+            }
+        }
+        int intResult = 0;
+        if (result != 0) {
+            intResult = (int) (1.0 / result);
+            if (intResult < 0) {
+                intResult = Integer.MAX_VALUE;
+            }
+        }
+        return intResult;
+    }
 }

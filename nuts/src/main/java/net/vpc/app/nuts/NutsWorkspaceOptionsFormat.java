@@ -162,6 +162,7 @@ public class NutsWorkspaceOptionsFormat implements Serializable {
             fillOption("--progress", "-P", options.getProgressOptions(), arguments, false);
             fillOption("--skip-companions", "-k", options.isSkipCompanions(), false, arguments, false);
             fillOption("--skip-welcome", "-K", options.isSkipWelcome(), false, arguments, false);
+            fillOption("--skip-boot", "-Q", options.isSkipBoot(), false, arguments, false);
             fillOption("--cached", null, options.isCached(), true, arguments, false);
             fillOption("--indexed", null, options.isIndexed(), true, arguments, false);
             fillOption("--transitive", null, options.isTransitive(), true, arguments, false);

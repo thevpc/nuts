@@ -41,19 +41,19 @@ import java.util.TreeSet;
  */
 public class RepositoryTypeNonOption extends DefaultNonOption {
 
-    public RepositoryTypeNonOption(String name, NutsWorkspace workspace) {
-        super(workspace,name);
+    public RepositoryTypeNonOption(String name) {
+        super(name);
     }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates() {
+    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         TreeSet<String> allValid = new TreeSet<>();
         allValid.add("nuts");
-        for (NutsRepositoryDefinition repo : getWorkspace().config().getDefaultRepositories()) {
+        for (NutsRepositoryDefinition repo : context.getWorkspace().config().getDefaultRepositories()) {
             allValid.add(repo.getType());
         }
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineFormat c = getWorkspace().commandLine();
+        NutsCommandLineFormat c = context.getWorkspace().commandLine();
         for (String v : allValid) {
             all.add(c.createCandidate(v));
         }

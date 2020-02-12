@@ -46,7 +46,7 @@ public interface NutsIndexStore {
      * @param session current session
      * @return all available versions (in the index)
      */
-    Iterator<NutsId> searchVersions(NutsId id, NutsRepositorySession session);
+    Iterator<NutsId> searchVersions(NutsId id, NutsSession session);
 
     /**
      * search all artifacts matching the given filter
@@ -54,7 +54,7 @@ public interface NutsIndexStore {
      * @param session current session
      * @return all available versions (in the index)
      */
-    Iterator<NutsId> search(NutsIdFilter filter, NutsRepositorySession session);
+    Iterator<NutsId> search(NutsIdFilter filter, NutsSession session);
 
     /**
      * return true if the index is enabled

@@ -38,8 +38,6 @@ import java.util.*;
  * @author vpc
  */
 public class PermissionNonOption extends DefaultNonOption {
-
-    private final NutsRepository repository;
     private final boolean existing;
     private final String user;
 
@@ -47,22 +45,22 @@ public class PermissionNonOption extends DefaultNonOption {
 //        super(name);
 //        this.workspace = context.getWorkspace();
 //    }
-    public PermissionNonOption(String name, NutsWorkspace workspace, NutsRepository repository, String user, boolean existing) {
-        super(workspace,name);
-        this.repository = repository;
+    public PermissionNonOption(String name, String user, boolean existing) {
+        super(name);
         this.existing = existing;
         this.user = user;
     }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates() {
+    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineFormat c=getWorkspace().commandLine();
+        NutsCommandLineFormat c= context.getWorkspace().commandLine();
         for (String r : NutsConstants.Permissions.ALL) {
             all.add(c.createCandidate(r));
         }
         Iterator<NutsArgumentCandidate> i = all.iterator();
-        NutsUser info = repository != null ? repository.security().getEffectiveUser(user) : getWorkspace().security().findUser(user);
+        NutsRepository repository=context.get(NutsRepository.class);
+        NutsUser info = repository != null ? repository.security().getEffectiveUser(user) : context.getWorkspace().security().findUser(user);
         Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : Arrays.asList(info.getPermissions()));
         while (i.hasNext()) {
             NutsArgumentCandidate right = i.next();

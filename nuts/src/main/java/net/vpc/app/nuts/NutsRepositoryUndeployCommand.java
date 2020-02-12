@@ -37,7 +37,15 @@ package net.vpc.app.nuts;
 public interface NutsRepositoryUndeployCommand extends NutsRepositoryCommand {
 
     @Override
-    NutsRepositoryUndeployCommand setSession(NutsRepositorySession session);
+    NutsRepositoryUndeployCommand setSession(NutsSession session);
+
+//    /**
+//     * fetchMode
+//     * @param fetchMode fetchMode
+//     * @return {@code this} instance
+//     */
+//    @Override
+//    NutsRepositoryUndeployCommand setFetchMode(NutsFetchMode fetchMode);
 
     /**
      * run this command and return {@code this} instance

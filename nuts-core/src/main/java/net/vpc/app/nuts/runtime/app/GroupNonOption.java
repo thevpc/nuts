@@ -39,12 +39,8 @@ import java.util.List;
  * @author vpc
  */
 public class GroupNonOption extends DefaultNonOption {
-
-    private NutsRepository repository;
-    private NutsUserConfig securityEntityConfig;
-
-    public GroupNonOption(String name, NutsWorkspace workspace) {
-        super(workspace,name);
+    public GroupNonOption(String name) {
+        super(name);
     }
 
 //    public GroupNonOption(String name, NutsWorkspace workspace, NutsRepository repository) {
@@ -65,9 +61,11 @@ public class GroupNonOption extends DefaultNonOption {
 //    }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates() {
-        NutsCommandLineFormat c=getWorkspace().commandLine();
+    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
+        NutsCommandLineFormat c=context.getWorkspace().commandLine();
         List<NutsArgumentCandidate> all = new ArrayList<>();
+        NutsRepository repository=context.get(NutsRepository.class);
+        NutsUserConfig securityEntityConfig=context.get(NutsUserConfig.class);
         if (securityEntityConfig != null) {
             for (String n : securityEntityConfig.getGroups()) {
                 all.add(c.createCandidate(n));
@@ -77,7 +75,7 @@ public class GroupNonOption extends DefaultNonOption {
                 all.add(c.createCandidate(nutsSecurityEntityConfig.getUser()));
             }
         } else {
-            for (NutsUser nutsSecurityEntityConfig : getWorkspace().security().findUsers()) {
+            for (NutsUser nutsSecurityEntityConfig : context.getWorkspace().security().findUsers()) {
                 all.add(c.createCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }

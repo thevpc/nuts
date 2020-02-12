@@ -10,14 +10,14 @@ import net.vpc.app.nuts.runtime.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 
 /**
- *
- * @author vpc
  * @param <T>
+ * @author vpc
  */
 public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand> implements NutsRepositoryCommand {
 
     protected NutsRepository repo;
-    private NutsRepositorySession session;
+    private NutsSession session;
+    private NutsFetchMode fetchMode = NutsFetchMode.LOCAL;
     private String commandName;
     private NutsSession validSession;
     private boolean sessionCopy = false;
@@ -40,17 +40,17 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
     }
 
     @Override
-    public NutsRepositorySession getSession() {
+    public NutsSession getSession() {
         return session;
     }
 
 //    @Override
-//    public T session(NutsRepositorySession session) {
+//    public T session(NutsSession session) {
 //        return setSession(session);
 //    }
 
     @Override
-    public T setSession(NutsRepositorySession session) {
+    public T setSession(NutsSession session) {
         this.session = session;
         return (T) this;
     }
@@ -70,11 +70,22 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
 
     public NutsSession getValidWorkspaceSession() {
         if (validSession == null) {
-            validSession = NutsWorkspaceUtils.of(getRepo().getWorkspace()).validateSession(getSession().getSession());
+            validSession = NutsWorkspaceUtils.of(getRepo().getWorkspace()).validateSession(getSession());
             sessionCopy = true;
         }
         return validSession;
     }
+
+    public NutsFetchMode getFetchMode() {
+        return fetchMode;
+    }
+
+//    @Override
+    public T setFetchMode(NutsFetchMode fetchMode) {
+        this.fetchMode = fetchMode;
+        return (T) this;
+    }
+
 
     protected NutsRepository getRepo() {
         return repo;
@@ -97,8 +108,8 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
      * configure the current command with the given arguments.
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * silently
-     * @param commandLine arguments to configure with
+     *                        silently
+     * @param commandLine     arguments to configure with
      * @return {@code this} instance
      */
     @Override

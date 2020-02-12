@@ -115,18 +115,18 @@ public class FilesFoldersApi {
 
 
     public static Iterator<NutsId> createIterator(
-            NutsWorkspace workspace, String repository, String rootUrl, String basePath, NutsIdFilter filter, NutsRepositorySession session, int maxDepth, IteratorModel model
+            NutsWorkspace workspace, NutsRepository repository, String rootUrl, String basePath, NutsIdFilter filter, NutsSession session, int maxDepth, IteratorModel model
     ) {
         return new FilesFoldersApiIdIterator(workspace, repository, rootUrl, basePath, filter, session, model, maxDepth);
     }
 
     public interface IteratorModel {
 
-        void undeploy(NutsId id, NutsRepositorySession session) throws NutsExecutionException;
+        void undeploy(NutsId id, NutsSession session) throws NutsExecutionException;
 
         boolean isDescFile(String pathname);
 
-        NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsRepositorySession session) throws IOException;
+        NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) throws IOException;
     }
 
 }

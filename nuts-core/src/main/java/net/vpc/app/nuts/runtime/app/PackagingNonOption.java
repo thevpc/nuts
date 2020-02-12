@@ -29,27 +29,25 @@
  */
 package net.vpc.app.nuts.runtime.app;
 
-import net.vpc.app.nuts.NutsCommandLineFormat;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsArgumentCandidate;
 
 /**
  *
  * @author vpc
  */
 public class PackagingNonOption extends DefaultNonOption {
-
-    public PackagingNonOption(NutsWorkspace ws,String name) {
-        super(ws,name);
+    public PackagingNonOption(String name) {
+        super(name);
     }
 
+
     @Override
-    public List<NutsArgumentCandidate> getCandidates() {
+    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineFormat c=getWorkspace().commandLine();
+        NutsCommandLineFormat c=context.getWorkspace().commandLine();
         all.add(c.createCandidate("jar"));
         all.add(c.createCandidate("war"));
         all.add(c.createCandidate("war"));

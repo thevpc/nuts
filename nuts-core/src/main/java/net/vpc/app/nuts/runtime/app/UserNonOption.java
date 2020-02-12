@@ -35,33 +35,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author vpc
  */
 public class UserNonOption extends DefaultNonOption {
 
-    private NutsRepository repository;
-
-    public UserNonOption(String name, NutsWorkspace workspace) {
-        super(workspace, name);
-    }
-
-    public UserNonOption(String name, NutsRepository repository) {
-        super(repository.getWorkspace(), name);
-        this.repository = repository;
+    public UserNonOption(String name) {
+        super(name);
     }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates() {
+    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineFormat c = getWorkspace().commandLine();
-
+        NutsCommandLineFormat c = context.getWorkspace().commandLine();
+        NutsRepository repository=context.get(NutsRepository.class);
         if (repository != null) {
             for (NutsUser nutsSecurityEntityConfig : repository.security().findUsers()) {
                 all.add(c.createCandidate(nutsSecurityEntityConfig.getUser()));
             }
         } else {
-            for (NutsUser nutsSecurityEntityConfig : getWorkspace().security().findUsers()) {
+            for (NutsUser nutsSecurityEntityConfig : context.getWorkspace().security().findUsers()) {
                 all.add(c.createCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }
