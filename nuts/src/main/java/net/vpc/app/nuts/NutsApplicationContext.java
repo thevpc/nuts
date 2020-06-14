@@ -363,6 +363,96 @@ public interface NutsApplicationContext extends NutsConfigurable {
     NutsCommandLine getCommandLine();
 
     /**
+     * create new NutsCommandLine and consume it with the given processor.
+     * This method is equivalent to the following code
+     * <pre>
+     *         NutsCommandLine cmdLine=getCommandLine();
+     *         NutsArgument a;
+     *         while (cmdLine.hasNext()) {
+     *             if (!this.configureFirst(cmdLine)) {
+     *                 a = cmdLine.peek();
+     *                 if(a.isOption()){
+     *                     if(!commandLineProcessor.processOption(a,cmdLine)){
+     *                         cmdLine.unexpectedArgument();
+     *                     }
+     *                 }else{
+     *                     if(!commandLineProcessor.processNonOption(a,cmdLine)){
+     *                         cmdLine.unexpectedArgument();
+     *                     }
+     *                 }
+     *             }
+     *         }
+     *         // test if application is running in exec mode
+     *         // (and not in autoComplete mode)
+     *         if (cmdLine.isExecMode()) {
+     *             //do the good staff here
+     *             commandLineProcessor.exec();
+     *         }
+     * </pre>
+     *
+     * This as an example of its usage
+     * <pre>
+     *     applicationContext.processCommandLine(new NutsCommandLineProcessor() {
+     *             HLCWithOptions hl = new HL().withOptions();
+     *             boolean noMoreOptions=false;
+     *             &#64;Override
+     *             public boolean processOption(NutsArgument argument, NutsCommandLine cmdLine) {
+     *                 if(!noMoreOptions){
+     *                     return false;
+     *                 }
+     *                 switch (argument.getStringKey()) {
+     *                     case "--clean": {
+     *                         hl.clean(cmdLine.nextBoolean().getBooleanValue());
+     *                         return true;
+     *                     }
+     *                     case "-i":
+     *                     case "--incremental":{
+     *                         hl.setIncremental(cmdLine.nextBoolean().getBooleanValue());
+     *                         return true;
+     *                     }
+     *                     case "-r":
+     *                     case "--root":{
+     *                         hl.setProjectRoot(cmdLine.nextString().getStringValue());
+     *                         return true;
+     *                     }
+     *                 }
+     *                 return false;
+     *             }
+     *
+     *             &#64;Override
+     *             public boolean processNonOption(NutsArgument argument, NutsCommandLine cmdLine) {
+     *                 String s = argument.getString();
+     *                 if(isURL(s)){
+     *                     hl.includeFileURL(s);
+     *                 }else{
+     *                     hl.includeFile(s);
+     *                 }
+     *                 noMoreOptions=true;
+     *                 return true;
+     *             }
+     *
+     *             private boolean isURL(String s) {
+     *                 return
+     *                         s.startsWith("file:")
+     *                         ||s.startsWith("http:")
+     *                         ||s.startsWith("https:")
+     *                         ;
+     *             }
+     *
+     *             &#64;Override
+     *             public void exec() {
+     *                 hl.compile();
+     *             }
+     *         });
+     * </pre>
+     *
+     * @param commandLineProcessor commandLineProcessor
+     * @throws NullPointerException if the commandLineProcessor is null
+     * @since 0.7.0
+     */
+    void processCommandLine(NutsCommandLineProcessor commandLineProcessor);
+
+    /**
      * equivalent to {@code getCommandLine()}
      *
      * @return a new instance of command line arguments to process

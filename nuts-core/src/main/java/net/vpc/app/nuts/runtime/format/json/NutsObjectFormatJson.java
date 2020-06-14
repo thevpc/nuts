@@ -33,8 +33,8 @@ public class NutsObjectFormatJson extends NutsObjectFormatBase {
     public boolean configureFirst(NutsCommandLine commandLine) {
         NutsArgument n = commandLine.peek();
         if (n != null) {
-            boolean enabled = n.isEnabled();
             NutsArgument a;
+            boolean enabled = n.isEnabled();
             if ((a = commandLine.nextString(DefaultPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
                 if (enabled) {
                     NutsArgument i = a.getArgumentValue();

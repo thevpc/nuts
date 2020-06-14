@@ -513,6 +513,32 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return getAutoComplete() == null;
     }
 
+    @Override
+    public void processCommandLine(NutsCommandLineProcessor commandLineProcessor) {
+        NutsCommandLine cmdLine=getCommandLine();
+        NutsArgument a;
+        while (cmdLine.hasNext()) {
+            if (!this.configureFirst(cmdLine)) {
+                a = cmdLine.peek();
+                if(a.isOption()) {
+                    if (!commandLineProcessor.processOption(a, cmdLine)) {
+                        cmdLine.unexpectedArgument();
+                    }
+                }else{
+                    if (!commandLineProcessor.processNonOption(a, cmdLine)) {
+                        cmdLine.unexpectedArgument();
+                    }
+                }
+            }
+        }
+        // test if application is running in exec mode
+        // (and not in autoComplete mode)
+        if (cmdLine.isExecMode()) {
+            //do the good staff here
+            commandLineProcessor.exec();
+        }
+    }
+
     private static class AppCommandAutoComplete extends NutsCommandAutoCompleteBase {
 
         private final ArrayList<String> words;

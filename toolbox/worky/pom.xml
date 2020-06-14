@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>worky</artifactId>
-    <version>0.6.0.0</version>
+    <version>0.7.0.0</version>
     <packaging>jar</packaging>
     <name>net.vpc.app.nuts.toolbox.worky</name>
     <description>Nuts Worky Command</description>
@@ -62,7 +62,7 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.6.0</version>
+            <version>0.7.0</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.common</groupId>
@@ -77,7 +77,7 @@
         <dependency>
             <groupId>net.vpc.common</groupId>
             <artifactId>vpc-common-diff-jar</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

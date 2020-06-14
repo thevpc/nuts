@@ -30,11 +30,11 @@ public class NutsComponentService {
 
     private static Map<String, String> nutsIdToJson(NutsId id) {
         Map<String, String> res = new HashMap<>();
-        res.put("name", id.getName());
+        res.put("name", id.getArtifactId());
         res.put("namespace", id.getNamespace());
-        res.put("group", id.getGroup());
+        res.put("group", id.getGroupId());
         res.put("version", id.getVersion().getValue());
-        res.put("scope", id.getScope());
+//        res.put("scope", id.getScope());
         res.put("arch", id.getArch());
         res.put("os", id.getOs());
         res.put("osdist", id.getOsdist());
@@ -53,9 +53,7 @@ public class NutsComponentService {
                     public boolean accept(NutsRepository repository) {
                         return repository.getUuid().equals(repositoryUuid);
                     }
-                })
-                .setLenient(true)
-                .setInstallInformation(false)
+                }).failFast(false)
                 .setContent(false)
                 .effective(true)
                 .getResultIds().list();
@@ -80,7 +78,7 @@ public class NutsComponentService {
 //            @RequestParam(NutsConstants.QueryKeys.ALTERNATIVE) String alternative,
             @RequestParam("all") String all) {
 
-        String URL = String.format("http://localhost:7070/indexer/"+NutsConstants.Folders.LIB+"/dependencies"
+        String URL = String.format("http://localhost:7070/indexer/"+NutsConstants.Folders.ID+"/dependencies"
                 + "?workspace=%s&name=%s&namespace=%s&group=%s&version=%s&"
                 + "face=%s&os=%s&osdist=%s&scope=%s&arch=%s&all=%s"/*&alternative=%s*/,
                 workspace, name, namespace, group, version, face, os, osdist, scope, arch, all/*alternative,*/ );
@@ -101,15 +99,15 @@ public class NutsComponentService {
 //        ,@RequestParam(NutsConstants.QueryKeys.ALTERNATIVE) String alternative
     ) {
         NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspace);
-        NutsId id = ws.createIdBuilder()
-                .setName(name)
+        NutsId id = ws.id().builder()
+                .setArtifactId(name)
                 .setNamespace(namespace)
-                .setGroup(group)
+                .setGroupId(group)
                 .setVersion(version)
                 .setOs(os)
                 .setOsdist(osdist)
                 .setFace(face)
-                .scope(scope)
+//                .scope(scope)
 //                .setAlternative(alternative)
                 .build();
         NutsFetchCommand fetch = ws.fetch().id(id);
@@ -143,19 +141,19 @@ public class NutsComponentService {
 //        ,@RequestParam(NutsConstants.QueryKeys.ALTERNATIVE) String alternative
     ) {
         NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspace);
-        NutsId id = ws.createIdBuilder()
-                .setName(name)
+        NutsId id = ws.id().builder()
+                .setArtifactId(name)
                 .setNamespace(namespace)
-                .setGroup(group)
+                .setGroupId(group)
                 .setVersion(version)
                 .setOs(os)
                 .setOsdist(osdist)
                 .setFace(face)
-                .scope(scope)
+//                .scope(scope)
 //                .setAlternative(alternative)
                 .build();
         ws.undeploy().id(id).run();
-        String URL = String.format("http://localhost:7070/indexer/"+NutsConstants.Folders.LIB+"/delete"
+        String URL = String.format("http://localhost:7070/indexer/"+NutsConstants.Folders.ID+"/delete"
                 + "?workspace=%s&name=%s&namespace=%s&group=%s&version=%s&"
                 + "face=%s&os=%s&osdist=%s&scope=%s&arch="/*&alternative=%s*/,
                 workspace, name, namespace, group, version, face, os, osdist, scope/*, alternative*/);

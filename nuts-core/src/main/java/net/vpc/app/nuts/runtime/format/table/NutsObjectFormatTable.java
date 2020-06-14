@@ -54,7 +54,7 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
             } else {
                 a = commandLine.next();
                 if(!a.isOption() || a.isEnabled()) {
-                    extraConfig.add(commandLine.next().getString());
+                    extraConfig.add(a.getString());
                 }
             }
             return true;

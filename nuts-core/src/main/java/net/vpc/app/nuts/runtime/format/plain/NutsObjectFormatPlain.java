@@ -5,23 +5,26 @@
  */
 package net.vpc.app.nuts.runtime.format.plain;
 
-import java.io.*;
-
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
-
-import java.util.*;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.stream.StreamResult;
-
-import net.vpc.app.nuts.runtime.format.props.DefaultPropertiesFormat;
 import net.vpc.app.nuts.runtime.format.NutsObjectFormatBase;
+import net.vpc.app.nuts.runtime.format.props.DefaultPropertiesFormat;
 import net.vpc.app.nuts.runtime.format.props.NutsObjectFormatProps;
 import net.vpc.app.nuts.runtime.format.table.NutsObjectFormatTable;
 import net.vpc.app.nuts.runtime.format.xml.NutsXmlUtils;
+import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamResult;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.UncheckedIOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author vpc
@@ -43,20 +46,25 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
             NutsArgument a;
             boolean enabled = n.isEnabled();
             if ((a = commandLine.nextString(DefaultPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
-                NutsArgument i = a.getArgumentValue();
                 if (enabled) {
+                    NutsArgument i = a.getArgumentValue();
                     extraConfig.add(a.getString());
                     addMultilineProperty(i.getStringKey(), i.getStringValue());
                 }
             } else {
                 a = commandLine.next();
-                if(!a.isOption() || a.isEnabled()) {
-                    extraConfig.add(commandLine.next().getString());
+                if (!a.isOption() || a.isEnabled()) {
+                    extraConfig.add(a.getString());
                 }
             }
             return true;
         }
         return false;
+    }
+
+    public NutsObjectFormatBase addMultilineProperty(String property, String separator) {
+        multilineProperties.put(property, separator);
+        return this;
     }
 
     private String getFormattedPrimitiveValue(NutsElement value) {
@@ -139,11 +147,6 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 throw new NutsUnsupportedArgumentException(getWorkspace(), value.type().toString());
             }
         }
-    }
-
-    public NutsObjectFormatBase addMultilineProperty(String property, String separator) {
-        multilineProperties.put(property, separator);
-        return this;
     }
 
     private String formatObject(Object any) {

@@ -63,7 +63,7 @@ import java.util.List;
  * <li>-!enable (with expandSimpleOptions=false) : option 'enable' with 'false'
  * value</li>
  * <li>--enable=yes : option 'enable' with 'yes' value</li>
- * <li>--!enable=yes : invalid option (no error will be thrown buts the result
+ * <li>--!enable=yes : invalid option (no error will be thrown but the result
  * is undefined)</li>
  * </ul>
  *

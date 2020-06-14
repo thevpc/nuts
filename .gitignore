@@ -50,3 +50,5 @@ toolbox/nuts-http-repo/nuts-http-repo.iml
 toolbox/nuts-server/nuts-server.iml
 toolbox/tomcat/tomcat.iml
 toolbox/worky/worky.iml
+/nutsc/build/
+/nutsc/dist/

@@ -92,6 +92,71 @@ import java.util.Map;
  *     }
  *   }
  * </pre>
+ * another example of using this class is :
+ * <pre>
+ *     public class HLMain extends NutsApplication {
+ *         public static void main(String[] args) {
+ *            // just create an instance and call runAndExit in the main method
+ *            new HLMain().runAndExit(args);
+ *         }
+ *
+ *         &#64;Override
+ *         public void run(NutsApplicationContext applicationContext) {
+ *             applicationContext.processCommandLine(new NutsCommandLineProcessor() {
+ *                 HLCWithOptions hl = new HL().withOptions();
+ *                 boolean noMoreOptions=false;
+ *                 &#64;Override
+ *                 public boolean processOption(NutsArgument argument, NutsCommandLine cmdLine) {
+ *                     if(!noMoreOptions){
+ *                         return false;
+ *                     }
+ *                     switch (argument.getStringKey()) {
+ *                         case "--clean": {
+ *                             hl.clean(cmdLine.nextBoolean().getBooleanValue());
+ *                             return true;
+ *                         }
+ *                         case "-i":
+ *                         case "--incremental":{
+ *                             hl.setIncremental(cmdLine.nextBoolean().getBooleanValue());
+ *                             return true;
+ *                         }
+ *                         case "-r":
+ *                         case "--root":{
+ *                             hl.setProjectRoot(cmdLine.nextString().getStringValue());
+ *                             return true;
+ *                         }
+ *                     }
+ *                     return false;
+ *                 }
+ *
+ *                 &#64;Override
+ *                 public boolean processNonOption(NutsArgument argument, NutsCommandLine cmdLine) {
+ *                     String s = argument.getString();
+ *                     if(isURL(s)){
+ *                         hl.includeFileURL(s);
+ *                     }else{
+ *                         hl.includeFile(s);
+ *                     }
+ *                     noMoreOptions=true;
+ *                     return true;
+ *                 }
+ *
+ *                 private boolean isURL(String s) {
+ *                     return
+ *                             s.startsWith("file:")
+ *                             ||s.startsWith("http:")
+ *                             ||s.startsWith("https:")
+ *                             ;
+ *                 }
+ *
+ *                 &#64;Override
+ *                 public void exec() {
+ *                     hl.compile();
+ *                 }
+ *             });
+ *         }
+ *     }
+ * </pre>
  *
  * @since 0.5.5
  */
@@ -104,7 +169,7 @@ public abstract class NutsApplication {
      */
     public void runAndExit(String[] args) {
         try {
-            run((NutsSession) null, args);
+            run(args);
         } catch (Exception ex) {
             System.exit(NutsApplications.processThrowable(ex, args, null));
             return;

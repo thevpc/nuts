@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>mvn</artifactId>
-    <version>0.6.0.0</version>
+    <version>0.7.0.0</version>
     <packaging>jar</packaging>
     <name>net.vpc.app.nuts.toolbox.mvn</name>
     <description>Nuts Maven Command</description>
@@ -64,7 +64,7 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.6.0</version>
+            <version>0.7.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>

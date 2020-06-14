@@ -162,9 +162,9 @@ public class NdiMain extends NutsApplication {
                     if (context.getSession().isPlainTrace()) {
                         int namesSize = result.stream().mapToInt(x -> x.getName().length()).max().orElse(1);
                         for (NdiScriptnfo ndiScriptnfo : result) {
-                            context.session().out().printf("installing%s script ==%-" + namesSize + "s== for " +
+                            context.session().out().printf("%s script ==%-" + namesSize + "s== for " +
                                             context.getWorkspace().id().set(ndiScriptnfo.getId().getLongNameId()).format()
-                                            + " at ==%s==%n", ndiScriptnfo.isOverride() ? " (with override)" : "",
+                                            + " at ==%s==%n", ndiScriptnfo.isOverride() ? "re-installing" : "installing",
                                     ndiScriptnfo.getName(), NdiUtils.betterPath(ndiScriptnfo.getPath().toString()));
                         }
 
