@@ -59,6 +59,24 @@ final class PrivateNutsUtils {
     private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
     public static final boolean NO_M2 = PrivateNutsUtils.getSysBoolNutsProperty("no-m2", false);
 
+    public static boolean isPreferConsole(String[] args){
+        try {
+            if (java.awt.GraphicsEnvironment.isHeadless()) {
+                // non gui mode
+                return true;
+            }
+        }catch (Exception ex){
+            return true;
+        }
+        if(System.console()!=null) {
+            return true;
+        }
+        Map<String, String> getenv = System.getenv();
+        if(getenv.get("XDG_SESSION_DESKTOP")!=null){
+            return false;
+        }
+        return false;
+    }
     public static boolean isValidWorkspaceName(String workspace) {
         if (isBlank(workspace)) {
             return true;
