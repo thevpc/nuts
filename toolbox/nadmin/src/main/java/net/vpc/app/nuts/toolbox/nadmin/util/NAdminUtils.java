@@ -9,7 +9,7 @@ public class NAdminUtils {
     public static void showRepo(NutsApplicationContext context, NutsRepository repository, String prefix) {
         boolean enabled = repository.config().isEnabled();
         String disabledString = enabled ? "" : " <DISABLED>";
-        PrintStream out = context.session().out();
+        PrintStream out = context.getSession().out();
         out.print(prefix);
         if (enabled) {
             out.print("==" + repository.config().getName() + disabledString + "==");

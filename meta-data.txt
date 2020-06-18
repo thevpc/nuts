@@ -1,0 +1,3 @@
+apiVersion=0.6.0
+implVersion=0.6.0.0
+jarLocation=https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.6.0/nuts-0.6.0.jar

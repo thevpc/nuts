@@ -74,13 +74,6 @@ public interface NutsIterableOutput extends NutsConfigurable {
      * @param session session
      * @return {@code this} instance
      */
-    NutsIterableOutput session(NutsSession session);
-
-    /**
-     * configure session
-     * @param session session
-     * @return {@code this} instance
-     */
     NutsIterableOutput setSession(NutsSession session);
 
     /**

@@ -160,13 +160,13 @@ public class MavenUtils {
             }
         }
         return new DefaultNutsDependencyBuilder()
-                .groupId(d.getGroupId())
-                .artifactId(d.getArtifactId())
-                .classifier(d.getClassifier())
-                .version(toNutsVersion((d.getVersion())))
-                .optional(d.getOptional())
-                .scope(nds.id())
-                .exclusions(toNutsId(d.getExclusions()))
+                .setGroupId(d.getGroupId())
+                .setArtifactId(d.getArtifactId())
+                .setClassifier(d.getClassifier())
+                .setVersion(toNutsVersion((d.getVersion())))
+                .setOptional(d.getOptional())
+                .setScope(nds.id())
+                .setExclusions(toNutsId(d.getExclusions()))
         .build();
     }
 
@@ -300,10 +300,10 @@ public class MavenUtils {
                 if (parentId != null) {
                     if (!CoreNutsUtils.isEffectiveId(parentId)) {
                         try {
-                            parentDescriptor = ws.fetch().id(parentId).setEffective(true)
-                                    .session(session)
-                                    .transitive(true)
-                                    .fetchStrategy(
+                            parentDescriptor = ws.fetch().setId(parentId).setEffective(true)
+                                    .setSession(session)
+                                    .setTransitive(true)
+                                    .setFetchStrategy(
                                             fetchMode == NutsFetchMode.REMOTE ? NutsFetchStrategy.ONLINE
                                             : NutsFetchStrategy.OFFLINE
                                     ).getResultDescriptor();
@@ -345,7 +345,7 @@ public class MavenUtils {
                         NutsDescriptor d = cache.get(pid);
                         if (d == null) {
                             try {
-                                d = ws.fetch().id(pid).effective().session(session).getResultDescriptor();
+                                d = ws.fetch().setId(pid).setEffective(true).setSession(session).getResultDescriptor();
                             } catch (NutsException ex) {
                                 throw ex;
                             } catch (Exception ex) {

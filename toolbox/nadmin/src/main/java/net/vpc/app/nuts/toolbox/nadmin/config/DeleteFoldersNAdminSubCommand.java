@@ -63,10 +63,10 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
         Path storeLocation = context.getWorkspace().config().getStoreLocation(folder);
         if (storeLocation != null) {
             if (Files.exists(storeLocation)) {
-                context.session().out().printf("@@Deleting@@ ##%s## for workspace ##%s## folder %s ...%n", folder.id(), context.getWorkspace().config().name(), storeLocation);
+                context.getSession().out().printf("@@Deleting@@ ##%s## for workspace ##%s## folder %s ...%n", folder.id(), context.getWorkspace().config().name(), storeLocation);
                 if (force
-                        || context.session().terminal().ask()
-                        .forBoolean("Force Delete?").setDefaultValue(false).session(context.getSession())
+                        || context.getSession().terminal().ask()
+                        .forBoolean("Force Delete?").setDefaultValue(false).setSession(context.getSession())
                         .getBooleanValue()) {
                     try {
                         Files.delete(storeLocation);
@@ -85,10 +85,10 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
         Path storeLocation = context.getWorkspace().config().getStoreLocation(folder);
         if (storeLocation != null) {
             if (Files.exists(storeLocation)) {
-                context.session().out().printf("@@Deleting@@ ##%s## for repository ##%s## folder %s ...%n", folder.id(), repository.config().name(), storeLocation);
+                context.getSession().out().printf("@@Deleting@@ ##%s## for repository ##%s## folder %s ...%n", folder.id(), repository.config().name(), storeLocation);
                 if (force
-                        || context.session().terminal().ask()
-                        .forBoolean("Force Delete?").setDefaultValue(false).session(context.getSession())
+                        || context.getSession().terminal().ask()
+                        .forBoolean("Force Delete?").setDefaultValue(false).setSession(context.getSession())
                         .getBooleanValue()) {
                     try {
                         Files.delete(storeLocation);
@@ -126,11 +126,11 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
         Path s = repository.config().getStoreLocation(NutsStoreLocation.CACHE);
         if (s != null) {
             if (Files.exists(s)) {
-                context.session().out().printf("@@Deleting@@ ##cache## folder %s ...%n", s);
+                context.getSession().out().printf("@@Deleting@@ ##cache## folder %s ...%n", s);
                 if (force
-                        || context.session().getTerminal().ask()
+                        || context.getSession().getTerminal().ask()
                         .forBoolean("Force Delete?").setDefaultValue(false)
-                        .session(context.getSession()).getBooleanValue()) {
+                        .setSession(context.getSession()).getBooleanValue()) {
                     try {
                         Files.delete(s);
                     } catch (IOException ex) {

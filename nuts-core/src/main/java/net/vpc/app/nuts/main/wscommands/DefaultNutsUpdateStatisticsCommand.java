@@ -31,7 +31,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
         NutsSession session = getSession();
         for (String repository : getRepositrories()) {
             processed = true;
-            NutsRepository repo = ws.config().getRepository(repository, session.copy().transitive());
+            NutsRepository repo = ws.config().getRepository(repository, session.copy().setTransitive(false));
             repo.updateStatistics()
                     .setSession(session)
 //                    .setFetchMode(NutsFetchMode.LOCAL)

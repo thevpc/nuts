@@ -47,15 +47,6 @@ public interface NutsInfoFormat extends NutsFormat {
      * @return {@code this instance}
      */
     @Override
-    NutsInfoFormat session(NutsSession session);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    @Override
     NutsInfoFormat setSession(NutsSession session);
 
     /**

@@ -41,7 +41,9 @@ public class NutsExternalExecutor implements JShellExternalExecutor {
     @Override
     public void execExternalCommand(String[] command, JShellContext context) {
         NutsShellContext jc = (NutsShellContext) context;
-        jc.getWorkspace().exec().command(command).failFast().executionType(jc.getWorkspace().config().options().getExecutionType()).run();
+        jc.getWorkspace().exec().addCommand(command).setFailFast(true)
+                .setExecutionType(jc.getWorkspace().config().options().getExecutionType())
+                .run();
     }
     
 }

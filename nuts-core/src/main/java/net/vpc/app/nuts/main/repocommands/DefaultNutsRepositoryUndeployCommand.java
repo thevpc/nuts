@@ -24,7 +24,7 @@ public class DefaultNutsRepositoryUndeployCommand extends AbstractNutsRepository
 
     public DefaultNutsRepositoryUndeployCommand(NutsRepository repo) {
         super(repo);
-        LOG=repo.workspace().log().of(DefaultNutsRepositoryUndeployCommand.class);
+        LOG=repo.getWorkspace().log().of(DefaultNutsRepositoryUndeployCommand.class);
     }
     public DefaultNutsRepositoryUndeployCommand(NutsWorkspace ws) {
         super(null);

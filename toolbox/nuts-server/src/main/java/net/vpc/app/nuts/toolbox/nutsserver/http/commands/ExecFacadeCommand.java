@@ -58,8 +58,8 @@ public class ExecFacadeCommand extends AbstractFacadeCommand {
         session.getTerminal().setIn(new ByteArrayInputStream(new byte[0]));
 
         int result = ws.exec()
-                .command(cmd)
-                .session(session)
+                .addCommand(cmd)
+                .setSession(session)
                 .getResult();
 
         context.sendResponseText(200, String.valueOf(result) + "\n" + new String(out.toByteArray()));

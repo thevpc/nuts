@@ -81,7 +81,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
                     return a.toArray(new String[0]);
                 }
                 default:{
-                    throw new NutsExecutionException(execCommand.getSession().workspace(),"ROOT_CMD: Unsupported Platform "+execCommand.getSession().getWorkspace().config().getOsFamily(),12);
+                    throw new NutsExecutionException(execCommand.getSession().getWorkspace(),"ROOT_CMD: Unsupported Platform "+execCommand.getSession().getWorkspace().config().getOsFamily(),12);
                 }
             }
         } else {
@@ -126,9 +126,9 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     @Override
     public String toString() {
         if (root) {
-            return "ROOT_CMD " + session.workspace().commandLine().create(cmd).toString();
+            return "ROOT_CMD " + session.getWorkspace().commandLine().create(cmd).toString();
         } else {
-            return "USER_CMD " + session.workspace().commandLine().create(cmd).toString();
+            return "USER_CMD " + session.getWorkspace().commandLine().create(cmd).toString();
         }
     }
 

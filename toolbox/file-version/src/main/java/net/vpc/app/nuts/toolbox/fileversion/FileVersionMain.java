@@ -48,7 +48,7 @@ public class FileVersionMain extends NutsApplication {
         boolean sort = false;
         boolean table = false;
         boolean error = false;
-        NutsCommandLine commandLine = context.commandLine();
+        NutsCommandLine commandLine = context.getCommandLine();
         NutsArgument a;
         int processed = 0;
         while (commandLine.hasNext()) {
@@ -128,8 +128,8 @@ public class FileVersionMain extends NutsApplication {
                 throw new NutsExecutionException(context.getWorkspace(), "file-version: Options conflict --table --long", 1);
             }
 
-            PrintStream out = context.session().out();
-            PrintStream err = context.session().out();
+            PrintStream out = context.getSession().out();
+            PrintStream err = context.getSession().out();
 
             if (table) {
                 NutsPropertiesFormat tt = context.getWorkspace().props().setSort(sort);

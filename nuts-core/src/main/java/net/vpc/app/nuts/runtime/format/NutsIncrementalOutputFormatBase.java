@@ -227,11 +227,6 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
     }
 
     @Override
-    public NutsIterableOutput session(NutsSession session) {
-        return setSession(session);
-    }
-
-    @Override
     public NutsIterableOutput setSession(NutsSession session) {
         //should copy because will change outputformat
         this.session = session == null ? null : session.copy();

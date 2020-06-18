@@ -50,11 +50,11 @@ public class Test06_CacheURL {
         final String url = "http://repo.maven.apache.org/maven2/archetype-catalog.xml";
         InputSource j1 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, null);
         //just to consume the stream
-        ws.io().copy().session(session).from(j1).to(new ByteArrayOutputStream()).logProgress().run();
+        ws.io().copy().setSession(session).from(j1).to(new ByteArrayOutputStream()).logProgress().run();
         TestUtils.println(j1);
         InputSource j2 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, null);
         //just to consume the stream
-        ws.io().copy().session(session).from(j2).to(new ByteArrayOutputStream()).logProgress().run();
+        ws.io().copy().setSession(session).from(j2).to(new ByteArrayOutputStream()).logProgress().run();
         TestUtils.println(j2);
     }
 

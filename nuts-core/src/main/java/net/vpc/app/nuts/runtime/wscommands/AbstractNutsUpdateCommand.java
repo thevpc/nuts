@@ -42,16 +42,6 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsUpdateCommand id(String id) {
-        return addId(id);
-    }
-
-    @Override
-    public NutsUpdateCommand id(NutsId id) {
-        return addId(id);
-    }
-
-    @Override
     public NutsUpdateCommand addId(String id) {
         return addId(id == null ? null : ws.id().parse(id));
     }
@@ -64,16 +54,6 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             ids.add(id);
         }
         return this;
-    }
-
-    @Override
-    public NutsUpdateCommand ids(String... ids) {
-        return addIds(ids);
-    }
-
-    @Override
-    public NutsUpdateCommand ids(NutsId... ids) {
-        return addIds(ids);
     }
 
     @Override
@@ -211,16 +191,6 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     @Override
     public boolean isEnableInstall() {
         return enableInstall;
-    }
-
-    @Override
-    public NutsUpdateCommand enableInstall() {
-        return enableInstall(true);
-    }
-
-    @Override
-    public NutsUpdateCommand enableInstall(boolean enableInstall) {
-        return setEnableInstall(enableInstall);
     }
 
     @Override
@@ -367,17 +337,6 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsUpdateCommand api() {
-        return api(true);
-    }
-
-    @Override
-    public NutsUpdateCommand api(boolean enable) {
-        setApi(enable);
-        return this;
-    }
-
-    @Override
     public NutsUpdateCommand runtime() {
         return runtime(true);
     }
@@ -385,11 +344,6 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     @Override
     public NutsUpdateCommand runtime(boolean enable) {
         return setRuntime(enable);
-    }
-
-    @Override
-    public NutsUpdateCommand extensions() {
-        return extensions(true);
     }
 
     @Override
@@ -403,11 +357,6 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsUpdateCommand extensions(boolean enable) {
-        return setExtensions(enable);
-    }
-
-    @Override
     public NutsUpdateCommand installed() {
         return installed(true);
     }
@@ -417,23 +366,9 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
         return setInstalled(enable);
     }
 
-    @Override
-    public NutsUpdateCommand arg(String arg) {
-        return addArg(arg);
-    }
 
     @Override
-    public NutsUpdateCommand args(String... arg) {
-        return addArgs(arg);
-    }
-
-    @Override
-    public NutsUpdateCommand args(Collection<String> arg) {
-        return addArgs(arg);
-    }
-
-    @Override
-    public NutsUpdateCommand all() {
+    public NutsUpdateCommand setAll() {
         setApi(true);
         setRuntime(true);
         setExtensions(true);
@@ -511,21 +446,6 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsUpdateCommand optional() {
-        return optional(true);
-    }
-
-    @Override
-    public NutsUpdateCommand optional(boolean enable) {
-        return setOptional(enable);
-    }
-
-    @Override
-    public NutsUpdateCommand apiVersion(String value) {
-        return setApiVersion(value);
-    }
-
-    @Override
     public NutsUpdateCommand clearScopes() {
         this.scopes.clear();
         return this;
@@ -543,7 +463,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             case "--all": {
                 cmdLine.skip();
                 if (enabled) {
-                    this.all();
+                    this.setAll();
                 }
                 return true;
             }
@@ -552,7 +472,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             case "--workspace": {
                 cmdLine.skip();
                 if (enabled) {
-                    this.workspace();
+                    this.getWorkspace();
                 }
                 return true;
             }
@@ -576,7 +496,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             case "--api": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    this.api(val);
+                    this.setApi(val);
                 }
                 return true;
             }
@@ -585,7 +505,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             case "--extensions": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    this.extensions(val);
+                    this.setExtensions(val);
                 }
                 return true;
             }
@@ -624,7 +544,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
                     return false;
                 } else {
                     cmdLine.skip();
-                    id(a.getString());
+                    addId(a.getString());
                     return true;
                 }
             }

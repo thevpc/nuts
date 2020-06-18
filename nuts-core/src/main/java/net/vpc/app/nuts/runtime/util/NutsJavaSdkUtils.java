@@ -79,7 +79,7 @@ public class NutsJavaSdkUtils {
 
     public NutsSdkLocation[] searchJdkLocations(NutsSession session) {
         String[] conf = {};
-        switch (session.workspace().config().getOsFamily()) {
+        switch (session.getWorkspace().config().getOsFamily()) {
             case LINUX:
             case UNIX:
             case UNKNOWN: {
@@ -210,9 +210,9 @@ public class NutsJavaSdkUtils {
 
     public NutsSdkLocation resolveJdkLocation(Path path, String preferredName, NutsSession session) {
         if (path == null) {
-            throw new NutsException(session.workspace(), "Missing path");
+            throw new NutsException(session.getWorkspace(), "Missing path");
         }
-        String appSuffix = session.workspace().config().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
+        String appSuffix = session.getWorkspace().config().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
         Path bin = path.resolve("bin");
         Path javaExePath = bin.resolve("java" + appSuffix);
         if (!Files.isRegularFile(javaExePath)) {
@@ -224,9 +224,9 @@ public class NutsJavaSdkUtils {
         int cmdRresult=0;
         boolean loggedError=false;
         try {
-            NutsExecCommand cmd = session.workspace().exec().userCmd().command(javaExePath.toString(), "-version")
-                    .redirectErrorStream()
-                    .grabOutputString().failFast().run();
+            NutsExecCommand cmd = session.getWorkspace().exec().userCmd().addCommand(javaExePath.toString(), "-version")
+                    .setRedirectErrorStream(true)
+                    .grabOutputString().setFailFast(true).run();
             cmdRresult = cmd.getResult();
             cmdOutputString = cmd.getOutputString();
             if (cmdOutputString.length() > 0) {

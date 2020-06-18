@@ -24,16 +24,6 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
     }
 
     @Override
-    public NutsUndeployCommand id(NutsId id) {
-        return addId(id);
-    }
-
-    @Override
-    public NutsUndeployCommand id(String id) {
-        return addId(id);
-    }
-
-    @Override
     public NutsUndeployCommand addId(NutsId id) {
         if (id != null) {
             ids.add(id);
@@ -48,11 +38,6 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
     }
 
     @Override
-    public NutsUndeployCommand ids(String... values) {
-        return addIds(values);
-    }
-
-    @Override
     public NutsUndeployCommand addIds(String... values) {
         if (values != null) {
             for (String s : values) {
@@ -62,11 +47,6 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
             }
         }
         return this;
-    }
-
-    @Override
-    public NutsUndeployCommand ids(NutsId... values) {
-        return addIds(values);
     }
 
     @Override
@@ -111,22 +91,6 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
         return this;
     }
 
-    @Override
-    public NutsUndeployCommand repository(String repository) {
-        return setRepository(repository);
-    }
-
-    @Override
-    public NutsUndeployCommand transitive() {
-        return setTransitive(true);
-    }
-
-    @Override
-    public NutsUndeployCommand transitive(boolean transitive) {
-        return setTransitive(transitive);
-    }
-
-
     protected void addResult(NutsId id) {
         if (result == null) {
             result = new ArrayList<>();
@@ -152,16 +116,6 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
         this.offline = offline;
         invalidateResult();
         return this;
-    }
-
-    @Override
-    public NutsUndeployCommand offline() {
-        return offline(true);
-    }
-
-    @Override
-    public NutsUndeployCommand offline(boolean offline) {
-        return setOffline(offline);
     }
 
     @Override
@@ -202,7 +156,7 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
                     return false;
                 } else {
                     cmdLine.skip();
-                    id(a.getString());
+                    addId(a.getString());
                     return true;
                 }
             }

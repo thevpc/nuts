@@ -190,7 +190,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 //                cache.deployContent(id, c.getPath(), session);
                     if (localPath2 != null) {
                         getWorkspace().io().copy()
-                                .session(session)
+                                .setSession(session)
                                 .from(cachePath).to(localPath2).run();
                     } else {
                         localPath2 = cachePath;

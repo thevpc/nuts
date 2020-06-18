@@ -46,14 +46,6 @@ public interface NutsMonitorAction {
      * @param session session
      * @return {@code this} instance
      */
-    NutsMonitorAction session(NutsSession session);
-
-    /**
-     * update current session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
     NutsMonitorAction setSession(NutsSession session);
 
     /**

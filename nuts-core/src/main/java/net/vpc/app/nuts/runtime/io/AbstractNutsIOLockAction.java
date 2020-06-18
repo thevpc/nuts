@@ -62,11 +62,6 @@ public abstract class AbstractNutsIOLockAction implements NutsIOLockAction {
     }
 
     @Override
-    public NutsIOLockAction session(NutsSession session) {
-        return setSession(session);
-    }
-
-    @Override
     public NutsIOLockAction setSession(NutsSession session) {
         this.session=session;
         return this;

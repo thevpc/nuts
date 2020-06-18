@@ -80,7 +80,7 @@ public class NutsWorkspaceUtils {
 
     public NutsFetchCommand validateSession(NutsFetchCommand fetch) {
         if (fetch.getSession() == null) {
-            fetch = fetch.session(ws.createSession());
+            fetch = fetch.setSession(ws.createSession());
         }
         return fetch;
     }
@@ -492,7 +492,7 @@ public class NutsWorkspaceUtils {
         for (Map.Entry<String, String> entry : execProperties.entrySet()) {
             map.put(entry.getKey(), entry.getValue());
         }
-        Path nutsJarFile = workspace.fetch().nutsApi().session(CoreNutsUtils.silent(session)).getResultPath();
+        Path nutsJarFile = workspace.fetch().setNutsApi().setSession(CoreNutsUtils.silent(session)).getResultPath();
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }
@@ -543,8 +543,8 @@ public class NutsWorkspaceUtils {
                     return NutsJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, true, session);
                 } else if (skey.equals("nuts")) {
                     NutsDefinition nutsDefinition;
-                    nutsDefinition = workspace.fetch().id(NutsConstants.Ids.NUTS_API)
-                            .session(session).getResultDefinition();
+                    nutsDefinition = workspace.fetch().setId(NutsConstants.Ids.NUTS_API)
+                            .setSession(session).getResultDefinition();
                     if (nutsDefinition.getPath() != null) {
                         return ("<::expand::> " + apply("java") + " -jar " + nutsDefinition.getPath());
                     }

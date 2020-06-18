@@ -243,9 +243,9 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
     @Override
     public NutsFetchCommand toFetch() {
         NutsFetchCommand t = new DefaultNutsFetchCommand(ws).copyFromDefaultNutsQueryBaseOptions(this)
-                .session(getSession());
+                .setSession(getSession());
         if (getDisplayOptions().isRequireDefinition()) {
-            t.content();
+            t.setContent(true);
         }
         return t;
     }
@@ -589,9 +589,9 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             }
             List<NutsId> mi = getResultIdsBase(false, sort).list();
             List<NutsDefinition> li = new ArrayList<>(mi.size());
-            NutsFetchCommand fetch = toFetch().content(content).effective(effective);
+            NutsFetchCommand fetch = toFetch().setContent(content).setEffective(effective);
             for (NutsId nutsId : mi) {
-                NutsDefinition y = fetch.id(nutsId).getResultDefinition();
+                NutsDefinition y = fetch.setId(nutsId).getResultDefinition();
                 if (y != null) {
                     li.add(y);
                 }
@@ -607,8 +607,8 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         @Override
         public Iterator<NutsDefinition> iterator() {
             Iterator<NutsId> base = getResultIdsBase(false, sort).iterator();
-            NutsFetchCommand fetch = toFetch().content(content).effective(effective);
-            NutsFetchCommand ofetch = toFetch().content(content).effective(effective).offline();
+            NutsFetchCommand fetch = toFetch().setContent(content).setEffective(effective);
+            NutsFetchCommand ofetch = toFetch().setContent(content).setEffective(effective).setOffline();
             fetch.getSession().silent();
             final boolean hasRemote = fetch.getFetchStrategy() == null || Arrays.stream(fetch.getFetchStrategy().modes()).anyMatch(x -> x == NutsFetchMode.REMOTE);
             Iterator<NutsDefinition> ii = new NamedIterator<NutsDefinition>("Id->Definition") {
@@ -620,13 +620,13 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         NutsId next = base.next();
                         NutsDefinition d = null;
                         if (content) {
-                            d = fetch.id(next).getResultDefinition();
+                            d = fetch.setId(next).getResultDefinition();
                         } else {
                             //load descriptor
                             if (hasRemote) {
-                                fetch.id(next).getResultDescriptor();
+                                fetch.setId(next).getResultDescriptor();
                             }
-                            d = ofetch.id(next).getResultDefinition();
+                            d = ofetch.setId(next).getResultDefinition();
 
                         }
                         if (d != null) {
@@ -711,9 +711,9 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     if (nutsId.getGroupId() == null) {
                         //now will look with *:artifactId pattern
                         NutsSearchCommand search2 = ws.search()
-                                .session(session)
-                                .repositoryFilter(search.getRepositoryFilter())
-                                .descriptorFilter(search.getDescriptorFilter());
+                                .setSession(session)
+                                .setRepositoryFilter(search.getRepositoryFilter())
+                                .setDescriptorFilter(search.getDescriptorFilter());
                         search2.setIdFilter(new NutsIdFilterOr(
                                 new NutsPatternIdFilter(nutsId.builder().setGroupId("*").build()),
                                 CoreNutsUtils.simplify(search2.getIdFilter())

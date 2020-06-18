@@ -24,7 +24,7 @@ public class DefaultNutsUninstallInternalExecutable extends DefaultInternalNutsE
             showDefaultHelp();
             return;
         }
-        getSession().getWorkspace().uninstall().session(getSession().trace()).configure(false, args).run();
+        getSession().getWorkspace().uninstall().setSession(getSession().setTrace(true)).configure(false, args).run();
     }
 
 }

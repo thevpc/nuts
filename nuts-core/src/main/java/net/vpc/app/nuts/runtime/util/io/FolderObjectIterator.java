@@ -81,7 +81,7 @@ public class FolderObjectIterator<T> implements Iterator<T> {
             throw new NullPointerException("Could not iterate over null folder");
         }
         stack.push(new PathAndDepth(folder, 0));
-        LOG = session.workspace().log().of(DefaultNutsInstalledRepository.class);
+        LOG = session.getWorkspace().log().of(DefaultNutsInstalledRepository.class);
     }
 
     @Override
@@ -152,7 +152,7 @@ public class FolderObjectIterator<T> implements Iterator<T> {
         if (last != null) {
             model.remove(last, lastPath, session);
         } else {
-            throw new NutsUnsupportedOperationException(session.workspace(), "Unsupported Remove");
+            throw new NutsUnsupportedOperationException(session.getWorkspace(), "Unsupported Remove");
         }
     }
 

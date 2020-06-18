@@ -140,29 +140,29 @@ public final class JavaExecutorOptions {
                 }
             }
         } else {
-            javaHome = NutsJavaSdkUtils.of(session.workspace()).resolveJavaCommandByHome(getJavaHome());
+            javaHome = NutsJavaSdkUtils.of(session.getWorkspace()).resolveJavaCommandByHome(getJavaHome());
         }
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
-        NutsSearchCommand se = getWorkspace().search().session(CoreNutsUtils.silent(session));
+        NutsSearchCommand se = getWorkspace().search().setSession(CoreNutsUtils.silent(session));
         if (tempId) {
             for (NutsDependency dependency : descriptor.getDependencies()) {
                 se.addId(dependency.getId());
             }
         } else {
-            se.id(id);
+            se.addId(id);
         }
         if (se.getIds().length > 0) {
             nutsDefinitions.addAll(
                     se
-                            .transitive()
-                            .scope(NutsDependencyScopePattern.RUN)
-                            .optional(false)
-                            .distinct()
-                            .content()
-                            .dependencies()
-                            .latest()
-                            .inlineDependencies()
+                            .setTransitive(true)
+                            .addScope(NutsDependencyScopePattern.RUN)
+                            .setOptional(false)
+                            .setDistinct(true)
+                            .setContent(true)
+                            .setDependencies(true)
+                            .setLatest(true)
+                            .setInlineDependencies(true)
                             .getResultDefinitions().list()
             );
         }
@@ -287,8 +287,8 @@ public final class JavaExecutorOptions {
 
     private void npToCp(List<String> classPath, String value) {
         NutsSession searchSession = CoreNutsUtils.silent(this.session);
-        NutsSearchCommand ns = getWorkspace().search().latest()
-                .session(searchSession);
+        NutsSearchCommand ns = getWorkspace().search().setLatest(true)
+                .setSession(searchSession);
         for (String n : CoreStringUtils.split(value, ";, ")) {
             if (!CoreStringUtils.isBlank(n)) {
                 ns.addId(n);
@@ -296,7 +296,7 @@ public final class JavaExecutorOptions {
         }
         for (NutsId nutsId : ns.getResultIds()) {
             NutsDefinition f = getWorkspace()
-                    .search().id(nutsId).session(searchSession).latest().getResultDefinitions().required();
+                    .search().addId(nutsId).setSession(searchSession).setLatest(true).getResultDefinitions().required();
             classPath.add(f.getPath().toString());
         }
     }

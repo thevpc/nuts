@@ -122,20 +122,6 @@ public class DefaultNutsArtifactCallBuilder implements NutsArtifactCallBuilder, 
         return this;
     }
 
-    @Override
-    public NutsArtifactCallBuilder id(NutsId value) {
-        return setId(value);
-    }
-
-    @Override
-    public NutsArtifactCallBuilder arguments(String... value) {
-        return setArguments(value);
-    }
-
-    @Override
-    public NutsArtifactCallBuilder properties(Map<String,String> value) {
-        return setProperties(value);
-    }
 
     @Override
     public boolean equals(Object o) {

@@ -51,21 +51,6 @@ public interface NutsDependencyFormat extends NutsFormat {
     NutsDependencyFormat setOmitNamespace(boolean omitNamespace);
 
     /**
-     * if true omit (do not include) namespace when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     * @param omitNamespace new value
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat omitNamespace(boolean omitNamespace);
-
-    /**
-     * if true omit (do not include) namespace when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat omitNamespace();
-
-    /**
      * return true if omit group
      * @return true if omit group
      */
@@ -78,21 +63,6 @@ public interface NutsDependencyFormat extends NutsFormat {
      * @return {@code this} instance
      */
     NutsDependencyFormat setOmitGroupId(boolean omitGroup);
-
-    /**
-     * if true omit (do not include) group when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     * @param omitGroup new value
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat omitGroupId(boolean omitGroup);
-
-    /**
-     * omit (do not include) group when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat omitGroupId();
 
     /**
      * omit imported group
@@ -137,20 +107,6 @@ public interface NutsDependencyFormat extends NutsFormat {
     NutsDependencyFormat setOmitScope(boolean value);
 
     /**
-     * if true omit (do not include) face when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat omitScope(boolean value);
-
-    /**
-     * omit scope
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat omitScope();
-
-    /**
      * return true if omit scope
      * @return true if omit scope
      */
@@ -163,20 +119,6 @@ public interface NutsDependencyFormat extends NutsFormat {
      * @return {@code this} instance
      */
     NutsDependencyFormat setOmitClassifier(boolean value);
-
-    /**
-     * if true omit (do not include) face when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat omitClassifier(boolean value);
-
-    /**
-     * omit classifier
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat omitClassifier();
 
 //    /**
 //     * return true if omit alternative
@@ -221,20 +163,6 @@ public interface NutsDependencyFormat extends NutsFormat {
     NutsDependencyFormat setOmitExclusions(boolean value);
 
     /**
-     * if true omit (do not include) face when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat omitExclusions(boolean value);
-
-    /**
-     * omit exclusions
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat omitExclusions();
-
-    /**
      * return true if omit optional
      * @return true if omit optional
      */
@@ -247,20 +175,6 @@ public interface NutsDependencyFormat extends NutsFormat {
      * @return {@code this} instance
      */
     NutsDependencyFormat setOmitOptional(boolean value);
-
-    /**
-     * if true omit (do not include) face when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat omitOptional(boolean value);
-
-    /**
-     * omit optional
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat omitOptional();
 
     /**
      * list of all omitted query properties
@@ -284,22 +198,6 @@ public interface NutsDependencyFormat extends NutsFormat {
      */
     NutsDependencyFormat setOmitQueryProperty(String name,boolean value);
 
-    /**
-     * if true omit (do not include) query property named {@code name} when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     * @param name property name
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat omitQueryProperty(String name,boolean value);
-
-    /**
-     * omit query property named {@code name}
-     * @param name property name
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat omitQueryProperty(String name);
-
 
     /**
      * true if highlight (distinct color) imported group
@@ -316,21 +214,6 @@ public interface NutsDependencyFormat extends NutsFormat {
     NutsDependencyFormat setHighlightImportedGroup(boolean highlightImportedGroup);
 
     /**
-     * if true omit (do not include) name space when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     * @param highlightImportedGroup new value
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat highlightImportedGroup(boolean highlightImportedGroup);
-
-    /**
-     * omit (do not include) name space when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat highlightImportedGroup();
-
-    /**
      * return true if scope is highlighted
      * @return true if scope is highlighted
      */
@@ -343,21 +226,6 @@ public interface NutsDependencyFormat extends NutsFormat {
      * @return {@code this} instance
      */
     NutsDependencyFormat setHighlightScope(boolean highlightScope);
-
-    /**
-     * if true omit (do not include) name space when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     * @param highlightScope new value
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat highlightScope(boolean highlightScope);
-
-    /**
-     * if true omit (do not include) name space when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat highlightScope();
 
     /**
      * return true if optional is highlighted
@@ -374,34 +242,11 @@ public interface NutsDependencyFormat extends NutsFormat {
     NutsDependencyFormat setHighlightOptional(boolean highlightOptional);
 
     /**
-     * if true omit (do not include) name space when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     * @param highlightOptional new value
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat highlightOptional(boolean highlightOptional);
-
-    /**
-     * if true omit (do not include) name space when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat highlightOptional();
-
-    /**
      * return current value to format
      * @return current value to format
      * @since 0.5.6
      */
     NutsDependency getValue();
-
-    /**
-     * value dependency to format
-     * @param dependency dependency to format
-     * @return {@code this} instance
-     * @since 0.5.6
-     */
-    NutsDependencyFormat value(NutsDependency dependency);
 
     /**
      * return mutable id builder instance initialized with {@code this} instance.
@@ -435,15 +280,6 @@ public interface NutsDependencyFormat extends NutsFormat {
      * @since 0.5.6
      */
     NutsDependencyFormat setValue(NutsDependency dependency);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    @Override
-    NutsDependencyFormat session(NutsSession session);
 
     /**
      * update session

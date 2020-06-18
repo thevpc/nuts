@@ -315,11 +315,11 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("user-name", stringValue(System.getProperty("user.name")));
         props.put("user-home", stringValue(System.getProperty("user.home")));
         props.put("user-dir", stringValue(System.getProperty("user.dir")));
-        props.put("command-line-long", ws.commandLine().value(ws.commandLine().create(ws.config().options().format().compact(false).getBootCommand())).format());
-        props.put("command-line-short", ws.commandLine().value(ws.commandLine().create(ws.config().options().format().compact(true).getBootCommand())).format());
+        props.put("command-line-long", ws.commandLine().setValue(ws.commandLine().create(ws.config().options().format().compact(false).getBootCommand())).format());
+        props.put("command-line-short", ws.commandLine().setValue(ws.commandLine().create(ws.config().options().format().compact(true).getBootCommand())).format());
         props.put("inherited", ws.config().options().isInherited());
-        props.put("inherited-nuts-boot-args", ws.commandLine().value(ws.commandLine().parse(System.getProperty("nuts.boot.args"))).format());
-        props.put("inherited-nuts-args", ws.commandLine().value(ws.commandLine().parse(System.getProperty("nuts.args"))).format());
+        props.put("inherited-nuts-boot-args", ws.commandLine().setValue(ws.commandLine().parse(System.getProperty("nuts.boot.args"))).format());
+        props.put("inherited-nuts-args", ws.commandLine().setValue(ws.commandLine().parse(System.getProperty("nuts.args"))).format());
         props.put("creation-started", stringValue(Instant.ofEpochMilli(ws.config().getCreationStartTimeMillis())));
         props.put("creation-finished", stringValue(Instant.ofEpochMilli(ws.config().getCreationFinishTimeMillis())));
         props.put("creation-within", CoreCommonUtils.formatPeriodMilli(ws.config().getCreationTimeMillis()).trim());

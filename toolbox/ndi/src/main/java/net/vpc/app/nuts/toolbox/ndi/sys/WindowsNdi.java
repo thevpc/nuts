@@ -133,8 +133,8 @@ public class WindowsNdi extends BaseSystemNdi {
                 "@ECHO OFF" + CRLF +
                 "SET \"NUTS_VERSION=" + wsconfig.getApiVersion() + "\"" + CRLF +
                 "SET \"NUTS_JAR=" + ws.search()
-                .session(context.getSession().copy().silent())
-                .id(wsconfig.getApiId()).getResultPaths().required() +
+                .setSession(context.getSession().copy().silent())
+                .addId(wsconfig.getApiId()).getResultPaths().required() +
                 "\"" + CRLF +
                 "SET \"NUTS_WORKSPACE=" + wsconfig.getWorkspaceLocation().toString() + "\"" + CRLF +
                 "SET \"PATH=" + ndiAppsFolder + ";%PATH%\"" + CRLF;
@@ -154,7 +154,7 @@ public class WindowsNdi extends BaseSystemNdi {
         }
         if (!updatedNames.isEmpty() && session.isTrace()) {
             if (context.getSession().isPlainTrace()) {
-                context.session().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating ==%s== to point to workspace ==%s==%n",
+                context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating ==%s== to point to workspace ==%s==%n",
                         String.join(", ", updatedNames)
                         , wsconfig.getWorkspaceLocation());
             }
@@ -162,7 +162,7 @@ public class WindowsNdi extends BaseSystemNdi {
             String desktopSpecificVersionShortcutPath = configurePathShortcut(Target.DESKTOP, false, session);
             String menuGlobalShortcutPath = configurePathShortcut(Target.MENU, true, session);
             String menuSpecificVersionShortcutPath = configurePathShortcut(Target.MENU, false, session);
-            PrintStream out = context.session().out();
+            PrintStream out = context.getSession().out();
             out.printf("@@ATTENTION@@ To run any nuts command you should use the pre-configured shell at \\\"==%s==\\\".%n", desktopSpecificVersionShortcutPath);
         }
     }

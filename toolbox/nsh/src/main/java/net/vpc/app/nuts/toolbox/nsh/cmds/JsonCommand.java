@@ -143,7 +143,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                     List<NutsElement> all = new ArrayList<>();
                     for (String query : options.queries) {
                         all.addAll(context.getWorkspace().element()
-                                .session(context.getSession())
+                                .setSession(context.getSession())
                                 .compilePath(query)
                                 .filter(inputDocument)
                         );

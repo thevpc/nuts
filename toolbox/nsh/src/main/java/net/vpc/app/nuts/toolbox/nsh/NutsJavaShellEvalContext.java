@@ -250,16 +250,16 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
         } else {
             NutsWorkspace ws = this.getWorkspace();
             List<NutsId> nutsIds = ws.search()
-                    .id(commandName)
-                    .latest()
+                    .addId(commandName)
+                    .setLatest(true)
                     .addScope(NutsDependencyScopePattern.RUN)
-                    .optional(false)
-                    .offline()
-                    .session(this.getSession().copy().silent())
+                    .setOptional(false)
+                    .setOffline()
+                    .setSession(this.getSession().copy().silent())
                     .getResultIds().list();
             if (nutsIds.size() == 1) {
                 NutsId selectedId = nutsIds.get(0);
-                NutsDefinition def = ws.search().id(selectedId).effective().session(this.getSession().copy().silent()).offline().getResultDefinitions().required();
+                NutsDefinition def = ws.search().addId(selectedId).setEffective(true).setSession(this.getSession().copy().silent()).setOffline().getResultDefinitions().required();
                 NutsDescriptor d = def.getDescriptor();
                 String nuts_autocomplete_support = StringUtils.trim(d.getProperties().get("nuts.autocomplete"));
                 if (d.isApplication()
@@ -268,7 +268,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
                     NutsExecCommand t = ws.exec()
                             .grabOutputString()
                             .grabErrorString()
-                            .command(
+                            .addCommand(
                                     selectedId
                                             .getLongName(),
                                     "--nuts-exec-mode=auto-complete " + wordIndex

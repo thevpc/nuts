@@ -24,7 +24,7 @@ public class DefaultNutsDeployInternalExecutable extends DefaultInternalNutsExec
             showDefaultHelp();
             return;
         }
-        getSession().getWorkspace().deploy().session(getSession().trace()).configure(false, args).run();
+        getSession().getWorkspace().deploy().setSession(getSession().setTrace(true)).configure(false, args).run();
     }
 
 }

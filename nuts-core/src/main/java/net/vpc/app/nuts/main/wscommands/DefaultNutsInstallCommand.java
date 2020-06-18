@@ -64,14 +64,14 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             return def;
         }
         NutsSession ss = CoreNutsUtils.silent(session).copy();
-        def = ws.fetch().id(id).session(ss)
-                .optional(false)
-                .content()
-                .effective()
-                .dependencies()
-                .notInstalled()
-                .scope(NutsDependencyScopePattern.RUN)
-                .failFast()
+        def = ws.fetch().setId(id).setSession(ss)
+                .setOptional(false)
+                .setContent(true)
+                .setEffective(true)
+                .setDependencies(true)
+                .setInstalled(false)
+                .addScope(NutsDependencyScopePattern.RUN)
+                .setFailFast(true)
                 .getResultDefinition();
         loaded.put(longNameId,def);
         if(includeDeps){
@@ -96,7 +96,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 emptyCommand = false;
                 if(!visited.contains(sid)) {
                     visited.add(sid);
-                    List<NutsId> allIds = ws.search().id(sid).session(searchSession).latest().targetApiVersion(ws.config().getApiVersion()).getResultIds().list();
+                    List<NutsId> allIds = ws.search().addId(sid).setSession(searchSession).setLatest(true).setTargetApiVersion(ws.config().getApiVersion()).getResultIds().list();
                     if (allIds.isEmpty()) {
                         throw new NutsNotFoundException(ws, sid);
                     }
@@ -111,7 +111,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             emptyCommand = false;
             if(!visited.contains(id.getLongName())) {
                 visited.add(id.getLongName());
-                List<NutsId> allIds = ws.search().id(id).session(searchSession).latest().getResultIds().list();
+                List<NutsId> allIds = ws.search().addId(id).setSession(searchSession).setLatest(true).getResultIds().list();
                 if (allIds.isEmpty()) {
                     throw new NutsNotFoundException(ws, id);
                 }
@@ -127,7 +127,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         Map<NutsId,NutsDefinition> defsToDefVersion = new LinkedHashMap<>();
         Map<NutsId,NutsDefinition> defsToIgnore = new LinkedHashMap<>();
         if(isInstalled()){
-            for (NutsId resultId : ws.search().session(searchSession).installed().getResultIds()) {
+            for (NutsId resultId : ws.search().setSession(searchSession).setInstalled().getResultIds()) {
                 emptyCommand = false;
                 if(!visited.contains(resultId.getLongName())) {
                     allToInstall.put(resultId.builder().setNamespace(null).build(), true);
@@ -211,7 +211,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         if (!defsToInstall.isEmpty() || !defsToInstallForced.isEmpty() || !defsToDefVersion.isEmpty()) {
             if(!ws.io().getTerminal().ask().forBoolean("Continue installation?")
                     .defaultValue(true)
-                    .session(session).getBooleanValue()) {
+                    .setSession(session).getBooleanValue()) {
                 result = new NutsDefinition[0];
                 return this;
             }

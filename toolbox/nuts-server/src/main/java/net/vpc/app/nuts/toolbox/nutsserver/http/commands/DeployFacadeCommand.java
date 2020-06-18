@@ -57,7 +57,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                             )
                     );
                     context.getWorkspace().io().copy()
-                            .session(context.getSession())
+                            .setSession(context.getSession())
                             .setSource(info.getContent())
                             .setTarget(contentFile)
                             .run();
@@ -67,10 +67,10 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
         if (contentFile == null) {
             context.sendError(400, "Invalid Command Arguments : " + getName() + " : Missing File");
         }
-        NutsId id = context.getWorkspace().deploy().content(contentFile)
-                .sha1(receivedContentHash)
-                .descriptor(descriptor)
-                .session(context.getSession().copy())
+        NutsId id = context.getWorkspace().deploy().setContent(contentFile)
+                .setSha1(receivedContentHash)
+                .setDescriptor(descriptor)
+                .setSession(context.getSession().copy())
                 .getResult()[0];
 //                NutsId id = workspace.deploy(content, descriptor, null);
         context.sendResponseText(200, id.toString());

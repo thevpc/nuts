@@ -134,15 +134,6 @@ public class NutsAddRepositoryOptions implements Serializable {
     }
 
     /**
-     * current session
-     * @param value new value
-     * @return {@code this} instance
-     */
-    public NutsAddRepositoryOptions session(NutsSession value) {
-        return setSession(value);
-    }
-
-    /**
      * temporary repository
      * @return temporary repository
      */

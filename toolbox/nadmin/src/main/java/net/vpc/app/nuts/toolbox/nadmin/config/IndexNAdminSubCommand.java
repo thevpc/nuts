@@ -36,9 +36,9 @@ public class IndexNAdminSubCommand extends AbstractNAdminSubCommand {
 
     private void updateStatistics(NutsApplicationContext context, String[] repos) {
         NutsWorkspaceConfigManager cfg = context.getWorkspace().config();
-        NutsSession session = context.session();
+        NutsSession session = context.getSession();
         NutsUpdateStatisticsCommand cmd = context.getWorkspace().updateStatistics()
-                .session(session);
+                .setSession(session);
         for (String repo : repos) {
             cmd.add(repo);
         }

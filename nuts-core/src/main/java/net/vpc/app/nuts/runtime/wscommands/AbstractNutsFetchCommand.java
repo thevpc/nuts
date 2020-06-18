@@ -11,17 +11,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
 
     public AbstractNutsFetchCommand(NutsWorkspace ws) {
         super(ws, "fetch");
-        failFast();
-    }
-
-    @Override
-    public NutsFetchCommand id(String id) {
-        return setId(id);
-    }
-
-    @Override
-    public NutsFetchCommand id(NutsId id) {
-        return setId(id);
+        setFailFast(true);
     }
 
     @Override
@@ -31,12 +21,12 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
     }
 
     @Override
-    public NutsFetchCommand nutsApi() {
+    public NutsFetchCommand setNutsApi() {
         return setId(ws.config().getApiId());
     }
 
     @Override
-    public NutsFetchCommand nutsRuntime() {
+    public NutsFetchCommand setNutsRuntime() {
         return setId(ws.config().getRuntimeId());
     }
 
@@ -47,11 +37,6 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
         }
         this.id = id;
         return this;
-    }
-
-    @Override
-    public NutsFetchCommand inlineDependencies() {
-        return this.inlineDependencies(true);
     }
 
     @Override
@@ -68,16 +53,6 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
             this.installedOrNot = o.getInstalled();
         }
         return this;
-    }
-
-    @Override
-    public NutsFetchCommand repositories(Collection<String> value) {
-        return addRepositories(value);
-    }
-
-    @Override
-    public NutsFetchCommand repositories(String... values) {
-        return addRepositories(values);
     }
 
     @Override

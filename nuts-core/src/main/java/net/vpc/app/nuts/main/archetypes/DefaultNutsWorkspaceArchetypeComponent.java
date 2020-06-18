@@ -88,7 +88,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         ws.config().addImports(new String[]{
                 "net.vpc.app.nuts.toolbox",
                 "net.vpc.app"
-        }, new NutsAddOptions().session(session));
+        }, new NutsAddOptions().setSession(session));
 
         ws.security().updateUser(NutsConstants.Users.ANONYMOUS)
                 .resetPermissions()
@@ -96,15 +96,14 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
                 .run();
 
         //has read rights
-        ws.security().addUser("user").credentials("user".toCharArray()).permissions(
+        ws.security().addUser("user").setCredentials("user".toCharArray()).addPermissions(
                 NutsConstants.Permissions.FETCH_DESC,
                 NutsConstants.Permissions.FETCH_CONTENT,
                 NutsConstants.Permissions.DEPLOY,
                 NutsConstants.Permissions.UNDEPLOY,
                 NutsConstants.Permissions.PUSH,
                 NutsConstants.Permissions.SAVE
-        ).remoteIdentity("contributor")
-                .remoteIdentity("contributor")
+        ).setRemoteIdentity("contributor")
                 .run();
     }
 }

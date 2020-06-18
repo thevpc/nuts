@@ -88,7 +88,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ```
-0.6.0/0.6.0.0
+00.6.0/0.6.0.0
 ```
 
 ## Run a command

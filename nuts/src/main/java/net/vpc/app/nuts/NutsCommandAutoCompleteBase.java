@@ -56,7 +56,7 @@ public abstract class NutsCommandAutoCompleteBase implements NutsCommandAutoComp
 
     @Override
     public NutsWorkspace getWorkspace() {
-        return getSession().workspace();
+        return getSession().getWorkspace();
     }
 
     @Override

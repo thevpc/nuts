@@ -218,14 +218,6 @@ public interface NutsIOCompressAction {
      * @param session current session
      * @return {@code this} instance
      */
-    NutsIOCompressAction session(NutsSession session);
-
-    /**
-     * update current session
-     *
-     * @param session current session
-     * @return {@code this} instance
-     */
     NutsIOCompressAction setSession(NutsSession session);
 
     /**

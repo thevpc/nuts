@@ -17,7 +17,7 @@ public class WorkyMain extends NutsApplication {
     public void run(NutsApplicationContext appContext) {
         String[] args = appContext.getArguments();
         this.service = new WorkspaceService(appContext);
-        NutsCommandLine cmdLine = appContext.commandLine();
+        NutsCommandLine cmdLine = appContext.getCommandLine();
         NutsArgument a;
         do {
             if (appContext.configureFirst(cmdLine)) {
@@ -39,6 +39,9 @@ public class WorkyMain extends NutsApplication {
                 return;
             } else if ((a = cmdLine.next("set")) != null) {
                 service.setWorkspaceConfigParam(cmdLine, appContext);
+                return;
+            } else if ((a = cmdLine.next("process-file")) != null) {
+                service.processFile(cmdLine, appContext);
                 return;
             } else {
                 cmdLine.setCommandName("worky").unexpectedArgument();

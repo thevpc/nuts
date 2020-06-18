@@ -23,7 +23,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
-        NutsCommandLineFormat commandLineFormat = context.workspace().commandLine();
+        NutsCommandLineFormat commandLineFormat = context.getWorkspace().commandLine();
         if (cmdLine.next("connect") != null) {
             char[] password = null;
             String server = null;
@@ -55,20 +55,20 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
                 server = server.substring(0, server.indexOf(":"));
             }
             if (!StringUtils.isBlank(login) && isBlank(password)) {
-                password = context.session().getTerminal().readPassword("Password:");
+                password = context.getSession().getTerminal().readPassword("Password:");
             }
             Socket socket = null;
             try {
                 try {
                     int validPort = port <= 0 ? DEFAULT_ADMIN_SERVER_PORT : port;
                     socket = new Socket(InetAddress.getByName(server), validPort);
-                    IOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), context.session().out());
+                    IOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), context.getSession().out());
                     PrintStream out = new PrintStream(socket.getOutputStream());
                     if (!StringUtils.isBlank(login)) {
                         out.printf("connect ==%s %s== %n", login, new String(password));
                     }
                     while (true) {
-                        String line = context.session().getTerminal().readLine("");
+                        String line = context.getSession().getTerminal().readLine("");
                         if (line == null) {
                             break;
                         }

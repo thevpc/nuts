@@ -42,10 +42,10 @@ public class Test09_FindLinuxTest {
                 "--yes",
                 "--skip-companions");
 
-        List<NutsId> def = ws.search().id("nuts").optional(false).latest().failFast(false)
+        List<NutsId> def = ws.search().addId("nuts").setOptional(false).setLatest(true).setFailFast(false)
 //                .repository("maven-local")
-                .defaultVersions()
-                .installedOrIncluded()
+                .setDefaultVersions(true)
+                .setInstalledOrIncluded()
                 .getResultIds().list();
                 
         TestUtils.println(def);

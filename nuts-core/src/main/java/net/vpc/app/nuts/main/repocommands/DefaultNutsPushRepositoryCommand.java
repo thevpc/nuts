@@ -26,7 +26,7 @@ public class DefaultNutsPushRepositoryCommand extends AbstractNutsPushRepository
 
     public DefaultNutsPushRepositoryCommand(NutsRepository repo) {
         super(repo);
-        LOG=repo.workspace().log().of(DefaultNutsPushRepositoryCommand.class);
+        LOG=repo.getWorkspace().log().of(DefaultNutsPushRepositoryCommand.class);
     }
 
     @Override

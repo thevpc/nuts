@@ -15,19 +15,19 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
-        NutsCommandLineFormat commandLineFormat = context.workspace().commandLine();
+        NutsCommandLineFormat commandLineFormat = context.getWorkspace().commandLine();
         if (cmdLine.next("list imports", "li") != null) {
             cmdLine.setCommandName("config list imports").unexpectedArgument();
             if (cmdLine.isExecMode()) {
                 for (String imp : (context.getWorkspace().config().getImports())) {
-                    context.session().out().printf("%s%n", imp);
+                    context.getSession().out().printf("%s%n", imp);
                 }
             }
             return true;
         } else if (cmdLine.next("clear imports", "ci") != null) {
             cmdLine.setCommandName("config clear imports").unexpectedArgument();
             if (cmdLine.isExecMode()) {
-                context.getWorkspace().config().removeAllImports(new NutsRemoveOptions().session(context.getSession()));
+                context.getWorkspace().config().removeAllImports(new NutsRemoveOptions().setSession(context.getSession()));
                 trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
             }
             return true;
@@ -35,7 +35,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
             do {
                 String a = cmdLine.required().nextNonOption(commandLineFormat.createName("import")).getString();
                 if (cmdLine.isExecMode()) {
-                    context.getWorkspace().config().addImports(new String[]{a},new NutsAddOptions().session(context.getSession()));
+                    context.getWorkspace().config().addImports(new String[]{a},new NutsAddOptions().setSession(context.getSession()));
                 }
             } while (cmdLine.hasNext());
             if (cmdLine.isExecMode()) {
@@ -46,7 +46,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
             while (cmdLine.hasNext()) {
                 String ii = cmdLine.required().nextNonOption(commandLineFormat.createName("import")).getString();
                 if (cmdLine.isExecMode()) {
-                    context.getWorkspace().config().removeImports(new String[]{ii}, new NutsRemoveOptions().session(context.getSession()));
+                    context.getWorkspace().config().removeImports(new String[]{ii}, new NutsRemoveOptions().setSession(context.getSession()));
                 }
             }
             if (cmdLine.isExecMode()) {

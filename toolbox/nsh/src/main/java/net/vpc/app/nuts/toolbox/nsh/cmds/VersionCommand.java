@@ -52,7 +52,7 @@ public class VersionCommand extends AbstractNshBuiltin {
         NutsVersionFormat version = ws.version();
         version.configure(true, cmdLine);
         version
-                .session(context.getSession())
+                .setSession(context.getSession())
                 .addProperty("nsh-version", PomIdResolver.resolvePomId(getClass()).toString())
                 .println(context.out());
     }

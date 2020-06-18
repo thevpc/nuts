@@ -47,7 +47,7 @@ public class Nsh extends NutsApplication {
     @Override
     protected void onInstallApplication(NutsApplicationContext applicationContext) {
         LOG.log(Level.FINER, "[Nsh] Installation...");
-        NutsCommandLine cmd = applicationContext.commandLine()
+        NutsCommandLine cmd = applicationContext.getCommandLine()
                 .setCommandName("nsh --nuts-exec-mode=install");
         NutsArgument a;
         boolean force = false;
@@ -94,7 +94,7 @@ public class Nsh extends NutsApplication {
                         .setOwner(applicationContext.getAppId())
                         .setHelpCommand(nshIdStr, "-c", "help", "--code", command.getName()),
                         new net.vpc.app.nuts.NutsAddOptions()
-                                .session(sessionCopy.yes(force).silent())
+                                .setSession(sessionCopy.yes(force).silent())
                 )) {
                     reinstalled.add(command.getName());
                 } else {
@@ -111,10 +111,10 @@ public class Nsh extends NutsApplication {
         }
         if (trace && applicationContext.getSession().isPlainOut()) {
             if (firstInstalled.size() > 0) {
-                applicationContext.session().out().printf("registered ==%s== nsh commands : ==%s== \n", firstInstalled.size(), firstInstalled.toString());
+                applicationContext.getSession().out().printf("registered ==%s== nsh commands : ==%s== \n", firstInstalled.size(), firstInstalled.toString());
             }
             if (reinstalled.size() > 0) {
-                applicationContext.session().out().printf("re-registered ==%s== nsh commands : ==%s== \n", reinstalled.size(), reinstalled.toString());
+                applicationContext.getSession().out().printf("re-registered ==%s== nsh commands : ==%s== \n", reinstalled.size(), reinstalled.toString());
             }
         }
         cfg.save(false, applicationContext.getSession());
@@ -143,7 +143,7 @@ public class Nsh extends NutsApplication {
                     cfg.removeCommandAlias(command.getName(), new net.vpc.app.nuts.NutsRemoveOptions());
                 } catch (Exception ex) {
                     if (applicationContext.getSession().isPlainTrace()) {
-                        applicationContext.session().err().printf("Unable to uninstall ==%s== .\n", command.getName());
+                        applicationContext.getSession().err().printf("Unable to uninstall ==%s== .\n", command.getName());
                     }
                 }
             }

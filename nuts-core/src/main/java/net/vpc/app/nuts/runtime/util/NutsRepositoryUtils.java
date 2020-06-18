@@ -24,7 +24,7 @@ public class NutsRepositoryUtils {
 
     private NutsRepositoryUtils(NutsRepository repo) {
         this.repo = repo;
-        LOG=repo.workspace().log().of(NutsRepositoryUtils.class);
+        LOG=repo.getWorkspace().log().of(NutsRepositoryUtils.class);
     }
 
     public Events events(){

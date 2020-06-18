@@ -34,7 +34,7 @@ public class LocalMysql {
 
     public void runArgs(String[] args) {
         NutsCommandLine cmd = context.getWorkspace().commandLine().create(args)
-                .commandName("mysql --local");
+                .setCommandName("mysql --local");
         while (cmd.hasNext()) {
             if (context.configureFirst(cmd)) {
                 //
@@ -117,13 +117,13 @@ public class LocalMysql {
                 case PLAIN: {
                     for (Map.Entry<String, LocalMysqlConfig> cnf : result.entrySet()) {
                         for (Map.Entry<String, LocalMysqlDatabaseConfig> db : cnf.getValue().getDatabases().entrySet()) {
-                            getContext().session().out().printf("%s\\@[[%s]]%n", db.getKey(), cnf.getKey());
+                            getContext().getSession().out().printf("%s\\@[[%s]]%n", db.getKey(), cnf.getKey());
                         }
                     }
                     break;
                 }
                 default: {
-                    context.session().formatObject(result).println();
+                    context.getSession().formatObject(result).println();
                 }
             }
         }

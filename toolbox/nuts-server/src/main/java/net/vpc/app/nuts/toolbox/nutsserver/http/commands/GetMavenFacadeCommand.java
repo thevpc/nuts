@@ -39,7 +39,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                 NutsId id = context.getWorkspace().id().builder().artifactId(split.get(split.size() - 3))
                         .groupId(String.join(".", split.subList(0, split.size() - 3)))
                         .version(split.get(split.size() - 2)).build();
-                NutsDefinition fetch = context.getWorkspace().fetch().id(id).session(context.getSession())
+                NutsDefinition fetch = context.getWorkspace().fetch().setId(id).setSession(context.getSession())
                         .getResultDefinition();
                 NutsDescriptor d = fetch.getDescriptor();
                 if(context.isHeadMethod()){
@@ -117,7 +117,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                 NutsId id = context.getWorkspace().id().builder().artifactId(split.get(split.size() - 3))
                         .groupId(String.join(".", split.subList(0, split.size() - 3)))
                         .version(split.get(split.size() - 2)).build();
-                NutsDefinition fetch = context.getWorkspace().fetch().id(id).session(context.getSession())
+                NutsDefinition fetch = context.getWorkspace().fetch().setId(id).setSession(context.getSession())
                         .getResultDefinition();
                 if(context.isHeadMethod()){
                     context.sendResponseHeaders(200,-1);
@@ -131,7 +131,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
             if (split.size() >= 3) {
                 NutsId id = context.getWorkspace().id().builder().artifactId(split.get(split.size() - 2))
                         .groupId(String.join(".", split.subList(0, split.size() - 2))).build();
-                NutsResultList<NutsId> resultIds = context.getWorkspace().search().id(id).distinct().sort().getResultIds();
+                NutsResultList<NutsId> resultIds = context.getWorkspace().search().addId(id).setDistinct(true).setSorted(true).getResultIds();
                 if(context.isHeadMethod()){
                     context.sendResponseHeaders(200,-1);
                     return;

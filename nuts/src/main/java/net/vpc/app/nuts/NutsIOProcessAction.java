@@ -81,14 +81,6 @@ public interface NutsIOProcessAction {
      * @param session session
      * @return {@code this} instance
      */
-    NutsIOProcessAction session(NutsSession session);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
     NutsIOProcessAction setSession(NutsSession session);
 
     /**

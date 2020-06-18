@@ -43,15 +43,6 @@ public interface NutsTableFormat extends NutsFormat {
      * @return {@code this instance}
      */
     @Override
-    NutsTableFormat session(NutsSession session);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    @Override
     NutsTableFormat setSession(NutsSession session);
 
     /**

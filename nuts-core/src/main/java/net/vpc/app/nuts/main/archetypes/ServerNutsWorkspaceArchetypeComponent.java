@@ -89,14 +89,14 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
         }
 
         //has read rights
-        session.getWorkspace().security().addUser("guest").credentials("user".toCharArray()).permissions(
+        session.getWorkspace().security().addUser("guest").setCredentials("user".toCharArray()).addPermissions(
                 NutsConstants.Permissions.FETCH_DESC,
                 NutsConstants.Permissions.FETCH_CONTENT,
                 NutsConstants.Permissions.DEPLOY
         ).run();
 
         //has write rights
-        session.getWorkspace().security().addUser("contributor").credentials("user".toCharArray()).permissions(
+        session.getWorkspace().security().addUser("contributor").setCredentials("user".toCharArray()).addPermissions(
                 NutsConstants.Permissions.FETCH_DESC,
                 NutsConstants.Permissions.FETCH_CONTENT,
                 NutsConstants.Permissions.DEPLOY,

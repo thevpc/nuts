@@ -24,7 +24,7 @@ public class DefaultNutsFetchInternalExecutable extends DefaultInternalNutsExecu
             showDefaultHelp();
             return;
         }
-        getSession().getWorkspace().fetch().session(getSession().trace()).configure(false, args).run();
+        getSession().getWorkspace().fetch().setSession(getSession().setTrace(true)).configure(false, args).run();
     }
 
 }

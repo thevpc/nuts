@@ -65,7 +65,7 @@ public class Test05_FindLinuxTest {
                 "--skip-companions" //            "--verbose"
         );
 
-        NutsResultList<NutsId> result = ws.search().remote().latest().id(NutsConstants.Ids.NUTS_API).getResultIds();
+        NutsResultList<NutsId> result = ws.search().setRemote().setLatest(true).addId(NutsConstants.Ids.NUTS_API).getResultIds();
         //There is one result because nuts id is always installed
         Assert.assertEquals(1, result.count());
     }
@@ -84,7 +84,7 @@ public class Test05_FindLinuxTest {
                 "--skip-companions");
 
         int count = 0;
-        NutsResultList<NutsId> result = ws.search().remote().latest().id(NutsConstants.Ids.NUTS_API).getResultIds();
+        NutsResultList<NutsId> result = ws.search().setRemote().setLatest(true).addId(NutsConstants.Ids.NUTS_API).getResultIds();
         Assert.assertTrue(result.count() > 0);
     }
 
@@ -101,8 +101,8 @@ public class Test05_FindLinuxTest {
                 "--yes",
                 "--skip-companions");
 
-        List<NutsId> result1 = ws.search().latest().id("nuts-core").getResultIds().list();
-        List<NutsId> result2 = ws.search().latest(false).id("nuts-core").getResultIds().list();
+        List<NutsId> result1 = ws.search().setLatest(true).addId("nuts-core").getResultIds().list();
+        List<NutsId> result2 = ws.search().setLatest(false).addId("nuts-core").getResultIds().list();
         TestUtils.println(result1);
         TestUtils.println(result2);
         Assert.assertTrue(result1.size() > 0);

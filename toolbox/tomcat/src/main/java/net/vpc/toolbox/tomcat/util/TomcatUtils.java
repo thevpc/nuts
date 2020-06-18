@@ -155,6 +155,6 @@ public class TomcatUtils {
     public static RunningTomcat[] getRunningInstances(NutsApplicationContext context) {
         return context.getWorkspace().io().ps().type("java").getResultList()
                 .stream().filter((p) -> p.getName().equals("org.apache.catalina.startup.Bootstrap"))
-                .map(x -> new RunningTomcat(x, context.workspace())).toArray(RunningTomcat[]::new);
+                .map(x -> new RunningTomcat(x, context.getWorkspace())).toArray(RunningTomcat[]::new);
     }
 }

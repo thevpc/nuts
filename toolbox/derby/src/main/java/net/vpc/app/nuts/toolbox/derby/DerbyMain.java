@@ -26,7 +26,7 @@ public class DerbyMain extends NutsApplication {
     public void run(NutsApplicationContext appContext) {
         this.appContext = appContext;
         NutsWorkspace ws = appContext.getWorkspace();
-        NutsCommandLine cmdLine = appContext.commandLine();
+        NutsCommandLine cmdLine = appContext.getCommandLine();
         NutsArgument a;
         DerbyOptions options = new DerbyOptions();
         cmdLine.setCommandName("derby");
@@ -92,7 +92,7 @@ public class DerbyMain extends NutsApplication {
             DerbyService srv = new DerbyService(appContext);
             String q = null;
             try {
-                q = srv.command(options).failFast().grabOutputString().getOutputString();
+                q = srv.command(options).setFailFast(true).grabOutputString().getOutputString();
             } catch (NutsExecutionException ex) {
                 //
             }
@@ -164,8 +164,8 @@ public class DerbyMain extends NutsApplication {
                         }
                         case "long": {
                             out.printf("##%s## ==HOME:== %s ==CMD:== " +
-                                            appContext.workspace().commandLine().value(
-                                                    appContext.commandLine().parseLine(jpsResult.getArgsLine())
+                                            appContext.getWorkspace().commandLine().setValue(
+                                                    appContext.getCommandLine().parseLine(jpsResult.getArgsLine())
                                             ).format()
                                             + "\n",
                                     jpsResult.getPid(),

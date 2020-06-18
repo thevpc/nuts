@@ -191,11 +191,11 @@ public class CoreNutsUtils {
             .setDependencies(
                     new NutsDependency[]{
                             new DefaultNutsDependencyBuilder()
-                                    .namespace("namespace")
-                                    .groupId("group")
-                                    .artifactId("name")
-                                    .version("version")
-                                    .optional("false").build()
+                                    .setNamespace("namespace")
+                                    .setGroupId("group")
+                                    .setArtifactId("name")
+                                    .setVersion("version")
+                                    .setOptional("false").build()
                     }
             )
             .build();
@@ -648,7 +648,7 @@ public class CoreNutsUtils {
     public static NutsIterableOutput getValidOutputFormat(NutsSession session) {
         NutsIterableOutput f = session.getIterableOutput();
         if (f == null) {
-            return session.getWorkspace().iter().session(session);
+            return session.getWorkspace().iter().setSession(session);
         }
         return f;
     }
@@ -849,7 +849,7 @@ public class CoreNutsUtils {
             o = new NutsUpdateOptions();
         }
         if (o.getSession() == null) {
-            o.session(ws.createSession());
+            o.setSession(ws.createSession());
         } else {
             NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
         }
@@ -861,7 +861,7 @@ public class CoreNutsUtils {
             o = new NutsAddOptions();
         }
         if (o.getSession() == null) {
-            o.session(ws.createSession());
+            o.setSession(ws.createSession());
         } else {
             NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
         }
@@ -873,7 +873,7 @@ public class CoreNutsUtils {
             o = new NutsRemoveOptions();
         }
         if (o.getSession() == null) {
-            o.session(ws.createSession());
+            o.setSession(ws.createSession());
         } else {
             NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
         }
@@ -881,27 +881,27 @@ public class CoreNutsUtils {
     }
 
     public static NutsAddOptions toAddOptions(NutsUpdateOptions o) {
-        return new NutsAddOptions().session(o.getSession());
+        return new NutsAddOptions().setSession(o.getSession());
     }
 
     public static NutsRemoveOptions toRemoveOptions(NutsUpdateOptions o) {
-        return new NutsRemoveOptions().session(o.getSession());
+        return new NutsRemoveOptions().setSession(o.getSession());
     }
 
     public static NutsUpdateOptions toUpdateOptions(NutsAddOptions o) {
-        return new NutsUpdateOptions().session(o.getSession());
+        return new NutsUpdateOptions().setSession(o.getSession());
     }
 
     public static NutsUpdateOptions toUpdateOptions(NutsRemoveOptions o) {
-        return new NutsUpdateOptions().session(o.getSession());
+        return new NutsUpdateOptions().setSession(o.getSession());
     }
 
     public static NutsRemoveOptions toRemoveOptions(NutsAddOptions o) {
-        return new NutsRemoveOptions().session(o.getSession());
+        return new NutsRemoveOptions().setSession(o.getSession());
     }
 
     public static NutsRemoveOptions toRemoveOptions(NutsRemoveOptions o) {
-        return new NutsRemoveOptions().session(o.getSession());
+        return new NutsRemoveOptions().setSession(o.getSession());
     }
 
     public static String idToPath(NutsId id) {

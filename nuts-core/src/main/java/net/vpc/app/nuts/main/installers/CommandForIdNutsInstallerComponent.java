@@ -62,14 +62,14 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
             executionContext.getWorkspace().exec()
-                    .session(executionContext.getSession())
+                    .setSession(executionContext.getSession())
                     //                    .executionType(NutsExecutionType.EMBEDDED)
-                    .command(executionContext.getDefinition())
-                    .command("--nuts-exec-mode=install")
+                    .setCommand(executionContext.getDefinition())
+                    .addCommand("--nuts-exec-mode=install")
                     .addExecutorOptions("--nuts-auto-install=false")
                     .addCommand(executionContext.getArguments())
                     .setExecutionType(executionContext.getWorkspace().config().options().getExecutionType())
-                    .failFast()
+                    .setFailFast(true)
                     .run();
         }
     }
@@ -81,9 +81,9 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
             executionContext.getWorkspace().exec()
-                    .command(id.builder().setNamespace(null).build().toString(), "--nuts-exec-mode=update", "--force")
+                    .addCommand(id.builder().setNamespace(null).build().toString(), "--nuts-exec-mode=update", "--force")
                     .addExecutorOptions().addCommand(executionContext.getArguments())
-                    .failFast().run();
+                    .setFailFast(true).run();
         }
     }
 
@@ -98,7 +98,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
             for (NutsExecutionEntry executionEntry : executionEntries) {
                 if (executionEntry.isApp()) {
                     //
-                    int r = ws.exec().command(id.getLongName(), "--nuts-exec-mode=uninstall", "--force").addCommand(executionContext.getArguments()).getResult();
+                    int r = ws.exec().addCommand(id.getLongName(), "--nuts-exec-mode=uninstall", "--force").addCommand(executionContext.getArguments()).getResult();
                     session.out().printf("Installation Exited with code : " + r + " %n");
                 }
             }

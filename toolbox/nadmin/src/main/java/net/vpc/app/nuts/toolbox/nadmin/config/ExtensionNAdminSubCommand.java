@@ -21,7 +21,7 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.next("list extension points", "lxp") != null) {
-            PrintStream out = context.session().out();
+            PrintStream out = context.getSession().out();
             if (cmdLine.isExecMode()) {
                 List<ExtensionPointInfo> all=new ArrayList<>();
                 NutsWorkspaceExtensionManager extensions = context.getWorkspace().extensions();

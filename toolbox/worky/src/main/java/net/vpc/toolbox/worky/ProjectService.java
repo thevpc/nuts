@@ -121,7 +121,7 @@ public class ProjectService {
     }
 
     public File detectLocalVersionFile(String sid) {
-        NutsId id = context.workspace().id().parse(sid);
+        NutsId id = context.getWorkspace().id().parse(sid);
         if (config.getTechnologies().contains("maven")) {
             File f = new File(System.getProperty("user.home"), ".m2/repository/"
                     + id.getGroupId().replace('.', File.separatorChar)
@@ -160,7 +160,7 @@ public class ProjectService {
     }
 
     public File detectRemoteVersionFile(String sid) {
-        NutsId id = context.workspace().id().parse(sid);
+        NutsId id = context.getWorkspace().id().parse(sid);
         if (config.getTechnologies().contains("maven")) {
             RepositoryAddress a = config.getAddress();
             if (a == null) {
@@ -190,9 +190,9 @@ public class ProjectService {
                     s = context.getSession();
                 }
                 List<NutsDefinition> found = ws2.search()
-                        .id(sid)
-                        .repository(nutsRepository)
-                        .latest().session(s).content().getResultDefinitions().list();
+                        .addId(sid)
+                        .addRepository(nutsRepository)
+                        .setLatest(true).setSession(s).setContent(true).getResultDefinitions().list();
                 if (found.size() > 0) {
                     Path p = found.get(0).getContent().getPath();
                     if (p == null) {
@@ -242,9 +242,9 @@ public class ProjectService {
                         }
                         s.silent();
                         List<NutsId> found = ws2.search()
-                                .id(g.getGroupId() + ":" + g.getArtifactId())
-                                .repository(nutsRepository)
-                                .latest().session(s).getResultIds().list();
+                                .addId(g.getGroupId() + ":" + g.getArtifactId())
+                                .addRepository(nutsRepository)
+                                .setLatest(true).setSession(s).getResultIds().list();
                         if (found.size() > 0) {
                             return found.get(0).getVersion().toString();
                         }

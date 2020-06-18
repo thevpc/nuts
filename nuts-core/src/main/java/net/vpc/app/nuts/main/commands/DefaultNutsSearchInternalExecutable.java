@@ -24,7 +24,7 @@ public class DefaultNutsSearchInternalExecutable extends DefaultInternalNutsExec
             showDefaultHelp();
             return;
         }
-        getSession().getWorkspace().search().session(getSession()).printResult()
+        getSession().getWorkspace().search().setSession(getSession()).printResult()
                 .configure(false, args).run();
     }
 

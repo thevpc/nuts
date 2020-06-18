@@ -90,15 +90,6 @@ public interface NutsElementFormat extends NutsFormat {
      * @return {@code this} instance
      */
     @Override
-    NutsElementFormat session(NutsSession session);
-
-    /**
-     * set current session.
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
     NutsElementFormat setSession(NutsSession session);
 
     /**

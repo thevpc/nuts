@@ -51,7 +51,7 @@ public class FilesFoldersApi {
         NutsVersion versionString= DefaultNutsVersion.valueOf("0.5.5");
         try {
             SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(baseUrl),session);
-            foldersFileStream = session.workspace().io().monitor().source(dotFilesUrl).session(session).create();
+            foldersFileStream = session.getWorkspace().io().monitor().source(dotFilesUrl).setSession(session).create();
             List<String> splitted = CoreStringUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r");
             for (String s : splitted) {
                 s=s.trim();
@@ -90,18 +90,18 @@ public class FilesFoldersApi {
                 }
             }
         } catch (UncheckedIOException ex) {
-            session.workspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}",dotFilesUrl);
+            session.getWorkspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}",dotFilesUrl);
         }
         if(versionString.compareTo("0.5.7")<0){
             if (folders) {
                 String[] foldersFileContent = null;
                 String dotFolderUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FOLDERS;
-                try (InputStream stream = session.workspace().io().monitor().source(dotFolderUrl)
-                        .session(session).create()){
+                try (InputStream stream = session.getWorkspace().io().monitor().source(dotFolderUrl)
+                        .setSession(session).create()){
                     foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(stream, true), "\n\r")
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException ex) {
-                    session.workspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}",dotFolderUrl);
+                    session.getWorkspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}",dotFolderUrl);
                 }
                 if (foldersFileContent != null) {
                     for (String folder : foldersFileContent) {

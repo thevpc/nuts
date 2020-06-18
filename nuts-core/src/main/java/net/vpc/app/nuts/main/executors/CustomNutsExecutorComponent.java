@@ -64,11 +64,11 @@ public class CustomNutsExecutorComponent implements NutsExecutorComponent {
         args.addAll(Arrays.asList(executionContext.getArguments()));
         executionContext.getWorkspace()
                 .exec()
-                .command(args)
-                .session(executionContext.getSession())
-                .env(executionContext.getEnv())
-                .directory(executionContext.getCwd())
-                .failFast()
+                .addCommand(args)
+                .setSession(executionContext.getSession())
+                .setEnv(executionContext.getEnv())
+                .setDirectory(executionContext.getCwd())
+                .setFailFast(true)
                 .run();
     }
 
@@ -79,12 +79,12 @@ public class CustomNutsExecutorComponent implements NutsExecutorComponent {
         args.addAll(Arrays.asList(executionContext.getArguments()));
         executionContext.getWorkspace()
                 .exec()
-                .command(args)
-                .session(executionContext.getSession())
-                .env(executionContext.getEnv())
-                .directory(executionContext.getCwd())
-                .failFast()
-                .dry()
+                .addCommand(args)
+                .setSession(executionContext.getSession())
+                .setEnv(executionContext.getEnv())
+                .setDirectory(executionContext.getCwd())
+                .setFailFast(true)
+                .setDry(true)
                 .run();
     }
 

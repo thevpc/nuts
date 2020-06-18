@@ -38,13 +38,9 @@ import java.util.Collection;
  */
 public interface NutsUninstallCommand extends NutsWorkspaceCommand {
 
-    NutsUninstallCommand id(NutsId id);
-
     NutsUninstallCommand addId(NutsId id);
 
     NutsUninstallCommand removeId(NutsId id);
-
-    NutsUninstallCommand id(String id);
 
     NutsUninstallCommand addId(String id);
 
@@ -58,15 +54,9 @@ public interface NutsUninstallCommand extends NutsWorkspaceCommand {
 
     NutsId[] getIds();
 
-    NutsUninstallCommand arg(String arg);
-
     NutsUninstallCommand addArg(String arg);
 
-    NutsUninstallCommand args(Collection<String> args);
-
     NutsUninstallCommand addArgs(Collection<String> args);
-
-    NutsUninstallCommand args(String... args);
 
     NutsUninstallCommand addArgs(String... args);
 
@@ -74,22 +64,9 @@ public interface NutsUninstallCommand extends NutsWorkspaceCommand {
 
     String[] getArgs();
 
-    NutsUninstallCommand erase();
-
-    NutsUninstallCommand erase(boolean erase);
-
     NutsUninstallCommand setErase(boolean erase);
 
     boolean isErase();
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NutsUninstallCommand session(NutsSession session);
 
     /**
      * update session

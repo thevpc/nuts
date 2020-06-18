@@ -28,9 +28,9 @@ public class DefaultNutsRemoveUserCommand extends AbstractNutsRemoveUserCommand 
     @Override
     public NutsRemoveUserCommand run() {
         if (repo != null) {
-            NutsRepositoryConfigManagerExt.of(repo.config()).removeUser(login, new NutsRemoveOptions().session(getSession()));
+            NutsRepositoryConfigManagerExt.of(repo.config()).removeUser(login, new NutsRemoveOptions().setSession(getSession()));
         } else {
-            NutsWorkspaceConfigManagerExt.of(ws.config()).removeUser(login, new NutsRemoveOptions().session(getSession()));
+            NutsWorkspaceConfigManagerExt.of(ws.config()).removeUser(login, new NutsRemoveOptions().setSession(getSession()));
         }
         return this;
     }

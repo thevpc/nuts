@@ -298,14 +298,9 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         }
         if (iterFormat == null) {
             iterFormat = new CustomNutsIncrementalOutputFormat(ws, iterFormatHandler);
-            iterFormat.session(this);
+            iterFormat.setSession(this);
         }
         return iterFormat;
-    }
-
-    @Override
-    public NutsSession iterableFormat(NutsIterableFormat traceFormat) {
-        return setIterableFormat(traceFormat);
     }
 
     @Override
@@ -463,7 +458,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--force": {
                     a = cmdLine.nextBoolean();
                     if (enabled) {
-                        this.force(a.getBooleanValue());
+                        this.setForce(a.getBooleanValue());
                     }
                     return true;
                 }
@@ -500,14 +495,14 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--trace": {
                     NutsArgument v = cmdLine.nextBoolean();
                     if (enabled) {
-                        this.trace(v.getBooleanValue());
+                        this.setTrace(v.getBooleanValue());
                     }
                     return true;
                 }
                 case "--progress": {
                     NutsArgument v = cmdLine.nextString();
                     if (enabled) {
-                        this.progressOptions(v.getStringValue());
+                        this.setProgressOptions(v.getStringValue());
                     }
                     return true;
                 }
@@ -648,34 +643,15 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return this;
     }
 
-    @Override
-    public NutsSession trace(boolean trace) {
-        return setTrace(trace);
-    }
 
     @Override
     public NutsSession silent() {
-        return trace(false);
-    }
-
-    @Override
-    public NutsSession trace() {
-        return trace(true);
+        return setTrace(false);
     }
 
     @Override
     public boolean isForce() {
         return force;
-    }
-
-    @Override
-    public NutsSession force() {
-        return force(true);
-    }
-
-    @Override
-    public NutsSession force(boolean value) {
-        return setForce(value);
     }
 
     @Override
@@ -853,36 +829,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsSession transitive(Boolean value) {
-        return setTrace(value);
-    }
-
-    @Override
-    public NutsSession transitive() {
-        return transitive(true);
-    }
-
-    @Override
-    public NutsSession cached(Boolean value) {
-        return setCached(value);
-    }
-
-    @Override
-    public NutsSession cached() {
-        return cached(true);
-    }
-
-    @Override
-    public NutsSession indexed(Boolean value) {
-        return setIndexed(value);
-    }
-
-    @Override
-    public NutsSession indexed() {
-        return indexed(true);
-    }
-
-    @Override
     public String getProgressOptions() {
         return progressOptions;
     }
@@ -894,13 +840,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsSession progressOptions(String progressOptions) {
-        this.progressOptions = progressOptions;
-        return this;
-    }
-
-    @Override
     public NutsObjectFormat formatObject(Object any) {
-        return getWorkspace().object().session(this).value(any);
+        return getWorkspace().object().setSession(this).value(any);
     }
 }

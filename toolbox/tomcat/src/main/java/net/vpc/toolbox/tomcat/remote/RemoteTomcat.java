@@ -83,7 +83,7 @@ public class RemoteTomcat {
                 processed = true;
                 List<RemoteTomcatAppConfigService> apps = c.getApps();
                 for (RemoteTomcatAppConfigService app : apps) {
-                    context.session().out().printf("%s\n", app.getName());
+                    context.getSession().out().printf("%s\n", app.getName());
                 }
             }
         }
@@ -99,7 +99,7 @@ public class RemoteTomcat {
         }
         if (!x.processed) {
             for (RemoteTomcatConfigService tomcatConfig : listConfig()) {
-                getContext().session().out().println(tomcatConfig.getName());
+                getContext().getSession().out().println(tomcatConfig.getName());
             }
         }
     }
@@ -169,27 +169,27 @@ public class RemoteTomcat {
                 if (TomcatUtils.isBlank(c.getConfig().getServer())) {
                     ok = false;
                     c.getConfig().setServer(
-                            context.session().terminal()
+                            context.getSession().terminal()
                                     .ask().forString("[instance=[[%s]]] Would you enter ==%s== value ?", c.getName(), "--server")
-                                    .defaultValue("ssh://login@myserver/instanceName").session(context.getSession())
+                                    .defaultValue("ssh://login@myserver/instanceName").setSession(context.getSession())
                                     .getValue()
                     );
                 }
                 if (TomcatUtils.isBlank(c.getConfig().getRemoteTempPath())) {
                     ok = false;
                     c.getConfig()
-                            .setRemoteTempPath(context.session().terminal().ask()
+                            .setRemoteTempPath(context.getSession().terminal().ask()
                                     .forString("[instance=[[%s]]] Would you enter ==%s== value ?", c.getName(), "--remote-temp-path").setDefaultValue("/tmp")
-                                    .session(context.getSession())
+                                    .setSession(context.getSession())
                                     .getValue()
                             );
                 }
                 for (RemoteTomcatAppConfigService aa : c.getApps()) {
                     if (TomcatUtils.isBlank(aa.getConfig().getPath())) {
                         ok = false;
-                        aa.getConfig().setPath(context.session().terminal().ask()
+                        aa.getConfig().setPath(context.getSession().terminal().ask()
                                 .forString("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value ?", c.getName(), aa.getName(), "-app.path")
-                                .session(context.getSession())
+                                .setSession(context.getSession())
                                 .getValue());
                     }
                 }
@@ -365,11 +365,11 @@ public class RemoteTomcat {
 
             public void show(RemoteTomcatServiceBase aa) {
                 if (json) {
-                    getContext().session().out().printf("[[%s]] :\n", aa.getName());
-                    aa.println(getContext().session().out());
+                    getContext().getSession().out().printf("[[%s]] :\n", aa.getName());
+                    aa.println(getContext().getSession().out());
                 } else {
-                    getContext().session().out().printf("[[%s]] :\n", aa.getName());
-                    aa.println(getContext().session().out());
+                    getContext().getSession().out().printf("[[%s]] :\n", aa.getName());
+                    aa.println(getContext().getSession().out());
                 }
             }
         }

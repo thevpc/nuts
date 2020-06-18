@@ -116,27 +116,6 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
     String[] getPermissions();
 
     /**
-     * add user group
-     * @param group new value
-     * @return {@code this} instance
-     */
-    NutsAddUserCommand group(String group);
-
-    /**
-     * add user groups
-     * @param groups new value
-     * @return {@code this} instance
-     */
-    NutsAddUserCommand groups(String... groups);
-
-    /**
-     * add user groups
-     * @param groups new value
-     * @return {@code this} instance
-     */
-    NutsAddUserCommand groups(Collection<String> groups);
-
-    /**
      * remove group
      * @param groups new value
      * @return {@code this} instance
@@ -165,34 +144,6 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
     NutsAddUserCommand removePermissions(Collection<String> permissions);
 
     /**
-     * add permission
-     * @param permission new value
-     * @return {@code this} instance
-     */
-    NutsAddUserCommand permission(String permission);
-
-    /**
-     * add permissions
-     * @param permissions new value
-     * @return {@code this} instance
-     */
-    NutsAddUserCommand permissions(String... permissions);
-
-    /**
-     * add permissions
-     * @param permissions new value
-     * @return {@code this} instance
-     */
-    NutsAddUserCommand permissions(Collection<String> permissions);
-
-    /**
-     * set username
-     * @param username new value
-     * @return {@code this} instance
-     */
-    NutsAddUserCommand username(String username);
-
-    /**
      * set username
      * @param username new value
      * @return {@code this} instance
@@ -200,25 +151,11 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
     NutsAddUserCommand setUsername(String username);
 
     /**
-     * set credentials
-     * @param password new value
-     * @return {@code this} instance
-     */
-    NutsAddUserCommand credentials(char[] password);
-
-    /**
      *
      * @param password new value
      * @return {@code this} instance
      */
     NutsAddUserCommand setCredentials(char[] password);
-
-    /**
-     * set remote identity
-     * @param remoteIdentity new value
-     * @return {@code this} instance
-     */
-    NutsAddUserCommand remoteIdentity(String remoteIdentity);
 
     /**
      * set remote identity
@@ -238,23 +175,7 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
      * @param password new value
      * @return {@code this} instance
      */
-    NutsAddUserCommand remoteCredentials(char[] password);
-
-    /**
-     * set remote credentials
-     * @param password new value
-     * @return {@code this} instance
-     */
     NutsAddUserCommand setRemoteCredentials(char[] password);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NutsAddUserCommand session(NutsSession session);
 
     /**
      * update session

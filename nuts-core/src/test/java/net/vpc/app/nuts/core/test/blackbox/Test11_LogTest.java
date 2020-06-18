@@ -37,10 +37,10 @@ public class Test11_LogTest {
                 "--skip-companions");
 
         TestUtils.println(ws.version().format());
-        String result = ws.exec().command(
+        String result = ws.exec().addCommand(
                 "https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/netbeans-launcher/1.2.2/netbeans-launcher-1.2.2.jar",
                 "--version"
-        ).redirectErrorStream().grabOutputString().failFast().getOutputString();
+        ).setRedirectErrorStream(true).grabOutputString().setFailFast(true).getOutputString();
         TestUtils.println("Result:");
         TestUtils.println(result);
         Assert.assertFalse("Message should not contain terminal format",result.contains("[0m"));

@@ -108,16 +108,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     }
 
     //@Override
-    public T transitive(boolean transitive) {
-        return setTransitive(transitive);
-    }
-
-    //@Override
-    public T transitive() {
-        return setTransitive(true);
-    }
-
-    //@Override
     public T fetchStrategy(NutsFetchStrategy mode) {
         return setFetchStrategy(mode);
     }
@@ -129,17 +119,17 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     }
 
     //@Override
-    public T remote() {
+    public T setRemote() {
         return setFetchStrategy(NutsFetchStrategy.REMOTE);
     }
 
     //@Override
-    public T offline() {
+    public T setOffline() {
         return setFetchStrategy(NutsFetchStrategy.OFFLINE);
     }
 
     //@Override
-    public T online() {
+    public T setOnline() {
         return setFetchStrategy(NutsFetchStrategy.ONLINE);
     }
 
@@ -149,7 +139,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 //    }
 
     //@Override
-    public T anyWhere() {
+    public T setAnyWhere() {
         return setFetchStrategy(NutsFetchStrategy.ANYWHERE);
     }
 
@@ -172,29 +162,9 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         getSession().setIndexed(indexEnabled);
         return (T) this;
     }
-
-    //@Override
-    public T indexed() {
-        return setIndexed(true);
-    }
-
-    //@Override
-    public T indexed(boolean indexed) {
-        return setIndexed(indexed);
-    }
-
-    //@Override
+   //@Override
     public Boolean getOptional() {
         return optional;
-    }
-
-    public T optional() {
-        return optional(true);
-    }
-
-    //@Override
-    public T optional(Boolean acceptOptional) {
-        return DefaultNutsQueryBaseOptions.this.setOptional(acceptOptional);
     }
 
     //@Override
@@ -214,19 +184,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     }
 
     //@Override
-//    public T addScopes(Collection<NutsDependencyScope> scope) {
-//        this.scope = NutsDependencyScopes.add(this.scope, scope);
-//        return (T) this;
-//    }
-    public T scope(NutsDependencyScope scope) {
-        return addScope(scope);
-    }
-
-    public T scope(NutsDependencyScopePattern scope) {
-        return addScope(scope);
-    }
-
-    //@Override
     public T addScope(NutsDependencyScope scope) {
         this.scope = NutsDependencyScopes.add(this.scope, scope);
         return (T) this;
@@ -235,14 +192,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     public T addScope(NutsDependencyScopePattern scope) {
         this.scope = NutsDependencyScopes.add(this.scope, scope);
         return (T) this;
-    }
-
-    public T scopes(NutsDependencyScope... scopes) {
-        return addScopes(scopes);
-    }
-
-    public T scopes(NutsDependencyScopePattern... scopes) {
-        return addScopes(scopes);
     }
 
     //@Override
@@ -310,13 +259,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         return (T) this;
     }
 
-    public T content(boolean includeContent) {
-        return (T) setContent(includeContent);
-    }
-
-    public T content() {
-        return (T) setContent(true);
-    }
 
     //@Override
     public boolean isEffective() {
@@ -329,24 +271,10 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         return (T) this;
     }
 
-    //@Override
-    public T effective(boolean effective) {
-        return setEffective(effective);
-    }
-
-    //@Override
-    public T effective() {
-        return setEffective(true);
-    }
 
     //@Override
     public boolean isInlineDependencies() {
         return inlineDependencies;
-    }
-
-    //@Override
-    public T inlineDependencies() {
-        return setInlineDependencies(true);
     }
 
     //@Override
@@ -355,18 +283,9 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         return (T) this;
     }
 
-    //@Override
-    public T inlineDependencies(boolean include) {
-        return setInlineDependencies(include);
-    }
 
     public boolean isDependencies() {
         return dependencies;
-    }
-
-    //@Override
-    public T dependencies() {
-        return setDependencies(true);
     }
 
     //@Override
@@ -375,29 +294,16 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         return (T) this;
     }
 
-    //@Override
-    public T dependencies(boolean include) {
-        return setDependencies(include);
-    }
 
     public boolean isDependenciesTree() {
         return dependenciesTree;
     }
 
-    //@Override
-    public T dependenciesTree() {
-        return setDependenciesTree(true);
-    }
 
     //@Override
     public T setDependenciesTree(boolean include) {
         dependenciesTree = include;
         return (T) this;
-    }
-
-    //@Override
-    public T dependenciesTree(boolean include) {
-        return setDependenciesTree(include);
     }
 
     //@Override
@@ -409,11 +315,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     public T setLocation(Path location) {
         this.location = location;
         return (T) this;
-    }
-
-    //@Override
-    public T location(Path location) {
-        return setLocation(location);
     }
 
     //@Override
@@ -429,22 +330,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     public T setFailFast(boolean enable) {
         this.failFast = enable;
         return (T) this;
-    }
-
-    public T failFast() {
-        return failFast(true);
-    }
-
-    public T failFast(boolean enable) {
-        return setFailFast(enable);
-    }
-
-    public T repositories(Collection<String> values) {
-        return addRepositories(values);
-    }
-
-    public T repositories(String... values) {
-        return addRepositories(values);
     }
 
     public T addRepositories(Collection<String> values) {
@@ -474,10 +359,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     public T addRepository(String value) {
         repos.add(value);
         return (T) this;
-    }
-
-    public T repository(String value) {
-        return addRepository(value);
     }
 
     public String[] getRepositories() {
@@ -528,14 +409,14 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             case "--dependencies": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    this.dependencies(val);
+                    this.setDependencies(val);
                 }
                 return true;
             }
             case "--dependencies-tree": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    this.dependenciesTree(val);
+                    this.setDependenciesTree(val);
                 }
                 return true;
             }

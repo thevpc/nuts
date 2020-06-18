@@ -20,7 +20,7 @@ public class FetchFacadeCommand extends AbstractFacadeCommand {
         boolean transitive = parameters.containsKey("transitive");
         NutsDefinition fetch = null;
         try {
-            fetch = context.getWorkspace().fetch().id(id).session(context.getSession()).transitive(transitive)
+            fetch = context.getWorkspace().fetch().setId(id).setSession(context.getSession()).setTransitive(transitive)
                     .getResultDefinition();
         } catch (Exception exc) {
             //
@@ -28,7 +28,7 @@ public class FetchFacadeCommand extends AbstractFacadeCommand {
         if (fetch != null && fetch.getPath() != null && Files.exists(fetch.getPath())) {
             context.sendResponseFile(200, fetch.getPath());
         } else {
-            context.sendError(404, "File Note Found");
+            context.sendError(404, "File Not Found");
         }
     }
 }

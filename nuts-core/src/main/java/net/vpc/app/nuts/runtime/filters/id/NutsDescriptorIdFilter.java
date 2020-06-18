@@ -44,8 +44,8 @@ public class NutsDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsId
         }
         NutsDescriptor descriptor = null;
         try {
-//                descriptor = repository.fetchDescriptor().setId(id).session(session).getResult();
-            descriptor = session.getWorkspace().fetch().id(id).session(session).getResultDescriptor();
+//                descriptor = repository.fetchDescriptor().setId(id).setSession(session).getResult();
+            descriptor = session.getWorkspace().fetch().setId(id).setSession(session).getResultDescriptor();
             if (!CoreNutsUtils.isEffectiveId(descriptor.getId())) {
                 NutsDescriptor nutsDescriptor = null;
                 try {

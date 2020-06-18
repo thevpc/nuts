@@ -143,15 +143,6 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     @Override
-    NutsUpdateUserCommand session(NutsSession session);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
     NutsUpdateUserCommand setSession(NutsSession session);
 
     /**

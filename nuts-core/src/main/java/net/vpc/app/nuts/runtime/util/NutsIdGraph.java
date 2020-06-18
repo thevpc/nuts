@@ -55,7 +55,7 @@ public class NutsIdGraph {
         this.session = session;
         this.failFast = failFast;
         context=new NutsIdGraphContext(session);
-        LOG=session.workspace().log().of(NutsIdGraph.class);
+        LOG=session.getWorkspace().log().of(NutsIdGraph.class);
     }
 
     private void reset(){
@@ -119,11 +119,11 @@ public class NutsIdGraph {
         Set<NutsIdNode> toaddOk = new HashSet<>();
         for (NutsIdNode nutsId : wildIds.values()) {
             try {
-                NutsId nutsId1 = session.workspace().fetch().id(nutsId.id).session(session).getResultId();
+                NutsId nutsId1 = session.getWorkspace().fetch().setId(nutsId.id).setSession(session).getResultId();
                 context.getNutsIdInfo(nutsId.id,true).refTo=context.getNutsIdInfo(nutsId1,true);
                 toaddOk.add(new NutsIdNode(nutsId1, nutsId.path, nutsId.filter, session));
             } catch (NutsNotFoundException ex) {
-                NutsDependency dep = session.workspace().dependency().builder().id(nutsId.id).build();
+                NutsDependency dep = session.getWorkspace().dependency().builder().setId(nutsId.id).build();
                 if (!dep.isOptional()) {
                     throw ex;
                 }
@@ -255,12 +255,12 @@ public class NutsIdGraph {
             NutsIdAndNutsDependencyFilterItem curr = stack.pop();
             if (acceptVisit(curr)) {
                 if (curr.id.getVersion().isSingleValue()) {
-                    SearchTraceHelper.progressIndeterminate("search for deps of "+session.workspace().id().set(curr.id.id.getLongNameId()).format(),session);
+                    SearchTraceHelper.progressIndeterminate("search for deps of "+session.getWorkspace().id().set(curr.id.id.getLongNameId()).format(),session);
                     NutsDescriptor effDescriptor = null;
                     try {
                         effDescriptor = curr.getEffDescriptor(session);
                     } catch (NutsNotFoundException ex) {
-                        NutsDependency dep = session.workspace().dependency().builder().id(curr.id.id).build();
+                        NutsDependency dep = session.getWorkspace().dependency().builder().setId(curr.id.id).build();
                         if (!dep.isOptional() && failFast) {
                             throw ex;
                         }
@@ -447,7 +447,7 @@ public class NutsIdGraph {
         NutsIdInfo getNutsIdInfoResult(NutsId id) {
             NutsIdInfo p = getNutsIdInfo(id, false);
             if(p==null){
-                throw new NutsNotFoundException(session.workspace(),id);
+                throw new NutsNotFoundException(session.getWorkspace(),id);
             }
             if(p.refTo!=null){
                 return p.refTo;
@@ -618,9 +618,9 @@ public class NutsIdGraph {
                     return -1;
                 }
 
-                throw new NutsException(session.workspace(), "Error");
+                throw new NutsException(session.getWorkspace(), "Error");
             } else {
-                throw new NutsException(session.workspace(), "Error");
+                throw new NutsException(session.getWorkspace(), "Error");
             }
         }
 

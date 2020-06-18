@@ -159,14 +159,6 @@ public interface NutsFormat extends NutsConfigurable {
     NutsSession getSession();
 
     /**
-     * equivalent to {@link #setSession(net.vpc.app.nuts.NutsSession) }
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    NutsFormat session(NutsSession session);
-
-    /**
      * update session
      *
      * @param session session

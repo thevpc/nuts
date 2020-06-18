@@ -210,13 +210,6 @@ public interface NutsIOUncompressAction {
      * @param session current session
      * @return {@code this} instance
      */
-    NutsIOUncompressAction session(NutsSession session);
-
-    /**
-     * update current session
-     * @param session current session
-     * @return {@code this} instance
-     */
     NutsIOUncompressAction setSession(NutsSession session);
 
     /**

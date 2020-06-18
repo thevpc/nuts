@@ -62,11 +62,6 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     }
 
     @Override
-    public NutsQuestion<T> session(NutsSession session) {
-        return setSession(session);
-    }
-
-    @Override
     public NutsQuestion<T> setSession(NutsSession session) {
         this.session = session;
         return this;

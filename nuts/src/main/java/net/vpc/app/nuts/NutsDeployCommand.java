@@ -46,21 +46,7 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      * @param stream content
      * @return {@code this} instance
      */
-    NutsDeployCommand content(InputStream stream);
-
-    /**
-     * set content
-     * @param stream content
-     * @return {@code this} instance
-     */
     NutsDeployCommand setContent(InputStream stream);
-
-    /**
-     * set content
-     * @param path content
-     * @return {@code this} instance
-     */
-    NutsDeployCommand content(String path);
 
     /**
      * set content
@@ -74,21 +60,7 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      * @param file content
      * @return {@code this} instance
      */
-    NutsDeployCommand content(File file);
-
-    /**
-     * set content
-     * @param file content
-     * @return {@code this} instance
-     */
     NutsDeployCommand setContent(File file);
-
-    /**
-     * set content
-     * @param file content
-     * @return {@code this} instance
-     */
-    NutsDeployCommand content(Path file);
 
     /**
      * set content
@@ -102,21 +74,7 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      * @param url content
      * @return {@code this} instance
      */
-    NutsDeployCommand content(URL url);
-
-    /**
-     * set content
-     * @param url content
-     * @return {@code this} instance
-     */
     NutsDeployCommand setContent(URL url);
-
-    /**
-     * set descriptor
-     * @param stream descriptor
-     * @return {@code this} instance
-     */
-    NutsDeployCommand descriptor(InputStream stream);
 
     /**
      * set descriptor
@@ -130,21 +88,7 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      * @param path descriptor
      * @return {@code this} instance
      */
-    NutsDeployCommand descriptor(Path path);
-
-    /**
-     * set descriptor
-     * @param path descriptor
-     * @return {@code this} instance
-     */
     NutsDeployCommand setDescriptor(Path path);
-
-    /**
-     * set descriptor
-     * @param path descriptor
-     * @return {@code this} instance
-     */
-    NutsDeployCommand descriptor(String path);
 
     /**
      * set descriptor
@@ -158,13 +102,6 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      * @param file descriptor
      * @return {@code this} instance
      */
-    NutsDeployCommand descriptor(File file);
-
-    /**
-     * set descriptor
-     * @param file descriptor
-     * @return {@code this} instance
-     */
     NutsDeployCommand setDescriptor(File file);
 
     /**
@@ -172,21 +109,7 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      * @param url descriptor
      * @return {@code this} instance
      */
-    NutsDeployCommand descriptor(URL url);
-
-    /**
-     * set descriptor
-     * @param url descriptor
-     * @return {@code this} instance
-     */
     NutsDeployCommand setDescriptor(URL url);
-
-    /**
-     * set descriptor
-     * @param descriptor descriptor
-     * @return {@code this} instance
-     */
-    NutsDeployCommand descriptor(NutsDescriptor descriptor);
 
     /**
      * set descriptor
@@ -206,13 +129,6 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      * @param sha1 hash
      * @return {@code this} instance
      */
-    NutsDeployCommand sha1(String sha1);
-
-    /**
-     * set content sha1 hash
-     * @param sha1 hash
-     * @return {@code this} instance
-     */
     NutsDeployCommand setSha1(String sha1);
 
     /**
@@ -220,21 +136,7 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      * @param descSHA1 descriptor hash
      * @return {@code this} instance
      */
-    NutsDeployCommand descSha1(String descSHA1);
-
-    /**
-     * set descriptor sha1 hash
-     * @param descSHA1 descriptor hash
-     * @return {@code this} instance
-     */
     NutsDeployCommand setDescSha1(String descSHA1);
-
-    /**
-     * set target repository to deploy to
-     * @param repository target repository to deploy to
-     * @return {@code this} instance
-     */
-    NutsDeployCommand repository(String repository);
 
     /**
      * set target repository to deploy to
@@ -258,13 +160,6 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
     NutsDeployCommand to(String repository);
 
     /**
-     * set target repository to deploy to
-     * @param repository target repository to deploy to
-     * @return {@code this} instance
-     */
-    NutsDeployCommand targetRepository(String repository);
-
-    /**
      * return target repository to deploy to
      * @return target repository to deploy to
      */
@@ -276,13 +171,6 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsDeployCommand from(String repository);
-
-    /**
-     * set source repository to deploy from the given ids
-     * @param repository source repository to deploy from
-     * @return {@code this} instance
-     */
-    NutsDeployCommand sourceRepository(String repository);
 
     /**
      * set source repository to deploy from the given ids
@@ -309,21 +197,7 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      * @param id id to deploy from source repository
      * @return {@code this} instance
      */
-    NutsDeployCommand id(String id);
-
-    /**
-     * add id to deploy from source repository
-     * @param id id to deploy from source repository
-     * @return {@code this} instance
-     */
     NutsDeployCommand addId(NutsId id);
-
-    /**
-     * add id to deploy from source repository
-     * @param id id to deploy from source repository
-     * @return {@code this} instance
-     */
-    NutsDeployCommand id(NutsId id);
 
     /**
      * add ids to deploy from source repository
@@ -337,21 +211,7 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      * @param values ids to deploy from source repository
      * @return {@code this} instance
      */
-    NutsDeployCommand ids(NutsId... values);
-
-    /**
-     * add ids to deploy from source repository
-     * @param values ids to deploy from source repository
-     * @return {@code this} instance
-     */
     NutsDeployCommand addIds(String... values);
-
-    /**
-     * add ids to deploy from source repository
-     * @param values ids to deploy from source repository
-     * @return {@code this} instance
-     */
-    NutsDeployCommand ids(String... values);
 
     /**
      * remove id to deploy from source repository
@@ -372,17 +232,6 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsDeployCommand clearIds();
-
-
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NutsDeployCommand session(NutsSession session);
 
     /**
      * update session

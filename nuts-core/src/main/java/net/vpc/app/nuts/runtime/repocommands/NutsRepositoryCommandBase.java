@@ -44,11 +44,6 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
         return session;
     }
 
-//    @Override
-//    public T session(NutsSession session) {
-//        return setSession(session);
-//    }
-
     @Override
     public T setSession(NutsSession session) {
         this.session = session;

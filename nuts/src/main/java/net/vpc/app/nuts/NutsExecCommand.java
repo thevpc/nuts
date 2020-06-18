@@ -47,13 +47,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecCommandFormat format();
 
     /**
-     * set fail fast flag.  An exception will thrown whenever the command returns non zero value.
-     *
-     * @return {@code this} instance
-     */
-    NutsExecCommand failFast();
-
-    /**
      * when the execution returns a non zero result, an exception is
      * thrown.Particularly, if grabOutputString is used, error exception will
      * state the output message
@@ -63,16 +56,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      */
     NutsExecCommand setFailFast(boolean failFast);
 
-
-    /**
-     * when the execution returns a non zero result, an exception is
-     * thrown.Particularly, if grabOutputString is used, error exception will
-     * state the output message
-     *
-     * @param failFast failFast if true an exception will be thrown if exit code is not zero
-     * @return {@code this} instance
-     */
-    NutsExecCommand failFast(boolean failFast);
 
     /**
      * if true, an exception is thrown whenever the command returns non zero value.
@@ -88,13 +71,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      */
     String[] getCommand();
 
-    /**
-     * append command arguments
-     *
-     * @param command command
-     * @return {@code this} instance
-     */
-    NutsExecCommand command(String... command);
 
     /**
      * append command arguments
@@ -103,15 +79,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsExecCommand addCommand(String... command);
-
-    /**
-     * append command arguments
-     *
-     * @param command command
-     * @return {@code this} instance
-     */
-    NutsExecCommand command(Collection<String> command);
-
 
     /**
      * append command arguments
@@ -135,7 +102,7 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * @param definition definition for the executable
      * @return {@code this} instance
      */
-    NutsExecCommand command(NutsDefinition definition);
+    NutsExecCommand setCommand(NutsDefinition definition);
 
     /**
      * append executor options
@@ -146,36 +113,12 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecCommand addExecutorOption(String executorOption);
 
     /**
-     * append executor option
-     *
-     * @param executorOption executor option
-     * @return {@code this} instance
-     */
-    NutsExecCommand executorOption(String executorOption);
-
-    /**
-     * append executor options
-     *
-     * @param executorOptions executor options
-     * @return {@code this} instance
-     */
-    NutsExecCommand executorOptions(String... executorOptions);
-
-    /**
      * append executor options
      *
      * @param executorOptions executor options
      * @return {@code this} instance
      */
     NutsExecCommand addExecutorOptions(String... executorOptions);
-
-    /**
-     * append executor options
-     *
-     * @param executorOptions executor options
-     * @return {@code this} instance
-     */
-    NutsExecCommand executorOptions(Collection<String> executorOptions);
 
     /**
      * append executor options
@@ -200,30 +143,12 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     Map<String, String> getEnv();
 
     /**
-     * set env properties
-     *
-     * @param env env properties
-     * @return {@code this} instance
-     */
-    NutsExecCommand env(Map<String, String> env);
-
-    /**
      * merge env properties
      *
      * @param env env properties
      * @return {@code this} instance
      */
     NutsExecCommand addEnv(Map<String, String> env);
-
-    /**
-     * set or unset env property.
-     * the property is unset if the value is null.
-     *
-     * @param key   env key
-     * @param value env value
-     * @return {@code this} instance
-     */
-    NutsExecCommand env(String key, String value);
 
     /**
      * set or unset env property.
@@ -264,14 +189,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsExecCommand setDirectory(String directory);
-
-    /**
-     * set execution directory
-     *
-     * @param directory execution directory
-     * @return {@code this} instance
-     */
-    NutsExecCommand directory(String directory);
 
     /**
      * return new command input stream (standard input source)
@@ -406,13 +323,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     boolean isRedirectErrorStream();
 
     /**
-     * redirect standard error is redirected to standard output
-     *
-     * @return {@code this} instance
-     */
-    NutsExecCommand redirectErrorStream();
-
-    /**
      * if true redirect standard error is redirected to standard output
      *
      * @param redirectErrorStream new value
@@ -421,28 +331,12 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecCommand setRedirectErrorStream(boolean redirectErrorStream);
 
     /**
-     * if true redirect standard error is redirected to standard output
-     *
-     * @param redirectErrorStream new value
-     * @return {@code this} instance
-     */
-    NutsExecCommand redirectErrorStream(boolean redirectErrorStream);
-
-    /**
      * set execution type
      *
      * @param executionType execution type
      * @return {@code this} instance
      */
     NutsExecCommand setExecutionType(NutsExecutionType executionType);
-
-    /**
-     * set execution type
-     *
-     * @param executionType execution type
-     * @return {@code this} instance
-     */
-    NutsExecCommand executionType(NutsExecutionType executionType);
 
     /**
      * set embedded execution type
@@ -488,21 +382,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecCommand setDry(boolean value);
 
     /**
-     * if true set dry execution
-     *
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsExecCommand dry(boolean value);
-
-    /**
-     * set dry execution
-     *
-     * @return {@code this} instance
-     */
-    NutsExecCommand dry();
-
-    /**
      * copy all field from the given command into {@code this} instance
      *
      * @param other command to copy from
@@ -544,16 +423,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * @return result exception or null
      */
     NutsExecutionException getResultException();
-
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NutsExecCommand session(NutsSession session);
 
     /**
      * update session

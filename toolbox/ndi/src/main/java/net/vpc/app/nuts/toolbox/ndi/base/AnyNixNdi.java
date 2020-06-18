@@ -88,8 +88,8 @@ public class AnyNixNdi extends BaseSystemNdi {
                 "#\n" +
                 "NUTS_VERSION='" + wsconfig.getApiVersion() + "'\n" +
                 "NUTS_JAR='" + ws.search()
-                .session(context.getSession().copy().silent())
-                .id(wsconfig.getApiId()).getResultPaths().required() +
+                .setSession(context.getSession().copy().silent())
+                .addId(wsconfig.getApiId()).getResultPaths().required() +
                 "'\n" +
                 "NUTS_WORKSPACE='" + wsconfig.getWorkspaceLocation().toString() + "'\n" +
                 //this test will be removed because if the path is define in later position, it wont be applied! So rather
@@ -104,18 +104,18 @@ public class AnyNixNdi extends BaseSystemNdi {
         if (!updatedNames.isEmpty() && session.isTrace()) {
             if (!updatedNames.isEmpty()) {
                 if (context.getSession().isPlainTrace()) {
-                    context.session().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating ==%s== to point to workspace ==%s==%n",
+                    context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating ==%s== to point to workspace ==%s==%n",
                             String.join(", ", updatedNames)
                             , wsconfig.getWorkspaceLocation());
                 }
-                context.session().terminal().ask()
+                context.getSession().terminal().ask()
                         .forBoolean(
                                 "@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.%n"
                                         + "Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
                                 ". ~/"+getBashrcName()
                         )
                         .hintMessage("")
-                        .session(context.getSession())
+                        .setSession(context.getSession())
                         .parser(new NutsQuestionParser<Boolean>() {
                             @Override
                             public Boolean parse(Object response, Boolean defaultValue, NutsQuestion<Boolean> question) {
@@ -133,7 +133,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                                     return true;
                                 }
                                 if ("why".equalsIgnoreCase(r)) {
-                                    PrintStream out = context.session().out();
+                                    PrintStream out = context.getSession().out();
                                     out.printf("\\\"==%s==\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", getBashrcName());
                                     out.print("It helps configuring environment variables. ==Nuts== make usage of such facility to update your **PATH** env variable\n");
                                     out.print("to point to current ==Nuts== workspace, so that when you call a ==Nuts== command it will be resolved correctly...\n");

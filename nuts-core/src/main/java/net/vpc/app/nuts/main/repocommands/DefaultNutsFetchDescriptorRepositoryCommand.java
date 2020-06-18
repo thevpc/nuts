@@ -51,7 +51,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
 
     public DefaultNutsFetchDescriptorRepositoryCommand(NutsRepository repo) {
         super(repo);
-        LOG = repo.workspace().log().of(DefaultNutsFetchDescriptorRepositoryCommand.class);
+        LOG = repo.getWorkspace().log().of(DefaultNutsFetchDescriptorRepositoryCommand.class);
     }
 
     @Override

@@ -27,7 +27,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
             autoSave = false;
         }
         NutsWorkspace ws = context.getWorkspace();
-        PrintStream out = context.session().out();
+        PrintStream out = context.getSession().out();
         NutsWorkspaceConfigManager conf = ws.config();
         if (cmdLine.next("add java") != null) {
             if (cmdLine.next("--search") != null) {
@@ -36,12 +36,12 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                     extraLocations.add(cmdLine.next().getString());
                 }
                 if (extraLocations.isEmpty()) {
-                    for (NutsSdkLocation loc : conf.searchSdkLocations("java", context.session())) {
+                    for (NutsSdkLocation loc : conf.searchSdkLocations("java", context.getSession())) {
                         conf.addSdk(loc, null);
                     }
                 } else {
                     for (String extraLocation : extraLocations) {
-                        for (NutsSdkLocation loc : conf.searchSdkLocations("java", Paths.get(extraLocation), context.session())) {
+                        for (NutsSdkLocation loc : conf.searchSdkLocations("java", Paths.get(extraLocation), context.getSession())) {
                             conf.addSdk(loc, null);
                         }
                     }
@@ -52,7 +52,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             } else {
                 while (cmdLine.hasNext()) {
-                    NutsSdkLocation loc = conf.resolveSdkLocation("java", Paths.get(cmdLine.next().getString()), null, context.session());
+                    NutsSdkLocation loc = conf.resolveSdkLocation("java", Paths.get(cmdLine.next().getString()), null, context.getSession());
                     if (loc != null) {
                         conf.addSdk(loc, null);
                     }

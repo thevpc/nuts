@@ -214,8 +214,8 @@ public class NutsJavaShell extends JShell {
             return;
         }
         if (appContext != null) {
-            getRootNutsShellContext().getSession().getTerminal().setOutMode(appContext.session().getTerminal().getOutMode());
-            getRootNutsShellContext().getSession().getTerminal().setErrMode(appContext.session().getTerminal().getErrMode());
+            getRootNutsShellContext().getSession().getTerminal().setOutMode(appContext.getSession().getTerminal().getOutMode());
+            getRootNutsShellContext().getSession().getTerminal().setErrMode(appContext.getSession().getTerminal().getErrMode());
         }
         getRootNutsShellContext().setSession(getRootNutsShellContext().getSession());
     }

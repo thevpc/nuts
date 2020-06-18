@@ -115,21 +115,6 @@ public interface NutsSession extends NutsConfigurable {
     NutsSession setTrace(boolean trace);
 
     /**
-     * equivalent to {@code setConfirm(true)}
-     *
-     * @return {@code this} instance
-     */
-    NutsSession trace();
-
-    /**
-     * equivalent to {@code setTrace(trace)}
-     *
-     * @param trace new value
-     * @return {@code this} instance
-     */
-    NutsSession trace(boolean trace);
-
-    /**
      * equivalent to {@code setTrace(false)}
      *
      * @return {@code this} instance
@@ -156,21 +141,6 @@ public interface NutsSession extends NutsConfigurable {
      * @return {@code this} instance
      */
     NutsSession setForce(boolean enable);
-
-    /**
-     * equivalent to {@code setForce(true)}
-     *
-     * @return {@code this} instance
-     */
-    NutsSession force();
-
-    /**
-     * equivalent to {@code setForce(force)}
-     *
-     * @param enable new value
-     * @return {@code this} instance
-     */
-    NutsSession force(boolean enable);
 
     /**
      * equivalent to {@code setAsk(true)}
@@ -594,14 +564,6 @@ public interface NutsSession extends NutsConfigurable {
      * @param value iterable output format
      * @return {@code this} instance
      */
-    NutsSession iterableFormat(NutsIterableFormat value);
-
-    /**
-     * set iterable output format
-     *
-     * @param value iterable output format
-     * @return {@code this} instance
-     */
     NutsSession setIterableFormat(NutsIterableFormat value);
 
     /**
@@ -649,21 +611,6 @@ public interface NutsSession extends NutsConfigurable {
     NutsSession setTransitive(Boolean value);
 
     /**
-     * consider transitive repositories
-     *
-     * @param value nullable value
-     * @return {@code this} instance
-     */
-    NutsSession transitive(Boolean value);
-
-    /**
-     * consider transitive repositories
-     *
-     * @return {@code this} instance
-     */
-    NutsSession transitive();
-
-    /**
      * true when using cache
      *
      * @return true when using cache
@@ -678,20 +625,6 @@ public interface NutsSession extends NutsConfigurable {
      */
     NutsSession setCached(Boolean value);
 
-    /**
-     * use cache
-     *
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsSession cached(Boolean value);
-
-    /**
-     * use cache
-     *
-     * @return {@code this} instance
-     */
-    NutsSession cached();
 
     /**
      * true when using indexes
@@ -709,21 +642,6 @@ public interface NutsSession extends NutsConfigurable {
     NutsSession setIndexed(Boolean value);
 
     /**
-     * use index
-     *
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsSession indexed(Boolean value);
-
-    /**
-     * use index
-     *
-     * @return {@code this} instance
-     */
-    NutsSession indexed();
-
-    /**
      * return progress options
      *
      * @return progress options
@@ -739,17 +657,9 @@ public interface NutsSession extends NutsConfigurable {
     NutsSession setProgressOptions(String progressOptions);
 
     /**
-     * change progress options
-     *
-     * @param progressOptions options
-     * @return {@code this} instance
-     */
-    NutsSession progressOptions(String progressOptions);
-
-    /**
      * This is a helper method to create and Object format initialized with this
      * session instance and the given object to print.
-     * {@code thisSession.getWorkspace().object().session(thisSession).value(any)}
+     * {@code thisSession.getWorkspace().object().setSession(thisSession).value(any)}
      * <p>
      * Using this method is recommended to print objects to default format (json, xml,...)
      *

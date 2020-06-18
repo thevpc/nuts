@@ -52,7 +52,7 @@ class NutsCommandTypeResolver implements JShellCommandTypeResolver {
         if (!item.startsWith("/")) {
             path = context.getCwd() + "/" + item;
         }
-        final NutsExecutableInformation w = ncontext.getWorkspace().exec().command(item).which();
+        final NutsExecutableInformation w = ncontext.getWorkspace().exec().addCommand(item).which();
         if (w != null) {
             return new JShellCommandType(item, "nuts " + w.getType().toString().toLowerCase(), w.getValue(), w.getDescription());
         }

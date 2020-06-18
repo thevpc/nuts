@@ -28,11 +28,6 @@ public class DefaultNutsClassifierMappingBuilder implements NutsClassifierMappin
     }
 
     @Override
-    public DefaultNutsClassifierMappingBuilder packaging(String packaging) {
-        return setPackaging(packaging);
-    }
-
-    @Override
     public String getClassifier() {
         return classifier;
     }
@@ -85,31 +80,6 @@ public class DefaultNutsClassifierMappingBuilder implements NutsClassifierMappin
     public DefaultNutsClassifierMappingBuilder setPlatform(String... platform) {
         this.platform = platform;
         return this;
-    }
-
-    @Override
-    public NutsClassifierMappingBuilder classifier(String value) {
-        return setClassifier(value);
-    }
-
-    @Override
-    public NutsClassifierMappingBuilder arch(String... value) {
-        return setArch(value);
-    }
-
-    @Override
-    public NutsClassifierMappingBuilder os(String... value) {
-        return setOs(value);
-    }
-
-    @Override
-    public NutsClassifierMappingBuilder osdist(String... value) {
-        return setOsdist(value);
-    }
-
-    @Override
-    public NutsClassifierMappingBuilder platform(String... value) {
-        return setPlatform(value);
     }
 
     @Override

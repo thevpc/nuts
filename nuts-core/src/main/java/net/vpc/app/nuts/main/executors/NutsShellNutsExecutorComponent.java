@@ -102,14 +102,14 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
         File directory = CoreStringUtils.isBlank(dir) ? null : new File(executionContext.getWorkspace().io().expandPath(dir));
         executionContext.getWorkspace()
                 .exec()
-                .command(app)
-                .session(executionContext.getSession())
-                .env(executionContext.getEnv())
-                .directory(directory == null ? null : directory.getPath())
-                .failFast()
+                .addCommand(app)
+                .setSession(executionContext.getSession())
+                .setEnv(executionContext.getEnv())
+                .setDirectory(directory == null ? null : directory.getPath())
+                .setFailFast(true)
                 //                .showCommand(showCommand)
-                .executionType(executionContext.getExecutionType())
-                .dry(dry)
+                .setExecutionType(executionContext.getExecutionType())
+                .setDry(dry)
                 .run();
     }
 

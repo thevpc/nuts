@@ -143,7 +143,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
             id1.omitProperty(omitQueryProperty);
         }
         return id1
-                .session(getSession())
+                .setSession(getSession())
                 .setValue(id.build())
                 .setHighlightImportedGroupId(isHighlightImportedGroup())
                 .setHighlightOptional(isHighlightOptional())
@@ -158,11 +158,6 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     @Override
     public NutsDependency getValue() {
         return value;
-    }
-
-    @Override
-    public NutsDependencyFormat value(NutsDependency id) {
-        return setValue(id);
     }
 
     @Override
@@ -196,17 +191,6 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     }
 
     @Override
-    public NutsDependencyFormat omitClassifier(boolean value) {
-        return setOmitClassifier(value);
-    }
-
-    @Override
-    public NutsDependencyFormat omitClassifier() {
-        return omitClassifier(true);
-    }
-
-
-    @Override
     public boolean isOmitOptional() {
         return isOmitQueryProperty(NutsConstants.IdProperties.OPTIONAL);
     }
@@ -215,17 +199,6 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     public NutsDependencyFormat setOmitOptional(boolean value) {
         return setOmitQueryProperty(NutsConstants.IdProperties.OPTIONAL, value);
     }
-
-    @Override
-    public NutsDependencyFormat omitOptional(boolean value) {
-        return setOmitOptional(value);
-    }
-
-    @Override
-    public NutsDependencyFormat omitOptional() {
-        return omitOptional(true);
-    }
-
 
     @Override
     public boolean isOmitExclusions() {
@@ -238,16 +211,6 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     }
 
     @Override
-    public NutsDependencyFormat omitExclusions(boolean value) {
-        return setOmitExclusions(value);
-    }
-
-    @Override
-    public NutsDependencyFormat omitExclusions() {
-        return omitExclusions(true);
-    }
-
-    @Override
     public boolean isOmitScope() {
         return isOmitQueryProperty(NutsConstants.IdProperties.SCOPE);
     }
@@ -255,16 +218,6 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     @Override
     public NutsDependencyFormat setOmitScope(boolean value) {
         return setOmitQueryProperty(NutsConstants.IdProperties.SCOPE, value);
-    }
-
-    @Override
-    public NutsDependencyFormat omitScope(boolean value) {
-        return setOmitScope(value);
-    }
-
-    @Override
-    public NutsDependencyFormat omitScope() {
-        return omitScope(true);
     }
 
 //    @Override
@@ -305,66 +258,6 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
             queryPropertiesOmitted.remove(name);
         }
         return this;
-    }
-
-    @Override
-    public NutsDependencyFormat omitQueryProperty(String name, boolean value) {
-        return setOmitQueryProperty(name, true);
-    }
-
-    @Override
-    public NutsDependencyFormat omitQueryProperty(String name) {
-        return omitQueryProperty(name, true);
-    }
-
-    @Override
-    public NutsDependencyFormat omitNamespace(boolean omitNamespace) {
-        return setOmitNamespace(omitNamespace);
-    }
-
-    @Override
-    public NutsDependencyFormat omitNamespace() {
-        return omitNamespace(true);
-    }
-
-    @Override
-    public NutsDependencyFormat omitGroupId(boolean omitGroup) {
-        return setOmitGroupId(omitGroup);
-    }
-
-    @Override
-    public NutsDependencyFormat omitGroupId() {
-        return omitGroupId(true);
-    }
-
-    @Override
-    public NutsDependencyFormat highlightImportedGroup(boolean highlightImportedGroup) {
-        return setHighlightImportedGroup(highlightImportedGroup);
-    }
-
-    @Override
-    public NutsDependencyFormat highlightImportedGroup() {
-        return highlightImportedGroup(true);
-    }
-
-    @Override
-    public NutsDependencyFormat highlightScope(boolean highlightScope) {
-        return setHighlightScope(highlightScope);
-    }
-
-    @Override
-    public NutsDependencyFormat highlightScope() {
-        return highlightScope(true);
-    }
-
-    @Override
-    public NutsDependencyFormat highlightOptional(boolean highlightOptional) {
-        return setHighlightOptional(true);
-    }
-
-    @Override
-    public NutsDependencyFormat highlightOptional() {
-        return highlightOptional(true);
     }
 
     @Override

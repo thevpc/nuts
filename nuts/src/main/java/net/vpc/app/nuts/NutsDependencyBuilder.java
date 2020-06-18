@@ -47,14 +47,6 @@ public interface NutsDependencyBuilder {
      * @param namespace new value
      * @return {@code this} instance
      */
-    NutsDependencyBuilder namespace(String namespace);
-
-    /**
-     * set namespace value
-     *
-     * @param namespace new value
-     * @return {@code this} instance
-     */
     NutsDependencyBuilder setNamespace(String namespace);
 
     /**
@@ -66,28 +58,12 @@ public interface NutsDependencyBuilder {
     NutsDependencyBuilder setGroupId(String groupId);
 
     /**
-     * set group value
-     *
-     * @param groupId new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder groupId(String groupId);
-
-    /**
      * set name value
      *
      * @param artifactId new value
      * @return {@code this} instance
      */
     NutsDependencyBuilder setArtifactId(String artifactId);
-
-    /**
-     * set name value
-     *
-     * @param artifactId new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder artifactId(String artifactId);
 
     /**
      * set version value
@@ -103,31 +79,7 @@ public interface NutsDependencyBuilder {
      * @param version new value
      * @return {@code this} instance
      */
-    NutsDependencyBuilder version(NutsVersion version);
-
-    /**
-     * set version value
-     *
-     * @param version new value
-     * @return {@code this} instance
-     */
     NutsDependencyBuilder setVersion(String version);
-
-    /**
-     * set version value
-     *
-     * @param version new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder version(String version);
-
-    /**
-     * set id value
-     *
-     * @param id new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder id(NutsId id);
 
     /**
      * set id value
@@ -143,23 +95,7 @@ public interface NutsDependencyBuilder {
      * @param scope new value
      * @return {@code this} instance
      */
-    NutsDependencyBuilder scope(String scope);
-
-    /**
-     * set scope value
-     *
-     * @param scope new value
-     * @return {@code this} instance
-     */
     NutsDependencyBuilder setScope(String scope);
-
-    /**
-     * set optional value
-     *
-     * @param optional new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder optional(String optional);
 
     /**
      * set optional value
@@ -178,14 +114,6 @@ public interface NutsDependencyBuilder {
     NutsDependencyBuilder setClassifier(String classifier);
 
     /**
-     * set classifier value
-     *
-     * @param classifier new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder classifier(String classifier);
-
-    /**
      * set exclusions value
      *
      * @param exclusions new value
@@ -194,20 +122,12 @@ public interface NutsDependencyBuilder {
     NutsDependencyBuilder setExclusions(NutsId[] exclusions);
 
     /**
-     * set exclusions value
-     *
-     * @param exclusions new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder exclusions(NutsId[] exclusions);
-
-    /**
      * reset this instance with value
      *
      * @param value new value
      * @return {@code this} instance
      */
-    NutsDependencyBuilder dependency(NutsDependencyBuilder value);
+    NutsDependencyBuilder setDependency(NutsDependencyBuilder value);
 
     /**
      * reset this instance with value
@@ -231,7 +151,7 @@ public interface NutsDependencyBuilder {
      * @param value new value
      * @return {@code this} instance
      */
-    NutsDependencyBuilder dependency(NutsDependency value);
+    NutsDependencyBuilder setDependency(NutsDependency value);
 
     /**
      * reset this instance
@@ -325,17 +245,11 @@ public interface NutsDependencyBuilder {
      */
     NutsDependency build();
 
-    NutsDependencyBuilder property(String property, String value);
-
     NutsDependencyBuilder setProperty(String property, String value);
-
-    NutsDependencyBuilder properties(Map<String, String> queryMap);
 
     NutsDependencyBuilder setProperties(Map<String, String> queryMap);
 
     NutsDependencyBuilder addProperties(Map<String, String> queryMap);
-
-    NutsDependencyBuilder properties(String propertiesQuery);
 
     NutsDependencyBuilder setProperties(String propertiesQuery);
 

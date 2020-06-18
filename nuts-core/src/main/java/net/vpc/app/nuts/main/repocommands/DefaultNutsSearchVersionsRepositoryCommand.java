@@ -28,7 +28,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
 
     public DefaultNutsSearchVersionsRepositoryCommand(NutsRepository repo) {
         super(repo);
-        LOG = repo.workspace().log().of(DefaultNutsSearchVersionsRepositoryCommand.class);
+        LOG = repo.getWorkspace().log().of(DefaultNutsSearchVersionsRepositoryCommand.class);
     }
 
     @Override

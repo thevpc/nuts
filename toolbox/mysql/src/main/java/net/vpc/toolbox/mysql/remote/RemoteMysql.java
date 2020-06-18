@@ -92,13 +92,13 @@ public class RemoteMysql {
                 case PLAIN: {
                     for (Map.Entry<String, RemoteMysqlConfig> cnf : result.entrySet()) {
                         for (Map.Entry<String, RemoteMysqlDatabaseConfig> db : cnf.getValue().getDatabases().entrySet()) {
-                            getContext().session().out().printf("%s\\@[[%s]]%n", db.getKey(), cnf.getKey());
+                            getContext().getSession().out().printf("%s\\@[[%s]]%n", db.getKey(), cnf.getKey());
                         }
                     }
                     break;
                 }
                 default: {
-                    context.session().formatObject(result).println();
+                    context.getSession().formatObject(result).println();
                 }
             }
         }

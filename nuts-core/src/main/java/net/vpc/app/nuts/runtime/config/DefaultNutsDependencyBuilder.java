@@ -347,77 +347,12 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     }
 
     @Override
-    public NutsDependencyBuilder namespace(String namespace) {
-        return setNamespace(namespace);
-    }
-
-    @Override
-    public NutsDependencyBuilder groupId(String groupId) {
-        return setGroupId(groupId);
-    }
-
-    @Override
-    public NutsDependencyBuilder artifactId(String artifactId) {
-        return setArtifactId(artifactId);
-    }
-
-    @Override
-    public NutsDependencyBuilder version(NutsVersion version) {
-        return setVersion(version);
-    }
-
-    @Override
-    public NutsDependencyBuilder version(String version) {
-        return setVersion(version);
-    }
-
-    @Override
-    public NutsDependencyBuilder id(NutsId id) {
-        return setId(id);
-    }
-
-    @Override
-    public NutsDependencyBuilder scope(String scope) {
-        return setScope(scope);
-    }
-
-    @Override
-    public NutsDependencyBuilder optional(String optional) {
-        return setOptional(optional);
-    }
-
-    @Override
-    public NutsDependencyBuilder classifier(String classifier) {
-        return setClassifier(classifier);
-    }
-
-    @Override
-    public NutsDependencyBuilder exclusions(NutsId[] exclusions) {
-        return setExclusions(exclusions);
-    }
-
-    @Override
-    public NutsDependencyBuilder dependency(NutsDependencyBuilder value) {
+    public NutsDependencyBuilder setDependency(NutsDependencyBuilder value) {
         return set(value);
     }
 
     @Override
-    public NutsDependencyBuilder dependency(NutsDependency value) {
+    public NutsDependencyBuilder setDependency(NutsDependency value) {
         return set(value);
-    }
-
-    @Override
-    public NutsDependencyBuilder property(String property, String value) {
-        return setProperty(property, value);
-    }
-
-    @Override
-    public NutsDependencyBuilder properties(Map<String, String> propertiesQuery) {
-        return setProperties(propertiesQuery);
-    }
-
-    @Override
-    public NutsDependencyBuilder properties(String propertiesQuery) {
-        return setProperties(propertiesQuery);
     }
 }

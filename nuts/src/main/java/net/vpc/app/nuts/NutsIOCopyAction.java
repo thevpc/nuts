@@ -268,13 +268,6 @@ public interface NutsIOCopyAction {
      * @param session current session
      * @return {@code this} instance
      */
-    NutsIOCopyAction session(NutsSession session);
-
-    /**
-     * update current session
-     * @param session current session
-     * @return {@code this} instance
-     */
     NutsIOCopyAction setSession(NutsSession session);
 
     /**

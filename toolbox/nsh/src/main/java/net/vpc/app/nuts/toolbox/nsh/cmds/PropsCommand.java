@@ -247,13 +247,13 @@ public class PropsCommand extends AbstractNshBuiltin {
     }
 
     private void action_list(NshExecutionContext context, Options o) {
-        context.workspace().object().session(context.session()).value(getProperties(o, context)).print();
+        context.getWorkspace().object().setSession(context.getSession()).value(getProperties(o, context)).print();
     }
 
     private void action_get(NshExecutionContext context, Options o) {
         Map<String,String> p = getProperties(o, context);
         String v = p.get(o.property);
-        context.workspace().object().session(context.session()).value(v == null ? "" : v).print();
+        context.getWorkspace().object().setSession(context.getSession()).value(v == null ? "" : v).print();
     }
 
     private Map<String,String> getProperties(Options o, NshExecutionContext context) {
@@ -330,7 +330,7 @@ public class PropsCommand extends AbstractNshBuiltin {
             Format format = o.targetFormat;
             switch (format) {
                 case AUTO: {
-                    NutsObjectFormat f = context.getWorkspace().object().session(context.getSession()).value(p);
+                    NutsObjectFormat f = context.getWorkspace().object().setSession(context.getSession()).value(p);
                     f.configure(true, context.getWorkspace().config().options().getOutputFormatOptions());
                     f.configure(true, context.getSession().getOutputFormatOptions());
                     f.println(context.getSession().out());

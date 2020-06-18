@@ -46,7 +46,7 @@ public class LocalMysqlDatabaseConfigService {
 
     public LocalMysqlDatabaseConfigService remove() {
         mysql.getConfig().getDatabases().remove(name);
-        context.session().out().printf("==[%s]== app removed.%n", getFullName());
+        context.getSession().out().printf("==[%s]== app removed.%n", getFullName());
         return this;
     }
 
@@ -103,7 +103,7 @@ public class LocalMysqlDatabaseConfigService {
             }
             if (path.endsWith(".sql")) {
                 if (context.getSession().isPlainTrace()) {
-                    context.session().out().printf("==[%s]== create archive %s%n", getDatabaseName(), path);
+                    context.getSession().out().printf("==[%s]== create archive %s%n", getDatabaseName(), path);
                 }
                 ProcessBuilder2 p;
                 p = new ProcessBuilder2().setCommand("sh", "-c",
@@ -128,7 +128,7 @@ public class LocalMysqlDatabaseConfigService {
                 }
             } else {
                 if (context.getSession().isPlainTrace()) {
-                    context.session().out().printf("==[%s]== create archive %s%n", getDatabaseName(), path);
+                    context.getSession().out().printf("==[%s]== create archive %s%n", getDatabaseName(), path);
                 }
                 ProcessBuilder2 p = new ProcessBuilder2().setCommand("sh", "-c",
                         "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
@@ -142,7 +142,7 @@ public class LocalMysqlDatabaseConfigService {
                         .setRedirectErrorStream(true)
                         .start().waitFor();
                 if (context.getSession().isPlainTrace()) {
-                    context.session().out().printf("==[%s]==    [EXEC] %s%n", getDatabaseName(), p.getCommandString(SECURE_COMMAND_FORMATTER));
+                    context.getSession().out().printf("==[%s]==    [EXEC] %s%n", getDatabaseName(), p.getCommandString(SECURE_COMMAND_FORMATTER));
                 }
                 int result = p.getResult();
                 if (result == 0) {
@@ -166,7 +166,7 @@ public class LocalMysqlDatabaseConfigService {
         try {
             if (path.endsWith(".sql")) {
                 if (context.getSession().isPlainTrace()) {
-                    context.session().out().printf("==[%s]== restore archive %s%n", getDatabaseName(), path);
+                    context.getSession().out().printf("==[%s]== restore archive %s%n", getDatabaseName(), path);
                 }
                 int result = new ProcessBuilder2().setCommand("sh", "-c",
                         "cat \"$CMD_FILE\" | " + "\"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
@@ -181,7 +181,7 @@ public class LocalMysqlDatabaseConfigService {
                 return new RestoreResult(path, result, false);
             } else {
                 if (context.getSession().isPlainTrace()) {
-                    context.session().out().printf("==[%s]== restore archive %s%n", getDatabaseName(), path);
+                    context.getSession().out().printf("==[%s]== restore archive %s%n", getDatabaseName(), path);
                 }
                 int result = new ProcessBuilder2().setCommand("sh", "-c",
                         "gunzip -c \"$CMD_FILE\" | \"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""

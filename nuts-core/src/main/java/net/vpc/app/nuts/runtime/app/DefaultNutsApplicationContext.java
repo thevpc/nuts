@@ -255,11 +255,6 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
-    public NutsSession session() {
-        return getSession();
-    }
-
-    @Override
     public NutsSession getSession() {
         return session;
     }
@@ -394,11 +389,6 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
-    public NutsCommandLine commandLine() {
-        return getCommandLine();
-    }
-
-    @Override
     public NutsCommandLine getCommandLine() {
         return workspace.commandLine().create(getArguments()).setAutoComplete(getAutoComplete());
     }
@@ -421,91 +411,6 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     public NutsApplicationContext setAppPreviousVersion(NutsVersion previousVersion) {
         this.appPreviousVersion = previousVersion;
         return this;
-    }
-
-    @Override
-    public NutsApplicationMode mode() {
-        return getMode();
-    }
-
-    @Override
-    public String[] modeArguments() {
-        return getModeArguments();
-    }
-
-    @Override
-    public NutsCommandAutoComplete autoComplete() {
-        return getAutoComplete();
-    }
-
-    @Override
-    public Class appClass() {
-        return getAppClass();
-    }
-
-    @Override
-    public NutsWorkspace workspace() {
-        return getWorkspace();
-    }
-
-    @Override
-    public Path appsFolder() {
-        return getAppsFolder();
-    }
-
-    @Override
-    public Path configFolder() {
-        return getConfigFolder();
-    }
-
-    @Override
-    public Path logFolder() {
-        return getLogFolder();
-    }
-
-    @Override
-    public Path tempFolder() {
-        return getTempFolder();
-    }
-
-    @Override
-    public Path varFolder() {
-        return getVarFolder();
-    }
-
-    @Override
-    public Path libFolder() {
-        return getLibFolder();
-    }
-
-    @Override
-    public Path cacheFolder() {
-        return getCacheFolder();
-    }
-
-    @Override
-    public NutsId appId() {
-        return getAppId();
-    }
-
-    @Override
-    public NutsVersion appVersion() {
-        return getAppVersion();
-    }
-
-    @Override
-    public String[] arguments() {
-        return getArguments();
-    }
-
-    @Override
-    public long startTimeMillis() {
-        return getStartTimeMillis();
-    }
-
-    @Override
-    public NutsVersion appPreviousVersion() {
-        return getAppPreviousVersion();
     }
 
     @Override

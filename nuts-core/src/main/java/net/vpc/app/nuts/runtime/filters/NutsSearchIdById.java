@@ -59,7 +59,7 @@ public class NutsSearchIdById implements NutsSearchId {
 
     @Override
     public NutsDescriptor getDescriptor(NutsSession session) {
-        return session.getWorkspace().fetch().id(id).getResultDescriptor();
+        return session.getWorkspace().fetch().setId(id).getResultDescriptor();
     }
 
 }

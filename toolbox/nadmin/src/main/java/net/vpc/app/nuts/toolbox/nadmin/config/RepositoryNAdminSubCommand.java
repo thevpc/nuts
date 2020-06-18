@@ -18,7 +18,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
 
-        NutsCommandLineFormat commandLineFormat = context.workspace().commandLine();
+        NutsCommandLineFormat commandLineFormat = context.getWorkspace().commandLine();
         NutsWorkspace ws = context.getWorkspace();
         if (cmdLine.next("create repo", "cr") != null) {
             String repositoryName = null;
@@ -56,7 +56,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
 
         } else {
-            PrintStream out = context.session().out();
+            PrintStream out = context.getSession().out();
             if (cmdLine.next("add repo", "ar") != null) {
                 boolean proxy = false;
                 String location = null;
@@ -192,11 +192,11 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
                 if (cmdLine.isExecMode()) {
                     if (parent == null) {
-                        ws.config().removeRepository(repositoryName, new NutsRemoveOptions().session(context.getSession()));
+                        ws.config().removeRepository(repositoryName, new NutsRemoveOptions().setSession(context.getSession()));
                         trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
                     } else {
                         NutsRepository p = ws.config().getRepository(parent, context.getSession());
-                        p.config().removeMirror(repositoryName, new NutsRemoveOptions().session(context.getSession()));
+                        p.config().removeMirror(repositoryName, new NutsRemoveOptions().setSession(context.getSession()));
                         trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
                     }
                 }
@@ -270,17 +270,17 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                 } else if (cmdLine.next("remove repo", "rr") != null) {
                     String location = cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryName")).getString();
                     NutsRepository editedRepo = ws.config().getRepository(repoId, context.getSession());
-                    editedRepo.config().removeMirror(location, new NutsRemoveOptions().session(context.getSession()));
+                    editedRepo.config().removeMirror(location, new NutsRemoveOptions().setSession(context.getSession()));
                     trySave(context, ws, editedRepo, autoSave, null);
 
                 } else if (cmdLine.next("enable", "br") != null) {
                     NutsRepository editedRepo = ws.config().getRepository(repoId, context.getSession());
-                    editedRepo.config().setEnabled(true, new NutsUpdateOptions().session(context.getSession()));
+                    editedRepo.config().setEnabled(true, new NutsUpdateOptions().setSession(context.getSession()));
                     trySave(context, ws, editedRepo, autoSave, null);
 
                 } else if (cmdLine.next("disable", "dr") != null) {
                     NutsRepository editedRepo = ws.config().getRepository(repoId, context.getSession());
-                    editedRepo.config().setEnabled(true, new NutsUpdateOptions().session(context.getSession()));
+                    editedRepo.config().setEnabled(true, new NutsUpdateOptions().setSession(context.getSession()));
                     trySave(context, ws, editedRepo, autoSave, null);
                 } else if (cmdLine.next("list repos", "lr") != null) {
                     NutsRepository editedRepo = ws.config().getRepository(repoId, context.getSession());
@@ -354,7 +354,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
         }
         if (cmdLine.isExecMode()) {
             NutsRepository editedRepo = ws.config().getRepository(repositoryName, context.getSession());
-            editedRepo.config().setEnabled(enableRepo, new NutsUpdateOptions().session(context.getSession()));
+            editedRepo.config().setEnabled(enableRepo, new NutsUpdateOptions().setSession(context.getSession()));
             trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
         }
     }

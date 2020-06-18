@@ -171,11 +171,6 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
     }
 
     @Override
-    public NutsIOCompressAction session(NutsSession session) {
-        return setSession(session);
-    }
-
-    @Override
     public NutsIOCompressAction setSession(NutsSession session) {
         this.session = session;
         return this;

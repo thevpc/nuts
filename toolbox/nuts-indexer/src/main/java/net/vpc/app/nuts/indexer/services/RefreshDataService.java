@@ -56,9 +56,9 @@ public class RefreshDataService {
                     .collect(Collectors.toMap(map -> map.get("stringId"), map -> NutsIndexerUtils.mapToNutsId(map, ws), (v1, v2) -> v1));
             Iterator<NutsDefinition> definitions = ws.search()
                     .setRepositoryFilter(repository -> repository.getUuid().equals(subscriber.getUuid()))
-                    .failFast(false)
-                    .content(false)
-                    .effective(true)
+                    .setFailFast(false)
+                    .setContent(false)
+                    .setEffective(true)
                     .getResultDefinitions().iterator();
             List<Map<String, String>> dataToIndex = new ArrayList<>();
             Map<String, Boolean> visited = new HashMap<>();

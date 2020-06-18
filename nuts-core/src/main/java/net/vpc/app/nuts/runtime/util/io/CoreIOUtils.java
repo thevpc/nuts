@@ -539,7 +539,7 @@ public class CoreIOUtils {
     }
 
     public static PrintStream resolveOut(NutsSession session) {
-        return (session.getTerminal() == null) ? session.workspace().io().nullPrintStream() : session.getTerminal().out();
+        return (session.getTerminal() == null) ? session.getWorkspace().io().nullPrintStream() : session.getTerminal().out();
     }
 
     /**
@@ -1627,7 +1627,7 @@ public class CoreIOUtils {
         final Path urlContent = cacheBasePath.resolve("urls-content");
         ByteArrayOutputStream t = new ByteArrayOutputStream();
         ws.io().copy()
-                .session(session)
+                .setSession(session)
                 .from(path + ".sha1").to(t).run();
         String sha1 = new String(t.toByteArray()).trim();
         final PersistentMap<String, String> cu = getCachedUrls(ws);
@@ -2188,7 +2188,7 @@ public class CoreIOUtils {
     }
 
 //    public static PrintStream createFormattedPrintStream(OutputStream out, NutsWorkspace ws) {
-//        PrintStream supported = (PrintStream) ws.extensions().createSupported(
+//        PrintStream supported = (PrintStream) ws.setExtension(true).createSupported(
 //                NutsFormattedPrintStream.class,
 //                new DefaultNutsSupportLevelContext<>(ws, out),
 //                new Class[]{OutputStream.class}, new Object[]{out});

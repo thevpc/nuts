@@ -175,14 +175,14 @@ public class EnvCommand extends SimpleNshBuiltin {
         if (options.command.isEmpty()) {
             context.setPrintlnOutObject(env);
         } else {
-            final NutsExecCommand e = context.getWorkspace().exec().command(options.command)
-                    .env(env)
-                    .failFast();
+            final NutsExecCommand e = context.getWorkspace().exec().addCommand(options.command)
+                    .setEnv(env)
+                    .setFailFast(true);
             if (options.dir != null) {
-                e.directory(options.dir);
+                e.setDirectory(options.dir);
             }
             if (options.executionType != null) {
-                e.executionType(options.executionType);
+                e.setExecutionType(options.executionType);
             }
             e.run();
         }

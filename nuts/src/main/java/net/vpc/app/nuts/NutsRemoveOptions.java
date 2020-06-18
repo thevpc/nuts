@@ -62,10 +62,6 @@ public class NutsRemoveOptions {
         return session;
     }
 
-    public NutsRemoveOptions session(NutsSession session) {
-        return setSession(session);
-    }
-
     public NutsRemoveOptions setSession(NutsSession session) {
         this.session = session;
         return this;

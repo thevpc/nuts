@@ -44,10 +44,10 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             runDeployFile();
         }
         if (ids.size() > 0) {
-            for (NutsId nutsId : ws.search().session(
+            for (NutsId nutsId : ws.search().setSession(
                     CoreNutsUtils.silent(getSession())
-            ).addIds(ids.toArray(new NutsId[0])).latest().setRepository(fromRepository).getResultIds()) {
-                NutsDefinition fetched = ws.fetch().content().id(nutsId).session(getSession()).getResultDefinition();
+            ).addIds(ids.toArray(new NutsId[0])).setLatest(true).setRepository(fromRepository).getResultIds()) {
+                NutsDefinition fetched = ws.fetch().setContent(true).setId(nutsId).setSession(getSession()).getResultDefinition();
                 if (fetched.getPath() != null) {
                     runDeployFile(fetched.getPath(), fetched.getDescriptor(), null);
                 }
@@ -79,7 +79,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             Path contentFile2 = null;
             try {
                 if (descriptor == null) {
-                    NutsFetchCommand p = ws.fetch().transitive().session(getSession());
+                    NutsFetchCommand p = ws.fetch().setTransitive(true).setSession(getSession());
                     characterizedFile = characterizeForDeploy(ws, contentSource, p, getParseOptions(), getSession());
                     if (characterizedFile.descriptor == null) {
                         throw new NutsIllegalArgumentException(ws, "Missing descriptor");
@@ -88,7 +88,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 }
                 String name = ws.config().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
                 tempFile = ws.io().createTempFile(name);
-                ws.io().copy().session(getSession()).from(contentSource.open()).to(tempFile).safe().run();
+                ws.io().copy().setSession(getSession()).from(contentSource.open()).to(tempFile).safe().run();
                 contentFile2 = tempFile;
 
                 Path contentFile0 = contentFile2;
@@ -168,7 +168,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                             return this;
                         }
                     } else {
-                        NutsRepository repo = ws.config().getRepository(repository, session.copy().transitive());
+                        NutsRepository repo = ws.config().getRepository(repository, session.copy().setTransitive(true));
                         if (repo == null) {
                             throw new NutsRepositoryNotFoundException(ws, repository);
                         }
@@ -248,11 +248,6 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
     }
 
     @Override
-    public NutsDeployCommand ids(String... values) {
-        return addIds(values);
-    }
-
-    @Override
     public NutsDeployCommand addIds(String... values) {
         if (values != null) {
             for (String s : values) {
@@ -262,11 +257,6 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             }
         }
         return this;
-    }
-
-    @Override
-    public NutsDeployCommand ids(NutsId... values) {
-        return addIds(values);
     }
 
     @Override
@@ -285,11 +275,6 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
     public NutsDeployCommand clearIds() {
         ids.clear();
         return this;
-    }
-
-    @Override
-    public NutsDeployCommand id(NutsId id) {
-        return addId(id);
     }
 
     @Override

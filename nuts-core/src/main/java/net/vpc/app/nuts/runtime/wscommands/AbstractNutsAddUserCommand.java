@@ -65,10 +65,6 @@ public abstract class AbstractNutsAddUserCommand extends NutsWorkspaceCommandBas
         return login;
     }
 
-    @Override
-    public AbstractNutsAddUserCommand username(String username) {
-        return setUsername(username);
-    }
 
     @Override
     public AbstractNutsAddUserCommand setUsername(String username) {
@@ -81,10 +77,6 @@ public abstract class AbstractNutsAddUserCommand extends NutsWorkspaceCommandBas
         return password;
     }
 
-    @Override
-    public AbstractNutsAddUserCommand credentials(char[] password) {
-        return setCredentials(password);
-    }
 
     @Override
     public AbstractNutsAddUserCommand setCredentials(char[] password) {
@@ -97,10 +89,6 @@ public abstract class AbstractNutsAddUserCommand extends NutsWorkspaceCommandBas
         return remoteCredentials;
     }
 
-    @Override
-    public AbstractNutsAddUserCommand remoteCredentials(char[] password) {
-        return setRemoteCredentials(password);
-    }
 
     @Override
     public AbstractNutsAddUserCommand setRemoteCredentials(char[] password) {
@@ -114,29 +102,9 @@ public abstract class AbstractNutsAddUserCommand extends NutsWorkspaceCommandBas
     }
 
     @Override
-    public AbstractNutsAddUserCommand remoteIdentity(String remoteIdentity) {
-        return setRemoteIdentity(remoteIdentity);
-    }
-
-    @Override
     public AbstractNutsAddUserCommand setRemoteIdentity(String remoteIdentity) {
         this.remoteIdentity = remoteIdentity;
         return this;
-    }
-
-    @Override
-    public AbstractNutsAddUserCommand permission(String permission) {
-        return addPermission(permission);
-    }
-
-    @Override
-    public AbstractNutsAddUserCommand permissions(String... permissions) {
-        return addPermissions(permissions);
-    }
-
-    @Override
-    public AbstractNutsAddUserCommand permissions(Collection<String> permissions) {
-        return addPermissions(permissions);
     }
 
     @Override
@@ -177,21 +145,6 @@ public abstract class AbstractNutsAddUserCommand extends NutsWorkspaceCommandBas
             }
         }
         return this;
-    }
-
-    @Override
-    public AbstractNutsAddUserCommand group(String group) {
-        return addGroup(group);
-    }
-
-    @Override
-    public AbstractNutsAddUserCommand groups(String... groups) {
-        return addGroups(groups);
-    }
-
-    @Override
-    public AbstractNutsAddUserCommand groups(Collection<String> groups) {
-        return addGroups(groups);
     }
 
     @Override

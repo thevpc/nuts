@@ -254,10 +254,6 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
         return session;
     }
 
-    @Override
-    public NutsIOCopyAction session(NutsSession session) {
-        return setSession(session);
-    }
 
     @Override
     public NutsIOCopyAction setSession(NutsSession session) {
@@ -516,17 +512,17 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
             if (_source.isPath()) {
-                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getPath().toString()).session(session)
+                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getPath().toString()).setSession(session)
                         .progressFactory(getProgressMonitorFactory())
                         .logProgress(isLogProgress())
                         .create());
             } else if (_source.isURL()) {
-                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getURL().toString()).session(session)
+                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getURL().toString()).setSession(session)
                         .progressFactory(getProgressMonitorFactory())
                         .logProgress(isLogProgress())
                         .create());
             } else {
-                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.open()).session(session)
+                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.open()).setSession(session)
                         .progressFactory(getProgressMonitorFactory())
                         .logProgress(isLogProgress())
                         .create());

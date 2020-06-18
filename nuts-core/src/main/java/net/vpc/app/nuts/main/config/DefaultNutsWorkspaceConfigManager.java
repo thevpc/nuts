@@ -212,15 +212,15 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
         }
         NutsRemoveOptions o0 = CoreNutsUtils.toRemoveOptions(options);
-        o0.session(options.getSession());
+        o0.setSession(options.getSession());
         removeAllRepositories(o0);
         if (this.storeModelMain.getRepositories() != null) {
             for (NutsRepositoryRef ref : this.storeModelMain.getRepositories()) {
                 NutsAddRepositoryOptions o1 = CoreNutsUtils.refToOptions(ref);
-                o1.session(options.getSession());
+                o1.setSession(options.getSession());
                 NutsRepository r = this.createRepository(o1, getRepositoriesRoot(), null);
                 NutsAddOptions o2 = CoreNutsUtils.toAddOptions(options);
-                o2.session(options.getSession());
+                o2.setSession(options.getSession());
                 addRepository(ref, r, o2);
             }
         }
@@ -498,7 +498,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //        }
 //        if (!CoreStringUtils.isBlank(other.getRuntimeId())) {
 //            NutsSession searchSession = ws.createSession().silent();
-//            other.setRuntimeDependencies(ws.search().session(searchSession).addId(other.getRuntimeId())
+//            other.setRuntimeDependencies(ws.search().setSession(searchSession).addId(other.getRuntimeId())
 //                    .scope(NutsDependencyScopePattern.RUN)
 //                    .inlineDependencies()
 //                    .duplicates(false)
@@ -765,7 +765,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (_config == null) {
             if (NutsConstants.Users.ADMIN.equals(userId) || NutsConstants.Users.ANONYMOUS.equals(userId)) {
                 _config = new NutsUserConfig(userId, null, null, null);
-                setUser(_config, new NutsUpdateOptions().session(ws.createSession()));
+                setUser(_config, new NutsUpdateOptions().setSession(ws.createSession()));
             }
         }
         return _config;
@@ -1019,7 +1019,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             if (session.isYes()) {
                 forced = true;
                 removeCommandAlias(command.getName(),
-                        new NutsRemoveOptions().session(session)
+                        new NutsRemoveOptions().setSession(session)
                 );
             } else {
                 throw new NutsIllegalArgumentException(ws, "Command alias already exists " + command.getName());
@@ -1214,10 +1214,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (force || !Files.isRegularFile(apiConfigFile)) {
             Map<String, Object> m = new LinkedHashMap<>();
             if (runtimeId == null) {
-                runtimeId = ws.search().id(NutsConstants.Ids.NUTS_RUNTIME)
-                        .runtime()
-                        .targetApiVersion(apiId.getVersion().getValue())
-                        .failFast(false).latest().getResultIds().first();
+                runtimeId = ws.search().addId(NutsConstants.Ids.NUTS_RUNTIME)
+                        .setRuntime(true)
+                        .setTargetApiVersion(apiId.getVersion().getValue())
+                        .setFailFast(false).setLatest(true).getResultIds().first();
             }
             if (runtimeId == null) {
                 runtimeId = MavenUtils.of(ws).resolveLatestMavenId(ws.id().parse(NutsConstants.Ids.NUTS_RUNTIME),
@@ -1260,12 +1260,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("id", id.getLongName());
 
-        NutsDefinition def = ws.fetch().id(id).dependencies()
-                .optional(false)
-                .scope(NutsDependencyScopePattern.RUN)
-                .content()
-                .failFast(false)
-                .session(CoreNutsUtils.silent(session))
+        NutsDefinition def = ws.fetch().setId(id).setDependencies(true)
+                .setOptional(false)
+                .addScope(NutsDependencyScopePattern.RUN)
+                .setContent(true)
+                .setFailFast(false)
+                .setSession(CoreNutsUtils.silent(session))
                 .getResultDefinition();
         if (def == null) {
             //selected repositories cannot reach runtime component
@@ -1314,12 +1314,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 ws.io().copy().from(path).to(jarFile).run();
             } else {
                 if (fetch) {
-                    NutsDefinition def = ws.fetch().id(id).dependencies()
-                            .optional(false)
-                            .scope(NutsDependencyScopePattern.RUN)
-                            .content()
-                            .session(ws.createSession().silent())
-                            .failFast(false)
+                    NutsDefinition def = ws.fetch().setId(id).setDependencies(true)
+                            .setOptional(false)
+                            .addScope(NutsDependencyScopePattern.RUN)
+                            .setContent(true)
+                            .setSession(ws.createSession().silent())
+                            .setFailFast(false)
                             .getResultDefinition();
                     if (def != null) {
                         ws.io().copy().from(def.getPath()).to(jarFile).run();
@@ -1640,11 +1640,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             setCurrentConfig(cconfig
                     .build(getWorkspaceLocation())
             );
-            setConfigBoot(_config, new NutsUpdateOptions().session(session), false);
-            setConfigApi(aconfig, new NutsUpdateOptions().session(session), false);
-            setConfigRuntime(rconfig, new NutsUpdateOptions().session(session), false);
-            setConfigSecurity(sconfig, new NutsUpdateOptions().session(session), false);
-            setConfigMain(mconfig, new NutsUpdateOptions().session(session), false);
+            setConfigBoot(_config, new NutsUpdateOptions().setSession(session), false);
+            setConfigApi(aconfig, new NutsUpdateOptions().setSession(session), false);
+            setConfigRuntime(rconfig, new NutsUpdateOptions().setSession(session), false);
+            setConfigSecurity(sconfig, new NutsUpdateOptions().setSession(session), false);
+            setConfigMain(mconfig, new NutsUpdateOptions().setSession(session), false);
             storeModelBootChanged = false;
             storeModelApiChanged = false;
             storeModelRuntimeChanged = false;
@@ -1822,7 +1822,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
         if (session.isTransitive()) {
             for (NutsRepository child : repositoryRegistryHelper.getRepositories()) {
-                final NutsRepository m = child.config().findMirror(repositoryNameOrId, session.copy().transitive());
+                final NutsRepository m = child.config().findMirror(repositoryNameOrId, session.copy().setTransitive(true));
                 if (m != null) {
                     if (y == null) {
                         y = m;
@@ -1844,7 +1844,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
         if (session.isTransitive()) {
             for (NutsRepository child : repositoryRegistryHelper.getRepositories()) {
-                final NutsRepository m = child.config().findMirrorById(repositoryNameOrId, session.copy().transitive());
+                final NutsRepository m = child.config().findMirrorById(repositoryNameOrId, session.copy().setTransitive(true));
                 if (m != null) {
                     if (y == null) {
                         y = m;
@@ -1866,7 +1866,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
         if (session.isTransitive()) {
             for (NutsRepository child : repositoryRegistryHelper.getRepositories()) {
-                final NutsRepository m = child.config().findMirrorByName(repositoryNameOrId, session.copy().transitive());
+                final NutsRepository m = child.config().findMirrorByName(repositoryNameOrId, session.copy().setTransitive(true));
                 if (m != null) {
                     if (y == null) {
                         y = m;
@@ -1961,7 +1961,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         options.setTemporary(true);
         options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, ws));
         NutsRepository r = new NutsSimpleRepositoryWrapper(options, ws, null, repository);
-        addRepository(null, r, new NutsAddOptions().session(session));
+        addRepository(null, r, new NutsAddOptions().setSession(session));
         return r;
     }
 
@@ -1997,7 +1997,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 }
                 //Dont need to add mirror if repository is already loadable from config!
                 final String m2 = options.getName() + "-ref";
-                if (proxy.config().findMirror(m2, options.getSession().copy().transitive(false)) == null) {
+                if (proxy.config().findMirror(m2, options.getSession().copy().setTransitive(false)) == null) {
                     proxy.config().addMirror(new NutsAddRepositoryOptions()
                             .setName(m2)
                             .setFailSafe(options.isFailSafe())
@@ -2029,7 +2029,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 }
                 //Dont need to add mirror if repository is already loadable from config!
                 final String m2 = options.getName() + "-ref";
-                if (proxy.config().findMirror(m2, options.getSession().copy().transitive(false)) == null) {
+                if (proxy.config().findMirror(m2, options.getSession().copy().setTransitive(false)) == null) {
                     proxy.config().addMirror(new NutsAddRepositoryOptions()
                             .setName(m2)
                             .setFailSafe(options.isFailSafe())
@@ -2049,7 +2049,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         } else {
             NutsRepositoryRef ref = options.isTemporary() ? null : CoreNutsUtils.optionsToRef(options);
             NutsRepository r = this.createRepository(options, getRepositoriesRoot(), null);
-            addRepository(ref, r, new NutsAddOptions().session(options.getSession()));
+            addRepository(ref, r, new NutsAddOptions().setSession(options.getSession()));
             return r;
         }
     }

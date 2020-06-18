@@ -37,10 +37,6 @@ import java.util.Collection;
  */
 public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
-    NutsUpdateCommand id(NutsId id);
-
-    NutsUpdateCommand id(String id);
-
     NutsUpdateCommand removeId(NutsId id);
 
     NutsUpdateCommand addId(NutsId id);
@@ -48,10 +44,6 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     NutsUpdateCommand removeId(String id);
 
     NutsUpdateCommand addId(String id);
-
-    NutsUpdateCommand ids(NutsId... id);
-
-    NutsUpdateCommand ids(String... id);
 
     NutsUpdateCommand addIds(NutsId... ids);
 
@@ -81,25 +73,15 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
     NutsId[] getLockedIds();
 
-    NutsUpdateCommand arg(String arg);
-
     NutsUpdateCommand addArg(String arg);
 
-    NutsUpdateCommand args(String... arg);
-
     NutsUpdateCommand addArgs(Collection<String> args);
-
-    NutsUpdateCommand args(Collection<String> arg);
 
     NutsUpdateCommand addArgs(String... args);
 
     NutsUpdateCommand clearArgs();
 
     String[] getArgs();
-
-    NutsUpdateCommand enableInstall();
-
-    NutsUpdateCommand enableInstall(boolean enableInstall);
 
     NutsUpdateCommand setEnableInstall(boolean enableInstall);
 
@@ -110,22 +92,6 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
      * @return true if enable install
      */
     boolean isEnableInstall();
-
-    /**
-     * include optional dependencies.
-     * equivalent to @code optional(true)}
-     *
-     * @return {@code this} instance
-     */
-    NutsUpdateCommand optional();
-
-    /**
-     * when true include optional dependencies
-     *
-     * @param includeOptional include optional
-     * @return {@code this} instance
-     */
-    NutsUpdateCommand optional(boolean includeOptional);
 
     /**
      * when true include optional dependencies
@@ -141,14 +107,6 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
      * @return return true when include optional dependencies
      */
     boolean isOptional();
-
-    /**
-     * set target api version required for updating other artifacts
-     *
-     * @param value target api version
-     * @return {@code this} instance
-     */
-    NutsUpdateCommand apiVersion(String value);
 
     /**
      * set target api version required for updating other artifacts
@@ -204,30 +162,11 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
      *
      * @return {@code this} instance
      */
-    NutsUpdateCommand all();
-
-    /**
-     * update workspace api version
-     *
-     * @return {@code this} instance
-     */
-    NutsUpdateCommand api();
-
-    NutsUpdateCommand api(boolean enable);
+    NutsUpdateCommand setAll();
 
     NutsUpdateCommand setApi(boolean enable);
 
     boolean isApi();
-
-
-    /**
-     * update workspace extension artifacts
-     *
-     * @return {@code this} instance
-     */
-    NutsUpdateCommand extensions();
-
-    NutsUpdateCommand extensions(boolean enable);
 
     NutsUpdateCommand setExtensions(boolean enable);
 
@@ -284,15 +223,6 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     NutsUpdateCommand addScopes(NutsDependencyScope... scopes);
 
     NutsUpdateCommand clearScopes();
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NutsUpdateCommand session(NutsSession session);
 
     /**
      * update session

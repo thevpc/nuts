@@ -214,10 +214,10 @@ public class NutsComponentController {
                 if (list.isEmpty()) {
                     Iterator<NutsDefinition> it = ws.search()
                             .setRepositoryFilter(repository -> repository.getUuid().equals(subscriber.getUuid()))
-                            .id(id)
-                            .failFast(false)
-                            .content(false)
-                            .effective(true)
+                            .addId(id)
+                            .setFailFast(false)
+                            .setContent(false)
+                            .setEffective(true)
                             .getResultDefinitions().iterator();
                     if (it.hasNext()) {
                         NutsDefinition definition = it.next();

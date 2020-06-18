@@ -107,10 +107,10 @@ public class JpsCommand extends SimpleNshBuiltin {
         List<JpsRow> results = new ArrayList<>();
 
         NutsExecCommand e = context.getWorkspace().exec().userCmd()
-                .command(resolveJpsCommand(context.getWorkspace()), "-l", "-v", "-m")
-                .redirectErrorStream()
+                .addCommand(resolveJpsCommand(context.getWorkspace()), "-l", "-v", "-m")
+                .setRedirectErrorStream(true)
                 .grabOutputString()
-                .failFast().run();
+                .setFailFast(true).run();
         String resultString = e.getOutputString();
         for (String line : resultString.split("[\n\r]+")) {
             line = line.trim();

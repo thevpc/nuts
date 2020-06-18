@@ -51,7 +51,7 @@ public class DerbyService {
 
     public DerbyService(NutsApplicationContext appContext) {
         this.appContext = appContext;
-        LOG = appContext.workspace().log().of(getClass());
+        LOG = appContext.getWorkspace().log().of(getClass());
     }
 
     private Path download(String id, Path folder, boolean optional) {
@@ -60,12 +60,12 @@ public class DerbyService {
         Path targetFile = folder.resolve(iid.getArtifactId() + ".jar");
         if (!Files.exists(targetFile)) {
             if (optional) {
-                Path r = appContext.getWorkspace().fetch().location(targetFile).id(id).failFast(false).getResultPath();
+                Path r = appContext.getWorkspace().fetch().setLocation(targetFile).setId(id).setFailFast(false).getResultPath();
                 if (r != null) {
                     LOG.with().level(Level.FINEST).verb("READ").log("downloading {0} to {1}", id, targetFile);
                 }
             } else {
-                appContext.getWorkspace().fetch().location(targetFile).id(id).failFast().getResultPath();
+                appContext.getWorkspace().fetch().setLocation(targetFile).setId(id).setFailFast(true).getResultPath();
                 LOG.with().level(Level.FINEST).verb("READ").log( "downloading {0} to {1}", id, targetFile);
             }
         } else {
@@ -77,7 +77,7 @@ public class DerbyService {
     public Set<String> findVersions() {
         NutsWorkspace ws = appContext.getWorkspace();
         NutsId java = appContext.getWorkspace().config().getPlatform();
-        List<String> all = ws.search().session(appContext.getSession().copy().silent()).addId("org.apache.derby:derbynet").distinct()
+        List<String> all = ws.search().setSession(appContext.getSession().copy().silent()).addId("org.apache.derby:derbynet").setDistinct(true)
                 .setIdFilter((id, session) -> {
                     if (java.getVersion().compareTo("1.9") < 0) {
                         return id.getVersion().compareTo("10.15.1.3") < 0;
@@ -102,14 +102,14 @@ public class DerbyService {
         String currentDerbyVersion = options.derbyVersion;
         if (currentDerbyVersion == null) {
             NutsId java = appContext.getWorkspace().config().getPlatform();
-            NutsId best = ws.search().session(appContext.getSession().copy().silent()).addId("org.apache.derby:derbynet").distinct().latest()
+            NutsId best = ws.search().setSession(appContext.getSession().copy().silent()).addId("org.apache.derby:derbynet").setDistinct(true).setLatest(true)
                     .setIdFilter((id, session) -> {
                         if (java.getVersion().compareTo("1.9") < 0) {
                             return id.getVersion().compareTo("10.15.1.3") < 0;
                         }
                         return true;
                     })
-                    .session(appContext.getSession().copy().silent())
+                    .setSession(appContext.getSession().copy().silent())
                     .getResultIds().singleton();
             currentDerbyVersion = best.getVersion().toString();
         }
@@ -138,7 +138,7 @@ public class DerbyService {
         Path derbyclient = download("org.apache.derby:derbyclient#" + currentDerbyVersion, derbyLibHome, false);
         Path derbytools = download("org.apache.derby:derbytools#" + currentDerbyVersion, derbyLibHome, false);
         Path policy = derbyBinHome.resolve("derby.policy");
-        if (!Files.exists(policy) || appContext.session().isYes()) {
+        if (!Files.exists(policy) || appContext.getSession().isYes()) {
             try {
                 String permissions = net.vpc.common.io.IOUtils.loadString(DerbyMain.class.getResourceAsStream("policy-file.policy"))
                         .replace("${{DB_PATH}}", derbyDataHomeRoot.toString());
@@ -157,7 +157,7 @@ public class DerbyService {
                         +
                         (derbyoptionaltools != null ? (":" + derbyoptionaltools) : "")
         );
-//        if (appContext.session().isPlainTrace()) {
+//        if (appContext.getSession().isPlainTrace()) {
 //            executorOptions.add("--show-command");
 //        }
         executorOptions.add("--main-class=org.apache.derby.drda.NetworkServerControl");
@@ -181,11 +181,11 @@ public class DerbyService {
         }
         return ws
                 .exec()
-                .executorOptions(executorOptions)
-                .command(command)
-                .directory(derbyBinHome.toString())
-                .failFast()
-                .session(appContext.getSession());
+                .addExecutorOptions(executorOptions)
+                .addCommand(command)
+                .setDirectory(derbyBinHome.toString())
+                .setFailFast(true)
+                .setSession(appContext.getSession());
     }
 
     void exec(DerbyOptions options) {

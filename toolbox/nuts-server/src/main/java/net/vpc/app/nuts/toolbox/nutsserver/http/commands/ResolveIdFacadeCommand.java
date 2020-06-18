@@ -19,9 +19,9 @@ public class ResolveIdFacadeCommand extends AbstractFacadeCommand {
         boolean transitive = parameters.containsKey("transitive");
         NutsId fetch = null;
         try {
-            fetch = context.getWorkspace().fetch().id(id)
-                    .session(context.getSession().copy())
-                    .transitive(transitive).getResultId();
+            fetch = context.getWorkspace().fetch().setId(id)
+                    .setSession(context.getSession().copy())
+                    .setTransitive(transitive).getResultId();
         } catch (Exception exc) {
             //
         }

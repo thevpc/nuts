@@ -136,7 +136,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
         HashSet<NutsId> baseRegulars = new HashSet<>(ids);
         if (isInstalled()) {
-            baseRegulars.addAll(ws.search().session(CoreNutsUtils.silent(getSession())).installed().getResultIds().stream().map(NutsId::getShortNameId).collect(Collectors.toList()));
+            baseRegulars.addAll(ws.search().setSession(CoreNutsUtils.silent(getSession())).setInstalled().getResultIds().stream().map(NutsId::getShortNameId).collect(Collectors.toList()));
             // This bloc is to handle packages that were installed by their jar/content was removed for any reason!
             NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
             NutsInstalledRepository ir = dws.getInstalledRepository();
@@ -196,12 +196,12 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         resultFixes = IteratorUtils.toList(IteratorUtils.convertNonNull(ir.searchInstallInformation(session), new Function<NutsInstallInformation, FixAction>() {
             @Override
             public FixAction apply(NutsInstallInformation nutsInstallInformation) {
-                NutsId id = ws.search().installed().id(nutsInstallInformation.getId()).getResultIds().first();
+                NutsId id = ws.search().setInstalled().addId(nutsInstallInformation.getId()).getResultIds().first();
                 if (id == null) {
                     return new FixAction(nutsInstallInformation.getId(), "MissingInstallation"){
                         @Override
                         public void fix(NutsSession session) {
-                            session.workspace().install().id(getId()).run();
+                            session.getWorkspace().install().id(getId()).run();
                         }
                     };
                 }
@@ -342,18 +342,18 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 //        } else {
 //            se.scopes(scopes.toArray(new NutsDependencyScope[0]));
 //        }
-//        se.optional(includeOptional ? null : false).latest();
+//        se.optional(includeOptional ? null : false).setLatest(true);
 //        return se;
 //    }
 
     private NutsFetchCommand latestOnlineDependencies(NutsFetchCommand se) {
-        se.dependencies();
+        se.setDependencies(true);
         if (scopes.isEmpty()) {
-            se.scope(NutsDependencyScopePattern.RUN);
+            se.addScope(NutsDependencyScopePattern.RUN);
         } else {
-            se.scopes(scopes.toArray(new NutsDependencyScope[0]));
+            se.addScopes(scopes.toArray(new NutsDependencyScope[0]));
         }
-        se.optional(isOptional() ? null : false).online();
+        se.setOptional(isOptional() ? null : false).setOnline();
         return se;
     }
 
@@ -368,11 +368,11 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         DefaultNutsUpdateResult r = new DefaultNutsUpdateResult();
         r.setId(id.getShortNameId());
         boolean shouldUpdateDefault = false;
-        NutsId d0Id = ws.search().id(id).session(searchSession).installedOrIncluded().optional(false).failFast(false).defaultVersions()
+        NutsId d0Id = ws.search().addId(id).setSession(searchSession).setInstalledOrIncluded().setOptional(false).setFailFast(false).setDefaultVersions(true)
                 .getResultIds().first();
         if (d0Id == null) {
             // may be the id is not default!
-            d0Id = ws.search().id(id).session(searchSession).installedOrIncluded().optional(false).failFast(false).latest()
+            d0Id = ws.search().addId(id).setSession(searchSession).setInstalledOrIncluded().setOptional(false).setFailFast(false).setLatest(true)
                     .getResultIds().first();
             if (d0Id != null) {
                 shouldUpdateDefault = true;
@@ -381,23 +381,23 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         if (d0Id == null) {
             throw new NutsIllegalArgumentException(ws, id + " is not yet installed to be updated.");
         }
-        NutsDefinition d0 = fetch0().id(d0Id)
-                .session(searchSession).installed().optional(false).failFast(false)
+        NutsDefinition d0 = fetch0().setId(d0Id)
+                .setSession(searchSession).installed().setOptional(false).setFailFast(false)
                 .getResultDefinition();
         if (d0 == null) {
             throw new NutsIllegalArgumentException(ws, d0Id + " installation is broken and cannot be updated.");
         }
         //search latest parse
-        NutsId d1Id = ws.search().id(d0Id.getShortNameId())
-                .session(searchSession)
-                .failFast(false)
-                .anyWhere()
-                .latest()
+        NutsId d1Id = ws.search().addId(d0Id.getShortNameId())
+                .setSession(searchSession)
+                .setFailFast(false)
+                .setAnyWhere()
+                .setLatest(true)
                 .getResultIds().first();
         //then fetch its definition!
-        NutsDefinition d1 = d1Id == null ? null : latestOnlineDependencies(fetch0().id(d1Id)
-                .session(searchSession))
-                .failFast(false)
+        NutsDefinition d1 = d1Id == null ? null : latestOnlineDependencies(fetch0().setId(d1Id)
+                .setSession(searchSession))
+                .setFailFast(false)
                 .getResultDefinition();
         r.setLocal(d0);
         r.setAvailable(d1);
@@ -433,7 +433,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     }
 
     private NutsFetchCommand fetch0() {
-        return ws.fetch().content().effective();
+        return ws.fetch().setContent(true).setEffective(true);
     }
 
     private void applyFixes() {
@@ -458,7 +458,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         final PrintStream out = CoreIOUtils.resolveOut(getSession());
         boolean accept = ws.io().getTerminal().ask()
                 .forBoolean("Would you like to apply updates?").setDefaultValue(true)
-                .session(getSession()).getValue();
+                .setSession(getSession()).getValue();
         if (getSession().isAsk() && !accept) {
             throw new NutsUserCancelException(ws);
         }
@@ -567,13 +567,13 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     v = NutsConstants.Versions.LATEST;
                 }
                 try {
-                    oldFile = fetch0().id(oldId).session(session).online().getResultDefinition();
+                    oldFile = fetch0().setId(oldId).setSession(session).setOnline().getResultDefinition();
                 } catch (NutsNotFoundException ex) {
                     //ignore
                 }
                 try {
-                    newId = ws.search().session(session).id(NutsConstants.Ids.NUTS_API + "#" + v).anyWhere().latest().getResultIds().first();
-                    newFile = newId == null ? null : latestOnlineDependencies(fetch0()).failFast(false).session(session).id(newId).getResultDefinition();
+                    newId = ws.search().setSession(session).addId(NutsConstants.Ids.NUTS_API + "#" + v).setAnyWhere().setLatest(true).getResultIds().first();
+                    newFile = newId == null ? null : latestOnlineDependencies(fetch0()).setFailFast(false).setSession(session).setId(newId).getResultDefinition();
                 } catch (NutsNotFoundException ex) {
                     LOG.with().level(Level.SEVERE).error(ex).log("Error : {0}",ex.toString());
                     //ignore
@@ -588,7 +588,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 }
                 if (oldId != null) {
                     try {
-                        oldFile = fetch0().id(oldId).session(session).online().getResultDefinition();
+                        oldFile = fetch0().setId(oldId).setSession(session).setOnline().getResultDefinition();
                     } catch (NutsNotFoundException ex) {
                         LOG.with().level(Level.SEVERE).error(ex).log("Error : {0}",ex.toString());
                         //ignore
@@ -597,17 +597,17 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 try {
                     NutsSearchCommand se = ws.search()
                             .addId(oldFile != null ? oldFile.getId().builder().version("").build().toString() : NutsConstants.Ids.NUTS_RUNTIME)
-                            .runtime()
-                            .targetApiVersion(bootApiVersion)
-                            .lockedIds(getLockedIds())
-                            .latest()
-                            .anyWhere()
-                            .session(session)
+                            .setRuntime(true)
+                            .setTargetApiVersion(bootApiVersion)
+                            .addLockedIds(getLockedIds())
+                            .setLatest(true)
+                            .setAnyWhere()
+                            .setSession(session)
                             .sort(LATEST_VERSION_FIRST);
                     newId = se.getResultIds().first();
-                    newFile = newId == null ? null : latestOnlineDependencies(fetch0().id(newId))
-                            .session(session)
-                            .failFast(false)
+                    newFile = newId == null ? null : latestOnlineDependencies(fetch0().setId(newId))
+                            .setSession(session)
+                            .setFailFast(false)
                             .getResultDefinition();
                 } catch (NutsNotFoundException ex) {
                     LOG.with().level(Level.SEVERE).error(ex).log("Error : {0}",ex.toString());
@@ -618,32 +618,32 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             case "companion":
             case "extension": {
                 try {
-                    oldId = ws.search().id(id).effective().session(session)
-                            .installedOrIncluded().sort(DEFAULT_THEN_LATEST_VERSION_FIRST).failFast(false).getResultIds().first();
+                    oldId = ws.search().addId(id).setEffective(true).setSession(session)
+                            .setInstalledOrIncluded().sort(DEFAULT_THEN_LATEST_VERSION_FIRST).setFailFast(false).getResultIds().first();
                     if (oldId != null) {
-                        oldFile = fetch0().id(oldId).session(session).getResultDefinition();
+                        oldFile = fetch0().setId(oldId).setSession(session).getResultDefinition();
                     }
                 } catch (Exception ex) {
                     LOG.with().level(Level.SEVERE).error(ex).log("Error : {0}",ex.toString());
                     //ignore
                 }
                 try {
-                    NutsSearchCommand se = ws.search().session(session).addId(id)
-                            .targetApiVersion(bootApiVersion)
-                            .lockedIds(getLockedIds())
-                            .anyWhere()
-                            .failFast(false)
-                            .latest()
+                    NutsSearchCommand se = ws.search().setSession(session).addId(id)
+                            .setTargetApiVersion(bootApiVersion)
+                            .addLockedIds(getLockedIds())
+                            .setAnyWhere()
+                            .setFailFast(false)
+                            .setLatest(true)
                             .sort(LATEST_VERSION_FIRST);
                     if (type.equals("extension")) {
-                        se.extensions();
+                        se.setExtension(true);
                     } else if (type.equals("companion")) {
-                        se.companion();
+                        se.setCompanion(true);
                     }
                     newId = se.getResultIds().first();
 
-                    newFile = newId == null ? null : latestOnlineDependencies(fetch0().session(session).id(newId))
-                            .online()
+                    newFile = newId == null ? null : latestOnlineDependencies(fetch0().setSession(session).setId(newId))
+                            .setOnline()
                             .getResultDefinition();
                 } catch (Exception ex) {
                     LOG.with().level(Level.SEVERE).error(ex).log("Error : {0}",ex.toString());

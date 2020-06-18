@@ -60,7 +60,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
 
     /**
      * return artifact content file info (including path).
-     * this is an <strong>optional</strong> property. It must be requested (see {@link NutsSearchCommand#content(boolean)}) to be available.
+     * this is an <strong>optional</strong> property. It must be requested (see {@link NutsSearchCommand#setContent(boolean)}) to be available.
      *
      * @return artifact content file info
      * @throws NutsElementNotFoundException if the property is not requested
@@ -69,7 +69,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
 
     /**
      * return artifact content file path.
-     * this is an <strong>optional</strong> property. It must be requested (see {@link NutsSearchCommand#content(boolean)}) to be available.
+     * this is an <strong>optional</strong> property. It must be requested (see {@link NutsSearchCommand#setContent(boolean)}) to be available.
      *
      * @return artifact content file path
      * @throws NutsElementNotFoundException if the property is not requested
@@ -87,7 +87,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
     /**
      * return artifact effective descriptor.
      * this is an <strong>optional</strong> property.
-     * It must be requested (see {@link NutsSearchCommand#effective(boolean)} to be available).
+     * It must be requested (see {@link NutsSearchCommand#setEffective(boolean)} to be available).
      *
      * @return artifact effective descriptor
      * @throws NutsElementNotFoundException if the property is not requested
@@ -98,7 +98,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      * return all or some of the transitive dependencies of the current Nuts as List
      * result of the search command
      * this is an <strong>optional</strong> property.
-     * It must be requested (see {@link NutsSearchCommand#dependencies()} to be available.
+     * It must be requested (see {@link NutsSearchCommand#setDependencies(boolean)} to be available.
      *
      * @return all or some of the transitive dependencies of the current Nuts as List
      * result of the search command.
@@ -109,7 +109,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
     /**
      * return all of some of the transitive dependencies of the current Nuts as Tree result of the search command
      * this is an <strong>optional</strong> property.
-     * It must be requested (see {@link NutsSearchCommand#dependenciesTree()} to be available.
+     * It must be requested (see {@link NutsSearchCommand#setDependenciesTree(boolean)} to be available.
      *
      * @return all of some of the transitive dependencies of the current Nuts as Tree result of the search command.
      * @throws NutsElementNotFoundException if the property is not requested

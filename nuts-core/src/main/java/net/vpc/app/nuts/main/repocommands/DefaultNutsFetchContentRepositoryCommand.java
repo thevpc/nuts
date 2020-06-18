@@ -48,7 +48,7 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
 
     public DefaultNutsFetchContentRepositoryCommand(NutsRepository repo) {
         super(repo);
-        LOG=repo.workspace().log().of(DefaultNutsFetchContentRepositoryCommand.class);
+        LOG=repo.getWorkspace().log().of(DefaultNutsFetchContentRepositoryCommand.class);
     }
 
     @Override

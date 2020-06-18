@@ -267,15 +267,6 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     @Override
-    NutsInstallCommand session(NutsSession session);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
     NutsInstallCommand setSession(NutsSession session);
 
     /**

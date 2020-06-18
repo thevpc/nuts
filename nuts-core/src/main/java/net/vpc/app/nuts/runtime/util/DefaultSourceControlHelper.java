@@ -50,7 +50,7 @@ public class DefaultSourceControlHelper {
             String newVersion = ws.version().parse(oldVersion).inc().getValue();
             NutsDefinition newVersionFound = null;
             try {
-                newVersionFound = ws.fetch().id(d.getId().builder().setVersion(newVersion).build()).session(session).getResultDefinition();
+                newVersionFound = ws.fetch().setId(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
             } catch (NutsNotFoundException ex) {
                 LOG.with().level(Level.FINE).error(ex).log( "Failed to fetch {0}",d.getId().builder().setVersion(newVersion).build());
                 //ignore
@@ -60,7 +60,7 @@ public class DefaultSourceControlHelper {
             } else {
                 d = d.builder().id(d.getId().builder().version(oldVersion + ".1").build()).build();
             }
-            NutsId newId = ws.deploy().content(folder).descriptor(d).session(session).getResult()[0];
+            NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
             ws.descriptor().value(d).print(file);
             try {
                 CoreIOUtils.delete(ws,folder);
@@ -82,7 +82,7 @@ public class DefaultSourceControlHelper {
     public NutsDefinition checkout(NutsId id, Path folder, NutsSession session) {
         session = NutsWorkspaceUtils.of(ws).validateSession( session);
         ws.security().checkAllowed(NutsConstants.Permissions.INSTALL, "checkout");
-        NutsDefinition nutToInstall = ws.fetch().id(id).session(session).optional(false).dependencies().getResultDefinition();
+        NutsDefinition nutToInstall = ws.fetch().setId(id).setSession(session).setOptional(false).setDependencies(true).getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
             try {

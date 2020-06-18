@@ -48,7 +48,7 @@ public class NdiMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext context) {
-        NutsCommandLine cmdLine = context.commandLine()
+        NutsCommandLine cmdLine = context.getCommandLine()
                 .setCommandName("ndi")
                 .required();
         List<NdiScriptnfo> result = new ArrayList<NdiScriptnfo>();
@@ -90,13 +90,13 @@ public class NdiMain extends NutsApplication {
                         executorOptions.add(a.getStringValue());
                     } else if ((a = cmdLine.nextString("-i", "--installed")) != null) {
                         forceAll = true;
-                        for (NutsId resultId : context.getWorkspace().search().installed().getResultIds()) {
+                        for (NutsId resultId : context.getWorkspace().search().setInstalled().getResultIds()) {
                             idsToInstall.add(resultId.getLongName());
                         }
                     } else if ((a = cmdLine.nextString("-c", "--companions")) != null) {
                         forceAll = true;
                         for (String companion : COMPANIONS) {
-                            idsToInstall.add(context.getWorkspace().search().id(companion).latest().getResultIds().required().getLongName());
+                            idsToInstall.add(context.getWorkspace().search().addId(companion).setLatest(true).getResultIds().required().getLongName());
                         }
                     } else if (cmdLine.peek().isOption()) {
                         cmdLine.unexpectedArgument();
@@ -142,7 +142,7 @@ public class NdiMain extends NutsApplication {
                                 Arrays.asList(
                                         ndi.createNutsScript(
                                                 new NdiScriptOptions().setId(id)
-                                                        .setSession(context.session().copy().trace(subTrace))
+                                                        .setSession(context.getSession().copy().setTrace(subTrace))
                                                         .setForceBoot(forceAll)
                                                         .setFetch(fetch)
                                                         .setExecType(execType)
@@ -154,7 +154,7 @@ public class NdiMain extends NutsApplication {
                     }
                 }
                 try {
-                    ndi.configurePath(context.session());
+                    ndi.configurePath(context.getSession());
                 } catch (IOException e) {
                     throw new NutsExecutionException(context.getWorkspace(), "Unable to configure path : " + e.toString(), e);
                 }
@@ -162,14 +162,14 @@ public class NdiMain extends NutsApplication {
                     if (context.getSession().isPlainTrace()) {
                         int namesSize = result.stream().mapToInt(x -> x.getName().length()).max().orElse(1);
                         for (NdiScriptnfo ndiScriptnfo : result) {
-                            context.session().out().printf("%s script ==%-" + namesSize + "s== for " +
+                            context.getSession().out().printf("%s script ==%-" + namesSize + "s== for " +
                                             context.getWorkspace().id().set(ndiScriptnfo.getId().getLongNameId()).format()
                                             + " at ==%s==%n", ndiScriptnfo.isOverride() ? "re-installing" : "installing",
                                     ndiScriptnfo.getName(), NdiUtils.betterPath(ndiScriptnfo.getPath().toString()));
                         }
 
                     } else {
-                        context.session().formatObject(result).println();
+                        context.getSession().formatObject(result).println();
                     }
                 }
             }
@@ -178,7 +178,7 @@ public class NdiMain extends NutsApplication {
                     try {
                         ndi.removeNutsScript(
                                 id,
-                                context.session().copy().trace(subTrace)
+                                context.getSession().copy().setTrace(subTrace)
                         );
                     } catch (IOException e) {
                         throw new NutsExecutionException(context.getWorkspace(), "Unable to run script " + id + " : " + e.toString(), e);
@@ -189,7 +189,7 @@ public class NdiMain extends NutsApplication {
     }
 
     protected void onInstallOrUpdateApplication(NutsApplicationContext context, boolean update) {
-        NutsCommandLine cmd = context.commandLine();
+        NutsCommandLine cmd = context.getCommandLine();
         if (update) {
             cmd.setCommandName("ndi --nuts-exec-mode=update");
         } else {

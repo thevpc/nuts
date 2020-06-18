@@ -320,15 +320,6 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     @Override
-    NutsPushCommand session(NutsSession session);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
     NutsPushCommand setSession(NutsSession session);
 
     /**

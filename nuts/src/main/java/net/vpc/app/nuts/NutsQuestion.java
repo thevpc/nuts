@@ -121,8 +121,6 @@ public interface NutsQuestion<T> extends NutsConfigurable {
 
     NutsSession getSession();
 
-    NutsQuestion<T> session(NutsSession session);
-
     NutsQuestion<T> setSession(NutsSession session);
 
     /**

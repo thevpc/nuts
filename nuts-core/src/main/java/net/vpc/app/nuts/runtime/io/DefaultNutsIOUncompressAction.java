@@ -227,11 +227,6 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
     }
 
     @Override
-    public NutsIOUncompressAction session(NutsSession session) {
-        return setSession(session);
-    }
-
-    @Override
     public NutsIOUncompressAction setSession(NutsSession session) {
         this.session = session;
         return this;
@@ -261,17 +256,17 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
             if (_source.isPath()) {
-                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getPath().toString()).session(session)
+                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getPath().toString()).setSession(session)
                         .progressFactory(getProgressMonitorFactory())
                         .logProgress(isLogProgress())
                         .create());
             } else if (_source.isURL()) {
-                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getURL().toString()).session(session)
+                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getURL().toString()).setSession(session)
                         .progressFactory(getProgressMonitorFactory())
                         .logProgress(isLogProgress())
                         .create());
             } else {
-                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.open()).session(session)
+                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.open()).setSession(session)
                         .progressFactory(getProgressMonitorFactory())
                         .logProgress(isLogProgress())
                         .create());

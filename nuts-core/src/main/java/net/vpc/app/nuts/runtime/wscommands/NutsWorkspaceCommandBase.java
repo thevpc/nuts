@@ -53,17 +53,6 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
      * @return {@code this} instance
      */
     @Override
-    public T session(NutsSession session) {
-        return setSession(session);
-    }
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
     public T setSession(NutsSession session) {
         this.session=session;
         return (T) this;

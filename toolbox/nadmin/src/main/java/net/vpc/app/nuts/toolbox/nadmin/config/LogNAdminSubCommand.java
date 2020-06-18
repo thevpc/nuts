@@ -18,7 +18,7 @@ public class LogNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
-        NutsUpdateOptions updateOptions = new NutsUpdateOptions().session(context.getSession());
+        NutsUpdateOptions updateOptions = new NutsUpdateOptions().setSession(context.getSession());
         if (cmdLine.next("set loglevel", "sll") != null) {
 //            NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
             NutsLogManager lm=context.getWorkspace().log();
@@ -68,7 +68,7 @@ public class LogNAdminSubCommand extends AbstractNAdminSubCommand {
         } else if (cmdLine.next("get loglevel") != null) {
             if (cmdLine.isExecMode()) {
                 Logger rootLogger = Logger.getLogger("");
-                context.session().out().printf("%s%n", rootLogger.getLevel().toString());
+                context.getSession().out().printf("%s%n", rootLogger.getLevel().toString());
             }
         }
         return false;

@@ -192,8 +192,8 @@ public class NutsHttpServletFacade {
             List<NutsId> fetch = null;
             try {
                 NutsWorkspace ws = context.getWorkspace();
-                fetch = ws.search().session(context.getSession())
-                        .transitive(transitive).addId(id).getResultIds().list();
+                fetch = ws.search().setSession(context.getSession())
+                        .setTransitive(transitive).addId(id).getResultIds().list();
             } catch (Exception exc) {
                 //
             }

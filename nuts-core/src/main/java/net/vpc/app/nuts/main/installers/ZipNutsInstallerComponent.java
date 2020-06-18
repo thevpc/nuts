@@ -73,10 +73,10 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
         if (executionContext.getExecutorOptions().length > 0) {
             executionContext.getWorkspace()
                     .exec()
-                    .command(executionContext.getExecutorOptions())
-                    .session(executionContext.getSession())
-                    .env(executionContext.getExecutorProperties())
-                    .directory(installFolder.toString())
+                    .addCommand(executionContext.getExecutorOptions())
+                    .setSession(executionContext.getSession())
+                    .setEnv(executionContext.getExecutorProperties())
+                    .setDirectory(installFolder.toString())
                     .getResult();
         }
     }

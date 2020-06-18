@@ -53,25 +53,11 @@ public interface NutsApplicationContext extends NutsConfigurable {
     NutsApplicationMode getMode();
 
     /**
-     * equivalent to {@code getMode()}
-     *
-     * @return application execution mode
-     */
-    NutsApplicationMode mode();
-
-    /**
      * application execution mode extra arguments
      *
      * @return application execution mode extra arguments
      */
     String[] getModeArguments();
-
-    /**
-     * equivalent to {@code getModeArguments()}
-     *
-     * @return application execution mode extra arguments
-     */
-    String[] modeArguments();
 
     /**
      * Auto complete instance associated with the
@@ -80,13 +66,6 @@ public interface NutsApplicationContext extends NutsConfigurable {
      * @return Auto complete instance
      */
     NutsCommandAutoComplete getAutoComplete();
-
-    /**
-     * equivalent to {@code getAutoComplete()}
-     *
-     * @return Auto complete instance
-     */
-    NutsCommandAutoComplete autoComplete();
 
     /**
      * configure the current command with the given arguments. This is an
@@ -114,13 +93,6 @@ public interface NutsApplicationContext extends NutsConfigurable {
     Class getAppClass();
 
     /**
-     * equivalent to {@code getAppClass()}
-     *
-     * @return application class reference
-     */
-    Class appClass();
-
-    /**
      * current workspace
      *
      * @return current workspace
@@ -128,25 +100,11 @@ public interface NutsApplicationContext extends NutsConfigurable {
     NutsWorkspace getWorkspace();
 
     /**
-     * equivalent to {@code getWorkspace()}
-     *
-     * @return current workspace
-     */
-    NutsWorkspace workspace();
-
-    /**
      * current session
      *
      * @return current session
      */
     NutsSession getSession();
-
-    /**
-     * equivalent to {@code getSession()}
-     *
-     * @return current session
-     */
-    NutsSession session();
 
     /**
      * update session
@@ -164,25 +122,11 @@ public interface NutsApplicationContext extends NutsConfigurable {
     Path getAppsFolder();
 
     /**
-     * equivalent to {@code getAppsFolder()}
-     *
-     * @return path to the apps folder of this application
-     */
-    Path appsFolder();
-
-    /**
      * path to the configuration folder of this application
      *
      * @return path to the configuration folder of this application
      */
     Path getConfigFolder();
-
-    /**
-     * equivalent to {@code getConfigFolder()}
-     *
-     * @return path to the configuration folder of this application
-     */
-    Path configFolder();
 
     /**
      * path to the log folder of this application
@@ -192,25 +136,11 @@ public interface NutsApplicationContext extends NutsConfigurable {
     Path getLogFolder();
 
     /**
-     * equivalent to {@code getLogFolder()}
-     *
-     * @return path to the log folder of this application
-     */
-    Path logFolder();
-
-    /**
      * path to the temporary files folder of this application
      *
      * @return path to the temporary files folder of this application
      */
     Path getTempFolder();
-
-    /**
-     * equivalent to {@code getTempFolder()}
-     *
-     * @return path to the temporary files folder of this application
-     */
-    Path tempFolder();
 
     /**
      * path to the variable files (aka /var in POSIX systems) folder of this
@@ -220,14 +150,6 @@ public interface NutsApplicationContext extends NutsConfigurable {
      * this application
      */
     Path getVarFolder();
-
-    /**
-     * equivalent to {@code getVarFolder()}
-     *
-     * @return path to the variable files (aka /var in POSIX systems) folder of
-     * this application
-     */
-    Path varFolder();
 
     /**
      * path to the libraries files (non applications) folder of this application
@@ -247,26 +169,11 @@ public interface NutsApplicationContext extends NutsConfigurable {
     Path getRunFolder();
 
     /**
-     * equivalent to {@code getLibFolder()}
-     *
-     * @return path to the libraries files (non applications) folder of this
-     * application
-     */
-    Path libFolder();
-
-    /**
      * path to the cache files folder of this application
      *
      * @return path to the cache files folder of this application
      */
     Path getCacheFolder();
-
-    /**
-     * equivalent to {@code getCacheFolder()}
-     *
-     * @return path to the cache files folder of this application
-     */
-    Path cacheFolder();
 
     Path getSharedAppsFolder();
 
@@ -292,25 +199,11 @@ public interface NutsApplicationContext extends NutsConfigurable {
     NutsId getAppId();
 
     /**
-     * equivalent to {@code getAppId()}
-     *
-     * @return application nuts id
-     */
-    NutsId appId();
-
-    /**
      * application version
      *
      * @return application version
      */
     NutsVersion getAppVersion();
-
-    /**
-     * equivalent to {@code getAppVersion()}
-     *
-     * @return application version
-     */
-    NutsVersion appVersion();
 
     /**
      * application arguments
@@ -320,13 +213,6 @@ public interface NutsApplicationContext extends NutsConfigurable {
     String[] getArguments();
 
     /**
-     * equivalent to {@code getArguments()}
-     *
-     * @return application arguments
-     */
-    String[] arguments();
-
-    /**
      * application start time in milli-seconds
      *
      * @return application start time in milli-seconds
@@ -334,25 +220,11 @@ public interface NutsApplicationContext extends NutsConfigurable {
     long getStartTimeMillis();
 
     /**
-     * equivalent to {@code getStartTimeMillis()}
-     *
-     * @return application start time in milli-seconds
-     */
-    long startTimeMillis();
-
-    /**
      * previous version (applicable in update mode)
      *
      * @return previous version
      */
     NutsVersion getAppPreviousVersion();
-
-    /**
-     * equivalent to {@code getAppPreviousVersion()}
-     *
-     * @return previous version
-     */
-    NutsVersion appPreviousVersion();
 
     /**
      * a new instance of command line arguments to process filled 
@@ -451,13 +323,6 @@ public interface NutsApplicationContext extends NutsConfigurable {
      * @since 0.7.0
      */
     void processCommandLine(NutsCommandLineProcessor commandLineProcessor);
-
-    /**
-     * equivalent to {@code getCommandLine()}
-     *
-     * @return a new instance of command line arguments to process
-     */
-    NutsCommandLine commandLine();
 
     /**
      * application store folder path for the given {@code location}

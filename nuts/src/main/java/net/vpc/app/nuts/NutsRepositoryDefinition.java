@@ -80,10 +80,6 @@ public class NutsRepositoryDefinition {
         return this;
     }
 
-    public NutsRepositoryDefinition session(NutsSession session) {
-        return setSession(session);
-    }
-
     public boolean isTemporary() {
         return temporary;
     }

@@ -23,17 +23,17 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
         NutsSession searchSession = CoreNutsUtils.silent(getSession());
         for (NutsId id : ids) {
             NutsDefinition p = ws.search()
-                    .session(searchSession)
-                    .ids(id)
-                    .repositories(getRepository())
-                    .transitive(isTransitive())
-                    .fetchStrategy(isOffline() ? NutsFetchStrategy.OFFLINE : NutsFetchStrategy.ONLINE)
+                    .setSession(searchSession)
+                    .addIds(id)
+                    .addRepositories(getRepository())
+                    .setTransitive(isTransitive())
+                    .setFetchStrategy(isOffline() ? NutsFetchStrategy.OFFLINE : NutsFetchStrategy.ONLINE)
                     //skip 'installed' repository
-                    .repositoryFilter(repository -> ! DefaultNutsInstalledRepository.INSTALLED_REPO_UUID.equals(repository.getUuid()))
-                    .distinct()
-                    .failFast()
+                    .setRepositoryFilter(repository -> ! DefaultNutsInstalledRepository.INSTALLED_REPO_UUID.equals(repository.getUuid()))
+                    .setDistinct(true)
+                    .setFailFast(true)
                     .getResultDefinitions().required();
-            NutsRepository repository1 = ws.config().getRepository(p.getRepositoryUuid(), session.copy().transitive());
+            NutsRepository repository1 = ws.config().getRepository(p.getRepositoryUuid(), session.copy().setTransitive(true));
             repository1.undeploy()
                     .setId(p.getId()).setSession(getSession())
 //                    .setFetchMode(NutsFetchMode.LOCAL)

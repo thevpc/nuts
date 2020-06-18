@@ -103,13 +103,6 @@ public interface NutsIOLockAction {
      * @param session session
      * @return {@code this} instance
      */
-    NutsIOLockAction session(NutsSession session);
-
-    /**
-     * update session
-     * @param session session
-     * @return {@code this} instance
-     */
     NutsIOLockAction setSession(NutsSession session);
 
     /**

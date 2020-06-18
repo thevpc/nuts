@@ -27,7 +27,7 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
 
     public DefaultNutsSearchRepositoryCommand(NutsRepository repo) {
         super(repo);
-        LOG=repo.workspace().log().of(DefaultNutsSearchRepositoryCommand.class);
+        LOG=repo.getWorkspace().log().of(DefaultNutsSearchRepositoryCommand.class);
     }
 
     @Override

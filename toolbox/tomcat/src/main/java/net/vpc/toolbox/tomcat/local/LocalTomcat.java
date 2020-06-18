@@ -134,10 +134,10 @@ public class LocalTomcat {
                     List<LocalTomcatAppConfigService> apps = c.getApps();
                     if (!apps.isEmpty()) {
                         if (isHeader()) {
-                            context.session().out().printf("[[\\[%s\\]]]:\n", "Apps");
+                            context.getSession().out().printf("[[\\[%s\\]]]:\n", "Apps");
                         }
                         for (LocalTomcatAppConfigService app : apps) {
-                            context.session().out().printf("%s\n", app.getName());
+                            context.getSession().out().printf("%s\n", app.getName());
                         }
                     }
                 }
@@ -145,10 +145,10 @@ public class LocalTomcat {
                     List<LocalTomcatDomainConfigService> domains = c.getDomains();
                     if (!domains.isEmpty()) {
                         if (isHeader()) {
-                            context.session().out().printf("[[\\[%s\\]]]:\n", "Domains");
+                            context.getSession().out().printf("[[\\[%s\\]]]:\n", "Domains");
                         }
                         for (LocalTomcatDomainConfigService app : domains) {
-                            context.session().out().printf("%s\n", app.getName());
+                            context.getSession().out().printf("%s\n", app.getName());
                         }
                     }
                 }
@@ -170,7 +170,7 @@ public class LocalTomcat {
         }
         if(x.instances){
             for (LocalTomcatConfigService tomcatConfig : listConfig()) {
-                getContext().session().out().println(tomcatConfig.getName());
+                getContext().getSession().out().println(tomcatConfig.getName());
             }
         }else {
             LocalTomcatConfigService s = nextLocalTomcatConfigService(args, NutsWorkspaceOpenMode.OPEN_EXISTING);
@@ -206,8 +206,8 @@ public class LocalTomcat {
                         }
                         case "long": {
                             out.printf("##%s## ==v==%s ==HOME:== %s ==BASE:== %s ==CMD:== " +
-                                            context.workspace().commandLine().value(
-                                                    context.commandLine().parseLine(jpsResult.getArgsLine())
+                                            context.getWorkspace().commandLine().setValue(
+                                                    context.getCommandLine().parseLine(jpsResult.getArgsLine())
                                             ).format()
                                             + "\n",
                                     jpsResult.getPid(),
@@ -229,7 +229,7 @@ public class LocalTomcat {
                     }
                 }
             } else {
-                context.workspace().object().session(session)
+                context.getWorkspace().object().setSession(session)
                         .setValue(TomcatUtils.getRunningInstances(context))
                         .println();
             }
@@ -254,7 +254,7 @@ public class LocalTomcat {
                 toShow.add(loadServiceBase("", NutsWorkspaceOpenMode.OPEN_EXISTING));
             }
             for (LocalTomcatServiceBase s2 : toShow) {
-                s2.println(getContext().session().out());
+                s2.println(getContext().getSession().out());
             }
         }
     }
@@ -448,13 +448,13 @@ public class LocalTomcat {
         if (c != null) {
             c.printStatus();
         } else {
-            if (context.session().isPlainOut()) {
-                context.session().out().printf("==[%s]== Tomcat {{Not Found}}.\n", name);
+            if (context.getSession().isPlainOut()) {
+                context.getSession().out().printf("==[%s]== Tomcat {{Not Found}}.\n", name);
             } else {
                 HashMap<String, String> r = new HashMap<>();
                 r.put("name", name);
                 r.put("status", "not-found");
-                context.workspace().object().session(context.session()).value(r).println();
+                context.getWorkspace().object().setSession(context.getSession()).setValue(r).println();
             }
         }
     }
@@ -598,8 +598,8 @@ public class LocalTomcat {
             }
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);
-        context.workspace().object().session(context.session())
-                .value(c.getCatalinaBase())
+        context.getWorkspace().object().setSession(context.getSession())
+                .setValue(c.getCatalinaBase())
                 .println();
     }
 
@@ -615,8 +615,8 @@ public class LocalTomcat {
             }
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);
-        context.workspace().object().session(context.session())
-                .value(c.getValidCatalinaVersion())
+        context.getWorkspace().object().setSession(context.getSession())
+                .setValue(c.getValidCatalinaVersion())
                 .println();
     }
 
@@ -632,8 +632,8 @@ public class LocalTomcat {
             }
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);
-        context.workspace().object().session(context.session())
-                .value(c.getCatalinaHome())
+        context.getWorkspace().object().setSession(context.getSession())
+                .setValue(c.getCatalinaHome())
                 .println();
     }
 
@@ -709,8 +709,8 @@ public class LocalTomcat {
                     break;
                 }
             }
-            context.workspace().object().session(context.session())
-                    .value(port)
+            context.getWorkspace().object().setSession(context.getSession())
+                    .setValue(port)
                     .println();
         }
     }
@@ -733,7 +733,7 @@ public class LocalTomcat {
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);
         if (path) {
-            getContext().session().out().printf("%s\n", c.getOutLogFile());
+            getContext().getSession().out().printf("%s\n", c.getOutLogFile());
         } else {
             c.showOutLog(count);
         }

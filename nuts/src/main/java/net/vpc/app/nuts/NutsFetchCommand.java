@@ -50,14 +50,14 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      *
      * @return {@code this} instance
      */
-    NutsFetchCommand nutsApi();
+    NutsFetchCommand setNutsApi();
 
     /**
      * set id to fetch to nuts-core (runtime artifact)
      *
      * @return {@code this} instance
      */
-    NutsFetchCommand nutsRuntime();
+    NutsFetchCommand setNutsRuntime();
 
     /**
      * set id to fetch.
@@ -76,22 +76,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand setId(NutsId id);
 
     /**
-     * set id to fetch.
-     *
-     * @param id id to fetch
-     * @return {@code this} instance
-     */
-    NutsFetchCommand id(String id);
-
-    /**
-     * set id to fetch.
-     *
-     * @param id id to fetch
-     * @return {@code this} instance
-     */
-    NutsFetchCommand id(NutsId id);
-
-    /**
      * set locating where to fetch the artifact. If the location is a folder, a
      * new name will be generated.
      *
@@ -99,16 +83,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsFetchCommand setLocation(Path fileOrFolder);
-
-    /**
-     * set locating where to fetch the artifact. If the location is a folder, a
-     * new name will be generated. equivalent to {@link #setLocation(java.nio.file.Path)
-     * }
-     *
-     * @param fileOrFolder path to store to
-     * @return {@code this} instance
-     */
-    NutsFetchCommand location(Path fileOrFolder);
 
     /**
      * unset location to store to fetched id and fall back to default location.
@@ -132,23 +106,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsFetchCommand setFailFast(boolean enable);
-
-    /**
-     * set armed (or disarmed) fail safe mode. if true, null replaces
-     * NutsNotFoundException.
-     *
-     * @param enable if true, null replaces NutsNotFoundException.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand failFast(boolean enable);
-
-    /**
-     * set armed (true) fail safe mode. null replaces
-     * NutsNotFoundException.
-     *
-     * @return {@code this} instance
-     */
-    NutsFetchCommand failFast();
 
 //    NutsFetch copyFrom(NutsFetch other);
     ////////////////////////////////////////////////////////
@@ -237,13 +194,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     ////////////////////////////////////////////////////////
     // Setters
     ////////////////////////////////////////////////////////
-    /**
-     * set fetch strategy.
-     *
-     * @param fetchStrategy fetch strategy
-     * @return {@code this} instance
-     */
-    NutsFetchCommand fetchStrategy(NutsFetchStrategy fetchStrategy);
 
     /**
      * set fetch strategy.
@@ -262,40 +212,25 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand setTransitive(boolean enable);
 
     /**
-     * set or unset transitive mode
-     *
-     * @param enable if true, transitive mode is armed
-     * @return {@code this} instance
-     */
-    NutsFetchCommand transitive(boolean enable);
-
-    /**
-     * set transitive mode to true
-     *
-     * @return {@code this} instance
-     */
-    NutsFetchCommand transitive();
-
-    /**
      * remote only
      *
      * @return {@code this} instance
      */
-    NutsFetchCommand remote();
+    NutsFetchCommand setRemote();
 
     /**
      * local only (installed or not)
      *
      * @return {@code this} instance
      */
-    NutsFetchCommand offline();
+    NutsFetchCommand setOffline();
 
     /**
      * local or remote. If local result found will not fetch remote.
      *
      * @return {@code this} instance
      */
-    NutsFetchCommand online();
+    NutsFetchCommand setOnline();
 
     /**
      * all artifacts (local and remote). If local result found will any way
@@ -303,29 +238,11 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      *
      * @return {@code this} instance
      */
-    NutsFetchCommand anyWhere();
+    NutsFetchCommand setAnyWhere();
 
     /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NutsFetchCommand scope(NutsDependencyScopePattern scope);
-
-    /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NutsFetchCommand scope(NutsDependencyScope scope);
-
-    /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
+     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)
+     * } and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -333,28 +250,17 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand addScope(NutsDependencyScopePattern scope);
 
     /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
+     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)
+     * } and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
      */
     NutsFetchCommand addScope(NutsDependencyScope scope);
 
-    NutsFetchCommand scopes(NutsDependencyScope... scope);
-
     /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NutsFetchCommand scopes(NutsDependencyScopePattern... scope);
-
-    /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
+     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)
+     * } and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -362,8 +268,8 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand addScopes(NutsDependencyScope... scope);
 
     /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
+     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
+     * and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -394,21 +300,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand clearScopes();
 
     /**
-     * retrieve optional only
-     * @return {@code this} instance
-     */
-    NutsFetchCommand optional();
-
-    /**
-     * set option filter. if null filter is removed. if false only non optional
-     * will be retrieved. if true, only optional will be retrieved.
-     *
-     * @param enable option filter
-     * @return {@code this} instance
-     */
-    NutsFetchCommand optional(Boolean enable);
-
-    /**
      * set option filter. if null filter is removed. if false only non optional
      * will be retrieved. if true, only optional will be retrieved.
      *
@@ -416,21 +307,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsFetchCommand setOptional(Boolean enable);
-
-    /**
-     * set index filter to true.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand indexed();
-
-    /**
-     * set index filter.if null index is removed. if false do not consider index. 
-     * if true, consider index.
-     *
-     * @param enable index filter.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand indexed(Boolean enable);
 
     /**
      * set index filter.if null index is removed. if false do not consider index. 
@@ -448,37 +324,11 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     boolean isIndexed();
 
     /**
-     * enable dependencies list retrieval
-     * @return {@code this} instance
-     */
-    NutsFetchCommand dependencies();
-
-    /**
-     * enable/disable dependencies list retrieval
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand dependencies(boolean enable);
-
-    /**
      * enable/disable dependencies list retrieval
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
      */
     NutsFetchCommand setDependencies(boolean enable);
-
-    /**
-     * enable dependencies tree retrieval
-     * @return {@code this} instance
-     */
-    NutsFetchCommand dependenciesTree();
-
-    /**
-     * enable/disable dependencies tree retrieval
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand dependenciesTree(boolean enable);
 
     /**
      * enable/disable dependencies tree retrieval
@@ -495,50 +345,11 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand setEffective(boolean enable);
 
     /**
-     * enable/disable effective descriptor evaluation
-     * @param enable if true evaluation is enabled.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand effective(boolean enable);
-
-    /**
-     * enable effective descriptor evaluation
-     * @return {@code this} instance
-     */
-    NutsFetchCommand effective();
-
-    /**
-     * enable retrieval from cache
-     * @return {@code this} instance
-     */
-    NutsFetchCommand cached();
-
-    /**
-     * enable/disable retrieval from cache
-     * @param enable if true cache is enabled.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand cached(boolean enable);
-
-    /**
      * enable/disable retrieval from cache
      * @param enable if true cache is enabled.
      * @return {@code this} instance
      */
     NutsFetchCommand setCached(boolean enable);
-
-    /**
-     * enable retrieval of content info
-     * @return {@code this} instance
-     */
-    NutsFetchCommand content();
-
-    /**
-     * enable/disable retrieval of content info
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand content(boolean enable);
 
     /**
      * enable/disable retrieval of content info
@@ -616,20 +427,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
 
     /**
      * add repository filter
-     * @param values repository filter
-     * @return {@code this} instance
-     */
-    NutsFetchCommand repositories(Collection<String> values);
-
-    /**
-     * add repository filter
-     * @param values repository filter
-     * @return {@code this} instance
-     */
-    NutsFetchCommand repositories(String... values);
-
-    /**
-     * add repository filter
      * @param value repository filter
      * @return {@code this} instance
      */
@@ -661,22 +458,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsFetchCommand addRepository(String value);
-
-    /**
-     * add repository filter
-     * @param value repository filter
-     * @return {@code this} instance
-     */
-    NutsFetchCommand repository(String value);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NutsFetchCommand session(NutsSession session);
 
     /**
      * update session

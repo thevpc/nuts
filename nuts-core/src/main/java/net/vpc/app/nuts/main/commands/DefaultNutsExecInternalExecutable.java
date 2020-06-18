@@ -28,7 +28,7 @@ public class DefaultNutsExecInternalExecutable extends DefaultInternalNutsExecut
             showDefaultHelp();
             return;
         }
-        execCommand.copy().session(getSession()).clearCommand().configure(false, args).failFast().run();
+        execCommand.copy().setSession(getSession()).clearCommand().configure(false, args).setFailFast(true).run();
     }
 
     @Override
@@ -37,6 +37,6 @@ public class DefaultNutsExecInternalExecutable extends DefaultInternalNutsExecut
             getSession().out().println("[dry] ==show-help==");
             return;
         }
-        execCommand.copy().session(getSession()).clearCommand().configure(false, args).failFast().dry().run();
+        execCommand.copy().setSession(getSession()).clearCommand().configure(false, args).setFailFast(true).setDry(true).run();
     }
 }

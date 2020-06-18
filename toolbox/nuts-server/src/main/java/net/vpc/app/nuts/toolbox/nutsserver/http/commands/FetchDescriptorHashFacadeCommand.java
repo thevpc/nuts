@@ -18,8 +18,8 @@ public class FetchDescriptorHashFacadeCommand extends AbstractFacadeCommand {
         boolean transitive = parameters.containsKey("transitive");
         String hash = null;
         try {
-            hash = context.getWorkspace().fetch().id(id)
-                    .session(context.getSession()).transitive(transitive)
+            hash = context.getWorkspace().fetch().setId(id)
+                    .setSession(context.getSession()).setTransitive(transitive)
                     .getResultDescriptorHash();
         } catch (Exception exc) {
             //

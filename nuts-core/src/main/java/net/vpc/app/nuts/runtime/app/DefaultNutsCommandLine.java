@@ -69,7 +69,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     public DefaultNutsCommandLine(NutsApplicationContext context) {
-        this.workspace = context.workspace();
+        this.workspace = context.getWorkspace();
         setArguments(context.getArguments());
         setAutoComplete(context.getAutoComplete());
     }
@@ -106,10 +106,6 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     //End Constructors
-    @Override
-    public NutsCommandLine autoComplete(NutsCommandAutoComplete autoComplete) {
-        return setAutoComplete(autoComplete);
-    }
 
     @Override
     public NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete) {
@@ -127,16 +123,6 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     public NutsCommandLine registerSpecialSimpleOption(String option) {
         specialSimpleOptions.add(option);
         return this;
-    }
-
-    @Override
-    public NutsCommandLine expandSimpleOptions() {
-        return expandSimpleOptions(true);
-    }
-
-    @Override
-    public NutsCommandLine expandSimpleOptions(boolean expand) {
-        return setExpandSimpleOptions(expand);
     }
 
     @Override
@@ -197,11 +183,6 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     @Override
     public String getCommandName() {
         return commandName;
-    }
-
-    @Override
-    public NutsCommandLine commandName(String commandName) {
-        return setCommandName(commandName);
     }
 
     @Override

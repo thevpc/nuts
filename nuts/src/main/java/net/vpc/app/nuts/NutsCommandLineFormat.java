@@ -48,25 +48,18 @@ public interface NutsCommandLineFormat extends NutsFormat{
     NutsCommandLineFormat setValue(NutsCommandLine value);
 
     /**
-     * set command line
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsCommandLineFormat value(NutsCommandLine value);
-
-    /**
      * set command line from string array
      * @param args args
      * @return {@code this} instance
      */
-    NutsCommandLineFormat value(String[] args);
+    NutsCommandLineFormat setValue(String[] args);
 
     /**
      * set command line from parsed string
      * @param args args
      * @return {@code this} instance
      */
-    NutsCommandLineFormat value(String args);
+    NutsCommandLineFormat setValue(String args);
 
     /**
      * return current command line
@@ -139,15 +132,6 @@ public interface NutsCommandLineFormat extends NutsFormat{
      * @return argument candidate
      */
     NutsArgumentCandidate createCandidate(String value, String label);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    @Override
-    NutsCommandLineFormat session(NutsSession session);
 
     /**
      * update session

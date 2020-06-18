@@ -4,19 +4,23 @@ import java.nio.file.*;
 
 def main(String[] args){
     String metadata=URL("https://raw.github.com/thevpc/nuts/master/meta-data.txt").readString;
-    String version,location;
+    String apiVersion,location;
     for(line:metadata.split("\n").trim){
-        if(p"[^#].*".matches(line)){
-            var (key,value)=line.splitFirst(":");
+        if(p"[^#].*" ~ line){
+            var (key,value)=line.splitFirst(':');
             switch(key.trim){
-                case "version": version=value.trim;
+                case "apiVersion": apiVersion=value.trim;
                 case "location":location=value.trim;
                 default:{}
             }
         }
     }
+    if(location==null){
+        apiVersion="0.6.0";
+        location=$"https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/$apiVersion/nuts-$apiVersion.jar";
+    }
     Path nj("nuts.jar");
     URL(location).write(nj);
     ProcessBuilder proc("java","-jar",nj.toString,"--gui");
-    proc.start.waitFor;
+    proc.inheritIO.start.waitFor;
 }

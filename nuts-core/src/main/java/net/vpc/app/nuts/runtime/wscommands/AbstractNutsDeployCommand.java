@@ -150,11 +150,6 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsDeployCommand to(String repository) {
-        return targetRepository(repository);
-    }
-
-    @Override
-    public NutsDeployCommand targetRepository(String repository) {
         return setTargetRepository(repository);
     }
 
@@ -172,11 +167,6 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsDeployCommand from(String repository) {
-        return sourceRepository(repository);
-    }
-
-    @Override
-    public NutsDeployCommand sourceRepository(String repository) {
         return setSourceRepository(repository);
     }
 
@@ -188,80 +178,10 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsDeployCommand content(InputStream value) {
-        return setContent(value);
-    }
-
-    @Override
-    public NutsDeployCommand content(String path) {
-        return setContent(path);
-    }
-
-    @Override
-    public NutsDeployCommand content(File file) {
-        return setContent(file);
-    }
-
-    @Override
-    public NutsDeployCommand content(Path file) {
-        return setContent(file);
-    }
-
-    @Override
-    public NutsDeployCommand descriptor(InputStream stream) {
-        return setDescriptor(stream);
-    }
-
-    @Override
-    public NutsDeployCommand descriptor(Path path) {
-        return setDescriptor(path);
-    }
-
-    @Override
     public NutsDeployCommand setDescriptor(Path path) {
         this.descriptor = path;
         invalidateResult();
         return this;
-    }
-
-    @Override
-    public NutsDeployCommand descriptor(String path) {
-        return setDescriptor(path);
-    }
-
-    @Override
-    public NutsDeployCommand descriptor(File file) {
-        return setDescriptor(file);
-    }
-
-    @Override
-    public NutsDeployCommand descriptor(URL url) {
-        return setDescriptor(url);
-    }
-
-    @Override
-    public NutsDeployCommand sha1(String sha1) {
-        return setSha1(sha1);
-    }
-
-    @Override
-    public NutsDeployCommand descSha1(String descSha1) {
-        return setDescSha1(descSha1);
-    }
-
-    @Override
-    public NutsDeployCommand content(URL url) {
-        return setContent(url);
-    }
-
-    @Override
-    public NutsDeployCommand descriptor(NutsDescriptor descriptor) {
-        return setDescriptor(descriptor);
-    }
-
-    @Override
-    public NutsDeployCommand repository(String repository) {
-        return setTargetRepository(repository);
     }
 
     @Override
@@ -288,11 +208,6 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsDeployCommand ids(String... values) {
-        return addIds(values);
-    }
-
-    @Override
     public NutsDeployCommand addIds(String... values) {
         if (values != null) {
             for (String s : values) {
@@ -302,11 +217,6 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
             }
         }
         return this;
-    }
-
-    @Override
-    public NutsDeployCommand ids(NutsId... values) {
-        return addIds(values);
     }
 
     @Override
@@ -328,11 +238,6 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsDeployCommand id(NutsId id) {
-        return addId(id);
-    }
-
-    @Override
     public NutsDeployCommand addId(NutsId id) {
         if (id != null) {
             addId(id.toString());
@@ -346,11 +251,6 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
             removeId(id.toString());
         }
         return this;
-    }
-
-    @Override
-    public NutsDeployCommand id(String id) {
-        return addId(id);
     }
 
     @Override
@@ -454,7 +354,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
                     if (idOrPath.indexOf('/') >= 0 || idOrPath.indexOf('\\') >= 0) {
                         setContent(idOrPath);
                     } else {
-                        id(idOrPath);
+                        addId(idOrPath);
                     }
                     return true;
                 }

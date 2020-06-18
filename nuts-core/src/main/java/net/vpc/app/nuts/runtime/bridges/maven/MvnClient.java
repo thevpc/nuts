@@ -33,15 +33,15 @@ public class MvnClient {
                 status = Status.DIRTY;
                 try {
                     NutsDefinition ff = ws.search()
-                            .id(NET_VPC_APP_NUTS_MVN).session(searchSession)
-                            .online()
-                            .optional(false)
-                            .inlineDependencies().latest().getResultDefinitions().required();
-                    for (NutsId nutsId : ws.search().id(ff.getId()).inlineDependencies().getResultIds()) {
-                        ws.fetch().id(nutsId).session(searchSession)
-                                .online()
-                                .optional(false)
-                                .dependencies().getResultDefinition();
+                            .addId(NET_VPC_APP_NUTS_MVN).setSession(searchSession)
+                            .setOnline()
+                            .setOptional(false)
+                            .setInlineDependencies(true).setLatest(true).getResultDefinitions().required();
+                    for (NutsId nutsId : ws.search().addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
+                        ws.fetch().setId(nutsId).setSession(searchSession)
+                                .setOnline()
+                                .setOptional(false)
+                                .setDependencies(true).getResultDefinition();
                     }
                     status = Status.SUCCESS;
                 } catch (Exception ex) {
@@ -66,14 +66,14 @@ public class MvnClient {
         try {
             NutsExecCommand b = ws
                     .exec()
-                    .failFast()
+                    .setFailFast(true)
                     .addCommand(
                             NET_VPC_APP_NUTS_MVN,
                             "--json",
                             "get",
                             id.toString(),
                             repoURL == null ? "" : repoURL
-                    ).session(session).run();
+                    ).setSession(session).run();
             return (b.getResult() == 0);
         } catch (Exception ex) {
             LOG.with().level(Level.SEVERE).error(ex).log("Failed to invoke {0} : {1}", NET_VPC_APP_NUTS_MVN,ex.toString());

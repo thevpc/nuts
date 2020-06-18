@@ -103,14 +103,6 @@ public interface NutsCommandLine {
      * @param autoComplete autocomplete instance
      * @return {@code this} instance
      */
-    NutsCommandLine autoComplete(NutsCommandAutoComplete autoComplete);
-
-    /**
-     * set autocomplete instance
-     *
-     * @param autoComplete autocomplete instance
-     * @return {@code this} instance
-     */
     NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete);
 
     /**
@@ -156,20 +148,6 @@ public interface NutsCommandLine {
     boolean isSpecialSimpleOption(String option);
 
     /**
-     * enable simple option expansion
-     *
-     * @return {@code this} instance
-     */
-    NutsCommandLine expandSimpleOptions();
-
-    /**
-     * enable or disable simple option expansion
-     * @param expand expand
-     * @return {@code this} instance
-     */
-    NutsCommandLine expandSimpleOptions(boolean expand);
-
-    /**
      * current word index
      *
      * @return current word index
@@ -203,14 +181,6 @@ public interface NutsCommandLine {
      * @return {@code this} instance
      */
     NutsCommandLine setCommandName(String commandName);
-
-    /**
-     * set command name that will be used as an extra info in thrown exceptions
-     *
-     * @param commandName commandName
-     * @return {@code this} instance
-     */
-    NutsCommandLine commandName(String commandName);
 
 
     /**

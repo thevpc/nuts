@@ -53,9 +53,9 @@ public class NutsComponentService {
                     public boolean accept(NutsRepository repository) {
                         return repository.getUuid().equals(repositoryUuid);
                     }
-                }).failFast(false)
+                }).setFailFast(false)
                 .setContent(false)
-                .effective(true)
+                .setEffective(true)
                 .getResultIds().list();
         List<Map<String, String>> result = ids.stream()
                 .map(NutsClownUtils::nutsIdToMap)

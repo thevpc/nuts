@@ -16,17 +16,17 @@ public class NutsIdAndNutsDependencyFilterItem {
 
     public NutsDescriptor getEffDescriptor(NutsSession session) {
         if (effDescriptor == null) {
-            effDescriptor = session.getWorkspace().fetch().id(id.id)
-                    .effective()
-                    .session(CoreNutsUtils.silent(session))
-                    .effective().getResultDescriptor();
+            effDescriptor = session.getWorkspace().fetch().setId(id.id)
+                    .setEffective(true)
+                    .setSession(CoreNutsUtils.silent(session))
+                    .getResultDescriptor();
         }
         return effDescriptor;
     }
 
     public NutsDescriptor getDescriptor(NutsSession session) {
         if (descriptor == null) {
-            descriptor = session.getWorkspace().fetch().id(id.id).session(session).getResultDescriptor();
+            descriptor = session.getWorkspace().fetch().setId(id.id).setSession(session).getResultDescriptor();
         }
         return descriptor;
     }

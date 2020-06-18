@@ -26,7 +26,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
     private final NutsLogger LOG;
     public DefaultNutsHelpInternalExecutable(String[] args, NutsSession session) {
         super("help", args, session);
-        LOG=session.workspace().log().of(DefaultNutsHelpInternalExecutable.class);
+        LOG=session.getWorkspace().log().of(DefaultNutsHelpInternalExecutable.class);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                         fout.flush();
                     } else {
                         try {
-                            w = getSession().getWorkspace().exec().command(arg).which();
+                            w = getSession().getWorkspace().exec().addCommand(arg).which();
                         } catch (Exception ex) {
                             LOG.with().level(Level.FINE).error(ex).log( "Failed to execute : {0}", arg);
                             //ignore

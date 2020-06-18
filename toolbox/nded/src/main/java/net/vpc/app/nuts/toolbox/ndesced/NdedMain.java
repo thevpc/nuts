@@ -20,7 +20,7 @@ public class NdedMain extends NutsApplication {
     }
 
     public void fillArgs(NutsDescriptorBuilder builder0) {
-        NutsCommandLine commandLine = context.commandLine();
+        NutsCommandLine commandLine = context.getCommandLine();
         NutsArgument a;
         while (commandLine.hasNext()) {
             if (context.configureFirst(commandLine)) {
@@ -70,7 +70,7 @@ public class NdedMain extends NutsApplication {
             } else if ((a = commandLine.nextString("--location")) != null) {
                 String v = a.getStringValue();
                 builder0.addLocation(
-                        context.workspace().descriptor().locationBuilder().setUrl(v).setClassifier(null).build()
+                        context.getWorkspace().descriptor().locationBuilder().setUrl(v).setClassifier(null).build()
                         );
             } else if ((a = commandLine.nextBoolean("-i", "--interactive")) != null) {
                 interactive = a.getBooleanValue();
@@ -81,7 +81,7 @@ public class NdedMain extends NutsApplication {
     }
 
     public String checkParam(String name, String lastValue) {
-        return context.session().getTerminal().readLine("Enter %s%s : ", name, (lastValue == null ? "" : (" " + lastValue)));
+        return context.getSession().getTerminal().readLine("Enter %s%s : ", name, (lastValue == null ? "" : (" " + lastValue)));
     }
 
     public void fillInteractive(NutsDescriptorBuilder b, boolean nullOnly) {
@@ -100,7 +100,7 @@ public class NdedMain extends NutsApplication {
                 try {
                     b.setId(s);
                 } catch (Exception ex) {
-                    context.session().err().println(ex.getMessage());
+                    context.getSession().err().println(ex.getMessage());
                 }
             }
         }
@@ -137,7 +137,7 @@ public class NdedMain extends NutsApplication {
         if (!nullOnly || b.getLocations().length == 0) {
             String s = checkParam("location", Arrays.toString(b.getLocations()));
             if (!isBlank(s)) {
-                b.addLocation(context.workspace().descriptor().locationBuilder().setUrl(s).build());
+                b.addLocation(context.getWorkspace().descriptor().locationBuilder().setUrl(s).build());
             }
         }
 
@@ -147,36 +147,36 @@ public class NdedMain extends NutsApplication {
         boolean error = false;
         if (b.getId() == null) {
             error = true;
-            context.session().err().print("Missing id\n");
+            context.getSession().err().print("Missing id\n");
         } else {
             if (b.getId().getArtifactId() == null) {
                 error = true;
-                context.session().err().print("Missing id name\n");
+                context.getSession().err().print("Missing id name\n");
             }
             if (b.getId().getGroupId() == null) {
                 error = true;
-                context.session().err().print("Missing id group\n");
+                context.getSession().err().print("Missing id group\n");
             }
             if (b.getId().getVersion() == null) {
                 error = true;
-                context.session().err().print("Missing id version\n");
+                context.getSession().err().print("Missing id version\n");
             }
 
         }
         if (isBlank(b.getPackaging())) {
             error = true;
-            context.session().err().print("Missing packaging\n");
+            context.getSession().err().print("Missing packaging\n");
         }
         if (isBlank(home)) {
             error = true;
-            context.session().err().print("Missing nuts-bootstrap\n");
+            context.getSession().err().print("Missing nuts-bootstrap\n");
         }
         return !error;
     }
 
     private boolean confirm(String message) {
         while (true) {
-            String o = context.session().terminal().readLine(message + " (y/n) : ");
+            String o = context.getSession().terminal().readLine(message + " (y/n) : ");
             if (o == null) {
                 o = "";
             }
@@ -202,7 +202,7 @@ public class NdedMain extends NutsApplication {
 //        f = this.appContext.getWorkspace().getExtensionManager();
         NutsDescriptorBuilder b = this.context.getWorkspace().descriptor().descriptorBuilder();
         fillArgs(b);
-        final PrintStream out = this.context.session().out();
+        final PrintStream out = this.context.getSession().out();
         out.print("[[Creating new Nuts descriptor...]]\n");
         while (true) {
             fillInteractive(b, true);

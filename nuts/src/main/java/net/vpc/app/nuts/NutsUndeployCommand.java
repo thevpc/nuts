@@ -36,56 +36,30 @@ package net.vpc.app.nuts;
  */
 public interface NutsUndeployCommand extends NutsWorkspaceCommand {
 
-    NutsUndeployCommand repository(String repository);
-
     NutsUndeployCommand setRepository(String repository);
 
     String getRepository();
 
     boolean isTransitive();
 
-    NutsUndeployCommand transitive();
-
-    NutsUndeployCommand transitive(boolean transitive);
 
     NutsUndeployCommand setTransitive(boolean transitive);
 
     NutsId[] getIds();
 
-    NutsUndeployCommand id(NutsId id);
-
-    NutsUndeployCommand id(String id);
-
     NutsUndeployCommand addId(NutsId id);
 
     NutsUndeployCommand addId(String id);
-
-    NutsUndeployCommand offline(boolean offline);
-
-    NutsUndeployCommand offline();
 
     NutsUndeployCommand setOffline(boolean offline);
 
     boolean isOffline();
 
-    NutsUndeployCommand ids(String... values);
-
     NutsUndeployCommand addIds(String... values);
-
-    NutsUndeployCommand ids(NutsId... values);
 
     NutsUndeployCommand addIds(NutsId... value);
 
     NutsUndeployCommand clearIds();
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NutsUndeployCommand session(NutsSession session);
 
     /**
      * update session

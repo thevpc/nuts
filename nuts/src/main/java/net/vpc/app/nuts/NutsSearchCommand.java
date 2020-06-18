@@ -103,52 +103,12 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand removeId(NutsId id);
 
     /**
-     * add id to search.
-     *
-     * @param id id to search
-     * @return {@code this} instance
-     */
-    NutsSearchCommand id(String id);
-
-    /**
-     * set lib filter. lib (non app) only are retrieved.
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand lib();
-
-    /**
-     * set lib filter. if true lib (non app) only are retrieved.
-     *
-     * @param enable lib filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand lib(boolean enable);
-
-    /**
      * set lib filter. if true lib (non app) only are retrieved.
      *
      * @param enable lib filter
      * @return {@code this} instance
      */
     NutsSearchCommand setLib(boolean enable);
-
-    /**
-     * set extensions filter. extensions only are retrieved.
-     *
-     * @return {@code this} instance
-     * @since 0.5.7
-     */
-    NutsSearchCommand extensions();
-
-    /**
-     * set extensions filter. if true extensions only are retrieved.
-     *
-     * @param enable extensions filter
-     * @return {@code this} instance
-     * @since 0.5.7
-     */
-    NutsSearchCommand extensions(boolean enable);
 
     /**
      * set extensions filter. if true extensions only are retrieved.
@@ -161,23 +121,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
 
     /**
-     * set companions filter. companions only are retrieved.
-     *
-     * @return {@code this} instance
-     * @since 0.5.7
-     */
-    NutsSearchCommand companion();
-
-    /**
-     * set companions filter. if true companions only are retrieved.
-     *
-     * @param enable companions filter
-     * @return {@code this} instance
-     * @since 0.5.7
-     */
-    NutsSearchCommand companion(boolean enable);
-
-    /**
      * set companions filter. if true companions only are retrieved.
      *
      * @param enable companions filter
@@ -185,21 +128,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @since 0.5.7
      */
     NutsSearchCommand setCompanion(boolean enable);
-
-    /**
-     * set app filter. non lib (app) only are retrieved.
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand exec();
-
-    /**
-     * set app filter. if true non lib (app) only are retrieved.
-     *
-     * @param enable lib filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand exec(boolean enable);
 
     /**
      * set app filter. if true non lib (app) only are retrieved.
@@ -211,40 +139,10 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * add runtime id to search
-     * @return {@code this} instance
-     */
-    NutsSearchCommand runtime();
-
-    /**
-     * add runtime id to search
-     * @param enable when true include runtime id in search
-     * @return {@code this} instance
-     */
-    NutsSearchCommand runtime(boolean enable);
-
-    /**
-     * add runtime id to search
      * @param enable when true include runtime id in search
      * @return {@code this} instance
      */
     NutsSearchCommand setRuntime(boolean enable);
-
-    /**
-     * set nuts app filter. nuts app (implementing NutsApplication) only are
-     * retrieved.
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand applications();
-
-    /**
-     * set nuts app filter. if true nuts app (implementing NutsApplication) only
-     * are retrieved.
-     *
-     * @param enable ap filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand applications(boolean enable);
 
     /**
      * set nuts app filter. if true nuts app (implementing NutsApplication) only
@@ -297,38 +195,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     boolean isLib();
 
     /**
-     * add id to search.
-     *
-     * @param id id to search
-     * @return {@code this} instance
-     */
-    NutsSearchCommand id(NutsId id);
-
-    /**
-     * add ids to search.
-     *
-     * @param ids ids to search
-     * @return {@code this} instance
-     */
-    NutsSearchCommand ids(String... ids);
-
-    /**
-     * add ids to search.
-     *
-     * @param ids ids to search
-     * @return {@code this} instance
-     */
-    NutsSearchCommand ids(NutsId... ids);
-
-    /**
-     * add javascript filter.
-     *
-     * @param value javascript filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand script(String value);
-
-    /**
      * add javascript filter.
      *
      * @param value javascript filter
@@ -350,23 +216,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param value javascript filter
      * @return {@code this} instance
      */
-    NutsSearchCommand scripts(Collection<String> value);
-
-    /**
-     * add javascript filter.
-     *
-     * @param value javascript filter
-     * @return {@code this} instance
-     */
     NutsSearchCommand addScripts(Collection<String> value);
-
-    /**
-     * add javascript filter.
-     *
-     * @param value javascript filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand scripts(String... value);
 
     /**
      * add javascript filter.
@@ -401,21 +251,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param values ids
      * @return {@code this} instance
      */
-    NutsSearchCommand lockedIds(String... values);
-
-    /**
-     * define locked ids to prevent them to be updated or the force other ids to use them (the installed version).
-     * @param values ids
-     * @return {@code this} instance
-     */
     NutsSearchCommand addLockedIds(String... values);
-
-    /**
-     * define locked ids to prevent them to be updated or the force other ids to use them (the installed version).
-     * @param values ids
-     * @return {@code this} instance
-     */
-    NutsSearchCommand lockedIds(NutsId... values);
 
     /**
      * define locked ids to prevent them to be updated or the force other ids to use them (the installed version).
@@ -457,48 +293,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsSearchCommand addArchs(String... values);
-
-    /**
-     * add arch to search
-     * @param value arch to search for
-     * @return {@code this} instance
-     */
-    NutsSearchCommand arch(String value);
-
-    /**
-     * add archs to search
-     * @param values arch to search for
-     * @return {@code this} instance
-     */
-    NutsSearchCommand archs(Collection<String> values);
-
-    /**
-     * add archs to search
-     * @param values arch to search for
-     * @return {@code this} instance
-     */
-    NutsSearchCommand archs(String... values);
-
-    /**
-     * add packaging to search
-     * @param value packaging to search for
-     * @return {@code this} instance
-     */
-    NutsSearchCommand packaging(String value);
-
-    /**
-     * add packagings to search
-     * @param values packagings to search for
-     * @return {@code this} instance
-     */
-    NutsSearchCommand packagings(Collection<String> values);
-
-    /**
-     * add packagings to search
-     * @param values packagings to search for
-     * @return {@code this} instance
-     */
-    NutsSearchCommand packagings(String... values);
 
     /**
      * reset packagings to search
@@ -545,13 +339,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param values repositories to search into
      * @return {@code this} instance
      */
-    NutsSearchCommand repositories(Collection<String> values);
-
-    /**
-     * add repositories to search into
-     * @param values repositories to search into
-     * @return {@code this} instance
-     */
     NutsSearchCommand addRepositories(Collection<String> values);
 
     /**
@@ -576,54 +363,11 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand removeRepository(String value);
 
     /**
-     * add repository to search into
-     * @param value repository to search into
-     * @return {@code this} instance
-     */
-    NutsSearchCommand repository(String value);
-
-    /**
-     * add repositories to search into
-     * @param values repositories to search into
-     * @return {@code this} instance
-     */
-    NutsSearchCommand repositories(String... values);
-
-    /**
-     * equivalent to {@code setSort(true)}
-     *
-     * @return sort mode
-     */
-    NutsSearchCommand sort();
-
-    /**
-     * sort result
-     * @param sort enable sort
-     * @return {@code this} instance
-     */
-    NutsSearchCommand sort(boolean sort);
-
-    /**
      * sort result
      * @param sort enable sort
      * @return {@code this} instance
      */
     NutsSearchCommand setSorted(boolean sort);
-
-    /**
-     * search must return only latest versions for each artifact id
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand latest();
-
-    /**
-     * if true search must return only latest versions for each artifact id
-     *
-     * @param enable enable latest artifact id filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand latest(boolean enable);
 
     /**
      * if true search must return only latest versions for each artifact id
@@ -632,20 +376,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsSearchCommand setLatest(boolean enable);
-
-    /**
-     * define dependency filter. applicable when using {@link #inlineDependencies()}
-     * @param filter dependency filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand dependencyFilter(NutsDependencyFilter filter);
-
-    /**
-     * add locked ids to prevent them to be updated or the force other ids to use them (the installed version).
-     * @param id id to lock
-     * @return {@code this} instance
-     */
-    NutsSearchCommand lockedId(NutsId id);
 
     /**
      * add locked ids to prevent them to be updated or the force other ids to use them (the installed version).
@@ -660,13 +390,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsSearchCommand removeLockedId(NutsId id);
-
-    /**
-     * add locked ids to prevent them to be updated or the force other ids to use them (the installed version).
-     * @param id id to lock
-     * @return {@code this} instance
-     */
-    NutsSearchCommand lockedId(String id);
 
     /**
      * remove locked ids to prevent them to be updated or the force other ids to use them (the installed version).
@@ -689,32 +412,18 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsId[] getLockedIds();
 
     /**
-     * define dependency filter. applicable when using {@link #inlineDependencies()}
+     * define dependency filter. applicable when using {@link #setInlineDependencies(boolean)}
      * @param filter dependency filter
      * @return {@code this} instance
      */
     NutsSearchCommand setDependencyFilter(NutsDependencyFilter filter);
 
     /**
-     * define dependency filter. applicable when using {@link #inlineDependencies()}
-     * @param filter dependency filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand dependencyFilter(String filter);
-
-    /**
-     * define dependency filter. applicable when using {@link #inlineDependencies()}
+     * define dependency filter. applicable when using {@link #setInlineDependencies(boolean)}
      * @param filter dependency filter
      * @return {@code this} instance
      */
     NutsSearchCommand setDependencyFilter(String filter);
-
-    /**
-     * define repository filter.
-     * @param filter repository filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand repositoryFilter(NutsRepositoryFilter filter);
 
     /**
      * define repository filter.
@@ -735,21 +444,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param filter descriptor filter
      * @return {@code this} instance
      */
-    NutsSearchCommand descriptorFilter(NutsDescriptorFilter filter);
-
-    /**
-     * define descriptor filter.
-     * @param filter descriptor filter
-     * @return {@code this} instance
-     */
     NutsSearchCommand setDescriptorFilter(NutsDescriptorFilter filter);
-
-    /**
-     * define descriptor filter.
-     * @param filter descriptor filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand descriptorFilter(String filter);
 
     /**
      * define descriptor filter.
@@ -763,13 +458,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param filter id filter
      * @return {@code this} instance
      */
-    NutsSearchCommand idFilter(NutsIdFilter filter);
-
-    /**
-     * define id filter.
-     * @param filter id filter
-     * @return {@code this} instance
-     */
     NutsSearchCommand setIdFilter(NutsIdFilter filter);
 
     /**
@@ -777,30 +465,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param filter id filter
      * @return {@code this} instance
      */
-    NutsSearchCommand idFilter(String filter);
-
-    /**
-     * define id filter.
-     * @param filter id filter
-     * @return {@code this} instance
-     */
     NutsSearchCommand setIdFilter(String filter);
-
-    /**
-     * set armed (true) fail safe mode. null replaces NutsNotFoundException.
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand failFast();
-
-    /**
-     * set armed (or disarmed) fail safe mode. if true, null replaces
-     * NutsNotFoundException.
-     *
-     * @param enable if true, null replaces NutsNotFoundException.
-     * @return {@code this} instance
-     */
-    NutsSearchCommand failFast(boolean enable);
 
     /**
      * set armed (or disarmed) fail safe mode. if true, null replaces
@@ -817,19 +482,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this}
      */
     NutsSearchCommand sort(Comparator comparator);
-
-    /**
-     * skip duplicates
-     * @return {@code this}
-     */
-    NutsSearchCommand distinct();
-
-    /**
-     * skip duplicates
-     * @param distinct skip duplicates
-     * @return {@code this}
-     */
-    NutsSearchCommand distinct(boolean distinct);
 
     /**
      * skip duplicates
@@ -864,19 +516,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsSearchCommand setBasePackage(boolean includeBasePackage);
-
-    /**
-     * include base package when searching for inlined dependencies
-     * @param includeBasePackage include Base Package
-     * @return {@code this} instance
-     */
-    NutsSearchCommand basePackage(boolean includeBasePackage);
-
-    /**
-     * include base package when searching for inlined dependencies
-     * @return {@code this} instance
-     */
-    NutsSearchCommand basePackage();
 
     ////////////////////////////////////////////////////////
     // Getters
@@ -957,13 +596,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setTargetApiVersion(String targetApiVersion);
 
     /**
-     * set target api version
-     * @param  targetApiVersion new value
-     * @return target api version
-     */
-    NutsSearchCommand targetApiVersion(String targetApiVersion);
-
-    /**
      * true if base package flag is armed.
      * @return true if base package flag is armed.
      */
@@ -1036,14 +668,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param fetchStrategy fetch strategy
      * @return {@code this} instance
      */
-    NutsSearchCommand fetchStrategy(NutsFetchStrategy fetchStrategy);
-
-    /**
-     * set fetch strategy.
-     *
-     * @param fetchStrategy fetch strategy
-     * @return {@code this} instance
-     */
     NutsSearchCommand setFetchStrategy(NutsFetchStrategy fetchStrategy);
 
     /**
@@ -1055,40 +679,25 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setTransitive(boolean enable);
 
     /**
-     * set or unset transitive mode
-     *
-     * @param enable if true, transitive mode is armed
-     * @return {@code this} instance
-     */
-    NutsSearchCommand transitive(boolean enable);
-
-    /**
-     * set transitive mode to true
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand transitive();
-
-    /**
      * remote only
      *
      * @return {@code this} instance
      */
-    NutsSearchCommand remote();
+    NutsSearchCommand setRemote();
 
     /**
      * local only (installed or not)
      *
      * @return {@code this} instance
      */
-    NutsSearchCommand offline();
+    NutsSearchCommand setOffline();
 
     /**
      * local or remote. If local result found will not fetch remote.
      *
      * @return {@code this} instance
      */
-    NutsSearchCommand online();
+    NutsSearchCommand setOnline();
 
     /**
      * all artifacts (local and remote). If local result found will any way
@@ -1096,7 +705,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return {@code this} instance
      */
-    NutsSearchCommand anyWhere();
+    NutsSearchCommand setAnyWhere();
 
     /**
      * remove all dependency scope filters.
@@ -1106,17 +715,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand clearScopes();
 
     /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand scope(NutsDependencyScope scope);
-
-    /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
+     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
+     * and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -1124,17 +724,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand addScope(NutsDependencyScope scope);
 
     /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand scopes(NutsDependencyScope... scope);
-
-    /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
+     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
+     * and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -1142,8 +733,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand addScopes(NutsDependencyScope... scope);
 
     /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
+     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
+     * and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -1151,17 +742,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand removeScope(NutsDependencyScope scope);
 
     /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand scope(NutsDependencyScopePattern scope);
-
-    /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
+     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
+     * and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -1169,17 +751,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand addScope(NutsDependencyScopePattern scope);
 
     /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
-     *
-     * @param scope scope filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand scopes(NutsDependencyScopePattern... scope);
-
-    /**
-     * add dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
+     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
+     * and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -1187,30 +760,13 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand addScopes(NutsDependencyScopePattern... scope);
 
     /**
-     * remove dependency scope filter. Only relevant with {@link #dependencies(boolean)
-     * } and {@link #dependenciesTree(boolean)}
+     * remove dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
+     * and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
      */
     NutsSearchCommand removeScope(NutsDependencyScopePattern scope);
-
-    /**
-     * default version only
-     *
-     * @return {@code this} instance
-     * @since v0.5.5
-     */
-    NutsSearchCommand defaultVersions();
-
-    /**
-     * default version only filter
-     *
-     * @param enable if non null apply filter
-     * @return {@code this} instance
-     * @since v0.5.5
-     */
-    NutsSearchCommand defaultVersions(Boolean enable);
 
     /**
      * default version only filter
@@ -1220,22 +776,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @since v0.5.5
      */
     NutsSearchCommand setDefaultVersions(Boolean enable);
-
-    /**
-     * retrieve optional only
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand optional();
-
-    /**
-     * set option filter. if null filter is removed. if false only non optional
-     * will be retrieved. if true, only optional will be retrieved.
-     *
-     * @param enable option filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand optional(Boolean enable);
 
     /**
      * set option filter. if null filter is removed. if false only non optional
@@ -1256,37 +796,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setIndexed(Boolean enable);
 
     /**
-     * set index filter to true.
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand indexed();
-
-    /**
-     * set index filter.if null index is removed. if false do not consider
-     * index. if true, consider index.
-     *
-     * @param enable index filter.
-     * @return {@code this} instance
-     */
-    NutsSearchCommand indexed(boolean enable);
-
-    /**
-     * enable inlined dependencies list retrieval
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand inlineDependencies();
-
-    /**
-     * enable/disable inlined dependencies list retrieval
-     *
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NutsSearchCommand inlineDependencies(boolean enable);
-
-    /**
      * enable/disable inlined dependencies list retrieval
      *
      * @param enable if true retrieval is enabled.
@@ -1295,42 +804,12 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setInlineDependencies(boolean enable);
 
     /**
-     * enable dependencies list retrieval
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand dependencies();
-
-    /**
-     * enable/disable dependencies list retrieval
-     *
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NutsSearchCommand dependencies(boolean enable);
-
-    /**
      * enable/disable dependencies list retrieval
      *
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
      */
     NutsSearchCommand setDependencies(boolean enable);
-
-    /**
-     * enable dependencies tree retrieval
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand dependenciesTree();
-
-    /**
-     * enable/disable dependencies tree retrieval
-     *
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NutsSearchCommand dependenciesTree(boolean enable);
 
     /**
      * enable/disable dependencies tree retrieval
@@ -1349,57 +828,12 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setEffective(boolean enable);
 
     /**
-     * enable/disable effective descriptor evaluation
-     *
-     * @param enable if true evaluation is enabled.
-     * @return {@code this} instance
-     */
-    NutsSearchCommand effective(boolean enable);
-
-    /**
-     * enable effective descriptor evaluation
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand effective();
-
-    /**
-     * enable retrieval from cache
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand cached();
-
-    /**
-     * enable/disable retrieval from cache
-     *
-     * @param enable if true cache is enabled.
-     * @return {@code this} instance
-     */
-    NutsSearchCommand cached(boolean enable);
-
-    /**
      * enable/disable retrieval from cache
      *
      * @param enable if true cache is enabled.
      * @return {@code this} instance
      */
     NutsSearchCommand setCached(boolean enable);
-
-    /**
-     * enable retrieval of content info
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand content();
-
-    /**
-     * enable/disable retrieval of content info
-     *
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NutsSearchCommand content(boolean enable);
 
     /**
      * enable/disable retrieval of content info
@@ -1417,15 +851,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsSearchCommand setLocation(Path fileOrFolder);
-
-    /**
-     * set locating where to fetch the artifact. If the location is a folder, a
-     * new name will be generated.
-     *
-     * @param fileOrFolder path to store to
-     * @return {@code this} instance
-     */
-    NutsSearchCommand location(Path fileOrFolder);
 
     /**
      * unset location to store to fetched id and fall back to default location.
@@ -1459,14 +884,14 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     boolean isIndexed();
 
     /**
-     * scope filter filter. applicable with {@link #inlineDependencies()}
+     * scope filter filter. applicable with {@link #setInlineDependencies(boolean)}
      * @return optional filter
      */
     Set<NutsDependencyScope> getScope();
 
     /**
      * optional filter. When non null will filter
-     * dependencies from {@link #inlineDependencies()}
+     * dependencies from {@link #setInlineDependencies(boolean)}
      * @return optional filter
      */
     Boolean getOptional();
@@ -1529,15 +954,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     //
     // NutsWorkspaceCommand overridden methods
     //    
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NutsSearchCommand session(NutsSession session);
 
     /**
      * update session
@@ -1746,19 +1162,19 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * search for non installed packages
      * @return {@code this} instance
      */
-    NutsSearchCommand installed();
+    NutsSearchCommand setInstalled();
 
     /**
      * search for included (in other installations as dependency) packages
      * @return {@code this} instance
      */
-    NutsSearchCommand included();
+    NutsSearchCommand setIncluded();
 
     /**
      * search for non installed or included (in other installations as dependency) packages
      * @return {@code this} instance
      */
-    NutsSearchCommand installedOrIncluded();
+    NutsSearchCommand setInstalledOrIncluded();
 
     /**
      * search for non installed packages

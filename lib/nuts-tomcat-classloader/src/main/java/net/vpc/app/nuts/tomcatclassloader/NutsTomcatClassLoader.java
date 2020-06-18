@@ -119,7 +119,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 try {
                     NutsWorkspace ws = resolveNutsWorkspace();
                     NutsSession session = ws.createSession().silent();
-                    nutsClassLoader = ws.search().session(session).ids(pathList).inlineDependencies().getResultClassLoader();
+                    nutsClassLoader = ws.search().setSession(session).addIds(pathList).setInlineDependencies(true).getResultClassLoader();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     nutsClassLoader = Thread.currentThread().getContextClassLoader();

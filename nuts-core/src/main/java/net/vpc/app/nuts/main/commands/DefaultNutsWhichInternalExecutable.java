@@ -61,7 +61,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
         for (String arg : this.args) {
             PrintStream out = getSession().out();
             try {
-                NutsExecutableInformation p = execCommand.copy().session(getSession()).clearCommand().configure(false, arg).which();
+                NutsExecutableInformation p = execCommand.copy().setSession(getSession()).clearCommand().configure(false, arg).which();
                 boolean showDesc = false;
                 switch (p.getType()) {
                     case SYSTEM: {

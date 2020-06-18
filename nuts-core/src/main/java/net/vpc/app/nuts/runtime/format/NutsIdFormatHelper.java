@@ -150,17 +150,17 @@ public class NutsIdFormatHelper {
     }
 
     private static FormatHelper getFormatHelper(NutsSession session) {
-        FormatHelper h = (FormatHelper) session.workspace().userProperties().get(FormatHelper.class.getName());
+        FormatHelper h = (FormatHelper) session.getWorkspace().userProperties().get(FormatHelper.class.getName());
         if (h != null) {
             return h;
         }
-        FormatHelperResetListener h2 = (FormatHelperResetListener) session.workspace().userProperties().get(FormatHelperResetListener.class.getName());
+        FormatHelperResetListener h2 = (FormatHelperResetListener) session.getWorkspace().userProperties().get(FormatHelperResetListener.class.getName());
         if (h2 == null) {
             h2 = new FormatHelperResetListener();
-            session.workspace().addWorkspaceListener(h2);
+            session.getWorkspace().addWorkspaceListener(h2);
         }
         h = new FormatHelper(session);
-        session.workspace().userProperties().put(FormatHelper.class.getName(), h);
+        session.getWorkspace().userProperties().put(FormatHelper.class.getName(), h);
         return h;
     }
 
@@ -231,7 +231,7 @@ public class NutsIdFormatHelper {
             }
             int z = 0;
             Stack<NutsRepository> stack = new Stack<>();
-            for (NutsRepository repository : session.workspace().config().getRepositories(session)) {
+            for (NutsRepository repository : session.getWorkspace().config().getRepositories(session)) {
                 stack.push(repository);
             }
             while (!stack.isEmpty()) {
@@ -254,7 +254,7 @@ public class NutsIdFormatHelper {
                 return maxUserNameSize;
             }
             int z = "anonymous".length();
-            NutsWorkspaceConfigManagerExt wc = NutsWorkspaceConfigManagerExt.of(session.workspace().config());
+            NutsWorkspaceConfigManagerExt wc = NutsWorkspaceConfigManagerExt.of(session.getWorkspace().config());
             NutsUserConfig[] users = wc.getStoredConfigSecurity().getUsers();
             if (users != null) {
                 for (NutsUserConfig user : users) {
@@ -265,7 +265,7 @@ public class NutsIdFormatHelper {
                 }
             }
             Stack<NutsRepository> stack = new Stack<>();
-            for (NutsRepository repository : session.workspace().config().getRepositories(session)) {
+            for (NutsRepository repository : session.getWorkspace().config().getRepositories(session)) {
                 stack.push(repository);
             }
             while (!stack.isEmpty()) {
@@ -399,7 +399,7 @@ public class NutsIdFormatHelper {
                         rname = def.getRepositoryName();
                     }
                     if (def.getRepositoryUuid() != null) {
-                        NutsRepository r = ws.config().findRepositoryById(def.getRepositoryUuid(), session.copy().transitive());
+                        NutsRepository r = ws.config().findRepositoryById(def.getRepositoryUuid(), session.copy().setTransitive(false));
                         if (r != null) {
                             rname = r.config().getName();
                         }
@@ -419,7 +419,7 @@ public class NutsIdFormatHelper {
                 }
                 if (ruuid == null && id != null) {
                     String p = id.getNamespace();
-                    NutsRepository r = ws.config().findRepositoryByName(p, session.copy().transitive());
+                    NutsRepository r = ws.config().findRepositoryByName(p, session.copy().setTransitive(false));
                     if (r != null) {
                         ruuid = r.uuid();
                     }
@@ -518,12 +518,12 @@ public class NutsIdFormatHelper {
 
             try {
                 if (this.installStatus==NutsInstallStatus.NOT_INSTALLED || def == null) {
-                    this.defFetched = ws.fetch().id(id).session(
+                    this.defFetched = ws.fetch().setId(id).setSession(
                             session.silent()
-                    ).offline()
-                            .content()
-                            .optional(false)
-                            .dependencies(this.checkDependencies)
+                    ).setOffline()
+                            .setContent(true)
+                            .setOptional(false)
+                            .setDependencies(this.checkDependencies)
                             .getResultDefinition();
                     this.fetched = true;
                 } else {

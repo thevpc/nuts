@@ -258,15 +258,15 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             throw new NutsNotFoundException(ws, commandName);
         }
         NutsSession searchSession = CoreNutsUtils.silent(session);
-        List<NutsId> ff = ws.search().id(nid).session(searchSession).optional(false).latest().failFast(false)
-                .defaultVersions()
+        List<NutsId> ff = ws.search().addId(nid).setSession(searchSession).setOptional(false).setLatest(true).setFailFast(false)
+                .setDefaultVersions(true)
 //                .configure(true,"--trace-monitor")
-                .installedOrIncluded().getResultIds().list();
+                .setInstalledOrIncluded().getResultIds().list();
         if (ff.isEmpty()) {
             //retest without checking if the parseVersion is default or not
             // this help recovering from "invalid default parseVersion" issue
-                ff = ws.search().id(nid).session(searchSession).optional(false).latest().failFast(false)
-                        .installedOrIncluded().getResultIds().list();
+                ff = ws.search().addId(nid).setSession(searchSession).setOptional(false).setLatest(true).setFailFast(false)
+                        .setInstalledOrIncluded().getResultIds().list();
         }
         if (ff.isEmpty()) {
             if(!forceInstalled) {
@@ -276,7 +276,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     session.out().printf("##%s## is @@not installed@@, will search for it online. Type ((CTRL\\^C)) to stop...\n", commandName);
                     session.out().flush();
                 }
-                ff = ws.search().id(nid).session(searchSession).optional(false).failFast(false).online().latest()
+                ff = ws.search().addId(nid).setSession(searchSession).setOptional(false).setFailFast(false).setOnline().setLatest(true)
 //                        .configure(true,"--trace-monitor")
                         .getResultIds().list();
             }
@@ -290,13 +290,13 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             }
         }
         NutsId goodId = ff.get(0);
-        def = ws.fetch().id(goodId)
-                .session(searchSession)
-                .optional(false).dependencies()
-                .failFast()
-                .effective()
-                .content()
-                .scope(NutsDependencyScopePattern.RUN)
+        def = ws.fetch().setId(goodId)
+                .setSession(searchSession)
+                .setOptional(false).setDependencies(true)
+                .setFailFast(true)
+                .setEffective(true)
+                .setContent(true)
+                .addScope(NutsDependencyScopePattern.RUN)
                 .getResultDefinition();
         return ws_exec0(def, commandName, appArgs, executorOptions, env, dir, failFast, executionType, session);
     }

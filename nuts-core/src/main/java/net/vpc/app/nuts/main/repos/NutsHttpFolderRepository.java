@@ -118,7 +118,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     }
 
     protected InputStream openStream(String path, Object source, NutsSession session) {
-        return getWorkspace().io().monitor().source(path).origin(source).session(session).create();
+        return getWorkspace().io().monitor().source(path).origin(source).setSession(session).create();
     }
 
     @Override
@@ -136,7 +136,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     }
 
     protected InputSource openStream(NutsId id, String path, Object source, NutsSession session) {
-        InputStream in = getWorkspace().io().monitor().source(path).origin(source).session(session).create();
+        InputStream in = getWorkspace().io().monitor().source(path).origin(source).setSession(session).create();
         return CoreIOUtils.createInputSource(in);
     }
 
@@ -311,13 +311,13 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         }
         if (descriptor.getLocations().length == 0) {
             String path = getPath(id);
-            getWorkspace().io().copy().session(session).from(path).to(localFile).safe().logProgress().run();
+            getWorkspace().io().copy().setSession(session).from(path).to(localFile).safe().logProgress().run();
             return new NutsDefaultContent(localFile, false, false);
         } else {
             for (NutsIdLocation location : descriptor.getLocations()) {
                 if (CoreNutsUtils.acceptClassifier(location, id.getClassifier())) {
                     try {
-                        getWorkspace().io().copy().session(session).from(location.getUrl()).to(localFile).safe().logProgress().run();
+                        getWorkspace().io().copy().setSession(session).from(location.getUrl()).to(localFile).safe().logProgress().run();
                         return new NutsDefaultContent(localFile, false, false);
                     } catch (Exception ex) {
                         LOG.with().level(Level.SEVERE).error(ex).log("Unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), ex.toString());

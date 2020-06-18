@@ -41,7 +41,7 @@ public class NutsMvnMain extends NutsApplication {
         String command = null;
         List<String> args2 = new ArrayList<>();
         Options o = new Options();
-        NutsCommandLine cmd = appContext.commandLine();
+        NutsCommandLine cmd = appContext.getCommandLine();
         NutsArgument a;
         while (cmd.hasNext()) {
             if (command == null) {
@@ -126,22 +126,22 @@ public class NutsMvnMain extends NutsApplication {
                 int r = cli.doMain(args, path.toString(), out, out);
                 String s = new String(bos.toByteArray());
                 if (s.contains("BUILD SUCCESS")) {
-                    appContext.session().out().println("{'result':'success'}");
+                    appContext.getSession().out().println("{'result':'success'}");
                     return 0;
                 } else {
                     if (r == 0) {
                         r = 1;
                     }
-                    appContext.session().out().println("{'result':'error'}");
+                    appContext.getSession().out().println("{'result':'error'}");
                 }
                 return r;
             } catch (Exception ex) {
                 LOG.log(Level.FINE,"Error executing mvn command "+ Arrays.toString(args),ex);//e.printStackTrace();
-                appContext.session().out().println("{'result':'error'}");
+                appContext.getSession().out().println("{'result':'error'}");
                 return 1;
             }
         } else {
-            return cli.doMain(args, path.toString(), appContext.session().out(), appContext.session().err());
+            return cli.doMain(args, path.toString(), appContext.getSession().out(), appContext.getSession().err());
         }
     }
 

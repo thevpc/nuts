@@ -43,19 +43,9 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommand failFast() {
-        return setFailFast(true);
-    }
-
-    @Override
     public NutsExecCommand setFailFast(boolean failFast) {
         this.failFast = failFast;
         return this;
-    }
-
-    @Override
-    public NutsExecCommand failFast(boolean failFast) {
-        return setFailFast(failFast);
     }
 
     @Override
@@ -69,7 +59,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommand command(NutsDefinition definition) {
+    public NutsExecCommand setCommand(NutsDefinition definition) {
         this.commandDefinition = definition;
         if (this.commandDefinition != null) {
             this.commandDefinition.getContent();
@@ -81,22 +71,12 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommand command(String... command) {
-        return addCommand(command);
-    }
-
-    @Override
     public NutsExecCommand addCommand(String... command) {
         if (this.command == null) {
             this.command = new ArrayList<>();
         }
         this.command.addAll(Arrays.asList(command));
         return this;
-    }
-
-    @Override
-    public NutsExecCommand command(Collection<String> command) {
-        return addCommand(command);
     }
 
     @Override
@@ -126,16 +106,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommand executorOption(String executorOption) {
-        return addExecutorOption(executorOption);
-    }
-
-    @Override
-    public NutsExecCommand executorOptions(String... executorOptions) {
-        return addExecutorOptions(executorOptions);
-    }
-
-    @Override
     public NutsExecCommand addExecutorOptions(String... executorOptions) {
         if (executorOptions != null) {
             for (String executorOption : executorOptions) {
@@ -143,11 +113,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             }
         }
         return this;
-    }
-
-    @Override
-    public NutsExecCommand executorOptions(Collection<String> executorOptions) {
-        return addExecutorOptions(executorOptions);
     }
 
     @Override
@@ -172,11 +137,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommand env(Map<String, String> env) {
-        return setEnv(env);
-    }
-
-    @Override
     public NutsExecCommand addEnv(Map<String, String> env) {
         if (env != null) {
             for (Map.Entry<String, String> entry : env.entrySet()) {
@@ -184,11 +144,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             }
         }
         return this;
-    }
-
-    @Override
-    public NutsExecCommand env(String key, String value) {
-        return setEnv(key, value);
     }
 
     @Override
@@ -228,11 +183,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     public NutsExecCommand setDirectory(String directory) {
         this.directory = directory;
         return this;
-    }
-
-    @Override
-    public NutsExecCommand directory(String directory) {
-        return setDirectory(directory);
     }
 
     @Override
@@ -350,19 +300,9 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommand redirectErrorStream() {
-        return setRedirectErrorStream(true);
-    }
-
-    @Override
     public NutsExecCommand setRedirectErrorStream(boolean redirectErrorStream) {
         this.redirectErrorStream = redirectErrorStream;
         return this;
-    }
-
-    @Override
-    public NutsExecCommand redirectErrorStream(boolean redirectErrorStream) {
-        return setRedirectErrorStream(redirectErrorStream);
     }
 
     @Override
@@ -372,11 +312,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         }
         this.executionType = executionType;
         return this;
-    }
-
-    @Override
-    public NutsExecCommand executionType(NutsExecutionType executionType) {
-        return setExecutionType(executionType);
     }
 
     @Override
@@ -540,16 +475,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     public NutsExecCommand setDry(boolean value) {
         this.dry = value;
         return this;
-    }
-
-    @Override
-    public NutsExecCommand dry(boolean value) {
-        return setDry(value);
-    }
-
-    @Override
-    public NutsExecCommand dry() {
-        return dry(true);
     }
 
     public boolean isGrabOutputString() {

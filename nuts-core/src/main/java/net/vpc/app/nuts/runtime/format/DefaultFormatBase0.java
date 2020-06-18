@@ -66,10 +66,6 @@ public abstract class DefaultFormatBase0<T> implements NutsConfigurable {
         return session;
     }
 
-    public T session(NutsSession session) {
-        return setSession(session);
-    }
-
     public T setSession(NutsSession session) {
         //should copy because will chage outputformat
         this.session = session == null ? null : session.copy();

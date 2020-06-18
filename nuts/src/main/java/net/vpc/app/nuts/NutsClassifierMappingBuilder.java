@@ -51,13 +51,6 @@ public interface NutsClassifierMappingBuilder {
      * @param value classifier
      * @return {@code this} instance
      */
-    NutsClassifierMappingBuilder classifier(String value);
-
-    /**
-     * set classifier
-     * @param value classifier
-     * @return {@code this} instance
-     */
     NutsClassifierMappingBuilder setClassifier(String value);
 
     /**
@@ -65,13 +58,6 @@ public interface NutsClassifierMappingBuilder {
      * @return packaging to select
      */
     String getPackaging();
-
-    /**
-     * set packaging
-     * @param value packaging
-     * @return {@code this} instance
-     */
-    NutsClassifierMappingBuilder packaging(String value);
 
     /**
      * set packaging
@@ -86,8 +72,6 @@ public interface NutsClassifierMappingBuilder {
      * @return arch list filter
      */
     String[] getArch();
-
-    NutsClassifierMappingBuilder arch(String... value);
 
     /**
      * set archs
@@ -108,13 +92,6 @@ public interface NutsClassifierMappingBuilder {
      * @param value oses
      * @return {@code this} instance
      */
-    NutsClassifierMappingBuilder os(String... value);
-
-    /**
-     * set oses
-     * @param value oses
-     * @return {@code this} instance
-     */
     NutsClassifierMappingBuilder setOs(String... value);
 
     /**
@@ -129,13 +106,6 @@ public interface NutsClassifierMappingBuilder {
      * @param value os dists
      * @return {@code this} instance
      */
-    NutsClassifierMappingBuilder osdist(String... value);
-
-    /**
-     * set os dists
-     * @param value os dists
-     * @return {@code this} instance
-     */
     NutsClassifierMappingBuilder setOsdist(String... value);
 
     /**
@@ -144,13 +114,6 @@ public interface NutsClassifierMappingBuilder {
      * @return platform list filter.
      */
     String[] getPlatform();
-
-    /**
-     * set platforms
-     * @param value platforms
-     * @return {@code this} instance
-     */
-    NutsClassifierMappingBuilder platform(String... value);
 
     /**
      * set platforms

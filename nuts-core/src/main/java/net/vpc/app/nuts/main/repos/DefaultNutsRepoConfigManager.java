@@ -39,7 +39,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     private String repositoryType;
 
     public DefaultNutsRepoConfigManager(NutsRepository repository, NutsSession session, String storeLocation, NutsRepositoryConfig config, int speed, int deployPriority, boolean temporary, boolean enabled, String globalName, boolean supportedMirroring, String repositoryName, String repositoryType) {
-        LOG=repository.workspace().log().of(DefaultNutsRepoConfigManager.class);
+        LOG=repository.getWorkspace().log().of(DefaultNutsRepoConfigManager.class);
         if (CoreStringUtils.isBlank(repositoryType)) {
             throw new NutsIllegalArgumentException(repository.getWorkspace(), "Missing Repository Type");
         }
@@ -68,7 +68,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         this.enabled = enabled;
         this.supportedMirroring = supportedMirroring;
         this.repositoryType = repositoryType;
-        setConfig(config, session, false, new NutsUpdateOptions().session(session));
+        setConfig(config, session, false, new NutsUpdateOptions().setSession(session));
     }
 
     @Override
@@ -535,7 +535,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         }
         if (session.isTransitive() && isSupportedMirroring()) {
             for (NutsRepository mirror : getMirrors(session)) {
-                NutsRepository m = mirror.config().findMirror(repositoryNameOrId, session.copy().transitive(true));
+                NutsRepository m = mirror.config().findMirror(repositoryNameOrId, session.copy().setTransitive(true));
                 if (m != null) {
                     if (y == null) {
                         y = m;
@@ -557,7 +557,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         }
         if (session.isTransitive() && isSupportedMirroring()) {
             for (NutsRepository mirror : getMirrors(session)) {
-                NutsRepository m = mirror.config().findMirrorById(repositoryNameOrId, session.copy().transitive());
+                NutsRepository m = mirror.config().findMirrorById(repositoryNameOrId, session.copy().setTransitive(true));
                 if (m != null) {
                     if (y == null) {
                         y = m;
@@ -579,7 +579,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         }
         if (session.isTransitive() && isSupportedMirroring()) {
             for (NutsRepository mirror : getMirrors(session)) {
-                NutsRepository m = mirror.config().findMirrorByName(repositoryNameOrId, session.copy().transitive());
+                NutsRepository m = mirror.config().findMirrorByName(repositoryNameOrId, session.copy().setTransitive(true));
                 if (m != null) {
                     if (y == null) {
                         y = m;
@@ -616,7 +616,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         }
         NutsRepositoryRef ref = CoreNutsUtils.optionsToRef(options);
         NutsRepository repo = repository.getWorkspace().config().createRepository(options, getMirrorsRoot(), repository);
-        addMirror(ref, repo, new NutsAddOptions().session(options.getSession()));
+        addMirror(ref, repo, new NutsAddOptions().setSession(options.getSession()));
         return repo;
     }
 

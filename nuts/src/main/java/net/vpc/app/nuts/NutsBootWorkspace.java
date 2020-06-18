@@ -956,21 +956,21 @@ public final class NutsBootWorkspace {
                 return;
             }
             workspace.exec()
-                    .session(session)
-                    .command("welcome")
-                    .executorOptions(o.getExecutorOptions())
-                    .executionType(o.getExecutionType())
-                    .failFast()
-                    .dry(options.isDry())
+                    .setSession(session)
+                    .addCommand("welcome")
+                    .addExecutorOptions(o.getExecutorOptions())
+                    .setExecutionType(o.getExecutionType())
+                    .setFailFast(true)
+                    .setDry(options.isDry())
                     .run();
         } else {
             workspace.exec()
-                    .session(session)
-                    .command(o.getApplicationArguments())
-                    .executorOptions(o.getExecutorOptions())
-                    .executionType(o.getExecutionType())
-                    .failFast()
-                    .dry(options.isDry())
+                    .setSession(session)
+                    .addCommand(o.getApplicationArguments())
+                    .addExecutorOptions(o.getExecutorOptions())
+                    .setExecutionType(o.getExecutionType())
+                    .setFailFast(true)
+                    .setDry(options.isDry())
                     .run();
         }
     }

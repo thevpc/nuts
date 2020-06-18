@@ -45,11 +45,6 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
     }
 
     @Override
-    public NutsIOProcessAction session(NutsSession session) {
-        return setSession(session);
-    }
-
-    @Override
     public NutsSession getSession() {
         return session;
     }

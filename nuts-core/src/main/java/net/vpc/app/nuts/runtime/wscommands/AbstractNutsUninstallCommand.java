@@ -26,16 +26,6 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
     }
 
     @Override
-    public NutsUninstallCommand id(String id) {
-        return addId(id);
-    }
-
-    @Override
-    public NutsUninstallCommand id(NutsId id) {
-        return addId(id);
-    }
-
-    @Override
     public NutsUninstallCommand addId(String id) {
         return addId(id == null ? null : ws.id().parse(id));
     }
@@ -86,34 +76,9 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
     }
 
     @Override
-    public NutsUninstallCommand arg(String arg) {
-        return addArg(arg);
-    }
-
-    @Override
-    public NutsUninstallCommand args(Collection<String> args) {
-        return addArgs(args);
-    }
-
-    @Override
-    public NutsUninstallCommand args(String... args) {
-        return addArgs(args);
-    }
-
-    @Override
     public NutsUninstallCommand clearArgs() {
         this.args = null;
         return this;
-    }
-
-    @Override
-    public NutsUninstallCommand erase() {
-        return setErase(true);
-    }
-
-    @Override
-    public NutsUninstallCommand erase(boolean erase) {
-        return setErase(erase);
     }
 
     @Override
@@ -178,7 +143,7 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
         boolean enabled=a.isEnabled();
         switch (a.getStringKey()) {
             case "-e":
-            case "--earse": {
+            case "--erase": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setErase(val);
@@ -203,7 +168,7 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
                     return false;
                 } else {
                     cmdLine.skip();
-                    id(a.getString());
+                    addId(a.getString());
                     return true;
                 }
             }

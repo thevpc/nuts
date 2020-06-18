@@ -208,7 +208,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 //        NutsId oldId = CoreNutsUtils.findNutsIdBySimpleName(id, extensions.keySet());
 //        NutsWorkspaceExtension old = null;
 //        if (oldId == null) {
-//            NutsWorkspaceExtension e = wireExtension(id, ws.fetch().setFetchStratery(NutsFetchStrategy.ONLINE).session(session));
+//            NutsWorkspaceExtension e = wireExtension(id, ws.fetch().setFetchStratery(NutsFetchStrategy.ONLINE).setSession(session));
 //            addExtension(id);
 //            return e;
 //        } else {
@@ -248,11 +248,11 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         LOG.with().level(Level.FINE).verb(NutsLogVerb.UPDATE).log( "Installing extension {0}", id);
         List<NutsDefinition> nutsDefinitions = ws.search()
                 .copyFrom(options)
-                .session(searchSession)
-                .addId(id).session(session)
+                .setSession(searchSession)
+                .addId(id).setSession(session)
                 .addScope(NutsDependencyScopePattern.RUN)
-                .optional(false)
-                .inlineDependencies().getResultDefinitions().list();
+                .setOptional(false)
+                .setInlineDependencies(true).getResultDefinitions().list();
         NutsId toWire = null;
         for (NutsDefinition nutsDefinition : nutsDefinitions) {
             if (nutsDefinition.getId().equalsShortName(id)) {

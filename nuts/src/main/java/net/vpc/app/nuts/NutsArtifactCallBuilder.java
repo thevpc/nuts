@@ -54,14 +54,6 @@ public interface NutsArtifactCallBuilder extends Serializable {
      * @param value artifact id
      * @return {@code this} instance
      */
-    NutsArtifactCallBuilder id(NutsId value);
-
-    /**
-     * update artifact id
-     *
-     * @param value artifact id
-     * @return {@code this} instance
-     */
     NutsArtifactCallBuilder setId(NutsId value);
 
     /**
@@ -77,14 +69,6 @@ public interface NutsArtifactCallBuilder extends Serializable {
      * @param value arguments
      * @return {@code this} instance
      */
-    NutsArtifactCallBuilder arguments(String... value);
-
-    /**
-     * update arguments
-     *
-     * @param value arguments
-     * @return {@code this} instance
-     */
     NutsArtifactCallBuilder setArguments(String... value);
 
     /**
@@ -93,14 +77,6 @@ public interface NutsArtifactCallBuilder extends Serializable {
      * @return call properties map
      */
     Map<String, String> getProperties();
-
-    /**
-     * update call properties map (replace all existing properties)
-     *
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsArtifactCallBuilder properties(Map<String, String> value);
 
     /**
      * update call properties map (replace all existing properties)

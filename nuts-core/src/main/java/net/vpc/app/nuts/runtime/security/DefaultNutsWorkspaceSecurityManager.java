@@ -214,7 +214,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
 
     @Override
     public NutsAddUserCommand addUser(String name) {
-        return new DefaultNutsAddUserCommand(ws).username(name);
+        return new DefaultNutsAddUserCommand(ws).setUsername(name);
     }
 
     @Override

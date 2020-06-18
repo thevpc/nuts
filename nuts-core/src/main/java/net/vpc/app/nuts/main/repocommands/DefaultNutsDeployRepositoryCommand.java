@@ -47,7 +47,7 @@ public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployReposi
 
     public DefaultNutsDeployRepositoryCommand(NutsRepository repo) {
         super(repo);
-        LOG=repo.workspace().log().of(DefaultNutsDeployRepositoryCommand.class);
+        LOG=repo.getWorkspace().log().of(DefaultNutsDeployRepositoryCommand.class);
     }
 
 

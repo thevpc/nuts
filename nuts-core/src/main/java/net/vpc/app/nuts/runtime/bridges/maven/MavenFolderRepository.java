@@ -134,7 +134,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
             return new NutsDefaultContent(f, true, false);
         } else {
             getWorkspace().io().copy()
-                    .session(session)
+                    .setSession(session)
                     .from(f).to(localPath).safe().run();
             return new NutsDefaultContent(localPath, true, false);
         }

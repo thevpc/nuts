@@ -51,14 +51,6 @@ public interface NutsWorkspaceCommand extends NutsConfigurable {
      * @param session session
      * @return {@code this} instance
      */
-    NutsWorkspaceCommand session(NutsSession session);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
     NutsWorkspaceCommand setSession(NutsSession session);
 
     /**

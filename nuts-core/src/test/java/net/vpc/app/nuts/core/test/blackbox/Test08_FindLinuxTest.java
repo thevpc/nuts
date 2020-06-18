@@ -41,8 +41,8 @@ public class Test08_FindLinuxTest {
                 "--yes",
                 "--skip-companions");
 
-        NutsDefinition def = ws.search().id("netbeans-launcher#1.1.0")
-                .optional(false).inlineDependencies().failFast().online().latest().getResultDefinitions().required();
+        NutsDefinition def = ws.search().addId("netbeans-launcher#1.1.0")
+                .setOptional(false).setInlineDependencies(true).setFailFast(true).setOnline().setLatest(true).getResultDefinitions().required();
         TestUtils.println(def);
     }
 
@@ -59,8 +59,8 @@ public class Test08_FindLinuxTest {
                 "--yes",
                 "--skip-companions");
 
-        NutsResultList<NutsId> resultIds = ws.search().session(ws.createSession().silent()).id("net.vpc.scholar.doovos.kernel:doovos-kernel-core")
-                .latest().inlineDependencies().getResultIds();
+        NutsResultList<NutsId> resultIds = ws.search().setSession(ws.createSession().silent()).addId("net.vpc.scholar.doovos.kernel:doovos-kernel-core")
+                .setLatest(true).setInlineDependencies(true).getResultIds();
         TestUtils.println(resultIds.list());
     }
 

@@ -51,8 +51,8 @@ public class SearchFacadeCommand extends AbstractFacadeCommand {
             }
         }
         Iterator<NutsId> it = context.getWorkspace().search()
-                .session(context.getSession())
-                .transitive(transitive)
+                .setSession(context.getSession())
+                .setTransitive(transitive)
                 .addScripts(js).addId(pattern).getResultIds().iterator();
 //                    Writer ps = new OutputStreamWriter(context.getResponseBody());
         context.sendResponseText(200, NutsServerUtils.iteratorNutsIdToString(it));

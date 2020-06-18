@@ -53,14 +53,14 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         }
         SshPath srvp = new SshPath(server);
         context.getWorkspace().exec()
-                .command(
+                .addCommand(
                         "nsh",
                         "cp",
                         "--verbose",
                         "--mkdir",
                         localWarPath,
                         srvp.setPath(remoteFilePath).toString()
-                ).session(context.getSession())
+                ).setSession(context.getSession())
                 .run();
         String v = config.getVersionCommand();
         if (StringUtils.isBlank(v)) {
@@ -79,9 +79,9 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         }
         NutsExecCommand s = context.getWorkspace()
                 .exec()
-                .redirectErrorStream()
+                .setRedirectErrorStream(true)
                 .grabOutputString()
-                .command(cmd).run();
+                .addCommand(cmd).run();
         if (s.getResult() == 0) {
             client.execRemoteNuts(
                     "net.vpc.app.nuts.toolbox:tomcat",
@@ -124,7 +124,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatAppConfigService remove() {
         client.getConfig().getApps().remove(name);
-        context.session().out().printf("==[%s]== app removed.\n", name);
+        context.getSession().out().printf("==[%s]== app removed.\n", name);
         return this;
 
     }
@@ -138,7 +138,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         Map<String,Object> m=new LinkedHashMap<>();
         m.put("name",getName());
         m.putAll(ws.element().fromElement(ws.element().toElement(getConfig()), Map.class));
-        ws.object().session(context.session()).value(m).print(out);
+        ws.object().setSession(context.getSession()).value(m).print(out);
         return this;
     }
 

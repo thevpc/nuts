@@ -88,7 +88,7 @@ public class ShellHelper {
 
         @Override
         public InputStream monitorInputStream(InputStream stream, long length, String name) {
-            return session.getWorkspace().io().monitor().source(stream).length(length).name(name).session(session).create();
+            return session.getWorkspace().io().monitor().source(stream).length(length).name(name).setSession(session).create();
         }
     }
 

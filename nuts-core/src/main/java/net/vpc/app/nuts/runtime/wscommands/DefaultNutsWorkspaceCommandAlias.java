@@ -108,14 +108,14 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
         args = r.toArray(new String[0]);
 
         ws.exec()
-                .command(args)
-                .executorOptions(executorOptions)
-                .directory(options.getDirectory())
-                .failFast()
-                .session(session)
-                .env(options.getEnv())
-                .executionType(options.getExecutionType())
-                .failFast()
+                .addCommand(args)
+                .addExecutorOptions(executorOptions)
+                .setDirectory(options.getDirectory())
+                .setFailFast(true)
+                .setSession(session)
+                .setEnv(options.getEnv())
+                .setExecutionType(options.getExecutionType())
+                .setFailFast(true)
                 .run();
 
         //load all needed dependencies!
@@ -131,14 +131,14 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
         args = r.toArray(new String[0]);
 
         ws.exec()
-                .command(args)
-                .executorOptions(executorOptions)
-                .directory(options.getDirectory())
-                .failFast()
-                .session(session)
-                .env(options.getEnv())
-                .executionType(options.getExecutionType())
-                .failFast()
+                .addCommand(args)
+                .addExecutorOptions(executorOptions)
+                .setDirectory(options.getDirectory())
+                .setFailFast(true)
+                .setSession(session)
+                .setEnv(options.getEnv())
+                .setExecutionType(options.getExecutionType())
+                .setFailFast(true)
                 .run();
 
         //load all needed dependencies!
@@ -153,9 +153,9 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
         if (helpCommand != null && helpCommand.length > 0) {
             try {
                 return ws.exec()
-                        .command(helpCommand)
-                        .failFast(false)
-                        .redirectErrorStream()
+                        .addCommand(helpCommand)
+                        .setFailFast(false)
+                        .setRedirectErrorStream(true)
                         .grabOutputString()
                         .run()
                         .getOutputString();

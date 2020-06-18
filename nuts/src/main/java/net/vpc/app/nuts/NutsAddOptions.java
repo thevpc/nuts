@@ -67,16 +67,6 @@ public class NutsAddOptions implements Serializable {
      * @param session session
      * @return {@code this} instance
      */
-    public NutsAddOptions session(NutsSession session) {
-        return setSession(session);
-    }
-
-    /**
-     * update current session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
     public NutsAddOptions setSession(NutsSession session) {
         this.session = session;
         return this;

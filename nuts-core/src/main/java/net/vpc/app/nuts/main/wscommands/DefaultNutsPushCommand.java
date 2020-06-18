@@ -73,7 +73,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
             if (CoreStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
                 throw new NutsIllegalArgumentException(ws, "Invalid Version " + id.getVersion());
             }
-            NutsDefinition file = ws.fetch().id(id).session(session).content().transitive(false).getResultDefinition();
+            NutsDefinition file = ws.fetch().setId(id).setSession(session).setContent(true).setTransitive(false).getResultDefinition();
             if (file == null) {
                 throw new NutsIllegalArgumentException(ws, "Nothing to push");
             }
@@ -121,7 +121,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                     throw new NutsRepositoryNotFoundException(ws, this.getRepository() + " : " + CoreStringUtils.join("\n", errors));
                 }
             } else {
-                NutsRepository repo = ws.config().getRepository(this.getRepository(), session.copy().transitive());
+                NutsRepository repo = ws.config().getRepository(this.getRepository(), session.copy().setTransitive(true));
                 if (!repo.config().isEnabled()) {
                     throw new NutsIllegalArgumentException(ws, "Repository " + repo.config().getName() + " is disabled");
                 }

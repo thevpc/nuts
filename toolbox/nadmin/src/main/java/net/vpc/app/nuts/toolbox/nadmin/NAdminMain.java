@@ -23,7 +23,7 @@ public class NAdminMain extends NutsApplication {
             );
         }
         Boolean autoSave = true;
-        NutsCommandLine cmdLine = context.commandLine();
+        NutsCommandLine cmdLine = context.getCommandLine();
         boolean empty = true;
         NutsArgument a;
         do {
@@ -46,7 +46,7 @@ public class NAdminMain extends NutsApplication {
                     return;
                 }
                 if (cmdLine.hasNext()) {
-                    PrintStream out = context.session().err();
+                    PrintStream out = context.getSession().err();
                     out.printf("Unexpected %s%n", cmdLine.peek());
                     out.printf("type for more help : nadmin -h%n");
                     throw new NutsExecutionException(context.getWorkspace(), "Unexpected " + cmdLine.peek(), 1);
@@ -55,7 +55,7 @@ public class NAdminMain extends NutsApplication {
             }
         } while (cmdLine.hasNext());
         if (empty) {
-            PrintStream out = context.session().err();
+            PrintStream out = context.getSession().err();
             out.printf("Missing nadmin command%n");
             out.printf("type for more help : nadmin -h%n");
             throw new NutsExecutionException(context.getWorkspace(), "Missing nadmin command", 1);
@@ -64,21 +64,21 @@ public class NAdminMain extends NutsApplication {
 
     @Override
     protected void onInstallApplication(NutsApplicationContext applicationContext) {
-        NutsWorkspace ws = applicationContext.workspace();
+        NutsWorkspace ws = applicationContext.getWorkspace();
         if(applicationContext.getSession().isPlainTrace()){
             applicationContext.getSession().out().println("looking for java installations in default locations...");
             applicationContext.getSession().out().println("you still be able to add another installation manually using 'nadmin add java' command.");
         }
         for (NutsSdkLocation java : ws.config().searchSdkLocations("java", applicationContext.getSession())) {
-            ws.config().addSdk(java,new NutsAddOptions().session(applicationContext.getSession()));
+            ws.config().addSdk(java,new NutsAddOptions().setSession(applicationContext.getSession()));
         }
     }
 
     @Override
     protected void onUpdateApplication(NutsApplicationContext applicationContext) {
-        NutsWorkspace ws = applicationContext.workspace();
+        NutsWorkspace ws = applicationContext.getWorkspace();
         for (NutsSdkLocation java : ws.config().searchSdkLocations("java", applicationContext.getSession())) {
-            ws.config().addSdk(java,new NutsAddOptions().session(applicationContext.getSession()));
+            ws.config().addSdk(java,new NutsAddOptions().setSession(applicationContext.getSession()));
         }
     }
 }

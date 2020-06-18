@@ -137,11 +137,11 @@ public class DataService {
         Map<String, String> row = rows.get(0);
         if (!row.containsKey("allDependencies")) {
             List<NutsId> allDependencies = ws.search()
-                    .basePackage(false)
-                    .inlineDependencies()
+                    .setBasePackage(false)
+                    .setInlineDependencies(true)
                     .addId(id)
-                    .failFast(false)
-                    .content(false)
+                    .setFailFast(false)
+                    .setContent(false)
                     .getResultIds().list();
             Map<String, String> oldRow = new HashMap<>(row);
             row.put("allDependencies", ws.json().value(allDependencies.stream().map(Object::toString).collect(Collectors.toList())).format());

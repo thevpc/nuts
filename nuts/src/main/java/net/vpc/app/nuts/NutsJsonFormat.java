@@ -160,15 +160,6 @@ public interface NutsJsonFormat extends NutsFormat {
      * @return {@code this instance}
      */
     @Override
-    NutsJsonFormat session(NutsSession session);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    @Override
     NutsJsonFormat setSession(NutsSession session);
 
     /**

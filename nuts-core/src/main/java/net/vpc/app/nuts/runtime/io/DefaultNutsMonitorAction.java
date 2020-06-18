@@ -39,11 +39,6 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     }
 
     @Override
-    public NutsMonitorAction session(NutsSession session) {
-        return setSession(session);
-    }
-
-    @Override
     public NutsMonitorAction setSession(NutsSession session) {
         this.session = session;
         return this;

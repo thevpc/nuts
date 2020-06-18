@@ -84,13 +84,6 @@ public interface NutsIODeleteAction {
      * @param session session
      * @return {@code this} instance
      */
-    NutsIODeleteAction session(NutsSession session);
-
-    /**
-     * update session
-     * @param session session
-     * @return {@code this} instance
-     */
     NutsIODeleteAction setSession(NutsSession session);
 
     /**

@@ -78,7 +78,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(path),session);
             long startTime = System.currentTimeMillis();
             try {
-                InputStream in = getWorkspace().io().monitor().source(path).origin(source).session(session).create();
+                InputStream in = getWorkspace().io().monitor().source(path).origin(source).setSession(session).create();
 //                if (LOG.isLoggable(Level.FINEST)) {
 //                    if (CoreIOUtils.isPathHttp(path)) {
 //                        String message = CoreIOUtils.isPathHttp(path) ? "Downloading maven" : "Open local file";
@@ -465,7 +465,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 } else {
                     Path tempFile = getWorkspace().io().createTempFile(content.getFileName().toString(), this);
                     getWorkspace().io().copy()
-                            .session(session)
+                            .setSession(session)
                             .from(content).to(tempFile).safe().run();
                     return new NutsDefaultContent(tempFile, true, false);
                 }
@@ -476,7 +476,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             Path tempFile = getWorkspace().io().createTempFile(new File(p).getName(), this);
             try {
                 getWorkspace().io().copy()
-                        .session(session)
+                        .setSession(session)
                         .from(helper.getStream(id, session)).to(tempFile).validator(new NutsIOCopyValidator() {
                     @Override
                     public void validate(InputStream in) throws IOException {
@@ -490,7 +490,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         } else {
             try {
                 getWorkspace().io().copy()
-                        .session(session)
+                        .setSession(session)
                         .from(helper.getStream(id, session)).to(localPath).validator(new NutsIOCopyValidator() {
                     @Override
                     public void validate(InputStream in) throws IOException {

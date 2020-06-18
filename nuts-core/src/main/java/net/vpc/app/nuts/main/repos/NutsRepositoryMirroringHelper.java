@@ -77,7 +77,7 @@ public class NutsRepositoryMirroringHelper {
                             .getResult();
                     if (c != null) {
                         if (localPath != null) {
-                            getWorkspace().io().copy().session(session)
+                            getWorkspace().io().copy().setSession(session)
                                     .from(c.getPath()).to(localPath).safe().run();
                         } else {
                             return c;
@@ -153,7 +153,7 @@ public class NutsRepositoryMirroringHelper {
         NutsWorkspaceUtils.of(getWorkspace()).checkSession( session);
         NutsId id = cmd.getId();
         String repository = cmd.getRepository();
-        NutsSession nonTransitiveSession = session.copy().transitive(false);
+        NutsSession nonTransitiveSession = session.copy().setTransitive(false);
         NutsDescriptor desc = repo.fetchDescriptor().setId(id).setSession(nonTransitiveSession).setFetchMode(NutsFetchMode.LOCAL).getResult();
         NutsContent local = repo.fetchContent().setId(id).setSession(nonTransitiveSession).setFetchMode(NutsFetchMode.LOCAL).getResult();
         if (local == null) {
@@ -182,7 +182,7 @@ public class NutsRepositoryMirroringHelper {
             }
             repo = all.get(0);
         } else {
-            repo = this.repo.config().getMirror(repository, session.copy().transitive(false));
+            repo = this.repo.config().getMirror(repository, session.copy().setTransitive(false));
         }
         if (repo != null) {
             NutsId effId = getWorkspace().config().createContentFaceId(id.builder().setProperties("").build(), desc)

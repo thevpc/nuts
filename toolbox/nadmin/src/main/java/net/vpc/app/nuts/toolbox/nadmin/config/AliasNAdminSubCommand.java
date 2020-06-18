@@ -110,9 +110,9 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                         })
                         .sorted((x, y) -> x.getName().compareTo(y.getName()))
                         .collect(Collectors.toList());
-                if (context.session().isPlainOut()) {
+                if (context.getSession().isPlainOut()) {
                     context.getWorkspace().props()
-                            .session(context.getSession())
+                            .setSession(context.getSession())
                             .model(
                                     r.stream().collect(
                                             Collectors.toMap(
@@ -126,7 +126,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                                             ))
                             ).println();
                 } else {
-                    context.session().formatObject(
+                    context.getSession().formatObject(
                             r.stream().map(x -> new AliasInfo(x, context.getWorkspace())).collect(Collectors.toList())
                     ).println();
                 }
@@ -136,7 +136,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
             if (cmdLine.isExecMode()) {
                 while (cmdLine.hasNext()) {
                     context.getWorkspace().config().removeCommandAlias(cmdLine.next().toString(), new NutsRemoveOptions()
-                            .session(context.getSession()));
+                            .setSession(context.getSession()));
                 }
                 trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
             }
@@ -175,7 +175,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                                     .setCommand(context.getWorkspace().commandLine().parse(value.command).toArray())
                                     .setName(value.name)
                                     .setExecutorOptions(context.getWorkspace().commandLine().parse(value.executionOptions).toArray()),
-                             new NutsAddOptions().session(context.getSession()));
+                             new NutsAddOptions().setSession(context.getSession()));
                 }
                 trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
             }

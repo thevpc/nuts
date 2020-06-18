@@ -115,7 +115,7 @@ public class SshCommand extends AbstractNshBuiltin {
                     cmd.add(o.nutsCommand);
                 } else {
                     String userHome = null;
-                    sshSession.failFast()
+                    sshSession.setFailFast(true)
                             .setRedirectErrorStream(true)
                             .grabOutputString().exec("echo", "$HOME");
                     userHome = sshSession.getOutputString().trim();
@@ -133,13 +133,13 @@ public class SshCommand extends AbstractNshBuiltin {
                         }
                     }
                     if (!nutsCommandFound) {
-                        Path from = ws.search().id(ws.config().getApiId()).getResultDefinitions().required().getPath();
+                        Path from = ws.search().addId(ws.config().getApiId()).getResultDefinitions().required().getPath();
                         if (from == null) {
                             throw new NutsExecutionException(context.getWorkspace(), "Unable to resolve Nuts Jar File", 2);
                         } else {
                             context.out().printf("Detected nuts.jar location : %s\n", from);
                             String bootApiFileName = "nuts-" + ws.config().getApiId() + ".jar";
-                            sshSession.failFast().copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);
+                            sshSession.setFailFast(true).copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);
                             String javaCmd = null;
                             if (o.nutsJre != null) {
                                 javaCmd = (o.nutsJre + FileUtils.getNativePath("/bin/java"));
@@ -155,7 +155,7 @@ public class SshCommand extends AbstractNshBuiltin {
                 }
             }
             cmd.addAll(o.cmd);
-            sshSession.grabOutputString(false).failFast().exec(cmd);
+            sshSession.grabOutputString(false).setFailFast(true).exec(cmd);
         }
     }
 
