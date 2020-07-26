@@ -4,7 +4,6 @@ import java.io.*;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.ndi.NdiScriptOptions;
-import net.vpc.app.nuts.toolbox.ndi.base.BaseSystemNdi;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,6 +15,7 @@ public class AnyNixNdi extends BaseSystemNdi {
         super(appContext);
     }
 
+    @Override
     public String createNutsScriptCommand(NutsId fnutsId, NdiScriptOptions options) {
         StringBuilder command = new StringBuilder();
         command.append(getExecFileName("nuts")).append(" $NUTS_OPTIONS ");
@@ -28,6 +28,7 @@ public class AnyNixNdi extends BaseSystemNdi {
     }
 
 
+    @Override
     public String toCommentLine(String line) {
         return "# " + line;
     }
@@ -88,7 +89,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                 "#\n" +
                 "NUTS_VERSION='" + wsconfig.getApiVersion() + "'\n" +
                 "NUTS_JAR='" + ws.search()
-                .setSession(context.getSession().copy().silent())
+                .setSession(context.getSession().copy().setSilent())
                 .addId(wsconfig.getApiId()).getResultPaths().required() +
                 "'\n" +
                 "NUTS_WORKSPACE='" + wsconfig.getWorkspaceLocation().toString() + "'\n" +
@@ -153,14 +154,17 @@ public class AnyNixNdi extends BaseSystemNdi {
         }
     }
 
+    @Override
     public String getExecFileName(String name) {
         return name;
     }
 
+    @Override
     protected String getTemplateBodyName() {
         return "linux_template_body.text";
     }
 
+    @Override
     protected String getTemplateNutsName() {
         return "linux_template_nuts.text";
     }

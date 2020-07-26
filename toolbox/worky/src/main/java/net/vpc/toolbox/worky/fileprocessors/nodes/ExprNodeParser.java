@@ -1,7 +1,6 @@
 package net.vpc.toolbox.worky.fileprocessors.nodes;
 
 import net.vpc.common.textsource.log.JTextSourceLog;
-import net.vpc.common.textsource.log.impl.JTextSourceLogImpl;
 
 import java.io.IOException;
 import java.io.Reader;

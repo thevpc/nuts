@@ -1,0 +1,204 @@
+package net.vpc.app.nuts:nuts-installer#0.7.0;
+import java.net.*;
+import java.nio.file.*;
+
+import java.io.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
+def main(String[] args){
+    String metadata=URL("https://raw.github.com/thevpc/nuts/master/meta-data.txt").readString;
+    String apiVersion,location;
+    for(line:metadata.split("\n").trim){
+        if(p"[^#].*" ~ line){
+            var (key,value)=line.splitFirst(':');
+            switch(key.trim){
+                case "apiVersion": apiVersion=value.trim;
+                case "location":location=value.trim;
+                default:{}
+            }
+        }
+    }
+    if(location==null){
+        apiVersion="0.6.0";
+        location=$"https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/$apiVersion/nuts-$apiVersion.jar";
+    }
+    Path nj("nuts.jar");
+    URL(location).write(nj);
+    ProcessBuilder proc("java","-jar",nj.toString,"--gui");
+    proc.inheritIO.start.waitFor;
+    Console2();
+}
+
+
+public class Console2 : JFrame, WindowListener, Runnable {
+
+  private JTextPane textArea;
+
+private Thread stdOutReader;
+
+  private Thread stdErrReader;
+
+  private boolean stopThreads;
+
+  private final PipedInputStream stdOutPin = PipedInputStream();
+
+  private final PipedInputStream stdErrPin = PipedInputStream();
+
+  //Used to print error messages in red
+  private StyledDocument doc;
+  private Style style;
+
+  /** Initializes a new console */
+  constructor() {
+
+    // The area to which the output will be send to
+    textArea = JTextPane();
+    textArea.setEditable(false);
+    textArea.setBackground(Color.WHITE);
+    doc = (StyledDocument) textArea.getDocument();
+    style = doc.addStyle("ConsoleStyle", null);
+    StyleConstants.setFontFamily(style, "MonoSpaced");
+    StyleConstants.setFontSize(style, 12);
+
+    // Main frame to which the text area will be added to, along with scroll bars
+    setTitle("Console");
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    Dimension frameSize = Dimension(screenSize.width / 3, screenSize.height / 4);
+    int x = frameSize.width / 20;
+    int y = frameSize.height / 20;
+    setBounds(x, y, frameSize.width, frameSize.height);
+
+    getContentPane().add(JScrollPane(textArea), BorderLayout.CENTER);
+    setVisible(true);
+
+    addWindowListener(this);
+
+    try {
+      PipedOutputStream stdOutPos = PipedOutputStream(this.stdOutPin);
+      System.setOut(PrintStream(stdOutPos, true));
+    } catch (java.io.IOException io) {
+      textArea.setText("Couldn't redirect STDOUT to this console\n" + io.getMessage());
+    } catch (SecurityException se) {
+      textArea.setText("Couldn't redirect STDOUT to this console\n" + se.getMessage());
+    }
+
+    try {
+      PipedOutputStream stdErrPos = PipedOutputStream(this.stdErrPin);
+      System.setErr(PrintStream(stdErrPos, true));
+    } catch (java.io.IOException io) {
+      textArea.setText("Couldn't redirect STDERR to this console\n" + io.getMessage());
+    } catch (SecurityException se) {
+      textArea.setText("Couldn't redirect STDERR to this console\n" + se.getMessage());
+    }
+
+    stopThreads = false; // Will be set to true at closing time. This will stop the threads
+
+    // Starting two threads to read the PipedInputStreams
+    stdOutReader = Thread(this);
+    stdOutReader.setDaemon(true);
+    stdOutReader.start();
+
+    stdErrReader = Thread(this);
+    stdErrReader.setDaemon(true);
+    stdErrReader.start();
+  }
+
+  /**
+   * Closes the window and stops the "stdOutReader" threads
+   *
+   * @param evt WindowEvent
+   */
+  public synchronized void windowClosed(WindowEvent evt) {
+
+    // Notify the threads that they must stop
+    stopThreads = true;
+    this.notifyAll();
+
+    try {
+      stdOutReader.join(1000);
+      stdOutPin.close();
+    } catch (Exception e) {
+    }
+    try {
+      stdErrReader.join(1000);
+      stdErrPin.close();
+    } catch (Exception e) {
+    }
+  }
+
+  /** Close the window */
+  public synchronized void windowClosing(WindowEvent evt) {
+    setVisible(false);
+    dispose();
+  }
+
+  /** The real work... */
+  public synchronized void run() {
+    try {
+      while (Thread.currentThread() == stdOutReader) {
+        this.wait(100);
+        if (stdOutPin.available() != 0) {
+          String input = this.readLine(stdOutPin);
+          StyleConstants.setForeground(style, Color.black);
+          doc.insertString(doc.getLength(), input, style);
+          // Make sure the last line is always visible
+          textArea.setCaretPosition(textArea.getDocument().getLength());
+        }
+        if (stopThreads) {
+          return;
+        }
+      }
+
+      while (Thread.currentThread() == stdErrReader) {
+        this.wait(100);
+        if (stdErrPin.available() != 0) {
+          String input = this.readLine(stdErrPin);
+          StyleConstants.setForeground(style, Color.red);
+          doc.insertString(doc.getLength(), input, style);
+          // Make sure the last line is always visible
+          textArea.setCaretPosition(textArea.getDocument().getLength());
+        }
+        if (stopThreads) {
+          return;
+        }
+      }
+    } catch (Exception e) {
+      textArea.setText("\nConsole reports an Internal error.");
+      textArea.setText("The error is: " + e);
+    }
+  }
+
+  private /*synchronized*/ String readLine(PipedInputStream in) {
+    String input = "";
+    while(true) {
+      int available = in.available();
+      if (available == 0) {
+        break;
+      }
+      byte b[] = byte[available]();
+      in.read(b);
+      input += String(b, 0, b.length);
+      if(!((!input.endsWith("\n") && !input.endsWith("\r\n") && !stopThreads))){
+        break;
+      }
+    };
+    return input;
+  }
+
+  //These methods must implement these inherited abstract methods from WindowListener
+  void windowOpened(WindowEvent e) {}
+
+  void windowIconified(WindowEvent e) {}
+
+  void windowDeiconified(WindowEvent e) {}
+
+  void windowActivated(WindowEvent e) {}
+
+  void windowDeactivated(WindowEvent e) {}
+
+}

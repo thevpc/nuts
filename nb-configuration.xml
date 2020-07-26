@@ -6,6 +6,12 @@
     therefore it is assumed to be part of version control checkout.
     Without this configuration present, some functionality in the IDE may be limited or fail altogether.
     -->
+    <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+        <word>https</word>
+        <word>misconfiguration</word>
+        <word>uninstall</word>
+        <word>urls</word>
+    </spellchecker-wordlist>
     <properties xmlns="http://www.netbeans.org/ns/maven-properties-data/1">
         <!--
         Properties that influence various parts of the IDE, especially code formatting and the like. 
@@ -14,12 +20,6 @@
         Any value defined here will override the pom.xml file value but is only applicable to the current project.
         -->
         <netbeans.hint.licensePath>${project.basedir}/licenseheader.txt</netbeans.hint.licensePath>
-        <netbeans.hint.jdkPlatform>default_platform</netbeans.hint.jdkPlatform>
+        <netbeans.hint.jdkPlatform>JDK_1.8</netbeans.hint.jdkPlatform>
     </properties>
-    <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
-        <word>https</word>
-        <word>misconfiguration</word>
-        <word>uninstall</word>
-        <word>urls</word>
-    </spellchecker-wordlist>
 </project-shared-configuration>

@@ -64,6 +64,14 @@ public interface NutsUpdateStatisticsCommand extends NutsWorkspaceCommand {
     NutsUpdateStatisticsCommand addPaths(Collection<Path> all);
 
     /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsUpdateStatisticsCommand copySession();
+
+    /**
      * update session
      *
      * @param session session

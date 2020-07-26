@@ -571,7 +571,7 @@ public class CoreNutsUtils {
     }
 
     public static NutsSession silent(NutsSession session) {
-        return session.isTrace() ? session.copy().silent() : session;
+        return session.isTrace() ? session.copy().setSilent() : session;
     }
 
 //    public static void wconfigToBconfig(NutsWorkspaceConfig wconfig, NutsBootConfig bconfig) {

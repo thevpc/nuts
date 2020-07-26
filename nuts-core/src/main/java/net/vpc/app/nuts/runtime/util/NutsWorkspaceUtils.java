@@ -98,7 +98,7 @@ public class NutsWorkspaceUtils {
 
     public NutsSession validateSilentSession(NutsSession session) {
         if (session == null) {
-            session = ws.createSession().silent();
+            session = ws.createSession().setSilent();
             return session;
         } else {
             return CoreNutsUtils.silent(session);

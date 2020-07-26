@@ -137,6 +137,14 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
     String[] getRemovePermissions();
 
     /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsUpdateUserCommand copySession();
+
+    /**
      * update session
      *
      * @param session session

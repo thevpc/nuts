@@ -50,7 +50,7 @@ public enum NutsInstallStatus {
     INCLUDED,
 
     /**
-     * this is a meta value including equivalent to (INSTALLED_DEPENDENCY or INSTALLED).
+     * this is a meta value equivalent to (INSTALLED or INCLUDED).
      * This Value should not be used but as a filter.
      */
     INSTALLED_OR_INCLUDED;

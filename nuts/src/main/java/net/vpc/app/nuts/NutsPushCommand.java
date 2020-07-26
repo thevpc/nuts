@@ -314,6 +314,14 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
     String getRepository();
 
     /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsPushCommand copySession();
+
+    /**
      * update session
      *
      * @param session session

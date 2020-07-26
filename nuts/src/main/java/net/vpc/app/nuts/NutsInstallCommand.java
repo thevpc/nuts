@@ -261,6 +261,14 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
     NutsResultList<NutsDefinition> getResult();
 
     /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsInstallCommand copySession();
+
+    /**
      * update session
      *
      * @param session session

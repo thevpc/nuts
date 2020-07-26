@@ -162,7 +162,6 @@ public final class Nuts {
      */
     public static void runWorkspace(String... args) throws NutsExecutionException {
         //long startTime = System.currentTimeMillis();
-        System.out.println("isPreferConsole="+PrivateNutsUtils.isPreferConsole(args));
         new NutsBootWorkspace(args).runWorkspace();
     }
 

@@ -5,7 +5,7 @@ import net.vpc.common.diff.jar.Diff;
 import net.vpc.common.diff.jar.DiffItem;
 import net.vpc.common.diff.jar.DiffResult;
 import net.vpc.common.strings.StringUtils;
-import net.vpc.common.textsource.log.impl.JTextSourceLogImpl;
+import net.vpc.common.textsource.log.impl.DefaultJTextSourceLog;
 import net.vpc.toolbox.worky.config.ProjectConfig;
 import net.vpc.toolbox.worky.config.RepositoryAddress;
 import net.vpc.toolbox.worky.config.WorkspaceConfig;
@@ -615,7 +615,7 @@ public class WorkspaceService {
 
     public void processFile0(Path path, NutsApplicationContext appContext) {
         if (Files.isRegularFile(path)) {
-            JTextSourceLogImpl log = new JTextSourceLogImpl("MarkdownPreprocessor", appContext.getSession().out());
+            DefaultJTextSourceLog log = new DefaultJTextSourceLog("MarkdownPreprocessor", appContext.getSession().out());
             try {
                 if (path.toString().endsWith(".pre")) {
                     new TextProcessor().processRegularFile(path, log);

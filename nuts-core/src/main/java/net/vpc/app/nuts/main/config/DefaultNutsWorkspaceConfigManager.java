@@ -1318,7 +1318,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                             .setOptional(false)
                             .addScope(NutsDependencyScopePattern.RUN)
                             .setContent(true)
-                            .setSession(ws.createSession().silent())
+                            .setSession(ws.createSession().setSilent())
                             .setFailFast(false)
                             .getResultDefinition();
                     if (def != null) {

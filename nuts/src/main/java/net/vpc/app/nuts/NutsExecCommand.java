@@ -425,6 +425,14 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecutionException getResultException();
 
     /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsExecCommand copySession();
+
+    /**
      * update session
      *
      * @param session session

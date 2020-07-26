@@ -879,7 +879,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--not-installed": {
                 cmdLine.skip();
                 if(enabled) {
-                    this.notInstalled();
+                    this.setNotInstalled();
                 }
                 return true;
             }
@@ -913,50 +913,56 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         }
     }
 
+    @Override
     public boolean isPrintResult() {
         return printResult;
     }
 
+    @Override
     public NutsSearchCommand printResult() {
         return printResult(true);
     }
 
+    @Override
     public NutsSearchCommand printResult(boolean printResult) {
         return setPrintResult(printResult);
     }
 
+    @Override
     public NutsSearchCommand setPrintResult(boolean printResult) {
         this.printResult = printResult;
         return this;
     }
 
+    @Override
     public NutsInstallStatus getInstallStatus() {
         return installStatus;
     }
 
+    @Override
     public NutsSearchCommand setInstallStatus(NutsInstallStatus installStatus) {
         this.installStatus = installStatus;
         return this;
     }
 
-    public NutsSearchCommand installStatus(NutsInstallStatus installStatus) {
-        return setInstallStatus(installStatus);
-    }
-
+    @Override
     public NutsSearchCommand setInstalled() {
-        return installStatus(NutsInstallStatus.INSTALLED);
+        return setInstallStatus(NutsInstallStatus.INSTALLED);
     }
 
+    @Override
     public NutsSearchCommand setIncluded() {
-        return installStatus(NutsInstallStatus.INCLUDED);
+        return setInstallStatus(NutsInstallStatus.INCLUDED);
     }
 
+    @Override
     public NutsSearchCommand setInstalledOrIncluded() {
         return setInstallStatus(NutsInstallStatus.INSTALLED_OR_INCLUDED);
     }
 
-    public NutsSearchCommand notInstalled() {
-        return installStatus(NutsInstallStatus.NOT_INSTALLED);
+    @Override
+    public NutsSearchCommand setNotInstalled() {
+        return setInstallStatus(NutsInstallStatus.NOT_INSTALLED);
     }
 
 

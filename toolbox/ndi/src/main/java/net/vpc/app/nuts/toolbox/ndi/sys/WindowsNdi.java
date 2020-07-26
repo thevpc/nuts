@@ -26,14 +26,17 @@ public class WindowsNdi extends BaseSystemNdi {
         return ":: " + line;
     }
 
+    @Override
     public String getExecFileName(String name) {
         return name + ".cmd";
     }
 
+    @Override
     protected String getTemplateBodyName() {
         return "windows_template_body.text";
     }
 
+    @Override
     protected String getTemplateNutsName() {
         return "windows_template_nuts.text";
     }
@@ -133,7 +136,7 @@ public class WindowsNdi extends BaseSystemNdi {
                 "@ECHO OFF" + CRLF +
                 "SET \"NUTS_VERSION=" + wsconfig.getApiVersion() + "\"" + CRLF +
                 "SET \"NUTS_JAR=" + ws.search()
-                .setSession(context.getSession().copy().silent())
+                .setSession(context.getSession().copy().setSilent())
                 .addId(wsconfig.getApiId()).getResultPaths().required() +
                 "\"" + CRLF +
                 "SET \"NUTS_WORKSPACE=" + wsconfig.getWorkspaceLocation().toString() + "\"" + CRLF +

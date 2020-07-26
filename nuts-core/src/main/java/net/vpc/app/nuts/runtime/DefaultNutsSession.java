@@ -345,11 +345,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsSession outputFormat(NutsOutputFormat outputFormat) {
-        return setOutputFormat(outputFormat);
-    }
-
-    @Override
     public NutsSession setOutputFormat(NutsOutputFormat outputFormat) {
         if (outputFormat == null) {
             outputFormat = NutsOutputFormat.PLAIN;
@@ -449,7 +444,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--xml": {
                     a = cmdLine.next();
                     if (enabled) {
-                        this.outputFormat(NutsOutputFormat.XML);
+                        this.setOutputFormat(NutsOutputFormat.XML);
                         this.addOutputFormatOptions(a.getStringValue(""));
                     }
                     return true;
@@ -645,7 +640,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
 
     @Override
-    public NutsSession silent() {
+    public NutsSession setSilent() {
         return setTrace(false);
     }
 
@@ -680,10 +675,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return setConfirm(ask ? NutsConfirmationMode.ASK : null);
     }
 
-    @Override
-    public NutsSession ask(boolean value) {
-        return setAsk(value);
-    }
 
     @Override
     public NutsSession setYes(boolean value) {
@@ -717,7 +708,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public NutsSession ask() {
-        return ask(true);
+        return setAsk(true);
     }
 
     @Override

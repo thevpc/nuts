@@ -1,15 +1,15 @@
-# You can be maven and you can be nuts
-Is there any package manager for Java(TM) applications? You can google for this question and you will find that many have 
-queries this on blogs and forums. In most cases responses point to maven and gradle, the tremendous build tools. However, 
+# You'd still be Maven, yet you gonna be Nuts
+Is there any package manager for Java(TM) applications? You can google for it and you will find that many have 
+queried this on blogs and forums. In most cases responses point to maven and gradle, the tremendous build tools. However, 
 both maven and gradle are build tools, while helping build packages they lack of deployment features. They bundle every 
 dependency in every package (think of wars, ears and standalone jars). They do not handles installation or upgrading.
-apache ivy, as well, while competing with maven build tool does not provide more than transitive dependency management.   
+Apache ivy, as well, while competing with maven build tool does not provide more than transitive dependency management.   
 The main idea behind a package manager is the automation of installation, update, configuration and removal of programs 
 or libraries in a coherent manner with the help of a database that manages binaries and metadata. maven, to consider one, 
 sticks to the build process, an goes no further.
 
 You may also ask, "Why ever, do we need a package manager for Java(TM) applications". Okkay, let's take some 
-example of Java(TM) applications. How can we install apache netbeans IDE ? The proper way is the browse to the editor's 
+example of Java(TM) applications. How can we install apache netbeans IDE ? The proper way is to browse to the editor's 
 website, select the proper mirror if applicable, download the archive, uncompress it, chmod the main binary (i'm a linux 
 guy) and adjust PATH environment variable to point to this binary; Quite a pain. What do we do to update it now? Hopefully, 
 the IDE has a solid plugin architecture and an in-app update/upgrade tool that will help the process (in a gui manner of 
@@ -28,14 +28,15 @@ with the highest level of simplicity, configurability and integrability. Install
 be as painful as using a custom Docker image or a complicated Dockerfile or even a custom apache tomcat bundle. 
 
 When we recall that Java(TM) is the one language that has the more versatile number of libraries, frameworks and tools, 
-i find it annoying not to have a decent package manager to make the leap and provide facilities i find prime in other 
+I find it annoying not to have a decent package manager to make the leap and provide facilities I find prime in other 
 languages and platforms (pip/python, npm/nodejs/javascript) and most of linux distribution (zypper/opsensuse, dnf/redhat 
 apt-get/debian/ubuntu)
 
-Hence i'm introducing here a humble attempt to provide a tiny (300ko) yet powerful package manager for Java(TM) 
+Hence I'm introducing here a humble attempt to provide a tiny (300ko) yet powerful package manager for Java(TM) 
 applications (but not only) that should handle jar files seamlessly (with little or no modification) and that comes with 
 a set of portable tools that makes this management at a higher level. I'm not talking about redefining the wheel. 
-I'm aware that many tools such as maven, are already very good at what they do, i just needed to make the leap for deployments. 
+I'm aware that many tools such as maven, are already very good at what they do, I just needed to make the leap for deployments. 
+You will be able to deploy your applications without bundling all of their dependencies : **Nuts** will take care of that. 
 
 So you'd still be maven, yet you gonna be **Nuts**.
   
@@ -84,16 +85,16 @@ repositories. Actually a fresh installation of **Nuts** is configured with maven
 to thousands of installable artifacts.
 
 At some point, you may need to uninstall an artifact and that's to undo the artifact installation.  
-Installation will help you choose between uninstalling binaries only and keeping data/config file or remove permanently 
+Installation will help you choose between uninstalling binaries only and keeping data/config files or remove permanently 
 all of the artifact files. In all ways, uninstalling will not affect other artifacts that use the same dependencies if ever. 
  
 ### Feature rich Toolset
 **Nuts** is intended to be used either by human users or by robots and other applications. It comes with portable,
 feature rich toolset, a versatile library and an a handy parsable result. 
 
-**Nuts** is mainly a commandline program that helps installing, uninstalling,searching, updating and running artifacts. 
-To help desktop integration, **Nuts** installs by default a set of other companion tools as wekk such as nsh (a portable 
-bash-compatible implementation), nadmin (an administration tool for **Nuts** and configure users, authorizations, repositories, 
+**Nuts** is mainly a commandline program that helps installing, uninstalling, searching, updating and running artifacts. 
+To help desktop integration, **Nuts** installs by default a set of other companion tools such as nsh (a portable 
+bash-compatible implementation), nadmin (an administration tool for **Nuts** to configure users, authorizations, repositories, 
 ...) and ndi (desktop integration) to help creating application shortcuts and scripts;
 
 **nsh** brings the bash  facilities to all environments (windows included) in a very portable manner. Besides it integrates
@@ -117,12 +118,62 @@ Roaming is also supported, so that a workspaces can be copied/moved across machi
 **Nuts** can also be embedded as a library in you application. This enables you to wire classes on the fly by its network 
 dependency-aware classloading mechanisms. The library allows as well building solid and well integrated applications, 
 mainly console applications. Indeed, it comes with rich outputs that support automatic formatting to json, xml, table, 
-tree and plain texts. It handles as well standard File Systems layouts; XDG Base Directory Specification si implemented 
+tree and plain texts. It handles as well standard File Systems layouts; XDG Base Directory Specification is implemented 
 for linux and MacOS. A compatible one is also implemented in Windows systems. And of course, it helps seamlessly install,
 update and remove events. 
 
 ## Nuts ? Really ?
 In every palace you will find the wizard and the fool, the **Maven** and the **Nuts**; There's no 
 exception in the java kingdom! If you do prefer acronyms here is another reason : **Nuts** stands for Network 
-Updatable Things Services. It should ne abe to facilitate things deployment and update over the 
-wire where things resolve here to any piece of software depending (or not) on other piece of sotfware.
+Updatable Things Services. It should be able to facilitate things deployment and update over the 
+wire where things resolve here to any piece of software depending (or not) on other piece of software.
+
+## Let's start the journey
+we start by opening anew terminal (termm, konsole or whatever you prefer) then download **Nuts** using this command : 
+On linux/MacOS system we issue :
+```
+wget https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.0/nuts-0.7.0.jar
+```
+
+Let's check that java is installed :
+```
+java --version
+```
+
+Now we run **Nuts**
+```
+java -jar nuts-0.7.0.jar -y -z
+```
+We used the flags -y to auto-confirm and -z to ignore cached binaries. These flags are not required. We use them here to make installation work in all cases.
+Installation may last several minutes as it will download all required dependencies, companions and tools.
+
+You should then see this message
+
+```
+Welcome to nuts. Yeah, it is working...
+```
+
+Nuts is well installed, just restart your terminal.
+
+Now we will install apache tomcat. So in your terminal issue :
+
+```
+nuts install tomcat
+nuts tomcat start --set-port 9090
+```
+The first two commands will install tomcat helper tool that will download latest version of tomcat and and configure it to 9090 port.
+The last command will start tomcat.
+Let's check tomcat status now
+```
+nuts tomcat status
+```
+
+Now we will do the same with derby database. We will install it and run it.
+```
+nuts install derby
+nuts derby start
+```
+
+As you can see, simple commands are all you need to download, install, configure and run tomcat or derby or any application that is deployed in the maven repository.
+
+So please visit [**Nuts**](https://github.com/thevpc/nuts) website for more information.
