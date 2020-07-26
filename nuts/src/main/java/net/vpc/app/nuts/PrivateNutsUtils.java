@@ -82,13 +82,9 @@ final class PrivateNutsUtils {
             return true;
         }
         String workspaceName = workspace.trim();
-        if (workspaceName.matches("[^/\\\\]+")
+        return workspaceName.matches("[^/\\\\]+")
                 && !workspaceName.equals(".")
-                && !workspaceName.equals("..")) {
-            return true;
-        } else {
-            return false;
-        }
+                && !workspaceName.equals("..");
     }
 
     public static String resolveValidWorkspaceName(String workspace) {

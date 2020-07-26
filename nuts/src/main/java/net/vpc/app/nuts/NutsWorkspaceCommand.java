@@ -44,6 +44,13 @@ public interface NutsWorkspaceCommand extends NutsConfigurable {
      * @return session
      */
     NutsSession getSession();
+    
+    /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    NutsWorkspaceCommand copySession();
 
     /**
      * update session

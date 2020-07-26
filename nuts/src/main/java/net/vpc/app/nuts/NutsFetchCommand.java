@@ -460,6 +460,14 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand addRepository(String value);
 
     /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsFetchCommand copySession();
+
+    /**
      * update session
      *
      * @param session session

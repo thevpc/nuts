@@ -119,7 +119,7 @@ public interface NutsSession extends NutsConfigurable {
      *
      * @return {@code this} instance
      */
-    NutsSession silent();
+    NutsSession setSilent();
 
     /**
      * true if force flag is armed. some operations may require user
@@ -148,14 +148,6 @@ public interface NutsSession extends NutsConfigurable {
      * @return {@code this} instance
      */
     NutsSession ask();
-
-    /**
-     * equivalent to {@code setAsk(enable)}
-     *
-     * @param enable new value
-     * @return {@code this} instance
-     */
-    NutsSession ask(boolean enable);
 
     /**
      * equivalent to {@code setConfirm(enable?ASK:null)}
@@ -261,14 +253,6 @@ public interface NutsSession extends NutsConfigurable {
      * @return effective trace output format
      */
     NutsOutputFormat getOutputFormat();
-
-    /**
-     * set output format
-     *
-     * @param outputFormat output format
-     * @return {@code this} instance
-     */
-    NutsSession outputFormat(NutsOutputFormat outputFormat);
 
     /**
      * set output format

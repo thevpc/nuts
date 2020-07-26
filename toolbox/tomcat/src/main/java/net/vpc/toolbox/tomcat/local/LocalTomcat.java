@@ -156,11 +156,11 @@ public class LocalTomcat {
         }
         Helper x = new Helper();
         while (args.hasNext()) {
-            if ((a = args.nextBoolean("-a","--apps")) != null) {
+            if ((a = args.nextBoolean("-a", "--apps")) != null) {
                 x.apps = a.getBooleanValue();
-            } else if ((a = args.nextBoolean("-d","--domains")) != null) {
+            } else if ((a = args.nextBoolean("-d", "--domains")) != null) {
                 x.domains = a.getBooleanValue();
-            } else if ((a = args.nextBoolean("-i","--instances")) != null) {
+            } else if ((a = args.nextBoolean("-i", "--instances")) != null) {
                 x.instances = a.getBooleanValue();
             } else if (context.configureFirst(args)) {
 
@@ -168,11 +168,11 @@ public class LocalTomcat {
                 args.unexpectedArgument();
             }
         }
-        if(x.instances){
+        if (x.instances) {
             for (LocalTomcatConfigService tomcatConfig : listConfig()) {
                 getContext().getSession().out().println(tomcatConfig.getName());
             }
-        }else {
+        } else {
             LocalTomcatConfigService s = nextLocalTomcatConfigService(args, NutsWorkspaceOpenMode.OPEN_EXISTING);
             x.print(s);
         }
@@ -205,24 +205,24 @@ public class LocalTomcat {
                             break;
                         }
                         case "long": {
-                            out.printf("##%s## ==v==%s ==HOME:== %s ==BASE:== %s ==CMD:== " +
-                                            context.getWorkspace().commandLine().setValue(
-                                                    context.getCommandLine().parseLine(jpsResult.getArgsLine())
-                                            ).format()
-                                            + "\n",
+                            out.printf("##%s## ==v==%s ==HOME:== %s ==BASE:== %s ==CMD:== "
+                                    + context.getWorkspace().commandLine().setValue(
+                                            context.getCommandLine().parseLine(jpsResult.getArgsLine())
+                                    ).format()
+                                    + "\n",
                                     jpsResult.getPid(),
                                     jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(Paths.get(jpsResult.getHome())),
-                                    jpsResult.getHome()
-                                    , jpsResult.getBase()
-                                    , jpsResult.getArgsLine()
+                                    jpsResult.getHome(),
+                                    jpsResult.getBase(),
+                                    jpsResult.getArgsLine()
                             );
                             break;
                         }
                         default: {
                             out.printf("##%s## ==v==%s ==BASE:== %s\n",
-                                    jpsResult.getPid()
-                                    , jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(Paths.get(jpsResult.getHome()))
-                                    , jpsResult.getBase()
+                                    jpsResult.getPid(),
+                                    jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(Paths.get(jpsResult.getHome())),
+                                    jpsResult.getBase()
                             );
                             break;
                         }
@@ -276,6 +276,11 @@ public class LocalTomcat {
                 case "app": {
                     LocalTomcatAppConfigService s = nextLocalTomcatAppConfigService(args, autoCreate);
                     addApp(s, args, autoCreate);
+                    return;
+                }
+                default: {
+                    args.pushBack(a);
+                    args.setCommandName("tomcat --local add").unexpectedArgument("expected instance|domain|app");
                     return;
                 }
             }
@@ -343,47 +348,47 @@ public class LocalTomcat {
     public void addDomain(LocalTomcatDomainConfigService c, NutsCommandLine args, NutsWorkspaceOpenMode autoCreate) {
         NutsArgument a;
 //        c = nextLocalTomcatConfigService(args, NutsWorkspaceOpenMode.OPEN_EXISTING);
-        boolean changed=false;
+        boolean changed = false;
         while (args.hasNext()) {
             if ((a = args.nextString("--log")) != null) {
                 c.getConfig().setLogFile(a.getStringValue());
-                changed=true;
+                changed = true;
             } else if (context.configureFirst(args)) {
                 //
             } else {
                 args.setCommandName("tomcat --local add").unexpectedArgument();
             }
         }
-        if(changed) {
+        if (changed) {
             c.getTomcat().save();
         }
     }
 
     public void addApp(LocalTomcatAppConfigService c, NutsCommandLine args, NutsWorkspaceOpenMode autoCreate) {
         NutsArgument a;
-        boolean changed=false;
+        boolean changed = false;
         while (args.hasNext()) {
             if ((a = args.nextString("--source")) != null) {
                 String value = a.getStringValue();
                 c.getConfig().setSourceFilePath(value);
-                changed=true;
+                changed = true;
             } else if ((a = args.nextString("--deploy")) != null) {
                 String value = a.getStringValue();
                 c.getConfig().setDeployName(value);
-                changed=true;
+                changed = true;
             } else if ((a = args.nextString("--domain")) != null) {
                 String value = a.getStringValue();
                 //check that domain exists!!
                 c.getTomcat().getDomain(value, NutsWorkspaceOpenMode.OPEN_EXISTING);
                 c.getConfig().setDomain(value);
-                changed=true;
+                changed = true;
             } else if (context.configureFirst(args)) {
                 //
             } else {
                 args.setCommandName("tomcat --local add").unexpectedArgument();
             }
         }
-        if(changed) {
+        if (changed) {
             c.getTomcat().save();
         }
     }
@@ -639,7 +644,7 @@ public class LocalTomcat {
 
     public void showPort(NutsCommandLine args) {
         args.setCommandName("tomcat --local port");
-        LocalTomcatConfigService s = nextLocalTomcatConfigService(args, NutsWorkspaceOpenMode.OPEN_EXISTING);
+        LocalTomcatConfigService c = nextLocalTomcatConfigService(args, NutsWorkspaceOpenMode.OPEN_EXISTING);
         NutsArgument a;
         boolean redirect = false;
 //        boolean shutdown = false;
@@ -647,6 +652,7 @@ public class LocalTomcat {
         boolean setValue = false;
         String type = "http";
         int newValue = -1;
+        List<Runnable> runnables = new ArrayList<>();
         while (args.hasNext()) {
             if ((a = args.nextBoolean("--redirect")) != null) {
                 redirect = a.getBooleanValue();
@@ -655,8 +661,23 @@ public class LocalTomcat {
             } else if ((a = args.nextBoolean("--ajp")) != null) {
                 type = "ajp";
             } else if ((a = args.nextString("--set")) != null) {
-                newValue = a.getInt();
+                newValue = a.getArgumentValue().getInt();
                 setValue = true;
+            } else if ((a = args.nextString("--set-port")) != null) {
+                int port = a.getArgumentValue().getInt();
+                runnables.add(() -> c.setHttpConnectorPort(false, port));
+            } else if ((a = args.nextString("--set-redirect-port")) != null) {
+                int port = a.getArgumentValue().getInt();
+                runnables.add(() -> c.setHttpConnectorPort(true, port));
+            } else if ((a = args.nextString("--set-shutdown-port")) != null) {
+                int port = a.getArgumentValue().getInt();
+                runnables.add(() -> c.setShutdownPort(port));
+            } else if ((a = args.nextString("--set-ajp-port")) != null) {
+                int port = a.getArgumentValue().getInt();
+                runnables.add(() -> c.setAjpConnectorPort(false, port));
+            } else if ((a = args.nextString("--set-redirect-ajp-port")) != null) {
+                int port = a.getArgumentValue().getInt();
+                runnables.add(() -> c.setAjpConnectorPort(true, port));
             } else if (context.configureFirst(args)) {
                 //
             } else {
@@ -664,48 +685,37 @@ public class LocalTomcat {
             }
         }
         if (setValue) {
-            Integer port = null;
-            if (newValue <= 0) {
-                port = null;
-            } else {
-                port = newValue;
-            }
+            runnables.forEach(Runnable::run);
+            int port = newValue;
             switch (type) {
                 case "shutdown": {
-                    if (port == null) {
-                        port = 8005;
-                    }
-                    s.setShutdownPort(port);
+                    c.setShutdownPort(port);
                     break;
                 }
                 case "ajp": {
-                    if (port == null) {
-                        port = redirect ? 8443 : 8009;
-                    }
-                    s.setAjpConnectorPort(redirect, port);
+                    c.setAjpConnectorPort(redirect, port);
                     break;
                 }
                 case "http": {
-                    if (port == null) {
-                        port = redirect ? 8080 : 8443;
-                    }
-                    s.setHttpConnectorPort(redirect, port);
+                    c.setHttpConnectorPort(redirect, port);
                     break;
                 }
             }
+        } else if (runnables.size() > 0) {
+            runnables.forEach(Runnable::run);
         } else {
             int port = 8080;
             switch (type) {
                 case "shutdown": {
-                    port = s.getShutdownPort();
+                    port = c.getShutdownPort();
                     break;
                 }
                 case "ajp": {
-                    port = s.getAjpConnectorPort(redirect);
+                    port = c.getAjpConnectorPort(redirect);
                     break;
                 }
                 case "http": {
-                    port = s.getHttpConnectorPort(redirect);
+                    port = c.getHttpConnectorPort(redirect);
                     break;
                 }
             }
@@ -804,12 +814,28 @@ public class LocalTomcat {
         String instance = null;
         LocalTomcatConfigService c = nextLocalTomcatConfigService(args, NutsWorkspaceOpenMode.OPEN_EXISTING);
         List<String> apps = new ArrayList<>();
+        List<Runnable> runnables = new ArrayList<>();
         while (args.hasNext()) {
             NutsArgument a = null;
             if ((a = args.nextBoolean("--delete-out-log")) != null) {
                 deleteLog = a.getBooleanValue();
             } else if ((a = args.nextString("--deploy")) != null) {
                 apps.add(a.getStringValue());
+            } else if ((a = args.nextString("--set-port")) != null) {
+                int port = a.getArgumentValue().getInt();
+                runnables.add(() -> c.setHttpConnectorPort(false, port));
+            } else if ((a = args.nextString("--set-redirect-port")) != null) {
+                int port = a.getArgumentValue().getInt();
+                runnables.add(() -> c.setHttpConnectorPort(true, port));
+            } else if ((a = args.nextString("--set-shutdown-port")) != null) {
+                int port = a.getArgumentValue().getInt();
+                runnables.add(() -> c.setShutdownPort(port));
+            } else if ((a = args.nextString("--set-ajp-port")) != null) {
+                int port = a.getArgumentValue().getInt();
+                runnables.add(() -> c.setAjpConnectorPort(false, port));
+            } else if ((a = args.nextString("--set-redirect-ajp-port")) != null) {
+                int port = a.getArgumentValue().getInt();
+                runnables.add(() -> c.setAjpConnectorPort(true, port));
             } else if ((a = args.nextNonOption()) != null) {
                 if (instance == null) {
                     instance = a.getString();
@@ -819,8 +845,10 @@ public class LocalTomcat {
             } else if (context.configureFirst(args)) {
                 //
             } else {
+                args.setCommandName("tomcat restart").unexpectedArgument();
             }
         }
+        runnables.forEach(Runnable::run);
         if (shutdown) {
             c.restart(apps.toArray(new String[0]), deleteLog);
         } else {
@@ -856,11 +884,11 @@ public class LocalTomcat {
 
     public LocalTomcatConfigService openTomcatConfig(String name, NutsWorkspaceOpenMode autoCreate) {
         LocalTomcatConfigService t = new LocalTomcatConfigService(name, this);
-        if(autoCreate==null){
-            if(!t.existsConfig()){
+        if (autoCreate == null) {
+            if (!t.existsConfig()) {
                 return null;
-            }else{
-                autoCreate=NutsWorkspaceOpenMode.OPEN_EXISTING;
+            } else {
+                autoCreate = NutsWorkspaceOpenMode.OPEN_EXISTING;
             }
         }
         t.open(autoCreate);
@@ -869,11 +897,11 @@ public class LocalTomcat {
 
     public LocalTomcatConfigService openTomcatConfig(Path file, NutsWorkspaceOpenMode autoCreate) {
         LocalTomcatConfigService t = new LocalTomcatConfigService(file, this);
-        if(autoCreate==null){
-            if(!t.existsConfig()){
+        if (autoCreate == null) {
+            if (!t.existsConfig()) {
                 return null;
-            }else{
-                autoCreate=NutsWorkspaceOpenMode.OPEN_EXISTING;
+            } else {
+                autoCreate = NutsWorkspaceOpenMode.OPEN_EXISTING;
             }
         }
         t.open(autoCreate);
@@ -913,7 +941,6 @@ public class LocalTomcat {
         String[] strings = TomcatUtils.splitInstanceAppPreferApp(name);
         return openTomcatConfig(strings[0], autoCreate).getDomain(strings[1], NutsWorkspaceOpenMode.OPEN_EXISTING);
     }
-
 
     public NutsApplicationContext getContext() {
         return context;

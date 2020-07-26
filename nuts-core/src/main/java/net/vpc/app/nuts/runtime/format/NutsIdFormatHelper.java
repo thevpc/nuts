@@ -519,7 +519,7 @@ public class NutsIdFormatHelper {
             try {
                 if (this.installStatus==NutsInstallStatus.NOT_INSTALLED || def == null) {
                     this.defFetched = ws.fetch().setId(id).setSession(
-                            session.silent()
+                            session.setSilent()
                     ).setOffline()
                             .setContent(true)
                             .setOptional(false)

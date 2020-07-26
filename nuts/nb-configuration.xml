@@ -14,11 +14,12 @@
         Any value defined here will override the pom.xml file value but is only applicable to the current project.
         -->
         <org-netbeans-modules-javascript2-requirejs.enabled>true</org-netbeans-modules-javascript2-requirejs.enabled>
-        <netbeans.hint.jdkPlatform>default_platform</netbeans.hint.jdkPlatform>
+        <netbeans.hint.jdkPlatform>JDK_1.8</netbeans.hint.jdkPlatform>
         <netbeans.hint.licensePath>${project.basedir}/licenseheader.txt</netbeans.hint.licensePath>
     </properties>
     <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
         <word>api</word>
+        <word>boolean</word>
         <word>classpath</word>
         <word>config</word>
         <word>gradle</word>

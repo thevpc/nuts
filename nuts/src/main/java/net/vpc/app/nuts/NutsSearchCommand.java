@@ -956,6 +956,14 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     //    
 
     /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsSearchCommand copySession();
+
+    /**
      * update session
      *
      * @param session session
@@ -1151,12 +1159,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsSearchCommand setInstallStatus(NutsInstallStatus installStatus);
 
-    /**
-     * search for non packages with the given {@code installStatus}
-     * @param installStatus new status
-     * @return {@code this} instance
-     */
-    NutsSearchCommand installStatus(NutsInstallStatus installStatus);
 
     /**
      * search for non installed packages
@@ -1180,5 +1182,5 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * search for non installed packages
      * @return {@code this} instance
      */
-    NutsSearchCommand notInstalled();
+    NutsSearchCommand setNotInstalled();
 }

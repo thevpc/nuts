@@ -5,7 +5,7 @@ import net.vpc.common.diff.jar.Diff;
 import net.vpc.common.diff.jar.DiffItem;
 import net.vpc.common.diff.jar.DiffResult;
 import net.vpc.common.strings.StringUtils;
-import net.vpc.common.textsource.log.impl.JTextSourceLogImpl;
+import net.vpc.common.textsource.log.impl.DefaultJTextSourceLog;
 import net.vpc.toolbox.worky.config.ProjectConfig;
 import net.vpc.toolbox.worky.config.RepositoryAddress;
 import net.vpc.toolbox.worky.config.WorkspaceConfig;
@@ -261,7 +261,7 @@ public class WorkspaceService {
 
         List<ProjectService> all = findProjectServices();
         all.sort((x, y) -> x.getConfig().getId().compareTo(y.getConfig().getId()));
-        for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext(); ) {
+        for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext();) {
             ProjectService projectService = iterator.next();
             if (!matches(projectService.getConfig().getId(), filters)) {
                 iterator.remove();
@@ -318,7 +318,7 @@ public class WorkspaceService {
         }
 
         Collections.sort(ddd);
-        for (Iterator<DataRow> iterator = ddd.iterator(); iterator.hasNext(); ) {
+        for (Iterator<DataRow> iterator = ddd.iterator(); iterator.hasNext();) {
             DataRow d = iterator.next();
             switch (d.status) {
                 case "invalid": {
@@ -615,15 +615,15 @@ public class WorkspaceService {
 
     public void processFile0(Path path, NutsApplicationContext appContext) {
         if (Files.isRegularFile(path)) {
-            JTextSourceLogImpl log = new JTextSourceLogImpl("MarkdownPreprocessor", appContext.getSession().out());
+            DefaultJTextSourceLog log = new DefaultJTextSourceLog("MarkdownPreprocessor", appContext.getSession().out());
             try {
                 if (path.toString().endsWith(".pre")) {
-                    new TextProcessor().processRegularFile(path, log);
-                }else {
-                    log.error("X000",null,"unsupported file : "+path.toString(),null);
+                    new TextProcessor().processRegularFile(path, ".", log);
+                } else {
+                    log.error("X000", null, "unsupported file : " + path.toString(), null);
                 }
             } catch (Exception e) {
-                log.error("X000",null,"unexpected error : "+e.toString(),null);
+                log.error("X000", null, "unexpected error : " + e.toString(), null);
             }
         }
     }

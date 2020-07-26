@@ -236,7 +236,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     public NutsWorkspaceExtension wireExtension(NutsId id, NutsFetchCommand options) {
         NutsSession session = NutsWorkspaceUtils.of(ws).validateSession(options.getSession());
-        NutsSession searchSession = session.silent();
+        NutsSession searchSession = session.setSilent();
         if (id == null) {
             throw new NutsIllegalArgumentException(ws, "Extension Id could not be null");
         }

@@ -2,25 +2,26 @@ package net.vpc.app.nuts:nuts-installer#0.7.0;
 import java.net.*;
 import java.nio.file.*;
 
-def main(String[] args){
+fun main(String[] args){
+    Console2();
     String metadata=URL("https://raw.github.com/thevpc/nuts/master/meta-data.txt").readString;
-    String apiVersion,location;
+    String apiVersion,jarLocation;
     for(line:metadata.split("\n").trim){
         if(p"[^#].*" ~ line){
-            var (key,value)=line.splitFirst(':');
+            var (key,value)=line.splitFirst(':|=');
             switch(key.trim){
                 case "apiVersion": apiVersion=value.trim;
-                case "location":location=value.trim;
+                case "jarLocation":jarLocation=value.trim;
                 default:{}
             }
         }
     }
-    if(location==null){
+    if(jarLocation==null){
         apiVersion="0.6.0";
-        location=$"https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/$apiVersion/nuts-$apiVersion.jar";
+        jarLocation=$"https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/$apiVersion/nuts-$apiVersion.jar";
     }
     Path nj("nuts.jar");
-    URL(location).write(nj);
+    URL(jarLocation).write(nj);
     ProcessBuilder proc("java","-jar",nj.toString,"--gui");
     proc.inheritIO.start.waitFor;
 }

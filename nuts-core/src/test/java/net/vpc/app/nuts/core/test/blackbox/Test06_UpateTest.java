@@ -199,7 +199,7 @@ public class Test06_UpateTest {
         try {
             Path zipFilePath = ws.io().createTempFile(".zip");
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
-            try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, null)) {
+            try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader)null)) {
 
                 Path fileInsideZipPath = fs.getPath("/META-INF/maven/net.vpc.app.nuts/nuts/pom.properties");
                 if (Files.exists(fileInsideZipPath)) {
@@ -237,7 +237,7 @@ public class Test06_UpateTest {
         try {
             Path zipFilePath = ws.io().createTempFile(".zip");
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
-            try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, null)) {
+            try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader)null)) {
 
                 Path fileInsideZipPath = fs.getPath("/META-INF/maven/net.vpc.app.nuts/nuts-core/pom.properties");
                 if (Files.exists(fileInsideZipPath)) {

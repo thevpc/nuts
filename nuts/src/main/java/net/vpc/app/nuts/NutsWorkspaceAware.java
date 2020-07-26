@@ -29,12 +29,10 @@
  */
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.NutsWorkspace;
-
 /**
  * classes that implement this class will have their method {@link #setWorkspace(NutsWorkspace)}
- * called upon its creation (by factory) with a non <tt>null</tt> argument to <strong>initialize</strong>.
- * They <strong>may</strong> accept a call with a <tt>null</tt>
+ * called upon its creation (by factory) with a non {@code null} argument to <strong>initialize</strong>.
+ * They <strong>may</strong> accept a call with a {@code null}
  * argument later to <strong>dispose</strong> the instance.
  * @author vpc
  */

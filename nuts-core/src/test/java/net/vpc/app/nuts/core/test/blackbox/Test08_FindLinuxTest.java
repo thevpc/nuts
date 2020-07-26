@@ -59,7 +59,7 @@ public class Test08_FindLinuxTest {
                 "--yes",
                 "--skip-companions");
 
-        NutsResultList<NutsId> resultIds = ws.search().setSession(ws.createSession().silent()).addId("net.vpc.scholar.doovos.kernel:doovos-kernel-core")
+        NutsResultList<NutsId> resultIds = ws.search().setSession(ws.createSession().setSilent()).addId("net.vpc.scholar.doovos.kernel:doovos-kernel-core")
                 .setLatest(true).setInlineDependencies(true).getResultIds();
         TestUtils.println(resultIds.list());
     }

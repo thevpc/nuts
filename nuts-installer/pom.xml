@@ -21,9 +21,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.vpc.hadra-lang</groupId>
-            <artifactId>hadra-lang-stdlib</artifactId>
-            <version>1.0.0</version> <!--updated-->
+            <groupId>net.hl</groupId>
+            <artifactId>hadra-lang</artifactId>
+            <version>0.1.0</version> <!--updated-->
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>${project.groupId}</groupId>-->
@@ -34,9 +34,9 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>net.vpc.hadra-lang</groupId>
+                <groupId>net.hl.build</groupId>
                 <artifactId>hadra-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>0.1.0</version>
                 <configuration>
                 </configuration>
                 <executions>

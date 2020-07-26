@@ -11,6 +11,7 @@
     <modules>
         <module>nuts</module>
         <module>nuts-core</module>
+<!--        <module>nuts-installer</module>-->
 
         <!--<module>toolbox/nuts-clown</module>-->
         <module>lib/nuts-lib-template</module>

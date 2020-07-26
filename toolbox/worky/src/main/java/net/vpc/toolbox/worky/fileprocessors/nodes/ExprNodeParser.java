@@ -1,7 +1,6 @@
 package net.vpc.toolbox.worky.fileprocessors.nodes;
 
 import net.vpc.common.textsource.log.JTextSourceLog;
-import net.vpc.common.textsource.log.impl.JTextSourceLogImpl;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -11,8 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExprNodeParser {
+
     StreamTokenizer st;
     JTextSourceLog log;
+    String workingDir;
     private List<ExprToken> tokens = new ArrayList<>();
 
 //    public static void main(String[] args) {
@@ -24,14 +25,15 @@ public class ExprNodeParser {
 //            }
 //        }
 //    }
-    public ExprNodeParser(String r, JTextSourceLog log) {
-        this(new StringReader(r), log);
+    public ExprNodeParser(String r, JTextSourceLog log, String workingDir) {
+        this(new StringReader(r), log, workingDir);
     }
 
-    public ExprNodeParser(Reader r, JTextSourceLog log) {
+    public ExprNodeParser(Reader r, JTextSourceLog log, String workingDir) {
         st = new StreamTokenizer(r);
         st.ordinaryChar('\n');
         this.log = log;
+        this.workingDir = workingDir;
     }
 
     private ExprNode parseExpression() {
@@ -97,20 +99,20 @@ public class ExprNodeParser {
     private boolean parseColonOrNewLine(boolean required) {
         ExprToken w = nextToken();
         if (w != null && (w.ttype == ';' || w.ttype == '\n')) {
-            while(true){
-                w=peekToken();
+            while (true) {
+                w = peekToken();
                 if (w != null && (w.ttype == ';' || w.ttype == '\n')) {
                     nextToken();
-                }else{
+                } else {
                     break;
                 }
             }
             return true;
         } else {
-            if(required) {
+            if (required) {
                 log.error("X000", "expression", "expected ';' or new line, encountered '" + w + "'", null);
             }
-            if(w!=null) {
+            if (w != null) {
                 pushBack(w);
             }
             return false;
@@ -226,4 +228,9 @@ public class ExprNodeParser {
         }
 
     }
+
+    public String getWorkingDir() {
+        return workingDir;
+    }
+
 }

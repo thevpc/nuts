@@ -1,5 +1,6 @@
 package net.vpc.toolbox.worky.fileprocessors.nodes;
 
+import java.io.File;
 import net.vpc.common.textsource.JTextSource;
 import net.vpc.common.textsource.JTextSourceFactory;
 import net.vpc.common.textsource.log.JTextSourceLog;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ExprEvaluator {
+
     private static final char[] HEXARR = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     private Map<String, Object> context = new HashMap<>();
 
@@ -59,7 +61,7 @@ public class ExprEvaluator {
         return HEXARR[(nibble & 0xF)];
     }
 
-    public Object eval(ExprNode node, JTextSourceLog log) {
+    public Object eval(ExprNode node, JTextSourceLog log, String workingDir) {
         switch (node.getClass().getSimpleName()) {
             case "ExprNodeLiteral": {
                 return (((ExprNodeLiteral) node).getValue());
@@ -73,77 +75,76 @@ public class ExprEvaluator {
                     case ";": {
                         Object a = "";
                         for (ExprNode arg : f.getArgs()) {
-                            a = eval(arg, log);
+                            a = eval(arg, log, workingDir);
                         }
                         return a;
                     }
                     case "set": {
                         ExprNode[] args = f.getArgs();
                         if (args.length != 2) {
-                            throw new IllegalStateException(f.getName()+" : invalid arguments count");
+                            throw new IllegalStateException(f.getName() + " : invalid arguments count");
                         }
                         if (!(args[0] instanceof ExprNodeVar)) {
-                            throw new IllegalStateException(f.getName()+" : first argument should be a var name");
+                            throw new IllegalStateException(f.getName() + " : first argument should be a var name");
                         }
-                        context.put(((ExprNodeVar) args[0]).getName(), eval(args[1], log));
+                        context.put(((ExprNodeVar) args[0]).getName(), eval(args[1], log, workingDir));
                         return "";
                     }
                     case "include": {
                         ExprNode[] args = f.getArgs();
                         if (args.length != 1) {
-                            throw new IllegalStateException(f.getName()+" : invalid arguments count");
+                            throw new IllegalStateException(f.getName() + " : invalid arguments count");
                         }
-                        String pathString = (String) eval(args[0], log);
-                        Path path = Paths.get(pathString);
-                        JTextSource source = JTextSourceFactory.fromFile(path);
+                        String pathString = (String) eval(args[0], log, workingDir);
+                        JTextSource source = FileProcessorUtils.createSource(pathString, workingDir);
                         if (source == null) {
-                            throw new IllegalStateException(f.getName()+" : file not found : " + pathString);
+                            throw new IllegalStateException(f.getName() + " : file not found : " + pathString);
                         }
-                        ExprNodeParser exprNodeParser = new ExprNodeParser(source.text(), log);
+                        ExprNodeParser exprNodeParser = new ExprNodeParser(source.text(), log, FileProcessorUtils.extractWorkDir(pathString, workingDir));
                         ExprNode n = exprNodeParser.parseDocument();
                         if (n != null) {
-                            return eval(n, log);
+                            return eval(n, log, exprNodeParser.getWorkingDir());
                         }
                         return "";
                     }
                     case "string": {
                         ExprNode[] args = f.getArgs();
                         if (args.length != 1) {
-                            throw new IllegalStateException(f.getName()+" : invalid arguments count");
+                            throw new IllegalStateException(f.getName() + " : invalid arguments count");
                         }
-                        String str = (String) eval(args[0], log);
+                        String str = (String) eval(args[0], log, workingDir);
                         return "\"" + escapeString(str) + "\"";
                     }
                     case "processString": {
                         ExprNode[] args = f.getArgs();
                         if (args.length != 1) {
-                            throw new IllegalStateException(f.getName()+" : invalid arguments count");
+                            throw new IllegalStateException(f.getName() + " : invalid arguments count");
                         }
-                        String str = (String) eval(args[0], log);
+                        String str = (String) eval(args[0], log, workingDir);
                         return FileProcessorUtils.processSource(
-                                JTextSourceFactory.fromString(str, "<Text>")
-                                , this, log);
+                                JTextSourceFactory.fromString(str, "<Text>"), workingDir,
+                                this, log);
                     }
                     case "processFile": {
                         ExprNode[] args = f.getArgs();
                         if (args.length != 1) {
-                            throw new IllegalStateException(f.getName()+" : invalid arguments count");
+                            throw new IllegalStateException(f.getName() + " : invalid arguments count");
                         }
-                        String str = (String) eval(args[0], log);
-                        JTextSource jTextSource = JTextSourceFactory.fromURI(str);
-                        return FileProcessorUtils.processSource(jTextSource,this, log);
+                        String str = (String) eval(args[0], log, workingDir);
+                        JTextSource jTextSource = JTextSourceFactory.fromURI(FileProcessorUtils.toAbsolute(str, workingDir));
+                        return FileProcessorUtils.processSource(jTextSource, FileProcessorUtils.extractWorkDir(str, workingDir), this, log);
                     }
                     case "loadFile": {
                         ExprNode[] args = f.getArgs();
                         if (args.length != 1) {
-                            throw new IllegalStateException(f.getName()+" : invalid arguments count");
+                            throw new IllegalStateException(f.getName() + " : invalid arguments count");
                         }
-                        String str = (String) eval(args[0], log);
-                        JTextSource jTextSource = JTextSourceFactory.fromURI(str);
+                        String str = (String) eval(args[0], log, workingDir);
+                        JTextSource jTextSource = JTextSourceFactory.fromURI(FileProcessorUtils.toAbsolute(str, workingDir));
                         return jTextSource.text();
                     }
                     default: {
-                        throw new IllegalStateException(f.getName()+" : invalid statement " + node);
+                        throw new IllegalStateException(f.getName() + " : invalid statement " + node);
                     }
                 }
             }

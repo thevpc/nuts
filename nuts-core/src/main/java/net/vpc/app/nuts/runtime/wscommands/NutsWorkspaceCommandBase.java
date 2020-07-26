@@ -7,7 +7,6 @@ package net.vpc.app.nuts.runtime.wscommands;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.NutsConfigurableHelper;
-import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.NutsCommandLine;
 
 /**
@@ -39,9 +38,10 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
     }
 
     //@Override
+    @Override
     public NutsSession getSession() {
-        if(session==null){
-            session=ws.createSession();
+        if (session == null) {
+            session = ws.createSession();
         }
         return session;
     }
@@ -54,8 +54,17 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
      */
     @Override
     public T setSession(NutsSession session) {
-        this.session=session;
+        this.session = session;
         return (T) this;
+    }
+
+    @Override
+    public T copySession() {
+        NutsSession s = getSession();
+        if (s != null) {
+            s = s.copy();
+        }
+        return setSession(s);
     }
 
     protected void invalidateResult() {
@@ -88,7 +97,8 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...)
+     * }
      * to help return a more specific return type;
      *
      * @param args argument to configure with

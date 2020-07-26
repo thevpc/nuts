@@ -479,7 +479,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             for (NutsDependency nutsDependency : d) {
                 if (dependencyFilter == null || dependencyFilter.accept(null, nutsDependency, session)) {
                     NutsDefinition def2 = ws.search()
-                            .addId(nutsDependency.getId()).setSession(session.copy().silent().setProperty("monitor-allowed", false)).setEffective(true)
+                            .addId(nutsDependency.getId()).setSession(session.copy().setSilent().setProperty("monitor-allowed", false)).setEffective(true)
                             .setContent(shouldIncludeContent(this))
                             .setLatest(true).getResultDefinitions().first();
                     if (def2 != null) {

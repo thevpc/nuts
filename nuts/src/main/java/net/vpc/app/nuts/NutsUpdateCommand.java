@@ -225,6 +225,14 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     NutsUpdateCommand clearScopes();
 
     /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsUpdateCommand copySession();
+
+    /**
      * update session
      *
      * @param session session
