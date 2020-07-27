@@ -53,3 +53,10 @@ toolbox/worky/worky.iml
 /nutsc/build/
 /nutsc/dist/
 /nuts-installer/target/
+/toolbox/derby-box/target/
+/toolbox/mysql-box/target/
+/toolbox/tomcat-box/target/
+/toolbox/nmysql/target/
+/toolbox/ntomcat/target/
+/toolbox/nmvn/target/
+/toolbox/nderby/target/
