@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class LocalMysqlConfig {
 
-    private String archiveFolder;
+    private String backupFolder;
     private String runningFolder;
     private String logFile;
     private String mysqlCommand;
@@ -24,12 +24,12 @@ public class LocalMysqlConfig {
         return this;
     }
 
-    public String getArchiveFolder() {
-        return archiveFolder;
+    public String getBackupFolder() {
+        return backupFolder;
     }
 
-    public LocalMysqlConfig setArchiveFolder(String archiveFolder) {
-        this.archiveFolder = archiveFolder;
+    public LocalMysqlConfig setBackupFolder(String archiveFolder) {
+        this.backupFolder = archiveFolder;
         return this;
     }
 

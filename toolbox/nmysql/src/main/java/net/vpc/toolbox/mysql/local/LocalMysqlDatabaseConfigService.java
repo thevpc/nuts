@@ -101,6 +101,9 @@ public class LocalMysqlDatabaseConfigService {
             if (!path.endsWith(".sql.zip") && !path.endsWith(".zip") && !path.endsWith(".sql")) {
                 path = path + ".sql.zip";
             }
+            String password = getConfig().getPassword();
+            char[] credentials = context.getWorkspace().security().getCredentials(password.toCharArray());
+            password=new String(credentials);
             if (path.endsWith(".sql")) {
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("==[%s]== create archive %s%n", getDatabaseName(), path);
@@ -111,7 +114,7 @@ public class LocalMysqlDatabaseConfigService {
                 )
                         .setEnv("CMD_FILE", path)
                         .setEnv("CMD_USER", getConfig().getUser())
-                        .setEnv("CMD_PWD", getConfig().getPassword())
+                        .setEnv("CMD_PWD", password)
                         .setEnv("CMD_DB", getDatabaseName())
                         .grabOutputString()
                         .setRedirectErrorStream(true)
@@ -130,12 +133,15 @@ public class LocalMysqlDatabaseConfigService {
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("==[%s]== create archive %s%n", getDatabaseName(), path);
                 }
+//                ProcessBuilder2 p = new ProcessBuilder2().setCommand("sh", "-c",
+//                        "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
+//                )
                 ProcessBuilder2 p = new ProcessBuilder2().setCommand("sh", "-c",
-                        "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
+                        "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p"+password+" --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
                 )
                         .setEnv("CMD_FILE", path)
                         .setEnv("CMD_USER", getConfig().getUser())
-                        .setEnv("CMD_PWD", getConfig().getPassword())
+                        .setEnv("CMD_PWD", password)
                         .setEnv("CMD_DB", getDatabaseName())
                         //                    .inheritIO()
                         .grabOutputString()

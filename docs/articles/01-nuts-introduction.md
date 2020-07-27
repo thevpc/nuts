@@ -158,8 +158,8 @@ Nuts is well installed, just restart your terminal.
 Now we will install apache tomcat. So in your terminal issue :
 
 ```
-nuts install tomcat
-nuts tomcat start --set-port 9090
+nuts install ntomcat
+nuts ntomcat start --set-port 9090
 ```
 The first two commands will install tomcat helper tool that will download latest version of tomcat and and configure it to 9090 port.
 The last command will start tomcat.
@@ -170,8 +170,8 @@ nuts tomcat status
 
 Now we will do the same with derby database. We will install it and run it.
 ```
-nuts install derby
-nuts derby start
+nuts install nderby
+nuts nderby start
 ```
 
 As you can see, simple commands are all you need to download, install, configure and run tomcat or derby or any application that is deployed in the maven repository.

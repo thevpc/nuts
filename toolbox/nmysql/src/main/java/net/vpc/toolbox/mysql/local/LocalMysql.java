@@ -175,7 +175,7 @@ public class LocalMysql {
                         c_startup_wait_time = commandLine.nextString().getArgumentValue().getInt();
                         break;
                     }
-                    case "--archive-folder": {
+                    case "--backup-folder": {
                         c_archive_folder = commandLine.nextString().getStringValue();
                         break;
                     }
@@ -281,7 +281,7 @@ public class LocalMysql {
                 }
                 if (c_archive_folder != null) {
                     someUpdates = true;
-                    c.getConfig().setArchiveFolder(c_archive_folder);
+                    c.getConfig().setBackupFolder(c_archive_folder);
                 }
                 if (c_log_file != null) {
                     someUpdates = true;

@@ -1,0 +1,10 @@
+##SYNOPSIS:##
+==nmvn== **\<command-options\>**
+manage local maven configurations
+
+==nmvn== [**--version** <MVN_VERSION>] [{{args...}}]
+
+##EXAMPLES:##
+
+##nmvn## clean install
+   maven clean install
