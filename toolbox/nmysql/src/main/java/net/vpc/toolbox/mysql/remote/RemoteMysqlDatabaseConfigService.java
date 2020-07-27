@@ -69,8 +69,8 @@ public class RemoteMysqlDatabaseConfigService {
             context.getSession().out().printf("==[%s]== remote restore%n", name);
         }
         String remoteTempPath = execRemoteNuts(
-                "net.vpc.app.nuts.toolbox:mysql",
-                "restore",
+                "net.vpc.app.nuts.toolbox:nmysql",
+                "backup",
                 "--name",
                 config.getRemoteName(),
                 ""
@@ -81,8 +81,8 @@ public class RemoteMysqlDatabaseConfigService {
         }
         context.getWorkspace().exec()
                 .addCommand("nsh",
+                        "--bot",
                         "cp",
-                        "--no-color",
                         remoteFullFilePath, localPath).setSession(context.getSession())
                 .setRedirectErrorStream(true)
                 .grabOutputString()
@@ -119,7 +119,7 @@ public class RemoteMysqlDatabaseConfigService {
         RemoteMysqlDatabaseConfig cconfig = getConfig();
         String remoteTempPath = null;
         final SshAddress sshAddress = new SshAddress(prepareSshServer(cconfig.getServer()));
-        final String searchResultString = execRemoteNuts("search --no-color --json net.vpc.app.nuts.toolbox:mysql --display temp-folder --installed --first");
+        final String searchResultString = execRemoteNuts("search --no-color --json net.vpc.app.nuts.toolbox:nmysql --display temp-folder --installed --first");
         List<Map> result = this.context.getWorkspace().json().parse(new StringReader(searchResultString), List.class);
         if (result.isEmpty()) {
             throw new IllegalArgumentException("Mysql is not installed on the remote machine");
@@ -135,8 +135,8 @@ public class RemoteMysqlDatabaseConfigService {
         context.getWorkspace().exec()
                 .addCommand(
                         "nsh",
+                        "--bot",
                         "cp",
-                        "--no-color",
                         localPath,
                         remoteFullFilePath
                 ).setSession(context.getSession())
@@ -148,7 +148,7 @@ public class RemoteMysqlDatabaseConfigService {
             context.getSession().out().printf("==[%s]== remote restore %s%n", name, remoteFilePath);
         }
         execRemoteNuts(
-                "net.vpc.app.nuts.toolbox:mysql",
+                "net.vpc.app.nuts.toolbox:nmysql",
                 "restore",
                 "--name",
                 config.getRemoteName(),
@@ -171,9 +171,10 @@ public class RemoteMysqlDatabaseConfigService {
     public String execRemoteNuts(String... cmd) {
         NutsExecCommand b = context.getWorkspace().exec()
                 .setSession(context.getSession());
-        b.addCommand("nsh", "-c", "ssh");
-        b.addCommand("--nuts");
+        b.addCommand("nsh", "--bot", "-c", "ssh");
         b.addCommand(this.config.getServer());
+        b.addCommand("nuts");
+        b.addCommand("--bot");
         b.addCommand(cmd);
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("[[EXEC]] %s%n", b.format()

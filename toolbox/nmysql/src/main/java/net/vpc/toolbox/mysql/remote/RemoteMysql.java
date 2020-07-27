@@ -178,6 +178,14 @@ public class RemoteMysql {
             name = new AtName("");
         }
         if (commandLine.isExecMode()) {
+            if(localName==null && remoteName==null){
+                localName=name;
+                remoteName=name;
+            }else if(localName==null){
+                localName=remoteName;
+            }else if(remoteName==null){
+                remoteName=localName;
+            }
             RemoteMysqlConfigService c = loadOrCreateMysqlConfig(name.getConfigName());
             boolean overrideExisting = false;
             if (add) {
