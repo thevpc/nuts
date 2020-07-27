@@ -65,7 +65,7 @@ final class PrivateNutsArgumentsParser {
      * nuts options
      *
      * @param bootArguments input arguments to parse
-     * @param options       options instance to fill
+     * @param options options instance to fill
      */
     public static void parseNutsArguments(String[] bootArguments, NutsWorkspaceOptionsBuilder options) {
         List<String> showError = new ArrayList<>();
@@ -499,6 +499,20 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
+                    case "--bot": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            if (a.getBooleanValue()) {
+                                options.setTerminalMode(NutsTerminalMode.FILTERED);
+                                options.setProgressOptions("none");
+                                options.setConfirm(NutsConfirmationMode.ERROR);
+                                options.setTrace(false);
+                                options.setDebug(false);
+                                options.setGui(false);
+                            }
+                        }
+                        break;
+                    }
                     case "-R":
                     case "--read-only": {
                         a = cmdLine.nextBoolean();
@@ -520,6 +534,15 @@ final class PrivateNutsArgumentsParser {
                         a = cmdLine.nextString();
                         if (enabled) {
                             options.setProgressOptions(a.getStringValue());
+                        }
+                        break;
+                    }
+                    case "--no-progress": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            if (a.getBooleanValue()) {
+                                options.setProgressOptions("none");
+                            }
                         }
                         break;
                     }
@@ -582,7 +605,7 @@ final class PrivateNutsArgumentsParser {
                     case "--log-file-count":
                     case "--log-inherited": {
                         if (enabled) {
-                            if(logConfig==null) {
+                            if (logConfig == null) {
                                 logConfig = new NutsLogConfig();
                             }
                         }
@@ -726,8 +749,7 @@ final class PrivateNutsArgumentsParser {
                         break;
                     }
                     case "-a":
-                    case "--anywhere":
-                    {
+                    case "--anywhere": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setFetchStrategy(NutsFetchStrategy.ANYWHERE);
@@ -744,24 +766,21 @@ final class PrivateNutsArgumentsParser {
 //                        break;
 //                    }
                     case "-F":
-                    case "--offline":
-                    {
+                    case "--offline": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setFetchStrategy(NutsFetchStrategy.OFFLINE);
                         }
                         break;
                     }
-                    case "--online":
-                    {
+                    case "--online": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setFetchStrategy(NutsFetchStrategy.ONLINE);
                         }
                         break;
                     }
-                    case "--remote":
-                    {
+                    case "--remote": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setFetchStrategy(NutsFetchStrategy.REMOTE);
@@ -798,15 +817,14 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--user-cmd":
-                        {
+                    case "--user-cmd": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setExecutionType(NutsExecutionType.USER_CMD);
                         }
                         break;
                     }
-                    case "--root-cmd":{
+                    case "--root-cmd": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setExecutionType(NutsExecutionType.ROOT_CMD);
@@ -879,8 +897,10 @@ final class PrivateNutsArgumentsParser {
                     case "--reset": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            options.setReset(true);
-                            options.setRecover(false);
+                            if (a.getBooleanValue()) {
+                                options.setReset(true);
+                                options.setRecover(false);
+                            }
                         } else {
                             cmdLine.skipAll();
                         }
@@ -890,8 +910,10 @@ final class PrivateNutsArgumentsParser {
                     case "--recover": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            options.setReset(false);
-                            options.setRecover(true);
+                            if (a.getBooleanValue()) {
+                                options.setReset(false);
+                                options.setRecover(true);
+                            }
                         }
                         break;
                     }
