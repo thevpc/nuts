@@ -201,7 +201,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         }
         extensionManager.onInitializeWorkspace(bootClassLoader);
         List<DefaultNutsWorkspaceExtensionManager.RegInfo> regInfos = extensionManager.buildRegInfos();
-        for (Iterator<DefaultNutsWorkspaceExtensionManager.RegInfo> iterator = regInfos.iterator(); iterator.hasNext(); ) {
+        for (Iterator<DefaultNutsWorkspaceExtensionManager.RegInfo> iterator = regInfos.iterator(); iterator.hasNext();) {
             DefaultNutsWorkspaceExtensionManager.RegInfo regInfo = iterator.next();
             switch (regInfo.getExtensionPointType().getName()) {
                 case "net.vpc.app.nuts.NutsSystemTerminalBase":
@@ -223,7 +223,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsSession session = createSession();
         ((DefaultNutsLogger) LOG).resumeTerminal();
 
-        for (Iterator<DefaultNutsWorkspaceExtensionManager.RegInfo> iterator = regInfos.iterator(); iterator.hasNext(); ) {
+        for (Iterator<DefaultNutsWorkspaceExtensionManager.RegInfo> iterator = regInfos.iterator(); iterator.hasNext();) {
             DefaultNutsWorkspaceExtensionManager.RegInfo regInfo = iterator.next();
             extensionManager.registerType(regInfo);
             iterator.remove();
@@ -300,7 +300,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     configManager.setBootRuntimeId(cfg.getRuntimeId(), updateOptions);
                     configManager.setBootRuntimeDependencies(cfg.getRuntimeDependencies(), updateOptions);
                     configManager.setBootRepositories(cfg.getBootRepositories(), updateOptions);
-                    install().installed().getResult();
+                    try {
+                        install().installed().getResult();
+                    } catch (Exception ex) {
+                        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Reinstall artifacts failed : " + ex.getMessage());
+                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("Reinstall artifacts failed : " + ex.getMessage(), ex);
+                    }
                 }
             }
             if (configManager.getRepositoryRefs(session).length == 0) {
@@ -335,8 +340,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
             LOG.with().level(Level.FINE).verb(NutsLogVerb.SUCCESS)
                     .formatted().log("==Nuts== Workspace loaded in @@{0}@@",
-                    CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis())
-            );
+                            CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis())
+                    );
 
             if (CoreCommonUtils.getSysBoolNutsProperty("perf", false)) {
                 session.out().printf("==Nuts== Workspace loaded in [[%s]]%n",
@@ -377,10 +382,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     //.setFetchMode(NutsFetchMode.LOCAL)
                     .setSession(session.copy().copy().yes())
                     .run();
-            if (
-                    desc.getId().getLongNameId().equals(config().getApiId().getLongNameId())
-                            || desc.getId().getLongNameId().equals(config().getRuntimeId().getLongNameId())
-            ) {
+            if (desc.getId().getLongNameId().equals(config().getApiId().getLongNameId())
+                    || desc.getId().getLongNameId().equals(config().getRuntimeId().getLongNameId())) {
                 getInstalledRepository().install(desc.getId(), session, null);
             } else {
                 getInstalledRepository().install(desc.getId(), session, config().getRuntimeId());
@@ -455,9 +458,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     @Override
     public String[] getCompanionIds() {
         return new String[]{
-                "net.vpc.app.nuts.toolbox:nsh",
-                "net.vpc.app.nuts.toolbox:nadmin",
-                "net.vpc.app.nuts.toolbox:ndi", //            "net.vpc.app.nuts.toolbox:mvn"
+            "net.vpc.app.nuts.toolbox:nsh",
+            "net.vpc.app.nuts.toolbox:nadmin",
+            "net.vpc.app.nuts.toolbox:ndi", //            "net.vpc.app.nuts.toolbox:mvn"
         };
     }
 
@@ -837,8 +840,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                             .setFetchMode(NutsFetchMode.LOCAL)
                             .setSession(session)
                             .getResult()
-                            .hasNext()
-                    ) {
+                            .hasNext()) {
                         NutsDefinition dd = search().addId(dependency.getId()).setContent(true).setLatest(true).getResultDefinitions().first();
                         if (dd != null) {
                             getInstalledRepository().deploy()
@@ -847,8 +849,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                     //.setFetchMode(NutsFetchMode.LOCAL)
                                     .setSession(session)
                                     .setDescriptor(dd.getDescriptor())
-                                    .run()
-                            ;
+                                    .run();
                             getInstalledRepository().install(dd, executionContext.getDefinition().getId(), session);
                         }
                     }
@@ -955,7 +956,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
         }
     }
-
 
     @Override
     public NutsExecutionContext createNutsExecutionContext(
@@ -1123,7 +1123,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     public NutsInstalledRepository getInstalledRepository() {
         return installedRepository;
     }
-
 
     @Override
     public void deployBoot(NutsSession session, NutsId id, boolean withDependencies) {

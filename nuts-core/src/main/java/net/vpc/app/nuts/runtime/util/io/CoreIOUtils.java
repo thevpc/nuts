@@ -93,12 +93,12 @@ public class CoreIOUtils {
     };
     private static final char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
 
-    public static PrintWriter toPrintWriter(Writer writer,NutsWorkspace ws) {
-        if(writer==null){
+    public static PrintWriter toPrintWriter(Writer writer, NutsWorkspace ws) {
+        if (writer == null) {
             return null;
         }
-        if(writer instanceof ExtendedFormatAware){
-            if(writer instanceof PrintWriter){
+        if (writer instanceof ExtendedFormatAware) {
+            if (writer instanceof PrintWriter) {
                 return (PrintWriter) writer;
             }
         }
@@ -107,8 +107,8 @@ public class CoreIOUtils {
         return s;
     }
 
-    public static PrintWriter toPrintWriter(OutputStream writer,NutsWorkspace ws) {
-        if(writer==null){
+    public static PrintWriter toPrintWriter(OutputStream writer, NutsWorkspace ws) {
+        if (writer == null) {
             return null;
         }
         ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer);
@@ -116,16 +116,16 @@ public class CoreIOUtils {
         return s;
     }
 
-    public static PrintStream toPrintStream(Writer writer,NutsWorkspace ws) {
-        if(writer==null){
+    public static PrintStream toPrintStream(Writer writer, NutsWorkspace ws) {
+        if (writer == null) {
             return null;
         }
         SimpleWriterOutputStream s = new SimpleWriterOutputStream(writer);
         NutsWorkspaceUtils.of(ws).setWorkspace(s);
-        return toPrintStream(s,ws);
+        return toPrintStream(s, ws);
     }
 
-    public static PrintStream toPrintStream(OutputStream os,NutsWorkspace ws) {
+    public static PrintStream toPrintStream(OutputStream os, NutsWorkspace ws) {
         if (os == null) {
             return null;
         }
@@ -134,13 +134,13 @@ public class CoreIOUtils {
             NutsWorkspaceUtils.of(ws).setWorkspace(y);
             return y;
         }
-        PrintStreamExt s = new PrintStreamExt(os,false);
+        PrintStreamExt s = new PrintStreamExt(os, false);
         NutsWorkspaceUtils.of(ws).setWorkspace(s);
         return s;
     }
 
     public static OutputStream convertOutputStream(OutputStream out, NutsTerminalMode expected, NutsWorkspace ws) {
-        ExtendedFormatAware a=convertOutputStreamToExtendedFormatAware(out,expected,ws);
+        ExtendedFormatAware a = convertOutputStreamToExtendedFormatAware(out, expected, ws);
         return (OutputStream) a;
     }
 
@@ -148,29 +148,30 @@ public class CoreIOUtils {
         if (out == null) {
             return null;
         }
-        ExtendedFormatAware aw=null;
+        ExtendedFormatAware aw = null;
         if (out instanceof ExtendedFormatAware) {
-            aw=(ExtendedFormatAware) out;
-        }else{
-            aw=new RawOutputStream(out);
+            aw = (ExtendedFormatAware) out;
+        } else {
+            aw = new RawOutputStream(out);
         }
-        switch (expected){
-            case INHERITED:{
+        switch (expected) {
+            case INHERITED: {
                 return aw.convert(NutsTerminalModeOp.NOP);
             }
-            case FORMATTED:{
+            case FORMATTED: {
                 return aw.convert(NutsTerminalModeOp.FORMAT);
             }
-            case FILTERED:{
+            case FILTERED: {
                 return aw.convert(NutsTerminalModeOp.FILTER);
             }
-            default:{
-                throw new IllegalArgumentException("Unsupported "+expected);
+            default: {
+                throw new IllegalArgumentException("Unsupported " + expected);
             }
         }
     }
 
     public static class ProcessExecHelper implements IProcessExecHelper {
+
         ProcessBuilder2 pb;
         NutsWorkspace ws;
         PrintStream out;
@@ -193,6 +194,12 @@ public class CoreIOUtils {
 
         public Future<Integer> execAsync() {
             try {
+                if (ws.io().getTerminalFormat().isFormatted(out)) {
+                    out.print("`move-line-start`");
+                    out.print("                                                                      ");
+                    out.print("`move-line-start`");
+                    out.flush();
+                }
                 ProcessBuilder2 p = pb.start();
                 return new FutureTask<Integer>(() -> p.waitFor().getResult());
             } catch (IOException ex) {
@@ -202,6 +209,12 @@ public class CoreIOUtils {
 
         public int exec() {
             try {
+                if (ws.io().getTerminalFormat().isFormatted(out)) {
+                    out.print("`move-line-start`");
+                    out.print("                                                                      ");
+                    out.print("`move-line-start`");
+                    out.flush();
+                }
                 ProcessBuilder2 p = pb.start();
                 return p.waitFor().getResult();
             } catch (IOException ex) {
@@ -234,7 +247,7 @@ public class CoreIOUtils {
             info.setContentEncoding(conn.getContentEncoding());
             info.setContentLength(conn.getContentLengthLong());
             String hf = conn.getHeaderField("last-modified");
-            long m = (hf==null)?0:conn.getLastModified();
+            long m = (hf == null) ? 0 : conn.getLastModified();
             info.setLastModified(m == 0 ? null : Instant.ofEpochMilli(m));
             return info;
         } finally {
@@ -544,7 +557,8 @@ public class CoreIOUtils {
 
     /**
      * @param localPath
-     * @param parseOptions may include --all-mains to force lookup of all main classes if available
+     * @param parseOptions may include --all-mains to force lookup of all main
+     * classes if available
      * @param session
      * @return
      */
@@ -591,7 +605,7 @@ public class CoreIOUtils {
     /**
      * copy input to output
      *
-     * @param in  entree
+     * @param in entree
      * @param out sortie
      * @throws IOException when IO error
      */
@@ -602,7 +616,7 @@ public class CoreIOUtils {
     /**
      * copy input to output
      *
-     * @param in  entree
+     * @param in entree
      * @param out sortie
      * @throws IOException when IO error
      */
@@ -613,8 +627,8 @@ public class CoreIOUtils {
     /**
      * copy input stream to output stream using the buffer size in bytes
      *
-     * @param in         entree
-     * @param out        sortie
+     * @param in entree
+     * @param out sortie
      * @param bufferSize
      * @throws IOException when IO error
      */
@@ -633,8 +647,8 @@ public class CoreIOUtils {
     /**
      * copy input stream to output stream using the buffer size in bytes
      *
-     * @param in         entree
-     * @param out        sortie
+     * @param in entree
+     * @param out sortie
      * @param bufferSize
      * @throws IOException when IO error
      */
@@ -838,12 +852,12 @@ public class CoreIOUtils {
                 try {
                     Files.delete(file);
                     if (LOG != null) {
-                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "Delete file " + file);
+                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("Delete file " + file);
                     }
                     deleted[0]++;
                 } catch (IOException e) {
                     if (LOG != null) {
-                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "Delete file Failed : " + file);
+                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("Delete file Failed : " + file);
                     }
                     deleted[2]++;
                 }
@@ -860,12 +874,12 @@ public class CoreIOUtils {
                 try {
                     Files.delete(dir);
                     if (LOG != null) {
-                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "Delete folder " + dir);
+                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("Delete folder " + dir);
                     }
                     deleted[1]++;
                 } catch (IOException e) {
                     if (LOG != null) {
-                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "Delete folder Failed : " + dir);
+                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("Delete folder Failed : " + dir);
                     }
                     deleted[2]++;
                 }
@@ -1901,7 +1915,7 @@ public class CoreIOUtils {
      * is private but we need call it handle special properties files
      */
     public static String escapePropsString(String theString,
-                                           boolean escapeSpace) {
+            boolean escapeSpace) {
         if (theString == null) {
             theString = "";
         }
@@ -2019,7 +2033,6 @@ public class CoreIOUtils {
         return null;
     }
 
-
     public enum MonitorType {
         STREAM,
         DEFAULT,
@@ -2057,12 +2070,9 @@ public class CoreIOUtils {
         return CoreStringUtils.isBlank(path) ? null : Paths.get(path);
     }
 
-
     public static String compressUrl(String path) {
-        if (
-                path.startsWith("http://")
-                        || path.startsWith("https://")
-        ) {
+        if (path.startsWith("http://")
+                || path.startsWith("https://")) {
             URL u = null;
             try {
                 u = new URL(path);
@@ -2071,16 +2081,18 @@ public class CoreIOUtils {
             }
             // pre-compute length of StringBuffer
             int len = u.getProtocol().length() + 1;
-            if (u.getAuthority() != null && u.getAuthority().length() > 0)
+            if (u.getAuthority() != null && u.getAuthority().length() > 0) {
                 len += 2 + u.getAuthority().length();
+            }
             if (u.getPath() != null) {
                 len += u.getPath().length();
             }
             if (u.getQuery() != null) {
                 len += 1 + u.getQuery().length();
             }
-            if (u.getRef() != null)
+            if (u.getRef() != null) {
                 len += 1 + u.getRef().length();
+            }
 
             StringBuffer result = new StringBuffer(len);
             result.append(u.getProtocol());
@@ -2103,7 +2115,6 @@ public class CoreIOUtils {
 //                result.append(u.getRef());
             }
             return result.toString();
-
 
         } else {
             return compressPath(path);
@@ -2158,7 +2169,6 @@ public class CoreIOUtils {
 //        }
 //        return out;
 //    }
-
 //    public static NutsTerminalMode resolveTerminalMode(OutputStream out) {
 //        if (out == null) {
 //            return NutsTerminalMode.INHERITED;
@@ -2172,7 +2182,6 @@ public class CoreIOUtils {
 //        }
 //        return NutsTerminalMode.INHERITED;
 //    }
-
     public static NutsTerminalModeOp resolveNutsTerminalModeOp(OutputStream out) {
         if (out == null) {
             return NutsTerminalModeOp.NOP;
@@ -2202,7 +2211,6 @@ public class CoreIOUtils {
 //    public static PrintStream createFilteredPrintStream(OutputStream out, NutsWorkspace ws) {
 //        return new NutsPrintStreamFiltered(out);
 //    }
-
 //    public static PrintStream convertPrintStream(OutputStream out, NutsTerminalMode m, NutsWorkspace ws) {
 //        if (out == null) {
 //            return null;
@@ -2262,7 +2270,6 @@ public class CoreIOUtils {
 //        }
 //        return CoreIOUtils.toPrintStream(out);
 //    }
-
     //    public static PrintStream compress(PrintStream out) {
 //        if (out == null) {
 //            return null;
@@ -2325,22 +2332,20 @@ public class CoreIOUtils {
 //        }
 //        return CoreIOUtils.toPrintStream(out);
 //    }
-
-
     public static PrintStream out(NutsWorkspace ws) {
-        DefaultNutsIOManager io=(DefaultNutsIOManager) ws.io();
+        DefaultNutsIOManager io = (DefaultNutsIOManager) ws.io();
         PrintStream out = io.getCurrentStdout();
         return out == null ? System.out : out;
     }
 
     public static PrintStream err(NutsWorkspace ws) {
-        DefaultNutsIOManager io=(DefaultNutsIOManager) ws.io();
+        DefaultNutsIOManager io = (DefaultNutsIOManager) ws.io();
         PrintStream err = io.getCurrentStderr();
         return err == null ? System.err : err;
     }
 
     public static InputStream in(NutsWorkspace ws) {
-        DefaultNutsIOManager io=(DefaultNutsIOManager) ws.io();
+        DefaultNutsIOManager io = (DefaultNutsIOManager) ws.io();
         InputStream in = io.getCurrentStdin();
         return in == null ? System.in : in;
     }
