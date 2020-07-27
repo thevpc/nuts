@@ -65,26 +65,34 @@ public class SshCommand extends AbstractNshBuiltin {
         NutsCommandLine cmdLine = cmdLine(args, context);
         Options o = new Options();
         NutsArgument a;
+        // address --nuts [nuts options] args
+        boolean acceptDashNuts = true;
         while (cmdLine.hasNext()) {
-            if (cmdLine.peek().isOption()) {
-                if (context.configureFirst(cmdLine)) {
-                    //
-                } else if ((a = cmdLine.next("--nuts")) != null) {
-                    o.invokeNuts = true;
-                } else if ((a = cmdLine.nextString("--nuts-jre")) != null) {
-                    o.nutsJre = a.getStringValue();
+            if (!o.cmd.isEmpty()) {
+                o.cmd.add(cmdLine.next().getString());
+            } else if (cmdLine.peek().isNonOption()) {
+                if (o.address == null) {
+                    o.address = cmdLine.next().getString();
                 } else {
-                    //suppose this is an other nuts option
-                    //just consume the rest as of the command
-                    while (cmdLine.hasNext()) {
-                        o.cmd.add(cmdLine.next().getString());
-                    }
-                }
-            } else {
-                o.address = cmdLine.next().getString();
-                while (cmdLine.hasNext()) {
                     o.cmd.add(cmdLine.next().getString());
                 }
+            } else if ((a = cmdLine.next("--nuts")) != null) {
+                if (acceptDashNuts) {
+                    o.invokeNuts = true;
+                } else {
+                    o.cmd.add(a.getString());
+                }
+            } else if ((a = cmdLine.next("--nuts-jre")) != null) {
+                if (acceptDashNuts) {
+                    o.nutsJre = a.getStringValue();
+                } else {
+                    o.cmd.add(a.getString());
+                }
+            } else if (o.address == null && context.configureFirst(cmdLine)) {
+                //okkay
+            } else {
+                acceptDashNuts = false;
+                o.cmd.add(cmdLine.next().getString());
             }
         }
         if (o.address == null) {
@@ -123,14 +131,12 @@ public class SshCommand extends AbstractNshBuiltin {
                         workspace = userHome + "/.config/nuts/" + NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
                     }
                     boolean nutsCommandFound = false;
-                    try (SShConnection sShConnection = sshSession.setFailFast(false).
+                    int r = sshSession.setFailFast(false).
                             grabOutputString()
-                            .setRedirectErrorStream(true)) {
-                        int r = sShConnection.exec("ls", workspace + "/nuts");
-                        if (0 == r) {
-                            //found
-                            nutsCommandFound = true;
-                        }
+                            .setRedirectErrorStream(true).exec("ls", workspace + "/nuts");
+                    if (0 == r) {
+                        //found
+                        nutsCommandFound = true;
                     }
                     if (!nutsCommandFound) {
                         Path from = ws.search().addId(ws.config().getApiId()).getResultDefinitions().required().getPath();
