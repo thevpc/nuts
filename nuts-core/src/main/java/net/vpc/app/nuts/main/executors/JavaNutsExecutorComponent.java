@@ -120,7 +120,13 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 options.setConfirm(executionContext.getSession().getConfirm());
                 options.setTransitive(executionContext.getSession().isTransitive());
                 options.setOutputFormat(executionContext.getSession().getOutputFormat());
-                options.setTerminalMode(executionContext.getSession().getTerminal().getOutMode());
+                if(options.getTerminalMode()==NutsTerminalMode.FILTERED){
+                    //retain filtered
+                }else if(options.getTerminalMode()==NutsTerminalMode.INHERITED){
+                    //retain inherited
+                }else{
+                    options.setTerminalMode(executionContext.getSession().getTerminal().getOutMode());
+                }
 
                 String bootArgumentsString = options
                         .format().exported().compact().getBootCommandLine();

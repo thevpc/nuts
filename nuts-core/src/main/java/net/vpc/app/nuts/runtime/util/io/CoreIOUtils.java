@@ -194,7 +194,10 @@ public class CoreIOUtils {
 
         public Future<Integer> execAsync() {
             try {
-                if (ws.io().getTerminalFormat().isFormatted(out)) {
+                if (ws.io().getTerminalFormat().isFormatted(out) 
+                        &&
+                        ws.config().options().getTerminalMode()==NutsTerminalMode.FORMATTED
+                        ) {
                     out.print("`move-line-start`");
                     out.print("                                                                      ");
                     out.print("`move-line-start`");
@@ -209,7 +212,10 @@ public class CoreIOUtils {
 
         public int exec() {
             try {
-                if (ws.io().getTerminalFormat().isFormatted(out)) {
+                if (ws.io().getTerminalFormat().isFormatted(out)
+                        &&
+                        ws.config().options().getTerminalMode()==NutsTerminalMode.FORMATTED
+                        ) {
                     out.print("`move-line-start`");
                     out.print("                                                                      ");
                     out.print("`move-line-start`");

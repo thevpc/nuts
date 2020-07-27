@@ -54,13 +54,13 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
     public DefaultNutsInstallCommand(NutsWorkspace ws) {
         super(ws);
-        LOG=ws.log().of(DefaultNutsInstallCommand.class);
+        LOG = ws.log().of(DefaultNutsInstallCommand.class);
     }
 
-    private NutsDefinition _loadIdContent(NutsId id,NutsSession session,boolean includeDeps,Map<NutsId,NutsDefinition> loaded){
+    private NutsDefinition _loadIdContent(NutsId id, NutsSession session, boolean includeDeps, Map<NutsId, NutsDefinition> loaded) {
         NutsId longNameId = id.getLongNameId();
         NutsDefinition def = loaded.get(longNameId);
-        if(def!=null){
+        if (def != null) {
             return def;
         }
         NutsSession ss = CoreNutsUtils.silent(session).copy();
@@ -73,14 +73,15 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 .addScope(NutsDependencyScopePattern.RUN)
                 .setFailFast(true)
                 .getResultDefinition();
-        loaded.put(longNameId,def);
-        if(includeDeps){
+        loaded.put(longNameId, def);
+        if (includeDeps) {
             for (NutsDependency dependency : def.getDependencies()) {
-                _loadIdContent(dependency.getId(),session,includeDeps,loaded);
+                _loadIdContent(dependency.getId(), session, includeDeps, loaded);
             }
         }
         return def;
     }
+
     @Override
     public NutsInstallCommand run() {
         boolean emptyCommand = true;
@@ -89,12 +90,12 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         NutsSession searchSession = CoreNutsUtils.silent(session);
         PrintStream out = CoreIOUtils.resolveOut(session);
         ws.security().checkAllowed(NutsConstants.Permissions.INSTALL, "install");
-        LinkedHashMap<NutsId,Boolean> allToInstall=new LinkedHashMap<>();
+        LinkedHashMap<NutsId, Boolean> allToInstall = new LinkedHashMap<>();
         Set<String> visited = new HashSet<>();
         if (this.isCompanions()) {
             for (String sid : dws.getCompanionIds()) {
                 emptyCommand = false;
-                if(!visited.contains(sid)) {
+                if (!visited.contains(sid)) {
                     visited.add(sid);
                     List<NutsId> allIds = ws.search().addId(sid).setSession(searchSession).setLatest(true).setTargetApiVersion(ws.config().getApiVersion()).getResultIds().list();
                     if (allIds.isEmpty()) {
@@ -109,7 +110,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         }
         for (NutsId id : this.getIds()) {
             emptyCommand = false;
-            if(!visited.contains(id.getLongName())) {
+            if (!visited.contains(id.getLongName())) {
                 visited.add(id.getLongName());
                 List<NutsId> allIds = ws.search().addId(id).setSession(searchSession).setLatest(true).getResultIds().list();
                 if (allIds.isEmpty()) {
@@ -121,15 +122,16 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 }
             }
         }
-        Map<NutsId,NutsDefinition> defsAll = new LinkedHashMap<>();
-        Map<NutsId,NutsDefinition> defsToInstall = new LinkedHashMap<>();
-        Map<NutsId,NutsDefinition> defsToInstallForced = new LinkedHashMap<>();
-        Map<NutsId,NutsDefinition> defsToDefVersion = new LinkedHashMap<>();
-        Map<NutsId,NutsDefinition> defsToIgnore = new LinkedHashMap<>();
-        if(isInstalled()){
+        Map<NutsId, NutsDefinition> defsAll = new LinkedHashMap<>();
+        Map<NutsId, NutsDefinition> defsToInstall = new LinkedHashMap<>();
+        Map<NutsId, NutsDefinition> defsToInstallForced = new LinkedHashMap<>();
+        Map<NutsId, NutsDefinition> defsToDefVersion = new LinkedHashMap<>();
+        Map<NutsId, NutsDefinition> defsToIgnore = new LinkedHashMap<>();
+        Map<NutsId, NutsDefinition> defsOk = new LinkedHashMap<>();
+        if (isInstalled()) {
             for (NutsId resultId : ws.search().setSession(searchSession).setInstalled().getResultIds()) {
                 emptyCommand = false;
-                if(!visited.contains(resultId.getLongName())) {
+                if (!visited.contains(resultId.getLongName())) {
                     allToInstall.put(resultId.builder().setNamespace(null).build(), true);
                     visited.add(resultId.getLongName());
                 }
@@ -137,13 +139,13 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             // This bloc is to handle packages that were installed but their jar/content was removed for any reason!
             NutsInstalledRepository ir = dws.getInstalledRepository();
             for (NutsInstallInformation y : IteratorUtils.toList(ir.searchInstallInformation(session))) {
-                if(y!=null && y.getInstallStatus()==NutsInstallStatus.INSTALLED && y.getId()!=null) {
-                    NutsId resultId=y.getId();
-                    if(!visited.contains(resultId.getLongName())) {
+                if (y != null && y.getInstallStatus() == NutsInstallStatus.INSTALLED && y.getId() != null) {
+                    NutsId resultId = y.getId();
+                    if (!visited.contains(resultId.getLongName())) {
                         NutsId newId = resultId.builder().setNamespace(null).build();
                         allToInstall.put(newId, true);
                         visited.add(resultId.getLongName());
-                        defsToInstallForced.put(newId,null);
+                        defsToInstallForced.put(newId, null);
                     }
                 }
             }
@@ -151,122 +153,169 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
         for (Map.Entry<NutsId, Boolean> nutsIdBooleanEntry : allToInstall.entrySet()) {
             emptyCommand = false;
-            NutsId nid=nutsIdBooleanEntry.getKey();
-            boolean installed = dws.getInstalledRepository().getInstallStatus(nid, session)==NutsInstallStatus.INSTALLED;
+            NutsId nid = nutsIdBooleanEntry.getKey();
+            boolean installed = dws.getInstalledRepository().getInstallStatus(nid, session) == NutsInstallStatus.INSTALLED;
             boolean defVer = dws.getInstalledRepository().isDefaultVersion(nid, session);
-            if(defsToInstallForced.containsKey(nid)){
-                installed=true;
+            if (defsToInstallForced.containsKey(nid)) {
+                installed = true;
             }
             boolean nForced = session.isForce() || nutsIdBooleanEntry.getValue();
             //must load dependencies because will be run later!!
-            if(installed){
-                if (nForced || getSession().isYes()){
-                    defsToInstallForced.put(nid,null);
-                }else if(!defVer){
+            if (installed) {
+                if (nForced || getSession().isYes()) {
+                    defsToInstallForced.put(nid, null);
+                } else if (!defVer) {
                     //installed, we only need to make it default!
-                    defsToDefVersion.put(nid,null);
-                }else{
+                    defsToDefVersion.put(nid, null);
+                } else {
                     //installed and default
-                    defsToIgnore.put(nid,null);
+                    defsToIgnore.put(nid, null);
                 }
-            }else{
-                defsToInstall.put(nid,null);
+            } else {
+                defsToInstall.put(nid, null);
             }
         }
-        if (getSession().isPlainTrace() || (!defsToInstall.isEmpty() && getSession().getConfirm()==NutsConfirmationMode.ASK)) {
-            if(!defsToInstall.isEmpty()) {
+        if (getSession().isPlainTrace() || (!defsToInstall.isEmpty() && getSession().getConfirm() == NutsConfirmationMode.ASK)) {
+            if (!defsToInstall.isEmpty()) {
                 out.println("the following {{new}} ==nuts== " + (defsToInstall.size() > 1 ? "components are" : "component is") + " going to be ##installed## : "
                         + defsToInstall.keySet().stream()
-                        .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
-                        .collect(Collectors.joining(", ")));
+                                .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
+                                .collect(Collectors.joining(", ")));
             }
-            if(!defsToInstallForced.isEmpty()) {
+            if (!defsToInstallForced.isEmpty()) {
                 out.println("the following already ##installed## ==nuts== " + (defsToInstallForced.size() > 1 ? "components are" : "component is") + " going to be [[reinstalled]] : "
                         + defsToInstallForced.keySet().stream()
-                        .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
-                        .collect(Collectors.joining(", ")));
+                                .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
+                                .collect(Collectors.joining(", ")));
             }
-            if(!defsToDefVersion.isEmpty()) {
+            if (!defsToDefVersion.isEmpty()) {
                 out.println("the following already ##installed## ==nuts== " + (defsToDefVersion.size() > 1 ? "components are" : "component is") + " going to be **set as default** : "
                         + defsToDefVersion.keySet().stream()
-                        .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
-                        .collect(Collectors.joining(", ")));
+                                .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
+                                .collect(Collectors.joining(", ")));
             }
-            if(!defsToIgnore.isEmpty()) {
+            if (!defsToIgnore.isEmpty()) {
                 out.println("the following already ##installed## ==nuts== " + (defsToIgnore.size() > 1 ? "components are" : "component is") + " {{ignored}} : "
                         + defsToIgnore.keySet().stream()
-                        .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
-                        .collect(Collectors.joining(", ")));
+                                .map(x -> ws.id().omitImportedGroupId().value(x.getLongNameId()).format())
+                                .collect(Collectors.joining(", ")));
             }
 
         }
-        List<String> cmdArgs=new ArrayList<>(Arrays.asList(this.getArgs()));
-        if(session.isForce()){
-            cmdArgs.add(0,"--force");
+        List<String> cmdArgs = new ArrayList<>(Arrays.asList(this.getArgs()));
+        if (session.isForce()) {
+            cmdArgs.add(0, "--force");
         }
-        if(session.isTrace()){
-            cmdArgs.add(0,"--force");
-            cmdArgs.add(0,"--trace");
+        if (session.isTrace()) {
+            cmdArgs.add(0, "--force");
+            cmdArgs.add(0, "--trace");
         }
         if (!defsToInstall.isEmpty() || !defsToInstallForced.isEmpty() || !defsToDefVersion.isEmpty()) {
-            if(!ws.io().getTerminal().ask().forBoolean("Continue installation?")
+            if (!ws.io().getTerminal().ask().forBoolean("Continue installation?")
                     .defaultValue(true)
                     .setSession(session).getBooleanValue()) {
                 result = new NutsDefinition[0];
+                fails = new NutsId[0];
                 return this;
             }
         }
         //fetch all items
         LinkedHashMap<NutsId, NutsDefinition> loadedDefs = new LinkedHashMap<>();
-        for (NutsId id : defsToInstall.keySet().toArray(new NutsId[0])) {
-            if(session.isPlainTrace()){
-                session.out().println("downloading "+ws.id().set(id).format()+" and its dependencies...");
-            }
-            NutsDefinition def = _loadIdContent(id, session, true, loadedDefs);
-            defsToInstall.put(id, def);
-            defsAll.put(id,def);
-        }
+        LinkedHashSet<NutsId> failed = new LinkedHashSet<>();
 
-        for (NutsId id : defsToInstallForced.keySet().toArray(new NutsId[0])) {
-            if(session.isPlainTrace()){
-                session.out().println("downloading "+ws.id().set(id).format()+" and its dependencies...");
-            }
-            NutsDefinition def = _loadIdContent(id, session, true, loadedDefs);
-            defsToInstallForced.put(id, def);
-            defsAll.put(id,def);
+        if (!doThis(defsToInstall, loadedDefs, defsAll, failed)) {
+            return this;
         }
-
-        for (NutsId id : defsToDefVersion.keySet().toArray(new NutsId[0])) {
-            if(session.isPlainTrace()){
-                session.out().println("downloading "+ws.id().set(id).format()+" and its dependencies...");
-            }
-            NutsDefinition def = _loadIdContent(id, session, true, loadedDefs);
-            defsToDefVersion.put(id,def);
-            defsAll.put(id,def);
+        if (!doThis(defsToInstallForced, loadedDefs, defsAll, failed)) {
+            return this;
         }
-        NutsId forId=null;//always null? may be should remove this!
+        if (!doThis(defsToDefVersion, loadedDefs, defsAll, failed)) {
+            return this;
+        }
+        NutsId forId = null;//always null? may be should remove this!
         if (!defsToInstall.isEmpty()) {
-            if(session.isForce()){
-                session=session.copy().yes();
+            if (session.isForce()) {
+                session = session.copy().yes();
             }
             for (NutsDefinition def : defsToInstall.values()) {
                 dws.installImpl(def, cmdArgs.toArray(new String[0]), null, session, isDefaultVersion(), forId);
             }
         }
-        if(session.isForce()){
-            session=session.copy().yes();
+        if (session.isForce()) {
+            session = session.copy().yes();
         }
         for (NutsDefinition def : defsToInstallForced.values()) {
-            dws.installImpl(def, cmdArgs.toArray(new String[0]), null, session.copy().yes(), isDefaultVersion(), forId);
+            try {
+                dws.installImpl(def, cmdArgs.toArray(new String[0]), null, session.copy().yes(), isDefaultVersion(), forId);
+            } catch (RuntimeException ex) {
+                failed.add(def.getId());
+                if (session.isPlainTrace()) {
+                    if (!ws.io().getTerminal().ask().forBoolean("failed to install " + ws.id().set(def.getId()).format() + " and its dependencies... Continue installation?")
+                            .defaultValue(true)
+                            .setSession(session).getBooleanValue()) {
+                        result = defsOk.values().toArray(new NutsDefinition[0]);
+                        fails = failed.toArray(new NutsId[0]);
+                        return this;
+                    }
+                    session.out().println();
+                } else {
+                    throw ex;
+                }
+            }
         }
         for (NutsDefinition def : defsToDefVersion.values()) {
-            dws.getInstalledRepository().setDefaultVersion(def.getId(), session);
+            try {
+                dws.getInstalledRepository().setDefaultVersion(def.getId(), session);
+            } catch (RuntimeException ex) {
+                failed.add(def.getId());
+                if (session.isPlainTrace()) {
+                    if (!ws.io().getTerminal().ask().forBoolean("@@failed to install@@ " + ws.id().set(def.getId()).format() + " and its dependencies... Continue installation?")
+                            .defaultValue(true)
+                            .setSession(session).getBooleanValue()) {
+                        result = defsOk.values().toArray(new NutsDefinition[0]);
+                        fails = failed.toArray(new NutsId[0]);
+                        return this;
+                    }
+                    session.out().println();
+                } else {
+                    throw ex;
+                }
+            }
         }
         if (emptyCommand) {
             throw new NutsExecutionException(ws, "Missing components to install", 1);
         }
-        result = defsAll.values().toArray(new NutsDefinition[0]);
+        result = defsOk.values().toArray(new NutsDefinition[0]);
+        fails = failed.toArray(new NutsId[0]);
         return this;
+    }
+
+    private boolean doThis(Map<NutsId, NutsDefinition> defsToInstall, LinkedHashMap<NutsId, NutsDefinition> loadedDefs, Map<NutsId, NutsDefinition> defsAll, LinkedHashSet<NutsId> failed) {
+        for (NutsId id : defsToInstall.keySet().toArray(new NutsId[0])) {
+            if (session.isPlainTrace()) {
+                session.out().println("downloading " + ws.id().set(id).format() + " and its dependencies...");
+            }
+            try {
+                NutsDefinition def = _loadIdContent(id, session, true, loadedDefs);
+                defsToInstall.put(id, def);
+                defsAll.put(id, def);
+            } catch (RuntimeException ex) {
+                failed.add(id);
+                if (session.isPlainTrace()) {
+                    if (!ws.io().getTerminal().ask().forBoolean("@@failed to install@@ " + ws.id().set(id).format() + " and its dependencies... Continue installation?")
+                            .defaultValue(true)
+                            .setSession(session).getBooleanValue()) {
+                        result = new NutsDefinition[0];
+                        fails = failed.toArray(new NutsId[0]);
+                        return false;
+                    }
+                    session.out().println();
+                } else {
+                    throw ex;
+                }
+            }
+        }
+        return true;
     }
 
     @Override

@@ -71,15 +71,19 @@ public class FolderObjectIterator<T> implements Iterator<T> {
     private long visitedFilesCount;
     private int maxDepth;
     private final NutsLogger LOG;
+    private final String name;
+    private final Path folder;
 
-    public FolderObjectIterator(Path folder, Predicate<T> filter, int maxDepth, NutsSession session, FolderIteratorModel<T> model) {
+    public FolderObjectIterator(String name,Path folder, Predicate<T> filter, int maxDepth, NutsSession session, FolderIteratorModel<T> model) {
         this.session = session;
         this.filter = filter;
         this.model = model;
+        this.name = name;
         this.maxDepth = maxDepth;
         if (folder == null) {
             throw new NullPointerException("Could not iterate over null folder");
         }
+        this.folder=folder;
         stack.push(new PathAndDepth(folder, 0));
         LOG = session.getWorkspace().log().of(DefaultNutsInstalledRepository.class);
     }
@@ -174,4 +178,10 @@ public class FolderObjectIterator<T> implements Iterator<T> {
 
         T parseObject(Path pathname, NutsSession session) throws IOException;
     }
+
+    @Override
+    public String toString() {
+        return "FolderIterator<"+name+">(folder="+folder+"; depth="+maxDepth+ ')';
+    }
+    
 }

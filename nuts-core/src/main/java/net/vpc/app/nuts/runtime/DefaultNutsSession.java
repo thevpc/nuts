@@ -557,6 +557,16 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     }
                     return true;
                 }
+                case "--bot": {
+                    a = cmdLine.nextBoolean();
+                    if (enabled) {
+                        getTerminal().setMode(NutsTerminalMode.FILTERED);
+                        setProgressOptions("none");
+                        setConfirm(NutsConfirmationMode.ERROR);
+                        setTrace(false);
+                    }
+                    return true;
+                }
             }
         }
         return false;

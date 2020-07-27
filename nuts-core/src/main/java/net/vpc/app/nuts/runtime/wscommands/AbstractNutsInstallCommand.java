@@ -48,6 +48,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     protected List<String> args;
     protected final List<NutsId> ids = new ArrayList<>();
     protected NutsDefinition[] result;
+    protected NutsId[] fails;
 
     public AbstractNutsInstallCommand(NutsWorkspace ws) {
         super(ws, "install");

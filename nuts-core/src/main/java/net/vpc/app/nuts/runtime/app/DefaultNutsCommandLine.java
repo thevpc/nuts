@@ -647,7 +647,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 char start = v.charAt(0);
                 for (int i = 1; i < chars.length; i++) {
                     char c = chars[i];
-                    if (c == '!') {
+                    if (c == '!' || c == '~') {
                         if (last != null) {
                             lookahead.add(createArgument(createExpandedSimpleOption(start, negate, last)));
                             last = null;

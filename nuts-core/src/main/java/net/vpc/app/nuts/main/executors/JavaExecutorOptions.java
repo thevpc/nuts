@@ -55,7 +55,7 @@ public final class JavaExecutorOptions {
         List<String> classPath0 = new ArrayList<>();
         NutsIdFormat nutsIdFormat = getWorkspace().id().omitNamespace();
         //will accept all -- and - based options!
-        NutsCommandLine cmdLine = getWorkspace().commandLine().create(getExecArgs());
+        NutsCommandLine cmdLine = getWorkspace().commandLine().create(getExecArgs()).setExpandSimpleOptions(false);
         NutsArgument a;
         while (cmdLine.hasNext()) {
             a = cmdLine.peek();
