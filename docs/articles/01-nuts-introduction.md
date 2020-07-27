@@ -161,7 +161,7 @@ Now we will install apache tomcat. So in your terminal issue :
 nuts install ntomcat
 nuts ntomcat start --set-port 9090
 ```
-The first two commands will install tomcat helper tool that will download latest version of tomcat and and configure it to 9090 port.
+The first two commands will install tomcat helper tool (ntomcat) that will download latest version of tomcat and configure it to 9090 port.
 The last command will start tomcat.
 Let's check tomcat status now
 ```
