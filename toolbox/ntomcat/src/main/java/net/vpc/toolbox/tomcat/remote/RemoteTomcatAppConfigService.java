@@ -55,6 +55,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         context.getWorkspace().exec()
                 .addCommand(
                         "nsh",
+                        "--bot",
                         "cp",
                         "--verbose",
                         "--mkdir",
@@ -97,6 +98,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
             );
             client.execRemoteNuts(
                     "nsh",
+                    "--bot",
                     "rm",
                     remoteFilePath
             );
@@ -135,8 +137,8 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatAppConfigService print(PrintStream out) {
         NutsWorkspace ws = context.getWorkspace();
-        Map<String,Object> m=new LinkedHashMap<>();
-        m.put("name",getName());
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("name", getName());
         m.putAll(ws.element().fromElement(ws.element().toElement(getConfig()), Map.class));
         ws.object().setSession(context.getSession()).value(m).print(out);
         return this;

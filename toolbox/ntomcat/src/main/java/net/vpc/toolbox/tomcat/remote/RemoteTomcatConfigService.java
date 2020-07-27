@@ -18,6 +18,7 @@ import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.toolbox.tomcat.local.LocalTomcatConfigService;
 
 public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
+    private static final String NTOMCAT = "net.vpc.app.nuts.toolbox:ntomcat";
 
     public static final String REMOTE_CONFIG_EXT = ".remote-config";
     private String name;
@@ -73,7 +74,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public void printStatus() {
         execRemoteNuts(
-                "net.vpc.app.nuts.toolbox:tomcat",
+                NTOMCAT,
                 "--status",
                 "--name",
                 getRemoteInstanceName()
@@ -82,7 +83,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public void start(String[] redeploy, boolean deleteOutLog) {
         List<String> arg = new ArrayList<>();
-        arg.add("net.vpc.app.nuts.toolbox:tomcat");
+        arg.add(NTOMCAT);
         arg.add("--start");
         arg.add("--name");
         arg.add(getRemoteInstanceName());
@@ -104,8 +105,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     }
 
     public void shutdown() {
-        execRemoteNuts(
-                "net.vpc.app.nuts.toolbox:tomcat",
+        execRemoteNuts(NTOMCAT,
                 "--stop",
                 "--name",
                 getRemoteInstanceName()
@@ -119,7 +119,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public void restart(String[] redeploy, boolean deleteOutLog) {
         List<String> arg = new ArrayList<>();
-        arg.add("net.vpc.app.nuts.toolbox:tomcat");
+        arg.add(NTOMCAT);
         arg.add("restart");
         arg.add("--name");
         arg.add(getRemoteInstanceName());
@@ -152,6 +152,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         throw new NamedItemNotFoundException("Instance not found : " + getName(),getName());
     }
 
+    @Override
     public RemoteTomcatConfigService remove() {
         Path f = getConfigPath();
         try {
@@ -162,6 +163,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         return this;
     }
 
+    @Override
     public RemoteTomcatConfigService print(PrintStream out) {
         PrintWriter w = new PrintWriter(out);
         context.getWorkspace().json().value(getConfig()).print(new PrintWriter(out));
@@ -204,8 +206,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     }
 
     public void deleteOutLog() {
-        execRemoteNuts(
-                "net.vpc.app.nuts.toolbox:tomcat",
+        execRemoteNuts(NTOMCAT,
                 "--deleteOutLog",
                 "--name",
                 getRemoteInstanceName()
@@ -224,11 +225,12 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         RemoteTomcatConfig cconfig = getConfig();
         List<String> cmdList = new ArrayList<>(Arrays.asList(
                 "nsh",
-                "ssh",
-                "--nuts"
+                "-c",
+                "ssh"
         ));
-        cmdList.add("--verbose");
         cmdList.add(this.config.getServer());
+        cmdList.add("nuts");
+        cmdList.add("--bot");
         cmdList.addAll(Arrays.asList(cmd));
         context.getWorkspace().exec()
                 .setSession(context.getSession())

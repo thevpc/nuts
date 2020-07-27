@@ -812,7 +812,8 @@ public class LocalTomcat {
     public void restart(NutsCommandLine args, boolean shutdown) {
         boolean deleteLog = false;
         String instance = null;
-        LocalTomcatConfigService c = nextLocalTomcatConfigService(args, NutsWorkspaceOpenMode.OPEN_EXISTING);
+        LocalTomcatConfigService[] srvRef=new LocalTomcatConfigService[1];
+        
         List<String> apps = new ArrayList<>();
         List<Runnable> runnables = new ArrayList<>();
         while (args.hasNext()) {
@@ -823,19 +824,19 @@ public class LocalTomcat {
                 apps.add(a.getStringValue());
             } else if ((a = args.nextString("--set-port")) != null) {
                 int port = a.getArgumentValue().getInt();
-                runnables.add(() -> c.setHttpConnectorPort(false, port));
+                runnables.add(() -> srvRef[0].setHttpConnectorPort(false, port));
             } else if ((a = args.nextString("--set-redirect-port")) != null) {
                 int port = a.getArgumentValue().getInt();
-                runnables.add(() -> c.setHttpConnectorPort(true, port));
+                runnables.add(() -> srvRef[0].setHttpConnectorPort(true, port));
             } else if ((a = args.nextString("--set-shutdown-port")) != null) {
                 int port = a.getArgumentValue().getInt();
-                runnables.add(() -> c.setShutdownPort(port));
+                runnables.add(() -> srvRef[0].setShutdownPort(port));
             } else if ((a = args.nextString("--set-ajp-port")) != null) {
                 int port = a.getArgumentValue().getInt();
-                runnables.add(() -> c.setAjpConnectorPort(false, port));
+                runnables.add(() -> srvRef[0].setAjpConnectorPort(false, port));
             } else if ((a = args.nextString("--set-redirect-ajp-port")) != null) {
                 int port = a.getArgumentValue().getInt();
-                runnables.add(() -> c.setAjpConnectorPort(true, port));
+                runnables.add(() -> srvRef[0].setAjpConnectorPort(true, port));
             } else if ((a = args.nextNonOption()) != null) {
                 if (instance == null) {
                     instance = a.getString();
@@ -848,6 +849,12 @@ public class LocalTomcat {
                 args.setCommandName("tomcat restart").unexpectedArgument();
             }
         }
+        if(instance==null){
+            instance="";
+        }
+        LocalTomcatConfigService c = openTomcatConfig(instance, NutsWorkspaceOpenMode.OPEN_OR_CREATE);
+        srvRef[0]=c;
+        c.buildCatalinaBase();//need build catalina base befor setting ports...
         runnables.forEach(Runnable::run);
         if (shutdown) {
             c.restart(apps.toArray(new String[0]), deleteLog);
