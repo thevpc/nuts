@@ -93,7 +93,7 @@ Other projects you may encounter in the repository are WIP projects that may be 
 This includes : **nutsc** (a native c bootstrapper) and **nuts-installer** (a nuts installer tool)
 
 ## 6. Honorable mentions
-Although not included in this project some other tools are based on **Nuts** and hence are installable using "nuts install <the-app>" command. Those tools are publishes in other repositories.
+Although not included in this Git repository some other tools are based on **Nuts** and hence are installable using "nuts install the-app" command. Those tools are published in other repositories.
 
 6.1 **netbeans-launcher** : this tool supports installation and launch of multiple netbeans instances in parallel. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/netbeans-launcher)
 
