@@ -29,9 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * Nuts Application is the Top Level class to be handled by nuts as rich console
  * application. By default NutsApplication classes :
