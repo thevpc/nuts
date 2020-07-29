@@ -4,6 +4,8 @@ View Official releases [here](https://github.com/thevpc/nuts/releases) :
 
 Starred releases are most stable ones.
 
++ 2020/07/26 	nuts 0.7.0.0 (*) released [download nuts-0.7.0.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.0/nuts-0.7.0.jar) ([view change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.7.0.0.md))
++ 2020/01/15 	nuts 0.6.0.0 (*) released [download nuts-0.6.0.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.6.0/nuts-0.6.0.jar) ([view change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.6.0.0.md))
 + 2019/09/02 	nuts 0.5.8.0 (*) released [download nuts-0.5.8.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar) ([view change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.8.0.md))
 + 2019/07/23 	nuts 0.5.7.0 (*) released [download nuts-0.5.7.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar) ([view change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.7.0.md))
 + 2019/06/23 	nuts 0.5.6.0 released [download nuts-0.5.6.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.6/nuts-0.5.6.jar) ([view change log](https://github.com/thevpc/nuts/blob/master/docs/change-log/v0.5.6.0.md))
