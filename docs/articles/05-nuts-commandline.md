@@ -6,7 +6,7 @@ Arguments in **Nuts** can be options or non options. Options always start with d
 Options can be long options (starts with double dash) or short options (start with a single dash). 
 Many arguments support both forms. For instance "-w" and "--workspace" are the spported forms to define the workspace location in the nuts command.
 
-## Options Values
+## Option Values
 Options can also support a value of type string or boolean.  The value can be suffixed to the option while separated with '=' sign or immediately after the option. As an example "-w=/myfolder/myworkspace" and  "--workspace /myfolder/myworkspace" are equivalent.
 
 ## Boolean Options
@@ -30,14 +30,14 @@ Options in Nuts are regrouped in multiple categories. An option can belong to mu
     * --skip-companions
     * --archetype
     * --store-strategy
-    * ----standalone
+    * --standalone
 
 * Open Options : such options are relevant when creating a new workspace or when opening an existing workspace. They define the way commands are executed. Examples include
     * --workspace
     * --bot
     * --reset
 
-* Exported Options : are passed to sub-**nuts**-processes that will be created by **nuts**. For instance when nuts will call the **nsh** command it will spawn a new process. In such case, these options are passed to the sub-process and environment variable.
+* Exported Options : are passed to sub-**nuts**-processes that will be created by **nuts**. For instance when nuts will call the **nsh** command it will spawn a new process. In such case, these options are passed to the sub-process as environment variable.
     * --workspace
     * --bot
     * --no-color
