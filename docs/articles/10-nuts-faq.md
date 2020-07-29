@@ -7,7 +7,7 @@ please read [Nuts Introduction, Why and What for](01-nuts-introduction.md)
 ## What does Nuts mean and why ?
 Nuts stands for "Network Updatable Things Services". It helps managing things (artifacts of any type, not only java).
 The Name also helps depicting another idea : Nuts is a good companion and complement to Maven tool. The word maven (MAY-vin), from Yiddish, means a super-enthusiastic expert/fan/connoisseur/Wizard.
-And where wizards are, fools and nuts must be. Nuts is the other around, it's a foolish, tool to support the deployment and not the build. 
+And where wizards are, fools and nuts must be. Nuts is the foolish tool to support the deployment and not the build. 
 Hence the name.
 
 
@@ -16,21 +16,24 @@ Not only. Nuts supports all packagings supported by maven. This includes  pom , 
 However **Nuts** is also intended to support any "thing" including "exe" ,"dll", "so", "zip" files, etc.
 Nuts differs from maven as it defines other properties to the artifact descriptor (aka pom in maven) : os (operating system), 
 arch (hardware architecture), osdist (relevant for linux for instance : opensuse, ubuntu) and platform (relevant to vm platforms like java vm, dotnet clr, etc).
-Such properties are queried to download the most appropriate binaries the the current characteristics.
+Such properties are queried to download the most appropriate binaries for the the current characteristics.
 
 
 ## Can I contribute to the project
-I hoped you would ask this question. Sure. please fork the repository and ping a pull request. If you also open a new issue for feature implementation to invite any other contributor to implement that feature (or even implement it your self).
+I hoped you would ask this question. Sure. 
+You can drop me an email to add you as contributor or fork the repository and ping a pull request. 
+You can also open a new issue for feature implementation to invite any other contributor to implement that feature (or even implement it your self).
 
 ## Where can I find Documentation about the Project
-The doc folder is intended to include all documentation. May be we will handle it differently later.
+The doc folder is intended to include documentation. The wiki also should help. 
 
-## How can i make my application Nuts aware
-If by nuts aware you mean that you would download your application and run it using nuts, then you just need to create the application using maven and deploy your application the public maven central.
+## How can I make my application "Nuts aware"
+If by nuts aware you mean that you would download your application and run it using nuts, then you just need to create the application using maven and deploy your application to the public maven central.
 Nothing really special is to be done from your side. You do not have to use plugins like 'maven-assembly-plugin' and 'maven-shade-plugin' to include your dependencies.
+Or, you can also use NAF (Nuts Application Framework) make your application full featured "Nuts aware" application.
 
-## Why should I consider implementing my terminal application using Nuts Application Framework
-First NAF is simple a 300k jar so for what it provided to you, you would be surprised. 
+## Why should I consider implementing my terminal application using Nuts Application Framework (NAF)
+First of all, NAF is a simple 300k jar so for what it provided to you, you would be surprised. 
 Indeed, implementing your application using NAF will provide you a clean way to :
 * seamless integration with nuts and all other NAF applications
 
@@ -50,10 +53,14 @@ Indeed, implementing your application using NAF will provide you a clean way to 
 
 * advanced io features (persistence Locks, monitored downloads, compression, file hashing....)
 
+* standard ways to support and use installed platforms (installed JRE, JDK, ...)
 
-## Can I use NAF ofr non terminal applications, Swing per JavaFX perhaps
-Sure, you will be able to benefit of all the items in the preceding question but terminal coloring. 
-Check netbeans-launcher in github. Its a good example that shows how interesting is to use NAF in non terminal application. 
+* and more...
+
+
+## Can I use NAF for non terminal applications, Swing or JavaFX perhaps
+Sure, you will be able to benefit of all the items in the preceding question but terminal coloring wont be relevant of course. 
+Check netbeans-launcher in github. It's a good example of how interesting is to use NAF in non terminal applications. 
 
 
 ## What is the License used in Nuts
