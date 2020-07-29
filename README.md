@@ -121,4 +121,6 @@ View all releases in [release details page](docs/change-log/release-details.md).
 
 - 1. [Nuts Introduction, Why and What for](docs/articles/01-nuts-introduction.md)
 - 2. [Nuts Project and Repository Organization](docs/articles/02-nuts-projects.md)
-- 3. [Nuts Text Coloring Format](docs/nuts-text-coloring-format.md)
+- 3. [Nuts Text Coloring Format](docs/articles/04-nuts-text-coloring-format.md)
+- 4. [Nuts File System](docs/articles/03-nuts-filesystem.md)
+- 5. [Nuts Commandline Format](docs/articles/05-nuts-commandline.md)

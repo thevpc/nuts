@@ -1,14 +1,14 @@
 # Nuts projects
 Nuts repository is composed of several projects that can be organized in 5 categories
 
-* **Core Nuts** : These projects are the core/base of the nuts package manager
+* **Core Nuts** : These projects are the core/base of the **Nuts** package manager
 * **Companion Tools** : These projects are applications and tools to install with **Nuts** itself. Their installation are prompted at first install of **Nuts**
 * **Toolbox** : These projects are applications and tools built on top of Nuts Application Framework and are of common interest
 * **Lib** : These projects are common libraries that can be used to enabled some **Nuts** features in your application
 * **Other** : All other apps that does no fit in the previous categories
 
 ## 1- Core Nuts projects
-Core nuts projects include **nuts-builder**, **nuts-api**, **nuts-core**.
+Core **Nuts** projects include **nuts-builder**, **nuts-api**, **nuts-core**.
 ### 1.1 **nuts-builder**
 **nuts-builder** is a meta project (parent maven pom project) that helps building all the other projects.
 
@@ -26,17 +26,17 @@ Companion tools include **nadmin**, **nsh** and **ndi**.
 These three applications are implemented following the "Nuts Application Framework" and hence are dependent on **nuts-api** library. They are recommended applications to install with **Nuts** itself, however they are not mandatory and may be ignored particularly when using **nuts-api** as library.
 
 ### 2.1 **nadmin**
-**nadmin** (for nuts admin)is an administration tool to the **Nuts** workspaces. It adds support to manage users, credentials, authorizations, workspaces and repositories by providing command line support for such actions.
+**nadmin** (for **Nuts** admin)is an administration tool to the **Nuts** workspaces. It adds support to manage users, credentials, authorizations, workspaces and repositories by providing command line support for such actions.
 
 ### 2.2 **nsh**
-**nsh** (for nuts shell) is simply a portable POSIX bash compatible implementation. It supports all common builtin commands (ls, cd, rm, ...) and adds support to grep, ssh and scp in a seamless manner. It also supports command line, scripts (including commons constructs with if, do, case, ...) and pipes (|)
+**nsh** (for **Nuts** shell) is simply a portable POSIX bash compatible implementation. It supports all common builtin commands (ls, cd, rm, ...) and adds support to grep, ssh and scp in a seamless manner. It also supports command line, scripts (including commons constructs with if, do, case, ...) and pipes (|)
 
 ### 2.3 **ndi**
-**ndi** (for nuts desktop integration)is simply a helper tool to support seamless integration of nuts commands in your favorite operating system and environment. **ndi** is responsible of creating script shortcuts to your common commands so that you can invoke tem directly from your environment. For instance it creates an "nadmin" script and configures your PATH environment to help calling the nuts admin tool instead of the common way to do so "nuts nadmin". On window system, **ndi** will create shortcuts and menus.
+**ndi** (for **Nuts** desktop integration)is simply a helper tool to support seamless integration of **Nuts** commands in your favorite operating system and environment. **ndi** is responsible of creating script shortcuts to your common commands so that you can invoke tem directly from your environment. For instance it creates an "nadmin" script and configures your PATH environment to help calling the nuts admin tool instead of the common way to do so "nuts nadmin". On window system, **ndi** will create shortcuts and menus.
 
 
 ## 3. Toolbox projects
-**Nuts** come with an array of tools out of the box you can install and play with. Here are these tools
+**Nuts** comes with an array of tools out of the box you can install and play with. Here are these tools
 
 ### 3.1 **nded**
 **nded** for "Nuts Descriptor Editor" is a small tool for creating and editing json Nuts descriptor file. It is intended to be called by automation tools.
@@ -48,10 +48,10 @@ These three applications are implemented following the "Nuts Application Framewo
 **nserver** is a standalone application that runs a small http server that will expose a workspace as a remote repository to other **Nuts** installations. This is the simplest way to mirror a workspace and share artifacts between networked nodes.
 
 ### 3.4 **nwar**
-**nwar** (for Nuts Web Application Archive)is a web application that exposes **nserver** as a war to be deployed on a more mature http server or container.
+**nwar** (for Nuts Web Application Archive) is a web application that exposes **nserver** as a war to be deployed on a more mature http server or container.
 
 ### 3.5 **ndexer**
-**ndexer** (for Indexer)is a lucene powered index for Nuts. It can be shared across multiple **Nuts** workspaces and processes.
+**ndexer** (for Indexer) is a lucene powered index for Nuts. It can be shared across multiple **Nuts** workspaces and processes.
 
 ### 3.6 **feenoo**
 **feenoo** is a small search tool. It searches for files, files contents and classes within jars. You ca search for files than contains some text or jars that contain some class, or jars of a specific version of java.
@@ -90,7 +90,7 @@ This library provides helper methods to manipulate maven pom.xml and generate si
 
 ## 5. Other Projects
 Other projects you may encounter in the repository are WIP projects that may be continued or discontinued.
-This includes : **nutsc** (a native c bootstrapper) and **nuts-installer** (a nuts installer tool)
+This includes : **nutsc** (a native c bootstrapper) and **nuts-installer** (a **Nuts** installer tool)
 
 ## 6. Honorable mentions
 Although not included in this Git repository some other tools are based on **Nuts** and hence are installable using "nuts install the-app" command. Those tools are published in other repositories.

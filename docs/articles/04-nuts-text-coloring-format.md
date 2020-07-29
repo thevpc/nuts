@@ -7,4 +7,4 @@ escape code on linux/windows terminals if available.
 
 Here after a showcase of available NTCF syntax.
 
-![nuts-text-coloring-format](nuts-text-coloring-format.png)
+![04-nuts-text-coloring-format](04-nuts-text-coloring-format.png)
