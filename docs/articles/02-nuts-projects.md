@@ -58,16 +58,16 @@ These three applications are implemented following the "Nuts Application Framewo
 The name **feenoo** comes form the Tunisian dialect and means "where is it?".
 
 ### 3.7 **file-version**
-**file-version** is a small tool that helps detecting files versions. It supports jar, war, ear, dll and exe file versions. It opens a file and looks for it's version in it meta-data.
+**file-version** is a small tool that helps detecting files versions. It supports jar, war, ear, dll and exe file versions. It opens a file and looks for it's version in its meta-data.
 
 ### 3.8 **nmysql**
 **nmysql** is a companion tool to the mysql and mariadb servers. The initial actions supported are backup and restore including push/pull mechanism from/to a couple of databases for synchronization. It supports jdbc and ssh based access to remote mysql/mariadb installation.
 
 ### 3.9 **ntomcat**
-**ntomcat** is a companion tool to the tomcat http server. The initial actions supported are start, stop, status, configure (http ports etc..) and deploy. It supports as well installation of several version of Tomcat and multi domain configuration for deployments.
+**ntomcat** is a companion tool to the tomcat http server. The initial actions supported are start, stop, status, configure (http ports etc..) and deploy. It supports as well installation of several versions of Tomcat and multi domain configuration for deployments.
 
 ### 3.10 **nderby**
-**nderby** is a companion tool to the derby database server. The initial actions supported are start, stop, status and configure. It supports as well installation of several version of Derby.
+**nderby** is a companion tool to the derby database server. The initial actions supported are start, stop, status and configure. It supports as well installation of several versions of Derby.
 
 ### 3.11 **nmvn**
 **nmvn** is a companion tool to maven. It supports installations of several versions of it and running them seamlessly.
@@ -78,8 +78,8 @@ The name **feenoo** comes form the Tunisian dialect and means "where is it?".
 ## 4. Library Projects
 Library projects are several libraries that add **Nuts** support in a particular environment or domain.
 ### 4.1 **nuts-tomcat-classloader**
-This is a must-have feature in your web application if deployed on Tomcat. It solves the following problem : a simple war application is surprisingly fat with too many jars (hundreds of Megas) you need to upload each time you change a single file or class in your web project. Basically all the jar included in the lib folder of the war are to be uploaded each time to the remote Tomcat server. The common solution is to use "provided" scope in maven and put your jars in Tomcat lib or ext folders. This is a bad approach if you are using a single Tomcat process for multiple applications. **nuts-tomcat-classloader** simply uses nuts to download libraries when the application is deployed based on the **pom.xml** you provide and include them in the current web application class loader. Hence, the war becomes lighter than ever. **Nuts** cache mechanisms optimizes bandwidth and makes this more convenient by sharing the same jar files between applications depending on the same versions. 
-All you have to do is to add this library to you application and configure your **pom.xml** accordingly.
+This is a must-have feature in your web application if deployed on Tomcat. It solves the following problem : a simple war application is surprisingly fat with too many jars (hundreds of Megas) you need to upload each time you change a single file or class in your web project. Basically all the jars included in the lib folder of the war are to be uploaded each time to the remote Tomcat server. The common solution is to use "provided" scope in maven and put your jars in Tomcat lib or ext folders. This is a bad approach if you are using a single Tomcat process for multiple applications. **nuts-tomcat-classloader** simply uses **Nuts** to download libraries when the application is deployed based on the **pom.xml** you provide and include them in the current web application class loader. Hence, the war becomes lighter than ever. **Nuts** cache mechanisms optimizes bandwidth and makes this more convenient by sharing the same jar files between applications depending on the same versions. 
+All you have to do is to add this library to your application and configure your **pom.xml** accordingly.
 
 
 ### 4.2 **nuts-servlet**
@@ -93,11 +93,11 @@ Other projects you may encounter in the repository are WIP projects that may be 
 This includes : **nutsc** (a native c bootstrapper) and **nuts-installer** (a nuts installer tool)
 
 ## 6. Honorable mentions
-Although not included in this project some other tools are based on **Nuts** and hence are installable using "nuts intall <the-app>" command. Those tools are publishes in other repositories.
-6.1 netbeans-launcher 
-	this tool supports installation and launch of multiple netbeans instances in parallel. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/netbeans-launcher)
-6.2 upa-box 
-	this tool supports creation of UPA aware projects. UPA is a non structured ORM for the Java Language. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/upa)
-6.3 vr-box
-	this tool supports creation of VR aware projects. VR is a web portal framework. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/vr)
+Although not included in this project some other tools are based on **Nuts** and hence are installable using "nuts install <the-app>" command. Those tools are publishes in other repositories.
+
+6.1 **netbeans-launcher** : this tool supports installation and launch of multiple netbeans instances in parallel. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/netbeans-launcher)
+
+6.2 **upa-box** : this tool supports creation of UPA aware projects. UPA is a non structured ORM for the Java Language. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/upa)
+
+6.3 **vr-box** : this tool supports creation of VR aware projects. VR is a web portal framework. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/vr)
 
