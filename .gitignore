@@ -60,3 +60,6 @@ toolbox/worky/worky.iml
 /toolbox/ntomcat/target/
 /toolbox/nmvn/target/
 /toolbox/nderby/target/
+/toolbox/nserver/target/
+/toolbox/nserver-war/target/
+/toolbox/nwar/target/

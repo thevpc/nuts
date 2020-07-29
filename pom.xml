@@ -21,13 +21,13 @@
         <module>toolbox/nadmin</module>
         <module>toolbox/nsh</module>
         <module>toolbox/ndi</module>
-        <module>toolbox/nuts-server</module>
+        <module>toolbox/nserver</module>
         <module>toolbox/feenoo</module>
         <module>toolbox/nded</module>
         <module>toolbox/worky</module>
         <module>toolbox/file-version</module>
-        <module>toolbox/nuts-indexer</module>
-        <module>toolbox/nuts-http-repo</module>
+        <module>toolbox/ndexer</module>
+        <module>toolbox/nwar</module>
         <module>toolbox/nmysql</module>
         <module>toolbox/ntomcat</module>
         <module>toolbox/nmvn</module>

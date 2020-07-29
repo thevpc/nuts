@@ -116,3 +116,9 @@ Nuts have lots of ways to be improved. Please feel free to join the journey.
 View stable releases in [official releases page](https://github.com/thevpc/nuts/releases).
 
 View all releases in [release details page](docs/change-log/release-details.md).
+
+## Read more
+
+- 1. [Nuts Introduction, Why and What for](docs/articles/01-nuts-introduction.md)
+- 2. [Nuts Project and Repository Organization](docs/articles/02-nuts-projects.md)
+- 3. [Nuts Text Coloring Format](docs/nuts-text-coloring-format.md)
