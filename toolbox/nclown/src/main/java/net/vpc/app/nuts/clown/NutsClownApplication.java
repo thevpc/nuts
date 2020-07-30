@@ -1,10 +1,8 @@
 package net.vpc.app.nuts.clown;
 
-import net.vpc.app.nuts.Nuts;
-import net.vpc.app.nuts.NutsWorkspaceOpenMode;
-import net.vpc.app.nuts.NutsWorkspaceOptions;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 public class NutsClownApplication {
@@ -16,6 +14,9 @@ public class NutsClownApplication {
 //            .setSkipPostCreateInstallCompanionTools(true)
 //        );
 
-        SpringApplication.run(NutsClownApplication.class, args);
+        ConfigurableApplicationContext cc=SpringApplication.run(NutsClownApplication.class, args);
+        for (String beanDefinitionName : cc.getBeanDefinitionNames()) {
+            System.out.println(beanDefinitionName);
+        }
     }
 }

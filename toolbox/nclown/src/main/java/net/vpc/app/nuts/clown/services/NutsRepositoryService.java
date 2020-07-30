@@ -17,12 +17,15 @@ import java.util.Map;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsRepositoryDefinition;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("ws/"+NutsConstants.Folders.REPOSITORIES)
 public class NutsRepositoryService {
 
     private Logger logger = Logger.getLogger(NutsRepositoryService.class.getName());
+    @Autowired
+    private NutsWorkspaceService wss;
 
     @SuppressWarnings("unchecked")
     @GetMapping(value = "", produces = "application/json")
@@ -35,7 +38,7 @@ public class NutsRepositoryService {
     @GetMapping(value = "delete", produces = "application/json")
     public ResponseEntity<List<Map<String, Object>>> deleteRepository(@RequestParam("name") String name,
             @RequestParam("workspace") String workspace) {
-        NutsWorkspace ws = NutsWorkspacePool.openWorkspace(workspace);
+        NutsWorkspace ws = wss.getWorkspace(workspace);
         ws.config().removeRepository(name,null);
         ws.config().save(null);
         logger.info(String.format("Repository with name %s was deleted", name));
@@ -46,7 +49,7 @@ public class NutsRepositoryService {
     @GetMapping(value = "add", produces = "application/json")
     public ResponseEntity<List<Map<String, Object>>> addRepository(@RequestParam("workspace") String workspace,
             @RequestParam("data") String data) {
-        NutsWorkspace ws = NutsWorkspacePool.openWorkspace(workspace);
+        NutsWorkspace ws = wss.getWorkspace(workspace);
         try {
             HashMap<String, String> dataMap = new ObjectMapper().readValue(data, HashMap.class);
             NutsRepositoryDefinition location = new NutsRepositoryDefinition()

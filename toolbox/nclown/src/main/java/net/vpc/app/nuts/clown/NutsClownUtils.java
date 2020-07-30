@@ -6,7 +6,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
-import net.vpc.app.nuts.NutsDependencyScope;
 
 public class NutsClownUtils {
 

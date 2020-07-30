@@ -56,9 +56,9 @@ public class DefaultSourceControlHelper {
                 //ignore
             }
             if (newVersionFound == null) {
-                d = d.builder().id(d.getId().builder().version(newVersion).build()).build();
+                d = d.builder().id(d.getId().builder().setVersion(newVersion).build()).build();
             } else {
-                d = d.builder().id(d.getId().builder().version(oldVersion + ".1").build()).build();
+                d = d.builder().id(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
             }
             NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
             ws.descriptor().value(d).print(file);
@@ -94,7 +94,7 @@ public class DefaultSourceControlHelper {
             Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
             NutsDescriptor d = ws.descriptor().parse(file);
             NutsVersion oldVersion = d.getId().getVersion();
-            NutsId newId = d.getId().builder().version(oldVersion + CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION).build();
+            NutsId newId = d.getId().builder().setVersion(oldVersion + CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION).build();
             d = d.builder().setId(newId).build();
 
             ws.descriptor().value(d).print(file);

@@ -32,7 +32,7 @@ export class NutsComponentService {
 
   getAll() {
     this.http
-      .get<NutsComponent[]>(`/ws/components?workspace=${this.workspaceService.currentWorkspace}`)
+      .get<NutsComponent[]>(`/ws/components?workspace=${this.workspaceService.currentWorkspace}&repository=`)
       .subscribe(components => this.refreshData(components), () => {
       });
   }

@@ -66,8 +66,8 @@ public class NutsWorkspaceUtils {
         if ("java".equalsIgnoreCase(type)) {
             return NutsJavaSdkUtils.of(ws).createJdkId(version);
         } else {
-            return ws.id().builder().artifactId(type)
-                    .version(version)
+            return ws.id().builder().setArtifactId(type)
+                    .setVersion(version)
                     .build();
         }
     }

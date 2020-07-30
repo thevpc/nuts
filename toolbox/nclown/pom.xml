@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.vpc.app.nuts</groupId>
-    <artifactId>nuts-clown</artifactId>
-    <name>net.vpc.app.nuts.nuts-clown</name>
+    <groupId>net.vpc.app.nuts.toolbox</groupId>
+    <artifactId>nclown</artifactId>
+    <name>net.vpc.app.nuts.toolbox.nuts-clown</name>
     <version>0.7.0.0</version>
     <packaging>war</packaging>
 
@@ -59,42 +59,42 @@
                 </configuration>
 
                 <executions>
-                    <!--<execution>-->
-                    <!--<id>install node and npm</id>-->
-                    <!--<goals>-->
-                    <!--<goal>install-node-and-npm</goal>-->
-                    <!--</goals>-->
-                    <!--</execution>-->
+                    <execution>
+                    <id>install node and npm</id>
+                    <goals>
+                    <goal>install-node-and-npm</goal>
+                    </goals>
+                    </execution>
 
-                    <!--<execution>-->
-                    <!--<id>npm install</id>-->
-                    <!--<goals>-->
-                    <!--<goal>npm</goal>-->
-                    <!--</goals>-->
-                    <!--</execution>-->
+                    <execution>
+                    <id>npm install</id>
+                    <goals>
+                    <goal>npm</goal>
+                    </goals>
+                    </execution>
 
-                    <!--<execution>-->
-                    <!--<id>npm run build</id>-->
-                    <!--<goals>-->
-                    <!--<goal>npm</goal>-->
-                    <!--</goals>-->
-                    <!--<phase>generate-resources</phase>-->
-                    <!--<configuration>-->
-                    <!--<arguments>run build:prod</arguments>-->
-                    <!--</configuration>-->
-                    <!--</execution>-->
-                    <!--<execution>-->
-                    <!--<id>gulp build</id>-->
-                    <!--<goals>-->
-                    <!--<goal>gulp</goal>-->
-                    <!--</goals>-->
+                    <execution>
+                    <id>npm run build</id>
+                    <goals>
+                    <goal>npm</goal>
+                    </goals>
+                    <phase>generate-resources</phase>
+                    <configuration>
+                    <arguments>run build:prod</arguments>
+                    </configuration>
+                    </execution>
+                    <execution>
+                    <id>gulp build</id>
+                    <goals>
+                    <goal>gulp</goal>
+                    </goals>
 
-                    <!--<phase>generate-resources</phase>-->
+                    <phase>generate-resources</phase>
 
-                    <!--<configuration>-->
-                    <!--<arguments>build</arguments>-->
-                    <!--</configuration>-->
-                    <!--</execution>-->
+                    <configuration>
+                    <arguments>build</arguments>
+                    </configuration>
+                    </execution>
 
                 </executions>
             </plugin>

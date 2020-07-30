@@ -596,7 +596,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 }
                 try {
                     NutsSearchCommand se = ws.search()
-                            .addId(oldFile != null ? oldFile.getId().builder().version("").build().toString() : NutsConstants.Ids.NUTS_RUNTIME)
+                            .addId(oldFile != null ? oldFile.getId().builder().setVersion("").build().toString() : NutsConstants.Ids.NUTS_RUNTIME)
                             .setRuntime(true)
                             .setTargetApiVersion(bootApiVersion)
                             .addLockedIds(getLockedIds())

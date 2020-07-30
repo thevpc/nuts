@@ -258,9 +258,9 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         String p = path.toString().substring(rootFolder.toString().length());
         List<String> split = CoreStringUtils.split(p, "/\\");
         if (split.size() >= 4) {
-            return workspace.id().builder().artifactId(split.get(split.size() - 3))
-                    .groupId(CoreStringUtils.join(".", split.subList(0, split.size() - 3)))
-                    .version(split.get(split.size() - 2)).build();
+            return workspace.id().builder().setArtifactId(split.get(split.size() - 3))
+                    .setGroupId(CoreStringUtils.join(".", split.subList(0, split.size() - 3)))
+                    .setVersion(split.get(split.size() - 2)).build();
 
         }
         return null;

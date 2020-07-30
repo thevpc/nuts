@@ -44,7 +44,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         }
         List<NutsId> all = new ArrayList<>();
         NutsWorkspace ws = session.getWorkspace();
-        NutsIdBuilder idBuilder = ws.id().builder().groupId("org.apache.catalina").artifactId("apache-tomcat");
+        NutsIdBuilder idBuilder = ws.id().builder().setGroupId("org.apache.catalina").setArtifactId("apache-tomcat");
         for (String s : list(HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT, "tomcat-[0-9.]+/", session)) {
             for (String s2 : list(HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT + s, "v.+/", session)) {
                 String prefix = "apache-tomcat-";
@@ -150,7 +150,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
             NutsWorkspace ws = session.getWorkspace();
             String r = getUrl(id.getVersion(), ".zip");
             if (localPath == null) {
-                localPath = getIdLocalFile(id.builder().faceContent().build(), fetchMode, repository, session);
+                localPath = getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session);
             }
             ws.io().copy().from(r).to(localPath).safe(true).run();
             return new NutsDefaultContent(localPath, false, false);

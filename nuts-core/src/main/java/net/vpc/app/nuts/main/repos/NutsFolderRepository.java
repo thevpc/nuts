@@ -58,7 +58,7 @@ public class NutsFolderRepository extends NutsCachedRepository {
         if (fetchMode == NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
         }
-        NutsId id2 = id.builder().faceDescriptor().build();
+        NutsId id2 = id.builder().setFaceDescriptor().build();
         throw new NutsNotFoundException(getWorkspace(), id,new IOException("File Not Found : "+lib.getGoodPath(id2)));
     }
 
@@ -67,7 +67,7 @@ public class NutsFolderRepository extends NutsCachedRepository {
         if (fetchMode == NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
         }
-        NutsId id2 = id.builder().faceContent().build();
+        NutsId id2 = id.builder().setFaceContent().build();
         throw new NutsNotFoundException(getWorkspace(), id,new IOException("File Not Found : "+lib.getGoodPath(id2)));
     }
 

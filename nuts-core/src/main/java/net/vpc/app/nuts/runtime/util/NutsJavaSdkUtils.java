@@ -298,10 +298,10 @@ public class NutsJavaSdkUtils {
         if (classFileId == 0) {
             classFileId = 52;
         }
-        return ws.id().builder().artifactId("java")
-                .property("s", standard)
-                .property("c", String.valueOf(classFileId))
-                .version(version)
+        return ws.id().builder().setArtifactId("java")
+                .setProperty("s", standard)
+                .setProperty("c", String.valueOf(classFileId))
+                .setVersion(version)
                 .build();
     }
 
