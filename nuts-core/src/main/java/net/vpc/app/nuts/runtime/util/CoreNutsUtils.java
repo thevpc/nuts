@@ -29,29 +29,33 @@
  */
 package net.vpc.app.nuts.runtime.util;
 
-import java.io.*;
-
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.core.repos.NutsInstalledRepository;
 import net.vpc.app.nuts.core.repos.NutsRepositoryExt;
-import net.vpc.app.nuts.runtime.*;
 import net.vpc.app.nuts.main.DefaultNutsWorkspace;
+import net.vpc.app.nuts.runtime.DefaultNutsId;
+import net.vpc.app.nuts.runtime.DefaultNutsVersion;
 import net.vpc.app.nuts.runtime.config.DefaultNutsArtifactCall;
 import net.vpc.app.nuts.runtime.config.DefaultNutsDependencyBuilder;
 import net.vpc.app.nuts.runtime.config.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.runtime.config.DefaultNutsIdLocation;
+import net.vpc.app.nuts.runtime.filters.dependency.NutsDependencyOptionFilter;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
-import net.vpc.app.nuts.runtime.util.common.TraceResult;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
-import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.runtime.filters.dependency.*;
+import net.vpc.app.nuts.runtime.util.common.TraceResult;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -72,24 +76,16 @@ public class CoreNutsUtils {
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     public static final NutsDependencyFilter OPTIONAL = NutsDependencyOptionFilter.OPTIONAL;
     public static final NutsDependencyFilter NON_OPTIONAL = NutsDependencyOptionFilter.NON_OPTIONAL;
-    private static final Map<String, String> _QUERY_EMPTY_ENV = new HashMap<>();
-    public static final Map<String, String> QUERY_EMPTY_ENV = Collections.unmodifiableMap(_QUERY_EMPTY_ENV);
     public static final String[] COLOR_NAMES = new TreeSet<String>(Arrays.asList(
             "Maroon", "Brown", "Olive", "Teal", "Navy", "Black", "Red", "Orange", "Yellow", "Lime", "Green", "Cyan", "Blue", "Purple", "Magenta", "Grey", "Pink",
             "Apricot", "Beige", "Mint", "Lavender", "White", "Turquoise", "Aqua", "Aquamarine", "Gold", "Coral", "Tomato", "Firebrick",
             "Crimson", "Salmon", "Moccasin", "PeachPuff", "Khaki", "Cornsilk", "Bisque", "Wheat", "Tan", "Peru", "Chocolate", "Sienna", "Snow", "Azure", "Ivory", "Linen", "Silver", "Gray"
     )).toArray(new String[0]);
-
     public static final int LOCK_TIME = 3;
     public static final TimeUnit LOCK_TIME_UNIT = TimeUnit.SECONDS;
-
-    static {
-        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.ARCH, null);
-        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OS, null);
-        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OSDIST, null);
-        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.PLATFORM, null);
-    }
-
+    public static final NutsDefaultThreadFactory nutsDefaultThreadFactory = new NutsDefaultThreadFactory("nuts-pool", true);
+    private static final Map<String, String> _QUERY_EMPTY_ENV = new HashMap<>();
+    public static final Map<String, String> QUERY_EMPTY_ENV = Collections.unmodifiableMap(_QUERY_EMPTY_ENV);
     public static Comparator<NutsId> NUTS_ID_COMPARATOR = new Comparator<NutsId>() {
         @Override
         public int compare(NutsId o1, NutsId o2) {
@@ -120,7 +116,42 @@ public class CoreNutsUtils {
             return NUTS_ID_COMPARATOR.compare(o1.getId(), o2.getId());
         }
     };
-
+    //    public static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("namespace", "group", "name", "version", "param='true'");
+    public static NutsDescriptor SAMPLE_NUTS_DESCRIPTOR
+            = new DefaultNutsDescriptorBuilder()
+            .setId(new DefaultNutsId(null, "group", "name", "version", (String) null))
+//                    .setAlternative("suse")
+            .setName("Application Full Name")
+            .setDescription("Application Description")
+            .setExecutable(true)
+            .setPackaging("jar")
+            //                    .setExt("exe")
+            .setArch(new String[]{"64bit"})
+            .setOs(new String[]{"linux#4.6"})
+            .setOsdist(new String[]{"opensuse#42"})
+            .setPlatform(new String[]{"java#1.8"})
+            .setExecutor(new DefaultNutsArtifactCall(
+                    new DefaultNutsId(null, null, "java", "1.8", (String) null),
+                    new String[]{"-jar"}
+            ))
+            .setInstaller(new DefaultNutsArtifactCall(
+                    new DefaultNutsId(null, null, "java", "1.8", (String) null),
+                    new String[]{"-jar"}
+            ))
+            .setLocations(new NutsIdLocation[]{
+                    new DefaultNutsIdLocation("http://server/somelink", null, null)
+            })
+            .setDependencies(
+                    new NutsDependency[]{
+                            new DefaultNutsDependencyBuilder()
+                                    .setNamespace("namespace")
+                                    .setGroupId("group")
+                                    .setArtifactId("name")
+                                    .setVersion("version")
+                                    .setOptional("false").build()
+                    }
+            )
+            .build();
     private static Set<String> DEPENDENCY_SUPPORTED_PARAMS = new HashSet<>(Arrays.asList(NutsConstants.IdProperties.SCOPE, NutsConstants.IdProperties.OPTIONAL));
     public static Comparator<NutsDescriptor> NUTS_DESC_ENV_SPEC_COMPARATOR = new Comparator<NutsDescriptor>() {
         @Override
@@ -163,72 +194,12 @@ public class CoreNutsUtils {
         }
     };
 
-    //    public static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("namespace", "group", "name", "version", "param='true'");
-    public static NutsDescriptor SAMPLE_NUTS_DESCRIPTOR
-            = new DefaultNutsDescriptorBuilder()
-            .setId(new DefaultNutsId(null, "group", "name", "version", (String) null))
-//                    .setAlternative("suse")
-            .setName("Application Full Name")
-            .setDescription("Application Description")
-            .setExecutable(true)
-            .setPackaging("jar")
-            //                    .setExt("exe")
-            .setArch(new String[]{"64bit"})
-            .setOs(new String[]{"linux#4.6"})
-            .setOsdist(new String[]{"opensuse#42"})
-            .setPlatform(new String[]{"java#1.8"})
-            .setExecutor(new DefaultNutsArtifactCall(
-                    new DefaultNutsId(null, null, "java", "1.8", (String) null),
-                    new String[]{"-jar"}
-            ))
-            .setInstaller(new DefaultNutsArtifactCall(
-                    new DefaultNutsId(null, null, "java", "1.8", (String) null),
-                    new String[]{"-jar"}
-            ))
-            .setLocations(new NutsIdLocation[]{
-                    new DefaultNutsIdLocation("http://server/somelink", null, null)
-            })
-            .setDependencies(
-                    new NutsDependency[]{
-                            new DefaultNutsDependencyBuilder()
-                                    .setNamespace("namespace")
-                                    .setGroupId("group")
-                                    .setArtifactId("name")
-                                    .setVersion("version")
-                                    .setOptional("false").build()
-                    }
-            )
-            .build();
-
-    public static class NutsDefaultThreadFactory implements ThreadFactory {
-        private static final AtomicInteger poolNumber = new AtomicInteger(1);
-        private final ThreadGroup group;
-        private final AtomicInteger threadNumber = new AtomicInteger(1);
-        private final String namePrefix;
-        private final boolean daemon;
-
-        NutsDefaultThreadFactory(String namePattern, boolean daemon) {
-            this.daemon = daemon;
-            SecurityManager s = System.getSecurityManager();
-            group = (s != null) ? s.getThreadGroup() :
-                    Thread.currentThread().getThreadGroup();
-            namePrefix = namePattern + "-" +
-                    CoreCommonUtils.indexToString(poolNumber.getAndIncrement()) +
-                    "-";
-        }
-
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(group, r,
-                    namePrefix + threadNumber.getAndIncrement(),
-                    0);
-            t.setDaemon(this.daemon);
-            if (t.getPriority() != Thread.NORM_PRIORITY)
-                t.setPriority(Thread.NORM_PRIORITY);
-            return t;
-        }
+    static {
+        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.ARCH, null);
+        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OS, null);
+        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OSDIST, null);
+        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.PLATFORM, null);
     }
-
-    public static final NutsDefaultThreadFactory nutsDefaultThreadFactory = new NutsDefaultThreadFactory("nuts-pool", true);
 
     public static String randomColorName() {
         return COLOR_NAMES[(int) (Math.random() * COLOR_NAMES.length)];
@@ -469,15 +440,15 @@ public class CoreNutsUtils {
         return child;
     }
 
-//    public static boolean isDefaultAlternative(String s1) {
-//        s1 = CoreStringUtils.trim(s1);
-//        return s1.isEmpty() || s1.equals(NutsConstants.IdProperties.ALTERNATIVE_DEFAULT_VALUE);
-//    }
-
     public static boolean isDefaultOptional(String s1) {
         s1 = CoreStringUtils.trim(s1);
         return s1.isEmpty() || s1.equals("false");
     }
+
+//    public static boolean isDefaultAlternative(String s1) {
+//        s1 = CoreStringUtils.trim(s1);
+//        return s1.isEmpty() || s1.equals(NutsConstants.IdProperties.ALTERNATIVE_DEFAULT_VALUE);
+//    }
 
     public static boolean isValidIdentifier(String s) {
         if (s == null || s.length() == 0) {
@@ -515,40 +486,135 @@ public class CoreNutsUtils {
                 .setTemporary(false);
     }
 
+    public static String resolveRepositoryEffectiveUrlFromUrl(String location) {
+        Matcher matcher = Pattern.compile("(?<p>[a-zA-Z+])://(?<r>.*>)").matcher(location);
+        if(matcher.find()){
+            String protocol=matcher.group("p");
+            String rest=matcher.group("r");
+            boolean http=false;
+            boolean https=false;
+            boolean nuts=false;
+            boolean nutsrv=false;
+            boolean file=false;
+            boolean mvn=false;
+            for (String s : protocol.split("[+]")) {
+                switch (s){
+                    case "http":{
+                        http=true;
+                        break;
+                    }
+                    case "https":{
+                        https=true;
+                        break;
+                    }
+                    case "nuts":{
+                        nuts=true;
+                        break;
+                    }
+                    case "nutsrv":{
+                        nutsrv=true;
+                        break;
+                    }
+                    case "file":{
+                        file=true;
+                        break;
+                    }
+                    case "mvn":{
+                        mvn=true;
+                        break;
+                    }
+                    default:{
+                        throw new IllegalArgumentException("Unsupported protocol "+s+" in "+location);
+                    }
+                }
+            }
+            if(((nuts?1:0)+(mvn?1:0)>0) || ((nutsrv?1:0)+(mvn?1:0)>0) ){
+                throw new IllegalArgumentException("Unsupported protocol "+protocol+" in "+location);
+            }
+            if(https){
+                return "https://"+rest;
+            }
+            if(http){
+                return "http://"+rest;
+            }
+            if(file){
+                return "file:"+rest;
+            }
+            return location;//"file:"+rest;
+        }
+//        try {
+            return location;//new File(location).toURI().toURL().toString();
+//        } catch (MalformedURLException e) {
+//            throw new IllegalArgumentException(e);
+//        }
+    }
+    public static String resolveRepositoryTypeFromUrl(String location) {
+        Matcher matcher = Pattern.compile("(?<p>[a-zA-Z+])://(?<r>.*>)").matcher(location);
+        if(matcher.find()){
+            String protocol=matcher.group("p");
+            String rest=matcher.group("r");
+            boolean http=false;
+            boolean https=false;
+            boolean nuts=false;
+            boolean nutsrv=false;
+            boolean file=false;
+            boolean mvn=false;
+            for (String s : protocol.split("[+]")) {
+                switch (s){
+                    case "http":{
+                        http=true;
+                        break;
+                    }
+                    case "https":{
+                        https=true;
+                        break;
+                    }
+                    case "nuts":{
+                        nuts=true;
+                        break;
+                    }
+                    case "nutsrv":{
+                        nutsrv=true;
+                        break;
+                    }
+                    case "file":{
+                        file=true;
+                        break;
+                    }
+                    case "mvn":{
+                        mvn=true;
+                        break;
+                    }
+                    default:{
+                        throw new IllegalArgumentException("Unsupported protocol "+s+" in "+location);
+                    }
+                }
+            }
+            if(((nuts?1:0)+(mvn?1:0)>0) || ((nutsrv?1:0)+(mvn?1:0)>0) ){
+                throw new IllegalArgumentException("Unsupported protocol "+protocol+" in "+location);
+            }
+            if(nutsrv){
+                return NutsConstants.RepoTypes.NUTS_SERVER;
+            }
+            if(nuts){
+                return NutsConstants.RepoTypes.NUTS;
+            }
+            if(mvn){
+                return NutsConstants.RepoTypes.MAVEN;
+            }
+        }
+        return NutsConstants.RepoTypes.MAVEN;
+    }
+
     public static NutsAddRepositoryOptions defToOptions(NutsRepositoryDefinition def) {
         NutsAddRepositoryOptions o = new NutsAddRepositoryOptions();
         String type = def.getType();
         String location = def.getLocation();
-        if(location!=null) {
-            if (location.startsWith("http+mvn://")) {
-                type = NutsConstants.RepoTypes.MAVEN;
-                location = "http://" + location.substring("http+mvn://".length());
-            } else if (location.startsWith("https+mvn://")) {
-                type = NutsConstants.RepoTypes.MAVEN;
-                location = "https://" + location.substring("https+mvn://".length());
-            } else if (location.startsWith("http+nuts://")) {
-                type = NutsConstants.RepoTypes.NUTS;
-                location = "http://" + location.substring("http+nuts://".length());
-            } else if (location.startsWith("https+nuts://")) {
-                type = NutsConstants.RepoTypes.NUTS;
-                location = "https://" + location.substring("https+nuts://".length());
-            } else if (location.startsWith("http+nutsrv://")) {
-                type = NutsConstants.RepoTypes.NUTS_SERVER;
-                location = "http://" + location.substring("http+nutsrv://".length());
-            } else if (location.startsWith("https+nutsrv://")) {
-                type = NutsConstants.RepoTypes.NUTS_SERVER;
-                location = "https://" + location.substring("https+nutsrv://".length());
-            } else if (location.startsWith("file+mvn://")) {
-                type = NutsConstants.RepoTypes.MAVEN;
-                location = "file://" + location.substring("file+mvn://".length());
-            } else if (location.startsWith("file+nuts://")) {
-                type = NutsConstants.RepoTypes.NUTS;
-                location = "file://" + location.substring("file+nuts://".length());
-            } else {
-                if (CoreStringUtils.isBlank(type)) {
-                    type = NutsConstants.RepoTypes.MAVEN;
-                }
+        if (location != null) {
+            if(CoreStringUtils.isBlank(type)) {
+                type = resolveRepositoryTypeFromUrl(location);
             }
+            location=resolveRepositoryEffectiveUrlFromUrl(location);
         }
         o.setName(def.getName());
         o.setCreate(def.isCreate());
@@ -556,8 +622,9 @@ public class CoreNutsUtils {
         o.setProxy(def.isProxy());
         o.setTemporary(def.isTemporary());
         o.setDeployOrder(def.getDeployOrder());
+        o.setEnabled(true); ///????
         if (def.isReference()) {
-            o.setLocation(def.getLocation());
+            o.setLocation(location);
         } else {
             o.setLocation(def.getName());
             o.setConfig(new NutsRepositoryConfig()
@@ -574,6 +641,11 @@ public class CoreNutsUtils {
         return session.isTrace() ? session.copy().setSilent() : session;
     }
 
+    public static String tracePlainNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
+        NutsIdFormat idFormat = ws.id();
+        return idFormat.value(id.getId()).format();
+    }
+
 //    public static void wconfigToBconfig(NutsWorkspaceConfig wconfig, NutsBootConfig bconfig) {
 //        bconfig.setStoreLocations(new NutsStoreLocationsMap(wconfig.getStoreLocations()).toMap());
 //        bconfig.setHomeLocations(new NutsHomeLocationsMap(wconfig.getHomeLocations()).toMap());
@@ -583,16 +655,6 @@ public class CoreNutsUtils {
 //        wconfig.setStoreLocations(new NutsStoreLocationsMap(wconfig.getStoreLocations()).toMapOrNull());
 //        wconfig.setHomeLocations(new NutsHomeLocationsMap(wconfig.getHomeLocations()).toMapOrNull());
 //    }
-
-    public String tracePlainNutsId(NutsWorkspace ws, NutsId id) {
-        NutsIdFormat idFormat = ws.id();
-        return idFormat.value(id).format();
-    }
-
-    public static String tracePlainNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
-        NutsIdFormat idFormat = ws.id();
-        return idFormat.value(id.getId()).format();
-    }
 
     public static Object tracePropsNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
         NutsIdFormat idFormat = ws.id();
@@ -699,14 +761,6 @@ public class CoreNutsUtils {
         return null;
     }
 
-//    public static String trimToNullAlternative(String s) {
-//        if (s == null) {
-//            return null;
-//        }
-//        s = s.trim();
-//        return (s.isEmpty() || NutsConstants.IdProperties.ALTERNATIVE_DEFAULT_VALUE.equalsIgnoreCase(s)) ? null : s;
-//    }
-
     public static boolean matchesSimpleNameStaticVersion(NutsId id, NutsId pattern) {
         if (pattern == null) {
             return id == null;
@@ -723,6 +777,14 @@ public class CoreNutsUtils {
     public static String[] nullArray_Locations(String[] a) {
         return nullArray(a, NutsStoreLocation.values().length);
     }
+
+//    public static String trimToNullAlternative(String s) {
+//        if (s == null) {
+//            return null;
+//        }
+//        s = s.trim();
+//        return (s.isEmpty() || NutsConstants.IdProperties.ALTERNATIVE_DEFAULT_VALUE.equalsIgnoreCase(s)) ? null : s;
+//    }
 
     public static String[] nullArray_LocationsAndOses(String[] a) {
         return nullArray(a, NutsStoreLocation.values().length * NutsOsFamily.values().length);
@@ -1024,9 +1086,8 @@ public class CoreNutsUtils {
         return session;
     }
 
-
-    public static int getSupportLevel(NutsRepository repository, NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode, boolean transitive, NutsSession session) {
-        if(repository instanceof NutsInstalledRepository){
+    public static int getSupportSpeedLevel(NutsRepository repository, NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode, boolean transitive, NutsSession session) {
+        if (repository instanceof NutsInstalledRepository) {
             return 0;
         }
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(repository);
@@ -1039,7 +1100,7 @@ public class CoreNutsUtils {
         }
         if (transitive) {
             for (NutsRepository remote : repository.config().getMirrors(session)) {
-                int r = getSupportLevel(remote,supportedAction, id, mode, transitive,session);
+                int r = getSupportSpeedLevel(remote, supportedAction, id, mode, transitive, session);
                 if (r > 0) {
                     result += 1.0 / r;
                 }
@@ -1053,5 +1114,125 @@ public class CoreNutsUtils {
             }
         }
         return intResult;
+    }
+
+    public static int getSupportDeployLevel(NutsRepository repository, NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode, boolean transitive, NutsSession session) {
+        if (repository instanceof NutsInstalledRepository) {
+            return 0;
+        }
+        NutsRepositoryExt xrepo = NutsRepositoryExt.of(repository);
+        int result = 0;
+        if (xrepo.acceptAction(id, supportedAction, mode, session)) {
+            int r = repository.config().getDeployOrder();
+            if (r > 0) {
+                result += r;
+            }
+        }
+        if (transitive) {
+            for (NutsRepository remote : repository.config().getMirrors(session)) {
+                int r = getSupportSpeedLevel(remote, supportedAction, id, mode, transitive, session);
+                if (r > 0) {
+                    result += r;
+                }
+            }
+        }
+        return result;
+    }
+
+    public static NutsRepositoryDefinition repositoryStringToDefinition(String s) {
+        switch (s) {
+            case NutsConstants.Names.DEFAULT_REPOSITORY_NAME: {
+                return new NutsRepositoryDefinition()
+                        .setName(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
+                        .setLocation(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
+                        .setDeployOrder(10)
+                        .setFailSafe(false)
+                        .setCreate(true)
+                        .setType(NutsConstants.RepoTypes.NUTS)
+                        .setReference(false);
+            }
+            case ".m2":
+            case "m2":
+            case "maven-local": {
+                return new NutsRepositoryDefinition().setName("maven-local")
+                        .setLocation(System.getProperty("user.home") + CoreIOUtils.syspath("/.m2/repository")).setType(NutsConstants.RepoTypes.MAVEN)
+                        .setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false))
+                        .setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL);
+            }
+            case "maven-central": {
+                return new NutsRepositoryDefinition().setName("maven-central")
+                        .setLocation(NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL).setType(NutsConstants.RepoTypes.MAVEN)
+                        .setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false))
+                        .setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL);
+            }
+            case "maven-git":
+            case "vpc-public-maven": {
+                return new NutsRepositoryDefinition().setName("vpc-public-maven")
+                        .setLocation(NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT).setType(NutsConstants.RepoTypes.MAVEN)
+                        .setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false))
+                        .setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL);
+            }
+            case "vpc-public-nuts": {
+                return new NutsRepositoryDefinition().setName("vpc-public-nuts")
+                        .setLocation(NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT).setType(NutsConstants.RepoTypes.NUTS)
+                        .setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false))
+                        .setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL);
+            }
+//                case "nuts-git": {
+//                    repos.add(NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT);
+//                    break;
+//                }
+            default: {
+                String[] kv = extractKeyEqValue(s);
+                if(kv==null){
+                    throw new IllegalArgumentException("Unsupported boot repository. Missing name: " + s);
+                }
+                return new NutsRepositoryDefinition().setName(kv[0])
+                        .setLocation(kv[1]).setType(resolveRepositoryTypeFromUrl(kv[1]))
+                        .setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false))
+                        .setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL);
+            }
+        }
+    }
+    private static String[] extractKeyEqValue(String s){
+        Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.*)").matcher(s);
+        if (matcher.find()) {
+            return new String[]{matcher.group("key"),matcher.group("value")};
+        } else {
+            return null;
+        }
+    }
+
+    public String tracePlainNutsId(NutsWorkspace ws, NutsId id) {
+        NutsIdFormat idFormat = ws.id();
+        return idFormat.value(id).format();
+    }
+
+    public static class NutsDefaultThreadFactory implements ThreadFactory {
+        private static final AtomicInteger poolNumber = new AtomicInteger(1);
+        private final ThreadGroup group;
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        private final String namePrefix;
+        private final boolean daemon;
+
+        NutsDefaultThreadFactory(String namePattern, boolean daemon) {
+            this.daemon = daemon;
+            SecurityManager s = System.getSecurityManager();
+            group = (s != null) ? s.getThreadGroup() :
+                    Thread.currentThread().getThreadGroup();
+            namePrefix = namePattern + "-" +
+                    CoreCommonUtils.indexToString(poolNumber.getAndIncrement()) +
+                    "-";
+        }
+
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r,
+                    namePrefix + threadNumber.getAndIncrement(),
+                    0);
+            t.setDaemon(this.daemon);
+            if (t.getPriority() != Thread.NORM_PRIORITY)
+                t.setPriority(Thread.NORM_PRIORITY);
+            return t;
+        }
     }
 }

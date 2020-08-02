@@ -48,7 +48,7 @@ public class NutsRepositoryMirroringHelper {
             for (NutsRepository repo : repo.config().getMirrors(session)) {
                 int sup = 0;
                 try {
-                    sup = CoreNutsUtils.getSupportLevel(repo, NutsRepositorySupportedAction.SEARCH, id, fetchMode, session.isTransitive(),session);
+                    sup = CoreNutsUtils.getSupportSpeedLevel(repo, NutsRepositorySupportedAction.SEARCH, id, fetchMode, session.isTransitive(),session);
                 } catch (Exception ex) {
                     //                errors.append(ex.toString()).append("\n");
                 }
@@ -166,7 +166,7 @@ public class NutsRepositoryMirroringHelper {
         if (CoreStringUtils.isBlank(repository)) {
             List<NutsRepository> all = new ArrayList<>();
             for (NutsRepository remote : repo.config().getMirrors(session)) {
-                int lvl = CoreNutsUtils.getSupportLevel(remote,NutsRepositorySupportedAction.DEPLOY, id, NutsFetchMode.LOCAL, false,session);
+                int lvl = CoreNutsUtils.getSupportSpeedLevel(remote,NutsRepositorySupportedAction.DEPLOY, id, NutsFetchMode.LOCAL, false,session);
                 if (lvl > 0) {
                     all.add(remote);
                 }

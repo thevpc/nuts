@@ -43,7 +43,9 @@ public class Test01_CreateTest {
                 "--skip-companions");
         NutsSession session = ws.createSession();
         org.junit.Assert.assertEquals(wsPath + "/cache", ws.config().getStoreLocation(NutsStoreLocation.CACHE).toString());
-        org.junit.Assert.assertEquals(wsPath + "/cache/" + NutsConstants.Folders.REPOSITORIES + "/local/"+ws.config().getRepositories(session)[0].uuid(),
+        org.junit.Assert.assertEquals(wsPath + "/cache/" + NutsConstants.Folders.REPOSITORIES + "/"+
+                        ws.config().getRepositories(session)[0].getName()+
+                        "/"+ws.config().getRepositories(session)[0].uuid(),
                 ws.config().getRepositories(session)[0].config().getStoreLocation(NutsStoreLocation.CACHE).toString());
     }
 

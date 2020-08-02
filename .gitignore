@@ -63,3 +63,7 @@ toolbox/worky/worky.iml
 /toolbox/nserver/target/
 /toolbox/nserver-war/target/
 /toolbox/nwar/target/
+/lsp/log/xml_err_20200730.log
+/lsp/log/xml_err_20200731.log
+/lsp/log/xml_out_20200730.log
+/lsp/log/xml_out_20200731.log

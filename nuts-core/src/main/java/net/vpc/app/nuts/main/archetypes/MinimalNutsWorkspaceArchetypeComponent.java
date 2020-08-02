@@ -31,6 +31,7 @@ package net.vpc.app.nuts.main.archetypes;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.main.config.DefaultNutsWorkspaceConfigManager;
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 
 import java.util.LinkedHashSet;
@@ -57,37 +58,12 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 
 
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) ws.config();
-
-        NutsAddRepositoryOptions localDef = new NutsAddRepositoryOptions()
-                .setName(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
-                .setLocation(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
-                .setDeployOrder(10)
-                .setEnabled(true)
-                .setFailSafe(false)
-                .setCreate(true)
-                .setConfig(new NutsRepositoryConfig()
-                        .setName(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
-                        .setType(NutsConstants.RepoTypes.NUTS)
-                );
         LinkedHashSet<String> br = new LinkedHashSet<>(rm.resolveBootRepositories());
-        int index = 1;
         for (String s : br) {
-            if ("local".equals(s)) {
-                ws.config().addRepository(
-                        localDef
-                );
-            } else {
-                rm.addRepository(
-                        new NutsRepositoryDefinition().setName("maven-custom-" + index)
-                                .setLocation(s).setType(NutsConstants.RepoTypes.MAVEN)
-                                .setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false))
-                                .setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL)
-                );
-                index++;
-            }
+            rm.addRepository(s,session);
         }
         if (br.isEmpty()) {
-            ws.config().addRepository(localDef);
+            rm.addRepository(NutsConstants.Names.DEFAULT_REPOSITORY_NAME,session);
         }
 
 

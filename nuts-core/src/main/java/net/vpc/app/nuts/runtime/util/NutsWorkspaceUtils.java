@@ -155,13 +155,21 @@ public class NutsWorkspaceUtils {
             for (NutsRepository repository : ws.config().getRepositories(session)) {
                 if (repository.config().isEnabled() && (repositoryFilter == null || repositoryFilter.accept(repository))) {
                     int t = 0;
+                    int d=0;
+                    if(fmode==NutsRepositorySupportedAction.DEPLOY){
+                        try {
+                            d = CoreNutsUtils.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive(), session);
+                        } catch (Exception ex) {
+                            LOG.with().level(Level.FINE).error(ex).log("Unable to resolve support deploy level for : {0}", repository.config().name());
+                        }
+                    }
                     try {
-                        t = CoreNutsUtils.getSupportLevel(repository, fmode, id, mode, session.isTransitive(), session);
+                        t = CoreNutsUtils.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive(), session);
                     } catch (Exception ex) {
-                        LOG.with().level(Level.FINE).error(ex).log("Unable to resolve support level for : {0}", repository.config().name());
+                        LOG.with().level(Level.FINE).error(ex).log("Unable to resolve support speed level for : {0}", repository.config().name());
                     }
                     if (t > 0) {
-                        repos2.add(new RepoAndLevel(repository, t, postComp));
+                        repos2.add(new RepoAndLevel(repository,d, t, postComp));
                     }
                 }
             }
@@ -259,19 +267,25 @@ public class NutsWorkspaceUtils {
     private static class RepoAndLevel implements Comparable<RepoAndLevel> {
 
         NutsRepository r;
-        int level;
+        int deployOrder;
+        int speedOrder;
         Comparator<NutsRepository> postComp;
 
-        public RepoAndLevel(NutsRepository r, int level, Comparator<NutsRepository> postComp) {
+        public RepoAndLevel(NutsRepository r, int deployOrder,int speedOrder, Comparator<NutsRepository> postComp) {
             super();
             this.r = r;
-            this.level = level;
+            this.deployOrder = deployOrder;
+            this.speedOrder = speedOrder;
             this.postComp = postComp;
         }
 
         @Override
         public int compareTo(RepoAndLevel o2) {
-            int x = Integer.compare(o2.level, this.level);
+            int x = Integer.compare(this.deployOrder,o2.deployOrder);
+            if (x != 0) {
+                return x;
+            }
+            x = Integer.compare(o2.speedOrder, this.speedOrder);
             if (x != 0) {
                 return x;
             }

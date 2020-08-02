@@ -26,12 +26,12 @@
         <module>toolbox/nded</module>
         <module>toolbox/worky</module>
         <module>toolbox/file-version</module>
-        <module>toolbox/ndexer</module>
-        <module>toolbox/nwar</module>
         <module>toolbox/nmysql</module>
         <module>toolbox/ntomcat</module>
         <module>toolbox/nmvn</module>
         <module>toolbox/nderby</module>
+        <module>toolbox/ndexer</module>
+        <module>toolbox/nwar</module>
     </modules>
     <properties>
     </properties>

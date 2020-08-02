@@ -121,7 +121,7 @@ Java         Version: **${java.version} (${java.vm.name})**
           [[default]] : should handle most cases. Will create 6 repositories
                     [[local]]            : containing local ==nuts== (java and non java ==nuts==).
                     [[maven-local]]      : referencing "~/.m2/repository" local maven repository.
-                    [[maven-central]]    : referencing "http://repo.maven.apache.org/maven2/" (with cache support).
+                    [[maven-central]]    : referencing "https://repo.maven.apache.org/maven2/" (with cache support).
                     [[vpc-public-maven]] : referencing "https://.../vpc-public-maven/master" author\'s github maven repo (cached).
                     [[vpc-public-nuts]]  : referencing "https://.../vpc-public-nuts/master"  author\'s github ==nuts==  repo (cached).
                     [[system]]           : referencing global (root, system wide) repository if available.

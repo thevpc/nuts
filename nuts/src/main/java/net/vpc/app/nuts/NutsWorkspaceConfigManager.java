@@ -108,7 +108,7 @@ public interface NutsWorkspaceConfigManager {
     NutsSdkLocation[] searchSdkLocations(String sdkType, Path path, NutsSession session);
 
     /**
-     * verify if the path is a valid a
+     * verify if the path is a valid sdk path and return null if not
      *
      * @param sdkType sdk type
      * @param path sdk path
@@ -177,6 +177,36 @@ public interface NutsWorkspaceConfigManager {
     NutsRepository addRepository(NutsRepositoryDefinition definition);
 
     NutsRepository addRepository(NutsAddRepositoryOptions options);
+
+    /**
+     * creates a new repository from the given {@code repositoryNamedUrl}.
+     *
+     * Accepted {@code repositoryNamedUrl} values are :
+     * <ul>
+     *     <li>'local' : corresponds to a local updatable repository. will be named 'local'</li>
+     *     <li>'m2', '.m2', 'maven-local' : corresponds the local maven folder repository. will be named 'local'</li>
+     *     <li>'maven-central': corresponds the remote maven central repository. will be named 'local'</li>
+     *     <li>'maven-git', 'vpc-public-maven': corresponds the remote maven vpc-public-maven git folder repository. will be named 'local'</li>
+     *     <li>'maven-git', 'vpc-public-nuts': corresponds the remote nuts vpc-public-nuts git folder repository. will be named 'local'</li>
+     *     <li>name=uri-or-path : corresponds the given uri. will be named name. Here are some examples:
+     *      <ul>
+     *          <li>myremote=http://192.168.6.3/folder</li>
+     *          <li>myremote=/folder/subfolder</li>
+     *          <li>myremote=c:/folder/subfolder</li>
+     *      </ul>
+     *     </li>
+     *     <li>uri-or-path : corresponds the given uri. will be named uri's last path component name. Here are some examples:
+     *      <ul>
+     *          <li>http://192.168.6.3/folder : will be named 'folder'</li>
+     *          <li>myremote=/folder/subfolder : will be named 'folder'</li>
+     *          <li>myremote=c:/folder/subfolder : will be named 'folder'</li>
+     *      </ul>
+     *     </li>
+     * </ul>
+     * @param repositoryNamedUrl repositoryNamedUrl
+     * @return created repository
+     */
+    NutsRepository addRepository(String repositoryNamedUrl, NutsSession session);
 
     NutsRepository findRepositoryById(String repositoryIdOrName, NutsSession session);
 

@@ -31,6 +31,7 @@ package net.vpc.app.nuts.main.archetypes;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.main.config.DefaultNutsWorkspaceConfigManager;
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 
 import java.util.LinkedHashMap;
@@ -56,30 +57,19 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
     public void initialize(NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) ws.config();
-        rm.addRepository(new NutsRepositoryDefinition()
-                .setDeployOrder(10)
-                .setCreate(true)
-                .setName(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
-                .setType(NutsConstants.RepoTypes.NUTS)
-        );
+        rm.addRepository(NutsConstants.Names.DEFAULT_REPOSITORY_NAME,session);
         LinkedHashSet<String> br = new LinkedHashSet<>(rm.resolveBootRepositories());
         LinkedHashMap<String, NutsRepositoryDefinition> def = new LinkedHashMap<>();
-        int index=1;
         for (NutsRepositoryDefinition d : rm.getDefaultRepositories()) {
             def.put(ws.io().expandPath(d.getLocation(),null), d);
         }
         for (String s : br) {
-            if (def.containsKey(s)) {
-                rm.addRepository(def.get(s));
-                def.remove(s);
+            String sloc = ws.io().expandPath(CoreNutsUtils.repositoryStringToDefinition(s).getLocation(),null);
+            if (def.containsKey(sloc)) {
+                rm.addRepository(def.get(sloc));
+                def.remove(sloc);
             } else {
-                rm.addRepository(
-                        new NutsRepositoryDefinition().setName("maven-custom-"+index)
-                                .setLocation(s).setType(NutsConstants.RepoTypes.MAVEN)
-                                .setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false))
-                                .setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL)
-                );
-                index++;
+                rm.addRepository(s,session);
             }
         }
         for (NutsRepositoryDefinition d : def.values()) {

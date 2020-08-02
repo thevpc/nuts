@@ -434,7 +434,8 @@ public class MavenUtils {
 //        }
         if (depsAndRepos == null || depsAndRepos.deps.isEmpty()) {
             for (String baseUrl : bootRepositories) {
-                depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(baseUrl + "/" + urlPath);
+                String location = CoreNutsUtils.repositoryStringToDefinition(baseUrl).getLocation();
+                depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(location + "/" + urlPath);
                 if (!depsAndRepos.deps.isEmpty()) {
                     break;
                 }

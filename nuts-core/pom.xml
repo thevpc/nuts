@@ -103,7 +103,7 @@
                     <outputFile>${project.build.outputDirectory}/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties</outputFile>
                     <text>
                         out.printProjectProperties();
-                        out.printlnf("project.repositories=%s","~/.m2/repository;http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master");
+                        out.printlnf("project.repositories=%s","~/.m2/repository;https://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master");
                     </text>
                 </configuration>
                 <executions>

@@ -47,7 +47,7 @@ public class Test06_CacheURL {
                 "--yes",
                 "--skip-companions");
         NutsSession session = ws.createSession();
-        final String url = "http://repo.maven.apache.org/maven2/archetype-catalog.xml";
+        final String url = "https://repo.maven.apache.org/maven2/archetype-catalog.xml";
         InputSource j1 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, null);
         //just to consume the stream
         ws.io().copy().setSession(session).from(j1).to(new ByteArrayOutputStream()).logProgress().run();
