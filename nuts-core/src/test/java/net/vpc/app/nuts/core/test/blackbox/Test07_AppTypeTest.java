@@ -44,7 +44,8 @@ public class Test07_AppTypeTest {
                 "--yes",
                 "--skip-companions"
         );
-        NutsDefinition u = uws.search().addId("netbeans-launcher").getResultDefinitions().required();
+        NutsDefinition u = uws.search().addId("nsh").getResultDefinitions().required();
+        System.out.println(u.getDescriptor());
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
         org.junit.Assert.assertTrue(u.getDescriptor().isExecutable());
