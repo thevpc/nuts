@@ -141,7 +141,7 @@ public final class NutsBootWorkspace {
     }
 
     public Collection<String> resolveBootRepositories() {
-        if(parsedBootRepositories!=null){
+        if (parsedBootRepositories != null) {
             return parsedBootRepositories;
         }
         String bootRepositories = options.getBootRepositories();
@@ -179,7 +179,7 @@ public final class NutsBootWorkspace {
             repos.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT);
             repos.add(NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL);
         }
-        return parsedBootRepositories=repos;
+        return parsedBootRepositories = repos;
     }
 
     public String[] createProcessCommandLine() {
@@ -241,11 +241,9 @@ public final class NutsBootWorkspace {
         return cmd.toArray(new String[0]);
     }
 
-
     public NutsWorkspaceOptions getOptions() {
         return options;
     }
-
 
     private boolean prepareWorkspace() {
         if (!preparedWorkspace) {
@@ -276,10 +274,10 @@ public final class NutsBootWorkspace {
                     lastConfigPath
                             = PrivateNutsUtils.isValidWorkspaceName(_ws)
                             ? PrivateNutsPlatformUtils.getPlatformHomeFolder(
-                            null, null, null,
-                            workspaceInformation.isGlobal(),
-                            PrivateNutsUtils.resolveValidWorkspaceName(_ws)
-                    ) : PrivateNutsUtils.getAbsolutePath(_ws);
+                                    null, null, null,
+                                    workspaceInformation.isGlobal(),
+                                    PrivateNutsUtils.resolveValidWorkspaceName(_ws)
+                            ) : PrivateNutsUtils.getAbsolutePath(_ws);
 
                     PrivateNutsWorkspaceInitInformation configLoaded = PrivateNutsBootConfigLoader.loadBootConfig(lastConfigPath, LOG);
                     if (configLoaded == null) {
@@ -369,21 +367,29 @@ public final class NutsBootWorkspace {
                     System.out.println("[dry] [reset] delete ALL workspace folders and configurations");
                 } else {
                     LOG.log(Level.CONFIG, PrivateNutsLog.WARNING, "reset workspace.");
-                    deleteStoreLocations(true, NutsStoreLocation.values());
+                    deleteStoreLocations(true, (Object[]) NutsStoreLocation.values());
                 }
             } else if (options.isRecover()) {
                 if (options.isDry()) {
                     System.out.println("[dry] [recover] delete CACHE/TEMP workspace folders");
                 } else {
                     LOG.log(Level.CONFIG, PrivateNutsLog.WARNING, "recover workspace.");
-                    deleteStoreLocations(false, NutsStoreLocation.CACHE, NutsStoreLocation.TEMP);
+                    List<Object> folders = new ArrayList<>();
+                    folders.add(NutsStoreLocation.CACHE);
+                    folders.add(NutsStoreLocation.TEMP);
+                    String p = getStoreLocationPath(NutsStoreLocation.LIB);
+                    if (p != null) {
+                        folders.add(new File(p,"id/net/vpc/app/nuts/nuts"));
+                        folders.add(new File(p,"id/net/vpc/app/nuts/nuts-core"));
+                    }
+                    deleteStoreLocations(false,folders.toArray());
                 }
             }
 
             //after eventual clean up
             if (NutsConstants.Versions.LATEST.equalsIgnoreCase(workspaceInformation.getApiVersion())
                     || NutsConstants.Versions.RELEASE.equalsIgnoreCase(workspaceInformation.getApiVersion())) {
-                String s = PrivateNutsUtils.Mvn.resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_API), null, LOG,resolveBootRepositories());
+                String s = PrivateNutsUtils.Mvn.resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_API), null, LOG, resolveBootRepositories());
                 if (s == null) {
                     throw new NutsIllegalArgumentException(null, "Unable to load latest nuts version");
                 }
@@ -430,7 +436,7 @@ public final class NutsBootWorkspace {
                 //resolve extension id
                 if (workspaceInformation.getRuntimeId() == null) {
                     String apiVersion = workspaceInformation.getApiId().substring(workspaceInformation.getApiId().indexOf('#') + 1);
-                    String runtimeId = PrivateNutsUtils.Mvn.resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_RUNTIME), (rtVersion) -> rtVersion.startsWith(apiVersion + "."), LOG,resolveBootRepositories());
+                    String runtimeId = PrivateNutsUtils.Mvn.resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_RUNTIME), (rtVersion) -> rtVersion.startsWith(apiVersion + "."), LOG, resolveBootRepositories());
                     if (runtimeId != null) {
                         //LOG.log(Level.FINEST, "[success] Resolved latest runtime-id : {0}", new Object[]{runtimeId});
                     } else {
@@ -471,7 +477,7 @@ public final class NutsBootWorkspace {
                             cacheLoaded = true;
                         }
                         if (!cacheLoaded || loadedDeps == null) {
-                            PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(PrivateNutsId.parse(workspaceInformation.getRuntimeId()), LOG,bootRepositories0);
+                            PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(PrivateNutsId.parse(workspaceInformation.getRuntimeId()), LOG, bootRepositories0);
                             if (depsAndRepos != null) {
                                 loadedDeps = depsAndRepos.deps;
                                 extraBootRepositories = String.join(";", depsAndRepos.repos);
@@ -499,7 +505,6 @@ public final class NutsBootWorkspace {
                 }
 
                 //resolve extension libraries
-
                 if (workspaceInformation.getExtensionDependenciesSet() == null) {
                     LinkedHashSet<String> allExtDependencies = new LinkedHashSet<>();
                     LinkedHashSet<String> visitedSimpleIds = new LinkedHashSet<>();
@@ -528,7 +533,7 @@ public final class NutsBootWorkspace {
                                     }
                                 }
                                 if (loadedDeps == null) {
-                                    PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(eid, LOG,bootRepositories0);
+                                    PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(eid, LOG, bootRepositories0);
                                     if (depsAndRepos != null) {
                                         loadedDeps = depsAndRepos.deps;
                                     }
@@ -591,13 +596,11 @@ public final class NutsBootWorkspace {
                     throw new NutsWorkspaceNotFoundException(null, workspaceInformation.getWorkspaceLocation());
                 }
             }
-            if (
-                    PrivateNutsUtils.isBlank(workspaceInformation.getApiId())
-                            || PrivateNutsUtils.isBlank(workspaceInformation.getRuntimeId())
-                            || PrivateNutsUtils.isBlank(workspaceInformation.getBootRepositories())
-                            || workspaceInformation.getRuntimeDependenciesSet() == null
-                            || workspaceInformation.getExtensionDependenciesSet() == null
-            ) {
+            if (PrivateNutsUtils.isBlank(workspaceInformation.getApiId())
+                    || PrivateNutsUtils.isBlank(workspaceInformation.getRuntimeId())
+                    || PrivateNutsUtils.isBlank(workspaceInformation.getBootRepositories())
+                    || workspaceInformation.getRuntimeDependenciesSet() == null
+                    || workspaceInformation.getExtensionDependenciesSet() == null) {
                 throw new IllegalArgumentException("Invalid state");
             }
             boolean recover = options.isRecover() || options.isReset();
@@ -975,7 +978,21 @@ public final class NutsBootWorkspace {
         }
     }
 
-    private void deleteStoreLocations(boolean includeRoot, NutsStoreLocation... locations) {
+    private String getStoreLocationPath(NutsStoreLocation value) {
+        Map<String, String> storeLocations = workspaceInformation.getStoreLocations();
+        if (storeLocations != null) {
+            String p = storeLocations.get(value.id());
+            return p;
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @param includeRoot true if include root
+     * @param locations of type NutsStoreLocation, Path of File
+     */
+    private void deleteStoreLocations(boolean includeRoot, Object... locations) {
         NutsWorkspaceOptions o = getOptions();
         NutsConfirmationMode confirm = o.getConfirm() == null ? NutsConfirmationMode.ASK : o.getConfirm();
         if (confirm == NutsConfirmationMode.ASK
@@ -1005,12 +1022,20 @@ public final class NutsBootWorkspace {
         if (includeRoot) {
             folders.add(new File(workspaceInformation.getWorkspaceLocation()));
         }
-        Map<String, String> storeLocations = workspaceInformation.getStoreLocations();
-        if (storeLocations != null) {
-            for (NutsStoreLocation value : locations) {
-                String p = storeLocations.get(value.id());
-                if (p != null) {
-                    folders.add(new File(p));
+        for (Object ovalue : locations) {
+            if (ovalue != null) {
+                if (ovalue instanceof NutsStoreLocation) {
+                    NutsStoreLocation value = (NutsStoreLocation) ovalue;
+                    String p = getStoreLocationPath(value);
+                    if (p != null) {
+                        folders.add(new File(p));
+                    }
+                } else if (ovalue instanceof Path) {
+                    folders.add(((Path) ovalue).toFile());
+                } else if (ovalue instanceof File) {
+                    folders.add(((File) ovalue));
+                } else {
+                    throw new IllegalArgumentException("Unsupported path type : " + ovalue);
                 }
             }
         }
@@ -1085,7 +1110,6 @@ public final class NutsBootWorkspace {
         }
         System.err.printf("Now exiting Nuts, Bye!%n");
     }
-
 
     /**
      * build and return unsatisfied requirements

@@ -129,7 +129,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         Map<NutsId, NutsDefinition> defsToIgnore = new LinkedHashMap<>();
         Map<NutsId, NutsDefinition> defsOk = new LinkedHashMap<>();
         if (isInstalled()) {
-            for (NutsId resultId : ws.search().setSession(searchSession).setInstalled().getResultIds()) {
+            for (NutsId resultId : ws.search().setSession(searchSession).installed().getResultIds()) {
                 emptyCommand = false;
                 if (!visited.contains(resultId.getLongName())) {
                     allToInstall.put(resultId.builder().setNamespace(null).build(), true);

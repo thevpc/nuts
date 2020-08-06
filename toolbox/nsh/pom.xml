@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>nsh</artifactId>
-    <version>0.7.0.0</version>
+    <version>0.7.1.0</version>
     <name>net.vpc.app.nuts.toolbox.nsh</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
@@ -69,7 +69,7 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.7.0</version>
+            <version>0.7.1</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.common</groupId>

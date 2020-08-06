@@ -72,6 +72,7 @@ import java.util.stream.Collectors;
  * @author vpc
  */
 public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt {
+
     public static final boolean NO_M2 = CoreCommonUtils.getSysBoolNutsProperty("no-m2", false);
 
     public static NutsLogger LOG;
@@ -421,11 +422,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
             NutsSdkLocation old = null;
             for (NutsSdkLocation nutsSdkLocation : list) {
-                if (
-                        nutsSdkLocation.getName().equals(location.getName())
-                                ||
-                                nutsSdkLocation.getPath().equals(location.getPath())
-                ) {
+                if (nutsSdkLocation.getName().equals(location.getName())
+                        || nutsSdkLocation.getPath().equals(location.getPath())) {
                     old = nutsSdkLocation;
                     break;
                 }
@@ -446,7 +444,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (location != null) {
             List<NutsSdkLocation> list = getSdk().get(location.getProduct());
             if (list != null) {
-                for (Iterator<NutsSdkLocation> iterator = list.iterator(); iterator.hasNext(); ) {
+                for (Iterator<NutsSdkLocation> iterator = list.iterator(); iterator.hasNext();) {
                     NutsSdkLocation location2 = iterator.next();
                     if (location2.equals(location)) {
                         iterator.remove();
@@ -514,7 +512,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //            fireConfigurationChanged();
 //        }
 //    }
-
     @Override
     public NutsSdkLocation findSdk(String type, NutsSdkLocation location, NutsSession session) {
         type = toValidSdkName(type);
@@ -680,7 +677,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
         NutsWorkspaceCommandFactory removeMe = null;
         NutsCommandAliasFactoryConfig removeMeConfig = null;
-        for (Iterator<NutsWorkspaceCommandFactory> iterator = commandFactories.iterator(); iterator.hasNext(); ) {
+        for (Iterator<NutsWorkspaceCommandFactory> iterator = commandFactories.iterator(); iterator.hasNext();) {
             NutsWorkspaceCommandFactory factory = iterator.next();
             if (factoryId.equals(factory.getFactoryId())) {
                 removeMe = factory;
@@ -691,7 +688,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
         List<NutsCommandAliasFactoryConfig> _commandFactories = storeModelMain.getCommandFactories();
         if (_commandFactories != null) {
-            for (Iterator<NutsCommandAliasFactoryConfig> iterator = _commandFactories.iterator(); iterator.hasNext(); ) {
+            for (Iterator<NutsCommandAliasFactoryConfig> iterator = _commandFactories.iterator(); iterator.hasNext();) {
                 NutsCommandAliasFactoryConfig commandFactory = iterator.next();
                 if (factoryId.equals(commandFactory.getFactoryId())) {
                     removeMeConfig = commandFactory;
@@ -724,7 +721,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             if (session.isYes()) {
                 forced = true;
                 removeCommandAlias(command.getName(),
-                        new NutsRemoveOptions().setSession(session)
+                        new NutsRemoveOptions().setSession(session.copy().setTrace(false))
                 );
             } else {
                 throw new NutsIllegalArgumentException(ws, "Command alias already exists " + command.getName());
@@ -733,7 +730,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         defaultCommandFactory.installCommand(command, options);
         if (session.isPlainTrace()) {
             PrintStream out = CoreIOUtils.resolveOut(session);
-            out.printf("[[install]] command alias ==%s==%n", command.getName());
+            if (forced) {
+                out.printf("[[re-install]] command alias ==%s==%n", command.getName());
+            } else {
+                out.printf("[[install]] command alias ==%s==%n", command.getName());
+            }
         }
         return forced;
     }
@@ -2031,10 +2032,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     public void prepareBootRuntimeOrExtension(NutsId id, boolean force, boolean runtime, NutsSession session) {
         Path configFile = getStoreLocation(NutsStoreLocation.CACHE)
-                .resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id)).resolve(runtime ?
-                        NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME
-                        : NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME
-                );
+                .resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id)).resolve(runtime
+                ? NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME
+                : NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME
+        );
         Path jarFile = getStoreLocation(NutsStoreLocation.LIB)
                 .resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id))
                 .resolve(ws.config().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build()));
@@ -2098,7 +2099,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //    public String getExtensionDependencies() {
 //        return current().getExtensionDependencies();
 //    }
-
     private void downloadId(NutsId id, boolean force, Path path, boolean fetch) {
         String idFileName = ws.config().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build());
         Path jarFile = getStoreLocation(NutsStoreLocation.LIB)
@@ -2342,7 +2342,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         String bootRepositories = options.getBootRepositories();
         LinkedHashSet<String> repos = new LinkedHashSet<>();
         for (String s : CoreStringUtils.split(bootRepositories, ",;", true)) {
-            if(s.trim().length()>0){
+            if (s.trim().length() > 0) {
                 repos.add(s);
             }
         }
@@ -2429,7 +2429,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //        public String getExtensionDependencies() {
 //            return getStoredConfigApi().getExtensionDependencies();
 //        }
-
         @Override
         public String getBootRepositories() {
             return getStoredConfigBoot().getBootRepositories();

@@ -198,21 +198,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     InputStream getIn();
 
     /**
-     * return new command input stream (standard input source)
-     *
-     * @return new command input stream (standard input source)
-     */
-    InputStream in();
-
-    /**
-     * set new command input stream (standard input source)
-     *
-     * @param in standard input source
-     * @return {@code this} instance
-     */
-    NutsExecCommand in(InputStream in);
-
-    /**
      * set new command input stream (standard input source)
      *
      * @param in standard input source
@@ -226,13 +211,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * @return new command output stream (standard output destination)
      */
     PrintStream getOut();
-
-    /**
-     * return new command output stream (standard output destination)
-     *
-     * @return new command output stream (standard output destination)
-     */
-    PrintStream out();
 
     /**
      * grab to memory standard output
@@ -262,13 +240,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      */
     String getErrorString();
 
-    /**
-     * set new command output stream (standard output destination)
-     *
-     * @param out standard output destination
-     * @return {@code this} instance
-     */
-    NutsExecCommand out(PrintStream out);
 
     /**
      * set new command output stream (standard output destination)
@@ -284,14 +255,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * @param err standard error destination
      * @return {@code this} instance
      */
-    NutsExecCommand err(PrintStream err);
-
-    /**
-     * set new command error stream (standard error destination)
-     *
-     * @param err standard error destination
-     * @return {@code this} instance
-     */
     NutsExecCommand setErr(PrintStream err);
 
     /**
@@ -300,13 +263,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * @return new command error stream (standard error destination)
      */
     PrintStream getErr();
-
-    /**
-     * return new command error stream (standard error destination)
-     *
-     * @return new command error stream (standard error destination)
-     */
-    PrintStream err();
 
     /**
      * return execution type

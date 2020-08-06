@@ -18,6 +18,7 @@ import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.NutsLogger;
 
 public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
+
     private final NutsLogger LOG;
     private NutsWorkspaceConfigManager configManager;
     private NutsWorkspaceConfigManagerExt configManagerExt;
@@ -97,6 +98,10 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     public List<NutsCommandAliasConfig> findCommands(Predicate<NutsCommandAliasConfig> filter) {
         List<NutsCommandAliasConfig> all = new ArrayList<>();
         try {
+            if (!Files.isDirectory(getStoreLocation())) {
+                LOG.with().level(Level.SEVERE).log("Unable to locate commands. Invalid store locate {0}", getStoreLocation());
+                return all;
+            }
             Files.list(getStoreLocation()).forEach(file -> {
                 String fileName = file.getFileName().toString();
                 if (file.getFileName().toString().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)) {
@@ -108,7 +113,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
                         //
                     }
                     if (c != null) {
-                        c.setName(fileName.substring(0, fileName.length() - 4));
+                        c.setName(fileName.substring(0, fileName.length() - NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION.length()));
                         if (filter == null || filter.test(c)) {
                             all.add(c);
                         }

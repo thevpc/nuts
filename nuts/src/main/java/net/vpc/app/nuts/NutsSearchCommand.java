@@ -1119,21 +1119,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     /**
      * enable print search result
      *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand printResult();
-
-    /**
-     * enable print search result
-     *
-     * @param enable lib filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand printResult(boolean enable);
-
-    /**
-     * enable print search result
-     *
      * @param enable lib filter
      * @return {@code this} instance
      */
@@ -1164,23 +1149,23 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * search for non installed packages
      * @return {@code this} instance
      */
-    NutsSearchCommand setInstalled();
+    NutsSearchCommand installed();
 
     /**
      * search for included (in other installations as dependency) packages
      * @return {@code this} instance
      */
-    NutsSearchCommand setIncluded();
+    NutsSearchCommand included();
 
     /**
      * search for non installed or included (in other installations as dependency) packages
      * @return {@code this} instance
      */
-    NutsSearchCommand setInstalledOrIncluded();
+    NutsSearchCommand installedOrIncluded();
 
     /**
      * search for non installed packages
      * @return {@code this} instance
      */
-    NutsSearchCommand setNotInstalled();
+    NutsSearchCommand notInstalled();
 }

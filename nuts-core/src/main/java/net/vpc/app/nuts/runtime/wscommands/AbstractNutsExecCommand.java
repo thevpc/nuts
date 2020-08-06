@@ -190,15 +190,15 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         return in;
     }
 
-    @Override
-    public InputStream in() {
-        return getIn();
-    }
-
-    @Override
-    public NutsExecCommand in(InputStream in) {
-        return setIn(in);
-    }
+//    @Override
+//    public InputStream in() {
+//        return getIn();
+//    }
+//
+//    @Override
+//    public NutsExecCommand in(InputStream in) {
+//        return setIn(in);
+//    }
 
     @Override
     public NutsExecCommand setIn(InputStream in) {
@@ -210,11 +210,11 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     public PrintStream getOut() {
         return out;
     }
-
-    @Override
-    public PrintStream out() {
-        return getOut();
-    }
+//
+//    @Override
+//    public PrintStream out() {
+//        return getOut();
+//    }
 
     @Override
     public NutsExecCommand grabOutputString() {
@@ -257,10 +257,10 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call grabErrorString");
     }
 
-    @Override
-    public NutsExecCommand out(PrintStream out) {
-        return setOut(out);
-    }
+//    @Override
+//    public NutsExecCommand out(PrintStream out) {
+//        return setOut(out);
+//    }
 
     @Override
     public NutsExecCommand setOut(PrintStream out) {
@@ -268,10 +268,10 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         return this;
     }
 
-    @Override
-    public NutsExecCommand err(PrintStream err) {
-        return setErr(err);
-    }
+//    @Override
+//    public NutsExecCommand err(PrintStream err) {
+//        return setErr(err);
+//    }
 
     @Override
     public NutsExecCommand setErr(PrintStream err) {
@@ -283,11 +283,11 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     public PrintStream getErr() {
         return err;
     }
-
-    @Override
-    public PrintStream err() {
-        return getErr();
-    }
+//
+//    @Override
+//    public PrintStream err() {
+//        return getErr();
+//    }
 
     @Override
     public NutsExecutionType getExecutionType() {

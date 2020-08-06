@@ -31,7 +31,6 @@ package net.vpc.app.nuts;
 
 import java.io.Serializable;
 import java.net.URL;
-import java.util.Map;
 import java.util.Set;
 
 /**

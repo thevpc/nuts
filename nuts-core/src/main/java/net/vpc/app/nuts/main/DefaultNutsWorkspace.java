@@ -120,6 +120,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCRF.log("   nuts-api-version               : {0}", Nuts.getVersion());
             LOGCRF.log("   nuts-boot-repositories         : {0}", CoreNutsUtils.desc(info.getBootRepositories()));
             LOGCRF.log("   nuts-runtime-dependencies      : {0}", new NutsString(info.getRuntimeDependenciesSet().stream().map(x -> id().set(id().parse(x)).format()).collect(Collectors.joining(";"))));
+            LOGCRF.log("   nuts-runtime-urls              : {0}", Arrays.asList(info.getClassWorldURLs()).stream().map(x -> x.toString()).collect(Collectors.joining(";")));
             LOGCRF.log("   nuts-extension-dependencies    : {0}", new NutsString(info.getExtensionDependenciesSet().stream().map(x -> id().set(id().parse(x)).format()).collect(Collectors.joining(";"))));
 //            if (hasUnsatisfiedRequirements()) {
 //                LOG.log(Level.CONFIG, "\t execution-requirements         : unsatisfied {0}", getRequirementsHelpString(true));
@@ -513,7 +514,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         try {
             nutToInstall = search().addId(id).setSession(session).setTransitive(false)
                     .setInlineDependencies(checkDependencies)
-                    .setInstalledOrIncluded()
+                    .installedOrIncluded()
                     .setOptional(false)
                     .getResultDefinitions().first();
             if (nutToInstall == null) {
@@ -806,7 +807,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     break;
                 }
                 default: {
-                    oldDef = search().setSession(CoreNutsUtils.silent(session)).addId(def.getId().getShortNameId()).setInstalledOrIncluded().setFailFast(false).getResultDefinitions().first();
+                    oldDef = search().setSession(CoreNutsUtils.silent(session)).addId(def.getId().getShortNameId()).installedOrIncluded().setFailFast(false).getResultDefinitions().first();
                     break;
                 }
             }

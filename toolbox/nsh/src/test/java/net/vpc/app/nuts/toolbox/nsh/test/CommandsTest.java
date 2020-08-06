@@ -47,7 +47,7 @@ public class CommandsTest {
 
     @Test
     public void testDiname() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
+        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
         StringBuilder out = new StringBuilder();
         StringBuilder err = new StringBuilder();
         c.executeCommand(new String[]{"dirname", "/", "a", "/a", "/a/"}, null, out, err);
@@ -62,7 +62,7 @@ public class CommandsTest {
 
     @Test
     public void testBasename() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
+        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
         StringBuilder out = new StringBuilder();
         StringBuilder err = new StringBuilder();
         c.executeCommand(new String[]{"basename", "-a", "/", "a", "/a", "/a/"}, null, out, err);
@@ -77,7 +77,7 @@ public class CommandsTest {
 
     @Test
     public void testEnv() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
+        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
         {
             StringBuilder out = new StringBuilder();
             StringBuilder err = new StringBuilder();
@@ -96,7 +96,7 @@ public class CommandsTest {
 
     @Test
     public void testCheck() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
+        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
         {
             StringBuilder out = new StringBuilder();
             StringBuilder err = new StringBuilder();

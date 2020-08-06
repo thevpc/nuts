@@ -872,14 +872,14 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--installed-or-included": {
                 cmdLine.skip();
                 if(enabled) {
-                    this.setInstalledOrIncluded();
+                    this.installedOrIncluded();
                 }
                 return true;
             }
             case "--not-installed": {
                 cmdLine.skip();
                 if(enabled) {
-                    this.setNotInstalled();
+                    this.notInstalled();
                 }
                 return true;
             }
@@ -887,14 +887,14 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--installed": {
                 cmdLine.skip();
                 if(enabled) {
-                    this.setInstalled();
+                    this.installed();
                 }
                 return true;
             }
             case "--included": {
                 cmdLine.skip();
                 if(enabled) {
-                    this.setIncluded();
+                    this.included();
                 }
                 return true;
             }
@@ -918,15 +918,15 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return printResult;
     }
 
-    @Override
-    public NutsSearchCommand printResult() {
-        return printResult(true);
-    }
-
-    @Override
-    public NutsSearchCommand printResult(boolean printResult) {
-        return setPrintResult(printResult);
-    }
+//    @Override
+//    public NutsSearchCommand printResult() {
+//        return printResult(true);
+//    }
+//
+//    @Override
+//    public NutsSearchCommand printResult(boolean printResult) {
+//        return setPrintResult(printResult);
+//    }
 
     @Override
     public NutsSearchCommand setPrintResult(boolean printResult) {
@@ -946,22 +946,22 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsSearchCommand setInstalled() {
+    public NutsSearchCommand installed() {
         return setInstallStatus(NutsInstallStatus.INSTALLED);
     }
 
     @Override
-    public NutsSearchCommand setIncluded() {
+    public NutsSearchCommand included() {
         return setInstallStatus(NutsInstallStatus.INCLUDED);
     }
 
     @Override
-    public NutsSearchCommand setInstalledOrIncluded() {
+    public NutsSearchCommand installedOrIncluded() {
         return setInstallStatus(NutsInstallStatus.INSTALLED_OR_INCLUDED);
     }
 
     @Override
-    public NutsSearchCommand setNotInstalled() {
+    public NutsSearchCommand notInstalled() {
         return setInstallStatus(NutsInstallStatus.NOT_INSTALLED);
     }
 

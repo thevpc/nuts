@@ -121,9 +121,9 @@ public class DefaultNutsExecCommandFormat extends DefaultFormatBase<NutsExecComm
     public void print(PrintStream out) {
         StringBuilder sb = new StringBuilder();
         NutsExecCommand ec = getValue();
-        PrintStream _out = ec.out();
-        PrintStream err = ec.err();
-        InputStream in = ec.in();
+        PrintStream _out = ec.getOut();
+        PrintStream err = ec.getErr();
+        InputStream in = ec.getIn();
         Map<String, String> env = ec.getEnv();
         String[] command = ec.getCommand();
         if (env != null) {

@@ -261,12 +261,12 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         List<NutsId> ff = ws.search().addId(nid).setSession(searchSession).setOptional(false).setLatest(true).setFailFast(false)
                 .setDefaultVersions(true)
 //                .configure(true,"--trace-monitor")
-                .setInstalledOrIncluded().getResultIds().list();
+                .installedOrIncluded().getResultIds().list();
         if (ff.isEmpty()) {
             //retest without checking if the parseVersion is default or not
             // this help recovering from "invalid default parseVersion" issue
                 ff = ws.search().addId(nid).setSession(searchSession).setOptional(false).setLatest(true).setFailFast(false)
-                        .setInstalledOrIncluded().getResultIds().list();
+                        .installedOrIncluded().getResultIds().list();
         }
         if (ff.isEmpty()) {
             if(!forceInstalled) {
