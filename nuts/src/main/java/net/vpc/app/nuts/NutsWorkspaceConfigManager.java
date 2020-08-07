@@ -47,7 +47,7 @@ public interface NutsWorkspaceConfigManager {
 
     String getUuid();
 
-    Map<String,String> getEnv();
+    Map<String, String> getEnv();
 
     String getEnv(String property, String defaultValue);
 
@@ -130,6 +130,17 @@ public interface NutsWorkspaceConfigManager {
 
     boolean removeCommandAlias(String name, NutsRemoveOptions options);
 
+    /**
+     * return alias definition for given name id and owner.
+     *
+     * @param name alias name, not null
+     * @param forId if not null, the alias name should resolve to the given id
+     * @param forOwner if not null, the alias name should resolve to the owner
+     * @param session session
+     * @return alias definition or null
+     */
+    NutsWorkspaceCommandAlias findCommandAlias(String name, NutsId forId, NutsId forOwner, NutsSession session);
+
     NutsWorkspaceCommandAlias findCommandAlias(String name, NutsSession session);
 
     List<NutsWorkspaceCommandAlias> findCommandAliases(NutsSession session);
@@ -168,6 +179,7 @@ public interface NutsWorkspaceConfigManager {
 
     /**
      * add temporary repository
+     *
      * @param repository temporary repository
      * @param session session
      * @return repository
@@ -183,26 +195,34 @@ public interface NutsWorkspaceConfigManager {
      *
      * Accepted {@code repositoryNamedUrl} values are :
      * <ul>
-     *     <li>'local' : corresponds to a local updatable repository. will be named 'local'</li>
-     *     <li>'m2', '.m2', 'maven-local' : corresponds the local maven folder repository. will be named 'local'</li>
-     *     <li>'maven-central': corresponds the remote maven central repository. will be named 'local'</li>
-     *     <li>'maven-git', 'vpc-public-maven': corresponds the remote maven vpc-public-maven git folder repository. will be named 'local'</li>
-     *     <li>'maven-git', 'vpc-public-nuts': corresponds the remote nuts vpc-public-nuts git folder repository. will be named 'local'</li>
-     *     <li>name=uri-or-path : corresponds the given uri. will be named name. Here are some examples:
-     *      <ul>
-     *          <li>myremote=http://192.168.6.3/folder</li>
-     *          <li>myremote=/folder/subfolder</li>
-     *          <li>myremote=c:/folder/subfolder</li>
-     *      </ul>
-     *     </li>
-     *     <li>uri-or-path : corresponds the given uri. will be named uri's last path component name. Here are some examples:
-     *      <ul>
-     *          <li>http://192.168.6.3/folder : will be named 'folder'</li>
-     *          <li>myremote=/folder/subfolder : will be named 'folder'</li>
-     *          <li>myremote=c:/folder/subfolder : will be named 'folder'</li>
-     *      </ul>
-     *     </li>
+     * <li>'local' : corresponds to a local updatable repository. will be named
+     * 'local'</li>
+     * <li>'m2', '.m2', 'maven-local' : corresponds the local maven folder
+     * repository. will be named 'local'</li>
+     * <li>'maven-central': corresponds the remote maven central repository.
+     * will be named 'local'</li>
+     * <li>'maven-git', 'vpc-public-maven': corresponds the remote maven
+     * vpc-public-maven git folder repository. will be named 'local'</li>
+     * <li>'maven-git', 'vpc-public-nuts': corresponds the remote nuts
+     * vpc-public-nuts git folder repository. will be named 'local'</li>
+     * <li>name=uri-or-path : corresponds the given uri. will be named name.
+     * Here are some examples:
+     * <ul>
+     * <li>myremote=http://192.168.6.3/folder</li>
+     * <li>myremote=/folder/subfolder</li>
+     * <li>myremote=c:/folder/subfolder</li>
      * </ul>
+     * </li>
+     * <li>uri-or-path : corresponds the given uri. will be named uri's last
+     * path component name. Here are some examples:
+     * <ul>
+     * <li>http://192.168.6.3/folder : will be named 'folder'</li>
+     * <li>myremote=/folder/subfolder : will be named 'folder'</li>
+     * <li>myremote=c:/folder/subfolder : will be named 'folder'</li>
+     * </ul>
+     * </li>
+     * </ul>
+     *
      * @param repositoryNamedUrl repositoryNamedUrl
      * @return created repository
      */

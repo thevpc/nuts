@@ -792,6 +792,22 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //        return CoreSecurityUtils.httpEncrypt(input, passphrase);
 //    }
     @Override
+    public NutsWorkspaceCommandAlias findCommandAlias(String name, NutsId forId, NutsId forOwner, NutsSession session) {
+        NutsWorkspaceCommandAlias a = findCommandAlias(name, session);
+        if (a != null && a.getCommand() != null && a.getCommand().length > 0) {
+            NutsId i = ws.id().parse(a.getCommand()[0]);
+            if (i != null
+                    && (forId == null
+                    || i.getShortName().equals(forId.getArtifactId())
+                    || i.getShortName().equals(forId.getShortName()))
+                    && (forOwner == null || a.getOwner() != null && a.getOwner().getShortName().equals(forOwner.getShortName()))) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public NutsWorkspaceCommandAlias findCommandAlias(String name, NutsSession session) {
         NutsCommandAliasConfig c = defaultCommandFactory.findCommand(name, ws);
         if (c == null) {
