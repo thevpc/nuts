@@ -11,9 +11,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="nuts" />
+    <orderEntry type="library" name="Maven: net.vpc.app.nuts:nuts:0.7.1" level="project" />
     <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-strings:1.2.17" level="project" />
-    <orderEntry type="module" module-name="vpc-common-io" />
+    <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-io:1.3.12" level="project" />
     <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-ssh:1.1.5" level="project" />
     <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.50" level="project" />
     <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-xfile:1.0.0" level="project" />

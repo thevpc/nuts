@@ -32,7 +32,9 @@ package net.vpc.app.nuts;
 import java.util.Map;
 
 /**
- * execution context used in {@link NutsExecutorComponent} and {@link NutsInstallerComponent}.
+ * execution context used in {@link NutsExecutorComponent} and
+ * {@link NutsInstallerComponent}.
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -40,90 +42,102 @@ public interface NutsExecutionContext {
 
     /**
      * command name
+     *
      * @return command name
      */
     String getCommandName();
 
     /**
      * executor options
+     *
      * @return executor options
      */
     String[] getExecutorOptions();
 
     /**
      * executor properties
+     *
      * @return executor properties
      */
-    Map<String,String> getExecutorProperties();
+    Map<String, String> getExecutorProperties();
 
     /**
      * command definition if any
+     *
      * @return command definition if any
      */
     NutsDefinition getDefinition();
 
     /**
      * command arguments
+     *
      * @return command arguments
      */
     String[] getArguments();
 
     /**
      * workspace
+     *
      * @return workspace
      */
     NutsWorkspace workspace();
 
     /**
      * workspace
+     *
      * @return workspace
      */
     NutsWorkspace getWorkspace();
 
     /**
      * executor descriptor
+     *
      * @return executor descriptor
      */
     NutsArtifactCall getExecutorDescriptor();
 
     /**
      * current session
+     *
      * @return current session
      */
-    NutsSession session();
+    NutsSession getExecSession();
 
-    /**
-     * current session
-     * @return current session
-     */
-    NutsSession getSession();
+    NutsSession getTraceSession();
 
     /**
      * execution environment
+     *
      * @return execution environment
      */
-    Map<String,String> getEnv();
+    Map<String, String> getEnv();
 
     /**
      * current working directory
+     *
      * @return current working directory
      */
     String getCwd();
 
     /**
      * when true, any non 0 exited command will throw an Exception
+     *
      * @return fail fast status
      */
     boolean isFailFast();
 
     /**
-     * when true, the component is temporary and is not registered withing the workspace
-     * @return true if the component is temporary and is not registered withing the workspace
+     * when true, the component is temporary and is not registered withing the
+     * workspace
+     *
+     * @return true if the component is temporary and is not registered withing
+     * the workspace
      */
     boolean isTemporary();
 
     /**
      * execution type
+     *
      * @return execution type
      */
     NutsExecutionType getExecutionType();

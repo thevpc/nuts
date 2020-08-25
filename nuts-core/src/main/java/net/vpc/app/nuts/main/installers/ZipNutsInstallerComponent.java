@@ -69,12 +69,12 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        nutsDefinition.setInstallInformation(NutsWorkspaceExt.of(executionContext.getWorkspace()).getInstalledRepository().getInstallInformation(nutsDefinition.getId(), executionContext.getSession()));
+        nutsDefinition.setInstallInformation(NutsWorkspaceExt.of(executionContext.getWorkspace()).getInstalledRepository().getInstallInformation(nutsDefinition.getId(), executionContext.getExecSession()));
         if (executionContext.getExecutorOptions().length > 0) {
             executionContext.getWorkspace()
                     .exec()
                     .addCommand(executionContext.getExecutorOptions())
-                    .setSession(executionContext.getSession())
+                    .setSession(executionContext.getExecSession())
                     .setEnv(executionContext.getExecutorProperties())
                     .setDirectory(installFolder.toString())
                     .getResult();

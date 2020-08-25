@@ -62,7 +62,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
             executionContext.getWorkspace().exec()
-                    .setSession(executionContext.getSession())
+                    .setSession(executionContext.getExecSession())
                     //                    .executionType(NutsExecutionType.EMBEDDED)
                     .setCommand(executionContext.getDefinition())
                     .addCommand("--nuts-exec-mode=install")
@@ -89,7 +89,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
 
     @Override
     public void uninstall(NutsExecutionContext executionContext, boolean deleteData) {
-        NutsSession session = executionContext.getSession();
+        NutsSession session = executionContext.getExecSession();
         NutsWorkspace ws = executionContext.getWorkspace();
         NutsWorkspaceUtils.of(executionContext.getWorkspace()).checkReadOnly();
         NutsId id = executionContext.getDefinition().getId();

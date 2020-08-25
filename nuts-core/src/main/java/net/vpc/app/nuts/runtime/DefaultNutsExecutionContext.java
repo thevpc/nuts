@@ -40,11 +40,12 @@ import java.util.Map;
 public class DefaultNutsExecutionContext implements NutsExecutionContext {
 
     private final NutsDefinition nutsDefinition;
-    private final Map<String,String> env;
+    private final Map<String, String> env;
     private final String[] executorOptions;
-    private final Map<String,String> executorProperties;
+    private final Map<String, String> executorProperties;
     private final String[] args;
-    private final NutsSession session;
+    private final NutsSession execSession;
+    private final NutsSession traceSession;
     private final NutsWorkspace workspace;
     private final NutsArtifactCall executorDescriptor;
     private final String cwd;
@@ -74,8 +75,8 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
 //        this.cwd = cwd;
 //    }
     public DefaultNutsExecutionContext(NutsDefinition nutsDefinition,
-            String[] args, String[] executorArgs, Map<String,String> env, Map<String,String> executorProperties,
-            String cwd, NutsSession session, NutsWorkspace workspace, boolean failFast,
+            String[] args, String[] executorArgs, Map<String, String> env, Map<String, String> executorProperties,
+            String cwd, NutsSession traceSession, NutsSession execSession, NutsWorkspace workspace, boolean failFast,
             boolean temporary,
             NutsExecutionType executionType,
             String commandName) {
@@ -91,7 +92,8 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
         this.commandName = commandName;
         this.nutsDefinition = nutsDefinition;
         this.args = args;
-        this.session = session;
+        this.execSession = execSession;
+        this.traceSession = traceSession;
         this.workspace = workspace;
         this.executorOptions = executorArgs;
         this.executorProperties = executorProperties;
@@ -127,7 +129,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     }
 
     @Override
-    public Map<String,String> getExecutorProperties() {
+    public Map<String, String> getExecutorProperties() {
         return executorProperties;
     }
 
@@ -152,8 +154,13 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     }
 
     @Override
-    public NutsSession getSession() {
-        return session;
+    public NutsSession getExecSession() {
+        return execSession;
+    }
+
+    @Override
+    public NutsSession getTraceSession() {
+        return traceSession;
     }
 
     @Override
@@ -162,12 +169,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     }
 
     @Override
-    public NutsSession session() {
-        return getSession();
-    }
-
-    @Override
-    public Map<String,String> getEnv() {
+    public Map<String, String> getEnv() {
         return env;
     }
 

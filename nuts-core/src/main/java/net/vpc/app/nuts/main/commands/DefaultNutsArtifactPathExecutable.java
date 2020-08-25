@@ -46,22 +46,24 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
     String[] args;
     String[] executorOptions;
     NutsExecutionType executionType;
-    NutsSession session;
+    NutsSession traceSession;
+    NutsSession execSession;
     DefaultNutsExecCommand execCommand;
 
-    public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsSession session, DefaultNutsExecCommand execCommand) {
+    public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType,NutsSession traceSession, NutsSession execSession, DefaultNutsExecCommand execCommand) {
         super(cmdName,
-                session.getWorkspace().commandLine().create(args).toString(),
+                execSession.getWorkspace().commandLine().create(args).toString(),
                 NutsExecutableType.ARTIFACT);
-        LOG = session.getWorkspace().log().of(DefaultNutsArtifactPathExecutable.class);
+        LOG = execSession.getWorkspace().log().of(DefaultNutsArtifactPathExecutable.class);
         this.cmdName = cmdName;
         this.args = args;
         this.executionType = executionType;
-        this.session = session;
+        this.traceSession = traceSession;
+        this.execSession = execSession;
         this.execCommand = execCommand;
         List<String> executorOptionsList = new ArrayList<>();
         for (String option : executorOptions) {
-            NutsArgument a = session.getWorkspace().commandLine().createArgument(option);
+            NutsArgument a = traceSession.getWorkspace().commandLine().createArgument(option);
             if (a.getStringKey().equals("--nuts-auto-install")) {
                 if (a.isKeyValue()) {
 //                    autoInstall= a.isNegated() != a.getBooleanValue();
@@ -77,7 +79,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     @Override
     public NutsId getId() {
-        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), session, executorOptions)) {
+        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), traceSession, executorOptions)) {
             return c.descriptor == null ? null : c.descriptor.getId();
         }
     }
@@ -93,8 +95,8 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
     }
 
     public void executeHelper(boolean dry) {
-        NutsWorkspace ws = session.getWorkspace();
-        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), session, executorOptions)) {
+        NutsWorkspace ws = execSession.getWorkspace();
+        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), traceSession, executorOptions)) {
             if (c.descriptor == null) {
                 throw new NutsNotFoundException(ws, "", "Unable to resolve a valid descriptor for " + cmdName, null);
             }
@@ -111,7 +113,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     idType, null
             );
             try {
-                execCommand.ws_exec(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(), true, session, executionType, dry);
+                execCommand.ws_exec(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(), true, traceSession,execSession, executionType, dry);
             } finally {
                 try {
                     CoreIOUtils.delete(ws, tempFolder);
@@ -217,7 +219,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     @Override
     public String toString() {
-        return "NUTS " + cmdName + " " + session.getWorkspace().commandLine().create(args).toString();
+        return "NUTS " + cmdName + " " + execSession.getWorkspace().commandLine().create(args).toString();
     }
 
     public static class CharacterizedExecFile implements AutoCloseable {

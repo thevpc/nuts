@@ -5,7 +5,6 @@
  */
 package net.vpc.app.nuts.main.commands;
 
-import java.nio.file.Paths;
 import java.util.*;
 
 import net.vpc.app.nuts.*;
@@ -21,21 +20,23 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     String[] cmd;
     String[] executorOptions;
-    NutsSession session;
+    NutsSession traceSession;
+    NutsSession execSession;
     private boolean showCommand = false;
     private boolean root;
     NutsExecCommand execCommand;
 
-    public DefaultNutsSystemExecutable(String[] cmd, String[] executorOptions, NutsSession session, NutsExecCommand execCommand, boolean root) {
+    public DefaultNutsSystemExecutable(String[] cmd, String[] executorOptions,NutsSession traceSession, NutsSession execSession, NutsExecCommand execCommand, boolean root) {
         super(cmd[0],
-                session.getWorkspace().commandLine().create(cmd).toString(),
+                execSession.getWorkspace().commandLine().create(cmd).toString(),
                 NutsExecutableType.SYSTEM);
         this.cmd = cmd;
         this.root = root;
         this.execCommand = execCommand;
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
-        this.session = session;
-        NutsCommandLine cmdLine = session.getWorkspace().commandLine().create(this.executorOptions);
+        this.traceSession = traceSession;
+        this.execSession = execSession;
+        NutsCommandLine cmdLine = execSession.getWorkspace().commandLine().create(this.executorOptions);
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
             switch (a.getStringKey()) {
@@ -96,7 +97,9 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         if (env1 != null) {
             e2 = new HashMap<>((Map) env1);
         }
-        NutsWorkspaceUtils.of(session.getWorkspace()).execAndWait(resolveUserOrRootCommand(), e2, CoreIOUtils.toPath(execCommand.getDirectory()), session.getTerminal(), showCommand, true)
+        NutsWorkspaceUtils.of(execSession.getWorkspace()).execAndWait(resolveUserOrRootCommand(), e2, CoreIOUtils.toPath(execCommand.getDirectory()), 
+                traceSession.getTerminal(),
+                execSession.getTerminal(), showCommand, true)
                 .exec();
     }
 
@@ -107,13 +110,16 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         if (env1 != null) {
             e2 = new HashMap<>((Map) env1);
         }
-        NutsWorkspaceUtils.of(session.getWorkspace()).execAndWait(resolveUserOrRootCommand(), e2, CoreIOUtils.toPath(execCommand.getDirectory()), session.getTerminal(), showCommand, true)
+        NutsWorkspaceUtils.of(execSession.getWorkspace()).execAndWait(resolveUserOrRootCommand(), e2, CoreIOUtils.toPath(execCommand.getDirectory()), 
+                traceSession.getTerminal(),
+                execSession.getTerminal(), 
+                showCommand, true)
                 .dryExec();
     }
 
     @Override
     public String getHelpText() {
-        switch (session.getWorkspace().config().getOsFamily()) {
+        switch (execSession.getWorkspace().config().getOsFamily()) {
             case WINDOWS: {
                 return "No help available. Try " + getName() + " /help";
             }
@@ -126,9 +132,9 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     @Override
     public String toString() {
         if (root) {
-            return "ROOT_CMD " + session.getWorkspace().commandLine().create(cmd).toString();
+            return "ROOT_CMD " + execSession.getWorkspace().commandLine().create(cmd).toString();
         } else {
-            return "USER_CMD " + session.getWorkspace().commandLine().create(cmd).toString();
+            return "USER_CMD " + execSession.getWorkspace().commandLine().create(cmd).toString();
         }
     }
 

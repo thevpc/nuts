@@ -812,7 +812,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
             }
         }
-        PrintStream out = session.out();
+        NutsSession traceSession=session;
+        PrintStream out = traceSession.out();
         out.flush();
         switch (def.getType()) {
             case API: {
@@ -829,17 +830,17 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
         }
         if (def.getPath() != null) {
-            NutsExecutionContext executionContext = createNutsExecutionContext(def, args, new String[0], session,
+            NutsExecutionContext executionContext = createNutsExecutionContext(def, args, new String[0], traceSession, session,
                     true,
                     false,
                     config().options().getExecutionType(),
                     null);
             for (NutsDependency dependency : def.getDependencies()) {
-                if (ndf == null || ndf.accept(def.getId(), dependency, session)) {
+                if (ndf == null || ndf.accept(def.getId(), dependency, traceSession)) {
                     if (!getInstalledRepository().
                             searchVersions().setId(dependency.getId())
                             .setFetchMode(NutsFetchMode.LOCAL)
-                            .setSession(session)
+                            .setSession(traceSession)
                             .getResult()
                             .hasNext()) {
                         NutsDefinition dd = search().addId(dependency.getId()).setContent(true).setLatest(true).getResultDefinitions().first();
@@ -848,15 +849,15 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                     .setId(dd.getId())
                                     .setContent(dd.getPath())
                                     //.setFetchMode(NutsFetchMode.LOCAL)
-                                    .setSession(session)
+                                    .setSession(traceSession)
                                     .setDescriptor(dd.getDescriptor())
                                     .run();
-                            getInstalledRepository().install(dd, executionContext.getDefinition().getId(), session);
+                            getInstalledRepository().install(dd, executionContext.getDefinition().getId(), traceSession);
                         }
                     }
                 }
             }
-            NutsInstallInformation iinfo = getInstalledRepository().install(executionContext.getDefinition(), forId, session);
+            NutsInstallInformation iinfo = getInstalledRepository().install(executionContext.getDefinition(), forId, traceSession);
 
             if (isUpdate) {
                 if (installerComponent != null) {
@@ -963,14 +964,15 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             NutsDefinition def,
             String[] args,
             String[] executorArgs,
-            NutsSession session,
+            NutsSession traceSession,
+            NutsSession execSession,
             boolean failFast,
             boolean temporary,
             NutsExecutionType executionType,
             String commandName
     ) {
         if (commandName == null) {
-            commandName = resolveCommandName(def.getId(), session);
+            commandName = resolveCommandName(def.getId(), traceSession);
         }
         NutsDescriptor descriptor = def.getDescriptor();
         NutsArtifactCall installer = descriptor.getInstaller();
@@ -991,7 +993,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         }
         Path installFolder = config().getStoreLocation(def.getId(), NutsStoreLocation.APPS);
         Map<String, String> env = new LinkedHashMap<>();
-        return new DefaultNutsExecutionContext(def, aargs.toArray(new String[0]), eargs.toArray(new String[0]), env, props, installFolder.toString(), session, this, failFast, temporary, executionType, commandName);
+        return new DefaultNutsExecutionContext(def, aargs.toArray(new String[0]), eargs.toArray(new String[0]), env, props, installFolder.toString(),
+                traceSession,
+                execSession, this, failFast, temporary, executionType, commandName);
     }
 
     public String resolveCommandName(NutsId id, NutsSession session) {

@@ -43,9 +43,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 
 import net.vpc.app.nuts.runtime.ext.DefaultNutsWorkspaceExtensionManager;
 import net.vpc.app.nuts.runtime.util.io.IProcessExecHelper;
@@ -94,10 +92,10 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 executionContext.getArguments(),
                 executionContext.getExecutorOptions(),
                 CoreStringUtils.isBlank(executionContext.getCwd()) ? System.getProperty("user.dir") : executionContext.getCwd(),
-                executionContext.getSession());
+                executionContext.getTraceSession());
         switch (executionContext.getExecutionType()) {
             case EMBEDDED: {
-                return new EmbeddedProcessExecHelper(def,executionContext.getSession(),joptions,executionContext.getSession().out());
+                return new EmbeddedProcessExecHelper(def,executionContext.getExecSession(),joptions,executionContext.getExecSession().out());
             }
             case SPAWN:
             default: {
@@ -114,18 +112,18 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 NutsWorkspaceOptionsBuilder options = ws.config().options().copy();
 
                 //copy session parameters to new created workspace
-                options.setTrace(executionContext.getSession().isTrace());
-                options.setCached(executionContext.getSession().isCached());
-                options.setIndexed(executionContext.getSession().isIndexed());
-                options.setConfirm(executionContext.getSession().getConfirm());
-                options.setTransitive(executionContext.getSession().isTransitive());
-                options.setOutputFormat(executionContext.getSession().getOutputFormat());
+                options.setTrace(executionContext.getExecSession().isTrace());
+                options.setCached(executionContext.getExecSession().isCached());
+                options.setIndexed(executionContext.getExecSession().isIndexed());
+                options.setConfirm(executionContext.getExecSession().getConfirm());
+                options.setTransitive(executionContext.getExecSession().isTransitive());
+                options.setOutputFormat(executionContext.getExecSession().getOutputFormat());
                 if(options.getTerminalMode()==NutsTerminalMode.FILTERED){
                     //retain filtered
                 }else if(options.getTerminalMode()==NutsTerminalMode.INHERITED){
                     //retain inherited
                 }else{
-                    options.setTerminalMode(executionContext.getSession().getTerminal().getOutMode());
+                    options.setTerminalMode(executionContext.getExecSession().getTerminal().getOutMode());
                 }
 
                 String bootArgumentsString = options
@@ -189,10 +187,10 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 }
                 xargs.addAll(joptions.getApp());
                 args.addAll(joptions.getApp());
-                return new AbstractSyncIProcessExecHelper(executionContext.getSession()) {
+                return new AbstractSyncIProcessExecHelper(executionContext.getExecSession()) {
                     @Override
                     public void dryExec() {
-                        PrintStream out = executionContext.getSession().out();
+                        PrintStream out = executionContext.getExecSession().out();
                         out.println("[dry] ==[nuts-exec]== ");
                         for (int i = 0; i < xargs.size(); i++) {
                             String xarg = xargs.get(i);
@@ -206,7 +204,8 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         }
                         String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
                         NutsWorkspaceUtils.of(executionContext.getWorkspace()).execAndWait(def,
-                                executionContext.getSession(),
+                                executionContext.getTraceSession(),
+                                executionContext.getExecSession(),
                                 executionContext.getExecutorProperties(),
                                 args.toArray(new String[0]),
                                 osEnv, directory, joptions.isShowCommand(), true
@@ -215,7 +214,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
                     private CoreIOUtils.ProcessExecHelper preExec() {
                         if (joptions.isShowCommand() || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
-                            PrintStream out = executionContext.getSession().out();
+                            PrintStream out = executionContext.getExecSession().out();
                             out.println("==[nuts-exec]== ");
                             for (int i = 0; i < xargs.size(); i++) {
                                 String xarg = xargs.get(i);
@@ -230,7 +229,8 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         }
                         String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
                         return NutsWorkspaceUtils.of(executionContext.getWorkspace()).execAndWait(def,
-                                executionContext.getSession(),
+                                executionContext.getTraceSession(),
+                                executionContext.getExecSession(),
                                 executionContext.getExecutorProperties(),
                                 args.toArray(new String[0]),
                                 osEnv, directory, joptions.isShowCommand(), true

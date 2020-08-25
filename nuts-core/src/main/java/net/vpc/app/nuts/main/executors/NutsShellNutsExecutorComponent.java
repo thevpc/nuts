@@ -103,7 +103,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
         executionContext.getWorkspace()
                 .exec()
                 .addCommand(app)
-                .setSession(executionContext.getSession())
+                .setSession(executionContext.getExecSession())
                 .setEnv(executionContext.getEnv())
                 .setDirectory(directory == null ? null : directory.getPath())
                 .setFailFast(true)

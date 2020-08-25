@@ -194,15 +194,7 @@ public class CoreIOUtils {
 
         public Future<Integer> execAsync() {
             try {
-                if (ws.io().getTerminalFormat().isFormatted(out) 
-                        &&
-                        ws.config().options().getTerminalMode()==NutsTerminalMode.FORMATTED
-                        ) {
-                    out.print("`move-line-start`");
-                    out.print("                                                                      ");
-                    out.print("`move-line-start`");
-                    out.flush();
-                }
+                clearMonitor(out, ws);
                 ProcessBuilder2 p = pb.start();
                 return new FutureTask<Integer>(() -> p.waitFor().getResult());
             } catch (IOException ex) {
@@ -212,15 +204,7 @@ public class CoreIOUtils {
 
         public int exec() {
             try {
-                if (ws.io().getTerminalFormat().isFormatted(out)
-                        &&
-                        ws.config().options().getTerminalMode()==NutsTerminalMode.FORMATTED
-                        ) {
-                    out.print("`move-line-start`");
-                    out.print("                                                                      ");
-                    out.print("`move-line-start`");
-                    out.flush();
-                }
+                clearMonitor(out, ws);
                 ProcessBuilder2 p = pb.start();
                 return p.waitFor().getResult();
             } catch (IOException ex) {
@@ -229,6 +213,21 @@ public class CoreIOUtils {
         }
     }
 
+    public static void clearMonitor(PrintStream out,NutsWorkspace ws) throws UncheckedIOException {
+        NutsTerminalMode terminalMode = ws.config().options().getTerminalMode();
+        if (ws.io().getTerminalFormat().isFormatted(out)
+                        &&
+                        (
+                            terminalMode==null
+                            || terminalMode==NutsTerminalMode.FORMATTED
+                        )
+                        ) {
+                    out.print("`move-line-start`");
+//                    out.print("                                                                      ");
+//                    out.print("`move-line-start`");
+                    out.flush();
+                }
+    }
     public static NutsURLHeader getURLHeader(URL url) throws UncheckedIOException {
         if (url.getProtocol().equals("file")) {
             File f = toFile(url);

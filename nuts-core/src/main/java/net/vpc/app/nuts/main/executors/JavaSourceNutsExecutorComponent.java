@@ -74,7 +74,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         NutsWorkspace ws = executionContext.getWorkspace();
         String folder = "__temp_folder";
-        PrintStream out = executionContext.getSession().out();
+        PrintStream out = executionContext.getTraceSession().out();
         out.println("[[compile]]");
         out.printf("==embedded-javac== **-d** <temp_folder> %s%n",javaFile.toString());
         JavaNutsExecutorComponent cc = new JavaNutsExecutorComponent();
@@ -100,7 +100,8 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
                 executionContext.getEnv(),
                 executionContext.getExecutorProperties(),
                 executionContext.getCwd(),
-                executionContext.getSession(),
+                executionContext.getTraceSession(),
+                executionContext.getExecSession(),
                 ws,
                 //failFast
                 true,
@@ -141,12 +142,13 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
                             "--main-class",
                             new File(fileName.substring(fileName.length() - ".java".length())).getName(),
                             "--class-path",
-                            folder.toString(),}
+                            folder.toString()}
                 ),
                 executionContext.getEnv(),
                 executionContext.getExecutorProperties(),
                 executionContext.getCwd(),
-                executionContext.getSession(),
+                executionContext.getTraceSession(),
+                executionContext.getExecSession(),
                 ws,
                 //failFast
                 true,

@@ -222,7 +222,7 @@ final class PrivateNutsArgumentsParser {
                     }
                     case "--standalone": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
 //                            options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         }
@@ -231,7 +231,7 @@ final class PrivateNutsArgumentsParser {
                     }
                     case "--standalone-workspace": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         }
                         break;
@@ -239,7 +239,7 @@ final class PrivateNutsArgumentsParser {
                     case "-E":
                     case "--exploded": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
 //                            options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
                         }
@@ -247,7 +247,7 @@ final class PrivateNutsArgumentsParser {
                     }
                     case "--exploded-workspace": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
                         }
                         break;
@@ -263,14 +263,14 @@ final class PrivateNutsArgumentsParser {
                     }
                     case "--exploded-repositories": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
                         }
                         break;
                     }
                     case "--standalone-repositories": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         }
                         break;
@@ -285,35 +285,35 @@ final class PrivateNutsArgumentsParser {
                     }
                     case "--system-layout": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setStoreLocationLayout(null);
                         }
                         break;
                     }
                     case "--windows-layout": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setStoreLocationLayout(NutsOsFamily.WINDOWS);
                         }
                         break;
                     }
                     case "--macos-layout": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setStoreLocationLayout(NutsOsFamily.MACOS);
                         }
                         break;
                     }
                     case "--linux-layout": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setStoreLocationLayout(NutsOsFamily.LINUX);
                         }
                         break;
                     }
                     case "--unix-layout": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setStoreLocationLayout(NutsOsFamily.UNIX);
                         }
                         break;
@@ -494,29 +494,27 @@ final class PrivateNutsArgumentsParser {
                     case "-C":
                     case "--no-color": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setTerminalMode(NutsTerminalMode.FILTERED);
                         }
                         break;
                     }
                     case "--bot": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
-                            if (a.getBooleanValue()) {
-                                options.setTerminalMode(NutsTerminalMode.FILTERED);
-                                options.setProgressOptions("none");
-                                options.setConfirm(NutsConfirmationMode.ERROR);
-                                options.setTrace(false);
-                                options.setDebug(false);
-                                options.setGui(false);
-                            }
+                        if (enabled && a.getBooleanValue()) {
+                            options.setTerminalMode(NutsTerminalMode.FILTERED);
+                            options.setProgressOptions("none");
+                            options.setConfirm(NutsConfirmationMode.ERROR);
+                            options.setTrace(false);
+                            options.setDebug(false);
+                            options.setGui(false);
                         }
                         break;
                     }
                     case "-R":
                     case "--read-only": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setReadOnly(a.getBooleanValue());
                         }
                         break;
@@ -524,7 +522,7 @@ final class PrivateNutsArgumentsParser {
                     case "-t":
                     case "--trace": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setTrace(a.getBooleanValue());
                         }
                         break;
@@ -539,10 +537,8 @@ final class PrivateNutsArgumentsParser {
                     }
                     case "--no-progress": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
-                            if (a.getBooleanValue()) {
-                                options.setProgressOptions("none");
-                            }
+                        if (enabled && a.getBooleanValue()) {
+                            options.setProgressOptions("none");
                         }
                         break;
                     }
@@ -692,7 +688,7 @@ final class PrivateNutsArgumentsParser {
                     case "--yes":
                     case "-y": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setConfirm(NutsConfirmationMode.YES);
                         }
                         break;
@@ -700,42 +696,42 @@ final class PrivateNutsArgumentsParser {
                     case "--no":
                     case "-n": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setConfirm(NutsConfirmationMode.NO);
                         }
                         break;
                     }
                     case "--error": {
-                        cmdLine.skip();
-                        if (enabled) {
+                        a = cmdLine.nextBoolean();
+                        if (enabled && a.getBooleanValue()) {
                             options.setConfirm(NutsConfirmationMode.ERROR);
                         }
                         break;
                     }
                     case "--ask": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setConfirm(NutsConfirmationMode.ASK);
                         }
                         break;
                     }
                     case "--cached": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setCached(a.getBooleanValue());
                         }
                         break;
                     }
                     case "--indexed": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setIndexed(a.getBooleanValue());
                         }
                         break;
                     }
                     case "--transitive": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setTransitive(a.getBooleanValue());
                         }
                         break;
@@ -802,7 +798,7 @@ final class PrivateNutsArgumentsParser {
                     case "--embedded":
                     case "-b": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setExecutionType(NutsExecutionType.EMBEDDED);
                         }
                         //ignore
@@ -812,21 +808,21 @@ final class PrivateNutsArgumentsParser {
                     case "--spawn":
                     case "-x": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setExecutionType(NutsExecutionType.SPAWN);
                         }
                         break;
                     }
                     case "--user-cmd": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setExecutionType(NutsExecutionType.USER_CMD);
                         }
                         break;
                     }
                     case "--root-cmd": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setExecutionType(NutsExecutionType.ROOT_CMD);
                         }
                         break;
@@ -842,14 +838,14 @@ final class PrivateNutsArgumentsParser {
                     }
                     case "--open": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING);
                         }
                         break;
                     }
                     case "--create": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             options.setOpenMode(NutsWorkspaceOpenMode.CREATE_NEW);
                         }
                         break;
@@ -920,7 +916,7 @@ final class PrivateNutsArgumentsParser {
                     case "-e":
                     case "--exec": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             while ((a = cmdLine.next()) != null) {
                                 if (a.isOption()) {
                                     executorOptions.add(a.getString());
@@ -939,7 +935,7 @@ final class PrivateNutsArgumentsParser {
                     case "--help":
                     case "-h": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (enabled && a.getBooleanValue()) {
                             applicationArguments.add("help");
                             applicationArguments.addAll(Arrays.asList(cmdLine.toArray()));
                             cmdLine.skipAll();

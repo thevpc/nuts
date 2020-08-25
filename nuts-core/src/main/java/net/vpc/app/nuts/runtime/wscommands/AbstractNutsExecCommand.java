@@ -242,6 +242,14 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call grabOutputString");
     }
 
+    public String getOutputString0() {
+        PrintStream o = getOut();
+        if (o instanceof SPrintStream) {
+            return ((SPrintStream) o).getStringBuffer();
+        }
+        throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call grabOutputString");
+    }
+
     @Override
     public String getErrorString() {
         if (!executed) {

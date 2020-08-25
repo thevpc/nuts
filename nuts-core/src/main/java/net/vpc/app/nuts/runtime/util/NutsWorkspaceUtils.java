@@ -37,6 +37,7 @@ import net.vpc.app.nuts.runtime.util.io.ZipUtils;
  * @author vpc
  */
 public class NutsWorkspaceUtils {
+
     private final NutsLogger LOG;
 
     private NutsWorkspace ws;
@@ -155,8 +156,8 @@ public class NutsWorkspaceUtils {
             for (NutsRepository repository : ws.config().getRepositories(session)) {
                 if (repository.config().isEnabled() && (repositoryFilter == null || repositoryFilter.accept(repository))) {
                     int t = 0;
-                    int d=0;
-                    if(fmode==NutsRepositorySupportedAction.DEPLOY){
+                    int d = 0;
+                    if (fmode == NutsRepositorySupportedAction.DEPLOY) {
                         try {
                             d = CoreNutsUtils.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive(), session);
                         } catch (Exception ex) {
@@ -169,7 +170,7 @@ public class NutsWorkspaceUtils {
                         LOG.with().level(Level.FINE).error(ex).log("Unable to resolve support speed level for : {0}", repository.config().name());
                     }
                     if (t > 0) {
-                        repos2.add(new RepoAndLevel(repository,d, t, postComp));
+                        repos2.add(new RepoAndLevel(repository, d, t, postComp));
                     }
                 }
             }
@@ -271,7 +272,7 @@ public class NutsWorkspaceUtils {
         int speedOrder;
         Comparator<NutsRepository> postComp;
 
-        public RepoAndLevel(NutsRepository r, int deployOrder,int speedOrder, Comparator<NutsRepository> postComp) {
+        public RepoAndLevel(NutsRepository r, int deployOrder, int speedOrder, Comparator<NutsRepository> postComp) {
             super();
             this.r = r;
             this.deployOrder = deployOrder;
@@ -281,7 +282,7 @@ public class NutsWorkspaceUtils {
 
         @Override
         public int compareTo(RepoAndLevel o2) {
-            int x = Integer.compare(this.deployOrder,o2.deployOrder);
+            int x = Integer.compare(this.deployOrder, o2.deployOrder);
             if (x != 0) {
                 return x;
             }
@@ -353,6 +354,7 @@ public class NutsWorkspaceUtils {
     }
 
     public static class Events {
+
         private NutsWorkspaceUtils u;
 
         public Events(NutsWorkspaceUtils u) {
@@ -448,15 +450,15 @@ public class NutsWorkspaceUtils {
                     .log("{0}{1} {2}{3}",
                             fetchString,
                             id,
-                            CoreStringUtils.alignLeft(message, 18)
-                            , timeMessage);
+                            CoreStringUtils.alignLeft(message, 18),
+                            timeMessage);
         }
     }
 
-    public CoreIOUtils.ProcessExecHelper execAndWait(String[] args, Map<String, String> env, Path directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) {
-        PrintStream out = terminal.out();
-        PrintStream err = terminal.err();
-        InputStream in = terminal.in();
+    public CoreIOUtils.ProcessExecHelper execAndWait(String[] args, Map<String, String> env, Path directory, NutsSessionTerminal prepareTerminal, NutsSessionTerminal execTerminal, boolean showCommand, boolean failFast) {
+        PrintStream out = execTerminal.out();
+        PrintStream err = execTerminal.err();
+        InputStream in = execTerminal.in();
         if (ws.io().getSystemTerminal().isStandardOutputStream(out)) {
             out = null;
         }
@@ -466,6 +468,7 @@ public class NutsWorkspaceUtils {
         if (ws.io().getSystemTerminal().isStandardInputStream(in)) {
             in = null;
         }
+        CoreIOUtils.clearMonitor(out, ws);
         ProcessBuilder2 pb = new ProcessBuilder2(ws)
                 .setCommand(args)
                 .setEnv(env)
@@ -482,19 +485,19 @@ public class NutsWorkspaceUtils {
             LOG.with().level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] {0}", new NutsString(pb.getFormattedCommandString(ws)));
         }
         if (showCommand || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
-            if (ws.io().getTerminalFormat().isFormatted(terminal.out())) {
-                terminal.out().print("==[exec]== ");
-                terminal.out().println(pb.getFormattedCommandString(ws));
+            if (ws.io().getTerminalFormat().isFormatted(prepareTerminal.out())) {
+                prepareTerminal.out().print("==[exec]== ");
+                prepareTerminal.out().println(pb.getFormattedCommandString(ws));
             } else {
-                terminal.out().print("exec ");
-                terminal.out().printf("%s%n", pb.getCommandString());
+                prepareTerminal.out().print("exec ");
+                prepareTerminal.out().printf("%s%n", pb.getCommandString());
             }
         }
-        return new CoreIOUtils.ProcessExecHelper(pb, ws, out == null ? terminal.out() : out);
+        return new CoreIOUtils.ProcessExecHelper(pb, ws, out == null ? execTerminal.out() : out);
     }
 
-    public CoreIOUtils.ProcessExecHelper execAndWait(NutsDefinition nutMainFile, NutsSession session, Map<String, String> execProperties, String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast) throws NutsExecutionException {
-        NutsWorkspace workspace = session.getWorkspace();
+    public CoreIOUtils.ProcessExecHelper execAndWait(NutsDefinition nutMainFile, NutsSession prepareSession, NutsSession execSession, Map<String, String> execProperties, String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast) throws NutsExecutionException {
+        NutsWorkspace workspace = execSession.getWorkspace();
         NutsId id = nutMainFile.getId();
         Path installerFile = nutMainFile.getPath();
         Path storeFolder = nutMainFile.getInstallInformation().getInstallFolder();
@@ -506,7 +509,7 @@ public class NutsWorkspaceUtils {
         for (Map.Entry<String, String> entry : execProperties.entrySet()) {
             map.put(entry.getKey(), entry.getValue());
         }
-        Path nutsJarFile = workspace.fetch().setNutsApi().setSession(CoreNutsUtils.silent(session)).getResultPath();
+        Path nutsJarFile = workspace.fetch().setNutsApi().setSession(CoreNutsUtils.silent(prepareSession)).getResultPath();
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }
@@ -516,7 +519,7 @@ public class NutsWorkspaceUtils {
         map.put("nuts.id.simpleName", id.getShortName());
         map.put("nuts.id.group", id.getGroupId());
         map.put("nuts.file", nutMainFile.getPath().toString());
-        String defaultJavaCommand = NutsJavaSdkUtils.of(ws).resolveJavaCommandByVersion("", false, session);
+        String defaultJavaCommand = NutsJavaSdkUtils.of(ws).resolveJavaCommandByVersion("", false, prepareSession);
 
         map.put("nuts.java", defaultJavaCommand);
         if (map.containsKey("nuts.jar")) {
@@ -548,17 +551,17 @@ public class NutsWorkspaceUtils {
                     if (CoreStringUtils.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    return NutsJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, false, session);
+                    return NutsJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, false, prepareSession);
                 } else if (skey.equals("javaw") || skey.startsWith("javaw#")) {
                     String javaVer = skey.substring(4);
                     if (CoreStringUtils.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    return NutsJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, true, session);
+                    return NutsJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, true, prepareSession);
                 } else if (skey.equals("nuts")) {
                     NutsDefinition nutsDefinition;
                     nutsDefinition = workspace.fetch().setId(NutsConstants.Ids.NUTS_API)
-                            .setSession(session).getResultDefinition();
+                            .setSession(prepareSession).getResultDefinition();
                     if (nutsDefinition.getPath() != null) {
                         return ("<::expand::> " + apply("java") + " -jar " + nutsDefinition.getPath());
                     }
@@ -597,9 +600,8 @@ public class NutsWorkspaceUtils {
         } else {
             pdirectory = workspace.config().getWorkspaceLocation().resolve(directory);
         }
-        return execAndWait(args, envmap, pdirectory, session.getTerminal(), showCommand, failFast);
+        return execAndWait(args, envmap, pdirectory, prepareSession.getTerminal(), execSession.getTerminal(), showCommand, failFast);
     }
-
 
     public NutsExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName) {
         CorePlatformUtils.MainClassType mainClass = null;

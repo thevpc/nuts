@@ -26,12 +26,17 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
     Map<String,String> env;
     String dir;
     boolean failFast;
-    NutsSession session;
+    NutsSession traceSession;
+    NutsSession execSession;
     NutsExecutionType executionType;
     DefaultNutsExecCommand execCommand;
     boolean autoInstall=true;
 
-    public DefaultNutsArtifactExecutable(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Map<String,String> env, String dir, boolean failFast, NutsSession session, NutsExecutionType executionType, DefaultNutsExecCommand execCommand) {
+    public DefaultNutsArtifactExecutable(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, 
+            Map<String,String> env, String dir, boolean failFast, 
+            NutsSession traceSession, 
+            NutsSession execSession, 
+            NutsExecutionType executionType, DefaultNutsExecCommand execCommand) {
         super(commandName, def.getId().getLongName(), NutsExecutableType.ARTIFACT);
         this.def = def;
         //all these information areavailable, an exception would be thrown if not!
@@ -45,13 +50,14 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
         this.env = env;
         this.dir = dir;
         this.failFast = failFast;
-        this.session = session;
+        this.traceSession = traceSession;
+        this.execSession = execSession;
         this.executionType = executionType;
         this.execCommand = execCommand;
 
         List<String> executorOptionsList=new ArrayList<>();
         for (String option : executorOptions) {
-            NutsArgument a = session.getWorkspace().commandLine().createArgument(option);
+            NutsArgument a = traceSession.getWorkspace().commandLine().createArgument(option);
             if(a.getStringKey().equals("--nuts-auto-install")){
                 if(a.isKeyValue()){
                     autoInstall= a.isNegated() != a.getBooleanValue();
@@ -73,25 +79,25 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
     @Override
     public void execute() {
         if (autoInstall && def.getInstallInformation().getInstallStatus()!=NutsInstallStatus.INSTALLED) {
-            session.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
-                session.getWorkspace().install().id(def.getId()).run();
+            traceSession.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
+                traceSession.getWorkspace().install().id(def.getId()).run();
         }
-        execCommand.ws_exec(def, commandName, appArgs, executorOptions, env, dir, failFast, false, session, executionType,false);
+        execCommand.ws_exec(def, commandName, appArgs, executorOptions, env, dir, failFast, false, traceSession,execSession, executionType,false);
     }
 
     @Override
     public void dryExecute() {
         if (autoInstall && def.getInstallInformation().getInstallStatus()!=NutsInstallStatus.INSTALLED) {
-            session.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
-            PrintStream out = session.out();
+            execSession.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
+            PrintStream out = execSession.out();
             out.printf("[dry] ==install== %s%n",def.getId().getLongName());
         }
-        execCommand.ws_exec(def, commandName, appArgs, executorOptions, env, dir, failFast, false, session, executionType,true);
+        execCommand.ws_exec(def, commandName, appArgs, executorOptions, env, dir, failFast, false, traceSession,execSession, executionType,true);
     }
 
     @Override
     public String toString() {
-        return "NUTS " + getId().toString() + " " + session.getWorkspace().commandLine().create(appArgs).toString();
+        return "NUTS " + getId().toString() + " " + execSession.getWorkspace().commandLine().create(appArgs).toString();
     }
 
 }

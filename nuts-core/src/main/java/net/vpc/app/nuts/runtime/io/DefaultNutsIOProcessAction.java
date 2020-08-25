@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.*;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 
 public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
     private String processType;

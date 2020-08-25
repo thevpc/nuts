@@ -10,7 +10,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --progress=newline -b nadmin list aliases</exec.args>
+            <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --progress=newline update nuts</exec.args>
             <exec.executable>java</exec.executable>
                 
                 
@@ -24,8 +24,9 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-e java -classpath %classpath net.vpc.app.nuts.runtime.terminals.NutsAnsiUnixTermPrintStream</exec.args>
+            <exec.args>--hold -e java -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts nadmin list aliases</exec.args>
             <exec.executable>konsole</exec.executable>
+            <jpda.listen>true</jpda.listen>
         </properties>
     </action>
     <action>
@@ -38,25 +39,26 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
         </goals>
         <properties>
-            <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --progress=newline -b nadmin list aliases</exec.args>
+            <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --progress=newline update nuts</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
     </action>
     <action>
-        <actionName>debug</actionName>
-        <packagings>
-            <packaging>jar</packaging>
-        </packagings>
-        <goals>
-            <goal>process-classes</goal>
-            <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
-        </goals>
-        <properties>
-            <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts --progress=newline -b nadmin list aliases</exec.args>
-            <exec.executable>java</exec.executable>
-            <jpda.listen>true</jpda.listen>
-        </properties>
-    </action>
+            <actionName>debug</actionName>
+            <packagings>
+                <packaging>jar</packaging>
+            </packagings>
+            <goals>
+                <goal>process-classes</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
+            </goals>
+            <properties>
+                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts --progress=newline update nuts</exec.args>
+                <exec.executable>java</exec.executable>
+                <jpda.listen>true</jpda.listen>
+            </properties>
+        </action>
+    
         
         
         

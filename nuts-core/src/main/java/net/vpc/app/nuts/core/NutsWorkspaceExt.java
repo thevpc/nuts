@@ -57,7 +57,10 @@ public interface NutsWorkspaceExt {
 
     NutsInstallStatus getInstallStatus(NutsId id, boolean checkDependencies, NutsSession session);
 
-    NutsExecutionContext createNutsExecutionContext(NutsDefinition nutToInstall, String[] args, String[] executorArgs, NutsSession session, boolean failFast, boolean temporary, NutsExecutionType executionType, String commandName);
+    NutsExecutionContext createNutsExecutionContext(NutsDefinition nutToInstall, String[] args, String[] executorArgs, 
+            NutsSession traceSession, 
+            NutsSession execSession, 
+            boolean failFast, boolean temporary, NutsExecutionType executionType, String commandName);
 
     @Deprecated
     void deployBoot(NutsSession session, NutsId def,boolean withDependencies);

@@ -14,11 +14,10 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import net.vpc.app.nuts.NutsApplicationContext;
 import net.vpc.app.nuts.NutsExecCommand;
-import net.vpc.app.nuts.NutsExecCommandFormat;
+import net.vpc.app.nuts.runtime.wscommands.AbstractNutsExecCommand;
 import net.vpc.toolbox.mysql.util.MysqlUtils;
 
 public class RemoteMysqlDatabaseConfigService {
@@ -171,13 +170,19 @@ public class RemoteMysqlDatabaseConfigService {
     public String execRemoteNuts(String... cmd) {
         NutsExecCommand b = context.getWorkspace().exec()
                 .setSession(context.getSession());
-        b.addCommand("nsh", "--bot", "-c", "ssh");
-        b.addCommand(this.config.getServer());
-        b.addCommand("nuts");
-        b.addCommand("--bot");
-        b.addCommand(cmd);
+        if ("localhost".equals(this.config.getServer())) {
+            b.addCommand("nuts");
+            b.addCommand("--bot");
+            b.addCommand(cmd);
+        } else {
+            b.addCommand("nsh", "-c", "ssh");
+            b.addCommand(this.config.getServer());
+            b.addCommand("nuts");
+            b.addCommand("--bot");
+            b.addCommand(cmd);
+        }
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("[[EXEC]] %s%n", b.format()
+            String ff = b.format()
                     .setEnvReplacer(envEntry -> {
                         if (envEntry.getName().toLowerCase().contains("password")
                                 || envEntry.getName().toLowerCase().contains("pwd")) {
@@ -185,11 +190,13 @@ public class RemoteMysqlDatabaseConfigService {
                         }
                         return null;
                     })
-                    .format());
+                    .format();
+            context.getSession().out().printf("[[EXEC]] %s%n", ff);
         }
         b.setRedirectErrorStream(true)
                 .grabOutputString()
                 .setFailFast(true);
+        String ss=((AbstractNutsExecCommand)b).getOutputString0();
         return b.run().getOutputString();
 
     }

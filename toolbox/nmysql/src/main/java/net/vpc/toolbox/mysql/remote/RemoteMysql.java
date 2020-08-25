@@ -405,11 +405,11 @@ public class RemoteMysql {
     public RemoteMysqlConfigService[] listConfig() {
         List<RemoteMysqlConfigService> all = new ArrayList<>();
         if(Files.isDirectory(getContext().getSharedConfigFolder())) {
-            try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(context.getSharedConfigFolder(), x -> x.getFileName().toString().endsWith(".config"))) {
+            try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(context.getSharedConfigFolder(), x -> x.getFileName().toString().endsWith(RemoteMysqlConfigService.CLIENT_CONFIG_EXT))) {
                 for (Path file1 : configFiles) {
                     try {
                         String nn = file1.getFileName().toString();
-                        RemoteMysqlConfigService c = loadMysqlConfig(nn.substring(0, nn.length() - ".config".length()));
+                        RemoteMysqlConfigService c = loadMysqlConfig(nn.substring(0, nn.length() - RemoteMysqlConfigService.CLIENT_CONFIG_EXT.length()));
                         all.add(c);
                     } catch (Exception ex) {
                         //ignore
