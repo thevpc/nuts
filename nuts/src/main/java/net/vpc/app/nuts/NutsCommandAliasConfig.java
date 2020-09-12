@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -37,6 +36,7 @@ import java.util.Objects;
  * Command Alias definition class Config
  * @author vpc
  * @since 0.5.4
+ * @category Config
  */
 public class NutsCommandAliasConfig extends NutsConfigItem{
     private static final long serialVersionUID = 1;

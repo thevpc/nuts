@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Search id defines a uniform interface to ids, versions and descriptors
  * @author vpc
  * @since 0.5.4
+ * @category Base
  */
 public interface NutsSearchId {
 

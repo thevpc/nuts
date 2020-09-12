@@ -35,6 +35,7 @@ import java.util.Collection;
  *
  * @author vpc
  * @since 0.5.4
+ * @category Commands
  */
 public interface NutsUninstallCommand extends NutsWorkspaceCommand {
 

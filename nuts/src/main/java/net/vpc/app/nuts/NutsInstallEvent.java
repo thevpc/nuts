@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Event describing installation of an artifact
  * @author vpc
  * @since 0.5.6
+ * @category Base
  */
 public interface NutsInstallEvent {
 

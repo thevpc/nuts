@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Supported Operating System Families
  * @author vpc
  * @since 0.5.4
+ * @category Base
  */
 public enum NutsOsFamily {
     /**

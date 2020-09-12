@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Push Exception
  *
  * @since 0.5.4
+ * @category Exception
  */
 public class NutsPushException extends NutsException {
 

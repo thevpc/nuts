@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Progress event
  * @author vpc
  * @since 0.5.8
+ * @category Base
  */
 public interface NutsProgressEvent {
 

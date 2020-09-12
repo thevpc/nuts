@@ -35,6 +35,8 @@ import java.util.Collection;
  * Command for installing artifacts
  * @author vpc
  * @since 0.5.4
+ * @category Base
+ * @category Commands
  */
 public interface NutsInstallCommand extends NutsWorkspaceCommand {
 

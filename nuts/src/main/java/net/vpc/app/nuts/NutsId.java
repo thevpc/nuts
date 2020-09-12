@@ -31,12 +31,12 @@ package net.vpc.app.nuts;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * Immutable Artifact id information.
  * @author vpc
  * @since 0.1.0
+ * @category Descriptor
  */
 public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId> {
 

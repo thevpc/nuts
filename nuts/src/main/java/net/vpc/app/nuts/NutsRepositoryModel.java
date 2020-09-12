@@ -3,6 +3,11 @@ package net.vpc.app.nuts;
 import java.nio.file.Path;
 import java.util.Iterator;
 
+/**
+ * 
+ * @author vpc
+ * @category Extensions
+ */
 public interface NutsRepositoryModel {
     int MIRRORING = 1;
     int LIB_READ = 2;

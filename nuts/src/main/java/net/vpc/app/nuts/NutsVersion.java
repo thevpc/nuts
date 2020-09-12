@@ -42,6 +42,7 @@ import java.io.Serializable;
  * </ul>
  * @author vpc
  * @since 0.5.4
+ * @category Descriptor
  */
 public interface NutsVersion extends Serializable, NutsTokenFilter, Comparable<NutsVersion> {
 

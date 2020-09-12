@@ -36,6 +36,7 @@ import java.nio.file.Path;
 /**
  *
  * @author vpc
+ * @category SPI Base
  */
 public abstract class AbstractNutsFetchContentRepositoryCommand extends NutsRepositoryCommandBase<NutsFetchContentRepositoryCommand> implements NutsFetchContentRepositoryCommand {
 

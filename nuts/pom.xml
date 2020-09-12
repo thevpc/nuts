@@ -104,6 +104,22 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <tags>
+                        <tag>
+                            <name>todo</name>
+                            <!-- todo tag for all places -->
+                            <placement>a</placement>
+                            <head>To do something:</head>
+                        </tag>
+                        <tag>
+                            <name>category</name>
+                            <!-- todo tag for all places -->
+                            <placement>a</placement>
+                            <head>Category:</head>
+                        </tag>
+                    </tags>                    
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>net.vpc.common.maven</groupId>

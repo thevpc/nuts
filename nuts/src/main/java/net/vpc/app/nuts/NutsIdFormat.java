@@ -37,6 +37,7 @@ package net.vpc.app.nuts;
  * </ul>
  * @author vpc
  * @since 0.5.4
+ * @category Format
  */
 public interface NutsIdFormat extends NutsFormat {
 

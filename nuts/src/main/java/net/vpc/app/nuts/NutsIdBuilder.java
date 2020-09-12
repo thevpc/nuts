@@ -37,6 +37,7 @@ import java.util.function.Function;
  * Mutable Artifact id information used to create instance of {@link NutsId}
  * @author vpc
  * @since 0.5.4
+ * @category Descriptor
  */
 public interface NutsIdBuilder extends Serializable {
 

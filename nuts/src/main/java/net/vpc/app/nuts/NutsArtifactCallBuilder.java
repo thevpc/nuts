@@ -38,6 +38,7 @@ import java.util.Map;
  * To get an instance of NutsArtifactCallBuilder you can use {@code workspace.descriptor().callBuilder()}
  *
  * @since 0.5.4
+ * @category Base
  */
 public interface NutsArtifactCallBuilder extends Serializable {
 

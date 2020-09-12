@@ -38,6 +38,7 @@ import java.io.OutputStream;
  * stream
  *
  * @since 0.5.4
+ * @category Input Output
  */
 public interface NutsOutputStreamTransparentAdapter {
 

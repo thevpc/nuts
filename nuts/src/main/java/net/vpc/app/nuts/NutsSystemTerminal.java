@@ -36,6 +36,7 @@ import java.io.OutputStream;
  *
  * @author vpc
  * @since 0.5.4
+ * @category Input Output
  */
 public interface NutsSystemTerminal extends NutsSystemTerminalBase, NutsTerminal {
 

@@ -34,6 +34,7 @@ package net.vpc.app.nuts;
  * and objects using simple argument line options.
  * @author vpc
  * @since 0.5.5
+ * @category Command Line
  */
 public interface NutsConfigurable {
 

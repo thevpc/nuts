@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Dependency Format Helper
  * @author vpc
  * @since 0.5.6
+ * @category Format
  */
 public interface NutsDependencyFormat extends NutsFormat {
 

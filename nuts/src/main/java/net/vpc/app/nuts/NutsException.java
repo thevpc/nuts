@@ -35,6 +35,7 @@ import java.io.IOException;
  * Base Nuts Exception. Parent of all Nuts defined Exceptions.
  * @author vpc
  * @since 0.5.4
+ * @category Exception
  */
 public class NutsException extends RuntimeException {
 

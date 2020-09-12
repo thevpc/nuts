@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Mutable IdLocation class that helps creating instance of immutable {@link NutsIdLocation}.
  * Instances of {@link NutsIdLocation} are used in {@link NutsDescriptor} (see {@link NutsDescriptor#getLocations()})
  *
+ * @category Base
  */
 public interface NutsIdLocationBuilder {
 

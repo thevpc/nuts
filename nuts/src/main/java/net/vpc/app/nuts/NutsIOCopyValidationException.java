@@ -32,20 +32,21 @@ package net.vpc.app.nuts;
 /**
  * Exception thrown when copy validation fails
  */
-public class NutsIOCopyValidationException extends RuntimeException {
+public class NutsIOCopyValidationException extends NutsException {
 
     /**
      * Constructs a new Validation Exception
      */
-    public NutsIOCopyValidationException() {
+    public NutsIOCopyValidationException(NutsWorkspace ws) {
+        super(ws);
     }
 
     /**
      * Constructs a new Validation Exception
      * @param message message
      */
-    public NutsIOCopyValidationException(String message) {
-        super(message);
+    public NutsIOCopyValidationException(NutsWorkspace ws,String message) {
+        super(ws,message);
     }
 
     /**
@@ -53,16 +54,16 @@ public class NutsIOCopyValidationException extends RuntimeException {
      * @param message message
      * @param cause cause
      */
-    public NutsIOCopyValidationException(String message, Throwable cause) {
-        super(message, cause);
+    public NutsIOCopyValidationException(NutsWorkspace ws,String message, Throwable cause) {
+        super(ws,message, cause);
     }
 
     /**
      * Constructs a new Validation Exception
      * @param cause cause
      */
-    public NutsIOCopyValidationException(Throwable cause) {
-        super(cause);
+    public NutsIOCopyValidationException(NutsWorkspace ws,Throwable cause) {
+        super(ws,cause);
     }
 
 }

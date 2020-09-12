@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Format class responsible of formatting prefix of a tree
  * @author vpc
  * @since 0.5.5
+ * @category Format
  */
 public interface NutsTreeLinkFormat {
 

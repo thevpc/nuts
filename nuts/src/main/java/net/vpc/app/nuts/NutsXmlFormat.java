@@ -41,6 +41,7 @@ import org.w3c.dom.Element;
  * Xml Format Helper class
  * @author vpc
  * @since 0.5.5
+ * @category Format
  */
 public interface NutsXmlFormat extends NutsFormat {
 
@@ -49,19 +50,6 @@ public interface NutsXmlFormat extends NutsFormat {
      * @return true if compact xml generated.
      */
     boolean isCompact();
-
-    /**
-     * set compact xml generated mode.
-     * @return {@code this} instance
-     */
-    NutsXmlFormat compact();
-
-    /**
-     * if true compact xml generated. if false, use more versatile/formatted output.
-     * @param compact compact flag
-     * @return {@code this} instance
-     */
-    NutsXmlFormat compact(boolean compact);
 
     /**
      * if true compact xml generated. if false, sue more versatile/formatted output.

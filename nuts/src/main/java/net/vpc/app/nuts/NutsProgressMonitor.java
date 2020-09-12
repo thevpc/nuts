@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Monitor handles events from copy, compress and delete actions
  * @author vpc
  * @since 0.5.8
+ * @category Base
  */
 public interface NutsProgressMonitor {
 

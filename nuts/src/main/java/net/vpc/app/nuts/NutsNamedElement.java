@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Named Element
  * @author vpc
+ * @category Format
  */
 public interface NutsNamedElement {
 

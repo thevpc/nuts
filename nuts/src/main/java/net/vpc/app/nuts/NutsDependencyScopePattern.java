@@ -34,6 +34,7 @@ package net.vpc.app.nuts;
  * A dependency scope pattern
  * @author vpc
  * @since 0.5.6
+ * @category Descriptor
  */
 public enum NutsDependencyScopePattern {
     /**

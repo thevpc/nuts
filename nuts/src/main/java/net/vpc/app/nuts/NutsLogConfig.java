@@ -37,6 +37,7 @@ import java.util.logging.Level;
  * log configuration for running nuts
  * @author vpc
  * @since 0.5.4
+ * @category Logging
  */
 public class NutsLogConfig implements Serializable{
     private static final long serialVersionUID = 1;

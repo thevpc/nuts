@@ -39,6 +39,7 @@ import java.lang.annotation.Target;
  * the factory.
  *
  * @since 0.5.4
+ * @category SPI Base
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

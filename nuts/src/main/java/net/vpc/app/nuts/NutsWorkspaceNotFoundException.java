@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * This Exception is thrown when the workspace does not exist.
  *
  * @since 0.5.4
+ * @category Exception
  */
 public class NutsWorkspaceNotFoundException extends NutsWorkspaceException {
 

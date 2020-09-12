@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Formats supported by Nuts
  * @author vpc
  * @since 0.5.4
+ * @category Format
  */
 public enum NutsOutputFormat {
     /**

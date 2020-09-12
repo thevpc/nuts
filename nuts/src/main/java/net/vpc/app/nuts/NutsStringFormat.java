@@ -36,6 +36,7 @@ import java.util.List;
  *
  * @author vpc
  * @since 0.5.5
+ * @category Format
  */
 public interface NutsStringFormat extends NutsFormat {
 

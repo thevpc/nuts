@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Extension information
  * @author vpc
  * @since 0.5.4
+ * @category Config
  */
 public interface NutsExtensionInformation {
 

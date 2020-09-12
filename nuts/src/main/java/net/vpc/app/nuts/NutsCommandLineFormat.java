@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -37,6 +36,7 @@ import java.util.List;
  *
  * @author vpc
  * @since 0.5.7
+ * @category Command Line
  */
 public interface NutsCommandLineFormat extends NutsFormat{
 

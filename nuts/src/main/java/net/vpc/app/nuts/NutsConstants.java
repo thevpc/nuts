@@ -38,6 +38,7 @@ import java.util.*;
  * Created by vpc on 1/14/17.
  *
  * @since 0.1.0
+ * @category Constants
  */
 public final class NutsConstants {
 

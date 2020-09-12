@@ -45,6 +45,7 @@ import java.util.function.Supplier;
  * Workspace creation/opening options class.
  *
  * @since 0.5.4
+ * @category Config
  */
 public final class NutsDefaultWorkspaceOptions implements Serializable, Cloneable, NutsWorkspaceOptionsBuilder {
     private static final long serialVersionUID = 1;

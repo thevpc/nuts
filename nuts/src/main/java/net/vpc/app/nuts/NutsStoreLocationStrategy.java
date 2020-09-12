@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 /**
  *
  * @since 0.5.4
+ * @category Base
  */
 public enum NutsStoreLocationStrategy {
     /**

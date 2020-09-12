@@ -254,7 +254,6 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
         return session;
     }
 
-
     @Override
     public NutsIOCopyAction setSession(NutsSession session) {
         this.session = session;
@@ -307,6 +306,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
     }
 
     private static class CopyData {
+
         long files;
         long folders;
         long doneFiles;
@@ -396,11 +396,11 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
     }
 
     public Path copy(Path source, Path target, CopyOption... options) throws IOException {
-        if(interruptible){
-            try(InputStream in=CoreIOUtils.interruptible(Files.newInputStream(source))){
-                interruptibleInstance=(Interruptible) in;
-                try(OutputStream out=Files.newOutputStream(target)){
-                    transferTo(in,out);
+        if (interruptible) {
+            try (InputStream in = CoreIOUtils.interruptible(Files.newInputStream(source))) {
+                interruptibleInstance = (Interruptible) in;
+                try (OutputStream out = Files.newOutputStream(target)) {
+                    transferTo(in, out);
                 }
             }
             return target;
@@ -410,11 +410,11 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
 
     public long copy(InputStream in, Path target, CopyOption... options)
             throws IOException {
-        if(interruptible){
-            in=CoreIOUtils.interruptible(in);
-            interruptibleInstance=(Interruptible) in;
-            try(OutputStream out=Files.newOutputStream(target)){
-                return transferTo(in,out);
+        if (interruptible) {
+            in = CoreIOUtils.interruptible(in);
+            interruptibleInstance = (Interruptible) in;
+            try (OutputStream out = Files.newOutputStream(target)) {
+                return transferTo(in, out);
             }
         }
         return Files.copy(in, target, options);
@@ -422,25 +422,25 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
 
     public long copy(InputStream in, OutputStream out, CopyOption... options)
             throws IOException {
-        if(interruptible){
-            in=CoreIOUtils.interruptible(in);
-            interruptibleInstance=(Interruptible) in;
-            return transferTo(in,out);
+        if (interruptible) {
+            in = CoreIOUtils.interruptible(in);
+            interruptibleInstance = (Interruptible) in;
+            return transferTo(in, out);
         }
         return CoreIOUtils.copy(in, out);
     }
 
     public long copy(Path source, OutputStream out) throws IOException {
-        if(interruptible){
-            try(InputStream in=CoreIOUtils.interruptible(Files.newInputStream(source))){
-                interruptibleInstance=(Interruptible) in;
-                return transferTo(in,out);
+        if (interruptible) {
+            try (InputStream in = CoreIOUtils.interruptible(Files.newInputStream(source))) {
+                interruptibleInstance = (Interruptible) in;
+                return transferTo(in, out);
             }
         }
         return Files.copy(source, out);
     }
 
-    private long transferTo(InputStream in,OutputStream out) throws IOException {
+    private long transferTo(InputStream in, OutputStream out) throws IOException {
         int DEFAULT_BUFFER_SIZE = 8192;
         Objects.requireNonNull(out, "out");
         long transferred = 0;
@@ -604,7 +604,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                 }
             }
         } catch (IOException ex) {
-            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log( "error copying {0} to {1} : {2}", _source.getSource(), target.getValue(), ex.toString());
+            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log("error copying {0} to {1} : {2}", _source.getSource(), target.getValue(), ex.toString());
             throw new UncheckedIOException(ex);
         }
     }
@@ -616,7 +616,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
             } catch (NutsIOCopyValidationException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NutsIOCopyValidationException("Validate file " + temp + " failed", ex);
+                throw new NutsIOCopyValidationException(session.getWorkspace(), "Validate file " + temp + " failed", ex);
             }
         }
     }
@@ -628,7 +628,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
             } catch (NutsIOCopyValidationException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NutsIOCopyValidationException("Validate file failed", ex);
+                throw new NutsIOCopyValidationException(session.getWorkspace(), "Validate file failed", ex);
             }
         }
     }

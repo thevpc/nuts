@@ -34,6 +34,7 @@ package net.vpc.app.nuts;
  * a given object. Multiple implementation should be available
  * to support tables, trees, json, xml,...
  * @author vpc
+ * @category Format
  */
 public interface NutsObjectFormat extends NutsFormat {
 

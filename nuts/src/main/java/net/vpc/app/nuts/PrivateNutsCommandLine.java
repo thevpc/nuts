@@ -79,6 +79,7 @@ import java.util.*;
  *
  * @author vpc
  * @since 0.5.5
+ * @category Internal
  */
 final class PrivateNutsCommandLine implements NutsCommandLine {
 

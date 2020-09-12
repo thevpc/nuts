@@ -36,6 +36,7 @@ import java.time.Instant;
  * Information about installed artifact
  * @author vpc
  * @since 0.5.5
+ * @category Base
  */
 public interface NutsInstallInformation {
     /**

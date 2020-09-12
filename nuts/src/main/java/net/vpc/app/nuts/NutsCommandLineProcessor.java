@@ -2,6 +2,7 @@ package net.vpc.app.nuts;
 
 /**
  *
+ * @category Command Line
  */
 public interface NutsCommandLineProcessor {
     /**

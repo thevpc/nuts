@@ -94,6 +94,7 @@ import java.util.List;
  *
  * @author vpc
  * @since 0.5.5
+ * @category Command Line
  */
 public interface NutsCommandLine {
 

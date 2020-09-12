@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Created by vpc on 1/20/17.
  *
  * @since 0.5.4
+ * @category Events
  */
 public interface NutsRepositoryListener extends NutsListener {
 

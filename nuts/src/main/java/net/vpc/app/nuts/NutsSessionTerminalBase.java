@@ -33,8 +33,8 @@ package net.vpc.app.nuts;
  * Session Terminal Base instance are special Terminal Base classes instances that handle workspace session.
  *
  * @since 0.5.4
+ * @category SPI Base
  */
-
 public interface NutsSessionTerminalBase extends NutsComponent<Object>, NutsTerminalBase {
 
 }

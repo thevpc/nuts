@@ -43,6 +43,7 @@ import java.util.Locale;
  * @see NutsWorkspace#io()
  * @author vpc
  * @since 0.5.5
+ * @category Format
  */
 public interface NutsTerminalFormat {
 

@@ -35,6 +35,7 @@ import java.util.Date;
 /**
  * Nuts Element builder that helps creating element instances.
  * @author vpc
+ * @category Elements
  */
 public interface NutsElementBuilder {
 

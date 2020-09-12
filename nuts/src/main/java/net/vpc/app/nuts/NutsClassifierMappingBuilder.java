@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.Serializable;
-
 /**
  * classifier selector builder class.
  * Nuts can select artifact classifier according to filters based on arch, os, os dist and platform.
@@ -38,6 +36,7 @@ import java.io.Serializable;
  * When multiple selectors match, the first on prevails.
  *
  * @since 0.5.7
+ * @category Descriptor
  */
 public interface NutsClassifierMappingBuilder {
     /**

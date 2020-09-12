@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Exception Thrown when a locked object is invoked.
  * @author vpc
+ * @category Exception
  */
 public class NutsLockReleaseException extends NutsLockException {
     /**

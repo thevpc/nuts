@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * This Exception is fired when an artifact fails to be uninstalled for the artifact not being installed yet.
  *
  * @since 0.5.4
+ * @category Exception
  */
 public class NutsNotInstalledException extends NutsInstallationException {
 

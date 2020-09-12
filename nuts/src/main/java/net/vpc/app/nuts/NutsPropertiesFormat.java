@@ -33,6 +33,7 @@ import java.util.Map;
 
 /**
  * Class formatting Map/Properties objects
+ * @category Format
  */
 public interface NutsPropertiesFormat extends NutsFormat {
 

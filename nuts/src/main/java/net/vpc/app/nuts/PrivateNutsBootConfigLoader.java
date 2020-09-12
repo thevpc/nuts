@@ -39,6 +39,7 @@ import java.util.logging.Level;
  *
  * @author vpc
  * @since 0.5.6
+ * @category Internal
  */
 final class PrivateNutsBootConfigLoader {
 

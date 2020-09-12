@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Class for filtering Artifact Ids
  *
  * @since 0.5.4
+ * @category Descriptor
  */
 public interface NutsIdFilter extends NutsSearchIdFilter {
 

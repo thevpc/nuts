@@ -33,7 +33,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Execute command.
@@ -41,6 +40,7 @@ import java.util.Properties;
  *
  * @author vpc
  * @since 0.5.4
+ * @category Commands
  */
 public interface NutsExecCommand extends NutsWorkspaceCommand {
 

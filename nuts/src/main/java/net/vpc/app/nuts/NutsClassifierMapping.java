@@ -30,7 +30,6 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
-import java.util.Properties;
 
 /**
  * classifier selector immutable class.
@@ -38,6 +37,7 @@ import java.util.Properties;
  * This class defines the mapping to classifier to consider if all the filters.
  * When multiple selectors match, the first on prevails.
  * @since 0.5.7
+ * @category Descriptor
  */
 public interface NutsClassifierMapping extends Serializable {
     /**

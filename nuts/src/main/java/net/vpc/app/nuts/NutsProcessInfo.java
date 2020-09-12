@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 /**
  * System Process Information
+ * @category Base
  */
 public interface NutsProcessInfo {
     /**

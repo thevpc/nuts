@@ -41,6 +41,7 @@ import java.util.Set;
  *
  * @author vpc
  * @since 0.5.4
+ * @category Commands
  */
 public interface NutsSearchCommand extends NutsWorkspaceCommand {
 

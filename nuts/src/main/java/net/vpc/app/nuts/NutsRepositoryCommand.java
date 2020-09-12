@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Root class for all Repository commands.
  * @author vpc
+ * @category SPI Base
  */
 public interface NutsRepositoryCommand extends NutsConfigurable {
 

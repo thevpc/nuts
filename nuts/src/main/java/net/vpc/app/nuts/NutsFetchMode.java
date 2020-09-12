@@ -53,6 +53,7 @@ package net.vpc.app.nuts;
  * enable cache support; in which case, if the artifact si cached, it will be accessed locally.
  * </p>
  * @since 0.5.4
+ * @category Commands
  */
 public enum NutsFetchMode {
     /**

@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Anchor interface for all Nuts Listeners.
  * @author vpc
  * @since 0.5.5
+ * @category Base
  */
 public interface NutsListener {
 }

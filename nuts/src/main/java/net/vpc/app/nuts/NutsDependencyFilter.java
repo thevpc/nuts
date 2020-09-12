@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Dependency filter
  *
  * @since 0.5.4
+ * @category Descriptor
  */
 public interface NutsDependencyFilter {
 

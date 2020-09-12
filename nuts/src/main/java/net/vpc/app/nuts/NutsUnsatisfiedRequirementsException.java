@@ -35,6 +35,7 @@ import java.io.IOException;
  *
  * @author vpc
  * @since 0.5.4
+ * @category Exception
  */
 public class NutsUnsatisfiedRequirementsException extends NutsException {
 

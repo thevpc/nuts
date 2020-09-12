@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Generic exception to be thrown when an element is not found.
  * @author vpc
  * @since 0.5.4
+ * @category Exception
  */
 public class NutsElementNotFoundException extends NutsException {
 

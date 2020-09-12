@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Component responsible of installing other artifacts.
  *
  * @since 0.5.4
+ * @category SPI Base
  */
 public interface NutsInstallerComponent extends NutsComponent<NutsDefinition> {
 

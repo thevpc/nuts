@@ -40,6 +40,7 @@ import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 /**
  *
  * @author vpc
+ * @category SPI Base
  */
 public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployRepositoryCommand {
 

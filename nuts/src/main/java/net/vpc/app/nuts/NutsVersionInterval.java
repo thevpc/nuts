@@ -35,6 +35,7 @@ import java.io.Serializable;
  * Created by vpc on 2/1/17.
  *
  * @since 0.5.4
+ * @category Base
  */
 public interface NutsVersionInterval extends Serializable {
 

@@ -35,6 +35,7 @@ import java.io.Serializable;
  * Dependency tree node
  * @author vpc
  * @since 0.5.5
+ * @category Descriptor
  */
 public interface NutsDependencyTreeNode extends Serializable{
 

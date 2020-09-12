@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Class describing executable command.
  * @author vpc
  * @since 0.5.4
+ * @category Descriptor
  */
 public interface NutsExecutableInformation {
 

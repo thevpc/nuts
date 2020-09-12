@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * This class handles formatting of iterable items in Search.
  * @author vpc
  * @since 0.5.5
+ * @category Format
  */
 public interface NutsIterableFormat extends NutsConfigurable {
 

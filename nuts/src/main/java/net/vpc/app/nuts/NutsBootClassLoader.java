@@ -5,6 +5,7 @@ import java.net.URLClassLoader;
 
 /**
  * Simple Implementation of Nuts BootClassLoader
+ * @category SPI Base
  */
 class NutsBootClassLoader extends URLClassLoader {
 

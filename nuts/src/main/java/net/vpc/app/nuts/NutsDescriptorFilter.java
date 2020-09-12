@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Descriptor filter
  *
  * @since 0.5.4
+ * @category Descriptor
  */
 public interface NutsDescriptorFilter extends NutsSearchIdFilter {
 

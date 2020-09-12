@@ -2,6 +2,11 @@ package net.vpc.app.nuts;
 
 import java.util.Comparator;
 
+/**
+ * 
+ * @author vpc
+ * @category Internal
+ */
 final class PrivateNutsBootWorkspaceFactoryComparator implements Comparator<NutsBootWorkspaceFactory> {
 
     private final NutsWorkspaceOptions options;

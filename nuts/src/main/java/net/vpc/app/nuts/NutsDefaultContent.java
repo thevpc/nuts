@@ -32,12 +32,12 @@ package net.vpc.app.nuts;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import net.vpc.app.nuts.NutsContent;
 
 /**
  * Default Content implementation.
  * @author vpc
  * @since 0.5.4
+ * @category Descriptor
  */
 public class NutsDefaultContent implements NutsContent {
 

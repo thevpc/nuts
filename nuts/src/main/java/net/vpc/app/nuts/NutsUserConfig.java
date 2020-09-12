@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -37,6 +36,7 @@ import java.util.Objects;
  *
  * @author vpc
  * @since 0.5.4
+ * @category Config
  */
 public final class NutsUserConfig extends NutsConfigItem {
 

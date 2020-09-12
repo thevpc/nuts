@@ -38,6 +38,7 @@ import java.util.logging.Level;
  *
  * @author vpc
  * @since 0.5.4
+ * @category Internal
  */
 final class PrivateNutsArgumentsParser {
 

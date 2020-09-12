@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 
@@ -38,6 +37,7 @@ import java.util.Objects;
  *
  * @author vpc
  * @since 0.5.4
+ * @category SPI Base
  */
 public class NutsCommandAliasFactoryConfig extends NutsConfigItem {
     private static final long serialVersionUID = 1;

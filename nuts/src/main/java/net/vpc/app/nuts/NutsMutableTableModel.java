@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Mutable Table Model
  * @author vpc
+ * @category Format
  */
 public interface NutsMutableTableModel extends NutsTableModel {
 

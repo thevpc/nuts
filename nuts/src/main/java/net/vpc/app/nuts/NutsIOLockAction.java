@@ -34,12 +34,12 @@ import java.nio.file.Path;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
-import java.util.function.Supplier;
 
 /**
  * Lock builder to create mainly File based Locks
  * @author vpc
  * @since 0.5.8
+ * @category Input Output
  */
 public interface NutsIOLockAction {
 

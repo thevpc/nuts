@@ -36,6 +36,7 @@ import java.util.Map;
  * it's main class for creating and opening nuts workspaces.
  *
  * @since 0.1.0
+ * @category Base
  */
 public final class Nuts {
 

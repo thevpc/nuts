@@ -35,6 +35,7 @@ import java.util.Objects;
  * Default and dummy NutsSupportLevelContext implementation
  * @author vpc
  * @param <T> support level type
+ * @category SPI Base
  */
 public class NutsDefaultSupportLevelContext<T> implements NutsSupportLevelContext<T> {
 

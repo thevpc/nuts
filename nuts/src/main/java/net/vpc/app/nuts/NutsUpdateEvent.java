@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  *
  * @author vpc
  * @since 0.5.6
+ * @category Events
  */
 public interface NutsUpdateEvent {
 

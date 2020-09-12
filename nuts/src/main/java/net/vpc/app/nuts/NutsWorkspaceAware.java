@@ -35,6 +35,7 @@ package net.vpc.app.nuts;
  * They <strong>may</strong> accept a call with a {@code null}
  * argument later to <strong>dispose</strong> the instance.
  * @author vpc
+ * @category SPI Base
  */
 public interface NutsWorkspaceAware {
 

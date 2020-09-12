@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * SearchId Filter.
  * @author vpc
  * @since 0.5.4
+ * @category Base
  */
 public interface NutsSearchIdFilter {
 

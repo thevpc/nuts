@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  *
  * @author vpc
  * @since 0.5.4
+ * @category SPI Base
  */
 public interface NutsRepositoryUndeployCommand extends NutsRepositoryCommand {
 

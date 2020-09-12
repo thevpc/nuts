@@ -39,6 +39,7 @@ package net.vpc.app.nuts;
  *
  * @author vpc
  * @since 0.5.5
+ * @category Base
  */
 public enum NutsConfirmationMode {
     /**

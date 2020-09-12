@@ -30,13 +30,13 @@
 package net.vpc.app.nuts;
 
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Classes implementations of {@code NutsIndexStore} handle
  * indexing of repositories to enable faster search.
  * @author vpc
  * @since 0.5.4
+ * @category Base
  */
 public interface NutsIndexStore {
 

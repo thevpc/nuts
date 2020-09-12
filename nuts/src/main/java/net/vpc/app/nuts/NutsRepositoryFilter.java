@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Created by vpc on 1/5/17.
  *
  * @since 0.5.4
+ * @category Base
  */
 public interface NutsRepositoryFilter {
 

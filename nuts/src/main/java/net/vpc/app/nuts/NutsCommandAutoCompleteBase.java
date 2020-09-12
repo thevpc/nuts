@@ -37,6 +37,7 @@ import java.util.List;
  * Base (Abstract) implementation of NutsCommandAutoComplete
  * @author vpc
  * @since 0.5.5
+ * @category Command Line
  */
 public abstract class NutsCommandAutoCompleteBase implements NutsCommandAutoComplete {
 

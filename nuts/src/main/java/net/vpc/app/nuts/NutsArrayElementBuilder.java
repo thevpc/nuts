@@ -29,13 +29,13 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
  * Array element Builder is a mutable NutsArrayElement that helps 
  * manipulating arrays.
  * @author vpc
+ * @category Elements
  */
 public interface NutsArrayElementBuilder {
 

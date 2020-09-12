@@ -39,6 +39,7 @@ import java.security.MessageDigest;
  * I/O command to hash contents.
  * @author vpc
  * @since 0.5.5
+ * @category Input Output
  */
 public interface NutsIOHashAction {
 

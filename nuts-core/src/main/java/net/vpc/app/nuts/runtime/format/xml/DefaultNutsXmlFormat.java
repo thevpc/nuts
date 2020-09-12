@@ -535,16 +535,6 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
     }
 
     @Override
-    public NutsXmlFormat compact() {
-        return compact(true);
-    }
-
-    @Override
-    public NutsXmlFormat compact(boolean compact) {
-        return setCompact(compact);
-    }
-
-    @Override
     public NutsXmlFormat setCompact(boolean compact) {
         this.compact = compact;
         return this;

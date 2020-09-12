@@ -35,6 +35,7 @@ import java.io.InputStream;
  * Created by vpc on 1/8/17.
  *
  * @since 0.5.4
+ * @category SPI Base
  */
 public class NutsTransportParamBinaryStreamPart extends NutsTransportParamPart {
 

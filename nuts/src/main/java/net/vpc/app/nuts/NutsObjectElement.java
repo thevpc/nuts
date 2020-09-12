@@ -36,6 +36,7 @@ import java.util.Collection;
  * Nuts Element types are generic JSON like parsable objects.
  * @author vpc
  * @since 0.5.6
+ * @category Elements
  */
 public interface NutsObjectElement extends NutsElement {
 

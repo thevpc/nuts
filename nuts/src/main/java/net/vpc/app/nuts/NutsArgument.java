@@ -36,6 +36,7 @@ import java.util.NoSuchElementException;
  *
  * @author vpc
  * @since 0.5.5
+ * @category Command Line
  */
 public interface NutsArgument extends NutsTokenFilter {
 

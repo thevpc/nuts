@@ -20,6 +20,7 @@ import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 /**
  *
  * @author vpc
+ * @category SPI Base
  */
 public class DefaultNutsPushRepositoryCommand extends AbstractNutsPushRepositoryCommand {
     private final NutsLogger LOG;

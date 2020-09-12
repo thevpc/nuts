@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Supported dependency scope lists
  * @author vpc
  * @since 0.5.4
+ * @category Descriptor
  */
 public enum NutsDependencyScope {
     /**

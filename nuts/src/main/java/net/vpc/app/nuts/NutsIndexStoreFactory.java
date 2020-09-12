@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Index Store Factory responsible of creating stores for a given repository
  * @author vpc
  * @since 0.5.4
+ * @category Base
  */
 public interface NutsIndexStoreFactory extends NutsComponent<Object/*any object or null*/> {
 

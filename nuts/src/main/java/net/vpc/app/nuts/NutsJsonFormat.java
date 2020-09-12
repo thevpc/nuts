@@ -40,6 +40,7 @@ import java.nio.file.Path;
  * simple mechanism to write json text from given object.
  * @author vpc
  * @since 0.5.5
+ * @category Format
  */
 public interface NutsJsonFormat extends NutsFormat {
 

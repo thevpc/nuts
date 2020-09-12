@@ -36,6 +36,7 @@ package net.vpc.app.nuts;
  *
  * @author vpc
  * @since 0.5.5
+ * @category Application
  */
 public interface NutsApplicationLifeCycle {
 

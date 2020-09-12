@@ -38,6 +38,7 @@ import java.util.Map;
  *
  * @author vpc
  * @since 0.5.4
+ * @category Descriptor
  */
 public interface NutsDependencyBuilder {
 

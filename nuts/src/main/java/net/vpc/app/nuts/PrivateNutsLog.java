@@ -7,13 +7,40 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 
+ * @author vpc
+ * @category Internal
+ */
 public class PrivateNutsLog {
+    /**
+     * Log verb used for tracing the start of an operation
+     */
     public static final String START = "START";
+    /**
+     * Log verb used for tracing a I/O read operation
+     */
     public static final String READ = "READ";
+    /**
+     * Log verb used for tracing the successful termination of an operation
+     */
     public static final String SUCCESS = "SUCCESS";
+    /**
+     * Log verb used for tracing the failure to run an operation
+     */
     public static final String FAIL = "FAIL";
+    /**
+     * Log verb used for tracing cache related operations
+     */
     public static final String CACHE = "CACHE";
+    /**
+     * Log verb used for tracing general purpose warnings
+     */
     public static final String WARNING = "WARNING";
+
+    /**
+     * Universal Data and time format "yyyy-MM-dd HH:mm:ss.SSS"
+     */
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
             .withZone(ZoneId.systemDefault());

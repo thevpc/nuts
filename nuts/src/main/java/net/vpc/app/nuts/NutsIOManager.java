@@ -39,6 +39,7 @@ import java.util.concurrent.ExecutorService;
  *
  * @author vpc
  * @since 0.5.4
+ * @category Input Output
  */
 public interface NutsIOManager extends NutsComponent<Object/* any object or null */> {
 

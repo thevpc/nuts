@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 /**
  * Package installation status
+ * @category Base
  */
 public enum NutsInstallStatus {
 

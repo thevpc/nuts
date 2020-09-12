@@ -34,6 +34,7 @@ import java.util.*;
 
 /**
  * @author vpc
+ * @category Format
  */
 public class NutsWorkspaceOptionsFormat implements Serializable {
     private static final long serialVersionUID = 1;

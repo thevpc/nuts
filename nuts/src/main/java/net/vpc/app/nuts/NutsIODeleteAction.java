@@ -37,6 +37,7 @@ import java.nio.file.Path;
  *
  * @author vpc
  * @since 0.5.8
+ * @category Input Output
  */
 public interface NutsIODeleteAction {
     /**

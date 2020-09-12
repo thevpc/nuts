@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Effective (including inherited) user information
  * @author vpc
  * @since 0.5.4
+ * @category Config
  */
 public interface NutsUser {
 

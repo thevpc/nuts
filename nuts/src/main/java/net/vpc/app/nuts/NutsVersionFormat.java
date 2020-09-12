@@ -30,12 +30,12 @@
 package net.vpc.app.nuts;
 
 import java.util.Map;
-import java.util.Properties;
 
 /**
  *
  * @author vpc
  * @since 0.5.4
+ * @category Format
  */
 public interface NutsVersionFormat extends NutsFormat {
 

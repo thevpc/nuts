@@ -7,6 +7,11 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * 
+ * @author vpc
+ * @category Internal
+ */
 final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInformation {
 
     private NutsWorkspaceOptions options;

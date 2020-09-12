@@ -29,13 +29,11 @@
  */
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.NutsException;
-import net.vpc.app.nuts.NutsWorkspace;
-
 /**
  * Exception Thrown when for any reason, the enum value is not expected/supported.
  *
  * @author vpc
+ * @category Exception
  */
 public class NutsUnsupportedEnumException extends NutsException {
     private Enum enumValue;

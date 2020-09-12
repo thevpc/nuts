@@ -34,6 +34,7 @@ package net.vpc.app.nuts;
  * the repository config files are missing.
  *
  * @since 0.5.4
+ * @category Exception
  */
 public class NutsRepositoryNotFoundException extends NutsRepositoryException {
 

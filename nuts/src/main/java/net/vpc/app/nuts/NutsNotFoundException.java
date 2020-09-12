@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Exception thrown when the package could not be resolved
  *
  * @since 0.5.4
+ * @category Exception
  */
 public class NutsNotFoundException extends NutsException {
 

@@ -38,6 +38,7 @@ import java.util.Set;
 /**
  * @author vpc
  * @since 0.5.4
+ * @category Config
  */
 public interface NutsWorkspaceConfigManager {
 

@@ -35,11 +35,12 @@ import java.io.InputStream;
  * context holding useful information for {@link NutsDescriptorContentParserComponent#parse(NutsDescriptorContentParserContext)}
  *
  * @since 0.5.4
+ * @category SPI Base
  */
 public interface NutsDescriptorContentParserContext {
 
     /**
-     * par exception is command line options that can be parsed to
+     * command line options that can be parsed to
      * configure parsing options.
      * A good example of it is the --all-mains option that can be passed
      * as executor option which will be catched by parser to force resolution

@@ -38,6 +38,7 @@ package net.vpc.app.nuts;
  * </pre>
  * @author vpc
  * @since 0.5.5
+ * @category Format
  */
 public interface NutsTreeFormat extends NutsFormat {
 

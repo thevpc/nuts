@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * NutsProgressFactory is responsible of creating instances of {@link NutsProgressMonitor}
  * @author vpc
  * @since 0.5.8
+ * @category Base
  */
 public interface NutsProgressFactory {
 

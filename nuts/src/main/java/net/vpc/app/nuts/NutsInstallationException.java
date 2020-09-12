@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Base exception for installation fails.
  *
  * @since 0.5.4
+ * @category Exception
  */
 public abstract class NutsInstallationException extends NutsException {
 

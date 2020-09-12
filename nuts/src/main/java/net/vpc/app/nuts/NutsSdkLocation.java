@@ -29,13 +29,13 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * SDK location
  * @author vpc
  * @since 0.5.4
+ * @category Config
  */
 public class NutsSdkLocation extends NutsConfigItem {
 

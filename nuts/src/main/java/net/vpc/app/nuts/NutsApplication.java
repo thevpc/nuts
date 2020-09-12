@@ -156,6 +156,7 @@ package net.vpc.app.nuts;
  * </pre>
  *
  * @since 0.5.5
+ * @category Application
  */
 public abstract class NutsApplication {
 

@@ -29,13 +29,13 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.IOException;
 import java.io.UncheckedIOException;
 
 /**
  * Transport component responsible of creating a connexion to remote servers.
  * Should handle at least valid http connections.
  * @since 0.5.4
+ * @category SPI Base
  */
 public interface NutsTransportComponent extends NutsComponent<String/*url*/> {
 

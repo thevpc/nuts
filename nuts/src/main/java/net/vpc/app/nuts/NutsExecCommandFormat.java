@@ -38,6 +38,7 @@ import java.util.function.Predicate;
  * @author vpc
  * @see NutsExecCommand#format()
  * @since 0.5.4
+ * @category Format
  */
 public interface NutsExecCommandFormat extends NutsFormat {
     /**

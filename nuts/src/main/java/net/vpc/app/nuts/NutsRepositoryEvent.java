@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Repository Event
  * @author vpc
  * @since 0.5.4
+ * @category Events
  */
 public interface NutsRepositoryEvent {
 

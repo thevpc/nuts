@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * This class is used in {@link NutsDescriptor} to describe
  * locations/mirrors to download artifact content instead of the
  * regular location.
+ * @category Descriptor
  */
 public interface NutsIdLocation {
 

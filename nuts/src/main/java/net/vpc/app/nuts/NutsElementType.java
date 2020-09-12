@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Element type. this an extension of json element types.
  * @author vpc
+ * @category Elements
  */
 public enum NutsElementType {
     /**

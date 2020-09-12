@@ -43,6 +43,7 @@ import java.util.Objects;
  * @see NutsWorkspaceConfigManager#addCommandAliasFactory(net.vpc.app.nuts.NutsCommandAliasFactoryConfig,
  * net.vpc.app.nuts.NutsAddOptions)
  * @since 0.5.4
+ * @category Config
  */
 public class NutsAddOptions implements Serializable {
     private static final long serialVersionUID = 1;

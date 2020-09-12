@@ -34,6 +34,7 @@ package net.vpc.app.nuts;
  *
  * @author vpc
  * @since 0.5.5
+ * @category Command Line
  */
 public enum NutsArgumentType {
     /**

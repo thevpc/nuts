@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Executable command type returned by which internal command
  * @author vpc
  * @since 0.5.4
+ * @category Descriptor
  */
 public enum NutsExecutableType {
     /**

@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * NutsWorkspaceException is the base class for Workspace related exceptions.
  *
  * @since 0.5.4
+ * @category Exception
  */
 public abstract class NutsWorkspaceException extends NutsException {
 

@@ -31,12 +31,12 @@ package net.vpc.app.nuts;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * artifact call descriptor used to define executor and installer call definitions.
  *
  * @since 0.5.4
+ * @category Base
  */
 public interface NutsArtifactCall extends Serializable {
 

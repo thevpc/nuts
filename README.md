@@ -1,11 +1,11 @@
 # nuts
 Network Updatable Things Services
 <pre>
-    _   __      __
-   / | / /_  __/ /______
-  /  |/ / / / / __/ ___/
- / /|  / /_/ / /_(__  )
-/_/ |_/\__,_/\__/____/   version 0.7.0.0
+     __        __       
+  /\ \ \ _  __/ /______ 
+ /  \/ / / / / __/ ___/ 
+/ /\  / /_/ / /_(__  )  
+\_\ \/\__,_/\__/____/    version 0.7.0.0
 </pre>
 
 **nuts** is a Package manager for Java (and other things). It stands for **Network Updatable Things Services** tool. Think of it as **npm** for javascript or **pip** for python. But it lots more... It is a simple tool  for managing remote artifacts, installing these  artifacts to the current machine and executing such  artifacts on need. Each managed artifact  is also called a **nuts** which  is a **Network Updatable Thing Service** . Nuts artifacts are  stored  into repositories. A  **repository**  may be local for  storing local Nuts or remote for accessing  remote artifacts (good examples  are  remote maven  repositories). 
@@ -24,6 +24,10 @@ What makes **nuts** very helpful is that it simplifies application deployments b
 + fetch, push        : download from, upload to remote repositories
 + search             : search for existing/installable artifacts
 + welcome            : a command that does nothing but bootstrapping nuts and showing a welcome message.
+
+
+Visit [nuts website](http://core-techs-solutions.com/nuts)
+
 
 ## Download Latest stable version
 + Linux,Windows,iOS, and Java enabled OS : [nuts-0.7.0.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.0/nuts-0.7.0.jar)

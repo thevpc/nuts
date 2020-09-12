@@ -56,6 +56,7 @@ package net.vpc.app.nuts;
  *
  * Created by vpc on 1/8/17.
  * @since 0.5.4
+ * @category Descriptor
  */
 public interface NutsVersionFilter extends NutsSearchIdFilter {
 

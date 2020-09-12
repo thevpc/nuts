@@ -40,6 +40,7 @@ import java.util.function.Supplier;
  * Workspace options class that holds command argument information.
  *
  * @since 0.5.4
+ * @category Config
  */
 public interface NutsWorkspaceOptions extends Serializable {
 

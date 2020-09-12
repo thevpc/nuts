@@ -53,6 +53,7 @@ import java.util.regex.Pattern;
  * Created by vpc on 1/15/17.
  *
  * @since 0.5.4
+ * @category Internal
  */
 final class PrivateNutsUtils {
 

@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * This Exception is thrown when the workspace fails to initialize.
  *
  * @since 0.5.4
+ * @category Exception
  */
 public class NutsInvalidWorkspaceException extends NutsWorkspaceException {
 

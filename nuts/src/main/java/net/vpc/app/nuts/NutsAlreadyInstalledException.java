@@ -34,6 +34,7 @@ package net.vpc.app.nuts;
  * reinstalled Created by vpc on 1/15/17.
  *
  * @since 0.5.4
+ * @category Exception
  */
 public class NutsAlreadyInstalledException extends NutsInstallationException {
 

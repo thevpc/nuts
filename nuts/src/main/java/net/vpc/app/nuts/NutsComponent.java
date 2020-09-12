@@ -42,6 +42,7 @@ package net.vpc.app.nuts;
  *
  * @param <CriteriaType> support criteria type
  * @since 0.5.4
+ * @category SPI Base
  */
 public interface NutsComponent<CriteriaType> {
 

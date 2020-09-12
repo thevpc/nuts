@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Push Command
  * @author vpc
+ * @category SPI Base
  */
 public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
 

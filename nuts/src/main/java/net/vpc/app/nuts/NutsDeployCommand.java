@@ -38,6 +38,7 @@ import java.nio.file.Path;
  * Nuts deploy command
  * @author vpc
  * @since 0.5.4
+ * @category Commands
  */
 public interface NutsDeployCommand extends NutsWorkspaceCommand {
 

@@ -34,6 +34,7 @@ package net.vpc.app.nuts;
  *
  * @author vpc
  * @since 0.5.8
+ * @category Input Output
  */
 public interface NutsIOProcessAction {
     /**

@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Command execution type.
  * @author vpc
  * @since 0.5.4
+ * @category Commands
  */
 public enum NutsExecutionType {
     /**

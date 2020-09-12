@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Base exception for Extension related exceptions
  *
  * @since 0.5.4
+ * @category Exception
  */
 public abstract class NutsExtensionException extends NutsException {
 

@@ -41,6 +41,7 @@ import net.vpc.app.nuts.runtime.util.common.TraceResult;
 /**
  *
  * @author vpc
+ * @category SPI Base
  */
 public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchContentRepositoryCommand {
 

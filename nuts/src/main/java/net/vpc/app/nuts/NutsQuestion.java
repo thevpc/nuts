@@ -35,6 +35,7 @@ package net.vpc.app.nuts;
  * @param <T> value type returned by this question object
  * @author vpc
  * @since 0.5.4
+ * @category Base
  */
 public interface NutsQuestion<T> extends NutsConfigurable {
 

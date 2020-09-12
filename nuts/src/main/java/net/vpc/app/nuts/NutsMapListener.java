@@ -35,6 +35,7 @@ package net.vpc.app.nuts;
  * @param <K> key type
  * @param <V> value type
  * @since 0.2.0
+ * @category Base
  */
 public interface NutsMapListener<K, V> extends NutsListener{
 

@@ -2,6 +2,11 @@ package net.vpc.app.nuts;
 
 import java.util.Objects;
 
+/**
+ * 
+ * @author vpc
+ * @category Format
+ */
 public class NutsString {
     private String value;
 

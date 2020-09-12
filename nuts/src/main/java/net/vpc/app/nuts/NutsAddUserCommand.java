@@ -40,6 +40,7 @@ import java.util.Collection;
  *
  * @author vpc
  * @since 0.5.5
+ * @category Security
  */
 public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 

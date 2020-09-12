@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Content parser component is responsible of resolving a Nuts descriptor form a content file
  *
  * @since 0.5.4
+ * @category SPI Base
  */
 public interface NutsDescriptorContentParserComponent extends NutsComponent<Object/*any object or null*/> {
 

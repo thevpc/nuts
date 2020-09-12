@@ -34,6 +34,7 @@ import java.util.logging.Level;
 
 /**
  * Nuts Log Manager
+ * @category Logging
  */
 public interface NutsLogManager {
     /**

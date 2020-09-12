@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 /**
  *
  * @author vpc
+ * @category SPI Base
  */
 public interface NutsSupportLevelContext<T> {
 
