@@ -1,7 +1,7 @@
 module.exports = {
   title: 'Nuts',
   tagline: 'The Java Package Manager',
-  url: 'https://core-techs-solutions.com/nuts',
+  url: 'https://thevpc.github.io/nuts',
   baseUrl: '/nuts/',
   onBrokenLinks: 'log',
   favicon: 'img/favicon.ico',

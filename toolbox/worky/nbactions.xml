@@ -10,8 +10,9 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Dnuts.debug=true -classpath %classpath net.vpc.toolbox.worky.WorkyMain process-file /data/public/git/nuts/README.md.pre</exec.args>
+            <exec.args>-Dnuts.debug=true -classpath %classpath net.vpc.toolbox.worky.WorkyMain process-file README.md.pre</exec.args>
             <exec.executable>java</exec.executable>
+            <exec.workingdir>/data/public/git/nuts/</exec.workingdir>
         </properties>
     </action>
     <action>
@@ -24,9 +25,10 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Dnuts.debug=true -classpath %classpath net.vpc.toolbox.worky.WorkyMain process-file /data/public/git/nuts/README.md.pre</exec.args>
+            <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Dnuts.debug=true -classpath %classpath net.vpc.toolbox.worky.WorkyMain process-file README.md.pre</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
+            <exec.workingdir>/data/public/git/nuts/</exec.workingdir>
         </properties>
     </action>
     <action>
@@ -39,8 +41,9 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Dnuts.debug=true -classpath %classpath net.vpc.toolbox.worky.WorkyMain process-file /data/public/git/nuts/README.md.pre</exec.args>
+            <exec.args>-Dnuts.debug=true -classpath %classpath net.vpc.toolbox.worky.WorkyMain process-file README.md.pre</exec.args>
             <exec.executable>java</exec.executable>
+            <exec.workingdir>/data/public/git/nuts/</exec.workingdir>
         </properties>
     </action>
 </actions>

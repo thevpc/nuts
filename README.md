@@ -1,11 +1,11 @@
 # nuts
 Network Updatable Things Services
 <pre>
-     __        __       
-  /\ \ \ _  __/ /______ 
- /  \/ / / / / __/ ___/ 
-/ /\  / /_/ / /_(__  )  
-\_\ \/\__,_/\__/____/    version 0.7.0.0
+     __        __    
+  /\ \ \ _  __/ /______
+ /  \/ / / / / __/ ___/
+/ /\  / /_/ / /_(__  )
+\_\ \/\__,_/\__/____/    version 0.7.1.0
 </pre>
 
 **nuts** is a Package manager for Java (and other things). It stands for **Network Updatable Things Services** tool. Think of it as **npm** for javascript or **pip** for python. But it lots more... It is a simple tool  for managing remote artifacts, installing these  artifacts to the current machine and executing such  artifacts on need. Each managed artifact  is also called a **nuts** which  is a **Network Updatable Thing Service** . Nuts artifacts are  stored  into repositories. A  **repository**  may be local for  storing local Nuts or remote for accessing  remote artifacts (good examples  are  remote maven  repositories). 
@@ -25,20 +25,16 @@ What makes **nuts** very helpful is that it simplifies application deployments b
 + search             : search for existing/installable artifacts
 + welcome            : a command that does nothing but bootstrapping nuts and showing a welcome message.
 
-
-Visit [nuts website](http://core-techs-solutions.com/nuts)
-
-
 ## Download Latest stable version
-+ Linux,Windows,iOS, and Java enabled OS : [nuts-0.7.0.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.0/nuts-0.7.0.jar)
++ Linux,Windows,iOS, and Java enabled OS : [nuts-0.7.1.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.1/nuts-0.7.1.jar)
 + On Unix/Linux platforms you may use :
     + using **wget**
         ```
-        wget https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.0/nuts-0.7.0.jar
+        wget https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.1/nuts-0.7.1.jar
         ```
     + or **curl**
         ```
-        curl https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.0/nuts-0.7.0.jar > nuts-0.7.0.jar 
+        curl https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.1/nuts-0.7.1.jar > nuts-0.7.1.jar 
         ```
     Note that you will need a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version **8** or later to run **nuts**.
 
@@ -48,7 +44,7 @@ It will create all needed configuration files upon the very first launch.
 More details are available at [wiki installation page](https://github.com/thevpc/nuts/wiki/Installation)
 
 ```
-java -jar nuts-0.7.0.jar
+java -jar nuts-0.7.1.jar
 ```
 Yous should then see some log like the following :
 
@@ -71,16 +67,16 @@ All tests where performed on OpenSuse Tumbleweed.
 
 ## Windows Systems
 On Windows systems, first launch will create a new Nuts Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
-  + **nuts-cmd-0.7.0** : this shortcut will open a configured command terminal. **nuts** command will be available as well 
+  + **nuts-cmd-0.7.1** : this shortcut will open a configured command terminal. **nuts** command will be available as well 
                          as several nuts companion tools installed by **ndi** by default
-  + **nuts-cmd**       : this shortcut will point to the last installed **nuts** version, here 0.7.0  
+  + **nuts-cmd**       : this shortcut will point to the last installed **nuts** version, here 0.7.1  
 
 Any of these shortcuts will launch a nuts-aware terminal.
 
 Supported Windows systems include Window 7 and later.
 
 ## MacOS Systems
-Installation will worl seemlely on MacOS as far as you are using bash shell. All Linux installatio notes apply then.
+Installation will work seamlessly on MacOS as far as you are using bash shell. All Linux installation notes apply then.
 
 ## Test Installation
 To test installation the simplest way is to open a nuts-aware terminal and type : 
@@ -92,7 +88,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ```
-00.7.0/0.7.0.0
+00.7.1/0.7.1.0
 ```
 
 ## Run a command
@@ -120,13 +116,3 @@ Nuts have lots of ways to be improved. Please feel free to join the journey.
 View stable releases in [official releases page](https://github.com/thevpc/nuts/releases).
 
 View all releases in [release details page](docs/change-log/release-details.md).
-
-## Read more
-
-- [Introduction, Why and What for](docs/articles/01-nuts-introduction.md)
-- [Project and Repository Organization](docs/articles/02-nuts-projects.md)
-- [Nuts Text Coloring Format](docs/articles/04-nuts-text-coloring-format.md)
-- [File System](docs/articles/03-nuts-filesystem.md)
-- [Commandline Format](docs/articles/05-nuts-commandline.md)
-- [FAQ](docs/articles/10-nuts-faq.md)
-- [Troubleshooting](docs/troubleshooting.md)

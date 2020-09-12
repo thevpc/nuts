@@ -31,7 +31,11 @@ public abstract class AbstractContentProcessor implements ContentProcessor{
                 try {
                     JTextSource source = JTextSourceFactory.fromFile(path);
                     if(source!=null) {
-                        String outputContent = new TextProcessor().processSource(source,path.getParent().toString(), messages);
+                        Path parent = path.getParent();
+                        if(parent==null){
+                            parent=Paths.get(System.getProperty("user.dir"));
+                        }
+                        String outputContent = new TextProcessor().processSource(source,parent.toString(), messages);
                         Files.write(r, outputContent.getBytes());
                     }else{
                         messages.error("X000",null,"invalid source :"+path,null);
