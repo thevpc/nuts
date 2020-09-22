@@ -1,3 +1,0 @@
-apiVersion='0.7.1';
-implVersion='0.7.1.0';
-jarLocation=processString("https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar");

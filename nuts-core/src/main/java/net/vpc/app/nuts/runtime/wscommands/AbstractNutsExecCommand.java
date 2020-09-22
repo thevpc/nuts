@@ -71,6 +71,19 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
+    public NutsExecCommand setCommand(String... command) {
+        this.command=null;
+        return addCommand(command);
+    }
+
+    @Override
+    public NutsExecCommand setCommand(Collection<String> command) {
+        this.command=null;
+        return addCommand(command);
+    }
+    
+
+    @Override
     public NutsExecCommand addCommand(String... command) {
         if (this.command == null) {
             this.command = new ArrayList<>();

@@ -2,7 +2,7 @@
  * ====================================================================
  *            Nuts : Network Updatable Things Service
  *                  (universal package manager)
- *
+ * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
@@ -10,18 +10,18 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2017 Taha BEN SALAH
+ * Copyright (C) 2016-2020 thevpc
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <br>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <br>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -54,18 +54,18 @@ import java.io.*;
 //        import org.apache.tomcat.util.http.fileupload.util.Closeable;
 //        import org.apache.tomcat.util.http.fileupload.util.Streams;
 /**
- * <p>
+ * <br>
  * Low level API for processing file uploads.
- * <p>
- * <p>
+ * <br>
+ * <br>
  * This class can be used to process data streams conforming to MIME 'multipart'
  * format as defined in
  * <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>. Arbitrarily large
  * amounts of data in the stream can be processed under constant memory usage.
- * <p>
- * <p>
+ * <br>
+ * <br>
  * The format of the stream is defined in the following way:<br>
- * <p>
+ * <br>
  * <code>
  * multipart-body := preamble 1*encapsulation close-delimiter epilogue<br>
  * encapsulation := delimiter body CRLF<br>
@@ -80,17 +80,17 @@ import java.io.*;
  * header-value := &lt;any ascii characters except CR &amp; LF&gt;<br>
  * body-data := &lt;arbitrary data&gt;<br>
  * </code>
- * <p>
- * <p>
+ * <br>
+ * <br>
  * Note that body-data can contain another mulipart entity. There is limited
  * support for single pass processing of such nested streams. The nested stream
  * is <strong>required</strong> to have a boundary token of the same length as
  * the parent stream (see {@link
  * #setBoundary(byte[])}).
- * <p>
- * <p>
+ * <br>
+ * <br>
  * Here is an example of usage of this class.<br>
- * <p>
+ * <br>
  * <
  * pre>
  * try { MultipartStream multipartStream = new MultipartStream(input, boundary);
@@ -286,10 +286,10 @@ public class MultipartStream2 {
 
     // ----------------------------------------------------------- Constructors
     /**
-     * <p>
+     * <br>
      * Constructs a <code>MultipartStream</code> with a custom size buffer.
-     * <p>
-     * <p>
+     * <br>
+     * <br>
      * Note that the buffer must be at least big enough to contain the boundary
      * string, plus 4 characters for CR/LF and double dash, plus at least one
      * byte of data. Too small a buffer size setting will degrade performance.
@@ -339,7 +339,7 @@ public class MultipartStream2 {
     }
 
     /**
-     * <p>
+     * <br>
      * Constructs a <code>MultipartStream</code> with a default size buffer.
      *
      * @param input The <code>InputStream</code> to serve as a data source.
@@ -448,17 +448,17 @@ public class MultipartStream2 {
     }
 
     /**
-     * <p>
+     * <br>
      * Changes the boundary token used for partitioning the stream.
-     * <p>
-     * <p>
+     * <br>
+     * <br>
      * This method allows single pass processing of nested multipart streams.
-     * <p>
-     * <p>
+     * <br>
+     * <br>
      * The boundary token of the nested stream is <code>required</code> to be of
      * the same length as the boundary token in parent stream.
-     * <p>
-     * <p>
+     * <br>
+     * <br>
      * Restoring the parent stream boundary token after processing of a nested
      * stream is left to the application.
      *
@@ -502,15 +502,15 @@ public class MultipartStream2 {
     }
 
     /**
-     * <p>
+     * <br>
      * Reads the <code>header-part</code> of the current
      * <code>encapsulation</code>.
-     * <p>
-     * <p>
+     * <br>
+     * <br>
      * Headers are returned verbatim to the input stream, including the trailing
      * <code>CRLF</code> marker. Parsing is left to the application.
-     * <p>
-     * <p>
+     * <br>
+     * <br>
      * <strong>TODO</strong> allow limiting maximum header size to protect
      * against abuse.
      *
@@ -564,11 +564,11 @@ public class MultipartStream2 {
     }
 
     /**
-     * <p>
+     * <br>
      * Reads <code>body-data</code> from the current <code>encapsulation</code>
      * and writes its contents into the output <code>Stream</code>.
-     * <p>
-     * <p>
+     * <br>
+     * <br>
      * Arbitrary large amounts of data can be processed by this method using a
      * constant size buffer. (see {@link
      * #MultipartStream2(InputStream, byte[], int,
@@ -595,11 +595,11 @@ public class MultipartStream2 {
     }
 
     /**
-     * <p>
+     * <br>
      * Reads <code>body-data</code> from the current <code>encapsulation</code>
      * and discards it.
-     * <p>
-     * <p>
+     * <br>
+     * <br>
      * Use this method to skip encapsulations you don't need or don't
      * understand.
      *

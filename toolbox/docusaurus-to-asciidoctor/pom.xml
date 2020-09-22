@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>docusaurus-to-asciidoctor</artifactId>
-    <version>0.7.0.0</version>
+    <version>0.7.2.0</version>
     <packaging>jar</packaging>
     <name>net.vpc.app.nuts.toolbox.docusaurus-to-asciidoctor</name>
     <description>Docusaurus To Asciidoctor Markdown converter</description>
@@ -61,12 +61,12 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.7.0</version>
+            <version>0.7.2</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.common</groupId>
             <artifactId>vpc-common-md-docusaurus-to-asciidoctor</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

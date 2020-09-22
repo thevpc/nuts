@@ -2,26 +2,26 @@
  * ====================================================================
  * Nuts : Network Updatable Things Service
  * (universal package manager)
- * <p>
+ * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
- * <p>
- * Copyright (C) 2016-2017 Taha BEN SALAH
- * <p>
+ * <br>
+ * Copyright (C) 2016-2020 thevpc
+ * <br>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 3 of the License, or (at your option) any later
  * version.
- * <p>
+ * <br>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * <p>
+ * <br>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -51,8 +51,8 @@ import java.util.List;
  * <ul>
  * <li>--!enable : option 'enable' with 'false' value</li>
  * <li>--enable=yes : option 'enable' with 'yes' value</li>
- * <li>--!enable=yes : invalid option (no error will be thrown but the result
- * is undefined)</li>
+ * <li>--!enable=yes : invalid option (no error will be thrown but the result is
+ * undefined)</li>
  * </ul>
  * </li>
  * <li>
@@ -63,24 +63,24 @@ import java.util.List;
  * <li>-!enable (with expandSimpleOptions=false) : option 'enable' with 'false'
  * value</li>
  * <li>--enable=yes : option 'enable' with 'yes' value</li>
- * <li>--!enable=yes : invalid option (no error will be thrown but the result
- * is undefined)</li>
+ * <li>--!enable=yes : invalid option (no error will be thrown but the result is
+ * undefined)</li>
  * </ul>
  *
  * </li>
  * <li>
- * condensed simple option arguments : any argument that starts with a single '-' in the
- * form of
- * <pre>-[//]([!]?[a-z])+[=.*]</pre> This is actually very similar to long options
- * and is parsable when expandSimpleOptions=true. When activating expandSimpleOptions, multi
- * characters key will be expanded as multiple separate simple options Examples
- * :
+ * condensed simple option arguments : any argument that starts with a single
+ * '-' in the form of
+ * <pre>-[//]([!]?[a-z])+[=.*]</pre> This is actually very similar to long
+ * options and is parsable when expandSimpleOptions=true. When activating
+ * expandSimpleOptions, multi characters key will be expanded as multiple
+ * separate simple options Examples :
  * <ul>
  * <li>-!enable (with expandSimpleOptions=false) : option 'enable' with 'false'
  * value</li>
  * <li>--enable=yes : option 'enable' with 'yes' value</li>
- * <li>--!enable=yes : invalid option (no error will be thrown but the result
- * is undefined)</li>
+ * <li>--!enable=yes : invalid option (no error will be thrown but the result is
+ * undefined)</li>
  * </ul>
  *
  * </li>
@@ -90,7 +90,7 @@ import java.util.List;
  * option may start with '!' to switch armed flags expandSimpleOptions : when
  * activated
  *
- * 
+ *
  *
  * @author vpc
  * @since 0.5.5
@@ -108,13 +108,14 @@ public interface NutsCommandLine {
 
     /**
      * autocomplete instance
+     *
      * @return autocomplete instance
      */
     NutsCommandAutoComplete getAutoComplete();
 
     /**
-     * unregister {@code options} as simple (with simple '-') option.
-     * This method helps considering '-version' as a single simple options when
+     * unregister {@code options} as simple (with simple '-') option. This
+     * method helps considering '-version' as a single simple options when
      * {@code isExpandSimpleOptions()==true}
      *
      * @param option option
@@ -124,13 +125,14 @@ public interface NutsCommandLine {
 
     /**
      * list of registered simple options
+     *
      * @return list of registered simple options
      */
     String[] getSpecialSimpleOptions();
 
     /**
-     * register {@code options} as simple (with simple '-') option.
-     * This method helps considering '-version' as a single simple options when
+     * register {@code options} as simple (with simple '-') option. This method
+     * helps considering '-version' as a single simple options when
      * {@code isExpandSimpleOptions()==true}
      *
      * @param option option
@@ -139,8 +141,8 @@ public interface NutsCommandLine {
     NutsCommandLine registerSpecialSimpleOption(String option);
 
     /**
-     * test if the option is a registered simple option
-     * This method helps considering '-version' as a single simple options when
+     * test if the option is a registered simple option This method helps
+     * considering '-version' as a single simple options when
      * {@code isExpandSimpleOptions()==true}
      *
      * @param option option
@@ -183,7 +185,6 @@ public interface NutsCommandLine {
      */
     NutsCommandLine setCommandName(String commandName);
 
-
     /**
      * true if simple option expansion is enabled
      *
@@ -193,6 +194,7 @@ public interface NutsCommandLine {
 
     /**
      * enable or disable simple option expansion
+     *
      * @param expand expand
      * @return {@code this} instance
      */
@@ -236,7 +238,8 @@ public interface NutsCommandLine {
     NutsCommandLine required(String errorMessage);
 
     /**
-     * push back argument so that it will be first to be retrieved (using next methods)
+     * push back argument so that it will be first to be retrieved (using next
+     * methods)
      *
      * @param arg argument
      * @return {@code this} instance
@@ -307,7 +310,7 @@ public interface NutsCommandLine {
      * next argument with any value type (may having not a value).
      *
      * @param expectValue expected value type
-     * @param names       names
+     * @param names names
      * @return next argument
      */
     NutsArgument next(NutsArgumentType expectValue, String... names);
@@ -371,7 +374,7 @@ public interface NutsCommandLine {
     /**
      * true if arguments start at index {@code index} with the given suite.
      *
-     * @param index  starting index
+     * @param index starting index
      * @param values arguments suite
      * @return true if arguments start with the given suite.
      */
@@ -379,6 +382,7 @@ public interface NutsCommandLine {
 
     /**
      * find first argument with argument key name
+     *
      * @param name argument key name
      * @return find first argument with argument key name
      */
@@ -386,6 +390,7 @@ public interface NutsCommandLine {
 
     /**
      * return argument at given index
+     *
      * @param index argument index
      * @return argument at given index
      */
@@ -393,26 +398,30 @@ public interface NutsCommandLine {
 
     /**
      * return true if any argument is equal to the given name
+     *
      * @param name argument name
      * @return true if any argument is equal to the given name
      */
     boolean contains(String name);
 
     /**
-     * first  argument index (or -1 if not found) with value {@code name}
+     * first argument index (or -1 if not found) with value {@code name}
+     *
      * @param name argument key name
-     * @return first  argument index (or -1 if not found) with value {@code name}
+     * @return first argument index (or -1 if not found) with value {@code name}
      */
     int indexOf(String name);
 
     /**
      * number of arguments available to retrieve
+     *
      * @return number of arguments available to retrieve
      */
     int length();
 
     /**
      * true if no more arguments are available
+     *
      * @return true if no more arguments are available
      */
     boolean isEmpty();
@@ -424,9 +433,9 @@ public interface NutsCommandLine {
      */
     String[] toArray();
 
-
     /**
      * true if the argument and index exists and is option
+     *
      * @param index index
      * @return true if the argument and index exists and is option
      */
@@ -434,14 +443,15 @@ public interface NutsCommandLine {
 
     /**
      * true if the argument and index exists and is non option
+     *
      * @param index index
      * @return true if the argument and index exists and is non option
      */
     boolean isNonOption(int index);
 
-
     /**
      * reset this instance with the given parsed arguments
+     *
      * @param commandLine to parse
      * @return reset this instance with the given parsed arguments
      */
@@ -449,6 +459,7 @@ public interface NutsCommandLine {
 
     /**
      * reset this instance with the given arguments
+     *
      * @param arguments to parse
      * @return reset this instance with the given arguments
      */
@@ -456,8 +467,17 @@ public interface NutsCommandLine {
 
     /**
      * reset this instance with the given arguments
+     *
      * @param arguments to parse
      * @return reset this instance with the given arguments
      */
     NutsCommandLine setArguments(String[] arguments);
+
+    /**
+     * run the processor and fall back to defaultConfigurable
+     * @param defaultConfigurable default configurable
+     * @param processor processor 
+     */
+    void process(NutsConfigurable defaultConfigurable, NutsCommandLineProcessor processor);
+
 }

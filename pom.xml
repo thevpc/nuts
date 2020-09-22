@@ -6,32 +6,34 @@
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-builder</artifactId>
     <name>net.vpc.app.nuts.nuts-builder</name>
-    <version>0.7.1.0</version>
+    <version>0.7.2.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>nuts</module>
         <module>nuts-core</module>
 <!--        <module>nuts-installer</module>-->
-
-        <!--<module>toolbox/nuts-clown</module>-->
         <module>lib/nuts-lib-template</module>
         <module>lib/nuts-servlet</module>
         <module>lib/nuts-tomcat-classloader</module>
-        <!--<module>toolbox/nfind</module>-->
         <module>toolbox/nadmin</module>
         <module>toolbox/nsh</module>
         <module>toolbox/ndi</module>
         <module>toolbox/nserver</module>
-        <module>toolbox/feenoo</module>
+        <module>toolbox/ncode</module>
         <module>toolbox/nded</module>
-        <module>toolbox/worky</module>
-        <module>toolbox/file-version</module>
+        <module>toolbox/ntemplate</module>
+        <module>toolbox/nwork</module>
+        <module>toolbox/ndoc</module>
+        <module>toolbox/ndocusaurus</module>
+        <module>toolbox/nversion</module>
         <module>toolbox/nmysql</module>
         <module>toolbox/ntomcat</module>
         <module>toolbox/nmvn</module>
         <module>toolbox/nderby</module>
+        <module>toolbox/docusaurus-to-asciidoctor</module>
         <module>toolbox/ndexer</module>
         <module>toolbox/nwar</module>
+        <!--<module>toolbox/nuts-clown</module>-->
     </modules>
     <properties>
     </properties>

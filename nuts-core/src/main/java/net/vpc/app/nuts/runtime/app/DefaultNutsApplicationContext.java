@@ -47,7 +47,6 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 //                startTimeMillis
 //        );
 //    }
-
     public DefaultNutsApplicationContext(NutsWorkspace workspace, String[] args, Class appClass, String storeId, long startTimeMillis) {
         this.startTimeMillis = startTimeMillis <= 0 ? System.currentTimeMillis() : startTimeMillis;
         int wordIndex = -1;
@@ -150,7 +149,8 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...)
+     * }
      * to help return a more specific return type;
      *
      * @param args argument to configure with
@@ -167,8 +167,8 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
      * configure the current command with the given arguments.
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     *                        silently
-     * @param commandLine     arguments to configure with
+     * silently
+     * @param commandLine arguments to configure with
      * @return {@code this} instance
      */
     @Override
@@ -200,7 +200,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     case INSTALL:
                     case UNINSTALL:
                     case UPDATE: {
-                        if(enabled) {
+                        if (enabled) {
                             cmd.skip();
                             throw new NutsExecutionException(workspace, "skip-event", 0);
                         }
@@ -210,7 +210,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             }
             case "--version": {
                 cmd.skip();
-                if(enabled) {
+                if (enabled) {
                     if (cmd.isExecMode()) {
                         getSession().out().printf("%s%n", getWorkspace().id().resolveId(getClass()).getVersion().toString());
                         cmd.skipAll();
@@ -360,7 +360,6 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return sharedFolders[location.ordinal()];
     }
 
-
     @Override
     public NutsId getAppId() {
         return appId;
@@ -390,7 +389,10 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public NutsCommandLine getCommandLine() {
-        return workspace.commandLine().create(getArguments()).setAutoComplete(getAutoComplete());
+        return workspace.commandLine()
+                .create(getArguments())
+                .setCommandName(getAppId().getArtifactId())
+                .setAutoComplete(getAutoComplete());
     }
 
     @Override
@@ -420,27 +422,16 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public void processCommandLine(NutsCommandLineProcessor commandLineProcessor) {
-        NutsCommandLine cmdLine=getCommandLine();
-        NutsArgument a;
-        while (cmdLine.hasNext()) {
-            if (!this.configureFirst(cmdLine)) {
-                a = cmdLine.peek();
-                if(a.isOption()) {
-                    if (!commandLineProcessor.processOption(a, cmdLine)) {
-                        cmdLine.unexpectedArgument();
-                    }
-                }else{
-                    if (!commandLineProcessor.processNonOption(a, cmdLine)) {
-                        cmdLine.unexpectedArgument();
-                    }
-                }
-            }
-        }
-        // test if application is running in exec mode
-        // (and not in autoComplete mode)
-        if (cmdLine.isExecMode()) {
-            //do the good staff here
-            commandLineProcessor.exec();
+        getCommandLine().process(this, commandLineProcessor);
+    }
+
+    @Override
+    public boolean configureLast(NutsCommandLine commandLine) {
+        if (!configureFirst(commandLine)) {
+            commandLine.unexpectedArgument();
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -459,7 +450,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         }
 
         @Override
-        public NutsSession getSession(){
+        public NutsSession getSession() {
             return session;
         }
 

@@ -8,6 +8,8 @@ Network Updatable Things Services
 \_\ \/\__,_/\__/____/    version 0.7.1.0
 </pre>
 
+website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
+
 **nuts** is a Package manager for Java (and other things). It stands for **Network Updatable Things Services** tool. Think of it as **npm** for javascript or **pip** for python. But it lots more... It is a simple tool  for managing remote artifacts, installing these  artifacts to the current machine and executing such  artifacts on need. Each managed artifact  is also called a **nuts** which  is a **Network Updatable Thing Service** . Nuts artifacts are  stored  into repositories. A  **repository**  may be local for  storing local Nuts or remote for accessing  remote artifacts (good examples  are  remote maven  repositories). 
 
 One manages a set of repositories called a **workspace**. Managed **nuts**  (artifacts)  have descriptors that depict dependencies between them. This dependency is seamlessly handled by  **nuts**  (tool) to resolve and download on-need dependencies over the wire. 
@@ -41,7 +43,7 @@ What makes **nuts** very helpful is that it simplifies application deployments b
 ## Installation
 Nuts needs no installation. 
 It will create all needed configuration files upon the very first launch. 
-More details are available at [wiki installation page](https://github.com/thevpc/nuts/wiki/Installation)
+More details are available at You may consider browsing the Nuts official website : [https://thevpc.github.io/nuts/docs](https://thevpc.github.io/nuts/docs)
 
 ```
 java -jar nuts-0.7.1.jar
@@ -107,7 +109,7 @@ See [troubleshooting documentation](docs/troubleshooting.md) for more details
 
 
 ## Getting started
-You may consider browsing the Nuts official [wiki](https://github.com/thevpc/nuts/wiki) .
+You may consider browsing the Nuts official website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
 
 ## Call for Contribution
 Nuts have lots of ways to be improved. Please feel free to join the journey.

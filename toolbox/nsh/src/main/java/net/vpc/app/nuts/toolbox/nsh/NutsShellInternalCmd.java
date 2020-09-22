@@ -10,7 +10,7 @@
 // * to share shell scripts and other 'things' . Its based on an extensible
 // * architecture to help supporting a large range of sub managers / repositories.
 // *
-// * Copyright (C) 2016-2017 Taha BEN SALAH
+// * Copyright (C) 2016-2020 thevpc
 // *
 // * This program is free software; you can redistribute it and/or modify
 // * it under the terms of the GNU General Public License as published by

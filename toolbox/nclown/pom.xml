@@ -6,7 +6,7 @@
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>nclown</artifactId>
     <name>net.vpc.app.nuts.toolbox.nuts-clown</name>
-    <version>0.7.1.0</version>
+    <version>0.7.2.0</version>
     <packaging>war</packaging>
 
     <parent>
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.7.1</version>
+            <version>0.7.2</version>
         </dependency>
     </dependencies>
 

@@ -69,3 +69,11 @@ toolbox/worky/worky.iml
 /lsp/log/xml_out_20200731.log
 /website/nuts/nbproject/private/
 /toolbox/docusaurus-to-asciidoctor/target/
+/toolbox/ndocusaurus/target/
+/toolbox/ntemplater/target/
+/toolbox/nversion/target/
+/toolbox/ncode/target/
+/toolbox/nwork/target/
+/toolbox/ntemplate/target/
+/toolbox/njavadoc/target/
+/static-docs/

@@ -10,18 +10,18 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  *
- * Copyright (C) 2016-2017 Taha BEN SALAH
+ * Copyright (C) 2016-2020 thevpc
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <br>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <br>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -42,7 +42,7 @@ public interface NonBlockingInputStream extends Closeable {
      * blocks until input data is available, the end of the stream is detected,
      * or an exception is thrown.
      *
-     * <p>
+     * <br>
      * A subclass must provide an implementation of this method.
      *
      * @return the next byte of data, or <code>-1</code> if the end of the
@@ -57,14 +57,14 @@ public interface NonBlockingInputStream extends Closeable {
      * returned as an integer. This method blocks until input data is available,
      * end of file is detected, or an exception is thrown.
      *
-     * <p>
+     * <br>
      * If the length of <code>b</code> is zero, then no bytes are read and
      * <code>0</code> is returned; otherwise, there is an attempt to read at
      * least one byte. If no byte is available because the stream is at the end
      * of the file, the value <code>-1</code> is returned; otherwise, at least
      * one byte is read and stored into <code>b</code>.
      *
-     * <p>
+     * <br>
      * The first byte read is stored into element <code>b[0]</code>, the next
      * one into <code>b[1]</code>, and so on. The number of bytes read is, at
      * most, equal to the length of <code>b</code>. Let <i>k</i> be the number
@@ -73,7 +73,7 @@ public interface NonBlockingInputStream extends Closeable {
      * leaving elements <code>b[</code><i>k</i><code>]</code> through
      * <code>b[b.length-1]</code> unaffected.
      *
-     * <p>
+     * <br>
      * The <code>read(b)</code> method for class <code>InputStream</code> has
      * the same effect as:
      * <pre><code> read(b, 0, b.length) </code></pre>
@@ -96,18 +96,18 @@ public interface NonBlockingInputStream extends Closeable {
      * bytes, but a smaller number may be read. The number of bytes actually
      * read is returned as an integer.
      *
-     * <p>
+     * <br>
      * This method blocks until input data is available, end of file is
      * detected, or an exception is thrown.
      *
-     * <p>
+     * <br>
      * If <code>len</code> is zero, then no bytes are read and <code>0</code> is
      * returned; otherwise, there is an attempt to read at least one byte. If no
      * byte is available because the stream is at end of file, the value
      * <code>-1</code> is returned; otherwise, at least one byte is read and
      * stored into <code>b</code>.
      *
-     * <p>
+     * <br>
      * The first byte read is stored into element <code>b[off]</code>, the next
      * one into <code>b[off+1]</code>, and so on. The number of bytes read is,
      * at most, equal to <code>len</code>. Let <i>k</i> be the number of bytes
@@ -116,12 +116,12 @@ public interface NonBlockingInputStream extends Closeable {
      * <code>b[off+</code><i>k</i><code>]</code> through
      * <code>b[off+len-1]</code> unaffected.
      *
-     * <p>
+     * <br>
      * In every case, elements <code>b[0]</code> through <code>b[off]</code> and
      * elements <code>b[off+len]</code> through <code>b[b.length-1]</code> are
      * unaffected.
      *
-     * <p>
+     * <br>
      * The <code>read(b,</code> <code>off,</code> <code>len)</code> method for
      * class <code>InputStream</code> simply calls the method
      * <code>read()</code> repeatedly. If the first such call results in an
@@ -173,7 +173,7 @@ public interface NonBlockingInputStream extends Closeable {
      * and no bytes are skipped. Subclasses may handle the negative value
      * differently.
      *
-     * <p>
+     * <br>
      * The <code>skip</code> method of this class creates a byte array and then
      * repeatedly reads into it until <code>n</code> bytes have been read or the
      * end of the stream has been reached. Subclasses are encouraged to provide
@@ -194,22 +194,22 @@ public interface NonBlockingInputStream extends Closeable {
      * thread or another thread. A single read or skip of this many bytes will
      * not block, but may read or skip fewer bytes.
      *
-     * <p>
+     * <br>
      * Note that while some implementations of {@code InputStream} will return
      * the total number of bytes in the stream, many will not. It is never
      * correct to use the return value of this method to allocate a buffer
      * intended to hold all data in this stream.
      *
-     * <p>
+     * <br>
      * A subclass' implementation of this method may choose to throw an
      * {@link IOException} if this input stream has been closed by invoking the
      * {@link #close()} method.
      *
-     * <p>
+     * <br>
      * The {@code available} method for class {@code InputStream} always returns
      * {@code 0}.
      *
-     * <p>
+     * <br>
      * This method should be overridden by subclasses.
      *
      * @return an estimate of the number of bytes that can be read (or skipped
@@ -223,7 +223,7 @@ public interface NonBlockingInputStream extends Closeable {
      * Closes this input stream and releases any system resources associated
      * with the stream.
      *
-     * <p>
+     * <br>
      * The <code>close</code> method of <code>InputStream</code> does nothing.
      *
      * @exception IOException if an I/O error occurs.
@@ -235,11 +235,11 @@ public interface NonBlockingInputStream extends Closeable {
      * <code>reset</code> method repositions this stream at the last marked
      * position so that subsequent reads re-read the same bytes.
      *
-     * <p>
+     * <br>
      * The <code>readlimit</code> arguments tells this input stream to allow
      * that many bytes to be read before the mark position gets invalidated.
      *
-     * <p>
+     * <br>
      * The general contract of <code>mark</code> is that, if the method
      * <code>markSupported</code> returns <code>true</code>, the stream somehow
      * remembers all the bytes read after the call to <code>mark</code> and
@@ -248,10 +248,10 @@ public interface NonBlockingInputStream extends Closeable {
      * remember any data at all if more than <code>readlimit</code> bytes are
      * read from the stream before <code>reset</code> is called.
      *
-     * <p>
+     * <br>
      * Marking a closed stream should not have any effect on the stream.
      *
-     * <p>
+     * <br>
      * The <code>mark</code> method of <code>InputStream</code> does nothing.
      *
      * @param readlimit the maximum limit of bytes that can be read before the
@@ -264,7 +264,7 @@ public interface NonBlockingInputStream extends Closeable {
      * Repositions this stream to the position at the time the <code>mark</code>
      * method was last called on this input stream.
      *
-     * <p>
+     * <br>
      * The general contract of <code>reset</code> is:
      *
      * <ul>
@@ -297,7 +297,7 @@ public interface NonBlockingInputStream extends Closeable {
      * subsequent callers of the <code>read</code> method depend on the
      * particular type of the input stream. </ul></ul>
      *
-     * <p>
+     * <br>
      * The method <code>reset</code> for class <code>InputStream</code> does
      * nothing except throw an <code>IOException</code>.
      *

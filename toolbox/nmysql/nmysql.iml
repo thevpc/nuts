@@ -11,12 +11,18 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: net.vpc.app.nuts:nuts:0.7.1" level="project" />
+    <orderEntry type="library" name="Maven: net.vpc.app.nuts:nuts:0.7.2" level="project" />
+    <orderEntry type="library" name="Maven: net.vpc.app.nuts:nuts-core:0.7.2.0" level="project" />
     <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-io:1.3.12" level="project" />
+    <orderEntry type="module" module-name="nuts" />
+    <orderEntry type="module" module-name="nuts-core" />
+    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.6" level="project" />
+    <orderEntry type="library" name="Maven: org.fusesource.jansi:jansi:1.17.1" level="project" />
+    <orderEntry type="module" module-name="vpc-common-io" />
     <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-strings:1.2.17" level="project" />
-    <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-ssh:1.1.5" level="project" />
+    <orderEntry type="module" module-name="vpc-common-ssh" />
     <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.50" level="project" />
-    <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-xfile:1.0.0" level="project" />
+    <orderEntry type="module" module-name="vpc-common-xfile" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
   </component>

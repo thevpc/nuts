@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Nuts',
+  title: 'Nuts, the Java Package Manager',
   tagline: 'The Java Package Manager',
   url: 'https://thevpc.github.io/nuts',
   baseUrl: '/nuts/',
@@ -7,10 +7,6 @@ module.exports = {
   favicon: 'img/favicon.ico',
   organizationName: 'facebook', // Usually your GitHub org/user name.
   projectName: 'docusaurus', // Usually your repo name.
-  customFields: {
-    appApiVersion: '0.7.0',
-    appCoreVersion: '0.7.0.0',
-  },  
   themeConfig: {
     navbar: {
       title: 'Nuts Package Manager',
@@ -107,4 +103,35 @@ module.exports = {
       },
     ],
   ],
+    customFields: {
+        copyBuildPath:'../../docs',
+        asciidoctor: {
+            path: 'asciidoctor',
+            pdf: {
+                headers: [
+                    ':source-highlighter: pygments',
+                    ':icons: font',
+                    ':icon-set: pf',
+                    ':doctype: book',
+                    ':revnumber: v${apiVersion}',
+                    ':revdate: 2020-09-10',
+                    ':toc:',
+                    ':toclevels: 3',
+                    ':appendix-caption: Appx',
+                ],
+                command: {
+                    bin: 'asciidoctor-pdf.ruby2.7',
+                    args: [
+                        '-a',
+                        'pdf-themesdir=${asciidoctor.baseDir}/resources/themes',
+                        '-a',
+                        'pdf-theme=custom',
+                        '-a',
+                        'pdf-fontsdir=${asciidoctor.baseDir}/resources/fonts/;GEM_FONTS_DIR',
+                    ]
+                },
+                output:'static/pdf/',
+            }
+        }
+    },
 };

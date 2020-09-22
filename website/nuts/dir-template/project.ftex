@@ -1,0 +1,3 @@
+exec("../../../dir-template/vars.ftex")
+root=workingDir
+resources=$"${root}/resources"

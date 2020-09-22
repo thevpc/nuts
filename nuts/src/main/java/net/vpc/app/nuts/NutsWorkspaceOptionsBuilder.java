@@ -2,26 +2,26 @@
  * ====================================================================
  * Nuts : Network Updatable Things Service
  * (universal package manager)
- * <p>
+ * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
  * build managers) as it helps installing all package dependencies at runtime.
  * Nuts is not tied to java and is a good choice to share shell scripts and
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
- * <p>
- * Copyright (C) 2016-2017 Taha BEN SALAH
- * <p>
+ * <br>
+ * Copyright (C) 2016-2020 thevpc
+ * <br>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 3 of the License, or (at your option) any later
  * version.
- * <p>
+ * <br>
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * <p>
+ * <br>
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -113,9 +113,9 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
     /**
      * if true, do not bootstrap workspace after reset/recover.
      * When reset/recover is not active this option is not accepted and an error will be thrown
-     * <p>
+     * <br>
      * defaults to false.
-     * <p>
+     * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
      * @param skipBoot skipBoot
      * @return if true, do not run welcome when no application arguments were resolved
@@ -155,7 +155,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     /**
      * set home locations.
-     * <p>
+     * <br>
      * <strong>option-type :</strong> create (used when creating new workspace. will not be
      * exported nor promoted to runtime).
      * @param homeLocations home locations map
@@ -165,7 +165,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     /**
      * set store location strategy for creating a new workspace.
-     * <p>
+     * <br>
      * <strong>option-type :</strong> create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      * @param storeLocations store locations map

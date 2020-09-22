@@ -1,0 +1,3 @@
+apiVersion=${apiVersion}
+implVersion=${implVersion}
+jarLocation=${jarLocation}

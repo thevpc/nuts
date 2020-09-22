@@ -148,7 +148,7 @@ public class DefaultNutsLogger implements NutsLogger {
 
     /**
      * Log a LogRecord.
-     * <p>
+     * <br>
      * All the other logging methods in this class call through
      * this method to actually perform any logging.  Subclasses can
      * override this single method to capture all log activity.

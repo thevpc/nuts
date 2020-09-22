@@ -11,7 +11,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: net.vpc.app.nuts:nuts:0.7.1" level="project" />
+    <orderEntry type="library" name="Maven: net.vpc.app.nuts:nuts:0.7.2" level="project" />
+    <orderEntry type="module" module-name="nuts" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-embedder:3.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-settings:3.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-core:3.1.1" level="project" />

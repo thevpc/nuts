@@ -19,13 +19,13 @@ public class LRUMap<A, B> extends LinkedHashMap<A, B> {
     /**
      * Returns <tt>true</tt> if this <code>LruCache</code> has more entries than
      * the maximum specified when it was created.
-     * <p>
-     * <p>
+     * <br>
+     * <br>
      * This method <em>does not</em> modify the underlying <code>Map</code>; it
      * relies on the implementation of <code>LinkedHashMap</code> to do that,
      * but that behavior is documented in the JavaDoc for
      * <code>LinkedHashMap</code>.
-     * </p>
+     * <br>
      *
      * @param eldest the <code>Entry</code> in question; this implementation
      * doesn't care what it is, since the implementation is only dependent on

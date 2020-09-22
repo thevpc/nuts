@@ -1,1 +1,0 @@
-# Nuts Application Framework

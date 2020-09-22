@@ -1,6 +1,0 @@
-${
-    include('app-include.pre-script')
-}
-apiVersion=${apiVersion}
-implVersion=${implVersion}
-jarLocation=${jarLocation}
