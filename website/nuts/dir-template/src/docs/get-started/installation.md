@@ -198,4 +198,4 @@ To run a command using **nuts** just type
 nuts <command>
 ```
 
-Several commands are available, and you still be able to run any java and non java application. More info is available in the **```nuts```** official [wiki](https://github.com/thevpc/nuts/wiki) .
+Several commands are available, and you can always manually run any java and non java application. More info is available in the **```nuts```** official [wiki](https://github.com/thevpc/nuts/wiki) .

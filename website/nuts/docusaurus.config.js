@@ -122,12 +122,9 @@ module.exports = {
                 command: {
                     bin: 'asciidoctor-pdf.ruby2.7',
                     args: [
-                        '-a',
-                        'pdf-themesdir=${asciidoctor.baseDir}/resources/themes',
-                        '-a',
-                        'pdf-theme=custom',
-                        '-a',
-                        'pdf-fontsdir=${asciidoctor.baseDir}/resources/fonts/;GEM_FONTS_DIR',
+                        '-a', 'pdf-themesdir=${asciidoctor.baseDir}/resources/themes',
+                        '-a', 'pdf-theme=custom',
+                        '-a', 'pdf-fontsdir=${asciidoctor.baseDir}/resources/fonts/;GEM_FONTS_DIR',
                     ]
                 },
                 output:'static/pdf/',

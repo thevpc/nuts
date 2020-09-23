@@ -65,10 +65,10 @@ public class Test02_SimpleClassStream {
     private static void parseRegularFile(Path file, NutsWorkspace ws) throws IOException {
         long from = System.currentTimeMillis();
         if (file.getFileName().toString().endsWith(".class")) {
-            parseClassFile(file.normalize().toAbsolutePath(), ws);
+            parseClassFile(file.toAbsolutePath().normalize(), ws);
         }
         if (file.getFileName().toString().endsWith(".jar")) {
-            parseJarFile(file.normalize().toAbsolutePath(), ws);
+            parseJarFile(file.toAbsolutePath().normalize(), ws);
         }
         long to = System.currentTimeMillis();
         if (max < to - from) {

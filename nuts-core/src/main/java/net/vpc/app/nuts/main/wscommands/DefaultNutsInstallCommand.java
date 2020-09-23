@@ -214,6 +214,15 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             if (!ws.io().getTerminal().ask().forBoolean("Continue installation?")
                     .defaultValue(true)
                     .setSession(session).getBooleanValue()) {
+                if (session.isPlainTrace()) {
+                    Set<NutsId> all=new TreeSet<>();
+                    all.addAll(defsToInstall.keySet());
+                    all.addAll(defsToInstallForced.keySet());
+                    all.addAll(defsToDefVersion.keySet());
+                    session.out().println("@@install cancelled:@@ "+all.stream().map(x->ws.id().set(x).format())
+                            .collect(Collectors.joining(", "))
+                    );
+                }
                 result = new NutsDefinition[0];
                 fails = new NutsId[0];
                 return this;

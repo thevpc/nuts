@@ -9,7 +9,8 @@ View Official releases [here](https://github.com/thevpc/nuts/releases) :
 Starred releases are most stable ones.
 
 ### nuts 0.7.2.0
-- ```2020/07/26 	nuts 0.7.2.0 (*)``` released [download nuts-0.7.2.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.2/nuts-0.7.2.jar) 
+- ```2020/09/23 	nuts 0.7.2.0 (*)``` released [download nuts-0.7.2.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.2/nuts-0.7.2.jar) 
+- FIXED  : execute non installed artifacts sometimes do not ask for confirmation
 - ADDED  : NutsCommandLineProcessor.prepare/exec/autoComplete
 - ADDED  : NutsApplicationContext.processCommandLine(cmdLine)
 - ADDED  : NutsApplicationContext.configureLast(cmdLine)
