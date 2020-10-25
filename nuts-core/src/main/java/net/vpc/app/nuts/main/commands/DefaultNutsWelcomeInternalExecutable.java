@@ -38,10 +38,10 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             welcome.put("description", "The Open Source Package Manager for Java (TM) and other Things ...");
             welcome.put("url", "http://github.com/thevpc/nuts");
             welcome.put("author", "thevpc");
-            welcome.put("api-id", getSession().getWorkspace().config().getApiId().builder().setVersion("").build().toString());
-            welcome.put("api-version", getSession().getWorkspace().config().getApiVersion());
-            welcome.put("runtime-id", getSession().getWorkspace().config().getRuntimeId().builder().setVersion("").build().toString());
-            welcome.put("runtime-version", getSession().getWorkspace().config().getRuntimeId().builder().setVersion("").build().toString());
+            welcome.put("api-id", getSession().getWorkspace().getApiId().builder().setVersion("").build().toString());
+            welcome.put("api-version", getSession().getWorkspace().getApiVersion());
+            welcome.put("runtime-id", getSession().getWorkspace().getRuntimeId().builder().setVersion("").build().toString());
+            welcome.put("runtime-version", getSession().getWorkspace().getRuntimeId().builder().setVersion("").build().toString());
             welcome.put("workspace", getSession().getWorkspace().config().getWorkspaceLocation().toString());
             getSession().formatObject(welcome).println();
         }

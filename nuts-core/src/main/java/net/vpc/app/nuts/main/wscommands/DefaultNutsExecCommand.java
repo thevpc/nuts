@@ -242,7 +242,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 cmdName = cmdName.substring(0, cmdName.length() - 1);
                 forceInstalled = true;
             }
-            command = ws.config().findCommandAlias(cmdName, prepareSession);
+            command = ws.aliases().find(cmdName, prepareSession);
             if (command != null) {
                 NutsCommandExecOptions o = new NutsCommandExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                         .setExecutionType(executionType).setEnv(env);
@@ -256,7 +256,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     protected NutsExecutableInformationExt ws_exec(String commandName, String[] appArgs, String[] executorOptions, Map<String, String> env, String dir, boolean failFast, NutsExecutionType executionType,
             NutsSession traceSession, NutsSession execSession, boolean forceInstalled) {
         NutsDefinition def = null;
-        NutsId nid = ws.id().parse(commandName);
+        NutsId nid = ws.id().parser().parse(commandName);
         if (nid == null) {
             throw new NutsNotFoundException(ws, commandName);
         }
@@ -264,12 +264,16 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         List<NutsId> ff = ws.search().addId(nid).setSession(searchSession).setOptional(false).setLatest(true).setFailFast(false)
                 .setDefaultVersions(true)
                 //                .configure(true,"--trace-monitor")
-                .installedOrIncluded().getResultIds().list();
+                .addInstallStatus(NutsInstallStatus.INSTALLED)
+                .addInstallStatus(NutsInstallStatus.REQUIRED)
+                .getResultIds().list();
         if (ff.isEmpty()) {
             //retest without checking if the parseVersion is default or not
             // this help recovering from "invalid default parseVersion" issue
             ff = ws.search().addId(nid).setSession(searchSession).setOptional(false).setLatest(true).setFailFast(false)
-                    .installedOrIncluded().getResultIds().list();
+                    .addInstallStatus(NutsInstallStatus.INSTALLED)
+                    .addInstallStatus(NutsInstallStatus.REQUIRED)
+                    .getResultIds().list();
         }
         if (ff.isEmpty()) {
             if (!forceInstalled) {

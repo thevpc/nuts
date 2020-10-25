@@ -9,9 +9,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.main.wscommands.DefaultNutsExecCommand;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author vpc
@@ -77,12 +75,42 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
     @Override
     public void execute() {
-        if (autoInstall && def.getInstallInformation().getInstallStatus() != NutsInstallStatus.INSTALLED) {
-            traceSession.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
+        Set<NutsInstallStatus> installStatus = def.getInstallInformation().getInstallStatus();
+        if (autoInstall && !installStatus.contains(NutsInstallStatus.INSTALLED)) {
             traceSession.getWorkspace().install().id(def.getId()).run();
-            NutsInstallStatus st = traceSession.getWorkspace().fetch().setId(def.getId()).getResultDefinition().getInstallInformation().getInstallStatus();
-            if (st != NutsInstallStatus.INSTALLED) {
+            Set<NutsInstallStatus> st = traceSession.getWorkspace().fetch().setId(def.getId()).getResultDefinition().getInstallInformation().getInstallStatus();
+            if (!st.contains(NutsInstallStatus.INSTALLED)) {
                 return;
+            }
+        } else if (installStatus.contains(NutsInstallStatus.INSTALLED) && installStatus.contains(NutsInstallStatus.OBSOLETE)) {
+            traceSession.getWorkspace().install().id(def.getId()).run();
+        }
+        LinkedHashSet<NutsDependency> reinstall=new LinkedHashSet<>();
+        for (NutsDependency dependency : def.getDependencies()) {
+            NutsDependencyScope scope = execSession.getWorkspace().dependency().parser().parseScope(dependency.getScope());
+            boolean acceptedScope=scope!=NutsDependencyScope.TEST_COMPILE
+                    &&scope!=NutsDependencyScope.TEST_PROVIDED
+                    &&scope!=NutsDependencyScope.TEST_RUNTIME;
+            if(acceptedScope) {
+                Set<NutsInstallStatus> st = traceSession.getWorkspace().fetch().setOffline().setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
+                if (st.contains(NutsInstallStatus.OBSOLETE) || st.contains(NutsInstallStatus.NOT_INSTALLED)) {
+                    reinstall.add(dependency);
+                }
+            }
+        }
+        if(!reinstall.isEmpty()){
+            NutsInstallCommand iii = traceSession.getWorkspace().install().setStrategy(NutsInstallStrategy.REINSTALL);
+            for (NutsDependency nutsId : reinstall) {
+                iii.id(nutsId.toId());
+            }
+            iii.run();
+            for (NutsDependency dependency : reinstall) {
+                boolean optional = execSession.getWorkspace().dependency().parser().parseOptional(dependency.getOptional());
+
+                Set<NutsInstallStatus> st = traceSession.getWorkspace().fetch().setOffline().setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
+                if (st.contains(NutsInstallStatus.OBSOLETE)||st.contains(NutsInstallStatus.NOT_INSTALLED) && !optional) {
+                    throw new NutsUnexpectedException(execSession.getWorkspace(),"unresolved dependency "+dependency+" has status "+st);
+                }
             }
         }
         execCommand.ws_exec(def, commandName, appArgs, executorOptions, env, dir, failFast, false, traceSession, execSession, executionType, false);
@@ -90,7 +118,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
     @Override
     public void dryExecute() {
-        if (autoInstall && def.getInstallInformation().getInstallStatus() != NutsInstallStatus.INSTALLED) {
+        if (autoInstall && !def.getInstallInformation().getInstallStatus().contains(NutsInstallStatus.INSTALLED)) {
             execSession.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
             PrintStream out = execSession.out();
             out.printf("[dry] ==install== %s%n", def.getId().getLongName());

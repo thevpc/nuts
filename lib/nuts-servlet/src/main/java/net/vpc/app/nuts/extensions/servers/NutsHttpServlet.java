@@ -29,8 +29,12 @@
  */
 package net.vpc.app.nuts.extensions.servers;
 
-import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nutsserver.*;
+import net.vpc.app.nuts.Nuts;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsWorkspaceOpenMode;
+import net.vpc.app.nuts.toolbox.nutsserver.AdminServerConfig;
+import net.vpc.app.nuts.toolbox.nutsserver.DefaultNutsWorkspaceServerManager;
+import net.vpc.app.nuts.toolbox.nutsserver.NutsServer;
 import net.vpc.app.nuts.toolbox.nutsserver.http.AbstractNutsHttpServletFacadeContext;
 import net.vpc.app.nuts.toolbox.nutsserver.http.NutsHttpServletFacade;
 import net.vpc.common.strings.StringUtils;
@@ -69,68 +73,25 @@ public class NutsHttpServlet extends HttpServlet {
     private boolean adminServer = true;
     private NutsServer adminServerRef;
 
+    public static int parseInt(String v1, int defaultValue) {
+        try {
+            if (StringUtils.isBlank(v1)) {
+                return defaultValue;
+            }
+            return Integer.parseInt(StringUtils.trim(v1));
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
     @Override
-    public void init() throws ServletException {
-        super.init();
-        Map<String, NutsWorkspace> workspacesByLocation = new HashMap<>();
-        Map<String, NutsWorkspace> workspacesByWebContextPath = new HashMap<>();
-        NutsWorkspace workspace = Nuts.openWorkspace(
-                new NutsDefaultWorkspaceOptions()
-                        .setRuntimeId(runtimeId)
-                        .setWorkspace(workspaceLocation)
-                        .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)
-                        .setArchetype("server")
-        );
-        DefaultNutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(workspace);
-        if (workspaces.isEmpty()) {
-            String wl = workspaceLocation == null ? "" : workspaceLocation;
-            workspaces.put("", wl);
-            workspacesByLocation.put(wl, workspace);
-        }
-        for (Map.Entry<String, String> w : workspaces.entrySet()) {
-            String webContext = w.getKey();
-            String location = w.getValue();
-            if (location == null) {
-                location = "";
-            }
-            NutsWorkspace ws = workspacesByLocation.get(location);
-            if (ws == null) {
-                ws = Nuts.openWorkspace(new NutsDefaultWorkspaceOptions()
-                        .setRuntimeId(runtimeId)
-                        .setWorkspace(location)
-                        .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)
-                        .setArchetype("server")
-                );
-                workspacesByLocation.put(location, ws);
-            }
-            workspacesByWebContextPath.put(webContext, ws);
-        }
-
-        if (StringUtils.isBlank(serverId)) {
-            String serverName = DEFAULT_HTTP_SERVER;
+    public void destroy() {
+        super.destroy();
+        if (adminServerRef != null) {
             try {
-                serverName = InetAddress.getLocalHost().getHostName();
-                if (serverName != null && serverName.length() > 0) {
-                    serverName = "nuts-" + serverName;
-                }
-            } catch (Exception e) {
-                //
-            }
-            if (serverName == null) {
-                serverName = DEFAULT_HTTP_SERVER;
-            }
-
-            serverId = serverName;
-        }
-
-        this.facade = new NutsHttpServletFacade(serverId, workspacesByWebContextPath);
-        if (adminServer) {
-            try {
-                AdminServerConfig serverConfig = new AdminServerConfig();
-                serverConfig.setPort(adminServerPort);
-                adminServerRef = serverManager.startServer(serverConfig);
+                adminServerRef.stop();
             } catch (Exception ex) {
-                LOG.log(Level.SEVERE, "Unable to start admin server", ex);
+                LOG.log(Level.SEVERE, "Unable to stop admin server", ex);
             }
         }
     }
@@ -178,20 +139,70 @@ public class NutsHttpServlet extends HttpServlet {
     }
 
     @Override
-    public void destroy() {
-        super.destroy();
-        if (adminServerRef != null) {
+    public void init() throws ServletException {
+        super.init();
+        Map<String, NutsWorkspace> workspacesByLocation = new HashMap<>();
+        Map<String, NutsWorkspace> workspacesByWebContextPath = new HashMap<>();
+        NutsWorkspace workspace = Nuts.openWorkspace(
+                Nuts.createOptions()
+                        .setRuntimeId(runtimeId)
+                        .setWorkspace(workspaceLocation)
+                        .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)
+                        .setArchetype("server")
+        );
+        DefaultNutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(workspace);
+        if (workspaces.isEmpty()) {
+            String wl = workspaceLocation == null ? "" : workspaceLocation;
+            workspaces.put("", wl);
+            workspacesByLocation.put(wl, workspace);
+        }
+        for (Map.Entry<String, String> w : workspaces.entrySet()) {
+            String webContext = w.getKey();
+            String location = w.getValue();
+            if (location == null) {
+                location = "";
+            }
+            NutsWorkspace ws = workspacesByLocation.get(location);
+            if (ws == null) {
+                ws = Nuts.openWorkspace(
+                        Nuts.createOptions()
+                        .setRuntimeId(runtimeId)
+                        .setWorkspace(location)
+                        .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)
+                        .setArchetype("server")
+                );
+                workspacesByLocation.put(location, ws);
+            }
+            workspacesByWebContextPath.put(webContext, ws);
+        }
+
+        if (StringUtils.isBlank(serverId)) {
+            String serverName = DEFAULT_HTTP_SERVER;
             try {
-                adminServerRef.stop();
+                serverName = InetAddress.getLocalHost().getHostName();
+                if (serverName != null && serverName.length() > 0) {
+                    serverName = "nuts-" + serverName;
+                }
+            } catch (Exception e) {
+                //
+            }
+            if (serverName == null) {
+                serverName = DEFAULT_HTTP_SERVER;
+            }
+
+            serverId = serverName;
+        }
+
+        this.facade = new NutsHttpServletFacade(serverId, workspacesByWebContextPath);
+        if (adminServer) {
+            try {
+                AdminServerConfig serverConfig = new AdminServerConfig();
+                serverConfig.setPort(adminServerPort);
+                adminServerRef = serverManager.startServer(serverConfig);
             } catch (Exception ex) {
-                LOG.log(Level.SEVERE, "Unable to stop admin server", ex);
+                LOG.log(Level.SEVERE, "Unable to start admin server", ex);
             }
         }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doService(req, resp);
     }
 
     @Override
@@ -199,19 +210,13 @@ public class NutsHttpServlet extends HttpServlet {
         doService(req, resp);
     }
 
-    protected void doService(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        facade.execute(new ServletNutsHttpServletFacadeContext(req, resp));
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doService(req, resp);
     }
 
-    public static int parseInt(String v1, int defaultValue) {
-        try {
-            if (StringUtils.isBlank(v1)) {
-                return defaultValue;
-            }
-            return Integer.parseInt(StringUtils.trim(v1));
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
+    protected void doService(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+        facade.execute(new ServletNutsHttpServletFacadeContext(req, resp));
     }
 
     private static class ServletNutsHttpServletFacadeContext extends AbstractNutsHttpServletFacadeContext {
@@ -221,6 +226,11 @@ public class NutsHttpServlet extends HttpServlet {
         public ServletNutsHttpServletFacadeContext(HttpServletRequest req, HttpServletResponse resp) {
             this.req = req;
             this.resp = resp;
+        }
+
+        @Override
+        public String getRequestMethod() throws IOException {
+            return req.getMethod();
         }
 
         @Override
@@ -260,13 +270,13 @@ public class NutsHttpServlet extends HttpServlet {
         }
 
         @Override
-        public String getRequestHeaderFirstValue(String header) throws IOException {
-            return req.getHeader(header);
+        public Set<String> getRequestHeaderKeys(String header) throws IOException {
+            return new HashSet<>(Collections.list(req.getHeaderNames()));
         }
 
         @Override
-        public Set<String> getRequestHeaderKeys(String header) throws IOException {
-            return new HashSet<>(Collections.list(req.getHeaderNames()));
+        public String getRequestHeaderFirstValue(String header) throws IOException {
+            return req.getHeader(header);
         }
 
         @Override
@@ -293,11 +303,6 @@ public class NutsHttpServlet extends HttpServlet {
         @Override
         public void addResponseHeader(String name, String value) throws IOException {
             resp.addHeader(name, value);
-        }
-
-        @Override
-        public String getRequestMethod() throws IOException {
-            return req.getMethod();
         }
     }
 }

@@ -8,6 +8,8 @@ package net.vpc.app.nuts.runtime.filters.id;
 import net.vpc.app.nuts.*;
 
 import java.util.Objects;
+
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
@@ -16,11 +18,12 @@ import net.vpc.app.nuts.runtime.util.common.Simplifiable;
  *
  * @author vpc
  */
-public class NutstVersionIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> {
+public class NutstVersionIdFilter extends AbstractNutsFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> {
 
     private final NutsVersionFilter filter;
 
     public NutstVersionIdFilter(NutsVersionFilter filter) {
+        super(filter.getWorkspace(),NutsFilterOp.CONVERT);
         this.filter = filter;
     }
 
@@ -30,11 +33,11 @@ public class NutstVersionIdFilter implements NutsIdFilter, Simplifiable<NutsIdFi
     }
 
     @Override
-    public boolean accept(NutsId other, NutsSession session) {
+    public boolean acceptId(NutsId other, NutsSession session) {
         if (filter == null) {
             return true;
         }
-        return filter.accept(other.getVersion(), session);
+        return filter.acceptVersion(other.getVersion(), session);
     }
 
     @Override

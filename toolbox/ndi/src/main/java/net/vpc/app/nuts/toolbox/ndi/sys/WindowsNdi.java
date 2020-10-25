@@ -67,7 +67,7 @@ public class WindowsNdi extends BaseSystemNdi {
     public String configurePathShortcut(Target target, boolean latestVersion, NutsSession session) throws IOException {
         NutsWorkspace ws = context.getWorkspace();
         NutsWorkspaceConfigManager wsconfig = ws.config();
-        Path apiConfigFolder = wsconfig.getStoreLocation(wsconfig.getApiId(), NutsStoreLocation.APPS);
+        Path apiConfigFolder = wsconfig.getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
         Path startNutsFile = apiConfigFolder.resolve(getExecFileName("start-nuts"));
         ShellLink sl = ShellLink.createLink(startNutsFile.toString())
                 .setWorkingDir(System.getProperty("user.home"))
@@ -87,7 +87,7 @@ public class WindowsNdi extends BaseSystemNdi {
         switch (target) {
             case DESKTOP: {
                 if (!latestVersion) {
-                    path = desktopFolder + File.separator + "nuts-cmd-" + context.getWorkspace().config().getApiVersion() + ".lnk";
+                    path = desktopFolder + File.separator + "nuts-cmd-" + ws.getApiVersion() + ".lnk";
                     sl.saveTo(path);
                     return path;
                 } else {
@@ -98,7 +98,7 @@ public class WindowsNdi extends BaseSystemNdi {
             }
             case MENU: {
                 if (!latestVersion) {
-                    path = menuFolder + File.separator + "nuts-cmd-" + context.getWorkspace().config().getApiVersion() + ".lnk";
+                    path = menuFolder + File.separator + "nuts-cmd-" + ws.getApiVersion() + ".lnk";
                     sl.saveTo(path);
                     return path;
                 } else {
@@ -117,7 +117,7 @@ public class WindowsNdi extends BaseSystemNdi {
         //Path ndiConfigFolder = context.getConfigFolder();
         NutsWorkspace ws = context.getWorkspace();
         NutsWorkspaceConfigManager wsconfig = ws.config();
-        Path apiConfigFolder = wsconfig.getStoreLocation(wsconfig.getApiId(), NutsStoreLocation.APPS);
+        Path apiConfigFolder = wsconfig.getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
         Path startNutsFile = apiConfigFolder.resolve(getExecFileName("start-nuts"));
         Path apiConfigFile = apiConfigFolder.resolve(getExecFileName(".nuts-batrc"));
         Path ndiConfigFile = ndiAppsFolder.resolve(getExecFileName(".ndi-batrc"));
@@ -134,10 +134,10 @@ public class WindowsNdi extends BaseSystemNdi {
                 toCommentLine("workspace installation." + CRLF) +
                 toCommentLine("" + CRLF) +
                 "@ECHO OFF" + CRLF +
-                "SET \"NUTS_VERSION=" + wsconfig.getApiVersion() + "\"" + CRLF +
+                "SET \"NUTS_VERSION=" + ws.getApiVersion() + "\"" + CRLF +
                 "SET \"NUTS_JAR=" + ws.search()
                 .setSession(context.getSession().copy().setSilent())
-                .addId(wsconfig.getApiId()).getResultPaths().required() +
+                .addId(ws.getApiId()).getResultPaths().required() +
                 "\"" + CRLF +
                 "SET \"NUTS_WORKSPACE=" + wsconfig.getWorkspaceLocation().toString() + "\"" + CRLF +
                 "SET \"PATH=" + ndiAppsFolder + ";%PATH%\"" + CRLF;

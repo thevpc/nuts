@@ -29,11 +29,13 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
                     .setTransitive(isTransitive())
                     .setFetchStrategy(isOffline() ? NutsFetchStrategy.OFFLINE : NutsFetchStrategy.ONLINE)
                     //skip 'installed' repository
-                    .setRepositoryFilter(repository -> ! DefaultNutsInstalledRepository.INSTALLED_REPO_UUID.equals(repository.getUuid()))
+                    .setRepositoryFilter(
+                                    ws.repos().filter().byName(DefaultNutsInstalledRepository.INSTALLED_REPO_UUID).neg()
+                    )
                     .setDistinct(true)
                     .setFailFast(true)
                     .getResultDefinitions().required();
-            NutsRepository repository1 = ws.config().getRepository(p.getRepositoryUuid(), session.copy().setTransitive(true));
+            NutsRepository repository1 = ws.repos().getRepository(p.getRepositoryUuid(), session.copy().setTransitive(true));
             repository1.undeploy()
                     .setId(p.getId()).setSession(getSession())
 //                    .setFetchMode(NutsFetchMode.LOCAL)

@@ -120,7 +120,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 
     @Override
     public String format() {
-        NutsIdBuilder id = value.getId().builder();
+        NutsIdBuilder id = value.toId().builder();
         Map<String, String> q = id.getProperties();
         for (Map.Entry<String, String> e : q.entrySet()) {
             switch (e.getKey()) {
@@ -138,7 +138,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
                 }
             }
         }
-        NutsIdFormat id1 = getWorkspace().id();
+        NutsIdFormat id1 = getWorkspace().id().formatter();
         for (String omitQueryProperty : getOmitQueryProperties()) {
             id1.omitProperty(omitQueryProperty);
         }
@@ -166,19 +166,6 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
         return this;
     }
 
-    @Override
-    public NutsDependency parse(String dependency) {
-        return CoreNutsUtils.parseNutsDependency(getWorkspace(), dependency);
-    }
-
-    @Override
-    public NutsDependency parseRequired(String dependency) {
-        NutsDependency d = parse(dependency);
-        if (d == null) {
-            throw new NutsParseException(getWorkspace(), "Invalid Dependency format : " + dependency);
-        }
-        return d;
-    }
 
     @Override
     public boolean isOmitClassifier() {
@@ -265,10 +252,6 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
         out.print(format());
     }
 
-    @Override
-    public NutsDependencyBuilder builder() {
-        return new DefaultNutsDependencyBuilder();
-    }
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {

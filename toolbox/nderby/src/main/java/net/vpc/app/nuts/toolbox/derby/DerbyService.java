@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.toolbox.derby;
 
+import net.vpc.app.nuts.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,8 +39,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-
-import net.vpc.app.nuts.*;
 
 /**
  * @author vpc
@@ -54,8 +54,73 @@ public class DerbyService {
         LOG = appContext.getWorkspace().log().of(getClass());
     }
 
+    /**
+     * should promote this to FileUtils !!
+     *
+     * @param path
+     * @param cwd
+     * @return
+     */
+    public static String getAbsoluteFile(String path, String cwd) {
+        if (new File(path).isAbsolute()) {
+            return path;
+        }
+        if (cwd == null) {
+            cwd = System.getProperty("user.dir");
+        }
+        switch (path) {
+            case "~":
+                return System.getProperty("user.home");
+            case ".": {
+                File file = new File(cwd);
+                try {
+                    return file.getCanonicalPath();
+                } catch (IOException ex) {
+                    return file.getAbsolutePath();
+                }
+            }
+            case "..": {
+                File file = new File(cwd, "..");
+                try {
+                    return file.getCanonicalPath();
+                } catch (IOException ex) {
+                    return file.getAbsolutePath();
+                }
+            }
+        }
+        int j = -1;
+        char[] chars = path.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '/' || chars[i] == '\\') {
+                j = i;
+                break;
+            }
+        }
+        if (j > 0) {
+            switch (path.substring(0, j)) {
+                case "~":
+                    String e = path.substring(j + 1);
+                    if (e.isEmpty()) {
+                        return System.getProperty("user.home");
+                    }
+                    File file = new File(System.getProperty("user.home"), e);
+                    try {
+                        return file.getCanonicalPath();
+                    } catch (IOException ex) {
+                        return file.getAbsolutePath();
+                    }
+            }
+        }
+        File file = new File(cwd, path);
+        try {
+            return file.getCanonicalPath();
+        } catch (IOException ex) {
+            return file.getAbsolutePath();
+        }
+    }
+
     private Path download(String id, Path folder, boolean optional) {
-        final NutsId iid = appContext.getWorkspace().id().parse(id);
+        final NutsId iid = appContext.getWorkspace().id().parser().parse(id);
 //        Path downloadBaseFolder = folder//.resolve(iid.getVersion().getValue());
         Path targetFile = folder.resolve(iid.getArtifactId() + ".jar");
         if (!Files.exists(targetFile)) {
@@ -66,24 +131,21 @@ public class DerbyService {
                 }
             } else {
                 appContext.getWorkspace().fetch().setLocation(targetFile).setId(id).setFailFast(true).getResultPath();
-                LOG.with().level(Level.FINEST).verb("READ").log( "downloading {0} to {1}", id, targetFile);
+                LOG.with().level(Level.FINEST).verb("READ").log("downloading {0} to {1}", id, targetFile);
             }
         } else {
-            LOG.with().level(Level.FINEST).verb("READ").log( "using {0} form {1}", id, targetFile);
+            LOG.with().level(Level.FINEST).verb("READ").log("using {0} form {1}", id, targetFile);
         }
         return targetFile;
     }
 
     public Set<String> findVersions() {
         NutsWorkspace ws = appContext.getWorkspace();
-        NutsId java = appContext.getWorkspace().config().getPlatform();
+        NutsId java = appContext.getWorkspace().env().getPlatform();
         List<String> all = ws.search().setSession(appContext.getSession().copy().setSilent()).addId("org.apache.derby:derbynet").setDistinct(true)
-                .setIdFilter((id, session) -> {
-                    if (java.getVersion().compareTo("1.9") < 0) {
-                        return id.getVersion().compareTo("10.15.1.3") < 0;
-                    }
-                    return true;
-                })
+                .setIdFilter(
+                        (java.getVersion().compareTo("1.9") < 0) ? ws.version().filter().byValue("[,10.15.1.3[").to(NutsIdFilter.class) :
+                                null)
                 .getResultIds().stream().map(x -> x.getVersion().toString()).collect(Collectors.toList());
         TreeSet<String> lastFirst = new TreeSet<>(new Comparator<String>() {
             @Override
@@ -101,14 +163,11 @@ public class DerbyService {
         NutsWorkspace ws = appContext.getWorkspace();
         String currentDerbyVersion = options.derbyVersion;
         if (currentDerbyVersion == null) {
-            NutsId java = appContext.getWorkspace().config().getPlatform();
+            NutsId java = appContext.getWorkspace().env().getPlatform();
             NutsId best = ws.search().setSession(appContext.getSession().copy().setSilent()).addId("org.apache.derby:derbynet").setDistinct(true).setLatest(true)
-                    .setIdFilter((id, session) -> {
-                        if (java.getVersion().compareTo("1.9") < 0) {
-                            return id.getVersion().compareTo("10.15.1.3") < 0;
-                        }
-                        return true;
-                    })
+                    .setIdFilter(
+                            (java.getVersion().compareTo("1.9") < 0) ? ws.version().filter().byValue("[,10.15.1.3[").to(NutsIdFilter.class) :
+                                    null)
                     .setSession(appContext.getSession().copy().setSilent())
                     .getResultIds().singleton();
             currentDerbyVersion = best.getVersion().toString();
@@ -205,71 +264,6 @@ public class DerbyService {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * should promote this to FileUtils !!
-     *
-     * @param path
-     * @param cwd
-     * @return
-     */
-    public static String getAbsoluteFile(String path, String cwd) {
-        if (new File(path).isAbsolute()) {
-            return path;
-        }
-        if (cwd == null) {
-            cwd = System.getProperty("user.dir");
-        }
-        switch (path) {
-            case "~":
-                return System.getProperty("user.home");
-            case ".": {
-                File file = new File(cwd);
-                try {
-                    return file.getCanonicalPath();
-                } catch (IOException ex) {
-                    return file.getAbsolutePath();
-                }
-            }
-            case "..": {
-                File file = new File(cwd, "..");
-                try {
-                    return file.getCanonicalPath();
-                } catch (IOException ex) {
-                    return file.getAbsolutePath();
-                }
-            }
-        }
-        int j = -1;
-        char[] chars = path.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            if (chars[i] == '/' || chars[i] == '\\') {
-                j = i;
-                break;
-            }
-        }
-        if (j > 0) {
-            switch (path.substring(0, j)) {
-                case "~":
-                    String e = path.substring(j + 1);
-                    if (e.isEmpty()) {
-                        return System.getProperty("user.home");
-                    }
-                    File file = new File(System.getProperty("user.home"), e);
-                    try {
-                        return file.getCanonicalPath();
-                    } catch (IOException ex) {
-                        return file.getAbsolutePath();
-                    }
-            }
-        }
-        File file = new File(cwd, path);
-        try {
-            return file.getCanonicalPath();
-        } catch (IOException ex) {
-            return file.getAbsolutePath();
         }
     }
 

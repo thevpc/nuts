@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
@@ -515,4 +516,18 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return  boot repositories ';' separated
      */
     String getBootRepositories();
+
+
+    /**
+     * return expired date/time or zero if not set.
+     * Expire time is used to expire any cached file that was downloaded before the given date/time
+     *
+     * @return expired date/time or zero
+     * @since 0.8.0
+     */
+    Instant getExpireTime();
+
+    boolean isSkipErrors();
+
+    String[] getErrors();
 }

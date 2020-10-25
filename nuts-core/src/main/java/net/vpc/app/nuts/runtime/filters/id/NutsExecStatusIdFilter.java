@@ -5,27 +5,27 @@
  */
 package net.vpc.app.nuts.runtime.filters.id;
 
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsDescriptorFilter;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
 /**
  *
  * @author vpc
  */
-public class NutsExecStatusIdFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
+public class NutsExecStatusIdFilter extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
 
     private final Boolean executable;
     private final Boolean nutsApplication;
 
-    public NutsExecStatusIdFilter(Boolean executable, Boolean nutsApplication) {
+    public NutsExecStatusIdFilter(NutsWorkspace ws, Boolean executable, Boolean nutsApplication) {
+        super(ws, NutsFilterOp.CUSTOM);
         this.executable = executable;
         this.nutsApplication = nutsApplication;
     }
 
     @Override
-    public boolean accept(NutsDescriptor other, NutsSession session) {
+    public boolean acceptDescriptor(NutsDescriptor other, NutsSession session) {
         if (executable != null) {
             return other.isExecutable() == executable.booleanValue();
         }

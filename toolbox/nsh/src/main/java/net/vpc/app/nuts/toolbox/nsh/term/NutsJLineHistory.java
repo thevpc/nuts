@@ -39,7 +39,7 @@ class NutsJLineHistory implements History {
     public NutsJLineHistory(LineReader reader, NutsWorkspace workspace) {
         attach(reader);
         this.ws = workspace;
-        workspace.addUserPropertyListener(new NutsMapListener<String, Object>() {
+        workspace.events().addUserPropertyListener(new NutsMapListener<String, Object>() {
 
             @Override
             public void entryAdded(String name, Object value) {

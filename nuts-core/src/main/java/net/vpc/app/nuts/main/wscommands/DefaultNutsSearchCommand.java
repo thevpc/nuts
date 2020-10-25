@@ -35,16 +35,8 @@ import net.vpc.app.nuts.runtime.DefaultNutsSearch;
 import net.vpc.app.nuts.runtime.ext.DefaultNutsWorkspaceExtensionManager;
 import net.vpc.app.nuts.runtime.NutsPatternIdFilter;
 import net.vpc.app.nuts.runtime.filters.id.*;
-import net.vpc.app.nuts.core.NutsWorkspaceExt;
 import net.vpc.app.nuts.runtime.util.*;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.runtime.filters.dependency.NutsDependencyJavascriptFilter;
-import net.vpc.app.nuts.runtime.filters.dependency.NutsDependencyOptionFilter;
-import net.vpc.app.nuts.runtime.filters.dependency.NutsDependencyScopeFilter;
-import net.vpc.app.nuts.runtime.filters.descriptor.NutsDescriptorFilterArch;
-import net.vpc.app.nuts.runtime.filters.descriptor.NutsDescriptorFilterPackaging;
-import net.vpc.app.nuts.runtime.filters.descriptor.NutsDescriptorJavascriptFilter;
-import net.vpc.app.nuts.runtime.filters.repository.DefaultNutsRepositoryFilter;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 
 import java.io.File;
@@ -64,7 +56,6 @@ import net.vpc.app.nuts.runtime.format.NutsDisplayProperty;
 import net.vpc.app.nuts.runtime.format.NutsFetchDisplayOptions;
 
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
-import net.vpc.app.nuts.runtime.util.io.NutsIdFilterTopInstalled;
 import net.vpc.app.nuts.runtime.util.iter.IteratorBuilder;
 import net.vpc.app.nuts.runtime.util.iter.IteratorUtils;
 import net.vpc.app.nuts.runtime.util.iter.NamedIterator;
@@ -93,7 +84,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             someIds.add(id.toString());
         }
         if (this.getIds().length == 0 && isCompanion()) {
-            someIds.addAll(Arrays.asList(NutsWorkspaceExt.of(ws).getCompanionIds()));
+            someIds.addAll(ws.companionIds());
         }
         if (this.getIds().length == 0 && isRuntime()) {
             someIds.add(NutsConstants.Ids.NUTS_RUNTIME);
@@ -133,106 +124,83 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 if (oo.isEmpty()) {
                     idFilter0 = null;
                 } else {
-                    idFilter0 = new NutsIdFilterOr(oo.toArray(new NutsIdFilter[0]));
+                    idFilter0 = ws.id().filter().any(oo.toArray(new NutsIdFilter[0]));
                 }
             }
         }
 
-        NutsDescriptorFilter _descriptorFilter = null;
-        NutsIdFilter _idFilter = null;
-        NutsDependencyFilter depFilter = null;
-        NutsRepositoryFilter rfilter = null;
+        NutsDescriptorFilter _descriptorFilter = ws.descriptor().filter().always();
+        NutsIdFilter _idFilter = ws.id().filter().always();
+        NutsDependencyFilter depFilter = ws.dependency().filter().always();
+        NutsRepositoryFilter rfilter = ws.repos().filter().always();
         for (String j : this.getScripts()) {
             if (!CoreStringUtils.isBlank(j)) {
                 if (CoreStringUtils.containsTopWord(j, "descriptor")) {
-                    _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, NutsDescriptorJavascriptFilter.valueOf(j));
+                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byExpression(j));
                 } else if (CoreStringUtils.containsTopWord(j, "dependency")) {
-                    depFilter = CoreFilterUtils.AndSimplified(depFilter, NutsDependencyJavascriptFilter.valueOf(j));
+                    depFilter = depFilter.and(ws.dependency().filter().byExpression(j));
                 } else {
-                    _idFilter = CoreFilterUtils.AndSimplified(_idFilter, NutsJavascriptIdFilter.valueOf(j));
+                    _idFilter = _idFilter.and(ws.id().filter().byExpression(j));
                 }
             }
         }
-        NutsDescriptorFilter packs = null;
-        for (String v : this.getPackaging()) {
-            packs = CoreFilterUtils.OrSimplified(packs, new NutsDescriptorFilterPackaging(v));
-        }
-        NutsDescriptorFilter archs = null;
-        for (String v : this.getArch()) {
-            archs = CoreFilterUtils.OrSimplified(archs, new NutsDescriptorFilterArch(v));
-        }
-
-        _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, packs, archs);
+        NutsDescriptorFilter packs = ws.descriptor().filter().byPackaging(getPackaging());
+        NutsDescriptorFilter archs = ws.descriptor().filter().byArch(getArch());
+        _descriptorFilter = _descriptorFilter.and(packs).and(archs);
 
         if (this.getRepositories().length > 0) {
-            rfilter = new DefaultNutsRepositoryFilter(Arrays.asList(this.getRepositories())).simplify();
+            rfilter = rfilter.and(ws.repos().filter().byName(this.getRepositories()));
         }
 
-        NutsRepositoryFilter _repositoryFilter = CoreFilterUtils.AndSimplified(rfilter, this.getRepositoryFilter());
-        _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, this.getDescriptorFilter());
+        NutsRepositoryFilter _repositoryFilter = rfilter.and(this.getRepositoryFilter());
+        _descriptorFilter = _descriptorFilter.and(this.getDescriptorFilter());
 
-        _idFilter = CoreFilterUtils.AndSimplified(_idFilter, idFilter0);
-        if (getInstallStatus() != null) {
-            _idFilter = CoreFilterUtils.AndSimplified(_idFilter, new NutsIdFilterTopInstalled(getInstallStatus()));
+        _idFilter = _idFilter.and(idFilter0);
+        if (getInstallStatus() != null && getInstallStatus().length>0) {
+            _idFilter = _idFilter.and(ws.id().filter().byInstallStatus(getInstallStatus()));
         }
         if (getDefaultVersions() != null) {
-            _idFilter = CoreFilterUtils.AndSimplified(_idFilter, new NutsDefaultVersionIdFilter(getDefaultVersions()));
+            _idFilter = _idFilter.and(ws.id().filter().byDefaultVersion(getDefaultVersions()));
         }
         if (execType != null) {
             switch (execType) {
                 case "lib": {
-                    _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new NutsExecStatusIdFilter(false, false));
+                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byApp(false)).and(ws.descriptor().filter().byExec(false));
                     break;
                 }
                 case "exec": {
-                    _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new NutsExecStatusIdFilter(true, null));
+                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byExec(true));
                     break;
                 }
                 case "app": {
-                    _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new NutsExecStatusIdFilter(null, true));
+                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byApp(true));
                     break;
                 }
                 case "extension": {
-                    _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new NutsExecExtensionFilter(
-                            targetApiVersion == null ? null : ws.id().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build())
-                    );
+                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byExtension(targetApiVersion));
                     break;
                 }
                 case "runtime": {
-                    _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new NutsExecRuntimeFilter(
-                            targetApiVersion == null ? null : ws.id().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build(),
-                             false
-                    )
-                    );
+                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byRuntime(targetApiVersion));
                     break;
                 }
                 case "companions": {
-                    _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new NutsExecCompanionFilter(
-                            targetApiVersion == null ? null : ws.id().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build(),
-                            NutsWorkspaceExt.of(ws).getCompanionIds()
-                    )
-                    );
+                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byCompanion(targetApiVersion));
                     break;
                 }
             }
         } else {
             if (targetApiVersion != null) {
-                _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new BootAPINutsDescriptorFilter(
-                        ws.id().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build().getVersion()
-                )
-                );
+                _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byApiVersion(targetApiVersion));
             }
         }
         if (!lockedIds.isEmpty()) {
-            _descriptorFilter = CoreFilterUtils.AndSimplified(_descriptorFilter, new NutsLockedIdExtensionFilter(
-                    lockedIds.toArray(new NutsId[0])
-            )
-            );
+            _descriptorFilter =  _descriptorFilter.and(ws.descriptor().filter().byLockedIds(
+                    lockedIds.stream().map(NutsId::getFullName).toArray(String[]::new)
+            ));
         }
         if (!wildcardIds.isEmpty()) {
-            for (String wildcardId : wildcardIds) {
-                _idFilter = CoreNutsUtils.simplify(new NutsIdFilterOr(_idFilter, new NutsPatternIdFilter(ws.id().parse(wildcardId))));
-            }
+            _idFilter =  _idFilter.and(ws.id().filter().byName(wildcardIds.toArray(new String[0])));
         }
         return new DefaultNutsSearch(
                 goodIds.toArray(new String[0]),
@@ -411,11 +379,13 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 
     private NutsId[] findDependencies(List<NutsId> ids) {
         NutsSession _session = this.getSession() == null ? ws.createSession() : this.getSession();
-        NutsDependencyFilter _dependencyFilter = CoreFilterUtils.AndSimplified(
-                new NutsDependencyScopeFilter().addScopes(getScope()),
-                getOptional() == null ? null : NutsDependencyOptionFilter.valueOf(getOptional()),
-                getDependencyFilter()
-        );
+        NutsDependencyFilter _dependencyFilter =ws.dependency().filter().byScope(getScope())
+                .and(ws.dependency().filter().byOptional(getOptional()))
+                .and(getDependencyFilter())
+                ;
+        for (NutsDependencyFilter ff : CoreFilterUtils.getTopLevelFilters(getIdFilter(),NutsDependencyFilter.class,getWorkspace())) {
+            _dependencyFilter=_dependencyFilter.and(ff);
+        }
         NutsIdGraph graph = new NutsIdGraph(CoreNutsUtils.silent(_session), isFailFast());
         return graph.resolveDependencies(ids, _dependencyFilter);
     }
@@ -453,7 +423,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
     @Override
     public NutsResultList<Instant> getResultInstallDates() {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionsBase(false, false, false, false).iterator())
-                .map(x -> (x.getInstallInformation() == null) ? null : x.getInstallInformation().getInstallDate())
+                .map(x -> (x.getInstallInformation() == null) ? null : x.getInstallInformation().getCreatedDate())
                 .notNull());
     }
 
@@ -539,7 +509,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionsBase(false, false, true, isEffective()).iterator())
                 .mapMulti(x
                         -> (x.getContent() == null || x.getContent().getPath() == null) ? Collections.emptyList()
-                : Arrays.asList(ws.io().parseExecutionEntries(x.getContent().getPath()))));
+                : Arrays.asList(ws.apps().execEntries().parse(x.getContent().getPath()))));
     }
 
     @Override
@@ -661,7 +631,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         NutsFetchStrategy fetchMode = NutsWorkspaceHelper.validate(session.getFetchStrategy());
         if (regularIds.length > 0) {
             for (String id : regularIds) {
-                NutsId nutsId = ws.id().parse(id);
+                NutsId nutsId = ws.id().parser().parse(id);
                 if (nutsId != null) {
                     List<NutsId> nutsId2 = new ArrayList<>();
                     if (CoreStringUtils.isBlank(nutsId.getGroupId())) {
@@ -673,7 +643,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                 nutsId2.add(nutsId.builder().setGroupId("net.vpc.app").build());
                             }
                         } else {
-                            for (String aImport : ws.config().getImports()) {
+                            for (String aImport : ws.imports().getAll()) {
                                 nutsId2.add(nutsId.builder().setGroupId(aImport).build());
                             }
                         }
@@ -685,17 +655,18 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     for (NutsFetchMode mode : fetchMode) {
                         List<Iterator<NutsId>> all = new ArrayList<>();
                         for (NutsId nutsId1 : nutsId2) {
-                            NutsIdFilter idFilter2 = CoreFilterUtils.AndSimplified(sIdFilter, nutsId1.filter());
-                            NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getProperties(), idFilter2, sDescriptorFilter));
-                            NutsInstallStatus nutsInstallStatusFilter = CoreFilterUtils.getTopLevelFilterInstallStatus(filter);
+                            NutsIdFilter idFilter2 = ws.filters().all(sIdFilter,
+                                    ws.id().filter().byName(nutsId1.getFullName())
+                            );
+                            NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getProperties(), idFilter2, sDescriptorFilter,ws));
+//                            boolean includeInstalledRepository=filter0.accept()
+                            boolean[] includeInstalledRepository=CoreFilterUtils.getTopLevelInstallRepoInclusion(filter);
                             for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories(NutsRepositorySupportedAction.SEARCH, nutsId1, sRepositoryFilter, mode, session,
-                                    nutsInstallStatusFilter != NutsInstallStatus.NOT_INSTALLED,
-                                    nutsInstallStatusFilter != NutsInstallStatus.INSTALLED_OR_INCLUDED
-                                    && nutsInstallStatusFilter != NutsInstallStatus.INCLUDED
-                                    && nutsInstallStatusFilter != NutsInstallStatus.INSTALLED
+                                    includeInstalledRepository[0],
+                                    includeInstalledRepository[1]
                             )) {
-                                if (sRepositoryFilter == null || sRepositoryFilter.accept(repo)) {
-                                    all.add(IteratorBuilder.ofLazyNamed("searchVersions(" + repo.config().name() + "," + mode + "," + sRepositoryFilter + "," + finalSession + ")", ()
+                                if (sRepositoryFilter == null || sRepositoryFilter.acceptRepository(repo)) {
+                                    all.add(IteratorBuilder.ofLazyNamed("searchVersions(" + repo.getName() + "," + mode + "," + sRepositoryFilter + "," + finalSession + ")", ()
                                             -> repo.searchVersions().setId(nutsId1).setFilter(filter)
                                                     .setSession(finalSession)
                                                     .setFetchMode(mode)
@@ -712,10 +683,11 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                 .setSession(session)
                                 .setRepositoryFilter(search.getRepositoryFilter())
                                 .setDescriptorFilter(search.getDescriptorFilter());
-                        search2.setIdFilter(new NutsIdFilterOr(
-                                new NutsPatternIdFilter(nutsId.builder().setGroupId("*").build()),
-                                CoreNutsUtils.simplify(search2.getIdFilter())
-                        ));
+                        search2.setIdFilter(
+                                (NutsIdFilter)
+                                ws.id().filter().byName(nutsId.builder().setGroupId("*").build().toString())
+                                        .or(search2.getIdFilter())
+                        );
                         coalesce.add(search2.getResultIds().iterator());
                     }
                     allResults.add(fetchMode.isStopFast()
@@ -725,20 +697,18 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 }
             }
         } else {
-            NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(null, sIdFilter, sDescriptorFilter));
-            NutsInstallStatus nutsInstallStatusFilter = CoreFilterUtils.getTopLevelFilterInstallStatus(filter);
-            boolean includeOtherReporisotries = 
-                       nutsInstallStatusFilter != NutsInstallStatus.INSTALLED_OR_INCLUDED
-                    && nutsInstallStatusFilter != NutsInstallStatus.INCLUDED
-                    && nutsInstallStatusFilter != NutsInstallStatus.INSTALLED;
+            NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(null, sIdFilter, sDescriptorFilter,ws));
+            boolean[] includeInstalledRepository=CoreFilterUtils.getTopLevelInstallRepoInclusion(filter);
 
             List<Iterator<NutsId>> coalesce = new ArrayList<>();
             for (NutsFetchMode mode : fetchMode) {
                 List<Iterator<NutsId>> all = new ArrayList<>();
-                for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories(NutsRepositorySupportedAction.SEARCH, null, sRepositoryFilter, mode, session, nutsInstallStatusFilter != NutsInstallStatus.NOT_INSTALLED, includeOtherReporisotries)) {
+                for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories(NutsRepositorySupportedAction.SEARCH, null, sRepositoryFilter, mode, session,
+                        includeInstalledRepository[0],includeInstalledRepository[1]
+                )) {
                     NutsSession finalSession1 = session;
                     all.add(
-                            IteratorBuilder.ofLazyNamed("search(" + repo.config().name() + "," + mode + "," + sRepositoryFilter + "," + session + ")",
+                            IteratorBuilder.ofLazyNamed("search(" + repo.getName() + "," + mode + "," + sRepositoryFilter + "," + session + ")",
                                     () -> repo.search().setFilter(filter).setSession(finalSession1)
                                             .setFetchMode(mode)
                                             .getResult()).safeIgnore().iterator()

@@ -203,15 +203,10 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
     NutsVersion getVersion();
 
     /**
-     * create a filter based on this id
-     * @return a filter based on this id
-     */
-    NutsIdFilter filter();
-
-    /**
      * create a builder (mutable id) based on this id
      * @return a new instance of builder (mutable id) based on this id
      */
     NutsIdBuilder builder();
 
+    NutsDependency toDependency();
 }

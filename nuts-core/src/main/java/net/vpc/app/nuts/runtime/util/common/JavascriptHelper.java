@@ -82,18 +82,18 @@ public class JavascriptHelper {
                 return CoreStringUtils.isBlank(value.toString());
             }
             if (value instanceof NutsId) {
-                NutsJavascriptIdFilter f = NutsJavascriptIdFilter.valueOf(pattern);
-                return f == null || f.accept((NutsId) value, session);
+                NutsIdFilter f = session.getWorkspace().id().filter().byExpression(pattern);
+                return f.acceptId((NutsId) value, session);
             }
             if (value instanceof NutsDependency) {
-                NutsDependencyJavascriptFilter f = NutsDependencyJavascriptFilter.valueOf(pattern);
+                NutsDependencyFilter f = session.getWorkspace().dependency().filter().byExpression(pattern);
                 //TODO, how to pass parent Id for dependency?
                 NutsId from = null;
-                return f == null || f.accept(from, (NutsDependency) value, session);
+                return f == null || f.acceptDependency(from, (NutsDependency) value, session);
             }
             if (value instanceof NutsVersion) {
-                NutsVersionJavascriptFilter f = NutsVersionJavascriptFilter.valueOf(pattern, session);
-                return f == null || f.accept((NutsVersion) value, session);
+                NutsVersionFilter f = session.getWorkspace().version().filter().byExpression(pattern);
+                return f == null || f.acceptVersion((NutsVersion) value, session);
             }
             return true;
         }

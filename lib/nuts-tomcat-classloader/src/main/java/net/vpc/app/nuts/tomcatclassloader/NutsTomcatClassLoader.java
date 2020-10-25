@@ -3,7 +3,6 @@ package net.vpc.app.nuts.tomcatclassloader;
 import net.vpc.app.nuts.*;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
-import org.apache.catalina.loader.ResourceEntry;
 import org.apache.catalina.loader.WebappClassLoader;
 import org.apache.catalina.loader.WebappClassLoaderBase;
 import org.w3c.dom.Document;
@@ -12,19 +11,11 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.IllegalClassFormatException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.StandardCharsets;
-import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -135,7 +126,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         if (nutsWorkspace == null) {
             nutsWorkspace
                     = Nuts.openWorkspace(
-                            new NutsDefaultWorkspaceOptions()
+                            Nuts.createOptions()
                                     .setRuntimeId(getWorkspaceBootRuntime())
                                     .setClassLoaderSupplier(this::getParent)
                                     .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)
@@ -148,121 +139,121 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         return nutsWorkspace;
     }
 
-    @Override
-    protected ResourceEntry findResourceInternal(final String name, final String path) {
-        ResourceEntry r = super.findResourceInternal(name, path);
-        if (r != null) {
-            return r;
-        }
-        boolean isClassResource = path.endsWith(CLASS_FILE_SUFFIX);
-        boolean isCacheable = isClassResource;
-        if (!isCacheable) {
-            isCacheable = path.startsWith(SERVICES_PREFIX);
-        }
-
-//        WebResource resource = null;
-        boolean fileNeedConvert = false;
-        if (nutsClassLoaderUnderConstruction) {
-            return null;
-        }
-        ClassLoader classLoader = resolveNutsClassLoader();
-        URL url = classLoader.getResource(name);
-        if (url == null) {
-            return null;
-        }
-
-        File file = resolveFileCodeBase(url);
-
-        ResourceEntry entry = new ResourceEntry();
-        entry.source = url;
-        try {
-            entry.codeBase = file.toURI().toURL();
-        } catch (MalformedURLException e) {
-            return null;
-        }
-        entry.lastModified = file.lastModified();
-
-        if (needConvert && path.endsWith(".properties")) {
-            fileNeedConvert = true;
-        }
-
-        /* Only cache the binary content if there is some content
-         * available one of the following is true:
-         * a) It is a class file since the binary content is only cached
-         *    until the class has been loaded
-         *    or
-         * b) The file needs conversion to address encoding issues (see
-         *    below)
-         *    or
-         * c) The resource is a service provider configuration file located
-         *    under META=INF/services
-         *
-         * In all other cases do not cache the content to prevent
-         * excessive memory usage if large resources are present (see
-         * https://bz.apache.org/bugzilla/show_bug.cgi?id=53081).
-         */
-        if (isCacheable || fileNeedConvert) {
-            byte[] binaryContent = loadFileBytes(entry.source);
-            if (binaryContent != null) {
-                if (fileNeedConvert) {
-                    // Workaround for certain files on platforms that use
-                    // EBCDIC encoding, when they are read through FileInputStream.
-                    // See commit message of rev.303915 for details
-                    // http://svn.apache.org/viewvc?view=revision&revision=303915
-                    String str = new String(binaryContent);
-                    try {
-                        binaryContent = str.getBytes(StandardCharsets.UTF_8);
-                    } catch (Exception e) {
-                        return null;
-                    }
-                }
-                entry.binaryContent = binaryContent;
-                // The certificates and manifest are made available as a side
-                // effect of reading the binary content
-                entry.certificates = new Certificate[0]; //resource.getCertificates();
-            }
-        }
-        entry.manifest = null;// resource.getManifest();
-
-        List<ClassFileTransformer> transformers = getTransformers();
-        if (isClassResource && entry.binaryContent != null
-                && transformers.size() > 0) {
-            // If the resource is a class just being loaded, decorate it
-            // with any attached transformers
-            String className = name.endsWith(CLASS_FILE_SUFFIX)
-                    ? name.substring(0, name.length() - CLASS_FILE_SUFFIX.length()) : name;
-            String internalName = className.replace(".", "/");
-
-            for (ClassFileTransformer transformer : transformers) {
-                try {
-                    byte[] transformed = transformer.transform(
-                            this, internalName, null, null, entry.binaryContent
-                    );
-                    if (transformed != null) {
-                        entry.binaryContent = transformed;
-                    }
-                } catch (IllegalClassFormatException e) {
-                    log.error(sm.getString("webappClassLoader.transformError", name), e);
-                    return null;
-                }
-            }
-        }
-
-        // Add the entry in the local resource repository
-        synchronized (resourceEntries) {
-            // Ensures that all the threads which may be in a race to load
-            // a particular class all end up with the same ResourceEntry
-            // instance
-            ResourceEntry entry2 = resourceEntries.get(path);
-            if (entry2 == null) {
-                resourceEntries.put(path, entry);
-            } else {
-                entry = entry2;
-            }
-        }
-
-        return entry;
-    }
+//    @Override
+//    protected ResourceEntry findResourceInternal(final String name, final String path) {
+//        ResourceEntry r = super.findResourceInternal(name, path);
+//        if (r != null) {
+//            return r;
+//        }
+//        boolean isClassResource = path.endsWith(CLASS_FILE_SUFFIX);
+//        boolean isCacheable = isClassResource;
+//        if (!isCacheable) {
+//            isCacheable = path.startsWith(SERVICES_PREFIX);
+//        }
+//
+////        WebResource resource = null;
+//        boolean fileNeedConvert = false;
+//        if (nutsClassLoaderUnderConstruction) {
+//            return null;
+//        }
+//        ClassLoader classLoader = resolveNutsClassLoader();
+//        URL url = classLoader.getResource(name);
+//        if (url == null) {
+//            return null;
+//        }
+//
+//        File file = resolveFileCodeBase(url);
+//
+//        ResourceEntry entry = new ResourceEntry();
+//        entry.source = url;
+//        try {
+//            entry.codeBase = file.toURI().toURL();
+//        } catch (MalformedURLException e) {
+//            return null;
+//        }
+//        entry.lastModified = file.lastModified();
+//
+//        if (needConvert && path.endsWith(".properties")) {
+//            fileNeedConvert = true;
+//        }
+//
+//        /* Only cache the binary content if there is some content
+//         * available one of the following is true:
+//         * a) It is a class file since the binary content is only cached
+//         *    until the class has been loaded
+//         *    or
+//         * b) The file needs conversion to address encoding issues (see
+//         *    below)
+//         *    or
+//         * c) The resource is a service provider configuration file located
+//         *    under META=INF/services
+//         *
+//         * In all other cases do not cache the content to prevent
+//         * excessive memory usage if large resources are present (see
+//         * https://bz.apache.org/bugzilla/show_bug.cgi?id=53081).
+//         */
+//        if (isCacheable || fileNeedConvert) {
+//            byte[] binaryContent = loadFileBytes(entry.source);
+//            if (binaryContent != null) {
+//                if (fileNeedConvert) {
+//                    // Workaround for certain files on platforms that use
+//                    // EBCDIC encoding, when they are read through FileInputStream.
+//                    // See commit message of rev.303915 for details
+//                    // http://svn.apache.org/viewvc?view=revision&revision=303915
+//                    String str = new String(binaryContent);
+//                    try {
+//                        binaryContent = str.getBytes(StandardCharsets.UTF_8);
+//                    } catch (Exception e) {
+//                        return null;
+//                    }
+//                }
+//                entry.binaryContent = binaryContent;
+//                // The certificates and manifest are made available as a side
+//                // effect of reading the binary content
+//                entry.certificates = new Certificate[0]; //resource.getCertificates();
+//            }
+//        }
+//        entry.manifest = null;// resource.getManifest();
+//
+//        List<ClassFileTransformer> transformers = getTransformers();
+//        if (isClassResource && entry.binaryContent != null
+//                && transformers.size() > 0) {
+//            // If the resource is a class just being loaded, decorate it
+//            // with any attached transformers
+//            String className = name.endsWith(CLASS_FILE_SUFFIX)
+//                    ? name.substring(0, name.length() - CLASS_FILE_SUFFIX.length()) : name;
+//            String internalName = className.replace(".", "/");
+//
+//            for (ClassFileTransformer transformer : transformers) {
+//                try {
+//                    byte[] transformed = transformer.transform(
+//                            this, internalName, null, null, entry.binaryContent
+//                    );
+//                    if (transformed != null) {
+//                        entry.binaryContent = transformed;
+//                    }
+//                } catch (IllegalClassFormatException e) {
+//                    log.error(sm.getString("webappClassLoader.transformError", name), e);
+//                    return null;
+//                }
+//            }
+//        }
+//
+//        // Add the entry in the local resource repository
+//        synchronized (resourceEntries) {
+//            // Ensures that all the threads which may be in a race to load
+//            // a particular class all end up with the same ResourceEntry
+//            // instance
+//            ResourceEntry entry2 = resourceEntries.get(path);
+//            if (entry2 == null) {
+//                resourceEntries.put(path, entry);
+//            } else {
+//                entry = entry2;
+//            }
+//        }
+//
+//        return entry;
+//    }
 
     private String[] splitString(String nutsPath, String sep) {
         List<String> all = new ArrayList<>();
@@ -274,65 +265,65 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         }
         return all.toArray(new String[0]);
     }
+//
+//    private File resolveFileCodeBase(URL url) {
+//        String urlFile = url.getFile();
+//        int separatorIndex = urlFile.indexOf("!/");
+//        if (separatorIndex != -1) {
+//            String jarFile = urlFile.substring(0, separatorIndex);
+//            if (jarFile.startsWith("jar:") && !jarFile.contains("!/")) {
+//                return new File(jarFile.substring("jar:".length()));
+//            }
+//
+//            try {
+//                return resolveFileCodeBase(new URL(jarFile));
+//            } catch (MalformedURLException ex) {
+//                // Probably no protocol in original jar URL, like "jar:C:/mypath/myjar.jar".
+//                // This usually indicates that the jar file resides in the file system.
+//                if (!jarFile.startsWith("/")) {
+//                    jarFile = "/" + jarFile;
+//                }
+//                return new File(jarFile);
+//            }
+//        } else {
+//            throw new NutsIllegalArgumentException(nutsWorkspace, "Unable to resolve url from " + urlFile);
+//        }
+//    }
 
-    private File resolveFileCodeBase(URL url) {
-        String urlFile = url.getFile();
-        int separatorIndex = urlFile.indexOf("!/");
-        if (separatorIndex != -1) {
-            String jarFile = urlFile.substring(0, separatorIndex);
-            if (jarFile.startsWith("jar:") && !jarFile.contains("!/")) {
-                return new File(jarFile.substring("jar:".length()));
-            }
-
-            try {
-                return resolveFileCodeBase(new URL(jarFile));
-            } catch (MalformedURLException ex) {
-                // Probably no protocol in original jar URL, like "jar:C:/mypath/myjar.jar".
-                // This usually indicates that the jar file resides in the file system.
-                if (!jarFile.startsWith("/")) {
-                    jarFile = "/" + jarFile;
-                }
-                return new File(jarFile);
-            }
-        } else {
-            throw new NutsIllegalArgumentException(nutsWorkspace, "Unable to resolve url from " + urlFile);
-        }
-    }
-
-    protected byte[] loadFileBytes(URL url) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        InputStream is = null;
-        try {
-            is = url.openStream();
-            byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
-            int n;
-
-            while ((n = is.read(byteChunk)) > 0) {
-                baos.write(byteChunk, 0, n);
-            }
-        } catch (IOException e) {
-            log.error("Failed while reading bytes from " + url.toExternalForm() + " : " + e.getMessage());
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    log.error("Failed while closing " + url.toExternalForm() + " : " + e.getMessage());
-                }
-            }
-        }
-        return baos.toByteArray();
-    }
-
-    protected List<ClassFileTransformer> getTransformers() {
-        try {
-            Field transformers = super.getClass().getDeclaredField("transformers");
-            transformers.setAccessible(true);
-            return (List<ClassFileTransformer>) transformers.get(this);
-        } catch (Exception ex) {
-            return new ArrayList<>();
-        }
-    }
+//    protected byte[] loadFileBytes(URL url) {
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        InputStream is = null;
+//        try {
+//            is = url.openStream();
+//            byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
+//            int n;
+//
+//            while ((n = is.read(byteChunk)) > 0) {
+//                baos.write(byteChunk, 0, n);
+//            }
+//        } catch (IOException e) {
+//            log.error("Failed while reading bytes from " + url.toExternalForm() + " : " + e.getMessage());
+//        } finally {
+//            if (is != null) {
+//                try {
+//                    is.close();
+//                } catch (IOException e) {
+//                    log.error("Failed while closing " + url.toExternalForm() + " : " + e.getMessage());
+//                }
+//            }
+//        }
+//        return baos.toByteArray();
+//    }
+//
+//    protected List<ClassFileTransformer> getTransformers() {
+//        try {
+//            Field transformers = super.getClass().getDeclaredField("transformers");
+//            transformers.setAccessible(true);
+//            return (List<ClassFileTransformer>) transformers.get(this);
+//        } catch (Exception ex) {
+//            return new ArrayList<>();
+//        }
+//    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     public String getWorkspaceLocation() {

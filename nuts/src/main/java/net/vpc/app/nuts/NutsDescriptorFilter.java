@@ -35,7 +35,7 @@ package net.vpc.app.nuts;
  * @since 0.5.4
  * @category Descriptor
  */
-public interface NutsDescriptorFilter extends NutsSearchIdFilter {
+public interface NutsDescriptorFilter extends NutsArtifactFilter {
 
     /**
      * return true if descriptor is accepted
@@ -43,16 +43,28 @@ public interface NutsDescriptorFilter extends NutsSearchIdFilter {
      * @param session session
      * @return true if descriptor is accepted
      */
-    boolean accept(NutsDescriptor descriptor, NutsSession session);
+    boolean acceptDescriptor(NutsDescriptor descriptor, NutsSession session);
 
     /**
-     * default implementation of {@link NutsSearchIdFilter}
+     * default implementation of {@link NutsArtifactFilter}
      * @param sid search id
      * @param session session
      * @return true if accepted
      */
     @Override
     default boolean acceptSearchId(NutsSearchId sid, NutsSession session) {
-        return accept(sid.getDescriptor(session), session);
+        return acceptDescriptor(sid.getDescriptor(session), session);
+    }
+
+    default NutsDescriptorFilter or(NutsDescriptorFilter other) {
+        return or((NutsFilter)other).to(NutsDescriptorFilter.class);
+    }
+
+    default NutsDescriptorFilter and(NutsDescriptorFilter other) {
+        return and((NutsFilter)other).to(NutsDescriptorFilter.class);
+    }
+
+    default NutsDescriptorFilter neg() {
+        return NutsArtifactFilter.super.neg().to(NutsDescriptorFilter.class);
     }
 }

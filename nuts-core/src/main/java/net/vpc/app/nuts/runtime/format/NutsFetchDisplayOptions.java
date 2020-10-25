@@ -41,7 +41,7 @@ public class NutsFetchDisplayOptions {
 
     public NutsFetchDisplayOptions(NutsWorkspace ws) {
         this.ws = ws;
-        this.idFormat = ws.id();
+        this.idFormat = ws.id().formatter();
         this.idFormat.setHighlightImportedGroupId(true);
         this.idFormat.setOmitOtherProperties(true);
         this.idFormat.setOmitFace(true);

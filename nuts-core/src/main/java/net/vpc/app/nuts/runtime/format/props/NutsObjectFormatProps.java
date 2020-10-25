@@ -9,8 +9,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.*;
 import net.vpc.app.nuts.runtime.format.NutsObjectFormatBase;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
@@ -35,7 +33,7 @@ public class NutsObjectFormatProps extends NutsObjectFormatBase {
 
     @Override
     public NutsObjectFormat setValue(Object value) {
-        return super.setValue(getWorkspace().element().toElement(value));
+        return super.setValue(getWorkspace().formats().element().toElement(value));
     }
 
     @Override
@@ -68,7 +66,7 @@ public class NutsObjectFormatProps extends NutsObjectFormatBase {
     @Override
     public void print(PrintStream w) {
         PrintStream out = getValidPrintStream(w);
-        NutsPropertiesFormat ff = getWorkspace().props().model(toMap());
+        NutsPropertiesFormat ff = getWorkspace().formats().props().model(toMap());
         ff.configure(true, getExtraConfigArray());
         ff.configure(true, "--escape-text=false");
         ff.print(out);

@@ -49,7 +49,6 @@ import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
-import net.vpc.app.nuts.runtime.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.runtime.util.io.InputStreamVisitor;
 import net.vpc.app.nuts.runtime.util.io.ZipUtils;
 
@@ -113,7 +112,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                             break;
                         case ("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME):
                             try {
-                                nutsjson.set(parserContext.getWorkspace().descriptor().parse(inputStream));
+                                nutsjson.set(parserContext.getWorkspace().descriptor().parser().parse(inputStream));
                             } finally {
                                 inputStream.close();
                             }
@@ -165,7 +164,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
             }
         }
         if (mainClass.get() == null || alwaysSelectAllMainClasses) {
-            NutsExecutionEntry[] classes = parserContext.getWorkspace().io().parseExecutionEntries(parserContext.getFullStream(), "java", parserContext.getFullStream().toString());
+            NutsExecutionEntry[] classes = parserContext.getWorkspace().apps().execEntries().parse(parserContext.getFullStream(), "java", parserContext.getFullStream().toString());
             if (classes.length == 0) {
                 return baseNutsDescriptor;
             } else {

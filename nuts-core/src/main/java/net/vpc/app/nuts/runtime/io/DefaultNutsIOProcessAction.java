@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.*;
-import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 
 public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
     private String processType;
@@ -80,14 +79,10 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
             return v;
         }
         NutsSession session = ws.createSession();
-        NutsVersionFilter nvf = CoreStringUtils.isBlank(version) ? null : ws.version().parse(version).filter();
-        List<NutsSdkLocation> availableJava = new ArrayList<>();
-        for (NutsSdkLocation java : ws.config().getSdks("java", session)) {
-            if ("jdk".equals(java.getPackaging()) && (nvf == null || nvf.accept(ws.version().parse(java.getVersion()), session))) {
-                availableJava.add(java);
-            }
-        }
-        availableJava.sort((o1, o2) -> -ws.version().parse(o1.getVersion()).compareTo(o2.getVersion()));
+        NutsVersionFilter nvf = CoreStringUtils.isBlank(version) ? null : ws.version().parser().parse(version).filter();
+        NutsSdkLocation[] availableJava = ws.sdks().find("java",
+                java->"jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(ws.version().parser().parse(java.getVersion()), session)),
+                session);
         for (NutsSdkLocation java : availableJava) {
             detectedJavaHomes.add(java.getPath());
             v = getJpsJavaHome(java.getPath());

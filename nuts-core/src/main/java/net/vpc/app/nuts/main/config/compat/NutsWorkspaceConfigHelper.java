@@ -13,7 +13,7 @@ public class NutsWorkspaceConfigHelper {
 
 
     private Map parseConfigMap(byte[] bytes) {
-        return ws.json().parse(bytes, Map.class);
+        return ws.formats().json().parse(bytes, Map.class);
     }
 
 

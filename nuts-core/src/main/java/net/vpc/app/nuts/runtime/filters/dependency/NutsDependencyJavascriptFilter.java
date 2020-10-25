@@ -31,6 +31,7 @@ package net.vpc.app.nuts.runtime.filters.dependency;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.DefaultNutsId;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.common.JavascriptHelper;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
@@ -41,20 +42,21 @@ import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 /**
  * Created by vpc on 1/7/17.
  */
-public class NutsDependencyJavascriptFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter>, JsNutsDependencyFilter {
+public class NutsDependencyJavascriptFilter extends AbstractNutsFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter>, JsNutsDependencyFilter {
 
     private static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("sample", "sample", "sample", "sample", "sample");
 
     private String code;
 
-    public static NutsDependencyJavascriptFilter valueOf(String value) {
+    public static NutsDependencyJavascriptFilter valueOf(String value,NutsWorkspace ws) {
         if (CoreStringUtils.isBlank(value)) {
             return null;
         }
-        return new NutsDependencyJavascriptFilter(value);
+        return new NutsDependencyJavascriptFilter(ws,value);
     }
 
-    public NutsDependencyJavascriptFilter(String code) {
+    public NutsDependencyJavascriptFilter(NutsWorkspace ws,String code) {
+        super(ws,NutsFilterOp.CUSTOM);
         this.code = code;
         //check if valid
 //        accept(SAMPLE_DependencyNUTS_DESCRIPTOR);
@@ -65,7 +67,7 @@ public class NutsDependencyJavascriptFilter implements NutsDependencyFilter, Sim
     }
 
     @Override
-    public boolean accept(NutsId from, NutsDependency d, NutsSession session) {
+    public boolean acceptDependency(NutsId from, NutsDependency d, NutsSession session) {
         JavascriptHelper engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", null, null, session);
         return engineHelper.accept(d);
     }

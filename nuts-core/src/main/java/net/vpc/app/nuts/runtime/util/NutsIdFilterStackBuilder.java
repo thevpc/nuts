@@ -7,6 +7,7 @@ package net.vpc.app.nuts.runtime.util;
 
 import java.util.Stack;
 import net.vpc.app.nuts.NutsIdFilter;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.runtime.NutsPatternIdFilter;
 import net.vpc.app.nuts.runtime.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.runtime.filters.id.NutsIdFilterOr;
@@ -17,11 +18,16 @@ import net.vpc.app.nuts.runtime.filters.id.NutsJavascriptIdFilter;
  * @author vpc
  */
 public class NutsIdFilterStackBuilder {
+    NutsWorkspace ws;
+
+    public NutsIdFilterStackBuilder(NutsWorkspace ws) {
+        this.ws = ws;
+    }
 
     private Stack<NutsIdFilter> vars = new Stack<>();
 
     public NutsIdFilterStackBuilder js(String n, String js) {
-        return push(new NutsJavascriptIdFilter(js));
+        return push(ws.id().filter().byExpression(js));
     }
 
     public NutsIdFilterStackBuilder and() {
@@ -29,7 +35,7 @@ public class NutsIdFilterStackBuilder {
     }
 
     public NutsIdFilterStackBuilder and(int n) {
-        return push(new NutsIdFilterAnd(pop(n)));
+        return push(ws.id().filter().all(pop(n)));
     }
 
     public NutsIdFilterStackBuilder or() {
@@ -37,11 +43,13 @@ public class NutsIdFilterStackBuilder {
     }
 
     public NutsIdFilterStackBuilder or(int n) {
-        return push(new NutsIdFilterOr(pop(n)));
+        return push(ws.id().filter().any(pop(n)));
     }
 
     public NutsIdFilterStackBuilder id(String id) {
-        return push(new NutsPatternIdFilter(CoreNutsUtils.parseNutsId(id)));
+        return push(
+                ws.id().filter().byName(id)
+        );
     }
 
     private NutsIdFilter pop() {

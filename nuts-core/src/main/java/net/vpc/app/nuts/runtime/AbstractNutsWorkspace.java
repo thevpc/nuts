@@ -30,178 +30,67 @@
 package net.vpc.app.nuts.runtime;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.runtime.app.DefaultNutsCommandLineFormat;
-import net.vpc.app.nuts.runtime.ext.DefaultNutsWorkspaceExtensionManager;
-import net.vpc.app.nuts.runtime.format.*;
-import net.vpc.app.nuts.runtime.format.elem.DefaultNutsElementFormat;
-import net.vpc.app.nuts.runtime.format.json.DefaultNutsJsonFormat;
-import net.vpc.app.nuts.runtime.format.props.DefaultPropertiesFormat;
-import net.vpc.app.nuts.runtime.format.table.DefaultTableFormat;
-import net.vpc.app.nuts.runtime.format.tree.DefaultTreeFormat;
-import net.vpc.app.nuts.runtime.format.xml.DefaultNutsXmlFormat;
-import net.vpc.app.nuts.main.wscommands.*;
-import net.vpc.app.nuts.core.config.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.common.DefaultObservableMap;
 import net.vpc.app.nuts.core.common.ObservableMap;
+import net.vpc.app.nuts.core.config.NutsWorkspaceConfigManagerExt;
+import net.vpc.app.nuts.main.wscommands.DefaultNutsUpdateStatisticsCommand;
+import net.vpc.app.nuts.runtime.app.DefaultNutsCommandLineFormat;
+import net.vpc.app.nuts.runtime.ext.DefaultNutsWorkspaceExtensionManager;
+import net.vpc.app.nuts.runtime.format.DefaultNutsInfoFormat;
+import net.vpc.app.nuts.runtime.io.DefaultNutsMonitorAction;
+import net.vpc.app.nuts.runtime.manager.DefaultNutsDependencyManager;
+import net.vpc.app.nuts.runtime.manager.DefaultNutsDescriptorManager;
+import net.vpc.app.nuts.runtime.manager.DefaultNutsIdManager;
+import net.vpc.app.nuts.runtime.manager.DefaultNutsVersionManager;
 
-import java.util.*;
+import java.util.Map;
 
 /**
  * Created by vpc on 1/6/17.
  */
 public abstract class AbstractNutsWorkspace implements NutsWorkspace {
-    protected final List<NutsWorkspaceListener> workspaceListeners = new ArrayList<>();
-    protected final List<NutsInstallListener> installListeners = new ArrayList<>();
-    protected final List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
 
     protected NutsIOManager ioManager;
     protected boolean initializing;
     protected NutsWorkspaceSecurityManager securityManager;
+    protected NutsFilterManager filters;
     protected NutsWorkspaceConfigManagerExt configManager;
+    protected NutsRepositoryManager repositoryManager;
     protected DefaultNutsWorkspaceExtensionManager extensionManager;
     protected ObservableMap<String, Object> userProperties;
+    protected DefaultNutsWorkspaceEvents events;
+    private DefaultNutsIdManager defaultNutsIdManager;
+    private DefaultNutsVersionManager defaultVersionManager;
+    private DefaultNutsDescriptorManager defaultDescriptorManager;
+    private DefaultNutsDependencyManager defaultDependencyManager;
+    private DefaultNutsFormatManager formatManager;
+    private DefaultNutsConcurrentManager concurrent;
+    private DefaultNutsWorkspaceAppsManager apps;
 
     public AbstractNutsWorkspace() {
         userProperties = new DefaultObservableMap<>();
+        defaultNutsIdManager = new DefaultNutsIdManager(this);
+        defaultVersionManager = new DefaultNutsVersionManager(this);
+        defaultDescriptorManager = new DefaultNutsDescriptorManager(this);
+        defaultDependencyManager = new DefaultNutsDependencyManager(this);
+        formatManager = new DefaultNutsFormatManager(this);
+        concurrent = new DefaultNutsConcurrentManager(this);
+        apps=new DefaultNutsWorkspaceAppsManager(this);
     }
 
     @Override
-    public String getUuid() {
-        return config().getUuid();
+    public NutsWorkspaceAppsManager apps() {
+        return apps;
     }
 
     @Override
     public String uuid() {
-        return getUuid();
-    }
-
-    @Override
-    public String getName() {
-        return config().getName();
+        return config().getUuid();
     }
 
     @Override
     public String name() {
-        return getName();
-    }
-
-    @Override
-    public Map<String, Object> userProperties() {
-        return userProperties;
-    }
-
-    @Override
-    public NutsSession createSession() {
-        NutsSession nutsSession = new DefaultNutsSession(this);
-        nutsSession.setTerminal(io().createTerminal(io().getSystemTerminal()));
-        return nutsSession;
-    }
-
-    @Override
-    public NutsWorkspaceConfigManager config() {
-        return configManager;
-    }
-
-    @Override
-    public NutsWorkspaceSecurityManager security() {
-        return securityManager;
-    }
-
-    public boolean isInitializing() {
-        return initializing;
-    }
-
-    @Override
-    public void removeWorkspaceListener(NutsWorkspaceListener listener) {
-        workspaceListeners.add(listener);
-    }
-
-    @Override
-    public void addWorkspaceListener(NutsWorkspaceListener listener) {
-        if (listener != null) {
-            workspaceListeners.add(listener);
-        }
-    }
-
-    @Override
-    public NutsWorkspaceListener[] getWorkspaceListeners() {
-        return workspaceListeners.toArray(new NutsWorkspaceListener[0]);
-    }
-
-    @Override
-    public void removeInstallListener(NutsInstallListener listener) {
-        installListeners.remove(listener);
-    }
-
-    @Override
-    public void addInstallListener(NutsInstallListener listener) {
-        if (listener != null) {
-            installListeners.add(listener);
-        }
-    }
-
-    @Override
-    public NutsInstallListener[] getInstallListeners() {
-        return installListeners.toArray(new NutsInstallListener[0]);
-    }
-
-    @Override
-    public NutsWorkspaceExtensionManager extensions() {
-        return extensionManager;
-    }
-
-    @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsWorkspaceOptions> criteria) {
-        return DEFAULT_SUPPORT;
-    }
-
-    @Override
-    public void addUserPropertyListener(NutsMapListener<String, Object> listener) {
-        userProperties.addListener(listener);
-    }
-
-    @Override
-    public void removeUserPropertyListener(NutsMapListener<String, Object> listener) {
-        userProperties.removeListener(listener);
-    }
-
-    @Override
-    public NutsMapListener<String, Object>[] getUserPropertyListeners() {
-        return userProperties.getListeners();
-    }
-
-    @Override
-    public String toString() {
-        return "NutsWorkspace{"
-                + configManager
-                + '}';
-    }
-
-    @Override
-    public NutsCommandLineFormat commandLine() {
-        return new DefaultNutsCommandLineFormat(this);
-    }
-
-    @Override
-    public NutsIOManager io() {
-        return ioManager;
-    }
-
-    @Override
-    public void removeRepositoryListener(NutsRepositoryListener listener) {
-        repositoryListeners.add(listener);
-    }
-
-    @Override
-    public void addRepositoryListener(NutsRepositoryListener listener) {
-        if (listener != null) {
-            repositoryListeners.add(listener);
-        }
-    }
-
-    @Override
-    public NutsRepositoryListener[] getRepositoryListeners() {
-        return repositoryListeners.toArray(new NutsRepositoryListener[0]);
+        return config().getName();
     }
 
     @Override
@@ -210,33 +99,64 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public NutsJsonFormat json() {
-        return new DefaultNutsJsonFormat(this);
+    public Map<String, Object> userProperties() {
+        return userProperties;
     }
 
     @Override
-    public NutsElementFormat element() {
-        return new DefaultNutsElementFormat(this);
+    public NutsWorkspaceExtensionManager extensions() {
+        return extensionManager;
     }
 
     @Override
-    public NutsXmlFormat xml() {
-        return new DefaultNutsXmlFormat(this);
+    public NutsWorkspaceConfigManager config() {
+        return configManager;
     }
 
     @Override
-    public NutsIdFormat id() {
-        return new DefaultNutsIdFormat(this);
+    public NutsRepositoryManager repos() {
+        return repositoryManager;
     }
 
     @Override
-    public NutsStringFormat str() {
-        return new DefaultNutsStringFormat(this);
+    public NutsWorkspaceSecurityManager security() {
+        return securityManager;
     }
 
     @Override
-    public NutsVersionFormat version() {
-        return new DefaultVersionFormat(this);
+    public NutsIOManager io() {
+        return ioManager;
+    }
+
+    @Override
+    public NutsSession createSession() {
+        NutsSession nutsSession = new DefaultNutsSession(this);
+        nutsSession.setTerminal(io().term().createTerminal(io().term().getSystemTerminal()));
+        nutsSession.setExpireTime(config().options().getExpireTime());
+        return nutsSession;
+    }
+
+    @Override
+    public NutsWorkspaceEvents events() {
+        if (events == null) {
+            events = new DefaultNutsWorkspaceEvents(this);
+        }
+        return events;
+    }
+
+    @Override
+    public NutsCommandLineFormat commandLine() {
+        return new DefaultNutsCommandLineFormat(this);
+    }
+
+    @Override
+    public NutsIdManager id() {
+        return defaultNutsIdManager;
+    }
+
+    @Override
+    public NutsVersionManager version() {
+        return defaultVersionManager;
     }
 
     @Override
@@ -245,37 +165,73 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public NutsDescriptorFormat descriptor() {
-        return new DefaultNutsDescriptorFormat(this);
+    public NutsDescriptorManager descriptor() {
+        return defaultDescriptorManager;
     }
 
     @Override
-    public NutsIterableOutput iter() {
-        return new DefaultNutsIncrementalOutputFormat(this);
+    public NutsDependencyManager dependency() {
+        return defaultDependencyManager;
     }
 
     @Override
-    public NutsTableFormat table() {
-        return new DefaultTableFormat(this);
+    public NutsFormatManager formats() {
+        return formatManager;
     }
 
     @Override
-    public NutsPropertiesFormat props() {
-        return new DefaultPropertiesFormat(this);
+    public NutsConcurrentManager concurrent() {
+        return concurrent;
     }
 
     @Override
-    public NutsTreeFormat tree() {
-        return new DefaultTreeFormat(this);
+    public String getApiVersion() {
+        return NutsWorkspaceConfigManagerExt.of(config()).getApiVersion();
     }
 
     @Override
-    public NutsObjectFormat object() {
-        return new DefaultNutsObjectFormat(this);
+    public NutsId getApiId() {
+        return NutsWorkspaceConfigManagerExt.of(config()).getApiId();
     }
 
     @Override
-    public NutsDependencyFormat dependency() {
-        return new DefaultNutsDependencyFormat(this);
+    public NutsId getRuntimeId() {
+        return NutsWorkspaceConfigManagerExt.of(config()).getRuntimeId();
+    }
+
+    @Override
+    public NutsSdkManager sdks() {
+        return NutsWorkspaceConfigManagerExt.of(config()).sdks();
+    }
+
+    @Override
+    public NutsImportManager imports() {
+        return NutsWorkspaceConfigManagerExt.of(config()).imports();
+    }
+
+    @Override
+    public NutsCommandAliasManager aliases() {
+        return NutsWorkspaceConfigManagerExt.of(config()).aliases();
+    }
+
+    @Override
+    public NutsWorkspaceEnvManager env() {
+        return NutsWorkspaceConfigManagerExt.of(config()).env();
+    }
+
+    public boolean isInitializing() {
+        return initializing;
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<NutsWorkspaceOptions> criteria) {
+        return DEFAULT_SUPPORT;
+    }
+
+    @Override
+    public String toString() {
+        return "NutsWorkspace{"
+                + configManager
+                + '}';
     }
 }

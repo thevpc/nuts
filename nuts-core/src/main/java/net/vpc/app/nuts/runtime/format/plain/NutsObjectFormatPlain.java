@@ -79,9 +79,9 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
     public void print(PrintStream w) {
         Object value = getValue();
         if (value instanceof NutsTableModel) {
-            getWorkspace().table().setModel(((NutsTableModel) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
+            getWorkspace().formats().table().setModel(((NutsTableModel) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof NutsTreeModel) {
-            getWorkspace().tree().setModel(((NutsTreeModel) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
+            getWorkspace().formats().tree().setModel(((NutsTreeModel) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
 //        } else if (value instanceof Map) {
 //            ws.props().setModel(((Map) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof org.w3c.dom.Document) {
@@ -93,14 +93,14 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
         } else if (value instanceof org.w3c.dom.Element) {
             try {
                 Element elem = (org.w3c.dom.Element) value;
-                Document doc = NutsXmlUtils.createDocument();
+                Document doc = NutsXmlUtils.createDocument(getWorkspace());
                 doc.appendChild(doc.importNode(elem, true));
                 NutsXmlUtils.writeDocument(doc, new StreamResult(w), false, false);
             } catch (TransformerException | ParserConfigurationException ex) {
                 throw new UncheckedIOException(new IOException(ex));
             }
         } else {
-            printElement(w, getWorkspace().element().toElement(value));
+            printElement(w, getWorkspace().formats().element().toElement(value));
         }
     }
 
@@ -124,7 +124,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 break;
             }
             case DATE: {
-                out.print(getWorkspace().io().getTerminalFormat().escapeText(value.primitive().getDate().toString()));
+                out.print(getWorkspace().io().term().getTerminalFormat().escapeText(value.primitive().getDate().toString()));
                 out.flush();
                 break;
             }

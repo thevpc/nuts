@@ -47,10 +47,6 @@ public class NutsSearchIdByDescriptor implements NutsSearchId {
         this.desc = desc;
     }
 
-    @Override
-    public NutsVersion getVersion(NutsSession session) {
-        return desc.getId().getVersion();
-    }
 
     @Override
     public NutsId getId(NutsSession session) {

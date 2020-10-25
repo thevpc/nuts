@@ -135,7 +135,7 @@ public class BashNutsDescriptorContentParserComponent implements NutsDescriptorC
                         .executor(new DefaultNutsArtifactCall(BASH))
                         .build();
             }
-            return ws.descriptor().parse(comment.getValidString());
+            return ws.descriptor().parser().parse(comment.getValidString());
         } finally {
             if (r != null) {
                 r.close();

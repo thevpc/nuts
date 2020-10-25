@@ -12,6 +12,14 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
         return (NutsWorkspaceConfigManagerExt) wsc;
     }
 
+    String getApiVersion();
+
+    NutsId getApiId();
+
+    NutsId getRuntimeId();
+
+    DefaultNutsWorkspaceCurrentConfig current();
+
     void setStartCreateTimeMillis(long currentTimeMillis);
 
     void setCurrentConfig(DefaultNutsWorkspaceCurrentConfig runningContext);
@@ -71,8 +79,6 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     NutsWorkspace getWorkspace();
 
-    void removeAllRepositories(NutsRemoveOptions options);
-
     Path getRepositoriesRoot();
 
     boolean isValidWorkspaceFolder();
@@ -88,4 +94,12 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
     NutsId createSdkId(String type, String version);
 
     void onExtensionsPrepared();
+
+    NutsSdkManager sdks();
+
+    NutsImportManager imports();
+
+    NutsCommandAliasManager aliases();
+
+    NutsWorkspaceEnvManager env();
 }

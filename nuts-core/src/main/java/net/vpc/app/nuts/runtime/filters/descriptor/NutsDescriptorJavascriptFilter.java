@@ -29,9 +29,8 @@
  */
 package net.vpc.app.nuts.runtime.filters.descriptor;
 
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsDescriptorFilter;
-import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.common.JavascriptHelper;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
@@ -41,18 +40,19 @@ import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 /**
  * Created by vpc on 1/7/17.
  */
-public class NutsDescriptorJavascriptFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
+public class NutsDescriptorJavascriptFilter extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
 
     private String code;
 
-    public static NutsDescriptorJavascriptFilter valueOf(String value) {
+    public static NutsDescriptorFilter valueOf(String value,NutsWorkspace ws) {
         if (CoreStringUtils.isBlank(value)) {
-            return null;
+            return ws.descriptor().filter().always();
         }
-        return new NutsDescriptorJavascriptFilter(value);
+        return new NutsDescriptorJavascriptFilter(ws,value);
     }
 
-    public NutsDescriptorJavascriptFilter(String code) {
+    public NutsDescriptorJavascriptFilter(NutsWorkspace ws,String code) {
+        super(ws, NutsFilterOp.CUSTOM);
         this.code = code;
     }
 
@@ -61,7 +61,7 @@ public class NutsDescriptorJavascriptFilter implements NutsDescriptorFilter, Sim
     }
 
     @Override
-    public boolean accept(NutsDescriptor d, NutsSession session) {
+    public boolean acceptDescriptor(NutsDescriptor d, NutsSession session) {
         JavascriptHelper engineHelper = new JavascriptHelper(code, "var descriptor=x; var id=x.getId(); var version=id.getVersion();", null, null,session);
         return engineHelper.accept(d);
     }

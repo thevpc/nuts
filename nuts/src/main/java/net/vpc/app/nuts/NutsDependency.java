@@ -72,10 +72,17 @@ public interface NutsDependency extends Serializable{
     String getClassifier();
 
     /**
-     * convert to NutsId
+     * convert to NutsId without including scope, exclusion d other
      * @return converted to NutsId
      */
     NutsId getId();
+
+
+    /**
+     * convert to NutsId
+     * @return converted to NutsId
+     */
+    NutsId toId();
 
     /**
      * return namespace

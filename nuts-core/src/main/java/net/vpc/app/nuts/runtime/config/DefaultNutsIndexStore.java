@@ -37,11 +37,11 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                     try {
                         NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(getRepository().getWorkspace(),
                                 URL);
-                        Map[] array = getRepository().getWorkspace().json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
+                        Map[] array = getRepository().getWorkspace().formats().json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
                         return Arrays.stream(array)
-                                .map(s -> getRepository().getWorkspace().id().parse(s.get("stringId").toString()))
+                                .map(s -> getRepository().getWorkspace().id().parser().parse(s.get("stringId").toString()))
                                 .collect(Collectors.toList()).iterator();
-                    } catch (UncheckedIOException e) {
+                    } catch (UncheckedIOException|NutsIOException e) {
                         setInaccessible();
                         return IteratorUtils.emptyIterator();
                     }
@@ -55,15 +55,16 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
         return IteratorUtils.supplier(
                 () -> {
                     if (isInaccessible()) {
-                        return IteratorUtils.emptyIterator();
+                        throw new NutsIndexerNotAccessibleException(session.getWorkspace());
+//                        return IteratorUtils.emptyIterator();
                     }
                     String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "?repositoryUuid=" + getRepository().getUuid();
                     try {
                         NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(getRepository().getWorkspace(),
                                 URL);
-                        Map[] array = getRepository().getWorkspace().json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
+                        Map[] array = getRepository().getWorkspace().formats().json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
                         return Arrays.stream(array)
-                                .map(s -> getRepository().getWorkspace().id().parse(s.get("stringId").toString()))
+                                .map(s -> getRepository().getWorkspace().id().parser().parse(s.get("stringId").toString()))
                                 .filter(filter != null ? new Predicate<NutsId>() {
                                     @Override
                                     public boolean test(NutsId t) {
@@ -71,9 +72,10 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                                     }
                                 } : (Predicate<NutsId>) id -> true)
                                 .iterator();
-                    } catch (UncheckedIOException e) {
+                    } catch (UncheckedIOException|NutsIOException e) {
                         setInaccessible();
-                        return IteratorUtils.emptyIterator();
+                        throw new NutsIndexerNotAccessibleException(session.getWorkspace());
+//                        return IteratorUtils.emptyIterator();
                     }
                 },
                 "searchIndex"
@@ -96,7 +98,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
             NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(getRepository().getWorkspace(),
                     URL);
             clientFacade.open();
-        } catch (UncheckedIOException e) {
+        } catch (UncheckedIOException|NutsIOException e) {
             setInaccessible();
             //
         }
@@ -119,7 +121,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
             NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(getRepository().getWorkspace(),
                     URL);
             clientFacade.open();
-        } catch (UncheckedIOException e) {
+        } catch (UncheckedIOException|NutsIOException e) {
             setInaccessible();
             //
         }
@@ -135,8 +137,8 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
             NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(getRepository().getWorkspace(),
                     URL);
             clientFacade.open();
-        } catch (UncheckedIOException e) {
-            throw new NutsUnsupportedOperationException(getRepository().getWorkspace(), "Unable to subscribe for repository" + getRepository().config().name(), e);
+        } catch (UncheckedIOException|NutsIOException e) {
+            throw new NutsUnsupportedOperationException(getRepository().getWorkspace(), "Unable to subscribe for repository" + getRepository().getName(), e);
         }
         return this;
     }
@@ -150,8 +152,8 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
             NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(getRepository().getWorkspace(),
                     URL);
             clientFacade.open();
-        } catch (UncheckedIOException e) {
-            throw new NutsUnsupportedOperationException(getRepository().getWorkspace(), "Unable to unsubscribe for repository" + getRepository().config().name(), e);
+        } catch (UncheckedIOException|NutsIOException e) {
+            throw new NutsUnsupportedOperationException(getRepository().getWorkspace(), "Unable to unsubscribe for repository" + getRepository().getName(), e);
         }
         return this;
     }
@@ -165,7 +167,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
             NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(getRepository().getWorkspace(),
                     URL);
             return new Scanner(clientFacade.open()).nextBoolean();
-        } catch (UncheckedIOException e) {
+        } catch (UncheckedIOException|NutsIOException e) {
             return false;
         }
     }

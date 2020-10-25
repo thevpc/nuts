@@ -1,7 +1,6 @@
 package net.vpc.toolbox.tomcat.local;
 
 import net.vpc.toolbox.tomcat.local.config.LocalTomcatDomainConfig;
-import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
 import java.io.PrintStream;
 import java.nio.file.Path;
@@ -59,7 +58,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
     }
 
     public LocalTomcatDomainConfigService print(PrintStream out) {
-        context.getWorkspace().json().value(getConfig()).print(out);
+        context.getWorkspace().formats().json().value(getConfig()).print(out);
         return this;
     }
 

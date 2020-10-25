@@ -48,11 +48,6 @@ public class NutsSearchIdById implements NutsSearchId {
     }
 
     @Override
-    public NutsVersion getVersion(NutsSession session) {
-        return id.getVersion();
-    }
-
-    @Override
     public NutsId getId(NutsSession session) {
         return id;
     }

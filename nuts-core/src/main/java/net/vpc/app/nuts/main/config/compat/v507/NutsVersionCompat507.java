@@ -21,15 +21,15 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
     }
 
     public NutsWorkspaceConfigBoot parseConfig507(byte[] bytes) {
-        return bytes==null?null:getWorkspace().json().parse(bytes, NutsWorkspaceConfigBoot.class);
+        return bytes==null?null:getWorkspace().formats().json().parse(bytes, NutsWorkspaceConfigBoot.class);
     }
 
     @Override
     public NutsWorkspaceConfigApi parseApiConfig() {
-        Path path = getWorkspace().config().getStoreLocation(getWorkspace().config().getApiId(), NutsStoreLocation.CONFIG)
+        Path path = getWorkspace().config().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.CONFIG)
                 .resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NutsWorkspaceConfigApi c = bytes==null?null:getWorkspace().json().parse(bytes, NutsWorkspaceConfigApi.class);
+        NutsWorkspaceConfigApi c = bytes==null?null:getWorkspace().formats().json().parse(bytes, NutsWorkspaceConfigApi.class);
         if (c != null) {
             c.setApiVersion(getApiVersion());
         }
@@ -38,10 +38,10 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
 
     @Override
     public NutsWorkspaceConfigRuntime parseRuntimeConfig() {
-        Path path = getWorkspace().config().getStoreLocation(getWorkspace().config().getApiId(), NutsStoreLocation.CONFIG)
+        Path path = getWorkspace().config().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.CONFIG)
                 .resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NutsWorkspaceConfigRuntime c = bytes==null?null:getWorkspace().json().parse(bytes, NutsWorkspaceConfigRuntime.class);
+        NutsWorkspaceConfigRuntime c = bytes==null?null:getWorkspace().formats().json().parse(bytes, NutsWorkspaceConfigRuntime.class);
 //        if (c != null) {
 //            c.setApiVersion(getApiVersion());
 //        }
@@ -50,23 +50,23 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
 
     @Override
     public NutsWorkspaceConfigSecurity parseSecurityConfig() {
-        Path path = getWorkspace().config().getStoreLocation(getWorkspace().config().getApiId()
+        Path path = getWorkspace().config().getStoreLocation(getWorkspace().getApiId()
                 .builder().setVersion(NutsConstants.Versions.RELEASE).build(), NutsStoreLocation.CONFIG)
                 .resolve(CoreNutsConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NutsWorkspaceConfigSecurity c = bytes==null?null:getWorkspace().json().parse(bytes, NutsWorkspaceConfigSecurity.class);
+        NutsWorkspaceConfigSecurity c = bytes==null?null:getWorkspace().formats().json().parse(bytes, NutsWorkspaceConfigSecurity.class);
         return c;
     }
 
     @Override
     public NutsWorkspaceConfigMain parseMainConfig() {
-        Path path = getWorkspace().config().getStoreLocation(getWorkspace().config().getApiId()
+        Path path = getWorkspace().config().getStoreLocation(getWorkspace().getApiId()
                 .builder().setVersion(NutsConstants.Versions.RELEASE)
                 .build()
                 , NutsStoreLocation.CONFIG)
                 .resolve(CoreNutsConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NutsWorkspaceConfigMain c = bytes==null?null:getWorkspace().json().parse(bytes, NutsWorkspaceConfigMain.class);
+        NutsWorkspaceConfigMain c = bytes==null?null:getWorkspace().formats().json().parse(bytes, NutsWorkspaceConfigMain.class);
         return c;
     }
 }

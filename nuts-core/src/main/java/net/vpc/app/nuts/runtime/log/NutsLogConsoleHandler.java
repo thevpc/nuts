@@ -38,7 +38,7 @@ public class NutsLogConsoleHandler extends StreamHandler {
             NutsLogRecord rr = (NutsLogRecord) record;
             NutsWorkspace ws = rr.getWorkspace();
             NutsIOManager io = ws.io();
-            NutsTerminalFormat tf = io==null?null:io.terminalFormat();
+            NutsTerminalFormat tf = io==null?null:io.term().getTerminalFormat();
             if (tf!=null && tf.isFormatted(out)) {
                 if(!rr.isFormatted()) {
                     record=((NutsLogRecord) record).escape();

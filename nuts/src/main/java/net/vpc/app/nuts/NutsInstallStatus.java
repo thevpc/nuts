@@ -30,7 +30,17 @@
 package net.vpc.app.nuts;
 
 /**
- * Package installation status
+ * Package installation status.
+ * Possible combinations are :
+ * <ul>
+ *    <li>NOT_INSTALLED</li>
+ *    <li>REQUIRED</li>
+ *    <li>INSTALLED</li>
+ *    <li>INSTALLED REQUIRED</li>
+ *    <li>REQUIRED OBSOLETE</li>
+ *    <li>INSTALLED OBSOLETE</li>
+ *    <li>INSTALLED REQUIRED OBSOLETE</li>
+ * </ul>
  * @category Base
  */
 public enum NutsInstallStatus {
@@ -48,13 +58,20 @@ public enum NutsInstallStatus {
     /**
      * package installed as a dependency for a primary package
      */
-    INCLUDED,
+    REQUIRED,
 
     /**
-     * this is a meta value equivalent to (INSTALLED or INCLUDED).
-     * This Value should not be used but as a filter.
+     * if obsolete the cache value requires refresh
+     * @since 0.8.0
      */
-    INSTALLED_OR_INCLUDED;
+    OBSOLETE,
+
+    /**
+     * true if this is the default version
+     * @since 0.8.0
+     */
+    DEFAULT_VERSION,
+    ;
 
     /**
      * lower-cased identifier for the enum entry

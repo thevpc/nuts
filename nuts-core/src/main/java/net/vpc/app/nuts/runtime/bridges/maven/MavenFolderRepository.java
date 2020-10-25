@@ -32,7 +32,6 @@ package net.vpc.app.nuts.runtime.bridges.maven;
 import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.runtime.util.io.FolderNutIdIterator;
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
-import net.vpc.app.nuts.runtime.util.io.InputSource;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.*;
 
@@ -48,8 +47,6 @@ import java.util.*;
 import java.util.logging.Level;
 
 import net.vpc.app.nuts.NutsDefaultContent;
-import net.vpc.app.nuts.runtime.NutsPatternIdFilter;
-import net.vpc.app.nuts.runtime.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.main.repos.NutsCachedRepository;
 import net.vpc.app.nuts.runtime.util.iter.IteratorUtils;
 
@@ -66,17 +63,17 @@ public class MavenFolderRepository extends NutsCachedRepository {
         }
 
         @Override
-        protected InputSource openStream(NutsId id, String path, Object source, NutsSession session) {
-            return CoreIOUtils.createInputSource(Paths.get(path));
+        protected NutsInput openStream(NutsId id, String path, Object source, String typeName, NutsSession session) {
+            return getWorkspace().io().input().setTypeName(typeName).of(Paths.get(path));
         }
 
         @Override
-        protected String getStreamSHA1(NutsId id, NutsSession session) {
-            return CoreIOUtils.evalSHA1Hex(getStream(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), session).open(), true);
+        protected String getStreamSHA1(NutsId id, NutsSession session, String typeName) {
+            return CoreIOUtils.evalSHA1Hex(getStream(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), typeName, session).open(), true);
         }
 
         @Override
-        protected void checkSHA1Hash(NutsId id, InputStream stream, NutsSession session) {
+        protected void checkSHA1Hash(NutsId id, InputStream stream, String typeName, NutsSession session) {
             try {
                 stream.close();
             } catch (IOException e) {
@@ -163,7 +160,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
                         //
                     }
                     if (d != null) {
-                        return Collections.singletonList(id.builder().setNamespace(config().getName()).build()).iterator();
+                        return Collections.singletonList(id.builder().setNamespace(getName()).build()).iterator();
                     }
                 }
 //                return IteratorUtils.emptyIterator();
@@ -171,8 +168,8 @@ public class MavenFolderRepository extends NutsCachedRepository {
             }
             try {
                 namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id),
-                        new NutsIdFilterAnd(idFilter,
-                                new NutsPatternIdFilter(id.getShortNameId())
+                        getWorkspace().id().filter().nonnull(idFilter).and(
+                                getWorkspace().id().filter().byName(id.getShortName())
                         ),
                         Integer.MAX_VALUE, session);
             } catch (NutsNotFoundException ex) {
@@ -215,7 +212,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
         if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
             return null;//IteratorUtils.emptyIterator();
         }
-        return new FolderNutIdIterator(getWorkspace(), config().getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
+        return new FolderNutIdIterator(getWorkspace(), getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsSession session) {
                 MavenFolderRepository.this.undeploy().setId(id).setSession(session)

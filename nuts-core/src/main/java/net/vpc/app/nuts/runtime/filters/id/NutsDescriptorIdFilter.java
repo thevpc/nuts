@@ -10,6 +10,7 @@ import java.util.logging.Level;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.bridges.maven.MavenRepositoryFolderHelper;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.log.NutsLogVerb;
 import net.vpc.app.nuts.core.NutsWorkspaceExt;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
@@ -20,12 +21,13 @@ import net.vpc.app.nuts.runtime.util.common.Simplifiable;
  *
  * @author vpc
  */
-public class NutsDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> {
+public class NutsDescriptorIdFilter extends AbstractNutsFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> {
 
     private NutsLogger LOG;
     private final NutsDescriptorFilter filter;
 
     public NutsDescriptorIdFilter(NutsDescriptorFilter filter) {
+        super(filter.getWorkspace(),NutsFilterOp.CONVERT);
         this.filter = filter;
     }
 
@@ -35,7 +37,7 @@ public class NutsDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsId
     }
 
     @Override
-    public boolean accept(NutsId id, NutsSession session) {
+    public boolean acceptId(NutsId id, NutsSession session) {
         if (filter == null) {
             return true;
         }
@@ -64,7 +66,7 @@ public class NutsDescriptorIdFilter implements NutsIdFilter, Simplifiable<NutsId
             }
             return false;
         }
-        if (!filter.accept(descriptor, session)) {
+        if (!filter.acceptDescriptor(descriptor, session)) {
             return false;
         }
         return true;

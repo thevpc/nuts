@@ -28,7 +28,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         this.name = name.trim();
         Path file = getConfigFile();
         if (Files.exists(file)) {
-            this.config = this.defaultWorkspace.json().parse(file, NutsWorkspaceListConfig.class);
+            this.config = this.defaultWorkspace.formats().json().parse(file, NutsWorkspaceListConfig.class);
             for (NutsWorkspaceLocation var : this.config.getWorkspaces()) {
                 this.workspaces.put(var.getUuid(), var);
             }
@@ -36,9 +36,9 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
             this.config = new NutsWorkspaceListConfig()
                     .setUuid(UUID.randomUUID().toString())
                     .setName("default-config");
-            this.workspaces.put(ws.getUuid(),
+            this.workspaces.put(ws.uuid(),
                     new NutsWorkspaceLocation()
-                            .setUuid(ws.getUuid())
+                            .setUuid(ws.uuid())
                             .setName("default-workspace")
                             .setLocation(this.defaultWorkspace.config().getWorkspaceLocation().toString())
             );
@@ -85,16 +85,17 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
     public NutsWorkspace addWorkspace(String path) {
         NutsWorkspace workspace = this.createWorkspace(path);
         NutsWorkspaceLocation workspaceLocation = new NutsWorkspaceLocation()
-                .setUuid(workspace.getUuid())
+                .setUuid(workspace.uuid())
                 .setName(workspace.config().getWorkspaceLocation().getFileName().toString())
                 .setLocation(workspace.config().getWorkspaceLocation().toString());
-        workspaces.put(workspace.getUuid(), workspaceLocation);
+        workspaces.put(workspace.uuid(), workspaceLocation);
         this.save();
         return workspace;
     }
 
     private NutsWorkspace createWorkspace(String path) {
-        return Nuts.openWorkspace(new NutsDefaultWorkspaceOptions()
+        return Nuts.openWorkspace(
+                this.defaultWorkspace.config().optionsBuilder()
                 .setWorkspace(path)
                 .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)
                 .setSkipCompanions(true)
@@ -107,7 +108,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
                 ? null
                 : new ArrayList<>(this.workspaces.values()));
         Path file = getConfigFile();
-        this.defaultWorkspace.json().value(this.config).print(file);
+        this.defaultWorkspace.formats().json().value(this.config).print(file);
     }
 
     @Override

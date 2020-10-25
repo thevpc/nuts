@@ -229,7 +229,7 @@ public class LocalTomcat {
                     }
                 }
             } else {
-                context.getWorkspace().object().setSession(session)
+                context.getWorkspace().formats().object().setSession(session)
                         .setValue(TomcatUtils.getRunningInstances(context))
                         .println();
             }
@@ -459,7 +459,7 @@ public class LocalTomcat {
                 HashMap<String, String> r = new HashMap<>();
                 r.put("name", name);
                 r.put("status", "not-found");
-                context.getWorkspace().object().setSession(context.getSession()).setValue(r).println();
+                context.getWorkspace().formats().object().setSession(context.getSession()).setValue(r).println();
             }
         }
     }
@@ -603,7 +603,7 @@ public class LocalTomcat {
             }
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);
-        context.getWorkspace().object().setSession(context.getSession())
+        context.getWorkspace().formats().object().setSession(context.getSession())
                 .setValue(c.getCatalinaBase())
                 .println();
     }
@@ -620,7 +620,7 @@ public class LocalTomcat {
             }
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);
-        context.getWorkspace().object().setSession(context.getSession())
+        context.getWorkspace().formats().object().setSession(context.getSession())
                 .setValue(c.getValidCatalinaVersion())
                 .println();
     }
@@ -637,7 +637,7 @@ public class LocalTomcat {
             }
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);
-        context.getWorkspace().object().setSession(context.getSession())
+        context.getWorkspace().formats().object().setSession(context.getSession())
                 .setValue(c.getCatalinaHome())
                 .println();
     }
@@ -719,7 +719,7 @@ public class LocalTomcat {
                     break;
                 }
             }
-            context.getWorkspace().object().setSession(context.getSession())
+            context.getWorkspace().formats().object().setSession(context.getSession())
                     .setValue(port)
                     .println();
         }

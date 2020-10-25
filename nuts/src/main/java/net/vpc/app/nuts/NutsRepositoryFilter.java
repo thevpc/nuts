@@ -35,7 +35,20 @@ package net.vpc.app.nuts;
  * @since 0.5.4
  * @category Base
  */
-public interface NutsRepositoryFilter {
+public interface NutsRepositoryFilter extends NutsFilter{
 
-    boolean accept(NutsRepository repository);
+    boolean acceptRepository(NutsRepository repository);
+
+    default NutsRepositoryFilter or(NutsRepositoryFilter other) {
+        return or((NutsFilter)other).to(NutsRepositoryFilter.class);
+    }
+
+    default NutsRepositoryFilter and(NutsRepositoryFilter other) {
+        return and((NutsFilter)other).to(NutsRepositoryFilter.class);
+    }
+
+    default NutsRepositoryFilter neg() {
+        return NutsFilter.super.neg().to(NutsRepositoryFilter.class);
+    }
+
 }

@@ -8,6 +8,7 @@ package net.vpc.app.nuts.runtime.util;
 import java.util.HashMap;
 import java.util.Map;
 import net.vpc.app.nuts.NutsIdFilter;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.runtime.NutsPatternIdFilter;
 import net.vpc.app.nuts.runtime.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.runtime.filters.id.NutsIdFilterOr;
@@ -21,9 +22,14 @@ public class NutsIdFilterVarBuilder {
 
     private static final String CURR = "$CURRENT";
     private Map<String, NutsIdFilter> vars = new HashMap<String, NutsIdFilter>();
+    private NutsWorkspace ws;
+
+    public NutsIdFilterVarBuilder(NutsWorkspace ws) {
+        this.ws = ws;
+    }
 
     public NutsIdFilterVarBuilder js(String n, String js) {
-        return store(n, new NutsJavascriptIdFilter(js));
+        return store(n, ws.id().filter().byExpression(js));
     }
 
     public NutsIdFilterVarBuilder and(String n, String... a) {
@@ -31,7 +37,7 @@ public class NutsIdFilterVarBuilder {
         for (int i = 0; i < aa.length; i++) {
             aa[i] = get(a[i]);
         }
-        return store(n, new NutsIdFilterAnd(aa));
+        return store(n, ws.id().filter().all(aa));
     }
 
     public NutsIdFilterVarBuilder or(String n, String... a) {
@@ -39,14 +45,14 @@ public class NutsIdFilterVarBuilder {
         for (int i = 0; i < aa.length; i++) {
             aa[i] = get(a[i]);
         }
-        return store(n, new NutsIdFilterOr(aa));
+        return store(n, ws.id().filter().any(aa));
     }
 
 //    public NutsIdFilterBuilder id(String id) {
 //        return id(null,id);
 //    }
     public NutsIdFilterVarBuilder id(String n, String id) {
-        return store(n, new NutsPatternIdFilter(CoreNutsUtils.parseNutsId(id)));
+        return store(n, ws.id().filter().byName(id));
     }
 
     private NutsIdFilter get(String n) {

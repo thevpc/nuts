@@ -429,7 +429,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public NutsId getArch() {
         if (arch == null) {
-            arch = ws.id().parse(CorePlatformUtils.getPlatformArch());
+            arch = ws.id().parser().parse(CorePlatformUtils.getPlatformArch());
         }
         return arch;
     }
@@ -465,7 +465,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public NutsId getOs() {
         if (os == null) {
-            os = ws.id().parse(CorePlatformUtils.getPlatformOs());
+            os = ws.id().parser().parse(CorePlatformUtils.getPlatformOs());
         }
         return os;
     }
@@ -481,14 +481,14 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public NutsId getOsDist() {
         if (osdist == null) {
-            osdist = ws.id().parse(CorePlatformUtils.getPlatformOsDist());
+            osdist = ws.id().parser().parse(CorePlatformUtils.getPlatformOsDist());
         }
         return osdist;
     }
 
     //
     public Path getStoreLocation(String id, NutsStoreLocation folderType) {
-        return getStoreLocation(ws.id().parse(id), folderType);
+        return getStoreLocation(ws.id().parser().parse(id), folderType);
     }
 
     //

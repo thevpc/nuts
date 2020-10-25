@@ -165,6 +165,14 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsDescriptor getResultDescriptor();
 
     /**
+     * return result as InstallInformation
+     *
+     * @return result as InstallInformation
+     * @since 0.8.0
+     */
+    NutsInstallInformation getResultInstallInformation();
+
+    /**
      * return result as content path
      *
      * @return result as content path

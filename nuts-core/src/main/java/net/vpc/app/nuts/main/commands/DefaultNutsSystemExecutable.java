@@ -58,7 +58,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     private String[] resolveUserOrRootCommand() {
         if (root) {
-            switch (execCommand.getSession().getWorkspace().config().getOsFamily()) {
+            switch (execCommand.getSession().getWorkspace().env().getOsFamily()) {
                 case LINUX:
                 case UNIX:
                 case MACOS:
@@ -71,7 +71,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
                 case WINDOWS:{
                     String s = (String)execCommand.getSession().getProperty("WINDOWS_ROOT_USER");
                     if(s==null) {
-                        s = execCommand.getSession().getWorkspace().config().getEnv("WINDOWS_ROOT_USER", null);
+                        s = execCommand.getSession().getWorkspace().env().get("WINDOWS_ROOT_USER", null);
                     }
                     if(CoreStringUtils.isBlank(s)){
                         s="Administrator";
@@ -82,7 +82,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
                     return a.toArray(new String[0]);
                 }
                 default:{
-                    throw new NutsExecutionException(execCommand.getSession().getWorkspace(),"ROOT_CMD: Unsupported Platform "+execCommand.getSession().getWorkspace().config().getOsFamily(),12);
+                    throw new NutsExecutionException(execCommand.getSession().getWorkspace(),"ROOT_CMD: Unsupported Platform "+execCommand.getSession().getWorkspace().env().getOsFamily(),12);
                 }
             }
         } else {
@@ -119,7 +119,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public String getHelpText() {
-        switch (execSession.getWorkspace().config().getOsFamily()) {
+        switch (execSession.getWorkspace().env().getOsFamily()) {
             case WINDOWS: {
                 return "No help available. Try " + getName() + " /help";
             }

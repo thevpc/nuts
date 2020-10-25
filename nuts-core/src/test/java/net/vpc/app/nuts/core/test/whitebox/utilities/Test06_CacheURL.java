@@ -7,17 +7,14 @@ package net.vpc.app.nuts.core.test.whitebox.utilities;
 
 import java.io.ByteArrayOutputStream;
 
-import net.vpc.app.nuts.NutsOsFamily;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.test.utils.TestUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import net.vpc.app.nuts.Nuts;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
+
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
-import net.vpc.app.nuts.runtime.util.io.InputSource;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assume;
@@ -48,11 +45,11 @@ public class Test06_CacheURL {
                 "--skip-companions");
         NutsSession session = ws.createSession();
         final String url = "https://repo.maven.apache.org/maven2/archetype-catalog.xml";
-        InputSource j1 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, null);
+        NutsInput j1 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, "archetype-catalog", null);
         //just to consume the stream
         ws.io().copy().setSession(session).from(j1).to(new ByteArrayOutputStream()).logProgress().run();
         TestUtils.println(j1);
-        InputSource j2 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, null);
+        NutsInput j2 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, "archetype-catalog", null);
         //just to consume the stream
         ws.io().copy().setSession(session).from(j2).to(new ByteArrayOutputStream()).logProgress().run();
         TestUtils.println(j2);

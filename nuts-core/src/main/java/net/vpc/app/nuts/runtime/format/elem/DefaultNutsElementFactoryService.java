@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.runtime.format.elem;
 
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.format.xml.NutsElementFactoryXmlElement;
 import net.vpc.app.nuts.runtime.format.json.DefaultNutsJsonFormat;
 import com.google.gson.JsonElement;
@@ -38,17 +39,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import net.vpc.app.nuts.NutsContent;
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsId;
+import java.util.stream.Collectors;
+
 import net.vpc.app.nuts.runtime.util.common.ClassMap;
-import org.w3c.dom.Node;
-import net.vpc.app.nuts.NutsElement;
-import net.vpc.app.nuts.NutsNamedElement;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.runtime.format.json.NutsElementFactoryJsonElement;
 import net.vpc.app.nuts.runtime.format.xml.NutsElementFactoryXmlDocument;
-import net.vpc.app.nuts.NutsInstallInformation;
 
 /**
  *
@@ -126,7 +121,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                 return f;
             }
         }
-        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) ws.json();
+        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) ws.formats().json();
         return create(json.convert(o, JsonElement.class), context);
         // new DefaultNutsPrimitiveElement(NutsElementType.UNKNWON, o)
     }
@@ -262,8 +257,9 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                     if (installation.getInstallFolder() != null) {
                         x.put("install-folder", installation.getInstallFolder().toString());
                     }
-                    x.put("install-status", installation.getInstallStatus().id());
-                    x.put("just-installed", installation.isJustInstalled());
+                    x.put("install-status", installation.getInstallStatus().stream().map(NutsInstallStatus::id).collect(Collectors.joining(", ")));
+                    x.put("was-installed", installation.isWasInstalled());
+                    x.put("was-required", installation.isWasRequired());
                 }
                 if (def.getRepositoryName() != null) {
                     x.put("repository-name", def.getRepositoryName());

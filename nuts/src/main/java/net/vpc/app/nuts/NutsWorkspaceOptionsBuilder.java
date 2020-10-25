@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
@@ -40,6 +41,12 @@ import java.util.function.Supplier;
  * @category Config
  */
 public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
+    NutsWorkspaceOptionsBuilder setAll(NutsWorkspaceOptions other);
+
+    NutsWorkspaceOptionsBuilder parseCommandLine(String commandLine);
+
+    NutsWorkspaceOptionsBuilder parseArguments(String[] args);
+
     NutsWorkspaceOptionsBuilder setWorkspace(String workspace);
 
     NutsWorkspaceOptionsBuilder setName(String workspaceName);
@@ -63,6 +70,10 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
     NutsWorkspaceOptionsBuilder setInherited(boolean inherited);
 
     NutsWorkspaceOptionsBuilder setTerminalMode(NutsTerminalMode terminalMode);
+
+    NutsWorkspaceOptionsBuilder setSkipErrors(boolean value);
+
+    NutsWorkspaceOptionsBuilder setErrors(String[] errors);
 
     NutsWorkspaceOptionsBuilder setDry(boolean dry);
 
@@ -173,4 +184,14 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
      */
     NutsWorkspaceOptionsBuilder setStoreLocations(Map<String, String> storeLocations);
 
+
+    /**
+     * set expire instant. Expire time is used to expire any cached
+     * file that was downloaded before the given date/time.
+     *
+     * @param value value
+     * @return {@code this} instance
+     * @since 0.8.0
+     */
+    NutsWorkspaceOptionsBuilder setExpireTime(Instant value);
 }

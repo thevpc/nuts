@@ -1,25 +1,20 @@
 package net.vpc.app.nuts.runtime.filters.dependency;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
-public class NutsDependencyOptionFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
-
-    public static final NutsDependencyFilter OPTIONAL = new NutsDependencyOptionFilter(true);
-    public static final NutsDependencyFilter NON_OPTIONAL = new NutsDependencyOptionFilter(false);
-
-    public static final NutsDependencyFilter valueOf(boolean b) {
-        return b ? OPTIONAL : NON_OPTIONAL;
-    }
+public class NutsDependencyOptionFilter extends AbstractNutsFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
 
     private final Boolean optional;
 
-    public NutsDependencyOptionFilter(Boolean optional) {
+    public NutsDependencyOptionFilter(NutsWorkspace ws,Boolean optional) {
+        super(ws,NutsFilterOp.CUSTOM);
         this.optional = optional;
     }
 
     @Override
-    public boolean accept(NutsId from, NutsDependency dependency, NutsSession session) {
+    public boolean acceptDependency(NutsId from, NutsDependency dependency, NutsSession session) {
         if (optional == null) {
             return false;
         }

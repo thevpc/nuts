@@ -86,7 +86,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                List<NutsWorkspaceCommandAlias> r = context.getWorkspace().config().findCommandAliases(context.getSession())
+                List<NutsWorkspaceCommandAlias> r = context.getWorkspace().aliases().findAll(context.getSession())
                         .stream()
                         .filter(new Predicate<NutsWorkspaceCommandAlias>() {
                             @Override
@@ -111,7 +111,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                         .sorted((x, y) -> x.getName().compareTo(y.getName()))
                         .collect(Collectors.toList());
                 if (context.getSession().isPlainOut()) {
-                    context.getWorkspace().props()
+                    context.getWorkspace().formats().props()
                             .setSession(context.getSession())
                             .model(
                                     r.stream().collect(
@@ -135,7 +135,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
         } else if (cmdLine.next("remove alias") != null) {
             if (cmdLine.isExecMode()) {
                 while (cmdLine.hasNext()) {
-                    context.getWorkspace().config().removeCommandAlias(cmdLine.next().toString(), new NutsRemoveOptions()
+                    context.getWorkspace().aliases().remove(cmdLine.next().toString(), new NutsRemoveOptions()
                             .setSession(context.getSession()));
                 }
                 trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
@@ -170,7 +170,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                     cmdLine.required();
                 }
                 for (AliasInfo value : toAdd.values()) {
-                    context.getWorkspace().config().addCommandAlias(
+                    context.getWorkspace().aliases().add(
                             new NutsCommandAliasConfig()
                                     .setCommand(context.getWorkspace().commandLine().parse(value.command).toArray())
                                     .setName(value.name)

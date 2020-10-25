@@ -30,10 +30,15 @@
 package net.vpc.app.nuts.runtime;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.config.DefaultNutsDependency;
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.QueryStringMap;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * Created by vpc on 1/5/17.
@@ -356,13 +361,32 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public NutsIdBuilder builder() {
-        return new DefaultNutsIdBuilder(this);
+    public NutsDependency toDependency() {
+        Map<String, String> properties = getProperties();
+        //CoreStringUtils.join(",", ex)
+        String exc=properties.get(NutsConstants.IdProperties.EXCLUSIONS);
+        if(exc==null){
+            exc="";
+        }
+        List<NutsId> a=new ArrayList<>();
+        for (String s : exc.split(";")) {
+            NutsId n = CoreNutsUtils.parseNutsId(s);
+            if(n!=null){
+                a.add(n);
+            }
+        }
+        return new DefaultNutsDependency(
+                getNamespace(),getGroupId(),getGroupId(),getClassifier(),getVersion(),
+                properties.get(NutsConstants.IdProperties.SCOPE),
+                properties.get(NutsConstants.IdProperties.OPTIONAL),
+                a.toArray(new NutsId[0]),
+                properties
+        );
     }
 
     @Override
-    public NutsIdFilter filter() {
-        return new NutsPatternIdFilter(this);
+    public NutsIdBuilder builder() {
+        return new DefaultNutsIdBuilder(this);
     }
 
     @Override

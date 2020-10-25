@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.runtime.wscommands;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 
 import java.util.*;
 
@@ -43,12 +44,13 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
 
 
     protected boolean defaultVersion = true;
-    protected boolean companions = false;
-    protected boolean installed = false;
+    protected NutsInstallStrategy companions;
+    protected NutsInstallStrategy installed;
+    protected NutsInstallStrategy strategy = NutsInstallStrategy.DEFAULT;
     protected List<String> args;
-    protected final List<NutsId> ids = new ArrayList<>();
+    protected final Map<NutsId,NutsInstallStrategy> ids = new LinkedHashMap<>();
     protected NutsDefinition[] result;
-    protected NutsId[] fails;
+    protected NutsId[] failed;
 
     public AbstractNutsInstallCommand(NutsWorkspace ws) {
         super(ws, "install");
@@ -66,7 +68,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
 
     @Override
     public NutsInstallCommand addId(String id) {
-        return addId(id == null ? null : ws.id().parse(id));
+        return addId(id == null ? null : ws.id().parser().parse(id));
     }
 
     @Override
@@ -74,7 +76,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
         if (id == null) {
             throw new NutsNotFoundException(ws, id);
         } else {
-            ids.add(id);
+            ids.put(id,getStrategy());
         }
         return this;
     }
@@ -106,7 +108,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     @Override
     public NutsInstallCommand removeId(String id) {
         if (id != null) {
-            this.ids.remove(ws.id().parse(id));
+            this.ids.remove(ws.id().parser().parse(id));
         }
         return this;
     }
@@ -169,29 +171,45 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
 
     @Override
     public NutsId[] getIds() {
-        return ids == null ? new NutsId[0] : ids.toArray(new NutsId[0]);
+        return ids == null ? new NutsId[0] : ids.keySet().toArray(new NutsId[0]);
     }
 
     @Override
+    public Map<NutsId,NutsInstallStrategy> getIdMap() {
+        return ids == null ? new LinkedHashMap<>() : new LinkedHashMap<>(ids);
+    }
+
+
+    @Override
     public boolean isCompanions() {
-        return companions;
+        return companions!=null;
     }
 
     @Override
     public NutsInstallCommand setCompanions(boolean value) {
-        this.companions = value;
+        this.companions = value?getStrategy():null;
         return this;
+    }
+
+    @Override
+    public NutsInstallStrategy getCompanions() {
+        return companions;
     }
 
     @Override
     public boolean isInstalled() {
-        return installed;
+        return installed!=null;
     }
 
     @Override
     public NutsInstallCommand setInstalled(boolean value) {
-        this.installed = value;
+        this.installed = value?getStrategy() : null;
         return this;
+    }
+
+    @Override
+    public NutsInstallStrategy getInstalled() {
+        return installed;
     }
 
     @Override
@@ -256,6 +274,20 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     }
 
     @Override
+    public NutsInstallCommand setStrategy(NutsInstallStrategy value) {
+        if(value==null){
+            value=NutsInstallStrategy.DEFAULT;
+        }
+        this.strategy=value;
+        return this;
+    }
+
+    @Override
+    public NutsInstallStrategy getStrategy() {
+        return strategy;
+    }
+
+    @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {
@@ -276,6 +308,35 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.installed(val);
+                }
+                return true;
+            }
+            case "-s":
+            case "--strategy": {
+                String val = cmdLine.nextString().getString();
+                if (enabled) {
+                    this.setStrategy(CoreCommonUtils.parseEnumString(val,NutsInstallStrategy.class,false));
+                }
+                return true;
+            }
+            case "--reinstall": {
+                cmdLine.skip();
+                if (enabled) {
+                    this.setStrategy(NutsInstallStrategy.REINSTALL);
+                }
+                return true;
+            }
+            case "--require": {
+                cmdLine.skip();
+                if (enabled) {
+                    this.setStrategy(NutsInstallStrategy.REQUIRE);
+                }
+                return true;
+            }
+            case "--repair": {
+                cmdLine.skip();
+                if (enabled) {
+                    this.setStrategy(NutsInstallStrategy.REPAIR);
                 }
                 return true;
             }

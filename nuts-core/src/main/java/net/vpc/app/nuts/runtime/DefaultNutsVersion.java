@@ -79,7 +79,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
 
     @Override
     public NutsVersionInterval[] intervals() {
-        NutsVersionFilter s = DefaultNutsVersionFilter.parse(expression);
+        NutsVersionFilter s = filter();
         if (s instanceof DefaultNutsVersionFilter) {
             return ((DefaultNutsVersionFilter) s).getIntervals();
         }
@@ -192,7 +192,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
         if (CoreStringUtils.isBlank(expression)) {
             return true;
         }
-        return DefaultNutsVersionFilter.parse(expression).accept(this, null);
+        return DefaultNutsVersionFilter.parse(expression).acceptVersion(this, null);
     }
 
     public static boolean versionMatches(String version, String pattern) {

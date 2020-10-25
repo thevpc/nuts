@@ -1,9 +1,0 @@
-{
-  "title":"API Documentation",
-  "order":10,
-  "type": {
-    "name":"javadoc",
-    "sources": ["../../../../../../nuts"]
-  }
-}
-

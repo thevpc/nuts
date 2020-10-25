@@ -1,17 +1,11 @@
 package net.vpc.app.nuts.runtime.format;
 
-import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UncheckedIOException;
-import java.io.Writer;
+
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 
 import java.util.*;
 
-import net.vpc.app.nuts.runtime.DefaultNutsIdBuilder;
-import net.vpc.app.nuts.runtime.bridges.maven.mvnutil.PomId;
-import net.vpc.app.nuts.runtime.bridges.maven.mvnutil.PomIdResolver;
 import net.vpc.app.nuts.runtime.util.NutsDependencyScopes;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 
@@ -213,7 +207,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             idBuilder.setProperty(NutsConstants.IdProperties.FACE, null);
         }
         id = idBuilder.build();
-        NutsTerminalFormat tf = getWorkspace().io().getTerminalFormat();
+        NutsTerminalFormat tf = getWorkspace().io().term().getTerminalFormat();
         StringBuilder sb = new StringBuilder();
         if (!isOmitNamespace()) {
             if (!CoreStringUtils.isBlank(id.getNamespace())) {
@@ -225,7 +219,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         if (!isOmitGroupId()) {
             if (!CoreStringUtils.isBlank(id.getGroupId())) {
                 boolean importedGroup2 = "net.vpc.app.nuts".equals(id.getGroupId());
-                boolean importedGroup = getWorkspace().config().getImports().contains(id.getGroupId());
+                boolean importedGroup = getWorkspace().imports().getAll().contains(id.getGroupId());
                 if (!(importedGroup && isOmitImportedGroupId())) {
                     if (importedGroup || importedGroup2) {
                         sb.append("<<");
@@ -355,47 +349,10 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     @Override
-    public NutsId parse(String id) {
-        return CoreNutsUtils.parseNutsId(id);
-    }
-
-    @Override
-    public NutsId parseRequired(String nutFormat) {
-        NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
-        if (id == null) {
-            throw new NutsParseException(getWorkspace(), "Invalid Id format : " + nutFormat);
-        }
-        return id;
-    }
-
-    @Override
     public void print(PrintStream out) {
             out.print(format());
     }
 
-    @Override
-    public NutsIdBuilder builder() {
-        return new DefaultNutsIdBuilder();
-    }
-
-    @Override
-    public NutsId resolveId(Class clazz) {
-        PomId u = PomIdResolver.of(getWorkspace()).resolvePomId(clazz, null);
-        if (u == null) {
-            return null;
-        }
-        return parse(u.getGroupId() + ":" + u.getArtifactId() + "#" + u.getVersion());
-    }
-
-    @Override
-    public NutsId[] resolveIds(Class clazz) {
-        PomId[] u = PomIdResolver.of(getWorkspace()).resolvePomIds(clazz);
-        NutsId[] all = new NutsId[u.length];
-        for (int i = 0; i < all.length; i++) {
-            all[i] = parse(u[i].getGroupId() + ":" + u[i].getArtifactId() + "#" + u[i].getVersion());
-        }
-        return all;
-    }
 
     @Override
     public NutsIdFormat omitNamespace(boolean value) {

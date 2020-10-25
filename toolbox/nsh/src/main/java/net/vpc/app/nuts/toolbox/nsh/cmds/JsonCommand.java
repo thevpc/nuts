@@ -101,7 +101,7 @@ public class JsonCommand extends SimpleNshBuiltin {
         if (options.queries.isEmpty()) {
             NutsElement inputDocument = readJsonConvertElement(options.input, context.getRootContext());
             if (context.getSession().getOutputFormat() == NutsOutputFormat.PLAIN) {
-                context.setPrintlnOutObject(context.getWorkspace().json().value(inputDocument).format());
+                context.setPrintlnOutObject(context.getWorkspace().formats().json().value(inputDocument).format());
             } else {
                 context.setPrintlnOutObject(inputDocument);
             }
@@ -132,7 +132,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                         }
                     }
                     if (context.getSession().getOutputFormat(null) == null) {
-                        context.setPrintlnOutObject(context.getWorkspace().json().value(resultDocument).format());
+                        context.setPrintlnOutObject(context.getWorkspace().formats().json().value(resultDocument).format());
                     } else {
                         context.setPrintlnOutObject(resultDocument);
                     }
@@ -142,7 +142,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                     NutsElement inputDocument = readJsonConvertElement(options.input, context.getRootContext());
                     List<NutsElement> all = new ArrayList<>();
                     for (String query : options.queries) {
-                        all.addAll(context.getWorkspace().element()
+                        all.addAll(context.getWorkspace().formats().element()
                                 .setSession(context.getSession())
                                 .compilePath(query)
                                 .filter(inputDocument)
@@ -150,7 +150,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                     }
                     Object result = all.size() == 1 ? all.get(0) : all;
                     if (context.getSession().getOutputFormat(null) == null) {
-                        context.setPrintlnOutObject(context.getWorkspace().json().value(result).format());
+                        context.setPrintlnOutObject(context.getWorkspace().formats().json().value(result).format());
                     } else {
                         context.setPrintlnOutObject(result);
                     }
@@ -170,7 +170,7 @@ public class JsonCommand extends SimpleNshBuiltin {
     }
 
     private <T> T readJsonConvertAny(String path, Class<T> cls, NutsShellContext context) {
-        NutsJsonFormat njson = context.getWorkspace().json();
+        NutsJsonFormat njson = context.getWorkspace().formats().json();
         T inputDocument = null;
         if (path != null) {
             File file = new File(context.getAbsolutePath(path));

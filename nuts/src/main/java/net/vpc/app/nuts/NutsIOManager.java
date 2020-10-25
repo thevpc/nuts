@@ -30,7 +30,6 @@
 package net.vpc.app.nuts;
 
 import java.io.*;
-import java.nio.file.Path;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -38,8 +37,8 @@ import java.util.concurrent.ExecutorService;
  * handy manner that is monitorable and Workspace aware.
  *
  * @author vpc
- * @since 0.5.4
  * @category Input Output
+ * @since 0.5.4
  */
 public interface NutsIOManager extends NutsComponent<Object/* any object or null */> {
 
@@ -106,150 +105,10 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
      */
     PrintStream createPrintStream(OutputStream out, NutsTerminalMode mode);
 
-    /**
-     * return new terminal bound to system terminal
-     *
-     * @return new terminal
-     */
-    NutsSessionTerminal createTerminal();
-
-    /**
-     * return new terminal bound to the given {@code parent}
-     *
-     * @param parent parent terminal or null
-     * @return new terminal
-     */
-    NutsSessionTerminal createTerminal(NutsTerminalBase parent);
-
-    /**
-     * create temp file in the workspace's temp folder
-     *
-     * @param name file name
-     * @return new file path
-     */
-    Path createTempFile(String name);
-
-    /**
-     * create temp file in the repository's temp folder
-     *
-     * @param name       file name
-     * @param repository repository
-     * @return new file path
-     */
-    Path createTempFile(String name, NutsRepository repository);
-
-    /**
-     * create temp folder in the workspace's temp folder
-     *
-     * @param name folder name
-     * @return new folder path
-     */
-    Path createTempFolder(String name);
-
-    /**
-     * create temp folder in the repository's temp folder
-     *
-     * @param name       folder name
-     * @param repository repository
-     * @return new folder path
-     */
-    Path createTempFolder(String name, NutsRepository repository);
+    NutsTempManager tmp();
 
 
-    /**
-     * create a new instance of {@link NutsApplicationContext}
-     *
-     * @param args            application arguments
-     * @param appClass        application class
-     * @param storeId         application store id or null
-     * @param startTimeMillis application start time
-     * @return new instance of {@link NutsApplicationContext}
-     */
-    NutsApplicationContext createApplicationContext(String[] args, Class appClass, String storeId, long startTimeMillis);
-
-    /**
-     * return terminal format that handles metrics and format/escape methods
-     *
-     * @return terminal format that handles metrics and format/escape methods
-     */
-    NutsTerminalFormat terminalFormat();
-
-    /**
-     * return terminal format that handles metrics and format/escape methods.
-     *
-     * @return terminal format that handles metrics and format/escape methods
-     */
-    NutsTerminalFormat getTerminalFormat();
-
-    /**
-     * return terminal format that handles metrics and format/escape methods.
-     *
-     * @return terminal format that handles metrics and format/escape methods
-     */
-    NutsSystemTerminal systemTerminal();
-
-    /**
-     * return workspace system terminal.
-     *
-     * @return workspace system terminal
-     */
-    NutsSystemTerminal getSystemTerminal();
-
-    /**
-     * return workspace default terminal
-     *
-     * @return workspace default terminal
-     */
-    NutsSessionTerminal terminal();
-
-    /**
-     * return workspace default terminal
-     *
-     * @return workspace default terminal
-     */
-    NutsSessionTerminal getTerminal();
-
-    /**
-     * update workspace wide system terminal
-     *
-     * @param terminal system terminal
-     * @return {@code this} instance
-     */
-    NutsIOManager setSystemTerminal(NutsSystemTerminalBase terminal);
-
-    /**
-     * update workspace wide terminal
-     *
-     * @param terminal terminal
-     * @return {@code this} instance
-     */
-    NutsIOManager setTerminal(NutsSessionTerminal terminal);
-
-    /**
-     * parse Execution Entries
-     *
-     * @param file jar file
-     * @return execution entries (class names with main method)
-     */
-    NutsExecutionEntry[] parseExecutionEntries(File file);
-
-    /**
-     * parse Execution Entries
-     *
-     * @param file jar file
-     * @return execution entries (class names with main method)
-     */
-    NutsExecutionEntry[] parseExecutionEntries(Path file);
-
-    /**
-     * parse Execution Entries
-     *
-     * @param inputStream stream
-     * @param type        stream type
-     * @param sourceName  stream source name (optional)
-     * @return execution entries (class names with main method)
-     */
-    NutsExecutionEntry[] parseExecutionEntries(InputStream inputStream, String type, String sourceName);
+    NutsTerminalManager term();
 
     /**
      * create new {@link NutsIOCopyAction} instance
@@ -287,13 +146,6 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
     NutsIODeleteAction delete();
 
     /**
-     * create new {@link NutsIOLockAction} instance
-     *
-     * @return create new {@link NutsIOLockAction} instance
-     */
-    NutsIOLockAction lock();
-
-    /**
      * create new {@link NutsMonitorAction} instance that helps
      * monitoring streams.
      *
@@ -309,10 +161,7 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
      */
     NutsIOHashAction hash();
 
-    /**
-     * return non null executor service
-     *
-     * @return non null executor service
-     */
-    ExecutorService executorService();
+    NutsInputManager input();
+
+    NutsOutputManager output();
 }

@@ -29,12 +29,15 @@
  */
 package net.vpc.app.nuts.main.executors;
 
-import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
-import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
-import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
-import net.vpc.app.nuts.runtime.util.common.StringKeyValueList;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.runtime.util.*;
+import net.vpc.app.nuts.runtime.ext.DefaultNutsWorkspaceExtensionManager;
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
+import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
+import net.vpc.app.nuts.runtime.util.common.StringKeyValueList;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
+import net.vpc.app.nuts.runtime.util.io.IProcessExecHelper;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -44,9 +47,8 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.Future;
-
-import net.vpc.app.nuts.runtime.ext.DefaultNutsWorkspaceExtensionManager;
-import net.vpc.app.nuts.runtime.util.io.IProcessExecHelper;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by vpc on 1/7/17.
@@ -62,16 +64,6 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
-        if (nutsDefinition != null) {
-            if ("jar".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())) {
-                return DEFAULT_SUPPORT + 1;
-            }
-        }
-        return NO_SUPPORT;
-    }
-
-    @Override
     public void exec(NutsExecutionContext executionContext) {
         execHelper(executionContext).exec();
     }
@@ -79,6 +71,16 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
     @Override
     public void dryExec(NutsExecutionContext executionContext) throws NutsExecutionException {
         execHelper(executionContext).dryExec();
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
+        if (nutsDefinition != null) {
+            if ("jar".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())) {
+                return DEFAULT_SUPPORT + 1;
+            }
+        }
+        return NO_SUPPORT;
     }
 
     //@Override
@@ -95,7 +97,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 executionContext.getTraceSession());
         switch (executionContext.getExecutionType()) {
             case EMBEDDED: {
-                return new EmbeddedProcessExecHelper(def,executionContext.getExecSession(),joptions,executionContext.getExecSession().out());
+                return new EmbeddedProcessExecHelper(def, executionContext.getExecSession(), joptions, executionContext.getExecSession().out());
             }
             case SPAWN:
             default: {
@@ -118,16 +120,46 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 options.setConfirm(executionContext.getExecSession().getConfirm());
                 options.setTransitive(executionContext.getExecSession().isTransitive());
                 options.setOutputFormat(executionContext.getExecSession().getOutputFormat());
-                if(options.getTerminalMode()==NutsTerminalMode.FILTERED){
+                if (options.getTerminalMode() == NutsTerminalMode.FILTERED) {
                     //retain filtered
-                }else if(options.getTerminalMode()==NutsTerminalMode.INHERITED){
+                } else if (options.getTerminalMode() == NutsTerminalMode.INHERITED) {
                     //retain inherited
-                }else{
+                } else {
                     options.setTerminalMode(executionContext.getExecSession().getTerminal().getOutMode());
                 }
+                NutsVersion nutsDependencyVersion = null;
+                for (String s : joptions.getClassPath()) {
+                    Pattern pp = Pattern.compile(".*[/\\\\]nuts-(?<v>.+)[.]jar");
+                    Matcher mm = pp.matcher(s);
+                    if (mm.find()) {
+                        String v = mm.group("v");
+                        nutsDependencyVersion = executionContext.getWorkspace().version().parser().parse(v);
+                        break;
+                    }
+                }
+//                List<String> validBootCommand = new ArrayList<>();
+                options.setTrace(executionContext.getExecSession().isTrace());
+                options.setExpireTime(executionContext.getExecSession().getExpireTime());
+                options.setOutputFormat(executionContext.getExecSession().getOutputFormat());
+                options.setConfirm(executionContext.getExecSession().getConfirm());
 
-                String bootArgumentsString = options
-                        .format().exported().compact().getBootCommandLine();
+                String[] bootCommand = options.format().exported().setApiVersion(nutsDependencyVersion == null ? null : nutsDependencyVersion.toString())
+                        .compact().getBootCommand();
+//                if(nutsDependencyVersion!=null && nutsDependencyVersion.compareTo(executionContext.getWorkspace().getApiVersion())<0){
+//                    if(nutsDependencyVersion.compareTo("0.8.0")<0){
+//                        for (String s : bootCommand) {
+//                            if(s.startsWith("-N=") || s.startsWith("--expire=")){
+//                                //ignore..
+//                            }else{
+//                                validBootCommand.add(s);
+//                            }
+//                        }
+//                    }else{
+//                validBootCommand.addAll(Arrays.asList(bootCommand));
+//                    }
+//                }
+                String bootArgumentsString = executionContext.getWorkspace().commandLine().create(bootCommand)
+                        .toString();
                 if (!CoreStringUtils.isBlank(bootArgumentsString)) {
                     osEnv.put("nuts_boot_args", bootArgumentsString);
                     joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
@@ -172,7 +204,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 }
                 if (joptions.isJar()) {
                     xargs.add("-jar");
-                    xargs.add(ws.id().value(def.getId()).format());
+                    xargs.add(ws.id().formatter(def.getId()).format());
 
                     args.add("-jar");
                     args.add(contentFile.toString());
@@ -212,6 +244,11 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         ).dryExec();
                     }
 
+                    @Override
+                    public int exec() {
+                        return preExec().exec();
+                    }
+
                     private CoreIOUtils.ProcessExecHelper preExec() {
                         if (joptions.isShowCommand() || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
                             PrintStream out = executionContext.getExecSession().out();
@@ -241,11 +278,6 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                     public Future<Integer> execAsync() {
                         return preExec().execAsync();
                     }
-
-                    @Override
-                    public int exec() {
-                        return preExec().exec();
-                    }
                 };
 
             }
@@ -257,7 +289,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         private JavaExecutorOptions joptions;
         private PrintStream out;
 
-        public EmbeddedProcessExecHelper(NutsDefinition def,NutsSession session,JavaExecutorOptions joptions,PrintStream out) {
+        public EmbeddedProcessExecHelper(NutsDefinition def, NutsSession session, JavaExecutorOptions joptions, PrintStream out) {
             super(session);
             this.def = def;
             this.joptions = joptions;
@@ -268,16 +300,15 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         public void dryExec() {
             out.print("[dry] ==[exec]== ");
             out.printf("[dry] ==embedded-java== **+cp** %s {{%s}} %s%n"
-                    ,String.join(":",joptions.getClassPath())
-                    ,joptions.getMainClass()
-                    ,String.join(":",joptions.getApp())
+                    , String.join(":", joptions.getClassPath())
+                    , joptions.getMainClass()
+                    , String.join(":", joptions.getApp())
             );
         }
 
 
-
         @Override
-        public int exec()  {
+        public int exec() {
             ClassLoader classLoader = null;
             Throwable th = null;
             try {
@@ -286,7 +317,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         getSession().getWorkspace().config().getBootClassLoader()
                 );
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
-                new ClassloaderAwareRunnableImpl2(def.getId(),classLoader, cls, getSession(), joptions).runAndWaitFor();
+                new ClassloaderAwareRunnableImpl2(def.getId(), classLoader, cls, getSession(), joptions).runAndWaitFor();
                 return 0;
             } catch (InvocationTargetException e) {
                 th = e.getTargetException();
@@ -309,14 +340,15 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             return 0;
         }
     }
+
     static class ClassloaderAwareRunnableImpl2 extends ClassloaderAwareRunnable {
 
         private final Class<?> cls;
         private final JavaExecutorOptions joptions;
         private final NutsId id;
 
-        public ClassloaderAwareRunnableImpl2(NutsId id,ClassLoader classLoader, Class<?> cls, NutsSession session, JavaExecutorOptions joptions) {
-            super(session,classLoader);
+        public ClassloaderAwareRunnableImpl2(NutsId id, ClassLoader classLoader, Class<?> cls, NutsSession session, JavaExecutorOptions joptions) {
+            super(session, classLoader);
             this.id = id;
             this.cls = cls;
             this.joptions = joptions;
@@ -349,7 +381,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             }
             if (isNutsApp) {
                 //NutsWorkspace
-                NutsApplications.getSharedMap().put("nuts.embedded.application.id",id);
+                NutsApplications.getSharedMap().put("nuts.embedded.application.id", id);
                 mainMethod.invoke(nutsApp, new Object[]{getSession(), joptions.getApp().toArray(new String[0])});
             } else {
                 //NutsWorkspace

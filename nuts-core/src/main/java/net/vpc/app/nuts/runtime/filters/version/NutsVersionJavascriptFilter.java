@@ -29,9 +29,8 @@
  */
 package net.vpc.app.nuts.runtime.filters.version;
 
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsVersion;
-import net.vpc.app.nuts.NutsVersionFilter;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.common.JavascriptHelper;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
@@ -41,19 +40,20 @@ import java.util.Objects;
 /**
  * Created by vpc on 1/7/17.
  */
-public class NutsVersionJavascriptFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, JsNutsVersionFilter {
+public class NutsVersionJavascriptFilter extends AbstractNutsFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, JsNutsVersionFilter {
 
     private String code;
     private JavascriptHelper engineHelper;
 
-    public static NutsVersionJavascriptFilter valueOf(String value, NutsSession session) {
+    public static NutsVersionFilter valueOf(String value, NutsWorkspace ws) {
         if (CoreStringUtils.isBlank(value)) {
-            return null;
+            return ws.version().filter().always();
         }
-        return new NutsVersionJavascriptFilter(value);
+        return new NutsVersionJavascriptFilter(ws,value);
     }
 
-    public NutsVersionJavascriptFilter(String code) {
+    public NutsVersionJavascriptFilter(NutsWorkspace ws,String code) {
+        super(ws, NutsFilterOp.CUSTOM);
         this.code = code;
         //check if valid
 //        accept(SAMPLE_DependencyNUTS_DESCRIPTOR);
@@ -64,7 +64,7 @@ public class NutsVersionJavascriptFilter implements NutsVersionFilter, Simplifia
     }
 
     @Override
-    public boolean accept(NutsVersion d, NutsSession session) {
+    public boolean acceptVersion(NutsVersion d, NutsSession session) {
         JavascriptHelper engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", null, null, session);
         return engineHelper.accept(d);
     }

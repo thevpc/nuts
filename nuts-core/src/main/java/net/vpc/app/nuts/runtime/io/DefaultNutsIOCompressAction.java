@@ -8,7 +8,6 @@ package net.vpc.app.nuts.runtime.io;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.log.NutsLogVerb;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
-import net.vpc.app.nuts.runtime.util.io.*;
 
 import java.io.*;
 import java.net.URL;
@@ -31,8 +30,8 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
 
     private boolean safe = true;
     private boolean logProgress = false;
-    private List<InputSource> sources = new ArrayList<>();
-    private CoreIOUtils.TargetItem target;
+    private List<NutsInput> sources = new ArrayList<>();
+    private NutsOutput target;
     private DefaultNutsIOManager iom;
     private NutsSession session;
     private boolean skipRoot;
@@ -51,60 +50,71 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
 
     @Override
     public NutsIOCompressAction addSource(InputStream source) {
-        this.sources.add(CoreIOUtils.createInputSource(source));
+        this.sources.add(iom.input().of(source));
         return this;
     }
 
     @Override
     public NutsIOCompressAction addSource(File source) {
-        this.sources.add(CoreIOUtils.createInputSource(source));
+        this.sources.add(iom.input().of(source));
         return this;
     }
 
     @Override
     public NutsIOCompressAction addSource(Path source) {
-        this.sources.add(CoreIOUtils.createInputSource(source));
+        this.sources.add(iom.input().of(source));
         return this;
     }
 
     @Override
     public NutsIOCompressAction addSource(URL source) {
-        this.sources.add(CoreIOUtils.createInputSource(source));
+        this.sources.add(iom.input().of(source));
+        return this;
+    }
+
+    @Override
+    public NutsIOCompressAction setTarget(NutsOutput target) {
+        this.target = target;
         return this;
     }
 
     @Override
     public NutsIOCompressAction setTarget(OutputStream target) {
-        this.target = CoreIOUtils.createTarget(target);
+        this.target = iom.output().of(target);
         return this;
     }
 
     @Override
     public NutsIOCompressAction setTarget(Path target) {
-        this.target = CoreIOUtils.createTarget(target);
+        this.target = iom.output().of(target);
         return this;
     }
 
     @Override
     public NutsIOCompressAction setTarget(File target) {
-        this.target = CoreIOUtils.createTarget(target);
+        this.target = iom.output().of(target);
         return this;
     }
 
     @Override
     public NutsIOCompressAction setTarget(String target) {
-        this.target = CoreIOUtils.createTarget(target);
+        this.target = iom.output().of(target);
         return this;
     }
 
     public NutsIOCompressAction addSource(Object source) {
-        this.sources.add(CoreIOUtils.createInputSource(source));
+        this.sources.add(iom.input().of(source));
         return this;
     }
 
     public NutsIOCompressAction addSource(String source) {
-        this.sources.add(CoreIOUtils.createInputSource(source));
+        this.sources.add(iom.input().of(source));
         return this;
+    }
+
+    @Override
+    public NutsIOCompressAction to(NutsOutput target) {
+        return setTarget(target);
     }
 
     @Override
@@ -122,8 +132,9 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         return target;
     }
 
+    @Override
     public NutsIOCompressAction setTarget(Object target) {
-        this.target = CoreIOUtils.createTarget(target);
+        this.target = iom.output().of(target);
         return this;
     }
 
@@ -207,7 +218,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
             if (this.target.isPath()) {
                 Path tempPath = null;
                 if (isSafe()) {
-                    tempPath = iom.createTempFile("zip");
+                    tempPath = iom.tmp().createTempFile("zip");
                 }
                 Path path = this.target.getPath();
                 if (path.getParent() != null) {
@@ -222,7 +233,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                     try {
                         zip = new ZipOutputStream(fW);
                         if (skipRoot) {
-                            for (InputSource s : sources) {
+                            for (NutsInput s : sources) {
                                 Item file1 = new Item(s);
                                 if (file1.isDirectory()) {
                                     for (Item c : file1.list()) {
@@ -233,7 +244,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                                 }
                             }
                         } else {
-                            for (InputSource s : sources) {
+                            for (NutsInput s : sources) {
                                 add("", new Item(s), zip);
                             }
                         }
@@ -254,7 +265,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                 throw new NutsIllegalArgumentException(iom.getWorkspace(), "Unsupported target " + target);
             }
         } catch (IOException ex) {
-            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log( "Error compressing {0} to {1} : {2}", sources, target.getValue(), ex.toString());
+            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log( "Error compressing {0} to {1} : {2}", sources, target.getSource(), ex.toString());
             throw new UncheckedIOException(ex);
         }
     }
@@ -441,8 +452,8 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
             if (o instanceof Path) {
                 return Files.isDirectory(((Path) o));
             }
-            if (o instanceof InputSource) {
-                InputSource s = (InputSource) o;
+            if (o instanceof NutsInput) {
+                NutsInput s = (NutsInput) o;
                 if (s.isPath()) {
                     return Files.isDirectory(s.getPath());
                 }
@@ -468,8 +479,8 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                     }
                 }
             }
-            if (o instanceof InputSource) {
-                InputSource s = (InputSource) o;
+            if (o instanceof NutsInput) {
+                NutsInput s = (NutsInput) o;
                 if (s.isPath()) {
                     Path o1 = s.getPath();
                     try {
@@ -497,8 +508,8 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                     throw new UncheckedIOException(e);
                 }
             }
-            if (o instanceof InputSource) {
-                InputSource s = (InputSource) o;
+            if (o instanceof NutsInput) {
+                NutsInput s = (NutsInput) o;
                 return s.open();
             }
             throw new UncheckedIOException(new IOException("Unsupported type " + o));
@@ -511,8 +522,8 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
             if (o instanceof Path) {
                 return ((Path) o).getFileName().toString();
             }
-            if (o instanceof InputSource) {
-                InputSource s = (InputSource) o;
+            if (o instanceof NutsInput) {
+                NutsInput s = (NutsInput) o;
                 return s.getPath().getFileName().toString();
             }
             return "";

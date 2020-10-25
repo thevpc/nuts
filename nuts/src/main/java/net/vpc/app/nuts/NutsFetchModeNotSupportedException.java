@@ -54,8 +54,8 @@ public class NutsFetchModeNotSupportedException extends NutsException {
     public NutsFetchModeNotSupportedException(NutsWorkspace workspace, NutsRepository repo, NutsFetchMode fetchMode, String id, String message, Exception cause) {
         super(workspace, PrivateNutsUtils.isBlank(message) ? ("Unsupported Fetch Mode " + fetchMode.id()) : message, cause);
         this.id = id;
-        this.repositoryName = repo == null ? null : repo.config().name();
-        this.repositoryUuid = repo == null ? null : repo.config().uuid();
+        this.repositoryName = repo == null ? null : repo.getName();
+        this.repositoryUuid = repo == null ? null : repo.getUuid();
         this.fetchMode = fetchMode;
     }
 
@@ -70,8 +70,8 @@ public class NutsFetchModeNotSupportedException extends NutsException {
     public NutsFetchModeNotSupportedException(NutsWorkspace workspace, NutsRepository repo, NutsFetchMode fetchMode, String id, String message) {
         super(workspace, PrivateNutsUtils.isBlank(message) ? ("Unsupported Fetch Mode " + fetchMode.id()) : message);
         this.id = id;
-        this.repositoryName = repo == null ? null : repo.config().name();
-        this.repositoryUuid = repo == null ? null : repo.config().uuid();
+        this.repositoryName = repo == null ? null : repo.getName();
+        this.repositoryUuid = repo == null ? null : repo.getUuid();
         this.fetchMode = fetchMode;
     }
 

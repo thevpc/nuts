@@ -76,7 +76,7 @@ public class NutsJavaShell extends JShell {
         setNodeEvaluator(new NutsNodeEvaluator());
         //super.setCwd(workspace.getConfigManager().getCwd());
         if (appContext == null) {
-            this.appContext = workspace.io().createApplicationContext(new String[]{}, Nsh.class, null, 0);
+            this.appContext = workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0);
         } else if (workspace == null) {
             this.appContext = appContext;
         } else {
@@ -140,7 +140,7 @@ public class NutsJavaShell extends JShell {
         ByteArrayPrintStream oout = new ByteArrayPrintStream();
         ByteArrayPrintStream oerr = new ByteArrayPrintStream();
         final NutsShellContext cc = (NutsShellContext) getRootContext().copy();
-        NutsSessionTerminal tt = getWorkspace().io().getTerminal().copy();
+        NutsSessionTerminal tt = getWorkspace().io().term().getTerminal().copy();
         tt.setIn(new ByteArrayInputStream(in == null ? new byte[0] : in.toString().getBytes()));
         tt.setOut(oout);
         tt.setErr(oerr);
@@ -278,7 +278,7 @@ public class NutsJavaShell extends JShell {
     @Override
     protected void printHeader(PrintStream out) {
         out.printf("==Nuts== shell (**Network Updatable Things Services**) [[v%s]] (c) vpc 2018\n",
-                getWorkspace().config().getRuntimeId().getVersion().toString());
+                getWorkspace().getRuntimeId().getVersion().toString());
     }
 
     //    @Override

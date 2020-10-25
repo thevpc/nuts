@@ -149,7 +149,7 @@ public class DefaultNutsLogManager implements NutsLogManager {
             } else {
                 NutsIOManager io = ws.io();
                 if(io!=null){
-                    NutsSessionTerminal term = io.terminal();
+                    NutsSessionTerminal term = io.term().terminal();
                     if(term!=null){
                         out = term.out();
                     }

@@ -1,8 +1,7 @@
 package net.vpc.app.nuts.runtime.filters.id;
 
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIdFilter;
-import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
@@ -12,11 +11,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 
-public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
+public class NutsIdFilterOr extends AbstractNutsFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
 
     private final NutsIdFilter[] children;
 
-    public NutsIdFilterOr(NutsIdFilter... all) {
+    public NutsIdFilterOr(NutsWorkspace ws,NutsIdFilter... all) {
+        super(ws, NutsFilterOp.OR);
         List<NutsIdFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NutsIdFilter filter : all) {
@@ -33,12 +33,12 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
     }
 
     @Override
-    public boolean accept(NutsId id, NutsSession session) {
+    public boolean acceptId(NutsId id, NutsSession session) {
         if (children.length == 0) {
             return true;
         }
         for (NutsIdFilter filter : children) {
-            if (filter.accept(id, session)) {
+            if (filter.acceptId(id, session)) {
                 return true;
             }
         }
@@ -47,27 +47,7 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
 
     @Override
     public NutsIdFilter simplify() {
-        if (children.length == 0) {
-            return null;
-        }
-        NutsIdFilter[] newValues = CoreNutsUtils.simplifyAndShrink(NutsIdFilter.class, children);
-        if (newValues != null) {
-            if (newValues.length == 0) {
-                return null;
-            }
-            if (newValues.length == 1) {
-                return newValues[0];
-            }
-            return new NutsIdFilterOr(newValues);
-        } else {
-            if (children.length == 0) {
-                return null;
-            }
-            if (children.length == 1) {
-                return children[0];
-            }
-            return this;
-        }
+        return CoreNutsUtils.simplifyFilterOr(getWorkspace(),NutsIdFilter.class,this,children);
     }
 
     @Override
@@ -130,4 +110,7 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
         return true;
     }
 
+    public NutsFilter[] getSubFilters() {
+        return children;
+    }
 }

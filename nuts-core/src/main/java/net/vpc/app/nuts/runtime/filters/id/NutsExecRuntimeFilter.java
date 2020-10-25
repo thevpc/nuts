@@ -6,6 +6,7 @@
 package net.vpc.app.nuts.runtime.filters.id;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
@@ -13,23 +14,24 @@ import net.vpc.app.nuts.runtime.util.common.Simplifiable;
  *
  * @author vpc
  */
-public class NutsExecRuntimeFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
+public class NutsExecRuntimeFilter extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
     private NutsId apiId;
     private boolean communityRuntime;
-    public NutsExecRuntimeFilter(NutsId apiId,boolean communityRuntime) {
+    public NutsExecRuntimeFilter(NutsWorkspace ws,NutsId apiId,boolean communityRuntime) {
+        super(ws,NutsFilterOp.CUSTOM);
         this.apiId=apiId;
         this.communityRuntime = communityRuntime;
     }
 
     @Override
-    public boolean accept(NutsDescriptor other, NutsSession session) {
+    public boolean acceptDescriptor(NutsDescriptor other, NutsSession session) {
         if(other.getId().getShortName().equals(NutsConstants.Ids.NUTS_RUNTIME)){
             if(apiId==null){
                 return true;
             }
             for (NutsDependency dependency : other.getDependencies()) {
-                if (dependency.getId().getShortName().equals(NutsConstants.Ids.NUTS_API)) {
-                    if (apiId.getVersion().equals(dependency.getId().getVersion())) {
+                if (dependency.toId().getShortName().equals(NutsConstants.Ids.NUTS_API)) {
+                    if (apiId.getVersion().equals(dependency.toId().getVersion())) {
                         return true;
                     }
                     return false;
@@ -41,11 +43,11 @@ public class NutsExecRuntimeFilter implements NutsDescriptorFilter, Simplifiable
                 return false;
             }
             for (NutsDependency dependency : other.getDependencies()) {
-                if (dependency.getId().getShortName().equals(NutsConstants.Ids.NUTS_API)) {
+                if (dependency.toId().getShortName().equals(NutsConstants.Ids.NUTS_API)) {
                     if (apiId == null) {
                         return true;
                     }
-                    if (apiId.getVersion().equals(dependency.getId().getVersion())) {
+                    if (apiId.getVersion().equals(dependency.toId().getVersion())) {
                         return true;
                     }
                     return false;

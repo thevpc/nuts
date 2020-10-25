@@ -94,7 +94,7 @@ public final class NutsApplications {
         NutsApplicationContext applicationContext = null;
         applicationContext = lifeCycle.createApplicationContext(ws, args, startTimeMillis);
         if (applicationContext == null) {
-            applicationContext = ws.io().createApplicationContext(args, appClass, null, startTimeMillis);
+            applicationContext = ws.apps().createApplicationContext(args, appClass, null, startTimeMillis);
         }
         if(session!=null) {
             //copy inter-process parameters only
@@ -195,7 +195,7 @@ public final class NutsApplications {
 //        }
         if (out == null && ws != null) {
             try {
-                out = ws.io().getSystemTerminal().getOut();
+                out = ws.io().term().getSystemTerminal().getOut();
                 m = "@@" + m + "@@";
             } catch (Exception ex2) {
                 ws.log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log("unable to get system terminal");

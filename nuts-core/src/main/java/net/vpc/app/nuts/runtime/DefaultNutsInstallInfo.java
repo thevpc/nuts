@@ -29,12 +29,14 @@
  */
 package net.vpc.app.nuts.runtime;
 
-import java.nio.file.Path;
-import java.time.Instant;
-
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallInformation;
 import net.vpc.app.nuts.NutsInstallStatus;
+
+import java.nio.file.Path;
+import java.time.Instant;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * @author vpc
@@ -42,36 +44,52 @@ import net.vpc.app.nuts.NutsInstallStatus;
  */
 public class DefaultNutsInstallInfo implements NutsInstallInformation {
 
-    private final NutsId id;
-    private final NutsInstallStatus installStatus;
-    private boolean justInstalled;
-    private boolean justReInstalled;
-    private boolean defaultVersion;
-    private Instant installDate;
+    private NutsId id;
+    private EnumSet<NutsInstallStatus> installStatus;
+    private boolean wasInstalled;
+    private boolean wasRequired;
+    private Instant lasModifiedDate;
+    private Instant createdDate;
     private String installUser;
-    private final Path installFolder;
+    private Path installFolder;
     private String sourceRepositoryName;
     private String sourceRepositoryUUID;
-
-    public DefaultNutsInstallInfo(NutsId id, NutsInstallStatus installStatus, boolean defaultVersion, Path installFolder, Instant installDate, String installUser,String sourceRepositoryName,String sourceRepositoryUUID) {
+    private boolean justInstalled;
+    private boolean justRequired;
+    public DefaultNutsInstallInfo(NutsId id, Set<NutsInstallStatus> installStatus, Path installFolder, Instant createdDate, Instant lasModifiedDate, String installUser, String sourceRepositoryName, String sourceRepositoryUUID,boolean justInstalled,boolean justRequired) {
         this.id = id;
-        this.installStatus = installStatus;
+        this.installStatus = EnumSet.copyOf(installStatus);
         this.installFolder = installFolder;
-        this.defaultVersion = defaultVersion;
-        this.installDate = installDate;
+        this.createdDate = createdDate;
+        this.lasModifiedDate = lasModifiedDate;
         this.installUser = installUser;
         this.sourceRepositoryName = sourceRepositoryName;
         this.sourceRepositoryUUID = sourceRepositoryUUID;
+        this.justInstalled=justInstalled;
+        this.justRequired=justRequired;
+    }
+
+    public DefaultNutsInstallInfo(NutsInstallInformation other) {
+        this.id = other.getId();
+        this.installStatus = EnumSet.copyOf(other.getInstallStatus());
+        this.installFolder = other.getInstallFolder();
+        this.createdDate = other.getCreatedDate();
+        this.lasModifiedDate = other.getLastModifiedDate();
+        this.installUser = other.getInstallUser();
+        this.sourceRepositoryName = other.getSourceRepositoryName();
+        this.sourceRepositoryUUID = other.getSourceRepositoryUUID();
+        this.justInstalled = other.isJustInstalled();
+        this.justRequired = other.isJustRequired();
     }
 
     public static DefaultNutsInstallInfo notInstalled(NutsId id) {
         return new DefaultNutsInstallInfo(null,
-                NutsInstallStatus.NOT_INSTALLED,
-                false,
+                EnumSet.of(NutsInstallStatus.NOT_INSTALLED),
                 null,
                 null,
                 null,
-                null,null
+                null,
+                null, null,false,false
         );
     }
 
@@ -80,40 +98,19 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
         return id;
     }
 
-    public NutsInstallStatus getInstallStatus() {
-        return installStatus;
+    @Override
+    public Instant getCreatedDate() {
+        return createdDate;
     }
 
     @Override
-    public boolean isInstalledOrIncluded() {
-        return installStatus == NutsInstallStatus.INCLUDED || installStatus == NutsInstallStatus.INSTALLED;
-    }
-
-    @Override
-    public String getInstallUser() {
-        return installUser;
-    }
-
-    public void setInstallUser(String installUser) {
-        this.installUser = installUser;
-    }
-
-    @Override
-    public Instant getInstallDate() {
-        return installDate;
-    }
-
-    public void setInstallDate(Instant installDate) {
-        this.installDate = installDate;
+    public Instant getLastModifiedDate() {
+        return lasModifiedDate;
     }
 
     @Override
     public boolean isDefaultVersion() {
-        return defaultVersion;
-    }
-
-    public void setDefaultVersion(boolean defaultVersion) {
-        this.defaultVersion = defaultVersion;
+        return getInstallStatus().contains(NutsInstallStatus.DEFAULT_VERSION);
     }
 
     @Override
@@ -122,13 +119,33 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
     }
 
     @Override
-    public boolean isJustInstalled() {
-        return justInstalled;
+    public boolean isWasInstalled() {
+        return wasInstalled;
+    }
+
+    public DefaultNutsInstallInfo setWasInstalled(boolean wasInstalled) {
+        this.wasInstalled = wasInstalled;
+        return this;
     }
 
     @Override
-    public boolean isJustReInstalled() {
-        return justReInstalled;
+    public boolean isWasRequired() {
+        return wasRequired;
+    }
+
+    @Override
+    public String getInstallUser() {
+        return installUser;
+    }
+
+    public Set<NutsInstallStatus> getInstallStatus() {
+        return installStatus;
+    }
+
+    @Override
+    public boolean isInstalledOrRequired() {
+        return installStatus.contains(NutsInstallStatus.REQUIRED)
+                || installStatus.contains(NutsInstallStatus.INSTALLED);
     }
 
     @Override
@@ -141,12 +158,78 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
         return sourceRepositoryUUID;
     }
 
-    public void setJustReInstalled(boolean justReInstalled) {
-        this.justReInstalled = justReInstalled;
+    public DefaultNutsInstallInfo setSourceRepositoryUUID(String sourceRepositoryUUID) {
+        this.sourceRepositoryUUID = sourceRepositoryUUID;
+        return this;
     }
 
-    public void setJustInstalled(boolean justInstalled) {
+    public DefaultNutsInstallInfo setSourceRepositoryName(String sourceRepositoryName) {
+        this.sourceRepositoryName = sourceRepositoryName;
+        return this;
+    }
+
+    public DefaultNutsInstallInfo setInstallStatus(EnumSet<NutsInstallStatus> installStatus) {
+        this.installStatus = installStatus;
+        return this;
+    }
+
+    public DefaultNutsInstallInfo setInstallUser(String installUser) {
+        this.installUser = installUser;
+        return this;
+    }
+
+    public DefaultNutsInstallInfo setWasRequired(boolean wasRequired) {
+        this.wasRequired = wasRequired;
+        return this;
+    }
+
+    public DefaultNutsInstallInfo setInstallFolder(Path installFolder) {
+        this.installFolder = installFolder;
+        return this;
+    }
+
+    public DefaultNutsInstallInfo setCreatedDate(Instant createdDate) {
+        this.createdDate = createdDate;
+        return this;
+    }
+
+    public DefaultNutsInstallInfo setId(NutsId id) {
+        this.id = id;
+        return this;
+    }
+
+    @Override
+    public boolean isJustReInstalled() {
+        return isWasInstalled() && isJustInstalled();
+    }
+
+    @Override
+    public boolean isJustInstalled() {
+        return justInstalled;
+    }
+
+    @Override
+    public boolean isJustReRequired() {
+        return isWasRequired() && isJustRequired();
+    }
+
+    @Override
+    public boolean isJustRequired() {
+        return justRequired;
+    }
+
+    public DefaultNutsInstallInfo setLasModifiedDate(Instant lasModifiedDate) {
+        this.lasModifiedDate = lasModifiedDate;
+        return this;
+    }
+
+    public DefaultNutsInstallInfo setJustInstalled(boolean justInstalled) {
         this.justInstalled = justInstalled;
+        return this;
     }
 
+    public DefaultNutsInstallInfo setJustRequired(boolean justRequired) {
+        this.justRequired = justRequired;
+        return this;
+    }
 }

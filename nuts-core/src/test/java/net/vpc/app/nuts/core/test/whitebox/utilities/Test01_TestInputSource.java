@@ -5,8 +5,9 @@
  */
 package net.vpc.app.nuts.core.test.whitebox.utilities;
 
-import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
-import net.vpc.app.nuts.runtime.util.io.InputSource;
+import net.vpc.app.nuts.Nuts;
+import net.vpc.app.nuts.NutsInput;
+import net.vpc.app.nuts.NutsWorkspace;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -18,23 +19,24 @@ public class Test01_TestInputSource {
 
     @Test
     public void test1() throws Exception {
-        InputSource s = CoreIOUtils.createInputSource("http://maven.ibiblio.org/maven2/archetype-catalog.xml");
+        NutsWorkspace ws = Nuts.openWorkspace();
+        NutsInput s = ws.io().input().of("http://maven.ibiblio.org/maven2/archetype-catalog.xml");
 
         Assert.assertFalse(s.isPath());
         Assert.assertTrue(s.isURL());
 
-        s = CoreIOUtils.createInputSource("file://maven.ibiblio.org/maven2/archetype-catalog.xml");
+        s = ws.io().input().of("file://maven.ibiblio.org/maven2/archetype-catalog.xml");
         Assert.assertTrue(s.isPath());
         Assert.assertTrue(s.isURL());
 
-        s = CoreIOUtils.createInputSource("file:/maven.ibiblio.org/maven2/archetype-catalog.xml");
+        s = ws.io().input().of("file:/maven.ibiblio.org/maven2/archetype-catalog.xml");
         Assert.assertTrue(s.isPath());
         Assert.assertTrue(s.isURL());
 
 //        s = CoreIOUtils.createInputSource("zip://maven.ibiblio.org/maven2/toto.zip?archetype-catalog.xml");
 //        Assert.assertFalse(s.isPath());
 //        Assert.assertTrue(s.isURL());
-        s = CoreIOUtils.createInputSource("/maven.ibiblio.org/maven2/archetype-catalog.xml");
+        s = ws.io().input().of("/maven.ibiblio.org/maven2/archetype-catalog.xml");
         Assert.assertTrue(s.isPath());
         Assert.assertTrue(s.isURL());
 

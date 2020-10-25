@@ -134,6 +134,8 @@ public interface NutsIOCompressAction {
      */
     Object getTarget();
 
+    NutsIOCompressAction setTarget(NutsOutput target);
+
     /**
      * update target
      *
@@ -198,6 +200,8 @@ public interface NutsIOCompressAction {
      */
     NutsIOCompressAction setTarget(String target);
 
+    NutsIOCompressAction to(NutsOutput target);
+
     /**
      * update target
      *
@@ -250,6 +254,8 @@ public interface NutsIOCompressAction {
      * @return {@code this} instance
      */
     NutsIOCompressAction setLogProgress(boolean value);
+
+    NutsIOCompressAction setTarget(Object target);
 
     /**
      * true if log progress flag is armed

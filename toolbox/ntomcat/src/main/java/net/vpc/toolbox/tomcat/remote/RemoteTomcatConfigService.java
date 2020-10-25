@@ -1,7 +1,6 @@
 package net.vpc.toolbox.tomcat.remote;
 
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.NutsIOManager;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.tomcat.remote.config.RemoteTomcatAppConfig;
 import net.vpc.toolbox.tomcat.remote.config.RemoteTomcatConfig;
@@ -63,7 +62,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService save() {
         Path f = getConfigPath();
-        context.getWorkspace().json().value(config).print(f);
+        context.getWorkspace().formats().json().value(config).print(f);
         return this;
     }
 
@@ -146,7 +145,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
-            config = context.getWorkspace().json().parse(f, RemoteTomcatConfig.class);
+            config = context.getWorkspace().formats().json().parse(f, RemoteTomcatConfig.class);
             return this;
         }
         throw new NamedItemNotFoundException("Instance not found : " + getName(),getName());
@@ -166,7 +165,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     @Override
     public RemoteTomcatConfigService print(PrintStream out) {
         PrintWriter w = new PrintWriter(out);
-        context.getWorkspace().json().value(getConfig()).print(new PrintWriter(out));
+        context.getWorkspace().formats().json().value(getConfig()).print(new PrintWriter(out));
         w.flush();
         return this;
     }

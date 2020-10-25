@@ -38,13 +38,6 @@ package net.vpc.app.nuts;
 public interface NutsSearchId {
 
     /**
-     * return version
-     * @param session session
-     * @return version
-     */
-    NutsVersion getVersion(NutsSession session);
-
-    /**
      * return id
      * @param session session
      * @return id

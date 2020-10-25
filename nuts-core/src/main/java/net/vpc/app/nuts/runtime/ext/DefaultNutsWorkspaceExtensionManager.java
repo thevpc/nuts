@@ -84,7 +84,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         if (excluded != null) {
             for (String e : CoreStringUtils.split(Arrays.asList(excluded), ",; ")) {
                 if (e != null && !e.trim().isEmpty()) {
-                    NutsId ee = ws.id().parse(e);
+                    NutsId ee = ws.id().parser().parse(e);
                     if (ee != null) {
                         this.exclusions.add(ee.getShortName());
                     }
@@ -95,21 +95,21 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     //    @Override
     public List<NutsExtensionInformation> findWorkspaceExtensions(NutsSession session) {
-        return findWorkspaceExtensions(ws.config().getApiVersion(), session);
+        return findWorkspaceExtensions(ws.getApiVersion(), session);
     }
 
     //  @Override
     public List<NutsExtensionInformation> findWorkspaceExtensions(String version, NutsSession session) {
         if (version == null) {
-            version = ws.config().getApiVersion();
+            version = ws.getApiVersion();
         }
-        NutsId id = ws.config().getApiId().builder().setVersion(version).build();
+        NutsId id = ws.getApiId().builder().setVersion(version).build();
         return findExtensions(id, "extensions", session);
     }
 
     //@Override
     public List<NutsExtensionInformation> findExtensions(String id, String extensionType, NutsSession session) {
-        return findExtensions(ws.id().parseRequired(id), extensionType, session);
+        return findExtensions(ws.id().parser().setLenient(false).parse(id), extensionType, session);
     }
 
     // @Override
@@ -126,7 +126,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             if (u != null) {
                 NutsExtensionInformation[] s = new NutsExtensionInformation[0];
                 try (Reader rr = new InputStreamReader(u.openStream())) {
-                    s = ws.json().parse(rr, DefaultNutsExtensionInformation[].class);
+                    s = ws.formats().json().parse(rr, DefaultNutsExtensionInformation[].class);
                 } catch (IOException ex) {
                     LOG.with().level(Level.SEVERE).error(ex).log("Failed to parse NutsExtensionInformation from {0} : {1}", u,ex.toString());
                 }
@@ -292,7 +292,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     private boolean isLoadedClassPath(NutsDefinition file, NutsSession session) {
         //session = CoreNutsUtils.validateSession(session,ws);
-        if (file.getId().equalsShortName(ws.id().parseRequired(NutsConstants.Ids.NUTS_API))) {
+        if (file.getId().equalsShortName(ws.id().parser().setLenient(false).parse(NutsConstants.Ids.NUTS_API))) {
             return true;
         }
         try {
@@ -429,7 +429,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     public String[] getExtensionRepositoryLocations(NutsId appId) {
         //should parse this form config?
         //or should be parse from and extension component?
-        String repos = ws.config().getEnv("bootstrapRepositoryLocations", "") + ";"
+        String repos = ws.env().get("bootstrapRepositoryLocations", "") + ";"
                 + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
                 + ";" + NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT;
         List<String> urls = new ArrayList<>();

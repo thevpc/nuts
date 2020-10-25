@@ -25,7 +25,7 @@ public class NutsLogRichFormatter extends Formatter {
             NutsLogRecord wRecord = (NutsLogRecord) record;
             Object[] p = wRecord.getParameters();
             NutsWorkspace ws = wRecord.getWorkspace();
-            String msgStr = ws.io().terminalFormat().formatText(
+            String msgStr = ws.io().term().getTerminalFormat().formatText(
                     wRecord.getFormatStyle(), wRecord.getMessage(),
                     p
             );
@@ -59,7 +59,7 @@ public class NutsLogRichFormatter extends Formatter {
         if (record instanceof NutsLogRecord) {
             NutsLogRecord wRecord = (NutsLogRecord) record;
             NutsTextFormatStyle style = wRecord.getFormatStyle();
-            NutsTerminalFormat tf = wRecord.getWorkspace().io().terminalFormat();
+            NutsTerminalFormat tf = wRecord.getWorkspace().io().term().getTerminalFormat();
             StringBuilder sb = new StringBuilder();
             String date = CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(wRecord.getMillis()));
             sb.append("<<").append(tf.escapeText(date)).append(">>");
@@ -190,7 +190,7 @@ public class NutsLogRichFormatter extends Formatter {
             String message = wRecord.getMessage();
             // \\{[0-9]+\\}
             message=message.replaceAll("\\\\\\{([0-9]+)\\\\}","{$1}");
-            String msgStr =wRecord.getWorkspace().io().terminalFormat().formatText(
+            String msgStr =wRecord.getWorkspace().io().term().getTerminalFormat().formatText(
                     style, message,
                     parameters2
             );

@@ -40,7 +40,6 @@ import net.vpc.app.nuts.runtime.config.DefaultNutsArtifactCall;
 import net.vpc.app.nuts.runtime.config.DefaultNutsDependencyBuilder;
 import net.vpc.app.nuts.runtime.config.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.runtime.config.DefaultNutsIdLocation;
-import net.vpc.app.nuts.runtime.filters.dependency.NutsDependencyOptionFilter;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
@@ -58,9 +57,11 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 5/16/17.
@@ -74,8 +75,6 @@ public class CoreNutsUtils {
             .withZone(ZoneId.systemDefault());
     public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}*-]+|<main>)://)?([a-zA-Z0-9_.${}*-]+)(:([a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
-    public static final NutsDependencyFilter OPTIONAL = NutsDependencyOptionFilter.OPTIONAL;
-    public static final NutsDependencyFilter NON_OPTIONAL = NutsDependencyOptionFilter.NON_OPTIONAL;
     public static final String[] COLOR_NAMES = new TreeSet<String>(Arrays.asList(
             "Maroon", "Brown", "Olive", "Teal", "Navy", "Black", "Red", "Orange", "Yellow", "Lime", "Green", "Cyan", "Blue", "Purple", "Magenta", "Grey", "Pink",
             "Apricot", "Beige", "Mint", "Lavender", "White", "Turquoise", "Aqua", "Aquamarine", "Gold", "Coral", "Tomato", "Firebrick",
@@ -378,6 +377,134 @@ public class CoreNutsUtils {
         return any;
     }
 
+    public static <T extends NutsFilter> T simplifyFilterOr(NutsWorkspace ws, Class<T> cls, T base, NutsFilter... all) {
+        if (all.length == 0) {
+            return (T) ws.filters().always(cls);
+        }
+        if (all.length == 1) {
+            return (T) all[0].simplify();
+        }
+        List<T> all2 = new ArrayList<>();
+        boolean updates = false;
+        boolean someFalse = false;
+        for (NutsFilter t : all) {
+            T t2 = t == null ? null : (T) t.simplify();
+            if (t2 != null) {
+                switch (t2.getFilterOp()) {
+                    case TRUE: {
+                        return (T) ws.filters().always(cls);
+                    }
+                    case FALSE: {
+                        someFalse = true;
+                        break;
+                    }
+                    default: {
+                        if (t2 != t) {
+                            updates = true;
+                        }
+                        all2.add(t2);
+                    }
+                }
+            } else {
+                updates = true;
+            }
+        }
+        if (all2.size() == 0) {
+            if (someFalse) {
+                return (T) ws.filters().never(cls);
+            }
+            return (T) ws.filters().always(cls);
+        }
+        if (all2.size() == 1) {
+            return all2.get(0);
+        }
+        if (!updates) {
+            return base;
+        }
+        return (T) ws.filters().any(cls,all2.toArray((T[]) Array.newInstance(cls,0)));
+    }
+
+    public static <T extends NutsFilter> T simplifyFilterAnd(NutsWorkspace ws, Class<T> cls, T base, NutsFilter... all) {
+        if (all.length == 0) {
+            return (T) ws.filters().always(cls);
+        }
+        if (all.length == 1) {
+            return (T) all[0].simplify();
+        }
+        List<T> all2 = new ArrayList<>();
+        boolean updates = false;
+        for (NutsFilter t : all) {
+            T t2 = t == null ? null : (T) t.simplify();
+            if (t2 != null) {
+                switch (t2.getFilterOp()) {
+                    case FALSE: {
+                        return (T) ws.filters().never(cls);
+                    }
+                    case TRUE: {
+                        updates = true;
+                        break;
+                    }
+                    default: {
+                        if (t2 != t) {
+                            updates = true;
+                        }
+                        all2.add(t2);
+                    }
+                }
+            } else {
+                updates = true;
+            }
+        }
+        if (all2.size() == 0) {
+            return (T) ws.filters().always(cls);
+        }
+        if (all2.size() == 1) {
+            return all2.get(0);
+        }
+        if (!updates) {
+            return base;
+        }
+        return (T) ws.filters().any(cls,all2.toArray((T[]) Array.newInstance(cls,0)));
+    }
+
+    public static <T extends NutsFilter> T simplifyFilterNone(NutsWorkspace ws, Class<T> cls, T base, NutsFilter... all) {
+        if (all.length == 0) {
+            return (T) ws.filters().always(cls);
+        }
+        List<T> all2 = new ArrayList<>();
+        boolean updates = false;
+        for (NutsFilter t : all) {
+            T t2 = t == null ? null : (T) t.simplify();
+            if (t2 != null) {
+                switch (t2.getFilterOp()) {
+                    case TRUE: {
+                        return (T) ws.filters().never(cls);
+                    }
+                    case FALSE: {
+                        updates = true;
+                        break;
+                    }
+                    default: {
+                        if (t2 != t) {
+                            updates = true;
+                        }
+                        all2.add(t2);
+                    }
+                }
+            } else {
+                updates = true;
+            }
+        }
+        if (all2.size() == 0) {
+            return (T) ws.filters().always(cls);
+        }
+        if (!updates) {
+            return base;
+        }
+        return (T) ws.filters().none(cls,all2.toArray((T[]) Array.newInstance(cls,0)));
+    }
+
+
     public static <T> T[] simplifyAndShrink(Class<T> cls, T... any) {
         List<T> all = new ArrayList<>();
         boolean updates = false;
@@ -388,6 +515,30 @@ public class CoreNutsUtils {
                     updates = true;
                 }
                 all.add(t2);
+            } else {
+                updates = true;
+            }
+        }
+        if (!updates) {
+            return null;
+        }
+        return all.toArray((T[]) Array.newInstance(cls, 0));
+    }
+
+    public static <T extends NutsFilter> T[] simplifyAndShrinkFilters(Class<T> cls, Predicate<T> onRemove, T... any) {
+        List<T> all = new ArrayList<>();
+        boolean updates = false;
+        for (T t : any) {
+            T t2 = t == null ? null : (T) t.simplify();
+            if (t2 != null) {
+                if (onRemove != null && onRemove.test(t2)) {
+                    updates = true;
+                } else {
+                    if (t2 != t) {
+                        updates = true;
+                    }
+                    all.add(t2);
+                }
             } else {
                 updates = true;
             }
@@ -488,118 +639,119 @@ public class CoreNutsUtils {
 
     public static String resolveRepositoryEffectiveUrlFromUrl(String location) {
         Matcher matcher = Pattern.compile("(?<p>[a-zA-Z+])://(?<r>.*>)").matcher(location);
-        if(matcher.find()){
-            String protocol=matcher.group("p");
-            String rest=matcher.group("r");
-            boolean http=false;
-            boolean https=false;
-            boolean nuts=false;
-            boolean nutsrv=false;
-            boolean file=false;
-            boolean mvn=false;
+        if (matcher.find()) {
+            String protocol = matcher.group("p");
+            String rest = matcher.group("r");
+            boolean http = false;
+            boolean https = false;
+            boolean nuts = false;
+            boolean nutsrv = false;
+            boolean file = false;
+            boolean mvn = false;
             for (String s : protocol.split("[+]")) {
-                switch (s){
-                    case "http":{
-                        http=true;
+                switch (s) {
+                    case "http": {
+                        http = true;
                         break;
                     }
-                    case "https":{
-                        https=true;
+                    case "https": {
+                        https = true;
                         break;
                     }
-                    case "nuts":{
-                        nuts=true;
+                    case "nuts": {
+                        nuts = true;
                         break;
                     }
-                    case "nutsrv":{
-                        nutsrv=true;
+                    case "nutsrv": {
+                        nutsrv = true;
                         break;
                     }
-                    case "file":{
-                        file=true;
+                    case "file": {
+                        file = true;
                         break;
                     }
-                    case "mvn":{
-                        mvn=true;
+                    case "mvn": {
+                        mvn = true;
                         break;
                     }
-                    default:{
-                        throw new IllegalArgumentException("Unsupported protocol "+s+" in "+location);
+                    default: {
+                        throw new IllegalArgumentException("Unsupported protocol " + s + " in " + location);
                     }
                 }
             }
-            if(((nuts?1:0)+(mvn?1:0)>0) || ((nutsrv?1:0)+(mvn?1:0)>0) ){
-                throw new IllegalArgumentException("Unsupported protocol "+protocol+" in "+location);
+            if (((nuts ? 1 : 0) + (mvn ? 1 : 0) > 0) || ((nutsrv ? 1 : 0) + (mvn ? 1 : 0) > 0)) {
+                throw new IllegalArgumentException("Unsupported protocol " + protocol + " in " + location);
             }
-            if(https){
-                return "https://"+rest;
+            if (https) {
+                return "https://" + rest;
             }
-            if(http){
-                return "http://"+rest;
+            if (http) {
+                return "http://" + rest;
             }
-            if(file){
-                return "file:"+rest;
+            if (file) {
+                return "file:" + rest;
             }
             return location;//"file:"+rest;
         }
 //        try {
-            return location;//new File(location).toURI().toURL().toString();
+        return location;//new File(location).toURI().toURL().toString();
 //        } catch (MalformedURLException e) {
 //            throw new IllegalArgumentException(e);
 //        }
     }
+
     public static String resolveRepositoryTypeFromUrl(String location) {
         Matcher matcher = Pattern.compile("(?<p>[a-zA-Z+])://(?<r>.*>)").matcher(location);
-        if(matcher.find()){
-            String protocol=matcher.group("p");
-            String rest=matcher.group("r");
-            boolean http=false;
-            boolean https=false;
-            boolean nuts=false;
-            boolean nutsrv=false;
-            boolean file=false;
-            boolean mvn=false;
+        if (matcher.find()) {
+            String protocol = matcher.group("p");
+            String rest = matcher.group("r");
+            boolean http = false;
+            boolean https = false;
+            boolean nuts = false;
+            boolean nutsrv = false;
+            boolean file = false;
+            boolean mvn = false;
             for (String s : protocol.split("[+]")) {
-                switch (s){
-                    case "http":{
-                        http=true;
+                switch (s) {
+                    case "http": {
+                        http = true;
                         break;
                     }
-                    case "https":{
-                        https=true;
+                    case "https": {
+                        https = true;
                         break;
                     }
-                    case "nuts":{
-                        nuts=true;
+                    case "nuts": {
+                        nuts = true;
                         break;
                     }
-                    case "nutsrv":{
-                        nutsrv=true;
+                    case "nutsrv": {
+                        nutsrv = true;
                         break;
                     }
-                    case "file":{
-                        file=true;
+                    case "file": {
+                        file = true;
                         break;
                     }
-                    case "mvn":{
-                        mvn=true;
+                    case "mvn": {
+                        mvn = true;
                         break;
                     }
-                    default:{
-                        throw new IllegalArgumentException("Unsupported protocol "+s+" in "+location);
+                    default: {
+                        throw new IllegalArgumentException("Unsupported protocol " + s + " in " + location);
                     }
                 }
             }
-            if(((nuts?1:0)+(mvn?1:0)>0) || ((nutsrv?1:0)+(mvn?1:0)>0) ){
-                throw new IllegalArgumentException("Unsupported protocol "+protocol+" in "+location);
+            if (((nuts ? 1 : 0) + (mvn ? 1 : 0) > 0) || ((nutsrv ? 1 : 0) + (mvn ? 1 : 0) > 0)) {
+                throw new IllegalArgumentException("Unsupported protocol " + protocol + " in " + location);
             }
-            if(nutsrv){
+            if (nutsrv) {
                 return NutsConstants.RepoTypes.NUTS_SERVER;
             }
-            if(nuts){
+            if (nuts) {
                 return NutsConstants.RepoTypes.NUTS;
             }
-            if(mvn){
+            if (mvn) {
                 return NutsConstants.RepoTypes.MAVEN;
             }
         }
@@ -611,10 +763,10 @@ public class CoreNutsUtils {
         String type = def.getType();
         String location = def.getLocation();
         if (location != null) {
-            if(CoreStringUtils.isBlank(type)) {
+            if (CoreStringUtils.isBlank(type)) {
                 type = resolveRepositoryTypeFromUrl(location);
             }
-            location=resolveRepositoryEffectiveUrlFromUrl(location);
+            location = resolveRepositoryEffectiveUrlFromUrl(location);
         }
         o.setName(def.getName());
         o.setCreate(def.isCreate());
@@ -642,7 +794,7 @@ public class CoreNutsUtils {
     }
 
     public static String tracePlainNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
-        NutsIdFormat idFormat = ws.id();
+        NutsIdFormat idFormat = ws.id().formatter();
         return idFormat.value(id.getId()).format();
     }
 
@@ -657,7 +809,7 @@ public class CoreNutsUtils {
 //    }
 
     public static Object tracePropsNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
-        NutsIdFormat idFormat = ws.id();
+        NutsIdFormat idFormat = ws.id().formatter();
         return idFormat.value(id.getId()).toString();
     }
 
@@ -675,8 +827,10 @@ public class CoreNutsUtils {
             if (def.getInstallInformation().getInstallFolder() != null) {
                 x.put("install-folder", def.getInstallInformation().getInstallFolder().toString());
             }
-            x.put("install-status", def.getInstallInformation().getInstallStatus().id());
-            x.put("just-installed", def.getInstallInformation().isJustInstalled());
+            x.put("install-status", def.getInstallInformation().getInstallStatus().stream().map(NutsInstallStatus::id).collect(Collectors.joining(", "))
+            );
+            x.put("was-installed", def.getInstallInformation().isWasInstalled());
+            x.put("was-required", def.getInstallInformation().isWasRequired());
         }
         if (def.getRepositoryName() != null) {
             x.put("repository-name", def.getRepositoryName());
@@ -685,8 +839,8 @@ public class CoreNutsUtils {
             x.put("repository-uuid", def.getRepositoryUuid());
         }
         if (def.getDescriptor() != null) {
-            x.put("descriptor", ws.descriptor().value(def.getDescriptor()).format());
-            x.put("effective-descriptor", ws.descriptor().value(
+            x.put("descriptor", ws.descriptor().formatter().value(def.getDescriptor()).format());
+            x.put("effective-descriptor", ws.descriptor().formatter(
                     NutsWorkspaceUtils.of(ws).getEffectiveDescriptor(def)
             ).format());
         }
@@ -710,7 +864,7 @@ public class CoreNutsUtils {
     public static NutsIterableOutput getValidOutputFormat(NutsSession session) {
         NutsIterableOutput f = session.getIterableOutput();
         if (f == null) {
-            return session.getWorkspace().iter().setSession(session);
+            return session.getWorkspace().formats().iter().setSession(session);
         }
         return f;
     }
@@ -1036,13 +1190,13 @@ public class CoreNutsUtils {
 
     public static String resolveMessageToTraceOrNullIfNutsNotFoundException(Throwable ex) {
         String msg = null;
-        if (ex instanceof NutsNotFoundException) {
+        if (ex instanceof NutsNotFoundException || ex instanceof UncheckedIOException) {
             if (ex.getCause() != null) {
                 Throwable ex2 = ex.getCause();
                 if (ex2 instanceof UncheckedIOException) {
                     ex2 = ex.getCause();
                 }
-                msg = ex2.getMessage();
+                msg = resolveMessageToTraceOrNullIfNutsNotFoundException(ex2);
             }
         } else {
             msg = ex.getMessage();
@@ -1184,7 +1338,7 @@ public class CoreNutsUtils {
 //                }
             default: {
                 String[] kv = extractKeyEqValue(s);
-                if(kv==null){
+                if (kv == null) {
                     throw new IllegalArgumentException("Unsupported boot repository. Missing name: " + s);
                 }
                 return new NutsRepositoryDefinition().setName(kv[0])
@@ -1194,17 +1348,18 @@ public class CoreNutsUtils {
             }
         }
     }
-    private static String[] extractKeyEqValue(String s){
+
+    private static String[] extractKeyEqValue(String s) {
         Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.*)").matcher(s);
         if (matcher.find()) {
-            return new String[]{matcher.group("key"),matcher.group("value")};
+            return new String[]{matcher.group("key"), matcher.group("value")};
         } else {
             return null;
         }
     }
 
     public String tracePlainNutsId(NutsWorkspace ws, NutsId id) {
-        NutsIdFormat idFormat = ws.id();
+        NutsIdFormat idFormat = ws.id().formatter();
         return idFormat.value(id).format();
     }
 
@@ -1234,5 +1389,162 @@ public class CoreNutsUtils {
                 t.setPriority(Thread.NORM_PRIORITY);
             return t;
         }
+    }
+
+    public static String[] parseCommandLineArray(String commandLineString) {
+        if (commandLineString == null) {
+            return new String[0];
+        }
+        List<String> args = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        final int START = 0;
+        final int IN_WORD = 1;
+        final int IN_QUOTED_WORD = 2;
+        final int IN_DBQUOTED_WORD = 3;
+        int status = START;
+        char[] charArray = commandLineString.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            char c = charArray[i];
+            switch (status) {
+                case START: {
+                    switch (c) {
+                        case ' ': {
+                            //ignore
+                            break;
+                        }
+                        case '\'': {
+                            status = IN_QUOTED_WORD;
+                            //ignore
+                            break;
+                        }
+                        case '"': {
+                            status = IN_DBQUOTED_WORD;
+                            //ignore
+                            break;
+                        }
+                        case '\\': {
+                            status = IN_WORD;
+                            i++;
+                            sb.append(charArray[i]);
+                            break;
+                        }
+                        default: {
+                            sb.append(c);
+                            status = IN_WORD;
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case IN_WORD: {
+                    switch (c) {
+                        case ' ': {
+                            args.add(sb.toString());
+                            sb.delete(0, sb.length());
+                            status = START;
+                            break;
+                        }
+                        case '\'': {
+                            throw new NutsParseException(null, "Illegal char " + c);
+                        }
+                        case '"': {
+                            throw new NutsParseException(null, "Illegal char " + c);
+                        }
+                        case '\\': {
+                            i++;
+                            sb.append(charArray[i]);
+                            break;
+                        }
+                        default: {
+                            sb.append(c);
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case IN_QUOTED_WORD: {
+                    switch (c) {
+                        case '\'': {
+                            args.add(sb.toString());
+                            sb.delete(0, sb.length());
+                            status = START;
+                            //ignore
+                            break;
+                        }
+                        case '\\': {
+                            i = readEscapedArgument(charArray, i + 1, sb);
+                            //ignore
+                            break;
+                        }
+                        default: {
+                            sb.append(c);
+                            //ignore
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case IN_DBQUOTED_WORD: {
+                    switch (c) {
+                        case '"': {
+                            args.add(sb.toString());
+                            sb.delete(0, sb.length());
+                            status = START;
+                            //ignore
+                            break;
+                        }
+                        case '\\': {
+                            i = readEscapedArgument(charArray, i + 1, sb);
+                            //ignore
+                            break;
+                        }
+                        default: {
+                            sb.append(c);
+                            //ignore
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        switch (status) {
+            case START: {
+                break;
+            }
+            case IN_WORD: {
+                args.add(sb.toString());
+                sb.delete(0, sb.length());
+                break;
+            }
+            case IN_QUOTED_WORD: {
+                throw new NutsParseException(null, "Expected '");
+            }
+        }
+        return args.toArray(new String[0]);
+    }
+    public static int readEscapedArgument(char[] charArray, int i, StringBuilder sb) {
+        char c = charArray[i];
+        switch (c) {
+            case 'n': {
+                sb.append('\n');
+                break;
+            }
+            case 't': {
+                sb.append('\t');
+                break;
+            }
+            case 'r': {
+                sb.append('\r');
+                break;
+            }
+            case 'f': {
+                sb.append('\f');
+                break;
+            }
+            default: {
+                sb.append(c);
+            }
+        }
+        return i;
     }
 }

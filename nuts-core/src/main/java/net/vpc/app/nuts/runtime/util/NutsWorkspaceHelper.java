@@ -48,7 +48,7 @@ public class NutsWorkspaceHelper {
             boolean ok = false;
             for (NutsRepository repository : parent.config().getMirrors(session)) {
                 if (repository.config().isEnabled()) {
-                    if (repositoryFilter == null || repositoryFilter.accept(repository)) {
+                    if (repositoryFilter == null || repositoryFilter.acceptRepository(repository)) {
                         repos.add(repository);
                         ok = true;
                     }

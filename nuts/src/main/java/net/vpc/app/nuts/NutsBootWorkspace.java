@@ -35,6 +35,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -105,12 +107,12 @@ public final class NutsBootWorkspace {
     };
 
     public NutsBootWorkspace(String... args) {
-        this(PrivateNutsArgumentsParser.parseNutsArguments(args));
+        this(Nuts.createOptions().parseArguments(args));
     }
 
     public NutsBootWorkspace(NutsWorkspaceOptions options) {
         if (options == null) {
-            options = new NutsDefaultWorkspaceOptions();
+            options = Nuts.createOptions();
         }
         LOG.setOptions(options);
         if (options.getCreationTime() == 0) {
@@ -195,7 +197,8 @@ public final class NutsBootWorkspace {
         File file = PrivateNutsUtils.Mvn.resolveOrDownloadJar(NutsConstants.Ids.NUTS_API + "#" + workspaceInformation.getApiVersion(),
                 repos.toArray(new String[0]),
                 workspaceInformation.getLib(), LOG,
-                true
+                true,
+                options.getExpireTime()
         );
         if (file == null) {
             errors.append("Unable to load nuts ").append(workspaceInformation.getApiVersion()).append("\n");
@@ -227,7 +230,7 @@ public final class NutsBootWorkspace {
         }
         cmd.add("-jar");
         cmd.add(file.getPath());
-        cmd.addAll(Arrays.asList(options.format().compact().getBootCommand()));
+        cmd.addAll(Arrays.asList(options.format().compact().setApiVersion(workspaceInformation.getApiVersion()).getBootCommand()));
         if (showCommand) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < cmd.size(); i++) {
@@ -427,7 +430,7 @@ public final class NutsBootWorkspace {
                     if (workspaceInformation.getJavaOptions() == null) {
                         workspaceInformation.setJavaOptions((String) obj.get("javaOptions"));
                     }
-                } catch (UncheckedIOException e) {
+                } catch (UncheckedIOException|NutsIOException e) {
                     LOG.log(Level.CONFIG, apiPath.toString(), "unable to read {0}");
                 }
             }
@@ -465,12 +468,12 @@ public final class NutsBootWorkspace {
                         Path runtimeFile = Paths.get(workspaceInformation.getCacheBoot())
                                 .resolve(PrivateNutsUtils.idToPath(rid)).resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME);
                         boolean cacheLoaded = false;
-                        if (isLoadFromCache() && Files.isRegularFile(runtimeFile)) {
+                        if (isLoadFromCache() && PrivateNutsUtils.isFileAccessible(runtimeFile,options.getExpireTime(),LOG)) {
                             try {
-                                Map<String, Object> obj = PrivateNutsJsonParser.parse(runtimeFile);
-                                LOG.log(Level.CONFIG, PrivateNutsLog.READ, "loaded {0} file : {1}", new String[]{NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME, runtimeFile.toString()});
-                                loadedDeps = PrivateNutsUtils.parseDependencies((String) obj.get("dependencies"));
-                                extraBootRepositories = (String) obj.get("bootRepositories");
+                                    Map<String, Object> obj = PrivateNutsJsonParser.parse(runtimeFile);
+                                    LOG.log(Level.CONFIG, PrivateNutsLog.READ, "loaded {0} file : {1}", new String[]{NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME, runtimeFile.toString()});
+                                    loadedDeps = PrivateNutsUtils.parseDependencies((String) obj.get("dependencies"));
+                                    extraBootRepositories = (String) obj.get("bootRepositories");
                             } catch (Exception ex) {
                                 LOG.log(Level.FINEST, PrivateNutsLog.FAIL, "unable to load {0} file : {1} : {2}", new String[]{NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME, runtimeFile.toString(), ex.toString()});
                                 //ignore...
@@ -612,12 +615,12 @@ public final class NutsBootWorkspace {
 
             String[] repositories = PrivateNutsUtils.splitUrlStrings(workspaceInformation.getBootRepositories()).toArray(new String[0]);
 
-            allExtensionFiles.put(workspaceInformation.getRuntimeId(), getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "runtime"));
+            allExtensionFiles.put(workspaceInformation.getRuntimeId(), getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "runtime",options.getExpireTime()));
             for (String idStr : workspaceInformation.getRuntimeDependenciesSet()) {
-                allExtensionFiles.put(idStr, getBootCacheJar(idStr, repositories, workspaceBootLibFolder, !recover, "runtime dependency"));
+                allExtensionFiles.put(idStr, getBootCacheJar(idStr, repositories, workspaceBootLibFolder, !recover, "runtime dependency",options.getExpireTime()));
             }
             for (String idStr : workspaceInformation.getExtensionDependenciesSet()) {
-                allExtensionFiles.put(idStr, getBootCacheJar(idStr, repositories, workspaceBootLibFolder, !recover, "extension dependency"));
+                allExtensionFiles.put(idStr, getBootCacheJar(idStr, repositories, workspaceBootLibFolder, !recover, "extension dependency",options.getExpireTime()));
             }
 
             bootClassWorldURLs = resolveClassWorldURLs(allExtensionFiles.values());
@@ -722,19 +725,19 @@ public final class NutsBootWorkspace {
         return base + File.separator + path;
     }
 
-    private File getBootCacheJar(String id, String[] repositories, String cacheFolder, boolean useCache, String name) {
+    private File getBootCacheJar(String id, String[] repositories, String cacheFolder, boolean useCache, String name, Instant expire) {
         PrivateNutsId vid = PrivateNutsId.parse(id);
-        File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache);
+        File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache,expire);
         if (f == null) {
             throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(), "Unable to load " + name + " " + vid + " from repositories " + Arrays.asList(repositories));
         }
         return f;
     }
 
-    private File getBootCacheFile(PrivateNutsId vid, String fileName, String[] repositories, String cacheFolder, boolean useCache) {
+    private File getBootCacheFile(PrivateNutsId vid, String fileName, String[] repositories, String cacheFolder, boolean useCache, Instant expire) {
         String path = getPathFile(vid, fileName);
         for (String repository : repositories) {
-            File file = getBootCacheFile(path, repository, cacheFolder, useCache);
+            File file = getBootCacheFile(path, repository, cacheFolder, useCache, expire);
             if (file != null) {
                 return file;
             }
@@ -750,14 +753,14 @@ public final class NutsBootWorkspace {
         return id.getGroupId().replace('.', '/') + '/' + id.getArtifactId() + '/' + id.getVersion() + "/" + name;
     }
 
-    private File getBootCacheFile(String path, String repository, String cacheFolder, boolean useCache) {
+    private File getBootCacheFile(String path, String repository, String cacheFolder, boolean useCache, Instant expire) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
         repository = repository.trim();
         repository = expandPath(repository, workspaceInformation.getWorkspaceLocation());
         if (useCache && cacheFolder != null) {
 
             File f = new File(cacheFolder, path.replace('/', File.separatorChar));
-            if (f.isFile()) {
+            if (f.isFile() && PrivateNutsUtils.isFileAccessible(f.toPath(),expire,LOG)) {
                 return f;
             }
             if (cacheFolder.equals(repository)) {

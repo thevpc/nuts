@@ -9,7 +9,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 
 import java.io.PrintStream;
-import java.io.Writer;
 import java.util.*;
 import net.vpc.app.nuts.runtime.format.props.DefaultPropertiesFormat;
 import net.vpc.app.nuts.runtime.format.NutsObjectFormatBase;
@@ -32,7 +31,7 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
 
     @Override
     public NutsObjectFormat setValue(Object value) {
-        return super.setValue(getWorkspace().element().toElement(value));
+        return super.setValue(getWorkspace().formats().element().toElement(value));
     }
 
     @Override
@@ -97,15 +96,15 @@ public class NutsObjectFormatTable extends NutsObjectFormatBase {
             case NULL:{
                 List<NutsElement> a = new ArrayList<>();
                 a.add(value);
-                print(w, getWorkspace().element().toElement(a));
+                print(w, getWorkspace().formats().element().toElement(a));
                 break;
             }
             case OBJECT: {
-                print(w, getWorkspace().element().toElement(value.object().children()));
+                print(w, getWorkspace().formats().element().toElement(value.object().children()));
                 break;
             }
             case ARRAY: {
-                NutsTableFormat t = getWorkspace().table();
+                NutsTableFormat t = getWorkspace().formats().table();
                 NutsMutableTableModel model = t.createModel();
                 t.setModel(model);
                 t.configure(true, getExtraConfigArray());

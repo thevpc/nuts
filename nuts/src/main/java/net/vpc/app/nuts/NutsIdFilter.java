@@ -35,7 +35,7 @@ package net.vpc.app.nuts;
  * @since 0.5.4
  * @category Descriptor
  */
-public interface NutsIdFilter extends NutsSearchIdFilter {
+public interface NutsIdFilter extends NutsArtifactFilter {
 
     /**
      * return true when the id is to be accepted
@@ -43,11 +43,23 @@ public interface NutsIdFilter extends NutsSearchIdFilter {
      * @param session current workspace session
      * @return true when the id is to be accepted
      */
-    boolean accept(NutsId id, NutsSession session);
+    boolean acceptId(NutsId id, NutsSession session);
 
     @Override
     default boolean acceptSearchId(NutsSearchId sid, NutsSession session) {
-        return accept(sid.getId(session), session);
+        return acceptId(sid.getId(session), session);
+    }
+
+    default NutsIdFilter or(NutsIdFilter other) {
+        return or((NutsFilter)other).to(NutsIdFilter.class);
+    }
+
+    default NutsIdFilter and(NutsIdFilter other) {
+        return and((NutsFilter)other).to(NutsIdFilter.class);
+    }
+
+    default NutsIdFilter neg() {
+        return NutsArtifactFilter.super.neg().to(NutsIdFilter.class);
     }
 
 }

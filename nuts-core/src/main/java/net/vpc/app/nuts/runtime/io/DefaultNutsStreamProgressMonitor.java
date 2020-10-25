@@ -73,7 +73,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
         }
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
-            NutsTerminalFormat terminalFormat = event.getSession().getWorkspace().io().getTerminalFormat();
+            NutsTerminalFormat terminalFormat = event.getSession().getWorkspace().io().term().getTerminalFormat();
             if(!optionNewline) {
                 out.print("`" + FPrintCommands.MOVE_LINE_START + "`");
             }else{

@@ -322,28 +322,6 @@ public interface NutsIdFormat extends NutsFormat {
      */
     NutsId getValue();
 
-
-    /**
-     * create new instance of id builder
-     * @return new instance of id builder
-     */
-    NutsIdBuilder builder();
-
-    /**
-     * detect nuts id from resources containing the given class
-     * or null if not found. If multiple resolutions return the first.
-     * @param clazz to search for
-     * @return nuts id detected from resources containing the given class
-     */
-    NutsId resolveId(Class clazz);
-
-    /**
-     * detect all nuts ids from resources containing the given class.
-     * @param clazz to search for
-     * @return all nuts ids detected from resources containing the given class
-     */
-    NutsId[] resolveIds(Class clazz);
-
     /**
      * set id to format
      * @param id id to format
@@ -368,22 +346,6 @@ public interface NutsIdFormat extends NutsFormat {
      */
     NutsIdFormat set(NutsId id);
 
-    /**
-     * parse id or error if not valid
-     * @param id to parse
-     * @return parsed id
-     */
-    NutsId parseRequired(String id);
-
-    /**
-     * parse id or null if not valid.
-     * id is parsed in the form
-     * namespace://group:name#version?key=&lt;value&gt;{@code &}key=&lt;value&gt; ...
-     * @param id to parse
-     * @return parsed id
-     * @throws NutsParseException if the string cannot be evaluated
-     */
-    NutsId parse(String id);
 
     /**
      * update session

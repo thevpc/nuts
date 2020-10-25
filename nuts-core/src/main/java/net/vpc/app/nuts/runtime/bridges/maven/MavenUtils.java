@@ -154,7 +154,7 @@ public class MavenUtils {
             default:{
                 nds= NutsDependencyScopes.parseScope(s,true);
                 if(nds==null){
-                    LOG.with().level(Level.FINER).verb(NutsLogVerb.FAIL).log( "unable to parse maven scope "+s+" for "+d);
+                    LOG.with().level(Level.FINER).verb(NutsLogVerb.FAIL).log( "unable to parse maven scope {0} for {1}",s,d);
                     nds=NutsDependencyScope.API;
                 }
             }
@@ -194,7 +194,7 @@ public class MavenUtils {
                 return null;
             }
             byte[] bytes = CoreIOUtils.loadByteArray(stream);
-            Pom pom = new PomXmlParser().parse(new NamedByteArrayInputStream(bytes,urlDesc));
+            Pom pom = new PomXmlParser(session.getWorkspace()).parse(new NamedByteArrayInputStream(bytes,urlDesc));
             boolean executable = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             boolean application = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             if ("true".equals(pom.getProperties().get("nuts.executable"))) {
@@ -232,7 +232,7 @@ public class MavenUtils {
             String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.id(), 7) + "] ";
             LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).time(time).formatted()
                     .log("{0}{1} parse pom    {2}", fetchString
-                            , CoreStringUtils.alignLeft(repository==null?"<no-repo>":repository.config().name(), 20)
+                            , CoreStringUtils.alignLeft(repository==null?"<no-repo>":repository.getName(), 20)
                             ,urlDesc
                     );
 
@@ -398,7 +398,7 @@ public class MavenUtils {
         Iterator<PomId> it = ArchetypeCatalogParser.createArchetypeCatalogIterator(stream, filter == null ? null : new PomIdFilter() {
             @Override
             public boolean accept(PomId id) {
-                return filter.accept(toNutsId(id), session);
+                return filter.acceptId(toNutsId(id), session);
             }
         }, autoClose);
         return IteratorBuilder.of(it).convert(pomId -> toNutsId(pomId),"PomId->NutsId").build();

@@ -32,6 +32,7 @@ package net.vpc.app.nuts.runtime.filters.version;
 import java.io.IOException;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.DefaultNutsVersion;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
@@ -48,7 +49,7 @@ import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 /**
  * Examples [2.6,], ]2.6,] . Created by vpc on 1/20/17.
  */
-public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter, Serializable {
+public class DefaultNutsVersionFilter extends AbstractNutsFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -76,8 +77,12 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
      */
     private final List<NutsVersionInterval> intervals = new ArrayList<>();
 
+    public DefaultNutsVersionFilter(NutsWorkspace ws) {
+        super(ws, NutsFilterOp.CUSTOM);
+    }
+
     @Override
-    public boolean accept(NutsVersion version, NutsSession session) {
+    public boolean acceptVersion(NutsVersion version, NutsSession session) {
         if (intervals.isEmpty()) {
             return true;
         }
@@ -94,10 +99,17 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
     }
 
     public static NutsVersionFilter parse(String version) {
+        return parse(version,null);
+    }
+
+    public static NutsVersionFilter parse(String version,NutsWorkspace ws) {
         if (DefaultNutsVersion.isBlank(version) || "*".equals(version)) {
-            return AllNutsVersionFilter.INSTANCE;
+            if(ws!=null){
+                return ws.version().filter().always();
+            }
+            return new NutsVersionFilterTrue(ws);
         }
-        ParseHelper pp = new ParseHelper();
+        ParseHelper pp = new ParseHelper(ws);
         return pp.parse(version);
     }
 
@@ -146,7 +158,7 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
         if (!updates) {
             return this;
         }
-        DefaultNutsVersionFilter d = new DefaultNutsVersionFilter();
+        DefaultNutsVersionFilter d = new DefaultNutsVersionFilter(getWorkspace());
         d.intervals.addAll(intervals2);
         return d;
     }
@@ -191,7 +203,11 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
         int close = -1;
         String v1 = null;
         String v2 = null;
-        DefaultNutsVersionFilter dd = new DefaultNutsVersionFilter();
+        DefaultNutsVersionFilter dd;
+
+        public ParseHelper(NutsWorkspace ws) {
+            dd = new DefaultNutsVersionFilter(ws);
+        }
 
         void reset() {
             open = -1;

@@ -12,9 +12,9 @@ public class NAdminUtils {
         PrintStream out = context.getSession().out();
         out.print(prefix);
         if (enabled) {
-            out.print("==" + repository.config().getName() + disabledString + "==");
+            out.print("==" + repository.getName() + disabledString + "==");
         } else {
-            out.print("@@" + repository.config().getName() + disabledString + "@@");
+            out.print("@@" + repository.getName() + disabledString + "@@");
         }
         out.print(" : " + repository.getRepositoryType() + " " + repository.config().getLocation(false));
         out.println();

@@ -120,7 +120,8 @@ public class CompatUtils {
                         r.getName(),
                         r.getPath(),
                         r.getVersion(),
-                        r.getPackaging()
+                        r.getPackaging(),
+                        r.getPriority()
                 );
                 list.add(r2);
             }

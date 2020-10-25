@@ -208,7 +208,7 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
         if (out == null) {
             out = getValidSession().getTerminal().getOut();
         }
-        return ws.io().getTerminalFormat().prepare(out);
+        return ws.io().term().getTerminalFormat().prepare(out);
     }
 
     public PrintStream getValidPrintStream() {

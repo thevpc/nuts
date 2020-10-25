@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.runtime;
 
 import net.vpc.app.nuts.NutsDescriptorContentParserContext;
+import net.vpc.app.nuts.NutsInput;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 
@@ -39,7 +40,6 @@ import java.io.UncheckedIOException;
 
 import net.vpc.app.nuts.runtime.io.NamedByteArrayInputStream;
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
-import net.vpc.app.nuts.runtime.util.io.InputSource;
 
 /**
  * Created by vpc on 1/29/17.
@@ -47,14 +47,14 @@ import net.vpc.app.nuts.runtime.util.io.InputSource;
 public class DefaultNutsDescriptorContentParserContext implements NutsDescriptorContentParserContext {
 
     private final NutsSession session;
-    private final InputSource file;
+    private final NutsInput file;
     private final String fileExtension;
     private final String mimeType;
     private byte[] bytes;
     private final String[] parseOptions;
 
-    public DefaultNutsDescriptorContentParserContext(NutsSession session, InputSource file, String fileExtension, String mimeType, String[] parseOptions) {
-        this.file = file.multi();
+    public DefaultNutsDescriptorContentParserContext(NutsSession session, NutsInput file, String fileExtension, String mimeType, String[] parseOptions) {
+        this.file = session.getWorkspace().io().input().setMultiRead(true).of(file);
         this.session = session;
         this.fileExtension = fileExtension;
         this.mimeType = mimeType;

@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -9,9 +9,9 @@
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2020 thevpc
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -30,26 +30,29 @@
 package net.vpc.app.nuts.main.installers;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.DefaultNutsDefinition;
+import net.vpc.app.nuts.runtime.DefaultNutsInstallInfo;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 
+import java.util.EnumSet;
+
 /**
- *
  * @author vpc
  */
 public class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
 
-    private String getNutsVersion(NutsExecutionContext executionContext){
+    private String getNutsVersion(NutsExecutionContext executionContext) {
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
             for (NutsDependency dependency : descriptor.getDependencies()) {
-                if(dependency.getId().getShortName().equals(NutsConstants.Ids.NUTS_API)){
-                    return dependency.getId().getVersion().getValue();
+                if (dependency.toId().getShortName().equals(NutsConstants.Ids.NUTS_API)) {
+                    return dependency.toId().getVersion().getValue();
                 }
             }
         }
         for (NutsDependency dependency : executionContext.getDefinition().getDependencies()) {
-            if(dependency.getId().getShortName().equals(NutsConstants.Ids.NUTS_API)){
-                return dependency.getId().getVersion().getValue();
+            if (dependency.toId().getShortName().equals(NutsConstants.Ids.NUTS_API)) {
+                return dependency.toId().getVersion().getValue();
             }
         }
         return null;
@@ -61,10 +64,15 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
 //        NutsId id = executionContext.getDefinition().getId();
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
+            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition())
+                    .setInstallInformation(
+                            new DefaultNutsInstallInfo(executionContext.getDefinition().getInstallInformation())
+                                    .setInstallStatus(EnumSet.of(NutsInstallStatus.INSTALLED))
+                    );
             executionContext.getWorkspace().exec()
                     .setSession(executionContext.getExecSession())
                     //                    .executionType(NutsExecutionType.EMBEDDED)
-                    .setCommand(executionContext.getDefinition())
+                    .setCommand(def2)
                     .addCommand("--nuts-exec-mode=install")
                     .addExecutorOptions("--nuts-auto-install=false")
                     .addCommand(executionContext.getArguments())
@@ -77,11 +85,18 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
     @Override
     public void update(NutsExecutionContext executionContext) {
         NutsWorkspaceUtils.of(executionContext.getWorkspace()).checkReadOnly();
-        NutsId id = executionContext.getDefinition().getId();
+//        NutsId id = executionContext.getDefinition().getId();
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
+            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition())
+                    .setInstallInformation(
+                            new DefaultNutsInstallInfo(executionContext.getDefinition().getInstallInformation())
+                                    .setInstallStatus(EnumSet.of(NutsInstallStatus.INSTALLED))
+                    );
             executionContext.getWorkspace().exec()
-                    .addCommand(id.builder().setNamespace(null).build().toString(), "--nuts-exec-mode=update", "--force")
+                    .setCommand(def2)
+                    .addCommand("--nuts-exec-mode=update","--force")
+//                    .addCommand(id.builder().setNamespace(null).build().toString(), "--nuts-exec-mode=update", "--force")
                     .addExecutorOptions().addCommand(executionContext.getArguments())
                     .setFailFast(true).run();
         }
@@ -94,7 +109,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
         NutsWorkspaceUtils.of(executionContext.getWorkspace()).checkReadOnly();
         NutsId id = executionContext.getDefinition().getId();
         if ("jar".equals(executionContext.getDefinition().getDescriptor().getPackaging())) {
-            NutsExecutionEntry[] executionEntries = ws.io().parseExecutionEntries(executionContext.getDefinition().getPath());
+            NutsExecutionEntry[] executionEntries = ws.apps().execEntries().parse(executionContext.getDefinition().getPath());
             for (NutsExecutionEntry executionEntry : executionEntries) {
                 if (executionEntry.isApp()) {
                     //

@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.PrintStream;
+import java.time.Instant;
 import java.util.Map;
 
 /**
@@ -556,13 +557,6 @@ public interface NutsSession extends NutsConfigurable {
      *
      * @return current terminal
      */
-    NutsSessionTerminal terminal();
-
-    /**
-     * current terminal
-     *
-     * @return current terminal
-     */
     NutsSessionTerminal getTerminal();
 
     /**
@@ -571,13 +565,6 @@ public interface NutsSession extends NutsConfigurable {
      * @return current workspace
      */
     NutsWorkspace getWorkspace();
-
-    /**
-     * current workspace
-     *
-     * @return current workspace
-     */
-    NutsWorkspace workspace();
 
 
     /**
@@ -626,6 +613,26 @@ public interface NutsSession extends NutsConfigurable {
      */
     NutsSession setIndexed(Boolean value);
 
+
+    /**
+     * set expire instant. Expire time is used to expire any cached
+     * file that was downloaded before the given date/time.
+     *
+     * @param value value
+     * @return {@code this} instance
+     * @since 0.8.0
+     */
+    NutsSession setExpireTime(Instant value);
+
+    /**
+     * return expired date/time or zero if not set.
+     * Expire time is used to expire any cached file that was downloaded before the given date/time
+     *
+     * @return expired date/time or zero
+     * @since 0.8.0
+     */
+    Instant getExpireTime();
+
     /**
      * return progress options
      *
@@ -644,6 +651,7 @@ public interface NutsSession extends NutsConfigurable {
     /**
      * This is a helper method to create and Object format initialized with this
      * session instance and the given object to print.
+     *
      * {@code thisSession.getWorkspace().object().setSession(thisSession).value(any)}
      * <br>
      * Using this method is recommended to print objects to default format (json, xml,...)

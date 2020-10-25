@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.runtime.filters.descriptor;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
 import java.util.Objects;
@@ -40,18 +41,19 @@ import net.vpc.app.nuts.runtime.filters.id.NutsScriptAwareIdFilter;
  *
  * @author vpc
  */
-public class NutsDescriptorFilterById implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
+public class NutsDescriptorFilterById extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
 
     private NutsIdFilter id;
 
     public NutsDescriptorFilterById(NutsIdFilter id) {
+        super(id.getWorkspace(),NutsFilterOp.CONVERT);
         this.id = id;
     }
 
     @Override
-    public boolean accept(NutsDescriptor descriptor, NutsSession session) {
+    public boolean acceptDescriptor(NutsDescriptor descriptor, NutsSession session) {
         if (id != null) {
-            return id.accept(descriptor.getId(), session);
+            return id.acceptId(descriptor.getId(), session);
         }
         return true;
     }

@@ -26,10 +26,6 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
         super(ws, "version");
     }
 
-    @Override
-    public NutsVersion parse(String version) {
-        return DefaultNutsVersion.valueOf(version);
-    }
 
     @Override
     public NutsVersion getVersion() {
@@ -105,8 +101,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
         if (getValidSession().isPlainOut() && !all) {
             if (isWorkspaceVersion()) {
                 PrintStream pout = getValidPrintStream(out);
-                NutsWorkspaceConfigManager rtcontext = getWorkspace().config();
-                pout.printf("%s/%s", rtcontext.getApiVersion(), rtcontext.getRuntimeId().getVersion());
+                pout.printf("%s/%s", getWorkspace().getApiVersion(), getWorkspace().getRuntimeId().getVersion());
             } else {
                 PrintStream pout = getValidPrintStream(out);
                 pout.printf("%s", getVersion());
@@ -122,16 +117,15 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
 
     public Map<String, String> buildProps() {
         LinkedHashMap<String, String> props = new LinkedHashMap<>();
-        NutsWorkspaceConfigManager configManager = getWorkspace().config();
         Set<String> extraKeys = new TreeSet<>();
         if (extraProperties != null) {
             extraKeys = new TreeSet(extraProperties.keySet());
         }
-        props.put("nuts-api-version", configManager.getApiVersion());
-        props.put("nuts-runtime-version", configManager.getRuntimeId().getVersion().toString());
+        props.put("nuts-api-version", getWorkspace().getApiVersion());
+        props.put("nuts-runtime-version", getWorkspace().getRuntimeId().getVersion().toString());
         if (all) {
             props.put("java-version", System.getProperty("java.version"));
-            props.put("os-version", getWorkspace().config().getOs().getVersion().toString());
+            props.put("os-version", getWorkspace().env().getOs().getVersion().toString());
         }
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));

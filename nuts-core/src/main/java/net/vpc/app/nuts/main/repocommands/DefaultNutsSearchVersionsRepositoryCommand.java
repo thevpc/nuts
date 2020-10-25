@@ -35,7 +35,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
     @Override
     public NutsSearchVersionsRepositoryCommand run() {
         NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession(getSession());
-        id = id.builder().setFaceContent().build();
+        //id = id.builder().setFaceContent().build();
         getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_DESC, "find-versions");
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
         NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSimpleNameNutsId(id);
@@ -47,12 +47,12 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
                 try {
                     d = xrepo.getIndexStore().searchVersions(id, getSession());
                 } catch (NutsException ex) {
-                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("Error find version operation with Indexer for {0} : {1}", getRepo().config().getName(), ex);
+                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("Error find version operation with Indexer for {0} : {1}", getRepo().getName(), ex);
                 }
                 if (d != null && filter != null) {
                     resultList.add(
                             IteratorUtils.safeIgnore(
-                                    IteratorBuilder.of(d).filter(x -> filter.accept(x, getSession())).iterator())
+                                    IteratorBuilder.of(d).filter(x -> filter.acceptId(x, getSession())).iterator())
                             );
                 }
             }
@@ -64,7 +64,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
             return this;
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "[{0}] {1} {2} {3}", CoreStringUtils.alignLeft(getFetchMode().toString(), 7), CoreStringUtils.alignLeft(getRepo().config().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id);
+                LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "[{0}] {1} {2} {3}", CoreStringUtils.alignLeft(getFetchMode().toString(), 7), CoreStringUtils.alignLeft(getRepo().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id);
             }
             throw ex;
         }

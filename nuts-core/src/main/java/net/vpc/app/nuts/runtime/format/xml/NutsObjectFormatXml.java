@@ -8,7 +8,6 @@ package net.vpc.app.nuts.runtime.format.xml;
 import net.vpc.app.nuts.*;
 
 import java.io.PrintStream;
-import java.io.Writer;
 import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -55,8 +54,8 @@ public class NutsObjectFormatXml extends NutsObjectFormatBase {
     @Override
     public void print(PrintStream w) {
         try {
-            Document document = NutsXmlUtils.createDocument();
-            document.appendChild(getWorkspace().xml().toXmlElement(getValue(), document));
+            Document document = NutsXmlUtils.createDocument(getWorkspace());
+            document.appendChild(getWorkspace().formats().xml().toXmlElement(getValue(), document));
             NutsXmlUtils.writeDocument(document, new StreamResult(w), false,true);
         } catch (TransformerException | ParserConfigurationException ex) {
             throw new NutsException(getWorkspace(), ex);

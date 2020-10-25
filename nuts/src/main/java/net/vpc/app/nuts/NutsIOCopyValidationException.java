@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Exception thrown when copy validation fails
  */
-public class NutsIOCopyValidationException extends NutsException {
+public class NutsIOCopyValidationException extends NutsIOException {
 
     /**
      * Constructs a new Validation Exception

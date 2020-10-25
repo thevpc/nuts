@@ -176,7 +176,7 @@ public class NdedMain extends NutsApplication {
 
     private boolean confirm(String message) {
         while (true) {
-            String o = context.getSession().terminal().readLine(message + " (y/n) : ");
+            String o = context.getSession().getTerminal().readLine(message + " (y/n) : ");
             if (o == null) {
                 o = "";
             }
@@ -237,9 +237,9 @@ public class NdedMain extends NutsApplication {
         if (!confirm("Confirm ?")) {
             throw new NutsUserCancelException(context.getWorkspace());
         }
-        NutsDescriptorFormat nutsDescriptorFormat = context.getWorkspace().descriptor();
-        nutsDescriptorFormat.value(desc).print(file);
-        nutsDescriptorFormat.value(desc).print(out);
+        NutsDescriptorFormat nutsDescriptorFormat = context.getWorkspace().descriptor().formatter(desc);
+        nutsDescriptorFormat.print(file);
+        nutsDescriptorFormat.print(out);
     }
 
     private static String getFilePath(File s) {

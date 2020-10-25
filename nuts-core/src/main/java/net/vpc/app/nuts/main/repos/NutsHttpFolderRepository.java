@@ -30,6 +30,13 @@
 package net.vpc.app.nuts.main.repos;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.CoreNutsConstants;
+import net.vpc.app.nuts.runtime.DefaultNutsId;
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
+import net.vpc.app.nuts.runtime.util.RemoteRepoApi;
+import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
+import net.vpc.app.nuts.runtime.util.io.FilesFoldersApi;
+import net.vpc.app.nuts.runtime.util.iter.IteratorUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,17 +48,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-
-import net.vpc.app.nuts.runtime.CoreNutsConstants;
-import net.vpc.app.nuts.runtime.DefaultNutsId;
-import net.vpc.app.nuts.runtime.NutsPatternIdFilter;
-import net.vpc.app.nuts.runtime.filters.id.NutsIdFilterAnd;
-import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
-import net.vpc.app.nuts.runtime.util.io.FilesFoldersApi;
-import net.vpc.app.nuts.runtime.util.RemoteRepoApi;
-import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
-import net.vpc.app.nuts.runtime.util.iter.IteratorUtils;
-import net.vpc.app.nuts.runtime.util.io.InputSource;
 
 public class NutsHttpFolderRepository extends NutsCachedRepository {
 
@@ -74,7 +70,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         @Override
         public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) throws IOException {
             try {
-                return getWorkspace().descriptor().parse(in);
+                return getWorkspace().descriptor().parser().parse(in);
             } finally {
                 in.close();
             }
@@ -101,7 +97,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 //                LOG.log(Level.FINEST, CoreStringUtils.alignLeft(config().getName(), 20) + " " + message + " url " + url);
 //            }
 //        }
-        return openStream(url, id, session);
+        return openStream(url, id, "artifact descriptor", session);
     }
 
     protected String getPath(NutsId id) {
@@ -117,27 +113,12 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         ));
     }
 
-    protected InputStream openStream(String path, Object source, NutsSession session) {
-        return getWorkspace().io().monitor().source(path).origin(source).setSession(session).create();
+    protected InputStream openStream(String path, Object source, String sourceTypeName, NutsSession session) {
+        return getWorkspace().io().monitor().source(path).origin(source).setSourceTypeName(sourceTypeName).setSession(session).create();
     }
 
-    @Override
-    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
-        if (fetchMode != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id, new NutsFetchModeNotSupportedException(getWorkspace(), this, fetchMode, id.toString(), null));
-        }
-        try (InputStream stream = getDescStream(id, session)) {
-            return getWorkspace().descriptor().parse(stream);
-        } catch (IOException ex) {
-            throw new NutsNotFoundException(getWorkspace(), id, ex);
-        } catch (UncheckedIOException ex) {
-            throw new NutsNotFoundException(getWorkspace(), id, ex);
-        }
-    }
-
-    protected InputSource openStream(NutsId id, String path, Object source, NutsSession session) {
-        InputStream in = getWorkspace().io().monitor().source(path).origin(source).setSession(session).create();
-        return CoreIOUtils.createInputSource(in);
+    protected NutsInput openStream(NutsId id, String path, Object source, String sourceTypeName, NutsSession session) {
+        return getWorkspace().io().monitor().source(path).origin(source).setSourceTypeName(sourceTypeName).setSession(session).createSource();
     }
 
     public Iterator<NutsId> findVersionsImplGithub(NutsId id, NutsIdFilter idFilter, NutsSession session) {
@@ -154,18 +135,18 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             String metadataURL = CoreIOUtils.buildUrl(apiUrlBase, groupId.replace('.', '/') + "/" + artifactId);
 
             try {
-                metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), session).open();
-            } catch (UncheckedIOException ex) {
+                metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session).open();
+            } catch (UncheckedIOException|NutsIOException ex) {
                 throw new NutsNotFoundException(getWorkspace(), id, ex);
             }
-            List<Map<String, Object>> info = getWorkspace().json().parse(new InputStreamReader(metadataStream), List.class);
+            List<Map<String, Object>> info = getWorkspace().formats().json().parse(new InputStreamReader(metadataStream), List.class);
             if (info != null) {
                 for (Map<String, Object> version : info) {
                     if ("dir".equals(version.get("type"))) {
                         String versionName = (String) version.get("name");
                         final NutsId nutsId = id.builder().setVersion(versionName).build();
 
-                        if (idFilter != null && !idFilter.accept(nutsId, session)) {
+                        if (idFilter != null && !idFilter.acceptId(nutsId, session)) {
                             continue;
                         }
                         ret.add(
@@ -217,7 +198,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                 }
                 if (validVersion) {
                     NutsId id2 = id.builder().setVersion(s.getName()).build();
-                    if (idFilter == null || idFilter.accept(id2, session)) {
+                    if (idFilter == null || idFilter.acceptId(id2, session)) {
                         n.add(id2);
                     }
                 }
@@ -244,7 +225,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                     + getIdFilename(id.builder().setFaceDescriptor().build())
             );
 
-            try (InputStream metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), session).open()) {
+            try (InputStream metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session).open()) {
                 // ok found!!
                 ret.add(id);
             } catch (UncheckedIOException | IOException ex) {
@@ -252,9 +233,9 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             }
             return ret.iterator();
         } else {
-            NutsIdFilter filter2 = new NutsIdFilterAnd(idFilter,
-                    new NutsPatternIdFilter(id.getShortNameId())
-            ).simplify();
+            NutsIdFilter filter2 = getWorkspace().id().filter().nonnull(idFilter).and(
+                    getWorkspace().id().filter().byName(id.getShortName())
+            );
             switch (versionApi) {
                 case DEFAULT:
                 case MAVEN:
@@ -271,6 +252,58 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                     throw new NutsUnsupportedArgumentException(getWorkspace(), String.valueOf(versionApi));
                 }
             }
+        }
+    }
+
+    @Override
+    public NutsId searchLatestVersionCore(NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
+        if (fetchMode != NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id, new NutsFetchModeNotSupportedException(getWorkspace(), this, fetchMode, id.toString(), null));
+        }
+        Iterator<NutsId> allVersions = searchVersionsCore(id, filter, fetchMode, session);
+        NutsId a = null;
+        while (allVersions != null && allVersions.hasNext()) {
+            NutsId next = allVersions.next();
+            if (a == null || next.getVersion().compareTo(a.getVersion()) > 0) {
+                a = next;
+            }
+        }
+        return a;
+    }
+
+    @Override
+    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
+        if (fetchMode != NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id, new NutsFetchModeNotSupportedException(getWorkspace(), this, fetchMode, id.toString(), null));
+        }
+        try (InputStream stream = getDescStream(id, session)) {
+            return getWorkspace().descriptor().parser().parse(stream);
+        } catch (IOException|UncheckedIOException| NutsIOException ex) {
+            throw new NutsNotFoundException(getWorkspace(), id, ex);
+        }
+    }
+
+    @Override
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localFile, NutsFetchMode fetchMode, NutsSession session) {
+        if (fetchMode != NutsFetchMode.REMOTE) {
+            throw new NutsNotFoundException(getWorkspace(), id, new NutsFetchModeNotSupportedException(getWorkspace(), this, fetchMode, id.toString(), null));
+        }
+        if (descriptor.getLocations().length == 0) {
+            String path = getPath(id);
+            getWorkspace().io().copy().setSession(session).from(path).to(localFile).safe().logProgress().run();
+            return new NutsDefaultContent(localFile, false, false);
+        } else {
+            for (NutsIdLocation location : descriptor.getLocations()) {
+                if (CoreNutsUtils.acceptClassifier(location, id.getClassifier())) {
+                    try {
+                        getWorkspace().io().copy().setSession(session).from(location.getUrl()).to(localFile).safe().logProgress().run();
+                        return new NutsDefaultContent(localFile, false, false);
+                    } catch (Exception ex) {
+                        LOG.with().level(Level.SEVERE).error(ex).log("Unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), ex.toString());
+                    }
+                }
+            }
+            return null;
         }
     }
 
@@ -302,46 +335,6 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                 throw new NutsUnsupportedArgumentException(getWorkspace(), String.valueOf(versionApi));
             }
         }
-    }
-
-    @Override
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localFile, NutsFetchMode fetchMode, NutsSession session) {
-        if (fetchMode != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id, new NutsFetchModeNotSupportedException(getWorkspace(), this, fetchMode, id.toString(), null));
-        }
-        if (descriptor.getLocations().length == 0) {
-            String path = getPath(id);
-            getWorkspace().io().copy().setSession(session).from(path).to(localFile).safe().logProgress().run();
-            return new NutsDefaultContent(localFile, false, false);
-        } else {
-            for (NutsIdLocation location : descriptor.getLocations()) {
-                if (CoreNutsUtils.acceptClassifier(location, id.getClassifier())) {
-                    try {
-                        getWorkspace().io().copy().setSession(session).from(location.getUrl()).to(localFile).safe().logProgress().run();
-                        return new NutsDefaultContent(localFile, false, false);
-                    } catch (Exception ex) {
-                        LOG.with().level(Level.SEVERE).error(ex).log("Unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), ex.toString());
-                    }
-                }
-            }
-            return null;
-        }
-    }
-
-    @Override
-    public NutsId searchLatestVersionCore(NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
-        if (fetchMode != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id, new NutsFetchModeNotSupportedException(getWorkspace(), this, fetchMode, id.toString(), null));
-        }
-        Iterator<NutsId> allVersions = searchVersionsCore(id, filter, fetchMode, session);
-        NutsId a = null;
-        while (allVersions != null && allVersions.hasNext()) {
-            NutsId next = allVersions.next();
-            if (a == null || next.getVersion().compareTo(a.getVersion()) > 0) {
-                a = next;
-            }
-        }
-        return a;
     }
 
 }

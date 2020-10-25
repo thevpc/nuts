@@ -38,7 +38,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
             switch (name) {
                 case "descriptor":
                     try {
-                        descriptor = context.getWorkspace().descriptor().parse(info.getContent());
+                        descriptor = context.getWorkspace().descriptor().parser().parse(info.getContent());
                     } finally {
                         info.getContent().close();
                     }
@@ -51,7 +51,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                     }
                     break;
                 case "content":
-                    contentFile = context.getWorkspace().io().createTempFile(
+                    contentFile = context.getWorkspace().io().tmp().createTempFile(
                             context.getWorkspace().config().getDefaultIdFilename(
                                     descriptor.getId().builder().setFaceDescriptor().build()
                             )

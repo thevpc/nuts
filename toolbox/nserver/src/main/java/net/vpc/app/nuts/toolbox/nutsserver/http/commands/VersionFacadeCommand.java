@@ -18,7 +18,7 @@ public class VersionFacadeCommand extends AbstractFacadeCommand {
                         .setNamespace(context.getServerId())
                         .setGroupId("net.vpc.app.nuts")
                         .setArtifactId("nuts-server")
-                        .setVersion(context.getWorkspace().config().getRuntimeId().getVersion().toString())
+                        .setVersion(context.getWorkspace().getRuntimeId().getVersion().toString())
                         .build().toString()
         );
     }

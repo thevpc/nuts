@@ -6,6 +6,7 @@
 package net.vpc.app.nuts.runtime.filters.id;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
 import java.util.Arrays;
@@ -15,28 +16,29 @@ import java.util.stream.Collectors;
  *
  * @author vpc
  */
-public class NutsLockedIdExtensionFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
+public class NutsLockedIdExtensionFilter extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
     private NutsId[] lockedIds;
-    public NutsLockedIdExtensionFilter(NutsId[] lockedIds) {
+    public NutsLockedIdExtensionFilter(NutsWorkspace ws,NutsId[] lockedIds) {
+        super(ws,NutsFilterOp.CUSTOM);
         this.lockedIds =lockedIds;
     }
 
     public boolean acceptId(NutsId id, NutsSession session) {
         for (NutsId nutsId : lockedIds) {
             if(nutsId.getShortNameId().equalsShortName(id.getShortNameId())){
-                return (id.getVersion().filter().accept(nutsId.getVersion(),session));
+                return (id.getVersion().filter().acceptVersion(nutsId.getVersion(),session));
             }
         }
         return true;
     }
 
     @Override
-    public boolean accept(NutsDescriptor other, NutsSession session) {
+    public boolean acceptDescriptor(NutsDescriptor other, NutsSession session) {
         if(!acceptId(other.getId(),session)){
             return false;
         }
         for (NutsDependency dependency : other.getDependencies()) {
-            if(!acceptId(dependency.getId(),session)){
+            if(!acceptId(dependency.toId(),session)){
                 return false;
             }
         }

@@ -29,10 +29,12 @@
  */
 package net.vpc.app.nuts.runtime;
 
+import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 
 import java.io.File;
+import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -123,7 +125,7 @@ public class NutsURLClassLoader extends URLClassLoader {
     public void addURL(String url) {
         try {
             super.addURL(CoreIOUtils.toURL(new String[]{url})[0]);
-        } catch (MalformedURLException e) {
+        } catch (UncheckedIOException| NutsIOException e) {
             throw new NutsIllegalArgumentException(ws, url.toString());
         }
     }

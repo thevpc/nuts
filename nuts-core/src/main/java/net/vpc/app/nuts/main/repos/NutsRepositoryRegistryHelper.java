@@ -66,7 +66,7 @@ public class NutsRepositoryRegistryHelper {
             return;
         }
         String uuid = repository != null ? repository.getUuid() : null;
-        String name = repository != null ? repository.config().name() : repositoryRef != null ? repositoryRef.getName() : null;
+        String name = repository != null ? repository.getName() : repositoryRef != null ? repositoryRef.getName() : null;
         if (name == null) {
             return;
         }
@@ -74,12 +74,12 @@ public class NutsRepositoryRegistryHelper {
         if (uuid != null) {
             ii = repositoriesByUuid.get(uuid);
             if (ii != null) {
-                throw new NutsIllegalArgumentException(ws, "Repository with the same uuid already exists " + ii.repo.getUuid() + "/" + ii.repo.config().name());
+                throw new NutsIllegalArgumentException(ws, "Repository with the same uuid already exists " + ii.repo.getUuid() + "/" + ii.repo.getName());
             }
         }
         ii = repositoriesByName.get(name);
         if (ii != null) {
-            throw new NutsIllegalArgumentException(ws, "Repository with the same name already exists " + ii.repo.getUuid() + "/" + ii.repo.config().name());
+            throw new NutsIllegalArgumentException(ws, "Repository with the same name already exists " + ii.repo.getUuid() + "/" + ii.repo.getName());
         }
         if (!name.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
             throw new NutsIllegalArgumentException(ws, "Invalid repository name " + name);
@@ -128,8 +128,8 @@ public class NutsRepositoryRegistryHelper {
     public NutsRepository removeRepository(String repository) {
         final NutsRepository r = findRepository(repository);
         if (r != null) {
-            repositoriesByName.remove(r.config().name());
-            repositoriesByUuid.remove(r.config().uuid());
+            repositoriesByName.remove(r.getName());
+            repositoriesByUuid.remove(r.getUuid());
             return r;
         }
         return null;

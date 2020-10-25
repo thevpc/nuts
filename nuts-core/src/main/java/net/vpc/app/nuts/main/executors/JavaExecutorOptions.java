@@ -53,7 +53,7 @@ public final class JavaExecutorOptions {
         this.dir = dir;
         this.execArgs = executorOptions;
         List<String> classPath0 = new ArrayList<>();
-        NutsIdFormat nutsIdFormat = getWorkspace().id().omitNamespace();
+        NutsIdFormat nutsIdFormat = getWorkspace().id().formatter().omitNamespace();
         //will accept all -- and - based options!
         NutsCommandLine cmdLine = getWorkspace().commandLine().create(getExecArgs()).setExpandSimpleOptions(false);
         NutsArgument a;
@@ -147,7 +147,7 @@ public final class JavaExecutorOptions {
         NutsSearchCommand se = getWorkspace().search().setSession(CoreNutsUtils.silent(session));
         if (tempId) {
             for (NutsDependency dependency : descriptor.getDependencies()) {
-                se.addId(dependency.getId());
+                se.addId(dependency.toId());
             }
         } else {
             se.addId(id);
@@ -184,7 +184,7 @@ public final class JavaExecutorOptions {
             if (mainClass == null) {
                 if (path != null) {
                     //check manifest!
-                    NutsExecutionEntry[] classes = getWorkspace().io().parseExecutionEntries(path);
+                    NutsExecutionEntry[] classes = getWorkspace().apps().execEntries().parse(path);
                     if (classes.length > 0) {
                         mainClass = CoreStringUtils.join(":",
                                 Arrays.stream(classes).map(NutsExecutionEntry::getName)

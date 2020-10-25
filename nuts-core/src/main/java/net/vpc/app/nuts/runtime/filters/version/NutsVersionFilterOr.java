@@ -1,8 +1,7 @@
 package net.vpc.app.nuts.runtime.filters.version;
 
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsVersion;
-import net.vpc.app.nuts.NutsVersionFilter;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
@@ -13,11 +12,12 @@ import java.util.stream.Collectors;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.filters.id.NutsScriptAwareIdFilter;
 
-public class NutsVersionFilterOr implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter {
+public class NutsVersionFilterOr extends AbstractNutsFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter {
 
     private NutsVersionFilter[] all;
 
-    public NutsVersionFilterOr(NutsVersionFilter... all) {
+    public NutsVersionFilterOr(NutsWorkspace ws,NutsVersionFilter... all) {
+        super(ws, NutsFilterOp.OR);
         List<NutsVersionFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NutsVersionFilter filter : all) {
@@ -30,12 +30,12 @@ public class NutsVersionFilterOr implements NutsVersionFilter, Simplifiable<Nuts
     }
 
     @Override
-    public boolean accept(NutsVersion id, NutsSession session) {
+    public boolean acceptVersion(NutsVersion id, NutsSession session) {
         if (all.length == 0) {
             return true;
         }
         for (NutsVersionFilter filter : all) {
-            if (filter.accept(id, session)) {
+            if (filter.acceptVersion(id, session)) {
                 return true;
             }
         }
@@ -44,26 +44,7 @@ public class NutsVersionFilterOr implements NutsVersionFilter, Simplifiable<Nuts
 
     @Override
     public NutsVersionFilter simplify() {
-        if (all.length == 0) {
-            return null;
-        }
-        NutsVersionFilter[] newValues = CoreNutsUtils.simplifyAndShrink(NutsVersionFilter.class, all);
-        if (newValues != null) {
-            if (newValues.length == 0) {
-                return null;
-            }
-            if (newValues.length == 1) {
-                return newValues[0];
-            }
-            return new NutsVersionFilterOr(newValues);
-        }
-        if (all.length == 0) {
-            return null;
-        }
-        if (all.length == 1) {
-            return all[0];
-        }
-        return this;
+        return CoreNutsUtils.simplifyFilterOr(getWorkspace(),NutsVersionFilter.class,this,all);
     }
 
     @Override
@@ -124,6 +105,10 @@ public class NutsVersionFilterOr implements NutsVersionFilter, Simplifiable<Nuts
     @Override
     public String toString() {
         return CoreStringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+    }
+
+    public NutsFilter[] getSubFilters() {
+        return all;
     }
 
 }

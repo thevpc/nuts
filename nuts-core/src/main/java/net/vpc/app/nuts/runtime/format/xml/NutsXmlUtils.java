@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.io.Writer;
+import java.util.logging.Level;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -44,15 +45,16 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import net.vpc.app.nuts.NutsElement;
-import net.vpc.app.nuts.NutsException;
-import net.vpc.app.nuts.NutsNamedElement;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 
+import net.vpc.app.nuts.runtime.log.NutsLogVerb;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  *
@@ -70,7 +72,7 @@ public class NutsXmlUtils {
 
     private static void print(String name, Object object, long elemIndex, Object out, boolean compact, boolean headerDeclaration, NutsWorkspace ws) {
         try {
-            Document document = NutsXmlUtils.createDocument();
+            Document document = NutsXmlUtils.createDocument(ws);
             String rootName = name;
             document.appendChild(createElement(CoreStringUtils.isBlank(rootName) ? "root" : rootName, object, elemIndex,document, ws));
             StreamResult streamResult = null;
@@ -95,7 +97,7 @@ public class NutsXmlUtils {
 
     public static Document createDocument(String name, Object object, NutsWorkspace ws) {
         try {
-            Document document = createDocument();
+            Document document = createDocument(ws);
             document.appendChild(createElement(CoreStringUtils.isBlank(name) ? "root" : name, object, -1,document, ws));
             return document;
         } catch (ParserConfigurationException ex) {
@@ -109,7 +111,7 @@ public class NutsXmlUtils {
         if(elemIndex>=0){
             elem.setAttribute("index",CoreCommonUtils.stringValue(elemIndex));
         }
-        NutsElement elem2 = ws.element().toElement(o);
+        NutsElement elem2 = ws.formats().element().toElement(o);
         switch (elem2.type()){
             case STRING:{
                 elem.setAttribute("type", "string");
@@ -212,11 +214,11 @@ public class NutsXmlUtils {
         return new String(r);
     }
 
-    public static Document createDocument() throws ParserConfigurationException {
-        return createDocumentBuilder(false).newDocument();
+    public static Document createDocument(NutsWorkspace ws) throws ParserConfigurationException {
+        return createDocumentBuilder(false,ws).newDocument();
     }
 
-    public static DocumentBuilder createDocumentBuilder(boolean safe) throws ParserConfigurationException {
+    public static DocumentBuilder createDocumentBuilder(boolean safe, NutsWorkspace ws) throws ParserConfigurationException {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         if (safe) {
             documentFactory.setExpandEntityReferences(false);
@@ -245,7 +247,28 @@ public class NutsXmlUtils {
             documentFactory.setXIncludeAware(false);
             documentFactory.setValidating(false);
         }
-        return documentFactory.newDocumentBuilder();
+        DocumentBuilder b = documentFactory.newDocumentBuilder();
+
+        b.setErrorHandler(new ErrorHandler() {
+            @Override
+            public void warning(SAXParseException exception) throws SAXException {
+                ws.log().of(NutsXmlUtils.class).with()
+                        .level(Level.FINEST).verb(NutsLogVerb.WARNING).log(exception.toString());
+            }
+
+            @Override
+            public void error(SAXParseException exception) throws SAXException {
+                ws.log().of(NutsXmlUtils.class).with()
+                        .level(Level.FINEST).verb(NutsLogVerb.WARNING).log(exception.toString());
+            }
+
+            @Override
+            public void fatalError(SAXParseException exception) throws SAXException {
+                ws.log().of(NutsXmlUtils.class).with()
+                        .level(Level.FINEST).verb(NutsLogVerb.WARNING).log(exception.toString());
+            }
+        });
+        return b;
     }
 
     private static void setLenientFeature(DocumentBuilderFactory dbFactory, String s, boolean b) {
@@ -266,10 +289,10 @@ public class NutsXmlUtils {
         }
     }
 
-    public static String elementToString(Element elem) {
+    public static String elementToString(Element elem,NutsWorkspace ws) {
         try {
             ByteArrayOutputStream b = new ByteArrayOutputStream();
-            Document d = createDocument();
+            Document d = createDocument(ws);
             elem = (Element) d.importNode(elem, true);
             d.appendChild(elem);
             writeDocument(d, new StreamResult(b), true,false);

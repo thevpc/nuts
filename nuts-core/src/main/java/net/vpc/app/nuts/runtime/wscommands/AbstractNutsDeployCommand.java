@@ -203,7 +203,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         }
         result.add(nid);
         if (getSession().isPlainTrace()) {
-            getSession().getTerminal().out().printf("Nuts %s deployed successfully to ==%s==%n", new NutsString(ws.id().value(nid).format()), toRepository == null ? "<default-repo>" : toRepository);
+            getSession().getTerminal().out().printf("Nuts %s deployed successfully to ==%s==%n", new NutsString(ws.id().formatter(nid).format()), toRepository == null ? "<default-repo>" : toRepository);
         }
     }
 
@@ -212,7 +212,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         if (values != null) {
             for (String s : values) {
                 if (!CoreStringUtils.isBlank(s)) {
-                    ids.add(ws.id().parseRequired(s));
+                    ids.add(ws.id().parser().setLenient(false).parse(s));
                 }
             }
         }
@@ -255,14 +255,14 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsDeployCommand removeId(String id) {
-        ids.remove(ws.id().parse(id));
+        ids.remove(ws.id().parser().parse(id));
         return this;
     }
 
     @Override
     public NutsDeployCommand addId(String id) {
         if (!CoreStringUtils.isBlank(id)) {
-            ids.add(ws.id().parseRequired(id));
+            ids.add(ws.id().parser().setLenient(false).parse(id));
         }
         return this;
     }

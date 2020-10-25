@@ -9,7 +9,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 
 import java.io.PrintStream;
-import java.io.Writer;
 import java.util.*;
 import net.vpc.app.nuts.runtime.format.props.DefaultPropertiesFormat;
 import net.vpc.app.nuts.runtime.format.NutsObjectFormatBase;
@@ -32,7 +31,7 @@ public class NutsObjectFormatTree extends NutsObjectFormatBase {
 
     @Override
     public NutsObjectFormat setValue(Object value) {
-        return super.setValue(getWorkspace().element().toElement(value));
+        return super.setValue(getWorkspace().formats().element().toElement(value));
     }
 
     @Override
@@ -64,7 +63,7 @@ public class NutsObjectFormatTree extends NutsObjectFormatBase {
 
     @Override
     public void print(PrintStream w) {
-        NutsTreeFormat t = getWorkspace().tree();
+        NutsTreeFormat t = getWorkspace().formats().tree();
         t.configure(true, getExtraConfigArray());
         t.setModel(new NutsElementTreeModel(getWorkspace(), rootName, getValue(), getValidSession()) {
             @Override

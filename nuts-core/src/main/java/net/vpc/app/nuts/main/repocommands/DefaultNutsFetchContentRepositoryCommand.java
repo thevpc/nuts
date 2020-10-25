@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -9,9 +9,9 @@
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2020 thevpc
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -29,14 +29,14 @@
  */
 package net.vpc.app.nuts.main.repocommands;
 
-import java.util.logging.Level;
-
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.runtime.repocommands.AbstractNutsFetchContentRepositoryCommand;
 import net.vpc.app.nuts.core.repos.NutsRepositoryExt;
+import net.vpc.app.nuts.runtime.repocommands.AbstractNutsFetchContentRepositoryCommand;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.runtime.util.common.TraceResult;
+
+import java.util.logging.Level;
 
 /**
  *
@@ -49,12 +49,12 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
 
     public DefaultNutsFetchContentRepositoryCommand(NutsRepository repo) {
         super(repo);
-        LOG=repo.getWorkspace().log().of(DefaultNutsFetchContentRepositoryCommand.class);
+        LOG = repo.getWorkspace().log().of(DefaultNutsFetchContentRepositoryCommand.class);
     }
 
     @Override
     public NutsFetchContentRepositoryCommand run() {
-        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession( getSession());
+        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession(getSession());
         NutsDescriptor descriptor0 = descriptor;
         if (descriptor0 == null) {
             descriptor0 = getRepo().fetchDescriptor().setId(id).setSession(getSession())
@@ -71,11 +71,11 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
             if (f == null) {
                 throw new NutsNotFoundException(getRepo().getWorkspace(), id);
             }
-                CoreNutsUtils.traceMessage(LOG,Level.FINER, getRepo().config().name(), getSession(), getFetchMode(), id.getLongNameId(), TraceResult.SUCCESS, "fetch component", startTime,null);
+            CoreNutsUtils.traceMessage(LOG, Level.FINER, getRepo().getName(), getSession(), getFetchMode(), id.getLongNameId(), TraceResult.SUCCESS, "fetch component", startTime, null);
             result = f;
         } catch (RuntimeException ex) {
-            if(!CoreNutsUtils.isUnsupportedFetchModeException(ex)) {
-                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().config().name(), getSession(), getFetchMode(), id.getLongNameId(), TraceResult.FAIL, "fetch component", startTime, CoreNutsUtils.resolveMessageToTraceOrNullIfNutsNotFoundException(ex));
+            if (!CoreNutsUtils.isUnsupportedFetchModeException(ex)) {
+                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().getName(), getSession(), getFetchMode(), id.getLongNameId(), TraceResult.FAIL, "fetch component", startTime, CoreNutsUtils.resolveMessageToTraceOrNullIfNutsNotFoundException(ex));
             }
             throw ex;
         }

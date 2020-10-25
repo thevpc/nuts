@@ -30,10 +30,10 @@
 package net.vpc.app.nuts.core.repos;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.main.repos.DefaultNutsRepoConfigManager;
-import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.common.DefaultObservableMap;
 import net.vpc.app.nuts.core.common.ObservableMap;
+import net.vpc.app.nuts.main.repos.DefaultNutsRepositoryEnvManager;
+import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -41,7 +41,7 @@ import java.util.*;
 /**
  * Created by vpc on 1/18/17.
  */
-public abstract class AbstractNutsRepository implements NutsRepository{
+public abstract class AbstractNutsRepository implements NutsRepository {
 
     private static final long serialVersionUID = 1L;
 
@@ -52,11 +52,38 @@ public abstract class AbstractNutsRepository implements NutsRepository{
     protected NutsRepositorySecurityManager securityManager;
     protected NutsRepositoryConfigManager configManager;
     protected ObservableMap<String, Object> userProperties;
+    protected boolean enabled = true;
+    protected DefaultNutsRepositoryEnvManager env;
 
     public AbstractNutsRepository() {
         userProperties = new DefaultObservableMap<>();
+        env=new DefaultNutsRepositoryEnvManager(this);
     }
 
+    @Override
+    public NutsRepositoryEnvManager env() {
+        return env;
+    }
+
+    @Override
+    public String getRepositoryType() {
+        return config().getType();
+    }
+
+    @Override
+    public String getUuid() {
+        return config().getUuid();
+    }
+
+    @Override
+    public String getName() {
+        return config().getName();
+    }
+
+    @Override
+    public NutsWorkspace getWorkspace() {
+        return workspace;
+    }
 
     @Override
     public NutsRepository getParentRepository() {
@@ -71,40 +98,6 @@ public abstract class AbstractNutsRepository implements NutsRepository{
     @Override
     public NutsRepositorySecurityManager security() {
         return securityManager;
-    }
-
-
-
-    @Override
-    public String getRepositoryType() {
-        return config().getType();
-    }
-
-    @Override
-    public String toString() {
-        NutsRepositoryConfigManager c = config();
-        String name = config().getName();
-        String storePath = null;
-        String loc = config().getLocation(false);
-        String impl = getClass().getSimpleName();
-        if (c != null) {
-            Path storeLocation = c.getStoreLocation();
-            storePath = storeLocation==null?null:storeLocation.toAbsolutePath().toString();
-        }
-        LinkedHashMap<String, String> a = new LinkedHashMap<>();
-        if (name != null) {
-            a.put("name", name);
-        }
-        if (impl != null) {
-            a.put("impl", impl);
-        }
-        if (storePath != null) {
-            a.put("store", storePath);
-        }
-        if (loc != null) {
-            a.put("location", loc);
-        }
-        return a.toString();
     }
 
     @Override
@@ -122,6 +115,62 @@ public abstract class AbstractNutsRepository implements NutsRepository{
     @Override
     public NutsRepositoryListener[] getRepositoryListeners() {
         return repositoryListeners.toArray(new NutsRepositoryListener[0]);
+    }
+
+    @Override
+    public Map<String, Object> getUserProperties() {
+        return userProperties;
+    }
+
+    @Override
+    public void addUserPropertyListener(NutsMapListener<String, Object> listener) {
+        userProperties.addListener(listener);
+    }
+
+    @Override
+    public void removeUserPropertyListener(NutsMapListener<String, Object> listener) {
+        userProperties.removeListener(listener);
+    }
+
+    @Override
+    public NutsMapListener<String, Object>[] getUserPropertyListeners() {
+        return userProperties.getListeners();
+    }
+
+    public boolean isEnabled() {
+        return enabled && config().isEnabled();
+    }
+
+    public NutsRepository setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        NutsRepositoryConfigManager c = config();
+        String name = getName();
+        String storePath = null;
+        String loc = config().getLocation(false);
+        String impl = getClass().getSimpleName();
+        if (c != null) {
+            Path storeLocation = c.getStoreLocation();
+            storePath = storeLocation == null ? null : storeLocation.toAbsolutePath().toString();
+        }
+        LinkedHashMap<String, String> a = new LinkedHashMap<>();
+        if (name != null) {
+            a.put("name", name);
+        }
+        if (impl != null) {
+            a.put("impl", impl);
+        }
+        if (storePath != null) {
+            a.put("store", storePath);
+        }
+        if (loc != null) {
+            a.put("location", loc);
+        }
+        return a.toString();
     }
 
     protected String getIdExtension(NutsId id) {
@@ -149,66 +198,5 @@ public abstract class AbstractNutsRepository implements NutsRepository{
         if (session == null) {
             throw new NutsIllegalArgumentException(workspace, "Missing Session");
         }
-    }
-
-    @Override
-    public NutsWorkspace getWorkspace() {
-        return workspace;
-    }
-
-
-    @Override
-    public String getUuid() {
-        return config().getUuid();
-    }
-
-    @Override
-    public String uuid() {
-        return getUuid();
-    }
-
-    @Override
-    public String getName() {
-        return config().getName();
-    }
-
-    @Override
-    public String name() {
-        return getName();
-    }
-
-    @Override
-    public String repositoryType() {
-        return getRepositoryType();
-    }
-
-    @Override
-    public NutsWorkspace workspace() {
-        return getWorkspace();
-    }
-
-    @Override
-    public NutsRepository parentRepository() {
-        return getParentRepository();
-    }
-
-    @Override
-    public Map<String, Object> userProperties() {
-        return userProperties;
-    }
-
-    @Override
-    public void addUserPropertyListener(NutsMapListener<String, Object> listener) {
-        userProperties.addListener(listener);
-    }
-
-    @Override
-    public void removeUserPropertyListener(NutsMapListener<String, Object> listener) {
-        userProperties.removeListener(listener);
-    }
-
-    @Override
-    public NutsMapListener<String, Object>[] getUserPropertyListeners() {
-        return userProperties.getListeners();
     }
 }

@@ -438,12 +438,12 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
 
         @Override
         public org.w3c.dom.Element deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return getWorkspace().xml().toXmlElement(fromJsonElement(json), null);
+            return getWorkspace().formats().xml().toXmlElement(fromJsonElement(json), null);
         }
 
         @Override
         public JsonElement serialize(org.w3c.dom.Element src, Type typeOfSrc, JsonSerializationContext context) {
-            return toJsonElement(getWorkspace().xml().fromXmlElement(src, NutsElement.class));
+            return toJsonElement(getWorkspace().formats().xml().fromXmlElement(src, NutsElement.class));
         }
     }
 
@@ -455,11 +455,11 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
         public org.w3c.dom.Document deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             Document doc;
             try {
-                doc = NutsXmlUtils.createDocument();
+                doc = NutsXmlUtils.createDocument(getWorkspace());
             } catch (ParserConfigurationException ex) {
                 throw new JsonParseException(ex.getMessage(), ex);
             }
-            Element ee = getWorkspace().xml().toXmlElement(fromJsonElement(json), doc);
+            Element ee = getWorkspace().formats().xml().toXmlElement(fromJsonElement(json), doc);
             ee = (Element) doc.importNode(ee, true);
             doc.appendChild(ee);
             return doc;
@@ -467,7 +467,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
 
         @Override
         public JsonElement serialize(org.w3c.dom.Document src, Type typeOfSrc, JsonSerializationContext context) {
-            NutsElement element = getWorkspace().xml().fromXmlElement(src.getDocumentElement(), NutsElement.class);
+            NutsElement element = getWorkspace().formats().xml().fromXmlElement(src.getDocumentElement(), NutsElement.class);
             return toJsonElement(element);
         }
     }

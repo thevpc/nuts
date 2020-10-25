@@ -29,8 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.NutsSingleton;
+import net.vpc.app.nuts.*;
 import net.vpc.common.io.InputStreamVisitor;
 import net.vpc.common.io.UnzipOptions;
 import net.vpc.common.io.ZipUtils;
@@ -43,9 +42,7 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
-import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
@@ -115,9 +112,7 @@ public class UnzipCommand extends SimpleNshBuiltin {
                     dir = context.getRootContext().getAbsolutePath(dir);
                     ZipUtils.unzip(file.getPath(), dir, new UnzipOptions().setSkipRoot(options.skipRoot));
                 }
-            } catch (UncheckedIOException ex) {
-                throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 1);
-            } catch (IOException ex) {
+            } catch (IOException|UncheckedIOException| NutsIOException ex) {
                 throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 1);
             }
         }

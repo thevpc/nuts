@@ -35,7 +35,7 @@ package net.vpc.app.nuts;
  * @since 0.5.4
  * @category Descriptor
  */
-public interface NutsDependencyFilter {
+public interface NutsDependencyFilter extends NutsFilter{
 
     /**
      * return true if the {@code dependency} is accepted
@@ -44,5 +44,17 @@ public interface NutsDependencyFilter {
      * @param session session
      * @return true if the {@code dependency} is accepted
      */
-    boolean accept(NutsId from, NutsDependency dependency, NutsSession session);
+    boolean acceptDependency(NutsId from, NutsDependency dependency, NutsSession session);
+
+    default NutsDependencyFilter or(NutsDependencyFilter other) {
+        return or((NutsFilter)other).to(NutsDependencyFilter.class);
+    }
+
+    default NutsDependencyFilter and(NutsDependencyFilter other) {
+        return and((NutsFilter)other).to(NutsDependencyFilter.class);
+    }
+
+    default NutsDependencyFilter neg() {
+        return NutsFilter.super.neg().to(NutsDependencyFilter.class);
+    }
 }

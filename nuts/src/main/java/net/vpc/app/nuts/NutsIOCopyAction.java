@@ -72,6 +72,8 @@ public interface NutsIOCopyAction {
      */
     NutsIOCopyAction setSource(Object source);
 
+    NutsIOCopyAction setSource(NutsInput source);
+
     /**
      * update source to copy from
      * @param source source to copy from
@@ -127,6 +129,13 @@ public interface NutsIOCopyAction {
      * @param source source to copy from
      * @return {@code this} instance
      */
+    NutsIOCopyAction from(NutsInput source);
+
+    /**
+     * update source to copy from
+     * @param source source to copy from
+     * @return {@code this} instance
+     */
     NutsIOCopyAction from(InputStream source);
 
     /**
@@ -162,6 +171,13 @@ public interface NutsIOCopyAction {
      * @return {@code this} instance
      */
     NutsIOCopyAction setTarget(OutputStream target);
+
+    /**
+     * update target to copy from
+     * @param target target to copy to
+     * @return {@code this} instance
+     */
+    NutsIOCopyAction setTarget(NutsOutput target);
 
     /**
      * update target to copy from
@@ -211,6 +227,13 @@ public interface NutsIOCopyAction {
      * @return {@code this} instance
      */
     NutsIOCopyAction to(File target);
+
+    /**
+     * update target to copy from
+     * @param target target to copy to
+     * @return {@code this} instance
+     */
+    NutsIOCopyAction to(NutsOutput target);
 
     /**
      * return validator

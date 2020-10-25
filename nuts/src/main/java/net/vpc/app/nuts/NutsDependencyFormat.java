@@ -250,31 +250,6 @@ public interface NutsDependencyFormat extends NutsFormat {
     NutsDependency getValue();
 
     /**
-     * return mutable id builder instance initialized with {@code this} instance.
-     * @return mutable id builder instance initialized with {@code this} instance
-     */
-    NutsDependencyBuilder builder();
-
-    /**
-     * parse dependency in the form
-     * namespace://group:name#version?scope=&lt;scope&gt;{@code &}optional=&lt;optional&gt;
-     * If the string cannot be evaluated, return null.
-     * @param dependency dependency
-     * @return new instance of parsed dependency
-     */
-    NutsDependency parse(String dependency);
-
-    /**
-     * parse dependency in the form
-     * namespace://group:name#version?scope=&lt;scope&gt;{@code &}optional=&lt;optional&gt;
-     * If the string cannot be evaluated, return null.
-     * @param dependency dependency
-     * @return new instance of parsed dependency
-     * @throws NutsParseException if the string cannot be evaluated
-     */
-    NutsDependency parseRequired(String dependency);
-
-    /**
      * value dependency to format
      * @param dependency dependency to format
      * @return {@code this} instance

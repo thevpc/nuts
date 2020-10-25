@@ -65,6 +65,8 @@ public class NutsMvnMain extends NutsApplication {
             command = "build";
         }
         if (cmd.isExecMode()) {
+            MavenCli2 cli = new MavenCli2(appContext);
+
             String[] args2Arr = args2.toArray(new String[0]);
             switch (command) {
                 case "build":
@@ -73,12 +75,12 @@ public class NutsMvnMain extends NutsApplication {
                     for (String ar : args2Arr) {
                         if (ar.startsWith("-D")) {
                             String[] as = ar.substring(2).split("=");
-                            System.setProperty(as[0], as[1]);
+                            cli.setProperty(as[0], as[1]);
                         } else {
                             defaultArgs.add(ar);
                         }
                     }
-                    int r = callMvn(appContext, o, Paths.get("."), defaultArgs.toArray(new String[0]));
+                    int r = callMvn(cli,appContext, o, defaultArgs.toArray(new String[0]));
                     if (r == 0) {
                         return;
                     } else {
@@ -86,7 +88,7 @@ public class NutsMvnMain extends NutsApplication {
                     }
                 }
                 case "get": {
-                    System.setProperty("artifact", args2Arr[0].replaceFirst("#", ":"));
+                    cli.setArtifactId(args2Arr[0]);
                     String repo = null;
                     if (args2Arr.length > 1) {
                         repo = args2Arr[1];
@@ -98,10 +100,11 @@ public class NutsMvnMain extends NutsApplication {
                         repo = "https://raw.github.com/thevpc/vpc-public-maven/master";
                     }
                     if (repo != null) {
-                        System.setProperty("repoUrl", repo);
+                        cli.setRepoUrl(repo);
                     }
                     Path dir = createTempPom(appContext.getWorkspace());
-                    int r = callMvn(appContext, o, dir, "dependency:get");
+                    cli.setWorkingDirectory(dir.toString());
+                    int r = callMvn(cli,appContext, o,  "dependency:get");
                     try {
                         delete(dir);
                     } catch (IOException ex) {
@@ -117,14 +120,22 @@ public class NutsMvnMain extends NutsApplication {
         }
     }
 
-    private static int callMvn(NutsApplicationContext appContext, Options options, Path path, String... args) {
-        MavenCli cli = new MavenCli();
-        if (options.json) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            PrintStream out = new PrintStream(bos);
+//    public void prepareM2Home(NutsApplicationContext appContext){
+//        Path configFolder = appContext.getConfigFolder();
+//        if(!Files.isRegularFile(configFolder.resolve(".mvn/maven.config"))){
+//            if(!Files.isDirectory(configFolder.resolve(".mvn"))){
+//                Files.createDirectories(configFolder.resolve(".mvn"));
+//            }
+//            Files.
+//        }
+//        maven.multiModuleProjectDirectory
+//    }
+    private static int callMvn(MavenCli2 cli,NutsApplicationContext appContext, Options options,String... args) {
+       if (options.json) {
             try {
-                int r = cli.doMain(args, path.toString(), out, out);
-                String s = new String(bos.toByteArray());
+                cli.setGrabString(true);
+                int r = cli.doMain(args);
+                String s = cli.getResultString();
                 if (s.contains("BUILD SUCCESS")) {
                     appContext.getSession().out().println("{'result':'success'}");
                     return 0;
@@ -141,13 +152,13 @@ public class NutsMvnMain extends NutsApplication {
                 return 1;
             }
         } else {
-            return cli.doMain(args, path.toString(), appContext.getSession().out(), appContext.getSession().err());
+            return cli.doMain(args);
         }
     }
 
     private static Path createTempPom(NutsWorkspace ws) {
-        Path d = ws.io().createTempFolder(null);
-        try (Writer out = Files.newBufferedWriter(d.resolve("filename.txt"))) {
+        Path d = ws.io().tmp().createTempFolder(null);
+        try (Writer out = Files.newBufferedWriter(d.resolve("pom.xml"))) {
             out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                     + "<project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"
                     + "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n"

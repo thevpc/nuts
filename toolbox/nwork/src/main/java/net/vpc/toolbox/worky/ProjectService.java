@@ -21,7 +21,7 @@ public class ProjectService {
     public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, Path file) throws IOException {
         this.context = context;
         this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
-        config = context.getWorkspace().json().parse(file, ProjectConfig.class);
+        config = context.getWorkspace().formats().json().parse(file, ProjectConfig.class);
     }
 
     public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
@@ -51,13 +51,13 @@ public class ProjectService {
     public void save() throws IOException {
         Path configFile = getConfigFile();
         Files.createDirectories(configFile.getParent());
-        context.getWorkspace().json().value(config).print(configFile);
+        context.getWorkspace().formats().json().value(config).print(configFile);
     }
 
     public boolean load() {
         Path configFile = getConfigFile();
         if (Files.isRegularFile(configFile)) {
-            ProjectConfig u = context.getWorkspace().json().parse(configFile, ProjectConfig.class);
+            ProjectConfig u = context.getWorkspace().formats().json().parse(configFile, ProjectConfig.class);
             if (u != null) {
                 config = u;
                 return true;
@@ -121,7 +121,7 @@ public class ProjectService {
     }
 
     public File detectLocalVersionFile(String sid) {
-        NutsId id = context.getWorkspace().id().parse(sid);
+        NutsId id = context.getWorkspace().id().parser().parse(sid);
         if (config.getTechnologies().contains("maven")) {
             File f = new File(System.getProperty("user.home"), ".m2/repository/"
                     + id.getGroupId().replace('.', File.separatorChar)
@@ -160,7 +160,7 @@ public class ProjectService {
     }
 
     public File detectRemoteVersionFile(String sid) {
-        NutsId id = context.getWorkspace().id().parse(sid);
+        NutsId id = context.getWorkspace().id().parser().parse(sid);
         if (config.getTechnologies().contains("maven")) {
             RepositoryAddress a = config.getAddress();
             if (a == null) {
@@ -178,7 +178,7 @@ public class ProjectService {
                 NutsSession s = null;
                 if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(context.getWorkspace().config().getWorkspaceLocation().toString())) {
                     ws2 = Nuts.openWorkspace(
-                            new NutsDefaultWorkspaceOptions()
+                            Nuts.createOptions()
                                     .setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING)
                                     .setReadOnly(true)
                                     .setWorkspace(a.getNutsWorkspace())
@@ -229,7 +229,7 @@ public class ProjectService {
                         NutsSession s = null;
                         if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(context.getWorkspace().config().getWorkspaceLocation().toString())) {
                             ws2 = Nuts.openWorkspace(
-                                    new NutsDefaultWorkspaceOptions()
+                                    context.getWorkspace().config().optionsBuilder()
                                             .setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING)
                                             .setReadOnly(true)
                                             .setWorkspace(a.getNutsWorkspace())

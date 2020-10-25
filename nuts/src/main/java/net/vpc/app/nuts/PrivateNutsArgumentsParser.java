@@ -29,7 +29,11 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.*;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -37,8 +41,8 @@ import java.util.logging.Level;
  * string array of valid nuts options
  *
  * @author vpc
- * @since 0.5.4
  * @category Internal
+ * @since 0.5.4
  */
 final class PrivateNutsArgumentsParser {
 
@@ -48,25 +52,13 @@ final class PrivateNutsArgumentsParser {
     private PrivateNutsArgumentsParser() {
     }
 
-    /**
-     * Create a {@link NutsWorkspaceOptions} instance from string array of valid
-     * nuts options
-     *
-     * @param bootArguments input arguments to parse
-     * @return newly created and filled options instance
-     */
-    public static NutsWorkspaceOptionsBuilder parseNutsArguments(String[] bootArguments) {
-        NutsDefaultWorkspaceOptions o = new NutsDefaultWorkspaceOptions();
-        parseNutsArguments(bootArguments, o);
-        return o;
-    }
 
     /**
      * Fill a {@link NutsWorkspaceOptions} instance from string array of valid
      * nuts options
      *
      * @param bootArguments input arguments to parse
-     * @param options options instance to fill
+     * @param options       options instance to fill
      */
     public static void parseNutsArguments(String[] bootArguments, NutsWorkspaceOptionsBuilder options) {
         List<String> showError = new ArrayList<>();
@@ -914,6 +906,18 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
+                    case "-N":
+                    case "--expire": {
+                        a = cmdLine.next();
+                        if (enabled) {
+                            if (a.getStringValue() != null) {
+                                options.setExpireTime(Instant.parse(a.getStringValue()));
+                            } else {
+                                options.setExpireTime(Instant.now());
+                            }
+                        }
+                        break;
+                    }
                     case "-e":
                     case "--exec": {
                         a = cmdLine.nextBoolean();
@@ -945,8 +949,32 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
+                    case "--skip-errors": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            options.setSkipErrors(a.getBooleanValue());
+                        }
+                        break;
+                    }
 
                     //ERRORS
+                    case "-I":
+                    case "-U":
+                    case "-S":
+                    case "-G":
+                    case "-H":
+                    case "-J":
+                    case "-L":
+                    case "-M":
+                    case "-W":
+                    case "-X":
+                    case "-B":
+                    case "-i":
+                    case "-q":
+                    case "-s":
+                    case "-d":
+                    case "-l":
+                    case "-m":
                     default: {
                         cmdLine.skip();
                         showError.add("nuts: invalid option " + a.getString());
@@ -962,19 +990,28 @@ final class PrivateNutsArgumentsParser {
         options.setExcludedExtensions(excludedExtensions.toArray(new String[0]));
         options.setExcludedRepositories(excludedRepositories.toArray(new String[0]));
         options.setTransientRepositories(tempRepositories.toArray(new String[0]));
+        options.setApplicationArguments(applicationArguments.toArray(new String[0]));
+        options.setExecutorOptions(executorOptions.toArray(new String[0]));
+        options.setErrors(showError.toArray(new String[0]));
         //error only if not asking for help
-        if (!(applicationArguments.size() > 0 && applicationArguments.get(0).equals("help"))) {
+        if (!(applicationArguments.size() > 0
+                && (applicationArguments.get(0).equals("help")
+                || applicationArguments.get(0).equals("--help")
+        )
+        )) {
             if (!showError.isEmpty()) {
                 StringBuilder errorMessage = new StringBuilder();
                 for (String s : showError) {
                     errorMessage.append(s).append("\n");
                 }
                 errorMessage.append("Try 'nuts --help' for more information.");
-                throw new NutsIllegalArgumentException(null, errorMessage.toString());
+                if (!options.isSkipErrors()) {
+                    throw new NutsIllegalArgumentException(null, errorMessage.toString());
+                } else {
+                    System.err.println(errorMessage.toString());
+                }
             }
         }
-        options.setApplicationArguments(applicationArguments.toArray(new String[0]));
-        options.setExecutorOptions(executorOptions.toArray(new String[0]));
     }
 
     private static void parseLogLevel(NutsLogConfig logConfig, NutsCommandLine cmdLine, boolean enabled) {
@@ -1060,7 +1097,7 @@ final class PrivateNutsArgumentsParser {
 
             case "--verbose": {
                 cmdLine.skip();
-                if (enabled) {
+                if (enabled && a.getArgumentValue().getBoolean(true)) {
                     logConfig.setLogTermLevel(Level.FINEST);
                     logConfig.setLogFileLevel(Level.FINEST);
                 }

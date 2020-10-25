@@ -61,7 +61,7 @@ public class FormattedPrintStreamUtils {
                 if(ws==null){
                     args2[i]=escapeText(String.valueOf(a));
                 }else{
-                    args2[i]=ws.id().set((NutsId) a).format();
+                    args2[i]=ws.id().formatter().set((NutsId) a).format();
                 }
             }else {
                 args2[i]=escapeText(String.valueOf(a));
@@ -70,16 +70,24 @@ public class FormattedPrintStreamUtils {
         char[] m = format.toCharArray();
         StringBuilder sb=new StringBuilder();
         for (int i = 0; i < m.length; i++) {
-            if(m[i]=='{' || m[i]=='}'){
-                int r=countRepeatable(m[i],m,i);
-                if(r>1){
+            if(m[i]=='{' || m[i]=='}') {
+                int r = countRepeatable(m[i], m, i);
+                if (r > 1) {
                     sb.append('\'');
-                    sb.append(m,i,r);
+                    sb.append(m, i, r);
                     sb.append('\'');
-                }else{
+                } else {
                     sb.append(m[i]);
                 }
-                i+=r-1;
+                i += r - 1;
+            }else if(m[i]=='\\' && i+1<m.length && m[i+1]=='\''){
+                sb.append("''");
+                i++;
+            }else if(m[i]=='\\' && i+1<m.length){
+                sb.append('\'');
+                sb.append(m[i+1]);
+                sb.append('\'');
+                i++;
             }else{
                 sb.append(m[i]);
             }
@@ -138,7 +146,7 @@ public class FormattedPrintStreamUtils {
                 if(ws==null){
                     args2[i]=escapeText(String.valueOf(a));
                 }else{
-                    args2[i]=ws.id().set((NutsId) a).format();
+                    args2[i]=ws.id().formatter().set((NutsId) a).format();
                 }
             }else {
                 args2[i]=escapeText(String.valueOf(a));

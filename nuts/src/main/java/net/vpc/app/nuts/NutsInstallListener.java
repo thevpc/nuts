@@ -48,6 +48,22 @@ public interface NutsInstallListener extends NutsListener {
     }
 
     /**
+     * This method is called whenever the observed workspace installs an artifact.
+     *
+     * @param event event
+     */
+    default void onRequire(NutsInstallEvent event) {
+    }
+
+    /**
+     * This method is called whenever the observed workspace installs an artifact.
+     *
+     * @param event event
+     */
+    default void onUnRequire(NutsInstallEvent event) {
+    }
+
+    /**
      * This method is called whenever the observed workspace uninstalls an artifact.
      *
      * @param event event

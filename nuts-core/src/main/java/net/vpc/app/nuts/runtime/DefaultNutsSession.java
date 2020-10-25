@@ -31,13 +31,13 @@ package net.vpc.app.nuts.runtime;
 
 import java.io.PrintStream;
 
-import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsConfigurableHelper;
 import net.vpc.app.nuts.runtime.util.NutsPropertiesHolder;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 
 import java.lang.reflect.Array;
+import java.time.Instant;
 import java.util.*;
 
 import net.vpc.app.nuts.runtime.format.CustomNutsIncrementalOutputFormat;
@@ -64,6 +64,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private Boolean indexed;
     private Boolean transitive;
     private String progressOptions;
+    private Instant expireTime;
 
     public DefaultNutsSession(NutsWorkspace ws) {
         this.ws = ws;
@@ -262,18 +263,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsSessionTerminal terminal() {
-        return getTerminal();
-    }
-
-    @Override
     public NutsWorkspace getWorkspace() {
         return ws;
-    }
-
-    @Override
-    public NutsWorkspace workspace() {
-        return getWorkspace();
     }
 
     @Override
@@ -842,6 +833,17 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public NutsObjectFormat formatObject(Object any) {
-        return getWorkspace().object().setSession(this).value(any);
+        return getWorkspace().formats().object().setSession(this).value(any);
+    }
+
+    @Override
+    public Instant getExpireTime() {
+        return expireTime;
+    }
+
+    @Override
+    public NutsSession setExpireTime(Instant expireTime) {
+        this.expireTime = expireTime;
+        return this;
     }
 }

@@ -121,9 +121,9 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                     throw new NutsRepositoryNotFoundException(ws, this.getRepository() + " : " + CoreStringUtils.join("\n", errors));
                 }
             } else {
-                NutsRepository repo = ws.config().getRepository(this.getRepository(), session.copy().setTransitive(true));
+                NutsRepository repo = ws.repos().getRepository(this.getRepository(), session.copy().setTransitive(true));
                 if (!repo.config().isEnabled()) {
-                    throw new NutsIllegalArgumentException(ws, "Repository " + repo.config().getName() + " is disabled");
+                    throw new NutsIllegalArgumentException(ws, "Repository " + repo.getName() + " is disabled");
                 }
                 NutsId effId = ws.config().createContentFaceId(id.builder().setProperties("").build(), file.getDescriptor())
 //                        .setAlternative(CoreStringUtils.trim(file.getDescriptor().getAlternative()))

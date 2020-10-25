@@ -1,18 +1,22 @@
 package net.vpc.app.nuts.runtime.filters.repository;
 
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsRepositoryFilter;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
+import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class NutsRepositoryFilterOr implements NutsRepositoryFilter, Simplifiable<NutsRepositoryFilter> {
+public class NutsRepositoryFilterOr extends AbstractNutsFilter implements NutsRepositoryFilter, Simplifiable<NutsRepositoryFilter> {
 
     private NutsRepositoryFilter[] all;
 
-    public NutsRepositoryFilterOr(NutsRepositoryFilter... all) {
+    public NutsRepositoryFilterOr(NutsWorkspace ws,NutsRepositoryFilter... all) {
+        super(ws, NutsFilterOp.OR);
         List<NutsRepositoryFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NutsRepositoryFilter filter : all) {
@@ -25,12 +29,12 @@ public class NutsRepositoryFilterOr implements NutsRepositoryFilter, Simplifiabl
     }
 
     @Override
-    public boolean accept(NutsRepository id) {
+    public boolean acceptRepository(NutsRepository id) {
         if (all.length == 0) {
             return true;
         }
         for (NutsRepositoryFilter filter : all) {
-            if (filter.accept(id)) {
+            if (filter.acceptRepository(id)) {
                 return true;
             }
         }
@@ -39,20 +43,29 @@ public class NutsRepositoryFilterOr implements NutsRepositoryFilter, Simplifiabl
 
     @Override
     public NutsRepositoryFilter simplify() {
-        if (all.length == 0) {
-            return null;
-        }
-        NutsRepositoryFilter[] newValues = CoreNutsUtils.simplifyAndShrink(NutsRepositoryFilter.class, all);
-        if (newValues != null) {
-            if (newValues.length == 0) {
-                return null;
-            }
-            if (newValues.length == 1) {
-                return newValues[0];
-            }
-            return new NutsRepositoryFilterOr(newValues);
-        }
-        return this;
+        return CoreNutsUtils.simplifyFilterOr(getWorkspace(), NutsRepositoryFilter.class,this,all);
+    }
+
+    @Override
+    public String toString() {
+        return CoreStringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsRepositoryFilterOr that = (NutsRepositoryFilterOr) o;
+        return Arrays.equals(all, that.all);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(all);
+    }
+
+    public NutsFilter[] getSubFilters() {
+        return all;
     }
 
 }

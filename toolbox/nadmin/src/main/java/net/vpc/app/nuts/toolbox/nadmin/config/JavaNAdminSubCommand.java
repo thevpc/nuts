@@ -36,13 +36,13 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                     extraLocations.add(cmdLine.next().getString());
                 }
                 if (extraLocations.isEmpty()) {
-                    for (NutsSdkLocation loc : conf.searchSdkLocations("java", context.getSession())) {
-                        conf.addSdk(loc, null);
+                    for (NutsSdkLocation loc : ws.sdks().searchSystem("java", context.getSession())) {
+                        ws.sdks().add(loc, null);
                     }
                 } else {
                     for (String extraLocation : extraLocations) {
-                        for (NutsSdkLocation loc : conf.searchSdkLocations("java", Paths.get(extraLocation), context.getSession())) {
-                            conf.addSdk(loc, null);
+                        for (NutsSdkLocation loc : ws.sdks().searchSystem("java", Paths.get(extraLocation), context.getSession())) {
+                            ws.sdks().add(loc, null);
                         }
                     }
                 }
@@ -52,9 +52,9 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             } else {
                 while (cmdLine.hasNext()) {
-                    NutsSdkLocation loc = conf.resolveSdkLocation("java", Paths.get(cmdLine.next().getString()), null, context.getSession());
+                    NutsSdkLocation loc = ws.sdks().resolve("java", Paths.get(cmdLine.next().getString()), null, context.getSession());
                     if (loc != null) {
-                        conf.addSdk(loc, null);
+                        ws.sdks().add(loc, null);
                     }
                 }
                 if (autoSave) {
@@ -65,15 +65,15 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
         } else if (cmdLine.next("remove java") != null) {
             while (cmdLine.hasNext()) {
                 String name = cmdLine.next().getString();
-                NutsSdkLocation loc = conf.findSdkByName("java", name, context.getSession());
+                NutsSdkLocation loc = ws.sdks().findByName("java", name, context.getSession());
                 if (loc == null) {
-                    loc = conf.findSdkByPath("java", Paths.get(name), context.getSession());
+                    loc = ws.sdks().findByPath("java", Paths.get(name), context.getSession());
                     if (loc == null) {
-                        loc = conf.findSdkByVersion("java", name, context.getSession());
+                        loc = ws.sdks().findByVersion("java", name, context.getSession());
                     }
                 }
                 if (loc != null) {
-                    conf.removeSdk(loc, null);
+                    ws.sdks().remove(loc, null);
                 }
             }
             if (autoSave) {
@@ -81,7 +81,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             return true;
         } else if (cmdLine.next("list java") != null) {
-            NutsTableFormat t = context.getWorkspace().table()
+            NutsTableFormat t = context.getWorkspace().formats().table()
                     //                    .setBorder(TableFormatter.SPACE_BORDER)
                     .setVisibleHeader(true);
             NutsMutableTableModel m = t.createModel();
@@ -93,7 +93,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                NutsSdkLocation[] sdks = conf.getSdks("java", context.getSession());
+                NutsSdkLocation[] sdks = ws.sdks().find("java", null,context.getSession());
                 Arrays.sort(sdks, new Comparator<NutsSdkLocation>() {
                     @Override
                     public int compare(NutsSdkLocation o1, NutsSdkLocation o2) {

@@ -111,11 +111,9 @@ public final class Nuts {
                 PrivateNutsUtils.trim(System.getProperty("nuts.boot.args"))
                         + " " + PrivateNutsUtils.trim(System.getProperty("nuts.args"))
         );
-        NutsWorkspaceOptionsBuilder options;
+        NutsWorkspaceOptionsBuilder options= createOptions();
         if (!PrivateNutsUtils.isBlank(nutsWorkspaceOptions)) {
-            options = PrivateNutsArgumentsParser.parseNutsArguments(PrivateNutsCommandLine.parseCommandLineArray(nutsWorkspaceOptions));
-        } else {
-            options = new NutsDefaultWorkspaceOptions();
+            options.parseCommandLine(nutsWorkspaceOptions);
         }
         options.setApplicationArguments(args);
         options.setInherited(true);
@@ -153,6 +151,10 @@ public final class Nuts {
         return new NutsBootWorkspace(options).openWorkspace();
     }
 
+    public static NutsWorkspaceOptionsBuilder createOptions(){
+        return new PrivateBootWorkspaceOptions();
+    }
+
     /**
      * open then run Nuts application with the provided arguments. This Main
      * will
@@ -166,16 +168,6 @@ public final class Nuts {
         new NutsBootWorkspace(args).runWorkspace();
     }
 
-    /**
-     * Create a {@link NutsWorkspaceOptions} instance from string array of valid
-     * nuts options
-     *
-     * @param bootArguments input arguments to parse
-     * @return newly created and filled options instance
-     */
-    public static NutsWorkspaceOptions parseNutsArguments(String[] bootArguments) {
-        return PrivateNutsArgumentsParser.parseNutsArguments(bootArguments);
-    }
 
     /**
      * resolves nuts home folder.Home folder is the root for nuts folders.It

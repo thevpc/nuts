@@ -31,6 +31,7 @@ package net.vpc.app.nuts.runtime.security;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -320,5 +321,20 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     @Override
     public boolean isSkipBoot() {
         return options.isSkipBoot();
+    }
+
+    @Override
+    public Instant getExpireTime() {
+        return options.getExpireTime();
+    }
+
+    @Override
+    public boolean isSkipErrors() {
+        return options.isSkipErrors();
+    }
+
+    @Override
+    public String[] getErrors() {
+        return options.getErrors();
     }
 }

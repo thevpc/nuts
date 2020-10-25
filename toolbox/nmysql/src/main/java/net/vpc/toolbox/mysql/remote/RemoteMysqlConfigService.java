@@ -45,7 +45,7 @@ public class RemoteMysqlConfigService {
 
     public RemoteMysqlConfigService saveConfig() {
         Path f = getConfigPath();
-        context.getWorkspace().json().value(config).print(f);
+        context.getWorkspace().formats().json().value(config).print(f);
         return this;
     }
 
@@ -64,7 +64,7 @@ public class RemoteMysqlConfigService {
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
-            config = context.getWorkspace().json().parse(f, RemoteMysqlConfig.class);
+            config = context.getWorkspace().formats().json().parse(f, RemoteMysqlConfig.class);
             return this;
         }
         throw new NoSuchElementException("Config not found : " + name);
@@ -81,7 +81,7 @@ public class RemoteMysqlConfigService {
     }
 
     public RemoteMysqlConfigService write(PrintStream out) {
-        context.getWorkspace().json().value(getConfig()).print(out);
+        context.getWorkspace().formats().json().value(getConfig()).print(out);
         out.flush();
         return this;
     }

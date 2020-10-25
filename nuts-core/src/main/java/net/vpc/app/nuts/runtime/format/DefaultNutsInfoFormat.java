@@ -258,10 +258,10 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         extraKeys = new TreeSet(extraProperties.keySet());
 
         props.put("name", stringValue(rt.getName()));
-        props.put("nuts-api-version", stringValue(rt.getApiVersion()));
-        NutsIdFormat idFormat = ws.id();
-        props.put("nuts-api-id", idFormat.value(rt.getApiId()).format());
-        props.put("nuts-runtime-id", idFormat.value(rt.getRuntimeId()).format());
+        props.put("nuts-api-version", stringValue(ws.getApiVersion()));
+        NutsIdFormat idFormat = ws.id().formatter();
+        props.put("nuts-api-id", idFormat.value(ws.getApiId()).format());
+        props.put("nuts-runtime-id", idFormat.value(ws.getRuntimeId()).format());
         URL[] cl = rt.getBootClassWorldURLs();
         List<String> runtimeClassPath = new ArrayList<>();
         if (cl != null) {
@@ -301,17 +301,17 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("nuts-skip-welcome", options.isSkipWelcome());
         props.put("nuts-skip-boot", options.isSkipBoot());
         props.put("java-version", stringValue(System.getProperty("java.version")));
-        props.put("platform", idFormat.value(ws.config().getPlatform()).format());
+        props.put("platform", idFormat.value(ws.env().getPlatform()).format());
         props.put("java-home", stringValue(System.getProperty("java.home")));
         props.put("java-executable", stringValue(NutsJavaSdkUtils.of(ws).resolveJavaCommandByHome(null)));
         props.put("java-classpath", stringValue(System.getProperty("java.class.path")));
         props.put("java-library-path", stringValue(System.getProperty("java.library.path")));
-        props.put("os-name", ws.config().getOs().toString());
-        props.put("os-family", stringValue(ws.config().getOsFamily()));
-        if (ws.config().getOsDist() != null) {
-            props.put("os-dist", stringValue(ws.config().getOsDist().toString()));
+        props.put("os-name", ws.env().getOs().toString());
+        props.put("os-family", stringValue(ws.env().getOsFamily()));
+        if (ws.env().getOsDist() != null) {
+            props.put("os-dist", stringValue(ws.env().getOsDist().toString()));
         }
-        props.put("os-arch", stringValue(ws.config().getArch().toString()));
+        props.put("os-arch", stringValue(ws.env().getArch().toString()));
         props.put("user-name", stringValue(System.getProperty("user.name")));
         props.put("user-home", stringValue(System.getProperty("user.home")));
         props.put("user-dir", stringValue(System.getProperty("user.dir")));
@@ -323,15 +323,15 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("creation-started", stringValue(Instant.ofEpochMilli(ws.config().getCreationStartTimeMillis())));
         props.put("creation-finished", stringValue(Instant.ofEpochMilli(ws.config().getCreationFinishTimeMillis())));
         props.put("creation-within", CoreCommonUtils.formatPeriodMilli(ws.config().getCreationTimeMillis()).trim());
-        props.put("repositories-count", (ws.config().getRepositories(getValidSession()).length));
+        props.put("repositories-count", (ws.repos().getRepositories(getValidSession()).length));
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));
         }
         if (deep) {
             Map<String, Object> repositories = new LinkedHashMap<>();
             props.put("repos", repositories);
-            for (NutsRepository repository : ws.config().getRepositories(getValidSession())) {
-                repositories.put(repository.config().name(), buildRepoRepoMap(repository, deep, prefix));
+            for (NutsRepository repository : ws.repos().getRepositories(getValidSession())) {
+                repositories.put(repository.getName(), buildRepoRepoMap(repository, deep, prefix));
             }
         }
 
@@ -340,7 +340,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
 
     private Map<String, Object> buildRepoRepoMap(NutsRepository repo, boolean deep, String prefix) {
         FilteredMap props = new FilteredMap(filter);
-        props.put(key(prefix, "name"), stringValue(repo.config().getName()));
+        props.put(key(prefix, "name"), stringValue(repo.getName()));
         props.put(key(prefix, "global-name"), repo.config().getGlobalName());
         props.put(key(prefix, "uuid"), stringValue(repo.config().getUuid()));
         props.put(key(prefix, "type"), repo.config().getType());
@@ -367,7 +367,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 Map<String, Object> mirrors = new LinkedHashMap<>();
                 props.put("mirrors", mirrors);
                 for (NutsRepository mirror : repo.config().getMirrors(getValidSession())) {
-                    mirrors.put(mirror.config().name(), buildRepoRepoMap(mirror, deep, null));
+                    mirrors.put(mirror.getName(), buildRepoRepoMap(mirror, deep, null));
                 }
             }
         }
@@ -375,7 +375,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     private String stringValue(Object s) {
-        return getWorkspace().io().getTerminalFormat().escapeText(CoreCommonUtils.stringValue(s));
+        return getWorkspace().io().term().getTerminalFormat().escapeText(CoreCommonUtils.stringValue(s));
     }
 
     public boolean isLenient() {

@@ -145,14 +145,14 @@ public class WhoamiCommand extends SimpleNshBuiltin {
                     result.remoteId = user.getRemoteIdentity();
                 }
                 List<RepoResult> rr = new ArrayList<>();
-                for (NutsRepository repository : context.getWorkspace().config().getRepositories(context.getSession())) {
+                for (NutsRepository repository : context.getWorkspace().repos().getRepositories(context.getSession())) {
                     NutsUser ruser = repository.security().getEffectiveUser(login);
                     if (ruser != null && (ruser.getGroups().length > 0
                             || ruser.getPermissions().length > 0
                             || !StringUtils.isBlank(ruser.getRemoteIdentity()))) {
                         RepoResult rt = new RepoResult();
                         rr.add(rt);
-                        rt.name = repository.config().getName();
+                        rt.name = repository.getName();
                         Set<String> rgroups = new TreeSet<>(Arrays.asList(ruser.getGroups()));
                         Set<String> rrights = new TreeSet<>(Arrays.asList(ruser.getPermissions()));
                         Set<String> rinherited = new TreeSet<>(Arrays.asList(ruser.getInheritedPermissions()));

@@ -79,7 +79,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     case "update": {
                         mode = NutsApplicationMode.UPDATE;
                         if (execModeCommand.hasNext()) {
-                            appPreviousVersion = workspace.version().parse(execModeCommand.next().getString());
+                            appPreviousVersion = workspace.version().parser().parse(execModeCommand.next().getString());
                         }
                         modeArgs = execModeCommand.toArray();
                         execModeCommand.skipAll();
@@ -112,7 +112,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             setSharedFolder(folder, cfg.getStoreLocation(this.appId.builder().setVersion(NutsConstants.Versions.RELEASE).build(), folder));
         }
         if (mode == NutsApplicationMode.AUTO_COMPLETE) {
-            this.workspace.io().getSystemTerminal().setMode(NutsTerminalMode.FILTERED);
+            this.workspace.io().term().getSystemTerminal().setMode(NutsTerminalMode.FILTERED);
             if (wordIndex < 0) {
                 wordIndex = args.length;
             }

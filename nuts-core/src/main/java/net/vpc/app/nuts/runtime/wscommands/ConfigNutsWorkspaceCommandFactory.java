@@ -20,13 +20,11 @@ import net.vpc.app.nuts.NutsLogger;
 public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 
     private final NutsLogger LOG;
-    private NutsWorkspaceConfigManager configManager;
-    private NutsWorkspaceConfigManagerExt configManagerExt;
+    private NutsWorkspace ws;
 
-    public ConfigNutsWorkspaceCommandFactory(NutsWorkspaceConfigManager cnf) {
-        this.configManager = cnf;
-        this.configManagerExt = NutsWorkspaceConfigManagerExt.of(cnf);
-        LOG = configManagerExt.getWorkspace().log().of(ConfigNutsWorkspaceCommandFactory.class);
+    public ConfigNutsWorkspaceCommandFactory(NutsWorkspace ws) {
+        this.ws = ws;
+        LOG = ws.log().of(ConfigNutsWorkspaceCommandFactory.class);
     }
 
     @Override
@@ -40,7 +38,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     public Path getStoreLocation() {
-        return configManager.getStoreLocation(configManager.getApiId(), NutsStoreLocation.APPS);
+        return ws.config().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
     }
 
     @Override
@@ -49,12 +47,12 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     public void uninstallCommand(String name, NutsRemoveOptions options) {
-        options = CoreNutsUtils.validate(options, configManagerExt.getWorkspace());
+        options = CoreNutsUtils.validate(options, ws);
         Path file = getStoreLocation().resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (Files.exists(file)) {
             try {
                 Files.delete(file);
-                configManagerExt.fireConfigurationChanged("command", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+                NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -62,17 +60,17 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     public void installCommand(NutsCommandAliasConfig command, NutsAddOptions options) {
-        options = CoreNutsUtils.validate(options, configManagerExt.getWorkspace());
+        options = CoreNutsUtils.validate(options, ws);
         Path path = getStoreLocation().resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
-        configManagerExt.getWorkspace().json().value(command).print(path);
-        configManagerExt.fireConfigurationChanged("command", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+        ws.formats().json().value(command).print(path);
+        NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
     }
 
     @Override
     public NutsCommandAliasConfig findCommand(String name, NutsWorkspace workspace) {
         Path file = getStoreLocation().resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (Files.exists(file)) {
-            NutsCommandAliasConfig c = configManagerExt.getWorkspace().json().parse(file, NutsCommandAliasConfig.class);
+            NutsCommandAliasConfig c = ws.formats().json().parse(file, NutsCommandAliasConfig.class);
             if (c != null) {
                 c.setName(name);
                 return c;
@@ -107,7 +105,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
                 if (file.getFileName().toString().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)) {
                     NutsCommandAliasConfig c = null;
                     try {
-                        c = configManagerExt.getWorkspace().json().parse(file, NutsCommandAliasConfig.class);
+                        c = ws.formats().json().parse(file, NutsCommandAliasConfig.class);
                     } catch (Exception ex) {
                         LOG.with().level(Level.FINE).error(ex).log("unable to parse {0}", file);
                         //

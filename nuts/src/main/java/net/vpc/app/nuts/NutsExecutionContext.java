@@ -81,13 +81,6 @@ public interface NutsExecutionContext {
      *
      * @return workspace
      */
-    NutsWorkspace workspace();
-
-    /**
-     * workspace
-     *
-     * @return workspace
-     */
     NutsWorkspace getWorkspace();
 
     /**

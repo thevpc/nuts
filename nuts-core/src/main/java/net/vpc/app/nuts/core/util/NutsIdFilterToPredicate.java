@@ -50,7 +50,7 @@ public class NutsIdFilterToPredicate implements Predicate<NutsId> {
 
     @Override
     public boolean test(NutsId x) {
-        return ff.accept(x, session);
+        return ff.acceptId(x, session);
     }
     
 }

@@ -89,7 +89,7 @@ public class FilesFoldersApi {
                     }
                 }
             }
-        } catch (UncheckedIOException ex) {
+        } catch (UncheckedIOException|NutsIOException ex) {
             session.getWorkspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}",dotFilesUrl);
         }
         if(versionString.compareTo("0.5.7")<0){

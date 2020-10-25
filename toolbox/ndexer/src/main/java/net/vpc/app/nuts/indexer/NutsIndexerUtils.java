@@ -30,7 +30,7 @@ public class NutsIndexerUtils {
             return new HashMap<>();
         }
         Map<String, String> entity = new HashMap<>();
-        entity.put("name", repository.config().getName());
+        entity.put("name", repository.getName());
         entity.put("type", repository.getRepositoryType());
         entity.put("location", repository.config().getLocation(false));
         entity.put("enabled", String.valueOf(repository.config().isEnabled()));
@@ -48,7 +48,7 @@ public class NutsIndexerUtils {
 
     public static String mapToJson(Map<String, String> map, NutsWorkspace ws) {
         StringWriter s = new StringWriter();
-        ws.json().value(map).print(s);
+        ws.formats().json().value(map).print(s);
         return s.toString();
     }
 
@@ -79,8 +79,8 @@ public class NutsIndexerUtils {
         _condPut(entity, "namespace", dependency.getNamespace());
         _condPut(entity, "group", dependency.getGroupId());
         _condPut(entity, "version", dependency.getVersion().getValue());
-        NutsId id2 = dependency.getId().builder()
-                .setFace(StringUtils.isEmpty(dependency.getId().getFace()) ? "default" : dependency.getId().getFace())
+        NutsId id2 = dependency.toId().builder()
+                .setFace(StringUtils.isEmpty(dependency.toId().getFace()) ? "default" : dependency.toId().getFace())
                 .build();
         _condPut(entity, NutsConstants.IdProperties.FACE, id2.getFace());
         _condPut(entity, "os", id2.getOs());

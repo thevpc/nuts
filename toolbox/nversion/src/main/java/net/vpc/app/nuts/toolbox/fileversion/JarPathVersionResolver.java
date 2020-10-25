@@ -32,8 +32,6 @@ package net.vpc.app.nuts.toolbox.fileversion;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
@@ -119,7 +117,7 @@ public class JarPathVersionResolver implements PathVersionResolver{
 
                     } else if (("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
                         try {
-                            NutsDescriptor d = context.getWorkspace().descriptor().parse(inputStream);
+                            NutsDescriptor d = context.getWorkspace().descriptor().parser().parse(inputStream);
                             inputStream.close();
                             Properties properties = new Properties();
                             properties.setProperty("parents", StringUtils.join(",", d.getParents(), Object::toString));
@@ -136,7 +134,7 @@ public class JarPathVersionResolver implements PathVersionResolver{
                             if (d.getDescription() != null) {
                                 properties.setProperty("description", d.getDescription());
                             }
-                            properties.setProperty("locations", context.getWorkspace().json().value(d.getLocations()).format());
+                            properties.setProperty("locations", context.getWorkspace().formats().json().value(d.getLocations()).format());
                             properties.setProperty("platform", StringUtils.join(";", d.getPlatform()));
                             properties.setProperty("os", StringUtils.join(";", d.getOs()));
                             properties.setProperty("arch", StringUtils.join(";", d.getArch()));

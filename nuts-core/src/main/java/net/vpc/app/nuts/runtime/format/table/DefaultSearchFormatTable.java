@@ -6,7 +6,6 @@
 package net.vpc.app.nuts.runtime.format.table;
 
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.Arrays;
 
 import net.vpc.app.nuts.*;
@@ -36,7 +35,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     public NutsTableFormat getTable(NutsWorkspace ws) {
         if (table == null) {
-            table = ws.table();
+            table = ws.formats().table();
             model = table.createModel();
             table.setModel(model);
         }

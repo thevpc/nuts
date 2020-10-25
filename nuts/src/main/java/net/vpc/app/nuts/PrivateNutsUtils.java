@@ -42,6 +42,8 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -851,14 +853,23 @@ final class PrivateNutsUtils {
             return mvnUrl + jarPath;
         }
 
-        public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder, PrivateNutsLog LOG, boolean includeDesc) {
+        public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder, PrivateNutsLog LOG, boolean includeDesc, Instant expire) {
             includeDesc = false;
             String descPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, "pom");
             String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, "jar");
             File cachedJarFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
             File cachedPomFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "pom"));
             if (cachedJarFile.isFile()) {
-                return cachedJarFile;
+                try {
+                    if(expire!=null && Files.getLastModifiedTime(cachedJarFile.toPath()).toInstant().compareTo(expire)<0){
+                        //ignore
+                    }else {
+                        return cachedJarFile;
+                    }
+                } catch (IOException e) {
+                    //suppose update, if not it will be re-downloaded every time
+                    return cachedJarFile;
+                }
             }
             for (String r : repositories) {
                 LOG.log(Level.FINE, PrivateNutsLog.CACHE, "checking {0} from {1}", new Object[]{nutsId, r});
@@ -1193,6 +1204,23 @@ final class PrivateNutsUtils {
             }
             return false;
         }
+    }
+
+    public static boolean isFileAccessible(Path path, Instant expireTime,PrivateNutsLog LOG){
+        boolean proceed=Files.isRegularFile(path);
+        if(proceed) {
+            try {
+                if (expireTime != null) {
+                    FileTime lastModifiedTime = Files.getLastModifiedTime(path);
+                    if (lastModifiedTime.toInstant().compareTo(expireTime) < 0) {
+                        return false;
+                    }
+                }
+            } catch (Exception ex0) {
+                LOG.log(Level.FINEST, PrivateNutsLog.FAIL, "unable to get LastModifiedTime for file : {0}", new String[]{path.toString(), ex0.toString()});
+            }
+        }
+        return proceed;
     }
 
     public static class Deps {

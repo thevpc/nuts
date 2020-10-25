@@ -29,9 +29,8 @@
  */
 package net.vpc.app.nuts.runtime.filters.descriptor;
 
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsDescriptorFilter;
-import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
@@ -42,11 +41,12 @@ import net.vpc.app.nuts.runtime.filters.CoreFilterUtils;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsDescriptorFilterPlatform implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
+public class NutsDescriptorFilterPlatform extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
 
     private final String platform;
 
-    public NutsDescriptorFilterPlatform(String packaging) {
+    public NutsDescriptorFilterPlatform(NutsWorkspace ws,String packaging) {
+        super(ws, NutsFilterOp.CUSTOM);
         this.platform = packaging;
     }
 
@@ -55,7 +55,7 @@ public class NutsDescriptorFilterPlatform implements NutsDescriptorFilter, Simpl
     }
 
     @Override
-    public boolean accept(NutsDescriptor descriptor, NutsSession session) {
+    public boolean acceptDescriptor(NutsDescriptor descriptor, NutsSession session) {
         return CoreFilterUtils.matchesPlatform(platform, descriptor, session);
     }
 

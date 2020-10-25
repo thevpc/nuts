@@ -58,7 +58,7 @@ package net.vpc.app.nuts;
  * @since 0.5.4
  * @category Descriptor
  */
-public interface NutsVersionFilter extends NutsSearchIdFilter {
+public interface NutsVersionFilter extends NutsArtifactFilter {
 
     /**
      * true if the version is accepted by this instance filter
@@ -66,7 +66,7 @@ public interface NutsVersionFilter extends NutsSearchIdFilter {
      * @param session current session instance
      * @return true if the version is accepted by this instance interval
      */
-    boolean accept(NutsVersion version, NutsSession session);
+    boolean acceptVersion(NutsVersion version, NutsSession session);
 
     /**
      * true if the version is accepted by this instance filter
@@ -76,6 +76,18 @@ public interface NutsVersionFilter extends NutsSearchIdFilter {
      */
     @Override
     default boolean acceptSearchId(NutsSearchId sid, NutsSession session) {
-        return accept(sid.getVersion(session), session);
+        return acceptVersion(sid.getId(session).getVersion(), session);
+    }
+
+    default NutsVersionFilter or(NutsVersionFilter other) {
+        return or((NutsFilter)other).to(NutsVersionFilter.class);
+    }
+
+    default NutsVersionFilter and(NutsVersionFilter other) {
+        return and((NutsFilter)other).to(NutsVersionFilter.class);
+    }
+
+    default NutsVersionFilter neg() {
+        return NutsArtifactFilter.super.neg().to(NutsVersionFilter.class);
     }
 }

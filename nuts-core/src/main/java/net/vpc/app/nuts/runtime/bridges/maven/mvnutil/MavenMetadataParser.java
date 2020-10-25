@@ -26,6 +26,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 
 import net.vpc.app.nuts.NutsLogger;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.runtime.format.xml.NutsXmlUtils;
 import org.w3c.dom.Document;
@@ -74,7 +75,7 @@ public class MavenMetadataParser {
     }
 
     public void writeMavenMetaData(MavenMetadata m, StreamResult writer) throws TransformerException, ParserConfigurationException {
-        Document document = NutsXmlUtils.createDocument();
+        Document document = NutsXmlUtils.createDocument(ws);
 
         Element metadata = document.createElement("metadata");
         document.appendChild(metadata);

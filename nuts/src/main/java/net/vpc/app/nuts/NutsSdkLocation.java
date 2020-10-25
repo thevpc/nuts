@@ -46,6 +46,7 @@ public class NutsSdkLocation extends NutsConfigItem {
     private final String product;
     private final String path;
     private final String version;
+    private final int priority;
 
     /**
      * default constructor
@@ -56,13 +57,23 @@ public class NutsSdkLocation extends NutsConfigItem {
      * @param version sdk version
      * @param packaging sdk packaging. for Java SDK this is room to set JRE or JDK.
      */
-    public NutsSdkLocation(NutsId id, String product, String name, String path, String version, String packaging) {
+    public NutsSdkLocation(NutsId id, String product, String name, String path, String version, String packaging,int priority) {
         this.id = id;
         this.product = product;
         this.name = name;
         this.path = path;
         this.version = version;
         this.packaging = packaging;
+        this.priority = priority;
+    }
+
+
+    public NutsSdkLocation setPriority(int priority) {
+        return new NutsSdkLocation(id, product, name, path, version, packaging,priority);
+    }
+
+    public int getPriority() {
+        return priority;
     }
 
     public NutsId getId() {
@@ -123,12 +134,14 @@ public class NutsSdkLocation extends NutsConfigItem {
                 Objects.equals(packaging, that.packaging) &&
                 Objects.equals(product, that.product) &&
                 Objects.equals(path, that.path) &&
-                Objects.equals(version, that.version);
+                Objects.equals(version, that.version) &&
+                Objects.equals(priority, that.priority)
+                ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, packaging, product, path, version);
+        return Objects.hash(id, name, packaging, product, path, version, priority);
     }
 
     @Override
@@ -140,6 +153,7 @@ public class NutsSdkLocation extends NutsConfigItem {
                 ", product='" + product + '\'' +
                 ", path='" + path + '\'' +
                 ", version='" + version + '\'' +
+                ", priority=" + priority +
                 '}';
     }
 }

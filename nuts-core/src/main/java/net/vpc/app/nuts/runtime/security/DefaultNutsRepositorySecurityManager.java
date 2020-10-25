@@ -33,7 +33,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
 
     public DefaultNutsRepositorySecurityManager(final NutsRepository repo) {
         this.repo = repo;
-        this.agent = new WrapperNutsAuthenticationAgent(repo.getWorkspace(), ()->repo.config().getEnv(), x -> getAuthenticationAgent(x));
+        this.agent = new WrapperNutsAuthenticationAgent(repo.getWorkspace(), ()->repo.env().toMap(), x -> getAuthenticationAgent(x));
         this.repo.addRepositoryListener(new NutsRepositoryListener() {
             @Override
             public void onConfigurationChanged(NutsRepositoryEvent event) {

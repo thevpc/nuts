@@ -43,7 +43,7 @@ public enum NutsExecutableType {
 
     /**
      * workspace configured command using
-     * {@link NutsWorkspaceConfigManager#addCommandAlias(NutsCommandAliasConfig, NutsAddOptions)}
+     * {@link NutsCommandAliasManager#add(NutsCommandAliasConfig, NutsAddOptions)}
      */
     ALIAS,
 

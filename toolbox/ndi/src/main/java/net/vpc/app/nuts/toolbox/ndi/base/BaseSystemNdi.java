@@ -65,6 +65,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (ensureHeader != null) {
                 if (fileRows.length == 0 || !fileRows[0].trim().matches(ensureHeader)) {
                     lines.add(headerReplace);
+                    updatedFile=true;
                 }
             }
             for (int i = 0; i < fileRows.length; i++) {
@@ -89,7 +90,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
         }
         if (!found) {
-            if (ensureHeader != null && headerReplace != null) {
+            if (ensureHeader != null && headerReplace != null && lines.isEmpty()) {
                 lines.add(headerReplace);
             }
             lines.add(toCommentLine(commentLine));
@@ -135,7 +136,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     @Override
     public NdiScriptnfo[] createNutsScript(NdiScriptOptions options) throws IOException {
-        NutsId nid = context.getWorkspace().id().parse(options.getId());
+        NutsId nid = context.getWorkspace().id().parser().parse(options.getId());
         if ("nuts".equals(nid.getShortName()) || "net.vpc.app.nuts:nuts".equals(nid.getShortName())) {
             return createBootScript(options.isForceBoot() || options.getSession().isYes(), options.getSession().isTrace());
         } else {
@@ -178,7 +179,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     protected abstract String getCallScriptCommand(String path);
 
     public NdiScriptnfo[] createBootScript(boolean force, boolean trace) throws IOException {
-        NutsId b = context.getWorkspace().config().getApiId();
+        NutsId b = context.getWorkspace().getApiId();
         NutsDefinition f = context.getWorkspace().search()
                 .setSession(context.getSession().copy().setSilent())
                 .addId(b).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
@@ -255,10 +256,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     @Override
     public void removeNutsScript(String id, NutsSession session) throws IOException {
-        NutsId nid = context.getWorkspace().id().parse(id);
+        NutsId nid = context.getWorkspace().id().parser().parse(id);
         Path f = getScriptFile(nid.getArtifactId());
         if (Files.isRegularFile(f)) {
-            if (session.terminal().ask().forBoolean("Tool ==%s== will be removed. Confirm?", NdiUtils.betterPath(f.toString()))
+            if (session.getTerminal().ask().forBoolean("Tool ==%s== will be removed. Confirm?", NdiUtils.betterPath(f.toString()))
                     .defaultValue(true)
                     .getBooleanValue()) {
                 Files.delete(f);

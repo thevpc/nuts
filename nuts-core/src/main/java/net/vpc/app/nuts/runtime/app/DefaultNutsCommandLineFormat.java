@@ -66,13 +66,13 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
                 if (index > 0) {
                     out.print(" ");
                 }
-                out.print(escapeArgument(n));
+                out.print(escapeArgumentFormat(n));
                 index++;
             }
         }
     }
 
-    private String escapeArgument(NutsArgument arg) {
+    private String escapeArgumentFormat(NutsArgument arg) {
         if (arg.isOption()) {
 
             StringBuilder sb = new StringBuilder();
@@ -84,30 +84,30 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
                     sb.append("@@//@@");
                 }
                 sb.append("[[!]]");
-                sb.append("**" + escapeArgument(getWorkspace(), name) + "**");
+                sb.append("**" + escapeArgumentFormat(getWorkspace(), name) + "**");
             } else {
                 if (!arg.isEnabled()) {
-                    sb.append("**" + escapeArgument(getWorkspace(), prefix) + "**");
+                    sb.append("**" + escapeArgumentFormat(getWorkspace(), prefix) + "**");
                     sb.append("@@//@@");
-                    sb.append("**" + escapeArgument(getWorkspace(), name) + "**");
+                    sb.append("**" + escapeArgumentFormat(getWorkspace(), name) + "**");
                 } else {
-                    sb.append("**" + escapeArgument(getWorkspace(), prefix + name) + "**");
+                    sb.append("**" + escapeArgumentFormat(getWorkspace(), prefix + name) + "**");
                 }
             }
             if (arg.isKeyValue()) {
                 sb.append("{{\\=}}");
-                sb.append(escapeArgument(getWorkspace(), arg.getStringValue()));
+                sb.append(escapeArgumentFormat(getWorkspace(), arg.getStringValue()));
             }
             return sb.toString();
         } else {
             if (!arg.isEnabled()) {
-                return "@@" + escapeArgument(getWorkspace(), arg.getString()) + "@@";
+                return "@@" + escapeArgumentFormat(getWorkspace(), arg.getString()) + "@@";
             }
-            return escapeArgument(getWorkspace(), arg.getString());
+            return escapeArgumentFormat(getWorkspace(), arg.getString());
         }
     }
 
-    private static String escapeArgument(NutsWorkspace ws, String arg) {
+    private static String escapeArgumentFormat(NutsWorkspace ws, String arg) {
         StringBuilder sb = new StringBuilder();
         if (arg != null) {
             for (char c : arg.toCharArray()) {
@@ -138,7 +138,7 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
                 }
             }
         }
-        return ws.io().terminalFormat().escapeText(sb.toString());
+        return ws.io().term().getTerminalFormat().escapeText(sb.toString());
     }
 
     @Override

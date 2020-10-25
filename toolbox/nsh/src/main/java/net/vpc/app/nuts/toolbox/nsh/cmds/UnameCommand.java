@@ -101,9 +101,9 @@ public class UnameCommand extends SimpleNshBuiltin {
         NutsWorkspace ws = context.getWorkspace();
 
         Result rr = new Result();
-        rr.osdist = ws.config().getOsDist();
-        rr.os = ws.config().getOs();
-        rr.arch = ws.config().getArch();
+        rr.osdist = ws.env().getOsDist();
+        rr.os = ws.env().getOs();
+        rr.arch = ws.env().getArch();
         if (!config.farch && !config.fos && !config.fdist) {
             config.farch = true;
             config.fos = true;

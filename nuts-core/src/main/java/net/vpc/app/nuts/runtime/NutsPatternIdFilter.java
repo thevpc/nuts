@@ -13,13 +13,14 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 
 /**
  *
  * @author vpc
  */
-public class NutsPatternIdFilter implements NutsIdFilter {
+public class NutsPatternIdFilter extends AbstractNutsFilter implements NutsIdFilter {
 
     private NutsId id;
     private Pattern g;
@@ -29,7 +30,8 @@ public class NutsPatternIdFilter implements NutsIdFilter {
     private Map<String, String> qm;
     private List<Predicate<Map<String, String>>> q = new ArrayList<>();
 
-    public NutsPatternIdFilter(NutsId id) {
+    public NutsPatternIdFilter(NutsWorkspace ws,NutsId id) {
+        super(ws,NutsFilterOp.CUSTOM);
         this.id = id;
         this.wildcard = containsWildcad(id.toString());
         g = CoreStringUtils.toPattern(id.getGroupId());
@@ -58,14 +60,14 @@ public class NutsPatternIdFilter implements NutsIdFilter {
     }
 
     @Override
-    public boolean accept(NutsId other, NutsSession session) {
+    public boolean acceptId(NutsId other, NutsSession session) {
         if (!g.matcher(other.getGroupId()).matches()) {
             return false;
         }
         if (!n.matcher(other.getArtifactId()).matches()) {
             return false;
         }
-        if (!v.accept(other.getVersion(), session)) {
+        if (!v.acceptVersion(other.getVersion(), session)) {
             return false;
         }
         Map<String, String> oqm = null;
@@ -156,4 +158,8 @@ public class NutsPatternIdFilter implements NutsIdFilter {
                 ;
     }
 
+    @Override
+    public NutsIdFilter simplify() {
+        return this;
+    }
 }

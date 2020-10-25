@@ -6,7 +6,6 @@
 package net.vpc.app.nuts.runtime.format.tree;
 
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +55,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
     }
 
     public void formatElement(Object object, long index, boolean last) {
-        NutsTreeFormat tree = getWorkspace().tree();
+        NutsTreeFormat tree = getWorkspace().formats().tree();
         List<String> options = new ArrayList<>();
         options.add("--omit-root");
         if (!last) {

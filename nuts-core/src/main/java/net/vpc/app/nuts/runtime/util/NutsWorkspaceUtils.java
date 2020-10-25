@@ -109,10 +109,10 @@ public class NutsWorkspaceUtils {
     public NutsId configureFetchEnv(NutsId id) {
         Map<String, String> qm = id.getProperties();
         if (qm.get(NutsConstants.IdProperties.FACE) == null && qm.get("arch") == null && qm.get("os") == null && qm.get("osdist") == null && qm.get("platform") == null) {
-            qm.put("arch", ws.config().getArch().toString());
-            qm.put("os", ws.config().getOs().toString());
-            if (ws.config().getOsDist() != null) {
-                qm.put("osdist", ws.config().getOsDist().toString());
+            qm.put("arch", ws.env().getArch().toString());
+            qm.put("os", ws.env().getOs().toString());
+            if (ws.env().getOsDist() != null) {
+                qm.put("osdist", ws.env().getOsDist().toString());
             }
             return id.builder().setProperties(qm).build();
         }
@@ -122,10 +122,10 @@ public class NutsWorkspaceUtils {
     public List<NutsRepository> _getEnabledRepositories(NutsRepositoryFilter repositoryFilter, NutsSession session) {
         List<NutsRepository> repos = new ArrayList<>();
         List<NutsRepository> subrepos = new ArrayList<>();
-        for (NutsRepository repository : ws.config().getRepositories(session)) {
+        for (NutsRepository repository : ws.repos().getRepositories(session)) {
             boolean ok = false;
             if (repository.config().isEnabled()) {
-                if (repositoryFilter == null || repositoryFilter.accept(repository)) {
+                if (repositoryFilter == null || repositoryFilter.acceptRepository(repository)) {
                     repos.add(repository);
                     ok = true;
                 }
@@ -149,25 +149,24 @@ public class NutsWorkspaceUtils {
     }
 
     public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsSession session, boolean includeInstalledRepository, boolean includeOtherRepositories) {
-
         List<RepoAndLevel> repos2 = new ArrayList<>();
         //        List<Integer> reposLevels = new ArrayList<>();
         if (includeOtherRepositories) {
-            for (NutsRepository repository : ws.config().getRepositories(session)) {
-                if (repository.config().isEnabled() && (repositoryFilter == null || repositoryFilter.accept(repository))) {
+            for (NutsRepository repository : ws.repos().getRepositories(session)) {
+                if (repository.isEnabled() && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))) {
                     int t = 0;
                     int d = 0;
                     if (fmode == NutsRepositorySupportedAction.DEPLOY) {
                         try {
                             d = CoreNutsUtils.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive(), session);
                         } catch (Exception ex) {
-                            LOG.with().level(Level.FINE).error(ex).log("Unable to resolve support deploy level for : {0}", repository.config().name());
+                            LOG.with().level(Level.FINE).error(ex).log("Unable to resolve support deploy level for : {0}", repository.getName());
                         }
                     }
                     try {
                         t = CoreNutsUtils.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive(), session);
                     } catch (Exception ex) {
-                        LOG.with().level(Level.FINE).error(ex).log("Unable to resolve support speed level for : {0}", repository.config().name());
+                        LOG.with().level(Level.FINE).error(ex).log("Unable to resolve support speed level for : {0}", repository.getName());
                     }
                     if (t > 0) {
                         repos2.add(new RepoAndLevel(repository, d, t, postComp));
@@ -301,7 +300,7 @@ public class NutsWorkspaceUtils {
         String k = DefaultSearchFormatPlain.class.getName() + "#NutsIdFormat";
         NutsIdFormat f = (NutsIdFormat) ws.userProperties().get(k);
         if (f == null) {
-            f = ws.id();
+            f = ws.id().formatter();
             ws.userProperties().put(k, f);
         }
         return f;
@@ -311,7 +310,7 @@ public class NutsWorkspaceUtils {
         String k = DefaultSearchFormatPlain.class.getName() + "#NutsDescriptorFormat";
         NutsDescriptorFormat f = (NutsDescriptorFormat) ws.userProperties().get(k);
         if (f == null) {
-            f = ws.descriptor();
+            f = ws.descriptor().formatter();
             ws.userProperties().put(k, f);
         }
         return f;
@@ -365,11 +364,23 @@ public class NutsWorkspaceUtils {
             if (u.LOG.isLoggable(Level.FINEST)) {
                 u.LOG.with().level(Level.FINEST).verb(NutsLogVerb.UPDATE).log("installed ##{0}##", event.getDefinition().getId());
             }
-            for (NutsInstallListener listener : u.ws.getInstallListeners()) {
+            for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
                 listener.onInstall(event);
             }
             for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
                 listener.onInstall(event);
+            }
+        }
+
+        public void fireOnRequire(NutsInstallEvent event) {
+            if (u.LOG.isLoggable(Level.FINEST)) {
+                u.LOG.with().level(Level.FINEST).verb(NutsLogVerb.UPDATE).log("required ##{0}##", event.getDefinition().getId());
+            }
+            for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
+                listener.onRequire(event);
+            }
+            for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
+                listener.onRequire(event);
             }
         }
 
@@ -385,7 +396,7 @@ public class NutsWorkspaceUtils {
                                     event.getNewValue().getId().getLongNameId());
                 }
             }
-            for (NutsInstallListener listener : u.ws.getInstallListeners()) {
+            for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
                 listener.onUpdate(event);
             }
             for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
@@ -398,7 +409,7 @@ public class NutsWorkspaceUtils {
                 u.LOG.with().level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
                         .log("uninstalled ##{0}##", event.getDefinition().getId());
             }
-            for (NutsInstallListener listener : u.ws.getInstallListeners()) {
+            for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
                 listener.onUninstall(event);
             }
             for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
@@ -409,10 +420,10 @@ public class NutsWorkspaceUtils {
         public void fireOnAddRepository(NutsWorkspaceEvent event) {
             if (u.LOG.isLoggable(Level.CONFIG)) {
                 u.LOG.with().level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted()
-                        .log("added Repo ##{0}##", event.getRepository().config().name());
+                        .log("added Repo ##{0}##", event.getRepository().getName());
             }
 
-            for (NutsWorkspaceListener listener : u.ws.getWorkspaceListeners()) {
+            for (NutsWorkspaceListener listener : u.ws.events().getWorkspaceListeners()) {
                 listener.onAddRepository(event);
             }
             for (NutsWorkspaceListener listener : event.getSession().getListeners(NutsWorkspaceListener.class)) {
@@ -423,9 +434,9 @@ public class NutsWorkspaceUtils {
         public void fireOnRemoveRepository(NutsWorkspaceEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
                 u.LOG.with().level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
-                        .log("removed Repo ##{0}##", event.getRepository().config().name());
+                        .log("removed Repo ##{0}##", event.getRepository().getName());
             }
-            for (NutsWorkspaceListener listener : u.ws.getWorkspaceListeners()) {
+            for (NutsWorkspaceListener listener : u.ws.events().getWorkspaceListeners()) {
                 listener.onRemoveRepository(event);
             }
             for (NutsWorkspaceListener listener : event.getSession().getListeners(NutsWorkspaceListener.class)) {
@@ -459,13 +470,13 @@ public class NutsWorkspaceUtils {
         PrintStream out = execTerminal.out();
         PrintStream err = execTerminal.err();
         InputStream in = execTerminal.in();
-        if (ws.io().getSystemTerminal().isStandardOutputStream(out)) {
+        if (ws.io().term().getSystemTerminal().isStandardOutputStream(out)) {
             out = null;
         }
-        if (ws.io().getSystemTerminal().isStandardErrorStream(err)) {
+        if (ws.io().term().getSystemTerminal().isStandardErrorStream(err)) {
             err = null;
         }
-        if (ws.io().getSystemTerminal().isStandardInputStream(in)) {
+        if (ws.io().term().getSystemTerminal().isStandardInputStream(in)) {
             in = null;
         }
         CoreIOUtils.clearMonitor(out, ws);
@@ -485,7 +496,7 @@ public class NutsWorkspaceUtils {
             LOG.with().level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] {0}", new NutsString(pb.getFormattedCommandString(ws)));
         }
         if (showCommand || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
-            if (ws.io().getTerminalFormat().isFormatted(prepareTerminal.out())) {
+            if (ws.io().term().getTerminalFormat().isFormatted(prepareTerminal.out())) {
                 prepareTerminal.out().print("==[exec]== ");
                 prepareTerminal.out().println(pb.getFormattedCommandString(ws));
             } else {

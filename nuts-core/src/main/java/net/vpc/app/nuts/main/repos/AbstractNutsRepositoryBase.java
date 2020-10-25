@@ -86,6 +86,13 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
                 options.getName(), repositoryType
         );
         this.nutsIndexStore = workspace.config().getIndexStoreClientFactory().createIndexStore(this);
+        setEnabled(
+                this.workspace.config().options().getExcludedRepositories()==null ||
+                Arrays.stream(this.workspace.config().options().getExcludedRepositories())
+                .noneMatch(
+                        n->optionsConfig.getName().equals(n)
+                )
+        );
     }
 
     @Override
@@ -100,7 +107,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     @Override
     public String toString() {
         NutsRepositoryConfigManager c = config();
-        String name = config().getName();
+        String name = getName();
         String storePath = null;
         String loc = config().getLocation(false);
         String impl = getClass().getSimpleName();
@@ -147,7 +154,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     }
 
     protected void traceMessage(NutsSession session, NutsFetchMode fetchMode,Level lvl, NutsId id, TraceResult tracePhase, String title, long startTime,String extraMessage) {
-        CoreNutsUtils.traceMessage(LOG, lvl,config().name(), session, fetchMode, id, tracePhase, title, startTime,extraMessage);
+        CoreNutsUtils.traceMessage(LOG, lvl,getName(), session, fetchMode, id, tracePhase, title, startTime,extraMessage);
     }
 
     @Override

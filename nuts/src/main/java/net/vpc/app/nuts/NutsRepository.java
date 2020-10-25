@@ -81,12 +81,6 @@ public interface NutsRepository {
      * return repository type
      * @return repository type
      */
-    String repositoryType();
-
-    /**
-     * return repository type
-     * @return repository type
-     */
     String getRepositoryType();
 
     /**
@@ -96,12 +90,6 @@ public interface NutsRepository {
     String getUuid();
 
     /**
-     * return repository unique identifier
-     * @return repository unique identifier
-     */
-    String uuid();
-
-    /**
      * return repository name.
      * equivalent to config().name()
      * @return repository name
@@ -109,11 +97,10 @@ public interface NutsRepository {
     String getName();
 
     /**
-     * return repository name.
-     * equivalent to config().name()
-     * @return repository name
+     * env
+     * @return env
      */
-    String name();
+    NutsRepositoryEnvManager env();
 
     /**
      * return parent workspace
@@ -122,22 +109,10 @@ public interface NutsRepository {
     NutsWorkspace getWorkspace();
 
     /**
-     * return parent workspace
-     * @return parent workspace
-     */
-    NutsWorkspace workspace();
-
-    /**
      * return parent repository or null
      * @return parent repository or null
      */
     NutsRepository getParentRepository();
-
-    /**
-     * return parent repository or null
-     * @return parent repository or null
-     */
-    NutsRepository parentRepository();
 
     /**
      * return repository configuration manager
@@ -225,7 +200,7 @@ public interface NutsRepository {
      * return mutable instance of user properties
      * @return mutable instance of user properties
      */
-    Map<String, Object> userProperties();
+    Map<String, Object> getUserProperties();
 
     /**
      * add listener to user properties
@@ -244,4 +219,17 @@ public interface NutsRepository {
      * @return array of registered user properties listeners
      */
     NutsMapListener<String, Object>[] getUserPropertyListeners();
+
+    /**
+     * enabled if config is enabled and runtime is enabled
+     * @return true if config is enabled and runtime is enabled
+     */
+    boolean isEnabled() ;
+
+    /**
+     * set runtime enabled
+     * @param enabled runtime enabled value
+     * @return {@code this} instance
+     */
+    NutsRepository setEnabled(boolean enabled);
 }

@@ -75,12 +75,4 @@ public interface NutsVersionFormat extends NutsFormat {
      */
     boolean isWorkspaceVersion();
 
-    /**
-     * return version instance representing the {@code version} string
-     *
-     * @param version string (may be null)
-     * @return version instance representing the {@code version} string
-     */
-    NutsVersion parse(String version);
-
 }

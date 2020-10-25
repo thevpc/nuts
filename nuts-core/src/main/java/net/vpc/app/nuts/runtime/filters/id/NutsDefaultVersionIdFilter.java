@@ -5,27 +5,28 @@
  */
 package net.vpc.app.nuts.runtime.filters.id;
 
-import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.NutsWorkspaceExt;
 import java.util.Objects;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIdFilter;
+
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
 /**
  *
  * @author vpc
  */
-public class NutsDefaultVersionIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> {
+public class NutsDefaultVersionIdFilter extends AbstractNutsFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> {
 
     private final Boolean defaultVersion;
 
-    public NutsDefaultVersionIdFilter(Boolean defaultVersion) {
+    public NutsDefaultVersionIdFilter(NutsWorkspace ws,Boolean defaultVersion) {
+        super(ws, NutsFilterOp.CUSTOM);
         this.defaultVersion = defaultVersion;
     }
 
     @Override
-    public boolean accept(NutsId other, NutsSession session) {
+    public boolean acceptId(NutsId other, NutsSession session) {
         if (defaultVersion == null) {
             return true;
         }

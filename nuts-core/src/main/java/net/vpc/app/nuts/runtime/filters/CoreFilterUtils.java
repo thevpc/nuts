@@ -29,33 +29,17 @@
  */
 package net.vpc.app.nuts.runtime.filters;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 import java.util.function.Predicate;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.runtime.filters.dependency.NutsDependencyFilterAnd;
-import net.vpc.app.nuts.runtime.filters.dependency.NutsDependencyFilterOr;
-import net.vpc.app.nuts.runtime.filters.descriptor.NutsDescriptorFilterAnd;
-import net.vpc.app.nuts.runtime.filters.descriptor.NutsDescriptorFilterArch;
-import net.vpc.app.nuts.runtime.filters.descriptor.NutsDescriptorFilterOr;
-import net.vpc.app.nuts.runtime.filters.descriptor.NutsDescriptorFilterOs;
-import net.vpc.app.nuts.runtime.filters.descriptor.NutsDescriptorFilterOsdist;
-import net.vpc.app.nuts.runtime.filters.descriptor.NutsDescriptorFilterPlatform;
-import net.vpc.app.nuts.runtime.filters.id.NutsIdFilterAnd;
-import net.vpc.app.nuts.runtime.filters.id.NutsIdFilterOr;
 import net.vpc.app.nuts.runtime.filters.id.NutsDescriptorIdFilter;
 import net.vpc.app.nuts.runtime.filters.id.NutstVersionIdFilter;
-import net.vpc.app.nuts.runtime.filters.repository.NutsRepositoryFilterAnd;
-import net.vpc.app.nuts.runtime.filters.repository.NutsRepositoryFilterOr;
-import net.vpc.app.nuts.runtime.filters.version.NutsVersionFilterAnd;
-import net.vpc.app.nuts.runtime.filters.version.NutsVersionFilterOr;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
-import net.vpc.app.nuts.runtime.util.io.NutsIdFilterTopInstalled;
+import net.vpc.app.nuts.runtime.util.io.NutsInstallStatusIdFilter;
 
 /**
  * @author vpc
@@ -73,59 +57,53 @@ public class CoreFilterUtils {
         return new NutstVersionIdFilter(other);
     }
 
-    public static NutsInstallStatus getTopLevelFilterInstallStatus(NutsIdFilter idFilter) {
-        NutsIdFilterTopInstalled z = (NutsIdFilterTopInstalled) getTopLevelFilterByType(idFilter, NutsIdFilterTopInstalled.class);
-        return z == null ? null : z.getInstallStatus();
-    }
 
-    public static NutsIdFilter getTopLevelFilterByType(NutsIdFilter idFilter, Class clazz) {
-        if (clazz.isInstance(idFilter)) {
-            return idFilter;
-        }
-        if (idFilter instanceof NutsIdFilterAnd) {
-            for (NutsIdFilter child : ((NutsIdFilterAnd) idFilter).getChildren()) {
-                if (clazz.isInstance(child)) {
-                    return child;
-                } else if (child instanceof NutsIdFilterAnd) {
-                    return getTopLevelFilterByType(child, clazz);
-                }
+    public static boolean[] getTopLevelInstallRepoInclusion(NutsIdFilter filter) {
+        boolean includeInstalledRepository=false;
+        boolean includeOtherRepository=false;
+        for (NutsFilter topLevelFilter : CoreFilterUtils.getTopLevelFilters(filter)) {
+            if(topLevelFilter instanceof NutsInstallStatusIdFilter){
+                includeInstalledRepository|=((NutsInstallStatusIdFilter) topLevelFilter).containsInstalled();
+                includeOtherRepository|=((NutsInstallStatusIdFilter) topLevelFilter).containsUninstalled();
             }
         }
-        return null;
+        if(!includeInstalledRepository && !includeOtherRepository){
+            includeInstalledRepository=true;
+            includeOtherRepository=true;
+        }
+        return new boolean[]{includeInstalledRepository,includeOtherRepository};
     }
 
-    public static NutsIdFilter idFilterOf(Map<String, String> map, NutsIdFilter idFilter, NutsDescriptorFilter descriptorFilter) {
-        return
-                CoreFilterUtils.AndSimplified(
-                        idFilter,
-                        CoreFilterUtils.idFilterOf(
-                                CoreFilterUtils.AndSimplified(CoreFilterUtils.createNutsDescriptorFilter(map), descriptorFilter)
-                        )
-                );
+    public static <T extends NutsFilter> T[] getTopLevelFilters(NutsFilter idFilter,Class<T> clazz,NutsWorkspace ws) {
+        return Arrays.stream(getTopLevelFilters(idFilter))
+                .map(x-> ws.filters().as(clazz,x))
+                .toArray(value -> (T[]) Array.newInstance(clazz,value));
     }
 
-    public static NutsDescriptorFilter Or(NutsDescriptorFilter... all) {
-        return new NutsDescriptorFilterOr(all);
+    public static NutsFilter[] getTopLevelFilters(NutsFilter idFilter) {
+        if(idFilter==null){
+            return new NutsFilter[0];
+        }
+        if(idFilter.getFilterOp()==NutsFilterOp.AND){
+            return idFilter.getSubFilters();
+        }
+        return new NutsFilter[]{idFilter};
     }
 
-    public static NutsIdFilter Or(NutsIdFilter... all) {
-        return new NutsIdFilterOr(all);
+    public static NutsIdFilter idFilterOf(Map<String, String> map, NutsIdFilter idFilter, NutsDescriptorFilter descriptorFilter,NutsWorkspace ws) {
+        return (NutsIdFilter) ws.id().filter().nonnull(idFilter).and(
+                CoreFilterUtils.createNutsDescriptorFilter(map,ws).and(descriptorFilter).to(NutsIdFilter.class)
+        );
     }
 
-    public static NutsVersionFilter Or(NutsVersionFilter... all) {
-        return new NutsVersionFilterOr(all);
+
+    public static NutsDescriptorFilter createNutsDescriptorFilter(String arch, String os, String osdist, String platform, NutsWorkspace ws) {
+        NutsDescriptorFilterManager d = ws.descriptor().filter();
+        return (NutsDescriptorFilter) d.byArch(arch).and(d.byOsdist(osdist)).and(d.byPlatform(platform));
     }
 
-    public static NutsDependencyFilter Or(NutsDependencyFilter... all) {
-        return new NutsDependencyFilterOr(all);
-    }
-
-    public static NutsDescriptorFilter createNutsDescriptorFilter(String arch, String os, String osdist, String platform) {
-        return AndSimplified(new NutsDescriptorFilterArch(arch), new NutsDescriptorFilterOs(os), new NutsDescriptorFilterOsdist(osdist), new NutsDescriptorFilterPlatform(platform));
-    }
-
-    public static NutsDescriptorFilter createNutsDescriptorFilter(Map<String, String> faceMap) {
-        return createNutsDescriptorFilter(faceMap == null ? null : faceMap.get("arch"), faceMap == null ? null : faceMap.get("os"), faceMap == null ? null : faceMap.get("osdist"), faceMap == null ? null : faceMap.get("platform"));
+    public static NutsDescriptorFilter createNutsDescriptorFilter(Map<String, String> faceMap,NutsWorkspace ws) {
+        return createNutsDescriptorFilter(faceMap == null ? null : faceMap.get("arch"), faceMap == null ? null : faceMap.get("os"), faceMap == null ? null : faceMap.get("osdist"), faceMap == null ? null : faceMap.get("platform"), ws);
     }
 
     public static <T> Predicate<NutsId> createFilter(NutsIdFilter t, NutsSession session) {
@@ -135,66 +113,15 @@ public class CoreFilterUtils {
         return new Predicate<NutsId>() {
             @Override
             public boolean test(NutsId value) {
-                return t.accept(value, session);
+                return t.acceptId(value, session);
             }
         };
     }
 
-    public static NutsIdFilter And(NutsIdFilter... all) {
-        return new NutsIdFilterAnd(all);
-    }
 
-    public static NutsDescriptorFilter AndSimplified(NutsDescriptorFilter... all) {
-        return CoreNutsUtils.simplify(And(all));
-    }
 
-    public static NutsDescriptorFilter OrSimplified(NutsDescriptorFilter... all) {
-        return CoreNutsUtils.simplify(Or(all));
-    }
 
-    public static NutsIdFilter AndSimplified(NutsIdFilter... all) {
-        return CoreNutsUtils.simplify(And(all));
-    }
 
-    public static NutsIdFilter OrSimplified(NutsIdFilter... all) {
-        return CoreNutsUtils.simplify(Or(all));
-    }
-
-    public static NutsRepositoryFilter AndSimplified(NutsRepositoryFilter... all) {
-        return CoreNutsUtils.simplify(And(all));
-    }
-
-    public static NutsRepositoryFilter OrSimplified(NutsRepositoryFilter... all) {
-        return CoreNutsUtils.simplify(Or(all));
-    }
-
-    public static NutsDependencyFilter AndSimplified(NutsDependencyFilter... all) {
-        return CoreNutsUtils.simplify(And(all));
-    }
-
-    public static NutsDependencyFilter OrSimplified(NutsDependencyFilter... all) {
-        return CoreNutsUtils.simplify(Or(all));
-    }
-
-    public static NutsDescriptorFilter And(NutsDescriptorFilter... all) {
-        return new NutsDescriptorFilterAnd(all);
-    }
-
-    public static NutsVersionFilter And(NutsVersionFilter... all) {
-        return new NutsVersionFilterAnd(all);
-    }
-
-    public static NutsRepositoryFilter And(NutsRepositoryFilter... all) {
-        return new NutsRepositoryFilterAnd(all);
-    }
-
-    public static NutsRepositoryFilter Or(NutsRepositoryFilter... all) {
-        return new NutsRepositoryFilterOr(all);
-    }
-
-    public static NutsDependencyFilter And(NutsDependencyFilter... all) {
-        return new NutsDependencyFilterAnd(all);
-    }
 
     public static List<NutsExtensionInformation> filterNutsExtensionInfoByLatestVersion(List<NutsExtensionInformation> base) {
         LinkedHashMap<String, NutsExtensionInformation> valid = new LinkedHashMap<>();
@@ -231,7 +158,7 @@ public class CoreFilterUtils {
             return _v == _v2;
         }
         if (_v.equalsShortName(_v2)) {
-            if (_v.getVersion().filter().accept(_v2.getVersion(), session)) {
+            if (_v.getVersion().filter().acceptVersion(_v2.getVersion(), session)) {
                 return true;
             }
         }
@@ -251,7 +178,7 @@ public class CoreFilterUtils {
                 }
                 NutsId y = NutsWorkspaceUtils.parseRequiredNutsId0(v);
                 if (y.equalsShortName(_v)) {
-                    if (y.getVersion().filter().accept(_v.getVersion(), session)) {
+                    if (y.getVersion().filter().acceptVersion(_v.getVersion(), session)) {
                         return true;
                     }
                 }
@@ -275,7 +202,7 @@ public class CoreFilterUtils {
                 }
                 NutsId y = NutsWorkspaceUtils.parseRequiredNutsId0(v);
                 if (y.equalsShortName(_v)) {
-                    if (y.getVersion().filter().accept(_v.getVersion(), session)) {
+                    if (y.getVersion().filter().acceptVersion(_v.getVersion(), session)) {
                         return true;
                     }
                 }
@@ -299,7 +226,7 @@ public class CoreFilterUtils {
                 }
                 NutsId y = NutsWorkspaceUtils.parseRequiredNutsId0(v);
                 if (y.equalsShortName(_v)) {
-                    if (y.getVersion().filter().accept(_v.getVersion(), session)) {
+                    if (y.getVersion().filter().acceptVersion(_v.getVersion(), session)) {
                         return true;
                     }
                 }
@@ -328,7 +255,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 if (y.equalsShortName(_v)) {
-                    if (y.getVersion().filter().accept(_v.getVersion(), session)) {
+                    if (y.getVersion().filter().acceptVersion(_v.getVersion(), session)) {
                         return true;
                     }
                 }
@@ -361,7 +288,7 @@ public class CoreFilterUtils {
         }
         List<NutsDependency> r = new ArrayList<>(d0.length);
         for (NutsDependency nutsDependency : d0) {
-            if (dependencyFilter.accept(from, nutsDependency, session)) {
+            if (dependencyFilter.acceptDependency(from, nutsDependency, session)) {
                 r.add(nutsDependency);
             }
         }

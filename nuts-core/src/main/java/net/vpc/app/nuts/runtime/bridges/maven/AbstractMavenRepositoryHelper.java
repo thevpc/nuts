@@ -40,7 +40,6 @@ import net.vpc.app.nuts.runtime.io.NamedByteArrayInputStream;
 import net.vpc.app.nuts.NutsLogger;
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
-import net.vpc.app.nuts.runtime.util.io.InputSource;
 
 /**
  * Created by vpc on 2/20/17.
@@ -57,17 +56,17 @@ public abstract class AbstractMavenRepositoryHelper {
 
     protected abstract String getIdPath(NutsId id);
 
-    protected InputSource getStream(NutsId id, NutsSession session) {
+    protected NutsInput getStream(NutsId id, String typeName, NutsSession session) {
         String url = getIdPath(id);
-        return openStream(id, url, id, session);
+        return openStream(id, url, id, typeName, session);
     }
 
-    protected String getStreamAsString(NutsId id, NutsSession session) {
+    protected String getStreamAsString(NutsId id, String typeName, NutsSession session) {
         String url = getIdPath(id);
-        return CoreIOUtils.loadString(openStream(id, url, id, session).open(), true);
+        return CoreIOUtils.loadString(openStream(id, url, id, typeName, session).open(), true);
     }
 
-    protected void checkSHA1Hash(NutsId id, InputStream stream, NutsSession session) throws IOException {
+    protected void checkSHA1Hash(NutsId id, InputStream stream, String typeName, NutsSession session) throws IOException {
         switch (CoreStringUtils.trim(id.getFace())) {
             case NutsConstants.QueryFaces.CONTENT_HASH:
             case NutsConstants.QueryFaces.DESCRIPTOR_HASH: {
@@ -81,8 +80,8 @@ public abstract class AbstractMavenRepositoryHelper {
         try {
             String rhash=null;
             try {
-                rhash = getStreamSHA1(id, session);
-            }catch (UncheckedIOException ex){
+                rhash = getStreamSHA1(id, session, typeName);
+            }catch (UncheckedIOException|NutsIOException ex){
                 //sha is not provided... so do not check anything!
                 return;
             }
@@ -95,8 +94,8 @@ public abstract class AbstractMavenRepositoryHelper {
         }
     }
 
-    protected String getStreamSHA1(NutsId id, NutsSession session) {
-        String hash = getStreamAsString(id, session).toUpperCase();
+    protected String getStreamSHA1(NutsId id, NutsSession session, String typeName) {
+        String hash = getStreamAsString(id, typeName+" SHA1", session).toUpperCase();
         for (String s : hash.split("[ \n\r]")) {
             if (s.length() > 0) {
                 return s;
@@ -105,17 +104,17 @@ public abstract class AbstractMavenRepositoryHelper {
         return hash.split("[ \n\r]")[0];
     }
 
-    protected abstract InputSource openStream(NutsId id, String path, Object source, NutsSession session);
+    protected abstract NutsInput openStream(NutsId id, String path, Object source, String typeName, NutsSession session);
 
     public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
-        InputSource stream = null;
+        NutsInput stream = null;
         try {
             NutsDescriptor nutsDescriptor = null;
             byte[] bytes = null;
             String name=null;
             NutsId idDesc = id.builder().setFaceDescriptor().build();
             try {
-                stream = getStream(idDesc, session);
+                stream = getStream(idDesc, "artifact descriptor", session);
                 bytes = CoreIOUtils.loadByteArray(stream.open(), true);
                 name = stream.getName();
                 nutsDescriptor = MavenUtils.of(session.getWorkspace()).parsePomXml(new NamedByteArrayInputStream(bytes, name), fetchMode, getIdPath(id), repository, session);
@@ -124,11 +123,9 @@ public abstract class AbstractMavenRepositoryHelper {
                     stream.close();
                 }
             }
-            checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(), new NamedByteArrayInputStream(bytes,name), session);
+            checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(), new NamedByteArrayInputStream(bytes,name), "artifact descriptor", session);
             return nutsDescriptor;
-        } catch (IOException ex) {
-            throw new NutsNotFoundException(repository.getWorkspace(), id, null, ex);
-        } catch (UncheckedIOException ex) {
+        } catch (IOException|UncheckedIOException|NutsIOException ex) {
             throw new NutsNotFoundException(repository.getWorkspace(), id, ex);
         }
     }

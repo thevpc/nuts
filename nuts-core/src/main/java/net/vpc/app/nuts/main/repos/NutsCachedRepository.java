@@ -61,8 +61,8 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     public NutsCachedRepository(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
         super(options, workspace, parent, speed, supportedMirroring, repositoryType);
         LOG = workspace.log().of(DefaultNutsRepoConfigManager.class);
-        cache = new NutsRepositoryFolderHelper(this, workspace, config().getStoreLocation(NutsStoreLocation.CACHE));
-        lib = new NutsRepositoryFolderHelper(this, workspace, config().getStoreLocation(NutsStoreLocation.LIB));
+        cache = new NutsRepositoryFolderHelper(this, workspace, config().getStoreLocation(NutsStoreLocation.CACHE),true);
+        lib = new NutsRepositoryFolderHelper(this, workspace, config().getStoreLocation(NutsStoreLocation.LIB),false);
         mirroring = new NutsRepositoryMirroringHelper(this, cache);
     }
 
@@ -82,7 +82,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         }
         RuntimeException mirrorsEx = null;
 
-        SuccessFailResult<NutsDescriptor, RuntimeException> res = workspace.io().lock().source(id.builder().setFaceDescriptor().build()).call(() -> {
+        SuccessFailResult<NutsDescriptor, RuntimeException> res = workspace.concurrent().lock().source(id.builder().setFaceDescriptor().build()).call(() -> {
             try {
                 NutsDescriptor success = fetchDescriptorCore(id, fetchMode, session);
                 if (success != null) {
@@ -180,7 +180,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
         RuntimeException mirrorsEx = null;
         NutsContent c = null;
-        SuccessFailResult<NutsContent, RuntimeException> res = workspace.io().lock().source(id.builder().setFaceContent().build()).call(() -> {
+        SuccessFailResult<NutsContent, RuntimeException> res = workspace.concurrent().lock().source(id.builder().setFaceContent().build()).call(() -> {
             if (cache.isWriteEnabled()) {
                 Path cachePath = cache.getLongNameIdLocalFile(id);
                 NutsContent c2 = fetchContentCore(id, descriptor, cachePath, fetchMode, session);

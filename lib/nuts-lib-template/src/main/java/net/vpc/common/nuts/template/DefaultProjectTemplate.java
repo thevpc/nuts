@@ -71,7 +71,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
 
             @Override
             public String ask(String propName, String propertyTitle, StringValidator validator, String defaultValue) {
-                NutsSessionTerminal term = session.terminal();
+                NutsSessionTerminal term = session.getTerminal();
                 if (session.getConfirm() == NutsConfirmationMode.YES) {
                     return defaultValue;
                 }
@@ -441,7 +441,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
         if (p == null) {
             p = resolveFirstPomFile(getProjectRootFolder());
             if (p != null) {
-                if (!getSession().terminal().ask().forBoolean("Accept project location ==%s==?", p.getPath())
+                if (!getSession().getTerminal().ask().forBoolean("Accept project location ==%s==?", p.getPath())
                         .defaultValue(false)
                         .getBooleanValue()) {
                     throw new NutsUserCancelException(getWorkspace());

@@ -6,6 +6,7 @@
 package net.vpc.app.nuts.runtime.filters.id;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
 import java.util.Arrays;
@@ -16,23 +17,24 @@ import java.util.Set;
  *
  * @author vpc
  */
-public class NutsExecCompanionFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
+public class NutsExecCompanionFilter extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
     private NutsId apiId;
     private Set<String> companions;
-    public NutsExecCompanionFilter(NutsId apiId,String[] shortIds) {
+    public NutsExecCompanionFilter(NutsWorkspace ws,NutsId apiId,String[] shortIds) {
+        super(ws,NutsFilterOp.CUSTOM);
         this.apiId=apiId;
         this.companions=new HashSet<>(Arrays.asList(shortIds));
     }
 
     @Override
-    public boolean accept(NutsDescriptor other, NutsSession session) {
+    public boolean acceptDescriptor(NutsDescriptor other, NutsSession session) {
         if(companions.contains(other.getId().getShortName())){
             for (NutsDependency dependency : other.getDependencies()) {
-                if(dependency.getId().getShortName().equals(NutsConstants.Ids.NUTS_API)){
+                if(dependency.toId().getShortName().equals(NutsConstants.Ids.NUTS_API)){
                     if(apiId==null){
                         return true;
                     }
-                    if(apiId.getVersion().equals(dependency.getId().getVersion())){
+                    if(apiId.getVersion().equals(dependency.toId().getVersion())){
                         return true;
                     }
                     return false;

@@ -203,7 +203,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         result.put("deployfolder", getDeployFolder());
         result.put("runningfolder", getRunningFile());
         result.put("versionFolder", getVersionFile());
-        context.getWorkspace().json().value(result).print(out);
+        context.getWorkspace().formats().json().value(result).print(out);
         return this;
     }
 

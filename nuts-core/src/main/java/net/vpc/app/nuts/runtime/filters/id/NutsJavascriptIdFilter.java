@@ -29,10 +29,9 @@
  */
 package net.vpc.app.nuts.runtime.filters.id;
 
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIdFilter;
-import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.DefaultNutsId;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.common.JavascriptHelper;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
@@ -43,20 +42,22 @@ import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 /**
  * Created by vpc on 1/7/17.
  */
-public class NutsJavascriptIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
+public class NutsJavascriptIdFilter extends AbstractNutsFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
 
     private static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("sample", "sample", "sample", "sample", "sample");
 
     private String code;
 
-    public static NutsJavascriptIdFilter valueOf(String value) {
+    public static NutsIdFilter valueOf(String value,NutsWorkspace ws) {
         if (CoreStringUtils.isBlank(value)) {
-            return null;
+            return ws.id().filter().always();
         }
-        return new NutsJavascriptIdFilter(value);
+        return new NutsJavascriptIdFilter(ws,value);
     }
 
-    public NutsJavascriptIdFilter(String code) {
+
+    public NutsJavascriptIdFilter(NutsWorkspace ws,String code) {
+        super(ws, NutsFilterOp.CUSTOM);
         this.code = code;
     }
 
@@ -65,7 +66,7 @@ public class NutsJavascriptIdFilter implements NutsIdFilter, Simplifiable<NutsId
     }
 
     @Override
-    public boolean accept(NutsId id, NutsSession session) {
+    public boolean acceptId(NutsId id, NutsSession session) {
         Set<String> blacklist = null;
         JavascriptHelper engineHelper = new JavascriptHelper(code, "var id=x.getId(); var version=id.getVersion();", blacklist, null, session);
         return engineHelper.accept(id);

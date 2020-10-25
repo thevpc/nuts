@@ -31,7 +31,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
         NutsSession session = getSession();
         for (String repository : getRepositrories()) {
             processed = true;
-            NutsRepository repo = ws.config().getRepository(repository, session.copy().setTransitive(false));
+            NutsRepository repo = ws.repos().getRepository(repository, session.copy().setTransitive(false));
             repo.updateStatistics()
                     .setSession(session)
 //                    .setFetchMode(NutsFetchMode.LOCAL)
@@ -66,7 +66,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
                         -> x.getName().equals("nuts-repository.json")
                 );
                 if (nutsRepoRootFiles != null && nutsRepoRootFiles.length > 0) {
-                    new NutsRepositoryFolderHelper(null, ws, repositoryPath).reindexFolder();
+                    new NutsRepositoryFolderHelper(null, ws, repositoryPath,false).reindexFolder();
                 } else {
                     throw new NutsIllegalArgumentException(ws, "Unsupported repository Folder");
                 }
@@ -79,7 +79,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
             if (session.isPlainTrace()) {
                 session.out().printf("[[%s]] Updating workspace stats%n", getWorkspace().config().getWorkspaceLocation());
             }
-            for (NutsRepository repo : getWorkspace().config().getRepositories(session)) {
+            for (NutsRepository repo : getWorkspace().repos().getRepositories(session)) {
                 if (session.isPlainTrace()) {
                     session.out().printf("[[%s]] Updating stats %s%n", getWorkspace().config().getWorkspaceLocation(), repo);
                 }

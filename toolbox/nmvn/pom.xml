@@ -4,11 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>nmvn</artifactId>
-    <version>0.7.2.0</version>
+    <version>0.8.0.0</version>
     <packaging>jar</packaging>
     <name>net.vpc.app.nuts.toolbox.nmvn</name>
     <description>Nuts Maven Command</description>
-
 
     <organization>
         <name>vpc open source initiative</name>
@@ -46,6 +45,10 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <github.global.server>github</github.global.server>
         <nuts.application>true</nuts.application>
+        <resolverVersion>1.1.0</resolverVersion>
+        <wagonVersion>3.3.2</wagonVersion>
+        <sisuInjectVersion>0.3.4</sisuInjectVersion>
+        <mavenMinimalVersion>3.5.4</mavenMinimalVersion>
     </properties>
 
     <distributionManagement>
@@ -64,13 +67,13 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.7.2</version>
+            <version>0.8.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-embedder</artifactId>
-            <version>3.1.1</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.jsoup</groupId>-->
+        <!--            <artifactId>jsoup</artifactId>-->
+        <!--            <version>1.12.1</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -81,16 +84,190 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.5</version>
         </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.eclipse.aether</groupId>-->
+        <!--            <artifactId>aether-connector-wagon</artifactId>-->
+        <!--            <version>0.9.0.M2</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.maven.wagon</groupId>-->
+        <!--            <artifactId>wagon-http-lightweight</artifactId>-->
+        <!--            <version>2.5</version>-->
+        <!--        </dependency>-->
+
         <dependency>
-            <groupId>org.eclipse.aether</groupId>
-            <artifactId>aether-connector-wagon</artifactId>
-            <version>0.9.0.M2</version>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-embedder</artifactId>
+            <version>3.6.3</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.maven.plugins</groupId>-->
+<!--            <artifactId>maven-downloader-plugin</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-cipher</artifactId>
+            <version>1.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-api</artifactId>
+            <version>${resolverVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-impl</artifactId>
+            <version>${resolverVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-spi</artifactId>
+            <version>${resolverVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-util</artifactId>
+            <version>${resolverVersion}</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.maven.resolver</groupId>-->
+<!--            <artifactId>maven-resolver-transport-wagon</artifactId>-->
+<!--            <version>${resolverVersion}</version>-->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>org.codehaus.plexus</groupId>-->
+<!--                    <artifactId>plexus-container-default</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-connector-basic</artifactId>
+            <version>${resolverVersion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.sisu</groupId>
+            <artifactId>org.eclipse.sisu.plexus</artifactId>
+            <version>${sisuInjectVersion}</version>
+            <exclusions>
+                <!--            <exclusion>-->
+                <!--                <groupId>org.sonatype.sisu</groupId>-->
+                <!--                <artifactId>sisu-guice</artifactId>-->
+                <!--            </exclusion>-->
+                <!-- Clashes with core, breaks tests: -->
+                <!--            <exclusion>-->
+                <!--                <groupId>com.google.guava</groupId>-->
+                <!--                <artifactId>guava</artifactId>-->
+                <!--            </exclusion>-->
+            </exclusions>
+        </dependency>
+
+        <!--
+        <dependency>
+          <groupId>org.sonatype.sisu</groupId>
+          <artifactId>sisu-inject-plexus</artifactId>
+          <version>2.4.1</version>
+        </dependency>
+        <dependency>
+          <groupId>org.sonatype.sisu</groupId>
+          <artifactId>sisu-inject-bean</artifactId>
+          <version>2.4.1</version>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-compat</artifactId>
+            <version>${mavenMinimalVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-http-lightweight</artifactId>
-            <version>2.5</version>
+            <artifactId>wagon-http</artifactId>
+            <version>${wagonVersion}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-file</artifactId>
+            <version>${wagonVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-ftp</artifactId>
+            <version>${wagonVersion}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-ssh</artifactId>
+            <version>${wagonVersion}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.plexus</groupId>
+                    <artifactId>plexus-component-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <!-- Comes from the jsch plugin -->
+                    <groupId>com.jcraft</groupId>
+                    <artifactId>jsch</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-ssh-external</artifactId>
+            <version>${wagonVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-provider-api</artifactId>
+            <version>${wagonVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.reporting</groupId>
+            <artifactId>maven-reporting-api</artifactId>
+            <version>3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-classworlds</artifactId>
+            <version>2.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-component-annotations</artifactId>
+            <version>1.7.1</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -150,7 +327,7 @@
                 <!--<version>0.9</version>-->
                 <configuration>
                     <!-- git commit message -->
-                    <!--<message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}</message>-->  
+                    <!--<message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}</message>-->
                     <message>${project.version} of ${project.groupId}:${project.artifactId}</message>
                     <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
                     <outputDirectory>${project.build.directory}/vpc-public-maven

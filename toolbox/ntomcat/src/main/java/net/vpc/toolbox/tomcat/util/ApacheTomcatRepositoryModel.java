@@ -57,7 +57,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                     //will ignore all alpha versions
                     continue;
                 }
-                NutsVersion version = ws.version().parse(s2.substring(1, s2.length() - 1));
+                NutsVersion version = ws.version().parser().parse(s2.substring(1, s2.length() - 1));
                 if (version.compareTo("4.1.32") < 0) {
                     prefix = "jakarta-tomcat-";
                 }
@@ -70,15 +70,15 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                             prefix + "[0-9]+\\.[0-9]+\\.[0-9]+\\.zip",
                             session)) {
                         String v0 = s3.substring(prefix.length(), s3.length() - 4);
-                        NutsVersion v = ws.version().parse(v0);
+                        NutsVersion v = ws.version().parser().parse(v0);
                         NutsId id2 = idBuilder.setVersion(v).build();
-                        if (filter == null || filter.accept(id2, session)) {
+                        if (filter == null || filter.acceptId(id2, session)) {
                             all.add(id2);
                         }
                     }
                 }else{
                     NutsId id2 = idBuilder.setVersion(version).build();
-                    if (filter == null || filter.accept(id2, session)) {
+                    if (filter == null || filter.acceptId(id2, session)) {
                         all.add(id2);
                     }
                 }
@@ -204,7 +204,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                     }
                 }
             }
-        } catch (UncheckedIOException io) {
+        } catch (UncheckedIOException|NutsIOException io) {
             LOG.log(Level.FINER, "Inaccessible url " + url + " (" + io.getCause().toString());
         }
         return all.toArray(new String[0]);

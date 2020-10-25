@@ -34,7 +34,7 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
 
     @Override
     public NutsUndeployCommand addId(String id) {
-        return addId(CoreStringUtils.isBlank(id) ? null : ws.id().parseRequired(id));
+        return addId(CoreStringUtils.isBlank(id) ? null : ws.id().parser().setLenient(false).parse(id));
     }
 
     @Override
@@ -42,7 +42,7 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
         if (values != null) {
             for (String s : values) {
                 if (!CoreStringUtils.isBlank(s)) {
-                    ids.add(ws.id().parseRequired(s));
+                    ids.add(ws.id().parser().setLenient(false).parse(s));
                 }
             }
         }
@@ -100,7 +100,7 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
         if (session.isTrace()) {
             if (session.getOutputFormat() == null || session.getOutputFormat() == NutsOutputFormat.PLAIN) {
                 if (session.getOutputFormat() == null || session.getOutputFormat() == NutsOutputFormat.PLAIN) {
-                    session.getTerminal().out().printf("Nuts %s undeployed successfully%n", new NutsString(ws.id().value(id).format()));
+                    session.getTerminal().out().printf("Nuts %s undeployed successfully%n", new NutsString(ws.id().formatter(id).format()));
                 }
             }
         }

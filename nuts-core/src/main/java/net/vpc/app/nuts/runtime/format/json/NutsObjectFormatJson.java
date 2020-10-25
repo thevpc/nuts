@@ -8,7 +8,6 @@ package net.vpc.app.nuts.runtime.format.json;
 import net.vpc.app.nuts.*;
 
 import java.io.PrintStream;
-import java.io.Writer;
 import java.util.*;
 
 import net.vpc.app.nuts.runtime.format.props.DefaultPropertiesFormat;
@@ -54,7 +53,7 @@ public class NutsObjectFormatJson extends NutsObjectFormatBase {
 
     @Override
     public void print(PrintStream w) {
-        getWorkspace().json().value(getValue()).print(w);
+        getWorkspace().formats().json().value(getValue()).print(w);
     }
 
     public NutsObjectFormatBase addMultilineProperty(String property, String separator) {

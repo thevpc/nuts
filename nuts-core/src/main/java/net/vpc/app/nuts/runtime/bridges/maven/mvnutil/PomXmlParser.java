@@ -1,5 +1,8 @@
 package net.vpc.app.nuts.runtime.bridges.maven.mvnutil;
 
+import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.runtime.log.NutsLogVerb;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -14,9 +17,11 @@ import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.vpc.app.nuts.runtime.format.xml.NutsXmlUtils;
+import org.xml.sax.SAXParseException;
 
 public class PomXmlParser {
 
@@ -44,26 +49,11 @@ public class PomXmlParser {
         map.put("&nbsp;", "&#32;");
         map.put("&apos;", "&#39;");
     }
+    private NutsWorkspace ws;
 
-    public static final ErrorHandler EH = null;
-//            new ErrorHandler() {
-//        @Override
-//        public void warning(SAXParseException exception) throws SAXException {
-//            System.out.println(exception);
-//        }
-//
-//        @Override
-//        public void error(SAXParseException exception) throws SAXException {
-//            System.out.println(exception);
-//
-//        }
-//
-//        @Override
-//        public void fatalError(SAXParseException exception) throws SAXException {
-//            System.out.println(exception);
-//
-//        }
-//    };
+    public PomXmlParser(NutsWorkspace ws) {
+        this.ws = ws;
+    }
 
     public Pom parse(URL url) throws IOException, SAXException, ParserConfigurationException {
         return parse(url, null);
@@ -119,7 +109,7 @@ public class PomXmlParser {
     }
 
     public Pom parse(InputStream stream, PomDomVisitor visitor) throws IOException, SAXException, ParserConfigurationException {
-        Document doc = NutsXmlUtils.createDocumentBuilder(true).parse(preValidateStream(stream));
+        Document doc = NutsXmlUtils.createDocumentBuilder(true,ws).parse(preValidateStream(stream));
         return parse(doc, visitor);
     }
 
@@ -152,7 +142,8 @@ public class PomXmlParser {
             if (v != null) {
                 m.appendReplacement(sb, v);
             } else {
-                System.err.println("[PomXmlParser] Unsupported  xml entity declaration : " + key);
+                ws.log().of(NutsXmlUtils.class).with()
+                        .level(Level.FINEST).verb(NutsLogVerb.WARNING).log("[PomXmlParser] Unsupported  xml entity declaration : {0}",key);
                 m.appendReplacement(sb, key);
             }
         }

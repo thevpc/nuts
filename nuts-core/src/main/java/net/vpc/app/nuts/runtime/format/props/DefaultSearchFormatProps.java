@@ -6,7 +6,6 @@
 package net.vpc.app.nuts.runtime.format.props;
 
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.vpc.app.nuts.NutsCommandLine;
@@ -48,7 +47,7 @@ public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
     public void next(Object object, long index) {
         Map<String, String> p = new LinkedHashMap<>();
         NutsFormatUtils.putAllInProps(String.valueOf(index + 1), p,
-                getWorkspace().element().toElement(object)
+                getWorkspace().formats().element().toElement(object)
         );
         CoreIOUtils.storeProperties(p, getWriter(), false);
         getWriter().flush();

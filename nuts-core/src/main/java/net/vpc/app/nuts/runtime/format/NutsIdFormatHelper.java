@@ -30,10 +30,7 @@
 package net.vpc.app.nuts.runtime.format;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -54,7 +51,7 @@ import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 public class NutsIdFormatHelper {
     private NutsLogger LOG;
     NutsId id;
-    NutsInstallStatus installStatus=NutsInstallStatus.NOT_INSTALLED;
+    Set<NutsInstallStatus> installStatus=EnumSet.of(NutsInstallStatus.NOT_INSTALLED);
     boolean defaultVersion;
     Boolean executable = null;
     Boolean executableApp = null;
@@ -68,6 +65,7 @@ public class NutsIdFormatHelper {
     Instant dte;
     String usr;
     char status_f;
+    char status_obs;
     char status_e;
     char status_i;
     char status_s;
@@ -125,7 +123,7 @@ public class NutsIdFormatHelper {
             } else if (desc != null) {
                 id = desc.getId();
             } else if (dep != null) {
-                id = dep.getId();
+                id = dep.toId();
             }
         }
         if (desc == null) {
@@ -157,7 +155,7 @@ public class NutsIdFormatHelper {
         FormatHelperResetListener h2 = (FormatHelperResetListener) session.getWorkspace().userProperties().get(FormatHelperResetListener.class.getName());
         if (h2 == null) {
             h2 = new FormatHelperResetListener();
-            session.getWorkspace().addWorkspaceListener(h2);
+            session.getWorkspace().events().addWorkspaceListener(h2);
         }
         h = new FormatHelper(session);
         session.getWorkspace().userProperties().put(FormatHelper.class.getName(), h);
@@ -231,12 +229,12 @@ public class NutsIdFormatHelper {
             }
             int z = 0;
             Stack<NutsRepository> stack = new Stack<>();
-            for (NutsRepository repository : session.getWorkspace().config().getRepositories(session)) {
+            for (NutsRepository repository : session.getWorkspace().repos().getRepositories(session)) {
                 stack.push(repository);
             }
             while (!stack.isEmpty()) {
                 NutsRepository r = stack.pop();
-                int n = r.config().getName().length();
+                int n = r.getName().length();
                 if (n > z) {
                     z = n;
                 }
@@ -265,7 +263,7 @@ public class NutsIdFormatHelper {
                 }
             }
             Stack<NutsRepository> stack = new Stack<>();
-            for (NutsRepository repository : session.getWorkspace().config().getRepositories(session)) {
+            for (NutsRepository repository : session.getWorkspace().repos().getRepositories(session)) {
                 stack.push(repository);
             }
             while (!stack.isEmpty()) {
@@ -388,7 +386,7 @@ public class NutsIdFormatHelper {
             }
             case INSTALL_DATE: {
                 if (def != null && def.getInstallInformation() != null) {
-                    return stringValue(def.getInstallInformation().getInstallDate());
+                    return stringValue(def.getInstallInformation().getCreatedDate());
                 }
                 return "<null>";
             }
@@ -399,9 +397,9 @@ public class NutsIdFormatHelper {
                         rname = def.getRepositoryName();
                     }
                     if (def.getRepositoryUuid() != null) {
-                        NutsRepository r = ws.config().findRepositoryById(def.getRepositoryUuid(), session.copy().setTransitive(false));
+                        NutsRepository r = ws.repos().findRepositoryById(def.getRepositoryUuid(), session.copy().setTransitive(false));
                         if (r != null) {
-                            rname = r.config().getName();
+                            rname = r.getName();
                         }
                     }
                 }
@@ -419,9 +417,9 @@ public class NutsIdFormatHelper {
                 }
                 if (ruuid == null && id != null) {
                     String p = id.getNamespace();
-                    NutsRepository r = ws.config().findRepositoryByName(p, session.copy().setTransitive(false));
+                    NutsRepository r = ws.repos().findRepositoryByName(p, session.copy().setTransitive(false));
                     if (r != null) {
-                        ruuid = r.uuid();
+                        ruuid = r.getUuid();
                     }
                 }
                 return stringValue(ruuid);
@@ -477,7 +475,7 @@ public class NutsIdFormatHelper {
             case EXEC_ENTRY: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
                     List<String> results = new ArrayList<String>();
-                    for (NutsExecutionEntry entry : ws.io().parseExecutionEntries(def.getContent().getPath())) {
+                    for (NutsExecutionEntry entry : ws.apps().execEntries().parse(def.getContent().getPath())) {
                         if (entry.isDefaultEntry()) {
                             //should all mark?
                             results.add(entry.getName());
@@ -506,7 +504,7 @@ public class NutsIdFormatHelper {
             this.installStatus = rr.getInstallStatus(id, session);
             this.defaultVersion = rr.isDefaultVersion(id, session);
             NutsInstallInformation iif = rr.getInstallInformation(id, session);
-            this.dte = iif == null ? null : iif.getInstallDate();
+            this.dte = iif == null ? null : iif.getCreatedDate();
             this.usr = iif == null ? null : iif.getInstallUser();
 //            Boolean updatable = null;
             this.executable = null;
@@ -517,7 +515,7 @@ public class NutsIdFormatHelper {
             this.defFetched = null;
 
             try {
-                if (this.installStatus==NutsInstallStatus.NOT_INSTALLED || def == null) {
+                if (this.installStatus.contains(NutsInstallStatus.NOT_INSTALLED) || def == null) {
                     this.defFetched = ws.fetch().setId(id).setSession(
                             session.setSilent()
                     ).setOffline()
@@ -543,7 +541,11 @@ public class NutsIdFormatHelper {
                 this.executable = desc.isExecutable();
                 this.executableApp = desc.isApplication();
             }
-            this.status_f = (this.installStatus==NutsInstallStatus.INSTALLED) && this.defaultVersion ? 'I' : (this.installStatus==NutsInstallStatus.INSTALLED) ? 'i' : (this.installStatus==NutsInstallStatus.INCLUDED) ? 'd' : this.fetched ? 'f' : 'r';
+            this.status_f = (this.installStatus.contains(NutsInstallStatus.INSTALLED)) && this.defaultVersion ? 'I'
+                    : (this.installStatus.contains(NutsInstallStatus.INSTALLED)) ? 'i'
+                    : (this.installStatus.contains(NutsInstallStatus.REQUIRED)) ? 'd'
+                    : this.fetched ? 'f' : 'r';
+            this.status_obs=(this.installStatus.contains(NutsInstallStatus.INSTALLED)?'O':'U');
             if (def != null) {
                 switch (def.getType()){
                     case API:{
@@ -652,16 +654,16 @@ public class NutsIdFormatHelper {
 
     public String getFormattedStatusString() {
         if (dep != null) {
-            return "**" + status_f + status_e + status_i + status_s + "**";
+            return "**" + status_f + status_obs +status_e + status_i + status_s + "**";
         }
-        return "**" + status_f + status_e + status_i + "**";
+        return "**" + status_f + status_obs+ status_e + status_i + "**";
     }
 
     public String getStatusString() {
         if (dep != null) {
-            return "" + status_f + status_e + status_i + status_s;
+            return "" + status_f + status_obs+ status_e + status_i + status_s;
         }
-        return "" + status_f + status_e + status_i;
+        return "" + status_f + status_obs+ status_e + status_i;
     }
 
     private String keywordArr1(String[] any) {

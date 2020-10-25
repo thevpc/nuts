@@ -29,8 +29,8 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
     private boolean safe = true;
     private boolean logProgress = false;
     private String format = "zip";
-    private InputSource source;
-    private CoreIOUtils.TargetItem target;
+    private NutsInput source;
+    private NutsOutput target;
     private DefaultNutsIOManager iom;
     private NutsSession session;
     private NutsProgressFactory progressMonitorFactory;
@@ -65,72 +65,78 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 
     @Override
     public NutsIOUncompressAction setSource(InputStream source) {
-        this.source = CoreIOUtils.createInputSource(source);
+        this.source = iom.input().of(source);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setSource(File source) {
-        this.source = CoreIOUtils.createInputSource(source);
+        this.source = iom.input().of(source);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setSource(Path source) {
-        this.source = CoreIOUtils.createInputSource(source);
+        this.source = iom.input().of(source);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setSource(URL source) {
-        this.source = CoreIOUtils.createInputSource(source);
+        this.source = iom.input().of(source);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setTarget(Path target) {
-        this.target = CoreIOUtils.createTarget(target);
+        this.target = iom.output().of(target);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setTarget(String target) {
-        this.target = CoreIOUtils.createTarget(target);
+        this.target = iom.output().of(target);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setTarget(File target) {
-        this.target = CoreIOUtils.createTarget(target);
+        this.target = iom.output().of(target);
         return this;
     }
 
     public DefaultNutsIOUncompressAction setSource(Object source) {
-        this.source = CoreIOUtils.createInputSource(source);
+        this.source = iom.input().of(source);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction from(String source) {
-        this.source = CoreIOUtils.createInputSource(source);
+        this.source = iom.input().of(source);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction to(String target) {
-        this.target = CoreIOUtils.createTarget(target);
+        this.target = iom.output().of(target);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction from(Object source) {
-        this.source = CoreIOUtils.createInputSource(source);
+        this.source = iom.input().of(source);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction to(Object target) {
-        this.target = CoreIOUtils.createTarget(target);
+        this.target = iom.output().of(target);
+        return this;
+    }
+
+    @Override
+    public NutsIOUncompressAction to(NutsOutput target) {
+        this.target = iom.output().of(target);
         return this;
     }
 
@@ -141,7 +147,13 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 
     //    @Override
     public DefaultNutsIOUncompressAction setTarget(Object target) {
-        this.target = CoreIOUtils.createTarget(target);
+        this.target = iom.output().of(target);
+        return this;
+    }
+
+    @Override
+    public NutsIOUncompressAction setTarget(NutsOutput target) {
+        this.target = iom.output().of(target);
         return this;
     }
 
@@ -247,7 +259,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
     }
 
     private void runZip(){
-        InputSource _source = source;
+        NutsInput _source = source;
         if (_source == null) {
             throw new UnsupportedOperationException("Missing Source");
         }
@@ -255,22 +267,10 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
             throw new UnsupportedOperationException("Missing Target");
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
-            if (_source.isPath()) {
-                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getPath().toString()).setSession(session)
-                        .progressFactory(getProgressMonitorFactory())
-                        .logProgress(isLogProgress())
-                        .create());
-            } else if (_source.isURL()) {
-                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getURL().toString()).setSession(session)
-                        .progressFactory(getProgressMonitorFactory())
-                        .logProgress(isLogProgress())
-                        .create());
-            } else {
-                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.open()).setSession(session)
-                        .progressFactory(getProgressMonitorFactory())
-                        .logProgress(isLogProgress())
-                        .create());
-            }
+            _source = iom.monitor().source(_source).setSession(session)
+                    .progressFactory(getProgressMonitorFactory())
+                    .logProgress(isLogProgress())
+                    .createSource();
         }
         //boolean _source_isPath = _source.isPath();
 //        if (!path.toLowerCase().startsWith("file://")) {
@@ -340,7 +340,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
                 _in.close();
             }
         } catch (IOException ex) {
-            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log( "error uncompressing {0} to {1} : {2}", _source.getSource(), target.getValue(), ex.toString());
+            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log( "error uncompressing {0} to {1} : {2}", _source.getSource(), target.getSource(), ex.toString());
             throw new UncheckedIOException(ex);
         }
     }

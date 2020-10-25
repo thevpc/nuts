@@ -3,7 +3,6 @@ package net.vpc.app.nuts.runtime.format.elem;
 import net.vpc.app.nuts.NutsElementBuilder;
 
 import java.io.PrintStream;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import net.vpc.app.nuts.*;
@@ -64,13 +63,13 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         }
         if (org.w3c.dom.Node.class.isAssignableFrom(cls)) {
             if (org.w3c.dom.Document.class.isAssignableFrom(cls)) {
-                return (T) getWorkspace().xml().toXmlDocument(element);
+                return (T) getWorkspace().formats().xml().toXmlDocument(element);
             }
             if (org.w3c.dom.Element.class.isAssignableFrom(cls)) {
-                return (T) getWorkspace().xml().toXmlElement(element, null);
+                return (T) getWorkspace().formats().xml().toXmlElement(element, null);
             }
         }
-        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) getWorkspace().json();
+        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) getWorkspace().formats().json();
         return json.convert(element, cls);
     }
 
@@ -92,7 +91,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 
     @Override
     public void print(PrintStream out) {
-        getWorkspace().json().value(value).print(out);
+        getWorkspace().formats().json().value(value).print(out);
     }
 
     @Override

@@ -127,9 +127,11 @@ public interface NutsMonitorAction {
     /**
      * update operation source
      *
-     * @param path operation source
+     * @param source operation source
      * @return {@code this} instance
      */
+    NutsMonitorAction source(NutsInput source);
+
     NutsMonitorAction source(String path);
 
     /**
@@ -164,6 +166,8 @@ public interface NutsMonitorAction {
      */
     NutsMonitorAction setSource(String path);
 
+    NutsMonitorAction setSource(NutsInput inputSource);
+
     /**
      * update operation source
      *
@@ -194,6 +198,17 @@ public interface NutsMonitorAction {
      * @return monitored input stream
      */
     InputStream create();
+
+    String getSourceTypeName();
+
+    NutsMonitorAction setSourceTypeName(String sourceType);
+
+    /**
+     *
+     * @return
+     * @since  0.8.0
+     */
+    NutsInput createSource();
 
     /**
      * return true if log progress on terminal

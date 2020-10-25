@@ -26,11 +26,11 @@ public class Nsh extends NutsApplication {
     @Override
     public void run(NutsApplicationContext applicationContext) {
         String[] args = applicationContext.getArguments();
-        NutsSystemTerminal st = applicationContext.getWorkspace().io().getSystemTerminal();
+        NutsSystemTerminal st = applicationContext.getWorkspace().io().term().getSystemTerminal();
         if (st instanceof NutsJLineTerminal || st.getParent() instanceof NutsJLineTerminal) {
             //that's ok
         } else {
-            applicationContext.getWorkspace().io().setSystemTerminal(new NutsJLineTerminal());
+            applicationContext.getWorkspace().io().term().setSystemTerminal(new NutsJLineTerminal());
         }
         NutsJavaShell c = new NutsJavaShell(applicationContext);
         try {
@@ -66,7 +66,8 @@ public class Nsh extends NutsApplication {
         }
         //id will not include version or
         String nshIdStr = applicationContext.getAppId().getShortName();
-        NutsWorkspaceConfigManager cfg = applicationContext.getWorkspace().config();
+        NutsWorkspace ws = applicationContext.getWorkspace();
+        NutsWorkspaceConfigManager cfg = ws.config();
 //        HashMap<String, String> parameters = new HashMap<>();
 //        parameters.put("list", nshIdStr + " --no-color -c find-command");
 //        parameters.put("find", nshIdStr + " --no-color -c find-command %n");
@@ -87,14 +88,14 @@ public class Nsh extends NutsApplication {
         for (JShellBuiltin command : commands) {
             if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
                 //avoid recursive definition!
-                if (cfg.addCommandAlias(new NutsCommandAliasConfig()
+                if (ws.aliases().add(new NutsCommandAliasConfig()
                         .setFactoryId("nsh")
                         .setName(command.getName())
                         .setCommand(nshIdStr, "-c", command.getName())
                         .setOwner(applicationContext.getAppId())
                         .setHelpCommand(nshIdStr, "-c", "help", "--code", command.getName()),
                         new net.vpc.app.nuts.NutsAddOptions()
-                                .setSession(sessionCopy.yes(force).setSilent())
+                                .setSession(sessionCopy.yes(true/*force*/).setSilent())
                 )) {
                     reinstalled.add(command.getName());
                 } else {
@@ -132,15 +133,15 @@ public class Nsh extends NutsApplication {
     protected void onUninstallApplication(NutsApplicationContext applicationContext) {
         LOG.log(Level.FINER, "[Nsh] Uninstallation...");
         try {
-            NutsWorkspaceConfigManager cfg = applicationContext.getWorkspace().config();
+            NutsWorkspace ws = applicationContext.getWorkspace();
             try {
-                cfg.removeCommandAliasFactory("nsh", null);
+                ws.aliases().removeFactory("nsh", null);
             } catch (Exception notFound) {
                 //ignore!
             }
-            for (NutsWorkspaceCommandAlias command : cfg.findCommandAliases(applicationContext.getAppId(), applicationContext.getSession())) {
+            for (NutsWorkspaceCommandAlias command : ws.aliases().findByOwner(applicationContext.getAppId(), applicationContext.getSession())) {
                 try {
-                    cfg.removeCommandAlias(command.getName(), new net.vpc.app.nuts.NutsRemoveOptions());
+                    ws.aliases().remove(command.getName(), new net.vpc.app.nuts.NutsRemoveOptions());
                 } catch (Exception ex) {
                     if (applicationContext.getSession().isPlainTrace()) {
                         applicationContext.getSession().err().printf("Unable to uninstall ==%s== .\n", command.getName());

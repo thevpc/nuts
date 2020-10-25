@@ -115,7 +115,7 @@ public class MavenRepositoryFolderHelper {
             NutsId id1 = id.builder().setFaceDescriptor().build();
             Path localFile = getIdLocalFile(id1);
             if (localFile != null && Files.isRegularFile(localFile)) {
-                return Collections.singletonList(id.builder().setNamespace(repo == null ? null : repo.config().getName()).build()).iterator();
+                return Collections.singletonList(id.builder().setNamespace(repo == null ? null : repo.getName()).build()).iterator();
             }
             return null;
         }
@@ -130,7 +130,7 @@ public class MavenRepositoryFolderHelper {
             //            return IteratorUtils.emptyIterator();
             return null;
         }
-        return new FolderNutIdIterator(getWorkspace(), repo == null ? null : repo.config().getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
+        return new FolderNutIdIterator(getWorkspace(), repo == null ? null : repo.getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsSession session) {
                 throw new IllegalArgumentException("Unsupported");
@@ -289,7 +289,7 @@ public class MavenRepositoryFolderHelper {
 //                            throw new UncheckedIOException(e);
 //                        }
                         try (PrintStream p = new PrintStream(new File(folder, CoreNutsConstants.Files.DOT_FILES))) {
-                            p.println("#version="+ws.config().getApiVersion());
+                            p.println("#version="+ws.getApiVersion());
                             for (String file : folders) {
                                 p.println(file+"/");
                             }

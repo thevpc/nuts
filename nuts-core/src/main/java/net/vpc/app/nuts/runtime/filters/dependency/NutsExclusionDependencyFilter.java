@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.runtime.filters.dependency;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
@@ -8,28 +9,29 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class NutsExclusionDependencyFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
+public class NutsExclusionDependencyFilter extends AbstractNutsFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
 
     private final NutsDependencyFilter base;
     private final NutsId[] exclusions;
 
-    public NutsExclusionDependencyFilter(NutsDependencyFilter base, NutsId[] exclusions) {
+    public NutsExclusionDependencyFilter(NutsWorkspace ws,NutsDependencyFilter base, NutsId[] exclusions) {
+        super(ws,NutsFilterOp.CUSTOM);
         this.base = base;
         this.exclusions = exclusions;
     }
 
     @Override
-    public boolean accept(NutsId from, NutsDependency dependency, NutsSession session) {
+    public boolean acceptDependency(NutsId from, NutsDependency dependency, NutsSession session) {
         if (base != null) {
-            if (!base.accept(from, dependency, session)) {
+            if (!base.acceptDependency(from, dependency, session)) {
                 return false;
             }
         }
         for (NutsId exclusion : exclusions) {
-            NutsId nutsId = dependency.getId();
+            NutsId nutsId = dependency.toId();
             if (nutsId.groupIdToken().like(exclusion.getGroupId())
                     && nutsId.artifactIdToken().like(exclusion.getArtifactId())
-                    && exclusion.getVersion().filter().accept(nutsId.getVersion(), session)) {
+                    && exclusion.getVersion().filter().acceptVersion(nutsId.getVersion(), session)) {
                 return false;
             }
         }
@@ -43,7 +45,7 @@ public class NutsExclusionDependencyFilter implements NutsDependencyFilter, Simp
         }
         NutsDependencyFilter base2 = CoreNutsUtils.simplify(base);
         if (base2 != base) {
-            return new NutsExclusionDependencyFilter(base2, exclusions);
+            return new NutsExclusionDependencyFilter(getWorkspace(),base2, exclusions);
         }
         return this;
     }

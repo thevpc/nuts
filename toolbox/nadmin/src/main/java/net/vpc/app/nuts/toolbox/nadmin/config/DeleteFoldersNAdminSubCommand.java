@@ -63,9 +63,9 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
         Path storeLocation = context.getWorkspace().config().getStoreLocation(folder);
         if (storeLocation != null) {
             if (Files.exists(storeLocation)) {
-                context.getSession().out().printf("@@Deleting@@ ##%s## for workspace ##%s## folder %s ...%n", folder.id(), context.getWorkspace().config().name(), storeLocation);
+                context.getSession().out().printf("@@Deleting@@ ##%s## for workspace ##%s## folder %s ...%n", folder.id(), context.getWorkspace().name(), storeLocation);
                 if (force
-                        || context.getSession().terminal().ask()
+                        || context.getSession().getTerminal().ask()
                         .forBoolean("Force Delete?").setDefaultValue(false).setSession(context.getSession())
                         .getBooleanValue()) {
                     try {
@@ -76,7 +76,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
         }
-        for (NutsRepository repository : context.getWorkspace().config().getRepositories(context.getSession())) {
+        for (NutsRepository repository : context.getWorkspace().repos().getRepositories(context.getSession())) {
             deleteRepoFolder(repository, context, folder, force);
         }
     }
@@ -85,9 +85,9 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
         Path storeLocation = context.getWorkspace().config().getStoreLocation(folder);
         if (storeLocation != null) {
             if (Files.exists(storeLocation)) {
-                context.getSession().out().printf("@@Deleting@@ ##%s## for repository ##%s## folder %s ...%n", folder.id(), repository.config().name(), storeLocation);
+                context.getSession().out().printf("@@Deleting@@ ##%s## for repository ##%s## folder %s ...%n", folder.id(), repository.getName(), storeLocation);
                 if (force
-                        || context.getSession().terminal().ask()
+                        || context.getSession().getTerminal().ask()
                         .forBoolean("Force Delete?").setDefaultValue(false).setSession(context.getSession())
                         .getBooleanValue()) {
                     try {
@@ -116,7 +116,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
                     throw new UncheckedIOException(ex);
                 }
             }
-            for (NutsRepository repository : context.getWorkspace().config().getRepositories(context.getSession())) {
+            for (NutsRepository repository : context.getWorkspace().repos().getRepositories(context.getSession())) {
                 deleteRepoCache(repository, context, force);
             }
         }

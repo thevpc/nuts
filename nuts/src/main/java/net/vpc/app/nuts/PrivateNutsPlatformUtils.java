@@ -262,12 +262,12 @@ final class PrivateNutsPlatformUtils {
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
         }
-        String key = NutsDefaultWorkspaceOptions.createHomeLocationKey(platformOsFamily, location);
+        String key = PrivateBootWorkspaceOptions.createHomeLocationKey(platformOsFamily, location);
         s = homeLocations == null ? "" : PrivateNutsUtils.trim(homeLocations.get(key));
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
         }
-        key = NutsDefaultWorkspaceOptions.createHomeLocationKey(null, location);
+        key = PrivateBootWorkspaceOptions.createHomeLocationKey(null, location);
         s = homeLocations == null ? "" : PrivateNutsUtils.trim(homeLocations.get(key));
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;

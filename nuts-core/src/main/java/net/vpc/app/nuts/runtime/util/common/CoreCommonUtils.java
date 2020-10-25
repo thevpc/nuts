@@ -410,28 +410,28 @@ public class CoreCommonUtils {
         }
         NutsWorkspace ws = session.getWorkspace();
         if (o instanceof Boolean) {
-            return ws.io().getTerminalFormat().escapeText(String.valueOf(o));
+            return ws.io().term().getTerminalFormat().escapeText(String.valueOf(o));
         }
         if (o.getClass().isEnum()) {
-            return ws.io().getTerminalFormat().escapeText(getEnumString((Enum) o));
+            return ws.io().term().getTerminalFormat().escapeText(getEnumString((Enum) o));
         }
         if (o instanceof Instant) {
-            return ws.io().getTerminalFormat().escapeText(
+            return ws.io().term().getTerminalFormat().escapeText(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Instant) o))
             );
         }
         if (o instanceof Temporal) {
-            return ws.io().getTerminalFormat().escapeText(
+            return ws.io().term().getTerminalFormat().escapeText(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Temporal) o))
             );
         }
         if (o instanceof Date) {
-            return ws.io().getTerminalFormat().escapeText(
+            return ws.io().term().getTerminalFormat().escapeText(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Date) o).toInstant())
             );
         }
         if (o instanceof NutsId) {
-            return ws.id().value((NutsId) o).format();
+            return ws.id().formatter((NutsId) o).format();
         }
         if (o instanceof Collection) {
             Collection c = ((Collection) o);
@@ -483,7 +483,7 @@ public class CoreCommonUtils {
         }
         String s = o.toString();
         if (escapeString) {
-            s = session.getWorkspace().io().terminalFormat().escapeText(s);
+            s = session.getWorkspace().io().term().getTerminalFormat().escapeText(s);
         }
         return s;
     }

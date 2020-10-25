@@ -32,7 +32,6 @@ package net.vpc.app.nuts.main.archetypes;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.main.config.DefaultNutsWorkspaceConfigManager;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
-import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -57,7 +56,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
     public void initialize(NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) ws.config();
-        rm.addRepository(NutsConstants.Names.DEFAULT_REPOSITORY_NAME,session);
+        ws.repos().addRepository(NutsConstants.Names.DEFAULT_REPOSITORY_NAME,session);
         LinkedHashSet<String> br = new LinkedHashSet<>(rm.resolveBootRepositories());
         LinkedHashMap<String, NutsRepositoryDefinition> def = new LinkedHashMap<>();
         for (NutsRepositoryDefinition d : rm.getDefaultRepositories()) {
@@ -66,16 +65,16 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         for (String s : br) {
             String sloc = ws.io().expandPath(CoreNutsUtils.repositoryStringToDefinition(s).getLocation(),null);
             if (def.containsKey(sloc)) {
-                rm.addRepository(def.get(sloc));
+                ws.repos().addRepository(def.get(sloc));
                 def.remove(sloc);
             } else {
-                rm.addRepository(s,session);
+                ws.repos().addRepository(s,session);
             }
         }
         for (NutsRepositoryDefinition d : def.values()) {
-            rm.addRepository(d);
+            ws.repos().addRepository(d);
         }
-        ws.config().addImports(new String[]{
+        ws.imports().add(new String[]{
                 "net.vpc.app.nuts.toolbox",
                 "net.vpc.app"
         }, new NutsAddOptions().setSession(session));

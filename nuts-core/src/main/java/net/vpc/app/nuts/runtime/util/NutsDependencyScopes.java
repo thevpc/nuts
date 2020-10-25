@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsDependencyFilter;
 import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsDependencyScopePattern;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.runtime.filters.CoreFilterUtils;
 import net.vpc.app.nuts.runtime.filters.dependency.ScopeNutsDependencyFilter;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
@@ -50,8 +51,12 @@ import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 public class NutsDependencyScopes {
     private static final Logger LOG=Logger.getLogger(NutsDependencyScopes.class.getName());
 
-    public static final NutsDependencyFilter SCOPE_RUN = CoreFilterUtils.And(new ScopeNutsDependencyFilter(NutsDependencyScopePattern.RUN), CoreNutsUtils.NON_OPTIONAL);
-    public static final NutsDependencyFilter SCOPE_TEST = CoreFilterUtils.And(new ScopeNutsDependencyFilter(NutsDependencyScopePattern.TEST), CoreNutsUtils.NON_OPTIONAL);
+    public static final NutsDependencyFilter SCOPE_RUN(NutsWorkspace ws) {
+        return (NutsDependencyFilter) ws.dependency().filter().byScope(NutsDependencyScopePattern.RUN).and(
+                ws.dependency().filter().byOptional(false)
+        );
+    }
+//    public static final NutsDependencyFilter SCOPE_TEST = CoreFilterUtils.And(new ScopeNutsDependencyFilter(NutsDependencyScopePattern.TEST), CoreNutsUtils.NON_OPTIONAL);
 
     public static String normalizeScope(String s1) {
         if (s1 == null) {

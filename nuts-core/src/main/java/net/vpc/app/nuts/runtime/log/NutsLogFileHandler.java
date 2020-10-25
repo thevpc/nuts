@@ -32,7 +32,7 @@ public class NutsLogFileHandler extends FileHandler {
             name = Instant.now().toString().replace(":", "") + "-nuts-%g.log";
         }
         if (folder == null || CoreStringUtils.isBlank(folder)) {
-            folder = logFolder + "/net/vpc/app/nuts/nuts/" + ws.config().getApiVersion();
+            folder = logFolder + "/net/vpc/app/nuts/nuts/" + ws.getApiVersion();
         }
         String pattern = (folder + "/" + name).replace('/', File.separatorChar);
         if (maxSize <= 0) {

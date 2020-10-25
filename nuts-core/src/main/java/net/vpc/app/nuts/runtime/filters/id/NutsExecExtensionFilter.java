@@ -6,6 +6,7 @@
 package net.vpc.app.nuts.runtime.filters.id;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
@@ -13,23 +14,24 @@ import net.vpc.app.nuts.runtime.util.common.Simplifiable;
  *
  * @author vpc
  */
-public class NutsExecExtensionFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
+public class NutsExecExtensionFilter extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
     private NutsId apiId;
-    public NutsExecExtensionFilter(NutsId apiId) {
+    public NutsExecExtensionFilter(NutsWorkspace ws,NutsId apiId) {
+        super(ws,NutsFilterOp.CUSTOM);
         this.apiId=apiId;
     }
 
     @Override
-    public boolean accept(NutsDescriptor other, NutsSession session) {
+    public boolean acceptDescriptor(NutsDescriptor other, NutsSession session) {
         if(!CoreCommonUtils.parseBoolean(other.getProperties().get("nuts-extension"),false)){
             return false;
         }
         for (NutsDependency dependency : other.getDependencies()) {
-            if(dependency.getId().getShortName().equals(NutsConstants.Ids.NUTS_API)){
+            if(dependency.toId().getShortName().equals(NutsConstants.Ids.NUTS_API)){
                 if(apiId==null){
                     return true;
                 }
-                if(apiId.getVersion().equals(dependency.getId().getVersion())){
+                if(apiId.getVersion().equals(dependency.toId().getVersion())){
                     return true;
                 }
                 return false;

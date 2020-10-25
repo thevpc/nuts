@@ -10,6 +10,7 @@ import java.util.zip.ZipInputStream;
 
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsLogger;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 
 public class PomIdResolver {
@@ -69,7 +70,7 @@ public class PomIdResolver {
                 String s2 = basePath.substring(0, basePath.length() - "/target/classes/".length()) + "/pom.xml";
                 //this is most likely to be a maven project
                 try {
-                    all.add(new PomXmlParser().parse(new URL(s2)).getPomId());
+                    all.add(new PomXmlParser(ws).parse(new URL(s2)).getPomId());
                 } catch (Exception ex) {
                     LOG.with().level(Level.SEVERE).error(ex).log("Failed to parse pom file {0} : {1}", s2,ex.toString());
                 }

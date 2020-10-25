@@ -29,10 +29,7 @@
  */
 package net.vpc.app.nuts.runtime;
 
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsInstallEvent;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 
 /**
  *
@@ -44,11 +41,17 @@ public class DefaultNutsInstallEvent implements NutsInstallEvent {
     private final NutsDefinition definition;
     private final NutsSession session;
     private final boolean force;
+    private final NutsId[] requireForIds;
 
-    public DefaultNutsInstallEvent(NutsDefinition definition, NutsSession session, boolean force) {
+    public DefaultNutsInstallEvent(NutsDefinition definition, NutsSession session, NutsId[] requireForIds,boolean force) {
         this.definition = definition;
         this.session = session;
         this.force = force;
+        this.requireForIds = requireForIds;
+    }
+
+    public NutsId[] getRequireForIds() {
+        return requireForIds;
     }
 
     @Override

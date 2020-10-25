@@ -33,7 +33,6 @@ import static net.vpc.app.nuts.runtime.util.io.CoreIOUtils.createInputSource;
 import static net.vpc.app.nuts.runtime.util.io.CoreIOUtils.resolveNutsDescriptorFromFileContent;
 import static net.vpc.app.nuts.runtime.util.io.CoreIOUtils.toPathInputSource;
 
-import net.vpc.app.nuts.runtime.util.io.InputSource;
 import net.vpc.app.nuts.runtime.util.io.ZipOptions;
 import net.vpc.app.nuts.runtime.util.io.ZipUtils;
 
@@ -79,7 +78,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     @Override
     public NutsId getId() {
-        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), traceSession, executorOptions)) {
+        try (final CharacterizedExecFile c = characterizeForExec(execSession.getWorkspace().io().input().of(cmdName), traceSession, executorOptions)) {
             return c.descriptor == null ? null : c.descriptor.getId();
         }
     }
@@ -96,11 +95,11 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     public void executeHelper(boolean dry) {
         NutsWorkspace ws = execSession.getWorkspace();
-        try (final CharacterizedExecFile c = characterizeForExec(CoreIOUtils.createInputSource(cmdName), traceSession, executorOptions)) {
+        try (final CharacterizedExecFile c = characterizeForExec(ws.io().input().of(cmdName), traceSession, executorOptions)) {
             if (c.descriptor == null) {
                 throw new NutsNotFoundException(ws, "", "Unable to resolve a valid descriptor for " + cmdName, null);
             }
-            Path tempFolder = ws.io().createTempFolder("exec-path-");
+            Path tempFolder = ws.io().tmp().createTempFolder("exec-path-");
             NutsId _id = c.descriptor.getId();
             NutsIdType idType = NutsWorkspaceExt.of(ws).resolveNutsIdType(_id);
             NutsDefinition nutToRun = new DefaultNutsDefinition(
@@ -117,14 +116,14 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             } finally {
                 try {
                     CoreIOUtils.delete(ws, tempFolder);
-                } catch (IOException e) {
+                } catch (UncheckedIOException|NutsIOException e) {
                     LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "Unable to delete temp folder created for execution : " + tempFolder);
                 }
             }
         }
     }
 
-    public static CharacterizedExecFile characterizeForExec(InputSource contentFile, NutsSession session, String[] execOptions) {
+    public static CharacterizedExecFile characterizeForExec(NutsInput contentFile, NutsSession session, String[] execOptions) {
         NutsWorkspace ws = session.getWorkspace();
         String classifier = null;//TODO how to get classifier?
         CharacterizedExecFile c = new CharacterizedExecFile();
@@ -138,7 +137,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             if (Files.isDirectory(fileSource)) {
                 Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                 if (Files.exists(ext)) {
-                    c.descriptor = ws.descriptor().parse(ext);
+                    c.descriptor = ws.descriptor().parser().parse(ext);
                 } else {
                     c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
                 }
@@ -146,7 +145,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     if ("zip".equals(c.descriptor.getPackaging())) {
                         Path zipFilePath = Paths.get(ws.io().expandPath(fileSource.toString() + ".zip"));
                         ZipUtils.zip(session.getWorkspace(), fileSource.toString(), new ZipOptions(), zipFilePath.toString());
-                        c.contentFile = createInputSource(zipFilePath).multi();
+                        c.contentFile = ws.io().input().setMultiRead(true).of(zipFilePath);
                         c.addTemp(zipFilePath);
                     } else {
                         throw new NutsIllegalArgumentException(ws, "Invalid Nut Folder source. expected 'zip' ext in descriptor");
@@ -155,14 +154,14 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             } else if (Files.isRegularFile(fileSource)) {
                 if (c.contentFile.getName().endsWith(NutsConstants.Files.DESCRIPTOR_FILE_NAME)) {
                     try (InputStream in = c.contentFile.open()) {
-                        c.descriptor = ws.descriptor().parse(in);
+                        c.descriptor = ws.descriptor().parser().parse(in);
                     }
                     c.contentFile = null;
                     if (c.baseFile.isURL()) {
                         URLBuilder ub = new URLBuilder(c.baseFile.getURL().toString());
                         try {
                             c.contentFile = toPathInputSource(
-                                    createInputSource(ub.resolveSibling(ws.config().getDefaultIdFilename(c.descriptor.getId())).toURL()),
+                                    ws.io().input().of(ub.resolveSibling(ws.config().getDefaultIdFilename(c.descriptor.getId())).toURL()),
                                     c.temps, ws);
                         } catch (Exception ex) {
 
@@ -175,7 +174,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                                 if (CoreIOUtils.isPathHttp(location)) {
                                     try {
                                         c.contentFile = toPathInputSource(
-                                                createInputSource(new URL(location)),
+                                                ws.io().input().of(new URL(location)),
                                                 c.temps, ws);
                                     } catch (Exception ex) {
 
@@ -184,7 +183,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                                     URLBuilder ub = new URLBuilder(c.baseFile.getURL().toString());
                                     try {
                                         c.contentFile = toPathInputSource(
-                                                createInputSource(ub.resolveSibling(ws.config().getDefaultIdFilename(c.descriptor.getId())).toURL()),
+                                                ws.io().input().of(ub.resolveSibling(ws.config().getDefaultIdFilename(c.descriptor.getId())).toURL()),
                                                 c.temps, ws);
                                     } catch (Exception ex) {
 
@@ -224,8 +223,8 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     public static class CharacterizedExecFile implements AutoCloseable {
 
-        public InputSource contentFile;
-        public InputSource baseFile;
+        public NutsInput contentFile;
+        public NutsInput baseFile;
         public List<Path> temps = new ArrayList<>();
         public NutsDescriptor descriptor;
         public NutsId executor;

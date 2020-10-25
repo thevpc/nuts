@@ -41,8 +41,6 @@ public interface NutsRepositoryConfigManager {
 
     String getUuid();
 
-    String uuid();
-
     /**
      * name is the name attributed by the containing workspace. It is defined in
      * NutsRepositoryRef
@@ -51,8 +49,6 @@ public interface NutsRepositoryConfigManager {
      */
     String getName();
 
-    String name();
-
     /**
      * global name is independent from workspace
      *
@@ -60,9 +56,7 @@ public interface NutsRepositoryConfigManager {
      */
     String getGlobalName();
 
-    Map<String, String> getEnv();
 
-    String getEnv(String property, String defaultValue);
 
     String getType();
 
@@ -72,7 +66,6 @@ public interface NutsRepositoryConfigManager {
 
     int getSpeed(NutsSession session);
 
-    void setEnv(String property, String value, NutsUpdateOptions options);
 
     boolean isTemporary();
 
@@ -94,10 +87,6 @@ public interface NutsRepositoryConfigManager {
     boolean save(boolean force, NutsSession session);
 
     void save(NutsSession session);
-
-    Map<String, String> getEnv(boolean inherit);
-
-    String getEnv(String key, String defaultValue, boolean inherit);
 
     NutsRepositoryConfigManager setIndexEnabled(boolean enabled, NutsUpdateOptions options);
 

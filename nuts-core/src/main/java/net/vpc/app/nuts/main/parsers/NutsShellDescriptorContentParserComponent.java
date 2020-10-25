@@ -131,7 +131,7 @@ public class NutsShellDescriptorContentParserComponent implements NutsDescriptor
                         .setExecutor(new DefaultNutsArtifactCall(NSH))
                         .build();
             }
-            return ws.descriptor().parse(comment.getValidString());
+            return ws.descriptor().parser().parse(comment.getValidString());
         } finally {
             if (r != null) {
                 r.close();

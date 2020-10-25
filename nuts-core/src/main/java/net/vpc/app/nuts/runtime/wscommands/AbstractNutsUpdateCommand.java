@@ -43,7 +43,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsUpdateCommand addId(String id) {
-        return addId(id == null ? null : ws.id().parse(id));
+        return addId(id == null ? null : ws.id().parser().parse(id));
     }
 
     @Override
@@ -82,7 +82,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsUpdateCommand removeId(String id) {
-        return removeId(ws.id().parse(id));
+        return removeId(ws.id().parser().parse(id));
     }
 
     @Override
@@ -240,7 +240,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             return true;
         }
         for (NutsId id : ids) {
-            if (id.getShortName().equals(ws.config().getRuntimeId().getShortName())) {
+            if (id.getShortName().equals(ws.getRuntimeId().getShortName())) {
                 return true;
             }
 
@@ -404,7 +404,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     @Override
     public NutsUpdateCommand addLockedId(String id) {
         if (!CoreStringUtils.isBlank(id)) {
-            lockedIds.add(ws.id().parseRequired(id));
+            lockedIds.add(ws.id().parser().setLenient(false).parse(id));
         }
         return this;
     }

@@ -36,11 +36,11 @@ public class NutsSubscriptionController {
     public ResponseEntity<Void> subscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         NutsWorkspace workspace = workspacePool.openWorkspace(workspaceLocation);
-        NutsRepository[] repositories = workspace.config().getRepositories(workspace.createSession());
+        NutsRepository[] repositories = workspace.repos().getRepositories(workspace.createSession());
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.subscribe(repositoryUuid,
-                        workspaceManager.getWorkspaceLocation(workspace.getUuid()));
+                        workspaceManager.getWorkspaceLocation(workspace.uuid()));
 
                 return ResponseEntity.ok().build();
             }
@@ -52,11 +52,11 @@ public class NutsSubscriptionController {
     public ResponseEntity<Void> unsubscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         NutsWorkspace workspace = workspacePool.openWorkspace(workspaceLocation);
-        NutsRepository[] repositories = workspace.config().getRepositories(workspace.createSession());
+        NutsRepository[] repositories = workspace.repos().getRepositories(workspace.createSession());
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.unsubscribe(repositoryUuid,
-                        workspaceManager.getWorkspaceLocation(workspace.getUuid()));
+                        workspaceManager.getWorkspaceLocation(workspace.uuid()));
 
                 return ResponseEntity.ok().build();
             }
@@ -69,11 +69,11 @@ public class NutsSubscriptionController {
             @RequestParam("repositoryUuid") String repositoryUuid) {
         System.out.println(workspaceLocation + " " + repositoryUuid);
         NutsWorkspace workspace = workspacePool.openWorkspace(workspaceLocation);
-        NutsRepository[] repositories = workspace.config().getRepositories(workspace.createSession());
+        NutsRepository[] repositories = workspace.repos().getRepositories(workspace.createSession());
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 boolean subscribed = this.subscriberManager.isSubscribed(repositoryUuid,
-                        workspaceManager.getWorkspaceLocation(workspace.getUuid()));
+                        workspaceManager.getWorkspaceLocation(workspace.uuid()));
 
                 return ResponseEntity.ok(subscribed);
             }

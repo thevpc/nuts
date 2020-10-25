@@ -85,7 +85,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 }
                 case ERROR: {
                     ByteArrayPrintStream os = new ByteArrayPrintStream();
-                    PrintStream os2 = ws.io().getTerminalFormat().prepare(os);
+                    PrintStream os2 = ws.io().term().getTerminalFormat().prepare(os);
                     os2.printf(message, this.getMessageParameters());
                     os2.flush();
                     throw new NutsUserCancelException(ws, "Cancelled : " + os.toString());
@@ -94,7 +94,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         }
         if (!getValidSession().isPlainOut()) {
             ByteArrayPrintStream os = new ByteArrayPrintStream();
-            PrintStream os2 = ws.io().getTerminalFormat().prepare(os);
+            PrintStream os2 = ws.io().term().getTerminalFormat().prepare(os);
             os2.printf(message, this.getMessageParameters());
             os2.flush();
             throw new NutsExecutionException(ws, "Unable to switch to interactive mode for non plain text output format. "

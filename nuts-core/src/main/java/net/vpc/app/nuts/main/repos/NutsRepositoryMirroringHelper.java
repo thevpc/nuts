@@ -120,7 +120,7 @@ public class NutsRepositoryMirroringHelper {
 //                    } else {
 //                        goodFile = versionFolder.resolve(CoreStringUtils.trim(a)).resolve(idFilename);
 //                    }
-                    getWorkspace().descriptor().value(nutsDescriptor).print(goodFile);
+                    getWorkspace().descriptor().formatter(nutsDescriptor).print(goodFile);
                     return nutsDescriptor;
                 }
             }
@@ -176,7 +176,7 @@ public class NutsRepositoryMirroringHelper {
             } else if (all.size() > 1) {
                 throw new NutsPushException(repo.getWorkspace(), id,
                         "Unable to perform push for " + id + ". Alteast Two Repositories ("
-                        + all.stream().map(x -> x.config().name()).collect(Collectors.joining(","))
+                        + all.stream().map(NutsRepository::getName).collect(Collectors.joining(","))
                         + ") provides the same nuts " + id
                 );
             }
@@ -225,7 +225,7 @@ public class NutsRepositoryMirroringHelper {
                         NutsWorkspaceExt dws = NutsWorkspaceExt.of(getWorkspace());
                         NutsId id2 = dws.resolveEffectiveId(nutsDescriptor, session).builder().setFaceDescriptor().build();
                         Path localNutFile = cache.getLongNameIdLocalFile(id2);
-                        getWorkspace().descriptor().value(nutsDescriptor).print(localNutFile);
+                        getWorkspace().descriptor().formatter(nutsDescriptor).print(localNutFile);
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                             bestId = id2;
                         }

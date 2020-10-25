@@ -1,8 +1,7 @@
 package net.vpc.app.nuts.runtime.filters.descriptor;
 
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsDescriptorFilter;
-import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.common.Simplifiable;
 
@@ -12,11 +11,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 
-public class NutsDescriptorFilterAnd implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
+public class NutsDescriptorFilterAnd extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
 
     private NutsDescriptorFilter[] all;
 
-    public NutsDescriptorFilterAnd(NutsDescriptorFilter... all) {
+    public NutsDescriptorFilterAnd(NutsWorkspace ws,NutsDescriptorFilter... all) {
+        super(ws, NutsFilterOp.AND);
         List<NutsDescriptorFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NutsDescriptorFilter filter : all) {
@@ -29,12 +29,12 @@ public class NutsDescriptorFilterAnd implements NutsDescriptorFilter, Simplifiab
     }
 
     @Override
-    public boolean accept(NutsDescriptor id, NutsSession session) {
+    public boolean acceptDescriptor(NutsDescriptor id, NutsSession session) {
         if (all.length == 0) {
             return true;
         }
         for (NutsDescriptorFilter filter : all) {
-            if (!filter.accept(id, session)) {
+            if (!filter.acceptDescriptor(id, session)) {
                 return false;
             }
         }
@@ -43,26 +43,7 @@ public class NutsDescriptorFilterAnd implements NutsDescriptorFilter, Simplifiab
 
     @Override
     public NutsDescriptorFilter simplify() {
-        if (all.length == 0) {
-            return null;
-        }
-        NutsDescriptorFilter[] newValues = CoreNutsUtils.simplifyAndShrink(NutsDescriptorFilter.class, all);
-        if (newValues != null) {
-            if (newValues.length == 0) {
-                return null;
-            }
-            if (newValues.length == 1) {
-                return newValues[0];
-            }
-            return new NutsDescriptorFilterAnd(newValues);
-        }
-        if (all.length == 0) {
-            return null;
-        }
-        if (all.length == 1) {
-            return all[0];
-        }
-        return this;
+        return CoreNutsUtils.simplifyFilterAnd(getWorkspace(),NutsDescriptorFilter.class,this,all);
     }
 
     @Override
@@ -125,4 +106,7 @@ public class NutsDescriptorFilterAnd implements NutsDescriptorFilter, Simplifiab
         return CoreStringUtils.join(" And ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
+    public NutsFilter[] getSubFilters() {
+        return all;
+    }
 }

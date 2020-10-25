@@ -80,7 +80,7 @@ public class HelpCommand extends AbstractNshBuiltin {
         Function<String, String> ss = code ? new Function<String, String>() {
             @Override
             public String apply(String t) {
-                return context.getWorkspace().io().getTerminalFormat().escapeText(t);
+                return context.getWorkspace().io().term().getTerminalFormat().escapeText(t);
             }
         } : x -> x;
         if (cmdLine.isExecMode()) {

@@ -117,6 +117,35 @@ public class DefaultNutsDependency implements NutsDependency {
         );
     }
 
+
+    @Override
+    public NutsId toId() {
+        Map<String, String> m = new LinkedHashMap<>();
+//        if (!NutsDependencyScopes.isDefaultScope(scope)) {
+//            m.put(NutsConstants.IdProperties.SCOPE, scope);
+//        }
+//        if (!CoreStringUtils.isBlank(optional) && !"false".equals(optional)) {
+//            m.put(NutsConstants.IdProperties.OPTIONAL, optional);
+//        }
+//        if (!CoreStringUtils.isBlank(classifier)) {
+//            m.put(NutsConstants.IdProperties.CLASSIFIER, classifier);
+//        }
+//        if (exclusions.length > 0) {
+//            TreeSet<String> ex = new TreeSet<>();
+//            for (NutsId exclusion : exclusions) {
+//                ex.add(exclusion.getShortName());
+//            }
+//            m.put(NutsConstants.IdProperties.EXCLUSIONS, CoreStringUtils.join(",", ex));
+//        }
+        return new DefaultNutsId(
+                getNamespace(),
+                getGroupId(),
+                getArtifactId(),
+                getVersion().getValue(),
+                m
+        );
+    }
+
     @Override
     public String getNamespace() {
         return namespace;

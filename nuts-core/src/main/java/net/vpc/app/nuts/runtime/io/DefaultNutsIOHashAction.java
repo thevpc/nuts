@@ -164,7 +164,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
             }
             case "desc": {
                 ByteArrayOutputStream o = new ByteArrayOutputStream();
-                ws.descriptor().compact().value((NutsDescriptor) value).print(new OutputStreamWriter(o));
+                ws.descriptor().formatter((NutsDescriptor) value).compact().print(new OutputStreamWriter(o));
                 try (InputStream is = new ByteArrayInputStream(o.toByteArray())) {
                     out.write(CoreIOUtils.evalHash(is, getValidAlgo()));
                     return this;
@@ -203,7 +203,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
             }
             case "desc": {
                 ByteArrayOutputStream o = new ByteArrayOutputStream();
-                ws.descriptor().compact().value((NutsDescriptor) value).print(new OutputStreamWriter(o));
+                ws.descriptor().formatter((NutsDescriptor) value).compact().print(new OutputStreamWriter(o));
                 try (InputStream is = new ByteArrayInputStream(o.toByteArray())) {
                     return CoreIOUtils.evalHash(is, getValidAlgo());
                 } catch (IOException ex) {

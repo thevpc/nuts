@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Command for installing artifacts
@@ -204,6 +205,8 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      */
     boolean isDefaultVersion();
 
+    Map<NutsId,NutsInstallStrategy> getIdMap();
+
     /**
      * return true companions should be installed as well
      * @return return true companions should be installed as well
@@ -230,6 +233,8 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      */
     NutsInstallCommand setCompanions(boolean value);
 
+    NutsInstallStrategy getCompanions();
+
     /**
      * return true installed artifacts should be re-installed as well
      * @return true installed artifacts should be re-installed as well
@@ -241,6 +246,8 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      * @return return {@code this} instance
      */
     NutsInstallCommand installed();
+
+    NutsInstallStrategy getInstalled();
 
     /**
      * if true reinstall installed artifacts
@@ -255,6 +262,10 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsInstallCommand setInstalled(boolean value);
+
+    NutsInstallCommand setStrategy(NutsInstallStrategy value);
+
+    NutsInstallStrategy getStrategy();
 
     /**
      * execute installation and return result.

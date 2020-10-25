@@ -7,6 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NutsCommandLineUtils {
+    public static String escapeArguments(String[] args) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (i > 0) {
+                sb.append(" ");
+            }
+            sb.append(escapeArgument(arg));
+        }
+        return sb.toString();
+    }
 
     public static String escapeArgument(String arg) {
         StringBuilder sb = new StringBuilder();

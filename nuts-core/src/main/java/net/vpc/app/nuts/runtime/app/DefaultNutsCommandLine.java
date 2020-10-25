@@ -705,7 +705,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     private String highlightText(String text) {
-        return "{{" + getWorkspace().io().getTerminalFormat().escapeText(text) + "}}";
+        return "{{" + getWorkspace().io().term().getTerminalFormat().escapeText(text) + "}}";
     }
 
     public void process(NutsConfigurable defaultConfigurable,NutsCommandLineProcessor commandLineProcessor){

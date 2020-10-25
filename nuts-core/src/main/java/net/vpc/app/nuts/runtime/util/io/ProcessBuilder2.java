@@ -670,7 +670,7 @@ public class ProcessBuilder2 {
     }
 
     public String getFormattedCommandString(NutsWorkspace ws, CommandStringFormat f) {
-        NutsTerminalFormat tf = ws.io().terminalFormat();
+        NutsTerminalFormat tf = ws.io().term().getTerminalFormat();
         StringBuilder sb = new StringBuilder();
         File ff = getDirectory();
         if (ff == null) {

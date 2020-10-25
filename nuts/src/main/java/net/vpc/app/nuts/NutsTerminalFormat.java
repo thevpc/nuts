@@ -39,7 +39,7 @@ import java.util.Locale;
 /**
  * Filtered Terminal Format Helper
  *
- * @see NutsIOManager#getTerminalFormat()
+ * @see NutsTerminalManager#getTerminalFormat()
  * @see NutsWorkspace#io()
  * @author vpc
  * @since 0.5.5

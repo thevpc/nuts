@@ -114,8 +114,9 @@ public class DefaultNutsDefinition implements NutsDefinition {
         return repositoryName;
     }
 
-    public void setId(NutsId id) {
+    public DefaultNutsDefinition setId(NutsId id) {
         this.id = id;
+        return this;
     }
 
     @Override
@@ -183,12 +184,14 @@ public class DefaultNutsDefinition implements NutsDefinition {
         return this.dependencies;
     }
 
-    public void setContent(NutsContent content) {
+    public DefaultNutsDefinition setContent(NutsContent content) {
         this.content = content;
+        return this;
     }
 
-    public void setDescriptor(NutsDescriptor descriptor) {
+    public DefaultNutsDefinition setDescriptor(NutsDescriptor descriptor) {
         this.descriptor = descriptor;
+        return this;
     }
 
     @Override
@@ -238,20 +241,24 @@ public class DefaultNutsDefinition implements NutsDefinition {
         return true;
     }
 
-    public void setEffectiveDescriptor(NutsDescriptor effectiveDescriptor) {
+    public DefaultNutsDefinition setEffectiveDescriptor(NutsDescriptor effectiveDescriptor) {
         this.effectiveDescriptor = effectiveDescriptor;
+        return this;
     }
 
-    public void setInstallInformation(NutsInstallInformation install) {
+    public DefaultNutsDefinition setInstallInformation(NutsInstallInformation install) {
         this.installInformation = install;
+        return this;
     }
 
-    public void setDependencyNodes(NutsDependencyTreeNode[] dependencyTreeNode) {
+    public DefaultNutsDefinition setDependencyNodes(NutsDependencyTreeNode[] dependencyTreeNode) {
         this.dependencyNodes = dependencyTreeNode;
+        return this;
     }
 
-    public void setDependencies(NutsDependency[] dependencies) {
+    public DefaultNutsDefinition setDependencies(NutsDependency[] dependencies) {
         this.dependencies = dependencies;
+        return this;
     }
 
     @Override

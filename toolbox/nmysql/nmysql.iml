@@ -19,7 +19,7 @@
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.6" level="project" />
     <orderEntry type="library" name="Maven: org.fusesource.jansi:jansi:1.17.1" level="project" />
     <orderEntry type="module" module-name="vpc-common-io" />
-    <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-strings:1.2.17" level="project" />
+    <orderEntry type="module" module-name="vpc-common-strings" />
     <orderEntry type="module" module-name="vpc-common-ssh" />
     <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.50" level="project" />
     <orderEntry type="module" module-name="vpc-common-xfile" />

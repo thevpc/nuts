@@ -169,7 +169,7 @@ public class RemoteTomcat {
                 if (TomcatUtils.isBlank(c.getConfig().getServer())) {
                     ok = false;
                     c.getConfig().setServer(
-                            context.getSession().terminal()
+                            context.getSession().getTerminal()
                                     .ask().forString("[instance=[[%s]]] Would you enter ==%s== value ?", c.getName(), "--server")
                                     .defaultValue("ssh://login@myserver/instanceName").setSession(context.getSession())
                                     .getValue()
@@ -178,7 +178,7 @@ public class RemoteTomcat {
                 if (TomcatUtils.isBlank(c.getConfig().getRemoteTempPath())) {
                     ok = false;
                     c.getConfig()
-                            .setRemoteTempPath(context.getSession().terminal().ask()
+                            .setRemoteTempPath(context.getSession().getTerminal().ask()
                                     .forString("[instance=[[%s]]] Would you enter ==%s== value ?", c.getName(), "--remote-temp-path").setDefaultValue("/tmp")
                                     .setSession(context.getSession())
                                     .getValue()
@@ -187,7 +187,7 @@ public class RemoteTomcat {
                 for (RemoteTomcatAppConfigService aa : c.getApps()) {
                     if (TomcatUtils.isBlank(aa.getConfig().getPath())) {
                         ok = false;
-                        aa.getConfig().setPath(context.getSession().terminal().ask()
+                        aa.getConfig().setPath(context.getSession().getTerminal().ask()
                                 .forString("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value ?", c.getName(), aa.getName(), "-app.path")
                                 .setSession(context.getSession())
                                 .getValue());

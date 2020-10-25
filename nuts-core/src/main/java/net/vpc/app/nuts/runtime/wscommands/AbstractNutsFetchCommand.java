@@ -16,18 +16,18 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
 
     @Override
     public NutsFetchCommand setId(String id) {
-        this.id = ws.id().parseRequired(id);
+        this.id = ws.id().parser().setLenient(false).parse(id);
         return this;
     }
 
     @Override
     public NutsFetchCommand setNutsApi() {
-        return setId(ws.config().getApiId());
+        return setId(ws.getApiId());
     }
 
     @Override
     public NutsFetchCommand setNutsRuntime() {
-        return setId(ws.config().getRuntimeId());
+        return setId(ws.getRuntimeId());
     }
 
     @Override

@@ -40,8 +40,8 @@ public class Test12_CopyTest {
                 "--log-info",
                 "--skip-companions");
 
-        Path from = ws.io().createTempFolder("source");
-        Path to = ws.io().createTempFolder("target");
+        Path from = ws.io().tmp().createTempFolder("source");
+        Path to = ws.io().tmp().createTempFolder("target");
         TestUtils.println("from="+from);
         TestUtils.println("to="+to);
         long collect = Files.list(from).collect(Collectors.counting());

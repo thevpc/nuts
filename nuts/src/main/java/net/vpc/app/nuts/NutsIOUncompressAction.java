@@ -130,6 +130,8 @@ public interface NutsIOUncompressAction {
      */
     NutsIOUncompressAction from(URL source);
 
+    NutsIOUncompressAction to(NutsOutput target);
+
     /**
      * target to uncompress to
      * @return target to uncompress to
@@ -230,6 +232,8 @@ public interface NutsIOUncompressAction {
      * @return {@code this} instance
      */
     NutsIOUncompressAction logProgress();
+
+    NutsIOUncompressAction setTarget(NutsOutput target);
 
     /**
      * true if log progress flag is armed

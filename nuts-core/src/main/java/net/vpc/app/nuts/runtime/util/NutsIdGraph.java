@@ -30,49 +30,59 @@
 package net.vpc.app.nuts.runtime.util;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.runtime.filters.CoreFilterUtils;
+import net.vpc.app.nuts.runtime.filters.NutsIdAndNutsDependencyFilterItem;
+import net.vpc.app.nuts.runtime.util.io.ByteArrayPrintStream;
 
 import java.io.PrintStream;
 import java.util.*;
 import java.util.logging.Level;
 
-import net.vpc.app.nuts.runtime.filters.CoreFilterUtils;
-import net.vpc.app.nuts.runtime.filters.NutsIdAndNutsDependencyFilterItem;
-import net.vpc.app.nuts.runtime.filters.dependency.NutsExclusionDependencyFilter;
-import net.vpc.app.nuts.runtime.util.io.ByteArrayPrintStream;
-
 public class NutsIdGraph {
     private final NutsLogger LOG;
-
-    private NutsIdGraphContext context;
-
     private final Set<NutsId> visited = new LinkedHashSet<>();
     private final Set<NutsIdNode> wildIds = new LinkedHashSet<>();
     private final NutsSession session;
     private final boolean failFast;
+    private NutsIdGraphContext context;
     private int maxComplexity = 300;
 
     public NutsIdGraph(NutsSession session, boolean failFast) {
         this.session = session;
         this.failFast = failFast;
-        context=new NutsIdGraphContext(session);
-        LOG=session.getWorkspace().log().of(NutsIdGraph.class);
+        context = new NutsIdGraphContext(session);
+        LOG = session.getWorkspace().log().of(NutsIdGraph.class);
     }
 
-    private void reset(){
+    private static NutsId cleanup(NutsId id) {
+        if (id == null) {
+            return null;
+        }
+        id = id.builder().setNamespace(null).build();
+        Map<String, String> m = id.getProperties();
+        if (m != null && !m.isEmpty()) {
+            m.remove(NutsConstants.IdProperties.FACE);
+            id = id.builder().setProperties(m).build();
+        }
+        return id;
+    }
+
+    private void reset() {
         visited.clear();
-        wildIds.clear();;
+        wildIds.clear();
+        ;
         maxComplexity = 300;
 
     }
 
-    public NutsId[] resolveDependencies(List<NutsId> ids,NutsDependencyFilter _dependencyFilter) {
+    public NutsId[] resolveDependencies(List<NutsId> ids, NutsDependencyFilter _dependencyFilter) {
         reset();
         push(ids, _dependencyFilter);
         return collect(ids, ids);
     }
 
-    public NutsId[] resolveDependencies(NutsId id,NutsDependencyFilter _dependencyFilter) {
-        return resolveDependencies(Arrays.asList(id),_dependencyFilter);
+    public NutsId[] resolveDependencies(NutsId id, NutsDependencyFilter _dependencyFilter) {
+        return resolveDependencies(Arrays.asList(id), _dependencyFilter);
     }
 
     public NutsIdInfo resolveBest(Set<NutsIdInfo> ids) {
@@ -120,8 +130,8 @@ public class NutsIdGraph {
         for (NutsIdNode nutsId : wildIds.values()) {
             try {
                 NutsId nutsId1 = session.getWorkspace().fetch().setId(nutsId.id).setSession(session).getResultId();
-                context.getNutsIdInfo(nutsId.id,true).refTo=context.getNutsIdInfo(nutsId1,true);
-                toaddOk.add(new NutsIdNode(nutsId1, nutsId.path, nutsId.filter, session));
+                context.getNutsIdInfo(nutsId.id, true).refTo = context.getNutsIdInfo(nutsId1, true);
+                toaddOk.add(new NutsIdNode(nutsId1, nutsId.path, nutsId.filter, session, nutsId.optional));
             } catch (NutsNotFoundException ex) {
                 NutsDependency dep = session.getWorkspace().dependency().builder().setId(nutsId.id).build();
                 if (!dep.isOptional()) {
@@ -136,19 +146,6 @@ public class NutsIdGraph {
             }
             push0(toaddOk);
         }
-    }
-
-    private static NutsId cleanup(NutsId id) {
-        if (id == null) {
-            return null;
-        }
-        id = id.builder().setNamespace(null).build();
-        Map<String, String> m = id.getProperties();
-        if (m != null && !m.isEmpty()) {
-            m.remove(NutsConstants.IdProperties.FACE);
-            id = id.builder().setProperties(m).build();
-        }
-        return id;
     }
 
     public void add(NutsIdNode from, NutsIdNode to) {
@@ -228,7 +225,9 @@ public class NutsIdGraph {
         Collection<NutsIdNode> n = new ArrayList<>();
         int order = 0;
         for (NutsId x : ids) {
-            n.add(new NutsIdNode(x, Collections.EMPTY_LIST, order++, null, dependencyFilter, session));
+            n.add(new NutsIdNode(x, Collections.EMPTY_LIST, order++, null, dependencyFilter, session,
+                    x.toDependency().isOptional()
+            ));
         }
         push0(n);
     }
@@ -248,21 +247,28 @@ public class NutsIdGraph {
         }
         Stack<NutsIdAndNutsDependencyFilterItem> stack = new Stack<>();
         for (NutsIdNode id : ids) {
-            stack.push(new NutsIdAndNutsDependencyFilterItem(id));
+            stack.push(new NutsIdAndNutsDependencyFilterItem(id, null));
         }
         int processed = 0;
         while (!stack.isEmpty()) {
             NutsIdAndNutsDependencyFilterItem curr = stack.pop();
             if (acceptVisit(curr)) {
                 if (curr.id.getVersion().isSingleValue()) {
-                    SearchTraceHelper.progressIndeterminate("search for deps of "+session.getWorkspace().id().set(curr.id.id.getLongNameId()).format(),session);
+                    SearchTraceHelper.progressIndeterminate("search for deps of " + session.getWorkspace().id().formatter().set(curr.id.id.getLongNameId()).format(), session);
                     NutsDescriptor effDescriptor = null;
                     try {
                         effDescriptor = curr.getEffDescriptor(session);
                     } catch (NutsNotFoundException ex) {
                         NutsDependency dep = session.getWorkspace().dependency().builder().setId(curr.id.id).build();
-                        if (!dep.isOptional() && failFast) {
-                            throw ex;
+                        if (!dep.isOptional() && !curr.optional && failFast) {
+                            if (curr.parent == null) {
+                                throw ex;
+                            }
+                            throw new NutsNotFoundException(ex.getWorkspace(),
+                                    curr.parent.id.id,
+                                    new NutsNotFoundException.NutsIdInvalidDependency[]{ex.toInvalidDependency()},
+                                    null, null
+                            );
                         }
                     }
                     if (effDescriptor != null) {
@@ -276,22 +282,26 @@ public class NutsIdGraph {
 
                             NutsDependencyFilter filter2 = curr.id.filter;
                             if (exclusions != null && exclusions.length > 0) {
-                                filter2 = new NutsExclusionDependencyFilter(curr.id.filter, exclusions);
+                                filter2 = session.getWorkspace().dependency().filter().byExclude(curr.id.filter,
+                                        Arrays.stream(exclusions).map(NutsId::getFullName).toArray(String[]::new)
+                                );
                             }
-                            if (curr.id.filter == null || curr.id.filter.accept(curr.id.id, dept, session)) {
-                                NutsId item = dept.getId();
-                                NutsIdNode nextNode = new NutsIdNode(prepareDepId(dept, item), curr.id.path, currentOrder++, curr.id.id, filter2, session);
+                            if (curr.id.filter == null || curr.id.filter.acceptDependency(curr.id.id, dept, session)) {
+                                NutsId item = dept.toId();
+                                NutsIdNode nextNode = new NutsIdNode(prepareDepId(dept, item), curr.id.path, currentOrder++, curr.id.id, filter2, session,
+                                        dept.isOptional()
+                                );
                                 if (!item.getVersion().isSingleValue()) {
                                     this.add(curr.id, nextNode);
                                 } else {
                                     try {
                                         this.add(curr.id, nextNode);
-                                        stack.push(new NutsIdAndNutsDependencyFilterItem(nextNode));
+                                        stack.push(new NutsIdAndNutsDependencyFilterItem(nextNode, curr));
                                     } catch (NutsNotFoundException ex) {
                                         if (dept.isOptional()) {
-                                            LOG.with().level(Level.FINE).error(ex).log("Unable to resolve optional dependency {0} for {1}",dept.getId(),curr.id);
+                                            LOG.with().level(Level.FINE).error(ex).log("Unable to resolve optional dependency {0} for {1}", dept.toId(), curr.id);
                                         } else {
-                                            stack.push(new NutsIdAndNutsDependencyFilterItem(nextNode));
+                                            stack.push(new NutsIdAndNutsDependencyFilterItem(nextNode, curr));
                                         }
                                     }
                                 }
@@ -319,6 +329,65 @@ public class NutsIdGraph {
         return item;
     }
 
+    public List<NutsIdInfo> getNutsIdInfoList() {
+        List<NutsIdInfo> all = new ArrayList<>();
+        for (SimpleNutsIdInfo node1 : context.snutsIds.values()) {
+            all.addAll(node1.nodes);
+        }
+        return all;
+    }
+
+    public List<NutsIdNode> getNutsIdNodeList() {
+        List<NutsIdNode> all = new ArrayList<>();
+        for (SimpleNutsIdInfo node1 : context.snutsIds.values()) {
+            for (NutsIdInfo node2 : node1.nodes) {
+                all.addAll(node2.nodes);
+            }
+        }
+        return all;
+    }
+
+    public Set<NutsIdInfo> getRoots() {
+        LinkedHashSet<NutsIdInfo> all = new LinkedHashSet<>();
+        for (NutsIdInfo nutsIdNode : getNutsIdInfoList()) {
+            if (nutsIdNode.input.isEmpty()) {
+                all.add(nutsIdNode);
+            }
+        }
+        return all;
+    }
+
+    @Override
+    public String toString() {
+        ByteArrayPrintStream out = new ByteArrayPrintStream();
+        print(out);
+        return out.toString();
+    }
+
+    public void print(PrintStream out) {
+        out.println("-------------------------------------------------------------");
+        HashSet<NutsId> visited = new HashSet<>();
+        for (NutsIdInfo root : getRoots()) {
+            print(out, root, "", visited);
+        }
+    }
+
+    public void print(PrintStream out, NutsIdInfo x, String prefix, Set<NutsId> visited) {
+        out.print(prefix + x.id);
+        List<NutsIdInfo> nutsList = x.output;
+        if (nutsList == null) {
+            out.println(" ==> NULL");
+        } else {
+            out.println("");
+            if (!visited.contains(x.id)) {
+                visited.add(x.id);
+                for (NutsIdInfo y : nutsList) {
+                    print(out, y, prefix + "  ", visited);
+                }
+            }
+        }
+    }
+
     public static class SimpleNutsIdInfo {
 
         private String id;
@@ -326,6 +395,11 @@ public class NutsIdGraph {
 
         public SimpleNutsIdInfo(String id) {
             this.id = id;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id);
         }
 
         @Override
@@ -339,20 +413,15 @@ public class NutsIdGraph {
             SimpleNutsIdInfo that = (SimpleNutsIdInfo) o;
             return Objects.equals(id, that.id);
         }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(id);
-        }
     }
 
     public static class NutsIdInfo {
 
-        private NutsId id;
-        private Set<NutsIdNode> nodes = new HashSet<>();
         public List<NutsIdInfo> input = new ArrayList<>();
         public List<NutsIdInfo> output = new ArrayList<>();
         public NutsIdInfo refTo;
+        private NutsId id;
+        private Set<NutsIdNode> nodes = new HashSet<>();
 
         public NutsIdInfo(NutsId id) {
             this.id = id;
@@ -373,6 +442,11 @@ public class NutsIdGraph {
         }
 
         @Override
+        public int hashCode() {
+            return Objects.hash(id);
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (this == o) {
                 return true;
@@ -385,8 +459,13 @@ public class NutsIdGraph {
         }
 
         @Override
-        public int hashCode() {
-            return Objects.hash(id);
+        public String toString() {
+            return "NutsIdInfo{"
+                    + "id=" + id
+                    + ", nodes=" + nodes.size()
+                    + ", input=" + input.size()
+                    + ", output=" + output.size()
+                    + '}';
         }
 
         public void replaceBy(NutsIdInfo other) {
@@ -408,16 +487,6 @@ public class NutsIdGraph {
         public void connect(NutsIdInfo other) {
             output.add(other);
             other.input.add(this);
-        }
-
-        @Override
-        public String toString() {
-            return "NutsIdInfo{"
-                    + "id=" + id
-                    + ", nodes=" + nodes.size()
-                    + ", input=" + input.size()
-                    + ", output=" + output.size()
-                    + '}';
         }
     }
 
@@ -446,10 +515,10 @@ public class NutsIdGraph {
 
         NutsIdInfo getNutsIdInfoResult(NutsId id) {
             NutsIdInfo p = getNutsIdInfo(id, false);
-            if(p==null){
-                throw new NutsNotFoundException(session.getWorkspace(),id);
+            if (p == null) {
+                throw new NutsNotFoundException(session.getWorkspace(), id);
             }
-            if(p.refTo!=null){
+            if (p.refTo != null) {
                 return p.refTo;
             }
             return p;
@@ -511,10 +580,11 @@ public class NutsIdGraph {
         public NutsId parent;
         public NutsDependencyFilter filter;
         public NutsSession session;
+        public boolean optional;
 
-        public NutsIdNode(NutsId id, List<Integer> path, NutsDependencyFilter dependencyFilter, NutsSession session) {
-            if(!CoreNutsUtils.isEffectiveId(id)){
-                throw new NutsIllegalArgumentException(null,id+" is a Non effective Id");
+        public NutsIdNode(NutsId id, List<Integer> path, NutsDependencyFilter dependencyFilter, NutsSession session, boolean optional) {
+            if (!CoreNutsUtils.isEffectiveId(id)) {
+                throw new NutsIllegalArgumentException(null, id + " is a Non effective Id");
             }
             this.id0 = id;
             this.id = cleanup(id0);
@@ -522,11 +592,12 @@ public class NutsIdGraph {
             this.parent = null;
             this.filter = dependencyFilter;
             this.session = session;
+            this.optional = optional;
         }
 
-        public NutsIdNode(NutsId id, List<Integer> parentPath, int order, NutsId parent, NutsDependencyFilter dependencyFilter, NutsSession session) {
-            if(!CoreNutsUtils.isEffectiveId(id)){
-                throw new NutsIllegalArgumentException(null,id+" is a Non effective Id");
+        public NutsIdNode(NutsId id, List<Integer> parentPath, int order, NutsId parent, NutsDependencyFilter dependencyFilter, NutsSession session, boolean optional) {
+            if (!CoreNutsUtils.isEffectiveId(id)) {
+                throw new NutsIllegalArgumentException(null, id + " is a Non effective Id");
             }
             this.id0 = id;
             this.id = cleanup(id0);
@@ -538,6 +609,7 @@ public class NutsIdGraph {
             this.parent = parent;
             this.filter = dependencyFilter;
             this.session = session;
+            this.optional = optional;
         }
 
         public String getSimpleName() {
@@ -546,6 +618,11 @@ public class NutsIdGraph {
 
         public NutsId getLongNameId() {
             return id.getLongNameId();
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, path);
         }
 
         @Override
@@ -562,8 +639,8 @@ public class NutsIdGraph {
         }
 
         @Override
-        public int hashCode() {
-            return Objects.hash(id, path);
+        public String toString() {
+            return id.toString() + path.toString();
         }
 
         public NutsVersion getVersion() {
@@ -611,10 +688,10 @@ public class NutsIdGraph {
                     }
                     return c < 0 ? 1 : -1;
                 }
-                if (id1.getVersion().filter().accept(id2.getVersion(), session)) {
+                if (id1.getVersion().filter().acceptVersion(id2.getVersion(), session)) {
                     return 1;
                 }
-                if (id2.getVersion().filter().accept(id1.getVersion(), session)) {
+                if (id2.getVersion().filter().acceptVersion(id1.getVersion(), session)) {
                     return -1;
                 }
 
@@ -624,69 +701,5 @@ public class NutsIdGraph {
             }
         }
 
-        @Override
-        public String toString() {
-            return id.toString() + path.toString();
-        }
-
-    }
-
-    public List<NutsIdInfo> getNutsIdInfoList() {
-        List<NutsIdInfo> all = new ArrayList<>();
-        for (SimpleNutsIdInfo node1 : context.snutsIds.values()) {
-            all.addAll(node1.nodes);
-        }
-        return all;
-    }
-
-    public List<NutsIdNode> getNutsIdNodeList() {
-        List<NutsIdNode> all = new ArrayList<>();
-        for (SimpleNutsIdInfo node1 : context.snutsIds.values()) {
-            for (NutsIdInfo node2 : node1.nodes) {
-                all.addAll(node2.nodes);
-            }
-        }
-        return all;
-    }
-
-    public Set<NutsIdInfo> getRoots() {
-        LinkedHashSet<NutsIdInfo> all = new LinkedHashSet<>();
-        for (NutsIdInfo nutsIdNode : getNutsIdInfoList()) {
-            if (nutsIdNode.input.isEmpty()) {
-                all.add(nutsIdNode);
-            }
-        }
-        return all;
-    }
-
-    @Override
-    public String toString() {
-        ByteArrayPrintStream out = new ByteArrayPrintStream();
-        print(out);
-        return out.toString();
-    }
-
-    public void print(PrintStream out) {
-        out.println("-------------------------------------------------------------");
-        HashSet<NutsId> visited = new HashSet<>();
-        for (NutsIdInfo root : getRoots()) {
-            print(out, root, "", visited);
-        }
-    }
-
-    public void print(PrintStream out, NutsIdInfo x, String prefix, Set<NutsId> visited) {
-        out.print(prefix + x.id);
-        List<NutsIdInfo> nutsList = x.output;
-        if (nutsList == null) {
-            out.println(" ==> NULL");
-        } else {
-            out.println("");
-            if (!visited.contains(x.id)) {
-                visited.add(x.id);
-                for (NutsIdInfo y : nutsList) {
-                    print(out, y, prefix + "  ", visited);
-                }
-            }
-        }
     }
 }

@@ -129,7 +129,7 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
     public <T> T parse(Reader reader, Class<T> clazz) {
         Document doc = null;
         try {
-            doc = NutsXmlUtils.createDocumentBuilder(false).parse(new InputSource(reader));
+            doc = NutsXmlUtils.createDocumentBuilder(false,getWorkspace()).parse(new InputSource(reader));
         } catch (SAXException | ParserConfigurationException ex) {
             throw new UncheckedIOException(new IOException(ex));
         } catch (IOException ex) {
@@ -152,7 +152,7 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
 
     public org.w3c.dom.Document toXmlDocument(NutsElement o) {
         try {
-            Document document = NutsXmlUtils.createDocument();
+            Document document = NutsXmlUtils.createDocument(getWorkspace());
             document.appendChild(toXmlElement(o, getDefaulTagName(), document, false));
             return document;
         } catch (ParserConfigurationException ex) {
@@ -176,7 +176,7 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
         if (NutsElement.class.isAssignableFrom(cls)) {
             return (T) fromXmlElement(element);
         }
-        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) getWorkspace().json();
+        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) getWorkspace().formats().json();
         return json.convert(element, cls);
     }
 
@@ -314,7 +314,7 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
         }
         Document document;
         try {
-            document = NutsXmlUtils.createDocument();
+            document = NutsXmlUtils.createDocument(getWorkspace());
         } catch (ParserConfigurationException ex) {
             throw new NutsIllegalArgumentException(getWorkspace(), ex);
         }
@@ -360,12 +360,12 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
             }
         }
 
-        NutsElement elem = getWorkspace().element().toElement(obj);
+        NutsElement elem = getWorkspace().formats().element().toElement(obj);
 
         if (doc == null) {
             if (defaulDocument == null) {
                 try {
-                    defaulDocument = NutsXmlUtils.createDocument();
+                    defaulDocument = NutsXmlUtils.createDocument(getWorkspace());
                 } catch (ParserConfigurationException ex) {
                     throw new NutsException(null, "Unable to create Document", ex);
                 }

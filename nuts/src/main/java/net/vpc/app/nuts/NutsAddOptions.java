@@ -36,11 +36,11 @@ import java.util.Objects;
  * Generic Add options
  *
  * @author vpc
- * @see NutsWorkspaceConfigManager#addSdk(net.vpc.app.nuts.NutsSdkLocation,
+ * @see NutsSdkManager#add(net.vpc.app.nuts.NutsSdkLocation,
  * net.vpc.app.nuts.NutsAddOptions)
- * @see NutsWorkspaceConfigManager#addCommandAlias(net.vpc.app.nuts.NutsCommandAliasConfig,
+ * @see NutsCommandAliasManager#add(net.vpc.app.nuts.NutsCommandAliasConfig,
  * net.vpc.app.nuts.NutsAddOptions)
- * @see NutsWorkspaceConfigManager#addCommandAliasFactory(net.vpc.app.nuts.NutsCommandAliasFactoryConfig,
+ * @see NutsCommandAliasManager#addFactory(net.vpc.app.nuts.NutsCommandAliasFactoryConfig,
  * net.vpc.app.nuts.NutsAddOptions)
  * @since 0.5.4
  * @category Config

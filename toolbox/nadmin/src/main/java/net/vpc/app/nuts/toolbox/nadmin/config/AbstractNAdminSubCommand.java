@@ -20,9 +20,9 @@ public abstract class AbstractNAdminSubCommand implements NAdminSubCommand {
         if (save == null) {
             if (cmdLine == null || cmdLine.isExecMode()) {
                 if (repository != null) {
-                    save = Boolean.parseBoolean(repository.config().getEnv("autosave", "false", true));
+                    save = Boolean.parseBoolean(repository.env().get("autosave", "false"));
                 } else {
-                    save = Boolean.parseBoolean(context.getWorkspace().config().getEnv("autosave", "false"));
+                    save = Boolean.parseBoolean(context.getWorkspace().env().get("autosave", "false"));
                 }
             } else {
                 save = false;

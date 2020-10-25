@@ -60,10 +60,10 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) ws.config();
         LinkedHashSet<String> br = new LinkedHashSet<>(rm.resolveBootRepositories());
         for (String s : br) {
-            rm.addRepository(s,session);
+            ws.repos().addRepository(s,session);
         }
         if (br.isEmpty()) {
-            rm.addRepository(NutsConstants.Names.DEFAULT_REPOSITORY_NAME,session);
+            ws.repos().addRepository(NutsConstants.Names.DEFAULT_REPOSITORY_NAME,session);
         }
 
 
