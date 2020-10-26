@@ -79,3 +79,5 @@ toolbox/worky/worky.iml
 /static-docs/
 /nuts/src/test/java/net/vpc/app/nuts/TestTemp.java
 /toolbox/ndoc/target/
+/lsp/log/
+/toolbox/ntasks/target/
