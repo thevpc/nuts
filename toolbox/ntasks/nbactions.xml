@@ -10,7 +10,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Dnuts.debug=true -classpath %classpath net.vpc.toolbox.worky.NWorkMain process-file
+            <exec.args>-Dnuts.debug=true -classpath %classpath net.vpc.toolbox.ntasks.NTasksMain process-file
                 README.md.pre</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir>/data/public/git/nuts/</exec.workingdir>
@@ -27,7 +27,7 @@
         </goals>
         <properties>
             <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Dnuts.debug=true -classpath
-                %classpath net.vpc.toolbox.worky.NWorkMain process-file README.md.pre</exec.args>
+                %classpath net.vpc.toolbox.ntasks.NTasksMain process-file README.md.pre</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
             <exec.workingdir>/data/public/git/nuts/</exec.workingdir>
@@ -43,7 +43,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Dnuts.debug=true -classpath %classpath net.vpc.toolbox.worky.NWorkMain process-file
+            <exec.args>-Dnuts.debug=true -classpath %classpath net.vpc.toolbox.ntasks.NTasksMain process-file
                 README.md.pre</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir>/data/public/git/nuts/</exec.workingdir>

@@ -23,6 +23,7 @@
         <module>toolbox/nded</module>
         <module>toolbox/ntemplate</module>
         <module>toolbox/nwork</module>
+        <module>toolbox/ntasks</module>
         <module>toolbox/ndoc</module>
         <module>toolbox/ndocusaurus</module>
         <module>toolbox/nversion</module>

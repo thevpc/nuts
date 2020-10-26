@@ -473,6 +473,8 @@ public interface NutsCommandLine {
      */
     NutsCommandLine setArguments(String[] arguments);
 
+    void throwError(String message);
+
     /**
      * run the processor and fall back to defaultConfigurable
      * @param defaultConfigurable default configurable

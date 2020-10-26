@@ -695,7 +695,8 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         return c;
     }
 
-    protected void throwError(String message) {
+    @Override
+    public void throwError(String message) {
         StringBuilder m = new StringBuilder();
         if (!CoreStringUtils.isBlank(commandName)) {
             m.append(commandName).append(" : ");

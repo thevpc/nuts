@@ -1,11 +1,14 @@
-==worky== is a developer companion
+==nwork== is a developer companion
 
 ##SYNOPSIS:##
 
-==worky== {{scan}} \[{{-i}}|{{--interactive}}\]  <path>
-    scan for maven projetcs
+==nwork== {{command}} <options>
 
-==worky== {{status}} <id>
+
+==nwork== {{scan}} \[{{-i}}|{{--interactive}}\]  <path>
+    scan for maven projects
+
+==nwork== {{status}} <id>
     check id status
     Options
         **-c** | **--commitable** | **--changed** 
@@ -21,20 +24,19 @@
         **-p** | **--progress**
             show progress
 
-==worky== {{enable scan}} <path>
+==nwork== {{enable scan}} <path>
     enable scan path for maven projects
 
-==worky== {{disable scan}} <path>
+==nwork== {{disable scan}} <path>
     disable scan path for maven projects
 
-==worky== {{list}}
-    list projects
+==nwork== {{list}}
+    list source projects
 
-==worky== {{set}} ...
+==nwork== {{set}} ...
     set project configurations
     Options
         \[{{-r}} | {{--repo}}\] <repo-path>
             set repository path
         \[{{-w}} | {{--workspace}}\] <workspace-path>
             set workspace path
-

@@ -705,7 +705,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 //        throw new UnsupportedOperationException(NOT_SUPPORTED);
 //    }
 
-    protected void throwError(String message) {
+    public void throwError(String message) {
         StringBuilder m = new StringBuilder();
         if (!PrivateNutsUtils.isBlank(commandName)) {
             m.append(commandName).append(" : ");
