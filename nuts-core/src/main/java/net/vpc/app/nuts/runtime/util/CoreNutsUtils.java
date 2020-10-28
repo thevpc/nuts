@@ -464,7 +464,7 @@ public class CoreNutsUtils {
         if (!updates) {
             return base;
         }
-        return (T) ws.filters().any(cls,all2.toArray((T[]) Array.newInstance(cls,0)));
+        return (T) ws.filters().all(cls,all2.toArray((T[]) Array.newInstance(cls,0)));
     }
 
     public static <T extends NutsFilter> T simplifyFilterNone(NutsWorkspace ws, Class<T> cls, T base, NutsFilter... all) {

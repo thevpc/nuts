@@ -3,10 +3,13 @@ package net.vpc.app.nuts.runtime.util.io;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.NutsWorkspaceExt;
 import net.vpc.app.nuts.runtime.filters.AbstractNutsFilter;
+import net.vpc.app.nuts.runtime.filters.CoreFilterUtils;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class NutsInstallStatusIdFilter extends AbstractNutsFilter implements NutsIdFilter {
     private Set<NutsInstallStatus>[] installStatus;
@@ -68,8 +71,29 @@ public class NutsInstallStatusIdFilter extends AbstractNutsFilter implements Nut
         return false;
     }
 
+    public Set<Set<NutsInstallStatus>> getInstallStatus() {
+        return new HashSet<>(Arrays.asList(installStatus));
+    }
+
+    public Set<Set<NutsInstallStatus>> getPossibilities() {
+        Set<Set<NutsInstallStatus>> z=new HashSet<>();
+        for (Set<NutsInstallStatus> s : CoreFilterUtils.getPossibleInstallStatuses()) {
+            if(accept(s)){
+                z.add(s);
+            }
+        }
+        return z;
+    }
+
     @Override
     public NutsFilter simplify() {
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return
+                "installStatusIncludesAny(" + Arrays.stream(installStatus).map(x->x.toString()).collect(Collectors.joining(",")) +
+                ')';
     }
 }

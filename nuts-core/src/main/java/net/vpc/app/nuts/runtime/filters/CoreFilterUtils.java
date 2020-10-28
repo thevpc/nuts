@@ -34,8 +34,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.runtime.filters.id.NutsDescriptorIdFilter;
-import net.vpc.app.nuts.runtime.filters.id.NutstVersionIdFilter;
+import net.vpc.app.nuts.runtime.filters.id.*;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
@@ -58,20 +57,84 @@ public class CoreFilterUtils {
     }
 
 
-    public static boolean[] getTopLevelInstallRepoInclusion(NutsIdFilter filter) {
-        boolean includeInstalledRepository=false;
-        boolean includeOtherRepository=false;
-        for (NutsFilter topLevelFilter : CoreFilterUtils.getTopLevelFilters(filter)) {
-            if(topLevelFilter instanceof NutsInstallStatusIdFilter){
-                includeInstalledRepository|=((NutsInstallStatusIdFilter) topLevelFilter).containsInstalled();
-                includeOtherRepository|=((NutsInstallStatusIdFilter) topLevelFilter).containsUninstalled();
+    public static Set<Set<NutsInstallStatus>> getPossibleInstallStatuses(){
+        Set<Set<NutsInstallStatus>> s=new HashSet<>();
+        s.add(new HashSet<>(Arrays.asList(NutsInstallStatus.NOT_INSTALLED)));
+        s.add(new HashSet<>(Arrays.asList(NutsInstallStatus.REQUIRED)));
+        s.add(new HashSet<>(Arrays.asList(NutsInstallStatus.INSTALLED)));
+        s.add(new HashSet<>(Arrays.asList(NutsInstallStatus.INSTALLED,NutsInstallStatus.REQUIRED)));
+
+        s.add(new HashSet<>(Arrays.asList(NutsInstallStatus.REQUIRED,NutsInstallStatus.OBSOLETE)));
+        s.add(new HashSet<>(Arrays.asList(NutsInstallStatus.INSTALLED,NutsInstallStatus.OBSOLETE)));
+        s.add(new HashSet<>(Arrays.asList(NutsInstallStatus.INSTALLED,NutsInstallStatus.REQUIRED,NutsInstallStatus.OBSOLETE)));
+
+        s.add(new HashSet<>(Arrays.asList(NutsInstallStatus.INSTALLED,NutsInstallStatus.DEFAULT_VERSION)));
+        s.add(new HashSet<>(Arrays.asList(NutsInstallStatus.INSTALLED,NutsInstallStatus.REQUIRED,NutsInstallStatus.DEFAULT_VERSION)));
+        s.add(new HashSet<>(Arrays.asList(NutsInstallStatus.INSTALLED,NutsInstallStatus.OBSOLETE,NutsInstallStatus.DEFAULT_VERSION)));
+        s.add(new HashSet<>(Arrays.asList(NutsInstallStatus.INSTALLED,NutsInstallStatus.REQUIRED,NutsInstallStatus.OBSOLETE,NutsInstallStatus.DEFAULT_VERSION)));
+
+        return s;
+    }
+    private static boolean isNutsInstallStatusIdFilter(NutsFilter filter){
+        if(filter instanceof NutsInstallStatusIdFilter){
+            return true;
+        }
+        if(filter instanceof NutsIdFilterAnd){
+            return Arrays.stream(((NutsIdFilterAnd) filter).getChildren()).allMatch(x->isNutsInstallStatusIdFilter(x));
+        }
+        if(filter instanceof NutsIdFilterOr){
+            return Arrays.stream(((NutsIdFilterOr) filter).getChildren()).allMatch(x->isNutsInstallStatusIdFilter(x));
+        }
+        if(filter instanceof NutsIdFilterNone){
+            return Arrays.stream(((NutsIdFilterNone) filter).getChildren()).allMatch(x->isNutsInstallStatusIdFilter(x));
+        }
+        return false;
+    }
+
+    private static Set<Set<NutsInstallStatus>> resolveNutsInstallStatusIdFilter(NutsFilter filter){
+        if(filter instanceof NutsInstallStatusIdFilter){
+            return ((NutsInstallStatusIdFilter)filter).getPossibilities();
+        }
+        if(filter instanceof NutsIdFilterAnd){
+            Set<Set<NutsInstallStatus>> ret= getPossibleInstallStatuses();
+            for (NutsIdFilter child : ((NutsIdFilterAnd) filter).getChildren()) {
+                Set<Set<NutsInstallStatus>> ok = resolveNutsInstallStatusIdFilter(child);
+                ret.retainAll(ok);
             }
+            return ret;
         }
-        if(!includeInstalledRepository && !includeOtherRepository){
-            includeInstalledRepository=true;
-            includeOtherRepository=true;
+        if(filter instanceof NutsIdFilterOr){
+            Set<Set<NutsInstallStatus>> ret=new HashSet<>();
+            for (NutsIdFilter child : ((NutsIdFilterOr) filter).getChildren()) {
+                Set<Set<NutsInstallStatus>> ok = resolveNutsInstallStatusIdFilter(child);
+                ret.addAll(ok);
+            }
+            return ret;
         }
-        return new boolean[]{includeInstalledRepository,includeOtherRepository};
+        if(filter instanceof NutsIdFilterNone){
+            Set<Set<NutsInstallStatus>> ret=new HashSet<>();
+            for (NutsIdFilter child : ((NutsIdFilterNone) filter).getChildren()) {
+                Set<Set<NutsInstallStatus>> ok = resolveNutsInstallStatusIdFilter(child);
+                Set<Set<NutsInstallStatus>> i=new HashSet<>(getPossibleInstallStatuses());
+                i.remove(ok);
+                ret.addAll(i);
+            }
+            return ret;
+        }
+        return getPossibleInstallStatuses();
+    }
+    public static boolean[] getTopLevelInstallRepoInclusion(NutsIdFilter filter) {
+        Set<Set<NutsInstallStatus>> s = resolveNutsInstallStatusIdFilter(filter);
+        boolean notInstalled=false;
+        boolean installedOrRequired=false;
+        for (Set<NutsInstallStatus> nutsInstallStatuses : s) {
+            notInstalled|=nutsInstallStatuses.contains(NutsInstallStatus.NOT_INSTALLED);
+            installedOrRequired|=nutsInstallStatuses.contains(NutsInstallStatus.INSTALLED)||nutsInstallStatuses.contains(NutsInstallStatus.REQUIRED);
+        }
+        return new boolean[]{
+                !notInstalled,
+                installedOrRequired
+        };
     }
 
     public static <T extends NutsFilter> T[] getTopLevelFilters(NutsFilter idFilter,Class<T> clazz,NutsWorkspace ws) {

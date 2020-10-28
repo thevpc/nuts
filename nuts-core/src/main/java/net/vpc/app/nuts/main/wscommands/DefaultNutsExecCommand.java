@@ -293,7 +293,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         } else {
             List<NutsVersion> versions = ff.stream().map(x -> x.getVersion()).distinct().collect(Collectors.toList());
             if (versions.size() > 1) {
-                throw new NutsTooManyElementsException(ws, nid.toString() + " can be resolved to all of " + ff);
+                throw new NutsTooManyElementsException(ws, nid.toString() + " can be resolved to all ("+ff.size()+") of " + ff);
             }
         }
         NutsId goodId = ff.get(0);
