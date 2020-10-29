@@ -1245,6 +1245,40 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         }
 
         @Override
+        public int getIntValue(int defaultValue) {
+            return getArgumentValue().getInt(defaultValue);
+        }
+
+        @Override
+        public int getIntValue() {
+            try {
+                return getArgumentValue().getInt();
+            }catch (NumberFormatException e){
+                throw new NumberFormatException("invalid int value for "+getString()+": "+e.getMessage());
+            }
+        }
+
+        @Override
+        public long getLongValue() {
+            try {
+                return getArgumentValue().getLong();
+            }catch (NumberFormatException e){
+                throw new NumberFormatException("invalid long value for "+getString()+": "+e.getMessage());
+            }
+        }
+
+        @Override
+        public double getDoubleValue() {
+            try {
+                return getArgumentValue().getDouble();
+            }catch (NumberFormatException e){
+                throw new NumberFormatException("invalid double value for "+getString()+": "+e.getMessage());
+            }
+        }
+
+
+
+        @Override
         public boolean isDouble() {
             try {
                 if (expression != null) {

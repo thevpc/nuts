@@ -169,4 +169,17 @@ public class NTask {
         this.modificationTime = modificationTime;
         return this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NTask nTask = (NTask) o;
+        return Objects.equals(id, nTask.id) && Objects.equals(jobId, nTask.jobId) && Objects.equals(parentTaskId, nTask.parentTaskId) && Objects.equals(name, nTask.name) && priority == nTask.priority && flag == nTask.flag && Objects.equals(creationTime, nTask.creationTime) && Objects.equals(modificationTime, nTask.modificationTime) && Objects.equals(dueTime, nTask.dueTime) && Objects.equals(startTime, nTask.startTime) && Objects.equals(endTime, nTask.endTime) && Objects.equals(internalDuration, nTask.internalDuration) && Objects.equals(duration, nTask.duration) && Objects.equals(project, nTask.project) && status == nTask.status && Objects.equals(observations, nTask.observations);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, jobId, parentTaskId, name, priority, flag, creationTime, modificationTime, dueTime, startTime, endTime, internalDuration, duration, project, status, observations);
+    }
 }

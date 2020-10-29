@@ -6,6 +6,7 @@ import net.vpc.app.nuts.toolbox.njob.time.TimespanPattern;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 public class TestTimeFormatter {
@@ -19,7 +20,7 @@ public class TestTimeFormatter {
     @Test
     public void test2(){
         System.out.println(
-                new TimePeriod(165321.365254, TimeUnit.SECONDS).toTimePeriods().toUnit(TimeUnit.SECONDS, TimespanPattern.DEFAULT)
+                new TimePeriod(165321.365254, ChronoUnit.SECONDS).toTimePeriods().toUnit(ChronoUnit.SECONDS, TimespanPattern.DEFAULT)
         );
     }
 }

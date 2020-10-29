@@ -36,7 +36,7 @@ public class TimeFormatter {
             if(Math.abs(u)<60*4){
 
                 if (u > 0 && u < 600) {
-                    return "in "+new TimePeriod(u, TimeUnit.MINUTES).toTimePeriods().toString();
+                    return "in "+new TimePeriod(u, ChronoUnit.MINUTES).toTimePeriods().toString();
                 }
                 if (-u > 0 && -u < 600) {
                     return (-u) + "mn ago";

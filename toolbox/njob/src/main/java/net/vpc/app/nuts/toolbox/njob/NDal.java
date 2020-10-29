@@ -5,6 +5,7 @@ import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsJsonFormat;
 import net.vpc.app.nuts.toolbox.njob.model.Id;
 import net.vpc.app.nuts.toolbox.njob.model.NJob;
+import net.vpc.app.nuts.toolbox.njob.model.NProject;
 import net.vpc.app.nuts.toolbox.njob.model.NTask;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.UUID;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -91,31 +93,19 @@ public class NDal {
             NJob j = (NJob) o;
             String ii=j.getId();
             if (ii==null){
-                SimpleDateFormat yyyyMMddHHmmssSSS = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-                while(true){
-                    //test until we reach next millisecond
-                    String nid=yyyyMMddHHmmssSSS.format(new Date());
-                    Path f = getFile(getEntityName(NJob.class), nid);
-                    if(!Files.exists(f)){
-                        j.setId(nid);
-                        break;
-                    }
-                }
+                j.setId(generateId(NJob.class));
             }
         }else if(o instanceof NTask){
             NTask j = (NTask) o;
             String ii=j.getId();
             if (ii==null){
-                SimpleDateFormat yyyyMMddHHmmssSSS = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-                while(true){
-                    //test until we reach next millisecond
-                    String nid=yyyyMMddHHmmssSSS.format(new Date());
-                    Path f = getFile(getEntityName(NTask.class), nid);
-                    if(!Files.exists(f)){
-                        j.setId(nid);
-                        break;
-                    }
-                }
+                j.setId(generateId(NTask.class));
+            }
+        }else if(o instanceof NProject){
+            NProject j = (NProject) o;
+            String ii=j.getId();
+            if (ii==null){
+                j.setId(generateId(NProject.class));
             }
         }
         Path objectFile = getObjectFile(o);
@@ -127,6 +117,19 @@ public class NDal {
             }
         }
         json.value(o).println(objectFile);
+    }
+
+    public String generateId(Class clz) {
+//        SimpleDateFormat yyyyMMddHHmmssSSS = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        while(true){
+            //test until we reach next millisecond
+            String nid= UUID.randomUUID().toString();
+//                    yyyyMMddHHmmssSSS.format(new Date());
+            Path f = getFile(getEntityName(clz), nid);
+            if(!Files.exists(f)){
+                return nid;
+            }
+        }
     }
 
     public boolean delete(Class entityName, Object id) {

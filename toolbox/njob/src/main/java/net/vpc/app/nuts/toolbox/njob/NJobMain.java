@@ -18,16 +18,23 @@ public class NJobMain extends NutsApplication {
         JobServiceCmd ts = new JobServiceCmd(appContext);
         NutsCommandLine cmdLine = appContext.getCommandLine();
         NutsArgument a;
-        do {
+        while(!cmdLine.isEmpty()) {
             if (appContext.configureFirst(cmdLine)) {
                 //
+            } else if (
+                    cmdLine.peek().toString().equals("-i")
+                    ||cmdLine.peek().toString().equals("--interactive")
+            ) {
+                //interactive
+                ts.runInteractive(cmdLine);
+                return;
             } else if (ts.runCommands(cmdLine)) {
                 //okkay
                 return;
             } else {
                 cmdLine.unexpectedArgument();
             }
-        } while (cmdLine.hasNext());
+        };
         cmdLine.required();
     }
 

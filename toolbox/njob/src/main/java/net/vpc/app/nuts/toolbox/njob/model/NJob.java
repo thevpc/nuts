@@ -12,6 +12,8 @@ public class NJob {
     private TimePeriod internalDuration;
     private TimePeriod duration;
     private String project;
+    private Instant creationTime;
+    private Instant modificationTime;
 
     private String observations;
 
@@ -75,6 +77,24 @@ public class NJob {
 
     public NJob setObservations(String observations) {
         this.observations = observations;
+        return this;
+    }
+
+    public Instant getCreationTime() {
+        return creationTime;
+    }
+
+    public NJob setCreationTime(Instant creationTime) {
+        this.creationTime = creationTime;
+        return this;
+    }
+
+    public Instant getModificationTime() {
+        return modificationTime;
+    }
+
+    public NJob setModificationTime(Instant modificationTime) {
+        this.modificationTime = modificationTime;
         return this;
     }
 }

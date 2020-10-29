@@ -29,7 +29,7 @@ public class TimeParser {
 
     public Predicate<Instant> parseInstantFilter(String s, boolean lenient) {
         if (s.startsWith(">=")) {
-            Instant p = new TimeParser().parseInstant(s.substring(2));
+            Instant p = new TimeParser().parseInstant(s.substring(2),lenient);
             if (p != null) {
                 return x -> x != null && x.compareTo(p) >= 0;
             } else {
@@ -41,7 +41,7 @@ public class TimeParser {
                 return x -> x != null && x.compareTo(p1) >= 0;
             }
         } else if (s.startsWith(">")) {
-            Instant p = new TimeParser().parseInstant(s.substring(1));
+            Instant p = new TimeParser().parseInstant(s.substring(1),lenient);
             if (p != null) {
                 return x -> x != null && x.compareTo(p) > 0;
             } else {
@@ -53,7 +53,7 @@ public class TimeParser {
                 return x -> x != null && x.compareTo(p1) > 0;
             }
         } else if (s.startsWith("<=")) {
-            Instant p = new TimeParser().parseInstant(s.substring(2));
+            Instant p = new TimeParser().parseInstant(s.substring(2),lenient);
             if (p != null) {
                 return x -> x != null && x.compareTo(p) <= 0;
             } else {
@@ -65,7 +65,7 @@ public class TimeParser {
                 return x -> x != null && x.compareTo(p1) <= 0;
             }
         } else if (s.startsWith("<")) {
-            Instant p = new TimeParser().parseInstant(s.substring(1));
+            Instant p = new TimeParser().parseInstant(s.substring(1),lenient);
             if (p != null) {
                 return x -> x != null && x.compareTo(p) < 0;
             } else {
@@ -77,7 +77,7 @@ public class TimeParser {
                 return x -> x != null && x.compareTo(p1) < 0;
             }
         } else {
-            Instant p = new TimeParser().parseInstant(s);
+            Instant p = new TimeParser().parseInstant(s,lenient);
             if (p != null) {
                 return x -> x != null && x.compareTo(p) == 0;
             } else {
@@ -91,155 +91,161 @@ public class TimeParser {
         }
     }
 
-    public Instant parseInstant(String a) {
-        return parseInstant(new PatternStringBuilder(a));
+    public Instant parseInstant(String a, boolean lenient) {
+        return parseInstant(new PatternStringBuilder(a), lenient);
     }
 
-    public Instant parseInstant(PatternStringBuilder a) {
-//        try {
-        if (a.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
-            return Instant.parse(a + "T00:00:00Z");
-        }
-        if (a.matches("[0-9]{2}[hH][0-9]{2}")) {
-            return Instant.parse(new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "T" + a.toString().replace("[hH]", ":") + "Z");
-        }
-        if (a.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}")) {
-            return Instant.parse(a + ":00Z");
-        }
-        if (a.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}[T@][0-9]{2}:[0-9]{2}")) {
-            return Instant.parse(a.toString().replace('@', 'T') + ":00Z");
-        }
-        if (a.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}[@T][0-9]{2}:[0-9]{2}:[0-9]{2}")) {
-            return Instant.parse(a.toString().replace('@', 'T') + "Z");
-        }
+    public Instant parseInstant(PatternStringBuilder a, boolean lenient) {
+        try {
+            if (a.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
+                return Instant.parse(a + "T00:00:00Z");
+            }
+            if (a.matches("[0-9]{2}[hH][0-9]{2}")) {
+                return Instant.parse(new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "T" + a.toString().replace("[hH]", ":") + "Z");
+            }
+            if (a.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}")) {
+                return Instant.parse(a + ":00Z");
+            }
+            if (a.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}[T@][0-9]{2}:[0-9]{2}")) {
+                return Instant.parse(a.toString().replace('@', 'T') + ":00Z");
+            }
+            if (a.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}[@T][0-9]{2}:[0-9]{2}:[0-9]{2}")) {
+                return Instant.parse(a.toString().replace('@', 'T') + "Z");
+            }
 
-        if (a.matches("[a-zA-Z]+ [0-9]{2}:[0-9]{2}:[0-9]{2}")) {
-            return Instant.parse(a.toString().replace('@', 'T') + "Z");
-        }
-        String s;
-        String day = null;
-        String time = null;
-        boolean future = false;
-        DecimalFormat D2 = new DecimalFormat("00");
-        while (!a.isEmpty()) {
-            if (parseDates && (s = a.readMatchAnyCase("today|tonight|yesterday|tomorrow|sunday|monday|tuesday|wednesday|thursday|friday|friday|saturday")) != null) {
-                day = s;
-            } else if ((s = a.readMatchAnyCase("next")) != null) {
-                future = true;
-            } else if ((s = a.readMatchAnyCase("last")) != null) {
-                future = false;
-            } else if ((s = a.readMatchAnyCase("this")) != null) {
-                day = "today";
-            } else if ((s = a.readMatchAnyCase("morning|afternoon|evening|night|sametime|samehour|same-time|same-hour|midnight|midday")) != null) {
-                time = timeStringFromKeyword(s);
-            } else if ((s = a.readMatchAnyCase("[0-9]{2}:[0-9]{2}:[0-9]{2}")) != null) {
-                time = s;
-            } else if ((s = a.readMatchAnyCase("[0-9]{2}[hH][0-9]{2}")) != null) {
-                time = s.replace("[hH]", ":") + ":00";
-            } else if ((s = a.readMatchAnyCase("[0-9]{1,2}[hH]")) != null) {
-                time = s.replace("[hH]", ":") + ":00:00";
-                if (time.length() == 7) {
-                    time = "0" + time;
-                }
-            } else if ((s = a.readMatchAnyCase("[0-9]{1,2}am")) != null) {
-                int i = Integer.parseInt(s.substring(0, s.length() - 2));
-                if (i == 12) {
-                    i = 0;
-                }
-                time = i + ":00:00";
-                if (time.length() == 7) {
-                    time = "0" + time;
-                }
-            } else if ((s = a.readMatchAnyCase("[0-9]{1,2}pm")) != null) {
-                int t = Integer.parseInt(s.substring(0, s.length() - 2));
-                t = t + 12;
-                if (t == 24) {
-                    t = 0;
-                }
-                time = t + ":00:00";
-                if (time.length() == 7) {
-                    time = "0" + time;
-                }
-            } else {
-                if (!a.trimStart()) {
-                    throw new IllegalArgumentException("Unexpected " + a);
-                }
+            if (a.matches("[a-zA-Z]+ [0-9]{2}:[0-9]{2}:[0-9]{2}")) {
+                return Instant.parse(a.toString().replace('@', 'T') + "Z");
             }
-        }
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.MILLISECOND, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        if (time!=null && time.equals("24:00:00")) {
-            c.add(Calendar.DAY_OF_YEAR, 1);
-            time="00:00:00";
-        }
-        if (day != null) {
-            switch (day.toLowerCase()) {
-                case "today": {
-                    if (time == null) {
-                        time = timeStringFromKeyword("afternoon");
+            String s;
+            String day = null;
+            String time = null;
+            boolean future = false;
+            DecimalFormat D2 = new DecimalFormat("00");
+            while (!a.isEmpty()) {
+                if (parseDates && (s = a.readMatchAnyCase("today|tonight|yesterday|tomorrow|sunday|monday|tuesday|wednesday|thursday|friday|friday|saturday")) != null) {
+                    day = s;
+                } else if ((s = a.readMatchAnyCase("next")) != null) {
+                    future = true;
+                } else if ((s = a.readMatchAnyCase("last")) != null) {
+                    future = false;
+                } else if ((s = a.readMatchAnyCase("this")) != null) {
+                    day = "today";
+                } else if ((s = a.readMatchAnyCase("morning|afternoon|evening|night|sametime|samehour|same-time|same-hour|midnight|midday")) != null) {
+                    time = timeStringFromKeyword(s);
+                } else if ((s = a.readMatchAnyCase("[0-9]{2}:[0-9]{2}:[0-9]{2}")) != null) {
+                    time = s;
+                } else if ((s = a.readMatchAnyCase("[0-9]{2}[hH][0-9]{2}")) != null) {
+                    time = s.replace("[hH]", ":") + ":00";
+                } else if ((s = a.readMatchAnyCase("[0-9]{1,2}[hH]")) != null) {
+                    time = s.replace("[hH]", ":") + ":00:00";
+                    if (time.length() == 7) {
+                        time = "0" + time;
                     }
-                    break;
-                }
-                case "tonight": {
-                    if (time == null) {
-                        time = timeStringFromKeyword("night");
+                } else if ((s = a.readMatchAnyCase("[0-9]{1,2}am")) != null) {
+                    int i = Integer.parseInt(s.substring(0, s.length() - 2));
+                    if (i == 12) {
+                        i = 0;
                     }
-                    break;
-                }
-                case "yesterday": {
-                    c.add(Calendar.DAY_OF_YEAR, -1);
-                    break;
-                }
-                case "tomorrow": {
-                    c.add(Calendar.DAY_OF_YEAR, 1);
-                    break;
-                }
-                case "sunday": {
-                    reachDayOfWeek(future, c, Calendar.SUNDAY);
-                    break;
-                }
-                case "monday": {
-                    reachDayOfWeek(future, c, Calendar.MONDAY);
-                    break;
-                }
-                case "tuesday": {
-                    reachDayOfWeek(future, c, Calendar.TUESDAY);
-                    break;
-                }
-                case "wednesday": {
-                    reachDayOfWeek(future, c, Calendar.WEDNESDAY);
-                    break;
-                }
-                case "thursday": {
-                    reachDayOfWeek(future, c, Calendar.THURSDAY);
-                    break;
-                }
-                case "friday": {
-                    reachDayOfWeek(future, c, Calendar.FRIDAY);
-                    break;
-                }
-                case "saturday": {
-                    reachDayOfWeek(future, c, Calendar.SATURDAY);
-                    break;
-                }
-                default: {
-                    throw new IllegalArgumentException("Unsupported");
+                    time = i + ":00:00";
+                    if (time.length() == 7) {
+                        time = "0" + time;
+                    }
+                } else if ((s = a.readMatchAnyCase("[0-9]{1,2}pm")) != null) {
+                    int t = Integer.parseInt(s.substring(0, s.length() - 2));
+                    t = t + 12;
+                    if (t == 24) {
+                        t = 0;
+                    }
+                    time = t + ":00:00";
+                    if (time.length() == 7) {
+                        time = "0" + time;
+                    }
+                } else {
+                    if (!a.trimStart()) {
+                        if (lenient) {
+                            return null;
+                        }
+                        throw new IllegalArgumentException("Unexpected " + a);
+                    }
                 }
             }
-            if (time == null) {
-                time = timeStringFromKeyword(defaultTimeKeyword);
+            Calendar c = Calendar.getInstance();
+            c.set(Calendar.MILLISECOND, 0);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            if (time != null && time.equals("24:00:00")) {
+                c.add(Calendar.DAY_OF_YEAR, 1);
+                time = "00:00:00";
             }
-            c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time.substring(0, 2), 10));
-            c.set(Calendar.MINUTE, Integer.parseInt(time.substring(3, 5), 10));
-            c.set(Calendar.SECOND, Integer.parseInt(time.substring(6, 8), 10));
+            if (day != null) {
+                switch (day.toLowerCase()) {
+                    case "today": {
+                        if (time == null) {
+                            time = timeStringFromKeyword("afternoon");
+                        }
+                        break;
+                    }
+                    case "tonight": {
+                        if (time == null) {
+                            time = timeStringFromKeyword("night");
+                        }
+                        break;
+                    }
+                    case "yesterday": {
+                        c.add(Calendar.DAY_OF_YEAR, -1);
+                        break;
+                    }
+                    case "tomorrow": {
+                        c.add(Calendar.DAY_OF_YEAR, 1);
+                        break;
+                    }
+                    case "sunday": {
+                        reachDayOfWeek(future, c, Calendar.SUNDAY);
+                        break;
+                    }
+                    case "monday": {
+                        reachDayOfWeek(future, c, Calendar.MONDAY);
+                        break;
+                    }
+                    case "tuesday": {
+                        reachDayOfWeek(future, c, Calendar.TUESDAY);
+                        break;
+                    }
+                    case "wednesday": {
+                        reachDayOfWeek(future, c, Calendar.WEDNESDAY);
+                        break;
+                    }
+                    case "thursday": {
+                        reachDayOfWeek(future, c, Calendar.THURSDAY);
+                        break;
+                    }
+                    case "friday": {
+                        reachDayOfWeek(future, c, Calendar.FRIDAY);
+                        break;
+                    }
+                    case "saturday": {
+                        reachDayOfWeek(future, c, Calendar.SATURDAY);
+                        break;
+                    }
+                    default: {
+                        throw new IllegalArgumentException("Unsupported");
+                    }
+                }
+                if (time == null) {
+                    time = timeStringFromKeyword(defaultTimeKeyword);
+                }
+                c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time.substring(0, 2), 10));
+                c.set(Calendar.MINUTE, Integer.parseInt(time.substring(3, 5), 10));
+                c.set(Calendar.SECOND, Integer.parseInt(time.substring(6, 8), 10));
+            }
+            return c.toInstant();
+        } catch (RuntimeException ex) {
+            if (lenient) {
+                return null;
+            }
+            throw ex;
         }
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-        return c.toInstant();
     }
 
     private String timeStringFromKeyword(String s) {

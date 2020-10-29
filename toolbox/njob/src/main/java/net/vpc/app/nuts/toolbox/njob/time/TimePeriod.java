@@ -3,7 +3,6 @@ package net.vpc.app.nuts.toolbox.njob.time;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,27 +10,32 @@ import java.util.regex.Pattern;
 public class TimePeriod implements Comparable<TimePeriod> {
     private static Pattern PATTERN = Pattern.compile("(?<val>[0-9]+([.][0-9]+)?)[ ]*(?<unit>([a-zA-Z]+))");
     private double count;
-    private TimeUnit unit;
+    private ChronoUnit unit;
 
     //    public static void main(String[] args) {
 //        System.out.println("1ms".matches("(<?val>([0-9]+([.][0-9]+)?))[ ]*(<?unit>([a-zA-Z]+))"));
 //        System.out.println("1".matches("(?<a>[0-9])"));
 //    }
-    public TimePeriod(double count, TimeUnit unit) {
+    public TimePeriod(double count, ChronoUnit unit) {
         this.count = count;
         this.unit = unit;
     }
 
-    public static Instant parseOpPeriodAsInstant(String str, Instant initial) {
+    public static Instant parseOpPeriodAsInstant(String str, Instant initial,boolean lenient) {
         if(str.startsWith("+")) {
-            return TimePeriod.parse(str.substring(1), false)
+            TimePeriod parse = TimePeriod.parse(str.substring(1), lenient);
+            if(lenient){
+                return null;
+            }
+            return parse
                     .addTo(initial, TimespanPattern.WORK);
         }else if(str.startsWith("-")){
-            return TimePeriod.parse(str.substring(1), false)
+            TimePeriod parse = TimePeriod.parse(str.substring(1), lenient);
+            return parse
                     .neg()
                     .addTo(initial, TimespanPattern.WORK);
         }else {
-            return new TimeParser().parseInstant(str);
+            return new TimeParser().parseInstant(str,lenient);
         }
     }
 
@@ -76,45 +80,45 @@ public class TimePeriod implements Comparable<TimePeriod> {
         }
     }
 
-    public static TimeUnit parseUnit(String u, boolean lenient) {
+    public static ChronoUnit parseUnit(String u, boolean lenient) {
         switch (u.toLowerCase()) {
             case "ns":
             case "nanos":
             case "nano":
             case "nanosecond":
             case "nanoseconds": {
-                return TimeUnit.NANOSECONDS;
+                return ChronoUnit.NANOS;
             }
             case "ms":
             case "milli":
             case "millis":
             case "millisecond":
             case "milliseconds": {
-                return TimeUnit.MILLISECONDS;
+                return ChronoUnit.MILLIS;
             }
             case "s":
             case "sec":
             case "secs":
             case "second":
             case "seconds": {
-                return TimeUnit.SECONDS;
+                return ChronoUnit.SECONDS;
             }
             case "mn":
             case "min":
             case "mins":
             case "minute":
             case "minutes": {
-                return TimeUnit.MINUTES;
+                return ChronoUnit.MINUTES;
             }
             case "h":
             case "hour":
             case "hours": {
-                return TimeUnit.HOURS;
+                return ChronoUnit.HOURS;
             }
             case "d":
             case "day":
             case "days": {
-                return TimeUnit.DAYS;
+                return ChronoUnit.DAYS;
             }
         }
         if (lenient) {
@@ -127,9 +131,9 @@ public class TimePeriod implements Comparable<TimePeriod> {
         if (str == null || str.trim().isEmpty()) {
             return null;
         }
-        TimeUnit defaultUnit = null;
+        ChronoUnit defaultUnit = null;
         if (defaultUnit == null) {
-            defaultUnit = TimeUnit.MILLISECONDS;
+            defaultUnit = ChronoUnit.MILLIS;
         }
         Matcher matcher = PATTERN.matcher(str);
         if (matcher.find()) {
@@ -152,7 +156,7 @@ public class TimePeriod implements Comparable<TimePeriod> {
             if (u == null) {
                 u = "ms";
             }
-            TimeUnit unit = parseUnit(u, lenient);
+            ChronoUnit unit = parseUnit(u, lenient);
             return new TimePeriod(unitCount, unit);
         }
         if (lenient) {
@@ -172,7 +176,7 @@ public class TimePeriod implements Comparable<TimePeriod> {
         return count;
     }
 
-    public TimeUnit getUnit() {
+    public ChronoUnit getUnit() {
         return unit;
     }
 
@@ -189,17 +193,17 @@ public class TimePeriod implements Comparable<TimePeriod> {
                 return v + "mn";
             case SECONDS:
                 return v + "s";
-            case MILLISECONDS:
+            case MILLIS:
                 return v + "ms";
-            case MICROSECONDS:
+            case MICROS:
                 return v + "us";
-            case NANOSECONDS:
+            case NANOS:
                 return v + "ns";
         }
         return String.valueOf((int) count) + unit.toString().toLowerCase();
     }
 
-    public TimePeriod toUnit(TimeUnit u, TimespanPattern pattern) {
+    public TimePeriod toUnit(ChronoUnit u, TimespanPattern pattern) {
         double hoursPerDay = pattern.getHoursPerDay();
         switch (unit) {
             case DAYS: {
@@ -208,22 +212,22 @@ public class TimePeriod implements Comparable<TimePeriod> {
                         return this;
                     }
                     case HOURS: {
-                        return new TimePeriod(hoursPerDay * count, TimeUnit.HOURS);
+                        return new TimePeriod(hoursPerDay * count, ChronoUnit.HOURS);
                     }
                     case MINUTES: {
-                        return new TimePeriod(count * 60 * hoursPerDay, TimeUnit.MINUTES);
+                        return new TimePeriod(count * 60 * hoursPerDay, ChronoUnit.MINUTES);
                     }
                     case SECONDS: {
-                        return new TimePeriod(count * 3600 * hoursPerDay, TimeUnit.SECONDS);
+                        return new TimePeriod(count * 3600 * hoursPerDay, ChronoUnit.SECONDS);
                     }
-                    case MILLISECONDS: {
-                        return new TimePeriod(count * 3600000 * hoursPerDay, TimeUnit.MILLISECONDS);
+                    case MILLIS: {
+                        return new TimePeriod(count * 3600000 * hoursPerDay, ChronoUnit.MILLIS);
                     }
-                    case MICROSECONDS: {
-                        return new TimePeriod(count * 3600000000L * hoursPerDay, TimeUnit.MICROSECONDS);
+                    case MICROS: {
+                        return new TimePeriod(count * 3600000000L * hoursPerDay, ChronoUnit.MICROS);
                     }
-                    case NANOSECONDS: {
-                        return new TimePeriod(count * 3600000000000L * hoursPerDay, TimeUnit.NANOSECONDS);
+                    case NANOS: {
+                        return new TimePeriod(count * 3600000000000L * hoursPerDay, ChronoUnit.NANOS);
                     }
                 }
                 break;
@@ -231,25 +235,25 @@ public class TimePeriod implements Comparable<TimePeriod> {
             case HOURS: {
                 switch (u) {
                     case DAYS: {
-                        return new TimePeriod(count / hoursPerDay, TimeUnit.DAYS);
+                        return new TimePeriod(count / hoursPerDay, ChronoUnit.DAYS);
                     }
                     case HOURS: {
                         return this;
                     }
                     case MINUTES: {
-                        return new TimePeriod(count * 60, TimeUnit.MINUTES);
+                        return new TimePeriod(count * 60, ChronoUnit.MINUTES);
                     }
                     case SECONDS: {
-                        return new TimePeriod(count * 3600, TimeUnit.SECONDS);
+                        return new TimePeriod(count * 3600, ChronoUnit.SECONDS);
                     }
-                    case MILLISECONDS: {
-                        return new TimePeriod(count * 3600000, TimeUnit.MILLISECONDS);
+                    case MILLIS: {
+                        return new TimePeriod(count * 3600000, ChronoUnit.MILLIS);
                     }
-                    case MICROSECONDS: {
-                        return new TimePeriod(count * 3600000000L, TimeUnit.MICROSECONDS);
+                    case MICROS: {
+                        return new TimePeriod(count * 3600000000L, ChronoUnit.MICROS);
                     }
-                    case NANOSECONDS: {
-                        return new TimePeriod(count * 3600000000000L, TimeUnit.NANOSECONDS);
+                    case NANOS: {
+                        return new TimePeriod(count * 3600000000000L, ChronoUnit.NANOS);
                     }
                 }
                 break;
@@ -257,25 +261,25 @@ public class TimePeriod implements Comparable<TimePeriod> {
             case MINUTES: {
                 switch (u) {
                     case DAYS: {
-                        return new TimePeriod(count / 60 / hoursPerDay, TimeUnit.DAYS);
+                        return new TimePeriod(count / 60 / hoursPerDay, ChronoUnit.DAYS);
                     }
                     case HOURS: {
-                        return new TimePeriod(count / 60, TimeUnit.HOURS);
+                        return new TimePeriod(count / 60, ChronoUnit.HOURS);
                     }
                     case MINUTES: {
                         return this;
                     }
                     case SECONDS: {
-                        return new TimePeriod(count * 60, TimeUnit.SECONDS);
+                        return new TimePeriod(count * 60, ChronoUnit.SECONDS);
                     }
-                    case MILLISECONDS: {
-                        return new TimePeriod(count * 60000, TimeUnit.MILLISECONDS);
+                    case MILLIS: {
+                        return new TimePeriod(count * 60000, ChronoUnit.MILLIS);
                     }
-                    case MICROSECONDS: {
-                        return new TimePeriod(count * 60000000L, TimeUnit.MICROSECONDS);
+                    case MICROS: {
+                        return new TimePeriod(count * 60000000L, ChronoUnit.MICROS);
                     }
-                    case NANOSECONDS: {
-                        return new TimePeriod(count * 60000000000L, TimeUnit.NANOSECONDS);
+                    case NANOS: {
+                        return new TimePeriod(count * 60000000000L, ChronoUnit.NANOS);
                     }
                 }
                 break;
@@ -283,102 +287,102 @@ public class TimePeriod implements Comparable<TimePeriod> {
             case SECONDS: {
                 switch (u) {
                     case DAYS: {
-                        return new TimePeriod(count / 3600 / hoursPerDay, TimeUnit.DAYS);
+                        return new TimePeriod(count / 3600 / hoursPerDay, ChronoUnit.DAYS);
                     }
                     case HOURS: {
-                        return new TimePeriod(count / 3600, TimeUnit.HOURS);
+                        return new TimePeriod(count / 3600, ChronoUnit.HOURS);
                     }
                     case MINUTES: {
-                        return new TimePeriod(count / 60, TimeUnit.MINUTES);
+                        return new TimePeriod(count / 60, ChronoUnit.MINUTES);
                     }
                     case SECONDS: {
                         return this;
                     }
-                    case MILLISECONDS: {
-                        return new TimePeriod(count * 1000, TimeUnit.MILLISECONDS);
+                    case MILLIS: {
+                        return new TimePeriod(count * 1000, ChronoUnit.MILLIS);
                     }
-                    case MICROSECONDS: {
-                        return new TimePeriod(count * 1000000L, TimeUnit.MICROSECONDS);
+                    case MICROS: {
+                        return new TimePeriod(count * 1000000L, ChronoUnit.MICROS);
                     }
-                    case NANOSECONDS: {
-                        return new TimePeriod(count * 1000000000L, TimeUnit.NANOSECONDS);
+                    case NANOS: {
+                        return new TimePeriod(count * 1000000000L, ChronoUnit.NANOS);
                     }
                 }
                 break;
             }
-            case MILLISECONDS: {
+            case MILLIS: {
                 switch (u) {
                     case DAYS: {
-                        return new TimePeriod(count / 3600000 / hoursPerDay, TimeUnit.DAYS);
+                        return new TimePeriod(count / 3600000 / hoursPerDay, ChronoUnit.DAYS);
                     }
                     case HOURS: {
-                        return new TimePeriod(count / 3600000, TimeUnit.HOURS);
+                        return new TimePeriod(count / 3600000, ChronoUnit.HOURS);
                     }
                     case MINUTES: {
-                        return new TimePeriod(count / 60000, TimeUnit.MINUTES);
+                        return new TimePeriod(count / 60000, ChronoUnit.MINUTES);
                     }
                     case SECONDS: {
-                        return new TimePeriod(count / 1000, TimeUnit.SECONDS);
+                        return new TimePeriod(count / 1000, ChronoUnit.SECONDS);
                     }
-                    case MILLISECONDS: {
+                    case MILLIS: {
                         return this;
                     }
-                    case MICROSECONDS: {
-                        return new TimePeriod(count * 1000L, TimeUnit.MICROSECONDS);
+                    case MICROS: {
+                        return new TimePeriod(count * 1000L, ChronoUnit.MICROS);
                     }
-                    case NANOSECONDS: {
-                        return new TimePeriod(count * 1000000L, TimeUnit.NANOSECONDS);
+                    case NANOS: {
+                        return new TimePeriod(count * 1000000L, ChronoUnit.NANOS);
                     }
                 }
                 break;
             }
-            case MICROSECONDS: {
+            case MICROS: {
                 switch (u) {
                     case DAYS: {
-                        return new TimePeriod(count / 3600000000L / hoursPerDay, TimeUnit.DAYS);
+                        return new TimePeriod(count / 3600000000L / hoursPerDay, ChronoUnit.DAYS);
                     }
                     case HOURS: {
-                        return new TimePeriod(count / 3600000000L, TimeUnit.HOURS);
+                        return new TimePeriod(count / 3600000000L, ChronoUnit.HOURS);
                     }
                     case MINUTES: {
-                        return new TimePeriod(count / 60000000, TimeUnit.MINUTES);
+                        return new TimePeriod(count / 60000000, ChronoUnit.MINUTES);
                     }
                     case SECONDS: {
-                        return new TimePeriod(count / 1000000, TimeUnit.SECONDS);
+                        return new TimePeriod(count / 1000000, ChronoUnit.SECONDS);
                     }
-                    case MILLISECONDS: {
-                        return new TimePeriod(count / 1000, TimeUnit.MILLISECONDS);
+                    case MILLIS: {
+                        return new TimePeriod(count / 1000, ChronoUnit.MILLIS);
                     }
-                    case MICROSECONDS: {
+                    case MICROS: {
                         return this;
                     }
-                    case NANOSECONDS: {
-                        return new TimePeriod(count * 1000, TimeUnit.NANOSECONDS);
+                    case NANOS: {
+                        return new TimePeriod(count * 1000, ChronoUnit.NANOS);
                     }
                 }
                 break;
             }
-            case NANOSECONDS: {
+            case NANOS: {
                 switch (u) {
                     case DAYS: {
-                        return new TimePeriod(count / 3600000000000L / hoursPerDay, TimeUnit.DAYS);
+                        return new TimePeriod(count / 3600000000000L / hoursPerDay, ChronoUnit.DAYS);
                     }
                     case HOURS: {
-                        return new TimePeriod(count / 3600000000000L, TimeUnit.HOURS);
+                        return new TimePeriod(count / 3600000000000L, ChronoUnit.HOURS);
                     }
                     case MINUTES: {
-                        return new TimePeriod(count / 60000000000L, TimeUnit.MINUTES);
+                        return new TimePeriod(count / 60000000000L, ChronoUnit.MINUTES);
                     }
                     case SECONDS: {
-                        return new TimePeriod(count / 1000000000, TimeUnit.SECONDS);
+                        return new TimePeriod(count / 1000000000, ChronoUnit.SECONDS);
                     }
-                    case MILLISECONDS: {
-                        return new TimePeriod(count / 1000000, TimeUnit.MILLISECONDS);
+                    case MILLIS: {
+                        return new TimePeriod(count / 1000000, ChronoUnit.MILLIS);
                     }
-                    case MICROSECONDS: {
-                        return new TimePeriod(count / 1000, TimeUnit.MICROSECONDS);
+                    case MICROS: {
+                        return new TimePeriod(count / 1000, ChronoUnit.MICROS);
                     }
-                    case NANOSECONDS: {
+                    case NANOS: {
                         return this;
                     }
                 }
@@ -392,7 +396,7 @@ public class TimePeriod implements Comparable<TimePeriod> {
         if (p == null) {
             return -1;
         }
-        TimeUnit t0 = getUnit();
+        ChronoUnit t0 = getUnit();
         if (getUnit().compareTo(p.getUnit()) > 0) {
             t0 = p.getUnit();
         }
@@ -419,15 +423,15 @@ public class TimePeriod implements Comparable<TimePeriod> {
                     i= i.plus((int) timePeriod.getCount(),ChronoUnit.SECONDS);
                     break;
                 }
-                case MILLISECONDS:{
+                case MILLIS:{
                     i= i.plus((int) timePeriod.getCount(),ChronoUnit.MILLIS);
                     break;
                 }
-                case MICROSECONDS:{
+                case MICROS:{
                     i= i.plus((int) timePeriod.getCount(),ChronoUnit.MICROS);
                     break;
                 }
-                case NANOSECONDS:{
+                case NANOS:{
                     i= i.plus((int) timePeriod.getCount(),ChronoUnit.NANOS);
                     break;
                 }
@@ -443,9 +447,9 @@ public class TimePeriod implements Comparable<TimePeriod> {
                 int c0 = (int) c;
                 double f = (c - c0) * 24;
                 TimePeriods s = new TimePeriods();
-                s.add(c0, TimeUnit.DAYS);
+                s.add(c0, ChronoUnit.DAYS);
                 if (f != 0) {
-                    TimePeriods pp = new TimePeriod(f, TimeUnit.MINUTES).toTimePeriods();
+                    TimePeriods pp = new TimePeriod(f, ChronoUnit.MINUTES).toTimePeriods();
                     for (TimePeriod tt : Arrays.asList(pp.getPeriodArray())) {
                         if (c >= 0) {
                             s.add(tt);
@@ -464,10 +468,10 @@ public class TimePeriod implements Comparable<TimePeriod> {
                 int h = (c0 % (24));
 
                 TimePeriods s = new TimePeriods();
-                s.add(d, TimeUnit.DAYS);
-                s.add(h, TimeUnit.HOURS);
+                s.add(d, ChronoUnit.DAYS);
+                s.add(h, ChronoUnit.HOURS);
                 if (f != 0) {
-                    TimePeriods pp = new TimePeriod(f, TimeUnit.MINUTES).toTimePeriods();
+                    TimePeriods pp = new TimePeriod(f, ChronoUnit.MINUTES).toTimePeriods();
                     for (TimePeriod tt : Arrays.asList(pp.getPeriodArray())) {
                         if (c >= 0) {
                             s.add(tt);
@@ -487,11 +491,11 @@ public class TimePeriod implements Comparable<TimePeriod> {
                 int mn = ((c0 % (60))) ;
 
                 TimePeriods s = new TimePeriods();
-                s.add(d, TimeUnit.DAYS);
-                s.add(h, TimeUnit.HOURS);
-                s.add(mn, TimeUnit.MINUTES);
+                s.add(d, ChronoUnit.DAYS);
+                s.add(h, ChronoUnit.HOURS);
+                s.add(mn, ChronoUnit.MINUTES);
                 if (f != 0) {
-                    TimePeriods pp = new TimePeriod(f, TimeUnit.SECONDS).toTimePeriods();
+                    TimePeriods pp = new TimePeriod(f, ChronoUnit.SECONDS).toTimePeriods();
                     for (TimePeriod tt : Arrays.asList(pp.getPeriodArray())) {
                         if (c >= 0) {
                             s.add(tt);
@@ -512,12 +516,12 @@ public class TimePeriod implements Comparable<TimePeriod> {
                 int sec = (int) (((c0 % (60))));
 
                 TimePeriods s = new TimePeriods();
-                s.add(d, TimeUnit.DAYS);
-                s.add(h, TimeUnit.HOURS);
-                s.add(mn, TimeUnit.MINUTES);
-                s.add(sec, TimeUnit.SECONDS);
+                s.add(d, ChronoUnit.DAYS);
+                s.add(h, ChronoUnit.HOURS);
+                s.add(mn, ChronoUnit.MINUTES);
+                s.add(sec, ChronoUnit.SECONDS);
                 if (f != 0) {
-                    TimePeriods pp = new TimePeriod(f, TimeUnit.MILLISECONDS).toTimePeriods();
+                    TimePeriods pp = new TimePeriod(f, ChronoUnit.MILLIS).toTimePeriods();
                     for (TimePeriod tt : Arrays.asList(pp.getPeriodArray())) {
                         if (c >= 0) {
                             s.add(tt);
@@ -528,7 +532,7 @@ public class TimePeriod implements Comparable<TimePeriod> {
                 }
                 return s;
             }
-            case MILLISECONDS: {
+            case MILLIS: {
                 double c = count < 0 ? -count : count;
                 long c0 = (int) c;
                 double f = (c - c0) * 1000;
@@ -539,13 +543,13 @@ public class TimePeriod implements Comparable<TimePeriod> {
                 int msec = (int) (((c0 % (1000))));
 
                 TimePeriods s = new TimePeriods();
-                s.add(d, TimeUnit.DAYS);
-                s.add(h, TimeUnit.HOURS);
-                s.add(mn, TimeUnit.MINUTES);
-                s.add(sec, TimeUnit.SECONDS);
-                s.add(msec, TimeUnit.MILLISECONDS);
+                s.add(d, ChronoUnit.DAYS);
+                s.add(h, ChronoUnit.HOURS);
+                s.add(mn, ChronoUnit.MINUTES);
+                s.add(sec, ChronoUnit.SECONDS);
+                s.add(msec, ChronoUnit.MILLIS);
                 if (f != 0) {
-                    TimePeriods pp = new TimePeriod(f, TimeUnit.MICROSECONDS).toTimePeriods();
+                    TimePeriods pp = new TimePeriod(f, ChronoUnit.MICROS).toTimePeriods();
                     for (TimePeriod tt : Arrays.asList(pp.getPeriodArray())) {
                         if (c >= 0) {
                             s.add(tt);
@@ -556,7 +560,7 @@ public class TimePeriod implements Comparable<TimePeriod> {
                 }
                 return s;
             }
-            case MICROSECONDS: {
+            case MICROS: {
                 double c = count < 0 ? -count : count;
                 long c0 = (int) c;
                 double f = (c - c0) * 1000;
@@ -568,14 +572,14 @@ public class TimePeriod implements Comparable<TimePeriod> {
                 int micsec = (int) (c0 %1000);
 
                 TimePeriods s = new TimePeriods();
-                s.add(d, TimeUnit.DAYS);
-                s.add(h, TimeUnit.HOURS);
-                s.add(mn, TimeUnit.MINUTES);
-                s.add(sec, TimeUnit.SECONDS);
-                s.add(msec, TimeUnit.MILLISECONDS);
-                s.add(micsec, TimeUnit.MICROSECONDS);
+                s.add(d, ChronoUnit.DAYS);
+                s.add(h, ChronoUnit.HOURS);
+                s.add(mn, ChronoUnit.MINUTES);
+                s.add(sec, ChronoUnit.SECONDS);
+                s.add(msec, ChronoUnit.MILLIS);
+                s.add(micsec, ChronoUnit.MICROS);
                 if (f != 0) {
-                    TimePeriods pp = new TimePeriod(f, TimeUnit.NANOSECONDS).toTimePeriods();
+                    TimePeriods pp = new TimePeriod(f, ChronoUnit.NANOS).toTimePeriods();
                     for (TimePeriod tt : Arrays.asList(pp.getPeriodArray())) {
                         if (c >= 0) {
                             s.add(tt);
@@ -586,7 +590,7 @@ public class TimePeriod implements Comparable<TimePeriod> {
                 }
                 return s;
             }
-            case NANOSECONDS: {
+            case NANOS: {
                 double c = count < 0 ? -count : count;
                 long c0 = (int) c;
                 int d = (int) (c0 / (24* 3600*1000000000L));
@@ -598,13 +602,13 @@ public class TimePeriod implements Comparable<TimePeriod> {
                 int nano = (int) (c0 %1000);
 
                 TimePeriods s = new TimePeriods();
-                s.add(d, TimeUnit.DAYS);
-                s.add(h, TimeUnit.HOURS);
-                s.add(mn, TimeUnit.MINUTES);
-                s.add(sec, TimeUnit.SECONDS);
-                s.add(msec, TimeUnit.MILLISECONDS);
-                s.add(micsec, TimeUnit.MICROSECONDS);
-                s.add(nano, TimeUnit.NANOSECONDS);
+                s.add(d, ChronoUnit.DAYS);
+                s.add(h, ChronoUnit.HOURS);
+                s.add(mn, ChronoUnit.MINUTES);
+                s.add(sec, ChronoUnit.SECONDS);
+                s.add(msec, ChronoUnit.MILLIS);
+                s.add(micsec, ChronoUnit.MICROS);
+                s.add(nano, ChronoUnit.NANOS);
                 return s;
             }
         }

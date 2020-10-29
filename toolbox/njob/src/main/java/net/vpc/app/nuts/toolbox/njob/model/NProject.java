@@ -1,14 +1,20 @@
 package net.vpc.app.nuts.toolbox.njob.model;
 
+import net.vpc.app.nuts.toolbox.njob.time.WeekDay;
+
 import java.time.Instant;
+import java.util.Objects;
 
 public class NProject {
     @Id
+    private String id;
     private String name;
     private String beneficiary;
     private String company;
-    private NDay startWeekDay;
+    private WeekDay startWeekDay;
     private Instant startTime;
+    private Instant creationTime;
+    private Instant modificationTime;
     private String observations;
 
     public String getName() {
@@ -38,11 +44,11 @@ public class NProject {
         return this;
     }
 
-    public NDay getStartWeekDay() {
+    public WeekDay getStartWeekDay() {
         return startWeekDay;
     }
 
-    public NProject setStartWeekDay(NDay startWeekDay) {
+    public NProject setStartWeekDay(WeekDay startWeekDay) {
         this.startWeekDay = startWeekDay;
         return this;
     }
@@ -63,5 +69,45 @@ public class NProject {
     public NProject setObservations(String observations) {
         this.observations = observations;
         return this;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public NProject setId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    public Instant getCreationTime() {
+        return creationTime;
+    }
+
+    public NProject setCreationTime(Instant creationTime) {
+        this.creationTime = creationTime;
+        return this;
+    }
+
+    public Instant getModificationTime() {
+        return modificationTime;
+    }
+
+    public NProject setModificationTime(Instant modificationTime) {
+        this.modificationTime = modificationTime;
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NProject nProject = (NProject) o;
+        return Objects.equals(id, nProject.id) && Objects.equals(name, nProject.name) && Objects.equals(beneficiary, nProject.beneficiary) && Objects.equals(company, nProject.company) && startWeekDay == nProject.startWeekDay && Objects.equals(startTime, nProject.startTime) && Objects.equals(creationTime, nProject.creationTime) && Objects.equals(modificationTime, nProject.modificationTime) && Objects.equals(observations, nProject.observations);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, beneficiary, company, startWeekDay, startTime, creationTime, modificationTime, observations);
     }
 }

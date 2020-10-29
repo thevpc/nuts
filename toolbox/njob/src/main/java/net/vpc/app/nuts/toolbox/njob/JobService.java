@@ -6,16 +6,13 @@ import net.vpc.app.nuts.toolbox.njob.model.*;
 import net.vpc.app.nuts.toolbox.njob.time.TimePeriod;
 import net.vpc.app.nuts.toolbox.njob.time.TimePeriods;
 import net.vpc.app.nuts.toolbox.njob.time.TimespanPattern;
+import net.vpc.app.nuts.toolbox.njob.time.WeekDay;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.TreeSet;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -68,13 +65,36 @@ public class JobService {
     public void addProject(NProject p) {
         String name = p.getName();
         if (name == null) {
-            throw new IllegalArgumentException("Invalid project");
+            throw new IllegalArgumentException("invalid project");
         }
+        p.setId(null);
         NProject p0 = getProject(name);
         if (p0 != null) {
             throw new NutsIllegalArgumentException(context.getWorkspace(), "project already exists: " + name);
         }
-        updateProject(p);
+        if (p.getBeneficiary() == null) {
+            p.setBeneficiary("unspecified");
+        }
+        if (p.getCompany() == null) {
+            String t = dal.search(NProject.class).filter(x -> x.getBeneficiary().equals(p.getBeneficiary()))
+                    .sorted(Comparator.comparing(NProject::getCreationTime).reversed())
+                    .map(x -> p.getBeneficiary())
+                    .findFirst().orElse(null);
+            if(t==null){
+                t=p.getBeneficiary();
+            }
+            p.setCompany(t);
+        }
+        p.setCreationTime(Instant.now());
+        p.setModificationTime(p.getCreationTime());
+        if (p.getStartTime() == null) {
+            p.setStartTime(Instant.now());
+        }
+        if (p.getStartWeekDay() == null) {
+            p.setStartWeekDay(WeekDay.MONDAY);
+        }
+//        dal.load(NProject.class,p.getId());
+        dal.store(p);
     }
 
     public void updateProject(NProject p) {
@@ -82,26 +102,39 @@ public class JobService {
         if (name == null) {
             throw new IllegalArgumentException("Invalid project");
         }
+        String id = p.getId();
+        if (id == null) {
+            p.setId(dal.generateId(NProject.class));
+        }
         if (p.getBeneficiary() == null) {
             p.setBeneficiary("unspecified");
         }
         if (p.getCompany() == null) {
             p.setCompany(p.getBeneficiary());
         }
+        p.setModificationTime(Instant.now());
+        if (p.getCreationTime() == null) {
+            p.setCreationTime(p.getModificationTime());
+        }
         if (p.getStartTime() == null) {
             p.setStartTime(Instant.now());
         }
         if (p.getStartWeekDay() == null) {
-            p.setStartWeekDay(NDay.MONDAY);
+            p.setStartWeekDay(WeekDay.MONDAY);
         }
+//        dal.load(NProject.class,p.getId());
         dal.store(p);
+    }
+
+    public boolean isIdFormat(String s) {
+        return s != null && s.matches("[0-9a-fA-F-]{36}");
     }
 
     public void addJob(NJob job) {
         if (job.getName() == null) {
             job.setName("work");
         }
-
+        job.setCreationTime(Instant.now());
         if (job.getStartTime() == null) {
             Calendar c = Calendar.getInstance();
             c.set(Calendar.MILLISECOND, 0);
@@ -111,7 +144,7 @@ public class JobService {
             job.setStartTime(c.getTime().toInstant());
         }
         if (job.getDuration() == null) {
-            job.setDuration(new TimePeriod(1, TimeUnit.HOURS));
+            job.setDuration(new TimePeriod(1, ChronoUnit.HOURS));
         }
         if (job.getProject() == null) {
             job.setProject("misc");
@@ -119,11 +152,14 @@ public class JobService {
 
         String project = job.getProject();
         if (project != null) {
-            NProject p = dal.load(NProject.class, project);
+            NProject p = getProject(project);
             if (p == null) {
+                if (isIdFormat(project)) {
+                    throw new NoSuchElementException("Project not found: " + project);
+                }
                 p = new NProject();
                 p.setName(project);
-                updateProject(p);
+                addProject(p);
             }
         }
         job.setId(null);
@@ -173,7 +209,7 @@ public class JobService {
         }
         if (task.getDuration() == null && task.getEndTime() != null && task.getEndTime() != null && task.getStatus() == NTaskStatus.DONE) {
             long between = ChronoUnit.MINUTES.between(task.getStartTime(), task.getEndTime());
-            task.setDuration(new TimePeriod(between, TimeUnit.MINUTES));
+            task.setDuration(new TimePeriod(between, ChronoUnit.MINUTES));
         }
         if (task.getProject() == null) {
             task.setProject("misc");
@@ -181,12 +217,13 @@ public class JobService {
 
         String project = task.getProject();
         if (project != null) {
-            NProject p = dal.load(NProject.class, project);
+            NProject p = getProject(project);
             if (p == null) {
                 p = new NProject();
                 p.setName(project);
                 updateProject(p);
             }
+            task.setProject(p.getId());
         }
 //        task.setId(null);
 //        if (task.getProject() != null) {
@@ -241,7 +278,7 @@ public class JobService {
         }
         if (task.getDuration() == null && task.getEndTime() != null && task.getEndTime() != null && task.getStatus() == NTaskStatus.DONE) {
             long between = ChronoUnit.MINUTES.between(task.getStartTime(), task.getEndTime());
-            task.setDuration(new TimePeriod(between, TimeUnit.MINUTES));
+            task.setDuration(new TimePeriod(between, ChronoUnit.MINUTES));
         }
         if (task.getProject() == null) {
             task.setProject("misc");
@@ -266,7 +303,7 @@ public class JobService {
         dal.store(task);
     }
 
-    public Instant getStartWeek(Instant date, NDay startWeekDay) {
+    public Instant getStartWeek(Instant date, WeekDay startWeekDay) {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(date.toEpochMilli());
         int d = c.get(Calendar.DAY_OF_WEEK);
@@ -274,7 +311,7 @@ public class JobService {
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
-        int d0 = startWeekDay.ordinal() - NDay.SUNDAY.ordinal() + 1;
+        int d0 = startWeekDay.ordinal() - WeekDay.SUNDAY.ordinal() + 1;
         if (d != d0) {
             c.add(Calendar.DAY_OF_YEAR, d0 - d);
         }
@@ -307,9 +344,9 @@ public class JobService {
 
     public Stream<NJob> findWeekJobs(Instant date) {
         return dal.search(NJob.class).filter(x -> {
-            NDay d = NDay.MONDAY;
+            WeekDay d = WeekDay.MONDAY;
             if (x.getProject() != null) {
-                NDay d0 = dal.load(NProject.class, x.getProject()).getStartWeekDay();
+                WeekDay d0 = dal.load(NProject.class, x.getProject()).getStartWeekDay();
                 if (d0 != null) {
                     d = d0;
                 }
@@ -318,7 +355,7 @@ public class JobService {
         });
     }
 
-    public Stream<NJob> findLastJobs(Instant endTime, int lastCount, ChronoUnit lastUnit, Predicate<NJob> whereFilter, NJobGroup groupBy, TimeUnit groupTimeUnit, TimespanPattern groupPattern) {
+    public Stream<NJob> findLastJobs(Instant endTime, int lastCount, ChronoUnit lastUnit, Predicate<NJob> whereFilter, NJobGroup groupBy, ChronoUnit groupTimeUnit, TimespanPattern groupPattern) {
         Instant endTime0 = endTime == null ? Instant.now() : endTime;
         Stream<NJob> s = dal.search(NJob.class).filter(x -> {
             if (!(endTime == null || x.getStartTime().compareTo(endTime) <= 0)) {
@@ -350,9 +387,9 @@ public class JobService {
         return s;
     }
 
-    public Stream<NTask> findTasks(NTaskStatusFilter statusFilter, Instant endTime, int lastCount, ChronoUnit lastUnit, Predicate<NTask> whereFilter, NJobGroup groupBy, TimeUnit groupTimeUnit, TimespanPattern groupPattern) {
+    public Stream<NTask> findTasks(NTaskStatusFilter statusFilter, Instant endTime, int lastCount, ChronoUnit lastUnit, Predicate<NTask> whereFilter, NJobGroup groupBy, ChronoUnit groupTimeUnit, TimespanPattern groupPattern) {
         if (statusFilter == null) {
-            statusFilter = NTaskStatusFilter.OPEN;
+            statusFilter = NTaskStatusFilter.RECENT;
         }
         NTaskStatusFilter statusFilter0 = statusFilter;
         Instant endTime0 = endTime == null ? Instant.now() : endTime;
@@ -365,6 +402,18 @@ public class JobService {
                         }
                         case OPEN: {
                             return x.getStatus() == NTaskStatus.WIP || x.getStatus() == NTaskStatus.TODO;
+                        }
+                        case RECENT: {
+                            if(x.getStatus() == NTaskStatus.WIP || x.getStatus() == NTaskStatus.TODO){
+                                return true;
+                            }
+                            Instant m = x.getModificationTime();
+                            if(m==null){
+                                return true;
+                            }
+                            //last three days...
+                            long days=(Instant.now().toEpochMilli()-m.toEpochMilli())/3600000/24;
+                            return days>-3;
                         }
                         case CLOSED: {
                             return x.getStatus() == NTaskStatus.DONE || x.getStatus() == NTaskStatus.CANCELLED;
@@ -454,8 +503,8 @@ public class JobService {
     }
 
     public Stream<NJob> tailWeekJobs(int count) {
-        Instant w0 = getStartWeek(subWeek(count), NDay.SUNDAY);
-        Instant w1 = getStartWeek(subWeek(count - 1), NDay.SUNDAY);
+        Instant w0 = getStartWeek(subWeek(count), WeekDay.SUNDAY);
+        Instant w1 = getStartWeek(subWeek(count - 1), WeekDay.SUNDAY);
         return dal.search(NJob.class).filter(x -> {
             return x.getStartTime().compareTo(w0) >= 0 && x.getStartTime().compareTo(w1) < 0;
         });
@@ -469,21 +518,50 @@ public class JobService {
         return dal.load(NTask.class, taskId);
     }
 
-    public NProject getProject(String projectName) {
-        return dal.load(NProject.class, projectName);
+    public NProject getProject(String projectNameOrId) {
+        if (isIdFormat(projectNameOrId)) {
+            return dal.load(NProject.class, projectNameOrId);
+        } else {
+            return dal.search(NProject.class).filter(x -> x.getName().equals(projectNameOrId))
+                    .findFirst().orElse(null);
+        }
     }
 
     public boolean removeJob(String jobId) {
+        long count = dal.search(NTask.class).filter(x -> jobId.equals(x.getJobId())).count();
+        if (count>1) {
+            throw new IllegalArgumentException("Job is used in " + count + " tasks. It cannot be removed.");
+        }else if (count>0) {
+            throw new IllegalArgumentException("Job is used in one task. It cannot be removed.");
+        }
         return dal.delete(NJob.class, jobId);
     }
 
     public boolean removeTask(String taskId) {
+        long count = dal.search(NTask.class).filter(x -> taskId.equals(x.getParentTaskId())).count();
+        if (count>1) {
+            throw new IllegalArgumentException("Task is used in " + count + " tasks. It cannot be removed.");
+        }else if (count>0) {
+            throw new IllegalArgumentException("Task is used in one task. It cannot be removed.");
+        }
         return dal.delete(NTask.class, taskId);
     }
 
     public boolean removeProject(String projectName) {
-        if (dal.search(NJob.class).anyMatch(x -> projectName.equals(x.getProject()))) {
-            throw new IllegalArgumentException("Project is used in on or multiple jobs. It cannot e removed.");
+        long countJobs = dal.search(NJob.class).filter(x -> projectName.equals(x.getProject())).count();
+        long countTasks = dal.search(NTask.class).filter(x -> projectName.equals(x.getProject())).count();
+        if(countJobs>0 || countTasks>0){
+            StringBuilder sb=new StringBuilder();
+            if(countJobs>0) {
+                sb.append(countJobs > 1 ? "one job" : (countJobs + " jobs"));
+            }
+            if(countTasks>0) {
+                if(sb.length()>0){
+                    sb.append(" and ");
+                }
+                sb.append(countTasks > 1 ? "one task" : (countTasks + " task"));
+            }
+            throw new IllegalArgumentException("Project is used in "+sb+". It cannot be removed.");
         }
         return dal.delete(NProject.class, projectName);
     }
@@ -492,14 +570,14 @@ public class JobService {
         return dal.search(NProject.class);
     }
 
-    public NJob groupJobs(Collection<NJob> value, TimeUnit timeUnit, TimespanPattern hoursPerDay) {
+    public NJob groupJobs(Collection<NJob> value, ChronoUnit timeUnit, TimespanPattern hoursPerDay) {
         return groupJobs(value.toArray(new NJob[0]), timeUnit, hoursPerDay);
     }
 
-    public NJob groupJobs(NJob[] value, TimeUnit timeUnit, TimespanPattern hoursPerDay) {
+    public NJob groupJobs(NJob[] value, ChronoUnit timeUnit, TimespanPattern hoursPerDay) {
         NJob t = new NJob();
         TimePeriods tp = new TimePeriods();
-        TreeSet<TimeUnit> atu = new TreeSet<TimeUnit>();
+        TreeSet<ChronoUnit> atu = new TreeSet<ChronoUnit>();
         TreeSet<String> names = new TreeSet<String>();
         TreeSet<String> projects = new TreeSet<String>();
         for (NJob nJob : value) {
@@ -513,23 +591,23 @@ public class JobService {
                 (projects.size() <= 3 || String.join(",", projects).length() < 20) ? String.join(",", projects) :
                         (String.valueOf(projects.size()) + " projects")
         );
-        TimeUnit[] atu0 = atu.toArray(new TimeUnit[0]);
+        ChronoUnit[] atu0 = atu.toArray(new ChronoUnit[0]);
         String jobs = " Job" + ((value.length == 1) ? "" : "s");
         String named = (names.size() == 0) ? "" : (names.size() == 1) ? (" named " + names.toArray()[0]) : (" with " + (names.size()) + " different names");
         t.setName(value.length + jobs + named);
-        t.setDuration(tp.toUnit(timeUnit != null ? timeUnit : (atu0.length == 0 ? TimeUnit.DAYS : atu0[0]), hoursPerDay));
+        t.setDuration(tp.toUnit(timeUnit != null ? timeUnit : (atu0.length == 0 ? ChronoUnit.DAYS : atu0[0]), hoursPerDay));
         t.setId(UUID.randomUUID().toString());
         return t;
     }
 
-    public NTask groupTasks(Collection<NTask> value, TimeUnit timeUnit, TimespanPattern hoursPerDay) {
+    public NTask groupTasks(Collection<NTask> value, ChronoUnit timeUnit, TimespanPattern hoursPerDay) {
         return groupTasks(value.toArray(new NTask[0]), timeUnit, hoursPerDay);
     }
 
-    public NTask groupTasks(NTask[] value, TimeUnit timeUnit, TimespanPattern hoursPerDay) {
+    public NTask groupTasks(NTask[] value, ChronoUnit timeUnit, TimespanPattern hoursPerDay) {
         NTask t = new NTask();
         TimePeriods tp = new TimePeriods();
-        TreeSet<TimeUnit> atu = new TreeSet<TimeUnit>();
+        TreeSet<ChronoUnit> atu = new TreeSet<>();
         TreeSet<String> names = new TreeSet<String>();
         TreeSet<String> projects = new TreeSet<String>();
         TreeSet<NTaskStatus> statuses = new TreeSet<NTaskStatus>();
@@ -548,11 +626,11 @@ public class JobService {
         if (statuses.size() == 1) {
             t.setStatus(statuses.first());
         }
-        TimeUnit[] atu0 = atu.toArray(new TimeUnit[0]);
+        ChronoUnit[] atu0 = atu.toArray(new ChronoUnit[0]);
         String jobs = " Job" + ((value.length == 1) ? "" : "s");
         String named = (names.size() == 0) ? "" : (names.size() == 1) ? (" named " + names.toArray()[0]) : (" with " + (names.size()) + " different names");
         t.setName(value.length + jobs + named);
-        t.setDuration(tp.toUnit(timeUnit != null ? timeUnit : (atu0.length == 0 ? TimeUnit.DAYS : atu0[0]), hoursPerDay));
+        t.setDuration(tp.toUnit(timeUnit != null ? timeUnit : (atu0.length == 0 ? ChronoUnit.DAYS : atu0[0]), hoursPerDay));
         t.setId(UUID.randomUUID().toString());
         return t;
     }

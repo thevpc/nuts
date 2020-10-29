@@ -110,6 +110,10 @@ public interface NutsArgument extends NutsTokenFilter {
      */
     int getInt() throws NumberFormatException;
 
+    long getLongValue();
+
+    double getDoubleValue();
+
     /**
      * parse number and return integer or {@code defaultValue} if not parsable.
      *
@@ -117,6 +121,10 @@ public interface NutsArgument extends NutsTokenFilter {
      * @return parsed integer or {@code defaultValue} if not parsable
      */
     int getInt(int defaultValue);
+
+    int getIntValue(int defaultValue);
+
+    int getIntValue();
 
     /**
      * test if the argument is valid long integer
