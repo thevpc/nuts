@@ -493,7 +493,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             repositoryType = NutsConstants.RepoTypes.NUTS;
         }
         return ws.extensions().createAllSupported(NutsRepositoryFactoryComponent.class,
-                new DefaultNutsSupportLevelContext<>(ws, new NutsRepositoryConfig().setType(repositoryType))
+                 new NutsRepositoryConfig().setType(repositoryType)
         ).size() > 0;
     }
 
@@ -516,7 +516,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public Set<String> getAvailableArchetypes(NutsSession session) {
         Set<String> set = new HashSet<>();
         set.add("default");
-        for (NutsWorkspaceArchetypeComponent extension : ws.extensions().createAllSupported(NutsWorkspaceArchetypeComponent.class, new DefaultNutsSupportLevelContext<>(ws, null))) {
+        for (NutsWorkspaceArchetypeComponent extension : ws.extensions().createAllSupported(NutsWorkspaceArchetypeComponent.class,  null)) {
             set.add(extension.getName());
         }
         return set;
@@ -1149,9 +1149,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         authenticationAgent = CoreStringUtils.trim(authenticationAgent);
         NutsAuthenticationAgent supported = null;
         if (authenticationAgent.isEmpty()) {
-            supported = ws.extensions().createSupported(NutsAuthenticationAgent.class, new DefaultNutsSupportLevelContext<>(ws, ""));
+            supported = ws.extensions().createSupported(NutsAuthenticationAgent.class, "");
         } else {
-            List<NutsAuthenticationAgent> agents = ws.extensions().createAllSupported(NutsAuthenticationAgent.class, new DefaultNutsSupportLevelContext<>(ws, authenticationAgent));
+            List<NutsAuthenticationAgent> agents = ws.extensions().createAllSupported(NutsAuthenticationAgent.class,  authenticationAgent);
             for (NutsAuthenticationAgent agent : agents) {
                 if (agent.getId().equals(authenticationAgent)) {
                     supported = agent;
@@ -1193,7 +1193,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     public void onExtensionsPrepared() {
         try {
-            indexStoreClientFactory = ws.extensions().createSupported(NutsIndexStoreFactory.class, new DefaultNutsSupportLevelContext<>(ws, null));
+            indexStoreClientFactory = ws.extensions().createSupported(NutsIndexStoreFactory.class,  null);
         } catch (Exception ex) {
             //
         }

@@ -34,6 +34,7 @@ import net.vpc.app.nuts.core.repos.NutsRepositoryExt;
 import net.vpc.app.nuts.runtime.repocommands.AbstractNutsFetchContentRepositoryCommand;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.common.TraceResult;
 
 import java.util.logging.Level;
@@ -75,7 +76,7 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
             result = f;
         } catch (RuntimeException ex) {
             if (!CoreNutsUtils.isUnsupportedFetchModeException(ex)) {
-                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().getName(), getSession(), getFetchMode(), id.getLongNameId(), TraceResult.FAIL, "fetch component", startTime, CoreNutsUtils.resolveMessageToTraceOrNullIfNutsNotFoundException(ex));
+                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().getName(), getSession(), getFetchMode(), id.getLongNameId(), TraceResult.FAIL, "fetch component", startTime, CoreStringUtils.exceptionToString(ex));
             }
             throw ex;
         }

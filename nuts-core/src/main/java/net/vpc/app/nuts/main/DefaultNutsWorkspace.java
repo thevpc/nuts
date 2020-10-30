@@ -105,8 +105,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).log(escapeText0(" = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="));
             LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).log(" ");
             LOGCSF.log("start ==Nuts== **{0}** at {1}", Nuts.getVersion(), CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(info.getOptions().getCreationTime())));
-            LOGCRF.log("open Nuts Workspace               : {0}", new NutsString(commandLine().setValue(info.getOptions().format().getBootCommand()).format()));
-            LOGCRF.log("open Nuts Workspace (compact)     : {0}", new NutsString(commandLine().setValue(info.getOptions().format().compact().getBootCommand()).format()));
+            LOGCRF.log("open Nuts Workspace               : {0}", new NutsString(commandLine().formatter().setValue(info.getOptions().format().getBootCommand()).format()));
+            LOGCRF.log("open Nuts Workspace (compact)     : {0}", new NutsString(commandLine().formatter().setValue(info.getOptions().format().compact().getBootCommand()).format()));
 
             LOGCRF.log("open Workspace with config        : ");
             LOGCRF.log("   nuts-uuid                      : {0}", CoreNutsUtils.desc(info.getUuid()));
@@ -137,8 +137,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCRF.log("   option-trace                   : {0}", info.getOptions().isTrace());
             LOGCRF.log("   option-progress                : {0}", CoreNutsUtils.desc(info.getOptions().getProgressOptions()));
             LOGCRF.log("   inherited                      : {0}", info.getOptions().isInherited());
-            LOGCRF.log("   inherited-nuts-boot-args       : {0}", System.getProperty("nuts.boot.args") == null ? "<EMPTY>" : new NutsString(commandLine().setValue(System.getProperty("nuts.boot.args")).format()));
-            LOGCRF.log("   inherited-nuts-args            : {0}", System.getProperty("nuts.args") == null ? "<EMPTY>" : new NutsString(commandLine().setValue(System.getProperty("nuts.args")).format()));
+            LOGCRF.log("   inherited-nuts-boot-args       : {0}", System.getProperty("nuts.boot.args") == null ? "<EMPTY>" : new NutsString(commandLine().formatter().setValue(System.getProperty("nuts.boot.args")).format()));
+            LOGCRF.log("   inherited-nuts-args            : {0}", System.getProperty("nuts.args") == null ? "<EMPTY>" : new NutsString(commandLine().formatter().setValue(System.getProperty("nuts.args")).format()));
             LOGCRF.log("   option-open-mode               : {0}", CoreNutsUtils.formatLogValue(info.getOptions().getOpenMode(), info.getOptions().getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : info.getOptions().getOpenMode()));
             LOGCRF.log("   java-home                      : {0}", System.getProperty("java.home"));
             LOGCRF.log("   java-classpath                 : {0}", System.getProperty("java.class.path"));
@@ -298,8 +298,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     try {
                         install().installed().getResult();
                     } catch (Exception ex) {
-                        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Reinstall artifacts failed : " + ex.getMessage());
-                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("Reinstall artifacts failed : " + ex.getMessage(), ex);
+                        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Reinstall artifacts failed : " + CoreStringUtils.exceptionToString(ex));
+                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("Reinstall artifacts failed : " + CoreStringUtils.exceptionToString(ex), ex);
                     }
                 }
             }
@@ -524,7 +524,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         }
         NutsWorkspaceArchetypeComponent instance = null;
         TreeSet<String> validValues = new TreeSet<>();
-        for (NutsWorkspaceArchetypeComponent ac : extensions().createAllSupported(NutsWorkspaceArchetypeComponent.class, new DefaultNutsSupportLevelContext<>(this, archetype))) {
+        for (NutsWorkspaceArchetypeComponent ac : extensions().createAllSupported(NutsWorkspaceArchetypeComponent.class, archetype)) {
             if (archetype.equals(ac.getName())) {
                 instance = ac;
                 break;
@@ -846,7 +846,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         session = NutsWorkspaceUtils.of(this).validateSession(session);
         if (configManager.loadWorkspace(session)) {
             //extensions already wired... this is needless!
-            for (NutsId extensionId : extensions().getExtensions()) {
+            for (NutsId extensionId : extensions().getConfigExtensions()) {
                 if (extensionManager.isExcludedExtension(extensionId)) {
                     continue;
                 }
@@ -1076,7 +1076,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             if (runnerFile == null) {
                 runnerFile = nutToInstall;
             }
-            NutsInstallerComponent best = extensions().createSupported(NutsInstallerComponent.class, new DefaultNutsSupportLevelContext<NutsDefinition>(this, runnerFile));
+            NutsInstallerComponent best = extensions().createSupported(NutsInstallerComponent.class, runnerFile);
             if (best != null) {
                 return best;
             }
@@ -1112,7 +1112,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     @Override
     public boolean requiresRuntimeExtension() {
         boolean coreFound = false;
-        for (NutsId ext : extensions().getExtensions()) {
+        for (NutsId ext : extensions().getConfigExtensions()) {
             if (ext.equalsShortName(getRuntimeId())) {
                 coreFound = true;
                 break;

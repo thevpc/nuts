@@ -35,6 +35,17 @@ package net.vpc.app.nuts;
  * @since 0.5.4
  * @category SPI Base
  */
-public interface NutsSystemTerminalBase extends NutsComponent<Object>, NutsTerminalBase {
+public interface NutsSystemTerminalBase extends NutsComponent<NutsTerminalSpec>, NutsTerminalBase {
 
+    default NutsCommandAutoCompleteProcessor getAutoCompleteResolver(){
+        return null;
+    }
+
+    default boolean isAutoCompleteSupported(){
+        return false;
+    }
+
+    default NutsSystemTerminalBase setAutoCompleteResolver(NutsCommandAutoCompleteProcessor autoCompleteResolver){
+        return this;
+    }
 }

@@ -58,9 +58,9 @@ public class CommandNonOption implements NutsArgumentName {
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineFormat c = this.context.getWorkspace().commandLine();
+        NutsCommandLineManager c = this.context.getWorkspace().commandLine();
         for (JShellBuiltin command : this.context.builtins().getAll()) {
-            all.add(c.createCandidate(command.getName()));
+            all.add(c.createCandidate(command.getName()).build());
         }
         return all;
     }

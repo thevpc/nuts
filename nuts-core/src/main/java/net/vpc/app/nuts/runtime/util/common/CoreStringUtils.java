@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.runtime.util.common;
 
+import net.vpc.app.nuts.NutsNotFoundException;
 import net.vpc.app.nuts.NutsWorkspace;
 
 import java.io.IOException;
@@ -521,24 +522,51 @@ public class CoreStringUtils {
      * @param ex
      * @return
      */
+//    public static String exceptionToString(Throwable ex) {
+//        for (Class aClass : new Class[]{
+//            NullPointerException.class,
+//            ArrayIndexOutOfBoundsException.class,
+//            ClassCastException.class,
+//            UnsupportedOperationException.class,
+//            ReflectiveOperationException.class,}) {
+//            if (aClass.isInstance(ex)) {
+//                return ex.toString();
+//            }
+//        }
+//        String message = ex.getMessage();
+//        if (message == null) {
+//            message = ex.toString();
+//        }
+//        return message;
+//    }
     public static String exceptionToString(Throwable ex) {
-        for (Class aClass : new Class[]{
-            NullPointerException.class,
-            ArrayIndexOutOfBoundsException.class,
-            ClassCastException.class,
-            UnsupportedOperationException.class,
-            ReflectiveOperationException.class,}) {
-            if (aClass.isInstance(ex)) {
-                return ex.toString();
+        String msg = null;
+        if (ex instanceof NutsNotFoundException || ex instanceof UncheckedIOException) {
+            if (ex.getCause() != null) {
+                Throwable ex2 = ex.getCause();
+                if (ex2 instanceof UncheckedIOException) {
+                    ex2 = ex.getCause();
+                }
+                msg = exceptionToString(ex2);
+            }
+        } else {
+            for (Class aClass : new Class[]{
+                    NullPointerException.class,
+                    ArrayIndexOutOfBoundsException.class,
+                    ClassCastException.class,
+                    UnsupportedOperationException.class,
+                    ReflectiveOperationException.class,}) {
+                if (aClass.isInstance(ex)) {
+                    return ex.toString();
+                }
+            }
+            msg = ex.getMessage();
+            if (msg == null) {
+                msg = ex.toString();
             }
         }
-        String message = ex.getMessage();
-        if (message == null) {
-            message = ex.toString();
-        }
-        return message;
+        return msg;
     }
-
     /**
      * copied from StringUtils (in order to remove dependency)
      *

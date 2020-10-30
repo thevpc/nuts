@@ -1188,22 +1188,6 @@ public class CoreNutsUtils {
         return false;
     }
 
-    public static String resolveMessageToTraceOrNullIfNutsNotFoundException(Throwable ex) {
-        String msg = null;
-        if (ex instanceof NutsNotFoundException || ex instanceof UncheckedIOException) {
-            if (ex.getCause() != null) {
-                Throwable ex2 = ex.getCause();
-                if (ex2 instanceof UncheckedIOException) {
-                    ex2 = ex.getCause();
-                }
-                msg = resolveMessageToTraceOrNullIfNutsNotFoundException(ex2);
-            }
-        } else {
-            msg = ex.getMessage();
-        }
-        return msg;
-    }
-
     public static boolean acceptMonitoring(NutsSession session) {
         // DefaultNutsStreamProgressMonitor is enable only if plain output
         // so it is disable in json, xml, table, ...

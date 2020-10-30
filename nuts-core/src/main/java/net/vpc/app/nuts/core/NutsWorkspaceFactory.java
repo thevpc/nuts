@@ -45,11 +45,11 @@ public interface NutsWorkspaceFactory {
 
     List<Class> getImplementationTypes(Class type);
 
-    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria);
+    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria);
 
-    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters);
+    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters);
 
-    <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria);
+    <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria);
 
     <T> List<T> createAll(Class<T> type);
 

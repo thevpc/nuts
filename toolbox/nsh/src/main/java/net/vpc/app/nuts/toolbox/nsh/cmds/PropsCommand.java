@@ -84,7 +84,7 @@ public class PropsCommand extends AbstractNshBuiltin {
         NutsCommandLine cmdLine = cmdLine(args, context);
         Options o = new Options();
         NutsArgument a;
-        NutsCommandLineFormat commandLineFormat = context.getWorkspace().commandLine();
+        NutsCommandLineManager commandLineFormat = context.getWorkspace().commandLine();
         do {
             if (context.configureFirst(cmdLine)) {
                 //

@@ -35,6 +35,6 @@ package net.vpc.app.nuts;
  * @since 0.5.4
  * @category SPI Base
  */
-public interface NutsSessionTerminalBase extends NutsComponent<Object>, NutsTerminalBase {
+public interface NutsSessionTerminalBase extends NutsComponent<NutsTerminalSpec>, NutsTerminalBase {
 
 }

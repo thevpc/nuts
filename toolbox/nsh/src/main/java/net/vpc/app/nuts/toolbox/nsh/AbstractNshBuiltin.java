@@ -132,17 +132,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
                 throw new NutsIllegalArgumentException(context.getWorkspace(), "Missing Auto Complete");
             }
             NutsCommandAutoCompleteComponent best = context.getWorkspace().extensions().createServiceLoader(NutsCommandAutoCompleteComponent.class, NshBuiltin.class, NutsCommandAutoCompleteComponent.class.getClassLoader())
-                    .loadBest(new NutsSupportLevelContext<NshBuiltin>() {
-                        @Override
-                        public NutsWorkspace getWorkspace() {
-                            return context.getWorkspace();
-                        }
-
-                        @Override
-                        public NshBuiltin getConstraints() {
-                            return AbstractNshBuiltin.this;
-                        }
-                    });
+                    .loadBest(AbstractNshBuiltin.this);
             if (best != null) {
                 best.autoComplete(this, context);
             } else {

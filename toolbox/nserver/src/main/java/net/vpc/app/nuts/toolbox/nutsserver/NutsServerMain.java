@@ -72,7 +72,7 @@ public class NutsServerMain extends NutsApplication {
 
     private void stop(NutsApplicationContext context, NutsCommandLine cmdLine) {
         NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getWorkspace());
-        NutsCommandLineFormat commandLineFormat = context.getWorkspace().commandLine();
+        NutsCommandLineManager commandLineFormat = context.getWorkspace().commandLine();
         String s;
         int count = 0;
         while (cmdLine.hasNext()) {
@@ -91,7 +91,7 @@ public class NutsServerMain extends NutsApplication {
 
     private void start(NutsApplicationContext context, NutsCommandLine cmdLine) {
         NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getWorkspace());
-        NutsCommandLineFormat commandLineFormat = context.getWorkspace().commandLine();
+        NutsCommandLineManager commandLineFormat = context.getWorkspace().commandLine();
         SrvInfoList servers = new SrvInfoList(context.getWorkspace());
         NutsArgument a;
         while (cmdLine.hasNext()) {
@@ -298,7 +298,7 @@ public class NutsServerMain extends NutsApplication {
 
     private void status(NutsApplicationContext context, NutsCommandLine cmdLine) {
         NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getWorkspace());
-        NutsCommandLineFormat commandLineFormat = context.getWorkspace().commandLine();
+        NutsCommandLineManager commandLineFormat = context.getWorkspace().commandLine();
         SrvInfoList servers = new SrvInfoList(context.getWorkspace());
         NutsArgument a;
         while (cmdLine.hasNext()) {

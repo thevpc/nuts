@@ -246,7 +246,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<NutsTerminalSpec> criteria) {
         return DEFAULT_SUPPORT;
     }
 

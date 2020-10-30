@@ -130,7 +130,7 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<NutsTerminalSpec> criteria) {
         return DEFAULT_SUPPORT;
     }
 

@@ -336,8 +336,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
             if (CoreStringUtils.isBlank(conf.getName())) {
                 conf.setName(options.getName());
             }
-            NutsRepositoryFactoryComponent factory_ = getWorkspace().extensions().createSupported(NutsRepositoryFactoryComponent.class,
-                    new DefaultNutsSupportLevelContext<>(getWorkspace(), conf));
+            NutsRepositoryFactoryComponent factory_ = getWorkspace().extensions().createSupported(NutsRepositoryFactoryComponent.class,conf);
             if (factory_ != null) {
                 NutsRepository r = factory_.create(options, getWorkspace(), parentRepository);
                 if (r != null) {

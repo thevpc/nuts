@@ -164,7 +164,7 @@ public class DerbyMain extends NutsApplication {
                         }
                         case "long": {
                             out.printf("##%s## ==HOME:== %s ==CMD:== " +
-                                            appContext.getWorkspace().commandLine().setValue(
+                                            appContext.getWorkspace().commandLine().formatter(
                                                     appContext.getCommandLine().parseLine(jpsResult.getArgsLine())
                                             ).format()
                                             + "\n",

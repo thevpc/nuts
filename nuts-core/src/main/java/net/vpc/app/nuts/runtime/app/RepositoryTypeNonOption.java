@@ -53,9 +53,9 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
             allValid.add(repo.getType());
         }
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineFormat c = context.getWorkspace().commandLine();
+        NutsCommandLineManager c = context.getWorkspace().commandLine();
         for (String v : allValid) {
-            all.add(c.createCandidate(v));
+            all.add(c.createCandidate(v).build());
         }
         return all;
     }

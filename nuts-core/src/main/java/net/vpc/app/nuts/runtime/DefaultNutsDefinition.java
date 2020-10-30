@@ -29,6 +29,9 @@
  */
 package net.vpc.app.nuts.runtime;
 
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -148,6 +151,19 @@ public class DefaultNutsDefinition implements NutsDefinition {
     public Path getPath() {
         NutsContent c = getContent();
         return c==null?null:c.getPath();
+    }
+
+    @Override
+    public URL getURL() {
+        Path p = getPath();
+        if(p!=null){
+            try {
+                return p.toUri().toURL();
+            } catch (MalformedURLException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+        return null;
     }
 
     @Override

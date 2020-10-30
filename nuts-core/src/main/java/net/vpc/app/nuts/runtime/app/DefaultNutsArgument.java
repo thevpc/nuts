@@ -35,6 +35,7 @@ import java.io.UncheckedIOException;
 import java.util.NoSuchElementException;
 
 import net.vpc.app.nuts.runtime.DefaultNutsTokenFilter;
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsArgument;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
@@ -345,7 +346,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
         try {
             return getArgumentValue().getInt();
         }catch (NumberFormatException e){
-            throw new NumberFormatException("invalid int value for "+getString()+": "+e.getMessage());
+            throw new NumberFormatException("invalid int value for "+getString()+": "+ CoreStringUtils.exceptionToString(e));
         }
     }
 
@@ -354,7 +355,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
         try {
             return getArgumentValue().getLong();
         }catch (NumberFormatException e){
-            throw new NumberFormatException("invalid long value for "+getString()+": "+e.getMessage());
+            throw new NumberFormatException("invalid long value for "+getString()+": "+CoreStringUtils.exceptionToString(e));
         }
     }
 
@@ -363,7 +364,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
         try {
             return getArgumentValue().getDouble();
         }catch (NumberFormatException e){
-            throw new NumberFormatException("invalid double value for "+getString()+": "+e.getMessage());
+            throw new NumberFormatException("invalid double value for "+getString()+": "+CoreStringUtils.exceptionToString(e));
         }
     }
 

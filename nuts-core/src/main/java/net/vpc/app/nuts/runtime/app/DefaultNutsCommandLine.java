@@ -362,7 +362,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     private NutsArgumentCandidate createCandidate(String s) {
-        return DefaultNutsCommandLineFormat.Factory.createCandidate0(getWorkspace(), s, null);
+        return DefaultNutsCommandLineManager.Factory.createCandidate0(getWorkspace(), s, null);
     }
 
     @Override
@@ -680,7 +680,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     private NutsArgument createArgument(String v) {
-        return DefaultNutsCommandLineFormat.Factory.createArgument0(getWorkspace(), v, eq);
+        return DefaultNutsCommandLineManager.Factory.createArgument0(getWorkspace(), v, eq);
     }
 
     private boolean isAutoComplete() {

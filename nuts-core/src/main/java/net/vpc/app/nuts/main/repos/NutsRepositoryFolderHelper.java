@@ -315,10 +315,10 @@ public class NutsRepositoryFolderHelper {
 
     public NutsDescriptor deploy(NutsDeployRepositoryCommand deployment, WriteType writeType) {
         if (!isWriteEnabled()) {
-            throw new IllegalArgumentException("Read only Repository");
+            throw new NutsIllegalArgumentException(getWorkspace(),"Read only Repository");
         }
         if (deployment.getContent() == null) {
-            throw new IllegalArgumentException("Invalid deployment. Missing content");
+            throw new NutsIllegalArgumentException(getWorkspace(),"Invalid deployment. Missing content");
         }
         NutsDescriptor descriptor = deployment.getDescriptor();
         NutsInput inputSource = ws.io().input().setTypeName("artifact content").setMultiRead(true).of(deployment.getContent());

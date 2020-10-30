@@ -23,7 +23,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
-        NutsCommandLineFormat commandLineFormat = context.getWorkspace().commandLine();
+        NutsCommandLineManager commandLineFormat = context.getWorkspace().commandLine();
         if (cmdLine.next("connect") != null) {
             char[] password = null;
             String server = null;

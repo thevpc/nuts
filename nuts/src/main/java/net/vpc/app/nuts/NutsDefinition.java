@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.nio.file.Path;
 
 /**
@@ -76,6 +77,16 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      * @throws NutsElementNotFoundException if the property is not requested
      */
     Path getPath();
+
+
+    /**
+     * return artifact content file URL.
+     * this is an <strong>optional</strong> property. It must be requested (see {@link NutsSearchCommand#setContent(boolean)}) to be available.
+     *
+     * @return artifact content file URL
+     * @throws NutsElementNotFoundException if the property is not requested
+     */
+    URL getURL();
 
     /**
      * return artifact install information.

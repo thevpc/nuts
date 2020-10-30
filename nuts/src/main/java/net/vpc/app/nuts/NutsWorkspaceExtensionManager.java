@@ -58,7 +58,7 @@ public interface NutsWorkspaceExtensionManager {
      * @param <V> extension context type
      * @return valid instance or null if no extension implementation was found
      */
-    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria);
+    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria);
 
     /**
      * create supported extension implementation or return null.
@@ -70,9 +70,9 @@ public interface NutsWorkspaceExtensionManager {
      * @param <V> extension context type
      * @return valid instance or null if no extension implementation was found
      */
-    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters);
+    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters);
 
-    <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria);
+    <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria);
 
     <T> List<T> createAll(Class<T> type);
 
@@ -92,11 +92,19 @@ public interface NutsWorkspaceExtensionManager {
 
     boolean isRegisteredType(Class extensionPointType, Class extensionType);
 
+    boolean isLoadedExtensions(NutsId id);
+
+    List<NutsId> getLoadedExtensions();
+
+    NutsWorkspaceExtensionManager loadExtension(NutsId extension);
+
+    NutsWorkspaceExtensionManager unloadExtension(NutsId extension);
+
     /**
      * return loaded extensions
      *
      * @return extension ids
      */
-    NutsId[] getExtensions();
+    List<NutsId> getConfigExtensions();
 
 }

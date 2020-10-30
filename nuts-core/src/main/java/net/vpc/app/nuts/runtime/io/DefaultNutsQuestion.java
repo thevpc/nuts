@@ -5,7 +5,9 @@ import net.vpc.app.nuts.*;
 import java.io.PrintStream;
 import java.util.Arrays;
 
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsConfigurableHelper;
+import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.io.ByteArrayPrintStream;
 
 public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
@@ -204,7 +206,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 } catch (NutsUserCancelException ex) {
                     throw ex;
                 } catch (Exception ex) {
-                    out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
+                    out.printf("@@ERROR@@ : %s%n", CoreStringUtils.exceptionToString(ex));
                 }
             } else {
                 String v;
@@ -225,7 +227,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 } catch (NutsUserCancelException ex) {
                     throw ex;
                 } catch (Exception ex) {
-                    out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
+                    out.printf("@@ERROR@@ : %s%n", CoreStringUtils.exceptionToString(ex));
                 }
             }
             extraInfo = true;

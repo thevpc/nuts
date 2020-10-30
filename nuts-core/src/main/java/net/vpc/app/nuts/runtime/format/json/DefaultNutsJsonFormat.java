@@ -38,6 +38,7 @@ import net.vpc.app.nuts.runtime.format.elem.NutsElementFactoryContext;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.runtime.format.xml.NutsXmlUtils;
+import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -457,7 +458,7 @@ public class DefaultNutsJsonFormat extends DefaultFormatBase<NutsJsonFormat> imp
             try {
                 doc = NutsXmlUtils.createDocument(getWorkspace());
             } catch (ParserConfigurationException ex) {
-                throw new JsonParseException(ex.getMessage(), ex);
+                throw new JsonParseException(CoreStringUtils.exceptionToString(ex), ex);
             }
             Element ee = getWorkspace().formats().xml().toXmlElement(fromJsonElement(json), doc);
             ee = (Element) doc.importNode(ee, true);

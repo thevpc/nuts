@@ -161,7 +161,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     }
 
     private NutsExecutorComponent resolveNutsExecutorComponent(NutsDefinition nutsDefinition) {
-        NutsExecutorComponent executorComponent = ws.extensions().createSupported(NutsExecutorComponent.class, new DefaultNutsSupportLevelContext<>(ws, nutsDefinition));
+        NutsExecutorComponent executorComponent = ws.extensions().createSupported(NutsExecutorComponent.class, nutsDefinition);
         if (executorComponent != null) {
             return executorComponent;
         }

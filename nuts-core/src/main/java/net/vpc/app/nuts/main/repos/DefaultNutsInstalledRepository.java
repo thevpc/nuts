@@ -216,7 +216,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             printJson(id, NUTS_INSTALL_FILE, ii);
         } catch (UncheckedIOException|NutsIOException ex) {
             throw new NutsNotInstallableException(workspace, id.toString(), "Unable to install "
-                    + id.builder().setNamespace(null).build() + " : " + ex.getMessage(), ex);
+                    + id.builder().setNamespace(null).build() + " : " + CoreStringUtils.exceptionToString(ex), ex);
         }
     }
 
@@ -298,7 +298,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             printJson(id, NUTS_INSTALL_FILE, ii);
         } catch (UncheckedIOException|NutsIOException ex) {
             throw new NutsNotInstallableException(workspace, id.toString(), "Unable to install "
-                    + id.builder().setNamespace(null).build() + " : " + ex.getMessage(), ex);
+                    + id.builder().setNamespace(null).build() + " : " + CoreStringUtils.exceptionToString(ex), ex);
         }
     }
 
@@ -550,7 +550,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 printJson(id, NUTS_INSTALL_FILE, ii);
             } catch (UncheckedIOException|NutsIOException ex) {
                 throw new NutsNotInstallableException(workspace, id.toString(), "Unable to install "
-                        + id.builder().setNamespace(null).build() + " : " + ex.getMessage(), ex);
+                        + id.builder().setNamespace(null).build() + " : " + CoreStringUtils.exceptionToString(ex), ex);
             }
             DefaultNutsInstallInfo uu = (DefaultNutsInstallInfo) getInstallInformation(ii, session);
             uu.setWasInstalled(false);

@@ -103,7 +103,7 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
     NutsWorkspaceEvents events();
 
-    NutsCommandLineFormat commandLine();
+    NutsCommandLineManager commandLine();
 
     /**
      * create id format instance

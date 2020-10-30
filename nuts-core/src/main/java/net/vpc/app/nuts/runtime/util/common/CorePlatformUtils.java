@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.runtime.util.common;
 
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.io.SimpleClassStream;
 import net.vpc.app.nuts.*;
 
@@ -210,7 +211,7 @@ public class CorePlatformUtils {
                     }
                 }
             } catch (Exception e) {
-                System.err.printf("Error: %s%n", e.getMessage());
+                System.err.printf("Error: %s%n", CoreStringUtils.exceptionToString(e));
             }
         }
         Map<String, String> m = new HashMap<>();

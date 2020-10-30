@@ -184,7 +184,7 @@ public class WorkspaceService {
         boolean interactive = false;
         NutsArgument a;
         boolean run = false;
-        NutsCommandLineFormat commandLineFormat = context.getWorkspace().commandLine();
+        NutsCommandLineManager commandLineFormat = context.getWorkspace().commandLine();
         while (cmdLine.hasNext()) {
             if (context.configureFirst(cmdLine)) {
                 //consumed

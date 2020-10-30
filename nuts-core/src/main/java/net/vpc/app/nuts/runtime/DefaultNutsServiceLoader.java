@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 import net.vpc.app.nuts.NutsSupportLevelContext;
+import net.vpc.app.nuts.NutsWorkspace;
 
 public class DefaultNutsServiceLoader<T extends NutsComponent<B>, B> implements NutsServiceLoader<T, B> {
 
@@ -14,8 +15,10 @@ public class DefaultNutsServiceLoader<T extends NutsComponent<B>, B> implements 
     private final Class<T> serviceType;
     private final Class<B> criteriaType;
     private final ServiceLoader<T> loader;
+    private final NutsWorkspace ws;
 
-    public DefaultNutsServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
+    public DefaultNutsServiceLoader(NutsWorkspace ws,Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
+        this.ws = ws;
         this.classLoader = classLoader;
         this.serviceType = serviceType;
         this.criteriaType = criteriaType;
@@ -25,10 +28,11 @@ public class DefaultNutsServiceLoader<T extends NutsComponent<B>, B> implements 
     }
 
     @Override
-    public List<T> loadAll(NutsSupportLevelContext<B> criteria) {
+    public List<T> loadAll(B criteria) {
         List<T> all = new ArrayList<>();
+        NutsSupportLevelContext<B> c=new DefaultNutsSupportLevelContext<>(ws,criteria);
         for (T t : loader) {
-            int p = t.getSupportLevel(criteria);
+            int p = t.getSupportLevel(c);
             if (p > NutsComponent.NO_SUPPORT) {
                 all.add(t);
             }
@@ -37,11 +41,12 @@ public class DefaultNutsServiceLoader<T extends NutsComponent<B>, B> implements 
     }
 
     @Override
-    public T loadBest(NutsSupportLevelContext<B> criteria) {
+    public T loadBest(B criteria) {
         T best = null;
         int bestVal = NutsComponent.NO_SUPPORT;
+        NutsSupportLevelContext<B> c=new DefaultNutsSupportLevelContext<>(ws,criteria);
         for (T t : loader) {
-            int p = t.getSupportLevel(criteria);
+            int p = t.getSupportLevel(c);
             if (p > NutsComponent.NO_SUPPORT) {
                 if (best == null || bestVal < p) {
                     best = t;

@@ -97,7 +97,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     private Set<NutsId> getExtensionsToUpdate() {
         Set<NutsId> ext = new HashSet<>();
-        for (NutsId extension : ws.extensions().getExtensions()) {
+        for (NutsId extension : ws.extensions().getConfigExtensions()) {
             ext.add(extension.getShortNameId());
         }
         if (updateExtensions) {
@@ -130,7 +130,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     private Set<NutsId> getRegularIds() {
         HashSet<String> extensions = new HashSet<>();
-        for (NutsId object : ws.extensions().getExtensions()) {
+        for (NutsId object : ws.extensions().getConfigExtensions()) {
             extensions.add(object.getShortName());
         }
 

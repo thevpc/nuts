@@ -314,6 +314,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             try {
                 classLoader = ((DefaultNutsWorkspaceExtensionManager) getSession().getWorkspace().extensions()).getNutsURLClassLoader(
                         CoreIOUtils.toURL(joptions.getClassPath().toArray(new String[0])),
+                        joptions.getNutsPath().stream().map(x->getSession().getWorkspace().id().parser().parse(x)).toArray(NutsId[]::new),
                         getSession().getWorkspace().config().getBootClassLoader()
                 );
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
@@ -330,11 +331,11 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             }
             if (th != null) {
                 if (!(th instanceof NutsExecutionException)) {
-                    th = new NutsExecutionException(getSession().getWorkspace(), "Error Executing " + def.getId().getLongName() + " : " + th.getMessage(), th);
+                    th = new NutsExecutionException(getSession().getWorkspace(), "Error Executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
                 }
                 NutsExecutionException nex = (NutsExecutionException) th;
                 if (nex.getExitCode() != 0) {
-                    throw new NutsExecutionException(getSession().getWorkspace(), "Error Executing " + def.getId().getLongName() + " : " + th.getMessage(), th);
+                    throw new NutsExecutionException(getSession().getWorkspace(), "Error Executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
                 }
             }
             return 0;

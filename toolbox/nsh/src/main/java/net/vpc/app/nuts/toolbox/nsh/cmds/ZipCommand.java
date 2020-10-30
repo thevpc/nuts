@@ -29,8 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsCommandLineFormat;
-import net.vpc.app.nuts.NutsExecutionException;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.vpc.common.io.ZipOptions;
 import net.vpc.common.io.ZipUtils;
@@ -39,9 +38,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsArgument;
+
 import net.vpc.app.nuts.toolbox.nsh.NshExecutionContext;
-import net.vpc.app.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -65,7 +63,7 @@ public class ZipCommand extends AbstractNshBuiltin {
 //        NutsPrintStream out = context.out();
         File outZip = null;
         NutsArgument a;
-        NutsCommandLineFormat nutsCommandLineFormat = context.getWorkspace().commandLine();
+        NutsCommandLineManager nutsCommandLineFormat = context.getWorkspace().commandLine();
         while (cmdLine.hasNext()) {
             if (context.configureFirst(cmdLine)) {
                 //

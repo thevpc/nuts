@@ -18,7 +18,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
 
-        NutsCommandLineFormat commandLineFormat = context.getWorkspace().commandLine();
+        NutsCommandLineManager commandLineFormat = context.getWorkspace().commandLine();
         NutsWorkspace ws = context.getWorkspace();
         if (cmdLine.next("create repo", "cr") != null) {
             String repositoryName = null;

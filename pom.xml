@@ -12,6 +12,7 @@
         <module>nuts</module>
         <module>nuts-core</module>
 <!--        <module>nuts-installer</module>-->
+        <module>ext/next-term</module>
         <module>lib/nuts-lib-template</module>
         <module>lib/nuts-servlet</module>
         <module>lib/nuts-tomcat-classloader</module>

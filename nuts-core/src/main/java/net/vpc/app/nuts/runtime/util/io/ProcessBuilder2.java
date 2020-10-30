@@ -37,6 +37,7 @@ import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsTerminalFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.runtime.app.DefaultNutsArgument;
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 
 public class ProcessBuilder2 {
@@ -279,7 +280,7 @@ public class ProcessBuilder2 {
                 try {
                     Thread.sleep(sleepMillis);
                 } catch (InterruptedException e) {
-                    throw new IOException(e.getMessage());
+                    throw new IOException(CoreStringUtils.exceptionToString(e));
                 }
             }
 
@@ -301,7 +302,7 @@ public class ProcessBuilder2 {
         try {
             result = proc.waitFor();
         } catch (InterruptedException e) {
-            throw new IOException(e.getMessage());
+            throw new IOException(CoreStringUtils.exceptionToString(e));
         }
         if (result != 0) {
             if (isFailFast()) {

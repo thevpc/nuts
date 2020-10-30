@@ -206,7 +206,7 @@ public class LocalTomcat {
                         }
                         case "long": {
                             out.printf("##%s## ==v==%s ==HOME:== %s ==BASE:== %s ==CMD:== "
-                                    + context.getWorkspace().commandLine().setValue(
+                                    + context.getWorkspace().commandLine().formatter(
                                             context.getCommandLine().parseLine(jpsResult.getArgsLine())
                                     ).format()
                                     + "\n",

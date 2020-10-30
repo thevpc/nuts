@@ -35,6 +35,7 @@ import net.vpc.app.nuts.core.common.ObservableMap;
 import net.vpc.app.nuts.core.config.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.main.wscommands.DefaultNutsUpdateStatisticsCommand;
 import net.vpc.app.nuts.runtime.app.DefaultNutsCommandLineFormat;
+import net.vpc.app.nuts.runtime.app.DefaultNutsCommandLineManager;
 import net.vpc.app.nuts.runtime.ext.DefaultNutsWorkspaceExtensionManager;
 import net.vpc.app.nuts.runtime.format.DefaultNutsInfoFormat;
 import net.vpc.app.nuts.runtime.io.DefaultNutsMonitorAction;
@@ -66,6 +67,7 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     private DefaultNutsFormatManager formatManager;
     private DefaultNutsConcurrentManager concurrent;
     private DefaultNutsWorkspaceAppsManager apps;
+    private DefaultNutsCommandLineManager defaultNutsCommandLineManager;
 
     public AbstractNutsWorkspace() {
         userProperties = new DefaultObservableMap<>();
@@ -76,6 +78,7 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
         formatManager = new DefaultNutsFormatManager(this);
         concurrent = new DefaultNutsConcurrentManager(this);
         apps=new DefaultNutsWorkspaceAppsManager(this);
+        defaultNutsCommandLineManager = new DefaultNutsCommandLineManager(this);
     }
 
     @Override
@@ -145,8 +148,8 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public NutsCommandLineFormat commandLine() {
-        return new DefaultNutsCommandLineFormat(this);
+    public NutsCommandLineManager commandLine() {
+        return defaultNutsCommandLineManager;
     }
 
     @Override

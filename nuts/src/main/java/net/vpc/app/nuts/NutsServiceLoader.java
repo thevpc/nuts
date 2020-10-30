@@ -46,12 +46,12 @@ public interface NutsServiceLoader<T extends NutsComponent<B>, B> {
      * @param criteria criteria to match
      * @return load all NutsComponent instances matching criteria
      */
-    List<T> loadAll(NutsSupportLevelContext<B> criteria);
+    List<T> loadAll(B criteria);
 
     /**
      * load best NutsComponent instance matching criteria
      * @param criteria criteria to match
      * @return load best NutsComponent instance matching criteria
      */
-    T loadBest(NutsSupportLevelContext<B> criteria);
+    T loadBest(B criteria);
 }

@@ -1,16 +1,9 @@
 package net.vpc.app.nuts.runtime.terminals;
 
-import net.vpc.app.nuts.NutsQuestion;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-
-import net.vpc.app.nuts.NutsSessionTerminal;
-import net.vpc.app.nuts.NutsSupportLevelContext;
-import net.vpc.app.nuts.NutsTerminal;
-import net.vpc.app.nuts.NutsTerminalBase;
-import net.vpc.app.nuts.NutsTerminalMode;
 
 public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSessionTerminal {
 
@@ -136,7 +129,7 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<NutsTerminalSpec> criteria) {
         return getBase().getSupportLevel(criteria);
     }
 

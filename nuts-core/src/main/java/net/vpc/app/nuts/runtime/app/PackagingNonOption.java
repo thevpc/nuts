@@ -47,15 +47,15 @@ public class PackagingNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineFormat c=context.getWorkspace().commandLine();
-        all.add(c.createCandidate("jar"));
-        all.add(c.createCandidate("war"));
-        all.add(c.createCandidate("war"));
-        all.add(c.createCandidate("ear"));
-        all.add(c.createCandidate("nuts-extension"));
-        all.add(c.createCandidate("elf"));
-        all.add(c.createCandidate("pe"));
-        all.add(c.createCandidate("bin"));
+        NutsCommandLineManager c=context.getWorkspace().commandLine();
+        all.add(c.createCandidate("jar").build());
+        all.add(c.createCandidate("war").build());
+        all.add(c.createCandidate("war").build());
+        all.add(c.createCandidate("ear").build());
+        all.add(c.createCandidate("nuts-extension").build());
+        all.add(c.createCandidate("elf").build());
+        all.add(c.createCandidate("pe").build());
+        all.add(c.createCandidate("bin").build());
         return all;
     }
 

@@ -38,7 +38,7 @@ import java.io.PrintStream;
  * @since 0.5.4
  * @category SPI Base
  */
-public interface NutsTerminalBase extends NutsComponent<Object> {
+public interface NutsTerminalBase extends NutsComponent<NutsTerminalSpec> {
 
     NutsTerminalBase setOutMode(NutsTerminalMode mode);
 

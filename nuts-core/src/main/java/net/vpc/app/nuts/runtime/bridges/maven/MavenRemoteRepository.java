@@ -46,7 +46,9 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import net.vpc.app.nuts.NutsDefaultContent;
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.SearchTraceHelper;
+import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.io.FilesFoldersApi;
 import net.vpc.app.nuts.runtime.util.RemoteRepoApi;
 import net.vpc.app.nuts.runtime.util.iter.IteratorUtils;
@@ -475,7 +477,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     }
                 }).run();
             } catch (UncheckedIOException|NutsIOException ex) {
-                LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log( id.toString() + " : " + ex.getMessage());
+                LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log( id.toString() + " : " + CoreStringUtils.exceptionToString(ex));
                 throw new NutsNotFoundException(getWorkspace(), id, null, ex);
             }
             return new NutsDefaultContent(localPath, false, false);

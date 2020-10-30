@@ -695,15 +695,13 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public ClassLoader getResultClassLoader(ClassLoader parent) {
         List<NutsDefinition> nutsDefinitions = getResultDefinitions().list();
-        URL[] all = new URL[nutsDefinitions.size()];
-        for (int i = 0; i < all.length; i++) {
-            try {
-                all[i] = nutsDefinitions.get(i).getPath().toUri().toURL();
-            } catch (MalformedURLException ex) {
-                throw new UncheckedIOException(ex);
-            }
+        URL[] allURLs = new URL[nutsDefinitions.size()];
+        NutsId[] allIds = new NutsId[nutsDefinitions.size()];
+        for (int i = 0; i < allURLs.length; i++) {
+            allURLs[i] = nutsDefinitions.get(i).getURL();
+            allIds[i] = nutsDefinitions.get(i).getId();
         }
-        return ((DefaultNutsWorkspaceExtensionManager) ws.extensions()).getNutsURLClassLoader(all, parent);
+        return ((DefaultNutsWorkspaceExtensionManager) ws.extensions()).getNutsURLClassLoader(allURLs, allIds,parent);
     }
 
     @Override

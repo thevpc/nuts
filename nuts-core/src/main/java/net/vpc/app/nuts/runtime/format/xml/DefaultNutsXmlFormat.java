@@ -42,6 +42,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.format.elem.DefaultNutsElementFactoryContext;
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
+import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import net.vpc.app.nuts.runtime.format.elem.NutsElementFactoryContext;
@@ -525,7 +527,7 @@ public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> imple
         try {
             NutsXmlUtils.writeDocument(doc, new StreamResult(out), compact,true);
         } catch (TransformerException ex) {
-            throw new NutsException(getWorkspace(), ex.getMessage(), ex);
+            throw new NutsException(getWorkspace(), CoreStringUtils.exceptionToString(ex), ex);
         }
     }
 

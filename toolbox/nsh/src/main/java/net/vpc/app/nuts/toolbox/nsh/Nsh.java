@@ -2,13 +2,16 @@ package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NutsApplication;
-import net.vpc.app.nuts.toolbox.nsh.term.NutsJLineTerminal;
 
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import net.vpc.common.javashell.AutoCompleteCandidate;
 import net.vpc.common.javashell.JShellException;
 import net.vpc.common.javashell.JShellBuiltin;
+import net.vpc.common.strings.StringUtils;
+import org.jline.reader.Candidate;
 
 public class Nsh extends NutsApplication {
 
@@ -26,12 +29,40 @@ public class Nsh extends NutsApplication {
     @Override
     public void run(NutsApplicationContext applicationContext) {
         String[] args = applicationContext.getArguments();
-        NutsSystemTerminal st = applicationContext.getWorkspace().io().term().getSystemTerminal();
-        if (st instanceof NutsJLineTerminal || st.getParent() instanceof NutsJLineTerminal) {
-            //that's ok
-        } else {
-            applicationContext.getWorkspace().io().term().setSystemTerminal(new NutsJLineTerminal());
-        }
+        applicationContext.getWorkspace().io().term().enableRichTerm();
+        applicationContext.getWorkspace().io().term().getSystemTerminal()
+                .setAutoCompleteResolver(new NutsCommandAutoCompleteProcessor() {
+                    @Override
+                    public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex,NutsWorkspace workspace) {
+                        List<NutsArgumentCandidate> candidates=new ArrayList<>();
+                        NutsShellContext nutsConsoleContext = (NutsShellContext) workspace.userProperties().get(NutsShellContext.class.getName());
+                        if (wordIndex == 0) {
+                            for (JShellBuiltin command : nutsConsoleContext.builtins().getAll()) {
+                                candidates.add(workspace.commandLine().createCandidate(command.getName()).build());
+                            }
+                        } else {
+                            List<String> autoCompleteWords = new ArrayList<>(Arrays.asList(commandline.toArray()));
+                            int x = commandline.getCommandName().length();
+
+                            List<AutoCompleteCandidate> autoCompleteCandidates
+                                    = nutsConsoleContext.resolveAutoCompleteCandidates(commandline.getCommandName(), autoCompleteWords, wordIndex, commandline.toString());
+                            for (Object cmdCandidate0 : autoCompleteCandidates) {
+                                AutoCompleteCandidate cmdCandidate = (AutoCompleteCandidate) cmdCandidate0;
+                                if (cmdCandidate != null) {
+                                    String value = cmdCandidate.getValue();
+                                    if (!StringUtils.isBlank(value)) {
+                                        String display = cmdCandidate.getDisplay();
+                                        if (StringUtils.isBlank(display)) {
+                                            display = value;
+                                        }
+                                        candidates.add(workspace.commandLine().createCandidate(value).setDisplay(display).build());
+                                    }
+                                }
+                            }
+                        }
+                        return candidates;
+                    }
+                });
         NutsJavaShell c = new NutsJavaShell(applicationContext);
         try {
             c.executeShell(args);

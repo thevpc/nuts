@@ -39,6 +39,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 import net.vpc.app.nuts.NutsLogger;
+import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.common.ClassClassMap;
 import net.vpc.app.nuts.runtime.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
@@ -357,7 +358,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 obj = (T) resolveInstance(c, type);
             } catch (Exception e) {
                 LOG.with().level(Level.FINEST).verb( NutsLogVerb.FAIL).formatted().error(e)
-                .log( "unable to instantiate {0} for {1} : {2}" ,c,type, e.getMessage());
+                .log( "unable to instantiate {0} for {1} : {2}" ,c,type, CoreStringUtils.exceptionToString(e));
             }
             if (obj != null) {
                 all.add(obj);
@@ -374,7 +375,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 obj = (T) resolveInstance(c, type, argTypes, args);
             } catch (Exception e) {
                 LOG.with().level(Level.WARNING).verb( NutsLogVerb.FAIL).formatted().error(e)
-                        .log( "unable to instantiate {0} for {1} : {2}" ,c,type, e.getMessage());
+                        .log( "unable to instantiate {0} for {1} : {2}" ,c,type, CoreStringUtils.exceptionToString(e));
             }
             if (obj != null) {
                 all.add(obj);
@@ -388,12 +389,13 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     }
 
     @Override
-    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters) {
+    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters) {
         List<T> list = createAll(type, constructorParameterTypes, constructorParameters);
         int bestSupportLevel = Integer.MIN_VALUE;
+        NutsSupportLevelContext<V> lc=new DefaultNutsSupportLevelContext<V>(workspace,supportCriteria);
         T bestObj = null;
         for (T t : list) {
-            int supportLevel = t.getSupportLevel(supportCriteria);
+            int supportLevel = t.getSupportLevel(lc);
             if (supportLevel > 0) {
                 if (bestObj == null || supportLevel > bestSupportLevel) {
                     bestSupportLevel = supportLevel;
@@ -411,12 +413,13 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     }
 
     @Override
-    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria) {
+    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria) {
         List<T> list = createAll(type);
         int bestSupportLevel = Integer.MIN_VALUE;
         T bestObj = null;
+        DefaultNutsSupportLevelContext<V> context = new DefaultNutsSupportLevelContext<>(workspace, supportCriteria);
         for (T t : list) {
-            int supportLevel = t.getSupportLevel(supportCriteria);
+            int supportLevel = t.getSupportLevel(context);
             if (supportLevel > 0) {
                 if (bestObj == null || supportLevel > bestSupportLevel) {
                     bestSupportLevel = supportLevel;
@@ -434,11 +437,12 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     }
 
     @Override
-    public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, NutsSupportLevelContext<V> supportCriteria) {
+    public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria) {
         List<T> list = createAll(type);
+        DefaultNutsSupportLevelContext<V> context = new DefaultNutsSupportLevelContext<>(workspace, supportCriteria);
         for (Iterator<T> iterator = list.iterator(); iterator.hasNext();) {
             T t = iterator.next();
-            int supportLevel = t.getSupportLevel(supportCriteria);
+            int supportLevel = t.getSupportLevel(context);
             if (supportLevel <= 0) {
                 iterator.remove();
             }

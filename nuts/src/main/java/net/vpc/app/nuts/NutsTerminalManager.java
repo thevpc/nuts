@@ -24,6 +24,10 @@ public interface NutsTerminalManager {
      */
     NutsSystemTerminal getSystemTerminal();
 
+    NutsTerminalManager enableRichTerm();
+
+    NutsSystemTerminal createSystemTerminal(NutsTerminalSpec spec);
+
     /**
      * update workspace wide system terminal
      *
@@ -60,6 +64,7 @@ public interface NutsTerminalManager {
      * @return new terminal
      */
     NutsSessionTerminal createTerminal();
+
 
     /**
      * return new terminal bound to the given {@code parent}

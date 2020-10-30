@@ -35,6 +35,7 @@ import net.vpc.app.nuts.core.repos.NutsInstalledRepository;
 import net.vpc.app.nuts.runtime.log.NutsLogVerb;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
 import net.vpc.app.nuts.runtime.util.NutsCollectionResult;
+import net.vpc.app.nuts.runtime.util.common.CoreStringUtils;
 import net.vpc.app.nuts.runtime.util.io.CoreIOUtils;
 import net.vpc.app.nuts.runtime.util.iter.IteratorUtils;
 import net.vpc.app.nuts.runtime.wscommands.AbstractNutsInstallCommand;
@@ -393,11 +394,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                             if (!ws.io().term().getTerminal().ask().forBoolean("@@failed to install@@ " + ws.id().formatter().set(info.id).format() + " and its dependencies... Continue installation?")
                                     .defaultValue(true)
                                     .setSession(session).getBooleanValue()) {
-                                session.out().printf(ws.id().formatter().set(info.id).omitNamespace().format() + " @@installation cancelled with error:@@ %s%n", ex.toString());
+                                session.out().printf(ws.id().formatter().set(info.id).omitNamespace().format() + " @@installation cancelled with error:@@ %s%n", CoreStringUtils.exceptionToString(ex));
                                 result = new NutsDefinition[0];
                                 return this;
                             } else {
-                                session.out().printf(ws.id().formatter().set(info.id).omitNamespace().format() + " @@installation cancelled with error:@@ %s%n", ex.toString());
+                                session.out().printf(ws.id().formatter().set(info.id).omitNamespace().format() + " @@installation cancelled with error:@@ %s%n", CoreStringUtils.exceptionToString(ex));
                             }
                         } else {
                             throw ex;

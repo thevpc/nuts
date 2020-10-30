@@ -32,7 +32,6 @@ package net.vpc.app.nuts.runtime.util.io;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.io.NutsFormattedPrintStream;
 import net.vpc.app.nuts.runtime.DefaultNutsDescriptorContentParserContext;
-import net.vpc.app.nuts.runtime.DefaultNutsSupportLevelContext;
 import net.vpc.app.nuts.runtime.io.*;
 import net.vpc.app.nuts.runtime.log.NutsLogVerb;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
@@ -526,7 +525,7 @@ public class CoreIOUtils {
         }
         NutsWorkspace ws = session.getWorkspace();
         if (localPath != null) {
-            List<NutsDescriptorContentParserComponent> allParsers = ws.extensions().createAllSupported(NutsDescriptorContentParserComponent.class, new DefaultNutsSupportLevelContext<>(ws, null));
+            List<NutsDescriptorContentParserComponent> allParsers = ws.extensions().createAllSupported(NutsDescriptorContentParserComponent.class,  null);
             if (allParsers.size() > 0) {
                 String fileExtension = CoreIOUtils.getFileExtension(localPath.getName());
                 NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(session, localPath, fileExtension, null, parseOptions);
@@ -1214,7 +1213,7 @@ public class CoreIOUtils {
 
     public static NutsTransportConnection getHttpClientFacade(NutsWorkspace ws, String url) {
         //        System.out.println("getHttpClientFacade "+url);
-        NutsTransportComponent best = ws.extensions().createSupported(NutsTransportComponent.class, new DefaultNutsSupportLevelContext<>(ws, url));
+        NutsTransportComponent best = ws.extensions().createSupported(NutsTransportComponent.class, url);
         if (best == null) {
             best = DefaultHttpTransportComponent.INSTANCE;
         }
@@ -1715,7 +1714,7 @@ public class CoreIOUtils {
         try {
             Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new RuntimeException(CoreStringUtils.exceptionToString(e), e);
         }
     }
 

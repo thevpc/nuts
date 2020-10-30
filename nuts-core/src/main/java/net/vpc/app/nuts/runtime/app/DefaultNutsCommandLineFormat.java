@@ -22,33 +22,17 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
 
     @Override
     public NutsCommandLineFormat setValue(String[] args) {
-        return setValue(args == null ? null : create(args));
+        return setValue(args == null ? null : getWorkspace().commandLine().create(args));
     }
 
     @Override
     public NutsCommandLineFormat setValue(String args) {
-        return setValue(args == null ? null : parse(args));
+        return setValue(args == null ? null : getWorkspace().commandLine().parse(args));
     }
 
     @Override
     public NutsCommandLine getValue() {
         return value;
-    }
-
-    @Override
-    public NutsCommandLine parse(String line) {
-        return new DefaultNutsCommandLine(getWorkspace(), NutsCommandLineUtils.parseCommandLine(getWorkspace(), line));
-    }
-
-    @Override
-    public NutsCommandLine create(String... args) {
-        return new DefaultNutsCommandLine(getWorkspace(), args);
-    }
-
-    @Override
-    public NutsCommandLine create(List<String> args) {
-
-        return new DefaultNutsCommandLine(getWorkspace(), args, null);
     }
 
     @Override
@@ -139,79 +123,5 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
             }
         }
         return ws.io().term().getTerminalFormat().escapeText(sb.toString());
-    }
-
-    @Override
-    public NutsArgument createArgument(String argument) {
-        return Factory.createArgument0(getWorkspace(), argument, '=');
-    }
-
-    @Override
-    public NutsArgumentCandidate createCandidate(String value, String label) {
-        return Factory.createCandidate0(getWorkspace(), value, label);
-    }
-
-    @Override
-    public NutsArgumentName createName(String type, String label) {
-        return Factory.createName0(getSession(), type, label);
-    }
-
-    @Override
-    public NutsArgumentName createName(String type) {
-        return createName(type, type);
-    }
-
-    public static class Factory {
-        public static NutsArgument createArgument0(NutsWorkspace ws, String argument, char eq) {
-            return new DefaultNutsArgument(argument, eq);
-        }
-
-        public static NutsArgumentCandidate createCandidate0(NutsWorkspace ws, String value, String label) {
-            return new NutsDefaultArgumentCandidate(value, CoreStringUtils.isBlank(label) ? value : label);
-        }
-
-        public static NutsArgumentName createName0(NutsSession ws, String type, String label) {
-            if (type == null) {
-                type = "";
-            }
-            if (label == null) {
-                label = type;
-            }
-            switch (type) {
-                case "arch": {
-                    return new ArchitectureNonOption(label);
-                }
-                case "packaging": {
-                    return new PackagingNonOption(label);
-                }
-                case "extension": {
-                    return new ExtensionNonOption(type, null);
-                }
-                case "file": {
-                    return new FileNonOption(type);
-                }
-                case "boolean": {
-                    return new ValueNonOption( type, "true", "false");
-                }
-                case "repository": {
-                    return new RepositoryNonOption( label);
-                }
-                case "repository-type": {
-                    return new RepositoryTypeNonOption(label);
-                }
-                case "right": {
-                    return new PermissionNonOption(label,  null, false);
-                }
-                case "user": {
-                    return new UserNonOption(label);
-                }
-                case "group": {
-                    return new GroupNonOption(label);
-                }
-                default: {
-                    return new DefaultNonOption(label);
-                }
-            }
-        }
     }
 }
