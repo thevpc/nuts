@@ -63,7 +63,7 @@ public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployReposi
             this.setId(rep.getId());
             if (getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 try {
-                    xrepo.getIndexStore().revalidate(this.getId());
+                    xrepo.getIndexStore().revalidate(this.getId(), getSession());
                 } catch (NutsException ex) {
                     LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "Error revalidating Indexer for {0} : {1}", getRepo().getName(), ex);
                 }

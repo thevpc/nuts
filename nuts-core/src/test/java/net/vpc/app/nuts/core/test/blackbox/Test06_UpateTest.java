@@ -161,9 +161,9 @@ public class Test06_UpateTest {
         final String newRuntimeVersion = foundUpdates.getResult().getRuntime().getAvailable().getId().getVersion().toString();
 //        Path bootFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
 //        Path bootCompFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
-        Path bootCacheFolder = nws.config().getStoreLocation(NutsStoreLocation.CACHE).resolve(NutsConstants.Folders.ID);
-        Path libFolder = nws.config().getStoreLocation(NutsStoreLocation.LIB).resolve(NutsConstants.Folders.ID);
-        Path configFolder = nws.config().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
+        Path bootCacheFolder = nws.locations().getStoreLocation(NutsStoreLocation.CACHE).resolve(NutsConstants.Folders.ID);
+        Path libFolder = nws.locations().getStoreLocation(NutsStoreLocation.LIB).resolve(NutsConstants.Folders.ID);
+        Path configFolder = nws.locations().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
         Assert.assertTrue(Files.exists(libFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));

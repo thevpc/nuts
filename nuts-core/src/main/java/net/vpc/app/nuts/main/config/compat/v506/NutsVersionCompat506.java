@@ -23,7 +23,7 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
     public NutsWorkspaceConfigApi parseApiConfig() {
         NutsWorkspaceConfigApi cc = new NutsWorkspaceConfigApi();
         cc.setApiVersion(getApiVersion());
-        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(getWorkspace().config().getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(getWorkspace().locations().getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
 //            cc.setConfigVersion(???);
             cc.setApiVersion(c.getApiVersion());
@@ -39,7 +39,7 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
     public NutsWorkspaceConfigRuntime parseRuntimeConfig() {
         NutsWorkspaceConfigRuntime cc = new NutsWorkspaceConfigRuntime();
 //        cc.setApiVersion(getApiVersion());
-        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(getWorkspace().config().getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(getWorkspace().locations().getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
 //            cc.setConfigVersion(???);
             cc.setDependencies(c.getRuntimeDependencies());
@@ -55,7 +55,7 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
     @Override
     public NutsWorkspaceConfigSecurity parseSecurityConfig() {
         NutsWorkspaceConfigSecurity cc = new NutsWorkspaceConfigSecurity();
-        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(getWorkspace().config().getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(getWorkspace().locations().getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
 //            cc.setConfigVersion(???);
             cc.setSecure(c.isSecure());
@@ -69,7 +69,7 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
     @Override
     public NutsWorkspaceConfigMain parseMainConfig() {
         NutsWorkspaceConfigMain cc = new NutsWorkspaceConfigMain();
-        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(getWorkspace().config().getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(getWorkspace().locations().getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
             c.setRepositories(CompatUtils.copyNutsRepositoryRefList(c.getRepositories()));
             c.setCommandFactories(CompatUtils.copyNutsCommandAliasFactoryConfigList(c.getCommandFactories()));

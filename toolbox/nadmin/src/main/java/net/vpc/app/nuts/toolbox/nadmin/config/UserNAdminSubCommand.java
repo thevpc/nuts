@@ -71,9 +71,9 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                 if (cmdLine.isExecMode()) {
                     NutsUser[] security;
                     if (repository == null) {
-                        security = workspace.security().findUsers();
+                        security = workspace.security().findUsers(context.getSession());
                     } else {
-                        security = repository.security().findUsers();
+                        security = repository.security().findUsers(context.getSession());
                     }
                     for (NutsUser u : security) {
                         out.printf("User: %s%n", u.getUser());
@@ -151,7 +151,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     if (repository == null) {
                         u = workspace.security().findUser(user);
                     } else {
-                        u = repository.security().getEffectiveUser(user);
+                        u = repository.security().getEffectiveUser(user, context.getSession());
                     }
                     if (u == null) {
                         throw new NutsElementNotFoundException(workspace, "No such user " + user);

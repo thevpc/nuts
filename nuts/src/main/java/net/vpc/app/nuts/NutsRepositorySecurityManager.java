@@ -46,13 +46,13 @@ public interface NutsRepositorySecurityManager {
 
     NutsRemoveUserCommand removeUser(String name);
 
-    NutsUser[] findUsers();
+    NutsUser[] findUsers(NutsSession session);
 
-    NutsUser getEffectiveUser(String username);
+    NutsUser getEffectiveUser(String username, NutsSession session);
 
     NutsRepositorySecurityManager setAuthenticationAgent(String authenticationAgent, NutsUpdateOptions options);
 
-    NutsAuthenticationAgent getAuthenticationAgent(String id);
+    NutsAuthenticationAgent getAuthenticationAgent(String id, NutsSession session);
 
     /**
      * check if the given <code>password</code> is valid against the one stored
@@ -60,9 +60,10 @@ public interface NutsRepositorySecurityManager {
      *
      * @param credentialsId credentialsId
      * @param password password
+     * @param session
      * @throws NutsSecurityException when check failed
      */
-    void checkCredentials(char[] credentialsId, char[] password) throws NutsSecurityException;
+    void checkCredentials(char[] credentialsId, char[] password, NutsSession session) throws NutsSecurityException;
 
     /**
      * get the credentials for the given id. The {@code credentialsId}
@@ -70,9 +71,10 @@ public interface NutsRepositorySecurityManager {
      * character
      *
      * @param credentialsId credentials-id
+     * @param session
      * @return credentials
      */
-    char[] getCredentials(char[] credentialsId);
+    char[] getCredentials(char[] credentialsId, NutsSession session);
 
     /**
      * remove existing credentials with the given id The {@code credentialsId}
@@ -80,9 +82,10 @@ public interface NutsRepositorySecurityManager {
      * character
      *
      * @param credentialsId credentials-id
+     * @param session
      * @return credentials
      */
-    boolean removeCredentials(char[] credentialsId);
+    boolean removeCredentials(char[] credentialsId, NutsSession session);
 
     /**
      * store credentials in the agent's and return the credential id to store
@@ -92,9 +95,10 @@ public interface NutsRepositorySecurityManager {
      * AuthenticationAgent'd id and ':' character
      *
      * @param credentials credential
-     * @param allowRetreive when true {@link #getCredentials(char[])} can be invoked over {@code credentialId}
+     * @param allowRetreive when true {@link #getCredentials(char[], NutsSession)} can be invoked over {@code credentialId}
      * @param credentialId preferred credentialId, if null, a new one is created
+     * @param session
      * @return credentials-id
      */
-    char[] createCredentials(char[] credentials, boolean allowRetreive, char[] credentialId);
+    char[] createCredentials(char[] credentials, boolean allowRetreive, char[] credentialId, NutsSession session);
 }

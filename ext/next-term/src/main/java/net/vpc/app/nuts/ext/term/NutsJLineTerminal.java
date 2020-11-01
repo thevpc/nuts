@@ -120,7 +120,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase,NutsWorkspaceAw
                     //                .completer(completer)
                     //                .parse(parse)
                     .build();
-            reader.setVariable(LineReader.HISTORY_FILE, workspace.config().getWorkspaceLocation().resolve("history").normalize().toFile());
+            reader.setVariable(LineReader.HISTORY_FILE, workspace.locations().getWorkspaceLocation().resolve("history").normalize().toFile());
             ((LineReaderImpl) reader).setHistory(new NutsJLineHistory(reader, workspace));
             this.out = workspace.io().createPrintStream(
                     new TransparentPrintStream(

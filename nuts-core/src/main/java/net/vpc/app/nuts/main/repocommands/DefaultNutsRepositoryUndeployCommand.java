@@ -41,7 +41,7 @@ public class DefaultNutsRepositoryUndeployCommand extends AbstractNutsRepository
             xrepo.undeployImpl(this);
             if (getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 try {
-                    xrepo.getIndexStore().invalidate(this.getId());
+                    xrepo.getIndexStore().invalidate(this.getId(), getSession());
                 } catch (NutsException ex) {
                     LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "Error invalidating Indexer for {0} : {1}", getRepo().getName(), ex);
                 }

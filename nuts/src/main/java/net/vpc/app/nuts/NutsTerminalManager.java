@@ -24,7 +24,7 @@ public interface NutsTerminalManager {
      */
     NutsSystemTerminal getSystemTerminal();
 
-    NutsTerminalManager enableRichTerm();
+    NutsTerminalManager enableRichTerm(NutsSession session);
 
     NutsSystemTerminal createSystemTerminal(NutsTerminalSpec spec);
 
@@ -34,7 +34,7 @@ public interface NutsTerminalManager {
      * @param terminal system terminal
      * @return {@code this} instance
      */
-    NutsTerminalManager setSystemTerminal(NutsSystemTerminalBase terminal);
+    NutsTerminalManager setSystemTerminal(NutsSystemTerminalBase terminal,NutsSession session);
 
     /**
      * return workspace default terminal
@@ -54,23 +54,26 @@ public interface NutsTerminalManager {
      * update workspace wide terminal
      *
      * @param terminal terminal
+     * @param session
      * @return {@code this} instance
      */
-    NutsTerminalManager setTerminal(NutsSessionTerminal terminal);
+    NutsTerminalManager setTerminal(NutsSessionTerminal terminal, NutsSession session);
 
     /**
      * return new terminal bound to system terminal
      *
      * @return new terminal
+     * @param session
      */
-    NutsSessionTerminal createTerminal();
+    NutsSessionTerminal createTerminal(NutsSession session);
 
 
     /**
      * return new terminal bound to the given {@code parent}
      *
      * @param parent parent terminal or null
+     * @param session
      * @return new terminal
      */
-    NutsSessionTerminal createTerminal(NutsTerminalBase parent);
+    NutsSessionTerminal createTerminal(NutsTerminalBase parent, NutsSession session);
 }

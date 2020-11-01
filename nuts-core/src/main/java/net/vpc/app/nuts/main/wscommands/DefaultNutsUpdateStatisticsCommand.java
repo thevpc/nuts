@@ -59,7 +59,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
             if (mavenRepoRootFiles != null && mavenRepoRootFiles.length > 3) {
                 new MavenRepositoryFolderHelper(null, ws, repositoryPath).reindexFolder();
                 if (session.isPlainTrace()) {
-                    session.getTerminal().out().printf("[%s] updated maven index %s%n", getWorkspace().config().getWorkspaceLocation(), repositoryPath);
+                    session.getTerminal().out().printf("[%s] updated maven index %s%n", getWorkspace().locations().getWorkspaceLocation(), repositoryPath);
                 }
             } else {
                 File[] nutsRepoRootFiles = repositoryPath.toFile().listFiles(x
@@ -71,17 +71,17 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
                     throw new NutsIllegalArgumentException(ws, "Unsupported repository Folder");
                 }
                 if (session.isPlainTrace()) {
-                    session.out().printf("[%s] updated stats %s%n", getWorkspace().config().getWorkspaceLocation(), repositoryPath);
+                    session.out().printf("[%s] updated stats %s%n", getWorkspace().locations().getWorkspaceLocation(), repositoryPath);
                 }
             }
         }
         if (!processed) {
             if (session.isPlainTrace()) {
-                session.out().printf("[[%s]] Updating workspace stats%n", getWorkspace().config().getWorkspaceLocation());
+                session.out().printf("[[%s]] Updating workspace stats%n", getWorkspace().locations().getWorkspaceLocation());
             }
             for (NutsRepository repo : getWorkspace().repos().getRepositories(session)) {
                 if (session.isPlainTrace()) {
-                    session.out().printf("[[%s]] Updating stats %s%n", getWorkspace().config().getWorkspaceLocation(), repo);
+                    session.out().printf("[[%s]] Updating stats %s%n", getWorkspace().locations().getWorkspaceLocation(), repo);
                 }
                 repo.updateStatistics()
                         .setSession(session)

@@ -148,7 +148,7 @@ public abstract class AbstractMavenRepositoryHelper {
             }
             case NutsConstants.QueryFaces.CONTENT: {
                 String packaging = q.get(NutsConstants.IdProperties.PACKAGING);
-                return repository.getWorkspace().config().getDefaultIdContentExtension(packaging);
+                return repository.getWorkspace().locations().getDefaultIdContentExtension(packaging);
             }
             default: {
                 throw new NutsUnsupportedArgumentException(repository.getWorkspace(), "Unsupported fact " + f);

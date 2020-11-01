@@ -176,7 +176,7 @@ public class ProjectService {
             try {
                 NutsWorkspace ws2 = null;
                 NutsSession s = null;
-                if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(context.getWorkspace().config().getWorkspaceLocation().toString())) {
+                if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(context.getWorkspace().locations().getWorkspaceLocation().toString())) {
                     ws2 = Nuts.openWorkspace(
                             Nuts.createOptions()
                                     .setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING)
@@ -227,7 +227,7 @@ public class ProjectService {
                         Pom g = new PomXmlParser().parse(new File(f, "pom.xml"));
                         NutsWorkspace ws2 = null;
                         NutsSession s = null;
-                        if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(context.getWorkspace().config().getWorkspaceLocation().toString())) {
+                        if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(context.getWorkspace().locations().getWorkspaceLocation().toString())) {
                             ws2 = Nuts.openWorkspace(
                                     context.getWorkspace().config().optionsBuilder()
                                             .setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING)

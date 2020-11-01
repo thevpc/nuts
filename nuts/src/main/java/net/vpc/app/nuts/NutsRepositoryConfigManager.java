@@ -30,7 +30,6 @@
 package net.vpc.app.nuts;
 
 import java.nio.file.Path;
-import java.util.Map;
 
 /**
  * @author vpc
@@ -69,7 +68,7 @@ public interface NutsRepositoryConfigManager {
 
     boolean isTemporary();
 
-    boolean isIndexSubscribed();
+    boolean isIndexSubscribed(NutsSession session);
 
     /**
      * return repository configured location as string

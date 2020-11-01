@@ -96,7 +96,7 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
         }
         if (!ws.security().isAllowed(NutsConstants.Permissions.ADMIN)) {
             ws.security().checkCredentials(u.getCredentials().toCharArray(),
-                    getOldCredentials());
+                    getOldCredentials(), session);
 //
 //            if (CoreStringUtils.isEmpty(password)) {
 //                throw new NutsSecurityException("Missing old password");
@@ -107,10 +107,10 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
 //            }
         }
         if (getCredentials() != null) {
-            u.setCredentials(CoreStringUtils.chrToStr(ws.security().createCredentials(getCredentials(), false, CoreStringUtils.strToChr(u.getCredentials()))));
+            u.setCredentials(CoreStringUtils.chrToStr(ws.security().createCredentials(getCredentials(), false, CoreStringUtils.strToChr(u.getCredentials()), session)));
         }
         if (getRemoteCredentials() != null) {
-            u.setRemoteCredentials(CoreStringUtils.chrToStr(ws.security().createCredentials(getRemoteCredentials(), true, CoreStringUtils.strToChr(u.getRemoteCredentials()))));
+            u.setRemoteCredentials(CoreStringUtils.chrToStr(ws.security().createCredentials(getRemoteCredentials(), true, CoreStringUtils.strToChr(u.getRemoteCredentials()), session)));
         }
 
         if (resetGroups) {

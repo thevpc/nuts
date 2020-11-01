@@ -108,7 +108,7 @@ public class NutsJavaShell extends JShell {
         NutsSupportLevelContext<NutsJavaShell> constraints = new NutsDefaultSupportLevelContext<>(ws,this);
 
         for (NshBuiltin command : this.appContext.getWorkspace().extensions().
-                createServiceLoader(NshBuiltin.class, NutsJavaShell.class, NshBuiltin.class.getClassLoader())
+                createServiceLoader(NshBuiltin.class, NutsJavaShell.class, NshBuiltin.class.getClassLoader(), session)
                 .loadAll(this)) {
             NshBuiltin old = (NshBuiltin) _rootContext.builtins().find(command.getName());
             if (old != null && old.getSupportLevel(constraints) >= command.getSupportLevel(constraints)) {
@@ -119,7 +119,7 @@ public class NutsJavaShell extends JShell {
         _rootContext.builtins().set(allCommand.toArray(new JShellBuiltin[0]));
         _rootContext.getUserProperties().put(JShellContext.class.getName(), _rootContext);
         try {
-            histFile = ws.config().getStoreLocation(this.appId,
+            histFile = ws.locations().getStoreLocation(this.appId,
                     NutsStoreLocation.VAR).resolve(serviceName + ".history").toFile();
             hist.setHistoryFile(histFile);
             if (histFile.exists()) {

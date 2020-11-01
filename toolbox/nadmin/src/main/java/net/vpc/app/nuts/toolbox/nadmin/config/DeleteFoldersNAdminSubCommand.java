@@ -60,7 +60,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteWorkspaceFolder(NutsApplicationContext context, NutsStoreLocation folder, boolean force) {
-        Path storeLocation = context.getWorkspace().config().getStoreLocation(folder);
+        Path storeLocation = context.getWorkspace().locations().getStoreLocation(folder);
         if (storeLocation != null) {
             if (Files.exists(storeLocation)) {
                 context.getSession().out().printf("@@Deleting@@ ##%s## for workspace ##%s## folder %s ...%n", folder.id(), context.getWorkspace().name(), storeLocation);
@@ -82,7 +82,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteRepoFolder(NutsRepository repository, NutsApplicationContext context, NutsStoreLocation folder, boolean force) {
-        Path storeLocation = context.getWorkspace().config().getStoreLocation(folder);
+        Path storeLocation = context.getWorkspace().locations().getStoreLocation(folder);
         if (storeLocation != null) {
             if (Files.exists(storeLocation)) {
                 context.getSession().out().printf("@@Deleting@@ ##%s## for repository ##%s## folder %s ...%n", folder.id(), repository.getName(), storeLocation);
@@ -106,7 +106,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteCache(NutsApplicationContext context, boolean force) {
-        Path storeLocation = context.getWorkspace().config().getStoreLocation(NutsStoreLocation.CACHE);
+        Path storeLocation = context.getWorkspace().locations().getStoreLocation(NutsStoreLocation.CACHE);
         if (storeLocation != null) {
 //            File cache = new File(storeLocation);
             if (Files.exists(storeLocation)) {

@@ -161,5 +161,7 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
     NutsCommandAliasManager aliases();
 
+    NutsWorkspaceLocationManager locations();
+
     NutsWorkspaceEnvManager env();
 }

@@ -118,8 +118,9 @@ public interface NutsWorkspaceSecurityManager {
     /**
      * find all registered users
      * @return all registered users
+     * @param session
      */
-    NutsUser[] findUsers();
+    NutsUser[] findUsers(NutsSession session);
 
     /**
      * find user with the given name or null.
@@ -173,9 +174,10 @@ public interface NutsWorkspaceSecurityManager {
      * get authentication agent with id {@code authenticationAgentId}.
      * if is blank, return default authentication agent
      * @param authenticationAgentId agent id
+     * @param session
      * @return authentication agent
      */
-    NutsAuthenticationAgent getAuthenticationAgent(String authenticationAgentId);
+    NutsAuthenticationAgent getAuthenticationAgent(String authenticationAgentId, NutsSession session);
 
     /**
      * return true if workspace is running secure mode
@@ -190,9 +192,10 @@ public interface NutsWorkspaceSecurityManager {
      *
      * @param credentialsId credentialsId
      * @param password password
+     * @param session
      * @throws NutsSecurityException when check failed
      */
-    void checkCredentials(char[] credentialsId, char[] password) throws NutsSecurityException;
+    void checkCredentials(char[] credentialsId, char[] password, NutsSession session) throws NutsSecurityException;
 
     /**
      * get the credentials for the given id. The {@code credentialsId}
@@ -200,9 +203,10 @@ public interface NutsWorkspaceSecurityManager {
      * character
      *
      * @param credentialsId credentials-id
+     * @param session
      * @return credentials
      */
-    char[] getCredentials(char[] credentialsId);
+    char[] getCredentials(char[] credentialsId, NutsSession session);
 
     /**
      * remove existing credentials with the given id The {@code credentialsId}
@@ -210,9 +214,10 @@ public interface NutsWorkspaceSecurityManager {
      * character
      *
      * @param credentialsId credentials-id
+     * @param session
      * @return credentials
      */
-    boolean removeCredentials(char[] credentialsId);
+    boolean removeCredentials(char[] credentialsId, NutsSession session);
 
     /**
      * store credentials in the agent's and return the credential id to store
@@ -222,11 +227,12 @@ public interface NutsWorkspaceSecurityManager {
      * AuthenticationAgent'd id and ':' character
      *
      * @param credentials credential
-     * @param allowRetrieve when true {@link #getCredentials(char[])} can be
+     * @param allowRetrieve when true {@link #getCredentials(char[], NutsSession)} can be
      * invoked over {@code credentialId}
      * @param credentialId preferred credentialId, if null, a new one is created
+     * @param session
      * @return credentials-id
      */
-    char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId);
+    char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, NutsSession session);
 
 }

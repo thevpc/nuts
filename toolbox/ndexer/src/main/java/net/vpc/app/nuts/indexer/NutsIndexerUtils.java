@@ -17,7 +17,7 @@ public class NutsIndexerUtils {
         String k = "NutsIndexerUtils.CACHE." + entity;
         String m = (String) ws.userProperties().get(k);
         if (m == null) {
-            m = ws.config()
+            m = ws.locations()
                     .getStoreLocation(ws.id().resolveId(NutsIndexerUtils.class),
                             NutsStoreLocation.CACHE) + File.separator + entity;
             ws.userProperties().put(k, m);

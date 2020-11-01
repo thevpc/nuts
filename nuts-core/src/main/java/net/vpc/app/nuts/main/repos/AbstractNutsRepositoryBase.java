@@ -188,16 +188,16 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     }
 
     protected String getIdComponentExtension(String packaging) {
-        return getWorkspace().config().getDefaultIdContentExtension(packaging);
+        return getWorkspace().locations().getDefaultIdContentExtension(packaging);
     }
 
     protected String getIdExtension(NutsId id) {
-        return getWorkspace().config().getDefaultIdExtension(id);
+        return getWorkspace().locations().getDefaultIdExtension(id);
     }
 
     @Override
     public String getIdBasedir(NutsId id) {
-        return getWorkspace().config().getDefaultIdBasedir(id);
+        return getWorkspace().locations().getDefaultIdBasedir(id);
     }
 
 

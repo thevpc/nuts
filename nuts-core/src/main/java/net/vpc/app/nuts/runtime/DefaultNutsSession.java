@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.runtime;
 
+import java.io.InputStream;
 import java.io.PrintStream;
 
 import net.vpc.app.nuts.runtime.util.NutsConfigurableHelper;
@@ -771,6 +772,11 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public PrintStream out() {
         return terminal.out();
+    }
+
+    @Override
+    public InputStream in() {
+        return terminal.in();
     }
 
     @Override

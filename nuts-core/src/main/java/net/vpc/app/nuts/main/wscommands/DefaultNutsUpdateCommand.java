@@ -97,7 +97,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     private Set<NutsId> getExtensionsToUpdate() {
         Set<NutsId> ext = new HashSet<>();
-        for (NutsId extension : ws.extensions().getConfigExtensions()) {
+        for (NutsId extension : ws.extensions().getConfigExtensions(session)) {
             ext.add(extension.getShortNameId());
         }
         if (updateExtensions) {
@@ -130,7 +130,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     private Set<NutsId> getRegularIds() {
         HashSet<String> extensions = new HashSet<>();
-        for (NutsId object : ws.extensions().getConfigExtensions()) {
+        for (NutsId object : ws.extensions().getConfigExtensions(session)) {
             extensions.add(object.getShortName());
         }
 
@@ -245,7 +245,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         }
         NutsUpdateResult runtimeUpdate = null;
         if (this.isRuntime()) {
-            if (dws.requiresRuntimeExtension()) {
+            if (dws.requiresRuntimeExtension(session)) {
                 runtimeUpdate = checkCoreUpdate(ws.id().parser().parse(ws.getRuntimeId().getShortName()),
                         apiUpdate != null && apiUpdate.getAvailable().getId() != null ? apiUpdate.getAvailable().getId().getVersion().toString()
                                 : bootVersion, session, "runtime");

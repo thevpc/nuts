@@ -38,7 +38,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     public Path getStoreLocation() {
-        return ws.config().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
+        return ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
     }
 
     @Override

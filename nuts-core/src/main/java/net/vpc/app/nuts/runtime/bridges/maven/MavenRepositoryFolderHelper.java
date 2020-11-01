@@ -82,7 +82,7 @@ public class MavenRepositoryFolderHelper {
 
     public Path getIdLocalFile(NutsId id) {
         return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id))
-                .resolve(ws.config().getDefaultIdFilename(id));
+                .resolve(ws.locations().getDefaultIdFilename(id));
     }
 
     public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsSession session) {
@@ -99,7 +99,7 @@ public class MavenRepositoryFolderHelper {
 
     protected String getIdFilename(NutsId id) {
         if (repo == null) {
-            return ws.config().getDefaultIdFilename(id);
+            return ws.locations().getDefaultIdFilename(id);
         }
         return NutsRepositoryExt.of(repo).getIdFilename(id);
     }

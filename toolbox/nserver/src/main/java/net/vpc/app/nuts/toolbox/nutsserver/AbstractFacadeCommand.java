@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.toolbox.nutsserver;
 
-import net.vpc.app.nuts.NutsWorkspaceConfigManager;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.ListMap;
 
@@ -60,8 +59,8 @@ public abstract class AbstractFacadeCommand implements FacadeCommand {
         String userPasswordS = parameters.getOne("up");
         char[] userPassword = userPasswordS == null ? null : userPasswordS.toCharArray();
         NutsWorkspaceSecurityManager secu = context.getWorkspace().security();
-        userLogin = userLogin == null ? null :new String(secu.getCredentials(userLogin.toCharArray()));
-        userPassword = userPassword==null?null:secu.getCredentials(userPassword);
+        userLogin = userLogin == null ? null :new String(secu.getCredentials(userLogin.toCharArray(), context.getSession()));
+        userPassword = userPassword==null?null:secu.getCredentials(userPassword, context.getSession());
         if (!StringUtils.isBlank(userLogin)) {
             boolean loggedId = false;
             try {

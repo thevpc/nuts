@@ -33,7 +33,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
 
     public DefaultNutsRepositorySecurityManager(final NutsRepository repo) {
         this.repo = repo;
-        this.agent = new WrapperNutsAuthenticationAgent(repo.getWorkspace(), ()->repo.env().toMap(), x -> getAuthenticationAgent(x));
+        this.agent = new WrapperNutsAuthenticationAgent(repo.getWorkspace(), ()->repo.env().toMap(), x -> getAuthenticationAgent(x, repo.getWorkspace().createSession()));
         this.repo.addRepositoryListener(new NutsRepositoryListener() {
             @Override
             public void onConfigurationChanged(NutsRepositoryEvent event) {
@@ -120,16 +120,16 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
     }
 
     @Override
-    public NutsUser[] findUsers() {
+    public NutsUser[] findUsers(NutsSession session) {
         List<NutsUser> all = new ArrayList<>();
         for (NutsUserConfig secu : NutsRepositoryConfigManagerExt.of(repo.config()).getUsers()) {
-            all.add(getEffectiveUser(secu.getUser()));
+            all.add(getEffectiveUser(secu.getUser(), session));
         }
         return all.toArray(new NutsUser[0]);
     }
 
     @Override
-    public NutsUser getEffectiveUser(String username) {
+    public NutsUser getEffectiveUser(String username, NutsSession session) {
         NutsUserConfig u = NutsRepositoryConfigManagerExt.of(repo.config()).getUser(username);
         Stack<String> inherited = new Stack<>();
         if (u != null) {
@@ -155,13 +155,13 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
     }
 
     @Override
-    public NutsAuthenticationAgent getAuthenticationAgent(String id) {
+    public NutsAuthenticationAgent getAuthenticationAgent(String id, NutsSession session) {
         id = CoreStringUtils.trim(id);
         if (id.isEmpty()) {
             id = ((DefaultNutsRepoConfigManager) repo.config())
                     .getStoredConfig().getAuthenticationAgent();
         }
-        NutsAuthenticationAgent a = NutsWorkspaceConfigManagerExt.of(repo.getWorkspace().config()).createAuthenticationAgent(id);
+        NutsAuthenticationAgent a = NutsWorkspaceConfigManagerExt.of(repo.getWorkspace().config()).createAuthenticationAgent(id, session);
         return a;
     }
 
@@ -170,7 +170,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
         options= CoreNutsUtils.validate(options,repo.getWorkspace());
         DefaultNutsRepoConfigManager cc = (DefaultNutsRepoConfigManager) repo.config();
 
-        if (NutsWorkspaceConfigManagerExt.of(repo.getWorkspace().config()).createAuthenticationAgent(authenticationAgent) == null) {
+        if (NutsWorkspaceConfigManagerExt.of(repo.getWorkspace().config()).createAuthenticationAgent(authenticationAgent, options.getSession()) == null) {
             throw new NutsIllegalArgumentException(repo.getWorkspace(), "Unsupported Authentication Agent " + authenticationAgent);
         }
 
@@ -183,22 +183,22 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
     }
 
     @Override
-    public void checkCredentials(char[] credentialsId, char[] password) throws NutsSecurityException {
-        agent.checkCredentials(credentialsId, password);
+    public void checkCredentials(char[] credentialsId, char[] password, NutsSession session) throws NutsSecurityException {
+        agent.checkCredentials(credentialsId, password, session);
     }
 
     @Override
-    public char[] getCredentials(char[] credentialsId) {
-        return agent.getCredentials(credentialsId);
+    public char[] getCredentials(char[] credentialsId, NutsSession session) {
+        return agent.getCredentials(credentialsId, session);
     }
 
     @Override
-    public boolean removeCredentials(char[] credentialsId) {
-        return agent.removeCredentials(credentialsId);
+    public boolean removeCredentials(char[] credentialsId, NutsSession session) {
+        return agent.removeCredentials(credentialsId, session);
     }
 
     @Override
-    public char[] createCredentials(char[] credentials, boolean allowRetreive, char[] credentialId) {
-        return agent.createCredentials(credentials, allowRetreive, credentialId);
+    public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, NutsSession session) {
+        return agent.createCredentials(credentials, allowRetrieve, credentialId, session);
     }
 }

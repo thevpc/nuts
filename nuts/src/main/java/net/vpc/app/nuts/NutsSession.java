@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.time.Instant;
 import java.util.Map;
@@ -522,6 +523,8 @@ public interface NutsSession extends NutsConfigurable {
      * @return current output stream
      */
     PrintStream out();
+
+    InputStream in();
 
     /**
      * current error stream

@@ -189,7 +189,7 @@ public class DerbyService {
         } catch (IOException ex) {
             throw new NutsExecutionException(ws, 1);
         }
-        Path derbyBinHome = ws.config().getStoreLocation(appContext.getAppId(), NutsStoreLocation.APPS).resolve(currentDerbyVersion);
+        Path derbyBinHome = ws.locations().getStoreLocation(appContext.getAppId(), NutsStoreLocation.APPS).resolve(currentDerbyVersion);
         Path derbyLibHome = derbyBinHome.resolve("lib");
         Path derby = download("org.apache.derby:derby#" + currentDerbyVersion, derbyLibHome, false);
         Path derbynet = download("org.apache.derby:derbynet#" + currentDerbyVersion, derbyLibHome, false);

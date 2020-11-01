@@ -71,11 +71,11 @@ public class GroupNonOption extends DefaultNonOption {
                 all.add(c.createCandidate(n).build());
             }
         } else if (repository != null) {
-            for (NutsUser nutsSecurityEntityConfig : repository.security().findUsers()) {
+            for (NutsUser nutsSecurityEntityConfig : repository.security().findUsers(context.getSession())) {
                 all.add(c.createCandidate(nutsSecurityEntityConfig.getUser()).build());
             }
         } else {
-            for (NutsUser nutsSecurityEntityConfig : context.getWorkspace().security().findUsers()) {
+            for (NutsUser nutsSecurityEntityConfig : context.getWorkspace().security().findUsers(context.getSession())) {
                 all.add(c.createCandidate(nutsSecurityEntityConfig.getUser()).build());
             }
         }

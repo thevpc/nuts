@@ -11,7 +11,6 @@ import net.vpc.common.javashell.AutoCompleteCandidate;
 import net.vpc.common.javashell.JShellException;
 import net.vpc.common.javashell.JShellBuiltin;
 import net.vpc.common.strings.StringUtils;
-import org.jline.reader.Candidate;
 
 public class Nsh extends NutsApplication {
 
@@ -29,7 +28,7 @@ public class Nsh extends NutsApplication {
     @Override
     public void run(NutsApplicationContext applicationContext) {
         String[] args = applicationContext.getArguments();
-        applicationContext.getWorkspace().io().term().enableRichTerm();
+        applicationContext.getWorkspace().io().term().enableRichTerm(applicationContext.getSession());
         applicationContext.getWorkspace().io().term().getSystemTerminal()
                 .setAutoCompleteResolver(new NutsCommandAutoCompleteProcessor() {
                     @Override

@@ -85,34 +85,39 @@ public interface NutsIndexStore {
     /**
      * invalidate the artifact from the index
      * @param id id to invalidate
+     * @param session
      * @return {@code this} instance
      */
-    NutsIndexStore invalidate(NutsId id);
+    NutsIndexStore invalidate(NutsId id, NutsSession session);
 
     /**
      * invalidate the artifact from the index and re-index it
      * @param id id to re-index
+     * @param session
      * @return {@code this} instance
      */
-    NutsIndexStore revalidate(NutsId id);
+    NutsIndexStore revalidate(NutsId id, NutsSession session);
 
     /**
      * subscribe the current repository so the indexing
      * is processed.
      * @return {@code this} instance
+     * @param session
      */
-    NutsIndexStore subscribe();
+    NutsIndexStore subscribe(NutsSession session);
 
     /**
      * unsubscribe the current repository so that the indexing
      * is disabled and the index is removed.
      * @return {@code this} instance
+     * @param session
      */
-    NutsIndexStore unsubscribe();
+    NutsIndexStore unsubscribe(NutsSession session);
 
     /**
      * return true if the current repository is registered
      * @return true if the current repository is registered
+     * @param session
      */
-    boolean isSubscribed();
+    boolean isSubscribed(NutsSession session);
 }

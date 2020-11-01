@@ -18,7 +18,7 @@ public class NutsWorkspacePool {
     public NutsWorkspace openWorkspace(String ws) {
         NutsWorkspace o = pool.get(ws);
         if (o == null) {
-            if (app.getApplicationContext().getWorkspace().config().getWorkspaceLocation().toString().equals(ws)) {
+            if (app.getApplicationContext().getWorkspace().locations().getWorkspaceLocation().toString().equals(ws)) {
                 o = app.getApplicationContext().getWorkspace();
             } else {
                 o = Nuts.openWorkspace(Nuts.createOptions()

@@ -42,7 +42,6 @@ import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsSupportLevelContext;
-import net.vpc.app.nuts.NutsWorkspace;
 
 /**
  * Created by vpc on 1/7/17.
@@ -131,7 +130,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
             if (autoComplete == null) {
                 throw new NutsIllegalArgumentException(context.getWorkspace(), "Missing Auto Complete");
             }
-            NutsCommandAutoCompleteComponent best = context.getWorkspace().extensions().createServiceLoader(NutsCommandAutoCompleteComponent.class, NshBuiltin.class, NutsCommandAutoCompleteComponent.class.getClassLoader())
+            NutsCommandAutoCompleteComponent best = context.getWorkspace().extensions().createServiceLoader(NutsCommandAutoCompleteComponent.class, NshBuiltin.class, NutsCommandAutoCompleteComponent.class.getClassLoader(), context.session())
                     .loadBest(AbstractNshBuiltin.this);
             if (best != null) {
                 best.autoComplete(this, context);

@@ -83,7 +83,7 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     boolean isValidWorkspaceFolder();
 
-    NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent);
+    NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent, NutsSession session);
 
     void setExcludedRepositories(String[] excludedRepositories, NutsUpdateOptions options);
 
@@ -93,7 +93,7 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     NutsId createSdkId(String type, String version);
 
-    void onExtensionsPrepared();
+    void onExtensionsPrepared(NutsSession session);
 
     NutsSdkManager sdks();
 

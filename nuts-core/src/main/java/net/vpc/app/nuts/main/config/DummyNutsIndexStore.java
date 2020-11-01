@@ -5,7 +5,6 @@ import net.vpc.app.nuts.runtime.config.AbstractNutsIndexStore;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
 public class DummyNutsIndexStore extends AbstractNutsIndexStore {
 
@@ -36,27 +35,27 @@ public class DummyNutsIndexStore extends AbstractNutsIndexStore {
     }
 
     @Override
-    public NutsIndexStore invalidate(NutsId id) {
+    public NutsIndexStore invalidate(NutsId id, NutsSession session) {
         return this;
     }
 
     @Override
-    public NutsIndexStore revalidate(NutsId id) {
+    public NutsIndexStore revalidate(NutsId id, NutsSession session) {
         return this;
     }
 
     @Override
-    public NutsIndexStore subscribe() {
+    public NutsIndexStore subscribe(NutsSession session) {
         return this;
     }
 
     @Override
-    public NutsIndexStore unsubscribe() {
+    public NutsIndexStore unsubscribe(NutsSession session) {
         return this;
     }
 
     @Override
-    public boolean isSubscribed() {
+    public boolean isSubscribed(NutsSession session) {
         return false;
     }
 }

@@ -28,7 +28,7 @@ public class DefaultTempManager implements NutsTempManager {
     public Path createTempFile(String name, NutsRepository repository) {
         File folder = null;
         if (repository == null) {
-            folder = ws.config().getStoreLocation(NutsStoreLocation.TEMP).toFile();
+            folder = ws.locations().getStoreLocation(NutsStoreLocation.TEMP).toFile();
         } else {
             folder = repository.config().getStoreLocation(NutsStoreLocation.TEMP).toFile();
         }
@@ -67,7 +67,7 @@ public class DefaultTempManager implements NutsTempManager {
     public Path createTempFolder(String name, NutsRepository repository) {
         File folder = null;
         if (repository == null) {
-            folder = ws.config().getStoreLocation(NutsStoreLocation.TEMP).toFile();
+            folder = ws.locations().getStoreLocation(NutsStoreLocation.TEMP).toFile();
         } else {
             folder = repository.config().getStoreLocation(NutsStoreLocation.TEMP).toFile();
         }

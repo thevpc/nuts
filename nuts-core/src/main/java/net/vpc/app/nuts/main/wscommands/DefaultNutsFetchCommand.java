@@ -160,8 +160,8 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(session.getFetchStrategy());
         Path cachePath = null;
         {
-            cachePath = ws.config().getStoreLocation(id, NutsStoreLocation.CACHE)
-                    .resolve(ws.config().getDefaultIdFilename(id.builder().setFace("def.cache").build()));
+            cachePath = ws.locations().getStoreLocation(id, NutsStoreLocation.CACHE)
+                    .resolve(ws.locations().getDefaultIdFilename(id.builder().setFace("def.cache").build()));
             if (Files.isRegularFile(cachePath)) {
                 try {
                     if (CoreIOUtils.isObsoleteInstant(session, Files.getLastModifiedTime(cachePath).toInstant())) {
@@ -271,8 +271,8 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         NutsDependencyTreeNode[] tree = null;
                         Path cachePath = null;
                         {
-                            cachePath = ws.config().getStoreLocation(effectiveId, NutsStoreLocation.CACHE)
-                                    .resolve(ws.config().getDefaultIdFilename(effectiveId
+                            cachePath = ws.locations().getStoreLocation(effectiveId, NutsStoreLocation.CACHE)
+                                    .resolve(ws.locations().getDefaultIdFilename(effectiveId
                                             .builder()
                                             .setFace(Integer.toHexString(cache.keyHashCode()) + ".dep-tree.cache").build()
                                     ));
@@ -311,8 +311,8 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         DefaultNutsDependency[] list = null;
                         Path cachePath = null;
                         {
-                            Path l = ws.config().getStoreLocation(effectiveId, NutsStoreLocation.CACHE);
-                            String nn = ws.config().getDefaultIdFilename(effectiveId
+                            Path l = ws.locations().getStoreLocation(effectiveId, NutsStoreLocation.CACHE);
+                            String nn = ws.locations().getDefaultIdFilename(effectiveId
                                     .builder()
                                     .setFace(Integer.toHexString(dependencyScopeCache.keyHashCode()) + ".dep-list.cache")
                                     .build()
@@ -358,7 +358,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         NutsId id1 = ws.config().createContentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor());
                         Path copyTo = options.getLocation();
                         if (copyTo != null && Files.isDirectory(copyTo)) {
-                            copyTo = copyTo.resolve(ws.config().getDefaultIdFilename(id1));
+                            copyTo = copyTo.resolve(ws.locations().getDefaultIdFilename(id1));
                         }
 //                        boolean escalateMode = false;
                         boolean contentSuccessful = false;
@@ -517,8 +517,8 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         boolean executable = nutsDescriptor.isExecutable();
         boolean nutsApp = nutsDescriptor.isApplication();
         if (jar.getFileName().toString().toLowerCase().endsWith(".jar") && Files.isRegularFile(jar)) {
-            Path cachePath = ws.config().getStoreLocation(nutsDescriptor.getId(), NutsStoreLocation.CACHE)
-                    .resolve(ws.config().getDefaultIdFilename(nutsDescriptor.getId()
+            Path cachePath = ws.locations().getStoreLocation(nutsDescriptor.getId(), NutsStoreLocation.CACHE)
+                    .resolve(ws.locations().getDefaultIdFilename(nutsDescriptor.getId()
                                     .builder()
                                     .setFace("info.cache")
                                     .build()

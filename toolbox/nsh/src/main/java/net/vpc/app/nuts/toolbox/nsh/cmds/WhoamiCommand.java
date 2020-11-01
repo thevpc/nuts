@@ -146,7 +146,7 @@ public class WhoamiCommand extends SimpleNshBuiltin {
                 }
                 List<RepoResult> rr = new ArrayList<>();
                 for (NutsRepository repository : context.getWorkspace().repos().getRepositories(context.getSession())) {
-                    NutsUser ruser = repository.security().getEffectiveUser(login);
+                    NutsUser ruser = repository.security().getEffectiveUser(login, context.getSession());
                     if (ruser != null && (ruser.getGroups().length > 0
                             || ruser.getPermissions().length > 0
                             || !StringUtils.isBlank(ruser.getRemoteIdentity()))) {

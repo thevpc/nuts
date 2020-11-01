@@ -31,6 +31,6 @@
     <orderEntry type="library" name="Maven: org.fusesource.jansi:jansi:1.16" level="project" />
     <orderEntry type="library" name="Maven: org.jline:jline-terminal:3.5.2" level="project" />
     <orderEntry type="module" module-name="vpc-common-ssh" />
-    <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.50" level="project" />
+    <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.55" level="project" />
   </component>
 </module>

@@ -36,7 +36,7 @@ public class Test01_InstallTest {
         TestUtils.setSystemProperties(extraProperties);
         String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
         NutsWorkspace ws = Nuts.openWorkspace("-y","-w="+wsPath,"--standalone","--embedded");
-        TestUtils.println(ws.config().getWorkspaceLocation());
+        TestUtils.println(ws.locations().getWorkspaceLocation());
         TestUtils.println(ws.exec().embedded().addCommand("ls").which());
 
 //        Nuts.runWorkspace(

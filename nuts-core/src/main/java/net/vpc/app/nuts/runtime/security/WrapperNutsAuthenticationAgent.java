@@ -34,12 +34,12 @@ class WrapperNutsAuthenticationAgent {
         return a;
     }
 
-    public boolean removeCredentials(char[] credentialsId) {
-        return getCachedAuthenticationAgent(extractId(credentialsId)).removeCredentials(credentialsId, envProvider.get());
+    public boolean removeCredentials(char[] credentialsId, NutsSession session) {
+        return getCachedAuthenticationAgent(extractId(credentialsId)).removeCredentials(credentialsId, envProvider.get(), session);
     }
 
-    public void checkCredentials(char[] credentialsId, char[] password) {
-        getCachedAuthenticationAgent(extractId(credentialsId)).checkCredentials(credentialsId, password, envProvider.get());
+    public void checkCredentials(char[] credentialsId, char[] password, NutsSession session) {
+        getCachedAuthenticationAgent(extractId(credentialsId)).checkCredentials(credentialsId, password, envProvider.get(), session);
     }
 
     protected String extractId(char[] a) {
@@ -56,15 +56,15 @@ class WrapperNutsAuthenticationAgent {
         return b.substring(0, x);
     }
 
-    public char[] getCredentials(char[] credentialsId) {
-        return getCachedAuthenticationAgent(extractId(credentialsId)).getCredentials(credentialsId, envProvider.get());
+    public char[] getCredentials(char[] credentialsId, NutsSession session) {
+        return getCachedAuthenticationAgent(extractId(credentialsId)).getCredentials(credentialsId, envProvider.get(), session);
     }
 
-    public char[] createCredentials(char[] credentials, boolean allowRetreive, char[] credentialId) {
+    public char[] createCredentials(char[] credentials, boolean allowRetreive, char[] credentialId, NutsSession session) {
         if (credentialId != null) {
-            return getCachedAuthenticationAgent(extractId(credentialId)).createCredentials(credentials, allowRetreive, credentialId, envProvider.get());
+            return getCachedAuthenticationAgent(extractId(credentialId)).createCredentials(credentials, allowRetreive, credentialId, envProvider.get(), session);
         } else {
-            return getCachedAuthenticationAgent("").createCredentials(credentials, allowRetreive, credentialId, envProvider.get());
+            return getCachedAuthenticationAgent("").createCredentials(credentials, allowRetreive, credentialId, envProvider.get(), session);
         }
     }
 }

@@ -56,9 +56,10 @@ public interface NutsAuthenticationAgent extends NutsComponent<String/* as authe
      * @param credentialsId credentialsId
      * @param password password
      * @param envProvider environment provider, nullable
+     * @param session
      * @throws NutsSecurityException when check failed
      */
-    void checkCredentials(char[] credentialsId, char[] password, Map<String,String> envProvider) throws NutsSecurityException;
+    void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider, NutsSession session) throws NutsSecurityException;
 
     /**
      * get the credentials for the given id. The {@code credentialsId}
@@ -67,9 +68,10 @@ public interface NutsAuthenticationAgent extends NutsComponent<String/* as authe
      *
      * @param credentialsId credentials-id
      * @param envProvider environment provider, nullable
+     * @param session
      * @return credentials
      */
-    char[] getCredentials(char[] credentialsId, Map<String,String> envProvider);
+    char[] getCredentials(char[] credentialsId, Map<String, String> envProvider, NutsSession session);
 
     /**
      * remove existing credentials with the given id The {@code credentialsId}
@@ -78,9 +80,10 @@ public interface NutsAuthenticationAgent extends NutsComponent<String/* as authe
      *
      * @param credentialsId credentials-id
      * @param envProvider environment provider, nullable
+     * @param session
      * @return credentials
      */
-    boolean removeCredentials(char[] credentialsId, Map<String,String> envProvider);
+    boolean removeCredentials(char[] credentialsId, Map<String, String> envProvider, NutsSession session);
 
     /**
      * store credentials in the agent's and return the credential id to store
@@ -90,11 +93,12 @@ public interface NutsAuthenticationAgent extends NutsComponent<String/* as authe
      * AuthenticationAgent'd id and ':' character
      *
      * @param credentials credential
-     * @param allowRetrieve when true {@link #getCredentials(char[], Map)}  }
+     * @param allowRetrieve when true {@link #getCredentials(char[], Map, NutsSession)}  }
      * can be invoked over {@code credentialId}
      * @param credentialId preferred credentialId, if null, a new one is created
      * @param envProvider environment provider, nullable
+     * @param session
      * @return credentials-id
      */
-    char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, Map<String,String> envProvider);
+    char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, Map<String, String> envProvider, NutsSession session);
 }

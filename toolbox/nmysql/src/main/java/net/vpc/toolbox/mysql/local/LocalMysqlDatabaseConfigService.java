@@ -102,7 +102,7 @@ public class LocalMysqlDatabaseConfigService {
                 path = path + ".sql.zip";
             }
             String password = getConfig().getPassword();
-            char[] credentials = context.getWorkspace().security().getCredentials(password.toCharArray());
+            char[] credentials = context.getWorkspace().security().getCredentials(password.toCharArray(), context.getSession());
             password=new String(credentials);
             if (path.endsWith(".sql")) {
                 if (context.getSession().isPlainTrace()) {

@@ -328,7 +328,7 @@ public class LocalMysql {
                     someUpdates = true;
                     r.getConfig().setPassword(
                             new String(context.getWorkspace().security().createCredentials(password.toCharArray(), true,
-                                    null))
+                                    null, context.getSession()))
                     );
                 }
                 if (add && dbname == null) {
@@ -342,8 +342,8 @@ public class LocalMysql {
                     r.getConfig().setPassword(
                             new String(context.getWorkspace().security()
                                     .createCredentials(context.getSession().getTerminal().readPassword("Password"), true,
-                                            null
-                                    )
+                                            null,
+                                            context.getSession())
                             )
                     );
                 }

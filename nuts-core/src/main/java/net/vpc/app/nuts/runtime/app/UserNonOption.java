@@ -49,11 +49,11 @@ public class UserNonOption extends DefaultNonOption {
         NutsCommandLineManager c = context.getWorkspace().commandLine();
         NutsRepository repository=context.get(NutsRepository.class);
         if (repository != null) {
-            for (NutsUser nutsSecurityEntityConfig : repository.security().findUsers()) {
+            for (NutsUser nutsSecurityEntityConfig : repository.security().findUsers(context.getSession())) {
                 all.add(c.createCandidate(nutsSecurityEntityConfig.getUser()).build());
             }
         } else {
-            for (NutsUser nutsSecurityEntityConfig : context.getWorkspace().security().findUsers()) {
+            for (NutsUser nutsSecurityEntityConfig : context.getWorkspace().security().findUsers(context.getSession())) {
                 all.add(c.createCandidate(nutsSecurityEntityConfig.getUser()).build());
             }
         }

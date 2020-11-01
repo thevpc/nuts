@@ -23,7 +23,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
     }
 
     @Override
-    public boolean removeCredentials(char[] credentialsId, Map<String,String> envProvider) {
+    public boolean removeCredentials(char[] credentialsId, Map<String, String> envProvider, NutsSession session) {
         extractId(credentialsId);
         return true;
     }
@@ -34,7 +34,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
     }
 
     @Override
-    public void checkCredentials(char[] credentialsId, char[] password, Map<String,String> envProvider) {
+    public void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider, NutsSession session) {
         if (CoreStringUtils.isBlank(password)) {
             throw new NutsSecurityException(ws, "Missing old password");
         }
@@ -65,7 +65,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
     }
 
     @Override
-    public char[] getCredentials(char[] credentialsId, Map<String,String> envProvider) {
+    public char[] getCredentials(char[] credentialsId, Map<String, String> envProvider, NutsSession session) {
         return extractId(credentialsId);
     }
 
@@ -74,8 +74,8 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
             char[] credentials,
             boolean allowRetrieve,
             char[] credentialId,
-            Map<String,String> envProvider
-    ) {
+            Map<String, String> envProvider,
+            NutsSession session) {
         if (CoreStringUtils.isBlank(credentials)) {
             return null;
         } else {

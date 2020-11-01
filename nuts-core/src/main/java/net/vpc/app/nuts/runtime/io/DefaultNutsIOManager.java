@@ -30,41 +30,41 @@ public class DefaultNutsIOManager implements NutsIOManager {
         public String apply(String from) {
             switch (from) {
                 case "home.config":
-                    return ws.config().getHomeLocation(NutsStoreLocation.CONFIG).toString();
+                    return ws.locations().getHomeLocation(NutsStoreLocation.CONFIG).toString();
                 case "home.apps":
-                    return ws.config().getHomeLocation(NutsStoreLocation.APPS).toString();
+                    return ws.locations().getHomeLocation(NutsStoreLocation.APPS).toString();
                 case "home.lib":
-                    return ws.config().getHomeLocation(NutsStoreLocation.LIB).toString();
+                    return ws.locations().getHomeLocation(NutsStoreLocation.LIB).toString();
                 case "home.temp":
-                    return ws.config().getHomeLocation(NutsStoreLocation.TEMP).toString();
+                    return ws.locations().getHomeLocation(NutsStoreLocation.TEMP).toString();
                 case "home.var":
-                    return ws.config().getHomeLocation(NutsStoreLocation.VAR).toString();
+                    return ws.locations().getHomeLocation(NutsStoreLocation.VAR).toString();
                 case "home.cache":
-                    return ws.config().getHomeLocation(NutsStoreLocation.CACHE).toString();
+                    return ws.locations().getHomeLocation(NutsStoreLocation.CACHE).toString();
                 case "home.log":
-                    return ws.config().getHomeLocation(NutsStoreLocation.LOG).toString();
+                    return ws.locations().getHomeLocation(NutsStoreLocation.LOG).toString();
                 case "home.run":
-                    return ws.config().getHomeLocation(NutsStoreLocation.RUN).toString();
+                    return ws.locations().getHomeLocation(NutsStoreLocation.RUN).toString();
                 case "workspace":
-                    return ws.config().getWorkspaceLocation().toString();
+                    return ws.locations().getWorkspaceLocation().toString();
                 case "user.home":
                     return System.getProperty("user.home");
                 case "config":
-                    return ws.config().getStoreLocation(NutsStoreLocation.CONFIG).toString();
+                    return ws.locations().getStoreLocation(NutsStoreLocation.CONFIG).toString();
                 case "lib":
-                    return ws.config().getStoreLocation(NutsStoreLocation.LIB).toString();
+                    return ws.locations().getStoreLocation(NutsStoreLocation.LIB).toString();
                 case "apps":
-                    return ws.config().getStoreLocation(NutsStoreLocation.APPS).toString();
+                    return ws.locations().getStoreLocation(NutsStoreLocation.APPS).toString();
                 case "cache":
-                    return ws.config().getStoreLocation(NutsStoreLocation.CACHE).toString();
+                    return ws.locations().getStoreLocation(NutsStoreLocation.CACHE).toString();
                 case "run":
-                    return ws.config().getStoreLocation(NutsStoreLocation.RUN).toString();
+                    return ws.locations().getStoreLocation(NutsStoreLocation.RUN).toString();
                 case "temp":
-                    return ws.config().getStoreLocation(NutsStoreLocation.TEMP).toString();
+                    return ws.locations().getStoreLocation(NutsStoreLocation.TEMP).toString();
                 case "log":
-                    return ws.config().getStoreLocation(NutsStoreLocation.LOG).toString();
+                    return ws.locations().getStoreLocation(NutsStoreLocation.LOG).toString();
                 case "var":
-                    return ws.config().getStoreLocation(NutsStoreLocation.VAR).toString();
+                    return ws.locations().getStoreLocation(NutsStoreLocation.VAR).toString();
                 case "nuts.boot.version":
                     return ws.getApiVersion();
                 case "nuts.boot.id":
@@ -126,7 +126,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     @Override
     public String expandPath(String path) {
-        return expandPath(path, ws.config().getWorkspaceLocation().toString());
+        return expandPath(path, ws.locations().getWorkspaceLocation().toString());
     }
 
     @Override
@@ -142,10 +142,10 @@ public class DefaultNutsIOManager implements NutsIOManager {
 //            }
             if (path.startsWith("~")) {
                 if (path.equals("~~")) {
-                    Path nutsHome = ws.config().getHomeLocation(NutsStoreLocation.CONFIG);
+                    Path nutsHome = ws.locations().getHomeLocation(NutsStoreLocation.CONFIG);
                     return nutsHome.normalize().toString();
                 } else if (path.startsWith("~~") && path.length() > 2 && (path.charAt(2) == '/' || path.charAt(2) == '\\')) {
-                    Path nutsHome = ws.config().getHomeLocation(NutsStoreLocation.CONFIG);
+                    Path nutsHome = ws.locations().getHomeLocation(NutsStoreLocation.CONFIG);
                     return nutsHome.resolve(path.substring(3)).normalize().toString();
                 } else if (path.equals("~")) {
                     return (System.getProperty("user.home"));

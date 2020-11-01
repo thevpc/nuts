@@ -280,13 +280,13 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
 
         props.put("nuts-runtime-path", stringValue(CoreStringUtils.join(";", runtimeClassPath)));
         props.put("nuts-workspace-id", stringValue(rt.getUuid()));
-        props.put("nuts-store-layout", stringValue(rt.getStoreLocationLayout()));
-        props.put("nuts-store-strategy", stringValue(rt.getStoreLocationStrategy()));
-        props.put("nuts-repo-store-strategy", stringValue(rt.getRepositoryStoreLocationStrategy()));
+        props.put("nuts-store-layout", stringValue(ws.locations().getStoreLocationLayout()));
+        props.put("nuts-store-strategy", stringValue(ws.locations().getStoreLocationStrategy()));
+        props.put("nuts-repo-store-strategy", stringValue(ws.locations().getRepositoryStoreLocationStrategy()));
         props.put("nuts-global", options.isGlobal());
-        props.put("nuts-workspace", stringValue(rt.getWorkspaceLocation().toString()));
+        props.put("nuts-workspace", stringValue(ws.locations().getWorkspaceLocation().toString()));
         for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
-            props.put("nuts-workspace-" + folderType.id(), stringValue(rt.getStoreLocation(folderType).toString()));
+            props.put("nuts-workspace-" + folderType.id(), stringValue(ws.locations().getStoreLocation(folderType).toString()));
         }
         props.put("nuts-open-mode", stringValue(options.getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
         props.put("nuts-secure", (ws.security().isSecure()));
@@ -347,7 +347,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put(key(prefix, "speed"), (repo.config().getSpeed()));
         props.put(key(prefix, "enabled"), (repo.config().isEnabled()));
         props.put(key(prefix, "index-enabled"), (repo.config().isIndexEnabled()));
-        props.put(key(prefix, "index-subscribed"), (repo.config().isIndexSubscribed()));
+        props.put(key(prefix, "index-subscribed"), (repo.config().isIndexSubscribed(getSession())));
         props.put(key(prefix, "location"), repo.config().getLocation(false));
         if (repo.config().getLocation(false) != null) {
             props.put(key(prefix, "location-expanded"), repo.config().getLocation(true));

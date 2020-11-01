@@ -525,7 +525,7 @@ public class CoreIOUtils {
         }
         NutsWorkspace ws = session.getWorkspace();
         if (localPath != null) {
-            List<NutsDescriptorContentParserComponent> allParsers = ws.extensions().createAllSupported(NutsDescriptorContentParserComponent.class,  null);
+            List<NutsDescriptorContentParserComponent> allParsers = ws.extensions().createAllSupported(NutsDescriptorContentParserComponent.class,  null, session);
             if (allParsers.size() > 0) {
                 String fileExtension = CoreIOUtils.getFileExtension(localPath.getName());
                 NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(session, localPath, fileExtension, null, parseOptions);
@@ -1211,9 +1211,9 @@ public class CoreIOUtils {
 
 
 
-    public static NutsTransportConnection getHttpClientFacade(NutsWorkspace ws, String url) {
+    public static NutsTransportConnection getHttpClientFacade(NutsSession session, String url) {
         //        System.out.println("getHttpClientFacade "+url);
-        NutsTransportComponent best = ws.extensions().createSupported(NutsTransportComponent.class, url);
+        NutsTransportComponent best = session.getWorkspace().extensions().createSupported(NutsTransportComponent.class, url, session);
         if (best == null) {
             best = DefaultHttpTransportComponent.INSTANCE;
         }
@@ -1508,7 +1508,7 @@ public class CoreIOUtils {
     }
 
     public static NutsInput getCachedUrlWithSHA1(NutsWorkspace ws, String path, String sourceTypeName, NutsSession session) {
-        final Path cacheBasePath = ws.config().getStoreLocation(ws.getRuntimeId(), NutsStoreLocation.CACHE);
+        final Path cacheBasePath = ws.locations().getStoreLocation(ws.getRuntimeId(), NutsStoreLocation.CACHE);
         final Path urlContent = cacheBasePath.resolve("urls-content");
         ByteArrayOutputStream t = new ByteArrayOutputStream();
         ws.io().copy()
@@ -1533,7 +1533,7 @@ public class CoreIOUtils {
             final OutputStream p = Files.newOutputStream(outPath);
             NutsURLHeader header = null;
             long size = -1;
-            NutsTransportConnection f = CoreIOUtils.getHttpClientFacade(ws, path);
+            NutsTransportConnection f = CoreIOUtils.getHttpClientFacade(session, path);
             try {
 
                 header = f.getURLHeader();
@@ -1567,7 +1567,7 @@ public class CoreIOUtils {
         final String k = PersistentMap.class.getName() + ":getCachedUrls";
         PersistentMap<String, String> m = (PersistentMap<String, String>) ws.userProperties().get(k);
         if (m == null) {
-            m = new DefaultPersistentMap<String, String>(String.class, String.class, ws.config().getStoreLocation(
+            m = new DefaultPersistentMap<String, String>(String.class, String.class, ws.locations().getStoreLocation(
                     ws.getRuntimeId(),
                     NutsStoreLocation.CACHE
             ).resolve("urls-db").toFile());

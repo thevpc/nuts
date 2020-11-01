@@ -75,7 +75,7 @@ public class NutsWorkspaceUtils {
 
     public void checkReadOnly() {
         if (ws.config().isReadOnly()) {
-            throw new NutsReadOnlyException(ws, ws.config().getWorkspaceLocation().toString());
+            throw new NutsReadOnlyException(ws, ws.locations().getWorkspaceLocation().toString());
         }
     }
 
@@ -536,7 +536,7 @@ public class NutsWorkspaceUtils {
         if (map.containsKey("nuts.jar")) {
             map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
         }
-        map.put("nuts.workspace", workspace.config().getWorkspaceLocation().toString());
+        map.put("nuts.workspace", workspace.locations().getWorkspaceLocation().toString());
         map.put("nuts.version", id.getVersion().getValue());
         map.put("nuts.name", id.getArtifactId());
         map.put("nuts.group", id.getGroupId());
@@ -601,15 +601,15 @@ public class NutsWorkspaceUtils {
         }
         args = args2.toArray(new String[0]);
 
-        Path path = workspace.config().getWorkspaceLocation().resolve(args[0]).normalize();
+        Path path = workspace.locations().getWorkspaceLocation().resolve(args[0]).normalize();
         if (Files.exists(path)) {
             CoreIOUtils.setExecutable(path);
         }
         Path pdirectory = null;
         if (CoreStringUtils.isBlank(directory)) {
-            pdirectory = workspace.config().getWorkspaceLocation();
+            pdirectory = workspace.locations().getWorkspaceLocation();
         } else {
-            pdirectory = workspace.config().getWorkspaceLocation().resolve(directory);
+            pdirectory = workspace.locations().getWorkspaceLocation().resolve(directory);
         }
         return execAndWait(args, envmap, pdirectory, prepareSession.getTerminal(), execSession.getTerminal(), showCommand, failFast);
     }

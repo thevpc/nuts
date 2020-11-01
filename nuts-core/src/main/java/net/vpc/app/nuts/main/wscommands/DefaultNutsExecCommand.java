@@ -4,7 +4,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.runtime.config.DefaultNutsArtifactCall;
 import net.vpc.app.nuts.runtime.config.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.runtime.DefaultNutsExecutionContext;
-import net.vpc.app.nuts.runtime.DefaultNutsSupportLevelContext;
 import net.vpc.app.nuts.main.commands.*;
 import net.vpc.app.nuts.main.executors.CustomNutsExecutorComponent;
 import net.vpc.app.nuts.main.DefaultNutsWorkspace;
@@ -150,7 +149,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     }
 
     private NutsExecutorComponent resolveNutsExecutorComponent(NutsId nutsId) {
-        for (NutsExecutorComponent nutsExecutorComponent : ws.extensions().createAll(NutsExecutorComponent.class)) {
+        for (NutsExecutorComponent nutsExecutorComponent : ws.extensions().createAll(NutsExecutorComponent.class, session)) {
             if (nutsExecutorComponent.getId().equalsShortName(nutsId)
                     || nutsExecutorComponent.getId().getArtifactId().equals(nutsId.toString())
                     || nutsExecutorComponent.getId().toString().equals("net.vpc.app.nuts.exec:exec-" + nutsId.toString())) {
@@ -161,7 +160,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     }
 
     private NutsExecutorComponent resolveNutsExecutorComponent(NutsDefinition nutsDefinition) {
-        NutsExecutorComponent executorComponent = ws.extensions().createSupported(NutsExecutorComponent.class, nutsDefinition);
+        NutsExecutorComponent executorComponent = ws.extensions().createSupported(NutsExecutorComponent.class, nutsDefinition, session);
         if (executorComponent != null) {
             return executorComponent;
         }

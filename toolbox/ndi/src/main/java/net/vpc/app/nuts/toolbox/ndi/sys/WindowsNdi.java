@@ -67,7 +67,7 @@ public class WindowsNdi extends BaseSystemNdi {
     public String configurePathShortcut(Target target, boolean latestVersion, NutsSession session) throws IOException {
         NutsWorkspace ws = context.getWorkspace();
         NutsWorkspaceConfigManager wsconfig = ws.config();
-        Path apiConfigFolder = wsconfig.getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
+        Path apiConfigFolder = ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
         Path startNutsFile = apiConfigFolder.resolve(getExecFileName("start-nuts"));
         ShellLink sl = ShellLink.createLink(startNutsFile.toString())
                 .setWorkingDir(System.getProperty("user.home"))
@@ -117,7 +117,7 @@ public class WindowsNdi extends BaseSystemNdi {
         //Path ndiConfigFolder = context.getConfigFolder();
         NutsWorkspace ws = context.getWorkspace();
         NutsWorkspaceConfigManager wsconfig = ws.config();
-        Path apiConfigFolder = wsconfig.getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
+        Path apiConfigFolder = ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
         Path startNutsFile = apiConfigFolder.resolve(getExecFileName("start-nuts"));
         Path apiConfigFile = apiConfigFolder.resolve(getExecFileName(".nuts-batrc"));
         Path ndiConfigFile = ndiAppsFolder.resolve(getExecFileName(".ndi-batrc"));
@@ -139,7 +139,7 @@ public class WindowsNdi extends BaseSystemNdi {
                 .setSession(context.getSession().copy().setSilent())
                 .addId(ws.getApiId()).getResultPaths().required() +
                 "\"" + CRLF +
-                "SET \"NUTS_WORKSPACE=" + wsconfig.getWorkspaceLocation().toString() + "\"" + CRLF +
+                "SET \"NUTS_WORKSPACE=" + ws.locations().getWorkspaceLocation().toString() + "\"" + CRLF +
                 "SET \"PATH=" + ndiAppsFolder + ";%PATH%\"" + CRLF;
         if (saveFile(ndiConfigFile, goodNdiRc, session.isYes())) {
             updatedNames.add(ndiConfigFile.getFileName().toString());
@@ -159,7 +159,7 @@ public class WindowsNdi extends BaseSystemNdi {
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating ==%s== to point to workspace ==%s==%n",
                         String.join(", ", updatedNames)
-                        , wsconfig.getWorkspaceLocation());
+                        , ws.locations().getWorkspaceLocation());
             }
             String desktopGlobalShortcutPath = configurePathShortcut(Target.DESKTOP, true, session);
             String desktopSpecificVersionShortcutPath = configurePathShortcut(Target.DESKTOP, false, session);

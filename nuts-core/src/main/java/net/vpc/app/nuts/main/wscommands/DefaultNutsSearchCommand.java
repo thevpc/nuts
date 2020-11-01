@@ -281,7 +281,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
     @Override
     public NutsResultList<Path> getResultStoreLocations(NutsStoreLocation location) {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionsBase(false, false, false, false).iterator())
-                .map(x -> ws.config().getStoreLocation(x.getId(), location))
+                .map(x -> ws.locations().getStoreLocation(x.getId(), location))
                 .notNull());
     }
 

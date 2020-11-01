@@ -52,7 +52,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                     break;
                 case "content":
                     contentFile = context.getWorkspace().io().tmp().createTempFile(
-                            context.getWorkspace().config().getDefaultIdFilename(
+                            context.getWorkspace().locations().getDefaultIdFilename(
                                     descriptor.getId().builder().setFaceDescriptor().build()
                             )
                     );

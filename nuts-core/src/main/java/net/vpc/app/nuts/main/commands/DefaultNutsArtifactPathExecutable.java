@@ -161,7 +161,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         URLBuilder ub = new URLBuilder(c.baseFile.getURL().toString());
                         try {
                             c.contentFile = toPathInputSource(
-                                    ws.io().input().of(ub.resolveSibling(ws.config().getDefaultIdFilename(c.descriptor.getId())).toURL()),
+                                    ws.io().input().of(ub.resolveSibling(ws.locations().getDefaultIdFilename(c.descriptor.getId())).toURL()),
                                     c.temps, ws);
                         } catch (Exception ex) {
 
@@ -183,7 +183,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                                     URLBuilder ub = new URLBuilder(c.baseFile.getURL().toString());
                                     try {
                                         c.contentFile = toPathInputSource(
-                                                ws.io().input().of(ub.resolveSibling(ws.config().getDefaultIdFilename(c.descriptor.getId())).toURL()),
+                                                ws.io().input().of(ub.resolveSibling(ws.locations().getDefaultIdFilename(c.descriptor.getId())).toURL()),
                                                 c.temps, ws);
                                     } catch (Exception ex) {
 

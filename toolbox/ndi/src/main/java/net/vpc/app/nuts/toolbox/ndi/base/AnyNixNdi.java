@@ -45,7 +45,7 @@ public class AnyNixNdi extends BaseSystemNdi {
     public boolean configureBashrc(NutsSession session) throws IOException {
         NutsWorkspace ws = context.getWorkspace();
         NutsWorkspaceConfigManager wsconfig = ws.config();
-        Path apiAppsFolder = wsconfig.getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
+        Path apiAppsFolder = ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
         Path apiConfigFile = apiAppsFolder.resolve(getExecFileName(".nuts-bashrc"));
 
         boolean force = session.isYes();
@@ -65,7 +65,7 @@ public class AnyNixNdi extends BaseSystemNdi {
         Path ndiAppsFolder = context.getAppsFolder();
         final NutsWorkspace ws = context.getWorkspace();
         NutsWorkspaceConfigManager wsconfig = ws.config();
-        Path apiAppsFolder = wsconfig.getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
+        Path apiAppsFolder = ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
         Path apiConfigFile = apiAppsFolder.resolve(getExecFileName(".nuts-bashrc"));
         Path ndiConfigFile = ndiAppsFolder.resolve(getExecFileName(".ndi-bashrc"));
         List<String> updatedNames = new ArrayList<>();
@@ -93,7 +93,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                 .setSession(context.getSession().copy().setSilent())
                 .addId(ws.getApiId()).getResultPaths().required() +
                 "'\n" +
-                "NUTS_WORKSPACE='" + wsconfig.getWorkspaceLocation().toString() + "'\n" +
+                "NUTS_WORKSPACE='" + ws.locations().getWorkspaceLocation().toString() + "'\n" +
                 //this test will be removed because if the path is define in later position, it wont be applied! So rather
                 //put it twice than having this trouble to manage.
                 //"[[ \":$PATH:\" != *\":" + ndiAppsFolder + ":\"* ]] && PATH=\"" + ndiAppsFolder + ":${PATH}\"\n" +
@@ -108,7 +108,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating ==%s== to point to workspace ==%s==%n",
                             String.join(", ", updatedNames)
-                            , wsconfig.getWorkspaceLocation());
+                            , ws.locations().getWorkspaceLocation());
                 }
                 context.getSession().getTerminal().ask()
                         .forBoolean(

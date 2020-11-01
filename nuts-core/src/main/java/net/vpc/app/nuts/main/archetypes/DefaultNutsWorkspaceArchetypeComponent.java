@@ -59,7 +59,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         ws.repos().addRepository(NutsConstants.Names.DEFAULT_REPOSITORY_NAME,session);
         LinkedHashSet<String> br = new LinkedHashSet<>(rm.resolveBootRepositories());
         LinkedHashMap<String, NutsRepositoryDefinition> def = new LinkedHashMap<>();
-        for (NutsRepositoryDefinition d : rm.getDefaultRepositories()) {
+        for (NutsRepositoryDefinition d : rm.getDefaultRepositories(session)) {
             def.put(ws.io().expandPath(d.getLocation(),null), d);
         }
         for (String s : br) {

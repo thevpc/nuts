@@ -16,7 +16,7 @@
     <orderEntry type="module" module-name="nuts" />
     <orderEntry type="module" module-name="vpc-common-io" />
     <orderEntry type="module" module-name="vpc-common-ssh" />
-    <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.50" level="project" />
+    <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.55" level="project" />
     <orderEntry type="module" module-name="vpc-common-strings" />
     <orderEntry type="module" module-name="vpc-common-xfile" />
     <orderEntry type="module" module-name="vpc-common-mvn" />

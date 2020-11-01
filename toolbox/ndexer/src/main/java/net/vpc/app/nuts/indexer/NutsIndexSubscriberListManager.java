@@ -38,7 +38,7 @@ public class NutsIndexSubscriberListManager {
 
     private Path getConfigFile() {
         return this.defaultWorkspace
-                .config()
+                .locations()
                 .getStoreLocation(
                         this.defaultWorkspace
                                 .id().resolveId(NutsIndexSubscriberListManager.class),

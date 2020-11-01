@@ -65,22 +65,23 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     private NutsURLClassLoader workspaceExtensionsClassLoader;
     private Map<NutsURLClassLoaderKey, NutsURLClassLoader> cachedClassLoaders = new HashMap<>();
     private Map<NutsId, NutsWorkspaceExtension> extensions = new HashMap<>();
-    private Set<NutsId> loadedExtensions = new HashSet<>();
-    private Set<NutsId> unloadedExtensions = new HashSet<>();
+    private Set<NutsId> loadedExtensionIds = new LinkedHashSet<>();
+    private Set<URL> loadedExtensionURLs = new LinkedHashSet<>();
+    private Set<NutsId> unloadedExtensions = new LinkedHashSet<>();
 
     public DefaultNutsWorkspaceExtensionManager(NutsWorkspace ws, NutsBootWorkspaceFactory bootFactory, String[] excludedExtensions) {
         this.ws = ws;
         LOG = ws.log().of(DefaultNutsWorkspaceExtensionManager.class);
         this.objectFactory = new DefaultNutsWorkspaceFactory(ws);
         this.bootFactory = bootFactory;
-        setExcludedExtensions(excludedExtensions);
+        setExcludedExtensions(excludedExtensions, ws.createSession());
     }
 
     public boolean isExcludedExtension(NutsId excluded) {
         return this.exclusions.contains(excluded.getShortName());
     }
 
-    public void setExcludedExtensions(String[] excluded) {
+    public void setExcludedExtensions(String[] excluded, NutsSession session) {
         this.exclusions.clear();
         if (excluded != null) {
             for (String e : CoreStringUtils.split(Arrays.asList(excluded), ",; ")) {
@@ -146,9 +147,9 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return ret;
     }
 
-    public List<RegInfo> buildRegInfos() {
+    public List<RegInfo> buildRegInfos(NutsSession session) {
         List<RegInfo> a = new ArrayList<>();
-        List<Class> loadedExtensions = getImplementationTypes(NutsComponent.class);
+        List<Class> loadedExtensions = getImplementationTypes(NutsComponent.class, session);
         for (Class extensionImpl : loadedExtensions) {
             for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
                 a.add(new RegInfo(extensionPointType, extensionImpl));
@@ -157,29 +158,29 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return a;
     }
 
-    public void onInitializeWorkspace(ClassLoader bootClassLoader) {
+    public void onInitializeWorkspace(ClassLoader bootClassLoader, NutsSession session) {
         //now will iterate over Extension classes to wire them ...
-        discoverTypes(bootClassLoader);
+        discoverTypes(bootClassLoader, session);
         this.workspaceExtensionsClassLoader = new NutsURLClassLoader(ws, new URL[0], new NutsId[0], bootClassLoader);
     }
 
-    public void registerType(RegInfo regInfo) {
-        if (registerType(regInfo.extensionPointType, regInfo.extensionTypeImpl)) {
+    public void registerType(RegInfo regInfo, NutsSession session) {
+        if (registerType(regInfo.extensionPointType, regInfo.extensionTypeImpl, session)) {
             defaultWiredComponents.add(regInfo.extensionPointType.getName(), ((Class<? extends NutsComponent>) regInfo.extensionTypeImpl).getName());
         }
     }
 
-    public void registerTypes(List<RegInfo> all) {
+    public void registerTypes(List<RegInfo> all, NutsSession session) {
         for (RegInfo regInfo : all) {
-            registerType(regInfo);
+            registerType(regInfo, session);
         }
     }
 
     @Override
-    public boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl) {
+    public boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl, NutsSession session) {
         if (NutsComponent.class.isAssignableFrom(extensionPointType)) {
             if (extensionPointType.isInstance(extensionImpl)) {
-                return registerInstance(extensionPointType, extensionImpl);
+                return registerInstance(extensionPointType, extensionImpl, session);
             }
             throw new ClassCastException(extensionImpl.getClass().getName());
         }
@@ -214,36 +215,36 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 //    }
 
     @Override
-    public List<Class> discoverTypes(ClassLoader classLoader) {
+    public List<Class> discoverTypes(ClassLoader classLoader, NutsSession session) {
         return objectFactory.discoverTypes(classLoader);
     }
 
     @Override
-    public List<Class> getImplementationTypes(Class type) {
+    public List<Class> getImplementationTypes(Class type, NutsSession session) {
         return objectFactory.getImplementationTypes(type);
     }
 
     @Override
-    public <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType) {
+    public <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, NutsSession session) {
         return createServiceLoader(serviceType, criteriaType, null);
     }
 
     @Override
-    public <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
+    public <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader, NutsSession session) {
         return new DefaultNutsServiceLoader<T, B>(ws, serviceType, criteriaType, classLoader);
     }
 
-    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria) {
+    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, NutsSession session) {
         return objectFactory.createSupported(type, supportCriteria);
     }
 
     @Override
-    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters) {
+    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters, NutsSession session) {
         return objectFactory.createSupported(type, supportCriteria, constructorParameterTypes, constructorParameters);
     }
 
     @Override
-    public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria) {
+    public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria, NutsSession session) {
         return objectFactory.createAllSupported(type, supportCriteria);
     }
 //    public List<Class> resolveComponentTypesOld(Class o) {
@@ -259,38 +260,38 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 //    }
 
     @Override
-    public <T> List<T> createAll(Class<T> type) {
+    public <T> List<T> createAll(Class<T> type, NutsSession session) {
         return objectFactory.createAll(type);
     }
 
     @Override
-    public Set<Class> getExtensionPoints() {
+    public Set<Class> getExtensionPoints(NutsSession session) {
         return objectFactory.getExtensionPoints();
     }
 
     @Override
-    public Set<Class> getExtensionTypes(Class extensionPoint) {
+    public Set<Class> getExtensionTypes(Class extensionPoint, NutsSession session) {
         return objectFactory.getExtensionTypes(extensionPoint);
     }
 
     @Override
-    public List<Object> getExtensionObjects(Class extensionPoint) {
+    public List<Object> getExtensionObjects(Class extensionPoint, NutsSession session) {
         return objectFactory.getExtensionObjects(extensionPoint);
     }
 
     @Override
-    public boolean isRegisteredType(Class extensionPointType, String name) {
+    public boolean isRegisteredType(Class extensionPointType, String name, NutsSession session) {
         return objectFactory.isRegisteredType(extensionPointType, name);
     }
 
     @Override
-    public boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl) {
+    public boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl, NutsSession session) {
         return objectFactory.isRegisteredInstance(extensionPointType, extensionImpl);
     }
 
     @Override
-    public boolean registerInstance(Class extensionPointType, Object extensionImpl) {
-        if (!isRegisteredType(extensionPointType, extensionImpl.getClass().getName()) && !isRegisteredInstance(extensionPointType, extensionImpl)) {
+    public boolean registerInstance(Class extensionPointType, Object extensionImpl, NutsSession session) {
+        if (!isRegisteredType(extensionPointType, extensionImpl.getClass().getName(), session) && !isRegisteredInstance(extensionPointType, extensionImpl, session)) {
             objectFactory.registerInstance(extensionPointType, extensionImpl);
             return true;
         }
@@ -299,8 +300,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     }
 
     @Override
-    public boolean registerType(Class extensionPointType, Class extensionType) {
-        if (!isRegisteredType(extensionPointType, extensionType.getName()) && !isRegisteredType(extensionPointType, extensionType)) {
+    public boolean registerType(Class extensionPointType, Class extensionType, NutsSession session) {
+        if (!isRegisteredType(extensionPointType, extensionType.getName(), session) && !isRegisteredType(extensionPointType, extensionType, session)) {
             objectFactory.registerType(extensionPointType, extensionType);
             return true;
         }
@@ -309,67 +310,116 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     }
 
     @Override
-    public boolean isRegisteredType(Class extensionPointType, Class extensionType) {
+    public boolean isRegisteredType(Class extensionPointType, Class extensionType, NutsSession session) {
         return objectFactory.isRegisteredType(extensionPointType, extensionType);
     }
 
     @Override
-    public boolean isLoadedExtensions(NutsId id) {
-        return loadedExtensions.stream().anyMatch(
+    public boolean isLoadedExtensions(NutsId id, NutsSession session) {
+        return loadedExtensionIds.stream().anyMatch(
                 x -> x.getShortName().equals(id.getShortName())
         );
     }
 
     @Override
-    public List<NutsId> getLoadedExtensions() {
-        return new ArrayList<>(loadedExtensions);
+    public List<NutsId> getLoadedExtensions(NutsSession session) {
+        return new ArrayList<>(loadedExtensionIds);
     }
 
     @Override
-    public NutsWorkspaceExtensionManager loadExtension(NutsId extension) {
-        if (extension != null) {
-            extension=extension.builder().setVersion("").build();
-            if (loadedExtensions.contains(extension)) {
-                //
-            } else if (unloadedExtensions.contains(extension)) {
-                //reload
-                loadedExtensions.add(extension);
-            } else {
-                //load extension
-                NutsDefinition def = ws.search().addId(extension).setTargetApiVersion(ws.getApiVersion())
-                        .setDependencies(true)
-                        .setLatest(true)
-                        .getResultDefinitions().required();
-                ws.install().id(def.getId());
-                workspaceExtensionsClassLoader.addId(def.getId().getLongNameId());
-                workspaceExtensionsClassLoader.addPath(def.getContent().getPath());
-                for (NutsDependency dependency : def.getDependencies()) {
-                    workspaceExtensionsClassLoader.addId(dependency.getId().getLongNameId());
-                    workspaceExtensionsClassLoader.addPath(ws.fetch().setId(dependency.getId()).getResultContent().getPath());
-                }
-                //should check current classpath
-                //and the add to classpath
-                loadedExtensions.add(extension);
-            }
-        }
+    public NutsWorkspaceExtensionManager loadExtension(NutsId extension, NutsSession session) {
+        return loadExtensions(session,extension);
+    }
+
+    @Override
+    public NutsWorkspaceExtensionManager unloadExtension(NutsId extension, NutsSession session) {
+        unloadExtensions(new NutsId[]{extension},session);
         return this;
     }
 
     @Override
-    public NutsWorkspaceExtensionManager unloadExtension(NutsId extension) {
-        if (extension != null) {
-            unloadedExtensions.add(extension);
-        }
-        return this;
-    }
-
-    @Override
-    public List<NutsId> getConfigExtensions() {
+    public List<NutsId> getConfigExtensions(NutsSession session) {
         if (getStoredConfig().getExtensions() != null) {
             return Collections.unmodifiableList(new ArrayList<>(getStoredConfig().getExtensions())
                     .stream().map(NutsWorkspaceConfigBoot.ExtensionConfig::getId).collect(Collectors.toList()));
         }
         return Collections.emptyList();
+    }
+
+    public NutsWorkspaceExtensionManager loadExtensions(NutsSession session,NutsId... extensions) {
+        boolean someUpdates = false;
+        for (NutsId extension : extensions) {
+            if (extension != null) {
+                extension = extension.builder().setVersion("").build();
+                if (loadedExtensionIds.contains(extension)) {
+                    //
+                } else if (unloadedExtensions.contains(extension)) {
+                    //reload
+                    loadedExtensionIds.add(extension);
+                    someUpdates = true;
+                } else {
+                    //load extension
+                    NutsDefinition def = ws.search().addId(extension).setTargetApiVersion(ws.getApiVersion())
+                            .setDependencies(true)
+                            .setDependencyFilter(ws.dependency().filter().byScope(NutsDependencyScopePattern.RUN))
+                            .setLatest(true)
+                            .getResultDefinitions().required();
+                    if (def.getType() != NutsIdType.EXTENSION) {
+                        throw new NutsIllegalArgumentException(ws, "Not an extension: " + extension);
+                    }
+                    ws.install().id(def.getId());
+                    workspaceExtensionsClassLoader.addId(def.getId().getLongNameId());
+                    workspaceExtensionsClassLoader.addPath(def.getContent().getPath());
+                    for (NutsDependency dependency : def.getDependencies()) {
+                        workspaceExtensionsClassLoader.addId(dependency.getId().getLongNameId());
+                        workspaceExtensionsClassLoader.addPath(ws.fetch().setId(dependency.getId()).getResultContent().getPath());
+                    }
+                    //should check current classpath
+                    //and the add to classpath
+                    loadedExtensionIds.add(extension);
+                    if(session.isPlainTrace()){
+                        session.out().printf("extensions %s loaded\n",new NutsString(ws.id().formatter(def.getId()).format()));
+                    }
+                    someUpdates=true;
+                }
+            }
+        }
+        if(someUpdates) {
+            updateLoadedExtensionURLs();
+        }
+        return this;
+    }
+
+    private void updateLoadedExtensionURLs() {
+        loadedExtensionURLs.clear();
+        for (NutsDefinition def : ws.search().addIds(loadedExtensionIds.toArray(new NutsId[0])).setTargetApiVersion(ws.getApiVersion())
+                .setDependencies(true)
+                .setDependencyFilter(ws.dependency().filter().byScope(NutsDependencyScopePattern.RUN))
+                .setLatest(true)
+                .getResultDefinitions().list()) {
+            loadedExtensionURLs.add(def.getContent().getURL());
+        }
+    }
+
+    public NutsWorkspaceExtensionManager unloadExtensions(NutsId[] extensions,NutsSession session) {
+        boolean someUpdates = false;
+        for (NutsId extension : extensions) {
+            NutsId u = loadedExtensionIds.stream().filter(
+                    x -> x.getShortName().equals(extension.getShortName())
+            ).findFirst().orElse(null);
+            if (u != null) {
+                if(session.isPlainTrace()){
+                    session.out().printf("extensions %s unloaded\n",new NutsString(ws.id().formatter(u).format()));
+                }
+                loadedExtensionIds.remove(u);
+                unloadedExtensions.add(u);
+                someUpdates = true;
+            }
+        }
+        if (someUpdates) {
+            updateLoadedExtensionURLs();
+        }
+        return this;
     }
 
     //    @Override
@@ -414,11 +464,11 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         }
         DefaultNutsWorkspaceExtension workspaceExtension = new DefaultNutsWorkspaceExtension(id, toWire, this.workspaceExtensionsClassLoader);
         //now will iterate over Extension classes to wire them ...
-        discoverTypes(workspaceExtension.getClassLoader());
-        List<Class> serviceLoader = getImplementationTypes(NutsComponent.class);
+        discoverTypes(workspaceExtension.getClassLoader(), session);
+        List<Class> serviceLoader = getImplementationTypes(NutsComponent.class, session);
         for (Class extensionImpl : serviceLoader) {
             for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
-                if (registerType(extensionPointType, extensionImpl)) {
+                if (registerType(extensionPointType, extensionImpl, session)) {
                     workspaceExtension.getWiredComponents().add(extensionPointType.getName(), ((Class<? extends NutsComponent>) extensionImpl).getName());
                 }
             }
@@ -505,10 +555,10 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return a;
     }
 
-    public boolean installExtensionComponentType(Class extensionPointType, Class extensionImplType) {
+    public boolean installExtensionComponentType(Class extensionPointType, Class extensionImplType, NutsSession session) {
         if (NutsComponent.class.isAssignableFrom(extensionPointType)) {
             if (extensionPointType.isAssignableFrom(extensionImplType)) {
-                return registerType(extensionPointType, extensionImplType);
+                return registerType(extensionPointType, extensionImplType, session);
             }
             throw new ClassCastException(extensionImplType.getName());
         }
@@ -516,7 +566,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     }
 
     public NutsSessionTerminal createTerminal(NutsTerminalSpec spec) {
-        NutsSessionTerminalBase termb = createSupported(NutsSessionTerminalBase.class, spec);
+        NutsSessionTerminalBase termb = createSupported(NutsSessionTerminalBase.class, spec, spec.getSession());
         if (termb == null) {
             throw new NutsExtensionNotFoundException(ws, NutsSessionTerminalBase.class, "TerminalBase");
         }

@@ -26,7 +26,7 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
 
     @Override
     public NutsWorkspaceConfigApi parseApiConfig() {
-        Path path = getWorkspace().config().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.CONFIG)
+        Path path = getWorkspace().locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.CONFIG)
                 .resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NutsWorkspaceConfigApi c = bytes==null?null:getWorkspace().formats().json().parse(bytes, NutsWorkspaceConfigApi.class);
@@ -38,7 +38,7 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
 
     @Override
     public NutsWorkspaceConfigRuntime parseRuntimeConfig() {
-        Path path = getWorkspace().config().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.CONFIG)
+        Path path = getWorkspace().locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.CONFIG)
                 .resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NutsWorkspaceConfigRuntime c = bytes==null?null:getWorkspace().formats().json().parse(bytes, NutsWorkspaceConfigRuntime.class);
@@ -50,7 +50,7 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
 
     @Override
     public NutsWorkspaceConfigSecurity parseSecurityConfig() {
-        Path path = getWorkspace().config().getStoreLocation(getWorkspace().getApiId()
+        Path path = getWorkspace().locations().getStoreLocation(getWorkspace().getApiId()
                 .builder().setVersion(NutsConstants.Versions.RELEASE).build(), NutsStoreLocation.CONFIG)
                 .resolve(CoreNutsConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
@@ -60,7 +60,7 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
 
     @Override
     public NutsWorkspaceConfigMain parseMainConfig() {
-        Path path = getWorkspace().config().getStoreLocation(getWorkspace().getApiId()
+        Path path = getWorkspace().locations().getStoreLocation(getWorkspace().getApiId()
                 .builder().setVersion(NutsConstants.Versions.RELEASE)
                 .build()
                 , NutsStoreLocation.CONFIG)

@@ -174,15 +174,15 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     }
 
     protected String getIdExtension(NutsId id) {
-        return getWorkspace().config().getDefaultIdExtension(id);
+        return getWorkspace().locations().getDefaultIdExtension(id);
     }
 
     public String getIdBasedir(NutsId id) {
-        return getWorkspace().config().getDefaultIdBasedir(id);
+        return getWorkspace().locations().getDefaultIdBasedir(id);
     }
 
     public String getIdFilename(NutsId id) {
-        //return getWorkspace().config().getDefaultIdFilename(id);
+        //return getWorkspace().locations().getDefaultIdFilename(id);
         String classifier = "";
         String ext = getIdExtension(id);
         if (!ext.equals(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {

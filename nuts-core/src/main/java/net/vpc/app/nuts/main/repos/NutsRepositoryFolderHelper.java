@@ -76,14 +76,14 @@ public class NutsRepositoryFolderHelper {
     public Path getLongNameIdLocalFolder(NutsId id) {
         CoreNutsUtils.checkId_GNV(id);
         if (repo == null) {
-            return getStoreLocation().resolve(getWorkspace().config().getDefaultIdBasedir(id));
+            return getStoreLocation().resolve(getWorkspace().locations().getDefaultIdBasedir(id));
         }
         return getStoreLocation().resolve(NutsRepositoryExt0.of(repo).getIdBasedir(id));
     }
 
     public Path getLongNameIdLocalFile(NutsId id) {
         if (repo == null) {
-            return getLongNameIdLocalFolder(id).resolve(getWorkspace().config().getDefaultIdFilename(id));
+            return getLongNameIdLocalFolder(id).resolve(getWorkspace().locations().getDefaultIdFilename(id));
         }
         return getLongNameIdLocalFolder(id).resolve(NutsRepositoryExt0.of(repo).getIdFilename(id));
     }
@@ -91,7 +91,7 @@ public class NutsRepositoryFolderHelper {
     public Path getShortNameIdLocalFolder(NutsId id) {
         CoreNutsUtils.checkId_GN(id);
         if (repo == null) {
-            return getStoreLocation().resolve(getWorkspace().config().getDefaultIdBasedir(id.builder().setVersion("").build()));
+            return getStoreLocation().resolve(getWorkspace().locations().getDefaultIdBasedir(id.builder().setVersion("").build()));
         }
         return getStoreLocation().resolve(NutsRepositoryExt0.of(repo).getIdBasedir(id.builder().setVersion("").build()));
     }
@@ -110,7 +110,7 @@ public class NutsRepositoryFolderHelper {
 
     protected String getIdFilename(NutsId id) {
         if (repo == null) {
-            return ws.config().getDefaultIdFilename(id);
+            return ws.locations().getDefaultIdFilename(id);
         }
         return NutsRepositoryExt0.of(repo).getIdFilename(id);
     }

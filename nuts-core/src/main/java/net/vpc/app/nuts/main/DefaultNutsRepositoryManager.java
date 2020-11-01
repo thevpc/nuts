@@ -7,7 +7,6 @@ import net.vpc.app.nuts.main.config.DefaultNutsWorkspaceConfigManager;
 import net.vpc.app.nuts.main.repos.DefaultNutsInstalledRepository;
 import net.vpc.app.nuts.main.repos.NutsRepositoryRegistryHelper;
 import net.vpc.app.nuts.main.repos.NutsSimpleRepositoryWrapper;
-import net.vpc.app.nuts.runtime.DefaultNutsSupportLevelContext;
 import net.vpc.app.nuts.runtime.DefaultNutsWorkspaceEvent;
 import net.vpc.app.nuts.runtime.log.NutsLogVerb;
 import net.vpc.app.nuts.runtime.util.CoreNutsUtils;
@@ -336,7 +335,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
             if (CoreStringUtils.isBlank(conf.getName())) {
                 conf.setName(options.getName());
             }
-            NutsRepositoryFactoryComponent factory_ = getWorkspace().extensions().createSupported(NutsRepositoryFactoryComponent.class,conf);
+            NutsRepositoryFactoryComponent factory_ = getWorkspace().extensions().createSupported(NutsRepositoryFactoryComponent.class,conf, options.getSession());
             if (factory_ != null) {
                 NutsRepository r = factory_.create(options, getWorkspace(), parentRepository);
                 if (r != null) {
@@ -393,7 +392,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         }
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
         LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
-        Path logError = wconfig.getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG).resolve("invalid-config");
+        Path logError = getWorkspace().locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG).resolve("invalid-config");
         try {
             Files.createDirectories(logError);
         } catch (IOException ex1) {
@@ -408,11 +407,11 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         }
 
         try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").toFile())) {
-            o.println("workspace.path:" + wconfig.getWorkspaceLocation());
+            o.println("workspace.path:" + workspace.locations().getWorkspaceLocation());
             o.println("repository.path:" + file);
             o.println("workspace.options:" + wconfig.getOptions().format().setCompact(false).setRuntime(true).setInit(true).setExported(true).getBootCommandLine());
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                o.println("location." + location.id() + ":" + wconfig.getStoreLocation(location));
+                o.println("location." + location.id() + ":" + workspace.locations().getStoreLocation(location));
             }
             o.println("java.class.path:" + System.getProperty("java.class.path"));
             o.println();

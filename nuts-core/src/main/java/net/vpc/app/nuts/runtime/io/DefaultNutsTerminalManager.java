@@ -20,7 +20,7 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
 
     @Override
     public NutsSystemTerminal createSystemTerminal(NutsTerminalSpec spec) {
-        NutsSystemTerminalBase termb = ws.extensions().createSupported(NutsSystemTerminalBase.class, spec);
+        NutsSystemTerminalBase termb = ws.extensions().createSupported(NutsSystemTerminalBase.class, spec, spec.getSession());
         if (termb == null) {
             throw new NutsExtensionNotFoundException(ws, NutsSystemTerminalBase.class, "SystemTerminalBase");
         }
@@ -33,17 +33,18 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
     }
 
     @Override
-    public NutsTerminalManager enableRichTerm() {
+    public NutsTerminalManager enableRichTerm(NutsSession session) {
         NutsSystemTerminal st = getSystemTerminal();
         if (st.isAutoCompleteSupported()) {
             //that's ok
         } else {
             NutsWorkspaceExtensionManager extensions = getWorkspace().extensions();
-            extensions.loadExtension(ws.id().parser().parse("net.vpc.app.nuts.ext:next-term#"+getWorkspace().getApiVersion()));
+            extensions.loadExtension(ws.id().parser().parse("net.vpc.app.nuts.ext:next-term#"+getWorkspace().getApiVersion()), session);
             getWorkspace().io().term().setSystemTerminal(
                     createSystemTerminal(new NutsDefaultTerminalSpec()
                             .setAutoComplete(true)
-                    ));
+                            .setSession(session)
+                    ),session);
         }
         return this;
     }
@@ -64,15 +65,9 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
     }
 
     @Override
-    public NutsTerminalManager setSystemTerminal(NutsSystemTerminalBase terminal) {
-        //TODO : should pass session in method
-        return setSystemTerminal(terminal, null);
-    }
-
-    @Override
-    public NutsTerminalManager setTerminal(NutsSessionTerminal terminal) {
+    public NutsTerminalManager setTerminal(NutsSessionTerminal terminal, NutsSession session) {
         if (terminal == null) {
-            terminal = createTerminal();
+            terminal = createTerminal(session);
         }
         if (!(terminal instanceof UnmodifiableTerminal)) {
             terminal = new UnmodifiableTerminal(terminal);
@@ -88,16 +83,16 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
 
 
     @Override
-    public NutsSessionTerminal createTerminal() {
-        return createTerminal(null);
+    public NutsSessionTerminal createTerminal(NutsSession session) {
+        return createTerminal(null, session);
     }
 
     @Override
-    public NutsSessionTerminal createTerminal(NutsTerminalBase parent) {
+    public NutsSessionTerminal createTerminal(NutsTerminalBase parent, NutsSession session) {
         if (parent == null) {
             parent = workspaceSystemTerminalAdapter;
         }
-        NutsSessionTerminalBase termb = ws.extensions().createSupported(NutsSessionTerminalBase.class, null);
+        NutsSessionTerminalBase termb = ws.extensions().createSupported(NutsSessionTerminalBase.class, null, session);
         if (termb == null) {
             throw new NutsExtensionNotFoundException(ws, NutsSessionTerminal.class, "SessionTerminalBase");
         }

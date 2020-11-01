@@ -42,7 +42,7 @@ public class Test01_CreateTest {
                 "--yes",
                 "--skip-companions");
         NutsSession session = ws.createSession();
-        org.junit.Assert.assertEquals(wsPath + "/cache", ws.config().getStoreLocation(NutsStoreLocation.CACHE).toString());
+        org.junit.Assert.assertEquals(wsPath + "/cache", ws.locations().getStoreLocation(NutsStoreLocation.CACHE).toString());
         org.junit.Assert.assertEquals(wsPath + "/cache/" + NutsConstants.Folders.REPOSITORIES + "/"+
                         ws.repos().getRepositories(session)[0].getName()+
                         "/"+ws.repos().getRepositories(session)[0].getUuid(),
@@ -92,7 +92,7 @@ public class Test01_CreateTest {
                 "--skip-companions");
         NutsSession session = ws.createSession();
         org.junit.Assert.assertEquals(System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName(),
-                ws.config().getStoreLocation(NutsStoreLocation.CACHE).toString());
+                ws.locations().getStoreLocation(NutsStoreLocation.CACHE).toString());
         org.junit.Assert.assertEquals(
                 System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName() + "/"
                 + NutsConstants.Folders.REPOSITORIES + "/"

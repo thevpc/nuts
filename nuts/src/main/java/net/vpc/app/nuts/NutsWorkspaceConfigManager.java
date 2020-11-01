@@ -31,7 +31,6 @@ package net.vpc.app.nuts;
 
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,7 +52,6 @@ public interface NutsWorkspaceConfigManager {
 
     URL[] getBootClassWorldURLs();
 
-    Path getWorkspaceLocation();
 
     boolean isReadOnly();
 
@@ -74,68 +72,20 @@ public interface NutsWorkspaceConfigManager {
     NutsWorkspaceOptions options();
 
     NutsWorkspaceOptions getOptions();
-    Path getHomeLocation(NutsStoreLocation folderType);
-
-    Path getStoreLocation(NutsStoreLocation folderType);
-
-    void setStoreLocation(NutsStoreLocation folderType, String location, NutsUpdateOptions options);
-
-    void setStoreLocationStrategy(NutsStoreLocationStrategy strategy, NutsUpdateOptions options);
-
-    void setStoreLocationLayout(NutsOsFamily layout, NutsUpdateOptions options);
-
-    Path getStoreLocation(String id, NutsStoreLocation folderType);
-
-    Path getStoreLocation(NutsId id, NutsStoreLocation folderType);
-
-    String getDefaultIdFilename(NutsId id);
-
-    String getDefaultIdBasedir(NutsId id);
 
     NutsId createContentFaceId(NutsId id, NutsDescriptor desc);
 
     NutsWorkspaceListManager createWorkspaceListManager(String name, NutsSession session);
 
-    void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location, NutsUpdateOptions options);
+    boolean isSupportedRepositoryType(String repositoryType, NutsSession session);
 
-    boolean isSupportedRepositoryType(String repositoryType);
-
-    NutsRepositoryDefinition[] getDefaultRepositories();
+    NutsRepositoryDefinition[] getDefaultRepositories(NutsSession session);
 
     Set<String> getAvailableArchetypes(NutsSession session);
 
-    Path resolveRepositoryPath(String repositoryLocation);
+    Path resolveRepositoryPath(String repositoryLocation, NutsSession session);
 
     NutsIndexStoreFactory getIndexStoreClientFactory();
-
-    String getDefaultIdContentExtension(String packaging);
-
-    String getDefaultIdExtension(NutsId id);
-
-    NutsStoreLocationStrategy getStoreLocationStrategy();
-
-    NutsStoreLocationStrategy getRepositoryStoreLocationStrategy();
-
-    NutsOsFamily getStoreLocationLayout();
-
-    /**
-     * all home locations key/value map where keys are in the form "location"
-     * and values are absolute paths.
-     *
-     * @return home locations mapping
-     */
-    Map<String, String> getStoreLocations();
-
-    /**
-     * all home locations key/value map where keys are in the form
-     * "osfamily:location" and values are absolute paths.
-     *
-     * @return home locations mapping
-     */
-    Map<String, String> getHomeLocations();
-
-    Path getHomeLocation(NutsOsFamily layout, NutsStoreLocation location);
-
 
     String getBootRepositories();
 

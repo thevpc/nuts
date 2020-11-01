@@ -29,6 +29,9 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -64,6 +67,15 @@ public class NutsDefaultContent implements NutsContent {
     @Override
     public Path getPath() {
         return file;
+    }
+
+    @Override
+    public URL getURL() {
+        try {
+            return file==null?null:file.toUri().toURL();
+        } catch (MalformedURLException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     /**

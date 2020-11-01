@@ -324,7 +324,7 @@ public class NutsJavaSdkUtils {
     public String resolveJavaCommandByVersion(String requestedJavaVersion, boolean javaw, NutsSession session) {
         String bestJavaPath = resolveJdkLocation(requestedJavaVersion, session).getPath();
         if (bestJavaPath.contains("/") || bestJavaPath.contains("\\") || bestJavaPath.equals(".") || bestJavaPath.equals("..")) {
-            Path file = ws.config().getWorkspaceLocation().resolve(bestJavaPath);
+            Path file = ws.locations().getWorkspaceLocation().resolve(bestJavaPath);
             if (Files.isDirectory(file) && Files.isDirectory(file.resolve("bin"))) {
                 boolean winOs = ws.env().getOsFamily() == NutsOsFamily.WINDOWS;
                 if (winOs) {

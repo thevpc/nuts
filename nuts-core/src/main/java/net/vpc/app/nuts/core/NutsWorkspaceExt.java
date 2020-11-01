@@ -48,8 +48,9 @@ public interface NutsWorkspaceExt {
      * false
      *
      * @return true when runtime extension is required for running this workspace
+     * @param session
      */
-    boolean requiresRuntimeExtension();
+    boolean requiresRuntimeExtension(NutsSession session);
 
     //    @Override
     NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session);

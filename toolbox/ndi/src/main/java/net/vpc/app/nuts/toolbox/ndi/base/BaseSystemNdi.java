@@ -203,7 +203,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                             }
                     ));
         }
-        Path ff2 = context.getWorkspace().config().getWorkspaceLocation().resolve("nuts");
+        Path ff2 = context.getWorkspace().locations().getWorkspaceLocation().resolve("nuts");
         boolean overridden = Files.exists(ff2);
         if (!force && Files.exists(ff2)) {
             if (trace && context.getSession().isPlainTrace()) {

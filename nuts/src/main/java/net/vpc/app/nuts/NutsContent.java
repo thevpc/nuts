@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.nio.file.Path;
 
 /**
@@ -45,6 +46,8 @@ public interface NutsContent extends Serializable {
      * @return artifact local path
      */
     Path getPath();
+
+    URL getURL();
 
     /**
      * when true, the content was retrieved from cache rather then from remote location.

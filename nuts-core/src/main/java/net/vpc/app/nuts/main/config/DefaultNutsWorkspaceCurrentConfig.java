@@ -499,11 +499,11 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         }
         switch (folderType) {
             case CACHE:
-                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(ws.config().getDefaultIdBasedir(id));
+                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(ws.locations().getDefaultIdBasedir(id));
             case CONFIG:
-                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(ws.config().getDefaultIdBasedir(id));
+                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(ws.locations().getDefaultIdBasedir(id));
         }
-        return storeLocation.resolve(ws.config().getDefaultIdBasedir(id));
+        return storeLocation.resolve(ws.locations().getDefaultIdBasedir(id));
     }
 
 //    

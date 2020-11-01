@@ -432,43 +432,43 @@ public class NutsIdFormatHelper {
             }
             case CACHE_FOLDER: {
                 if (def != null) {
-                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.CACHE));
+                    return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.CACHE));
                 }
                 return "@@nobody@@";
             }
             case CONFIG_FOLDER: {
                 if (def != null) {
-                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.CONFIG));
+                    return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.CONFIG));
                 }
                 return "@@nobody@@";
             }
             case LIB_FOLDER: {
                 if (def != null) {
-                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.LIB));
+                    return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.LIB));
                 }
                 return "@@nobody@@";
             }
             case LOG_FOLDER: {
                 if (def != null) {
-                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.LOG));
+                    return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.LOG));
                 }
                 return "@@nobody@@";
             }
             case TEMP_FOLDER: {
                 if (def != null) {
-                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.TEMP));
+                    return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.TEMP));
                 }
                 return "@@nobody@@";
             }
             case VAR_LOCATION: {
                 if (def != null) {
-                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.VAR));
+                    return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.VAR));
                 }
                 return "@@nobody@@";
             }
             case APPS_FOLDER: {
                 if (def != null) {
-                    return stringValue(ws.config().getStoreLocation(def.getId(), NutsStoreLocation.APPS));
+                    return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.APPS));
                 }
                 return "@@nobody@@";
             }

@@ -211,9 +211,9 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             for (Map.Entry<String, NutsWorkspace> entry : workspaces.entrySet()) {
                 String k = entry.getKey();
                 if(k.equals("")){
-                    out.printf("%s\n", entry.getValue().config().getWorkspaceLocation());
+                    out.printf("%s\n", entry.getValue().locations().getWorkspaceLocation());
                 }else{
-                    out.printf("%s : %s\n", k, entry.getValue().config().getWorkspaceLocation());
+                    out.printf("%s : %s\n", k, entry.getValue().locations().getWorkspaceLocation());
                 }
             }
         }else {
@@ -223,7 +223,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                 if(k.equals("")){
                     k="<default>";
                 }
-                out.printf("\t%s : %s\n", k, entry.getValue().config().getWorkspaceLocation());
+                out.printf("\t%s : %s\n", k, entry.getValue().locations().getWorkspaceLocation());
             }
         }
         final String finalServerId = serverId;

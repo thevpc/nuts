@@ -198,7 +198,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
                     return getStoreLocation().resolve(n);
                 }
                 case EXPLODED: {
-                    Path storeLocation = repository.getWorkspace().config().getStoreLocation(folderType);
+                    Path storeLocation = repository.getWorkspace().locations().getStoreLocation(folderType);
                     //uuid is added as
                     return storeLocation.resolve(NutsConstants.Folders.REPOSITORIES).resolve(getName()).resolve(getUuid());
 
@@ -227,7 +227,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         }
         if (this.config.getStoreLocationStrategy() == null) {
             fireChange = true;
-            this.config.setStoreLocationStrategy(repository.getWorkspace().config().getRepositoryStoreLocationStrategy());
+            this.config.setStoreLocationStrategy(repository.getWorkspace().locations().getRepositoryStoreLocationStrategy());
         }
         if (CoreStringUtils.isBlank(config.getType())) {
             fireChange = true;
@@ -439,9 +439,9 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     @Override
-    public boolean isIndexSubscribed() {
+    public boolean isIndexSubscribed(NutsSession session) {
         NutsIndexStore s = getIndexStore();
-        return s != null && s.isSubscribed();
+        return s != null && s.isSubscribed(session);
     }
 
     private NutsIndexStore getIndexStore() {
@@ -452,7 +452,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     public NutsRepositoryConfigManager subscribeIndex(NutsSession session) {
         NutsIndexStore s = getIndexStore();
         if(s!=null) {
-            s.subscribe();
+            s.subscribe(session);
         }
         return this;
     }
@@ -461,7 +461,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     public NutsRepositoryConfigManager unsubscribeIndex(NutsSession session) {
         NutsIndexStore s = getIndexStore();
         if(s!=null) {
-            s.unsubscribe();
+            s.unsubscribe(session);
         }
         return this;
     }

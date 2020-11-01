@@ -35,7 +35,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
 //                , CoreStringUtils.trim(id.getAlternative())
                     );
                     try {
-                        NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(getRepository().getWorkspace(),
+                        NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                                 URL);
                         Map[] array = getRepository().getWorkspace().formats().json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
                         return Arrays.stream(array)
@@ -60,7 +60,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                     }
                     String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "?repositoryUuid=" + getRepository().getUuid();
                     try {
-                        NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(getRepository().getWorkspace(),
+                        NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                                 URL);
                         Map[] array = getRepository().getWorkspace().formats().json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
                         return Arrays.stream(array)
@@ -83,7 +83,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
     }
 
     @Override
-    public NutsIndexStore invalidate(NutsId id) {
+    public NutsIndexStore invalidate(NutsId id, NutsSession session) {
         if (isInaccessible()) {
             return this;
         }
@@ -95,7 +95,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
 //                ,CoreStringUtils.trim(id.getAlternative())
         );
         try {
-            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(getRepository().getWorkspace(),
+            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                     URL);
             clientFacade.open();
         } catch (UncheckedIOException|NutsIOException e) {
@@ -106,7 +106,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
     }
 
     @Override
-    public NutsIndexStore revalidate(NutsId id) {
+    public NutsIndexStore revalidate(NutsId id, NutsSession session) {
         if (isInaccessible()) {
             return this;
         }
@@ -118,7 +118,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
 //                ,CoreStringUtils.trim(id.getAlternative())
         );
         try {
-            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(getRepository().getWorkspace(),
+            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                     URL);
             clientFacade.open();
         } catch (UncheckedIOException|NutsIOException e) {
@@ -129,12 +129,12 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
     }
 
     @Override
-    public NutsIndexStore subscribe() {
+    public NutsIndexStore subscribe(NutsSession session) {
         String URL = "http://localhost:7070/indexer/subscription/subscribe?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(getRepository().getWorkspace().config().getWorkspaceLocation().toString())
+                + CoreIOUtils.urlEncodeString(getRepository().getWorkspace().locations().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
         try {
-            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(getRepository().getWorkspace(),
+            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                     URL);
             clientFacade.open();
         } catch (UncheckedIOException|NutsIOException e) {
@@ -144,12 +144,12 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
     }
 
     @Override
-    public NutsIndexStore unsubscribe() {
+    public NutsIndexStore unsubscribe(NutsSession session) {
         String URL = "http://localhost:7070/indexer/subscription/unsubscribe?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(getRepository().getWorkspace().config().getWorkspaceLocation().toString())
+                + CoreIOUtils.urlEncodeString(getRepository().getWorkspace().locations().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
         try {
-            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(getRepository().getWorkspace(),
+            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                     URL);
             clientFacade.open();
         } catch (UncheckedIOException|NutsIOException e) {
@@ -159,12 +159,12 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
     }
 
     @Override
-    public boolean isSubscribed() {
+    public boolean isSubscribed(NutsSession session) {
         String URL = "http://localhost:7070/indexer/subscription/isSubscribed?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(getRepository().getWorkspace().config().getWorkspaceLocation().toString())
+                + CoreIOUtils.urlEncodeString(getRepository().getWorkspace().locations().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
         try {
-            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(getRepository().getWorkspace(),
+            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                     URL);
             return new Scanner(clientFacade.open()).nextBoolean();
         } catch (UncheckedIOException|NutsIOException e) {

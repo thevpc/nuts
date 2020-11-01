@@ -57,17 +57,17 @@ public class DefaultNutsAddUserCommand extends AbstractNutsAddUserCommand {
         }
         if (repo != null) {
             NutsUserConfig security = new NutsUserConfig(getUsername(),
-                    CoreStringUtils.chrToStr(repo.security().createCredentials(getCredentials(), false, null)),
+                    CoreStringUtils.chrToStr(repo.security().createCredentials(getCredentials(), false, null, session)),
                     getGroups(), getPermissions());
             security.setRemoteIdentity(getRemoteIdentity());
-            security.setRemoteCredentials(CoreStringUtils.chrToStr(repo.security().createCredentials(getRemoteCredentials(), true, null)));
+            security.setRemoteCredentials(CoreStringUtils.chrToStr(repo.security().createCredentials(getRemoteCredentials(), true, null, session)));
             NutsRepositoryConfigManagerExt.of(repo.config()).setUser(security, new NutsUpdateOptions().setSession(getSession()));
         } else {
             NutsUserConfig security = new NutsUserConfig(getUsername(),
-                    CoreStringUtils.chrToStr(ws.security().createCredentials(getCredentials(), false, null)),
+                    CoreStringUtils.chrToStr(ws.security().createCredentials(getCredentials(), false, null, session)),
                     getGroups(), getPermissions());
             security.setRemoteIdentity(getRemoteIdentity());
-            security.setRemoteCredentials(CoreStringUtils.chrToStr(ws.security().createCredentials(getRemoteCredentials(), true, null)));
+            security.setRemoteCredentials(CoreStringUtils.chrToStr(ws.security().createCredentials(getRemoteCredentials(), true, null, session)));
             NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(security, new NutsUpdateOptions().setSession(getSession()));
         }
         return this;

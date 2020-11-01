@@ -34,11 +34,10 @@ import net.vpc.app.nuts.core.common.DefaultObservableMap;
 import net.vpc.app.nuts.core.common.ObservableMap;
 import net.vpc.app.nuts.core.config.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.main.wscommands.DefaultNutsUpdateStatisticsCommand;
-import net.vpc.app.nuts.runtime.app.DefaultNutsCommandLineFormat;
 import net.vpc.app.nuts.runtime.app.DefaultNutsCommandLineManager;
+import net.vpc.app.nuts.runtime.app.DefaultNutsWorkspaceLocationManager;
 import net.vpc.app.nuts.runtime.ext.DefaultNutsWorkspaceExtensionManager;
 import net.vpc.app.nuts.runtime.format.DefaultNutsInfoFormat;
-import net.vpc.app.nuts.runtime.io.DefaultNutsMonitorAction;
 import net.vpc.app.nuts.runtime.manager.DefaultNutsDependencyManager;
 import net.vpc.app.nuts.runtime.manager.DefaultNutsDescriptorManager;
 import net.vpc.app.nuts.runtime.manager.DefaultNutsIdManager;
@@ -68,8 +67,9 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     private DefaultNutsConcurrentManager concurrent;
     private DefaultNutsWorkspaceAppsManager apps;
     private DefaultNutsCommandLineManager defaultNutsCommandLineManager;
+    private NutsWorkspaceLocationManager locationManager;
 
-    public AbstractNutsWorkspace() {
+    public AbstractNutsWorkspace(NutsWorkspaceInitInformation info) {
         userProperties = new DefaultObservableMap<>();
         defaultNutsIdManager = new DefaultNutsIdManager(this);
         defaultVersionManager = new DefaultNutsVersionManager(this);
@@ -79,6 +79,12 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
         concurrent = new DefaultNutsConcurrentManager(this);
         apps=new DefaultNutsWorkspaceAppsManager(this);
         defaultNutsCommandLineManager = new DefaultNutsCommandLineManager(this);
+        locationManager=new DefaultNutsWorkspaceLocationManager(this,info);
+    }
+
+    @Override
+    public NutsWorkspaceLocationManager locations() {
+        return locationManager;
     }
 
     @Override
@@ -134,7 +140,7 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     @Override
     public NutsSession createSession() {
         NutsSession nutsSession = new DefaultNutsSession(this);
-        nutsSession.setTerminal(io().term().createTerminal(io().term().getSystemTerminal()));
+        nutsSession.setTerminal(io().term().createTerminal(io().term().getSystemTerminal(), nutsSession));
         nutsSession.setExpireTime(config().options().getExpireTime());
         return nutsSession;
     }

@@ -25,12 +25,12 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
             if (cmdLine.isExecMode()) {
                 List<ExtensionPointInfo> all=new ArrayList<>();
                 NutsWorkspaceExtensionManager extensions = context.getWorkspace().extensions();
-                for (Class extension : extensions.getExtensionPoints()) {
+                for (Class extension : extensions.getExtensionPoints(context.getSession())) {
                     ExtensionPointInfo a=new ExtensionPointInfo();
                     a.name=extension.getName();
-                    a.types= extensions.getExtensionTypes(extension)
+                    a.types= extensions.getExtensionTypes(extension, context.getSession())
                             .stream().map(Class::getName).toArray(String[]::new);
-                    a.objects= extensions.getExtensionObjects(extension)
+                    a.objects= extensions.getExtensionObjects(extension, context.getSession())
                             .stream().map(x->x==null?"null":(x.getClass().getName()+"::"+x.toString()))
                                     .toArray(String[]::new);
                     all.add(a);
