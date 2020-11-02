@@ -122,7 +122,7 @@ public class TimeParser {
             boolean future = false;
             DecimalFormat D2 = new DecimalFormat("00");
             while (!a.isEmpty()) {
-                if (parseDates && (s = a.readMatchAnyCase("today|tonight|yesterday|tomorrow|sunday|monday|tuesday|wednesday|thursday|friday|friday|saturday")) != null) {
+                if (parseDates && (s = a.readMatchAnyCase("today|tonight|yesterday|tomorrow|sunday|monday|tuesday|wednesday|thursday|friday|saturday|sun|mon|tue|wed|thu|fri|sat")) != null) {
                     day = s;
                 } else if ((s = a.readMatchAnyCase("next")) != null) {
                     future = true;
@@ -200,31 +200,45 @@ public class TimeParser {
                         c.add(Calendar.DAY_OF_YEAR, 1);
                         break;
                     }
-                    case "sunday": {
+                    case "sunday":
+                    case "sun":
+                        {
                         reachDayOfWeek(future, c, Calendar.SUNDAY);
                         break;
                     }
-                    case "monday": {
+                    case "monday":
+                    case "mon":
+                        {
                         reachDayOfWeek(future, c, Calendar.MONDAY);
                         break;
                     }
-                    case "tuesday": {
+                    case "tuesday":
+                    case "tue":
+                        {
                         reachDayOfWeek(future, c, Calendar.TUESDAY);
                         break;
                     }
-                    case "wednesday": {
+                    case "wednesday":
+                    case "wed":
+                        {
                         reachDayOfWeek(future, c, Calendar.WEDNESDAY);
                         break;
                     }
-                    case "thursday": {
+                    case "thursday":
+                    case "thu":
+                        {
                         reachDayOfWeek(future, c, Calendar.THURSDAY);
                         break;
                     }
-                    case "friday": {
+                    case "friday":
+                    case "fri":
+                        {
                         reachDayOfWeek(future, c, Calendar.FRIDAY);
                         break;
                     }
-                    case "saturday": {
+                    case "saturday":
+                    case "sat":
+                        {
                         reachDayOfWeek(future, c, Calendar.SATURDAY);
                         break;
                     }

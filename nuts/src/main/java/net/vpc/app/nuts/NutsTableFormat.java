@@ -72,6 +72,8 @@ public interface NutsTableFormat extends NutsFormat {
 
     Boolean getVisibleColumn(int col);
 
+    NutsTableFormat setBorder(String borderName);
+
     NutsTableFormat setCellFormat(NutsTableCellFormat formatter);
 
     NutsTableModel getModel();

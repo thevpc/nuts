@@ -116,6 +116,36 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return this;
     }
 
+    @Override
+    public NutsTableFormat setBorder(String borderName) {
+        switch (borderName) {
+            case "spaces": {
+                setBorder(SPACE_BORDER);
+                break;
+            }
+            case "simple": {
+                setBorder(SIMPLE_BORDER);
+                break;
+            }
+            case "fancy-rows": {
+                setBorder(FANCY_ROWS_BORDER);
+                break;
+            }
+            case "fancy-columns": {
+                setBorder(FANCY_COLUMNS_BORDER);
+                break;
+            }
+            case "none": {
+                setBorder(NO_BORDER);
+                break;
+            }
+            default: {
+                throw new NutsIllegalArgumentException(getWorkspace(),"unsupported border. use one of spaces,simple,fancy-rows,fancy-columns,none");
+            }
+        }
+        return this;
+    }
+
     private String getSeparator(Separator id) {
         String s = border.format(id);
         if (s == null) {
@@ -1119,28 +1149,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             return true;
         } else if ((a = cmdLine.nextString("--border")) != null) {
             if(a.isEnabled()) {
-                switch (a.getArgumentValue().getStringKey()) {
-                    case "spaces": {
-                        setBorder(SPACE_BORDER);
-                        break;
-                    }
-                    case "simple": {
-                        setBorder(SIMPLE_BORDER);
-                        break;
-                    }
-                    case "fancy-rows": {
-                        setBorder(FANCY_ROWS_BORDER);
-                        break;
-                    }
-                    case "fancy-columns": {
-                        setBorder(FANCY_COLUMNS_BORDER);
-                        break;
-                    }
-                    case "none": {
-                        setBorder(NO_BORDER);
-                        break;
-                    }
-                }
+                setBorder(a.getArgumentValue().getStringKey());
             }
             return true;
         } else if (cmdLine.hasNext() && cmdLine.peek().isOption()) {

@@ -58,6 +58,9 @@ public class TimePeriods {
     }
 
     public TimePeriods add(TimePeriod p) {
+        if(p==null){
+            return this;
+        }
         return add(p.getCount(),p.getUnit());
     }
 

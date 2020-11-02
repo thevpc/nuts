@@ -611,25 +611,35 @@ public class JobService {
         TreeSet<String> names = new TreeSet<String>();
         TreeSet<String> projects = new TreeSet<String>();
         TreeSet<NTaskStatus> statuses = new TreeSet<NTaskStatus>();
-        for (NTask nJob : value) {
-            tp.add(nJob.getDuration());
-            t.setStartTime(nJob.getStartTime());
-            atu.add(nJob.getDuration().getUnit());
-            names.add(nJob.getName());
-            projects.add(nJob.getProject());
-            statuses.add(nJob.getStatus());
+        for (NTask t2 : value) {
+            if(t2.getStartTime()!=null) {
+                t.setStartTime(t2.getStartTime());
+            }
+            if(t2.getDuration()!=null) {
+                tp.add(t2.getDuration());
+                atu.add(t2.getDuration().getUnit());
+            }
+            if(t2.getName()!=null) {
+                names.add(t2.getName());
+            }
+            if(t2.getProject()!=null) {
+                projects.add(t2.getProject());
+            }
+            if(t2.getStatus()!=null) {
+                statuses.add(t2.getStatus());
+            }
         }
         t.setProject(projects.size() == 0 ? "" : projects.size() == 1 ? projects.toArray()[0].toString() :
                 (projects.size() <= 3 || String.join(",", projects).length() < 20) ? String.join(",", projects) :
                         (String.valueOf(projects.size()) + " projects")
         );
-        if (statuses.size() == 1) {
+        if (statuses.size() >= 1) {
             t.setStatus(statuses.first());
         }
         ChronoUnit[] atu0 = atu.toArray(new ChronoUnit[0]);
-        String jobs = " Job" + ((value.length == 1) ? "" : "s");
+        String tasks = " Task" + ((value.length == 1) ? "" : "s");
         String named = (names.size() == 0) ? "" : (names.size() == 1) ? (" named " + names.toArray()[0]) : (" with " + (names.size()) + " different names");
-        t.setName(value.length + jobs + named);
+        t.setName(value.length + tasks + named);
         t.setDuration(tp.toUnit(timeUnit != null ? timeUnit : (atu0.length == 0 ? ChronoUnit.DAYS : atu0[0]), hoursPerDay));
         t.setId(UUID.randomUUID().toString());
         return t;

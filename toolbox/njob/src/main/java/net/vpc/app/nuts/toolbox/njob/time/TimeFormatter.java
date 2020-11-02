@@ -57,7 +57,7 @@ public class TimeFormatter {
 
     protected String extractDateName(LocalDate d,String qualifier) {
         LocalDate n = LocalDateTime.now().toLocalDate();
-        if (n.equals(d)) {
+        if (d.equals(n)) {
             if(qualifier!=null){
                 if(qualifier.equals("midnight")){
                     return qualifier;
@@ -69,41 +69,59 @@ public class TimeFormatter {
             }
             return "today";
         }
-        if (n.equals(d.plus(1, ChronoUnit.DAYS))) {
+        if (d.equals(n.plus(-1, ChronoUnit.DAYS))) {
             String t = "yesterday";
             if(qualifier!=null){
                 return "yesterday "+qualifier;
             }
             return t;
         }
-        if (n.equals(d.plus(-1, ChronoUnit.DAYS))) {
+        if (d.equals(n.plus(1, ChronoUnit.DAYS))) {
             String t = "tomorrow";
             if(qualifier!=null){
                 return "tomorrow "+qualifier;
             }
             return t;
         }
-        if (n.equals(d.plus(2, ChronoUnit.DAYS))) {
+        if (d.equals(n.plus(-2, ChronoUnit.DAYS))) {
             return "two days ago";
         }
-        if (n.equals(d.plus(3, ChronoUnit.DAYS))) {
+        if (d.equals(n.plus(-3, ChronoUnit.DAYS))) {
             return "three days ago";
         }
-        if (n.equals(d.plus(-2, ChronoUnit.DAYS))) {
+        if (d.equals(n.plus(-4, ChronoUnit.DAYS))) {
+            return "four days ago";
+        }
+        if (d.equals(n.plus(-5, ChronoUnit.DAYS))) {
+            return "five days ago";
+        }
+        if (d.equals(n.plus(-6, ChronoUnit.DAYS))) {
+            return "six days ago";
+        }
+        if (d.equals(n.plus(2, ChronoUnit.DAYS))) {
             return "in two days";
         }
-        if (n.equals(d.plus(-3, ChronoUnit.DAYS))) {
+        if (d.equals(n.plus(3, ChronoUnit.DAYS))) {
             return "in three days";
         }
-        if (n.equals(d.plus(7, ChronoUnit.DAYS))) {
+        if (d.equals(n.plus(4, ChronoUnit.DAYS))) {
+            return "in four days";
+        }
+        if (d.equals(n.plus(5, ChronoUnit.DAYS))) {
+            return "in five days";
+        }
+        if (d.equals(n.plus(6, ChronoUnit.DAYS))) {
+            return "in six days";
+        }
+        if (d.equals(n.plus(-7, ChronoUnit.DAYS))) {
             return "last week";
         }
-        if (n.equals(d.plus(-7, ChronoUnit.DAYS))) {
+        if (d.equals(n.plus(+7, ChronoUnit.DAYS))) {
             return "next week";
         }
         DecimalFormat df2 = new DecimalFormat("00");
         DecimalFormat df4 = new DecimalFormat("0000");
-        return df4.format(d.getDayOfYear()) + "-" + df2.format(d.getMonth()) + "-" + df2.format(d.getDayOfMonth());
+        return df4.format(d.getYear()) + "-" + df2.format(d.getMonth().getValue()) + "-" + df2.format(d.getDayOfMonth());
     }
 
     public String format(LocalDateTime d) {

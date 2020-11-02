@@ -33,6 +33,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.common.DefaultObservableMap;
 import net.vpc.app.nuts.core.common.ObservableMap;
 import net.vpc.app.nuts.core.config.NutsWorkspaceConfigManagerExt;
+import net.vpc.app.nuts.main.DefaultNutsStringBuilder;
 import net.vpc.app.nuts.main.wscommands.DefaultNutsUpdateStatisticsCommand;
 import net.vpc.app.nuts.runtime.app.DefaultNutsCommandLineManager;
 import net.vpc.app.nuts.runtime.app.DefaultNutsWorkspaceLocationManager;
@@ -226,6 +227,11 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     @Override
     public NutsWorkspaceEnvManager env() {
         return NutsWorkspaceConfigManagerExt.of(config()).env();
+    }
+
+    @Override
+    public NutsStringBuilder str() {
+        return new DefaultNutsStringBuilder(this);
     }
 
     public boolean isInitializing() {

@@ -179,7 +179,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         cfg.setRuntimeId(runtimeId);
         cfg.setRuntimeDependencies(runtimeDependencies);
         cfg.setExtensionDependencies(extensionDependencies);
-        extensionManager = new DefaultNutsWorkspaceExtensionManager(this, bootFactory, uoptions.getExcludedExtensions());
+        NutsSession bootSession = createBootSession();//TODO
+        extensionManager = new DefaultNutsWorkspaceExtensionManager(this, bootFactory, uoptions.getExcludedExtensions(),bootSession);
         boolean exists = NutsWorkspaceConfigManagerExt.of(config()).isValidWorkspaceFolder();
         NutsWorkspaceOpenMode openMode = uoptions.getOpenMode();
         if (openMode != null) {
@@ -198,7 +199,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
             }
         }
-        NutsSession bootSession = createBootSession();//TODO
         extensionManager.onInitializeWorkspace(bootClassLoader, bootSession);
         List<DefaultNutsWorkspaceExtensionManager.RegInfo> regInfos = extensionManager.buildRegInfos(bootSession);
         for (Iterator<DefaultNutsWorkspaceExtensionManager.RegInfo> iterator = regInfos.iterator(); iterator.hasNext(); ) {

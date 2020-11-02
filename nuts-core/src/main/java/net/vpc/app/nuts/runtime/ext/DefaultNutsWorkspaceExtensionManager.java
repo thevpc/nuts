@@ -69,12 +69,12 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     private Set<URL> loadedExtensionURLs = new LinkedHashSet<>();
     private Set<NutsId> unloadedExtensions = new LinkedHashSet<>();
 
-    public DefaultNutsWorkspaceExtensionManager(NutsWorkspace ws, NutsBootWorkspaceFactory bootFactory, String[] excludedExtensions) {
+    public DefaultNutsWorkspaceExtensionManager(NutsWorkspace ws, NutsBootWorkspaceFactory bootFactory, String[] excludedExtensions,NutsSession bootSession) {
         this.ws = ws;
         LOG = ws.log().of(DefaultNutsWorkspaceExtensionManager.class);
         this.objectFactory = new DefaultNutsWorkspaceFactory(ws);
         this.bootFactory = bootFactory;
-        setExcludedExtensions(excludedExtensions, ws.createSession());
+        setExcludedExtensions(excludedExtensions, bootSession);
     }
 
     public boolean isExcludedExtension(NutsId excluded) {
