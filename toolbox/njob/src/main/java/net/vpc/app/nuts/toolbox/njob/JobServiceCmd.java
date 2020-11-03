@@ -242,6 +242,21 @@ public class JobServiceCmd {
             } else if (a.getStringKey().equals("-o") || a.getStringKey().equals("--obs")) {
                 String v = cmd.nextString().getStringValue();
                 runLater.add(t -> t.setObservations(v));
+            } else if (a.getStringKey().equals("--obs+") || a.getStringKey().equals("-o+")) {
+                String v = cmd.nextString().getStringValue();
+                runLater.add(t -> {
+                    String s=t.getObservations();
+                    if(s==null){
+                        s="";
+                    }
+                    s=s.trim();
+                    if(!s.isEmpty()){
+                        s+="\n";
+                    }
+                    s+=v;
+                    s=s.trim();
+                    t.setObservations(s);
+                });
             } else {
                 NProject t = service.getProject(cmd.next().toString());
                 if (t == null) {
@@ -340,7 +355,7 @@ public class JobServiceCmd {
                         NFlag.values()[(int) (Math.random() * NFlag.values().length)]
                         : NFlag.valueOf(v.toUpperCase());
                 runLater.add(t -> t.setFlag(f));
-            } else if (a.getStringKey().equals("--job")) {
+            } else if (a.getStringKey().equals("-j") || a.getStringKey().equals("--job")) {
                 String jobId = cmd.nextString().getStringValue();
                 NJob job = service.getJob(jobId);
                 if (job == null) {
@@ -381,7 +396,23 @@ public class JobServiceCmd {
                 String v = cmd.nextString().getStringValue();
                 runLater.add(t -> t.setProject(v));
             } else if (a.getStringKey().equals("--obs") || a.getStringKey().equals("-o")) {
-                runLater.add(t -> t.setObservations(cmd.nextString().getStringValue()));
+                String v = cmd.nextString().getStringValue();
+                runLater.add(t -> t.setObservations(v));
+            } else if (a.getStringKey().equals("--obs+") || a.getStringKey().equals("-o+")) {
+                String v = cmd.nextString().getStringValue();
+                runLater.add(t -> {
+                    String s=t.getObservations();
+                    if(s==null){
+                        s="";
+                    }
+                    s=s.trim();
+                    if(!s.isEmpty()){
+                       s+="\n";
+                    }
+                    s+=v;
+                    s=s.trim();
+                    t.setObservations(s);
+                });
             } else if (a.isNonOption()) {
                 NTask t = service.getTask(cmd.next().toString());
                 if (t == null) {
