@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.vpc.app.nuts.toolbox</groupId>
+    <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>ndoc</artifactId>
     <version>0.8.0.0</version>
     <packaging>jar</packaging>
-    <name>net.vpc.app.nuts.toolbox.ndoc</name>
+    <name>net.thevpc.nuts.toolbox.ndoc</name>
     <description>Nuts Javadoc Command</description>
 
     <organization>
@@ -48,23 +48,23 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.vpc.app.nuts</groupId>
+            <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
             <version>0.8.0</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-md-doc</artifactId>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-md-doc</artifactId>
             <version>1.1.0</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-md-docusaurus</artifactId>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-md-docusaurus</artifactId>
             <version>1.1.0</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-md-asciidoctor</artifactId>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-md-asciidoctor</artifactId>
             <version>1.1.0</version>
         </dependency>
         <dependency>

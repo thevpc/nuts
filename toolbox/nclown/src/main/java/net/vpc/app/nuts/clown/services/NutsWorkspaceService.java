@@ -1,7 +1,7 @@
-package net.vpc.app.nuts.clown.services;
+package net.thevpc.nuts.clown.services;
 
-import net.vpc.app.nuts.Nuts;
-import net.vpc.app.nuts.NutsWorkspaceListManager;
+import net.thevpc.nuts.Nuts;
+import net.thevpc.nuts.NutsWorkspaceListManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,9 +12,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsWorkspaceLocation;
-import net.vpc.app.nuts.clown.NutsClownUtils;
+import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsWorkspaceLocation;
+import net.thevpc.nuts.clown.NutsClownUtils;
 
 @RestController
 @RequestMapping("ws/workspaces")

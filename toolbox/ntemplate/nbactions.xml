@@ -10,7 +10,8 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Dnuts.debug=true -Dnuts.args=--progress=newline -classpath %classpath net.vpc.toolbox.ntemplater.NTemplaterMain -p dir-template</exec.args>
+            <exec.args>-Dnuts.debug=true -Dnuts.args=--progress=newline -classpath %classpath
+                net.thevpc.toolbox.ntemplater.NTemplaterMain -p dir-template</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir>/data/public/git/nuts/</exec.workingdir>
         </properties>
@@ -25,7 +26,9 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Dnuts.debug=true -Dnuts.args=--progress=newline -classpath %classpath net.vpc.toolbox.ntemplater.NTemplaterMain -p dir-template</exec.args>
+            <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Dnuts.debug=true
+                -Dnuts.args=--progress=newline -classpath %classpath net.thevpc.toolbox.ntemplater.NTemplaterMain -p
+                dir-template</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
             <exec.workingdir>/data/public/git/nuts/</exec.workingdir>
@@ -41,7 +44,8 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Dnuts.debug=true -Dnuts.args=--progress=newline -classpath %classpath net.vpc.toolbox.ntemplater.NTemplaterMain -p dir-template</exec.args>
+            <exec.args>-Dnuts.debug=true -Dnuts.args=--progress=newline -classpath %classpath
+                net.thevpc.toolbox.ntemplater.NTemplaterMain -p dir-template</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir>/data/public/git/nuts/</exec.workingdir>
         </properties>

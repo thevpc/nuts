@@ -10,7 +10,10 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
         </goals>
         <properties>
-            <exec.args>"-Dnuts.export.debug=true" "-Dnuts.boot.args=-t -y" "-Dnuts.export.debug=true" "-Dnuts.export.always-show-command=true" "-Dmonitor.enabled=false" "-Dexport.monitor.enabled=false" -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh -c ssh --nuts eniso.info net.vpc.app.nuts.toolbox:mysql backup --name enisoinfo@default ""</exec.args>
+            <exec.args>"-Dnuts.export.debug=true" "-Dnuts.boot.args=-t -y" "-Dnuts.export.debug=true"
+                "-Dnuts.export.always-show-command=true" "-Dmonitor.enabled=false" "-Dexport.monitor.enabled=false"
+                -classpath %classpath net.thevpc.nuts.toolbox.nsh.Nsh -c ssh --nuts eniso.info
+                net.vpc.app.nuts.toolbox:mysql backup --name enisoinfo@default ""</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir></exec.workingdir>
         </properties>
@@ -25,7 +28,11 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
         </goals>
         <properties>
-            <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} "-Dnuts.export.debug=true" "-Dnuts.boot.args=-t -y" "-Dnuts.export.debug=true" "-Dnuts.export.always-show-command=true" "-Dmonitor.enabled=false" "-Dexport.monitor.enabled=false" -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh -c ssh --nuts eniso.info net.vpc.app.nuts.toolbox:mysql backup --name enisoinfo@default ""</exec.args>
+            <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} "-Dnuts.export.debug=true"
+                "-Dnuts.boot.args=-t -y" "-Dnuts.export.debug=true" "-Dnuts.export.always-show-command=true"
+                "-Dmonitor.enabled=false" "-Dexport.monitor.enabled=false" -classpath %classpath
+                net.thevpc.nuts.toolbox.nsh.Nsh -c ssh --nuts eniso.info net.vpc.app.nuts.toolbox:mysql backup
+                --name enisoinfo@default ""</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
             <exec.workingdir></exec.workingdir>
@@ -41,7 +48,10 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
         </goals>
         <properties>
-            <exec.args>"-Dnuts.export.debug=true" "-Dnuts.boot.args=-t -y" "-Dnuts.export.debug=true" "-Dnuts.export.always-show-command=true" "-Dmonitor.enabled=false" "-Dexport.monitor.enabled=false" -classpath %classpath net.vpc.app.nuts.toolbox.nsh.Nsh -c ssh --nuts eniso.info net.vpc.app.nuts.toolbox:mysql backup --name enisoinfo@default ""</exec.args>
+            <exec.args>"-Dnuts.export.debug=true" "-Dnuts.boot.args=-t -y" "-Dnuts.export.debug=true"
+                "-Dnuts.export.always-show-command=true" "-Dmonitor.enabled=false" "-Dexport.monitor.enabled=false"
+                -classpath %classpath net.thevpc.nuts.toolbox.nsh.Nsh -c ssh --nuts eniso.info
+                net.vpc.app.nuts.toolbox:mysql backup --name enisoinfo@default ""</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir></exec.workingdir>
         </properties>

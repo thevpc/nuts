@@ -1,0 +1,191 @@
+/**
+ * ====================================================================
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <br>
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
+ * <br>
+ * Copyright (C) 2016-2020 thevpc
+ * <br>
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
+ * <br>
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * <br>
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * ====================================================================
+ */
+package net.thevpc.nuts.toolbox.nsh.cmds;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+
+/**
+ * Created by vpc on 1/7/17.
+ */
+@NutsSingleton
+public class EnvCommand extends SimpleNshBuiltin {
+
+    public EnvCommand() {
+        super("env", DEFAULT_SUPPORT);
+    }
+
+    public static class Options {
+
+        int readStatus = 0;
+        LinkedHashMap<String, String> newEnv = new LinkedHashMap<>();
+        List<String> command = new ArrayList<String>();
+        Set<String> unsetVers = new HashSet<String>();
+        boolean sort = true;
+        boolean ignoreEnvironment = false;
+        String dir = null;
+        NutsExecutionType executionType = null;
+    }
+
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        NutsArgument a = commandLine.peek();
+        switch (options.readStatus) {
+            case 0: {
+                switch (a.getStringKey()) {
+                    case "--sort": {
+                        options.sort = (commandLine.nextBoolean().getBooleanValue());
+                        return true;
+                    }
+                    case "--external":
+                    case "--spawn":
+                    case "-x": {
+                        commandLine.skip();
+                        options.executionType = (NutsExecutionType.SPAWN);
+                        return true;
+                    }
+                    case "--embedded":
+                    case "-b": {
+                        commandLine.skip();
+                        options.executionType = (NutsExecutionType.EMBEDDED);
+                        return true;
+                    }
+                    case "--user-cmd":{
+                        commandLine.skip();
+                        options.executionType = (NutsExecutionType.USER_CMD);
+                        return true;
+                    }
+                    case "--root-cmd":{
+                        commandLine.skip();
+                        options.executionType = (NutsExecutionType.ROOT_CMD);
+                        return true;
+                    }
+                    case "-C":
+                    case "--chdir": {
+                        options.dir = commandLine.nextString().getStringValue();
+                        return true;
+                    }
+                    case "-u":
+                    case "--unset": {
+                        options.unsetVers.add(commandLine.nextString().getStringValue());
+                        return true;
+                    }
+                    case "-i":
+                    case "--ignore-environment": {
+                        options.ignoreEnvironment = (commandLine.nextBoolean().getBooleanValue());
+                        return true;
+                    }
+                    case "-": {
+                        commandLine.skip();
+                        options.readStatus = 1;
+                        return true;
+                    }
+                    default: {
+                        if (a.isKeyValue()) {
+                            options.newEnv.put(a.getStringKey(), a.getStringValue());
+                            commandLine.skip();
+                            options.readStatus = 1;
+                            return true;
+                        } else if (a.isOption()) {
+                            return false;
+                        } else {
+                            options.command.add(a.getString());
+                            commandLine.skip();
+                            options.readStatus = 2;
+                            return true;
+                        }
+                    }
+                }
+            }
+            case 1: {
+                if (a.isKeyValue()) {
+                    options.newEnv.put(a.getStringKey(), a.getStringValue());
+                } else {
+                    options.command.add(a.getString());
+                    options.readStatus = 2;
+                }
+                commandLine.skip();
+                return true;
+            }
+            case 2: {
+                options.command.add(a.getString());
+                commandLine.skip();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        if (options.sort) {
+            context.getSession().addOutputFormatOptions("--sort");
+        }
+        SortedMap<String, String> env = new TreeMap<>();
+        if (!options.ignoreEnvironment) {
+            env.putAll((Map) context.getRootContext().vars().getAll());
+        }
+        for (String v : options.unsetVers) {
+            env.remove(v);
+        }
+        env.putAll(options.newEnv);
+        if (options.command.isEmpty()) {
+            context.setPrintlnOutObject(env);
+        } else {
+            final NutsExecCommand e = context.getWorkspace().exec().addCommand(options.command)
+                    .setEnv(env)
+                    .setFailFast(true);
+            if (options.dir != null) {
+                e.setDirectory(options.dir);
+            }
+            if (options.executionType != null) {
+                e.setExecutionType(options.executionType);
+            }
+            e.run();
+        }
+    }
+
+}

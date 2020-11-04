@@ -11,7 +11,7 @@
         </goals>
         <properties>
             <exec.args>-Dnuts.debug=true -Dnuts.args="-y --progress=newline" -classpath %classpath
-                net.vpc.toolbox.docusaurus.NDocusaurusMain</exec.args>
+                net.thevpc.toolbox.docusaurus.NDocusaurusMain</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir>/data/public/git/nuts/website/nuts</exec.workingdir>
         </properties>
@@ -27,7 +27,7 @@
         </goals>
         <properties>
             <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Dnuts.debug=true
-                -Dnuts.args="-y --progress=newline" -classpath %classpath net.vpc.toolbox.docusaurus.NDocusaurusMain</exec.args>
+                -Dnuts.args="-y --progress=newline" -classpath %classpath net.thevpc.toolbox.docusaurus.NDocusaurusMain</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
             <exec.workingdir>/data/public/git/nuts/website/nuts</exec.workingdir>
@@ -44,7 +44,7 @@
         </goals>
         <properties>
             <exec.args>-Dnuts.debug=true -Dnuts.args="-y --progress=newline" -classpath %classpath
-                net.vpc.toolbox.docusaurus.NDocusaurusMain</exec.args>
+                net.thevpc.toolbox.docusaurus.NDocusaurusMain</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir>/data/public/git/nuts/website/nuts</exec.workingdir>
         </properties>

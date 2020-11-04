@@ -1,7 +1,7 @@
-package net.vpc.app.nuts.clown;
+package net.thevpc.nuts.clown;
 
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsId;
+import net.thevpc.nuts.NutsConstants;
+import net.thevpc.nuts.NutsId;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;

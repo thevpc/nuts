@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.vpc.app.nuts.toolbox</groupId>
+    <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>nclown</artifactId>
-    <name>net.vpc.app.nuts.toolbox.nuts-clown</name>
+    <name>net.thevpc.nuts.toolbox.nuts-clown</name>
     <version>0.8.0.0</version>
     <packaging>war</packaging>
 
@@ -35,7 +35,7 @@
         </dependency>
 
         <dependency>
-            <groupId>net.vpc.app.nuts</groupId>
+            <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
             <version>0.8.0</version>
         </dependency>

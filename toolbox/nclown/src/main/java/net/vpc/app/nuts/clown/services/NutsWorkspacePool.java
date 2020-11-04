@@ -1,6 +1,6 @@
-package net.vpc.app.nuts.clown.services;
+package net.thevpc.nuts.clown.services;
 
-import net.vpc.app.nuts.*;
+import net.thevpc.nuts.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

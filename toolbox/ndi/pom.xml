@@ -2,10 +2,10 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.vpc.app.nuts.toolbox</groupId>
+    <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>ndi</artifactId>
     <version>0.8.0.0</version>
-    <name>net.vpc.app.nuts.toolbox.ndi</name>
+    <name>net.thevpc.nuts.toolbox.ndi</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
     <description>Nuts Desktop Integration companion</description>
@@ -62,13 +62,13 @@
     </distributionManagement>
     <dependencies>
         <dependency>
-            <groupId>net.vpc.app.nuts</groupId>
+            <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
             <version>0.8.0</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-io</artifactId>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-io</artifactId>
             <version>1.3.12</version>
         </dependency>
         <dependency>

@@ -1,7 +1,7 @@
-package net.vpc.app.nuts.clown.services;
+package net.thevpc.nuts.clown.services;
 
-import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.clown.NutsClownUtils;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.clown.NutsClownUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -219,7 +219,7 @@ public class NutsComponentService {
             }
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        
+
 //        NutsWorkspace ws = Nuts.openWorkspace("--workspace", workspace);
 //        NutsId id = ws.id().builder()
 //                .setArtifactId(name)

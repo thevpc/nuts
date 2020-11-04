@@ -1,11 +1,11 @@
 <!-- docu<?xml version="1.0" encoding="UTF-8"?> -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.vpc.app.nuts.toolbox</groupId>
+    <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>ndocusaurus</artifactId>
     <version>0.8.0.0</version>
     <packaging>jar</packaging>
-    <name>net.vpc.app.nuts.toolbox.ndocusaurus</name>
+    <name>net.thevpc.nuts.toolbox.ndocusaurus</name>
     <description>Docusaurus Toolbox</description>
     <organization>
         <name>vpc open source initiative</name>
@@ -59,13 +59,13 @@
     </distributionManagement>
     <dependencies>
         <dependency>
-            <groupId>net.vpc.app.nuts</groupId>
+            <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
             <version>0.8.0</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-docusaurus</artifactId>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-docusaurus</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

@@ -1,4 +1,4 @@
-package net.vpc.app.nuts;
+package net.thevpc.nuts;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

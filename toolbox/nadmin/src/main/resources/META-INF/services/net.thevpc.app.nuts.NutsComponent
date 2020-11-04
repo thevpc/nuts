@@ -1,0 +1,12 @@
+
+net.thevpc.nuts.toolbox.nadmin.config.ArchetypeNAdminSubCommand
+net.thevpc.nuts.toolbox.nadmin.config.ExtensionNAdminSubCommand
+net.thevpc.nuts.toolbox.nadmin.config.ImportNAdminSubCommand
+net.thevpc.nuts.toolbox.nadmin.config.LogNAdminSubCommand
+net.thevpc.nuts.toolbox.nadmin.config.RepositoryNAdminSubCommand
+net.thevpc.nuts.toolbox.nadmin.config.UserNAdminSubCommand
+net.thevpc.nuts.toolbox.nadmin.config.JavaNAdminSubCommand
+net.thevpc.nuts.toolbox.nadmin.config.DeleteFoldersNAdminSubCommand
+net.thevpc.nuts.toolbox.nadmin.config.IndexNAdminSubCommand
+net.thevpc.nuts.toolbox.nadmin.config.ConnectNAdminSubCommand
+net.thevpc.nuts.toolbox.nadmin.config.AliasNAdminSubCommand

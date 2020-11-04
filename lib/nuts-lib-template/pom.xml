@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.vpc.app.nuts</groupId>
+    <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-lib-template</artifactId>
     <version>0.8.0.0</version>
     <packaging>jar</packaging>
-    <name>net.vpc.app.nuts.nuts-lib-template</name>
+    <name>net.thevpc.nuts.nuts-lib-template</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -19,19 +19,19 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.vpc.app.nuts</groupId>
+            <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
             <version>0.8.0</version>
         </dependency>
 
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-strings</artifactId>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-strings</artifactId>
             <version>1.2.18</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-mvn</artifactId>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-mvn</artifactId>
             <version>1.1.1</version>
         </dependency>
     </dependencies>
@@ -140,42 +140,6 @@
                     </execution>
                 </executions>
             </plugin>            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>net.vpc.app.vr.core.toolbox.VrBoxMain</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <mainClass>
-                                        net.vpc.app.vr.core.toolbox.VrBoxMain
-                                    </mainClass>
-                                </manifest>
-                            </archive>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
     

@@ -3,14 +3,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.vpc.app.nuts</groupId>
+    <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-builder</artifactId>
-    <name>net.vpc.app.nuts.nuts-builder</name>
+    <name>net.thevpc.nuts.nuts-builder</name>
     <version>0.8.0.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>nuts</module>
-        <module>nuts-core</module>
+        <module>core/nuts</module>
+        <module>core/nuts-runtime</module>
 <!--        <module>nuts-installer</module>-->
         <module>ext/next-term</module>
         <module>lib/nuts-lib-template</module>

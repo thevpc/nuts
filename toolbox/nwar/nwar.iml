@@ -16,9 +16,9 @@
     <orderEntry type="module" module-name="nuts-servlet" />
     <orderEntry type="library" name="Maven: javax.servlet:javax.servlet-api:3.1.0" level="project" />
     <orderEntry type="module" module-name="nserver" />
-    <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-utils:1.22.6" level="project" />
+    <orderEntry type="module" module-name="vpc-common-utils" />
     <orderEntry type="module" module-name="nsh" />
-    <orderEntry type="library" name="Maven: net.vpc.common:java-shell:0.7.3" level="project" />
+    <orderEntry type="module" module-name="vpc-common-jshell" />
     <orderEntry type="module" module-name="vpc-common-strings" />
     <orderEntry type="module" module-name="vpc-common-mvn" />
     <orderEntry type="module" module-name="vpc-common-xfile" />

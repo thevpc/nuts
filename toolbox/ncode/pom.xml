@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.vpc.app.nuts.toolbox</groupId>
+    <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>ncode</artifactId>
-    <name>net.vpc.app.nuts.toolbox.ncode</name>
+    <name>net.thevpc.nuts.toolbox.ncode</name>
     <version>0.8.0.0</version>
     <packaging>jar</packaging>
     <description>Nuts Code Search Command</description>
@@ -17,13 +17,13 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>net.vpc.app.nuts</groupId>
+            <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
             <version>0.8.0</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-strings</artifactId>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-strings</artifactId>
             <version>1.2.18</version>
         </dependency>
     </dependencies>
@@ -70,28 +70,6 @@
                         <configuration>
                             <outputDirectory>${targetdirectory}</outputDirectory>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>net.vpc.feenoo.Feenoo</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- bind to the packaging phase -->
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>

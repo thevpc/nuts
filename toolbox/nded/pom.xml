@@ -2,10 +2,10 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.vpc.app.nuts.toolbox</groupId>
+    <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>nded</artifactId>
     <version>0.8.0.0</version>
-    <name>net.vpc.app.nuts.toolbox.nded</name>
+    <name>net.thevpc.nuts.toolbox.nded</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
     <description>Nuts Descriptor Editor</description>
@@ -62,7 +62,7 @@
     </distributionManagement>
     <dependencies>
         <dependency>
-            <groupId>net.vpc.app.nuts</groupId>
+            <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
             <version>0.8.0</version>
         </dependency>

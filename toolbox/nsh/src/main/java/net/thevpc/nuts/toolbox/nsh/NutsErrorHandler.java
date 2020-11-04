@@ -1,0 +1,71 @@
+/**
+ * ====================================================================
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
+ * <br>
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * Copyright (C) 2016-2020 thevpc
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * <br>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * <br>
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * ====================================================================
+ */
+package net.thevpc.nuts.toolbox.nsh;
+
+import net.thevpc.nuts.NutsExecutionException;
+import net.thevpc.jshell.JShellContext;
+import net.thevpc.jshell.JShellErrorHandler;
+import net.thevpc.jshell.JShellException;
+import net.thevpc.jshell.JShellQuitException;
+import net.thevpc.common.strings.StringUtils;
+
+/**
+ *
+ * @author vpc
+ */
+public class NutsErrorHandler implements JShellErrorHandler {
+    
+    @Override
+    public boolean isRequireExit(Throwable th) {
+        return th instanceof JShellQuitException;
+    }
+
+    @Override
+    public int errorToCode(Throwable th) {
+        if (th instanceof NutsExecutionException) {
+            return ((NutsExecutionException) th).getExitCode();
+        }
+        if (th instanceof JShellException) {
+            return ((NutsExecutionException) th).getExitCode();
+        }
+        return 1;
+    }
+
+    @Override
+    public String errorToMessage(Throwable th) {
+        return StringUtils.exceptionToString(th);
+    }
+
+    @Override
+    public void onErrorImpl(String message, Throwable th, JShellContext context) {
+        ((NutsShellContext) context).getSession().getTerminal().err().printf("@@%s@@\n", message);
+    }
+    
+}

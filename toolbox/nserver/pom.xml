@@ -2,9 +2,9 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.vpc.app.nuts.toolbox</groupId>
+    <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>nserver</artifactId>
-    <name>net.vpc.app.nuts.toolbox.nserver</name>
+    <name>net.thevpc.nuts.toolbox.nserver</name>
     <version>0.8.0.0</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
@@ -62,17 +62,17 @@
     </distributionManagement>
     <dependencies>
         <dependency>
-            <groupId>net.vpc.app.nuts</groupId>
+            <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
             <version>0.8.0</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-utils</artifactId>
-            <version>1.22.6</version>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-utils</artifactId>
+            <version>1.23.0</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.app.nuts.toolbox</groupId>
+            <groupId>net.thevpc.nuts.toolbox</groupId>
             <artifactId>nsh</artifactId>
             <version>0.8.0.0</version>
         </dependency>

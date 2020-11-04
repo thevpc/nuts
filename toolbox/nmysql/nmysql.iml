@@ -15,7 +15,7 @@
     <orderEntry type="library" name="Maven: net.vpc.app.nuts:nuts-core:0.7.2.0" level="project" />
     <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-io:1.3.12" level="project" />
     <orderEntry type="module" module-name="nuts" />
-    <orderEntry type="module" module-name="nuts-core" />
+    <orderEntry type="module" module-name="nuts-runtime" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.6" level="project" />
     <orderEntry type="library" name="Maven: org.fusesource.jansi:jansi:1.17.1" level="project" />
     <orderEntry type="module" module-name="vpc-common-io" />

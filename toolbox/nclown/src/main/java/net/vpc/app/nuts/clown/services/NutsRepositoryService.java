@@ -1,8 +1,8 @@
-package net.vpc.app.nuts.clown.services;
+package net.thevpc.nuts.clown.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsWorkspace;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsRepositoryDefinition;
+import net.thevpc.nuts.NutsConstants;
+import net.thevpc.nuts.NutsRepositoryDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController

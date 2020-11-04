@@ -2,10 +2,10 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.vpc.app.nuts.toolbox</groupId>
+    <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>nsh</artifactId>
     <version>0.8.0.0</version>
-    <name>net.vpc.app.nuts.toolbox.nsh</name>
+    <name>net.thevpc.nuts.toolbox.nsh</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
     <description>Nuts bash shell companion</description>
@@ -62,38 +62,38 @@
     </distributionManagement>
     <dependencies>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>java-shell</artifactId>
-            <version>0.7.3</version>
+            <groupId>net.thevpc</groupId>
+            <artifactId>jshell</artifactId>
+            <version>0.8.0</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.app.nuts</groupId>
+            <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
             <version>0.8.0</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-strings</artifactId>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-strings</artifactId>
             <version>1.2.18</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-utils</artifactId>
-            <version>1.22.6</version>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-utils</artifactId>
+            <version>1.23.0</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-mvn</artifactId>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-mvn</artifactId>
             <version>1.1.1</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-xfile</artifactId>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-xfile</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-io-compress</artifactId>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-io-compress</artifactId>
             <version>1.3.12</version>
         </dependency>
         <dependency>
@@ -119,8 +119,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-ssh</artifactId>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-ssh</artifactId>
             <version>1.1.6</version>
         </dependency>
     </dependencies>
