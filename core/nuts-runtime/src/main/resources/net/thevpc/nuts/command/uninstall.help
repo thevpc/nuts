@@ -6,7 +6,7 @@
        **-e** or **--erase** : enable erase mode to delete all of artifact\'s config data as well
        <args> ...        : provide arguments to pass to uninstaller
 
-#!include</net/vpc/app/nuts/includes/standard-command.help>
+#!include</net/thevpc/nuts/includes/standard-command.help>
 
 ##EXAMPLES:##
         ==nuts== {{uninstall}} **--help**

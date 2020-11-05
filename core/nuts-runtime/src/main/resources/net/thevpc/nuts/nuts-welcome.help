@@ -1,4 +1,4 @@
-#!include</net/vpc/app/nuts/includes/standard-header.help>
+#!include</net/thevpc/nuts/includes/standard-header.help>
 __location__:${workspace}
 
 ##SYNOPSIS:##

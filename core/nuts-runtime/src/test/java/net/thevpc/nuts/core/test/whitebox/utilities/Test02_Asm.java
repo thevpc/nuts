@@ -256,7 +256,7 @@ package net.thevpc.nuts.core.test.whitebox.utilities;
 //
 //            @Override
 //            public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-//                if (superName != null && superName.equals("net/vpc/app/nuts/app/NutsApplication")) {
+//                if (superName != null && superName.equals("net/thevpc/nuts/app/NutsApplication")) {
 //                    nutsApp.add(true);
 //                }
 //                super.visit(version, access, name, signature, superName, interfaces);

@@ -18,7 +18,7 @@
 **-A** or **--api**
     check updates for workspace\'s api (major workspace update)
 
-#!include</net/vpc/app/nuts/includes/standard-command.help>
+#!include</net/thevpc/nuts/includes/standard-command.help>
 
 ##EXAMPLES:##
         ==nuts== {{check-updates}} **--help**

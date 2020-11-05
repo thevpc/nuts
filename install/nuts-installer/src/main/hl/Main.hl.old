@@ -24,8 +24,8 @@ def main(String[] args){
         }
     }
     if(location==null){
-        apiVersion="0.6.0";
-        location=$"https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/$apiVersion/nuts-$apiVersion.jar";
+        apiVersion="0.8.0";
+        location=$"https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar";
     }
     Path nj("nuts.jar");
     URL(location).write(nj);

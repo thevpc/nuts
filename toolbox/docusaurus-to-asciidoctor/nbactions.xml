@@ -11,7 +11,7 @@
         </goals>
         <properties>
             <exec.args>-Dnuts.debug=true -classpath %classpath
-                net.thevpc.toolbox.docusaurustoasciidoctor.DocusaurusToAsciidoctorMain</exec.args>
+                net.thevpc.nuts.toolbox.docusaurustoasciidoctor.DocusaurusToAsciidoctorMain</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir>/data/private/work-local/clients/pwc/standards/coding-standards/</exec.workingdir>
         </properties>
@@ -27,7 +27,7 @@
         </goals>
         <properties>
             <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Dnuts.debug=true -classpath
-                %classpath net.thevpc.toolbox.docusaurustoasciidoctor.DocusaurusToAsciidoctorMain</exec.args>
+                %classpath net.thevpc.nuts.toolbox.docusaurustoasciidoctor.DocusaurusToAsciidoctorMain</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
             <exec.workingdir>/data/private/work-local/clients/pwc/standards/coding-standards/</exec.workingdir>
@@ -44,7 +44,7 @@
         </goals>
         <properties>
             <exec.args>-Dnuts.debug=true -classpath %classpath
-                net.thevpc.toolbox.docusaurustoasciidoctor.DocusaurusToAsciidoctorMain</exec.args>
+                net.thevpc.nuts.toolbox.docusaurustoasciidoctor.DocusaurusToAsciidoctorMain</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir>/data/private/work-local/clients/pwc/standards/coding-standards/</exec.workingdir>
         </properties>

@@ -169,7 +169,7 @@ search for artifacts/==nuts==
 **--highlight-scope**
     when formatting id, highlight scope
 
-#!include</net/vpc/app/nuts/includes/standard-command.help>
+#!include</net/thevpc/nuts/includes/standard-command.help>
 
 ##EXAMPLES:##
         ==nuts== {{search}} **--help**

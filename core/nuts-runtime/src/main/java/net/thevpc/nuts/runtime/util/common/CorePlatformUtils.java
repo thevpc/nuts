@@ -609,7 +609,7 @@ public class CorePlatformUtils {
             @Override
             public void visitClassDeclaration(int access, String name, String superName, String[] interfaces) {
 //                System.out.println("::: visit class "+name);
-                if (superName != null && superName.equals("net/vpc/app/nuts/NutsApplication")) {
+                if (superName != null && superName.equals("net/thevpc/nuts/NutsApplication")) {
                     nutsApp.set(true);
                 }
                 className.set(name.replace('/', '.'));

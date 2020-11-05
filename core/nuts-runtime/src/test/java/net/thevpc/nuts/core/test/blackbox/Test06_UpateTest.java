@@ -164,14 +164,14 @@ public class Test06_UpateTest {
         Path bootCacheFolder = nws.locations().getStoreLocation(NutsStoreLocation.CACHE).resolve(NutsConstants.Folders.ID);
         Path libFolder = nws.locations().getStoreLocation(NutsStoreLocation.LIB).resolve(NutsConstants.Folders.ID);
         Path configFolder = nws.locations().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
-        Assert.assertTrue(Files.exists(libFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
+        Assert.assertTrue(Files.exists(libFolder.resolve("net/thevpc/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));
-        Assert.assertTrue(Files.exists(configFolder.resolve("net/vpc/app/nuts/nuts/").resolve(newApiVersion)
+        Assert.assertTrue(Files.exists(configFolder.resolve("net/thevpc/nuts/nuts/").resolve(newApiVersion)
                 .resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME)
         ));
 
-        Assert.assertTrue(Files.exists(bootCacheFolder.resolve("net/vpc/app/nuts/nuts-runtime/").resolve(newRuntimeVersion)
+        Assert.assertTrue(Files.exists(bootCacheFolder.resolve("net/thevpc/nuts/nuts-runtime/").resolve(newRuntimeVersion)
                 .resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME)
         ));
 //        try {

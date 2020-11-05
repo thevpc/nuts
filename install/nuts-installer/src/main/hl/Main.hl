@@ -17,8 +17,8 @@ fun main(String[] args){
         }
     }
     if(jarLocation==null){
-        apiVersion="0.6.0";
-        jarLocation=$"https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/$apiVersion/nuts-$apiVersion.jar";
+        apiVersion="0.8.0";
+        jarLocation=$"https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar";
     }
     Path nj("nuts.jar");
     URL(jarLocation).write(nj);

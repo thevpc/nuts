@@ -1,4 +1,4 @@
-#!include</net/vpc/app/nuts/includes/standard-header.help>
+#!include</net/thevpc/nuts/includes/standard-header.help>
 
 ==nuts== stands for ==Network Updatable Things Services== tool. It is a ==__Package Manager__== for (mainly) java
 and non Java world. It helps discovering, downloading, assembling and executing  remote artifacts (packages) in
@@ -513,7 +513,7 @@ will search for it), aliases (a commodity mechanism to extend internal commands)
  **-** <args>...
    run a nut\'s shell (nsh) command with the remaining arguments
 
-#!include</net/vpc/app/nuts/includes/standard-options-format.help>
+#!include</net/thevpc/nuts/includes/standard-options-format.help>
 
 ##EXAMPLES:##
         ==nuts== {{help}}

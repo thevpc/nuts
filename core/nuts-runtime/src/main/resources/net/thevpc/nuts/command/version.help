@@ -14,7 +14,7 @@
  "**--add** <key>\=<value>
       include key\=value pair in the result
 
-#!include</net/vpc/app/nuts/includes/standard-command.help>
+#!include</net/thevpc/nuts/includes/standard-command.help>
 
 ##EXAMPLES:##
         ==nuts== {{version}} **-a**
