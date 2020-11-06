@@ -529,5 +529,7 @@ public interface NutsWorkspaceOptions extends Serializable {
 
     boolean isSkipErrors();
 
+    Boolean getSwitchWorkspace();
+
     String[] getErrors();
 }

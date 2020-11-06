@@ -33,6 +33,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.util.common.CoreCommonUtils;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  *
@@ -48,9 +49,28 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     protected NutsInstallStrategy installed;
     protected NutsInstallStrategy strategy = NutsInstallStrategy.DEFAULT;
     protected List<String> args;
+    protected List<ConditionalArguments> conditionalArguments=new ArrayList<>();
     protected final Map<NutsId,NutsInstallStrategy> ids = new LinkedHashMap<>();
     protected NutsDefinition[] result;
     protected NutsId[] failed;
+
+    protected static class ConditionalArguments{
+        Predicate<NutsDefinition> predicate;
+        List<String> args=new ArrayList<>();
+
+        public ConditionalArguments(Predicate<NutsDefinition> predicate, List<String> args) {
+            this.predicate = predicate;
+            this.args = args;
+        }
+
+        public Predicate<NutsDefinition> getPredicate() {
+            return predicate;
+        }
+
+        public List<String> getArgs() {
+            return args;
+        }
+    }
 
     public AbstractNutsInstallCommand(NutsWorkspace ws) {
         super(ws, "install");
@@ -151,6 +171,12 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     @Override
     public NutsInstallCommand addArgs(String... args) {
         return addArgs(args == null ? null : Arrays.asList(args));
+    }
+
+    @Override
+    public NutsInstallCommand addConditionalArgs(Predicate<NutsDefinition> definition, String... args) {
+        conditionalArguments.add(new ConditionalArguments(definition,Arrays.asList(args)));
+        return this;
     }
 
     @Override

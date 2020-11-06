@@ -77,7 +77,7 @@ public class DefaultNutsSdkManager implements NutsSdkManager {
                             location.getProduct(),
                             location.getVersion(), location.getPath());
                 }
-                NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("sdk", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+                NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("sdk", options.getSession(), ConfigEventType.MAIN);
             }
             return true;
         }
@@ -100,7 +100,7 @@ public class DefaultNutsSdkManager implements NutsSdkManager {
             List<NutsSdkLocation> list = getSdk().get(location.getProduct());
             if (list != null) {
                 if (list.remove(location)) {
-                    NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("sdk", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+                    NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("sdk", options.getSession(), ConfigEventType.MAIN);
                     return true;
                 }
             }

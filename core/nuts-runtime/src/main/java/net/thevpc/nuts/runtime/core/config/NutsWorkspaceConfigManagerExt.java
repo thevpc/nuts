@@ -66,7 +66,7 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     void setSecure(boolean secure, NutsUpdateOptions options);
 
-    void fireConfigurationChanged(String configName, NutsSession session, DefaultNutsWorkspaceConfigManager.ConfigEventType t);
+    void fireConfigurationChanged(String configName, NutsSession session, ConfigEventType t);
 
     NutsWorkspaceConfigApi getStoredConfigApi();
 

@@ -18,7 +18,7 @@
     <orderEntry type="module" module-name="vpc-common-text-source-log" />
     <orderEntry type="module" module-name="vpc-common-mvn" />
     <orderEntry type="module" module-name="vpc-common-diff-jar" />
-    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.13" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
   </component>
 </module>

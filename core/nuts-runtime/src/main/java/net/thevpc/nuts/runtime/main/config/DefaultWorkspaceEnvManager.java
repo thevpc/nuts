@@ -52,7 +52,7 @@ public class DefaultWorkspaceEnvManager implements NutsWorkspaceEnvManager {
         if (CoreStringUtils.isBlank(value)) {
             if (env != null && env.containsKey(property)) {
                 env.remove(property);
-                NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("env", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+                NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("env", options.getSession(), ConfigEventType.MAIN);
             }
         } else {
             if (env == null) {
@@ -62,7 +62,7 @@ public class DefaultWorkspaceEnvManager implements NutsWorkspaceEnvManager {
             String old = env.get(property);
             if (!value.equals(old)) {
                 env.put(property, value);
-                NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("env", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+                NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("env", options.getSession(), ConfigEventType.MAIN);
             }
         }
     }

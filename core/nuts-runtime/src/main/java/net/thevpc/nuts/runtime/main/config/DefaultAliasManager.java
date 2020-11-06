@@ -70,7 +70,7 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
             oldCommandFactory.setParameters(commandFactoryConfig.getParameters() == null ? null : new LinkedHashMap<>(commandFactoryConfig.getParameters()));
             oldCommandFactory.setPriority(commandFactoryConfig.getPriority());
         }
-        NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+        NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), ConfigEventType.MAIN);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
             if (factoryId.equals(factory.getFactoryId())) {
                 removeMe = factory;
                 iterator.remove();
-                NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+                NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), ConfigEventType.MAIN);
                 break;
             }
         }
@@ -97,7 +97,7 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
                 if (factoryId.equals(commandFactory.getFactoryId())) {
                     removeMeConfig = commandFactory;
                     iterator.remove();
-                    NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+                    NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), ConfigEventType.MAIN);
                     break;
                 }
             }

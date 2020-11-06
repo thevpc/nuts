@@ -317,6 +317,8 @@ public interface NutsArgument extends NutsTokenFilter {
      */
     String getStringValue();
 
+    Boolean getBooleanValue(Boolean defaultValue);
+
     /**
      * equivalent to {@code getArgumentValue().getString(value)}
      *

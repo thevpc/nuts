@@ -66,6 +66,8 @@ public interface NutsWorkspaceConfigManager {
 
     void save(NutsSession session);
 
+    NutsWorkspaceBootConfig loadBootConfig(String path, boolean global, boolean followLinks, NutsSession session);
+
     NutsWorkspaceOptionsBuilder optionsBuilder();
 
     NutsWorkspaceOptions options();

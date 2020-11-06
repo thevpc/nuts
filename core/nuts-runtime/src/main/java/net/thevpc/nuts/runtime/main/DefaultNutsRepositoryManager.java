@@ -2,10 +2,10 @@ package net.thevpc.nuts.runtime.main;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.main.config.ConfigEventType;
 import net.thevpc.nuts.runtime.main.repos.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.main.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.main.repos.NutsRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.main.repos.NutsSimpleRepositoryWrapper;
 import net.thevpc.nuts.runtime.DefaultNutsWorkspaceEvent;
@@ -145,7 +145,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         final NutsRepository repository = repositoryRegistryHelper.removeRepository(repositoryId);
         if (repository != null) {
             NutsWorkspaceConfigManagerExt config = NutsWorkspaceConfigManagerExt.of(getWorkspace().config());
-            config.fireConfigurationChanged("config-main", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+            config.fireConfigurationChanged("config-main", options.getSession(), ConfigEventType.MAIN);
             NutsWorkspaceUtils.of(getWorkspace()).events().fireOnRemoveRepository(new DefaultNutsWorkspaceEvent(options.getSession(), repository, "repository", repository, null));
         }
         return this;
@@ -169,7 +169,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         repositoryRegistryHelper.addRepository(ref, repo);
         if (repo != null) {
             NutsWorkspaceConfigManagerExt config = NutsWorkspaceConfigManagerExt.of(getWorkspace().config());
-            config.fireConfigurationChanged("config-main", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+            config.fireConfigurationChanged("config-main", options.getSession(), ConfigEventType.MAIN);
             NutsWorkspaceUtils.of(getWorkspace()).events().fireOnAddRepository(
                     new DefaultNutsWorkspaceEvent(options.getSession(), repo, "repository", null, repo)
             );

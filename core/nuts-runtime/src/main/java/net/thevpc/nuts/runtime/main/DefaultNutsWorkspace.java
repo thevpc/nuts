@@ -446,13 +446,17 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 );
             }
             try {
-                install().companions().setSession(session.copy().setTrace(session.isTrace() && session.isPlainOut())).run();
+                install().companions().setSession(session.copy().setTrace(session.isTrace() && session.isPlainOut()))
+                        .addConditionalArgs(d->d.getId().getShortName().equals("net.thevpc.nuts:ndi")
+                                && config().options().getSwitchWorkspace()!=null
+                                ,"--switch="+config().options().getSwitchWorkspace())
+                        .run();
             } catch (Exception ex) {
                 LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("Unable to install companions");
                 if (session.isPlainTrace()) {
                     PrintStream out = session.out();
                     out.printf("@@Unable to install companion tools@@. This happens when none of the following repositories are able to locate them : %s\n",
-                            Arrays.stream(repos().getRepositories(session)).map(x -> x.getName()).collect(Collectors.joining(","))
+                            Arrays.stream(repos().getRepositories(session)).map(NutsRepository::getName).collect(Collectors.joining(","))
                     );
                 }
             }
@@ -757,7 +761,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     .save();
             h.add(def.getId());
             wcfg.getStoredConfigBoot().setExtensions(h.getConfs());
-            wcfg.fireConfigurationChanged("extensions", session, DefaultNutsWorkspaceConfigManager.ConfigEventType.BOOT);
+            wcfg.fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
             wcfg.prepareBootExtension(def.getId(), true, session);
         }
 

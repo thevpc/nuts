@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.main.config.DefaultNutsWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.main.config.ConfigEventType;
 import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 
 public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
@@ -51,7 +51,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
         if (Files.exists(file)) {
             try {
                 Files.delete(file);
-                NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+                NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), ConfigEventType.MAIN);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -62,7 +62,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
         options = CoreNutsUtils.validate(options, ws);
         Path path = getStoreLocation().resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         ws.formats().json().value(command).print(path);
-        NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+        NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), ConfigEventType.MAIN);
     }
 
     @Override

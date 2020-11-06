@@ -1,14 +1,13 @@
 package net.thevpc.nuts.toolbox.ndi.base;
 
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ndi.NdiScriptOptions;
 import net.thevpc.nuts.toolbox.ndi.NdiScriptnfo;
 import net.thevpc.nuts.toolbox.ndi.util.NdiUtils;
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsDefinition;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsSession;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -45,7 +44,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     public abstract String toCommentLine(String line);
 
-    public boolean saveFile(Path filePath, String content, boolean force) throws IOException {
+    public boolean saveFile(Path filePath, String content, boolean force) {
+        try{
         String fileContent = "";
         if (Files.isRegularFile(filePath)) {
             fileContent = new String(Files.readAllBytes(filePath));
@@ -56,19 +56,27 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             return true;
         }
         return false;
+        }catch (IOException ex){
+            throw new UncheckedIOException(ex);
+        }
     }
 
-    public boolean addFileLine(Path filePath, String commentLine, String goodLine, boolean force, String ensureHeader, String headerReplace) throws IOException {
+    public boolean addFileLine(Path filePath, String commentLine, String goodLine, boolean force, String ensureHeader, String headerReplace) {
         boolean found = false;
         boolean updatedFile = false;
         List<String> lines = new ArrayList<>();
         if (Files.isRegularFile(filePath)) {
-            String fileContent = new String(Files.readAllBytes(filePath));
+            String fileContent = null;
+            try {
+                fileContent = new String(Files.readAllBytes(filePath));
+            }catch (IOException ex){
+                throw new UncheckedIOException(ex);
+            }
             String[] fileRows = fileContent.split("\n");
             if (ensureHeader != null) {
                 if (fileRows.length == 0 || !fileRows[0].trim().matches(ensureHeader)) {
                     lines.add(headerReplace);
-                    updatedFile=true;
+                    updatedFile = true;
                 }
             }
             for (int i = 0; i < fileRows.length; i++) {
@@ -101,15 +109,20 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             updatedFile = true;
         }
         if (force || updatedFile) {
+            try{
             Files.createDirectories(filePath.getParent());
             Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
+            }catch (IOException ex){
+                throw new UncheckedIOException(ex);
+            }
         }
         return updatedFile;
     }
 
-    public boolean removeFileLine(Path filePath, String commentLine, boolean force) throws IOException {
+    public boolean removeFileCommented2Lines(Path filePath, String commentLine, boolean force){
         boolean found = false;
         boolean updatedFile = false;
+        try{
         List<String> lines = new ArrayList<>();
         if (Files.isRegularFile(filePath)) {
             String fileContent = new String(Files.readAllBytes(filePath));
@@ -135,10 +148,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
         }
         return updatedFile;
+        }catch (IOException ex){
+            throw new UncheckedIOException(ex);
+        }
     }
 
     @Override
-    public NdiScriptnfo[] createNutsScript(NdiScriptOptions options) throws IOException {
+    public NdiScriptnfo[] createNutsScript(NdiScriptOptions options) {
         NutsId nid = context.getWorkspace().id().parser().parse(options.getId());
         if ("nuts".equals(nid.getShortName()) || "net.thevpc.nuts:nuts".equals(nid.getShortName())) {
             return createBootScript(options.isForceBoot() || options.getSession().isYes(), options.getSession().isTrace());
@@ -179,9 +195,41 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
     }
 
+    @Override
+    public void removeNutsScript(String id, NutsSession session) {
+        NutsId nid = context.getWorkspace().id().parser().parse(id);
+        Path f = getScriptFile(nid.getArtifactId());
+        if (Files.isRegularFile(f)) {
+            if (session.getTerminal().ask().forBoolean("Tool ==%s== will be removed. Confirm?", NdiUtils.betterPath(f.toString()))
+                    .defaultValue(true)
+                    .getBooleanValue()) {
+                try {
+                    Files.delete(f);
+                } catch (IOException ex) {
+                    throw new UncheckedIOException(ex);
+                }
+                if (session.isPlainTrace()) {
+                    session.out().printf("Tool ==%s== removed.%n", NdiUtils.betterPath(f.toString()));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void switchWorkspace(String switchWorkspaceLocation, String apiVersion) {
+        NutsWorkspaceBootConfig bootconfig = null;
+        if(switchWorkspaceLocation!=null) {
+            bootconfig = context.getWorkspace().config().loadBootConfig(switchWorkspaceLocation, false, true, context.getSession());
+            if (bootconfig == null) {
+                throw new NutsIllegalArgumentException(context.getWorkspace(), "Invalid workspace: " + switchWorkspaceLocation);
+            }
+        }
+        persistConfig(bootconfig, apiVersion, context.getSession());
+    }
+
     protected abstract String getCallScriptCommand(String path);
 
-    public NdiScriptnfo[] createBootScript(boolean force, boolean trace) throws IOException {
+    public NdiScriptnfo[] createBootScript(boolean force, boolean trace) {
         NutsId b = context.getWorkspace().getApiId();
         NutsDefinition f = context.getWorkspace().search()
                 .setSession(context.getSession().copy().setSilent())
@@ -217,17 +265,21 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 context.getSession().out().printf((Files.exists(ff2) ? "re-installing" : "installing") +
                         " script ==%s== %n", NdiUtils.betterPath(ff2.toString()));
             }
-            try (BufferedWriter w = Files.newBufferedWriter(ff2)) {
-                NdiUtils.generateScript("/net/thevpc/nuts/toolbox/" + getTemplateBodyName(), w, x -> {
-                    switch (x) {
-                        case "NUTS_ID":
-                            return "BOOT : " + f.getId().toString();
-                        case "BODY": {
-                            return getCallScriptCommand(NdiUtils.replaceFilePrefix(ff.toString(), ff2.toString(), ""));
+            try {
+                try (BufferedWriter w = Files.newBufferedWriter(ff2)) {
+                    NdiUtils.generateScript("/net/thevpc/nuts/toolbox/" + getTemplateBodyName(), w, x -> {
+                        switch (x) {
+                            case "NUTS_ID":
+                                return "BOOT : " + f.getId().toString();
+                            case "BODY": {
+                                return getCallScriptCommand(NdiUtils.replaceFilePrefix(ff.toString(), ff2.toString(), ""));
+                            }
                         }
-                    }
-                    return null;
-                });
+                        return null;
+                    });
+                }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
             }
             NdiUtils.setExecutable(ff2);
             all.add(new NdiScriptnfo("nuts", b, ff2, overridden));
@@ -235,41 +287,28 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return all.toArray(new NdiScriptnfo[0]);
     }
 
-
     protected abstract String getExecFileName(String name);
 
     protected abstract String getTemplateBodyName();
 
     protected abstract String getTemplateNutsName();
 
-    public NdiScriptnfo createScript(String name, NutsId fnutsId, boolean trace, String desc, Function<String, String> mapper) throws IOException {
-        Path script = getScriptFile(name);
-        if (script.getParent() != null) {
-            if (!Files.exists(script.getParent())) {
-                Files.createDirectories(script.getParent());
-            }
-        }
-        boolean _override = Files.exists(script);
-        try (BufferedWriter w = Files.newBufferedWriter(script)) {
-            NdiUtils.generateScript("/net/thevpc/nuts/toolbox/" + getTemplateBodyName(), w, mapper);
-        }
-        NdiUtils.setExecutable(script);
-        return new NdiScriptnfo(name, fnutsId, script, _override);
-    }
-
-    @Override
-    public void removeNutsScript(String id, NutsSession session) throws IOException {
-        NutsId nid = context.getWorkspace().id().parser().parse(id);
-        Path f = getScriptFile(nid.getArtifactId());
-        if (Files.isRegularFile(f)) {
-            if (session.getTerminal().ask().forBoolean("Tool ==%s== will be removed. Confirm?", NdiUtils.betterPath(f.toString()))
-                    .defaultValue(true)
-                    .getBooleanValue()) {
-                Files.delete(f);
-                if (session.isPlainTrace()) {
-                    session.out().printf("Tool ==%s== removed.%n", NdiUtils.betterPath(f.toString()));
+    public NdiScriptnfo createScript(String name, NutsId fnutsId, boolean trace, String desc, Function<String, String> mapper) {
+        try {
+            Path script = getScriptFile(name);
+            if (script.getParent() != null) {
+                if (!Files.exists(script.getParent())) {
+                    Files.createDirectories(script.getParent());
                 }
             }
+            boolean _override = Files.exists(script);
+            try (BufferedWriter w = Files.newBufferedWriter(script)) {
+                NdiUtils.generateScript("/net/thevpc/nuts/toolbox/" + getTemplateBodyName(), w, mapper);
+            }
+            NdiUtils.setExecutable(script);
+            return new NdiScriptnfo(name, fnutsId, script, _override);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
     }
 

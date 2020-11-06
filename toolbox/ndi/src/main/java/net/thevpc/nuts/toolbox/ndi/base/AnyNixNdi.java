@@ -41,16 +41,21 @@ public class AnyNixNdi extends BaseSystemNdi {
     public String getBashrcName() {
         return ".bashrc";
     }
-
-    public boolean configureBashrc(NutsSession session) throws IOException {
+    @Override
+    public boolean persistConfig(NutsWorkspaceBootConfig bootConfig, String apiVersion, NutsSession session) {
         NutsWorkspace ws = context.getWorkspace();
         NutsWorkspaceConfigManager wsconfig = ws.config();
-        Path apiAppsFolder = ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
+        Path apiAppsFolder =
+                bootConfig!=null?bootConfig.getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS):
+                ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
         Path apiConfigFile = apiAppsFolder.resolve(getExecFileName(".nuts-bashrc"));
 
         boolean force = session.isYes();
         Path sysrcFile = Paths.get(System.getProperty("user.home")).resolve(getBashrcName());
-        removeFileLine(sysrcFile, "net.thevpc.nuts.toolbox.ndi configuration", force);
+        //old configs
+        removeFileCommented2Lines(sysrcFile, "net.thevpc.nuts.toolbox.ndi configuration", force);
+        removeFileCommented2Lines(sysrcFile, "net.vpc.app.nuts configuration", force);
+
         if (addFileLine(sysrcFile, "net.thevpc.nuts configuration",
                 getCallScriptCommand(apiConfigFile.toString()),
                 force,"#!.*","#!/bin/sh")) {
@@ -60,8 +65,10 @@ public class AnyNixNdi extends BaseSystemNdi {
         return false;
     }
 
+
+
     @Override
-    public void configurePath(NutsSession session) throws IOException {
+    public void configurePath(NutsSession session, boolean persistentConfig) {
         Path ndiAppsFolder = context.getAppsFolder();
         final NutsWorkspace ws = context.getWorkspace();
         NutsWorkspaceConfigManager wsconfig = ws.config();
@@ -71,7 +78,7 @@ public class AnyNixNdi extends BaseSystemNdi {
         List<String> updatedNames = new ArrayList<>();
         boolean force = session.isYes();
 
-        if(configureBashrc(session)){
+        if(persistentConfig && persistConfig(null, null, session)){
             updatedNames.add("~/"+getBashrcName());
         }
 

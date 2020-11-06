@@ -265,6 +265,13 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
+     * @since 0.8.0
+     */
+    private Boolean switchWorkspace;
+
+    /**
+     * option-type : create (used when creating new workspace. will not be
+     * exported nor promoted to runtime)
      */
     private Map<String, String> storeLocations = new HashMap<>();
 
@@ -404,6 +411,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         this.setExpireTime(other.getExpireTime());
         this.setErrors(other.getErrors());
         this.setSkipErrors(other.isSkipErrors());
+        this.setSwitchWorkspace(other.getSwitchWorkspace());
         return this;
     }
 
@@ -1315,5 +1323,15 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     @Override
     public String[] getErrors() {
         return Arrays.copyOf(errors,errors.length);
+    }
+
+    @Override
+    public Boolean getSwitchWorkspace() {
+        return switchWorkspace;
+    }
+
+    public NutsWorkspaceOptionsBuilder setSwitchWorkspace(Boolean switchWorkspace) {
+        this.switchWorkspace = switchWorkspace;
+        return this;
     }
 }

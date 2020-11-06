@@ -8,11 +8,15 @@ import net.thevpc.nuts.toolbox.ndi.util.NdiUtils;
 import net.thevpc.nuts.*;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class NdiMain extends NutsApplication {
 
-    public static final String[] COMPANIONS = {"net.thevpc.nuts:nuts",
+    public static final String[] COMPANIONS = {
+            "net.thevpc.nuts:nuts",
             "net.thevpc.nuts.toolbox:ndi",
             "net.thevpc.nuts.toolbox:nsh",
             "net.thevpc.nuts.toolbox:nadmin"
@@ -53,12 +57,15 @@ public class NdiMain extends NutsApplication {
         List<NdiScriptnfo> result = new ArrayList<NdiScriptnfo>();
         ArrayList<String> idsToInstall = new ArrayList<>();
         ArrayList<String> idsToUninstall = new ArrayList<>();
+        String switchWorkspaceLocation=null;
+        String switchWorkspaceApi=null;
         boolean forceAll = false;
         boolean fetch = false;
         ArrayList<String> executorOptions = new ArrayList<>();
         NutsExecutionType execType = null;
         NutsArgument a;
         NutsWorkspace ws = context.getWorkspace();
+        Boolean persistentConfig=null;
         while (cmdLine.hasNext()) {
             if (context.configureFirst(cmdLine)) {
                 // ignore
@@ -98,6 +105,11 @@ public class NdiMain extends NutsApplication {
                         for (String companion : ws.companionIds()) {
                             idsToInstall.add(ws.search().addId(companion).setLatest(true).getResultIds().required().getLongName());
                         }
+                    } else if ((a = cmdLine.nextString("--switch")) != null) {
+                        Boolean booleanValue = a.getBooleanValue(null);
+                        if (booleanValue!=null) {
+                            persistentConfig=booleanValue;
+                        }
                     } else if (cmdLine.peek().isOption()) {
                         cmdLine.unexpectedArgument();
                     } else {
@@ -114,6 +126,24 @@ public class NdiMain extends NutsApplication {
                         idsToUninstall.add(cmdLine.next().getString());
                     }
                 }
+            } else if ((a = cmdLine.next("sw", "switch")) != null) {
+                while (cmdLine.hasNext()) {
+                    if (context.configureFirst(cmdLine)) {
+                        //consumed
+                    } else if (cmdLine.peek().getStringKey().equals("-w")||cmdLine.peek().getStringKey().equals("--workspace")) {
+                        switchWorkspaceLocation=cmdLine.nextString().getStringValue();
+                    } else if (cmdLine.peek().getStringKey().equals("-a")||cmdLine.peek().getStringKey().equals("--api")) {
+                        switchWorkspaceApi=cmdLine.nextString().getStringValue();
+                    } else if (cmdLine.peek().isOption()) {
+                        cmdLine.unexpectedArgument();
+                    } else if(switchWorkspaceLocation==null){
+                        switchWorkspaceLocation=cmdLine.next().getString();
+                    } else if(switchWorkspaceApi==null){
+                        switchWorkspaceApi=cmdLine.next().getString();
+                    }else{
+                        cmdLine.unexpectedArgument();
+                    }
+                }
             } else {
                 cmdLine.unexpectedArgument();
             }
@@ -121,6 +151,12 @@ public class NdiMain extends NutsApplication {
 
         if (idsToInstall.isEmpty() && idsToUninstall.isEmpty()) {
             cmdLine.required();
+        }
+        Path workspaceLocation = context.getWorkspace().locations().getWorkspaceLocation();
+        if(workspaceLocation.equals(Paths.get(System.getProperty("user.home")).resolve(".config/nuts/default-workspace"))){
+            persistentConfig=true;
+        }else{
+            persistentConfig=false;
         }
         if (cmdLine.isExecMode()) {
             if (forceAll) {
@@ -149,15 +185,11 @@ public class NdiMain extends NutsApplication {
                                                         .setExecutorOptions(executorOptions)
                                         )
                                 ));
-                    } catch (IOException e) {
+                    } catch (UncheckedIOException e) {
                         throw new NutsExecutionException(ws, "Unable to run script " + id + " : " + e.toString(), e);
                     }
                 }
-                try {
-                    ndi.configurePath(context.getSession());
-                } catch (IOException e) {
-                    throw new NutsExecutionException(ws, "Unable to configure path : " + e.toString(), e);
-                }
+                    ndi.configurePath(context.getSession(), persistentConfig);
                 if (context.getSession().isTrace()) {
                     if (context.getSession().isPlainTrace()) {
                         int namesSize = result.stream().mapToInt(x -> x.getName().length()).max().orElse(1);
@@ -180,10 +212,13 @@ public class NdiMain extends NutsApplication {
                                 id,
                                 context.getSession().copy().setTrace(subTrace)
                         );
-                    } catch (IOException e) {
+                    } catch (UncheckedIOException e) {
                         throw new NutsExecutionException(ws, "Unable to run script " + id + " : " + e.toString(), e);
                     }
                 }
+            }
+            if(switchWorkspaceLocation!=null || switchWorkspaceApi!=null){
+                ndi.switchWorkspace(switchWorkspaceLocation, switchWorkspaceApi);
             }
         }
     }
@@ -211,7 +246,11 @@ public class NdiMain extends NutsApplication {
         if (ndi != null) {
             List<String> args = new ArrayList<>();
             args.addAll(Arrays.asList("install", "--embedded"));
-            args.addAll(Arrays.asList(COMPANIONS));
+            LinkedHashSet<String> companions=new LinkedHashSet<>();
+            companions.add("net.thevpc.nuts:nuts");
+            companions.add("net.thevpc.nuts.toolbox:ndi");
+            companions.addAll(context.getWorkspace().companionIds());
+            args.addAll(companions);
             context.getSession().yes();
             run(context.getSession(),args.toArray(new String[0]));
         }

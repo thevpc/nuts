@@ -31,6 +31,7 @@ package net.thevpc.nuts;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Command for installing artifacts
@@ -143,6 +144,8 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsInstallCommand args(Collection<String> args);
+
+    NutsInstallCommand addConditionalArgs(Predicate<NutsDefinition> definition, String... args);
 
     /**
      * add arguments to pass to the install command

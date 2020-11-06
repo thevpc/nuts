@@ -209,6 +209,9 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                 fillOption("--expire", "-N",
                         options.getExpireTime() == null ? null : options.getExpireTime().toString()
                         , arguments, false);
+                if(options.getSwitchWorkspace()!=null) {
+                    fillOption("--switch", null, options.getSwitchWorkspace(), false, arguments, false);
+                }
             }
         }
 

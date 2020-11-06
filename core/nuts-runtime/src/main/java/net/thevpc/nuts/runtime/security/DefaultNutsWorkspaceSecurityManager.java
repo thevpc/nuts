@@ -31,8 +31,8 @@ package net.thevpc.nuts.runtime.security;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.main.config.ConfigEventType;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.main.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.main.config.NutsWorkspaceConfigSecurity;
 import net.thevpc.nuts.runtime.log.NutsLogVerb;
 import net.thevpc.nuts.runtime.util.CoreNutsUtils;
@@ -405,7 +405,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         NutsWorkspaceConfigSecurity conf = cc.getStoredConfigSecurity();
         if (!Objects.equals(conf.getAuthenticationAgent(), authenticationAgentId)) {
             conf.setAuthenticationAgent(authenticationAgentId);
-            cc.fireConfigurationChanged("authentication-agent",options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.SECURITY);
+            cc.fireConfigurationChanged("authentication-agent",options.getSession(), ConfigEventType.SECURITY);
         }
         return this;
     }

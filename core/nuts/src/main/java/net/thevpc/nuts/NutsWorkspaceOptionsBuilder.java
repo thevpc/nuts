@@ -73,6 +73,8 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     NutsWorkspaceOptionsBuilder setSkipErrors(boolean value);
 
+    NutsWorkspaceOptionsBuilder setSwitchWorkspace(Boolean value);
+
     NutsWorkspaceOptionsBuilder setErrors(String[] errors);
 
     NutsWorkspaceOptionsBuilder setDry(boolean dry);

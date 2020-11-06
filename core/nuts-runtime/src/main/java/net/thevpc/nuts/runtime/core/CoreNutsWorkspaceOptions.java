@@ -49,10 +49,6 @@ import java.util.function.Supplier;
 public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, NutsWorkspaceOptionsBuilder {
     private static final long serialVersionUID = 1;
     /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private final List<String> outputFormatOptions = new ArrayList<>();
-    /**
      * nuts api version to boot option-type : exported (inherited in child
      * workspaces)
      */
@@ -181,81 +177,111 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * option-type : exported (inherited in child workspaces)
      */
     private NutsOutputFormat outputFormat = null;
+
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
+    private final List<String> outputFormatOptions = new ArrayList<>();
+
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private String[] applicationArguments;
+
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private NutsWorkspaceOpenMode openMode = NutsWorkspaceOpenMode.OPEN_OR_CREATE;
+
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private long creationTime;
+
     /**
      * if true no real execution, wil dry exec
      * option-type : runtime (available only for the current workspace instance)
      */
     private boolean dry = false;
+
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private Supplier<ClassLoader> classLoaderSupplier;
+
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private String[] executorOptions;
+
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private boolean recover = false;
+
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private boolean reset = false;
+
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private boolean debug = false;
+
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private boolean inherited = false;
+
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private NutsExecutionType executionType;
+
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
     private String archetype;
+
+    /**
+     * option-type : create (used when creating new workspace. will not be
+     * exported nor promoted to runtime)
+     * @since 0.8.0
+     */
+    private Boolean switchWorkspace;
+
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
     private Map<String, String> storeLocations = new HashMap<>();
+
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
     private Map<String, String> homeLocations = new HashMap<>();
+
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
     private NutsOsFamily storeLocationLayout = null;
+
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
     private NutsStoreLocationStrategy storeLocationStrategy = null;
+
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
+
     /**
      * option-type : exported (inherited in child workspaces)
      */
@@ -272,26 +298,31 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * option-type : exported (inherited in child workspaces)
      */
     private boolean transitive = true;
+
     /**
      * not parsed
      * option-type : runtime (available only for the current workspace instance)
      */
     private InputStream stdin = null;
+
     /**
      * not parsed
      * option-type : runtime (available only for the current workspace instance)
      */
     private PrintStream stdout = null;
+
     /**
      * not parsed
      * option-type : runtime (available only for the current workspace instance)
      */
     private PrintStream stderr = null;
+
     /**
      * not parsed
      * option-type : runtime (available only for the current workspace instance)
      */
     private ExecutorService executorService = null;
+
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
@@ -377,6 +408,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         this.setExpireTime(other.getExpireTime());
         this.setErrors(other.getErrors());
         this.setSkipErrors(other.isSkipErrors());
+        this.setSwitchWorkspace(other.getSwitchWorkspace());
         return this;
     }
 
@@ -1287,5 +1319,16 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     @Override
     public String toString() {
         return format().getBootCommandLine();
+    }
+
+
+    @Override
+    public Boolean getSwitchWorkspace() {
+        return switchWorkspace;
+    }
+
+    public NutsWorkspaceOptionsBuilder setSwitchWorkspace(Boolean switchWorkspace) {
+        this.switchWorkspace = switchWorkspace;
+        return this;
     }
 }

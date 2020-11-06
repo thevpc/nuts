@@ -122,6 +122,13 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         InstallIdInfo info = list.get(id);
         if (info.doInstall) {
             _loadIdContent(info.id, null, session, true, list,info.strategy);
+            if(info.definition!=null) {
+                for (ConditionalArguments conditionalArgument : conditionalArguments) {
+                    if (conditionalArgument.getPredicate().test(info.definition)){
+                        cmdArgs.addAll(conditionalArgument.getArgs());
+                    }
+                }
+            }
             dws.installImpl(info.definition, cmdArgs.toArray(new String[0]), null, session, info.doSwitchVersion);
             return true;
         } else if (info.doRequire) {

@@ -81,7 +81,7 @@ public class DefaultImportManager implements NutsImportManager {
             }
         }
         getStoreModelMain().setImports(new ArrayList<>(simports));
-        NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("import", options.getSession(), DefaultNutsWorkspaceConfigManager.ConfigEventType.MAIN);
+        NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("import", options.getSession(), ConfigEventType.MAIN);
     }
 
     @Override

@@ -408,6 +408,20 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
+                    case "--switch": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            options.setSwitchWorkspace(a.getBooleanValue(true));
+                        }
+                        break;
+                    }
+                    case "--no-switch": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            options.setSwitchWorkspace(!a.getBooleanValue(true));
+                        }
+                        break;
+                    }
 
                     //**********************************
                     //*

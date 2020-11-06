@@ -1,13 +1,18 @@
 package net.thevpc.nuts.toolbox.ndi;
 
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsWorkspaceBootConfig;
+
 import java.io.IOException;
 
-import net.thevpc.nuts.NutsSession;
-
 public interface SystemNdi {
-    void configurePath(NutsSession session) throws IOException;
+    boolean persistConfig(NutsWorkspaceBootConfig bootConfig, String apiVersion, NutsSession session);
 
-    NdiScriptnfo[] createNutsScript(NdiScriptOptions options) throws IOException;
+    void configurePath(NutsSession session, boolean persistentConfig);
 
-    void removeNutsScript(String id, NutsSession session) throws IOException;
+    NdiScriptnfo[] createNutsScript(NdiScriptOptions options);
+
+    void removeNutsScript(String id, NutsSession session);
+
+    void switchWorkspace(String switchWorkspaceLocation, String apiVersion);
 }

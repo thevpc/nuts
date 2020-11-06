@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.main.wscommands;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.main.config.DefaultNutsWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.main.config.ConfigEventType;
 import net.thevpc.nuts.runtime.DefaultNutsInstallEvent;
 import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
@@ -84,7 +84,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                         .save();
                 h.remove(def.getId());
                 wcfg.getStoredConfigBoot().setExtensions(h.getConfs());
-                wcfg.fireConfigurationChanged("extensions", session, DefaultNutsWorkspaceConfigManager.ConfigEventType.BOOT);
+                wcfg.fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
             }
             if (getSession().isPlainTrace()) {
                 out.println(ws.id().formatter(id).format() + " uninstalled ##successfully##");

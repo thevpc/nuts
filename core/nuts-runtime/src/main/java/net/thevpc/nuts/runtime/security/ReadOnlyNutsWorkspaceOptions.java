@@ -337,4 +337,9 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     public String[] getErrors() {
         return options.getErrors();
     }
+
+    @Override
+    public Boolean getSwitchWorkspace() {
+        return options.getSwitchWorkspace();
+    }
 }

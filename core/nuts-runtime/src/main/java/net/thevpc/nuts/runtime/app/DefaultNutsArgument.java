@@ -493,6 +493,11 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
     }
 
     @Override
+    public Boolean getBooleanValue(Boolean defaultValue) {
+        return getArgumentValue().getBoolean(defaultValue);
+    }
+
+    @Override
     public String getStringValue(String defaultValue) {
         return getArgumentValue().getString(defaultValue);
     }
