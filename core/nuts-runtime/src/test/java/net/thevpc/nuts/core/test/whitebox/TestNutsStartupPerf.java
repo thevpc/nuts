@@ -27,7 +27,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.core.test.whitebox;
+
+import net.thevpc.nuts.Nuts;
 
 /**
  *

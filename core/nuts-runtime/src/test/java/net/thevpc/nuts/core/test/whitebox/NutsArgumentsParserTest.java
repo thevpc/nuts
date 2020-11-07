@@ -1,4 +1,4 @@
-package net.thevpc.nuts;
+package net.thevpc.nuts.core.test.whitebox;
 
 import org.junit.Test;
 
