@@ -377,6 +377,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             printList(out, "{{installed}}", "**set as default**", list.ids(x -> x.doSwitchVersion && x.isAlreadyInstalled()));
             printList(out, "{{installed}}", "{{ignored}}", list.ids(x -> x.ignored));
         }
+        if (!list.ids(x -> !x.ignored).isEmpty() && !ws.io().term().getTerminal().ask().forBoolean("should we proceed?")
+                .defaultValue(true)
+                .setSession(session).getBooleanValue()) {
+            throw new NutsUserCancelException(ws,"installation cancelled");
+        }
 //        List<String> cmdArgs = new ArrayList<>(Arrays.asList(this.getArgs()));
 //        if (session.isForce()) {
 //            cmdArgs.add(0, "--force");
@@ -395,17 +400,17 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                             resultList.add(info.definition);
                         }
                     } catch (RuntimeException ex) {
-                        LOG.with().error(ex).verb(NutsLogVerb.WARNING).level(Level.FINE).log("failed to install " + ws.id().formatter().set(info.id).format());
+                        LOG.with().error(ex).verb(NutsLogVerb.WARNING).level(Level.FINE).log("failed to install " + ws.id().formatter(info.id).format());
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
-                            if (!ws.io().term().getTerminal().ask().forBoolean("@@failed to install@@ " + ws.id().formatter().set(info.id).format() + " and its dependencies... Continue installation?")
+                            if (!ws.io().term().getTerminal().ask().forBoolean("@@failed to install@@ " + ws.id().formatter(info.id).format() + " and its dependencies... Continue installation?")
                                     .defaultValue(true)
                                     .setSession(session).getBooleanValue()) {
-                                session.out().printf(ws.id().formatter().set(info.id).omitNamespace().format() + " @@installation cancelled with error:@@ %s%n", CoreStringUtils.exceptionToString(ex));
+                                session.out().printf(ws.id().formatter(info.id).omitNamespace().format() + " @@installation cancelled with error:@@ %s%n", CoreStringUtils.exceptionToString(ex));
                                 result = new NutsDefinition[0];
                                 return this;
                             } else {
-                                session.out().printf(ws.id().formatter().set(info.id).omitNamespace().format() + " @@installation cancelled with error:@@ %s%n", CoreStringUtils.exceptionToString(ex));
+                                session.out().printf(ws.id().formatter(info.id).omitNamespace().format() + " @@installation cancelled with error:@@ %s%n", CoreStringUtils.exceptionToString(ex));
                             }
                         } else {
                             throw ex;

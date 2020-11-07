@@ -8,9 +8,7 @@ import java.util.Formatter;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.util.fprint.parser.FormattedPrintStreamNodePartialParser;
 
 public class FormattedPrintStreamUtils {
@@ -55,13 +53,17 @@ public class FormattedPrintStreamUtils {
             Object a = args2[i];
             if(a instanceof Number && a instanceof Number && a instanceof Date  && a instanceof Temporal) {
                 //do nothing
-            }else if(a instanceof NutsString){
+            }else if(a instanceof NutsStringBase){
                 args2[i]=String.valueOf(a);
-            }else if(a instanceof NutsId){
+            }else if(a instanceof NutsFormattable){
                 if(ws==null){
                     args2[i]=escapeText(String.valueOf(a));
                 }else{
-                    args2[i]=ws.id().formatter().set((NutsId) a).format();
+                    try {
+                        args2[i] = ws.formats().of((NutsFormattable) a).format();
+                    }catch(Exception ex){
+                        args2[i]=escapeText(String.valueOf(a));
+                    }
                 }
             }else {
                 args2[i]=escapeText(String.valueOf(a));
@@ -142,11 +144,15 @@ public class FormattedPrintStreamUtils {
                 //do nothing
             }else if(a instanceof NutsString){
                 args2[i]=String.valueOf(a);
-            }else if(a instanceof NutsId){
+            }else if(a instanceof NutsFormattable){
                 if(ws==null){
                     args2[i]=escapeText(String.valueOf(a));
                 }else{
-                    args2[i]=ws.id().formatter().set((NutsId) a).format();
+                    try {
+                        args2[i] = ws.formats().of((NutsFormattable) a).format();
+                    }catch (Exception ex){
+                        args2[i]=escapeText(String.valueOf(a));
+                    }
                 }
             }else {
                 args2[i]=escapeText(String.valueOf(a));

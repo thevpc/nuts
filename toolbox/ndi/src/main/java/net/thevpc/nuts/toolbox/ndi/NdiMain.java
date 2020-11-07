@@ -7,7 +7,6 @@ import net.thevpc.nuts.toolbox.ndi.sys.WindowsNdi;
 import net.thevpc.nuts.toolbox.ndi.util.NdiUtils;
 import net.thevpc.nuts.*;
 
-import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -195,8 +194,10 @@ public class NdiMain extends NutsApplication {
                         int namesSize = result.stream().mapToInt(x -> x.getName().length()).max().orElse(1);
                         for (NdiScriptnfo ndiScriptnfo : result) {
                             context.getSession().out().printf("%s script ==%-" + namesSize + "s== for " +
-                                            ws.id().formatter().set(ndiScriptnfo.getId().getLongNameId()).format()
-                                            + " at ==%s==%n", ndiScriptnfo.isOverride() ? "re-installing" : "installing",
+                                            ws.id().formatter(ndiScriptnfo.getId().getLongNameId()).format()
+                                            + " at ==%s==%n", ndiScriptnfo.isOverride() ?
+                                            ws.str().append("**","re-installing") :
+                                            ws.str().append("##","installing"),
                                     ndiScriptnfo.getName(), NdiUtils.betterPath(ndiScriptnfo.getPath().toString()));
                         }
 

@@ -35,6 +35,7 @@ import java.util.function.Predicate;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.filters.id.*;
+import net.thevpc.nuts.runtime.util.InstalledVsNonInstalledSearch;
 import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.filters.id.*;
@@ -124,7 +125,7 @@ public class CoreFilterUtils {
         }
         return getPossibleInstallStatuses();
     }
-    public static boolean[] getTopLevelInstallRepoInclusion(NutsIdFilter filter) {
+    public static InstalledVsNonInstalledSearch getTopLevelInstallRepoInclusion(NutsIdFilter filter) {
         Set<Set<NutsInstallStatus>> s = resolveNutsInstallStatusIdFilter(filter);
         boolean notInstalled=false;
         boolean installedOrRequired=false;
@@ -132,10 +133,10 @@ public class CoreFilterUtils {
             notInstalled|=nutsInstallStatuses.contains(NutsInstallStatus.NOT_INSTALLED);
             installedOrRequired|=nutsInstallStatuses.contains(NutsInstallStatus.INSTALLED)||nutsInstallStatuses.contains(NutsInstallStatus.REQUIRED);
         }
-        return new boolean[]{
-                !notInstalled,
-                installedOrRequired
-        };
+        return new InstalledVsNonInstalledSearch(
+                installedOrRequired,
+                notInstalled
+        );
     }
 
     public static <T extends NutsFilter> T[] getTopLevelFilters(NutsFilter idFilter,Class<T> clazz,NutsWorkspace ws) {

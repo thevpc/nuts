@@ -405,7 +405,10 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                     includedRemote = true;
                                 }
 
-                                for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories(NutsRepositorySupportedAction.SEARCH, id, null, mode, session, false/*installedOrNot == null || installedOrNot*/, installedOrNot == null || !installedOrNot)) {
+                                for (NutsRepository repo : NutsWorkspaceUtils.of(ws)
+                                        .filterRepositories(NutsRepositorySupportedAction.SEARCH, id, null, mode, session,
+                                                getInstalledVsNonInstalledSearch()
+                                )) {
                                     try {
                                         NutsContent content = repo.fetchContent()
                                                 .setId(id1).setDescriptor(foundDefinition.getDescriptor())
@@ -474,6 +477,10 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             return foundDefinition;
         }
         throw new NutsNotFoundException(ws, id);
+    }
+
+    private InstalledVsNonInstalledSearch getInstalledVsNonInstalledSearch() {
+        return new InstalledVsNonInstalledSearch(installedOrNot == null || installedOrNot, true);
     }
 
     private boolean shouldIncludeContent(NutsFetchCommand options) {
@@ -590,7 +597,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
 //                throw new NutsNotFoundException(ws, id);
 //            }
 //        }
-        for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories(NutsRepositorySupportedAction.SEARCH, id, repositoryFilter, mode, session, installedOrNot == null || installedOrNot, installedOrNot == null || !installedOrNot)) {
+        for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories(NutsRepositorySupportedAction.SEARCH, id, repositoryFilter, mode, session, getInstalledVsNonInstalledSearch())) {
             try {
                 NutsDescriptor descriptor = repo.fetchDescriptor().setId(id)
                         .setSession(session).setFetchMode(mode)

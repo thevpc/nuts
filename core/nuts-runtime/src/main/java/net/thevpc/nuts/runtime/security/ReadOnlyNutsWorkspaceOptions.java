@@ -342,4 +342,14 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     public Boolean getSwitchWorkspace() {
         return options.getSwitchWorkspace();
     }
+
+    @Override
+    public String getOutLinePrefix() {
+        return options.getOutLinePrefix();
+    }
+
+    @Override
+    public String getErrLinePrefix() {
+        return options.getErrLinePrefix();
+    }
 }

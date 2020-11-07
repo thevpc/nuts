@@ -405,6 +405,29 @@ public interface NutsWorkspaceOptions extends Serializable {
      */
     boolean isSkipWelcome();
 
+
+    /**
+     * if not null ant not empty, this prefix will be prefixed to output stream
+     * <br>
+     * defaults to null.
+     * <br>
+     * <strong>option-type :</strong>  exported (inherited in child workspaces)
+     * @return out line prefix
+     * @since 0.8.0
+     */
+    String getOutLinePrefix();
+
+    /**
+     * if not null ant not empty, this prefix will be prefixed to error stream
+     * <br>
+     * defaults to null.
+     * <br>
+     * <strong>option-type :</strong>  exported (inherited in child workspaces)
+     * @return err line prefix
+     * @since 0.8.0
+     */
+    String getErrLinePrefix();
+
     /**
      * if true, do not bootstrap workspace after reset/recover.
      * When reset/recover is not active this option is not accepted and an error will be thrown

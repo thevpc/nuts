@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.main;
 
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.NutsStringBuilder;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 public class DefaultNutsStringBuilder implements NutsStringBuilder {
     private static String[] AVAILABLE_FORMATS = new String[]{
@@ -53,12 +50,6 @@ public class DefaultNutsStringBuilder implements NutsStringBuilder {
 
     @Override
     public NutsStringBuilder append(Object s) {
-        if (s instanceof NutsString) {
-            sb.append(((NutsString) s).getValue());
-        }
-        if (s instanceof NutsStringBuilder) {
-            sb.append(((NutsStringBuilder) s).toFormattedString());
-        }
         sb.append(s);
         return this;
     }
@@ -70,10 +61,10 @@ public class DefaultNutsStringBuilder implements NutsStringBuilder {
     }
 
     @Override
-    public NutsStringBuilder appendRaw(String type, String s) {
-        String suffix = getSuffix(type);
-        sb.append(type);
-        sb.append(ws.io().term().getTerminalFormat().escapeText(s));
+    public NutsStringBuilder append(String formatType, String rawString) {
+        String suffix = getSuffix(formatType);
+        sb.append(formatType);
+        sb.append(ws.io().term().getTerminalFormat().escapeText(rawString));
         sb.append(suffix);
         return this;
     }
@@ -88,7 +79,7 @@ public class DefaultNutsStringBuilder implements NutsStringBuilder {
         if (h == 0) {
             return appendRaw(et);
         } else {
-            return appendRaw(AVAILABLE_FORMATS[h - 1], et);
+            return append(AVAILABLE_FORMATS[h - 1], et);
         }
     }
 
@@ -99,7 +90,7 @@ public class DefaultNutsStringBuilder implements NutsStringBuilder {
         if (h == 0) {
             return appendRaw(et);
         } else {
-            return appendRaw(AVAILABLE_FORMATS[h - 1], et);
+            return append(AVAILABLE_FORMATS[h - 1], et);
         }
     }
 

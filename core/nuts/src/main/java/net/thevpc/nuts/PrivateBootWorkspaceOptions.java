@@ -94,6 +94,16 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     private String workspace = null;
 
     /**
+     * out line prefix
+     */
+    private String outLinePrefix = null;
+
+    /**
+     * out line prefix
+     */
+    private String errLinePrefix = null;
+
+    /**
      * user friendly workspace name option-type : exported (inherited in child
      * workspaces)
      */
@@ -1332,6 +1342,28 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
 
     public NutsWorkspaceOptionsBuilder setSwitchWorkspace(Boolean switchWorkspace) {
         this.switchWorkspace = switchWorkspace;
+        return this;
+    }
+
+    @Override
+    public String getOutLinePrefix() {
+        return outLinePrefix;
+    }
+
+    @Override
+    public PrivateBootWorkspaceOptions setOutLinePrefix(String outLinePrefix) {
+        this.outLinePrefix = outLinePrefix;
+        return this;
+    }
+
+    @Override
+    public String getErrLinePrefix() {
+        return errLinePrefix;
+    }
+
+    @Override
+    public PrivateBootWorkspaceOptions setErrLinePrefix(String errLinePrefix) {
+        this.errLinePrefix = errLinePrefix;
         return this;
     }
 }

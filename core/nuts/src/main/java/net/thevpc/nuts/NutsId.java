@@ -38,7 +38,7 @@ import java.util.Map;
  * @since 0.1.0
  * @category Descriptor
  */
-public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId> {
+public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId>,NutsFormattable {
 
     /**
      * true if other has exact shot name than {@code this}

@@ -7,7 +7,7 @@ import java.util.Objects;
  * @author vpc
  * @category Format
  */
-public class NutsString {
+public class NutsString implements NutsStringBase{
     private String value;
 
     public NutsString(String value) {
@@ -34,5 +34,10 @@ public class NutsString {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    @Override
+    public NutsString toNutsString() {
+        return this;
     }
 }

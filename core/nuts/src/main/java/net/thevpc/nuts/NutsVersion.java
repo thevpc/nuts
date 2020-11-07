@@ -44,7 +44,7 @@ import java.io.Serializable;
  * @since 0.5.4
  * @category Descriptor
  */
-public interface NutsVersion extends Serializable, NutsTokenFilter, Comparable<NutsVersion> {
+public interface NutsVersion extends Serializable, NutsTokenFilter, NutsFormattable, Comparable<NutsVersion> {
 
     /**
      * return string representation of the version

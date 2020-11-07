@@ -932,6 +932,28 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
+                    case "--out-line-prefix": {
+                        a = cmdLine.nextString();
+                        if (enabled) {
+                            options.setOutLinePrefix(a.getStringValue());
+                        }
+                        break;
+                    }
+                    case "--err-line-prefix": {
+                        a = cmdLine.nextString();
+                        if (enabled) {
+                            options.setErrLinePrefix(a.getStringValue());
+                        }
+                        break;
+                    }
+                    case "--line-prefix": {
+                        a = cmdLine.nextString();
+                        if (enabled) {
+                            options.setOutLinePrefix(a.getStringValue());
+                            options.setErrLinePrefix(a.getStringValue());
+                        }
+                        break;
+                    }
                     case "-e":
                     case "--exec": {
                         a = cmdLine.nextBoolean();

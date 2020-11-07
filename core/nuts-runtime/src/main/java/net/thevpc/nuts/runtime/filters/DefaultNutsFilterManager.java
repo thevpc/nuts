@@ -53,31 +53,31 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
             throw new NutsIllegalArgumentException(ws, "Unable to detected Filter type");
         }
         switch (type.getName()) {
-            case "NutsDependencyFilter": {
+            case "net.thevpc.nuts.NutsDependencyFilter": {
                 if (nutsDependencyFilterTrue == null) {
                     nutsDependencyFilterTrue = new NutsDependencyFilterTrue(ws);
                 }
                 return (T) nutsDependencyFilterTrue;
             }
-            case "NutsRepositoryFilter": {
+            case "net.thevpc.nuts.NutsRepositoryFilter": {
                 if (nutsRepositoryFilterTrue == null) {
                     nutsRepositoryFilterTrue = new NutsRepositoryFilterTrue(ws);
                 }
                 return (T) nutsRepositoryFilterTrue;
             }
-            case "NutsIdFilter": {
+            case "net.thevpc.nuts.NutsIdFilter": {
                 if (nutsIdFilterTrue == null) {
                     nutsIdFilterTrue = new NutsIdFilterTrue(ws);
                 }
                 return (T) nutsIdFilterTrue;
             }
-            case "NutsVersionFilter": {
+            case "net.thevpc.nuts.NutsVersionFilter": {
                 if (nutsVersionFilterTrue == null) {
                     nutsVersionFilterTrue = new NutsVersionFilterTrue(ws);
                 }
                 return (T) nutsVersionFilterTrue;
             }
-            case "NutsDescriptorFilter": {
+            case "net.thevpc.nuts.NutsDescriptorFilter": {
                 if (nutsDescriptorFilterTrue == null) {
                     nutsDescriptorFilterTrue = new NutsDescriptorFilterTrue(ws);
                 }
@@ -93,31 +93,31 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
             throw new NutsIllegalArgumentException(ws, "Unable to detected Filter type");
         }
         switch (type.getName()) {
-            case "NutsDependencyFilter": {
+            case "net.thevpc.nuts.NutsDependencyFilter": {
                 if (nutsDependencyFilterFalse == null) {
                     nutsDependencyFilterFalse = new NutsDependencyFilterFalse(ws);
                 }
                 return (T) nutsDependencyFilterFalse;
             }
-            case "NutsRepositoryFilter": {
+            case "net.thevpc.nuts.NutsRepositoryFilter": {
                 if (nutsRepositoryFilterFalse == null) {
                     nutsRepositoryFilterFalse = new NutsRepositoryFilterFalse(ws);
                 }
                 return (T) nutsRepositoryFilterFalse;
             }
-            case "NutsIdFilter": {
+            case "net.thevpc.nuts.NutsIdFilter": {
                 if (nutsIdFilterFalse == null) {
                     nutsIdFilterFalse = new NutsIdFilterFalse(ws);
                 }
                 return (T) nutsIdFilterFalse;
             }
-            case "NutsVersionFilter": {
+            case "net.thevpc.nuts.NutsVersionFilter": {
                 if (nutsVersionFilterFalse == null) {
                     nutsVersionFilterFalse = new NutsVersionFilterFalse(ws);
                 }
                 return (T) nutsVersionFilterFalse;
             }
-            case "NutsDescriptorFilter": {
+            case "net.thevpc.nuts.NutsDescriptorFilter": {
                 if (nutsDescriptorFilterFalse == null) {
                     nutsDescriptorFilterFalse = new NutsDescriptorFilterFalse(ws);
                 }
@@ -139,7 +139,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
             }
         }
         switch (type.getName()) {
-            case "NutsDependencyFilter": {
+            case "net.thevpc.nuts.NutsDependencyFilter": {
                 List<NutsDependencyFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
                     NutsDependencyFilter a = toDependencyFilter(other);
@@ -155,7 +155,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 }
                 return (T) new NutsDependencyFilterAnd(ws, all.toArray(new NutsDependencyFilter[0]));
             }
-            case "NutsRepositoryFilter": {
+            case "net.thevpc.nuts.NutsRepositoryFilter": {
                 List<NutsRepositoryFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
                     NutsRepositoryFilter a = toRepositoryFilter(other);
@@ -171,7 +171,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 }
                 return (T) new NutsRepositoryFilterAnd(ws, all.toArray(new NutsRepositoryFilter[0]));
             }
-            case "NutsIdFilter": {
+            case "net.thevpc.nuts.NutsIdFilter": {
                 List<NutsIdFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
                     NutsIdFilter a = toIdFilter(other);
@@ -187,7 +187,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 }
                 return (T) new NutsIdFilterAnd(ws, all.toArray(new NutsIdFilter[0]));
             }
-            case "NutsVersionFilter": {
+            case "net.thevpc.nuts.NutsVersionFilter": {
                 List<NutsVersionFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
                     NutsVersionFilter a = toVersionFilter(other);
@@ -203,7 +203,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 }
                 return (T) new NutsVersionFilterAnd(ws, all.toArray(new NutsVersionFilter[0]));
             }
-            case "NutsDescriptorFilter": {
+            case "net.thevpc.nuts.NutsDescriptorFilter": {
                 List<NutsDescriptorFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
                     NutsDescriptorFilter a = toDescriptorFilter(other);
@@ -240,7 +240,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
             }
         }
         switch (type.getName()) {
-            case "NutsDependencyFilter": {
+            case "net.thevpc.nuts.NutsDependencyFilter": {
                 List<NutsDependencyFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
                     NutsDependencyFilter a = toDependencyFilter(other);
@@ -256,7 +256,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 }
                 return (T) new NutsDependencyFilterOr(ws, all.toArray(new NutsDependencyFilter[0]));
             }
-            case "NutsRepositoryFilter": {
+            case "net.thevpc.nuts.NutsRepositoryFilter": {
                 List<NutsRepositoryFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
                     NutsRepositoryFilter a = toRepositoryFilter(other);
@@ -272,7 +272,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 }
                 return (T) new NutsRepositoryFilterOr(ws, all.toArray(new NutsRepositoryFilter[0]));
             }
-            case "NutsIdFilter": {
+            case "net.thevpc.nuts.NutsIdFilter": {
                 List<NutsIdFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
                     NutsIdFilter a = toIdFilter(other);
@@ -288,7 +288,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 }
                 return (T) new NutsIdFilterOr(ws, all.toArray(new NutsIdFilter[0]));
             }
-            case "NutsVersionFilter": {
+            case "net.thevpc.nuts.NutsVersionFilter": {
                 List<NutsVersionFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
                     NutsVersionFilter a = toVersionFilter(other);
@@ -304,7 +304,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 }
                 return (T) new NutsVersionFilterOr(ws, all.toArray(new NutsVersionFilter[0]));
             }
-            case "NutsDescriptorFilter": {
+            case "net.thevpc.nuts.NutsDescriptorFilter": {
                 List<NutsDescriptorFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
                     NutsDescriptorFilter a = toDescriptorFilter(other);
@@ -338,19 +338,19 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
             }
         }
         switch (type.getName()) {
-            case "NutsDependencyFilter": {
+            case "net.thevpc.nuts.NutsDependencyFilter": {
                 return (T) new NutsDependencyFilterNone(ws, (NutsDependencyFilter) other);
             }
-            case "NutsRepositoryFilter": {
+            case "net.thevpc.nuts.NutsRepositoryFilter": {
                 return (T) new NutsRepositoryFilterNone(ws, (NutsRepositoryFilter) other);
             }
-            case "NutsIdFilter": {
+            case "net.thevpc.nuts.NutsIdFilter": {
                 return (T) new NutsIdFilterNone(ws, (NutsIdFilter) other);
             }
-            case "NutsVersionFilter": {
+            case "net.thevpc.nuts.NutsVersionFilter": {
                 return (T) new NutsVersionFilterNone(ws, (NutsVersionFilter) other);
             }
-            case "NutsDescriptorFilter": {
+            case "net.thevpc.nuts.NutsDescriptorFilter": {
                 return (T) new NutsDescriptorFilterNone(ws, (NutsDescriptorFilter) other);
             }
         }
@@ -374,7 +374,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
             }
         }
         switch (type.getName()) {
-            case "NutsDependencyFilter": {
+            case "net.thevpc.nuts.NutsDependencyFilter": {
                 List<NutsDependencyFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
                     NutsDependencyFilter a = toDependencyFilter(other);
@@ -387,7 +387,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 }
                 return (T) new NutsDependencyFilterNone(ws, all.toArray(new NutsDependencyFilter[0]));
             }
-            case "NutsRepositoryFilter": {
+            case "net.thevpc.nuts.NutsRepositoryFilter": {
                 List<NutsRepositoryFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
                     NutsRepositoryFilter a = toRepositoryFilter(other);
@@ -400,7 +400,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 }
                 return (T) new NutsRepositoryFilterNone(ws, all.toArray(new NutsRepositoryFilter[0]));
             }
-            case "NutsIdFilter": {
+            case "net.thevpc.nuts.NutsIdFilter": {
                 List<NutsIdFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
                     NutsIdFilter a = toIdFilter(other);
@@ -413,7 +413,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 }
                 return (T) new NutsIdFilterNone(ws, all.toArray(new NutsIdFilter[0]));
             }
-            case "NutsVersionFilter": {
+            case "net.thevpc.nuts.NutsVersionFilter": {
                 List<NutsVersionFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
                     NutsVersionFilter a = toVersionFilter(other);
@@ -426,7 +426,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 }
                 return (T) new NutsVersionFilterNone(ws, all.toArray(new NutsVersionFilter[0]));
             }
-            case "NutsDescriptorFilter": {
+            case "net.thevpc.nuts.NutsDescriptorFilter": {
                 List<NutsDescriptorFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
                     NutsDescriptorFilter a = toDescriptorFilter(other);
@@ -451,19 +451,19 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
     @Override
     public <T extends NutsFilter> T to(Class<T> toFilterInterface, NutsFilter filter) {
         switch (toFilterInterface.getName()) {
-            case "NutsDependencyFilter": {
+            case "net.thevpc.nuts.NutsDependencyFilter": {
                 return (T) toDependencyFilter(filter);
             }
-            case "NutsRepositoryFilter": {
+            case "net.thevpc.nuts.NutsRepositoryFilter": {
                 return (T) toRepositoryFilter(filter);
             }
-            case "NutsIdFilter": {
+            case "net.thevpc.nuts.NutsIdFilter": {
                 return (T) toIdFilter(filter);
             }
-            case "NutsVersionFilter": {
+            case "net.thevpc.nuts.NutsVersionFilter": {
                 return (T) toVersionFilter(filter);
             }
-            case "NutsDescriptorFilter": {
+            case "net.thevpc.nuts.NutsDescriptorFilter": {
                 return (T) toDescriptorFilter(filter);
             }
         }
@@ -553,19 +553,19 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
 
     public <T extends NutsFilter> T as(Class<T> toFilterInterface, NutsFilter filter) {
         switch (toFilterInterface.getName()) {
-            case "NutsDependencyFilter": {
+            case "net.thevpc.nuts.NutsDependencyFilter": {
                 return (T) asDependencyFilter(filter);
             }
-            case "NutsRepositoryFilter": {
+            case "net.thevpc.nuts.NutsRepositoryFilter": {
                 return (T) asRepositoryFilter(filter);
             }
-            case "NutsIdFilter": {
+            case "net.thevpc.nuts.NutsIdFilter": {
                 return (T) asIdFilter(filter);
             }
-            case "NutsVersionFilter": {
+            case "net.thevpc.nuts.NutsVersionFilter": {
                 return (T) asVersionFilter(filter);
             }
-            case "NutsDescriptorFilter": {
+            case "net.thevpc.nuts.NutsDescriptorFilter": {
                 return (T) asDescriptorFilter(filter);
             }
         }

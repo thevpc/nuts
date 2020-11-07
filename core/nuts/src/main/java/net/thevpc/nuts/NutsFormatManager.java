@@ -74,4 +74,6 @@ public interface NutsFormatManager {
      */
     NutsIterableOutput iter();
 
+    NutsFormat of(NutsFormattable any);
+
 }

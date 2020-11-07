@@ -21,7 +21,7 @@ public class DefaultNutsIdManager implements NutsIdManager {
 
     @Override
     public NutsIdFormat formatter(NutsId id) {
-        return formatter().set(id);
+        return formatter().setValue(id);
     }
 
     @Override

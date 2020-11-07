@@ -192,6 +192,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
             fillOption("--progress", "-P", options.getProgressOptions(), arguments, false);
             fillOption("--skip-companions", "-k", options.isSkipCompanions(), false, arguments, false);
             fillOption("--skip-welcome", "-K", options.isSkipWelcome(), false, arguments, false);
+            fillOption("--out-line-prefix", null, options.isSkipWelcome(), false, arguments, false);
             fillOption("--skip-boot", "-Q", options.isSkipBoot(), false, arguments, false);
             fillOption("--cached", null, options.isCached(), true, arguments, false);
             fillOption("--indexed", null, options.isIndexed(), true, arguments, false);
@@ -209,8 +210,15 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                 fillOption("--expire", "-N",
                         options.getExpireTime() == null ? null : options.getExpireTime().toString()
                         , arguments, false);
-                if(options.getSwitchWorkspace()!=null) {
-                    fillOption("--switch", null, options.getSwitchWorkspace(), false, arguments, false);
+                if(options.getOutLinePrefix()!=null && Objects.equals(options.getOutLinePrefix(),options.getErrLinePrefix())){
+                    fillOption("--line-prefix", null, options.getOutLinePrefix(),arguments, false);
+                }else {
+                    if (options.getOutLinePrefix() != null) {
+                        fillOption("--out-line-prefix", null, options.getOutLinePrefix(),arguments, false);
+                    }
+                    if (options.getErrLinePrefix() != null) {
+                        fillOption("--err-line-prefix", null, options.getOutLinePrefix(),arguments, false);
+                    }
                 }
             }
         }
@@ -244,6 +252,12 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                             fillOption("--" + osFamily.id() + "-" + location.id() + "-home", null, s, arguments, false);
                         }
                     }
+                }
+            }
+            NutsVersion apiVersionObj = getApiVersionObj();
+            if(apiVersionObj ==null || apiVersionObj.compareTo("0.8.0")>=0) {
+                if(options.getSwitchWorkspace()!=null) {
+                    fillOption("--switch", null, options.getSwitchWorkspace(), false, arguments, false);
                 }
             }
         }
@@ -291,15 +305,6 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
 
     private boolean isImplicitAll() {
         return !exportedOptions && !runtimeOptions && !createOptions;
-    }
-
-    public NutsVersion getApiVersionObj() {
-        if (apiVersionObj == null) {
-            if (apiVersion != null) {
-                apiVersionObj = ws.version().parser().parse(apiVersion);
-            }
-        }
-        return apiVersionObj;
     }
 
     private void fillOption(String longName, String shortName, String[] values, String sep, List<String> arguments, boolean forceSingle) {
@@ -543,6 +548,15 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
     @Override
     public String toString() {
         return getBootCommandLine();
+    }
+
+    public NutsVersion getApiVersionObj() {
+        if (apiVersionObj == null) {
+            if (apiVersion != null) {
+                apiVersionObj = ws.version().parser().parse(apiVersion);
+            }
+        }
+        return apiVersionObj;
     }
 
 

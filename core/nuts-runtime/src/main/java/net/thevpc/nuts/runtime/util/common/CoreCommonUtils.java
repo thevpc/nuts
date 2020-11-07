@@ -431,8 +431,8 @@ public class CoreCommonUtils {
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Date) o).toInstant())
             );
         }
-        if (o instanceof NutsId) {
-            return ws.id().formatter((NutsId) o).format();
+        if (o instanceof NutsFormattable) {
+            return ws.formats().of((NutsFormattable) o).format();
         }
         if (o instanceof Collection) {
             Collection c = ((Collection) o);

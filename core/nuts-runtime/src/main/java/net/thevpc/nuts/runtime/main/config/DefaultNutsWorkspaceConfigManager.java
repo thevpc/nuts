@@ -1287,8 +1287,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             if (!NO_M2) {
                 repos.add("maven-local");
             }
-            repos.add("vpc-public-nuts");
-            repos.add("vpc-public-maven");
+//            repos.add("vpc-public-nuts");
+//            repos.add("vpc-public-maven");
             repos.add("maven-central");
         }
         return parsedBootRepositories = repos;

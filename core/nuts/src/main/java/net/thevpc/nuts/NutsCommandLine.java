@@ -96,7 +96,7 @@ import java.util.List;
  * @since 0.5.5
  * @category Command Line
  */
-public interface NutsCommandLine extends Iterable<NutsArgument>{
+public interface NutsCommandLine extends Iterable<NutsArgument>,NutsFormattable{
 
     /**
      * set autocomplete instance

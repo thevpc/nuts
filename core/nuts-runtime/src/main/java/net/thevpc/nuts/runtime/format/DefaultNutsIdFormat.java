@@ -344,11 +344,6 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     @Override
-    public NutsIdFormat set(NutsId id) {
-        return setValue(id);
-    }
-
-    @Override
     public void print(PrintStream out) {
             out.print(format());
     }

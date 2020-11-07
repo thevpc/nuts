@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.log;
 
 
 import net.thevpc.nuts.NutsString;
+import net.thevpc.nuts.NutsStringBase;
 import net.thevpc.nuts.runtime.util.common.CoreCommonUtils;
 import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 
@@ -58,8 +59,8 @@ public class NutsLogPlainFormatter extends Formatter {
             }else{
                 parameters2= Arrays.copyOf(parameters2,parameters2.length);
                 for (int i = 0; i < parameters2.length; i++) {
-                    if(parameters2[i] instanceof NutsString){
-                        parameters2[i]=wRecord.getWorkspace().io().term().getTerminalFormat().filterText(((NutsString)parameters2[i]).getValue());
+                    if(parameters2[i] instanceof NutsStringBase){
+                        parameters2[i]=wRecord.getWorkspace().io().term().getTerminalFormat().filterText(parameters2[i].toString());
                     }
                 }
                 switch (wRecord.getFormatStyle()){

@@ -38,7 +38,7 @@ import java.util.Map;
  * @since 0.5.3
  * @category Descriptor
  */
-public interface NutsDependency extends Serializable{
+public interface NutsDependency extends Serializable, NutsFormattable{
 
     /**
      * return mutable id builder instance initialized with {@code this} instance.

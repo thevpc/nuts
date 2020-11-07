@@ -716,11 +716,9 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             );
                             NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getProperties(), idFilter2, sDescriptorFilter, ws));
 //                            boolean includeInstalledRepository=filter0.accept()
-                            boolean[] includeInstalledRepository = CoreFilterUtils.getTopLevelInstallRepoInclusion(filter);
+                            InstalledVsNonInstalledSearch includeInstalledRepository = CoreFilterUtils.getTopLevelInstallRepoInclusion(filter);
                             for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories(NutsRepositorySupportedAction.SEARCH, nutsId1, sRepositoryFilter, mode, session,
-                                    includeInstalledRepository[0],
-                                    includeInstalledRepository[1]
-                            )) {
+                                    includeInstalledRepository)) {
                                 if (sRepositoryFilter == null || sRepositoryFilter.acceptRepository(repo)) {
                                     all.add(IteratorBuilder.ofLazyNamed("searchVersions(" + repo.getName() + "," + mode + "," + sRepositoryFilter + "," + finalSession + ")", ()
                                             -> repo.searchVersions().setId(nutsId1).setFilter(filter)
@@ -754,13 +752,13 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             }
         } else {
             NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(null, sIdFilter, sDescriptorFilter, ws));
-            boolean[] includeInstalledRepository = CoreFilterUtils.getTopLevelInstallRepoInclusion(filter);
+            InstalledVsNonInstalledSearch includeInstalledRepository = CoreFilterUtils.getTopLevelInstallRepoInclusion(filter);
 
             List<Iterator<NutsId>> coalesce = new ArrayList<>();
             for (NutsFetchMode mode : fetchMode) {
                 List<Iterator<NutsId>> all = new ArrayList<>();
                 for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositories(NutsRepositorySupportedAction.SEARCH, null, sRepositoryFilter, mode, session,
-                        includeInstalledRepository[0], includeInstalledRepository[1]
+                        includeInstalledRepository
                 )) {
                     NutsSession finalSession1 = session;
                     all.add(

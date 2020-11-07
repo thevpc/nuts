@@ -365,7 +365,11 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 mainMethod.setAccessible(true);
                 Class p = cls.getSuperclass();
                 while (p != null) {
-                    if (p.getName().equals("NutsApplication")) {
+                    if (
+                            p.getName().equals("net.thevpc.nuts.NutsApplication")
+                                    //this is the old nuts apps (version < 0.8.0)
+                            || p.getName().equals("net.vpc.app.nuts.NutsApplication")
+                    ) {
                         isNutsApp = true;
                         break;
                     }

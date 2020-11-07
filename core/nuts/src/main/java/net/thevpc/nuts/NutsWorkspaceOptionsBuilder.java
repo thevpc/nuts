@@ -196,4 +196,24 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
      * @since 0.8.0
      */
     NutsWorkspaceOptionsBuilder setExpireTime(Instant value);
+
+
+    /**
+     * set output line prefix
+     *
+     * @param value value
+     * @return {@code this} instance
+     * @since 0.8.0
+     */
+    NutsWorkspaceOptionsBuilder setOutLinePrefix(String value);
+
+    /**
+     * set output line prefix
+     *
+     * @param value value
+     * @return {@code this} instance
+     * @since 0.8.0
+     */
+    NutsWorkspaceOptionsBuilder setErrLinePrefix(String value);
+
 }

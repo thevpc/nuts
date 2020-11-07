@@ -1,13 +1,13 @@
 package net.thevpc.nuts;
 
-public interface NutsStringBuilder {
+public interface NutsStringBuilder extends NutsStringBase{
     NutsStringBuilder append(String s);
 
     NutsStringBuilder append(Object s);
 
     NutsStringBuilder appendRaw(String s);
 
-    NutsStringBuilder appendRaw(String type, String s);
+    NutsStringBuilder append(String formatType, String rawString);
 
     NutsStringBuilder appendHashed(Object o, Object hash);
 
@@ -16,8 +16,6 @@ public interface NutsStringBuilder {
     NutsStringBuilder appendRandom(Object o);
 
     String toFormattedString();
-
-    NutsString toNutsString();
 
     String toFilteredString();
 

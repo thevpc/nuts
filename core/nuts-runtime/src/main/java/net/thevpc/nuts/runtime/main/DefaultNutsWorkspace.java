@@ -117,9 +117,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCRF.log("   nuts-name                      : {0}", CoreNutsUtils.desc(info.getName()));
             LOGCRF.log("   nuts-api-version               : {0}", Nuts.getVersion());
             LOGCRF.log("   nuts-boot-repositories         : {0}", CoreNutsUtils.desc(info.getBootRepositories()));
-            LOGCRF.log("   nuts-runtime-dependencies      : {0}", new NutsString(info.getRuntimeDependenciesSet().stream().map(x -> id().formatter().set(id().parser().parse(x)).format()).collect(Collectors.joining(";"))));
+            LOGCRF.log("   nuts-runtime-dependencies      : {0}", new NutsString(info.getRuntimeDependenciesSet().stream().map(x -> id().formatter(id().parser().parse(x)).format()).collect(Collectors.joining(";"))));
             LOGCRF.log("   nuts-runtime-urls              : {0}", Arrays.asList(info.getClassWorldURLs()).stream().map(x -> x.toString()).collect(Collectors.joining(";")));
-            LOGCRF.log("   nuts-extension-dependencies    : {0}", new NutsString(info.getExtensionDependenciesSet().stream().map(x -> id().formatter().set(id().parser().parse(x)).format()).collect(Collectors.joining(";"))));
+            LOGCRF.log("   nuts-extension-dependencies    : {0}", new NutsString(info.getExtensionDependenciesSet().stream().map(x -> id().formatter(id().parser().parse(x)).format()).collect(Collectors.joining(";"))));
 //            if (hasUnsatisfiedRequirements()) {
 //                LOG.log(Level.CONFIG, "\t execution-requirements         : unsatisfied {0}", getRequirementsHelpString(true));
 //            } else {
@@ -204,9 +204,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         for (Iterator<DefaultNutsWorkspaceExtensionManager.RegInfo> iterator = regInfos.iterator(); iterator.hasNext(); ) {
             DefaultNutsWorkspaceExtensionManager.RegInfo regInfo = iterator.next();
             switch (regInfo.getExtensionPointType().getName()) {
-                case "NutsSystemTerminalBase":
-                case "NutsSessionTerminalBase":
-                case "net.thevpc.nuts.core.io.NutsFormattedPrintStream": {
+                case "net.thevpc.nuts.NutsSystemTerminalBase":
+                case "net.thevpc.nuts.NutsSessionTerminalBase":
+                case "net.thevpc.nuts.runtime.core.io.NutsFormattedPrintStream": {
                     extensionManager.registerType(regInfo, bootSession);
                     iterator.remove();
                     break;
@@ -394,7 +394,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
             StringBuilder version = new StringBuilder(nutsVersion);
             CoreStringUtils.fillString(' ', 25 - version.length(), version);
-            out.println(io().loadFormattedString("/net/thevpc/app/nuts/includes/standard-header.help", getClass().getClassLoader(), "no help found"));
+            out.println(io().loadFormattedString("/net/thevpc/nuts/includes/standard-header.help", getClass().getClassLoader(), "no help found"));
             out.println("{{/------------------------------------------------------------------------------\\\\}}");
             out.println("{{|}}  This is the very {{first}} time ==Nuts== has been started for this workspace...     {{|}}");
             out.println("{{\\\\------------------------------------------------------------------------------/}}");
@@ -442,7 +442,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 PrintStream out = session.out();
                 Set<String> companionIds = companionIds();
                 out.println("looking for recommended companion tools to install... detected : " + companionIds.stream()
-                        .map(x -> id().formatter().set(id().parser().parse(x)).format()).collect(Collectors.toList())
+                        .map(x -> id().formatter(id().parser().parse(x)).format()).collect(Collectors.toList())
                 );
             }
             try {
@@ -587,7 +587,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         boolean reinstall = false;
         if (session.isPlainTrace()) {
             if (strategy0 == InstallStrategy0.UPDATE) {
-                session.out().println("updating " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
+                session.out().println("updating " + id().formatter(def.getId().getLongNameId()).format() + " ...");
             } else if (strategy0 == InstallStrategy0.REQUIRE) {
                 reinstall = def.getInstallInformation().getInstallStatus()
                         .contains(NutsInstallStatus.REQUIRED);
@@ -600,9 +600,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 reinstall = def.getInstallInformation().getInstallStatus()
                         .contains(NutsInstallStatus.INSTALLED);
                 if (reinstall) {
-                    session.out().println("re-installing " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
+                    session.out().println("re-installing " + id().formatter(def.getId().getLongNameId()).format() + " ...");
                 } else {
-                    session.out().println("installing " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
+                    session.out().println("installing " + id().formatter(def.getId().getLongNameId()).format() + " ...");
                 }
             }
         }
@@ -792,21 +792,34 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     if (!def.getContent().isCached()) {
                         if (def.getContent().isTemporary()) {
                             if (session.isPlainTrace()) {
-                                out.printf("%s %s ##successfully## from temporarily file %s.%s%n", installedString, new NutsString(id().formatter().value(def.getId().getLongNameId()).format()), def.getPath(), new NutsString(setAsDefaultString));
+                                out.printf("%s %s ##successfully## from remote repository (%s) temporarily file %s.%s%n", installedString,
+                                        new NutsString(id().formatter().value(def.getId().getLongNameId()).format()),
+                                        def.getRepositoryName(),
+                                        def.getPath(), new NutsString(setAsDefaultString));
                             }
                         } else {
                             if (session.isPlainTrace()) {
-                                out.printf("%s %s ##successfully## from remote repository.%s%n", installedString, new NutsString(id().formatter().value(def.getId().getLongNameId()).format()), new NutsString(setAsDefaultString));
+                                out.printf("%s %s ##successfully## from remote repository (%s).%s%n", installedString,
+                                        new NutsString(id().formatter().value(def.getId().getLongNameId()).format()),
+                                        def.getRepositoryName(),
+                                        new NutsString(setAsDefaultString));
                             }
                         }
                     } else {
                         if (def.getContent().isTemporary()) {
                             if (session.isPlainTrace()) {
-                                out.printf("%s %s from local temporarily file %s.%s%n", installedString, new NutsString(id().formatter().value(def.getId().getLongNameId()).format()), def.getPath(), new NutsString(setAsDefaultString));
+                                out.printf("%s %s from local repository (%s) temporarily file %s.%s%n", installedString,
+                                        new NutsString(id().formatter().value(def.getId().getLongNameId()).format()),
+                                        def.getRepositoryName(),
+                                        def.getPath(), new NutsString(setAsDefaultString));
                             }
                         } else {
                             if (session.isPlainTrace()) {
-                                out.printf("%s %s from local repository.%s%n", installedString, new NutsString(id().formatter().value(def.getId().getLongNameId()).format()), new NutsString(setAsDefaultString));
+                                out.printf("%s %s from local repository (%s).%s%n", installedString,
+                                        new NutsString(id().formatter().value(def.getId().getLongNameId()).format()),
+                                        def.getRepositoryName(),
+                                        new NutsString(setAsDefaultString)
+                                );
                             }
                         }
                     }
@@ -977,17 +990,17 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     @Override
     public String getWelcomeText() {
-        return this.io().loadFormattedString("/net/thevpc/app/nuts/nuts-welcome.help", getClass().getClassLoader(), "no welcome found");
+        return this.io().loadFormattedString("/net/thevpc/nuts/nuts-welcome.help", getClass().getClassLoader(), "no welcome found");
     }
 
     @Override
     public String getHelpText() {
-        return this.io().loadFormattedString("/net/thevpc/app/nuts/nuts-help.help", getClass().getClassLoader(), "no help found");
+        return this.io().loadFormattedString("/net/thevpc/nuts/nuts-help.help", getClass().getClassLoader(), "no help found");
     }
 
     @Override
     public String getLicenseText() {
-        return this.io().loadFormattedString("/net/thevpc/app/nuts/nuts-license.help", getClass().getClassLoader(), "no license found");
+        return this.io().loadFormattedString("/net/thevpc/nuts/nuts-license.help", getClass().getClassLoader(), "no license found");
     }
 
     @Override

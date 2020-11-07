@@ -141,17 +141,20 @@ public class NutsWorkspaceUtils {
     }
 
     public List<NutsRepository> filterRepositoriesDeploy(NutsId id, NutsRepositoryFilter repositoryFilter, NutsSession session) {
-        return filterRepositories(NutsRepositorySupportedAction.DEPLOY, id, repositoryFilter, NutsFetchMode.LOCAL, session, false, true);
+        return filterRepositories(NutsRepositorySupportedAction.DEPLOY, id, repositoryFilter, NutsFetchMode.LOCAL, session, new InstalledVsNonInstalledSearch(
+                false,
+                true
+        ));
     }
 
-    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchMode mode, NutsSession session, boolean includeInstalledRepository, boolean includeOtherRepositories) {
-        return filterRepositories(fmode, id, repositoryFilter, true, null, mode, session, includeInstalledRepository, includeOtherRepositories);
+    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchMode mode, NutsSession session, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
+        return filterRepositories(fmode, id, repositoryFilter, true, null, mode, session, installedVsNonInstalledSearch);
     }
 
-    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsSession session, boolean includeInstalledRepository, boolean includeOtherRepositories) {
+    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsSession session, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
         List<RepoAndLevel> repos2 = new ArrayList<>();
         //        List<Integer> reposLevels = new ArrayList<>();
-        if (includeOtherRepositories) {
+        if (installedVsNonInstalledSearch.isSearchInOtherRepositories()) {
             for (NutsRepository repository : ws.repos().getRepositories(session)) {
                 if (repository.isEnabled() && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))) {
                     int t = 0;
@@ -178,7 +181,7 @@ public class NutsWorkspaceUtils {
             }
         }
         List<NutsRepository> ret = new ArrayList<>();
-        if (fmode == NutsRepositorySupportedAction.SEARCH && includeInstalledRepository) {
+        if (fmode == NutsRepositorySupportedAction.SEARCH && installedVsNonInstalledSearch.isSearchInInstalled()) {
             ret.add(NutsWorkspaceExt.of(ws).getInstalledRepository());
         }
         for (RepoAndLevel repoAndLevel : repos2) {

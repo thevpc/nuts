@@ -76,6 +76,19 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      */
     private String workspace = null;
 
+
+    /**
+     * out line prefix, option-type : exported (inherited in child
+     * workspaces)
+     */
+    private String outLinePrefix=null;
+
+    /**
+     * err line prefix, option-type : exported (inherited in child
+     * workspaces)
+     */
+    private String errLinePrefix=null;
+
     /**
      * user friendly workspace name option-type : exported (inherited in child
      * workspaces)
@@ -1329,6 +1342,25 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
 
     public NutsWorkspaceOptionsBuilder setSwitchWorkspace(Boolean switchWorkspace) {
         this.switchWorkspace = switchWorkspace;
+        return this;
+    }
+
+    @Override
+    public String getOutLinePrefix() {
+        return outLinePrefix;
+    }
+
+    public CoreNutsWorkspaceOptions setOutLinePrefix(String outLinePrefix) {
+        this.outLinePrefix = outLinePrefix;
+        return this;
+    }
+
+    public String getErrLinePrefix() {
+        return errLinePrefix;
+    }
+
+    public CoreNutsWorkspaceOptions setErrLinePrefix(String errLinePrefix) {
+        this.errLinePrefix = errLinePrefix;
         return this;
     }
 }

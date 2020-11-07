@@ -3,8 +3,6 @@ package net.thevpc.nuts.toolbox.njob;
 import net.thevpc.nuts.toolbox.njob.model.*;
 import net.thevpc.nuts.toolbox.njob.time.*;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.toolbox.njob.model.*;
-import net.thevpc.nuts.toolbox.njob.time.*;
 
 import java.io.InputStream;
 import java.time.Instant;
@@ -1028,7 +1026,7 @@ public class JobServiceCmd {
             NutsMutableTableModel m = ws.formats().table().createModel();
             NJobGroup finalGroupBy = groupBy;
             r.forEach(x -> {
-                NutsString durationString = ws.str().appendRaw("##", String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)))
+                NutsString durationString = ws.str().append("##", String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)))
                         .toNutsString();
                 m.newRow().addCells(
                         (finalGroupBy != null) ?
@@ -1039,7 +1037,7 @@ public class JobServiceCmd {
                                         x.getName()
 
                                 } : new Object[]{
-                                ws.str().appendRaw("<<", x.getId()).toNutsString(),
+                                ws.str().append("<<", x.getId()).toNutsString(),
                                 getFormattedDate(x.getStartTime()),
                                 durationString,
                                 getFormattedProject(x.getProject() == null ? "*" : x.getProject()),
@@ -1227,15 +1225,15 @@ public class JobServiceCmd {
         String dte0 = getFormattedDate(x.getDueTime());
         NutsStringBuilder dte = ws.str();
         if (s == NTaskStatus.CANCELLED || s == NTaskStatus.DONE) {
-            dte.appendRaw("<<", dte0);
+            dte.append("<<", dte0);
         } else if (x.getDueTime() != null && x.getDueTime().compareTo(Instant.now()) < 0) {
-            dte.appendRaw("@@", dte0);
+            dte.append("@@", dte0);
         } else {
-            dte.appendRaw("##", dte0);
+            dte.append("##", dte0);
         }
         String projectName = p != null ? p.getName() : project != null ? project : "*";
         return new Object[]{
-                ws.str().appendRaw("<<", x.getId()),
+                ws.str().append("<<", x.getId()),
                 getFlagString(x.getFlag()),
                 getStatusString(x.getStatus()),
                 getPriorityString(x.getPriority()),
