@@ -20,8 +20,8 @@
             <name>Taha Ben Salah</name>
             <email>taha.bensalah@gmail.com</email>
             <url>http://tahabensalah.net</url>
-            <organization>vpc open source initiative</organization>
-            <organizationUrl>http://tahabensalah.net</organizationUrl>
+            <organization>thevpc open source initiative</organization>
+            <organizationUrl>http://thevpc.net</organizationUrl>
             <roles>
                 <role>architect</role>
                 <role>developer</role>
@@ -35,8 +35,8 @@
 
     <licenses>
         <license>
-            <name>GNU General Public License Version 3.0</name>
-            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
 
