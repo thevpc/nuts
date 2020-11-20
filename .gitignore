@@ -90,3 +90,7 @@ toolbox/worky/worky.iml
 /core/nuts/target/
 /lsp/conf/
 /core/nuts-runtime/target/
+/toolbox/njob/njob.iml
+/toolbox/noapi/target/
+/core/nuts-runtime/nuts-runtime.iml
+/core/nuts/nuts.iml
