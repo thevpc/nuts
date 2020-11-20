@@ -32,7 +32,7 @@ import java.io.*;
  * handy manner that is monitorable and Workspace aware.
  *
  * @author vpc
- * @category Input Output
+ * %category Input Output
  * @since 0.5.4
  */
 public interface NutsIOManager extends NutsComponent<Object/* any object or null */> {

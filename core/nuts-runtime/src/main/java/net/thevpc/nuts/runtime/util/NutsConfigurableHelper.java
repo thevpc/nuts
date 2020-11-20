@@ -41,7 +41,11 @@ public class NutsConfigurableHelper {
      * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
+     * @param c argument configurable
+     * @param ws workspace
+     * @param skipUnsupported skipUnsupported
      * @param args argument to configure with
+     * @param commandName commandName
      * @return {@code this} instance
      */
     public static <T> T configure(NutsConfigurable c, NutsWorkspace ws, boolean skipUnsupported, String[] args, String commandName) {

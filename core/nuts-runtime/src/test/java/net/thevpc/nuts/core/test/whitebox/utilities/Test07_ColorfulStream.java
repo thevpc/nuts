@@ -8,7 +8,7 @@ package net.thevpc.nuts.core.test.whitebox.utilities;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.util.fprint.FormatOutputStream;
 import net.thevpc.nuts.runtime.util.fprint.util.FormattedPrintStreamUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.PrintStream;
 

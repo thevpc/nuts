@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 /**
  * Mutable Table Model
  * @author vpc
- * @category Format
+ * %category Format
  */
 public interface NutsMutableTableModel extends NutsTableModel {
 

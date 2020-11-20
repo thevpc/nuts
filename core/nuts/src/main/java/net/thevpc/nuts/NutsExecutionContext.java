@@ -33,7 +33,7 @@ import java.util.Map;
  *
  * @author vpc
  * @since 0.5.4
- * @category Base
+ * %category Base
  */
 public interface NutsExecutionContext {
 
@@ -44,12 +44,14 @@ public interface NutsExecutionContext {
      */
     String getCommandName();
 
+    long getSleepMillis();
+
     /**
      * executor options
      *
      * @return executor options
      */
-    String[] getExecutorOptions();
+    String[] getExecutorArguments();
 
     /**
      * executor properties

@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * @author vpc
  * @since 0.5.4
- * @category Format
+ * %category Format
  */
 public interface NutsVersionFormat extends NutsFormat {
 

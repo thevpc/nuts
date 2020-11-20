@@ -23,7 +23,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
     private Object lastObject;
 
     public DefaultSearchFormatTree(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
-        super(session, writer, NutsOutputFormat.TREE, options);
+        super(session, writer, NutsContentType.TREE, options);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
                 return id.getSingleColumnRow(getDisplayOptions());
             }
         });
-        tree.setModel(new SearchResultTreeModel(object));
+        tree.setValue(new SearchResultTreeModel(object));
         tree.println(getWriter());
         getWriter().flush();
     }

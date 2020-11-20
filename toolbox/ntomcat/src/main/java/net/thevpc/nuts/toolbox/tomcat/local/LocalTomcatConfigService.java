@@ -106,7 +106,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
         }
         Path f = getConfigPath();
-        context.getWorkspace().formats().json().value(config).print(f);
+        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(config).print(f);
         return this;
     }
 
@@ -226,7 +226,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                     break;
                 }
             }
-            object().value(r).println();
+            object().setValue(r).println();
         }
     }
 
@@ -682,7 +682,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         String name = getName();
         Path f = context.getSharedConfigFolder().resolve(name + LOCAL_CONFIG_EXT);
         if (Files.exists(f)) {
-            config = context.getWorkspace().formats().json().parse(f, LocalTomcatConfig.class);
+            config = context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(f, LocalTomcatConfig.class);
             return this;
 //        } else if ("default".equals(name)) {
 //            //auto create default config

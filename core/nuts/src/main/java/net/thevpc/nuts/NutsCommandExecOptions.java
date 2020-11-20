@@ -35,7 +35,7 @@ import java.util.Objects;
  * Command execution options
  * @author vpc
  * @since 0.5.4
- * @category Command Line
+ * %category Command Line
  */
 public class NutsCommandExecOptions implements Serializable {
     private static final long serialVersionUID = 1;

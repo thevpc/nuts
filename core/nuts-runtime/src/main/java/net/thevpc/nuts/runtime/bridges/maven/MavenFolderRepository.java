@@ -72,7 +72,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
             try {
                 stream.close();
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new NutsIOException(getWorkspace(),e);
             }
         }
     };
@@ -273,22 +273,22 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    throw new UnsupportedOperationException("updateStatistics Not supported.");
+                    throw new NutsIOException(getWorkspace(),"updateStatistics Not supported.");
                 }
 
                 @Override
                 public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    throw new UnsupportedOperationException("updateStatistics Not supported.");
+                    throw new NutsIOException(getWorkspace(),"updateStatistics Not supported.");
                 }
 
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    throw new UnsupportedOperationException("updateStatistics Not supported.");
+                    throw new NutsIOException(getWorkspace(),"updateStatistics Not supported.");
                 }
             }
             );
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(getWorkspace(),ex);
         }
     }
 

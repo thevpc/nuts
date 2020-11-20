@@ -25,17 +25,17 @@
 */
 package net.thevpc.nuts.runtime.format.xml;
 
-import net.thevpc.nuts.NutsElementType;
+import net.thevpc.nuts.*;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import net.thevpc.nuts.NutsElement;
+
+import net.thevpc.nuts.runtime.format.elem.DefaultNutsElementFormat;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import net.thevpc.nuts.NutsNamedElement;
-import net.thevpc.nuts.NutsXmlFormat;
 import net.thevpc.nuts.runtime.format.elem.DefaultNutsNamedElement;
 import net.thevpc.nuts.runtime.format.elem.NutsElementFactoryContext;
 import net.thevpc.nuts.runtime.format.elem.NutsObjectElementBase;
@@ -59,18 +59,18 @@ public class NutsObjectElementXml extends NutsObjectElementBase {
         return NutsElementType.OBJECT;
     }
 
-    private NutsXmlFormat getNutsElementXmlConverter() {
-        NutsXmlFormat xml = (NutsXmlFormat) context.getProperties().get(DefaultNutsXmlFormat.class.getName());
+    private NutsElementFormat getDefaultNutsElementFormat() {
+        NutsElementFormat xml = (NutsElementFormat) context.getProperties().get(DefaultNutsElementFormat.class.getName());
         if (xml != null) {
             return xml;
         }
-        return context.getWorkspace().formats().xml();
+        return context.getWorkspace().formats().element();
     }
 
     @Override
     public Collection<NutsNamedElement> children() {
         List<NutsNamedElement> all = new ArrayList<>();
-        DefaultNutsXmlFormat xml = (DefaultNutsXmlFormat) getNutsElementXmlConverter();
+        DefaultNutsElementFormat xml = (DefaultNutsElementFormat) getDefaultNutsElementFormat();
         NamedNodeMap aa = value.getAttributes();
         NutsElementType type = null;
         for (int i = 0; i < aa.getLength(); i++) {
@@ -95,7 +95,7 @@ public class NutsObjectElementXml extends NutsObjectElementBase {
 
     @Override
     public NutsElement get(String name0) {
-        DefaultNutsXmlFormat xml = (DefaultNutsXmlFormat) getNutsElementXmlConverter();
+        DefaultNutsElementFormat xml = (DefaultNutsElementFormat) getDefaultNutsElementFormat();
         NamedNodeMap aa = value.getAttributes();
         NutsElementType type = null;
         for (int i = 0; i < aa.getLength(); i++) {
@@ -124,7 +124,7 @@ public class NutsObjectElementXml extends NutsObjectElementBase {
 
     @Override
     public int size() {
-        DefaultNutsXmlFormat xml = (DefaultNutsXmlFormat) getNutsElementXmlConverter();
+        DefaultNutsElementFormat xml = (DefaultNutsElementFormat) getDefaultNutsElementFormat();
         NamedNodeMap aa = value.getAttributes();
         int size = 0;
         for (int i = 0; i < aa.getLength(); i++) {

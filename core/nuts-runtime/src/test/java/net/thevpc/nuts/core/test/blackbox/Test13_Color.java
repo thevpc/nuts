@@ -8,7 +8,7 @@ package net.thevpc.nuts.core.test.blackbox;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,25 +60,25 @@ public class Test13_Color {
         out.println();
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearUpClass() throws IOException {
         //CoreIOUtils.delete(null,new File(baseFolder));
     }
 
-    @Before
+    @BeforeEach
     public void startup() throws IOException {
-        Assume.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
+        Assumptions.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         TestUtils.unsetNutsSystemProperties();
     }

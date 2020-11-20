@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * Non formatted Print Stream Anchor Interface
  * @author vpc
  * @since 0.5.4
- * @category Input Output
+ * %category Input Output
  */
 public interface NutsNonFormattedPrintStream extends NutsComponent<Object> {
 }

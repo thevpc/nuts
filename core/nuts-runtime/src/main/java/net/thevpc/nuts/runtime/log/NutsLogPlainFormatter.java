@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.log;
 
 
+import net.thevpc.nuts.NutsFormattable;
 import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.NutsStringBase;
 import net.thevpc.nuts.runtime.util.common.CoreCommonUtils;
@@ -61,6 +62,10 @@ public class NutsLogPlainFormatter extends Formatter {
                 for (int i = 0; i < parameters2.length; i++) {
                     if(parameters2[i] instanceof NutsStringBase){
                         parameters2[i]=wRecord.getWorkspace().io().term().getTerminalFormat().filterText(parameters2[i].toString());
+                    }else if(parameters2[i] instanceof NutsFormattable){
+                        parameters2[i]=wRecord.getWorkspace().io().term().getTerminalFormat().filterText(
+                                wRecord.getWorkspace().formats().of((NutsFormattable) parameters2[i]).format()
+                        );
                     }
                 }
                 switch (wRecord.getFormatStyle()){

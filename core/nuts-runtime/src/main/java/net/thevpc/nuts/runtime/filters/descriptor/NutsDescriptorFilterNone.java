@@ -103,7 +103,7 @@ public class NutsDescriptorFilterNone extends AbstractNutsFilter implements Nuts
 
     @Override
     public String toString() {
-        return "Not("+CoreStringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()))+")";
+        return "Not("+String.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()))+")";
     }
 
     public NutsFilter[] getSubFilters() {

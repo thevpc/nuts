@@ -31,7 +31,7 @@ import java.util.Objects;
  * SDK location
  * @author vpc
  * @since 0.5.4
- * @category Config
+ * %category Config
  */
 public class NutsSdkLocation extends NutsConfigItem {
 

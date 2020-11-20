@@ -37,22 +37,6 @@ public interface NutsFormatManager {
     NutsStringFormat str();
 
     /**
-     * create json format instance
-     *
-     * @return json format
-     * @since 0.5.5
-     */
-    NutsJsonFormat json();
-
-    /**
-     * create xml format instance
-     *
-     * @return xml format
-     * @since 0.5.5
-     */
-    NutsXmlFormat xml();
-
-    /**
      * create element format instance
      *
      * @return element format

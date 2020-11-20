@@ -38,7 +38,7 @@ public interface NutsWorkspaceBootConfig {
 
     String getBootPath();
 
-    String getEffectivePath();
+    String getEffectiveWorkspace();
 
     String getName();
 
@@ -66,7 +66,7 @@ public interface NutsWorkspaceBootConfig {
 
     Path getStoreLocation(NutsStoreLocation storeLocation);
 
-    Path getHomeLocation(NutsOsFamily layout, NutsStoreLocation storeLocation);
+    Path getHomeLocation(NutsOsFamily osFamily, NutsStoreLocation storeLocation);
 
     Path getHomeLocation(NutsStoreLocation storeLocation);
 

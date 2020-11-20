@@ -24,7 +24,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
     private NutsMutableTableModel model;
 
     public DefaultSearchFormatTable(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
-        super(session, writer, NutsOutputFormat.TABLE, options);
+        super(session, writer, NutsContentType.TABLE, options);
     }
 
     public NutsMutableTableModel getTableModel(NutsWorkspace ws) {

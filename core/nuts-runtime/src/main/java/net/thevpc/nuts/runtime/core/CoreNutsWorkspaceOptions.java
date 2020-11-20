@@ -39,7 +39,7 @@ import java.util.function.Supplier;
 /**
  * Workspace creation/opening options class.
  *
- * @category Config
+ * %category Config
  * @since 0.5.4
  */
 public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, NutsWorkspaceOptionsBuilder {
@@ -185,7 +185,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private NutsOutputFormat outputFormat = null;
+    private NutsContentType outputFormat = null;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -919,7 +919,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setOutputFormat(NutsOutputFormat outputFormat) {
+    public NutsWorkspaceOptionsBuilder setOutputFormat(NutsContentType outputFormat) {
         this.outputFormat = outputFormat;
         return this;
     }
@@ -1149,7 +1149,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public NutsOutputFormat getOutputFormat() {
+    public NutsContentType getOutputFormat() {
         return outputFormat;
     }
 

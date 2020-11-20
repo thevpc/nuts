@@ -32,8 +32,7 @@ import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.security.DefaultNutsAuthenticationAgent;
 import net.thevpc.nuts.runtime.security.PlainNutsAuthenticationAgent;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -51,19 +50,19 @@ public class Test08_NutsAuthenticationAgent {
         NutsSession session = ws.createSession();
         String withAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), true, null, envProvider, session));
         TestUtils.println(withAllowRetreiveId);
-        Assert.assertTrue(withAllowRetreiveId.startsWith(a.getId() + ":"));
+        Assertions.assertTrue(withAllowRetreiveId.startsWith(a.getId() + ":"));
         a.checkCredentials(withAllowRetreiveId.toCharArray(), "my-secret".toCharArray(), envProvider, session);
         try {
             a.checkCredentials(withAllowRetreiveId.toCharArray(), "my-bad-secret".toCharArray(), envProvider, session);
-            Assert.assertTrue(false);
+            Assertions.assertTrue(false);
         } catch (SecurityException ex) {
-            Assert.assertTrue(true);
+            Assertions.assertTrue(true);
         }
-        Assert.assertEquals(mySecret, new String(a.getCredentials(withAllowRetreiveId.toCharArray(), envProvider, session)));
+        Assertions.assertEquals(mySecret, new String(a.getCredentials(withAllowRetreiveId.toCharArray(), envProvider, session)));
 
         String withoutAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), false, null, envProvider, session));
         TestUtils.println(withoutAllowRetreiveId);
-        Assert.assertTrue(withoutAllowRetreiveId.startsWith(a.getId() + ":"));
+        Assertions.assertTrue(withoutAllowRetreiveId.startsWith(a.getId() + ":"));
     }
 
     private void testHelperHashed(NutsAuthenticationAgent a, boolean alwaysRetrievable) {
@@ -73,28 +72,28 @@ public class Test08_NutsAuthenticationAgent {
         NutsSession session = ws.createSession();
         String withoutAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), false, null, envProvider, session));
         TestUtils.println(withoutAllowRetreiveId);
-        Assert.assertTrue(withoutAllowRetreiveId.startsWith(a.getId() + ":"));
+        Assertions.assertTrue(withoutAllowRetreiveId.startsWith(a.getId() + ":"));
         a.checkCredentials(withoutAllowRetreiveId.toCharArray(), "my-secret".toCharArray(), envProvider, session);
         try {
             a.checkCredentials(withoutAllowRetreiveId.toCharArray(), "my-bad-secret".toCharArray(), envProvider, session);
-            Assert.assertTrue(false);
+            Assertions.assertTrue(false);
         } catch (SecurityException ex) {
-            Assert.assertTrue(true);
+            Assertions.assertTrue(true);
         }
         if (alwaysRetrievable) {
             try {
                 a.getCredentials(withoutAllowRetreiveId.toCharArray(), envProvider, session);
-                Assert.assertTrue(true);
+                Assertions.assertTrue(true);
             } catch (SecurityException ex) {
-                Assert.assertTrue(false);
+                Assertions.assertTrue(false);
             }
 
         } else {
             try {
                 a.getCredentials(withoutAllowRetreiveId.toCharArray(), envProvider, session);
-                Assert.assertTrue(false);
+                Assertions.assertTrue(false);
             } catch (SecurityException ex) {
-                Assert.assertTrue(true);
+                Assertions.assertTrue(true);
             }
 
         }

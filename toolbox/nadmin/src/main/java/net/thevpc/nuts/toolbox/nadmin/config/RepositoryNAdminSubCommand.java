@@ -236,7 +236,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     NutsRepository[] r=parent==null?ws.repos().getRepositories(context.getSession()):ws.repos().getRepository(parent,context.getSession()).config().getMirrors(context.getSession());
                     context.getSession().formatObject(
                             Arrays.stream(ws.repos().getRepositories(context.getSession()))
-                                    .map(x -> repoInfo(x, context.getSession().getOutputFormat() != NutsOutputFormat.TABLE && context.getSession().getOutputFormat() != NutsOutputFormat.PLAIN,context.getSession())
+                                    .map(x -> repoInfo(x, context.getSession().getOutputFormat() != NutsContentType.TABLE && context.getSession().getOutputFormat() != NutsContentType.PLAIN,context.getSession())
                                     )
                                     .toArray()
                     ).println(out);

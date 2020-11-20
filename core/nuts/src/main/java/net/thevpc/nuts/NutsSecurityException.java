@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 /**
  * Thrown by Nuts Workspace to indicate a security violation.
  * @since 0.5.4
- * @category Exception
+ * %category Exception
  */
 public class NutsSecurityException extends SecurityException {
 

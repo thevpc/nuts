@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * This class handles formatting of iterable items in Search.
  * @author vpc
  * @since 0.5.5
- * @category Format
+ * %category Format
  */
 public interface NutsIterableFormat extends NutsConfigurable {
 
@@ -37,7 +37,7 @@ public interface NutsIterableFormat extends NutsConfigurable {
      * Current output format
      * @return Current output format
      */
-    NutsOutputFormat getOutputFormat();
+    NutsContentType getOutputFormat();
 
     /**
      * configure the current command with the given arguments. This is an

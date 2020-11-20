@@ -10,7 +10,7 @@ import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,28 +42,28 @@ public class Test10_ExecURLTest {
         ).setRedirectErrorStream(true).grabOutputString().setFailFast(true).getOutputString();
         TestUtils.println("Result:");
         TestUtils.println(result);
-        Assert.assertFalse("Message should not contain terminal format",result.contains("[0m"));
+        Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearUpClass() throws IOException {
         CoreIOUtils.delete(null,new File(baseFolder));
     }
 
-    @Before
+    @BeforeEach
     public void startup() throws IOException {
-        Assume.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
+        Assumptions.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         TestUtils.unsetNutsSystemProperties();
     }

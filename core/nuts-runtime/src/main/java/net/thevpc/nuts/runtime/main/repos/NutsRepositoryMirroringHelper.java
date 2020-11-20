@@ -202,14 +202,6 @@ public class NutsRepositoryMirroringHelper {
         }
     }
 
-    /**
-     * @param bestId
-     * @param id
-     * @param filter
-     * @param fetchMode
-     * @param session
-     * @return
-     */
     public NutsId searchLatestVersion(NutsId bestId, NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
         if (session.isTransitive() && repo.config().isSupportedMirroring()) {
             for (NutsRepository remote : repo.config().getMirrors(session)) {

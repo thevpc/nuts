@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  * a given object. Multiple implementation should be available
  * to support tables, trees, json, xml,...
  * @author vpc
- * @category Format
+ * %category Format
  */
 public interface NutsObjectFormat extends NutsFormat {
 
@@ -47,13 +47,6 @@ public interface NutsObjectFormat extends NutsFormat {
      * @return {@code this} instance
      */
     NutsObjectFormat setValue(Object value);
-
-    /**
-     * set value to format
-     * @param value value to format
-     * @return {@code this} instance
-     */
-    NutsObjectFormat value(Object value);
 
     /**
      * update session

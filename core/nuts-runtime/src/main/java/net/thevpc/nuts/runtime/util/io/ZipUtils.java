@@ -187,6 +187,8 @@ public class ZipUtils {
      *
      * @param zipFile input zip file
      * @param outputFolder zip file output folder
+     * @param options options
+     * @throws IOException io exception
      */
     public static void unzip(NutsWorkspace ws,String zipFile, String outputFolder, UnzipOptions options) throws IOException {
         if (options == null) {

@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.main.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.NutsHomeLocationsMap;
-import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
 
 class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
     private String bootPath;
-    private String effectivePath;
+    private String effectiveWorkspace;
     private String effectiveWorkspaceName;
     private boolean immediateLocation;
 
@@ -39,9 +38,9 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
 
     private List<Extension> extensions;
 
-    public DefaultNutsWorkspaceBootConfig(NutsWorkspace ws, String bootPath, String effectivePath, String effectiveWorkspaceName, boolean immediateLocation, NutsWorkspaceConfigBoot bootModel) {
+    public DefaultNutsWorkspaceBootConfig(NutsWorkspace ws, String bootPath, String effectiveWorkspace, String effectiveWorkspaceName, boolean immediateLocation, NutsWorkspaceConfigBoot bootModel) {
         this.bootPath = bootPath;
-        this.effectivePath = effectivePath;
+        this.effectiveWorkspace = effectiveWorkspace;
         this.immediateLocation = immediateLocation;
         this.effectiveWorkspaceName = effectiveWorkspaceName;
         this.uuid = bootModel.getUuid();
@@ -72,7 +71,7 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
             if (CoreStringUtils.isBlank(_storeLocation)) {
                 switch (storeLocationStrategy) {
                     case STANDALONE: {
-                        storeLocations.put(typeId, (workspace + File.separator + typeId));
+                        storeLocations.put(typeId, (effectiveWorkspace + File.separator + typeId));
                         break;
                     }
                     case EXPLODED: {
@@ -83,7 +82,7 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
             } else if (!CoreIOUtils.isAbsolutePath(_storeLocation)) {
                 switch (storeLocationStrategy) {
                     case STANDALONE: {
-                        storeLocations.put(typeId, (workspace + File.separator + location.id()));
+                        storeLocations.put(typeId, (effectiveWorkspace + File.separator + location.id()));
                         break;
                     }
                     case EXPLODED: {
@@ -117,10 +116,7 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
         return bootPath;
     }
 
-    @Override
-    public String getEffectivePath() {
-        return effectivePath;
-    }
+
 
     @Override
     public String getName() {
@@ -132,6 +128,10 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
         return workspace;
     }
 
+    @Override
+    public String getEffectiveWorkspace() {
+        return effectiveWorkspace;
+    }
 
     @Override
     public List<Extension> getExtensions() {
@@ -222,8 +222,8 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
 
 
     @Override
-    public Path getHomeLocation(NutsOsFamily layout, NutsStoreLocation storeLocation) {
-        String path = new NutsHomeLocationsMap(homeLocations).get(layout, storeLocation);
+    public Path getHomeLocation(NutsOsFamily osFamily, NutsStoreLocation storeLocation) {
+        String path = new NutsHomeLocationsMap(homeLocations).get(osFamily, storeLocation);
         return path == null ? null : Paths.get(path);
     }
 

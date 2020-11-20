@@ -35,7 +35,7 @@ import java.util.logging.Level;
  *
  * @author vpc
  * @since 0.5.5
- * @category Application
+ * %category Application
  */
 public final class NutsApplications {
 
@@ -144,8 +144,20 @@ public final class NutsApplications {
             return 0;
         }
         int errorCode = 204;
-        boolean showTrace = PrivateNutsUtils.getSysBoolNutsProperty("debug", false);
-
+        boolean showTrace=false;
+        String nutsArgs = System.getProperty("nuts.args");
+        if(nutsArgs!=null){
+            String[] aargs = PrivateNutsCommandLine.parseCommandLineArray(nutsArgs);
+            for (String arg : aargs) {
+                if(arg.equals("--verbose") || arg.equals("--debug")){
+                    showTrace = true;
+                    break;
+                }
+            }
+        }
+        if(!showTrace) {
+            showTrace = PrivateNutsUtils.getSysBoolNutsProperty("debug", false);
+        }
         if (!showTrace && args != null) {
             for (String arg : args) {
                 if (arg.startsWith("-")) {

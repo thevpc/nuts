@@ -41,7 +41,6 @@ import java.util.*;
 public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSearchCommand> implements NutsSearchCommand {
 
     protected Comparator comparator;
-    protected NutsDependencyFilter dependencyFilter;
     protected NutsDescriptorFilter descriptorFilter;
     protected NutsIdFilter idFilter;
     protected NutsRepositoryFilter repositoryFilter;
@@ -65,7 +64,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     /**
-     * @return
+     * @return default version or null
      * @since 0.5.5
      */
     @Override
@@ -74,8 +73,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     /**
-     * @param acceptDefaultVersion
-     * @return
+     * @param acceptDefaultVersion acceptDefaultVersion
+     * @return {@code this} instance
      * @since 0.5.5
      */
     @Override
@@ -265,7 +264,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         if (other != null) {
             NutsSearchCommand o = other;
             this.comparator = o.getComparator();
-            this.dependencyFilter = o.getDependencyFilter();
             this.descriptorFilter = o.getDescriptorFilter();
             this.idFilter = o.getIdFilter();
             this.latest = o.isLatest();
@@ -466,22 +464,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 //        return this;
 //    }
 //
-    @Override
-    public NutsSearchCommand setDependencyFilter(NutsDependencyFilter filter) {
-        this.dependencyFilter = filter;
-        return this;
-    }
 
-    @Override
-    public NutsDependencyFilter getDependencyFilter() {
-        return dependencyFilter;
-    }
-
-    @Override
-    public NutsSearchCommand setDependencyFilter(String filter) {
-        this.dependencyFilter = ws.dependency().filter().byExpression(filter);
-        return this;
-    }
 
     @Override
     public NutsSearchCommand setRepositoryFilter(NutsRepositoryFilter filter) {

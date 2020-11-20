@@ -228,9 +228,9 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
         return this;
     }
 
-    public NutsOutputFormat getOutputFormat() {
-        NutsOutputFormat format = getValidSession().getOutputFormat();
-        return format == null ? NutsOutputFormat.PLAIN : format;
+    public NutsContentType getOutputFormat() {
+        NutsContentType format = getValidSession().getOutputFormat();
+        return format == null ? NutsContentType.PLAIN : format;
     }
 
 }

@@ -113,7 +113,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                 if (context.getSession().isPlainOut()) {
                     context.getWorkspace().formats().props()
                             .setSession(context.getSession())
-                            .model(
+                            .setValue(
                                     r.stream().collect(
                                             Collectors.toMap(
                                                     NutsWorkspaceCommandAlias::getName,

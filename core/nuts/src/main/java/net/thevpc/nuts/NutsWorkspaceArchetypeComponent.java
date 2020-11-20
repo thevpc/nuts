@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * Created by vpc on 1/23/17.
  *
  * @since 0.5.4
- * @category SPI Base
+ * %category SPI Base
  */
 public interface NutsWorkspaceArchetypeComponent extends NutsComponent<String/*archetype id*/> {
 

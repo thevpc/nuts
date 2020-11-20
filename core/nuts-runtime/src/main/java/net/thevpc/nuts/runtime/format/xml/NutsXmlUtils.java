@@ -41,10 +41,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsException;
-import net.thevpc.nuts.NutsNamedElement;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.log.NutsLogVerb;
@@ -88,9 +85,9 @@ public class NutsXmlUtils {
             }
 
         } catch (ParserConfigurationException | TransformerException ex) {
-            throw new UncheckedIOException(new IOException(ex));
+            throw new NutsIOException(ws,new IOException(ex));
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(ws,ex);
         }
     }
 
@@ -110,7 +107,7 @@ public class NutsXmlUtils {
         if(elemIndex>=0){
             elem.setAttribute("index",CoreCommonUtils.stringValue(elemIndex));
         }
-        NutsElement elem2 = ws.formats().element().toElement(o);
+        NutsElement elem2 = ws.formats().element().convert(o,NutsElement.class);
         switch (elem2.type()){
             case STRING:{
                 elem.setAttribute("type", "string");

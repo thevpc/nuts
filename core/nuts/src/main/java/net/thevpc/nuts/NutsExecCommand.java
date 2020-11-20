@@ -36,7 +36,7 @@ import java.util.Map;
  *
  * @author vpc
  * @since 0.5.4
- * @category Commands
+ * %category Commands
  */
 public interface NutsExecCommand extends NutsWorkspaceCommand {
 
@@ -429,4 +429,9 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      */
     @Override
     NutsExecCommand run();
+
+    int getSleepMillis();
+
+    NutsExecCommand setSleepMillis(int sleepMillis) ;
+
 }

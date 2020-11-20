@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.nmysql.remote;
 
+import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.common.io.FileUtils;
 import net.thevpc.nuts.toolbox.nmysql.remote.config.RemoteMysqlDatabaseConfig;
@@ -45,7 +46,7 @@ public class RemoteMysqlConfigService {
 
     public RemoteMysqlConfigService saveConfig() {
         Path f = getConfigPath();
-        context.getWorkspace().formats().json().value(config).print(f);
+        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(config).print(f);
         return this;
     }
 
@@ -64,7 +65,7 @@ public class RemoteMysqlConfigService {
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
-            config = context.getWorkspace().formats().json().parse(f, RemoteMysqlConfig.class);
+            config = context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(f, RemoteMysqlConfig.class);
             return this;
         }
         throw new NoSuchElementException("Config not found : " + name);
@@ -81,7 +82,7 @@ public class RemoteMysqlConfigService {
     }
 
     public RemoteMysqlConfigService write(PrintStream out) {
-        context.getWorkspace().formats().json().value(getConfig()).print(out);
+        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(getConfig()).print(out);
         out.flush();
         return this;
     }

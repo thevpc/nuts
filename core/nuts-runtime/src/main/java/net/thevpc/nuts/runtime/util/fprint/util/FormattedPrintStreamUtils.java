@@ -30,8 +30,8 @@ public class FormattedPrintStreamUtils {
      * transform plain text to formatted text so that the result is rendered as
      * is
      *
-     * @param text
-     * @return
+     * @param text text
+     * @return escaped text
      */
     public static String escapeText(String text) {
         return FormattedPrintStreamNodePartialParser.escapeText0(text);
@@ -142,7 +142,7 @@ public class FormattedPrintStreamUtils {
             Object a = args2[i];
             if(a instanceof Number && a instanceof Number && a instanceof Date  && a instanceof Temporal) {
                 //do nothing
-            }else if(a instanceof NutsString){
+            }else if(a instanceof NutsStringBase){
                 args2[i]=String.valueOf(a);
             }else if(a instanceof NutsFormattable){
                 if(ws==null){

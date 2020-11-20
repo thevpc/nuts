@@ -9,7 +9,7 @@ import java.io.PrintStream;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsOutputFormat;
+import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.format.DefaultSearchFormatBase;
@@ -24,7 +24,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     private String rootName = "root";
 
     public DefaultSearchFormatXml(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
-        super(session, writer, NutsOutputFormat.XML,options);
+        super(session, writer, NutsContentType.XML,options);
     }
 
     public String getRootName() {

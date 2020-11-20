@@ -7,11 +7,11 @@ package net.thevpc.nuts.runtime.core;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
+import net.thevpc.nuts.runtime.main.NutsExecutionContextBuilder;
 
 import java.util.Set;
 
 /**
- *
  * @author vpc
  */
 public interface NutsWorkspaceExt {
@@ -34,7 +34,8 @@ public interface NutsWorkspaceExt {
 
     NutsInstallerComponent getInstaller(NutsDefinition nutToInstall, NutsSession session);
 
-    void requireImpl(NutsDefinition def, NutsSession session, boolean withDependencies,NutsId[] forId);
+    void requireImpl(NutsDefinition def, NutsSession session, boolean withDependencies, NutsId[] forId);
+
     void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion);
 
     void updateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion);
@@ -47,8 +48,8 @@ public interface NutsWorkspaceExt {
      * <code>NutsConstants.ENV_KEY_EXCLUDE_RUNTIME_EXTENSION</code> is forced to
      * false
      *
+     * @param session session
      * @return true when runtime extension is required for running this workspace
-     * @param session
      */
     boolean requiresRuntimeExtension(NutsSession session);
 
@@ -59,11 +60,8 @@ public interface NutsWorkspaceExt {
 
     Set<NutsInstallStatus> getInstallStatus(NutsId id, boolean checkDependencies, NutsSession session);
 
-    NutsExecutionContext createNutsExecutionContext(NutsDefinition nutToInstall, String[] args, String[] executorArgs,
-                                                    NutsSession traceSession,
-                                                    NutsSession execSession,
-                                                    boolean failFast, boolean temporary, NutsExecutionType executionType, String commandName);
+    NutsExecutionContextBuilder createExecutionContext();
 
     @Deprecated
-    void deployBoot(NutsSession session, NutsId def,boolean withDependencies);
+    void deployBoot(NutsSession session, NutsId def, boolean withDependencies);
 }

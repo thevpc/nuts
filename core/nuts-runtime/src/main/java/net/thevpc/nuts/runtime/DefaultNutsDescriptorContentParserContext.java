@@ -25,10 +25,7 @@
 */
 package net.thevpc.nuts.runtime;
 
-import net.thevpc.nuts.NutsDescriptorContentParserContext;
-import net.thevpc.nuts.NutsInput;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,7 +77,7 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
                     bytes = CoreIOUtils.loadByteArray(is, 1024 * 1024 * 10, true);
                 }
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new NutsIOException(getWorkspace(),e);
             }
         }
         return new NamedByteArrayInputStream(bytes, file.getName());

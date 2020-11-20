@@ -260,7 +260,8 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             throw new NutsNotFoundException(ws, commandName);
         }
         NutsSession searchSession = CoreNutsUtils.silent(traceSession);
-        List<NutsId> ff = ws.search().addId(nid).setSession(searchSession).setOptional(false).setLatest(true).setFailFast(false)
+        NutsSession noProgressSession = traceSession.copy().setProgressOptions("none");
+        List<NutsId> ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setLatest(true).setFailFast(false)
                 .setDefaultVersions(true)
                 //                .configure(true,"--trace-monitor")
                 .addInstallStatus(NutsInstallStatus.INSTALLED)
@@ -269,9 +270,10 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         if (ff.isEmpty()) {
             //retest without checking if the parseVersion is default or not
             // this help recovering from "invalid default parseVersion" issue
-            ff = ws.search().addId(nid).setSession(searchSession).setOptional(false).setLatest(true).setFailFast(false)
+            ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setLatest(true).setFailFast(false)
                     .addInstallStatus(NutsInstallStatus.INSTALLED)
                     .addInstallStatus(NutsInstallStatus.REQUIRED)
+                    .setSession(noProgressSession)
                     .getResultIds().list();
         }
         if (ff.isEmpty()) {
@@ -282,7 +284,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     traceSession.out().printf("##%s## is @@not installed@@, will search for it online. Type ((CTRL\\^C)) to stop...\n", commandName);
                     traceSession.out().flush();
                 }
-                ff = ws.search().addId(nid).setSession(searchSession).setOptional(false).setFailFast(false).setOnline().setLatest(true)
+                ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setFailFast(false).setOnline().setLatest(true)
                         //                        .configure(true,"--trace-monitor")
                         .getResultIds().list();
             }
@@ -297,7 +299,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         }
         NutsId goodId = ff.get(0);
         def = ws.fetch().setId(goodId)
-                .setSession(searchSession)
+                .setSession(noProgressSession)
                 .setOptional(false).setDependencies(true)
                 .setFailFast(true)
                 .setEffective(true)
@@ -341,10 +343,11 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             executorArgs.addAll(Arrays.asList(executorOptions));
             final NutsExecutionContext executionContext = new DefaultNutsExecutionContext(def,
                     appArgs, executorArgs.toArray(new String[0]),
-                    env, execProps, dir, traceSession, execSession, ws, true,
+                    env, execProps, dir, traceSession, execSession, ws, failFast,
                     temporary,
                     executionType,
-                    commandName
+                    commandName,
+                    getSleepMillis()
             );
             if (dry) {
                 execComponent.dryExec(executionContext);

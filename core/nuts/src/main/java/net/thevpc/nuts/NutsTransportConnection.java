@@ -33,7 +33,7 @@ import java.io.UncheckedIOException;
  * Connection to a remote server.
  *
  * @since 0.5.4
- * @category SPI Base
+ * %category SPI Base
  */
 public interface NutsTransportConnection {
 

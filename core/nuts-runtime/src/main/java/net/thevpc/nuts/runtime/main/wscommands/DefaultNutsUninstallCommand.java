@@ -61,11 +61,16 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
             NutsInstallerComponent ii = dws.getInstaller(def, session);
             PrintStream out = CoreIOUtils.resolveOut(session);
             if (ii != null) {
-                NutsExecutionContext executionContext = dws.createNutsExecutionContext(def, this.getArgs(), new String[0], session, session,
-                        true,
-                        false,
-                        ws.config().options().getExecutionType(),
-                        null);
+                NutsExecutionContext executionContext = dws.createExecutionContext()
+                        .setDefinition(def)
+                        .setArguments(getArgs())
+                        .setExecSession(session)
+                        .setTraceSession(session)
+                        .setFailFast(true)
+                        .setTemporary(false)
+                        .setExecutionType(ws.config().options().getExecutionType())
+                        .build()
+                        ;
                 ii.uninstall(executionContext, this.isErase());
             }
 

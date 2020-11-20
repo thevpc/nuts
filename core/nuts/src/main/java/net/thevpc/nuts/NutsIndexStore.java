@@ -33,7 +33,7 @@ import java.util.Iterator;
  * indexing of repositories to enable faster search.
  * @author vpc
  * @since 0.5.4
- * @category Base
+ * %category Base
  */
 public interface NutsIndexStore {
 

@@ -351,7 +351,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             someIds.add(id.toString());
         }
         if (this.getIds().length == 0 && isCompanion()) {
-            someIds.addAll(ws.companionIds());
+            someIds.addAll(ws.companionIds().stream().map(NutsId::getShortName).collect(Collectors.toList()));
         }
         if (this.getIds().length == 0 && isRuntime()) {
             someIds.add(NutsConstants.Ids.NUTS_RUNTIME);
@@ -734,16 +734,29 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                 .setRepositoryFilter(search.getRepositoryFilter())
                                 .setDescriptorFilter(search.getDescriptorFilter());
                         search2.setIdFilter(
-                                (NutsIdFilter)
                                         ws.id().filter().byName(nutsId.builder().setGroupId("*").build().toString())
-                                                .or(search2.getIdFilter())
+                                                .and(search.getIdFilter())
                         );
-                        coalesce.add(search2.getResultIds().iterator());
+                        Iterator<NutsId> extraResult = search2.getResultIds().iterator();
+                        if(fetchMode.isStopFast()){
+                            coalesce.add(extraResult);
+                            allResults.add(IteratorUtils.coalesce(coalesce));
+                        }else{
+                            allResults.add(
+                                    IteratorUtils.coalesce(
+                                            Arrays.asList(
+                                                IteratorUtils.concat(coalesce),
+                                                    extraResult
+                                            )
+                                    )
+                            );
+                        }
+                    }else {
+                        allResults.add(fetchMode.isStopFast()
+                                ? IteratorUtils.coalesce(coalesce)
+                                : IteratorUtils.concat(coalesce)
+                        );
                     }
-                    allResults.add(fetchMode.isStopFast()
-                            ? IteratorUtils.coalesce(coalesce)
-                            : IteratorUtils.concat(coalesce)
-                    );
                 }
             }
         } else {

@@ -33,7 +33,7 @@ import java.io.Serializable;
  * This class defines the mapping to classifier to consider if all the filters.
  * When multiple selectors match, the first on prevails.
  * @since 0.5.7
- * @category Descriptor
+ * %category Descriptor
  */
 public interface NutsClassifierMapping extends Serializable {
     /**

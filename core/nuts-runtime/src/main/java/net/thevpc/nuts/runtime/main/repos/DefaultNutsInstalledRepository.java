@@ -34,7 +34,6 @@ import net.thevpc.nuts.runtime.DefaultNutsInstallInfo;
 import net.thevpc.nuts.runtime.repocommands.*;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.repos.AbstractNutsRepository;
-import net.thevpc.nuts.runtime.repocommands.*;
 import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.util.common.CoreCommonUtils;
@@ -277,7 +276,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         List<String> split = CoreStringUtils.split(p, "/\\");
         if (split.size() >= 4) {
             return workspace.id().builder().setArtifactId(split.get(split.size() - 3))
-                    .setGroupId(CoreStringUtils.join(".", split.subList(0, split.size() - 3)))
+                    .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                     .setVersion(split.get(split.size() - 2)).build();
 
         }
@@ -323,12 +322,12 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         Set<NutsId> list = findDependenciesFrom(from, scope);
         if (!list.contains(to)) {
             list.add(to);
-            workspace.formats().json().value(list.toArray(new NutsId[0])).print(getDeps(from, true, scope));
+            workspace.formats().element().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDeps(from, true, scope));
         }
         list = findDependenciesTo(to, scope);
         if (!list.contains(from)) {
             list.add(from);
-            workspace.formats().json().value(list.toArray(new NutsId[0])).print(getDeps(to, false, scope));
+            workspace.formats().element().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDeps(to, false, scope));
         }
     }
 
@@ -349,12 +348,12 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         if (list.contains(to)) {
             list.remove(to);
             stillRequired = list.size() > 0;
-            workspace.formats().json().value(list.toArray(new NutsId[0])).print(getDeps(from, true, scope));
+            workspace.formats().element().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDeps(from, true, scope));
         }
         list = findDependenciesTo(to, scope);
         if (list.contains(from)) {
             list.remove(from);
-            workspace.formats().json().value(list.toArray(new NutsId[0])).print(getDeps(to, false, scope));
+            workspace.formats().element().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDeps(to, false, scope));
         }
         if (fi.required != stillRequired) {
             fi.required = true;
@@ -365,7 +364,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     public synchronized Set<NutsId> findDependenciesFrom(NutsId from, NutsDependencyScope scope) {
         Path path = getDeps(from, true, scope);
         if (Files.isRegularFile(path)) {
-            NutsId[] old = workspace.formats().json().parse(path, NutsId[].class);
+            NutsId[] old = workspace.formats().element().setContentType(NutsContentType.JSON).parse(path, NutsId[].class);
             return new HashSet<NutsId>(Arrays.asList(old));
         }
         return new HashSet<>();
@@ -374,7 +373,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     public synchronized Set<NutsId> findDependenciesTo(NutsId from, NutsDependencyScope scope) {
         Path path = getDeps(from, false, scope);
         if (Files.isRegularFile(path)) {
-            NutsId[] old = workspace.formats().json().parse(path, NutsId[].class);
+            NutsId[] old = workspace.formats().element().setContentType(NutsContentType.JSON).parse(path, NutsId[].class);
             return new HashSet<NutsId>(Arrays.asList(old));
         }
         return new HashSet<>();
@@ -393,7 +392,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         Path finalPath = path;
         if (Files.isRegularFile(path)) {
             InstallInfoConfig c = workspace.concurrent().lock().source(path).setSession(session).call(
-                    () -> workspace.formats().json().parse(finalPath, InstallInfoConfig.class),
+                    () -> workspace.formats().element().setContentType(NutsContentType.JSON).parse(finalPath, InstallInfoConfig.class),
                     CoreNutsUtils.LOCK_TIME, CoreNutsUtils.LOCK_TIME_UNIT
             );
             if (c != null) {
@@ -424,7 +423,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                             () -> {
                                 LOG.with().level(Level.CONFIG).log("Upgraded {0}", finalPath.toString());
                                 c.setConfigVersion(workspace.getApiVersion());
-                                workspace.formats().json().value(c).print(finalPath);
+                                workspace.formats().element().setContentType(NutsContentType.JSON).setValue(c).print(finalPath);
                                 return null;
                             },
                             CoreNutsUtils.LOCK_TIME, CoreNutsUtils.LOCK_TIME_UNIT
@@ -591,12 +590,12 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public <T> T readJson(NutsId id, String name, Class<T> clazz) {
-        return workspace.formats().json().parse(getPath(id, name), clazz);
+        return workspace.formats().element().setContentType(NutsContentType.JSON).parse(getPath(id, name), clazz);
     }
 
     public void printJson(NutsId id, String name, InstallInfoConfig value) {
         value.setConfigVersion(workspace.getApiVersion());
-        workspace.formats().json().value(value).print(getPath(id, name));
+        workspace.formats().element().setContentType(NutsContentType.JSON).setValue(value).print(getPath(id, name));
     }
 
     public void remove(NutsId id, String name) {

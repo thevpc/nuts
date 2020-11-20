@@ -60,8 +60,8 @@ public class CorePlatformUtils {
 //        SUPPORTED_ARCH_ALIASES.put("i386", "x86");
     }
 
-    private static String buildUnixOsNameAndVersion(String name) {
-        Map<String, String> m = getOsDistMap();
+    private static String buildUnixOsNameAndVersion(String name,NutsWorkspace ws) {
+        Map<String, String> m = getOsDistMap(ws);
         String v = m.get("osVersion");
         if (CoreStringUtils.isBlank(v)) {
             return name;
@@ -69,29 +69,29 @@ public class CorePlatformUtils {
         return name + "#" + v;
     }
 
-    public static Map<String, String> getOsDistMap() {
+    public static Map<String, String> getOsDistMap(NutsWorkspace ws) {
         String property = System.getProperty("os.name").toLowerCase();
         if (property.startsWith("linux")) {
             if (LOADED_OS_DIST_MAP == null) {
-                LOADED_OS_DIST_MAP = getOsDistMapLinux();
+                LOADED_OS_DIST_MAP = getOsDistMapLinux(ws);
             }
             return Collections.unmodifiableMap(LOADED_OS_DIST_MAP);
         }
         if (property.startsWith("mac")) {
             if (LOADED_OS_DIST_MAP == null) {
-                LOADED_OS_DIST_MAP = getOsDistMapLinux();
+                LOADED_OS_DIST_MAP = getOsDistMapLinux(ws);
             }
             return Collections.unmodifiableMap(LOADED_OS_DIST_MAP);
         }
         if (property.startsWith("sunos")) {
             if (LOADED_OS_DIST_MAP == null) {
-                LOADED_OS_DIST_MAP = getOsDistMapLinux();
+                LOADED_OS_DIST_MAP = getOsDistMapLinux(ws);
             }
             return Collections.unmodifiableMap(LOADED_OS_DIST_MAP);
         }
         if (property.startsWith("freebsd")) {
             if (LOADED_OS_DIST_MAP == null) {
-                LOADED_OS_DIST_MAP = getOsDistMapLinux();
+                LOADED_OS_DIST_MAP = getOsDistMapLinux(ws);
             }
             return Collections.unmodifiableMap(LOADED_OS_DIST_MAP);
         }
@@ -105,7 +105,7 @@ public class CorePlatformUtils {
      *
      * @return
      */
-    public static Map<String, String> getOsDistMapLinux() {
+    public static Map<String, String> getOsDistMapLinux(NutsWorkspace ws) {
         File dir = new File("/etc/");
         List<File> fileList = new ArrayList<>();
         if (dir.exists()) {
@@ -145,11 +145,12 @@ public class CorePlatformUtils {
             CoreStringUtils.clear(osVersion);
             try {
                 osVersion.append(
-                        new ProcessBuilder2(null).setCommand("uname", "-r")
+                        ws.exec().setExecutionType(NutsExecutionType.USER_CMD)
+                        .setCommand("uname", "-r")
                                 .setRedirectErrorStream(true)
                                 .grabOutputString()
                                 .setSleepMillis(50)
-                                .waitFor().getOutputString()
+                                .getOutputString()
                 );
             } catch (Exception e) {
                 e.printStackTrace();
@@ -216,10 +217,10 @@ public class CorePlatformUtils {
         return m;
     }
 
-    public static String getPlatformOsDist() {
-        String osInfo = getPlatformOs();
+    public static String getPlatformOsDist(NutsWorkspace ws) {
+        String osInfo = getPlatformOs(ws);
         if (osInfo.startsWith("linux")) {
-            Map<String, String> m = getOsDistMap();
+            Map<String, String> m = getOsDistMap(ws);
             String distId = m.get("distId");
             String distVersion = m.get("distVersion");
             if (!CoreStringUtils.isBlank(distId)) {
@@ -238,10 +239,10 @@ public class CorePlatformUtils {
      *
      * @return
      */
-    public static String getPlatformOs() {
+    public static String getPlatformOs(NutsWorkspace ws) {
         String property = System.getProperty("os.name").toLowerCase();
         if (property.startsWith("linux")) {
-            return buildUnixOsNameAndVersion("linux");
+            return buildUnixOsNameAndVersion("linux",ws);
         }
         if (property.startsWith("win")) {
             if (property.startsWith("windows 10")) {
@@ -271,31 +272,31 @@ public class CorePlatformUtils {
             if (property.startsWith("mac os x") || property.startsWith("macosx")) {
                 return "macos#10";
             }
-            return buildUnixOsNameAndVersion("macos");
+            return buildUnixOsNameAndVersion("macos",ws);
         }
         if (property.startsWith("sunos") || property.startsWith("solaris")) {
-            return buildUnixOsNameAndVersion("sunos");
+            return buildUnixOsNameAndVersion("sunos",ws);
         }
         if (property.startsWith("zos")) {
-            return buildUnixOsNameAndVersion("zos");
+            return buildUnixOsNameAndVersion("zos",ws);
         }
         if (property.startsWith("freebsd")) {
-            return buildUnixOsNameAndVersion("freebsd");
+            return buildUnixOsNameAndVersion("freebsd",ws);
         }
         if (property.startsWith("openbsd")) {
-            return buildUnixOsNameAndVersion("openbsd");
+            return buildUnixOsNameAndVersion("openbsd",ws);
         }
         if (property.startsWith("netbsd")) {
-            return buildUnixOsNameAndVersion("netbsd");
+            return buildUnixOsNameAndVersion("netbsd",ws);
         }
         if (property.startsWith("aix")) {
-            return buildUnixOsNameAndVersion("aix");
+            return buildUnixOsNameAndVersion("aix",ws);
         }
         if (property.startsWith("hpux")) {
-            return buildUnixOsNameAndVersion("hpux");
+            return buildUnixOsNameAndVersion("hpux",ws);
         }
         if (property.startsWith("os400") && property.length() <= 5 || !Character.isDigit(property.charAt(5))) {
-            return buildUnixOsNameAndVersion("os400");
+            return buildUnixOsNameAndVersion("os400",ws);
         }
         return "unknown";
 //        return property;

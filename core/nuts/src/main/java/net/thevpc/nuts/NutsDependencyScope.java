@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * Supported dependency scope lists
  * @author vpc
  * @since 0.5.4
- * @category Descriptor
+ * %category Descriptor
  */
 public enum NutsDependencyScope {
     /**

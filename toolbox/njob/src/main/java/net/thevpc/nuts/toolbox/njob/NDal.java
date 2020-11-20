@@ -1,8 +1,6 @@
 package net.thevpc.nuts.toolbox.njob;
 
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsJsonFormat;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.njob.model.Id;
 import net.thevpc.nuts.toolbox.njob.model.NJob;
 import net.thevpc.nuts.toolbox.njob.model.NProject;
@@ -19,11 +17,11 @@ import java.util.stream.StreamSupport;
 
 public class NDal {
     private NutsApplicationContext context;
-    private NutsJsonFormat json;
+    private NutsElementFormat json;
 
     public NDal(NutsApplicationContext context) {
         this.context = context;
-        json = context.getWorkspace().formats().json();
+        json = context.getWorkspace().formats().element().setContentType(NutsContentType.JSON);
         json.setCompact(false);
     }
 
@@ -114,7 +112,7 @@ public class NDal {
                 throw new NutsIllegalArgumentException(context.getWorkspace(),"unable to create parent path");
             }
         }
-        json.value(o).println(objectFile);
+        json.setValue(o).println(objectFile);
     }
 
     public String generateId(Class clz) {

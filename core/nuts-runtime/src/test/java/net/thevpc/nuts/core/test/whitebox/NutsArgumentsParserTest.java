@@ -1,6 +1,6 @@
 package net.thevpc.nuts.core.test.whitebox;
 
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 public class NutsArgumentsParserTest {
     @Test
@@ -15,7 +15,7 @@ public class NutsArgumentsParserTest {
 //            String v = NutsMinimalCommandLine.escapeArguments(arg);
 //            System.out.println("\t"+v);
 //            String[] v2 = NutsMinimalCommandLine.parseCommand(v);
-//            Assert.assertArrayEquals(
+//            Assertions.assertArrayEquals(
 //                    arg,v2
 //            );
 //        }

@@ -1,0 +1,49 @@
+==ndocusaurus== is a docusaurus project toolbox. It helps templating docusaurus folder and generating pdf file
+
+##SYNOPSIS:##
+
+==ndocusaurus== **<options>** {{command}}
+    run ndocusaurus command
+
+Only docusaurus v2 is supported. "docusaurus.config.js" needs to include 'customFields'
+as show in the following example.
+
+
+customFields: {
+    docusaurus:{
+        generateSidebarMenu:false
+    },
+    asciidoctor: {
+        path: 'pdf',
+        pdf: {
+            output:'pdf/',
+            headers: [
+                ':doctype: book',
+            ],
+            command: {
+                bin: 'asciidoctor-pdf.ruby2.7',
+                args: [
+                    '-a',
+                    'pdf-themesdir=${asciidoctor.baseDir}/resources/themes',
+                    '-a',
+                    'pdf-theme=custom',
+                    '-a',
+                    'pdf-fontsdir=${asciidoctor.baseDir}/resources/fonts/;GEM_FONTS_DIR',
+                ]
+            }
+        }
+    }
+}
+
+##OPTIONS:##
+ **-d**
+ **--dir**   : docusaurus working directory. defaults to '.'
+
+##COMMANDS:##
+ {{pdf}}     : runs pdf converter using asciidoctor configuration in "docusaurus.config.js"
+ {{build}}   : builds website (runs npm run-script build)
+ {{start}}   : runs website locally (runs npm start)
+
+##EXAMPLES:##
+==ndocusaurus== {{pdf}}
+  generates pdf file

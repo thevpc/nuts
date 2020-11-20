@@ -44,6 +44,7 @@ import net.thevpc.common.mvn.Pom;
 import net.thevpc.common.mvn.PomXmlParser;
 import net.thevpc.common.strings.StringUtils;
 import net.thevpc.common.xfile.XFile;
+import net.thevpc.nuts.NutsContentType;
 
 /**
  *
@@ -130,7 +131,7 @@ public class JarPathVersionResolver implements PathVersionResolver{
                             if (d.getDescription() != null) {
                                 properties.setProperty("description", d.getDescription());
                             }
-                            properties.setProperty("locations", context.getWorkspace().formats().json().value(d.getLocations()).format());
+                            properties.setProperty("locations", context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(d.getLocations()).format());
                             properties.setProperty("platform", StringUtils.join(";", d.getPlatform()));
                             properties.setProperty("os", StringUtils.join(";", d.getOs()));
                             properties.setProperty("arch", StringUtils.join(";", d.getArch()));

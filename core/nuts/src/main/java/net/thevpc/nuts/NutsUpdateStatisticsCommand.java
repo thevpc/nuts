@@ -33,7 +33,7 @@ import java.util.Collection;
  *
  * @author vpc
  * @since 0.5.5
- * @category Config
+ * %category Config
  */
 public interface NutsUpdateStatisticsCommand extends NutsWorkspaceCommand {
 

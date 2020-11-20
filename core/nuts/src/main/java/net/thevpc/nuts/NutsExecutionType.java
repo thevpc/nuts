@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * Command execution type.
  * @author vpc
  * @since 0.5.4
- * @category Commands
+ * %category Commands
  */
 public enum NutsExecutionType {
     /**

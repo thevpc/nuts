@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 /**
  * Root class for all Repository commands.
  * @author vpc
- * @category SPI Base
+ * %category SPI Base
  */
 public interface NutsRepositoryCommand extends NutsConfigurable {
 

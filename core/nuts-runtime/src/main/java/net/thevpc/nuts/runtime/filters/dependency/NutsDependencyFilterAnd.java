@@ -34,7 +34,7 @@ public class NutsDependencyFilterAnd extends AbstractNutsFilter implements NutsD
 
     @Override
     public String toString() {
-        return CoreStringUtils.join(" And ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+        return String.join(" And ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
     @Override

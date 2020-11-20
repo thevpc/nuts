@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  *
  * @author vpc
  * @since 0.5.5
- * @category Command Line
+ * %category Command Line
  */
 public enum NutsArgumentType {
     /**

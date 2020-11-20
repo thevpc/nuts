@@ -8,7 +8,7 @@ package net.thevpc.nuts.core.test.blackbox;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -45,7 +45,7 @@ public class Test12_CopyTest {
         TestUtils.println("from="+from);
         TestUtils.println("to="+to);
         long collect = Files.list(from).collect(Collectors.counting());
-        Assert.assertEquals(0L,collect);
+        Assertions.assertEquals(0L,collect);
         for (String s : new String[]{
                 "/a/b/c.txt",
                 "/a/b/d.txt",
@@ -83,25 +83,25 @@ public class Test12_CopyTest {
         }).run();
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearUpClass() throws IOException {
         //CoreIOUtils.delete(null,new File(baseFolder));
     }
 
-    @Before
+    @BeforeEach
     public void startup() throws IOException {
-        Assume.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
+        Assumptions.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         TestUtils.unsetNutsSystemProperties();
     }

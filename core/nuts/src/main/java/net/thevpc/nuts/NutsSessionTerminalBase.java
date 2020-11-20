@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * Session Terminal Base instance are special Terminal Base classes instances that handle workspace session.
  *
  * @since 0.5.4
- * @category SPI Base
+ * %category SPI Base
  */
 public interface NutsSessionTerminalBase extends NutsComponent<NutsTerminalSpec>, NutsTerminalBase {
 

@@ -35,7 +35,7 @@ import java.io.PrintWriter;
  * TODO : should merge with NutsIterableFormat
  * @author vpc
  * @since 0.5.5
- * @category Format
+ * %category Format
  */
 public interface NutsIterableOutput extends NutsConfigurable {
 

@@ -3,20 +3,22 @@ package net.thevpc.nuts.runtime.bridges.maven.mvnutil;
 import java.util.Objects;
 
 /**
- * <repository>
- * <url>http://repository.primefaces.org/</url>
- * <id>PrimeFaces-maven-lib</id>
- * <layout>default</layout>
- * <name>Repository for library PrimeFaces-maven-lib</name>
- * </repository>
- * <repository>
- * <id>vpc-public-maven</id>
- * <url>https://raw.github.com/thevpc/vpc-public-maven/master</url>
- * <snapshots>
- * <enabled>true</enabled>
- * <updatePolicy>always</updatePolicy>
- * </snapshots>
- * </repository>
+ * <pre>
+ * &lt;repository&gt;
+ * &lt;url&gt;http://repository.primefaces.org/&lt;/url&gt;
+ * &lt;id&gt;PrimeFaces-maven-lib&lt;/id&gt;
+ * &lt;layout&gt;default&lt;/layout&gt;
+ * &lt;name&gt;Repository for library PrimeFaces-maven-lib&lt;/name&gt;
+ * &lt;/repository&gt;
+ * &lt;repository&gt;
+ * &lt;id&gt;vpc-public-maven&lt;/id&gt;
+ * &lt;url&gt;https://raw.github.com/thevpc/vpc-public-maven/master&lt;/url&gt;
+ * &lt;snapshots&gt;
+ * &lt;enabled&gt;true&lt;/enabled&gt;
+ * &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;
+ * &lt;/snapshots&gt;
+ * &lt;/repository&gt;
+ * </pre>
  */
 public class PomRepository {
 

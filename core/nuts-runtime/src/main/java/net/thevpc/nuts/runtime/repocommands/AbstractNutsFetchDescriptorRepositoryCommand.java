@@ -31,7 +31,7 @@ import net.thevpc.nuts.*;
 /**
  *
  * @author vpc
- * @category SPI Base
+ * %category SPI Base
  */
 public abstract class AbstractNutsFetchDescriptorRepositoryCommand extends NutsRepositoryCommandBase<NutsFetchDescriptorRepositoryCommand> implements NutsFetchDescriptorRepositoryCommand {
 

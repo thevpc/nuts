@@ -20,7 +20,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
     private boolean compact;
 
     public DefaultSearchFormatJson(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
-        super(session, writer, NutsOutputFormat.JSON,options);
+        super(session, writer, NutsContentType.JSON,options);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         if (index > 0) {
             getWriter().print(", ");
         }
-        getWriter().printf("%s%n", new NutsString(getWorkspace().formats().json().compact(isCompact()).value(object).format()));
+        getWriter().printf("%s%n", new NutsString(getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(object).setCompact(isCompact()).format()));
         getWriter().flush();
     }
 

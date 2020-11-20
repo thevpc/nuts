@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * Execution entry is a class that can be executed.
  * @author vpc
  * @since 0.5.4
- * @category Descriptor
+ * %category Descriptor
  */
 public interface NutsExecutionEntry extends Comparable<NutsExecutionEntry> {
 

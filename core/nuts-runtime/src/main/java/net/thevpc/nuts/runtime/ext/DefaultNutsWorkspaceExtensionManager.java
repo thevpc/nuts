@@ -128,7 +128,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             if (u != null) {
                 NutsExtensionInformation[] s = new NutsExtensionInformation[0];
                 try (Reader rr = new InputStreamReader(u.openStream())) {
-                    s = ws.formats().json().parse(rr, DefaultNutsExtensionInformation[].class);
+                    s = ws.formats().element().setContentType(NutsContentType.JSON).parse(rr, DefaultNutsExtensionInformation[].class);
                 } catch (IOException ex) {
                     LOG.with().level(Level.SEVERE).error(ex).log("Failed to parse NutsExtensionInformation from {0} : {1}", u, ex.toString());
                 }
@@ -361,7 +361,9 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                     //load extension
                     NutsDefinition def = ws.search().addId(extension).setTargetApiVersion(ws.getApiVersion())
                             .setDependencies(true)
-                            .setDependencyFilter(ws.dependency().filter().byScope(NutsDependencyScopePattern.RUN))
+                            .setDependencyFilter(ws.dependency().filter().byScope(NutsDependencyScopePattern.RUN).and(
+                                    ws.dependency().filter().byOptional(false)
+                            ))
                             .setLatest(true)
                             .getResultDefinitions().required();
                     if (def.getType() != NutsIdType.EXTENSION) {

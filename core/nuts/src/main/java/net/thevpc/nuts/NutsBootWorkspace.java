@@ -53,7 +53,7 @@ import java.util.zip.ZipFile;
  * <br>
  *
  * @author vpc
- * @category SPI Base
+ * %category SPI Base
  * @since 0.5.4
  */
 public final class NutsBootWorkspace {
@@ -597,7 +597,7 @@ public final class NutsBootWorkspace {
             // accessible when deleting others
             String latestDefaultVersion = null;
             try {
-                Path nbase = Paths.get(System.getProperty("user.home")).resolve(".local/share/nuts/apps/default-workspace/id/net/vpc/app/nuts/nuts");
+                Path nbase = Paths.get(System.getProperty("user.home")).resolve(".local/share/nuts/apps/default-workspace/id/net/thevpc/nuts/nuts");
                 if (Files.isDirectory(nbase)) {
                     latestDefaultVersion = Files.list(nbase).filter(f -> Files.exists(f.resolve(".nuts-bashrc")))
                             .map(x -> sysrcFile.getFileName().toString())
@@ -1134,7 +1134,7 @@ public final class NutsBootWorkspace {
         NutsConfirmationMode confirm = o.getConfirm() == null ? NutsConfirmationMode.ASK : o.getConfirm();
         if (confirm == NutsConfirmationMode.ASK
                 && this.getOptions().getOutputFormat() != null
-                && this.getOptions().getOutputFormat() != NutsOutputFormat.PLAIN) {
+                && this.getOptions().getOutputFormat() != NutsContentType.PLAIN) {
             throw new NutsExecutionException(null, "Unable to switch to interactive mode for non plain text output format. "
                     + "You need to provide default response (-y|-n) for resetting/recovering workspace. You was asked to confirm deleting folders as part as recover/reset option.", 243);
         }
@@ -1189,7 +1189,7 @@ public final class NutsBootWorkspace {
         if (rbc_locations == null) {
             rbc_locations = Collections.emptyMap();
         }
-        System.err.printf("Unable to bootstrap Nuts. : %s%n", extraMessage);
+        System.err.printf("Unable to bootstrap nuts. : %s%n", extraMessage);
         System.err.printf("Here after current environment info:%n");
         System.err.printf("  nuts-boot-api-version            : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getApiVersion(), "<?> Not Found!"));
         System.err.printf("  nuts-boot-runtime                : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getRuntimeId(), "<?> Not Found!"));

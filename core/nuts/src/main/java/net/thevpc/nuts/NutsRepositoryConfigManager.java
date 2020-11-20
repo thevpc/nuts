@@ -30,7 +30,7 @@ import java.nio.file.Path;
 /**
  * @author vpc
  * @since 0.5.4
- * @category Config
+ * %category Config
  */
 public interface NutsRepositoryConfigManager {
 

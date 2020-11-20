@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>njob</artifactId>
-    <version>0.8.0.0</version>
+    <version>0.8.1.0</version><!--published NONE-->
     <packaging>jar</packaging>
     <name>net.thevpc.nuts.toolbox.njob</name>
     <description>Nuts Job Command</description>
@@ -38,6 +39,7 @@
             <url>https://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -62,37 +64,12 @@
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.8.0</version>
+            <version>0.8.1</version>
         </dependency>
         <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-strings</artifactId>
-            <version>1.2.18</version>
-        </dependency>
-        <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-text-source</artifactId>
-            <version>1.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-text-source-log</artifactId>
-            <version>1.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-mvn</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-diff-jar</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.5.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -120,7 +97,33 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.0.2</version>
@@ -133,11 +136,13 @@
                         </goals>
 
                         <configuration>
+
                             <outputDirectory>${targetdirectory}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.8.1</version>
@@ -154,7 +159,7 @@
                 <!--<version>0.9</version>-->
                 <configuration>
                     <!-- git commit message -->
-                    <!--<message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}</message>-->  
+                    <!--<message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}</message>-->
                     <message>${project.version} of ${project.groupId}:${project.artifactId}</message>
                     <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
                     <outputDirectory>${project.build.directory}/vpc-public-maven

@@ -6,8 +6,6 @@ import net.thevpc.nuts.runtime.format.DefaultNutsObjectFormat;
 import net.thevpc.nuts.runtime.format.DefaultNutsStringFormat;
 import net.thevpc.nuts.runtime.format.elem.DefaultNutsElementFormat;
 import net.thevpc.nuts.runtime.format.tree.DefaultTreeFormat;
-import net.thevpc.nuts.runtime.format.xml.DefaultNutsXmlFormat;
-import net.thevpc.nuts.runtime.format.json.DefaultNutsJsonFormat;
 import net.thevpc.nuts.runtime.format.props.DefaultPropertiesFormat;
 import net.thevpc.nuts.runtime.format.table.DefaultTableFormat;
 
@@ -19,25 +17,25 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
     }
 
 
-    @Override
-    public NutsJsonFormat json() {
-        return new DefaultNutsJsonFormat(ws);
-    }
-
-    @Override
-    public NutsXmlFormat xml() {
-        return new DefaultNutsXmlFormat(ws);
-    }
+//    @Override
+//    public NutsJsonFormat json() {
+//        return new DefaultNutsJsonFormat(ws);
+//    }
+//
+//    @Override
+//    public NutsXmlFormat xml() {
+//        return new DefaultNutsXmlFormat(ws);
+//    }
 
     @Override
     public NutsElementFormat element() {
         return new DefaultNutsElementFormat(ws);
     }
+
     @Override
     public NutsStringFormat str() {
         return new DefaultNutsStringFormat(ws);
     }
-
 
     @Override
     public NutsTreeFormat tree() {

@@ -104,7 +104,7 @@ public class NutsVersionFilterAnd extends AbstractNutsFilter implements NutsVers
 
     @Override
     public String toString() {
-        return CoreStringUtils.join(" And ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+        return String.join(" And ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
     public NutsFilter[] getSubFilters() {

@@ -37,7 +37,7 @@ import java.util.function.Supplier;
  * Workspace options class that holds command argument information.
  *
  * @since 0.5.4
- * @category Config
+ * %category Config
  */
 public interface NutsWorkspaceOptions extends Serializable {
 
@@ -214,7 +214,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * <strong>option-type :</strong> exported (inherited in child workspaces)
      * @return default output format type.
      */
-    NutsOutputFormat getOutputFormat();
+    NutsContentType getOutputFormat();
 
     /**
      * default output formation options.

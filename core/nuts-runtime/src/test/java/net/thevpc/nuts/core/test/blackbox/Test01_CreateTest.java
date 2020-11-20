@@ -14,12 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 /**
  *
@@ -43,8 +38,8 @@ public class Test01_CreateTest {
                 "--yes",
                 "--skip-companions");
         NutsSession session = ws.createSession();
-        org.junit.Assert.assertEquals(wsPath + "/cache", ws.locations().getStoreLocation(NutsStoreLocation.CACHE).toString());
-        org.junit.Assert.assertEquals(wsPath + "/cache/" + NutsConstants.Folders.REPOSITORIES + "/"+
+        Assertions.assertEquals(wsPath + "/cache", ws.locations().getStoreLocation(NutsStoreLocation.CACHE).toString());
+        Assertions.assertEquals(wsPath + "/cache/" + NutsConstants.Folders.REPOSITORIES + "/"+
                         ws.repos().getRepositories(session)[0].getName()+
                         "/"+ws.repos().getRepositories(session)[0].getUuid(),
                 ws.repos().getRepositories(session)[0].config().getStoreLocation(NutsStoreLocation.CACHE).toString());
@@ -92,9 +87,9 @@ public class Test01_CreateTest {
                 "--yes",
                 "--skip-companions");
         NutsSession session = ws.createSession();
-        org.junit.Assert.assertEquals(System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName(),
+        Assertions.assertEquals(System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName(),
                 ws.locations().getStoreLocation(NutsStoreLocation.CACHE).toString());
-        org.junit.Assert.assertEquals(
+        Assertions.assertEquals(
                 System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName() + "/"
                 + NutsConstants.Folders.REPOSITORIES + "/"
                 + ws.repos().getRepositories(session)[0].getName()
@@ -130,25 +125,25 @@ public class Test01_CreateTest {
                 "--skip-companions");
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearUpClass() throws IOException {
         CoreIOUtils.delete(null,new File(baseFolder));
     }
 
-    @Before
+    @BeforeEach
     public void startup() throws IOException {
-        Assume.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
+        Assumptions.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         TestUtils.unsetNutsSystemProperties();
     }

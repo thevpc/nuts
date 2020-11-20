@@ -30,23 +30,15 @@ import java.util.Map;
 
 /**
  * Class formatting Map/Properties objects
- * @category Format
+ * %category Format
  */
-public interface NutsPropertiesFormat extends NutsFormat {
-
+public interface NutsPropertiesFormat extends NutsObjectFormat {
     /**
      * set model to format
      * @param map model to format
      * @return {@code this} instance
      */
-    NutsPropertiesFormat model(Map map);
-
-    /**
-     * set model to format
-     * @param map model to format
-     * @return {@code this} instance
-     */
-    NutsPropertiesFormat setModel(Map map);
+    NutsPropertiesFormat setValue(Map map);
 
     /**
      * return model to format

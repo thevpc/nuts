@@ -82,7 +82,7 @@ public class NutsIdFilterOr extends AbstractNutsFilter implements NutsIdFilter, 
 
     @Override
     public String toString() {
-        return CoreStringUtils.join(" Or ", Arrays.asList(children).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+        return String.join(" Or ", Arrays.asList(children).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
     @Override

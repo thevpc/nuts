@@ -16,27 +16,18 @@ public class NDocusaurusMain extends NutsApplication {
             boolean start;
             boolean build;
             String workdir = null;
-            boolean updateSidebarMenu =true;
-            boolean buildPdf=true;
+            boolean buildPdf=false;
 
             @Override
             public boolean nextOption(NutsArgument option, NutsCommandLine cmdLine) {
                 switch (option.getStringKey()) {
                     case "-d":
-                    case "-dir": {
+                    case "--dir": {
                         if (workdir == null) {
                             workdir = cmdLine.nextString().getStringValue();
                         } else {
                             cmdLine.unexpectedArgument();
                         }
-                        break;
-                    }
-                    case "--pdf": {
-                        buildPdf=cmdLine.nextBoolean().getBooleanValue();
-                        break;
-                    }
-                    case "--updateSidebarMenu": {
-                        updateSidebarMenu=cmdLine.nextBoolean().getBooleanValue();
                         break;
                     }
                     default: {
@@ -47,18 +38,29 @@ public class NDocusaurusMain extends NutsApplication {
             }
 
             @Override
-            public boolean nextNonOption(NutsArgument nonOption, NutsCommandLine cmdLine) {
+            public boolean nextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
                 switch (nonOption.getString()) {
                     case "start": {
-                        start = cmdLine.nextBoolean().getBooleanValue();
+                        start = commandline.nextBoolean().getBooleanValue();
                         return true;
                     }
                     case "build": {
-                        build = cmdLine.nextBoolean().getBooleanValue();
+                        build = commandline.nextBoolean().getBooleanValue();
+                        return true;
+                    }
+                    case "pdf": {
+                        buildPdf = commandline.nextBoolean().getBooleanValue();
                         return true;
                     }
                 }
                 return false;
+            }
+
+            @Override
+            public void prepare(NutsCommandLine commandline) {
+                if(!start && !build && !buildPdf){
+                    commandline.required("missing command. try ndocusaurus pdf | start | build");
+                }
             }
 
             @Override
@@ -71,7 +73,6 @@ public class NDocusaurusMain extends NutsApplication {
                         .setBuildWebSite(build)
                         .setStartWebSite(start)
                         .setBuildPdf(buildPdf)
-                        .setUpdateSidebarMenu(updateSidebarMenu)
                         .setAutoInstallNutsPackages(appContext.getWorkspace().config().options().getConfirm()== NutsConfirmationMode.YES)
                         .run();
             }

@@ -373,7 +373,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
             if (CoreStringUtils.isBlank(config.getConfigVersion())) {
                 config.setConfigVersion(repository.getWorkspace().getApiVersion());
             }
-            repository.getWorkspace().formats().json().value(config).print(file);
+            repository.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(config).print(file);
             configurationChanged = false;
             if (LOG.isLoggable(Level.CONFIG)) {
                 if (created) {

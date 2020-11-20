@@ -711,8 +711,8 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
      * transform plain text to formatted text so that the result is rendered as
      * is
      *
-     * @param str
-     * @return
+     * @param str str
+     * @return  escaped text
      */
     public static String escapeText0(String str) {
         if (str == null) {

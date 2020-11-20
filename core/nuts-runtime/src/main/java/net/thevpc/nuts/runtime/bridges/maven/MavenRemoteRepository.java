@@ -177,7 +177,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             } catch (UncheckedIOException|NutsIOException ex) {
                 throw new NutsNotFoundException(getWorkspace(), id, ex);
             }
-            List<Map<String, Object>> info = getWorkspace().formats().json().parse(new InputStreamReader(metadataStream), List.class);
+            List<Map<String, Object>> info = getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(new InputStreamReader(metadataStream), List.class);
             if (info != null) {
                 for (Map<String, Object> version : info) {
                     if ("dir".equals(version.get("type"))) {
@@ -205,7 +205,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 try {
                     metadataStream.close();
                 } catch (IOException e) {
-                    throw new UncheckedIOException(e);
+                    throw new NutsIOException(getWorkspace(),e);
                 }
             }
         }
@@ -258,7 +258,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 try {
                     metadataStream.close();
                 } catch (IOException e) {
-//                    throw new UncheckedIOException(e);
+//                    throw new NutsIOException(getWorkspace(),e);
                     return null;
                 }
             }
@@ -332,7 +332,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 try {
                     foldersFileStream.close();
                 } catch (IOException e) {
-                    throw new UncheckedIOException(e);
+                    throw new NutsIOException(getWorkspace(),e);
                 }
             }
         }

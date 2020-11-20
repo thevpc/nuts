@@ -29,7 +29,7 @@ import java.util.*;
 
 /**
  * @author vpc
- * @category Format
+ * %category Format
  */
 final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFormat {
     private static final long serialVersionUID = 1;

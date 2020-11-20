@@ -6,7 +6,7 @@
 
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-installer</artifactId>
-    <version>0.8.0</version>
+    <version>0.8.1</version>
     <name>net.thevpc.nuts.nuts-installer</name>
     <packaging>jar</packaging>
     <description>
@@ -21,7 +21,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.hl</groupId>
+            <groupId>net.thevpc.hl</groupId>
             <artifactId>hadra-lang</artifactId>
             <version>0.1.0</version> <!--updated-->
         </dependency>
@@ -34,7 +34,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>net.hl.build</groupId>
+                <groupId>net.thevpc.hl.build</groupId>
                 <artifactId>hadra-maven-plugin</artifactId>
                 <version>0.1.0</version>
                 <configuration>

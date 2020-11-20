@@ -9,6 +9,7 @@ import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +46,7 @@ public class Test13_OverloadedDependency {
         ws.install().id("tomcat").run();
     }
 
-//    @BeforeClass
+//    @BeforeAll
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));

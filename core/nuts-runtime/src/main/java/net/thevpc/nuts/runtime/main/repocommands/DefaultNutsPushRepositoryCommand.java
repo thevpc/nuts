@@ -20,7 +20,7 @@ import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
 /**
  *
  * @author vpc
- * @category SPI Base
+ * %category SPI Base
  */
 public class DefaultNutsPushRepositoryCommand extends AbstractNutsPushRepositoryCommand {
     private final NutsLogger LOG;

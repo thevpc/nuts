@@ -14,12 +14,12 @@
     <orderEntry type="library" name="Maven: net.vpc.app.nuts:nuts:0.7.2" level="project" />
     <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-io:1.3.12" level="project" />
     <orderEntry type="module" module-name="nuts" />
-    <orderEntry type="module" module-name="vpc-common-io" />
-    <orderEntry type="module" module-name="vpc-common-ssh" />
+    <orderEntry type="module" module-name="thevpc-common-io" />
+    <orderEntry type="module" module-name="thevpc-common-ssh" />
     <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.55" level="project" />
-    <orderEntry type="module" module-name="vpc-common-strings" />
-    <orderEntry type="module" module-name="vpc-common-xfile" />
-    <orderEntry type="module" module-name="vpc-common-mvn" />
+    <orderEntry type="module" module-name="thevpc-common-strings" />
+    <orderEntry type="module" module-name="thevpc-common-xfile" />
+    <orderEntry type="module" module-name="thevpc-common-mvn" />
     <orderEntry type="library" name="Maven: org.whitesource:pecoff4j:0.0.2.1" level="project" />
   </component>
 </module>

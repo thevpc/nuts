@@ -152,7 +152,7 @@ package net.thevpc.nuts;
  * </pre>
  *
  * @since 0.5.5
- * @category Application
+ * %category Application
  */
 public abstract class NutsApplication {
 

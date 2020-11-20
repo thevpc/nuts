@@ -32,7 +32,7 @@ import java.util.Map;
  * artifact call descriptor used to define executor and installer call definitions.
  *
  * @since 0.5.4
- * @category Base
+ * %category Base
  */
 public interface NutsArtifactCall extends Serializable {
 

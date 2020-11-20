@@ -469,7 +469,8 @@ public class NutsWorkspaceUtils {
         }
     }
 
-    public CoreIOUtils.ProcessExecHelper execAndWait(String[] args, Map<String, String> env, Path directory, NutsSessionTerminal prepareTerminal, NutsSessionTerminal execTerminal, boolean showCommand, boolean failFast) {
+    public CoreIOUtils.ProcessExecHelper execAndWait(String[] args, Map<String, String> env, Path directory, NutsSessionTerminal prepareTerminal,
+                                                     NutsSessionTerminal execTerminal, boolean showCommand, boolean failFast,long sleep) {
         PrintStream out = execTerminal.out();
         PrintStream err = execTerminal.err();
         InputStream in = execTerminal.in();
@@ -490,6 +491,7 @@ public class NutsWorkspaceUtils {
                 .setOutput(out)
                 .setErr(err)
                 .setDirectory(directory == null ? null : directory.toFile())
+                .setSleepMillis(sleep)
                 .setFailFast(failFast);
         if (out == null && err == null && in == null) {
             pb.inheritIO();
@@ -510,7 +512,7 @@ public class NutsWorkspaceUtils {
         return new CoreIOUtils.ProcessExecHelper(pb, ws, out == null ? execTerminal.out() : out);
     }
 
-    public CoreIOUtils.ProcessExecHelper execAndWait(NutsDefinition nutMainFile, NutsSession prepareSession, NutsSession execSession, Map<String, String> execProperties, String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast) throws NutsExecutionException {
+    public CoreIOUtils.ProcessExecHelper execAndWait(NutsDefinition nutMainFile, NutsSession prepareSession, NutsSession execSession, Map<String, String> execProperties, String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast,long sleep) throws NutsExecutionException {
         NutsWorkspace workspace = execSession.getWorkspace();
         NutsId id = nutMainFile.getId();
         Path installerFile = nutMainFile.getPath();
@@ -614,7 +616,8 @@ public class NutsWorkspaceUtils {
         } else {
             pdirectory = workspace.locations().getWorkspaceLocation().resolve(directory);
         }
-        return execAndWait(args, envmap, pdirectory, prepareSession.getTerminal(), execSession.getTerminal(), showCommand, failFast);
+        return execAndWait(args, envmap, pdirectory, prepareSession.getTerminal(), execSession.getTerminal(), showCommand, failFast,
+                sleep);
     }
 
     public NutsExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName) {

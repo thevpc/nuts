@@ -12,6 +12,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: net.vpc.app.nuts:nuts:0.7.2" level="project" />
     <orderEntry type="module" module-name="nuts" />
-    <orderEntry type="module" module-name="vpc-common-strings" />
+    <orderEntry type="module" module-name="thevpc-common-strings" />
   </component>
 </module>

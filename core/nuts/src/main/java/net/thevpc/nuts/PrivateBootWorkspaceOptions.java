@@ -42,7 +42,7 @@ import java.util.function.Supplier;
  * Workspace creation/opening options class.
  *
  * @since 0.5.4
- * @category Config
+ * %category Config
  */
 final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, NutsWorkspaceOptionsBuilder {
     private static final long serialVersionUID = 1;
@@ -199,7 +199,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private NutsOutputFormat outputFormat = null;
+    private NutsContentType outputFormat = null;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -1132,7 +1132,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
-    public NutsOutputFormat getOutputFormat() {
+    public NutsContentType getOutputFormat() {
         return outputFormat;
     }
 
@@ -1143,7 +1143,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setOutputFormat(NutsOutputFormat outputFormat) {
+    public NutsWorkspaceOptionsBuilder setOutputFormat(NutsContentType outputFormat) {
         this.outputFormat = outputFormat;
         return this;
     }

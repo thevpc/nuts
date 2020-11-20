@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 
 /**
  * System Process Information
- * @category Base
+ * %category Base
  */
 public interface NutsProcessInfo {
     /**

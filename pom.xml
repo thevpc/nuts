@@ -6,7 +6,7 @@
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-builder</artifactId>
     <name>net.thevpc.nuts.nuts-builder</name>
-    <version>0.8.0.0</version>
+    <version>0.8.1.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>core/nuts</module>
@@ -35,6 +35,7 @@
         <module>toolbox/docusaurus-to-asciidoctor</module>
         <module>toolbox/ndexer</module>
         <module>toolbox/nwar</module>
+        <module>toolbox/noapi</module>
         <!--<module>toolbox/nuts-clown</module>-->
     </modules>
     <properties>

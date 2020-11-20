@@ -29,7 +29,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.format.json.NutsElementFactoryJsonElement;
 import net.thevpc.nuts.runtime.format.xml.NutsElementFactoryXmlDocument;
 import net.thevpc.nuts.runtime.format.xml.NutsElementFactoryXmlElement;
-import net.thevpc.nuts.runtime.format.json.DefaultNutsJsonFormat;
 import com.google.gson.JsonElement;
 import java.util.Collection;
 import java.util.Date;
@@ -68,30 +67,30 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private final NutsWorkspace ws;
 
     public DefaultNutsElementFactoryService(NutsWorkspace ws) {
-        addHirarchyFactory(String.class, F_STRINGS);
-        addHirarchyFactory(Boolean.class, F_BOOLEANS);
-        addHirarchyFactory(StringBuilder.class, F_STRINGS);
-        addHirarchyFactory(StringBuffer.class, F_STRINGS);
-        addHirarchyFactory(Number.class, F_NUMBERS);
-        addHirarchyFactory(java.util.Date.class, F_DATE);
-        addHirarchyFactory(java.time.Instant.class, F_INSTANT);
-        addHirarchyFactory(Enum.class, F_ENUMS);
+        addHierarchyFactory(String.class, F_STRINGS);
+        addHierarchyFactory(Boolean.class, F_BOOLEANS);
+        addHierarchyFactory(StringBuilder.class, F_STRINGS);
+        addHierarchyFactory(StringBuffer.class, F_STRINGS);
+        addHierarchyFactory(Number.class, F_NUMBERS);
+        addHierarchyFactory(java.util.Date.class, F_DATE);
+        addHierarchyFactory(java.time.Instant.class, F_INSTANT);
+        addHierarchyFactory(Enum.class, F_ENUMS);
 
-        addHirarchyFactory(JsonElement.class, F_JSONELEMENT);
-        addHirarchyFactory(org.w3c.dom.Element.class, F_XML_ELEMENT);
-        addHirarchyFactory(org.w3c.dom.Document.class, F_XML_DOCUMENT);
-        addHirarchyFactory(NutsDefinition.class, F_NUTS_DEF);
-        addHirarchyFactory(NutsId.class, F_NUTS_ID);
-        addHirarchyFactory(NutsNamedElement.class, F_NAMED_ELEM);
+        addHierarchyFactory(JsonElement.class, F_JSONELEMENT);
+        addHierarchyFactory(org.w3c.dom.Element.class, F_XML_ELEMENT);
+        addHierarchyFactory(org.w3c.dom.Document.class, F_XML_DOCUMENT);
+        addHierarchyFactory(NutsDefinition.class, F_NUTS_DEF);
+        addHierarchyFactory(NutsId.class, F_NUTS_ID);
+        addHierarchyFactory(NutsNamedElement.class, F_NAMED_ELEM);
 
-        addHirarchyFactory(Collection.class, F_COLLECTION);
-        addHirarchyFactory(Iterator.class, F_ITERATOR);
-        addHirarchyFactory(Map.class, F_MAP);
-        addHirarchyFactory(Map.Entry.class, F_MAPENTRY);
+        addHierarchyFactory(Collection.class, F_COLLECTION);
+        addHierarchyFactory(Iterator.class, F_ITERATOR);
+        addHierarchyFactory(Map.class, F_MAP);
+        addHierarchyFactory(Map.Entry.class, F_MAPENTRY);
         this.ws = ws;
     }
 
-    public final void addHirarchyFactory(Class cls, NutsElementFactory instance) {
+    public final void addHierarchyFactory(Class cls, NutsElementFactory instance) {
         factories.put(cls, instance);
     }
 
@@ -117,7 +116,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                 return f;
             }
         }
-        DefaultNutsJsonFormat json = (DefaultNutsJsonFormat) ws.formats().json();
+        DefaultNutsElementFormat json = (DefaultNutsElementFormat) ws.formats().element().setContentType(NutsContentType.JSON);
         return create(json.convert(o, JsonElement.class), context);
         // new DefaultNutsPrimitiveElement(NutsElementType.UNKNWON, o)
     }

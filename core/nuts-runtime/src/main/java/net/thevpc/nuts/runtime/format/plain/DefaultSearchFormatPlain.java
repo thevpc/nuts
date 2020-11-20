@@ -10,7 +10,7 @@ import java.io.PrintStream;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.runtime.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.format.NutsIdFormatHelper;
-import net.thevpc.nuts.NutsOutputFormat;
+import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.format.DefaultSearchFormatBase;
 
@@ -21,7 +21,7 @@ import net.thevpc.nuts.runtime.format.DefaultSearchFormatBase;
 public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
 
     public DefaultSearchFormatPlain(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
-        super(session, writer, NutsOutputFormat.PLAIN,options);
+        super(session, writer, NutsContentType.PLAIN,options);
     }
 
     @Override

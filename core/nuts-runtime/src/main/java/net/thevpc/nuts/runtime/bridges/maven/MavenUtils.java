@@ -274,7 +274,7 @@ public class MavenUtils {
                 return nutsDescriptor;
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session.getWorkspace(),ex);
         }
     }
 
@@ -383,7 +383,7 @@ public class MavenUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session.getWorkspace(),ex);
         } catch (Exception ex) {
             throw new NutsParseException(null, "Error Parsing " + urlDesc, ex);
         }
@@ -557,6 +557,7 @@ public class MavenUtils {
      * find latest maven component
      *
      * @param filter filter
+     * @param zId id
      * @return latest runtime version
      */
     public NutsId resolveLatestMavenId(NutsId zId, Predicate<String> filter) {

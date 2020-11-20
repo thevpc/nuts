@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.main.config.compat;
 
+import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.NutsWorkspace;
 
 import java.util.Map;
@@ -13,7 +14,7 @@ public class NutsWorkspaceConfigHelper {
 
 
     private Map parseConfigMap(byte[] bytes) {
-        return ws.formats().json().parse(bytes, Map.class);
+        return ws.formats().element().setContentType(NutsContentType.JSON).parse(bytes, Map.class);
     }
 
 

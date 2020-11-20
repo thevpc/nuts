@@ -51,7 +51,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private boolean trace;
     private boolean force;
     private NutsConfirmationMode confirm = null;
-    private NutsOutputFormat outputFormat;
+    private NutsContentType outputFormat;
     protected NutsIterableFormat iterFormatHandler = null;
     protected NutsIterableOutput iterFormat = null;
     protected NutsWorkspace ws = null;
@@ -304,38 +304,38 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public NutsSession json() {
-        return setOutputFormat(NutsOutputFormat.JSON);
+        return setOutputFormat(NutsContentType.JSON);
     }
 
     @Override
     public NutsSession plain() {
-        return setOutputFormat(NutsOutputFormat.PLAIN);
+        return setOutputFormat(NutsContentType.PLAIN);
     }
 
     @Override
     public NutsSession tree() {
-        return setOutputFormat(NutsOutputFormat.TREE);
+        return setOutputFormat(NutsContentType.TREE);
     }
 
     @Override
     public NutsSession table() {
-        return setOutputFormat(NutsOutputFormat.TABLE);
+        return setOutputFormat(NutsContentType.TABLE);
     }
 
     @Override
     public NutsSession xml() {
-        return setOutputFormat(NutsOutputFormat.XML);
+        return setOutputFormat(NutsContentType.XML);
     }
 
     @Override
     public NutsSession props() {
-        return setOutputFormat(NutsOutputFormat.PROPS);
+        return setOutputFormat(NutsContentType.PROPS);
     }
 
     @Override
-    public NutsSession setOutputFormat(NutsOutputFormat outputFormat) {
+    public NutsSession setOutputFormat(NutsContentType outputFormat) {
         if (outputFormat == null) {
-            outputFormat = NutsOutputFormat.PLAIN;
+            outputFormat = NutsContentType.PLAIN;
         }
         this.outputFormat = outputFormat;
         return this;
@@ -376,7 +376,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--output-format": {
                     a = cmdLine.nextString();
                     if (enabled) {
-                        NutsOutputFormat outf = CoreCommonUtils.parseEnumString(a.getStringValue(), NutsOutputFormat.class, false);
+                        NutsContentType outf = CoreCommonUtils.parseEnumString(a.getStringValue(), NutsContentType.class, false);
                         this.setOutputFormat(outf);
                     }
                     return true;
@@ -392,7 +392,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--json": {
                     a = cmdLine.next();
                     if (enabled) {
-                        this.setOutputFormat(NutsOutputFormat.JSON);
+                        this.setOutputFormat(NutsContentType.JSON);
                         this.addOutputFormatOptions(a.getStringValue(""));
                     }
                     return true;
@@ -400,7 +400,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--props": {
                     a = cmdLine.next();
                     if (enabled) {
-                        this.setOutputFormat(NutsOutputFormat.PROPS);
+                        this.setOutputFormat(NutsContentType.PROPS);
                         this.addOutputFormatOptions(a.getStringValue(""));
                     }
                     return true;
@@ -408,7 +408,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--plain": {
                     a = cmdLine.next();
                     if (enabled) {
-                        this.setOutputFormat(NutsOutputFormat.PLAIN);
+                        this.setOutputFormat(NutsContentType.PLAIN);
                         this.addOutputFormatOptions(a.getStringValue(""));
                     }
                     return true;
@@ -416,7 +416,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--table": {
                     a = cmdLine.next();
                     if (enabled) {
-                        this.setOutputFormat(NutsOutputFormat.TABLE);
+                        this.setOutputFormat(NutsContentType.TABLE);
                         this.addOutputFormatOptions(a.getStringValue(""));
                     }
                     return true;
@@ -424,7 +424,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--tree": {
                     a = cmdLine.next();
                     if (enabled) {
-                        this.setOutputFormat(NutsOutputFormat.TREE);
+                        this.setOutputFormat(NutsContentType.TREE);
                         this.addOutputFormatOptions(a.getStringValue(""));
                     }
                     return true;
@@ -432,7 +432,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--xml": {
                     a = cmdLine.next();
                     if (enabled) {
-                        this.setOutputFormat(NutsOutputFormat.XML);
+                        this.setOutputFormat(NutsContentType.XML);
                         this.addOutputFormatOptions(a.getStringValue(""));
                     }
                     return true;
@@ -561,15 +561,15 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     //    @Override
-    public NutsOutputFormat getPreferredOutputFormat() {
+    public NutsContentType getPreferredOutputFormat() {
         return this.outputFormat;
     }
 
     @Override
-    public NutsOutputFormat getOutputFormat(NutsOutputFormat defaultValue) {
+    public NutsContentType getOutputFormat(NutsContentType defaultValue) {
         NutsIterableFormat f = getIterableFormat();
         if (f != null) {
-            NutsOutputFormat o = f.getOutputFormat();
+            NutsContentType o = f.getOutputFormat();
             if (o != null) {
                 return o;
             }
@@ -577,7 +577,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (this.outputFormat != null) {
             return this.outputFormat;
         }
-        NutsOutputFormat o = ws.config().options().getOutputFormat();
+        NutsContentType o = ws.config().options().getOutputFormat();
         if (o != null) {
             return o;
         }
@@ -585,8 +585,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsOutputFormat getOutputFormat() {
-        return getOutputFormat(NutsOutputFormat.PLAIN);
+    public NutsContentType getOutputFormat() {
+        return getOutputFormat(NutsContentType.PLAIN);
     }
 
     @Override
@@ -598,18 +598,18 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public boolean isPlainTrace() {
         return isTrace()
                 && !isIterableOut()
-                && getOutputFormat() == NutsOutputFormat.PLAIN;
+                && getOutputFormat() == NutsContentType.PLAIN;
     }
 
     @Override
     public boolean isPlainOut() {
-        return getOutputFormat() == NutsOutputFormat.PLAIN;
+        return getOutputFormat() == NutsContentType.PLAIN;
     }
 
     @Override
     public boolean isStructuredOut() {
         return !isIterableOut()
-                && getOutputFormat() != NutsOutputFormat.PLAIN;
+                && getOutputFormat() != NutsContentType.PLAIN;
     }
 
     @Override
@@ -627,7 +627,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public boolean isStructuredTrace() {
         return isTrace()
                 && !isIterableOut()
-                && getOutputFormat() != NutsOutputFormat.PLAIN;
+                && getOutputFormat() != NutsContentType.PLAIN;
     }
 
     @Override
@@ -835,7 +835,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public NutsObjectFormat formatObject(Object any) {
-        return getWorkspace().formats().object().setSession(this).value(any);
+        return getWorkspace().formats().object().setSession(this).setValue(any);
     }
 
     @Override

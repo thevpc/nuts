@@ -34,7 +34,7 @@ import java.nio.file.Path;
  *
  * @author vpc
  * @since 0.5.5
- * @category Application
+ * %category Application
  */
 public interface NutsApplicationContext extends NutsConfigurable {
 

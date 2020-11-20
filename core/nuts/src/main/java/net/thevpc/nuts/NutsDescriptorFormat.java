@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * Descriptor Format class that help building, formatting and parsing Descriptors.
  * @author vpc
  * @since 0.5.4
- * @category Format
+ * %category Format
  */
 public interface NutsDescriptorFormat extends NutsFormat {
 

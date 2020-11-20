@@ -69,7 +69,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
 
     public void execHelper(NutsExecutionContext executionContext,boolean dry) {
         NutsDefinition nutMainFile = executionContext.getDefinition();
-        String[] execArgs = executionContext.getExecutorOptions();
+        String[] execArgs = executionContext.getExecutorArguments();
         String[] appArgs = executionContext.getArguments();
 
         String dir = null;

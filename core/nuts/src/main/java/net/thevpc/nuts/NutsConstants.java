@@ -34,7 +34,7 @@ import java.util.*;
  * Created by vpc on 1/14/17.
  *
  * @since 0.1.0
- * @category Constants
+ * %category Constants
  */
 public final class NutsConstants {
 
@@ -428,6 +428,11 @@ public final class NutsConstants {
          * workspace boot config file name for a particular nuts-api version
          */
         public static final String WORKSPACE_API_CONFIG_FILE_NAME = "nuts-api-config.json";
+
+        /**
+         * workspace boot config file name for a particular nuts-runtime version
+         */
+        public static final String WORKSPACE_RUNTIME_CONFIG_FILE_NAME = "nuts-runtime-config.json";
 
         /**
          * workspace boot config file name for a particular nuts-extension version

@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  * (package) Created by vpc on 1/7/17.
  *
  * @since 0.5.4
- * @category SPI Base
+ * %category SPI Base
  */
 public interface NutsExecutorComponent extends NutsComponent<NutsDefinition> {
 

@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.util.fprint.FPrintCommands;
 
 import java.io.PrintStream;
 import java.util.Calendar;
+import java.util.Set;
 
 public class CProgressBar {
     private static final IndeterminatePosition DEFAULT_INDETERMINATE_POSITION = new DefaultIndeterminatePosition();
@@ -28,11 +29,12 @@ public class CProgressBar {
         this.session = session;
         formatted = session != null;
         if (session != null) {
-            optionNewline = NutsWorkspaceUtils.parseProgressOptions(session).contains("newline");
+            Set<String> options = NutsWorkspaceUtils.parseProgressOptions(session);
+            optionNewline = options.contains("newline") || options.contains("%n") ;
         }
     }
 
-    public CProgressBar(NutsSession ws, int size) {
+    public CProgressBar(NutsSession session, int size) {
         this.session = session;
         setSize(size);
     }

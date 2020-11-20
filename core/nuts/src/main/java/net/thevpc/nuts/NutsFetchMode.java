@@ -49,7 +49,7 @@ package net.thevpc.nuts;
  * enable cache support; in which case, if the artifact si cached, it will be accessed locally.
  * <br>
  * @since 0.5.4
- * @category Commands
+ * %category Commands
  */
 public enum NutsFetchMode {
     /**

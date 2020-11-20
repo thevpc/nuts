@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * When multiple selectors match, the first on prevails.
  *
  * @since 0.5.7
- * @category Descriptor
+ * %category Descriptor
  */
 public interface NutsClassifierMappingBuilder {
     /**

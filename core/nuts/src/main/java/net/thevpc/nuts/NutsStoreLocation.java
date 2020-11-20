@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  *
  * @author vpc
  * @since 0.5.4
- * @category Base
+ * %category Base
  */
 public enum NutsStoreLocation {
 

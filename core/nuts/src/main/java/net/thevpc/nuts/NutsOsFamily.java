@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * Supported Operating System Families
  * @author vpc
  * @since 0.5.4
- * @category Base
+ * %category Base
  */
 public enum NutsOsFamily {
     /**

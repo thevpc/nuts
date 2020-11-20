@@ -122,8 +122,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     private Set<NutsId> getCompanionsToUpdate() {
         Set<NutsId> ext = new HashSet<>();
-        for (String extension : ws.companionIds()) {
-            ext.add(ws.id().parser().parse(extension).getShortNameId());
+        for (NutsId extension : ws.companionIds()) {
+            ext.add(extension.getShortNameId());
         }
         return ext;
     }

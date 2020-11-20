@@ -40,7 +40,7 @@ public class NutsDefaultArgumentCandidate implements NutsArgumentCandidate {
 
     /**
      *
-     * @param value
+     * @param value value
      */
     public NutsDefaultArgumentCandidate(String value) {
         this.value = value;

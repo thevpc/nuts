@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.main.config.compat.v502;
 
 import net.thevpc.nuts.NutsConstants;
+import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.NutsUserConfig;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.main.config.*;
@@ -74,7 +75,7 @@ public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
     }
 
     private NutsWorkspaceConfigBoot502 parseConfig502(byte[] bytes) {
-        return getWorkspace().formats().json().parse(bytes, NutsWorkspaceConfigBoot502.class);
+        return getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(bytes, NutsWorkspaceConfigBoot502.class);
     }
 
 

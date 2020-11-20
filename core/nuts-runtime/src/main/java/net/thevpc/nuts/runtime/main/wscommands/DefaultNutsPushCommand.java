@@ -113,7 +113,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                     }
                 }
                 if (!ok) {
-                    throw new NutsRepositoryNotFoundException(ws, this.getRepository() + " : " + CoreStringUtils.join("\n", errors));
+                    throw new NutsRepositoryNotFoundException(ws, this.getRepository() + " : " + String.join("\n", errors));
                 }
             } else {
                 NutsRepository repo = ws.repos().getRepository(this.getRepository(), session.copy().setTransitive(true));

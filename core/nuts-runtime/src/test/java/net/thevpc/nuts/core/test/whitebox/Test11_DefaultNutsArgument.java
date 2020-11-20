@@ -28,8 +28,7 @@ package net.thevpc.nuts.core.test.whitebox;
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.app.DefaultNutsArgument;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 /**
  *
@@ -168,15 +167,15 @@ public class Test11_DefaultNutsArgument {
             , String optionPrefix
             , String eq
     ){
-        Assert.assertEquals("Option:"+a.getString(),option,a.isOption());
-        Assert.assertEquals("Enabled:"+a.getString(),enabled,a.isEnabled());
-        Assert.assertEquals("KeyValue:"+a.getString(),keyValue,a.isKeyValue());
-        Assert.assertEquals("Negated:"+a.getString(),negated,a.isNegated());
-        Assert.assertEquals("StringKey:"+a.getString(),key,a.getStringKey());
-        Assert.assertEquals("StringValue:"+a.getString(),value,a.getStringValue());
-        Assert.assertEquals("StringOptionName:"+a.getString(),optionName,a.getStringOptionName());
-        Assert.assertEquals("StringOptionPrefix:"+a.getString(),optionPrefix,a.getStringOptionPrefix());
-        Assert.assertEquals("KeyValueSeparator:"+a.getString(),eq,a.getKeyValueSeparator());
+        Assertions.assertEquals(option,a.isOption(),"Option:"+a.getString());
+        Assertions.assertEquals(enabled,a.isEnabled(),"Enabled:"+a.getString());
+        Assertions.assertEquals(keyValue,a.isKeyValue(),"KeyValue:"+a.getString());
+        Assertions.assertEquals(negated,a.isNegated(),"Negated:"+a.getString());
+        Assertions.assertEquals("StringKey:"+a.getString(),key,a.getStringKey());
+        Assertions.assertEquals("StringValue:"+a.getString(),value,a.getStringValue());
+        Assertions.assertEquals("StringOptionName:"+a.getString(),optionName,a.getStringOptionName());
+        Assertions.assertEquals("StringOptionPrefix:"+a.getString(),optionPrefix,a.getStringOptionPrefix());
+        Assertions.assertEquals("KeyValueSeparator:"+a.getString(),eq,a.getKeyValueSeparator());
         TestUtils.println("OK : "+a.getString());
     }
 

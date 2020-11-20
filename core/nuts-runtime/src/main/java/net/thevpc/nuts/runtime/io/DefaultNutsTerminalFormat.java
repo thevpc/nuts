@@ -50,11 +50,11 @@ public class DefaultNutsTerminalFormat implements NutsTerminalFormat, NutsWorksp
     }
 
     /**
-     * @param style
-     * @param locale
-     * @param format
-     * @param args
-     * @return
+     * @param style style
+     * @param locale locale
+     * @param format format
+     * @param args args
+     * @return formatted text
      */
     @Override
     public String formatText(NutsTextFormatStyle style, Locale locale, String format, Object... args) {

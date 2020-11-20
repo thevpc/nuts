@@ -150,7 +150,7 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public NutsOutputFormat getOutputFormat() {
+    public NutsContentType getOutputFormat() {
         return options.getOutputFormat();
     }
 

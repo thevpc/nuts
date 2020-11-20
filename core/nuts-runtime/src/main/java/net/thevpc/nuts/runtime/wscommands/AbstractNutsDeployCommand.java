@@ -320,7 +320,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
                         this.setDescSha1(new String(Files.readAllBytes(Paths.get(val))));
                     }
                 } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
+                    throw new NutsIOException(ws,ex);
                 }
                 return true;
             }
@@ -338,7 +338,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
                         this.setSha1(new String(Files.readAllBytes(Paths.get(val))));
                     }
                 } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
+                    throw new NutsIOException(ws,ex);
                 }
                 return true;
             }

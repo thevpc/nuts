@@ -25,7 +25,7 @@
 */
 package net.thevpc.nuts.runtime.format;
 
-import net.thevpc.nuts.NutsOutputFormat;
+import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.NutsUnsupportedArgumentException;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.format.json.DefaultSearchFormatJson;
@@ -48,7 +48,7 @@ public class DefaultNutsIncrementalOutputFormat extends NutsIncrementalOutputFor
 
     @Override
     public NutsIterableFormat getEffectiveFormat() {
-        NutsOutputFormat outputFormat = getOutputFormat();
+        NutsContentType outputFormat = getOutputFormat();
         NutsIterableFormat old = super.getFormat();
         if (old == null || old.getOutputFormat() != outputFormat) {
             switch (outputFormat) {

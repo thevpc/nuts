@@ -38,7 +38,7 @@ package net.thevpc.nuts;
  *    <li>INSTALLED OBSOLETE</li>
  *    <li>INSTALLED REQUIRED OBSOLETE</li>
  * </ul>
- * @category Base
+ * %category Base
  */
 public enum NutsInstallStatus {
 

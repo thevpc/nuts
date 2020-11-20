@@ -39,13 +39,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import net.thevpc.nuts.NutsArrayElementBuilder;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementBuilder;
-import net.thevpc.nuts.NutsElementPath;
-import net.thevpc.nuts.NutsElementType;
-import net.thevpc.nuts.NutsNamedElement;
-import net.thevpc.nuts.NutsSession;
+
+import net.thevpc.nuts.*;
 
 /**
  *
@@ -95,7 +90,7 @@ public class NutsElementPathFilter {
      *
      * @param jpath path
      * @param session session
-     * @return
+     * @return element path
      */
     public static NutsElementPath compile(String jpath, NutsSession session) {
         StreamTokenizer st = new StreamTokenizer(new StringReader(jpath));
@@ -640,7 +635,7 @@ public class NutsElementPathFilter {
                 u = new HashSet<>();
                 matchContext.put("unique", u);
             }
-            String v = session.getWorkspace().formats().json().value(value).format();
+            String v = session.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(value).format();
             if (u.contains(v)) {
                 return false;
             }

@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.nmysql.local;
 
 import net.thevpc.common.io.FileUtils;
 import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.NutsDefinition;
 import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.common.strings.StringUtils;
@@ -55,7 +56,7 @@ public class LocalMysqlConfigService {
 
     public LocalMysqlConfigService saveConfig() {
         Path f = getServerConfigPath();
-        context.getWorkspace().formats().json().value(config).print(f);
+        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(config).print(f);
         return this;
     }
 
@@ -88,7 +89,7 @@ public class LocalMysqlConfigService {
         String name = getName();
         Path f = getServerConfigPath();
         if (Files.exists(f)) {
-            config = context.getWorkspace().formats().json().parse(f, LocalMysqlConfig.class);
+            config = context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(f, LocalMysqlConfig.class);
             return this;
         } else if ("default".equals(name)) {
             //auto create default config
@@ -109,7 +110,7 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlConfigService write(PrintStream out) {
-        context.getWorkspace().formats().json().value(getConfig()).print(out);
+        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(getConfig()).print(out);
         return this;
     }
 

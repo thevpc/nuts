@@ -82,7 +82,7 @@ public class PomIdResolver {
      * resolve all Maven/Nuts artifact definitions in the classloader that has
      * loaded <code>clazz</code>
      *
-     * @param clazz
+     * @param clazz class
      * @return artifacts array in the form groupId:artfcatId#version
      */
     public PomId[] resolvePomIds(Class clazz) {

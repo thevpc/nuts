@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Class describing executable command.
  * @author vpc
  * @since 0.5.4
- * @category Descriptor
+ * %category Descriptor
  */
 public interface NutsExecutableInformation {
 

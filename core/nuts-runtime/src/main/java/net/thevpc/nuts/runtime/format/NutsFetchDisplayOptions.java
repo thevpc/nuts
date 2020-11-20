@@ -185,7 +185,7 @@ public class NutsFetchDisplayOptions {
                 displayOptionsArgs.add("--omit-namespace");
             }
 
-            displayOptionsArgs.add("--display=" + CoreStringUtils.join(",", Arrays.asList(getDisplayProperties()).stream().map(x -> CoreCommonUtils.getEnumString(x)).collect(Collectors.toList())));
+            displayOptionsArgs.add("--display=" + String.join(",", Arrays.asList(getDisplayProperties()).stream().map(x -> CoreCommonUtils.getEnumString(x)).collect(Collectors.toList())));
         }
         return displayOptionsArgs.toArray(new String[0]);
     }

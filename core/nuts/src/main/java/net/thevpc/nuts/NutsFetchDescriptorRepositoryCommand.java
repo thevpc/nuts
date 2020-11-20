@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Repository command used to fetch an artifact descriptor from a specific repository.
  * @author vpc
  * @since 0.5.5
- * @category SPI Base
+ * %category SPI Base
  */
 public interface NutsFetchDescriptorRepositoryCommand extends NutsRepositoryCommand {
 

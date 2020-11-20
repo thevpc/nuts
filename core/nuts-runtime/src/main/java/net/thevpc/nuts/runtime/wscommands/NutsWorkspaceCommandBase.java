@@ -11,7 +11,7 @@ import net.thevpc.nuts.runtime.util.NutsConfigurableHelper;
 /**
  *
  * @author vpc
- * @param <T>
+ * @param <T> Type
  */
 public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> implements NutsWorkspaceCommand {
 

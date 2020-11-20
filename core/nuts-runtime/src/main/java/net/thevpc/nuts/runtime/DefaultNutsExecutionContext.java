@@ -37,7 +37,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
 
     private NutsDefinition definition;
     private Map<String, String> env;
-    private String[] executorOptions;
+    private String[] executorArguments;
     private Map<String, String> executorProperties;
     private String[] arguments;
     private NutsSession execSession;
@@ -48,6 +48,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     private String commandName;
     private boolean failFast;
     private boolean temporary;
+    private long sleepMillis;
     private NutsExecutionType executionType;
 
     //    public NutsExecutionContextImpl(NutsDefinition nutsDefinition, NutsSession session, NutsWorkspace workspace,String cwd) {
@@ -75,7 +76,9 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
                                        String cwd, NutsSession traceSession, NutsSession execSession, NutsWorkspace workspace, boolean failFast,
                                        boolean temporary,
                                        NutsExecutionType executionType,
-                                       String commandName) {
+                                       String commandName,
+                                       long sleepMillis
+                                       ) {
         if (arguments == null) {
             arguments = new String[0];
         }
@@ -91,8 +94,9 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
         this.execSession = execSession;
         this.traceSession = traceSession;
         this.workspace = workspace;
-        this.executorOptions = executorArgs;
+        this.executorArguments = executorArgs;
         this.executorProperties = executorProperties;
+        this.sleepMillis = sleepMillis;
         this.cwd = cwd;
         if (env == null) {
             env = new LinkedHashMap<>();
@@ -111,7 +115,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
         this.execSession = other.getExecSession();
         this.traceSession = other.getTraceSession();
         this.workspace = other.getWorkspace();
-        this.executorOptions = other.getExecutorOptions();
+        this.executorArguments = other.getExecutorArguments();
         this.executorProperties = other.getExecutorProperties();
         this.cwd = other.getCwd();
         this.env = other.getEnv();
@@ -119,6 +123,11 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
         this.temporary = other.isTemporary();
         this.executionType = other.getExecutionType();
         this.executorDescriptor = other.getExecutorDescriptor();
+        this.sleepMillis = other.getSleepMillis();
+    }
+
+    public long getSleepMillis() {
+        return sleepMillis;
     }
 
     @Override
@@ -127,8 +136,8 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     }
 
     @Override
-    public String[] getExecutorOptions() {
-        return executorOptions;
+    public String[] getExecutorArguments() {
+        return executorArguments;
     }
 
     @Override
@@ -200,8 +209,8 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
         return this;
     }
 
-    public DefaultNutsExecutionContext setExecutorOptions(String[] executorOptions) {
-        this.executorOptions = executorOptions;
+    public DefaultNutsExecutionContext setExecutorArguments(String[] executorArguments) {
+        this.executorArguments = executorArguments;
         return this;
     }
 

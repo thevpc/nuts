@@ -35,6 +35,7 @@ import java.io.UncheckedIOException;
 import java.util.*;
 
 import net.thevpc.nuts.runtime.format.DefaultFormatBase;
+import net.thevpc.nuts.runtime.util.common.CoreCommonUtils;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.util.common.StringBuilder2;
 
@@ -79,7 +80,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
      * ABBBBCBBBBD E F G HIIIIJIIIIK E F G LMMMMNMMMMO
      */
     private NutsTableBordersFormat border = SIMPLE_BORDER;
-    private NutsTableModel model = new DefaultNutsMutableTableModel();
+    private Object model;
     private List<Boolean> visibleColumns = new ArrayList<>();
     private boolean visibleHeader = true;
 
@@ -155,7 +156,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         try {
             w.flush();
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(getWorkspace(),ex);
         }
         return new String(out.toByteArray());
     }
@@ -662,6 +663,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
 
     private List<Row> rebuild() {
         List<Row> rows1 = new ArrayList<>();
+        NutsTableModel model = getModel();
         int columnsCount = model.getColumnsCount();
         int rowsCount = model.getRowsCount();
         for (int rowIndex = 0; rowIndex < rowsCount; rowIndex++) {
@@ -858,15 +860,112 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
 
     @Override
     public NutsTableModel getModel() {
-        return model;
+        return createTableModel(model);
+    }
+
+    private NutsTableModel createTableModel(Object o){
+        if(o==null){
+            return new DefaultNutsMutableTableModel();
+        }
+        if(o instanceof NutsTableModel){
+            return (NutsTableModel) o;
+        }
+        if(!(o instanceof NutsElement)){
+            return createTableModel(getWorkspace().formats().element().convert(o,NutsElement.class));
+        }
+        NutsElement elem = (NutsElement) o;
+        switch (elem.type()) {
+            case BOOLEAN:
+            case DATE:
+            case STRING:
+            case INTEGER:
+            case FLOAT:
+            case NULL:{
+                List<NutsElement> a = new ArrayList<>();
+                a.add(elem);
+                return createTableModel(getWorkspace().formats().element().convert(a,NutsElement.class));
+            }
+            case OBJECT: {
+                return createTableModel(getWorkspace().formats().element().convert(elem.object().children(),NutsElement.class));
+            }
+            case ARRAY: {
+                NutsMutableTableModel model = createModel();
+                LinkedHashSet<String> columns = new LinkedHashSet<>();
+                resolveColumns(elem, columns);
+                for (String column : columns) {
+                    model.addHeaderCell(column);
+                }
+                for (NutsElement elem2 : elem.array().children()) {
+                    model.newRow();
+                    switch (elem2.type()) {
+                        case OBJECT: {
+                            Map<String, NutsElement> m = new HashMap<>();
+                            for (NutsNamedElement vv : elem2.object().children()) {
+                                m.put(vv.getName(), vv.getValue());
+                            }
+                            for (String column : columns) {
+                                NutsElement vv = m.get(column);
+                                if (vv != null) {
+                                    model.addCell(formatObject(vv));
+                                } else {
+                                    model.addCell("");
+                                }
+                            }
+                            break;
+                        }
+                        default: {
+                            for (String column : columns) {
+                                if (column.equals("value")) {
+                                    model.addCell(formatObject(elem2/*.primitive().getValue()*/));
+                                } else {
+                                    model.addCell("");
+                                }
+                            }
+                        }
+                    }
+                }
+                return model;
+            }
+            default: {
+                throw new NutsUnsupportedArgumentException(getWorkspace(), "Unsupported " + elem.type());
+            }
+        }
+    }
+
+    public void resolveColumns(NutsElement value, LinkedHashSet<String> columns) {
+        switch (value.type()) {
+            case OBJECT: {
+                for (NutsNamedElement nutsNamedValue : value.object().children()) {
+                    columns.add(nutsNamedValue.getName());
+                }
+                break;
+            }
+            case ARRAY: {
+                for (NutsElement value2 : value.array().children()) {
+                    resolveColumns(value2, columns);
+                }
+                break;
+            }
+            default: {
+                columns.add("value");
+            }
+        }
     }
 
     @Override
     public NutsTableFormat setModel(NutsTableModel model) {
-        if (model == null) {
-            model = new DefaultNutsMutableTableModel();
-        }
         this.model = model;
+        return this;
+    }
+
+    @Override
+    public Object getValue() {
+        return model;
+    }
+
+    @Override
+    public NutsObjectFormat setValue(Object value) {
+        this.model=value;
         return this;
     }
 
@@ -1173,4 +1272,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return false;
     }
 
+    private String formatObject(Object any) {
+        return CoreCommonUtils.stringValueFormatted(any, false, getValidSession());
+    }
 }

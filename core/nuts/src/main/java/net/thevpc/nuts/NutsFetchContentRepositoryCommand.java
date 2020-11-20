@@ -32,7 +32,7 @@ import java.nio.file.Path;
  * Repository command bound to FetchCommand used to fetch an artifact content from a specific repository.
  * @author vpc
  * @since 0.5.5
- * @category SPI Base
+ * %category SPI Base
  */
 public interface NutsFetchContentRepositoryCommand extends NutsRepositoryCommand {
 

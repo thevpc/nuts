@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 /**
  * Exception thrown when the package could not be resolved
  *
- * @category Exception
+ * %category Exception
  * @since 0.5.4
  */
 public class NutsNotFoundException extends NutsException {

@@ -23,11 +23,6 @@ public abstract class NutsObjectFormatBase extends DefaultFormatBase<NutsObjectF
     }
 
     @Override
-    public NutsObjectFormat value(Object value) {
-        return setValue(value);
-    }
-
-    @Override
     public NutsObjectFormat setValue(Object value) {
         this.value = value;
         return this;

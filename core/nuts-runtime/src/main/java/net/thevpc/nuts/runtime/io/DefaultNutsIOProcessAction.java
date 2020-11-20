@@ -126,26 +126,23 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
     private NutsResultList<NutsProcessInfo> getResultListJava(String version) {
         Iterator<NutsProcessInfo> it = IteratorBuilder.ofLazy(() -> {
             String cmd = "jps";
-            ProcessBuilder2 b = null;
+            NutsExecCommand b = null;
             boolean mainArgs = true;
             boolean vmArgs = true;
-            try {
-                String jdkHome = getJpsJavaHome(ws,version);
-                if (jdkHome != null) {
-                    cmd = jdkHome + File.separator + "bin" + File.separator + cmd;
-                }
-                b = new ProcessBuilder2(ws)
-                        .addCommand(cmd)
-                        .addCommand("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))
-                        .setRedirectErrorStream(true)
-                        .grabOutputString();
-                b.waitFor();
-            } catch (IOException ex) {
-                if (isFailFast()) {
-                    throw new UncheckedIOException(ex);
-                }
+            String jdkHome = getJpsJavaHome(ws,version);
+            if (jdkHome != null) {
+                cmd = jdkHome + File.separator + "bin" + File.separator + cmd;
             }
-            if (b != null && b.getResult() == 0) {
+            b =ws.exec()
+                    .setExecutionType(NutsExecutionType.USER_CMD)
+                    .addCommand(cmd)
+                    .addCommand("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))
+                    .setRedirectErrorStream(true)
+                    .grabOutputString()
+                    .setFailFast(isFailFast())
+            ;
+            b.getResult();
+            if (b.getResult() == 0) {
                 String out = b.getOutputString();
                 String[] split = out.split("\n");
                 return Arrays.asList(split).iterator();

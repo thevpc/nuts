@@ -35,7 +35,7 @@ import java.nio.file.Path;
  * This class is part of Nuts SPI and is not to be used by end users.
  * @author vpc
  * @since 0.5.4
- * @category SPI Base
+ * %category SPI Base
  */
 public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
 

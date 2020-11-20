@@ -693,4 +693,16 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     public String toString() {
         return getCommandString();
     }
+
+    private int sleepMillis = 1000;
+
+    public int getSleepMillis() {
+        return sleepMillis;
+    }
+
+    public NutsExecCommand setSleepMillis(int sleepMillis) {
+        this.sleepMillis = sleepMillis;
+        return this;
+    }
+
 }

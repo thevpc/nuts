@@ -6,6 +6,7 @@ import net.thevpc.common.io.FileUtils;
 import net.thevpc.common.io.IOUtils;
 import net.thevpc.common.ssh.SshAddress;
 import net.thevpc.common.strings.StringUtils;
+import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.toolbox.nmysql.remote.config.RemoteMysqlDatabaseConfig;
 import net.thevpc.nuts.toolbox.nmysql.local.LocalMysql;
 import net.thevpc.nuts.toolbox.nmysql.local.LocalMysqlDatabaseConfigService;
@@ -17,7 +18,6 @@ import java.util.Map;
 
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsExecCommand;
-import net.thevpc.nuts.runtime.wscommands.AbstractNutsExecCommand;
 import net.thevpc.nuts.toolbox.nmysql.util.MysqlUtils;
 
 public class RemoteMysqlDatabaseConfigService {
@@ -54,7 +54,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public void write(PrintStream out) {
-        context.getWorkspace().formats().json().value(getConfig()).print(out);
+        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(getConfig()).print(out);
     }
 
     public String pull(String localPath, boolean restore, boolean deleteRemote) {
@@ -119,7 +119,7 @@ public class RemoteMysqlDatabaseConfigService {
         String remoteTempPath = null;
         final SshAddress sshAddress = new SshAddress(prepareSshServer(cconfig.getServer()));
         final String searchResultString = execRemoteNuts("search --no-color --json net.thevpc.nuts.toolbox:nmysql --display temp-folder --installed --first");
-        List<Map> result = this.context.getWorkspace().formats().json().parse(new StringReader(searchResultString), List.class);
+        List<Map> result = this.context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(new StringReader(searchResultString), List.class);
         if (result.isEmpty()) {
             throw new IllegalArgumentException("Mysql is not installed on the remote machine");
         }
@@ -196,9 +196,7 @@ public class RemoteMysqlDatabaseConfigService {
         b.setRedirectErrorStream(true)
                 .grabOutputString()
                 .setFailFast(true);
-        String ss=((AbstractNutsExecCommand)b).getOutputString0();
         return b.run().getOutputString();
-
     }
 
     private String prepareSshServer(String server) {

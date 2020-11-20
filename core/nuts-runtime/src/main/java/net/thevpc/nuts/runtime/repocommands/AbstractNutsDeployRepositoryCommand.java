@@ -36,7 +36,7 @@ import java.nio.file.Path;
 /**
  *
  * @author vpc
- * @category SPI Base
+ * %category SPI Base
  */
 public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepositoryCommandBase<NutsDeployRepositoryCommand> implements NutsDeployRepositoryCommand {
 

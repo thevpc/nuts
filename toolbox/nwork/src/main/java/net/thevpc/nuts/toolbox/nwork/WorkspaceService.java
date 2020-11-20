@@ -29,7 +29,7 @@ public class WorkspaceService {
         Path c = getConfigFile();
         if (Files.isRegularFile(c)) {
             try {
-                config = appContext.getWorkspace().formats().json().parse(c, WorkspaceConfig.class);
+                config = appContext.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(c, WorkspaceConfig.class);
             } catch (Exception ex) {
                 //
             }
@@ -97,7 +97,7 @@ public class WorkspaceService {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        appContext.getWorkspace().formats().json().value(c).print(configFile);
+        appContext.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(c).print(configFile);
     }
     
     private void updateBools(Boolean[] all, boolean ok) {
@@ -175,7 +175,7 @@ public class WorkspaceService {
             } else {
                 appContext.getWorkspace().formats().object()
                         .setSession(appContext.getSession())
-                        .value(result).println();
+                        .setValue(result).println();
             }
         }
     }
@@ -402,7 +402,7 @@ public class WorkspaceService {
             } else {
                 appContext.getWorkspace().formats().object()
                         .setSession(appContext.getSession())
-                        .value(ddd).println();
+                        .setValue(ddd).println();
             }
         }
     }
@@ -534,7 +534,7 @@ public class WorkspaceService {
         boolean scan = true;
         if (Files.isRegularFile(ni)) {
             try {
-                p = appContext.getWorkspace().formats().json().parse(ni, Map.class);
+                p = appContext.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(ni, Map.class);
                 String v = p.get(SCAN) == null ? null : String.valueOf(p.get(SCAN));
                 if (v == null || "false".equals(v.trim())) {
                     scan = false;
@@ -549,7 +549,7 @@ public class WorkspaceService {
                 p = new Properties();
             }
             p.put(SCAN, enable);
-            appContext.getWorkspace().formats().json().value(p).print(ni);
+            appContext.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(p).print(ni);
         }
     }
     
@@ -559,7 +559,7 @@ public class WorkspaceService {
         Map p = null;
         if (ni.isFile()) {
             try {
-                p = appContext.getWorkspace().formats().json().parse(ni, Map.class);
+                p = appContext.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(ni, Map.class);
                 String v = p.get(SCAN) == null ? null : String.valueOf(p.get(SCAN));
                 if (v == null || "false".equals(v.trim())) {
                     scan = false;

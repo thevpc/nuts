@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @param <T>
+ * @param <T> Type
  * @author vpc
  */
 public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand> extends NutsWorkspaceCommandBase<T> {
@@ -38,6 +38,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     private Path location = null;
     private final List<String> repos = new ArrayList<>();
     private NutsFetchDisplayOptions displayOptions;
+    protected NutsDependencyFilter dependencyFilter;
 
 //    private Boolean transitive = true;
 //    private Boolean cached = true;
@@ -69,6 +70,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             this.location = other.getLocation();
             this.repos.clear();
             this.repos.addAll(Arrays.asList(other.getRepositories()));
+            this.dependencyFilter = other.getDependencyFilter();
 
         }
         return (T) this;
@@ -518,6 +520,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 ", optional=" + optional +
                 ", scope=" + scope +
                 ", content=" + content +
+                ", dependencyFilter=" + dependencyFilter +
                 ", inlineDependencies=" + inlineDependencies +
                 ", dependencies=" + dependencies +
                 ", dependenciesTree=" + dependenciesTree +
@@ -527,5 +530,22 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 ", displayOptions=" + displayOptions +
                 ", session=" + getSession() +
                 ')';
+    }
+
+//    @Override
+    public T setDependencyFilter(NutsDependencyFilter filter) {
+        this.dependencyFilter = filter;
+        return (T)this;
+    }
+
+//    @Override
+    public NutsDependencyFilter getDependencyFilter() {
+        return dependencyFilter;
+    }
+
+//    @Override
+    public T setDependencyFilter(String filter) {
+        this.dependencyFilter = ws.dependency().filter().byExpression(filter);
+        return (T)this;
     }
 }

@@ -30,9 +30,9 @@ package net.thevpc.nuts;
  * Formats supported by Nuts
  * @author vpc
  * @since 0.5.4
- * @category Format
+ * %category Format
  */
-public enum NutsOutputFormat {
+public enum NutsContentType {
     /**
      * json format
      */
@@ -71,7 +71,7 @@ public enum NutsOutputFormat {
     /**
      * private constructor
      */
-    NutsOutputFormat() {
+    NutsContentType() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.indexer.services;
 
+import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.indexer.NutsIndexerUtils;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsWorkspace;
@@ -144,10 +145,10 @@ public class DataService {
                     .setContent(false)
                     .getResultIds().list();
             Map<String, String> oldRow = new HashMap<>(row);
-            row.put("allDependencies", ws.formats().json().value(allDependencies.stream().map(Object::toString).collect(Collectors.toList())).format());
+            row.put("allDependencies", ws.formats().element().setContentType(NutsContentType.JSON).setValue(allDependencies.stream().map(Object::toString).collect(Collectors.toList())).format());
             updateData(dirPath, oldRow, row);
         }
-        String[] array = ws.formats().json().parse(new StringReader(row.get("allDependencies")), String[].class);
+        String[] array = ws.formats().element().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("allDependencies")), String[].class);
         List<Map<String, String>> allDependencies = Arrays.stream(array)
                 .map(s -> NutsIndexerUtils.nutsIdToMap(ws.id().parser().parse(s)))
                 .collect(Collectors.toList());
@@ -160,7 +161,7 @@ public class DataService {
             return null;
         }
         Map<String, String> row = rows.get(0);
-        String[] array = ws.formats().json().parse(new StringReader(row.get("dependencies")), String[].class);
+        String[] array = ws.formats().element().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("dependencies")), String[].class);
         List<Map<String, String>> dependencies = Arrays.stream(array)
                 .map(s -> NutsIndexerUtils.nutsIdToMap(ws.id().parser().parse(s)))
                 .collect(Collectors.toList());

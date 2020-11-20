@@ -32,7 +32,7 @@ import java.io.PrintStream;
  * Created by vpc on 2/20/17.
  *
  * @since 0.5.4
- * @category SPI Base
+ * %category SPI Base
  */
 public interface NutsTerminalBase extends NutsComponent<NutsTerminalSpec> {
 

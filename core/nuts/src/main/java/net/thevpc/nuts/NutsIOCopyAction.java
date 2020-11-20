@@ -50,7 +50,7 @@ import java.nio.file.Path;
  * </ul>
  * @author vpc
  * @since 0.5.4
- * @category Input Output
+ * %category Input Output
  */
 public interface NutsIOCopyAction {
 

@@ -29,19 +29,10 @@ import java.io.File;
 import java.io.PrintStream;
 import java.io.Writer;
 import java.nio.file.Path;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsException;
-import net.thevpc.nuts.NutsObjectFormat;
-import net.thevpc.nuts.NutsOutputFormat;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTerminal;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.format.tree.NutsObjectFormatTree;
-import net.thevpc.nuts.runtime.format.xml.NutsObjectFormatXml;
-import net.thevpc.nuts.runtime.format.json.NutsObjectFormatJson;
+
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.runtime.format.plain.NutsObjectFormatPlain;
-import net.thevpc.nuts.runtime.format.props.NutsObjectFormatProps;
-import net.thevpc.nuts.runtime.format.table.NutsObjectFormatTable;
 
 /**
  *
@@ -49,7 +40,7 @@ import net.thevpc.nuts.runtime.format.table.NutsObjectFormatTable;
  */
 public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
 
-    private NutsOutputFormat outputFormat;
+    private NutsContentType outputFormat;
     private NutsObjectFormat base;
 
     public DefaultNutsObjectFormat(NutsWorkspace ws) {
@@ -74,13 +65,13 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
         return this;
     }
 
-    public NutsOutputFormat getOutputFormat() {
-        NutsOutputFormat t = getValidSession().getOutputFormat();
-        return t == null ? NutsOutputFormat.PLAIN : t;
+    public NutsContentType getOutputFormat() {
+        NutsContentType t = getValidSession().getOutputFormat();
+        return t == null ? NutsContentType.PLAIN : t;
     }
 
     public NutsObjectFormat getBase() {
-        NutsOutputFormat nextOutputFormat = getOutputFormat();
+        NutsContentType nextOutputFormat = getOutputFormat();
         if (base == null || this.outputFormat != nextOutputFormat) {
             this.outputFormat = nextOutputFormat;
             base = createObjectFormat();
@@ -94,23 +85,21 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
 
     public NutsObjectFormat createObjectFormat() {
         switch (getOutputFormat()) {
-            case JSON: {
-                return new NutsObjectFormatJson(getWorkspace());
+            case XML:
+            case JSON:{
+                return getWorkspace().formats().element().setContentType(getOutputFormat());
             }
             case PROPS: {
-                return new NutsObjectFormatProps(getWorkspace());
+                return getWorkspace().formats().props();
             }
             case TREE: {
-                return new NutsObjectFormatTree(getWorkspace());
+                return getWorkspace().formats().tree();
             }
             case PLAIN: {
                 return new NutsObjectFormatPlain(getWorkspace());
             }
-            case XML: {
-                return new NutsObjectFormatXml(getWorkspace());
-            }
             case TABLE: {
-                return new NutsObjectFormatTable(getWorkspace());
+                return getWorkspace().formats().table();
             }
         }
         throw new NutsException(getWorkspace(), "Unsupported");

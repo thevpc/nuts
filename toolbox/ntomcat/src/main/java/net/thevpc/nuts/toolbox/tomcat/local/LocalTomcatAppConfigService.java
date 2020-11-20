@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.tomcat.local;
 
+import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.NutsWorkspaceOpenMode;
 import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.toolbox.tomcat.local.config.LocalTomcatAppConfig;
@@ -203,7 +204,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         result.put("deployfolder", getDeployFolder());
         result.put("runningfolder", getRunningFile());
         result.put("versionFolder", getVersionFile());
-        context.getWorkspace().formats().json().value(result).print(out);
+        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(result).print(out);
         return this;
     }
 

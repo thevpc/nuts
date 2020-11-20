@@ -28,9 +28,9 @@ package net.thevpc.nuts.toolbox.nsh.test;
 
 import net.thevpc.nuts.toolbox.nsh.NutsJavaShell;
 import net.thevpc.nuts.Nuts;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,13 +48,13 @@ public class CommandsTest {
         StringBuilder out = new StringBuilder();
         StringBuilder err = new StringBuilder();
         c.executeCommand(new String[]{"dirname", "/", "a", "/a", "/a/"}, null, out, err);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 "/\n"
                 + ".\n"
                 + "/\n"
                 + "/\n"
                 + "", out.toString());
-        Assert.assertEquals("", err.toString());
+        Assertions.assertEquals("", err.toString());
     }
 
     @Test
@@ -63,13 +63,13 @@ public class CommandsTest {
         StringBuilder out = new StringBuilder();
         StringBuilder err = new StringBuilder();
         c.executeCommand(new String[]{"basename", "-a", "/", "a", "/a", "/a/"}, null, out, err);
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 "/\n"
                 + "a\n"
                 + "a\n"
                 + "a\n"
                 + "", out.toString());
-        Assert.assertEquals("", err.toString());
+        Assertions.assertEquals("", err.toString());
     }
 
     @Test
@@ -79,15 +79,15 @@ public class CommandsTest {
             StringBuilder out = new StringBuilder();
             StringBuilder err = new StringBuilder();
             c.executeCommand(new String[]{"env"}, null, out, err);
-            Assert.assertTrue(out.toString().contains("==PWD "));
-            Assert.assertEquals("", err.toString());
+            Assertions.assertTrue(out.toString().contains("==PWD "));
+            Assertions.assertEquals("", err.toString());
         }
         {
             StringBuilder out = new StringBuilder();
             StringBuilder err = new StringBuilder();
             c.executeCommand(new String[]{"env", "--json"}, null, out, err);
-            Assert.assertTrue(out.toString().contains("\"PWD\""));
-            Assert.assertEquals("", err.toString());
+            Assertions.assertTrue(out.toString().contains("\"PWD\""));
+            Assertions.assertEquals("", err.toString());
         }
     }
 
@@ -98,18 +98,18 @@ public class CommandsTest {
             StringBuilder out = new StringBuilder();
             StringBuilder err = new StringBuilder();
             c.executeCommand(new String[]{"test", "1", "-lt", "2"}, null, out, err);
-            Assert.assertEquals("", out.toString());
-            Assert.assertEquals("", err.toString());
+            Assertions.assertEquals("", out.toString());
+            Assertions.assertEquals("", err.toString());
         }
         {
             StringBuilder out = new StringBuilder();
             StringBuilder err = new StringBuilder();
             c.executeCommand(new String[]{"test", "2", "-lt", "1"}, null, out, err);
-            Assert.assertEquals("", out.toString());
-            Assert.assertEquals("", err.toString());
+            Assertions.assertEquals("", out.toString());
+            Assertions.assertEquals("", err.toString());
         }
     }
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         TestUtils.delete(null,new File(baseFolder));

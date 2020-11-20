@@ -3,10 +3,7 @@ package net.thevpc.nuts.runtime.format.props;
 import java.io.PrintStream;
 import java.util.*;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsPropertiesFormat;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.format.ObjectOutputFormatWriterHelper;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
@@ -19,9 +16,11 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     private boolean sort;
     private boolean compact;
     private boolean javaProps;
+    private final String rootName = "";
+    private final boolean omitNull = true;
     private boolean escapeText = true;
     private String separator = " = ";
-    private Map model;
+    private Object value;
     private Map<String, String> multilineProperties = new HashMap<>();
 
     public DefaultPropertiesFormat(NutsWorkspace ws) {
@@ -61,14 +60,61 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         return this;
     }
 
-    @Override
-    public Map getModel() {
-        return model;
+    public Map buildModel() {
+        Object value=getValue();
+        if(value instanceof Map){
+            return (Map) value;
+        }
+        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        fillMap(getWorkspace().formats().element().convert(value,NutsElement.class), map, rootName);
+        return map;
+    }
+
+    private void fillMap(NutsElement e, Map<String, String> map, String prefix) {
+        switch (e.type()) {
+            case NULL: {
+                if (omitNull) {
+                    //do nothing;
+                } else {
+                    String k = (CoreStringUtils.isBlank(prefix)) ? "value" : prefix;
+                    map.put(k, stringValue(e.primitive().getValue()));
+                }
+                break;
+            }
+            case BOOLEAN:
+            case DATE:
+            case INTEGER:
+            case FLOAT:
+            case STRING: {
+                String k = (CoreStringUtils.isBlank(prefix)) ? "value" : prefix;
+                map.put(k, stringValue(e.primitive().getValue()));
+                break;
+            }
+            case ARRAY: {
+                int index = 1;
+                for (NutsElement datum : e.array().children()) {
+                    String k = (CoreStringUtils.isBlank(prefix)) ? String.valueOf(index) : (prefix + "." + String.valueOf(index));
+                    fillMap(datum, map, k);
+                    index++;
+                }
+                break;
+            }
+            case OBJECT: {
+                for (NutsNamedElement datum : e.object().children()) {
+                    String k = (CoreStringUtils.isBlank(prefix)) ? datum.getName() : (prefix + "." + datum.getName());
+                    fillMap(datum.getValue(), map, k);
+                }
+                break;
+            }
+            default: {
+                throw new NutsUnsupportedArgumentException(getWorkspace(), e.type().name());
+            }
+        }
     }
 
     @Override
-    public NutsPropertiesFormat model(Map model) {
-        return setModel(model);
+    public Map getModel() {
+        return buildModel();
     }
 
     @Override
@@ -86,9 +132,8 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         return setSort(sort);
     }
 
-    public NutsPropertiesFormat setModel(Map model) {
-        this.model = model;
-        return this;
+    public NutsPropertiesFormat setValue(Map model) {
+        return setValue(model);
     }
 
     public boolean isSort() {
@@ -129,18 +174,19 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     public void print(PrintStream w) {
         PrintStream out = getValidPrintStream(w);
         Map<Object, Object> mm;
+        Map model = buildModel();
         if (sort) {
             mm = new LinkedHashMap<>();
-            List<Object> keys = new ArrayList(getModel().keySet());
+            List<Object> keys = new ArrayList(model.keySet());
             if (sort) {
                 keys.sort(null);
             }
             for (Object k : keys) {
-                Object v = getModel().get(k);
+                Object v = model.get(k);
                 mm.put(k, v);
             }
         } else {
-            mm = getModel();
+            mm = model;
         }
         if (javaProps) {
             CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w, sort);
@@ -245,5 +291,16 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         } else {
             return String.valueOf(o);
         }
+    }
+
+    @Override
+    public Object getValue() {
+        return value;
+    }
+
+    @Override
+    public NutsPropertiesFormat setValue(Object value) {
+        this.value=value;
+        return this;
     }
 }

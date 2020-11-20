@@ -37,7 +37,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-//import net.thevpc.common.strings.StringConverter;
 
 /**
  * Created by vpc on 5/16/17.
@@ -78,9 +77,9 @@ public class CoreStringUtils {
      * *
      * **
      *
-     * @param pattern
-     * @param contains
-     * @return
+     * @param pattern pattern
+     * @param contains contains
+     * @return regexp
      */
     public static String simpexpToRegexp(String pattern, boolean contains) {
         if (pattern == null) {
@@ -199,10 +198,10 @@ public class CoreStringUtils {
     }
 
     /**
-     * @param text
+     * @param text text
      * @param compact if true, quotes will not be used unless necessary
-     * @param entrySeparators
-     * @return
+     * @param entrySeparators entrySeparators
+     * @return quotes
      */
     public static String simpleQuote(String text, boolean compact, String entrySeparators) {
         StringBuilder sb = new StringBuilder();
@@ -253,10 +252,10 @@ public class CoreStringUtils {
     }
     
     /**
-     * @param text
+     * @param text text
      * @param compact if true, quotes will not be used unless necessary
-     * @param entrySeparators
-     * @return
+     * @param entrySeparators entrySeparators
+     * @return double quotes
      */
     public static String dblQuote(String text, boolean compact, String entrySeparators) {
         StringBuilder sb = new StringBuilder();
@@ -368,8 +367,8 @@ public class CoreStringUtils {
     /**
      * copied from StringUtils (in order to remove dependency)
      *
-     * @param value
-     * @return
+     * @param value value
+     * @return trimmed value
      */
     public static String trim(String value) {
         if (value == null) {
@@ -381,8 +380,8 @@ public class CoreStringUtils {
     /**
      * copied from StringUtils (in order to remove dependency)
      *
-     * @param str
-     * @return
+     * @param str string
+     * @return trimmed value
      */
     public static String trimToNull(String str) {
         if (str == null) {
@@ -398,8 +397,8 @@ public class CoreStringUtils {
     /**
      * copied from StringUtils (in order to remove dependency)
      *
-     * @param string
-     * @return
+     * @param string value
+     * @return true if blank
      */
     public static boolean isBlank(String string) {
         return string == null || string.trim().isEmpty();
@@ -420,9 +419,9 @@ public class CoreStringUtils {
     /**
      * copied from StringUtils (in order to remove dependency)
      *
-     * @param s
-     * @param converter
-     * @return
+     * @param s string
+     * @param converter converter
+     * @return replaced string
      */
     public static String replaceDollarPlaceHolders(String s, Map<String, String> converter) {
         return replaceDollarPlaceHolders(s, new MapToFunction(converter));
@@ -431,9 +430,9 @@ public class CoreStringUtils {
     /**
      * copied from StringUtils (in order to remove dependency)
      *
-     * @param s
-     * @param converter
-     * @return
+     * @param s string
+     * @param converter converter
+     * @return replaced string
      */
     public static String replaceDollarPlaceHolders(String s, Function<String, String> converter) {
         Matcher matcher = DOLLAR_PLACE_HOLDER_PATTERN.matcher(s);
@@ -480,26 +479,6 @@ public class CoreStringUtils {
             }
             return converter.get(t);
         }
-    }
-
-    /**
-     * copied from StringUtils (in order to remove dependency)
-     *
-     * @param sep
-     * @param items
-     * @return
-     */
-    public static String join(String sep, Collection<String> items) {
-        StringBuilder sb = new StringBuilder();
-        Iterator<String> i = items.iterator();
-        if (i.hasNext()) {
-            sb.append(i.next());
-        }
-        while (i.hasNext()) {
-            sb.append(sep);
-            sb.append(i.next());
-        }
-        return sb.toString();
     }
 
     /**
@@ -626,9 +605,9 @@ public class CoreStringUtils {
     /**
      * copied from StringUtils (in order to remove dependency)
      *
-     * @param s
-     * @param width
-     * @return
+     * @param s string
+     * @param width width
+     * @return aligned string
      */
     public static String alignLeft(String s, int width) {
         StringBuilder sb = new StringBuilder();
@@ -714,11 +693,11 @@ public class CoreStringUtils {
     /**
      * copied from StringUtils (in order to remove dependency)
      *
-     * @param reader
-     * @param stopTokens
-     * @param result
-     * @return
-     * @throws IOException
+     * @param reader reader
+     * @param stopTokens stopTokens
+     * @param result result
+     * @return next token
+     * @throws IOException IOException
      */
     public static int readToken(Reader reader, String stopTokens, StringBuilder result) throws IOException {
         while (true) {

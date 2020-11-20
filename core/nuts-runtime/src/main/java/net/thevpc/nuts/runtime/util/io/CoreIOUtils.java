@@ -511,11 +511,11 @@ public class CoreIOUtils {
     }
 
     /**
-     * @param localPath
+     * @param localPath localPath
      * @param parseOptions may include --all-mains to force lookup of all main
      *                     classes if available
-     * @param session
-     * @return
+     * @param session session
+     * @return descriptor
      */
     public static NutsDescriptor resolveNutsDescriptorFromFileContent(NutsInput localPath, String[] parseOptions, NutsSession session) {
         if (parseOptions == null) {
@@ -582,7 +582,7 @@ public class CoreIOUtils {
      *
      * @param in         entree
      * @param out        sortie
-     * @param bufferSize
+     * @param bufferSize bufferSize
      */
     public static long copy(java.io.InputStream in, OutputStream out, int bufferSize) {
         byte[] buffer = new byte[bufferSize];
@@ -604,7 +604,7 @@ public class CoreIOUtils {
      *
      * @param in         entree
      * @param out        sortie
-     * @param bufferSize
+     * @param bufferSize bufferSize
      */
     public static void copy(Reader in, Writer out, int bufferSize) {
         char[] buffer = new char[bufferSize];

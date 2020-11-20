@@ -35,9 +35,9 @@ package net.thevpc.nuts;
  * </pre>
  * @author vpc
  * @since 0.5.5
- * @category Format
+ * %category Format
  */
-public interface NutsTreeFormat extends NutsFormat {
+public interface NutsTreeFormat extends NutsObjectFormat {
 
     /**
      * update session
@@ -111,13 +111,6 @@ public interface NutsTreeFormat extends NutsFormat {
      * @param tree new tree model
      * @return {@code this} instance
      */
-    NutsTreeFormat setModel(NutsTreeModel tree);
-
-    /**
-     * update tree model
-     * @param tree new tree model
-     * @return {@code this} instance
-     */
-    NutsTreeFormat model(NutsTreeModel tree);
+    NutsTreeFormat setValue(NutsTreeModel tree);
 
 }

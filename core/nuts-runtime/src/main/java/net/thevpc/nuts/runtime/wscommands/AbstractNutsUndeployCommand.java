@@ -98,8 +98,8 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
         result.add(id);
         NutsSession session = getSession();
         if (session.isTrace()) {
-            if (session.getOutputFormat() == null || session.getOutputFormat() == NutsOutputFormat.PLAIN) {
-                if (session.getOutputFormat() == null || session.getOutputFormat() == NutsOutputFormat.PLAIN) {
+            if (session.getOutputFormat() == null || session.getOutputFormat() == NutsContentType.PLAIN) {
+                if (session.getOutputFormat() == null || session.getOutputFormat() == NutsContentType.PLAIN) {
                     session.getTerminal().out().printf("Nuts %s undeployed successfully%n", new NutsString(ws.id().formatter(id).format()));
                 }
             }

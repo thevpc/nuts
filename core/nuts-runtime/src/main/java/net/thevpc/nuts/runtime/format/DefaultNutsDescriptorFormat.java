@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.format;
 
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsDescriptor;
-import net.thevpc.nuts.NutsDescriptorFormat;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 import java.io.*;
 
@@ -57,7 +54,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
 
     @Override
     public void print(PrintStream out) {
-        getWorkspace().formats().json().compact(isCompact()).value(desc).print(out);
+        getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(desc).setCompact(isCompact()).print(out);
     }
 
 }

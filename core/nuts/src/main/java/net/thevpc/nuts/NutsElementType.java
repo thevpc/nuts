@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 /**
  * Element type. this an extension of json element types.
  * @author vpc
- * @category Elements
+ * %category Elements
  */
 public enum NutsElementType {
     /**

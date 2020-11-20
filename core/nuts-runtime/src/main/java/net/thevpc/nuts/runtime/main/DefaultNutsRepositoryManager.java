@@ -367,7 +367,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
                 throw new UncheckedIOException(ex);
             }
             try {
-                Map<String, Object> a_config0 = ws.formats().json().parse(bytes, Map.class);
+                Map<String, Object> a_config0 = ws.formats().element().setContentType(NutsContentType.JSON).parse(bytes, Map.class);
                 String version = (String) a_config0.get("configVersion");
                 if (version == null) {
                     version = ws.getApiVersion();
@@ -376,7 +376,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
                 if (buildNumber < 506) {
 
                 }
-                conf = ws.formats().json().parse(file, NutsRepositoryConfig.class);
+                conf = ws.formats().element().setContentType(NutsContentType.JSON).parse(file, NutsRepositoryConfig.class);
             } catch (Exception ex) {
                 onLoadRepositoryError(file, name, null, ex);
             }

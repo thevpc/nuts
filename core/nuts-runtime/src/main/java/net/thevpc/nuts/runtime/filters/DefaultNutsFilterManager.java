@@ -16,6 +16,7 @@ import net.thevpc.nuts.runtime.filters.version.*;
 import net.thevpc.nuts.runtime.util.io.NutsInstallStatusIdFilter;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DefaultNutsFilterManager implements NutsFilterManager {
     private NutsWorkspace ws;
@@ -918,7 +919,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
         public NutsDescriptorFilter byCompanion(String targetApiVersion) {
             return new NutsExecCompanionFilter(ws,
                     targetApiVersion == null ? null : ws.id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build(),
-                    ws.companionIds().toArray(new String[0])
+                    ws.companionIds().stream().map(NutsId::getShortName).toArray(String[]::new)
             );
         }
 

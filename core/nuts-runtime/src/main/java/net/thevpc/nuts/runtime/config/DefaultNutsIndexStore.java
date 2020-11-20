@@ -63,7 +63,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                     try {
                         NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                                 URL);
-                        Map[] array = getRepository().getWorkspace().formats().json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
+                        Map[] array = getRepository().getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(new InputStreamReader(clientFacade.open()), Map[].class);
                         return Arrays.stream(array)
                                 .map(s -> getRepository().getWorkspace().id().parser().parse(s.get("stringId").toString()))
                                 .collect(Collectors.toList()).iterator();
@@ -88,7 +88,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                     try {
                         NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                                 URL);
-                        Map[] array = getRepository().getWorkspace().formats().json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
+                        Map[] array = getRepository().getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(new InputStreamReader(clientFacade.open()), Map[].class);
                         return Arrays.stream(array)
                                 .map(s -> getRepository().getWorkspace().id().parser().parse(s.get("stringId").toString()))
                                 .filter(filter != null ? new Predicate<NutsId>() {

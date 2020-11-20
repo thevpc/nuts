@@ -1,9 +1,6 @@
 package net.thevpc.nuts.indexer;
 
-import net.thevpc.nuts.NutsRepository;
-import net.thevpc.nuts.NutsStoreLocation;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsWorkspaceLocation;
+import net.thevpc.nuts.*;
 import net.thevpc.common.strings.StringUtils;
 
 import java.nio.file.Files;
@@ -25,7 +22,7 @@ public class NutsIndexSubscriberListManager {
         this.name = name.trim();
         Path file = getConfigFile();
         if (Files.exists(file)) {
-            this.config = this.defaultWorkspace.formats().json().parse(file, NutsIndexSubscriberListConfig.class);
+            this.config = this.defaultWorkspace.formats().element().setContentType(NutsContentType.JSON).parse(file, NutsIndexSubscriberListConfig.class);
             if (this.config.getSubscribers() != null) {
                 for (NutsIndexSubscriber var : this.config.getSubscribers()) {
                     this.subscribers.put(var.getUuid(), var);
@@ -105,7 +102,7 @@ public class NutsIndexSubscriberListManager {
                 ? null
                 : new ArrayList<>(this.subscribers.values()));
         Path file = getConfigFile();
-        this.defaultWorkspace.formats().json().value(this.config).print(file);
+        this.defaultWorkspace.formats().element().setContentType(NutsContentType.JSON).setValue(this.config).print(file);
     }
 
     public boolean unsubscribe(String repositoryUuid, NutsWorkspaceLocation workspaceLocation) {

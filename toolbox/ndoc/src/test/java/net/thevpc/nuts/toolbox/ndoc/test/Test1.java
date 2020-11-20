@@ -25,7 +25,8 @@
 */
 package net.thevpc.nuts.toolbox.ndoc.test;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 /**
  *

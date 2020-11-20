@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.tomcat.local;
 
+import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.toolbox.tomcat.local.config.LocalTomcatDomainConfig;
 
 import java.io.PrintStream;
@@ -58,7 +59,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
     }
 
     public LocalTomcatDomainConfigService print(PrintStream out) {
-        context.getWorkspace().formats().json().value(getConfig()).print(out);
+        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(getConfig()).print(out);
         return this;
     }
 

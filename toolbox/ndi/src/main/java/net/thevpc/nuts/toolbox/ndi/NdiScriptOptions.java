@@ -13,6 +13,7 @@ public class NdiScriptOptions {
     private NutsExecutionType execType;
     private List<String> executorOptions;
     private NutsSession session;
+    private String preferredScriptName;
 
     public String getId() {
         return id;
@@ -67,5 +68,13 @@ public class NdiScriptOptions {
         this.session = session;
         return this;
     }
-    
+
+    public String getPreferredScriptName() {
+        return preferredScriptName;
+    }
+
+    public NdiScriptOptions setPreferredScriptName(String preferredScriptName) {
+        this.preferredScriptName = preferredScriptName;
+        return this;
+    }
 }

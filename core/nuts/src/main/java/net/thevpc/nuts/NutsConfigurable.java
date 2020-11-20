@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * and objects using simple argument line options.
  * @author vpc
  * @since 0.5.5
- * @category Command Line
+ * %category Command Line
  */
 public interface NutsConfigurable {
 

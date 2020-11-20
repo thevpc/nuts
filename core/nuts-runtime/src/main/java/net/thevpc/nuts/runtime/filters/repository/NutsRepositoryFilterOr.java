@@ -48,7 +48,7 @@ public class NutsRepositoryFilterOr extends AbstractNutsFilter implements NutsRe
 
     @Override
     public String toString() {
-        return CoreStringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+        return String.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
     @Override

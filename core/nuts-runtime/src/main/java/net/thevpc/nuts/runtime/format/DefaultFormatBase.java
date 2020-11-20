@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import net.thevpc.nuts.NutsFormat;
+import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsTerminal;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.util.io.ByteArrayPrintStream;
@@ -94,12 +95,12 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
                 Files.createDirectories(path.getParent());
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(getWorkspace(),ex);
         }
         try (Writer w = Files.newBufferedWriter(path)) {
             print(w);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(getWorkspace(),ex);
         }
     }
 
@@ -108,7 +109,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
         try (Writer w = Files.newBufferedWriter(path)) {
             println(w);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(getWorkspace(),ex);
         }
     }
 

@@ -76,7 +76,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
 
     private NutsDescriptor parse(InputStream in, boolean closeStream) {
         try (Reader rr = new InputStreamReader(in)) {
-            return getWorkspace().formats().json().parse(rr, NutsDescriptor.class);
+            return getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(rr, NutsDescriptor.class);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }

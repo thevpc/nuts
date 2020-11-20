@@ -43,7 +43,7 @@ import java.util.logging.Level;
  *
  * @author vpc
  * @since 0.5.4
- * @category Internal
+ * %category Internal
  */
 final class CoreNutsArgumentsParser {
 
@@ -640,42 +640,42 @@ final class CoreNutsArgumentsParser {
                     case "--json":
                         a = cmdLine.next();
                         if (enabled) {
-                            options.setOutputFormat(NutsOutputFormat.JSON);
+                            options.setOutputFormat(NutsContentType.JSON);
                             options.addOutputFormatOptions(a.getStringValue(""));
                         }
                         break;
                     case "--plain":
                         a = cmdLine.next();
                         if (enabled) {
-                            options.setOutputFormat(NutsOutputFormat.PLAIN);
+                            options.setOutputFormat(NutsContentType.PLAIN);
                             options.addOutputFormatOptions(a.getStringValue(""));
                         }
                         break;
                     case "--xml":
                         a = cmdLine.next();
                         if (enabled) {
-                            options.setOutputFormat(NutsOutputFormat.XML);
+                            options.setOutputFormat(NutsContentType.XML);
                             options.addOutputFormatOptions(a.getStringValue(""));
                         }
                         break;
                     case "--table":
                         a = cmdLine.next();
                         if (enabled) {
-                            options.setOutputFormat(NutsOutputFormat.TABLE);
+                            options.setOutputFormat(NutsContentType.TABLE);
                             options.addOutputFormatOptions(a.getStringValue(""));
                         }
                         break;
                     case "--tree":
                         a = cmdLine.next();
                         if (enabled) {
-                            options.setOutputFormat(NutsOutputFormat.TREE);
+                            options.setOutputFormat(NutsContentType.TREE);
                             options.addOutputFormatOptions(a.getStringValue(""));
                         }
                         break;
                     case "--props":
                         a = cmdLine.next();
                         if (enabled) {
-                            options.setOutputFormat(NutsOutputFormat.PROPS);
+                            options.setOutputFormat(NutsContentType.PROPS);
                             options.addOutputFormatOptions(a.getStringValue(""));
                         }
                         break;

@@ -14,13 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 /**
  *
@@ -45,9 +39,9 @@ public class Test05_FindLinuxTest {
                     //            "--skip-companions",
                     "--verbose");
         }catch (NutsInvalidWorkspaceException ex){
-            Assert.fail();
+            Assertions.fail();
         }catch (NutsNotFoundException ex){
-            Assert.fail();
+            Assertions.fail();
         }
     }
 
@@ -67,7 +61,7 @@ public class Test05_FindLinuxTest {
 
         NutsResultList<NutsId> result = ws.search().setRemote().setLatest(true).addId(NutsConstants.Ids.NUTS_API).getResultIds();
         //There is one result because nuts id is always installed
-        Assert.assertEquals(1, result.count());
+        Assertions.assertEquals(1, result.count());
     }
 
     @Test()
@@ -85,7 +79,7 @@ public class Test05_FindLinuxTest {
 
         int count = 0;
         NutsResultList<NutsId> result = ws.search().setRemote().setLatest(true).addId(NutsConstants.Ids.NUTS_API).getResultIds();
-        Assert.assertTrue(result.count() > 0);
+        Assertions.assertTrue(result.count() > 0);
     }
 
     @Test()
@@ -105,7 +99,7 @@ public class Test05_FindLinuxTest {
         List<NutsId> result2 = ws.search().setLatest(false).addId("nuts-runtime").getResultIds().list();
         TestUtils.println(result1);
         TestUtils.println(result2);
-        Assert.assertTrue(result1.size() > 0);
+        Assertions.assertTrue(result1.size() > 0);
     }
 
     @Test()
@@ -128,28 +122,28 @@ public class Test05_FindLinuxTest {
         TestUtils.println("=====================");
         TestUtils.println(result2);
         TestUtils.println("=====================");
-        Assert.assertTrue(result1.size() > 0);
+        Assertions.assertTrue(result1.size() > 0);
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearUpClass() throws IOException {
         CoreIOUtils.delete(null,new File(baseFolder));
     }
 
-    @Before
+    @BeforeEach
     public void startup() throws IOException {
-        Assume.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
+        Assumptions.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         TestUtils.unsetNutsSystemProperties();
     }

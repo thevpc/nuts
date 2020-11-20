@@ -3,10 +3,8 @@ package net.thevpc.nuts.toolbox.ndi;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspaceBootConfig;
 
-import java.io.IOException;
-
 public interface SystemNdi {
-    boolean persistConfig(NutsWorkspaceBootConfig bootConfig, String apiVersion, NutsSession session);
+    WorkspaceAndApiVersion persistConfig(NutsWorkspaceBootConfig bootConfig, String apiVersion, String preferredName, NutsSession session);
 
     void configurePath(NutsSession session, boolean persistentConfig);
 
@@ -14,5 +12,6 @@ public interface SystemNdi {
 
     void removeNutsScript(String id, NutsSession session);
 
+    void addNutsWorkspaceScript(String preferredScriptName, String switchWorkspaceLocation, String apiVersion);
     void switchWorkspace(String switchWorkspaceLocation, String apiVersion);
 }

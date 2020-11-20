@@ -26,34 +26,40 @@
 */
 package net.thevpc.nuts;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+import java.net.URL;
+import java.nio.file.Path;
+
 /**
  * Class responsible of manipulating {@link NutsElement} type. It help parsing
  * from, converting to and formatting such types.
  *
  * @author vpc
  * @since 0.5.5
- * @category Format
+ * %category Format
  */
-public interface NutsElementFormat extends NutsFormat {
+public interface NutsElementFormat extends NutsObjectFormat {
 
     /**
-     * convert any object to valid {@link NutsElement}.
-     *
-     * @param object object to convert
-     * @return converted value
+     * return parse content type
+     * @return content type
+     * @since 0.8.1
      */
-    NutsElement toElement(Object object);
+    NutsContentType getContentType();
 
     /**
-     * convert element to the specified object if applicable or throw an
-     * exception.
-     *
-     * @param <T> return type
-     * @param element element to convert
-     * @param clazz class type
-     * @return instance of type {@code T} converted from {@code element}
+     * set the parse content type. defaults to JSON.
+     * Non structured content types are not allowed.
+     * @param contentType contentType
+     * @return {@code this} instance
+     * @since 0.8.1
      */
-    <T> T fromElement(NutsElement element, Class<T> clazz);
+    NutsElementFormat setContentType(NutsContentType contentType);
 
     /**
      * return current value to format.
@@ -62,15 +68,6 @@ public interface NutsElementFormat extends NutsFormat {
      * @since 0.5.6
      */
     Object getValue();
-
-    /**
-     * set current value to format.
-     *
-     * @param value value to format
-     * @return {@code this} instance
-     * @since 0.5.6
-     */
-    NutsElementFormat set(Object value);
 
     /**
      * set current value to format.
@@ -125,4 +122,100 @@ public interface NutsElementFormat extends NutsFormat {
     @Override
     NutsElementFormat configure(boolean skipUnsupported, String... args);
 
+    /**
+     * true is compact json flag is armed
+     * @return true is compact json flag is armed
+     */
+    boolean isCompact();
+
+    /**
+     * enable compact json
+     * @return {@code this} instance
+     */
+    NutsElementFormat setCompact(boolean compact);
+
+    /**
+     * parse url as a valid object of the given type
+     * @param url source url
+     * @param clazz target type
+     * @param <T> target type
+     * @return new instance of the given class
+     */
+    <T> T parse(URL url, Class<T> clazz);
+
+    /**
+     * parse inputStream as a valid object of the given type
+     * @param inputStream source inputStream
+     * @param clazz target type
+     * @param <T> target type
+     * @return new instance of the given class
+     */
+    <T> T parse(InputStream inputStream, Class<T> clazz);
+
+    /**
+     * parse inputStream as a valid object of the given type
+     * @param string source as json string
+     * @param clazz target type
+     * @param <T> target type
+     * @return new instance of the given class
+     */
+    <T> T parse(String string, Class<T> clazz);
+
+    /**
+     * parse bytes as a valid object of the given type
+     * @param bytes source bytes
+     * @param clazz target type
+     * @param <T> target type
+     * @return new instance of the given class
+     */
+    <T> T parse(byte[] bytes, Class<T> clazz);
+
+    /**
+     * parse reader as a valid object of the given type
+     * @param reader source reader
+     * @param clazz target type
+     * @param <T> target type
+     * @return new instance of the given class
+     */
+    <T> T parse(Reader reader, Class<T> clazz);
+
+    /**
+     * parse file as a valid object of the given type
+     * @param file source url
+     * @param clazz target type
+     * @param <T> target type
+     * @return new instance of the given class
+     */
+    <T> T parse(Path file, Class<T> clazz);
+
+    /**
+     * parse file as a valid object of the given type
+     * @param file source url
+     * @param clazz target type
+     * @param <T> target type
+     * @return new instance of the given class
+     */
+    <T> T parse(File file, Class<T> clazz);
+
+
+    /**
+     * convert {@code value} to a valid root element to add to the given {@code xmlDocument}.
+     * if the document is null, a new one will be created.
+     * @param value value to convert
+     * @param xmlDocument target document
+     * @return converted object
+     */
+    Element toXmlElement(Object value, Document xmlDocument);
+
+
+    /**
+     * convert element to the specified object if applicable or throw an
+     * exception.
+     *
+     * @param <T> return type
+     * @param any element to convert
+     * @param to class type
+     * @return instance of type {@code T} converted from {@code element}
+     */
+    <T> T convert(Object any, Class<T> to);
 }

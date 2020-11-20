@@ -165,7 +165,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                 return baseNutsDescriptor;
             } else {
                 return baseNutsDescriptor.builder().executor(new DefaultNutsArtifactCall(JAVA, new String[]{
-                        "--main-class=" + CoreStringUtils.join(":",
+                        "--main-class=" + String.join(":",
                                 Arrays.stream(classes)
                                         .map(x -> x.getName())
                                         .collect(Collectors.toList())

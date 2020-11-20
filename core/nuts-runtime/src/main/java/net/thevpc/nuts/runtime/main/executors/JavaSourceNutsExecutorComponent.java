@@ -30,7 +30,6 @@ import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.util.common.CoreCommonUtils;
 import net.thevpc.nuts.runtime.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.DefaultNutsExecutionContext;
-import net.thevpc.nuts.runtime.util.*;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -85,7 +84,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
                 d,
                 executionContext.getArguments(),
                 CoreCommonUtils.concatArrays(
-                        executionContext.getExecutorOptions(),
+                        executionContext.getExecutorArguments(),
                         new String[]{
                                 "--main-class",
                                 new File(fileName.substring(fileName.length() - ".java".length())).getName(),
@@ -103,7 +102,8 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
                 //temporary
                 true,
                 executionContext.getExecutionType(),
-                executionContext.getCommandName()
+                executionContext.getCommandName(),
+                executionContext.getSleepMillis()
         );
         cc.dryExec(executionContext2);
     }
@@ -132,7 +132,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
                 d,
                 executionContext.getArguments(),
                 CoreCommonUtils.concatArrays(
-                        executionContext.getExecutorOptions(),
+                        executionContext.getExecutorArguments(),
                         new String[]{
                             "--main-class",
                             new File(fileName.substring(fileName.length() - ".java".length())).getName(),
@@ -150,7 +150,8 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
                 //temporary
                 true,
                 executionContext.getExecutionType(),
-                executionContext.getCommandName()
+                executionContext.getCommandName(),
+                executionContext.getSleepMillis()
         );
         cc.exec(executionContext2);
     }

@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 
 /**
  * Mutable Workspace options
- * @category Config
+ * %category Config
  */
 public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
     NutsWorkspaceOptionsBuilder setAll(NutsWorkspaceOptions other);
@@ -138,7 +138,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     NutsWorkspaceOptionsBuilder setConfirm(NutsConfirmationMode confirm);
 
-    NutsWorkspaceOptionsBuilder setOutputFormat(NutsOutputFormat outputFormat);
+    NutsWorkspaceOptionsBuilder setOutputFormat(NutsContentType outputFormat);
 
     NutsWorkspaceOptionsBuilder addOutputFormatOptions(String... options);
 

@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Created by vpc on 6/23/17.
  *
  * @since 0.5.5
- * @category Commands
+ * %category Commands
  */
 public interface NutsWorkspaceUpdateResult {
 

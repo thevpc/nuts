@@ -134,7 +134,7 @@ public class NVersionMain extends NutsApplication {
                         }
                     }
                 }
-                tt.model(pp).print(out);
+                tt.setValue(pp).print(out);
             } else {
                 Set<String> keys = sort ? new TreeSet<>(results.keySet()) : new LinkedHashSet<>(results.keySet());
                 for (String k : keys) {
@@ -155,7 +155,7 @@ public class NVersionMain extends NutsApplication {
                             out.printf("[[%s]]%n", descriptor.getId());
                             NutsPropertiesFormat f = context.getWorkspace().formats().props()
                                     .setSort(true);
-                            f.model(descriptor.getProperties()).print(out);
+                            f.setValue(descriptor.getProperties()).print(out);
                         } else {
                             out.printf("[[%s]]%n", descriptor.getId().getVersion());
                         }

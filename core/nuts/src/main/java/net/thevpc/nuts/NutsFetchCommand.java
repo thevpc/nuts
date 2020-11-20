@@ -36,7 +36,7 @@ import java.util.Set;
  *
  * @author vpc
  * @since 0.5.4
- * @category Commands
+ * %category Commands
  */
 public interface NutsFetchCommand extends NutsWorkspaceCommand {
 
@@ -534,5 +534,28 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     Boolean getInstalled();
+
+    /**
+     * return dependency filter
+     *
+     * @return dependency filter
+     */
+    NutsDependencyFilter getDependencyFilter();
+
+    /**
+     * define dependency filter.
+     *
+     * @param filter dependency filter
+     * @return {@code this} instance
+     */
+    NutsFetchCommand setDependencyFilter(NutsDependencyFilter filter);
+
+    /**
+     * define dependency filter.
+     *
+     * @param filter dependency filter
+     * @return {@code this} instance
+     */
+    NutsFetchCommand setDependencyFilter(String filter);
 
 }

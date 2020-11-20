@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  *
  * @author vpc
  * @since 0.5.5
- * @category Base
+ * %category Base
  */
 public interface NutsTokenFilter {
 

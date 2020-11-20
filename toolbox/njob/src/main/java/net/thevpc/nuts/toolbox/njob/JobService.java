@@ -136,6 +136,7 @@ public class JobService {
             job.setName("work");
         }
         job.setCreationTime(Instant.now());
+        job.setModificationTime(job.getCreationTime());
         if (job.getStartTime() == null) {
             Calendar c = Calendar.getInstance();
             c.set(Calendar.MILLISECOND, 0);
@@ -234,6 +235,51 @@ public class JobService {
 //            }
 //        }
         dal.store(task);
+    }
+
+    public void updateJob(NJob job) {
+        if (job.getName() == null) {
+            job.setName("work");
+        }
+        Instant now = Instant.now();
+        if (job.getCreationTime() == null) {
+            job.setCreationTime(now);
+        }
+        job.setModificationTime(now);
+        if (job.getObservations() == null) {
+            job.setObservations("");
+        }
+        if (job.getStartTime() == null) {
+
+        }
+        if (job.getStartTime() == null) {
+            Calendar c = Calendar.getInstance();
+            c.set(Calendar.MILLISECOND, 0);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.HOUR, 8);
+            job.setStartTime(c.getTime().toInstant());
+        }
+        if (job.getDuration() == null) {
+            job.setDuration(new TimePeriod(1, ChronoUnit.HOURS));
+        }
+        if (job.getProject() == null) {
+            job.setProject("misc");
+        }
+
+        String project = job.getProject();
+        if (project != null) {
+            NProject p = getProject(project);
+            if (p == null) {
+                if (isIdFormat(project)) {
+                    throw new NoSuchElementException("Project not found: " + project);
+                }
+                p = new NProject();
+                p.setName(project);
+                addProject(p);
+            }
+        }
+        dal.store(job);
     }
 
     public void addTask(NTask task) {
@@ -498,8 +544,12 @@ public class JobService {
     }
 
     public Stream<NJob> findMonthJobs(Instant date) {
+        if(date==null){
+            date=Instant.now();
+        }
+        Instant finalDate = date;
         return dal.search(NJob.class).filter(x -> {
-            return getStartMonth(date).equals(getStartMonth(x.getStartTime()));
+            return getStartMonth(finalDate).equals(getStartMonth(x.getStartTime()));
         });
     }
 

@@ -34,7 +34,7 @@ package net.thevpc.nuts;
  *  <li>{@code prepare}: called when the command line is fully consumed</li>
  *  <li>{@code exec}|{@code autoComplete}: called to process execution of autcomplete</li>
  * </ul>
- * @category Command Line
+ * %category Command Line
  */
 public interface NutsCommandLineProcessor {
     /**
@@ -45,32 +45,34 @@ public interface NutsCommandLineProcessor {
      * @param cmdLine associated commandline
      * @return true if the argument can be processed, false otherwise.
      */
-    public boolean nextOption(NutsArgument option, NutsCommandLine cmdLine);
+    boolean nextOption(NutsArgument option, NutsCommandLine cmdLine);
 
     /**
      * process the given non option argument that was peeked from the command line.
      * Implementations <strong>MUST</strong> call one of
      * the "next" methods to
      * @param nonOption peeked argument
-     * @param cmdLine associated commandline
+     * @param commandline associated commandline
      * @return true if the argument can be processed, false otherwise.
      */
-    public boolean nextNonOption(NutsArgument nonOption, NutsCommandLine cmdLine);
+    boolean nextNonOption(NutsArgument nonOption, NutsCommandLine commandline);
 
 
     /**
-     * initialize the processor
+     * initialize the processor.
+     * Called before any other method.
      * @param commandline associated commandline
      */
-    public default void init(NutsCommandLine commandline){
+    default void init(NutsCommandLine commandline){
         
     }
 
     /**
-     * prepare for execution of for auto-complete
+     * prepare for execution of for auto-complete.
+     * Called after all next methods and before exec and autoComplete methods
      * @param commandline associated commandline
      */
-    public default void prepare(NutsCommandLine commandline){
+    default void prepare(NutsCommandLine commandline){
         
     }
 
@@ -78,13 +80,13 @@ public interface NutsCommandLineProcessor {
      * execute options, called after all options was processed and
      * cmdLine.isExecMode() return true.
      */
-    public void exec();
+    void exec();
 
     /**
      * called when auto-complete ({@code autoComplete} is not null)
      * @param autoComplete autoComplete instance
      */
-    public default void autoComplete(NutsCommandAutoComplete autoComplete){
+    default void autoComplete(NutsCommandAutoComplete autoComplete){
         
     }
 

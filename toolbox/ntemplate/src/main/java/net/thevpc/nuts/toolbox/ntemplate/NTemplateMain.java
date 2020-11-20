@@ -50,8 +50,8 @@ public class NTemplateMain extends NutsApplication {
             }
 
             @Override
-            public boolean nextNonOption(NutsArgument nonOption, NutsCommandLine cmdLine) {
-                config.addSource(cmdLine.next().getString());
+            public boolean nextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
+                config.addSource(commandline.next().getString());
                 return false;
             }
 

@@ -21,7 +21,7 @@ import net.thevpc.nuts.runtime.util.iter.IteratorUtils;
 
 /**
  * @author vpc
- * @category SPI Base
+ * %category SPI Base
  */
 public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSearchVersionsRepositoryCommand {
 

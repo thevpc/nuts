@@ -23,8 +23,7 @@ import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.util.common.CoreCommonUtils;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 import net.thevpc.nuts.runtime.util.io.SimpleClassStream;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 /**
  *
@@ -137,7 +136,7 @@ public class Test02_SimpleClassStream {
         );
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null, new File(baseFolder));

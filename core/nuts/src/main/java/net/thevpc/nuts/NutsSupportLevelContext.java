@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 /**
  *
  * @author vpc
- * @category SPI Base
+ * %category SPI Base
  */
 public interface NutsSupportLevelContext<T> {
 

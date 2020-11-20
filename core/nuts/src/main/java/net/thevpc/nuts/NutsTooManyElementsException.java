@@ -32,7 +32,7 @@ import java.io.IOException;
  *
  * @author vpc
  * @since 0.5.4
- * @category Exception
+ * %category Exception
  */
 public class NutsTooManyElementsException extends NutsException {
 

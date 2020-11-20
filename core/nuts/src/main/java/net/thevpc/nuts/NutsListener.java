@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Anchor interface for all Nuts Listeners.
  * @author vpc
  * @since 0.5.5
- * @category Base
+ * %category Base
  */
 public interface NutsListener {
 }

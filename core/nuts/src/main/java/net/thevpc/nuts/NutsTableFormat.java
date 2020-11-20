@@ -29,9 +29,9 @@ package net.thevpc.nuts;
  *
  * @author vpc
  * @since 0.5.5
- * @category Format
+ * %category Format
  */
-public interface NutsTableFormat extends NutsFormat {
+public interface NutsTableFormat extends NutsObjectFormat {
 
     /**
      * update session

@@ -53,7 +53,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
                 Files.delete(file);
                 NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), ConfigEventType.MAIN);
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(ws,ex);
             }
         }
     }
@@ -61,7 +61,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     public void installCommand(NutsCommandAliasConfig command, NutsAddOptions options) {
         options = CoreNutsUtils.validate(options, ws);
         Path path = getStoreLocation().resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
-        ws.formats().json().value(command).print(path);
+        ws.formats().element().setContentType(NutsContentType.JSON).setValue(command).print(path);
         NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), ConfigEventType.MAIN);
     }
 
@@ -69,7 +69,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     public NutsCommandAliasConfig findCommand(String name, NutsWorkspace workspace) {
         Path file = getStoreLocation().resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (Files.exists(file)) {
-            NutsCommandAliasConfig c = ws.formats().json().parse(file, NutsCommandAliasConfig.class);
+            NutsCommandAliasConfig c = ws.formats().element().setContentType(NutsContentType.JSON).parse(file, NutsCommandAliasConfig.class);
             if (c != null) {
                 c.setName(name);
                 return c;
@@ -104,7 +104,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
                 if (file.getFileName().toString().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)) {
                     NutsCommandAliasConfig c = null;
                     try {
-                        c = ws.formats().json().parse(file, NutsCommandAliasConfig.class);
+                        c = ws.formats().element().setContentType(NutsContentType.JSON).parse(file, NutsCommandAliasConfig.class);
                     } catch (Exception ex) {
                         LOG.with().level(Level.FINE).error(ex).log("unable to parse {0}", file);
                         //
@@ -118,7 +118,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
                 }
             });
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(ws,ex);
         }
         return all;
     }

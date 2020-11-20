@@ -82,7 +82,7 @@ public class NutsIdFilterNone extends AbstractNutsFilter implements NutsIdFilter
 
     @Override
     public String toString() {
-        return "Not("+CoreStringUtils.join(" Or ", Arrays.asList(children).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()))+")";
+        return "Not("+String.join(" Or ", Arrays.asList(children).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()))+")";
     }
 
     @Override

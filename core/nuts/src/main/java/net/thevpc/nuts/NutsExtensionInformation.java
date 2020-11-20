@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Extension information
  * @author vpc
  * @since 0.5.4
- * @category Config
+ * %category Config
  */
 public interface NutsExtensionInformation {
 

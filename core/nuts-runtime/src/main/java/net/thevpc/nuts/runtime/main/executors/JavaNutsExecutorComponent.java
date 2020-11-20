@@ -88,9 +88,9 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 def,
                 executionContext.isTemporary(),
                 executionContext.getArguments(),
-                executionContext.getExecutorOptions(),
+                executionContext.getExecutorArguments(),
                 CoreStringUtils.isBlank(executionContext.getCwd()) ? System.getProperty("user.dir") : executionContext.getCwd(),
-                executionContext.getTraceSession());
+                executionContext.getTraceSession().copy().setProgressOptions("none"));
         switch (executionContext.getExecutionType()) {
             case EMBEDDED: {
                 return new EmbeddedProcessExecHelper(def, executionContext.getExecSession(), joptions, executionContext.getExecSession().out());
@@ -206,11 +206,11 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                     args.add(contentFile.toString());
                 } else {
                     xargs.add("--nuts-path");
-                    xargs.add(CoreStringUtils.join(";", joptions.getNutsPath()));
+                    xargs.add(String.join(";", joptions.getNutsPath()));
                     xargs.add(joptions.getMainClass());
 
                     args.add("-classpath");
-                    args.add(CoreStringUtils.join(File.pathSeparator, joptions.getClassPath()));
+                    args.add(String.join(File.pathSeparator, joptions.getClassPath()));
                     args.add(joptions.getMainClass());
                 }
                 xargs.addAll(joptions.getApp());
@@ -236,7 +236,9 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                                 executionContext.getExecSession(),
                                 executionContext.getExecutorProperties(),
                                 args.toArray(new String[0]),
-                                osEnv, directory, joptions.isShowCommand(), true
+                                osEnv, directory, joptions.isShowCommand(), true,
+                                executionContext.getSleepMillis()
+
                         ).dryExec();
                     }
 
@@ -266,7 +268,8 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                                 executionContext.getExecSession(),
                                 executionContext.getExecutorProperties(),
                                 args.toArray(new String[0]),
-                                osEnv, directory, joptions.isShowCommand(), true
+                                osEnv, directory, joptions.isShowCommand(), true,
+                                executionContext.getSleepMillis()
                         );
                     }
 

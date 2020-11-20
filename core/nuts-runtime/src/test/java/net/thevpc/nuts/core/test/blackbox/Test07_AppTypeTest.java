@@ -15,12 +15,7 @@ import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsDefinition;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 /**
  *
@@ -48,34 +43,34 @@ public class Test07_AppTypeTest {
         System.out.println(u.getDescriptor());
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
-        org.junit.Assert.assertTrue(u.getDescriptor().isExecutable());
-        org.junit.Assert.assertTrue(u.getDescriptor().isApplication());
+        Assertions.assertTrue(u.getDescriptor().isExecutable());
+        Assertions.assertTrue(u.getDescriptor().isApplication());
         u = uws.search().addId("nsh").getResultDefinitions().required();
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
-        org.junit.Assert.assertTrue(u.getDescriptor().isExecutable());
-        org.junit.Assert.assertTrue(u.getDescriptor().isApplication());
+        Assertions.assertTrue(u.getDescriptor().isExecutable());
+        Assertions.assertTrue(u.getDescriptor().isApplication());
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getPath();
         CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearUpClass() throws IOException {
         CoreIOUtils.delete(null,new File(baseFolder));
     }
 
-    @Before
+    @BeforeEach
     public void startup() throws IOException {
-        Assume.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
+        Assumptions.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         TestUtils.unsetNutsSystemProperties();
     }

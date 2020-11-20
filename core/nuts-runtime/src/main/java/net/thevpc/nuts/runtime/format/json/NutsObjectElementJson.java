@@ -42,7 +42,7 @@ import net.thevpc.nuts.runtime.format.elem.NutsObjectElementBase;
  *
  * @author vpc
  */
-class NutsObjectElementJson extends NutsObjectElementBase {
+public class NutsObjectElementJson extends NutsObjectElementBase {
 
     private final JsonObject value;
 

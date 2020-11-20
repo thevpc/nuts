@@ -8,7 +8,7 @@ package net.thevpc.nuts.core.test.blackbox;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -27,14 +27,14 @@ public class Test06_UpateTest {
 
     private static String baseFolder;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getPath();
         CoreIOUtils.delete(null, new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ " + TestUtils.getCallerClassSimpleName());
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearUpClass() throws IOException {
         //CoreIOUtils.delete(null,new File(baseFolder));
     }
@@ -128,7 +128,7 @@ public class Test06_UpateTest {
         TestUtils.println(nws.repos().getRepository("temp", session).config().getStoreLocationStrategy());
         TestUtils.println(nws.repos().getRepository("temp", session).config().getStoreLocation());
         TestUtils.println(nws.repos().getRepository("temp", session).config().getStoreLocation(NutsStoreLocation.LIB));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 uws.repos().getRepository("local", session).config().getStoreLocation(NutsStoreLocation.LIB),
                 nws.repos().getRepository("temp", session).config().getStoreLocation(NutsStoreLocation.LIB));
 
@@ -136,12 +136,12 @@ public class Test06_UpateTest {
         TestUtils.println(uws.search().addId(rt.getId().getShortNameId()).getResultIds().list());
         List<NutsId> foundApis = uws.search().addId(api.getId().getShortNameId()).getResultIds().list();
         List<NutsId> foundRts = uws.search().addId(rt.getId().getShortNameId()).getResultIds().list();
-        Assert.assertTrue(foundApis.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(api.getId().builder().setVersion(apiv1).getLongName()));
+        Assertions.assertTrue(foundApis.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(api.getId().builder().setVersion(apiv1).getLongName()));
         if (!implOnly) {
-            Assert.assertTrue(foundApis.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(api.getId().builder().setVersion(apiv2).getLongName()));
+            Assertions.assertTrue(foundApis.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(api.getId().builder().setVersion(apiv2).getLongName()));
         }
-        Assert.assertTrue(foundRts.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(rt.getId().builder().setVersion(rt.getId().getVersion()).getLongName()));
-        Assert.assertTrue(foundRts.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(rt.getId().builder().setVersion(rtv2).getLongName()));
+        Assertions.assertTrue(foundRts.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(rt.getId().builder().setVersion(rt.getId().getVersion()).getLongName()));
+        Assertions.assertTrue(foundRts.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(rt.getId().builder().setVersion(rtv2).getLongName()));
 
         TestUtils.println("========================");
         TestUtils.println(nws.search().addId(api.getId().getShortNameId()).setRepository("temp").getResultIds().list());
@@ -154,7 +154,7 @@ public class Test06_UpateTest {
         for (NutsUpdateResult u : foundUpdates.getResult().getAllUpdates()) {
             TestUtils.println(u.getAvailable());
         }
-        Assert.assertEquals(implOnly ? 1 : 2, foundUpdates.getResultCount());
+        Assertions.assertEquals(implOnly ? 1 : 2, foundUpdates.getResultCount());
         foundUpdates.update();
 
         final String newApiVersion = foundUpdates.getResult().getApi().getAvailable().getId().getVersion().toString();
@@ -164,22 +164,22 @@ public class Test06_UpateTest {
         Path bootCacheFolder = nws.locations().getStoreLocation(NutsStoreLocation.CACHE).resolve(NutsConstants.Folders.ID);
         Path libFolder = nws.locations().getStoreLocation(NutsStoreLocation.LIB).resolve(NutsConstants.Folders.ID);
         Path configFolder = nws.locations().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
-        Assert.assertTrue(Files.exists(libFolder.resolve("net/thevpc/nuts/nuts/").resolve(newApiVersion)
+        Assertions.assertTrue(Files.exists(libFolder.resolve("net/thevpc/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));
-        Assert.assertTrue(Files.exists(configFolder.resolve("net/thevpc/nuts/nuts/").resolve(newApiVersion)
+        Assertions.assertTrue(Files.exists(configFolder.resolve("net/thevpc/nuts/nuts/").resolve(newApiVersion)
                 .resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME)
         ));
 
-        Assert.assertTrue(Files.exists(bootCacheFolder.resolve("net/thevpc/nuts/nuts-runtime/").resolve(newRuntimeVersion)
+        Assertions.assertTrue(Files.exists(bootCacheFolder.resolve("net/thevpc/nuts/nuts-runtime/").resolve(newRuntimeVersion)
                 .resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME)
         ));
 //        try {
 //            NutsWorkspace updatedws = Nuts.openWorkspace(new String[]{
 //                "--workspace", workpacePath});
-//            Assert.assertFalse(true);
+//            Assertions.assertFalse(true);
 //        } catch (NutsUnsatisfiedRequirementsException e) {
-//            Assert.assertTrue(true);
+//            Assertions.assertTrue(true);
 //        }
         NutsBootWorkspace b = new NutsBootWorkspace(
                 "--workspace", workspacePath,
@@ -195,9 +195,9 @@ public class Test06_UpateTest {
         String ss = uws.exec().userCmd().addCommand(b.createProcessCommandLine()).grabOutputString().run().getOutputString();
         TestUtils.println("================");
         TestUtils.println(ss);
-        Map m = uws.formats().json().parse(ss, Map.class);
-        Assert.assertEquals(newApiVersion, m.get("nuts-api-version"));
-        Assert.assertEquals(newRuntimeVersion, m.get("nuts-runtime-version"));
+        Map m = uws.formats().element().setContentType(NutsContentType.JSON).parse(ss, Map.class);
+        Assertions.assertEquals(newApiVersion, m.get("nuts-api-version"));
+        Assertions.assertEquals(newRuntimeVersion, m.get("nuts-runtime-version"));
     }
 
     private Path replaceAPIJar(Path p, FromTo api, NutsWorkspace ws) {
@@ -286,13 +286,13 @@ public class Test06_UpateTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void startup() throws IOException {
-        Assume.assumeTrue(Nuts.getPlatformOsFamily() == NutsOsFamily.LINUX);
+        Assumptions.assumeTrue(Nuts.getPlatformOsFamily() == NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         TestUtils.unsetNutsSystemProperties();
     }

@@ -39,9 +39,9 @@ public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
     private final NutsFetchDisplayOptions displayOptions;
     private final NutsSession session;
     private final PrintStream writer;
-    private final NutsOutputFormat format;
+    private final NutsContentType format;
 
-    public DefaultSearchFormatBase(NutsSession session, PrintStream writer, NutsOutputFormat format,NutsFetchDisplayOptions options) {
+    public DefaultSearchFormatBase(NutsSession session, PrintStream writer, NutsContentType format, NutsFetchDisplayOptions options) {
         this.format = format;
         this.writer = writer;
         this.session = session;
@@ -52,7 +52,7 @@ public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
     }
 
     @Override
-    public NutsOutputFormat getOutputFormat() {
+    public NutsContentType getOutputFormat() {
         return format;
     }
 

@@ -82,7 +82,7 @@ public class NAdminMain extends NutsApplication {
             }else {
                 applicationContext.getSession().out().printf("**%s** new java installation locations added...\n", someAdded);
             }
-            applicationContext.getSession().out().println("you can always manually add another installation manually using 'nadmin add java' command.");
+            applicationContext.getSession().out().println("you can always add another installation manually using 'nadmin add java' command.");
         }
         if(!ws.config().isReadOnly()) {
             ws.config().save(applicationContext.getSession());

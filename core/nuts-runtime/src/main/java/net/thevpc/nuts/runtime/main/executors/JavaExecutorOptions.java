@@ -186,7 +186,7 @@ public final class JavaExecutorOptions {
                     //check manifest!
                     NutsExecutionEntry[] classes = getWorkspace().apps().execEntries().parse(path);
                     if (classes.length > 0) {
-                        mainClass = CoreStringUtils.join(":",
+                        mainClass = String.join(":",
                                 Arrays.stream(classes).map(NutsExecutionEntry::getName)
                                         .collect(Collectors.toList())
                         );

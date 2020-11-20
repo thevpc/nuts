@@ -99,7 +99,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         }
         NutsWorkspaceUtils.of(execSession.getWorkspace()).execAndWait(resolveUserOrRootCommand(), e2, CoreIOUtils.toPath(execCommand.getDirectory()),
                 traceSession.getTerminal(),
-                execSession.getTerminal(), showCommand, true)
+                execSession.getTerminal(), showCommand, true, execCommand.getSleepMillis())
                 .exec();
     }
 
@@ -113,7 +113,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         NutsWorkspaceUtils.of(execSession.getWorkspace()).execAndWait(resolveUserOrRootCommand(), e2, CoreIOUtils.toPath(execCommand.getDirectory()), 
                 traceSession.getTerminal(),
                 execSession.getTerminal(), 
-                showCommand, true)
+                showCommand, true, execCommand.getSleepMillis())
                 .dryExec();
     }
 

@@ -102,7 +102,7 @@ public class DefaultNutsDependency implements NutsDependency {
             for (NutsId exclusion : exclusions) {
                 ex.add(exclusion.getShortName());
             }
-            m.put(NutsConstants.IdProperties.EXCLUSIONS, CoreStringUtils.join(",", ex));
+            m.put(NutsConstants.IdProperties.EXCLUSIONS, String.join(",", ex));
         }
         return new DefaultNutsId(
                 getNamespace(),

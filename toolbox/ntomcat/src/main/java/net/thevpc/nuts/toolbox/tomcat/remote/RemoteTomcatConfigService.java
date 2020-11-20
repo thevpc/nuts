@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.tomcat.remote;
 
+import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.nuts.toolbox.tomcat.local.LocalTomcatConfigService;
 import net.thevpc.common.strings.StringUtils;
@@ -62,7 +63,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService save() {
         Path f = getConfigPath();
-        context.getWorkspace().formats().json().value(config).print(f);
+        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(config).print(f);
         return this;
     }
 
@@ -145,7 +146,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
-            config = context.getWorkspace().formats().json().parse(f, RemoteTomcatConfig.class);
+            config = context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(f, RemoteTomcatConfig.class);
             return this;
         }
         throw new NamedItemNotFoundException("Instance not found : " + getName(),getName());
@@ -165,7 +166,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     @Override
     public RemoteTomcatConfigService print(PrintStream out) {
         PrintWriter w = new PrintWriter(out);
-        context.getWorkspace().formats().json().value(getConfig()).print(new PrintWriter(out));
+        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(getConfig()).print(new PrintWriter(out));
         w.flush();
         return this;
     }

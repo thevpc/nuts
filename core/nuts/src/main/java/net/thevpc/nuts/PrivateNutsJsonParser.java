@@ -40,7 +40,7 @@ import java.util.Map;
  * (Very Simple) JSON parser
  *
  * @author vpc
- * @category Internal
+ * %category Internal
  */
 final class PrivateNutsJsonParser {
 

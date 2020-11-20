@@ -78,7 +78,7 @@ public class NutsDescriptorFilterOr extends AbstractNutsFilter implements NutsDe
 
     @Override
     public String toString() {
-        return CoreStringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+        return String.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
     public NutsFilter[] getSubFilters() {

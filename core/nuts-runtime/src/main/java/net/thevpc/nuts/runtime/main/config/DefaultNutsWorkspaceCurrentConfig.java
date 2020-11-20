@@ -465,7 +465,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public NutsId getOs() {
         if (os == null) {
-            os = ws.id().parser().parse(CorePlatformUtils.getPlatformOs());
+            os = ws.id().parser().parse(CorePlatformUtils.getPlatformOs(ws));
         }
         return os;
     }
@@ -481,7 +481,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public NutsId getOsDist() {
         if (osdist == null) {
-            osdist = ws.id().parser().parse(CorePlatformUtils.getPlatformOsDist());
+            osdist = ws.id().parser().parse(CorePlatformUtils.getPlatformOsDist(ws));
         }
         return osdist;
     }

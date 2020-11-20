@@ -259,8 +259,8 @@ public class CoreNutsUtils {
      * script://groupId:artifactId/version script://groupId:artifactId
      * script://artifactId artifactId
      *
-     * @param nutsId
-     * @return
+     * @param nutsId nutsId
+     * @return nutsId
      */
     public static NutsId parseNutsId(String nutsId) {
         if (nutsId == null) {
@@ -896,27 +896,27 @@ public class CoreNutsUtils {
                         extraMsg);
     }
 
-    public static NutsOutputFormat readOptionOutputFormat(NutsCommandLine cmdLine) {
+    public static NutsContentType readOptionOutputFormat(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         switch (a.getStringKey()) {
             case "--output-format": {
                 a = cmdLine.nextString();
-                return CoreCommonUtils.parseEnumString(a.getStringValue(), NutsOutputFormat.class, false);
+                return CoreCommonUtils.parseEnumString(a.getStringValue(), NutsContentType.class, false);
             }
             case "--json": {
-                return (NutsOutputFormat.JSON);
+                return (NutsContentType.JSON);
             }
             case "--props": {
-                return (NutsOutputFormat.PROPS);
+                return (NutsContentType.PROPS);
             }
             case "--table": {
-                return (NutsOutputFormat.TABLE);
+                return (NutsContentType.TABLE);
             }
             case "--tree": {
-                return (NutsOutputFormat.TREE);
+                return (NutsContentType.TREE);
             }
             case "--plain": {
-                return (NutsOutputFormat.PLAIN);
+                return (NutsContentType.PLAIN);
             }
         }
         return null;

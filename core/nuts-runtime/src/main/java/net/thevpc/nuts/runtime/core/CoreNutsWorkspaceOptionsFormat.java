@@ -34,7 +34,7 @@ import java.util.*;
 
 /**
  * @author vpc
- * @category Format
+ * %category Format
  */
 public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFormat {
     private static final long serialVersionUID = 1;

@@ -35,7 +35,7 @@ import java.util.Map;
  *
  * @author vpc
  * @since 0.5.4
- * @category Base
+ * %category Base
  */
 public interface NutsSession extends NutsConfigurable {
 
@@ -52,7 +52,7 @@ public interface NutsSession extends NutsConfigurable {
      * true if non iterable and plain formats along with trace flag are armed.
      * equivalent to {@code isTrace()
      * && !isIterableOut()
-     * && getOutputFormat() == NutsOutputFormat.PLAIN}
+     * && getOutputFormat() == NutsContentType.PLAIN}
      *
      * @return true plain non iterable format AND trace are armed
      */
@@ -70,7 +70,7 @@ public interface NutsSession extends NutsConfigurable {
      * true if NON iterable and NON plain formats along with trace flag are
      * armed. equivalent to {@code isTrace()
      * && !isIterableOut()
-     * && getOutputFormat() == NutsOutputFormat.PLAIN}
+     * && getOutputFormat() == NutsContentType.PLAIN}
      *
      * @return true if NON iterable and NON plain formats along with trace flag
      * are armed.
@@ -87,7 +87,7 @@ public interface NutsSession extends NutsConfigurable {
 
     /**
      * true if NON iterable and NON plain formats are armed. equivalent to {@code !isIterableOut()
-     * && getOutputFormat() != NutsOutputFormat.PLAIN}
+     * && getOutputFormat() != NutsContentType.PLAIN}
      *
      * @return true if non iterable format AND structured outpt format are
      * armed.
@@ -237,21 +237,21 @@ public interface NutsSession extends NutsConfigurable {
      * @param defaultValue value when Output Format is not set
      * @return current Output Format or {@code defaultValue} if null
      */
-    NutsOutputFormat getOutputFormat(NutsOutputFormat defaultValue);
+    NutsContentType getOutputFormat(NutsContentType defaultValue);
 
     /**
      * return effective trace output format. The effective trace output format
      * is the value of {@code getIterableFormat().getOutputFormat()} whenever {@code getIterableFormat()!=null
      * } otherwise it returns simply the value defined by calling
-     * {@link #setOutputFormat(NutsOutputFormat)}. If none of
+     * {@link #setOutputFormat(NutsContentType)}. If none of
      * null null     {@link #setIterableFormat(NutsIterableFormat)
-     * } or {@link #setOutputFormat(NutsOutputFormat)} has been
-     * called (or called with null values) {@link NutsOutputFormat#PLAIN} should
+     * } or {@link #setOutputFormat(NutsContentType)} has been
+     * called (or called with null values) {@link NutsContentType#PLAIN} should
      * be returned.
      *
      * @return effective trace output format
      */
-    NutsOutputFormat getOutputFormat();
+    NutsContentType getOutputFormat();
 
     /**
      * set output format
@@ -259,7 +259,7 @@ public interface NutsSession extends NutsConfigurable {
      * @param outputFormat output format
      * @return {@code this} instance
      */
-    NutsSession setOutputFormat(NutsOutputFormat outputFormat);
+    NutsSession setOutputFormat(NutsContentType outputFormat);
 
     /**
      * set json output format

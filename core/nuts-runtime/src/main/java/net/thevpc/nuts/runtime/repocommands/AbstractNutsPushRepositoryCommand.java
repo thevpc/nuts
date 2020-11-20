@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * @author vpc
- * @category SPI Base
+ * %category SPI Base
  */
 public abstract class AbstractNutsPushRepositoryCommand extends NutsRepositoryCommandBase<NutsPushRepositoryCommand> implements NutsPushRepositoryCommand {
 

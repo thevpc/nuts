@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 /**
  * Exception Thrown when for any reason, the enum value is not expected/supported.
  * @author vpc
- * @category Exception
+ * %category Exception
  */
 public class NutsParseEnumException extends NutsException {
     private String invalidValue;

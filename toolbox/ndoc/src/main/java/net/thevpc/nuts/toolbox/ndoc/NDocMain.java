@@ -50,7 +50,7 @@ public class NDocMain extends NutsApplication {
             }
 
             @Override
-            public boolean nextNonOption(NutsArgument nonOption, NutsCommandLine cmdLine) {
+            public boolean nextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
                 return false;
             }
 

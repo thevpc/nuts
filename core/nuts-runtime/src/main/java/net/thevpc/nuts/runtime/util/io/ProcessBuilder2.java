@@ -49,18 +49,18 @@ public class ProcessBuilder2 {
     private boolean failFast;
     //    private List<PipeThread> pipes = new ArrayList<>();
     private Process proc;
-    private int sleepMillis = 1000;
+    private long sleepMillis = 1000;
     private NutsWorkspace ws;
 
     public ProcessBuilder2(NutsWorkspace ws) {
         this.ws = ws;
     }
 
-    public int getSleepMillis() {
+    public long getSleepMillis() {
         return sleepMillis;
     }
 
-    public ProcessBuilder2 setSleepMillis(int sleepMillis) {
+    public ProcessBuilder2 setSleepMillis(long sleepMillis) {
         this.sleepMillis = sleepMillis;
         return this;
     }
@@ -143,7 +143,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setIn(InputStream in) {
         if (baseIO) {
-            throw new NutsIllegalArgumentException(ws, "Already used Base IO Rediection");
+            throw new NutsIllegalArgumentException(ws, "Already used Base IO Redirection");
         }
         this.in = in;
         return this;
@@ -184,7 +184,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setOutput(PrintStream out) {
         if (baseIO) {
-            throw new IllegalArgumentException("Already used Base IO Rediection");
+            throw new IllegalArgumentException("Already used Base IO Redirection");
         }
         this.out = out;
         return this;
@@ -196,7 +196,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setErr(PrintStream err) {
         if (baseIO) {
-            throw new NutsIllegalArgumentException(ws, "Already used Base IO Rediection");
+            throw new NutsIllegalArgumentException(ws, "Already used Base IO Redirection");
         }
         this.err = err;
         return this;

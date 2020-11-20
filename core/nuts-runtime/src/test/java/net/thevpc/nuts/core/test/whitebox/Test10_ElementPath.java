@@ -38,9 +38,7 @@ import net.thevpc.nuts.NutsElementFormat;
 import net.thevpc.nuts.NutsObjectFormat;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 /**
  *
@@ -101,7 +99,7 @@ public class Test10_ElementPath {
         NutsObjectFormat ss = ws.createSession().json().formatObject(p);
         ss.println();
         String json = ss.format();
-        Assert.assertEquals("[\n"
+        Assertions.assertEquals("[\n"
                 + "  {\n"
                 + "    \"first\": {\n"
                 + "      \"name\": \"first name\",\n"
@@ -272,12 +270,12 @@ public class Test10_ElementPath {
             TestUtils.println("=====================================");
             TestUtils.println("CHECKING : '" + tt.path+"'");
             List<NutsElement> filtered1 = e.compilePath(tt.path).filter(p);
-            ss.value(filtered1).println();
-            Assert.assertEquals(tt.expected.get(0), ss.format());
+            ss.setValue(filtered1).println();
+            Assertions.assertEquals(tt.expected.get(0), ss.format());
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
         CoreIOUtils.delete(null,new File(baseFolder));

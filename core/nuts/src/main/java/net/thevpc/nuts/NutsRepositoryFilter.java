@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Created by vpc on 1/5/17.
  *
  * @since 0.5.4
- * @category Base
+ * %category Base
  */
 public interface NutsRepositoryFilter extends NutsFilter{
 

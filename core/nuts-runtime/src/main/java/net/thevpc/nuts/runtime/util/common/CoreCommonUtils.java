@@ -376,7 +376,7 @@ public class CoreCommonUtils {
             if (a.length == 1) {
                 return stringValue(a[0]);
             }
-            return "\\{" + CoreStringUtils.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "\\}";
+            return "\\{" + String.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "\\}";
             
         } else if (o instanceof NutsNamedElement) {
             NutsNamedElement ne = (NutsNamedElement) o;
@@ -440,7 +440,7 @@ public class CoreCommonUtils {
             if (a.length == 1) {
                 return stringValue(a[0]);
             }
-            return "\\[" + CoreStringUtils.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "\\]";
+            return "\\[" + String.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "\\]";
         }
         if (o instanceof Map) {
             Map c = ((Map) o);
@@ -451,7 +451,7 @@ public class CoreCommonUtils {
             if (a.length == 1) {
                 return stringValue(a[0]);
             }
-            return "\\{" + CoreStringUtils.join(", ", Arrays.stream(a).map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "\\}";
+            return "\\{" + String.join(", ", Arrays.stream(a).map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "\\}";
         }
         if (o.getClass().isArray()) {
             int len = Array.getLength(o);
@@ -465,7 +465,7 @@ public class CoreCommonUtils {
             for (int i = 0; i < len; i++) {
                 all.add(stringValueFormatted(Array.get(o, i), escapeString, session));
             }
-            return "\\[" + CoreStringUtils.join(", ", all) + "\\]";
+            return "\\[" + String.join(", ", all) + "\\]";
         }
 //        if (o instanceof Iterable) {
 //            Iterable x = (Iterable) o;
@@ -508,7 +508,7 @@ public class CoreCommonUtils {
             if (a.length == 1) {
                 return stringValue(a[0]);
             }
-            return "[" + CoreStringUtils.join(", ", (List) c.stream().map(x -> stringValue(x)).collect(Collectors.toList())) + "]";
+            return "[" + String.join(", ", (List) c.stream().map(x -> stringValue(x)).collect(Collectors.toList())) + "]";
         }
         if (o.getClass().isArray()) {
             int len = Array.getLength(o);
@@ -522,7 +522,7 @@ public class CoreCommonUtils {
             for (int i = 0; i < len; i++) {
                 all.add(stringValue(Array.get(o, i)));
             }
-            return "[" + CoreStringUtils.join(", ", all) + "]";
+            return "[" + String.join(", ", all) + "]";
         }
         return o.toString();
     }

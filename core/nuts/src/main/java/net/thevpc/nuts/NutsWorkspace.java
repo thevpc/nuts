@@ -32,7 +32,7 @@ import java.util.Set;
  * Created by vpc on 1/5/17.
  *
  * @since 0.5.4
- * @category Base
+ * %category Base
  */
 public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
@@ -75,7 +75,7 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
     Map<String, Object> userProperties();
 
     ///////////////////// sub system
-    Set<String> companionIds();
+    Set<NutsId> companionIds();
 
     NutsWorkspaceAppsManager apps();
 

@@ -8,8 +8,7 @@ package net.thevpc.nuts.core.test.whitebox.utilities;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsInput;
 import net.thevpc.nuts.NutsWorkspace;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 /**
  *
@@ -22,23 +21,23 @@ public class Test01_TestInputSource {
         NutsWorkspace ws = Nuts.openWorkspace();
         NutsInput s = ws.io().input().of("http://maven.ibiblio.org/maven2/archetype-catalog.xml");
 
-        Assert.assertFalse(s.isPath());
-        Assert.assertTrue(s.isURL());
+        Assertions.assertFalse(s.isPath());
+        Assertions.assertTrue(s.isURL());
 
         s = ws.io().input().of("file://maven.ibiblio.org/maven2/archetype-catalog.xml");
-        Assert.assertTrue(s.isPath());
-        Assert.assertTrue(s.isURL());
+        Assertions.assertTrue(s.isPath());
+        Assertions.assertTrue(s.isURL());
 
         s = ws.io().input().of("file:/maven.ibiblio.org/maven2/archetype-catalog.xml");
-        Assert.assertTrue(s.isPath());
-        Assert.assertTrue(s.isURL());
+        Assertions.assertTrue(s.isPath());
+        Assertions.assertTrue(s.isURL());
 
 //        s = CoreIOUtils.createInputSource("zip://maven.ibiblio.org/maven2/toto.zip?archetype-catalog.xml");
-//        Assert.assertFalse(s.isPath());
-//        Assert.assertTrue(s.isURL());
+//        Assertions.assertFalse(s.isPath());
+//        Assertions.assertTrue(s.isURL());
         s = ws.io().input().of("/maven.ibiblio.org/maven2/archetype-catalog.xml");
-        Assert.assertTrue(s.isPath());
-        Assert.assertTrue(s.isURL());
+        Assertions.assertTrue(s.isPath());
+        Assertions.assertTrue(s.isURL());
 
     }
 

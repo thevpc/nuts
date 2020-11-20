@@ -13,7 +13,7 @@
 **-g** | **--args** <args> ...
     pass the given args to the install executor
 
-#!include</net/vpc/app/command/includes/standard-command.help>
+#!include</net/thevpc/app/command/includes/standard-command.help>
 
 ##EXAMPLES:##
         ==nuts== install **--help**

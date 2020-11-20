@@ -282,7 +282,7 @@ public class MavenRepositoryFolderHelper {
 //                                p.println(file);
 //                            }
 //                        } catch (FileNotFoundException e) {
-//                            throw new UncheckedIOException(e);
+//                            throw new NutsIOException(getWorkspace(),e);
 //                        }
                         try (PrintStream p = new PrintStream(new File(folder, CoreNutsConstants.Files.DOT_FILES))) {
                             p.println("#version="+ws.getApiVersion());
@@ -293,14 +293,14 @@ public class MavenRepositoryFolderHelper {
                                 p.println(file);
                             }
                         } catch (FileNotFoundException e) {
-                            throw new UncheckedIOException(e);
+                            throw new NutsIOException(getWorkspace(),e);
                         }
                     }
                     return FileVisitResult.CONTINUE;
                 }
             });
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(getWorkspace(),ex);
         }
 
     }

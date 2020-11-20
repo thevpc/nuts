@@ -77,7 +77,7 @@ public class RefreshDataService {
                 visited.put(id.get("stringId"), true);
 
                 NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();
-                id.put("dependencies", ws.formats().json().value(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList())).format());
+                id.put("dependencies", ws.formats().element().setContentType(NutsContentType.JSON).setValue(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList())).format());
                 dataToIndex.add(id);
             }
             this.dataService.indexMultipleData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), dataToIndex);
