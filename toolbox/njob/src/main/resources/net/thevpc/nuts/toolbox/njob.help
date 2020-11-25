@@ -2,68 +2,12 @@
 
 ##SYNOPSIS:##
 
-==njob== {{tasks}} | {{jobs}} | {{projects}} ...
+==njob== {{tasks}} | {{jobs}} | {{projects}} | {{summary}}...
     manage tasks, jobs, projects
 
-==njob== {{jobs|j}} {{add|a}} [options] <job-name>
-    {{on}} <<start-date>>
-    {{at}} <<start-time>>
-    {{for}} <<project>>
-    {{obs}} <<observations>>
 
-    add new job
-
-==njob== {{jobs|j}} {{remove|rm}} <job-id> ...
-    remove jobs
-
-==njob== {{jobs|j}} {{show|s}} <job-id> ...
-    remove jobs
-
-==njob== {{jobs|j}} {{list|l}} [options]
-    {{-w}}=<n> last <n> weeks
-    {{-m}}=<n> last <n> months
-    {{-l}}=<n> last <n> jobs
-    {{-u|--unit}}=<unit-name> show duration in <unit-name> (h,d,mn,s,... are valid unit names)
-    {{-g|--group-by}}=p|project group by project name
-    {{-g|--group-by}}=n|name group by job name
-    {{-g|--group-by}}=s|summary show one row summary
-    -p=<s-expr>      filter by project name /../ is used for regexps, '*' is supported in non regexp.
-    -n=<s-expr>      filter by job name /../ is used for regexps, '*' is supported in non regexp.
-    -c=<s-expr>      filter by customer name /../ is used for regexps, '*' is supported in non regexp.
-    -C=<s-expr>      filter by company name /../ is used for regexps, '*' is supported in non regexp.
-    -d=<t-expr>      filter by duration. can start with '<' and other operators
-    -t=<t-expr>      filter by start date. can start with '<' and other operators. accept periods as well.
-
-
-
-==njob== {{add project|ap}}  [options] <project-name>
-    {{on}} <<start-date>>
-    {{at}} <<start-time>>
-    {{for}} <<customer>>
-    ==via== <<company>>
-    {{week}}=<week-day> week start day
-    {{obs}} <<observations>>
-
-    add new project
-
-==njob== {{update|up}} <project-name> [options]
-    {{on}} <<start-date>>
-    {{at}} <<start-time>>
-    {{for}} <<customer>>
-    ==via== <<company>>
-    {{week}}=<week-day> week start day
-    {{obs}} <<observations>>
-
-    update project
-
-==njob== {{remove project|rmp}} <project-name> ...
-    remove projects
-
-==njob== {{show project|dp}} <project-name> ...
-    show project details
-
-==njob== {{list projects|lp}} [options]
-    -n=<s-expr>      filter by project name /../ is used for regexps, '*' is supported in non regexp.
-
+#!include</net/thevpc/nuts/toolbox/njob-jobs.help>
+#!include</net/thevpc/nuts/toolbox/njob-tasks.help>
+#!include</net/thevpc/nuts/toolbox/njob-projects.help>
 
 

@@ -816,14 +816,21 @@ public class JobServiceCmd {
         if (runTaskCommands(cmd)) {
             return true;
         }
-        if(cmd.next("summary")!=null){
+        if(cmd.next("summary")!=null) {
             long projectsCount = service.findProjects().count();
-            long tasksCount = service.findTasks(NTaskStatusFilter.OPEN, null,-1,null,null,null,null,null).count();
+            long tasksCount = service.findTasks(NTaskStatusFilter.OPEN, null, -1, null, null, null, null, null).count();
             long jobsCount = service.findMonthJobs(null).count();
-            long allJobsCount = service.findLastJobs(null,-1,null,null,null,null,null).count();
-            context.getSession().out().printf("##%s## projects\n",projectsCount);
-            context.getSession().out().printf("##%s## open tasks\n",tasksCount);
-            context.getSession().out().printf("##%s## jobs (##%s## this month)\n",allJobsCount,jobsCount);
+            long allJobsCount = service.findLastJobs(null, -1, null, null, null, null, null).count();
+            context.getSession().out().printf("##%s## projects\n", projectsCount);
+            context.getSession().out().printf("##%s## open tasks\n", tasksCount);
+            context.getSession().out().printf("##%s## jobs (##%s## this month)\n", allJobsCount, jobsCount);
+            return true;
+        }else if(cmd.next("help")!=null){
+            for (String s : new String[]{"jobs","projects","tasks"}) {
+                showCustomHelp("njob-"+s);
+                return true;
+            }
+            showCustomHelp("njob");
             return true;
         }
         return false;
@@ -846,11 +853,20 @@ public class JobServiceCmd {
             runJobShow(cmd);
             return true;
         } else if (cmd.next("j", "jobs") != null) {
-            runJobList(cmd);
+            if (cmd.next("--help") != null) {
+                showCustomHelp("njob-jobs");
+            }else {
+                runJobList(cmd);
+            }
             return true;
         } else {
             return false;
         }
+    }
+
+    private void showCustomHelp(String name) {
+        context.getSession().out().println(context.getWorkspace().formats().text().loadFormattedString("/net/thevpc/nuts/toolbox/"+name+".help",
+                getClass().getClassLoader(), null));
     }
 
     public boolean runProjectCommands(NutsCommandLine cmd) {
@@ -871,7 +887,11 @@ public class JobServiceCmd {
             runProjectShow(cmd);
             return true;
         } else if (cmd.next("p", "projects") != null) {
-            runProjectList(cmd);
+            if (cmd.next("--help") != null) {
+                showCustomHelp("njob-projects");
+            }else {
+                runProjectList(cmd);
+            }
             return true;
         }
         return false;
@@ -896,7 +916,11 @@ public class JobServiceCmd {
             runTaskShow(cmd);
             return true;
         } else if (cmd.next("t", "tasks") != null) {
-            runTaskList(cmd);
+            if (cmd.next("--help") != null) {
+                showCustomHelp("njob-tasks");
+            }else {
+                runTaskList(cmd);
+            }
             return true;
         }
         return false;
