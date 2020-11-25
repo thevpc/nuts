@@ -94,3 +94,5 @@ toolbox/worky/worky.iml
 /toolbox/noapi/target/
 /core/nuts-runtime/nuts-runtime.iml
 /core/nuts/nuts.iml
+/lib/nlib-servlet/target/
+/lib/nlib-tomcat-classloader/target/

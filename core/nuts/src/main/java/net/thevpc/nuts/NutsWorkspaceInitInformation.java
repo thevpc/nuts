@@ -83,4 +83,8 @@ public interface NutsWorkspaceInitInformation extends Serializable {
     NutsStoreLocationStrategy getRepositoryStoreLocationStrategy();
 
     String getStoreLocation(NutsStoreLocation location);
+
+    NutsIdURL getRuntimeBootURL();
+
+    NutsIdURL[] getExtensionsBootURL();
 }

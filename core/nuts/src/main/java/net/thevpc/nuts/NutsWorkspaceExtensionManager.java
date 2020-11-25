@@ -39,9 +39,7 @@ public interface NutsWorkspaceExtensionManager {
 
     boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl, NutsSession session);
 
-    List<Class> discoverTypes(ClassLoader classLoader, NutsSession session);
-
-    List<Class> getImplementationTypes(Class type, NutsSession session);
+    Set<Class> discoverTypes(NutsId id,ClassLoader classLoader, NutsSession session);
 
     <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, NutsSession session);
 
@@ -75,7 +73,8 @@ public interface NutsWorkspaceExtensionManager {
 
     <T> List<T> createAll(Class<T> type, NutsSession session);
 
-    Set<Class> getExtensionPoints(NutsSession session);
+//    Set<Class> getExtensionPoints(NutsSession session);
+
 
     Set<Class> getExtensionTypes(Class extensionPoint, NutsSession session);
 
@@ -87,7 +86,7 @@ public interface NutsWorkspaceExtensionManager {
 
     <T> boolean registerInstance(Class<T> extensionPoint, T implementation, NutsSession session);
 
-    boolean registerType(Class extensionPointType, Class extensionType, NutsSession session);
+    boolean registerType(Class extensionPointType, Class extensionType, NutsId source,NutsSession session);
 
     boolean isRegisteredType(Class extensionPointType, Class extensionType, NutsSession session);
 

@@ -739,8 +739,8 @@ public final class NutsBootWorkspace {
             }
             boolean recover = options.isRecover() || options.isReset();
 
-//            LinkedHashMap<String, NutsBootClassLoader.IdInfo> allExtensionFiles = new LinkedHashMap<>();
-            List<NutsBootClassLoader.IdInfo> deps = new ArrayList<>();
+//            LinkedHashMap<String, NutsBootClassLoader.NutsIdURL> allExtensionFiles = new LinkedHashMap<>();
+            List<NutsIdURL> deps = new ArrayList<>();
 
             String workspaceBootLibFolder = workspaceInformation.getLib();
 
@@ -758,7 +758,7 @@ public final class NutsBootWorkspace {
                         );
                 rt.addDependency(x.build());
             }
-            deps.add(rt.build());
+            workspaceInformation.setRuntimeBootURL(rt.build());
 
             for (NutsIdBootInfo nutsIdBootInfo : workspaceInformation.getExtensionsBootInfo()) {
                 NutsBootClassLoader.IdInfoBuilder rt2=new NutsBootClassLoader.IdInfoBuilder();
@@ -775,8 +775,11 @@ public final class NutsBootWorkspace {
                 }
                 deps.add(rt2.build());
             }
-            bootClassWorldURLs = resolveClassWorldURLs(deps.toArray(new NutsBootClassLoader.IdInfo[0]));
-            workspaceClassLoader = bootClassWorldURLs.length == 0 ? getContextClassLoader() : new NutsBootClassLoader(deps.toArray(new NutsBootClassLoader.IdInfo[0]), getContextClassLoader());
+            workspaceInformation.setExtensionsBootURL(deps.toArray(new NutsIdURL[0]));
+            deps.add(0,workspaceInformation.getRuntimeBootURL());
+
+            bootClassWorldURLs = resolveClassWorldURLs(deps.toArray(new NutsIdURL[0]));
+            workspaceClassLoader = bootClassWorldURLs.length == 0 ? getContextClassLoader() : new NutsBootClassLoader(deps.toArray(new NutsIdURL[0]), getContextClassLoader());
             workspaceInformation.setWorkspaceClassLoader(workspaceClassLoader);
             workspaceInformation.setBootClassWorldURLs(bootClassWorldURLs);
             ServiceLoader<NutsBootWorkspaceFactory> serviceLoader = ServiceLoader.load(NutsBootWorkspaceFactory.class, workspaceClassLoader);
@@ -832,16 +835,16 @@ public final class NutsBootWorkspace {
         }
     }
 
-    private void fillURLs(NutsBootClassLoader.IdInfo info,Set<URL> urls) {
-        urls.add(info.getUrl());
-        for (NutsBootClassLoader.IdInfo dependency : info.getDependencies()) {
+    private void fillURLs(NutsIdURL info, Set<URL> urls) {
+        urls.add(info.getURL());
+        for (NutsIdURL dependency : info.getDependencies()) {
             fillURLs(dependency,urls);
         }
     }
 
-    private URL[] resolveClassWorldURLs(NutsBootClassLoader.IdInfo[] infos) {
+    private URL[] resolveClassWorldURLs(NutsIdURL[] infos) {
         LinkedHashSet<URL> urls0 = new LinkedHashSet<>();
-        for (NutsBootClassLoader.IdInfo info : infos) {
+        for (NutsIdURL info : infos) {
             fillURLs(info, urls0);
         }
         List<URL> urls = new ArrayList<>();

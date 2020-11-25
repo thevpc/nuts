@@ -1667,16 +1667,15 @@ public class JobServiceCmd {
 
     public void runInteractive(NutsCommandLine cmdLine) {
         NutsSession session = context.getSession();
+        context.getWorkspace().io().term().enableRichTerm(context.getSession());
+
         session.out().println("{{" + context.getAppId().getArtifactId() + " " + context.getAppId().getVersion() + "}} interactive mode. type **q** to quit.");
         InputStream in = session.getTerminal().in();
-        Scanner sc = new Scanner(in);
         Exception lastError = null;
         while (true) {
-            session.out().print("> ");
-            session.out().flush();
             String line = null;
             try {
-                line = sc.nextLine();
+                line = session.getTerminal().readLine("> ");
             } catch (NoSuchElementException e) {
             }
             if (line == null) {

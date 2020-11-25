@@ -50,7 +50,9 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
      */
     private String runtimeId;
     private NutsIdBootInfo runtimeBootInfo;
+    private NutsIdURL runtimeBootURL;
     private NutsIdBootInfo[] extensionsBootInfo;
+    private NutsIdURL[] extensionsBootURL;
 
     private NutsBootWorkspaceFactory bootWorkspaceFactory;
 
@@ -397,6 +399,26 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
 
     public void setExtensionsSet(Set<String> extensionsSet) {
         this.extensionsSet = extensionsSet == null ? new LinkedHashSet<>() : new LinkedHashSet<>(extensionsSet);
+    }
+
+    @Override
+    public NutsIdURL getRuntimeBootURL() {
+        return runtimeBootURL;
+    }
+
+    public PrivateNutsWorkspaceInitInformation setRuntimeBootURL(NutsIdURL runtimeBootURL) {
+        this.runtimeBootURL = runtimeBootURL;
+        return this;
+    }
+
+    @Override
+    public NutsIdURL[] getExtensionsBootURL() {
+        return extensionsBootURL;
+    }
+
+    public PrivateNutsWorkspaceInitInformation setExtensionsBootURL(NutsIdURL[] extensionsBootURL) {
+        this.extensionsBootURL = extensionsBootURL;
+        return this;
     }
 
     @Override

@@ -1,6 +1,5 @@
-
 net.thevpc.nuts.toolbox.nadmin.config.ArchetypeNAdminSubCommand
-net.thevpc.nuts.toolbox.nadmin.config.ExtensionNAdminSubCommand
+#net.thevpc.nuts.toolbox.nadmin.config.ExtensionNAdminSubCommand
 net.thevpc.nuts.toolbox.nadmin.config.ImportNAdminSubCommand
 net.thevpc.nuts.toolbox.nadmin.config.LogNAdminSubCommand
 net.thevpc.nuts.toolbox.nadmin.config.RepositoryNAdminSubCommand

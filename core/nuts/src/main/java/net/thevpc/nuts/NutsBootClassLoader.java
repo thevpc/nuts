@@ -44,10 +44,10 @@ class NutsBootClassLoader extends URLClassLoader {
      * @param urls urls
      * @param parent parent class loader
      */
-    NutsBootClassLoader(IdInfo[] urls, ClassLoader parent) {
+    NutsBootClassLoader(NutsIdURL[] urls, ClassLoader parent) {
         super(new URL[0], parent);
         LinkedHashSet<URL> all=new LinkedHashSet<>();
-        for (IdInfo url : urls) {
+        for (NutsIdURL url : urls) {
             addURL(url,all);
         }
         for (URL url : all) {
@@ -55,9 +55,9 @@ class NutsBootClassLoader extends URLClassLoader {
         }
     }
 
-    protected void addURL(IdInfo ids, Set<URL> urls) {
-        urls.add(ids.url);
-        for (IdInfo dependency : ids.dependencies) {
+    protected void addURL(NutsIdURL ids, Set<URL> urls) {
+        urls.add(ids.getURL());
+        for (NutsIdURL dependency : ids.getDependencies()) {
             addURL(dependency,urls);
         }
     }
@@ -72,33 +72,10 @@ class NutsBootClassLoader extends URLClassLoader {
         super.addURL(url);
     }
 
-    static class IdInfo{
-        private String id;
-        private URL url;
-        private IdInfo[] dependencies;
-
-        public IdInfo(String id, URL url, IdInfo... dependencies) {
-            this.id = id;
-            this.url = url;
-            this.dependencies = dependencies;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public URL getUrl() {
-            return url;
-        }
-
-        public IdInfo[] getDependencies() {
-            return dependencies;
-        }
-    }
     static class IdInfoBuilder{
         private String id;
         private URL url;
-        private List<IdInfo> dependencies=new ArrayList<>();
+        private List<NutsIdURL> dependencies=new ArrayList<>();
 
         public String getId() {
             return id;
@@ -118,22 +95,22 @@ class NutsBootClassLoader extends URLClassLoader {
             return this;
         }
 
-        public List<IdInfo> getDependencies() {
+        public List<NutsIdURL> getDependencies() {
             return dependencies;
         }
 
-        public IdInfoBuilder addDependency(IdInfo other) {
+        public IdInfoBuilder addDependency(NutsIdURL other) {
             this.dependencies.add(other);
             return this;
         }
-        public IdInfoBuilder setDependencies(List<IdInfo> dependencies) {
+        public IdInfoBuilder setDependencies(List<NutsIdURL> dependencies) {
             this.dependencies = dependencies;
             return this;
         }
 
-        public IdInfo build(){
-            return new IdInfo(
-                    id, url,dependencies.toArray(new IdInfo[0])
+        public NutsIdURL build(){
+            return new NutsIdURL(
+                    id, url,dependencies.toArray(new NutsIdURL[0])
             );
         }
     }

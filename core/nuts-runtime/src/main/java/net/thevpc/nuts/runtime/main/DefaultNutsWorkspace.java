@@ -190,20 +190,28 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
             }
         }
-        extensionManager.onInitializeWorkspace(bootClassLoader, bootSession);
-        List<DefaultNutsWorkspaceExtensionManager.RegInfo> regInfos = extensionManager.buildRegInfos(bootSession);
-        for (Iterator<DefaultNutsWorkspaceExtensionManager.RegInfo> iterator = regInfos.iterator(); iterator.hasNext(); ) {
-            DefaultNutsWorkspaceExtensionManager.RegInfo regInfo = iterator.next();
-            switch (regInfo.getExtensionPointType().getName()) {
-                case "net.thevpc.nuts.NutsSystemTerminalBase":
-                case "net.thevpc.nuts.NutsSessionTerminalBase":
-                case "net.thevpc.nuts.runtime.core.io.NutsFormattedPrintStream": {
-                    extensionManager.registerType(regInfo, bootSession);
-                    iterator.remove();
-                    break;
-                }
-            }
-        }
+        extensionManager.onInitializeWorkspace(info,bootClassLoader, bootSession);
+//        List<DefaultNutsWorkspaceExtensionManager.RegInfo> regInfos = extensionManager.buildRegInfos(bootSession);
+//        for (Iterator<DefaultNutsWorkspaceExtensionManager.RegInfo> iterator = regInfos.iterator(); iterator.hasNext(); ) {
+//            DefaultNutsWorkspaceExtensionManager.RegInfo regInfo = iterator.next();
+//            switch (regInfo.getExtensionPointType().getName()) {
+//                case "net.thevpc.nuts.NutsSystemTerminalBase":
+//                case "net.thevpc.nuts.NutsSessionTerminalBase":{
+//                    extensionManager.registerType(regInfo.getExtensionPointType(),regInfo.getExtensionTypeImpl(),
+//                            getApiId()
+//                            , bootSession);
+//                    iterator.remove();
+//                    break;
+//                }
+//                case "net.thevpc.nuts.runtime.core.io.NutsFormattedPrintStream": {
+//                    extensionManager.registerType(regInfo.getExtensionPointType(),regInfo.getExtensionTypeImpl(),
+//                            getRuntimeId()
+//                            , bootSession);
+//                    iterator.remove();
+//                    break;
+//                }
+//            }
+//        }
 
         NutsSystemTerminalBase termb = extensions().createSupported(NutsSystemTerminalBase.class, null, bootSession);
         if (termb == null) {
@@ -214,11 +222,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsSession session = createSession();
         ((DefaultNutsLogger) LOG).resumeTerminal();
 
-        for (Iterator<DefaultNutsWorkspaceExtensionManager.RegInfo> iterator = regInfos.iterator(); iterator.hasNext(); ) {
-            DefaultNutsWorkspaceExtensionManager.RegInfo regInfo = iterator.next();
-            extensionManager.registerType(regInfo, session);
-            iterator.remove();
-        }
+//        for (Iterator<DefaultNutsWorkspaceExtensionManager.RegInfo> iterator = regInfos.iterator(); iterator.hasNext(); ) {
+//            DefaultNutsWorkspaceExtensionManager.RegInfo regInfo = iterator.next();
+//            extensionManager.registerType(regInfo.getExtensionPointType(),re, session);
+//            iterator.remove();
+//        }
         configManager.onExtensionsPrepared(session);
         initializing = true;
         try {
