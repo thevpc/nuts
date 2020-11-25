@@ -20,7 +20,7 @@
 /lib/nuts-tomcat-classloader/target/
 /lib/nuts-ssh-cli/target/
 /lib/vpc-common-nuts-template/target/
-/lib/nuts-lib-template/target/
+/lib/nlib-template/target/
 /nuts/target/
 /nuts-core/target/
 # Project exclude paths
@@ -31,7 +31,7 @@
 /mk-nuts-bootstrap-push
 /mk-nuts-bootstrap
 /runtime/
-lib/nuts-lib-template/nuts-lib-template.iml
+lib/nlib-template/nlib-template.iml
 lib/nuts-servlet/nuts-servlet.iml
 lib/nuts-tomcat-classloader/nuts-tomcat-classloader.iml
 nuts-core/nuts-core.iml

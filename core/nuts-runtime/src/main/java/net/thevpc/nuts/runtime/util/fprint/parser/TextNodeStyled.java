@@ -33,12 +33,24 @@ import net.thevpc.nuts.runtime.util.fprint.TextFormat;
  */
 public class TextNodeStyled implements TextNode {
 
+    private final String start;
+    private final String end;
     private final TextFormat style;
     private TextNode child;
 
-    public TextNodeStyled(TextFormat style, TextNode child) {
+    public TextNodeStyled(String start, String end,TextFormat style, TextNode child) {
+        this.start = start;
+        this.end = end;
         this.style = style;
         this.child = child;
+    }
+
+    public String getEnd() {
+        return end;
+    }
+
+    public String getStart() {
+        return start;
     }
 
     public TextFormat getStyle() {

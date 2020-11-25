@@ -14,6 +14,7 @@ public class NdiScriptOptions {
     private List<String> executorOptions;
     private NutsSession session;
     private String preferredScriptName;
+    private boolean includeEnv;
 
     public String getId() {
         return id;
@@ -75,6 +76,15 @@ public class NdiScriptOptions {
 
     public NdiScriptOptions setPreferredScriptName(String preferredScriptName) {
         this.preferredScriptName = preferredScriptName;
+        return this;
+    }
+
+    public boolean isIncludeEnv() {
+        return includeEnv;
+    }
+
+    public NdiScriptOptions setIncludeEnv(boolean includeEnv) {
+        this.includeEnv = includeEnv;
         return this;
     }
 }

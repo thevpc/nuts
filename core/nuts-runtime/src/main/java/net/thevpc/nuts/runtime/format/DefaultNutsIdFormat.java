@@ -207,7 +207,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             idBuilder.setProperty(NutsConstants.IdProperties.FACE, null);
         }
         id = idBuilder.build();
-        NutsTerminalFormat tf = getWorkspace().io().term().getTerminalFormat();
+        NutsTextFormatManager tf = getWorkspace().formats().text();
         StringBuilder sb = new StringBuilder();
         if (!isOmitNamespace()) {
             if (!CoreStringUtils.isBlank(id.getNamespace())) {

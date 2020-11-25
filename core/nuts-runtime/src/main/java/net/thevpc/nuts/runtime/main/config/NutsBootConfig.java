@@ -28,11 +28,8 @@ package net.thevpc.nuts.runtime.main.config;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import net.thevpc.nuts.NutsConstants;
-import net.thevpc.nuts.NutsOsFamily;
-import net.thevpc.nuts.NutsStoreLocationStrategy;
-import net.thevpc.nuts.NutsUnexpectedException;
-import net.thevpc.nuts.NutsWorkspaceOptions;
+
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 
 /**
@@ -66,12 +63,12 @@ public final class NutsBootConfig implements Cloneable, Serializable {
     /**
      * runtime component dependencies id list (; separated)
      */
-    private String runtimeDependencies;
+    private NutsIdBootInfo runtimeBootInfo;
 
     /**
      *
      */
-    private String extensionDependencies;
+    private NutsIdBootInfo[] extensionsBootInfo;
 
     /**
      * bootRepositories list (; separated) where to look for runtime dependencies
@@ -144,8 +141,8 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             this.name = context.getName();
             this.apiVersion = context.getApiVersion();
             this.runtimeId = context.getRuntimeId().getLongName();
-            this.runtimeDependencies = context.getRuntimeDependencies();
-            this.extensionDependencies = context.getExtensionDependencies();
+            this.runtimeBootInfo = context.getRuntimeBootInfo();
+            this.extensionsBootInfo = context.getExtensionsBootInfo();
             this.bootRepositories = context.getBootRepositories();
             this.javaCommand = context.getJavaCommand();
             this.javaOptions = context.getJavaOptions();
@@ -163,8 +160,8 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             this.name = other.getName();
             this.apiVersion = other.getApiVersion();
             this.runtimeId = other.getRuntimeId();
-            this.runtimeDependencies = other.getRuntimeDependencies();
-            this.extensionDependencies = other.getExtensionDependencies();
+            this.runtimeBootInfo = other.getRuntimeBootInfo();
+            this.extensionsBootInfo = other.getExtensionsBootInfo();
             this.bootRepositories = other.getBootRepositories();
             this.javaCommand = other.getJavaCommand();
             this.javaOptions = other.getJavaOptions();
@@ -206,21 +203,21 @@ public final class NutsBootConfig implements Cloneable, Serializable {
         return this;
     }
 
-    public String getRuntimeDependencies() {
-        return runtimeDependencies;
+    public NutsIdBootInfo getRuntimeBootInfo() {
+        return runtimeBootInfo;
     }
 
-    public NutsBootConfig setRuntimeDependencies(String runtimeDependencies) {
-        this.runtimeDependencies = runtimeDependencies;
+    public NutsBootConfig setRuntimeBootInfo(NutsIdBootInfo runtimeBootInfo) {
+        this.runtimeBootInfo = runtimeBootInfo;
         return this;
     }
 
-    public String getExtensionDependencies() {
-        return extensionDependencies;
+    public NutsIdBootInfo[] getExtensionsBootInfo() {
+        return extensionsBootInfo;
     }
 
-    public NutsBootConfig setExtensionDependencies(String extensionDependencies) {
-        this.extensionDependencies = extensionDependencies;
+    public NutsBootConfig setExtensionsBootInfo(NutsIdBootInfo[] extensionsBootInfo) {
+        this.extensionsBootInfo = extensionsBootInfo;
         return this;
     }
 
@@ -358,11 +355,11 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             }
             sb.append("runtimeId='").append(runtimeId).append('\'');
         }
-        if (!CoreStringUtils.isBlank(runtimeDependencies)) {
+        if (runtimeBootInfo!=null) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
-            sb.append("runtimeDependencies='").append(runtimeDependencies).append('\'');
+            sb.append("runtimeDependencies=").append(runtimeBootInfo);
         }
         if (!CoreStringUtils.isBlank(bootRepositories)) {
             if (sb.length() > 0) {

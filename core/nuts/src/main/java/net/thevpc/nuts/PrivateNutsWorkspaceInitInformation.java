@@ -49,6 +49,8 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
      * workspace runtime id (group, name avec version)
      */
     private String runtimeId;
+    private NutsIdBootInfo runtimeBootInfo;
+    private NutsIdBootInfo[] extensionsBootInfo;
 
     private NutsBootWorkspaceFactory bootWorkspaceFactory;
 
@@ -71,17 +73,17 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
      * workspace path
      */
     private String workspace;
-
-    /**
-     * runtime artifact dependencies id list (; separated)
-     */
-    private LinkedHashSet<String> runtimeDependenciesSet;
-
-    /**
-     *
-     */
-    private LinkedHashSet<String> extensionDependenciesSet;
-
+//
+//    /**
+//     * runtime artifact dependencies id list (; separated)
+//     */
+//    private LinkedHashSet<String> runtimeDependenciesSet;
+//
+//    /**
+//     *
+//     */
+//    private LinkedHashSet<String> extensionDependenciesSet;
+//
     /**
      *
      */
@@ -159,6 +161,24 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         return this;
     }
 
+    public NutsIdBootInfo getRuntimeBootInfo() {
+        return runtimeBootInfo;
+    }
+
+    public PrivateNutsWorkspaceInitInformation setRuntimeBootInfo(NutsIdBootInfo runtimeIdBootInfo) {
+        this.runtimeBootInfo = runtimeIdBootInfo;
+        return this;
+    }
+
+    public NutsIdBootInfo[] getExtensionsBootInfo() {
+        return extensionsBootInfo;
+    }
+
+    public PrivateNutsWorkspaceInitInformation setExtensionsBootInfo(NutsIdBootInfo[] extensionsIdBootInfo) {
+        this.extensionsBootInfo = extensionsIdBootInfo;
+        return this;
+    }
+
     @Override
     public String getWorkspaceLocation() {
         return workspace;
@@ -184,15 +204,15 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         return this;
     }
 
-    @Override
-    public String getRuntimeDependencies() {
-        return String.join(";", getRuntimeDependenciesSet());
-    }
-
-    @Override
-    public String getExtensionDependencies() {
-        return String.join(";", getExtensionDependenciesSet());
-    }
+//    @Override
+//    public String getRuntimeDependencies() {
+//        return String.join(";", getRuntimeDependenciesSet());
+//    }
+//
+//    @Override
+//    public String getExtensionDependencies() {
+//        return String.join(";", getExtensionDependenciesSet());
+//    }
 
     @Override
     public String getBootRepositories() {
@@ -253,25 +273,25 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         return NutsConstants.Ids.NUTS_API + "#" + apiVersion;
     }
 
-    @Override
-    public Set<String> getRuntimeDependenciesSet() {
-        return runtimeDependenciesSet;
-    }
+//    @Override
+//    public Set<String> getRuntimeDependenciesSet() {
+//        return runtimeDependenciesSet;
+//    }
+//
+//    public PrivateNutsWorkspaceInitInformation setRuntimeDependenciesSet(Set<String> runtimeDependenciesSet) {
+//        this.runtimeDependenciesSet = runtimeDependenciesSet == null ? null : new LinkedHashSet<>(runtimeDependenciesSet);
+//        return this;
+//    }
 
-    public PrivateNutsWorkspaceInitInformation setRuntimeDependenciesSet(Set<String> runtimeDependenciesSet) {
-        this.runtimeDependenciesSet = runtimeDependenciesSet == null ? null : new LinkedHashSet<>(runtimeDependenciesSet);
-        return this;
-    }
-
-    @Override
-    public Set<String> getExtensionDependenciesSet() {
-        return extensionDependenciesSet;
-    }
-
-    public PrivateNutsWorkspaceInitInformation setExtensionDependenciesSet(Set<String> extensionDependenciesSet) {
-        this.extensionDependenciesSet = extensionDependenciesSet == null ? null : new LinkedHashSet<>(extensionDependenciesSet);
-        return this;
-    }
+//    @Override
+//    public Set<String> getExtensionDependenciesSet() {
+//        return extensionDependenciesSet;
+//    }
+//
+//    public PrivateNutsWorkspaceInitInformation setExtensionDependenciesSet(Set<String> extensionDependenciesSet) {
+//        this.extensionDependenciesSet = extensionDependenciesSet == null ? null : new LinkedHashSet<>(extensionDependenciesSet);
+//        return this;
+//    }
 
     @Override
     public String getJavaCommand() {
@@ -394,12 +414,12 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
             }
             sb.append("runtimeId='").append(runtimeId).append('\'');
         }
-        if (!runtimeDependenciesSet.isEmpty()) {
-            if (sb.length() > 0) {
-                sb.append(", ");
-            }
-            sb.append("runtimeDependencies='").append(runtimeDependenciesSet).append('\'');
-        }
+//        if (!runtimeDependenciesSet.isEmpty()) {
+//            if (sb.length() > 0) {
+//                sb.append(", ");
+//            }
+//            sb.append("runtimeDependencies='").append(runtimeDependenciesSet).append('\'');
+//        }
         if (!PrivateNutsUtils.isBlank(bootRepositories)) {
             if (sb.length() > 0) {
                 sb.append(", ");

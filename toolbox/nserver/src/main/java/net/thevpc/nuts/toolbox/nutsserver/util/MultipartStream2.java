@@ -88,8 +88,7 @@ import java.io.*;
  * <br>
  * Here is an example of usage of this class.<br>
  * <br>
- * <
- * pre>
+ * <pre>
  * try { MultipartStream multipartStream = new MultipartStream(input, boundary);
  * boolean nextPart = multipartStream.skipPreamble(); OutputStream output;
  * while(nextPart) { String header = multipartStream.readHeaders(); // process

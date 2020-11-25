@@ -218,7 +218,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     private void printMap(PrintStream out, String prefix, Map<Object, Object> props) {
         int len = 1;
         for (Object extraKey : props.keySet()) {
-            int x = getWorkspace().io().term().getTerminalFormat().textLength(stringValue(extraKey));
+            int x = getWorkspace().formats().text().textLength(stringValue(extraKey));
             if (x > len) {
                 len = x;
             }
@@ -251,7 +251,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (prefix == null) {
             prefix = "";
         }
-        String ekey = getWorkspace().io().term().getTerminalFormat().escapeText(key);
+        String ekey = getWorkspace().formats().text().escapeText(key);
         int delta = key.length() - ekey.length();
         String formattedKey = compact ? key : CoreStringUtils.alignLeft(ekey, len - delta);
         if (fancySep != null) {

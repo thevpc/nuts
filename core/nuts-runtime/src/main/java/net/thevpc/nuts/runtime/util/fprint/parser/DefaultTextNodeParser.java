@@ -5,28 +5,26 @@
  */
 package net.thevpc.nuts.runtime.util.fprint.parser;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.util.fprint.FormattedPrintStreamParser;
+import net.thevpc.nuts.runtime.util.fprint.AbstractTextNodeParser;
+import net.thevpc.nuts.runtime.util.fprint.TextNodeVisitor;
 
 /**
  * @author vpc
  */
-public class FormattedPrintStreamNodePartialParser implements FormattedPrintStreamParser {
+public class DefaultTextNodeParser extends AbstractTextNodeParser {
 
-    private static final Logger LOG = Logger.getLogger(FormattedPrintStreamNodePartialParser.class.getName());
+    private static final Logger LOG = Logger.getLogger(DefaultTextNodeParser.class.getName());
 
     Stack<ParseAction> statusStack = new Stack<>();
     private boolean lineMode = false;
 
-    public FormattedPrintStreamNodePartialParser() {
-        statusStack.push(new AllParseAction());
+    public DefaultTextNodeParser() {
+        statusStack.push(new AllParseAction(true));
     }
 
     public FDocNode consumeFDocNode() {
@@ -39,7 +37,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
     @Override
     public boolean isIncomplete() {
-        ParseAction s = root().available.poll();
+        ParseAction s = root().available.peek();
         if (s == null) {
             for (ParseAction parseAction : statusStack) {
                 if (!parseAction.isComplete()) {
@@ -52,7 +50,11 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
     }
 
     @Override
-    public TextNode consumeNode() {
+    public long parseRemaining(TextNodeVisitor visitor) {
+        return consumeNodes(true,visitor);
+    }
+
+    public TextNode consumeNode(TextNodeVisitor visitor) {
         ParseAction s = root().available.poll();
         if (s == null) {
             while (!statusStack.isEmpty()) {
@@ -74,7 +76,14 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
             }
             s = root().available.poll();
         }
-        return s == null ? null : FDocNodeHelper.convert(s.toFDocNode());
+        if(s==null){
+            return null;
+        }
+        TextNode n = FDocNodeHelper.convert(s.toFDocNode());
+        if(visitor!=null) {
+            visitor.visit(n);
+        }
+        return n;
     }
 
     private AllParseAction root() {
@@ -92,7 +101,6 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         return statusStack.isEmpty() || root().available.isEmpty();
     }
 
-    @Override
     public boolean forceEnding() {
         boolean ok = false;
         while (true) {
@@ -118,7 +126,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
     static abstract class ParseAction {
 
-        abstract void consume(char c, FormattedPrintStreamNodePartialParser p);
+        abstract void consume(char c, DefaultTextNodeParser p);
 
         abstract void appendChild(ParseAction tt);
 
@@ -131,15 +139,17 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
     }
 
     static class AllParseAction extends ParseAction {
-
+        boolean spreadLines;
         LinkedList<ParseAction> available = new LinkedList<>();
 
-        public AllParseAction() {
+        public AllParseAction(boolean spreadLines) {
+            this.spreadLines=spreadLines;
         }
 
         @Override
-        void consume(char c, FormattedPrintStreamNodePartialParser p) {
-            p.applyStart(c);
+        void consume(char c, DefaultTextNodeParser p) {
+            boolean lineStart=available.isEmpty();
+            p.applyStart(c,spreadLines,lineStart);
         }
 
         @Override
@@ -154,11 +164,18 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
         @Override
         FDocNode toFDocNode() {
+            if(available.size()==1){
+                return available.get(0).toFDocNode();
+            }
             List<FDocNode> all = new ArrayList<>();
+            boolean partial=false;
             for (ParseAction a : available) {
+                if(!partial && !a.isComplete()){
+                    partial=true;
+                }
                 all.add(a.toFDocNode());
             }
-            return new FDocNode.List(all.toArray(new FDocNode[0]));
+            return new FDocNode.List(all.toArray(new FDocNode[0]),partial);
         }
 
         @Override
@@ -193,7 +210,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         }
 
         @Override
-        public void consume(char c, FormattedPrintStreamNodePartialParser p) {
+        public void consume(char c, DefaultTextNodeParser p) {
             switch (status) {
                 case 0: {
                     if (c == start.charAt(0)) {
@@ -302,23 +319,29 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
         @Override
         FDocNode toFDocNode() {
-            return new FDocNode.Escaped(start.toString(), end.toString(), value.toString());
+            return new FDocNode.Escaped(start.toString(), end.toString(), value.toString(),!isComplete());
         }
     }
 
     static class TypedParseAction extends ParseAction {
 
+        boolean spreadLines;
+        boolean lineStart;
         boolean started = false;
         StringBuilder start = new StringBuilder();
         StringBuilder end = new StringBuilder();
         List<ParseAction> children = new ArrayList<>();
 
-        public TypedParseAction(char c) {
+        public TypedParseAction(char c,boolean spreadLines,boolean lineStart) {
             start.append(c);
+            this.spreadLines=spreadLines;
+            this.lineStart = lineStart;
         }
 
-        public TypedParseAction(String c) {
+        public TypedParseAction(String c,boolean spreadLines,boolean lineStart) {
             start.append(c);
+            this.spreadLines=spreadLines;
+            this.lineStart =lineStart;
         }
 
         @Override
@@ -327,14 +350,18 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         }
 
         @Override
-        public void consume(char c, FormattedPrintStreamNodePartialParser p) {
+        public void consume(char c, DefaultTextNodeParser p) {
+            if(!spreadLines && (c=='\n' || c=='\r')){
+                p.applyPopReject(c);
+                return;
+            }
             if (!started) {
                 if (c == start.charAt(0)) {
                     if (start.length() < 4) {
                         start.append(c);
                     } else {
                         started = true;
-                        p.applyStart(c);
+                        p.applyStart(c,spreadLines,false);
                     }
                 } else {
                     char endChar = endOf(start.charAt(0));
@@ -344,8 +371,12 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                         if (end.length() >= start.length()) {
                             p.applyPop();
                         }
+
+                    }else if (lineStart && c == ')') {
+                        //this is a title
+                        p.applyDropReplace(new TitleParseAction(start.toString()+c));
                     } else {
-                        p.applyStart(c);
+                        p.applyStart(c,spreadLines,false);
                     }
                 }
             } else {
@@ -361,11 +392,11 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                     }
                 } else {
                     if (end.length() == 0) {
-                        p.applyStart(c);
+                        p.applyStart(c,spreadLines,false);
                     } else {
                         String y = end.toString();
                         end.delete(0, end.length());
-                        p.applyPush(new TypedParseAction(y));
+                        p.applyPush(new TypedParseAction(y,spreadLines, lineStart));
                     }
                 }
             }
@@ -413,11 +444,80 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
         @Override
         FDocNode toFDocNode() {
+            if(children.size()==1){
+                return new FDocNode.Typed(start.toString(), end.toString(), children.get(0).toFDocNode(),!children.get(0).isComplete());
+            }
             List<FDocNode> all = new ArrayList<>();
+            boolean partial=false;
             for (ParseAction a : children) {
+                if(!partial && !a.isComplete()){
+                    partial=true;
+                }
                 all.add(a.toFDocNode());
             }
-            return new FDocNode.Typed(start.toString(), end.toString(), new FDocNode.List(all.toArray(new FDocNode[0])));
+            return new FDocNode.Typed(start.toString(), end.toString(), new FDocNode.List(all.toArray(new FDocNode[0]),partial),partial);
+        }
+
+    }
+
+    static class TitleParseAction extends ParseAction {
+
+        StringBuilder start = new StringBuilder();
+        List<ParseAction> children = new ArrayList<>();
+
+        public TitleParseAction(String c) {
+            start.append(c);
+        }
+
+        @Override
+        void appendChild(ParseAction tt) {
+            children.add(tt);
+        }
+
+        @Override
+        public void consume(char c, DefaultTextNodeParser p) {
+            if(c==' ' && children.isEmpty()) {
+                start.append(c);
+            }else if(c=='\n' || c=='\r'){
+                p.applyPopReject(c);
+            } else {
+                p.applyStart(c,true,false);
+            }
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("Title(" + CoreStringUtils.dblQuote(start.toString()));
+            for (ParseAction parseAction : children) {
+                sb.append(",");
+                sb.append(parseAction.toString());
+            }
+            return sb.append(")").toString();
+        }
+
+        public boolean isComplete() {
+            return true;
+        }
+
+        @Override
+        void forceEnding() {
+        }
+
+        @Override
+        FDocNode toFDocNode() {
+            String s=start.toString();
+            if(children.size()==1){
+                return new FDocNode.Title(s, children.get(0).toFDocNode(),!children.get(0).isComplete());
+            }
+            List<FDocNode> all = new ArrayList<>();
+            boolean partial=false;
+            for (ParseAction a : children) {
+                if(!partial && !a.isComplete()){
+                    partial=true;
+                }
+                all.add(a.toFDocNode());
+            }
+            return new FDocNode.Title(s, new FDocNode.List(all.toArray(new FDocNode[0]),partial),partial);
         }
 
     }
@@ -426,9 +526,13 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
         char last = '\0';
         private boolean wasEscape;
+        private boolean spreadLines;
+        private boolean lineStart;
         private StringBuilder value = new StringBuilder();
 
-        public PlainParseAction(char c) {
+        public PlainParseAction(char c,boolean spreadLines,boolean lineStart) {
+            this.spreadLines=spreadLines;
+            this.lineStart = lineStart;
             if (c == '\\') {
                 wasEscape = true;
             } else {
@@ -443,7 +547,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         }
 
         @Override
-        public void consume(char c, FormattedPrintStreamNodePartialParser p) {
+        public void consume(char c, DefaultTextNodeParser p) {
             char oldLast = last;
             last = c;
             switch (c) {
@@ -470,10 +574,10 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                         if (oldLast == c) {
                             value.deleteCharAt(value.length() - 1);
                             if (value.length() == 0) {
-                                p.applyDropReplace(new TypedParseAction(c + "" + c));
+                                p.applyDropReplace(new TypedParseAction(c + "" + c,spreadLines,lineStart));
                                 return;
                             } else {
-                                p.applyPopReplace(new TypedParseAction(c + "" + c));
+                                p.applyPopReplace(new TypedParseAction(c + "" + c,spreadLines,lineStart));
                                 return;
                             }
                         }
@@ -481,7 +585,6 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                         return;
                     }
                 }
-
                 case '`':
                 case '"':
                 case '\'':
@@ -506,13 +609,26 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                 }
                 case '\n':
                 case '\r': {
-                    if (wasEscape) {
-                        wasEscape = false;
-                    }
-                    value.append(c);
-                    p.applyPop();
-                    if (p.lineMode) {
-                        p.forceEnding();
+                    if(spreadLines) {
+                        if (wasEscape) {
+                            wasEscape = false;
+                        }
+                        value.append(c);
+                        p.applyPop();
+                        if (p.lineMode) {
+                            p.forceEnding();
+                        }
+                    }else{
+                        if (wasEscape) {
+                            wasEscape = false;
+                            value.append(c);
+                            p.applyPop();
+                            if (p.lineMode) {
+                                p.forceEnding();
+                            }
+                        }else{
+                            p.applyPopReject(c);
+                        }
                     }
                     return;
                 }
@@ -555,7 +671,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
         @Override
         FDocNode toFDocNode() {
-            return new FDocNode.Plain(value.toString());
+            return new FDocNode.Plain(value.toString(),!isComplete());
         }
 
         @Override
@@ -566,9 +682,22 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
     }
 
     @Override
-    public void take(String str) {
-        char[] c = str.toCharArray();
-        write(c, 0, c.length);
+    public long parseIncremental(byte[] buf, int off, int len, TextNodeVisitor visitor) {
+        if (len == 0) {
+            return 0;
+        }
+        String raw = new String(buf, off, len);
+        char[] c = raw.toCharArray();
+        return parseIncremental(c,0,c.length,visitor);
+    }
+
+    @Override
+    public long parseIncremental(char[] buf, int off, int len, TextNodeVisitor visitor) {
+        if (len == 0) {
+            return 0;
+        }
+        write(buf, off, len);
+        return consumeNodes(false, visitor);
     }
 
     public void write(char[] str) {
@@ -622,7 +751,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 //        }
 //    }
 
-    void applyStart(char c) {
+    void applyStart(char c,boolean spreadLines,boolean lineStart) {
         switch (c) {
             case '`':
             case '"':
@@ -635,12 +764,12 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
             case '[':
             case '{':
             case '<': {
-                this.applyPush(new TypedParseAction(c));
+                this.applyPush(new TypedParseAction(c,spreadLines,false));
                 break;
             }
             case '\n':
             case '\r': {
-                this.applyPush(new PlainParseAction(c));
+                this.applyPush(new PlainParseAction(c,spreadLines,true));
                 applyPop();
                 if (lineMode) {
                     forceEnding();
@@ -648,7 +777,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                 break;
             }
             default: {
-                this.applyPush(new PlainParseAction(c));
+                this.applyPush(new PlainParseAction(c,spreadLines,lineStart));
             }
         }
     }
@@ -664,10 +793,11 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
     public static String filterText0(String text) {
         //create new instance not to alter current state
-        FormattedPrintStreamNodePartialParser pp = new FormattedPrintStreamNodePartialParser();
+        DefaultTextNodeParser pp = new DefaultTextNodeParser();
         StringBuilder sb = new StringBuilder();
         try {
-            pp.take(text);
+            byte[] bytes = text.getBytes();
+            pp.parseIncremental(bytes,0,bytes.length,null);
             pp.forceEnding();
             FDocNode tn = null;
             while ((tn = pp.consumeFDocNode()) != null) {
@@ -760,10 +890,25 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
     @Override
     public String toString() {
-        return "FormattedPrintStreamNodePartialParser{" + (isIncomplete() ? "incomplete" : isEmpty() ? "empty" : String.valueOf(size())) +
+        return "DefaultTextNodeParser{" + (isIncomplete() ? "incomplete" : isEmpty() ? "empty" : String.valueOf(size())) +
                 (lineMode ? ",lineMode" : "") +
                 "," + statusStack
                 + "}";
+    }
+
+    public long consumeNodes(boolean greedy, TextNodeVisitor visitor) {
+        long count=0;
+        while ((consumeNode(visitor)) != null) {
+            count++;
+        }
+        if (greedy) {
+            if (forceEnding()) {
+                while ((consumeNode(visitor)) != null) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
 

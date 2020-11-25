@@ -97,7 +97,7 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
     NutsSession createSession();
 
 
-    NutsWorkspaceEvents events();
+    NutsWorkspaceEventManager events();
 
     NutsCommandLineManager commandLine();
 

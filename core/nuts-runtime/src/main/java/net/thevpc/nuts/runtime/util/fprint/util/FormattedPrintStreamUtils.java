@@ -9,7 +9,7 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.util.fprint.parser.FormattedPrintStreamNodePartialParser;
+import net.thevpc.nuts.runtime.util.fprint.parser.DefaultTextNodeParser;
 
 public class FormattedPrintStreamUtils {
 
@@ -23,7 +23,7 @@ public class FormattedPrintStreamUtils {
      * @return
      */
     public static String filterText(String text) {
-        return FormattedPrintStreamNodePartialParser.filterText0(text);
+        return DefaultTextNodeParser.filterText0(text);
     }
 
     /**
@@ -34,7 +34,7 @@ public class FormattedPrintStreamUtils {
      * @return escaped text
      */
     public static String escapeText(String text) {
-        return FormattedPrintStreamNodePartialParser.escapeText0(text);
+        return DefaultTextNodeParser.escapeText0(text);
     }
 
     static int countRepeatable(char c,char[] cc,int offset){

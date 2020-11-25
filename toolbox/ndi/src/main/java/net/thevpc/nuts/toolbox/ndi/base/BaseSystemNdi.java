@@ -33,8 +33,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     protected abstract String createNutsScriptCommand(NutsId fnutsId, NdiScriptOptions options);
 
-    public String createBootScriptCommand(NutsDefinition f) {
-        return NdiUtils.generateScriptAsString("/net/thevpc/nuts/toolbox/" + getTemplateNutsName(),
+    public String createBootScriptCommand(NutsDefinition f,boolean includeEnv) {
+        String txt = NdiUtils.generateScriptAsString("/net/thevpc/nuts/toolbox/" + getTemplateNutsName(),
                 ss -> {
                     switch (ss) {
                         case "NUTS_JAR":
@@ -43,6 +43,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     return null;
                 }
         );
+        if(includeEnv){
+            Path ndiAppsFolder = context.getAppsFolder();
+            Path ndiConfigFile = ndiAppsFolder.resolve(getExecFileName(".ndi-bashrc"));
+            txt=getCallScriptCommand(ndiConfigFile.toString())+"\n"
+                    +txt;
+        }
+        return txt;
     }
 
     public WorkspaceAndApiVersion persistConfig(NutsWorkspaceBootConfig bootConfig, String apiVersion, String preferredName, NutsSession session) {
@@ -86,12 +93,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             return createBootScript(
                     options.getPreferredScriptName(),
                     nid.getVersion().toString(),
-                    options.isForceBoot() || options.getSession().isYes(), options.getSession().isTrace());
+                    options.isForceBoot() || options.getSession().isYes(), options.getSession().isTrace(),options.isIncludeEnv());
         } else {
             List<NdiScriptnfo> r = new ArrayList<>(Arrays.asList(createBootScript(
                     null,
                     null,
-                    false, false)));
+                    false, false,options.isIncludeEnv())));
             NutsDefinition fetched = null;
             if (nid.getVersion().isBlank()) {
                 fetched = context.getWorkspace().search()
@@ -114,6 +121,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                             switch (x) {
                                 case "NUTS_ID":
                                     return "RUN : " + fnutsId;
+                                case "GENERATOR":
+                                    return context.getAppId().toString();
                                 case "BODY": {
                                     return createNutsScriptCommand(fnutsId, options);
                                 }
@@ -294,7 +303,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     protected abstract String getCallScriptCommand(String path);
 
-    public NdiScriptnfo[] createBootScript(String preferredName, String apiVersion,boolean force, boolean trace) {
+    public NdiScriptnfo[] createBootScript(String preferredName, String apiVersion,boolean force, boolean trace, boolean includeEnv) {
         boolean currId=false;
         NutsId apiId=null;
         NutsId b = context.getWorkspace().getApiId();
@@ -338,9 +347,11 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                             x -> {
                                 switch (x) {
                                     case "NUTS_ID":
-                                        return "BOOT : " + f.getId().toString();
+                                        return f.getId().toString();
+                                    case "GENERATOR":
+                                        return context.getAppId().toString();
                                     case "BODY":
-                                        return createBootScriptCommand(f);
+                                        return createBootScriptCommand(f,includeEnv);
                                 }
                                 return null;
                             }
@@ -363,7 +374,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         NdiUtils.generateScript("/net/thevpc/nuts/toolbox/" + getTemplateBodyName(), w, x -> {
                             switch (x) {
                                 case "NUTS_ID":
-                                    return "BOOT : " + f.getId().toString();
+                                    return f.getId().toString();
+                                case "GENERATOR":
+                                    return context.getAppId().toString();
                                 case "BODY": {
                                     return getCallScriptCommand(NdiUtils.replaceFilePrefix(scriptString, ff2.toString(), ""));
                                 }

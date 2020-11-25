@@ -152,7 +152,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         List<Class> loadedExtensions = getImplementationTypes(NutsComponent.class, session);
         for (Class extensionImpl : loadedExtensions) {
             for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
-                a.add(new RegInfo(extensionPointType, extensionImpl));
+                a.add(new RegInfo(extensionPointType, extensionImpl,null));
             }
         }
         return a;
@@ -714,10 +714,16 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     public static class RegInfo {
         Class extensionPointType;
         Class extensionTypeImpl;
+        NutsId extensionId;
 
-        public RegInfo(Class extensionPointType, Class extensionTypeImpl) {
+        public RegInfo(Class extensionPointType, Class extensionTypeImpl,NutsId extensionId) {
             this.extensionPointType = extensionPointType;
             this.extensionTypeImpl = extensionTypeImpl;
+            this.extensionId = extensionId;
+        }
+
+        public NutsId getExtensionId() {
+            return extensionId;
         }
 
         public Class getExtensionPointType() {

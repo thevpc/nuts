@@ -5,15 +5,15 @@
  */
 package net.thevpc.nuts.runtime.util.fprint.parser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import net.thevpc.nuts.runtime.util.fprint.FPrintCommands;
 import net.thevpc.nuts.runtime.util.fprint.TextFormat;
 import net.thevpc.nuts.runtime.util.fprint.TextFormats;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
- *
  * @author vpc
  */
 public class FDocNodeHelper {
@@ -22,9 +22,8 @@ public class FDocNodeHelper {
         if (n != null) {
             if (n instanceof FDocNode.Plain) {
                 FDocNode.Plain p = (FDocNode.Plain) n;
-                return new TextNodePlain(p.getValue());
-            }
-            if (n instanceof FDocNode.Escaped) {
+                return new TextNodeEscaped(p.getValue());
+            } else if (n instanceof FDocNode.Escaped) {
                 FDocNode.Escaped p = (FDocNode.Escaped) n;
                 switch (p.getStart()) {
                     case "\"":
@@ -33,196 +32,117 @@ public class FDocNodeHelper {
                     case "'":
                     case "''":
                     case "'''": {
-                        return wrap(convert(new FDocNode.Plain(p.getValue())), p.getStart(), p.getEnd(), TextFormats.FG_GREEN);
+                        return wrap(new TextNodeEscaped(p.getValue()), p.getStart(), p.getEnd(), TextFormats.FG_GREEN);
                     }
-                    case "``": {
-                        // this a plain text!
-                        return new TextNodePlain(p.getValue());
-                    }
+                    case "``":
                     case "%%": {
-                        // this a plain text!
-                        return new TextNodePlain(p.getValue());
+                        // this stays un-styled
+                        return new TextNodeUnStyled(p.getStart(), p.getValue(), new TextNodeEscaped(p.getValue()));
                     }
                     case "```": {
                         //this is a comment ?
-                        return wrap(convert(new FDocNode.Plain(p.getValue())), p.getStart(), p.getEnd(), TextFormats.FG_GREEN);
+                        return wrap(new TextNodeEscaped(p.getValue()), p.getStart(), p.getEnd(), TextFormats.FG_GREEN);
                     }
                     case "`": {
                         //this might be a command !!
                         String v = p.getValue().trim();
                         switch (v) {
                             case FPrintCommands.MOVE_LINE_START: {
-                                return new TextNodeCommand(TextFormats.MOVE_LINE_START);
+                                return new TextNodeCommand(p.getStart(), p.getEnd(), p.getValue(), TextFormats.MOVE_LINE_START);
                             }
                             case FPrintCommands.LATER_RESET_LINE: {
-                                return new TextNodeCommand(TextFormats.LATER_RESET_LINE);
+                                return new TextNodeCommand(p.getStart(), p.getEnd(), p.getValue(), TextFormats.LATER_RESET_LINE);
                             }
                             case FPrintCommands.MOVE_UP: {
-                                return new TextNodeCommand(TextFormats.MOVE_UP);
+                                return new TextNodeCommand(p.getStart(), p.getEnd(), p.getValue(), TextFormats.MOVE_UP);
                             }
                             default: {
-                                return wrap(convert(new FDocNode.Plain(p.getValue())), p.getStart(), p.getEnd(), TextFormats.FG_GREEN);
+                                return wrap(new TextNodeEscaped(p.getValue()), p.getStart(), p.getEnd(), TextFormats.FG_GREEN);
                             }
                         }
                     }
                 }
 
-                return new TextNodePlain(p.getValue());
-            }
-            if (n instanceof FDocNode.List) {
+                return new TextNodeEscaped(p.getValue());
+            } else if (n instanceof FDocNode.List) {
                 FDocNode.List p = (FDocNode.List) n;
                 FDocNode[] children = p.getValues();
                 if (children.length == 1) {
                     return convert(children[0]);
                 }
                 return convert(Arrays.asList(children));
-            }
-            if (n instanceof FDocNode.Typed) {
+            } else if (n instanceof FDocNode.Typed) {
                 FDocNode.Typed p = (FDocNode.Typed) n;
                 switch (p.getStart()) {
-                    case "(": {
-                        return wrap(convert(p.getNode()), "(", ")", null);
+                    case "(":
+                    case "{":
+                    case "<": {
+                        return new TextNodeUnStyled(p.getStart(), p.getEnd(), convert(p.getNode()));
                     }
                     case "[": {
-                        return wrap(convert(p.getNode()), "[", "]", null);
-                    }
-                    case "{": {
-                        return wrap(convert(p.getNode()), "{", "}", null);
-                    }
-                    case "<": {
-                        return wrap(convert(p.getNode()), "<", ">", null);
+                        if (p.getNode() instanceof FDocNode.Plain) {
+                            String s = ((FDocNode.Plain) p.getNode()).getValue();
+                            if (s.startsWith("#") && s.length() > 1 && s.indexOf('#', 1) < 0) {
+                                return new TextNodeAnchor(
+                                        p.getStart() + "#",
+                                        p.getEnd(),
+                                        s.substring(1));
+                            }
+                        }
+                        return new TextNodeUnStyled(p.getStart(), p.getEnd(), convert(p.getNode()));
                     }
                     case "__":
                     case "___":
-                    case "____": {
-                        return new TextNodeStyled(TextFormats.UNDERLINED, convert(p.getNode()));
-                    }
+                    case "____":
                     case "//":
                     case "///":
-                    case "////": {
-                        return new TextNodeStyled(TextFormats.ITALIC, convert(p.getNode()));
-                    }
+                    case "////":
                     case "~~":
                     case "~~~":
-                    case "~~~~": {
-                        return new TextNodeStyled(TextFormats.STRIKED, convert(p.getNode()));
-                    }
+                    case "~~~~":
                     case "%%":
                     case "%%%":
-                    case "%%%%": {
-                        return new TextNodeStyled(TextFormats.REVERSED, convert(p.getNode()));
-                    }
-                    case "==": {
-                        return new TextNodeStyled(TextFormats.FG_BLUE, convert(p.getNode()));
-                    }
-                    case "===": {
-                        return new TextNodeStyled(TextFormats.BG_BLUE, convert(p.getNode()));
-                    }
-                    case "====": {
-                        return new TextNodeStyled(TextFormats.FG_BLUE, convert(p.getNode()));
-                    }
+                    case "%%%%":
+                    case "==":
+                    case "===":
+                    case "====":
                     case "**":
                     case "***":
-                    case "****": {
-                        return new TextNodeStyled(TextFormats.FG_CYAN, convert(p.getNode()));
-                    }
-                    case "##": {
-                        return new TextNodeStyled(TextFormats.FG_GREEN, convert(p.getNode()));
-                    }
-                    case "###": {
-                        return new TextNodeStyled(TextFormats.BG_GREEN, convert(p.getNode()));
-                    }
-                    case "####": {
-                        return new TextNodeStyled(TextFormats.FG_GREEN, convert(p.getNode()));
-                    }
-                    case "@@": {
-                        return new TextNodeStyled(TextFormats.FG_RED, convert(p.getNode()));
-                    }
-                    case "@@@": {
-                        return new TextNodeStyled(TextFormats.BG_RED, convert(p.getNode()));
-                    }
-                    case "@@@@": {
-                        return new TextNodeStyled(TextFormats.FG_RED, convert(p.getNode()));
-                    }
-                    case "[[": {
-                        return new TextNodeStyled(TextFormats.FG_MAGENTA, convert(p.getNode()));
-                    }
-                    case "[[[": {
-                        return new TextNodeStyled(TextFormats.BG_MAGENTA, convert(p.getNode()));
-                    }
-                    case "[[[[": {
-                        return new TextNodeStyled(TextFormats.FG_MAGENTA, convert(p.getNode()));
-                    }
-
-                    case "{{": {
-                        return new TextNodeStyled(TextFormats.FG_YELLOW, convert(p.getNode()));
-                    }
-                    case "{{{": {
-                        return new TextNodeStyled(TextFormats.BG_YELLOW, convert(p.getNode()));
-                    }
-                    case "{{{{": {
-                        return new TextNodeStyled(TextFormats.FG_YELLOW, convert(p.getNode()));
-                    }
-
+                    case "****":
+                    case "##":
+                    case "###":
+                    case "####":
+                    case "@@":
+                    case "@@@":
+                    case "@@@@":
+                    case "[[":
+                    case "[[[":
+                    case "[[[[":
+                    case "{{":
+                    case "{{{":
+                    case "{{{{":
                     case "++":
                     case "+++":
-                    case "++++": {
-                        return new TextNodeStyled(TextFormats.BG_GREEN, convert(p.getNode()));
-                    }
-
-                    case "^^": {
-                        return new TextNodeStyled(TextFormats.FG_BLUE, convert(p.getNode()));
-                    }
-                    case "^^^": {
-                        return new TextNodeStyled(TextFormats.BG_BLUE, convert(p.getNode()));
-                    }
-                    case "^^^^": {
-                        return new TextNodeStyled(TextFormats.FG_BLUE, convert(p.getNode()));
-                    }
-                    case "((": {
-                        return new TextNodeStyled(TextFormats.FG_BLUE, convert(p.getNode()));
-                    }
-                    case "(((": {
-                        return new TextNodeStyled(TextFormats.BG_CYAN, convert(p.getNode()));
-                    }
-                    case "((((": {
-                        return new TextNodeStyled(TextFormats.FG_BLUE, convert(p.getNode()));
-                    }
-                    case "<<": {
-                        return new TextNodeStyled(TextFormats.FG_GREY, convert(p.getNode()));
-                    }
-                    case "<<<": {
-                        return new TextNodeStyled(TextFormats.BG_GREY, convert(p.getNode()));
-                    }
-                    case "<<<<": {
-                        return new TextNodeStyled(TextFormats.FG_GREY, convert(p.getNode()));
-                    }
-                    case "$$": {
-                        return new TextNodeStyled(TextFormats.FG_MAGENTA, convert(p.getNode()));
-                    }
-                    case "$$$": {
-                        return new TextNodeStyled(TextFormats.BG_MAGENTA, convert(p.getNode()));
-                    }
-                    case "$$$$": {
-                        return new TextNodeStyled(TextFormats.BG_MAGENTA, convert(p.getNode()));
-                    }
-                    case "££": {
-                        return new TextNodeStyled(TextFormats.FG_RED, convert(p.getNode()));
-                    }
-                    case "£££": {
-                        return new TextNodeStyled(TextFormats.BG_RED, convert(p.getNode()));
-                    }
-                    case "££££": {
-                        return new TextNodeStyled(TextFormats.FG_RED, convert(p.getNode()));
-                    }
-                    case "§§": {
-                        return new TextNodeStyled(TextFormats.FG_WHITE, convert(p.getNode()));
-                    }
-                    case "§§§": {
-                        return new TextNodeStyled(TextFormats.BG_WHITE, convert(p.getNode()));
-                    }
+                    case "++++":
+                    case "^^":
+                    case "^^^":
+                    case "^^^^":
+                    case "((":
+                    case "(((":
+                    case "((((":
+                    case "<<":
+                    case "<<<":
+                    case "<<<<":
+                    case "$$":
+                    case "$$$":
+                    case "$$$$":
+                    case "££":
+                    case "£££":
+                    case "££££":
+                    case "§§":
+                    case "§§§":
                     case "§§§§": {
-                        return new TextNodeStyled(TextFormats.FG_WHITE, convert(p.getNode()));
+                        return new TextNodeStyled(p.getStart(), p.getEnd(), createStyle(p.getStart()), convert(p.getNode()));
                     }
                 }
                 TextNode convert = convert(p.getNode());
@@ -233,12 +153,28 @@ public class FDocNodeHelper {
 //                    return new TextNodePlain(convert.toString());
 //                }
 //                return new TextNodePlain(String.valueOf(n.toString()));
+            } else if (n instanceof FDocNode.Title) {
+                FDocNode.Title p = (FDocNode.Title) n;
+                String sc = p.getStyleCode();
+                return new TextNodeTitle(p.getStart(), createStyle(sc), convert(p.getNode()));
             }
+
         }
-        return new TextNodePlain(String.valueOf(n == null ? null : n.toString()));
+        throw new UnsupportedOperationException("Unsupported type " + n.getClass().getSimpleName());
     }
 
     private static TextNode wrap(TextNode t, String prefix, String suffix, TextFormat format) {
+        if (t instanceof TextNodePlain) {
+            TextNodePlain y = new TextNodePlain(
+                    prefix +
+                            ((TextNodePlain) t).getValue()
+                            + suffix
+            );
+            if (format == null) {
+                return y;
+            }
+            return new TextNodeStyled(prefix, suffix, format, y);
+        }
         TextNodeList y = new TextNodeList(
                 new TextNodePlain(prefix),
                 t,
@@ -247,7 +183,145 @@ public class FDocNodeHelper {
         if (format == null) {
             return y;
         }
-        return new TextNodeStyled(format, y);
+        return new TextNodeStyled(prefix, suffix, format, y);
+    }
+
+    private static TextFormat createStyle(String code) {
+        switch (code) {
+            case "__":
+            case "___":
+            case "____": {
+                return TextFormats.UNDERLINED;
+            }
+            case "//":
+            case "///":
+            case "////": {
+                return TextFormats.ITALIC;
+            }
+            case "~~":
+            case "~~~":
+            case "~~~~": {
+                return TextFormats.STRIKED;
+            }
+            case "%%":
+            case "%%%":
+            case "%%%%": {
+                return TextFormats.REVERSED;
+            }
+            case "==": {
+                return TextFormats.FG_BLUE;
+            }
+            case "===": {
+                return TextFormats.BG_BLUE;
+            }
+            case "====": {
+                return TextFormats.FG_BLUE;
+            }
+            case "**":
+            case "***":
+            case "****": {
+                return TextFormats.FG_CYAN;
+            }
+            case "##": {
+                return TextFormats.FG_GREEN;
+            }
+            case "###": {
+                return TextFormats.BG_GREEN;
+            }
+            case "####": {
+                return TextFormats.FG_GREEN;
+            }
+            case "@@": {
+                return TextFormats.FG_RED;
+            }
+            case "@@@": {
+                return TextFormats.BG_RED;
+            }
+            case "@@@@": {
+                return TextFormats.FG_RED;
+            }
+            case "[[": {
+                return TextFormats.FG_MAGENTA;
+            }
+            case "[[[": {
+                return TextFormats.BG_MAGENTA;
+            }
+            case "[[[[": {
+                return TextFormats.FG_MAGENTA;
+            }
+
+            case "{{": {
+                return TextFormats.FG_YELLOW;
+            }
+            case "{{{": {
+                return TextFormats.BG_YELLOW;
+            }
+            case "{{{{": {
+                return TextFormats.FG_YELLOW;
+            }
+
+            case "++":
+            case "+++":
+            case "++++": {
+                return TextFormats.BG_GREEN;
+            }
+
+            case "^^": {
+                return TextFormats.FG_BLUE;
+            }
+            case "^^^": {
+                return TextFormats.BG_BLUE;
+            }
+            case "^^^^": {
+                return TextFormats.FG_BLUE;
+            }
+            case "((": {
+                return TextFormats.FG_BLUE;
+            }
+            case "(((": {
+                return TextFormats.BG_CYAN;
+            }
+            case "((((": {
+                return TextFormats.FG_BLUE;
+            }
+            case "<<": {
+                return TextFormats.FG_GREY;
+            }
+            case "<<<": {
+                return TextFormats.BG_GREY;
+            }
+            case "<<<<": {
+                return TextFormats.FG_GREY;
+            }
+            case "$$": {
+                return TextFormats.FG_MAGENTA;
+            }
+            case "$$$": {
+                return TextFormats.BG_MAGENTA;
+            }
+            case "$$$$": {
+                return TextFormats.BG_MAGENTA;
+            }
+            case "££": {
+                return TextFormats.FG_RED;
+            }
+            case "£££": {
+                return TextFormats.BG_RED;
+            }
+            case "££££": {
+                return TextFormats.FG_RED;
+            }
+            case "§§": {
+                return TextFormats.FG_WHITE;
+            }
+            case "§§§": {
+                return TextFormats.BG_WHITE;
+            }
+            case "§§§§": {
+                return TextFormats.FG_WHITE;
+            }
+        }
+        throw new UnsupportedOperationException("Unsupported format " + code);
     }
 
     private static TextNode convert(List<FDocNode> n) {

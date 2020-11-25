@@ -31,7 +31,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
-import java.io.UncheckedIOException;
 import java.util.*;
 
 import net.thevpc.nuts.runtime.format.DefaultFormatBase;
@@ -180,7 +179,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.FIRST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, getWorkspace().io().term().getTerminalFormat().textLength(s)));
+                    line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().textLength(s)));
                 }
                 line.write(getSeparator(Separator.FIRST_ROW_END));
 
@@ -202,7 +201,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                             DefaultCell cell = cells.get(i);
                             String B = getSeparator(Separator.MIDDLE_ROW_LINE);
                             String s = cell.rendered.toString();
-                            line.write(CoreStringUtils.fillString(B, getWorkspace().io().term().getTerminalFormat().textLength(s)));
+                            line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().textLength(s)));
                         }
                         line.write(getSeparator(Separator.MIDDLE_ROW_END));
 
@@ -244,7 +243,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.LAST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, getWorkspace().io().term().getTerminalFormat().textLength(s)));
+                    line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().textLength(s)));
                 }
                 line.write(getSeparator(Separator.LAST_ROW_END));
             }
@@ -259,7 +258,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         List<DefaultCell> cells = new ArrayList<>();
     }
 
-    public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsTerminalFormat tf) {
+    public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsTextFormatManager tf) {
         int length = tf.textLength(sb.toString());
         switch (a) {
             case FIRST: {
@@ -325,7 +324,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         int rows;
         int columns;
         NutsTableCellFormat formatter;
-        NutsTerminalFormat metrics;
+        NutsTextFormatManager metrics;
         NutsPositionType valign;
         NutsPositionType halign;
 
@@ -333,7 +332,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
 
         }
 
-        public RenderedCell(int c, int r, Object o, String str, NutsTableCellFormat formatter, NutsPositionType valign, NutsPositionType halign, NutsTerminalFormat metrics) {
+        public RenderedCell(int c, int r, Object o, String str, NutsTableCellFormat formatter, NutsPositionType valign, NutsPositionType halign, NutsTextFormatManager metrics) {
             this.formatter = formatter;
             this.metrics = metrics;
             this.valign = valign;
@@ -753,7 +752,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                         formatter,
                         formatter.getVerticalAlign(r0, c0, cvalue),
                         formatter.getHorizontalAlign(r0, c0, cvalue),
-                        getWorkspace().io().term().getTerminalFormat()
+                        getWorkspace().formats().text()
                 ));
                 cell.cw = cell.getRendered().columns;
                 cell.ch = cell.getRendered().rows;

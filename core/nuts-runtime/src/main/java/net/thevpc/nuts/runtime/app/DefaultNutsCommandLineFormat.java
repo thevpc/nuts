@@ -123,6 +123,6 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
                 }
             }
         }
-        return ws.io().term().getTerminalFormat().escapeText(sb.toString());
+        return ws.formats().text().escapeText(sb.toString());
     }
 }

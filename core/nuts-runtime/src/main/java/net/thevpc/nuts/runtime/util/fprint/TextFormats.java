@@ -55,7 +55,7 @@ public class TextFormats {
     public static final TextFormat BG_GREY = new TextBackground("BG_GREY", Color.GRAY);
 
     public static final TextFormat BG_CYAN = new TextBackground("BG_CYAN", Color.CYAN);
-    public static final TextFormat BG_MAGENTA = new TextBackground("BG_PURPLE", new Color(128, 0, 128));
+    public static final TextFormat BG_MAGENTA = new TextBackground("BG_MAGENTA", new Color(128, 0, 128));
     public static final TextFormat BG_BLACK = new TextBackground("BG_BLACK", Color.BLACK);
     public static final TextFormat BG_YELLOW = new TextBackground("BG_YELLOW", Color.YELLOW);
     public static final TextFormat BG_GREEN = new TextBackground("BG_GREEN", Color.GREEN);

@@ -278,7 +278,7 @@ public class AnsiStyle implements StyleRenderer {
     }
 
     @Override
-    public void startFormat(RenderedRawStream out)  throws IOException {
+    public void startFormat(RenderedRawStream out) {
         for (String command : startCommands) {
             byte[] bytes = command.getBytes();
             out.writeRaw(bytes,0,bytes.length);
@@ -291,7 +291,7 @@ public class AnsiStyle implements StyleRenderer {
     }
 
     @Override
-    public void endFormat(RenderedRawStream out) throws IOException {
+    public void endFormat(RenderedRawStream out)  {
         String s = this.resolveEndEscapeString();
         if (s != null && s.length()>0) {
             byte[] bytes = s.getBytes();

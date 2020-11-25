@@ -19,40 +19,40 @@
 //            writeRaw0(buf, off, len);
 //        }
 //    };
-////    private FormattedPrintStreamNodePartialParser partialParser = new FormattedPrintStreamNodePartialParser();
+////    private DefaultTextNodeParser partialParser = new DefaultTextNodeParser();
 //
-//    public FormattedPrintStream(OutputStream out, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) {
+//    public FormattedPrintStream(OutputStream out, FormattedPrintStreamRenderer renderer, TextNodeParser parser) {
 //        super(out);
 //        init(renderer, parser);
 //    }
 //
-//    public FormattedPrintStream(OutputStream out, boolean autoFlush, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) {
+//    public FormattedPrintStream(OutputStream out, boolean autoFlush, FormattedPrintStreamRenderer renderer, TextNodeParser parser) {
 //        super(out, autoFlush);
 //        init(renderer, parser);
 //    }
 //
-//    public FormattedPrintStream(OutputStream out, boolean autoFlush, String encoding, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws UnsupportedEncodingException {
+//    public FormattedPrintStream(OutputStream out, boolean autoFlush, String encoding, FormattedPrintStreamRenderer renderer, TextNodeParser parser) throws UnsupportedEncodingException {
 //        super(out, autoFlush, encoding);
 //        init(renderer, parser);
 //    }
 //
 //
-//    //    public FormattedPrintStream(String fileName, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws FileNotFoundException {
+//    //    public FormattedPrintStream(String fileName, FormattedPrintStreamRenderer renderer, TextNodeParser parser) throws FileNotFoundException {
 ////        super(fileName);
 ////        init(renderer, parser);
 ////    }
 ////
-////    public FormattedPrintStream(String fileName, String csn, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws FileNotFoundException, UnsupportedEncodingException {
+////    public FormattedPrintStream(String fileName, String csn, FormattedPrintStreamRenderer renderer, TextNodeParser parser) throws FileNotFoundException, UnsupportedEncodingException {
 ////        super(fileName, csn);
 ////        init(renderer, parser);
 ////    }
 ////
-////    public FormattedPrintStream(File file, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws FileNotFoundException {
+////    public FormattedPrintStream(File file, FormattedPrintStreamRenderer renderer, TextNodeParser parser) throws FileNotFoundException {
 ////        super(file);
 ////        init(renderer, parser);
 ////    }
 ////
-////    public FormattedPrintStream(File file, String csn, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) throws FileNotFoundException, UnsupportedEncodingException {
+////    public FormattedPrintStream(File file, String csn, FormattedPrintStreamRenderer renderer, TextNodeParser parser) throws FileNotFoundException, UnsupportedEncodingException {
 ////        super(file, csn);
 ////        init(renderer, parser);
 ////    }
@@ -89,7 +89,7 @@
 ////    }
 //
 //    //////////////////////////////////////////
-//    private void init(FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) {
+//    private void init(FormattedPrintStreamRenderer renderer, TextNodeParser parser) {
 //        OutputStream base = getOut();
 //        NutsTerminalModeOp t = CoreIOUtils.resolveNutsTerminalModeOp(base);
 //        if (t.in() != NutsTerminalMode.INHERITED) {

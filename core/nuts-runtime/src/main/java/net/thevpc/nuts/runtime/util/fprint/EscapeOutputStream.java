@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.util.fprint;
 
 import net.thevpc.nuts.NutsTerminalMode;
-import net.thevpc.nuts.runtime.util.fprint.parser.FormattedPrintStreamNodePartialParser;
+import net.thevpc.nuts.runtime.util.fprint.parser.DefaultTextNodeParser;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 import net.thevpc.nuts.runtime.io.NutsTerminalModeOp;
 
@@ -30,13 +30,13 @@ public class EscapeOutputStream extends FilterOutputStream implements ExtendedFo
     @Override
     public void write(int b) throws IOException {
         out.write(
-                FormattedPrintStreamNodePartialParser.escapeText0(Character.toString((char) b)).getBytes()
+                DefaultTextNodeParser.escapeText0(Character.toString((char) b)).getBytes()
         );
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
-        byte[] bytes = FormattedPrintStreamNodePartialParser.escapeText0(new String(b, off, len)).getBytes();
+        byte[] bytes = DefaultTextNodeParser.escapeText0(new String(b, off, len)).getBytes();
         out.write(bytes,0,bytes.length);
     }
 

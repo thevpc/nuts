@@ -55,7 +55,7 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     protected NutsRepositoryManager repositoryManager;
     protected DefaultNutsWorkspaceExtensionManager extensionManager;
     protected ObservableMap<String, Object> userProperties;
-    protected DefaultNutsWorkspaceEvents events;
+    protected DefaultNutsWorkspaceEventManager events;
     private DefaultNutsIdManager defaultNutsIdManager;
     private DefaultNutsVersionManager defaultVersionManager;
     private DefaultNutsDescriptorManager defaultDescriptorManager;
@@ -143,9 +143,9 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public NutsWorkspaceEvents events() {
+    public NutsWorkspaceEventManager events() {
         if (events == null) {
-            events = new DefaultNutsWorkspaceEvents(this);
+            events = new DefaultNutsWorkspaceEventManager(this);
         }
         return events;
     }

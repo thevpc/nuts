@@ -13,5 +13,6 @@ public interface SystemNdi {
     void removeNutsScript(String id, NutsSession session);
 
     void addNutsWorkspaceScript(String preferredScriptName, String switchWorkspaceLocation, String apiVersion);
+
     void switchWorkspace(String switchWorkspaceLocation, String apiVersion);
 }

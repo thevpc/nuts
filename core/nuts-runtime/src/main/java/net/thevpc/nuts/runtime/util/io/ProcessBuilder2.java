@@ -28,10 +28,7 @@ package net.thevpc.nuts.runtime.util.io;
 import java.io.*;
 import java.util.*;
 
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsTerminalFormat;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.app.DefaultNutsArgument;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 
@@ -666,7 +663,7 @@ public class ProcessBuilder2 {
     }
 
     public String getFormattedCommandString(NutsWorkspace ws, CommandStringFormat f) {
-        NutsTerminalFormat tf = ws.io().term().getTerminalFormat();
+        NutsTextFormatManager tf = ws.formats().text();
         StringBuilder sb = new StringBuilder();
         File ff = getDirectory();
         if (ff == null) {

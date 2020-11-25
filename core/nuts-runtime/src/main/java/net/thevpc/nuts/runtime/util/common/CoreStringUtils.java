@@ -457,7 +457,7 @@ public class CoreStringUtils {
     }
 
     public static String enforceDoubleQuote(String s, NutsWorkspace ws) {
-        s = ws.io().term().getTerminalFormat().escapeText(s);
+        s = ws.formats().text().escapeText(s);
         if (s.isEmpty() || s.contains(" ") || s.contains("\"") || s.contains("'")) {
             s = "\"" + s + "\"";
         }

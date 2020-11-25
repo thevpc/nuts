@@ -28,6 +28,10 @@ package net.thevpc.nuts;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Simple Implementation of Nuts BootClassLoader
@@ -40,7 +44,97 @@ class NutsBootClassLoader extends URLClassLoader {
      * @param urls urls
      * @param parent parent class loader
      */
-    NutsBootClassLoader(URL[] urls, ClassLoader parent) {
-        super(urls, parent);
+    NutsBootClassLoader(IdInfo[] urls, ClassLoader parent) {
+        super(new URL[0], parent);
+        LinkedHashSet<URL> all=new LinkedHashSet<>();
+        for (IdInfo url : urls) {
+            addURL(url,all);
+        }
+        for (URL url : all) {
+            super.addURL(url);
+        }
+    }
+
+    protected void addURL(IdInfo ids, Set<URL> urls) {
+        urls.add(ids.url);
+        for (IdInfo dependency : ids.dependencies) {
+            addURL(dependency,urls);
+        }
+    }
+
+    @Override
+    protected void addURL(URL url) {
+        for (URL u : getURLs()) {
+            if(u.equals(url)){
+                return;
+            }
+        }
+        super.addURL(url);
+    }
+
+    static class IdInfo{
+        private String id;
+        private URL url;
+        private IdInfo[] dependencies;
+
+        public IdInfo(String id, URL url, IdInfo... dependencies) {
+            this.id = id;
+            this.url = url;
+            this.dependencies = dependencies;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public URL getUrl() {
+            return url;
+        }
+
+        public IdInfo[] getDependencies() {
+            return dependencies;
+        }
+    }
+    static class IdInfoBuilder{
+        private String id;
+        private URL url;
+        private List<IdInfo> dependencies=new ArrayList<>();
+
+        public String getId() {
+            return id;
+        }
+
+        public IdInfoBuilder setId(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public URL getUrl() {
+            return url;
+        }
+
+        public IdInfoBuilder setUrl(URL url) {
+            this.url = url;
+            return this;
+        }
+
+        public List<IdInfo> getDependencies() {
+            return dependencies;
+        }
+
+        public IdInfoBuilder addDependency(IdInfo other) {
+            this.dependencies.add(other);
+            return this;
+        }
+        public IdInfoBuilder setDependencies(List<IdInfo> dependencies) {
+            this.dependencies = dependencies;
+            return this;
+        }
+
+        public IdInfo build(){
+            return new IdInfo(
+                    id, url,dependencies.toArray(new IdInfo[0])
+            );
+        }
     }
 }

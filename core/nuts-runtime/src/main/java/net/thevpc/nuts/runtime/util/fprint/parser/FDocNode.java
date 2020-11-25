@@ -10,15 +10,27 @@ package net.thevpc.nuts.runtime.util.fprint.parser;
  * @author vpc
  */
 public class FDocNode {
+    private boolean partial;
 
-    private FDocNode() {
+    public boolean isPartial() {
+        return partial;
+    }
+
+    public FDocNode setPartial(boolean partial) {
+        this.partial = partial;
+        return this;
+    }
+
+    private FDocNode(boolean partial) {
+        this.partial=partial;
     }
 
     public static final class Plain extends FDocNode {
 
         private String value;
 
-        public Plain(String value) {
+        public Plain(String value,boolean partial) {
+            super(partial);
             this.value = value;
         }
 
@@ -39,7 +51,8 @@ public class FDocNode {
         private String end;
         private FDocNode node;
 
-        public Typed(String start, String end, FDocNode value) {
+        public Typed(String start, String end, FDocNode value,boolean partial) {
+            super(partial);
             this.start = start;
             this.end = end;
             this.node = value;
@@ -64,13 +77,45 @@ public class FDocNode {
 
     }
 
+    public static final class Title extends FDocNode {
+
+        private String start;
+        private FDocNode node;
+
+        public Title(String start, FDocNode value,boolean partial) {
+            super(partial);
+            this.start = start;
+            this.node = value;
+        }
+
+        public String getStyleCode() {
+            int u = start.indexOf(')');
+            return start.substring(0,u);
+        }
+
+        public String getStart() {
+            return start;
+        }
+
+        public FDocNode getNode() {
+            return node;
+        }
+
+        @Override
+        public String toString() {
+            return "Title&" + start + "&{" + node + '}';
+        }
+
+    }
+
     public static final class Escaped extends FDocNode {
 
         private String start;
         private String end;
         private String value;
 
-        public Escaped(String start, String end, String value) {
+        public Escaped(String start, String end, String value,boolean partial) {
+            super(partial);
             this.start = start;
             this.end = end;
             this.value = value;
@@ -99,7 +144,8 @@ public class FDocNode {
 
         private FDocNode[] values;
 
-        public List(FDocNode[] values) {
+        public List(FDocNode[] values,boolean partial) {
+            super(partial);
             this.values = values;
         }
 

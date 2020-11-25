@@ -641,11 +641,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             if (cconfig.getRuntimeId() == null) {
                 cconfig.setRuntimeId(initOptions.getRuntimeId());
             }
-            if (cconfig.getRuntimeDependencies() == null) {
-                cconfig.setRuntimeDependencies(initOptions.getRuntimeDependencies());
+            if (cconfig.getRuntimeBootInfo() == null) {
+                cconfig.setRuntimeBootInfo(initOptions.getRuntimeBootInfo());
             }
-            if (cconfig.getExtensionDependencies() == null) {
-                cconfig.setExtensionDependencies(initOptions.getExtensionDependencies());
+            if (cconfig.getExtensionsBootInfo() == null) {
+                cconfig.setExtensionsBootInfo(initOptions.getExtensionsBootInfo());
             }
             if (cconfig.getBootRepositories() == null) {
                 cconfig.setBootRepositories(initOptions.getBootRepositories());
@@ -669,8 +669,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 //always reload boot resolved versions!
                 cconfig.setApiId(ws.id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + initOptions.getApiVersion()));
                 cconfig.setRuntimeId(initOptions.getRuntimeId());
-                cconfig.setRuntimeDependencies(initOptions.getRuntimeDependencies());
-                cconfig.setExtensionDependencies(initOptions.getExtensionDependencies());
+                cconfig.setRuntimeBootInfo(initOptions.getRuntimeBootInfo());
+                cconfig.setExtensionsBootInfo(initOptions.getExtensionsBootInfo());
                 cconfig.setBootRepositories(initOptions.getBootRepositories());
             }
             setCurrentConfig(cconfig

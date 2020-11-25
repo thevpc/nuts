@@ -33,10 +33,28 @@ import net.thevpc.nuts.runtime.util.fprint.TextFormat;
  */
 public class TextNodeCommand implements TextNode {
 
+    private final String start;
+    private final String end;
+    private final String text;
     private final TextFormat style;
 
-    public TextNodeCommand(TextFormat style) {
+    public TextNodeCommand(String start,String end,String text,TextFormat style) {
+        this.text = text;
         this.style = style;
+        this.start = start;
+        this.end = end;
+    }
+
+    public String getStart() {
+        return start;
+    }
+
+    public String getEnd() {
+        return end;
+    }
+
+    public String getText() {
+        return text;
     }
 
     public TextFormat getStyle() {

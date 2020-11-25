@@ -36,8 +36,10 @@ import net.thevpc.nuts.runtime.util.common.ListMap;
 
 import java.lang.reflect.Modifier;
 
+import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 1/5/17.
@@ -45,11 +47,24 @@ import java.util.logging.Level;
 public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 
     private final NutsLogger LOG;
+    private final static class ClassExtension{
+        Class clazz;
+        Object source;
+        boolean enabled=true;
 
-    private final ListMap<Class, Class> classes = new ListMap<>();
+        public ClassExtension(Class clazz, Object source, boolean enabled) {
+            this.clazz = clazz;
+            this.source = source;
+            this.enabled = enabled;
+        }
+    }
+
+    private final ListMap<Class, ClassExtension> classes = new ListMap<>();
     private final ListMap<Class, Object> instances = new ListMap<>();
     private final Map<Class, Object> singletons = new HashMap<>();
     private final Map<ClassLoader, List<Class>> discoveredCacheByLoader = new HashMap<>();
+    private final Map<URL, List<Class>> discoveredCacheByURL = new HashMap<>();
+    private final Map<NutsId, List<Class>> discoveredCacheById = new HashMap<>();
     private final ClassClassMap discoveredCacheByClass = new ClassClassMap();
     private NutsWorkspace workspace;
 
@@ -102,13 +117,18 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 
     @Override
     public boolean isRegisteredType(Class extensionPoint, Class implementation) {
-        return classes.contains(extensionPoint, implementation);
+        for (ClassExtension cls : classes.getAll(extensionPoint)) {
+            if (cls.clazz.equals(implementation)) {
+                return cls.enabled;
+            }
+        }
+        return false;
     }
 
     public Class findRegisteredType(Class extensionPoint, String implementation) {
-        for (Class cls : classes.getAll(extensionPoint)) {
-            if (cls.getName().equals(implementation)) {
-                return cls;
+        for (ClassExtension cls : classes.getAll(extensionPoint)) {
+            if (cls.clazz.getName().equals(implementation)) {
+                return cls.clazz;
             }
         }
         return null;
@@ -138,12 +158,18 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 
     @Override
     public Set<Class> getExtensionTypes(Class extensionPoint) {
-        return new HashSet<>(classes.getAll(extensionPoint));
+        return
+                classes.getAll(extensionPoint).stream().map(x->x.clazz).collect(Collectors.toSet())
+        ;
     }
 
     @Override
     public List<Object> getExtensionObjects(Class extensionPoint) {
         return new ArrayList<>(instances.getAll(extensionPoint));
+    }
+
+    private Object resolveClassSource(Class implementation){
+        return null;
     }
 
     @Override
@@ -155,7 +181,11 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             LOG.with().level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
             .log("bind    {0} for __impl type__ {1}", CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getName());
         }
-        classes.add(extensionPoint, implementation);
+        classes.add(extensionPoint, new ClassExtension(
+                implementation,
+                resolveClassSource(implementation),
+                true
+        ));
     }
 
     public void unregisterType(Class extensionPoint, Class implementation) {
@@ -165,7 +195,10 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 LOG.with().level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
                 .log("unbind  {0} for __impl type__ {1}", extensionPoint, registered.getName());
             }
-            classes.remove(extensionPoint, registered);
+            ClassExtension found = classes.getAll(extensionPoint).stream().filter(x->x.clazz.equals(registered)).findFirst().orElse(null);
+            if(found!=null) {
+                classes.remove(extensionPoint, found);
+            }
         }
     }
 
@@ -176,7 +209,10 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 LOG.with().level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
                 .log("unbind  Unregistering {0} for __impl type__ {1}", extensionPoint, registered.getName());
             }
-            classes.remove(extensionPoint, registered);
+            ClassExtension found = classes.getAll(extensionPoint).stream().filter(x->x.clazz.equals(registered)).findFirst().orElse(null);
+            if(found!=null) {
+                classes.remove(extensionPoint, found);
+            }
         }
     }
 
@@ -327,9 +363,10 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             }
             return (T) one;
         }
-        Class oneType = classes.getOne(type);
-        if (oneType != null) {
-            return (T) resolveInstance(oneType, type);
+        for (ClassExtension e : classes.getAll(type)) {
+            if(e.enabled){
+                return (T) resolveInstance(e.clazz, type);
+            }
         }
         for (Class<T> t : getImplementationTypes(type)) {
             return (T) instantiate0(t);
@@ -344,7 +381,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             all.add((T) obj);
         }
         LinkedHashSet<Class> allTypes = new LinkedHashSet<>();
-        allTypes.addAll(classes.getAll(type));
+        allTypes.addAll(classes.getAll(type).stream().filter(x->x.enabled).map(x->x.clazz).collect(Collectors.toList()));
         allTypes.addAll(getImplementationTypes(type));
         for (Class c : allTypes) {
             T obj = null;
@@ -363,16 +400,19 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 
     public <T> List<T> createAll(Class<T> type, Class[] argTypes, Object[] args) {
         List<T> all = new ArrayList<T>();
-        for (Class c : classes.getAll(type)) {
-            T obj = null;
-            try {
-                obj = (T) resolveInstance(c, type, argTypes, args);
-            } catch (Exception e) {
-                LOG.with().level(Level.WARNING).verb( NutsLogVerb.FAIL).formatted().error(e)
-                        .log( "unable to instantiate {0} for {1} : {2}" ,c,type, CoreStringUtils.exceptionToString(e));
-            }
-            if (obj != null) {
-                all.add(obj);
+        for (ClassExtension cc : classes.getAll(type)) {
+            if(cc.enabled) {
+                Class c=cc.clazz;
+                T obj = null;
+                try {
+                    obj = (T) resolveInstance(c, type, argTypes, args);
+                } catch (Exception e) {
+                    LOG.with().level(Level.WARNING).verb(NutsLogVerb.FAIL).formatted().error(e)
+                            .log("unable to instantiate {0} for {1} : {2}", c, type, CoreStringUtils.exceptionToString(e));
+                }
+                if (obj != null) {
+                    all.add(obj);
+                }
             }
         }
 //        ServiceLoader serviceLoader = ServiceLoader.load(type);

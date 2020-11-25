@@ -21,8 +21,8 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     private String name;
     private NutsId apiId;
     private NutsId bootRuntime;
-    private String bootRuntimeDependencies;
-    private String bootExtensionDependencies;
+    private NutsIdBootInfo bootRuntimeBootInfo;
+    private NutsIdBootInfo[] bootExtensionsBootInfo;
     private String bootRepositories;
     private String bootJavaCommand;
     private String bootJavaOptions;
@@ -190,7 +190,10 @@ public final class DefaultNutsWorkspaceCurrentConfig {
             this.bootRuntime = CoreNutsUtils.parseNutsId(c.getId());
         }
         if (c.getDependencies() != null) {
-            this.bootRuntimeDependencies = c.getDependencies();
+            this.bootRuntimeBootInfo = new NutsIdBootInfo(
+                    this.bootRuntime.toString(),
+                    c.getDependencies().split(";")
+            );
         }
         return this;
     }
@@ -225,11 +228,11 @@ public final class DefaultNutsWorkspaceCurrentConfig {
                     ? CoreNutsUtils.parseNutsId(c.getRuntimeId())
                     : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId());
         }
-        if (c.getRuntimeDependencies() != null) {
-            this.bootRuntimeDependencies = c.getRuntimeDependencies();
+        if (c.getRuntimeBootInfo() != null) {
+            this.bootRuntimeBootInfo = c.getRuntimeBootInfo();
         }
-        if (c.getExtensionDependencies() != null) {
-            this.bootExtensionDependencies = c.getExtensionDependencies();
+        if (c.getExtensionsBootInfo() != null) {
+            this.bootExtensionsBootInfo = c.getExtensionsBootInfo();
         }
         if (c.getBootRepositories() != null) {
             this.bootRepositories = c.getBootRepositories();
@@ -256,8 +259,8 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
 
-    public String getExtensionDependencies() {
-        return bootExtensionDependencies;
+    public NutsIdBootInfo[] getExtensionsBootInfo() {
+        return bootExtensionsBootInfo;
     }
 
 
@@ -286,8 +289,8 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
 
-    public String getRuntimeDependencies() {
-        return bootRuntimeDependencies;
+    public NutsIdBootInfo getRuntimeBootInfo() {
+        return bootRuntimeBootInfo;
     }
 
 
@@ -381,13 +384,13 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         return this;
     }
 
-    public DefaultNutsWorkspaceCurrentConfig setRuntimeDependencies(String bootRuntimeDependencies) {
-        this.bootRuntimeDependencies = bootRuntimeDependencies;
+    public DefaultNutsWorkspaceCurrentConfig setRuntimeBootInfo(NutsIdBootInfo bootRuntimeBootInfo) {
+        this.bootRuntimeBootInfo = bootRuntimeBootInfo;
         return this;
     }
 
-    public DefaultNutsWorkspaceCurrentConfig setExtensionDependencies(String bootExtensionDependencies) {
-        this.bootExtensionDependencies = bootExtensionDependencies;
+    public DefaultNutsWorkspaceCurrentConfig setExtensionsBootInfo(NutsIdBootInfo[] bootExtensionDependencies) {
+        this.bootExtensionsBootInfo = bootExtensionDependencies;
         return this;
     }
 

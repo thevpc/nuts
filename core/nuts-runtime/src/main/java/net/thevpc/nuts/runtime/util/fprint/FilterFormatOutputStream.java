@@ -6,47 +6,16 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class FilterFormatOutputStream extends FilterOutputStream implements ExtendedFormatAware {
-    FormatOutputStreamSupport h;
-
+public class FilterFormatOutputStream extends RenderedOutputStream implements ExtendedFormatAware {
     public FilterFormatOutputStream(OutputStream out) {
-        super(out);
-        h = new FormatOutputStreamSupport(FPrint.RENDERER_ANSI_STRIPPER);
-        h.setRawOutput(new FormatOutputStreamSupport.RawOutputStream() {
-            @Override
-            public void writeRaw(byte[] buf, int off, int len) throws IOException {
-                writeRaw0(buf, off, len);
-            }
-
-            @Override
-            public void flushRaw() throws IOException {
-                flushRaw0();
-            }
-        });
+        super(out,FPrint.RENDERER_ANSI_STRIPPER);
     }
 
-    private void writeRaw0(byte[] b, int off, int len) throws IOException {
-        out.write(b, off, len);
-    }
-    private void flushRaw0() throws IOException {
-        out.flush();
-    }
-
-    @Override
-    public void write(byte[] b, int off, int len) throws IOException {
-        h.processBytes(b, off, len);
-    }
-
-    @Override
-    public void write(int b) throws IOException {
-        h.processByte(b);
-    }
 
     @Override
     public NutsTerminalModeOp getModeOp() {
         return NutsTerminalModeOp.FILTER;
     }
-
 
     @Override
     public ExtendedFormatAware convert(NutsTerminalModeOp other) {

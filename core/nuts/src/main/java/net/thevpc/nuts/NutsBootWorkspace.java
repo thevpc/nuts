@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -433,7 +433,7 @@ public final class NutsBootWorkspace {
                 }
             }
             if (!loadedApiConfig || PrivateNutsUtils.isBlank(workspaceInformation.getRuntimeId())
-                    || workspaceInformation.getRuntimeDependenciesSet() == null || workspaceInformation.getExtensionDependenciesSet() == null || workspaceInformation.getBootRepositories() == null) {
+                    || workspaceInformation.getRuntimeBootInfo() == null || workspaceInformation.getExtensionsBootInfo() == null || workspaceInformation.getBootRepositories() == null) {
 
                 //resolve extension id
                 if (workspaceInformation.getRuntimeId() == null) {
@@ -445,7 +445,7 @@ public final class NutsBootWorkspace {
                         LOG.log(Level.FINEST, PrivateNutsLog.FAIL, "unable to resolve latest runtime-id (is connection ok?)", new Object[0]);
                     }
                     workspaceInformation.setRuntimeId(runtimeId);
-                    workspaceInformation.setRuntimeDependenciesSet(null);
+                    workspaceInformation.setRuntimeBootInfo(null);
                     workspaceInformation.setBootRepositories(null);
                 }
                 if (workspaceInformation.getRuntimeId() == null) {
@@ -458,7 +458,7 @@ public final class NutsBootWorkspace {
 
                 Collection<String> bootRepositories0 = resolveBootRepositories();
                 //resolve runtime libraries
-                if (workspaceInformation.getRuntimeDependenciesSet() == null) {
+                if (workspaceInformation.getRuntimeBootInfo() == null) {
                     Set<String> loadedDeps = null;
                     String extraBootRepositories = null;
                     PrivateNutsId rid = PrivateNutsId.parse(workspaceInformation.getRuntimeId());
@@ -492,7 +492,10 @@ public final class NutsBootWorkspace {
                     if (loadedDeps == null) {
                         throw new IllegalArgumentException("unable to load dependencies for " + rid);
                     }
-                    workspaceInformation.setRuntimeDependenciesSet(loadedDeps);
+                    workspaceInformation.setRuntimeBootInfo(new NutsIdBootInfo(
+                            workspaceInformation.getRuntimeId(),
+                            loadedDeps.toArray(new String[0])
+                    ));
 
                     LinkedHashSet<String> bootRepositories = new LinkedHashSet<>();
                     if (extraBootRepositories != null) {
@@ -507,10 +510,8 @@ public final class NutsBootWorkspace {
                 }
 
                 //resolve extension libraries
-                if (workspaceInformation.getExtensionDependenciesSet() == null) {
-                    LinkedHashSet<String> allExtDependencies = new LinkedHashSet<>();
-                    LinkedHashSet<String> visitedSimpleIds = new LinkedHashSet<>();
-
+                if (workspaceInformation.getExtensionsBootInfo() == null) {
+//                    LinkedHashSet<String> allExtDependencies = new LinkedHashSet<>();
                     LinkedHashSet<String> excludedExtensions = new LinkedHashSet<>();
                     if (options.getExcludedExtensions() != null) {
                         for (String excludedExtension : options.getExcludedExtensions()) {
@@ -518,7 +519,9 @@ public final class NutsBootWorkspace {
                         }
                     }
                     if (workspaceInformation.getExtensionsSet() != null) {
+                        List<NutsIdBootInfo> all=new ArrayList<>();
                         for (String extension : workspaceInformation.getExtensionsSet()) {
+                            LinkedHashMap<String,NutsIdBootInfo> visitedSimpleIds = new LinkedHashMap<>();
                             PrivateNutsId eid = PrivateNutsId.parse(extension);
                             if (!excludedExtensions.contains(eid.getShortName())) {
                                 Path extensionFile = Paths.get(workspaceInformation.getCacheBoot())
@@ -541,22 +544,15 @@ public final class NutsBootWorkspace {
                                     }
                                 }
                                 if (loadedDeps != null) {
-                                    for (String loadedDep : loadedDeps) {
-                                        String sed = PrivateNutsId.parse(loadedDep).getShortName();
-                                        //when multiple versions, the first is retained
-                                        if (!visitedSimpleIds.contains(sed)) {
-                                            visitedSimpleIds.add(sed);
-                                            allExtDependencies.add(loadedDep);
-                                        }
-                                    }
+                                    all.add(new NutsIdBootInfo(extension,loadedDeps.toArray(new String[0])));
                                 } else {
                                     throw new IllegalArgumentException("Unable to load dependencies for " + eid);
                                 }
                             }
                         }
-                        workspaceInformation.setExtensionDependenciesSet(allExtDependencies);
+                        workspaceInformation.setExtensionsBootInfo(all.toArray(new NutsIdBootInfo[0]));
                     } else {
-                        workspaceInformation.setExtensionDependenciesSet(new HashSet<>());
+                        workspaceInformation.setExtensionsBootInfo(new NutsIdBootInfo[0]);
                     }
                 }
             }
@@ -737,28 +733,50 @@ public final class NutsBootWorkspace {
             if (PrivateNutsUtils.isBlank(workspaceInformation.getApiId())
                     || PrivateNutsUtils.isBlank(workspaceInformation.getRuntimeId())
                     || PrivateNutsUtils.isBlank(workspaceInformation.getBootRepositories())
-                    || workspaceInformation.getRuntimeDependenciesSet() == null
-                    || workspaceInformation.getExtensionDependenciesSet() == null) {
+                    || workspaceInformation.getRuntimeBootInfo() == null
+                    || workspaceInformation.getExtensionsBootInfo() == null) {
                 throw new IllegalArgumentException("Invalid state");
             }
             boolean recover = options.isRecover() || options.isReset();
 
-            LinkedHashMap<String, File> allExtensionFiles = new LinkedHashMap<>();
+//            LinkedHashMap<String, NutsBootClassLoader.IdInfo> allExtensionFiles = new LinkedHashMap<>();
+            List<NutsBootClassLoader.IdInfo> deps = new ArrayList<>();
 
             String workspaceBootLibFolder = workspaceInformation.getLib();
 
             String[] repositories = PrivateNutsUtils.splitUrlStrings(workspaceInformation.getBootRepositories()).toArray(new String[0]);
 
-            allExtensionFiles.put(workspaceInformation.getRuntimeId(), getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "runtime", options.getExpireTime()));
-            for (String idStr : workspaceInformation.getRuntimeDependenciesSet()) {
-                allExtensionFiles.put(idStr, getBootCacheJar(idStr, repositories, workspaceBootLibFolder, !recover, "runtime dependency", options.getExpireTime()));
+            NutsBootClassLoader.IdInfoBuilder rt=new NutsBootClassLoader.IdInfoBuilder();
+            rt.setId(workspaceInformation.getRuntimeId())
+                    .setUrl(getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "runtime", options.getExpireTime())
+                            .toURI().toURL());
+            for (String s : workspaceInformation.getRuntimeBootInfo().getDependencies()) {
+                NutsBootClassLoader.IdInfoBuilder x=new NutsBootClassLoader.IdInfoBuilder();
+                x.setId(s)
+                        .setUrl(getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "runtime dependency", options.getExpireTime())
+                                .toURI().toURL()
+                        );
+                rt.addDependency(x.build());
             }
-            for (String idStr : workspaceInformation.getExtensionDependenciesSet()) {
-                allExtensionFiles.put(idStr, getBootCacheJar(idStr, repositories, workspaceBootLibFolder, !recover, "extension dependency", options.getExpireTime()));
-            }
+            deps.add(rt.build());
 
-            bootClassWorldURLs = resolveClassWorldURLs(allExtensionFiles.values());
-            workspaceClassLoader = bootClassWorldURLs.length == 0 ? getContextClassLoader() : new NutsBootClassLoader(bootClassWorldURLs, getContextClassLoader());
+            for (NutsIdBootInfo nutsIdBootInfo : workspaceInformation.getExtensionsBootInfo()) {
+                NutsBootClassLoader.IdInfoBuilder rt2=new NutsBootClassLoader.IdInfoBuilder();
+                rt2.setId(nutsIdBootInfo.getId())
+                        .setUrl(getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "extension "+nutsIdBootInfo.getId(), options.getExpireTime())
+                                .toURI().toURL());
+                for (String s : nutsIdBootInfo.getDependencies()) {
+                    NutsBootClassLoader.IdInfoBuilder x=new NutsBootClassLoader.IdInfoBuilder();
+                    x.setId(s)
+                            .setUrl(getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "extension "+nutsIdBootInfo.getId()+" dependency", options.getExpireTime())
+                                    .toURI().toURL()
+                            );
+                    rt2.addDependency(x.build());
+                }
+                deps.add(rt2.build());
+            }
+            bootClassWorldURLs = resolveClassWorldURLs(deps.toArray(new NutsBootClassLoader.IdInfo[0]));
+            workspaceClassLoader = bootClassWorldURLs.length == 0 ? getContextClassLoader() : new NutsBootClassLoader(deps.toArray(new NutsBootClassLoader.IdInfo[0]), getContextClassLoader());
             workspaceInformation.setWorkspaceClassLoader(workspaceClassLoader);
             workspaceInformation.setBootClassWorldURLs(bootClassWorldURLs);
             ServiceLoader<NutsBootWorkspaceFactory> serviceLoader = ServiceLoader.load(NutsBootWorkspaceFactory.class, workspaceClassLoader);
@@ -814,18 +832,25 @@ public final class NutsBootWorkspace {
         }
     }
 
-    private URL[] resolveClassWorldURLs(Collection<File> list) {
+    private void fillURLs(NutsBootClassLoader.IdInfo info,Set<URL> urls) {
+        urls.add(info.getUrl());
+        for (NutsBootClassLoader.IdInfo dependency : info.getDependencies()) {
+            fillURLs(dependency,urls);
+        }
+    }
+
+    private URL[] resolveClassWorldURLs(NutsBootClassLoader.IdInfo[] infos) {
+        LinkedHashSet<URL> urls0 = new LinkedHashSet<>();
+        for (NutsBootClassLoader.IdInfo info : infos) {
+            fillURLs(info, urls0);
+        }
         List<URL> urls = new ArrayList<>();
-        for (File file : list) {
-            if (file != null) {
-                if (isLoadedClassPath(file)) {
-                    LOG.log(Level.WARNING, PrivateNutsLog.CACHE, "file will not be loaded (already in classloader) : {0}", new Object[]{file});
+        for (URL url0 : urls0) {
+            if (url0 != null) {
+                if (isLoadedClassPath(url0)) {
+                    LOG.log(Level.WARNING, PrivateNutsLog.CACHE, "url will not be loaded (already in classloader) : {0}", new Object[]{url0});
                 } else {
-                    try {
-                        urls.add(file.toURI().toURL());
-                    } catch (MalformedURLException e) {
-                        LOG.log(Level.WARNING, PrivateNutsLog.FAIL, "failed to create url for  {0}", new Object[]{file});
-                    }
+                    urls.add(url0);
                 }
             }
         }
@@ -986,9 +1011,15 @@ public final class NutsBootWorkspace {
         return null;
     }
 
-    private boolean isLoadedClassPath(File file) {
+    private boolean isLoadedClassPath(URL url) {
         try {
-            if (file != null) {
+            if (url != null) {
+                File file=null;
+                try {
+                    file = new File(url.toURI());
+                }catch (URISyntaxException e){
+                    throw new IllegalArgumentException("Unsupported");
+                }
                 ZipFile zipFile = null;
                 try {
                     zipFile = new ZipFile(file);
@@ -1300,5 +1331,4 @@ public final class NutsBootWorkspace {
         }
         return null;
     }
-
 }

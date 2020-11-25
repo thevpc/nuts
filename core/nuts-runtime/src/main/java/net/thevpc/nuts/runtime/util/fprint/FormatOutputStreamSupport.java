@@ -1,306 +1,71 @@
 package net.thevpc.nuts.runtime.util.fprint;
 
-import net.thevpc.nuts.runtime.util.fprint.parser.*;
-import net.thevpc.nuts.runtime.util.fprint.renderer.AnsiUnixTermPrintRenderer;
-import net.thevpc.nuts.runtime.util.fprint.renderer.StyleRenderer;
-import net.thevpc.nuts.runtime.util.fprint.parser.*;
+import net.thevpc.nuts.runtime.util.fprint.parser.DefaultTextNodeParser;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.OutputStream;
 
 public class FormatOutputStreamSupport {
-    private byte[] buffer = new byte[1024];
-    private int bufferSize = 0;
-    private boolean enableBuffering = false;
-    private FormattedPrintStreamParser parser = new FormattedPrintStreamNodePartialParser();
-    private FormattedPrintStreamRenderer renderer = AnsiUnixTermPrintRenderer.ANSI_RENDERER;
-    private RawOutputStream rawOutput;
-    private RenderedRawStream renderedRawStream = new RenderedRawStream() {
-        @Override
-        public void writeRaw(byte[] buf, int off, int len) throws IOException {
-            FormatOutputStreamSupport.this.writeRaw(new String(buf, off, len));
-        }
-
-        @Override
-        public void writeLater(byte[] buf) throws IOException {
-            FormatOutputStreamSupport.this.later(buf);
+    private TextNodeWriter nodeWriter;
+    private TextNodeParser parser = new DefaultTextNodeParser();
+    private boolean formatEnabled = true;
+    private TextNodeVisitor textNodeVisitor=node -> {
+        if (isFormatEnabled()) {
+            nodeWriter.writeNode(node, new TextNodeWriterContext().setFiltered(false));
+        } else {
+            nodeWriter.writeNode(node,new TextNodeWriterContext().setFiltered(true));
         }
     };
-    private boolean formatEnabled = true;
-    private byte[] later = null;
 
     public FormatOutputStreamSupport() {
 
     }
 
-    public FormatOutputStreamSupport(FormattedPrintStreamRenderer renderer) {
-        this.renderer = renderer;
+    public FormatOutputStreamSupport(OutputStream rawOutput,FormattedPrintStreamRenderer renderer) {
+        this.nodeWriter = new TextNodeWriterRenderer(rawOutput,renderer);
     }
 
-    public FormatOutputStreamSupport setParser(FormattedPrintStreamParser parser) {
-        this.parser = parser == null ? new FormattedPrintStreamNodePartialParser() : parser;
-        return this;
-    }
-
-    public FormattedPrintStreamRenderer getRenderer() {
-        return renderer;
-    }
-
-    public FormatOutputStreamSupport setRenderer(FormattedPrintStreamRenderer renderer) {
-        this.renderer = renderer == null ? AnsiUnixTermPrintRenderer.ANSI_RENDERER : renderer;
-        return this;
-    }
-
-    public FormattedPrintStreamParser getParser() {
+    public TextNodeParser getParser() {
         return parser;
     }
 
-    public RawOutputStream getRawOutput() {
-        return rawOutput;
-    }
-
-    public void setRawOutput(RawOutputStream rawOutput) {
-        this.rawOutput = rawOutput;
-    }
-
-    //    @Override
-//    public void println(String text) {
-//        print(text);
-//        println();
-//    }
-
-    public interface RawOutputStream {
-        void writeRaw(byte[] buf, int off, int len) throws IOException;
-
-        void flushRaw() throws IOException;
+    public FormatOutputStreamSupport setParser(TextNodeParser parser) {
+        this.parser = parser == null ? new DefaultTextNodeParser() : parser;
+        return this;
     }
 
     public boolean isFormatEnabled() {
         return formatEnabled;
     }
 
-    public void setFormatEnabled(boolean formatEnabled) {
+    public FormatOutputStreamSupport setFormatEnabled(boolean formatEnabled) {
         this.formatEnabled = formatEnabled;
-    }
-
-
-    protected void writeRaw(TextFormat format, String rawString) throws IOException {
-        if (isFormatEnabled() && format != null) {
-            StyleRenderer f = null;
-            f = renderer.createStyleRenderer(simplifyFormat(format));
-            try {
-                f.startFormat(renderedRawStream);
-                if (rawString.length() > 0) {
-                    writeRaw(rawString);
-                }
-            } finally {
-                f.endFormat(renderedRawStream);
-            }
-        } else {
-            if (rawString.length() > 0) {
-                writeRaw(rawString);
-            }
-        }
-    }
-
-    public boolean consumeNodes(boolean greedy) throws IOException {
-        boolean some = false;
-        TextNode n = null;
-        while ((n = parser.consumeNode()) != null) {
-            print(n);
-            some = true;
-        }
-        if (greedy) {
-            if (parser.forceEnding()) {
-                while ((n = parser.consumeNode()) != null) {
-                    print(n);
-                    some = true;
-                }
-            }
-        }
-        return some;
-    }
-
-    public void print(TextNode node) throws IOException {
-        if (node == null) {
-            node = TextNodePlain.NULL;
-        }
-        print(new TextFormat[0], node);
-    }
-
-    private void print(TextFormat[] formats, TextNode node) throws IOException {
-        if (formats == null) {
-            formats = new TextFormat[0];
-        }
-        if (node instanceof TextNodePlain) {
-            TextNodePlain p = (TextNodePlain) node;
-            writeRaw(TextFormats.list(formats), p.getValue());
-        } else if (node instanceof TextNodeList) {
-            TextNodeList s = (TextNodeList) node;
-            for (TextNode n : s) {
-                print(formats, n);
-            }
-        } else if (node instanceof TextNodeStyled) {
-            TextNodeStyled s = (TextNodeStyled) node;
-            TextFormat[] s2 = _appendFormats(formats, s.getStyle());
-            print(s2, s.getChild());
-        } else if (node instanceof TextNodeCommand) {
-            TextNodeCommand s = (TextNodeCommand) node;
-            TextFormat[] s2 = _appendFormats(formats, s.getStyle());
-            writeRaw(TextFormats.list(s2), "");
-        } else {
-            writeRaw(TextFormats.list(formats), String.valueOf(node));
-        }
-    }
-
-    protected TextFormat simplifyFormat(TextFormat f) {
-        if (f instanceof TextFormatList) {
-            TextFormatList l = (TextFormatList) f;
-            TextFormat[] o = ((TextFormatList) f).getChildren();
-            List<TextFormat> ok = new ArrayList<>();
-            if (o != null) {
-                for (TextFormat v : o) {
-                    if (v != null) {
-                        v = simplifyFormat(v);
-                        if (v != null) {
-                            ok.add(v);
-                        }
-                    }
-                }
-            }
-            if (ok.isEmpty()) {
-                return null;
-            }
-            if (ok.size() == 1) {
-                return simplifyFormat(ok.get(0));
-            }
-            return TextFormats.list(ok.toArray(new TextFormat[0]));
-        }
-        return f;
-    }
-
-    private TextFormat[] _appendFormats(TextFormat[] old, TextFormat v) {
-        List<TextFormat> list = new ArrayList<TextFormat>((old == null ? 0 : old.length) + 1);
-        if (old != null) {
-            list.addAll(Arrays.asList(old));
-        }
-        list.add(v);
-        return list.toArray(new TextFormat[0]);
+        return this;
     }
 
     public void processByte(int oneByte) throws IOException {
         processBytes(new byte[]{(byte) oneByte}, 0, 1);
     }
 
-    public void processBytes(byte[] buf, int off, int len) throws IOException {
+    public void processBytes(byte[] buf, int off, int len) {
         if (!isFormatEnabled()) {
-            rawOutput.writeRaw(buf, off, len);
-            return;
-        }
-        if (len == 0) {
-            //do nothing!!!
+            nodeWriter.writeRaw(buf, off, len);
         } else {
-            String raw = new String(buf, off, len);
-            try {
-                parser.take(raw);
-                consumeNodes(false);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                //
-            }
+            parser.parseIncremental(buf, off, len, textNodeVisitor);
         }
     }
 
-    public final void later(byte[] later) throws IOException {
-        this.later = later;
-        rawOutput.flushRaw();
+    public void reset() {
+        flush();
     }
 
-    public final void flushLater() throws IOException {
-        byte[] b = later;
-        if (b != null) {
-            later = null;
-            if (enableBuffering) {
-                if (b.length + bufferSize < buffer.length) {
-                    System.arraycopy(b, 0, buffer, bufferSize, b.length);
-                    bufferSize += b.length;
-                } else {
-                    flushBuffer();
-                    if (b.length >= buffer.length) {
-                        rawOutput.writeRaw(b, 0, b.length);
-                    } else {
-                        System.arraycopy(b, 0, buffer, bufferSize, b.length);
-                        bufferSize += b.length;
-                    }
-                }
-            } else {
-                rawOutput.writeRaw(b, 0, b.length);
-                rawOutput.flushRaw();
-            }
-            //flush();
-        }
-    }
-
-
-    public final void writeRaw(String rawString) throws IOException {
-        flushLater();
-        byte[] b = rawString.getBytes();
-        if (enableBuffering) {
-            if (b.length + bufferSize < buffer.length) {
-                System.arraycopy(b, 0, buffer, bufferSize, b.length);
-                bufferSize += b.length;
-            } else {
-                flushBuffer();
-                if (b.length >= buffer.length) {
-                    rawOutput.writeRaw(b, 0, b.length);
-                } else {
-                    System.arraycopy(b, 0, buffer, bufferSize, b.length);
-                    bufferSize += b.length;
-                }
-            }
-        } else {
-            rawOutput.writeRaw(b, 0, b.length);
-        }
-    }
-
-    private final boolean flushBuffer() throws IOException {
-        if (bufferSize > 0) {
-            rawOutput.writeRaw(buffer, 0, bufferSize);
-            bufferSize = 0;
-            return true;
-        }
-        return false;
-    }
-
-    public void reset() throws IOException {
-        boolean some = false;
-        some |= flushBuffer();
-        try {
-            some |= consumeNodes(true);
-        } catch (Exception ex) {
-            //
-        }
+    public void flush() {
+        nodeWriter.flush();
+        parser.parseRemaining(textNodeVisitor);
 //        if(!some) {
 //            flushLater();
 //        }
-        flushBuffer();
-    }
-
-    public void flush() throws IOException {
-        //flushLater();
-        boolean some = false;
-        some |= flushBuffer();
-        try {
-            some |= consumeNodes(true);
-        } catch (Exception ex) {
-            //
-        }
-//        if(!some) {
-//            flushLater();
-//        }
-        flushBuffer();
+        nodeWriter.flush();
     }
 
     public boolean isIncomplete() {
@@ -309,6 +74,7 @@ public class FormatOutputStreamSupport {
 
     @Override
     public String toString() {
-        return "FormatOutputStreamSupport(" + parser.toString() + (this.later != null ? ";withLater" : "") + ")";
+        return "FormatOutputStreamSupport(" + parser.toString() + ";" + this.nodeWriter + ")";
     }
+
 }

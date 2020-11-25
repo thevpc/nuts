@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.log;
 
 
-import net.thevpc.nuts.NutsTerminalFormat;
+import net.thevpc.nuts.NutsTextFormatManager;
 import net.thevpc.nuts.NutsTextFormatStyle;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
@@ -25,7 +25,7 @@ public class NutsLogRichFormatter extends Formatter {
             NutsLogRecord wRecord = (NutsLogRecord) record;
             Object[] p = wRecord.getParameters();
             NutsWorkspace ws = wRecord.getWorkspace();
-            String msgStr = ws.io().term().getTerminalFormat().formatText(
+            String msgStr = ws.formats().text().formatText(
                     wRecord.getFormatStyle(), wRecord.getMessage(),
                     p
             );
@@ -59,7 +59,7 @@ public class NutsLogRichFormatter extends Formatter {
         if (record instanceof NutsLogRecord) {
             NutsLogRecord wRecord = (NutsLogRecord) record;
             NutsTextFormatStyle style = wRecord.getFormatStyle();
-            NutsTerminalFormat tf = wRecord.getWorkspace().io().term().getTerminalFormat();
+            NutsTextFormatManager tf = wRecord.getWorkspace().formats().text();
             StringBuilder sb = new StringBuilder();
             String date = CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(wRecord.getMillis()));
             sb.append("<<").append(tf.escapeText(date)).append(">>");
@@ -190,7 +190,7 @@ public class NutsLogRichFormatter extends Formatter {
             String message = wRecord.getMessage();
             // \\{[0-9]+\\}
             message=message.replaceAll("\\\\\\{([0-9]+)\\\\}","{$1}");
-            String msgStr =wRecord.getWorkspace().io().term().getTerminalFormat().formatText(
+            String msgStr =wRecord.getWorkspace().formats().text().formatText(
                     style, message,
                     parameters2
             );

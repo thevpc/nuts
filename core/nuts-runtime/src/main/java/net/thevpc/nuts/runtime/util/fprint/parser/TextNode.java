@@ -30,5 +30,4 @@ package net.thevpc.nuts.runtime.util.fprint.parser;
  * Created by vpc on 5/23/17.
  */
 public interface TextNode {
-
 }

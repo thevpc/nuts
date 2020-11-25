@@ -18,7 +18,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -122,7 +121,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 break;
             }
             case DATE: {
-                out.print(getWorkspace().io().term().getTerminalFormat().escapeText(value.primitive().getDate().toString()));
+                out.print(getWorkspace().formats().text().escapeText(value.primitive().getDate().toString()));
                 out.flush();
                 break;
             }

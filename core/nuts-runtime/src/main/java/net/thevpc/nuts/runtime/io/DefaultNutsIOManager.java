@@ -7,86 +7,19 @@ import net.thevpc.nuts.runtime.util.io.NullInputStream;
 import net.thevpc.nuts.runtime.util.io.NullOutputStream;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.StringTokenizer;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 public class DefaultNutsIOManager implements NutsIOManager {
 
+    public static final Pattern ANCHOR_PATTERN = Pattern.compile("[#]+(?<n>.+)[:]?[#]+");
     //    private final NutsLogger LOG;
     private NutsWorkspace ws;
+    private final Function<String, String> pathExpansionConverter;
     private NutsTerminalManager term;
     private DefaultTempManager tmp;
-    private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
-        @Override
-        public String apply(String from) {
-            switch (from) {
-                case "home.config":
-                    return ws.locations().getHomeLocation(NutsStoreLocation.CONFIG).toString();
-                case "home.apps":
-                    return ws.locations().getHomeLocation(NutsStoreLocation.APPS).toString();
-                case "home.lib":
-                    return ws.locations().getHomeLocation(NutsStoreLocation.LIB).toString();
-                case "home.temp":
-                    return ws.locations().getHomeLocation(NutsStoreLocation.TEMP).toString();
-                case "home.var":
-                    return ws.locations().getHomeLocation(NutsStoreLocation.VAR).toString();
-                case "home.cache":
-                    return ws.locations().getHomeLocation(NutsStoreLocation.CACHE).toString();
-                case "home.log":
-                    return ws.locations().getHomeLocation(NutsStoreLocation.LOG).toString();
-                case "home.run":
-                    return ws.locations().getHomeLocation(NutsStoreLocation.RUN).toString();
-                case "workspace":
-                    return ws.locations().getWorkspaceLocation().toString();
-                case "user.home":
-                    return System.getProperty("user.home");
-                case "config":
-                    return ws.locations().getStoreLocation(NutsStoreLocation.CONFIG).toString();
-                case "lib":
-                    return ws.locations().getStoreLocation(NutsStoreLocation.LIB).toString();
-                case "apps":
-                    return ws.locations().getStoreLocation(NutsStoreLocation.APPS).toString();
-                case "cache":
-                    return ws.locations().getStoreLocation(NutsStoreLocation.CACHE).toString();
-                case "run":
-                    return ws.locations().getStoreLocation(NutsStoreLocation.RUN).toString();
-                case "temp":
-                    return ws.locations().getStoreLocation(NutsStoreLocation.TEMP).toString();
-                case "log":
-                    return ws.locations().getStoreLocation(NutsStoreLocation.LOG).toString();
-                case "var":
-                    return ws.locations().getStoreLocation(NutsStoreLocation.VAR).toString();
-                case "nuts.boot.version":
-                    return ws.getApiVersion();
-                case "nuts.boot.id":
-                    return ws.getApiId().toString();
-                case "nuts.workspace-boot.version":
-                    return Nuts.getVersion();
-                case "nuts.workspace-boot.id":
-                    return NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion();
-                case "nuts.workspace-runtime.version": {
-                    String rt = ws.config().getOptions().getRuntimeId();
-                    return rt == null ? ws.getRuntimeId().getVersion().toString() : rt.contains("#")
-                            ? rt.substring(rt.indexOf("#") + 1)
-                            : rt;
-                }
-                case "nuts.workspace-runtime.id": {
-                    String rt = ws.config().getOptions().getRuntimeId();
-                    return rt == null ? ws.getRuntimeId().getVersion().toString() : rt.contains("#")
-                            ? rt
-                            : (NutsConstants.Ids.NUTS_RUNTIME + "#" + rt);
-                }
-            }
-            String v = System.getProperty(from);
-            if (v != null) {
-                return v;
-            }
-            return "${" + from + "}";
-        }
-    };
     private InputStream bootStdin = null;
     private PrintStream bootStdout = null;
     private PrintStream bootStderr = null;
@@ -97,20 +30,10 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     public DefaultNutsIOManager(NutsWorkspace workspace) {
         this.ws = workspace;
+        pathExpansionConverter=new NutsWorkspaceVarExpansionFunction(ws);
 //        LOG = ws.log().of(DefaultNutsIOManager.class);
-        term=new DefaultNutsTerminalManager(ws);
-        tmp=new DefaultTempManager(ws);
-    }
-
-    @Override
-    public NutsTempManager tmp() {
-        return tmp;
-    }
-
-
-    @Override
-    public NutsTerminalManager term() {
-        return term;
+        term = new DefaultNutsTerminalManager(ws);
+        tmp = new DefaultTempManager(ws);
     }
 
     @Override
@@ -174,16 +97,6 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public String loadFormattedString(Reader is, ClassLoader classLoader) {
-        return loadHelp(is, classLoader, true, 36, true);
-    }
-
-    @Override
-    public String loadFormattedString(String resourcePath, ClassLoader classLoader, String defaultValue) {
-        return loadHelp(resourcePath, classLoader, false, true, defaultValue);
-    }
-
-    @Override
     public InputStream nullInputStream() {
         return NullInputStream.INSTANCE;
     }
@@ -210,6 +123,16 @@ public class DefaultNutsIOManager implements NutsIOManager {
         return CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(out, expectedMode, ws), ws);
     }
 
+    @Override
+    public NutsTempManager tmp() {
+        return tmp;
+    }
+
+    @Override
+    public NutsTerminalManager term() {
+        return term;
+    }
+
 
 //    @Override
 //    public PrintStream createPrintStream(Path out) {
@@ -234,7 +157,6 @@ public class DefaultNutsIOManager implements NutsIOManager {
 //            throw new IllegalArgumentException(ex);
 //        }
 //    }
-
 
     @Override
     public NutsIOCopyAction copy() {
@@ -282,73 +204,6 @@ public class DefaultNutsIOManager implements NutsIOManager {
         return new DefaultNutsOutputManager(ws);
     }
 
-    private String loadHelp(String urlPath, ClassLoader clazz, boolean err, boolean vars, String defaultValue) {
-        return loadHelp(urlPath, clazz, err, 36, vars, defaultValue);
-    }
-
-    private String loadHelp(String urlPath, ClassLoader classLoader, boolean err, int depth, boolean vars, String defaultValue) {
-        if (depth <= 0) {
-            throw new IllegalArgumentException("Unable to load " + urlPath + ". Too many recursions");
-        }
-        if (classLoader == null) {
-            classLoader = Thread.currentThread().getContextClassLoader();
-        }
-        if (urlPath.startsWith("/")) {
-            urlPath = urlPath.substring(1);
-        }
-        URL resource = classLoader.getResource(urlPath);
-        if (resource == null) {
-            if (err) {
-                return "@@Not Found resource " + term().getTerminalFormat().escapeText(urlPath) + "@@";
-            }
-            if (defaultValue == null) {
-                return null;
-            }
-            try (Reader is = new StringReader(defaultValue)) {
-                return loadHelp(is, classLoader, err, depth, vars);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
-        try (Reader is = new InputStreamReader(resource.openStream())) {
-            return loadHelp(is, classLoader, true, depth, vars);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    private String loadHelp(Reader is, ClassLoader classLoader, boolean err, int depth, boolean vars) {
-        return processHelp(CoreIOUtils.loadString(is, true), classLoader, err, depth, vars);
-    }
-
-    private String processHelp(String s, ClassLoader classLoader, boolean err, int depth, boolean vars) {
-        if (classLoader == null) {
-            classLoader = Thread.currentThread().getContextClassLoader();
-        }
-        StringBuilder sb = new StringBuilder();
-        if (s != null) {
-            StringTokenizer st = new StringTokenizer(s, "\n\r", true);
-            while (st.hasMoreElements()) {
-                String e = st.nextToken();
-                if (e.length() > 0) {
-                    if (e.charAt(0) == '\n' || e.charAt(0) == '\r') {
-                        sb.append(e);
-                    } else if (e.startsWith("#!include<") && e.trim().endsWith(">")) {
-                        e = e.trim();
-                        e = e.substring("#!include<".length(), e.length() - 1);
-                        sb.append(loadHelp(e, classLoader, err, depth - 1, false, "@@NOT FOUND\\<" + term().getTerminalFormat().escapeText(e) + "\\>@@"));
-                    } else {
-                        sb.append(e);
-                    }
-                }
-            }
-        }
-        String help = sb.toString();
-        if (vars) {
-            help = CoreStringUtils.replaceDollarPlaceHolders(help, pathExpansionConverter);
-        }
-        return help;
-    }
 
     public NutsWorkspace getWorkspace() {
         return ws;

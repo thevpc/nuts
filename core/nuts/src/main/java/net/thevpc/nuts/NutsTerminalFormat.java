@@ -44,57 +44,6 @@ import java.util.Locale;
  */
 public interface NutsTerminalFormat {
 
-    int textLength(String value);
-
-    /**
-     * this method removes all special "nuts print format" sequences support
-     * and returns the raw string to be printed on an
-     * ordinary {@link PrintStream}
-     *
-     * @param value input string
-     * @return string without any escape sequences so that the text printed
-     * correctly on any non formatted {@link PrintStream}
-     */
-    String filterText(String value);
-
-    /**
-     * This method escapes all special characters that are interpreted by
-     * "nuts print format" o that this exact string is printed on
-     * such print streams When str is null, an empty string is return
-     *
-     * @param value input string
-     * @return string with escaped characters so that the text printed correctly
-     * on a "nuts print format" aware print stream
-     */
-    String escapeText(String value);
-
-    /**
-     * format string. supports {@link Formatter#format(java.util.Locale, java.lang.String, java.lang.Object...)
-     * }
-     * pattern format and adds NutsString special format to print unfiltered strings.
-     *
-     *
-     * @param style style
-     * @param locale locale
-     * @param format format
-     * @param args arguments
-     * @return formatted string
-     */
-    String formatText(NutsTextFormatStyle style, Locale locale, String format, Object... args);
-
-    /**
-     * format string. supports {@link Formatter#format(java.lang.String, java.lang.Object...)
-     * }
-     * pattern format and adds NutsString special format to print unfiltered strings.
-     *
-     *
-     * @param style format style
-     * @param format format
-     * @param args arguments
-     * @return formatted string
-     */
-    String formatText(NutsTextFormatStyle style, String format, Object... args);
-
     /**
      * prepare PrintStream to handle NutsString aware format pattern. If the instance
      * already supports Nuts specific pattern it will be returned unmodified.

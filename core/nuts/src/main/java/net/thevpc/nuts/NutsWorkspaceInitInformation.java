@@ -47,9 +47,13 @@ public interface NutsWorkspaceInitInformation extends Serializable {
 
     String getRuntimeId();
 
-    String getRuntimeDependencies();
+    NutsIdBootInfo getRuntimeBootInfo();
+    NutsIdBootInfo[] getExtensionsBootInfo();
 
-    String getExtensionDependencies();
+//    String getRuntimeDependencies();
+//
+//    String getExtensionDependencies();
+//    Set<String> getExtensionDependenciesSet();
 
     String getBootRepositories();
 
@@ -65,9 +69,8 @@ public interface NutsWorkspaceInitInformation extends Serializable {
 
     String getApiId();
 
-    Set<String> getRuntimeDependenciesSet();
+//    Set<String> getRuntimeDependenciesSet();
 
-    Set<String> getExtensionDependenciesSet();
 
     String getJavaCommand();
 

@@ -458,7 +458,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-        throw new NutsIllegalArgumentException(getWorkspace(), "Pom project nto found");
+        throw new NutsIllegalArgumentException(getWorkspace(), "Pom project not found");
     }
 
     public String getProjectName() {

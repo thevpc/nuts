@@ -23,32 +23,45 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
+*/
+package net.thevpc.nuts.runtime.util.fprint.parser;
+
+import net.thevpc.nuts.runtime.util.fprint.TextFormat;
+
+/**
+ * Created by vpc on 5/23/17.
  */
-package net.thevpc.nuts;
+public class TextNodeTitle implements TextNode {
 
-public interface NutsWorkspaceEvents {
-    void removeRepositoryListener(NutsRepositoryListener listener);
+    private final String start;
+    private final TextFormat style;
+    private TextNode child;
 
-    void addRepositoryListener(NutsRepositoryListener listener);
+    public TextNodeTitle(String start, TextFormat style, TextNode child) {
+        this.start = start;
+        this.style = style;
+        this.child = child;
+    }
 
-    NutsRepositoryListener[] getRepositoryListeners();
+    public String getStyleCode() {
+        int u = start.indexOf(')');
+        return start.substring(0,u);
+    }
 
-    void addUserPropertyListener(NutsMapListener<String, Object> listener);
+    public String getStart() {
+        return start;
+    }
 
-    void removeUserPropertyListener(NutsMapListener<String, Object> listener);
+    public TextFormat getStyle() {
+        return style;
+    }
 
-    NutsMapListener<String, Object>[] getUserPropertyListeners();
+    public TextNode getChild() {
+        return child;
+    }
 
-    void removeWorkspaceListener(NutsWorkspaceListener listener);
-
-    void addWorkspaceListener(NutsWorkspaceListener listener);
-
-    NutsWorkspaceListener[] getWorkspaceListeners();
-
-    void removeInstallListener(NutsInstallListener listener);
-
-    void addInstallListener(NutsInstallListener listener);
-
-    NutsInstallListener[] getInstallListeners();
-
+    @Override
+    public String toString() {
+        return style + ":" + child;
+    }
 }

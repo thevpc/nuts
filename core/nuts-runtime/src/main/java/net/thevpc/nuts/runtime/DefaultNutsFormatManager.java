@@ -8,6 +8,13 @@ import net.thevpc.nuts.runtime.format.elem.DefaultNutsElementFormat;
 import net.thevpc.nuts.runtime.format.tree.DefaultTreeFormat;
 import net.thevpc.nuts.runtime.format.props.DefaultPropertiesFormat;
 import net.thevpc.nuts.runtime.format.table.DefaultTableFormat;
+import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
+
+import java.io.*;
+import java.net.URL;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
 
 public class DefaultNutsFormatManager implements NutsFormatManager {
     private NutsWorkspace ws;
@@ -58,6 +65,11 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
     }
 
     @Override
+    public NutsTextFormatManager text() {
+        return new DefaultNutsTextFormatManager(ws);
+    }
+
+    @Override
     public NutsIterableOutput iter() {
         return new DefaultNutsIncrementalOutputFormat(ws);
     }
@@ -81,4 +93,6 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
         }
         throw new NutsIllegalArgumentException(ws,"Unsupported formattable "+((any==null)?"null":any.getClass().getName()));
     }
+
+
 }

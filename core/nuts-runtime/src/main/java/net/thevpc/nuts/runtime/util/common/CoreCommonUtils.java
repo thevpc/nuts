@@ -27,6 +27,8 @@
 package net.thevpc.nuts.runtime.util.common;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.util.io.InputStreamVisitor;
+import net.thevpc.nuts.runtime.util.io.ZipUtils;
 import net.thevpc.nuts.runtime.util.iter.PushBackIterator;
 import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 
@@ -51,6 +53,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.ServiceConfigurationError;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.app.DefaultNutsArgument;
@@ -130,6 +133,32 @@ public class CoreCommonUtils {
             }
         }
         return set;
+    }
+
+    public static Set<String> loadServiceClassNames(URL url,Class service) {
+        LinkedHashSet<String> found=new LinkedHashSet<>();
+        try(InputStream jarStream=url.openStream()) {
+            if(jarStream!=null) {
+                ZipUtils.visitZipStream(jarStream, s -> s.equals("META-INF/services/" + service.getName())
+                        , new InputStreamVisitor() {
+                            @Override
+                            public boolean visit(String path, InputStream inputStream) throws IOException {
+                                BufferedReader reader=new BufferedReader(new InputStreamReader(inputStream));
+                                String line=null;
+                                while((line=reader.readLine())!=null) {
+                                    line=line.trim();
+                                    if(line.length()>0 &&!line.startsWith("#")){
+                                        found.add(line);
+                                    }
+                                }
+                                return false;
+                            }
+                        });
+            }
+        }catch (IOException ex){
+            throw new UncheckedIOException(ex);
+        }
+        return found;
     }
 
     public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader) {
@@ -408,23 +437,23 @@ public class CoreCommonUtils {
         }
         NutsWorkspace ws = session.getWorkspace();
         if (o instanceof Boolean) {
-            return ws.io().term().getTerminalFormat().escapeText(String.valueOf(o));
+            return ws.formats().text().escapeText(String.valueOf(o));
         }
         if (o.getClass().isEnum()) {
-            return ws.io().term().getTerminalFormat().escapeText(getEnumString((Enum) o));
+            return ws.formats().text().escapeText(getEnumString((Enum) o));
         }
         if (o instanceof Instant) {
-            return ws.io().term().getTerminalFormat().escapeText(
+            return ws.formats().text().escapeText(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Instant) o))
             );
         }
         if (o instanceof Temporal) {
-            return ws.io().term().getTerminalFormat().escapeText(
+            return ws.formats().text().escapeText(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Temporal) o))
             );
         }
         if (o instanceof Date) {
-            return ws.io().term().getTerminalFormat().escapeText(
+            return ws.formats().text().escapeText(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Date) o).toInstant())
             );
         }
@@ -481,7 +510,7 @@ public class CoreCommonUtils {
         }
         String s = o.toString();
         if (escapeString) {
-            s = session.getWorkspace().io().term().getTerminalFormat().escapeText(s);
+            s = session.getWorkspace().formats().text().escapeText(s);
         }
         return s;
     }

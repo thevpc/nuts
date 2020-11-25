@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.io;
 
 import net.thevpc.nuts.NutsProgressEvent;
 import net.thevpc.nuts.NutsProgressMonitor;
-import net.thevpc.nuts.NutsTerminalFormat;
+import net.thevpc.nuts.NutsTextFormatManager;
 import net.thevpc.nuts.runtime.util.common.BytesSizeFormat;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.util.fprint.FPrintCommands;
@@ -61,7 +61,7 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
     public boolean onProgress0(NutsProgressEvent event, boolean end) {
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
-            NutsTerminalFormat terminalFormat = event.getSession().getWorkspace().io().term().getTerminalFormat();
+            NutsTextFormatManager terminalFormat = event.getSession().getWorkspace().formats().text();
             out.print("`" + FPrintCommands.MOVE_LINE_START + "`");
             double globalSeconds = event.getTimeMillis() / 1000.0;
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentValue() / globalSeconds);

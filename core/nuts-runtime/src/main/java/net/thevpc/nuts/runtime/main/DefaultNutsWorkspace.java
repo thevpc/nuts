@@ -90,12 +90,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).log(escapeText0(" ==============================================================================="));
 
-//            LOGCSF.log("==" + escapeText0("     _   __      __         ") + "==                                   ");
-//            LOGCSF.log("==" + escapeText0("    / | / /_  __/ /______   ") + "== ==N==etwork ==U==pdatable ==T==hings ==S==ervices");
-//            LOGCSF.log("==" + escapeText0("   /  |/ / / / / __/ ___/   ") + "== <<The Open Source Package Manager for __Java__ (TM)>>");
-//            LOGCSF.log("==" + escapeText0("  / /|  / /_/ / /_(__  )    ") + "== <<and other Things>> ... by ==thevpc==");
-//            LOGCSF.log("==" + escapeText0(" /_/ |_/\\__,_/\\__/____/   ") + "==   __http://github.com/thevpc/nuts__");
-
             LOGCSF.log("==" + escapeText0("     __        __         ") + "==                                   ");
             LOGCSF.log("==" + escapeText0("  /\\ \\ \\ _  __/ /______   ") + "== ==N==etwork ==U==pdatable ==T==hings ==S==ervices");
             LOGCSF.log("==" + escapeText0(" /  \\/ / / / / __/ ___/   ") + "== <<The Open Source Package Manager for __Java__ (TM)>>");
@@ -113,9 +107,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCRF.log("   nuts-name                      : {0}", CoreNutsUtils.desc(info.getName()));
             LOGCRF.log("   nuts-api-version               : {0}", Nuts.getVersion());
             LOGCRF.log("   nuts-boot-repositories         : {0}", CoreNutsUtils.desc(info.getBootRepositories()));
-            LOGCRF.log("   nuts-runtime-dependencies      : {0}", new NutsString(info.getRuntimeDependenciesSet().stream().map(x -> id().formatter(id().parser().parse(x)).format()).collect(Collectors.joining(";"))));
+            LOGCRF.log("   nuts-runtime-dependencies      : {0}", new NutsString(Arrays.stream(info.getRuntimeBootInfo().getDependencies()).map(x -> id().formatter(id().parser().parse(x)).format()).collect(Collectors.joining(";"))));
             LOGCRF.log("   nuts-runtime-urls              : {0}", Arrays.asList(info.getClassWorldURLs()).stream().map(x -> x.toString()).collect(Collectors.joining(";")));
-            LOGCRF.log("   nuts-extension-dependencies    : {0}", new NutsString(info.getExtensionDependenciesSet().stream().map(x -> id().formatter(id().parser().parse(x)).format()).collect(Collectors.joining(";"))));
+            LOGCRF.log("   nuts-extension-dependencies    : {0}", new NutsString(
+                    toIds(info.getExtensionsBootInfo()).stream().map(x -> id().formatter(id().parser().parse(x)).format()).collect(Collectors.joining(";"))));
 //            if (hasUnsatisfiedRequirements()) {
 //                LOG.log(Level.CONFIG, "\t execution-requirements         : unsatisfied {0}", getRequirementsHelpString(true));
 //            } else {
@@ -154,8 +149,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         String workspaceLocation = info.getWorkspaceLocation();
         String apiVersion = info.getApiVersion();
         String runtimeId = info.getRuntimeId();
-        String runtimeDependencies = info.getRuntimeDependencies();
-        String extensionDependencies = info.getExtensionDependencies();
+//        String runtimeDependencies = String.join(";",info.getRuntimeBootInfo().getDependencies());
+//        String extensionDependencies = String.join(";",toIds(info.getExtensionsBootInfo()));
         String repositories = info.getBootRepositories();
         NutsWorkspaceOptions uoptions = info.getOptions();
         NutsBootWorkspaceFactory bootFactory = info.getBootWorkspaceFactory();
@@ -173,9 +168,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         cfg.setWorkspace(workspaceLocation);
         cfg.setApiVersion(apiVersion);
         cfg.setRuntimeId(runtimeId);
-        cfg.setRuntimeDependencies(runtimeDependencies);
-        cfg.setExtensionDependencies(extensionDependencies);
-        NutsSession bootSession = createBootSession();//TODO
+        cfg.setRuntimeBootInfo(info.getRuntimeBootInfo());
+        cfg.setExtensionsBootInfo(info.getExtensionsBootInfo());
+        NutsSession bootSession = createBootSession();
         extensionManager = new DefaultNutsWorkspaceExtensionManager(this, bootFactory, uoptions.getExcludedExtensions(),bootSession);
         boolean exists = NutsWorkspaceConfigManagerExt.of(config()).isValidWorkspaceFolder();
         NutsWorkspaceOpenMode openMode = uoptions.getOpenMode();
@@ -231,7 +226,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 //workspace wasn't loaded. Create new configuration...
                 NutsWorkspaceUtils.of(this).checkReadOnly();
                 LOG.with().level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log("Creating NEW workspace at {0}", locations().getWorkspaceLocation());
-                exists = false;
                 NutsWorkspaceConfigBoot bconfig = new NutsWorkspaceConfigBoot();
                 //load from config with resolution applied
                 bconfig.setUuid(UUID.randomUUID().toString());
@@ -242,7 +236,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 aconfig.setJavaOptions(uoptions.getJavaOptions());
 
                 NutsWorkspaceConfigRuntime rconfig = new NutsWorkspaceConfigRuntime();
-                rconfig.setDependencies(runtimeDependencies);
+                rconfig.setDependencies(String.join(";",info.getRuntimeBootInfo().getDependencies()));
                 rconfig.setId(runtimeId);
 
                 bconfig.setBootRepositories(repositories);
@@ -294,7 +288,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     NutsUpdateOptions updateOptions = new NutsUpdateOptions().setSession(session);
                     configManager.setBootApiVersion(cfg.getApiVersion(), updateOptions);
                     configManager.setBootRuntimeId(cfg.getRuntimeId(), updateOptions);
-                    configManager.setBootRuntimeDependencies(cfg.getRuntimeDependencies(), updateOptions);
+                    configManager.setBootRuntimeDependencies(String.join(";",cfg.getRuntimeBootInfo().getDependencies()), updateOptions);
                     configManager.setBootRepositories(cfg.getBootRepositories(), updateOptions);
                     try {
                         install().installed().getResult();
@@ -390,7 +384,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
             StringBuilder version = new StringBuilder(nutsVersion);
             CoreStringUtils.fillString(' ', 25 - version.length(), version);
-            out.println(io().loadFormattedString("/net/thevpc/nuts/includes/standard-header.help", getClass().getClassLoader(), "no help found"));
+            out.println(formats().text().loadFormattedString("/net/thevpc/nuts/includes/standard-header.help", getClass().getClassLoader(), "no help found"));
             out.println("{{/------------------------------------------------------------------------------\\\\}}");
             out.println("{{|}}  This is the very {{first}} time ==nuts== has been started for this workspace...     {{|}}");
             out.println("{{\\\\------------------------------------------------------------------------------/}}");
@@ -653,8 +647,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     .setDefinition(def).setArguments(args).setFailFast(true).setTemporary(false)
                     .setExecutionType(config().options().getExecutionType());
             NutsArtifactCall installer = def.getDescriptor().getInstaller();
-            cc.addExecutorArguments(installer.getArguments());
-            cc.addExecutorProperties(installer.getProperties());
+            if(installer!=null) {
+                cc.addExecutorArguments(installer.getArguments());
+                cc.addExecutorProperties(installer.getProperties());
+            }
             NutsExecutionContext executionContext = cc.build();
 //            NutsInstallInformation iinfo = null;
             if (strategy0 == InstallStrategy0.REQUIRE) {
@@ -989,17 +985,17 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     @Override
     public String getWelcomeText() {
-        return this.io().loadFormattedString("/net/thevpc/nuts/nuts-welcome.help", getClass().getClassLoader(), "no welcome found");
+        return this.formats().text().loadFormattedString("/net/thevpc/nuts/nuts-welcome.help", getClass().getClassLoader(), "no welcome found");
     }
 
     @Override
     public String getHelpText() {
-        return this.io().loadFormattedString("/net/thevpc/nuts/nuts-help.help", getClass().getClassLoader(), "no help found");
+        return this.formats().text().loadFormattedString("/net/thevpc/nuts/nuts-help.help", getClass().getClassLoader(), "no help found");
     }
 
     @Override
     public String getLicenseText() {
-        return this.io().loadFormattedString("/net/thevpc/nuts/nuts-license.help", getClass().getClassLoader(), "no license found");
+        return this.formats().text().loadFormattedString("/net/thevpc/nuts/nuts-license.help", getClass().getClassLoader(), "no license found");
     }
 
     @Override
@@ -1007,7 +1003,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsId nutsId = id().resolveId(clazz);
         if (nutsId != null) {
             String urlPath = "/" + nutsId.getGroupId().replace('.', '/') + "/" + nutsId.getArtifactId() + ".help";
-            return io().loadFormattedString(urlPath, clazz.getClassLoader(), "no help found");
+            return formats().text().loadFormattedString(urlPath, clazz.getClassLoader(), "no help found");
         }
         return null;
     }
@@ -1222,7 +1218,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     @Override
     public NutsExecutionContextBuilder createExecutionContext(){
-        return new DefaultNutsExecutionContextBuilder();
+        return new DefaultNutsExecutionContextBuilder().setWorkspace(this);
     }
 //    public NutsExecutionContext createNutsExecutionContext(
 //            NutsDefinition def,
@@ -1377,4 +1373,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //            return false;
 //        }
 //    }
+    private static Set<String> toIds(NutsIdBootInfo[] all){
+        Set<String> set=new LinkedHashSet<>();
+        for (NutsIdBootInfo i : all) {
+            set.add(i.getId());
+            Collections.addAll(set, i.getDependencies());
+        }
+        return set;
+    }
 }

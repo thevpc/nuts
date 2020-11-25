@@ -31,5 +31,12 @@ import java.io.InputStream;
 
 public interface InputStreamVisitor {
 
+    /**
+     *
+     * @param path path
+     * @param inputStream inputStream
+     * @return true if we can proceed with next element or false if we need to exit the visit loop
+     * @throws IOException IOException
+     */
     boolean visit(String path, InputStream inputStream) throws IOException;
 }

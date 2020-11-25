@@ -227,7 +227,7 @@ public interface NutsWorkspaceSecurityManager {
      * @param allowRetrieve when true {@link #getCredentials(char[], NutsSession)} can be
      * invoked over {@code credentialId}
      * @param credentialId preferred credentialId, if null, a new one is created
-     * @param session
+     * @param session session
      * @return credentials-id
      */
     char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, NutsSession session);

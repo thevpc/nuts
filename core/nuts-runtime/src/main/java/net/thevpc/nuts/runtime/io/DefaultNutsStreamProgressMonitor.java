@@ -5,11 +5,10 @@
  */
 package net.thevpc.nuts.runtime.io;
 
-import net.thevpc.nuts.NutsTerminalFormat;
-
 import java.io.PrintStream;
 import java.text.DecimalFormat;
 
+import net.thevpc.nuts.NutsTextFormatManager;
 import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.NutsProgressEvent;
@@ -72,7 +71,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
         }
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
-            NutsTerminalFormat terminalFormat = event.getSession().getWorkspace().io().term().getTerminalFormat();
+            NutsTextFormatManager terminalFormat = event.getSession().getWorkspace().formats().text();
             if(!optionNewline) {
                 out.print("`" + FPrintCommands.MOVE_LINE_START + "`");
             }else{

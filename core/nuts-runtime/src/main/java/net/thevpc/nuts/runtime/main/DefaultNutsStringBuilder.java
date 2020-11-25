@@ -56,7 +56,7 @@ public class DefaultNutsStringBuilder implements NutsStringBuilder {
 
     @Override
     public NutsStringBuilder appendRaw(String s) {
-        append(ws.io().term().getTerminalFormat().escapeText(s));
+        append(ws.formats().text().escapeText(s));
         return this;
     }
 
@@ -64,7 +64,7 @@ public class DefaultNutsStringBuilder implements NutsStringBuilder {
     public NutsStringBuilder append(String formatType, String rawString) {
         String suffix = getSuffix(formatType);
         sb.append(formatType);
-        sb.append(ws.io().term().getTerminalFormat().escapeText(rawString));
+        sb.append(ws.formats().text().escapeText(rawString));
         sb.append(suffix);
         return this;
     }
@@ -75,7 +75,7 @@ public class DefaultNutsStringBuilder implements NutsStringBuilder {
             hash=o;
         }
         int h = hash==null?0:Math.abs(hash.hashCode()) % (AVAILABLE_FORMATS.length + 1);
-        String et = ws.io().term().getTerminalFormat().escapeText(String.valueOf(o));
+        String et = ws.formats().text().escapeText(String.valueOf(o));
         if (h == 0) {
             return appendRaw(et);
         } else {
@@ -86,7 +86,7 @@ public class DefaultNutsStringBuilder implements NutsStringBuilder {
     @Override
     public NutsStringBuilder appendRandom(Object o) {
         int h = (int)Math.random()*(AVAILABLE_FORMATS.length + 1);
-        String et = ws.io().term().getTerminalFormat().escapeText(String.valueOf(o));
+        String et = ws.formats().text().escapeText(String.valueOf(o));
         if (h == 0) {
             return appendRaw(et);
         } else {
@@ -111,7 +111,7 @@ public class DefaultNutsStringBuilder implements NutsStringBuilder {
 
     @Override
     public String toFilteredString() {
-        return ws.io().term().getTerminalFormat().filterText(sb.toString());
+        return ws.formats().text().filterText(sb.toString());
     }
 
     @Override

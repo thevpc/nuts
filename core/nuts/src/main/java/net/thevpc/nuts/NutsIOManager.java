@@ -57,25 +57,6 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
     String expandPath(String path, String baseFolder);
 
     /**
-     * load resource as a formatted string to be used mostly as a help string.
-     *
-     * @param reader      resource reader
-     * @param classLoader class loader
-     * @return formatted string (in Nuts Stream Format)
-     */
-    String loadFormattedString(Reader reader, ClassLoader classLoader);
-
-    /**
-     * load resource as a formatted string to be used mostly as a help string.
-     *
-     * @param resourcePath resource path
-     * @param classLoader  class loader
-     * @param defaultValue default value if the loading fails
-     * @return formatted string (in Nuts Stream Format)
-     */
-    String loadFormattedString(String resourcePath, ClassLoader classLoader, String defaultValue);
-
-    /**
      * create a null input stream instance
      *
      * @return null input stream instance

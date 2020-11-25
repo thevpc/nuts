@@ -6,13 +6,13 @@ import net.thevpc.nuts.runtime.core.common.ObservableMap;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DefaultNutsWorkspaceEvents implements NutsWorkspaceEvents {
+public class DefaultNutsWorkspaceEventManager implements NutsWorkspaceEventManager {
     private NutsWorkspace ws;
     protected final List<NutsWorkspaceListener> workspaceListeners = new ArrayList<>();
     protected final List<NutsInstallListener> installListeners = new ArrayList<>();
     protected final List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
 
-    public DefaultNutsWorkspaceEvents(NutsWorkspace ws) {
+    public DefaultNutsWorkspaceEventManager(NutsWorkspace ws) {
         this.ws = ws;
     }
 

@@ -361,7 +361,7 @@ public class WorkspaceService {
             if (appContext.getSession().isPlainOut()) {
                 for (DataRow p2 : ddd) {
                     String status = p2.status;
-                    NutsTerminalFormat tf = appContext.getWorkspace().io().term().getTerminalFormat();
+                    NutsTextFormatManager tf = appContext.getWorkspace().formats().text();
                     int len = tf.textLength(status);
                     while (len < 10) {
                         status += " ";
