@@ -602,7 +602,9 @@ final class CoreNutsArgumentsParser {
                         parseLogLevel(logConfig, cmdLine, enabled);
                         break;
                     }
-                    case "--exclude-extension": {
+                    case "-X":
+                    case "--exclude-extension":
+                        {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
@@ -961,7 +963,6 @@ final class CoreNutsArgumentsParser {
                     case "-L":
                     case "-M":
                     case "-W":
-                    case "-X":
                     case "-B":
                     case "-i":
                     case "-q":

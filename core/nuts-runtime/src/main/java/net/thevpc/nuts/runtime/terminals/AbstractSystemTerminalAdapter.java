@@ -185,4 +185,9 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         return getParent().readPassword(out, prompt, params);
     }
 
+    public boolean isAutoCompleteSupported(){
+        return getParent().isAutoCompleteSupported();
+    }
+
+
 }

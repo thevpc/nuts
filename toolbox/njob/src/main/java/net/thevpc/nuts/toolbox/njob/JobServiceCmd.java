@@ -420,7 +420,7 @@ public class JobServiceCmd {
                 default: {
                     if (a.isNonOption()) {
                         String pid = cmd.next().toString();
-                        NProject t = findProject(pid,cmd);
+                        NProject t = findProject(pid, cmd);
                         projects.add(t);
                     } else {
                         cmd.unexpectedArgument();
@@ -657,7 +657,7 @@ public class JobServiceCmd {
                 default: {
                     if (a.isNonOption()) {
                         String pid = cmd.next().toString();
-                        NTask t = findTask(pid,cmd);
+                        NTask t = findTask(pid, cmd);
                         tasks.add(t);
                     } else {
                         cmd.unexpectedArgument();
@@ -771,7 +771,7 @@ public class JobServiceCmd {
                 }
                 default: {
                     if (a.isNonOption()) {
-                        NJob t = findJob(cmd.next().toString(),cmd);
+                        NJob t = findJob(cmd.next().toString(), cmd);
                         jobs.add(t);
                     } else {
                         cmd.unexpectedArgument();
@@ -816,24 +816,32 @@ public class JobServiceCmd {
         if (runTaskCommands(cmd)) {
             return true;
         }
-        if(cmd.next("summary")!=null) {
-            long projectsCount = service.findProjects().count();
-            long tasksCount = service.findTasks(NTaskStatusFilter.OPEN, null, -1, null, null, null, null, null).count();
-            long jobsCount = service.findMonthJobs(null).count();
-            long allJobsCount = service.findLastJobs(null, -1, null, null, null, null, null).count();
-            context.getSession().out().printf("##%s## projects\n", projectsCount);
-            context.getSession().out().printf("##%s## open tasks\n", tasksCount);
-            context.getSession().out().printf("##%s## jobs (##%s## this month)\n", allJobsCount, jobsCount);
+        if (cmd.next("summary") != null) {
+            runTaskSummary(cmd);
             return true;
-        }else if(cmd.next("help")!=null){
-            for (String s : new String[]{"jobs","projects","tasks"}) {
-                showCustomHelp("njob-"+s);
+        } else if (cmd.next("help") != null) {
+            for (String s : new String[]{"jobs", "projects", "tasks"}) {
+                showCustomHelp("njob-" + s);
                 return true;
             }
             showCustomHelp("njob");
             return true;
         }
         return false;
+    }
+
+    private void runTaskSummary(NutsCommandLine cmd) {
+        long projectsCount = service.findProjects().count();
+        long tasksCount = service.findTasks(NTaskStatusFilter.OPEN, null, -1, null, null, null, null, null).count();
+        long jobsCount = service.findMonthJobs(null).count();
+        long allJobsCount = service.findLastJobs(null, -1, null, null, null, null, null).count();
+        context.getSession().out().printf("##%s## project%s\n", projectsCount, projectsCount == 1 ? "" : "s");
+        context.getSession().out().printf("##%s## open task%s\n", tasksCount, tasksCount == 1 ? "" : "s");
+        context.getSession().out().printf("##%s## job%s %s\n", allJobsCount, allJobsCount == 1 ? "" : "s",
+                allJobsCount == 0 ? "" : new NutsString(
+                        "(##" + jobsCount + "## this month)"
+                )
+        );
     }
 
     public boolean runJobCommands(NutsCommandLine cmd) {
@@ -855,7 +863,7 @@ public class JobServiceCmd {
         } else if (cmd.next("j", "jobs") != null) {
             if (cmd.next("--help") != null) {
                 showCustomHelp("njob-jobs");
-            }else {
+            } else {
                 runJobList(cmd);
             }
             return true;
@@ -865,7 +873,7 @@ public class JobServiceCmd {
     }
 
     private void showCustomHelp(String name) {
-        context.getSession().out().println(context.getWorkspace().formats().text().loadFormattedString("/net/thevpc/nuts/toolbox/"+name+".help",
+        context.getSession().out().println(context.getWorkspace().formats().text().loadFormattedString("/net/thevpc/nuts/toolbox/" + name + ".help",
                 getClass().getClassLoader(), null));
     }
 
@@ -889,7 +897,7 @@ public class JobServiceCmd {
         } else if (cmd.next("p", "projects") != null) {
             if (cmd.next("--help") != null) {
                 showCustomHelp("njob-projects");
-            }else {
+            } else {
                 runProjectList(cmd);
             }
             return true;
@@ -918,7 +926,7 @@ public class JobServiceCmd {
         } else if (cmd.next("t", "tasks") != null) {
             if (cmd.next("--help") != null) {
                 showCustomHelp("njob-tasks");
-            }else {
+            } else {
                 runTaskList(cmd);
             }
             return true;
@@ -929,7 +937,7 @@ public class JobServiceCmd {
     private void runJobRemove(NutsCommandLine cmd) {
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
-            NJob t = findJob(a.toString(),cmd);
+            NJob t = findJob(a.toString(), cmd);
             if (service.removeJob(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("job {{%s}} removed.\n",
@@ -948,7 +956,7 @@ public class JobServiceCmd {
     private void runTaskRemove(NutsCommandLine cmd) {
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
-            NTask t = findTask(a.toString(),cmd);
+            NTask t = findTask(a.toString(), cmd);
             if (service.removeTask(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("task {{%s}} removed.\n",
@@ -967,7 +975,7 @@ public class JobServiceCmd {
     private void runProjectRemove(NutsCommandLine cmd) {
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
-            NProject t = findProject(a.toString(),cmd);
+            NProject t = findProject(a.toString(), cmd);
             if (service.removeProject(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("project {{%s}} removed.\n",
@@ -986,7 +994,7 @@ public class JobServiceCmd {
     private void runJobShow(NutsCommandLine cmd) {
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
-            NJob job = findJob(a.toString(),cmd);
+            NJob job = findJob(a.toString(), cmd);
             if (job == null) {
                 context.getSession().out().printf("<<%s>>: @@not found@@.\n",
                         a.toString()
@@ -1016,7 +1024,7 @@ public class JobServiceCmd {
     private void runProjectShow(NutsCommandLine cmd) {
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
-            NProject project = findProject(a.toString(),cmd);
+            NProject project = findProject(a.toString(), cmd);
             if (project == null) {
                 context.getSession().out().printf("<<%s>>: @@not found@@.\n",
                         a.toString()
@@ -1040,7 +1048,7 @@ public class JobServiceCmd {
     private void runTaskShow(NutsCommandLine cmd) {
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
-            NTask task = findTask(a.toString(),cmd);
+            NTask task = findTask(a.toString(), cmd);
             if (task == null) {
                 context.getSession().out().printf("<<%s>>: @@not found@@.\n",
                         a.toString()
@@ -1192,24 +1200,25 @@ public class JobServiceCmd {
             NutsMutableTableModel m = ws.formats().table().createModel();
             NJobGroup finalGroupBy = groupBy;
             List<NJob> lastResults = new ArrayList<>();
-            int[] index=new int[1];
+            int[] index = new int[1];
             r.forEach(x -> {
-                NutsString durationString = ws.str().append("##", String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)))
+                NutsString durationString = ws.formats().text().builder()
+                        .appendStyled(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)),NutsTextNodeStyle.KEYWORD1)
                         .toNutsString();
                 index[0]++;
                 lastResults.add(x);
                 m.newRow().addCells(
                         (finalGroupBy != null) ?
                                 new Object[]{
-                                        createHashId(index[0],-1),
+                                        createHashId(index[0], -1),
                                         getFormattedDate(x.getStartTime()),
                                         durationString,
                                         getFormattedProject(x.getProject() == null ? "*" : x.getProject()),
                                         x.getName()
 
                                 } : new Object[]{
-                                createHashId(index[0],-1),
-                                ws.str().append("<<", x.getId()).toNutsString(),
+                                createHashId(index[0], -1),
+                                ws.formats().text().builder().appendStyled(x.getId(),NutsTextNodeStyle.PRIMARY8).toNutsString(),
                                 getFormattedDate(x.getStartTime()),
                                 durationString,
                                 getFormattedProject(x.getProject() == null ? "*" : x.getProject()),
@@ -1382,12 +1391,12 @@ public class JobServiceCmd {
         if (context.getSession().isPlainTrace()) {
             NutsMutableTableModel m = ws.formats().table().createModel();
             List<NTask> lastResults = new ArrayList<>();
-            int[] index=new int[1];
+            int[] index = new int[1];
             r.forEach(x -> {
                 index[0]++;
                 m.newRow().addCells(toTaskRowArray(x,
-                        createHashId(index[0],-1)
-                        ));
+                        createHashId(index[0], -1)
+                ));
                 lastResults.add(x);
             });
             context.getSession().setProperty("LastResults", lastResults.toArray(new NTask[0]));
@@ -1399,23 +1408,23 @@ public class JobServiceCmd {
         }
     }
 
-    private Object[] toTaskRowArray(NTask x,String index) {
+    private Object[] toTaskRowArray(NTask x, String index) {
         String project = x.getProject();
         NProject p = project == null ? null : service.getProject(project);
         NTaskStatus s = x.getStatus();
         String dte0 = getFormattedDate(x.getDueTime());
-        NutsStringBuilder dte = ws.str();
+        NutsTextNodeBuilder dte = ws.formats().text().builder();
         if (s == NTaskStatus.CANCELLED || s == NTaskStatus.DONE) {
-            dte.append("<<", dte0);
+            dte.appendStyled(dte0, NutsTextNodeStyle.PRIMARY8);
         } else if (x.getDueTime() != null && x.getDueTime().compareTo(Instant.now()) < 0) {
-            dte.append("@@", dte0);
+            dte.appendStyled(dte0, NutsTextNodeStyle.PRIMARY7);
         } else {
-            dte.append("##", dte0);
+            dte.appendStyled(dte0, NutsTextNodeStyle.PRIMARY2);
         }
         String projectName = p != null ? p.getName() : project != null ? project : "*";
         return new Object[]{
                 index,
-                ws.str().append("<<", x.getId()),
+                ws.formats().text().builder().appendStyled(x.getId(),NutsTextNodeStyle.PRIMARY8),
                 getFlagString(x.getFlag()),
                 getStatusString(x.getStatus()),
                 getPriorityString(x.getPriority()),
@@ -1426,7 +1435,7 @@ public class JobServiceCmd {
     }
 
     private NutsString getFormattedProject(String projectName) {
-        return ws.str().appendHashed(projectName).toNutsString();
+        return ws.formats().text().builder().appendHashedStyle(projectName).toNutsString();
     }
 
     private String getFormattedDate(Instant x) {
@@ -1615,7 +1624,7 @@ public class JobServiceCmd {
         if (context.getSession().isPlainTrace()) {
             NutsMutableTableModel m = ws.formats().table().createModel();
             List<NProject> lastResults = new ArrayList<>();
-            int[] index=new int[1];
+            int[] index = new int[1];
             r.forEach(x -> {
                 Instant st = x.getStartTime();
                 String sts = "";
@@ -1626,7 +1635,7 @@ public class JobServiceCmd {
                 lastResults.add(x);
                 index[0]++;
                 m.newRow().addCells(
-                        createHashId(index[0],-1),
+                        createHashId(index[0], -1),
                         x.getId(),
                         sts,
                         x.getCompany(),
@@ -1782,9 +1791,10 @@ public class JobServiceCmd {
         }
         return t;
     }
-    private String createHashId(int value,int maxValues){
+
+    private String createHashId(int value, int maxValues) {
 //        DecimalFormat decimalFormat = new DecimalFormat("00");
 //        return "#"+decimalFormat.format(value);
-        return "#"+value;
+        return "#" + value;
     }
 }

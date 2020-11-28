@@ -15,7 +15,7 @@ import net.thevpc.nuts.NutsProgressEvent;
 import net.thevpc.nuts.NutsProgressMonitor;
 import net.thevpc.nuts.runtime.util.common.BytesSizeFormat;
 import net.thevpc.nuts.runtime.util.console.CProgressBar;
-import net.thevpc.nuts.runtime.util.fprint.FPrintCommands;
+import net.thevpc.nuts.runtime.format.text.FPrintCommands;
 
 /**
  * @author vpc

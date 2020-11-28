@@ -60,15 +60,27 @@ final class PrivateNutsId {
             }
             return new PrivateNutsId(id.substring(0, dots), id.substring(dots + 1), NutsConstants.Versions.LATEST);
         }
-        throw new NutsParseException(null, "Unable to parse " + id);
+        int dash = id.indexOf('#', dots + 1);
+        if (dash < 0) {
+            //maven will use a double ':' instead of #
+            dash = id.indexOf(':', dots + 1);
+        }
+        if (dash >= 0) {
+            return new PrivateNutsId("", id.substring(0, dash), id.substring(dash + 1));
+        }
+        return new PrivateNutsId("", id, NutsConstants.Versions.LATEST);
     }
 
     @Override
     public String toString() {
-        if (version == null) {
-            return groupId + ":" + artifactId;
+        String s=artifactId;
+        if(groupId!=null && groupId.length()>0){
+            s=groupId+":"+s;
         }
-        return groupId + ":" + artifactId + "#" + version;
+        if (version != null && version.length()>0) {
+            s=s+="#" + version;
+        }
+        return s;
     }
 
     public String getVersion() {

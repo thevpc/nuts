@@ -2,9 +2,12 @@ package net.thevpc.nuts.runtime.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.DefaultNutsWorkspaceEvent;
+import net.thevpc.nuts.runtime.log.NutsLogVerb;
 import net.thevpc.nuts.runtime.terminals.*;
 import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.terminals.*;
+
+import java.util.logging.Level;
 
 public class DefaultNutsTerminalManager implements NutsTerminalManager {
     private NutsWorkspace ws;
@@ -12,9 +15,11 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
     private NutsSessionTerminal terminal;
     private NutsSystemTerminal systemTerminal;
     private WorkspaceSystemTerminalAdapter workspaceSystemTerminalAdapter;
+    public NutsLogger LOG;
 
     public DefaultNutsTerminalManager(NutsWorkspace ws) {
         this.ws = ws;
+        this.LOG = ws.log().of(DefaultNutsTerminalManager.class);
         NutsWorkspaceUtils.of(ws).setWorkspace(terminalMetrics);
         workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(ws);
     }
@@ -39,13 +44,23 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
         if (st.isAutoCompleteSupported()) {
             //that's ok
         } else {
-            NutsWorkspaceExtensionManager extensions = getWorkspace().extensions();
-            extensions.loadExtension(ws.id().parser().parse("net.thevpc.nuts.ext:next-term#"+getWorkspace().getApiVersion()), session);
-            getWorkspace().io().term().setSystemTerminal(
-                    createSystemTerminal(new NutsDefaultTerminalSpec()
-                            .setAutoComplete(true)
-                            .setSession(session)
-                    ),session);
+            NutsId extId = ws.id().parser().parse("net.thevpc.nuts.ext:next-term#" + getWorkspace().getApiVersion());
+            if(!getWorkspace().config().options().isExcludedExtension(extId.toString())) {
+                NutsWorkspaceExtensionManager extensions = getWorkspace().extensions();
+                extensions.loadExtension(extId, session);
+                NutsSystemTerminal systemTerminal = createSystemTerminal(new NutsDefaultTerminalSpec()
+                        .setAutoComplete(true)
+                        .setSession(session)
+                );
+                setSystemTerminal(systemTerminal, session);
+                if(getSystemTerminal().isAutoCompleteSupported()) {
+                    LOG.with().level(Level.FINE).verb(NutsLogVerb.SUCCESS).log("enable rich terminal");
+                }else{
+                    LOG.with().level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to enable rich terminal");
+                }
+            }else{
+                LOG.with().level(Level.FINE).verb(NutsLogVerb.WARNING).log("enableRichTerm discarded; next-term is excluded.");
+            }
         }
         return this;
     }
@@ -129,6 +144,7 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
                 syst = new DefaultSystemTerminal(terminal);
                 NutsWorkspaceUtils.of(ws).setWorkspace(syst);
             } catch (Exception ex) {
+                LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("unable to create system terminal : %s",ex.getMessage());
                 syst = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBase());
                 NutsWorkspaceUtils.of(ws).setWorkspace(syst);
 

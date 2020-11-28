@@ -5,16 +5,10 @@ import net.thevpc.nuts.runtime.format.DefaultNutsIncrementalOutputFormat;
 import net.thevpc.nuts.runtime.format.DefaultNutsObjectFormat;
 import net.thevpc.nuts.runtime.format.DefaultNutsStringFormat;
 import net.thevpc.nuts.runtime.format.elem.DefaultNutsElementFormat;
+import net.thevpc.nuts.runtime.format.text.DefaultNutsTextFormatManager;
 import net.thevpc.nuts.runtime.format.tree.DefaultTreeFormat;
 import net.thevpc.nuts.runtime.format.props.DefaultPropertiesFormat;
 import net.thevpc.nuts.runtime.format.table.DefaultTableFormat;
-import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
-
-import java.io.*;
-import java.net.URL;
-import java.util.StringTokenizer;
-import java.util.regex.Matcher;
 
 public class DefaultNutsFormatManager implements NutsFormatManager {
     private NutsWorkspace ws;

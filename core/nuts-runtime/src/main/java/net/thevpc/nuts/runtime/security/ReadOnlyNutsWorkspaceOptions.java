@@ -348,4 +348,9 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     public String getErrLinePrefix() {
         return options.getErrLinePrefix();
     }
+
+    @Override
+    public boolean isExcludedExtension(String extensionId) {
+        return options.isExcludedExtension(extensionId);
+    }
 }

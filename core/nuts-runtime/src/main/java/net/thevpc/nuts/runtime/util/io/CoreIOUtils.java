@@ -27,17 +27,15 @@ package net.thevpc.nuts.runtime.util.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.io.NutsFormattedPrintStream;
+import net.thevpc.nuts.runtime.format.text.*;
 import net.thevpc.nuts.runtime.io.*;
 import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.DefaultNutsDescriptorContentParserContext;
-import net.thevpc.nuts.runtime.util.fprint.*;
-import net.thevpc.nuts.runtime.io.*;
 import net.thevpc.nuts.runtime.log.NutsLogVerb;
 import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.util.common.DefaultPersistentMap;
 import net.thevpc.nuts.runtime.util.common.PersistentMap;
-import net.thevpc.nuts.runtime.util.fprint.*;
 
 import java.io.*;
 import java.net.*;
@@ -104,7 +102,7 @@ public class CoreIOUtils {
         if (writer == null) {
             return null;
         }
-        SimpleWriterOutputStream s = new SimpleWriterOutputStream(writer);
+        SimpleWriterOutputStream s = new SimpleWriterOutputStream(writer,ws);
         NutsWorkspaceUtils.of(ws).setWorkspace(s);
         return toPrintStream(s, ws);
     }
@@ -136,7 +134,7 @@ public class CoreIOUtils {
         if (out instanceof ExtendedFormatAware) {
             aw = (ExtendedFormatAware) out;
         } else {
-            aw = new RawOutputStream(out);
+            aw = new RawOutputStream(out,ws);
         }
         switch (expected) {
             case INHERITED: {
@@ -583,6 +581,7 @@ public class CoreIOUtils {
      * @param in         entree
      * @param out        sortie
      * @param bufferSize bufferSize
+     * @return size copied
      */
     public static long copy(java.io.InputStream in, OutputStream out, int bufferSize) {
         byte[] buffer = new byte[bufferSize];

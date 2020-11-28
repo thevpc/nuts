@@ -1,4 +1,4 @@
-deploy a ==nuts==
+deploy a ##nuts##
 
 ##SYNOPSIS:##
 ##deploy## --file <file> [--desc <desc-file>] [--to <repository>] 

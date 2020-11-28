@@ -4,7 +4,7 @@ import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsStringFormat;
 import net.thevpc.nuts.NutsTextFormatStyle;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.util.fprint.util.FormattedPrintStreamUtils;
+import net.thevpc.nuts.runtime.format.text.util.FormattedPrintStreamUtils;
 
 import java.io.PrintStream;
 import java.util.ArrayList;

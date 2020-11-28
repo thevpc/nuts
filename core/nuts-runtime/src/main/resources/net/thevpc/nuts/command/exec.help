@@ -1,4 +1,4 @@
-==nuts==  [[exec]] \[**<options>**\]... <command> <arguments>...
+##nuts##  [[exec]] \[**<options>**\]... <command> <arguments>...
  **--exec** \[**<options>**\]... <command> <arguments>...
  **-e** \[**<options>**\]... <command> <arguments>...
       runs command with the given executor options \( it will be considered an option if it 
@@ -20,21 +20,21 @@
 #!include</net/thevpc/nuts/includes/standard-command.help>
 
 ##EXAMPLES:##
-        ==nuts== {{exec}} **--help**
+        ##nuts## {{exec}} **--help**
             shows this help and exit
        
-        ==nuts== {{exec}} **--yes** **-e** **-Xmx1G** netbeans-launcher
+        ##nuts## {{exec}} **--yes** **-e** **-Xmx1G** netbeans-launcher
             runs netbeans-launcher with JVM option  {{-Xmx1G}}. If the artifact is not installed
             it will be automatically installed ( **--yes** modifier helps bypassing interactive mode)
 
-        ==nuts== {{exec}} my-nuts-group:my-nuts#12.3
+        ##nuts## {{exec}} my-nuts-group:my-nuts#12.3
            executes the version 12.3 of my-nuts-group:my-nuts
 
-        ==nuts== {{exec}} my-nuts-group:my-nuts
+        ##nuts## {{exec}} my-nuts-group:my-nuts
            executes the latest version of my-nuts-group:my-nuts
 
 
-        ==nuts== {{exec}} my-nuts
+        ##nuts## {{exec}} my-nuts
            executes the latest version of my-nuts-group:my-nuts
                 supposing that my-nuts-group is added as imported group using
                 config import my-nuts-group

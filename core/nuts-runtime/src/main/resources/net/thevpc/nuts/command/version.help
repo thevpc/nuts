@@ -1,11 +1,11 @@
-==nuts== [[version]]
-==nuts== **--version**
-==nuts== **-version**
-==nuts== **-v**
+##nuts## [[version]]
+##nuts## **--version**
+##nuts## **-version**
+##nuts## **-v**
       show version
 
 ##SYNOPSIS:##
-==nuts== ##version## \[**<options>**\]
+##nuts## ##version## \[**<options>**\]
 
 ##OPTIONS:##
  **-a** | "**--all**
@@ -17,9 +17,9 @@
 #!include</net/thevpc/nuts/includes/standard-command.help>
 
 ##EXAMPLES:##
-        ==nuts== {{version}} **-a**
+        ##nuts## {{version}} **-a**
             shows all versions
        
-        ==nuts== **-v**
+        ##nuts## **-v**
             show version
        

@@ -369,32 +369,32 @@ public class WorkspaceService {
                     }
                     switch (tf.filterText(p2.status)) {
                         case "new": {
-                            appContext.getSession().out().printf("\\[{{new}}\\] %s : [[%s]]%n", p2.id, p2.local);
+                            appContext.getSession().out().printf("[####new####] %s : ###%s###%n", p2.id, p2.local);
                             break;
                         }
                         case "commitable": {
-                            appContext.getSession().out().printf("\\[[[commitable]]\\] %s : [[%s]] - %s%n", p2.id, p2.local, p2.remote);
+                            appContext.getSession().out().printf("[#####commitable#####] %s : ###%s### - %s%n", p2.id, p2.local, p2.remote);
                             break;
                         }
                         case "dirty": {
-                            appContext.getSession().out().printf("\\[@@dirty@@\\] %s : @@%s@@ - %s%n", p2.id, p2.local, p2.remote);
+                            appContext.getSession().out().printf("[```error dirty```] %s : ```error %s``` - %s%n", p2.id, p2.local, p2.remote);
                             printDiffResults("  ", appContext.getSession().out(), p2.details);
                             break;
                         }
                         case "old": {
-                            appContext.getSession().out().printf("\\[{{old}}\\] %s : @@%s@@ - %s%n", p2.id, p2.local, p2.remote);
+                            appContext.getSession().out().printf("[###old###] %s : ```error %s``` - %s%n", p2.id, p2.local, p2.remote);
                             break;
                         }
                         case "invalid": {
-                            appContext.getSession().out().printf("\\[@@invalid@@\\] %s : @@%s@@ - %s%n", p2.id, p2.local, p2.remote);
+                            appContext.getSession().out().printf("[```error invalid```invalid ] %s : ```error %s``` - %s%n", p2.id, p2.local, p2.remote);
                             break;
                         }
                         case "uptodate": {
-                            appContext.getSession().out().printf("\\[uptodate\\] %s : %s%n", p2.id, p2.local);
+                            appContext.getSession().out().printf("[uptodate] %s : %s%n", p2.id, p2.local);
                             break;
                         }
                         default: {
-                            appContext.getSession().out().printf("\\[%s\\] %s : %s - %s%n", status, p2.id, p2.local, p2.remote);
+                            appContext.getSession().out().printf("[%s] %s : %s - %s%n", status, p2.id, p2.local, p2.remote);
                             break;
                         }
                     }
@@ -479,7 +479,7 @@ public class WorkspaceService {
                         }
                     } else if (!p2.getPath().equals(p3.getPath())) {
                         if (appContext.getSession().isPlainOut()) {
-                            appContext.getSession().out().printf("@@[CONFLICT]@@ Multiple paths for the same id [[%s]]. Please consider adding .nuts-info file with " + SCAN + "=false  :  ==%s== -- ==%s==%n", p2.getId(), p2.getPath(), p3.getPath());
+                            appContext.getSession().out().printf("```error [CONFLICT]``` Multiple paths for the same id ###%s###. Please consider adding .nuts-info file with " + SCAN + "=false  :  ###%s### -- ###%s###%n", p2.getId(), p2.getPath(), p3.getPath());
                         }
                     } else {
                         if (appContext.getSession().isPlainOut()) {

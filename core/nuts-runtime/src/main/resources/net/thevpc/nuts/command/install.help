@@ -1,9 +1,9 @@
-==nuts== {{install}} \<nuts-artifact\>... <args> ...
-      install ==nuts== package \<nuts-artifact\>
+##nuts## {{install}} \<nuts-artifact\>... <args> ...
+      install ##nuts## package \<nuts-artifact\>
        <args> ...        : provide arguments to pass to installer
 
 ##SYNOPSIS:##
-==nuts== {{install}} \<options\> \<nuts-artifact\>...
+##nuts## {{install}} \<options\> \<nuts-artifact\>...
 
 ##OPTIONS:##
 **-c** | **--companions**
@@ -16,8 +16,8 @@
 #!include</net/thevpc/app/command/includes/standard-command.help>
 
 ##EXAMPLES:##
-        ==nuts== install **--help**
+        ##nuts## install **--help**
             shows this help and exit
        
-        ==nuts== {{install}} netbeans-launcher
+        ##nuts## {{install}} netbeans-launcher
             install netbeans-launcher

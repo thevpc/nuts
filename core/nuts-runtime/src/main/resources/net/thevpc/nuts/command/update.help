@@ -1,5 +1,5 @@
-==nuts== [[update]]  \[**<options>**\]... <ids> ...  <args> ...
-       check if a newer version of ==nuts== or any of the provided <ids> 
+##nuts## [[update]]  \[**<options>**\]... <ids> ...  <args> ...
+       check if a newer version of ##nuts## or any of the provided <ids>
        is available in the current workspace and perform update by downloading (fetch) 
        and installing the artifact. The updated version is promoted to 'default' version.
        **-a** or **--all** : force updates of both workspace\'s api, runtime extensions and installed artifacts
@@ -17,21 +17,21 @@
 #!include</net/thevpc/nuts/includes/standard-command.help>
 
 ##SYNOPSIS:##
-==nuts== ##update## id1 ...
+##nuts## ##update## id1 ...
 
-   update the ==nuts== to the latest version. If --force is armed, will re-download the artifacts and its dependencies.
+   update the ##nuts## to the latest version. If --force is armed, will re-download the artifacts and its dependencies.
 
-==nuts== ##update## [ --to-version <version> ]
+##nuts## ##update## [ --to-version <version> ]
 
    update the current workspace to latest version or to the given version if provided.
 
 ##EXAMPLES:##
-        ==nuts== {{update}} **--help**
+        ##nuts## {{update}} **--help**
             show this help and exit
        
-        ==nuts== {{update}}
+        ##nuts## {{update}}
             update workspace
        
-        ==nuts== netbeans-launcher
+        ##nuts## netbeans-launcher
             update netbeans-launcher
 

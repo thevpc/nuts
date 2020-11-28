@@ -273,7 +273,7 @@ public class NutsJavaShell extends JShell {
 
     @Override
     protected void printHeader(PrintStream out) {
-        out.printf("==nuts== shell (**Network Updatable Things Services**) [[v%s]] (c) vpc 2018\n",
+        out.printf("##nuts## shell (**Network Updatable Things Services**) [[v%s]] (c) vpc 2018\n",
                 getWorkspace().getRuntimeId().getVersion().toString());
     }
 

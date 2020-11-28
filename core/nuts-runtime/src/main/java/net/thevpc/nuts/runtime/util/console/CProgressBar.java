@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.util.console;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.util.fprint.FPrintCommands;
+import net.thevpc.nuts.runtime.format.text.FPrintCommands;
 
 import java.io.PrintStream;
 import java.util.Calendar;

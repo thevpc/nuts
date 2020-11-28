@@ -108,7 +108,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase,NutsWorkspaceAw
             } catch (Throwable ex) {
                 //unable to create system terminal
                 //Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
-                throw new UncheckedIOException(new IOException(ex));
+                throw new UncheckedIOException(new IOException("unable to create JLine system terminal: "+ex.getMessage(),ex));
             }
             reader = LineReaderBuilder.builder()
                     .completer(new NutsJLineCompleter(workspace,this))
@@ -232,4 +232,5 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase,NutsWorkspaceAw
     public NutsTerminalBase getParent() {
         return null;
     }
+
 }

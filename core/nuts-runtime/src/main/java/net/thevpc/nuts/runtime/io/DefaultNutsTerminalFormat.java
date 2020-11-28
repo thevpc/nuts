@@ -9,15 +9,11 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.Locale;
 
-import net.thevpc.nuts.NutsTextFormatStyle;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.NutsWorkspaceAware;
-import net.thevpc.nuts.runtime.util.fprint.ExtendedFormatAware;
-import net.thevpc.nuts.runtime.util.fprint.util.FormattedPrintStreamUtils;
+import net.thevpc.nuts.runtime.format.text.ExtendedFormatAware;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
-import net.thevpc.nuts.runtime.util.fprint.*;
 import net.thevpc.nuts.NutsTerminalFormat;
 
 /**

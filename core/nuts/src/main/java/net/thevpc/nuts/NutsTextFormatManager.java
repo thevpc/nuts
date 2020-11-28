@@ -25,6 +25,9 @@ public interface NutsTextFormatManager {
      */
     String loadFormattedString(String resourcePath, ClassLoader classLoader, String defaultValue);
 
+    NutsTextNodeFactory factory();
+
+    NutsTextNodeBuilder builder();
 
     /**
      * text length after filtering all special characters
@@ -45,6 +48,8 @@ public interface NutsTextFormatManager {
      */
     String filterText(String value);
 
+    NutsTextNodeParser parser();
+
     /**
      * This method escapes all special characters that are interpreted by
      * "nuts print format" o that this exact string is printed on
@@ -55,6 +60,7 @@ public interface NutsTextFormatManager {
      * on a "nuts print format" aware print stream
      */
     String escapeText(String value);
+    String escapeCodeText(String value);
 
     /**
      * format string. supports {@link Formatter#format(java.util.Locale, java.lang.String, java.lang.Object...)

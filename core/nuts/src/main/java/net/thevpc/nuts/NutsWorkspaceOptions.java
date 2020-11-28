@@ -121,6 +121,8 @@ public interface NutsWorkspaceOptions extends Serializable {
      */
     String[] getExcludedExtensions();
 
+    boolean isExcludedExtension(String extensionId);
+
     /**
      * repository list to be excluded when opening the workspace.
      * <br>

@@ -182,7 +182,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
         WorkspaceAndApiVersion v = persistConfig(bootconfig, apiVersion, null, context.getSession());
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("==nuts== switched to workspace %s to point to %s\n", v.getWorkspace(), v.getApiVersion());
+            context.getSession().out().printf("##nuts## switched to workspace %s to point to %s\n", v.getWorkspace(), v.getApiVersion());
         }
     }
 

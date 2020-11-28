@@ -1,9 +1,10 @@
 #!include</net/thevpc/nuts/includes/standard-header.help>
-__location__:${workspace}
+~~location~~:${workspace}
 
-##SYNOPSIS:##
-==nuts== \[**<options>**\]... {{\<command\>}} \<args\> ...
+##)SYNOPSIS
+```sh
+nuts [<options>]... <command> <args> ...
+```
+For Help, type ```sh nuts help```
 
-For Help, type ==nuts== {{help}}
-
-Welcome to ==nuts==. Yeah, it is ##working##...
+Welcome to ##nuts##. Yeah, it is ###working###...

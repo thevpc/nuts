@@ -517,6 +517,27 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return excludedExtensions;
     }
 
+    @Override
+    public boolean isExcludedExtension(String extensionId) {
+        if(extensionId!=null){
+            PrivateNutsId pnid = PrivateNutsId.parse(extensionId);
+            String shortName = pnid.getShortName();
+            String artifactId = pnid.getArtifactId();
+            if(excludedExtensions!=null){
+                for (String excludedExtensionList : excludedExtensions) {
+                    for (String s : excludedExtensionList.split("[;, ]")) {
+                        if(s.length()>0){
+                            if(s.equals(shortName)||s.equals(artifactId)){
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * set excludedExtensions
      *

@@ -9,6 +9,6 @@ search in xpath compatible pattern in input file. If no file is defined, conside
 ==json== **--xpath** /item/path **-f** file.json
     search in xpath compatible pattern file.json
 
-==nuts== **--reset** **-y** **-b** {{json}} **-q** "...[][3-5]" **-f**  ~/.config/nuts/default-workspace/nuts-workspace.json
+##nuts## **--reset** **-y** **-b** {{json}} **-q** "...[][3-5]" **-f**  ~/.config/nuts/default-workspace/nuts-workspace.json
     search in jsonpath compatible pattern. return [ false, 10, "maven-local" ] for standard installation
 

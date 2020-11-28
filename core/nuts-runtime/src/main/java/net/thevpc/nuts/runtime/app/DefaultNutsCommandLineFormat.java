@@ -44,85 +44,8 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
     @Override
     public void print(PrintStream out) {
         if (value != null) {
-            int index = 0;
-            NutsCommandLine cmd = new DefaultNutsCommandLine(getWorkspace(), value.toStringArray());
-            while (cmd.hasNext()) {
-                NutsArgument n = cmd.next();
-                if (index > 0) {
-                    out.print(" ");
-                }
-                out.print(escapeArgumentFormat(n));
-                index++;
-            }
+            String cmd=NutsCommandLineUtils.escapeArguments(value.toStringArray());
+            out.print("```sh "+cmd+"```");
         }
-    }
-
-    private String escapeArgumentFormat(NutsArgument arg) {
-        if (arg.isOption()) {
-
-            StringBuilder sb = new StringBuilder();
-            String prefix = arg.getStringOptionPrefix();
-            String name = arg.getStringOptionName();
-            if (arg.isNegated()) {
-                sb.append("**" + prefix + "**");
-                if (!arg.isEnabled()) {
-                    sb.append("@@//@@");
-                }
-                sb.append("[[!]]");
-                sb.append("**" + escapeArgumentFormat(getWorkspace(), name) + "**");
-            } else {
-                if (!arg.isEnabled()) {
-                    sb.append("**" + escapeArgumentFormat(getWorkspace(), prefix) + "**");
-                    sb.append("@@//@@");
-                    sb.append("**" + escapeArgumentFormat(getWorkspace(), name) + "**");
-                } else {
-                    sb.append("**" + escapeArgumentFormat(getWorkspace(), prefix + name) + "**");
-                }
-            }
-            if (arg.isKeyValue()) {
-                sb.append("{{\\=}}");
-                sb.append(escapeArgumentFormat(getWorkspace(), arg.getStringValue()));
-            }
-            return sb.toString();
-        } else {
-            if (!arg.isEnabled()) {
-                return "@@" + escapeArgumentFormat(getWorkspace(), arg.getString()) + "@@";
-            }
-            return escapeArgumentFormat(getWorkspace(), arg.getString());
-        }
-    }
-
-    private static String escapeArgumentFormat(NutsWorkspace ws, String arg) {
-        StringBuilder sb = new StringBuilder();
-        if (arg != null) {
-            for (char c : arg.toCharArray()) {
-                switch (c) {
-                    case '\\':
-                        sb.append('\\');
-                        break;
-                    case '\'':
-                        sb.append("\\'");
-                        break;
-                    case '"':
-                        sb.append("\\\"");
-                        break;
-                    case '\n':
-                        sb.append("\\n");
-                        break;
-                    case '\t':
-                        sb.append("\\t");
-                        break;
-                    case '\r':
-                        sb.append("\\r");
-                    case '\f':
-                        sb.append("\\f");
-                        break;
-                    default:
-                        sb.append(c);
-                        break;
-                }
-            }
-        }
-        return ws.formats().text().escapeText(sb.toString());
     }
 }

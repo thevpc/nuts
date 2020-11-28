@@ -32,15 +32,10 @@ public class NJobMain extends NutsApplication {
                 //okkay
                 return;
             } else {
-                if(cmdLine.isEmpty()){
-                    ts.runCommands(appContext.getWorkspace().commandLine().create("summary"));
-                    return;
-                }else {
-                    cmdLine.unexpectedArgument();
-                }
+                cmdLine.unexpectedArgument();
             }
         };
-        cmdLine.required();
+        ts.runCommands(appContext.getWorkspace().commandLine().create("summary"));
     }
 
 }

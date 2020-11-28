@@ -514,16 +514,19 @@ public final class NutsBootWorkspace {
 //                    LinkedHashSet<String> allExtDependencies = new LinkedHashSet<>();
                     LinkedHashSet<String> excludedExtensions = new LinkedHashSet<>();
                     if (options.getExcludedExtensions() != null) {
-                        for (String excludedExtension : options.getExcludedExtensions()) {
-                            excludedExtensions.add(PrivateNutsId.parse(excludedExtension).getShortName());
+                        for (String excludedExtensionGroup : options.getExcludedExtensions()) {
+                            for (String excludedExtension : excludedExtensionGroup.split("[;, ]")) {
+                                if(excludedExtension.length()>0) {
+                                    excludedExtensions.add(PrivateNutsId.parse(excludedExtension).getShortName());
+                                }
+                            }
                         }
                     }
                     if (workspaceInformation.getExtensionsSet() != null) {
                         List<NutsIdBootInfo> all=new ArrayList<>();
                         for (String extension : workspaceInformation.getExtensionsSet()) {
-                            LinkedHashMap<String,NutsIdBootInfo> visitedSimpleIds = new LinkedHashMap<>();
                             PrivateNutsId eid = PrivateNutsId.parse(extension);
-                            if (!excludedExtensions.contains(eid.getShortName())) {
+                            if (!excludedExtensions.contains(eid.getShortName()) && !excludedExtensions.contains(eid.getArtifactId())) {
                                 Path extensionFile = Paths.get(workspaceInformation.getCacheBoot())
                                         .resolve(PrivateNutsUtils.idToPath(eid)).resolve(NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME);
                                 Set<String> loadedDeps = null;

@@ -178,7 +178,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                 fillOption("--log-file-name", null, logConfig.getLogFileName(), arguments, false);
                 fillOption("--log-inherited", null, logConfig.isLogInherited(), false, arguments, false);
             }
-            fillOption("--exclude-extension", null, options.getExcludedExtensions(), ";", arguments, false);
+            fillOption("--exclude-extension", "-", options.getExcludedExtensions(), ";", arguments, false);
             fillOption("--exclude-repository", null, options.getExcludedRepositories(), ";", arguments, false);
             fillOption("--repository", "-r", options.getTransientRepositories(), ";", arguments, false);
             fillOption("--global", "-g", options.isGlobal(), false, arguments, false);

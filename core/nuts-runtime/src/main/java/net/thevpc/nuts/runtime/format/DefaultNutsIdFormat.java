@@ -207,13 +207,11 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             idBuilder.setProperty(NutsConstants.IdProperties.FACE, null);
         }
         id = idBuilder.build();
-        NutsTextFormatManager tf = getWorkspace().formats().text();
-        StringBuilder sb = new StringBuilder();
+//        NutsTextFormatManager tf = getWorkspace().formats().text();
+        NutsTextNodeBuilder sb = getWorkspace().formats().text().builder();
         if (!isOmitNamespace()) {
             if (!CoreStringUtils.isBlank(id.getNamespace())) {
-                sb.append("<<");
-                sb.append(tf.escapeText(id.getNamespace() + "://"));
-                sb.append(">>");
+                sb.appendStyled(id.getNamespace() + "://", NutsTextNodeStyle.PRIMARY8);
             }
         }
         if (!isOmitGroupId()) {
@@ -222,22 +220,18 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                 boolean importedGroup = getWorkspace().imports().getAll().contains(id.getGroupId());
                 if (!(importedGroup && isOmitImportedGroupId())) {
                     if (importedGroup || importedGroup2) {
-                        sb.append("<<");
-                        sb.append(tf.escapeText(id.getGroupId()));
-                        sb.append(">>");
+                        sb.appendStyled(id.getGroupId(), NutsTextNodeStyle.PRIMARY8);
                     } else {
-                        sb.append(tf.escapeText(id.getGroupId()));
+                        sb.appendPlain(id.getGroupId());
                     }
-                    sb.append(":");
+                    sb.appendStyled(":", NutsTextNodeStyle.SEPARATOR1);
                 }
             }
         }
-        sb.append("[[");
-        sb.append(tf.escapeText(id.getArtifactId()));
-        sb.append("]]");
+        sb.appendStyled(id.getArtifactId(), NutsTextNodeStyle.PRIMARY1);
         if (!CoreStringUtils.isBlank(id.getVersion().getValue())) {
-            sb.append("\\#");
-            sb.append(tf.escapeText(id.getVersion().toString()));
+            sb.appendPlain("#");
+            sb.appendPlain(id.getVersion().toString());
         }
         boolean firstQ = true;
 
@@ -256,56 +250,48 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 
         if (!CoreStringUtils.isBlank(classifier)) {
             if (firstQ) {
-                sb.append("{{\\?}}");
+                sb.appendStyled("?", NutsTextNodeStyle.SEPARATOR1);
                 firstQ = false;
             } else {
-                sb.append("{{\\&}}");
+                sb.appendStyled("&", NutsTextNodeStyle.SEPARATOR1);
             }
-            sb.append("{{classifier}}=**");
-            sb.append("**");
-            sb.append(tf.escapeText(classifier));
-            sb.append("**");
+            sb.appendStyled("classifier", NutsTextNodeStyle.KEYWORD2).appendStyled("=", NutsTextNodeStyle.SEPARATOR1);
+            sb.appendStyled(classifier);
         }
 
 //        if (highlightScope) {
         if (!NutsDependencyScopes.isDefaultScope(scope)) {
             if (firstQ) {
-                sb.append("{{\\?}}");
+                sb.appendStyled("?", NutsTextNodeStyle.SEPARATOR1);
                 firstQ = false;
             } else {
-                sb.append("{{\\&}}");
+                sb.appendStyled("&", NutsTextNodeStyle.SEPARATOR1);
             }
-            sb.append("{{scope}}=");
-            sb.append("**");
-            sb.append(tf.escapeText(scope));
-            sb.append("**");
+            sb.appendStyled("scope", NutsTextNodeStyle.KEYWORD2).appendStyled("=", NutsTextNodeStyle.SEPARATOR1);
+            sb.appendStyled(scope);
         }
 //        }
 //        if (highlightOptional) {
         if (!CoreStringUtils.isBlank(optional) && !"false".equalsIgnoreCase(optional)) {
             if (firstQ) {
-                sb.append("{{\\?}}");
+                sb.appendStyled("?", NutsTextNodeStyle.SEPARATOR1);
                 firstQ = false;
             } else {
-                sb.append("{{\\&}}");
+                sb.appendStyled("&", NutsTextNodeStyle.SEPARATOR1);
             }
-            sb.append("{{optional}}=");
-            sb.append("**");
-            sb.append(tf.escapeText(optional));
-            sb.append("**");
+            sb.appendStyled("optional",NutsTextNodeStyle.KEYWORD2).appendStyled("=",NutsTextNodeStyle.SEPARATOR1);
+            sb.appendStyled(optional);
         }
 //        }
         if (!CoreStringUtils.isBlank(exclusions)) {
             if (firstQ) {
-                sb.append("{{\\?}}");
+                sb.appendStyled("?", NutsTextNodeStyle.SEPARATOR1);
                 firstQ = false;
             } else {
-                sb.append("{{\\&}}");
+                sb.appendStyled("&", NutsTextNodeStyle.SEPARATOR1);
             }
-            sb.append("{{exclusions}}=");
-            sb.append("@@");
-            sb.append(tf.escapeText(exclusions));
-            sb.append("@@");
+            sb.appendStyled("exclusions",NutsTextNodeStyle.KEYWORD2).appendStyled("=",NutsTextNodeStyle.SEPARATOR1);
+            sb.appendStyled(exclusions,NutsTextNodeStyle.ERROR1);
         }
         if (!CoreStringUtils.isBlank(id.getPropertiesQuery())) {
             Set<String> otherKeys=new TreeSet<>(queryMap.keySet());
@@ -313,14 +299,14 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                 String v = queryMap.get(k);
                 if(v!=null) {
                     if (firstQ) {
-                        sb.append("{{\\?}}");
+                        sb.appendStyled("?", NutsTextNodeStyle.SEPARATOR1);
                         firstQ = false;
                     } else {
-                        sb.append("{{\\&}}");
+                        sb.appendStyled("&", NutsTextNodeStyle.SEPARATOR1);
                     }
-                    sb.append("<<").append(tf.escapeText(v)).append(">>");
-                    sb.append("=");
-                    sb.append(tf.escapeText(v));
+                    sb.appendStyled(v,NutsTextNodeStyle.PRIMARY8);
+                    sb.appendStyled("=",NutsTextNodeStyle.SEPARATOR1);
+                    sb.appendStyled(v);
                 }
             }
         }

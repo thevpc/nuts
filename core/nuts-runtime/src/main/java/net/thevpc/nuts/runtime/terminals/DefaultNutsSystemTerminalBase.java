@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.main.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 import net.thevpc.nuts.runtime.log.NutsLogVerb;
-import net.thevpc.nuts.runtime.util.fprint.FPrint;
+import net.thevpc.nuts.runtime.format.text.FPrint;
 
 import java.io.InputStream;
 import java.io.PrintStream;

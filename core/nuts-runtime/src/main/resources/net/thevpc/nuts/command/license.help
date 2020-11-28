@@ -1,11 +1,11 @@
-==nuts== {{license}}
+##nuts## {{license}}
       show license info and exit
 
 #!include</net/thevpc/nuts/includes/standard-command.help>
 
 ##EXAMPLES:##
-        ==nuts== {{license}} **--help**
+        ##nuts## {{license}} **--help**
             shows this help and exit
        
-        ==nuts== {{license}}
+        ##nuts## {{license}}
             show license and exit

@@ -1,13 +1,17 @@
+#) xml
 manipulate and query xml input
 
-##SYNOPSIS:##
-==xml== [**--file** <file>] [**--xpath** <query>]
+##) SYNOPSIS
+```sh-synopsys
+xml [--file <file>] [--xpath <query>]
+```
 search in xpath compatible pattern in input file. If no file is defined, consider standard input
 
-##EXAMPLES:##
+##)EXAMPLES
 
-==xml== **--xpath** /item/path **-f** file.xml
+```sh
+xml --xpath /item/path -f file.xml
+```
     search in xpath compatible pattern file.xml
-
 
 

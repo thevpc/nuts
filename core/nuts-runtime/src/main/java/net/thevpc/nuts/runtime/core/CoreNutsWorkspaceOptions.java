@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.core;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 
 import java.io.InputStream;
@@ -1358,5 +1359,26 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     public CoreNutsWorkspaceOptions setErrLinePrefix(String errLinePrefix) {
         this.errLinePrefix = errLinePrefix;
         return this;
+    }
+
+    @Override
+    public boolean isExcludedExtension(String extensionId) {
+        if(extensionId!=null){
+            NutsId pnid = CoreNutsUtils.parseNutsId(extensionId);
+            String shortName = pnid.getShortName();
+            String artifactId = pnid.getArtifactId();
+            if(excludedExtensions!=null){
+                for (String excludedExtensionList : excludedExtensions) {
+                    for (String s : excludedExtensionList.split("[;, ]")) {
+                        if(s.length()>0){
+                            if(s.equals(shortName)||s.equals(artifactId)){
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

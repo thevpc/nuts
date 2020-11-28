@@ -1,7 +1,7 @@
-search for artifacts/==nuts==
+search for artifacts/##nuts##
 
 ##SYNOPSYS##:
-==nuts== {{search}}  \[**<options>**\]... \<ids\> ...  <args> ...
+##nuts## {{search}}  \[**<options>**\]... \<ids\> ...  <args> ...
        search for \<ids\> 
 
 ##OPTIONS:##
@@ -172,14 +172,14 @@ search for artifacts/==nuts==
 #!include</net/thevpc/nuts/includes/standard-command.help>
 
 ##EXAMPLES:##
-        ==nuts== {{search}} **--help**
+        ##nuts## {{search}} **--help**
             shows this help and exit
        
-        ==nuts== {{search}}
+        ##nuts## {{search}}
             search installed nuts
 
-        ==nuts== {{search}} **--offline** netbeans-\*
+        ##nuts## {{search}} **--offline** netbeans-\*
             search all artifacts that start with "netbeans-" in all local repositories
 
-        ==nuts== {{search}} **--anywhere** netbeans-\*
+        ##nuts## {{search}} **--anywhere** netbeans-\*
             search all artifacts that start with "netbeans-" in all local and remote repositories

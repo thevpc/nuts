@@ -1,8 +1,8 @@
-==nuts== [[info]]
+##nuts## [[info]]
       show workspace detailed information (paths and libraries)
 
 ##SYNOPSIS:##
-==nuts== ##info## \[**<options>**\]
+##nuts## ##info## \[**<options>**\]
 
 ##OPTIONS:##
 **-r** | **--repos**
@@ -23,8 +23,8 @@
 #!include</net/thevpc/nuts/includes/standard-command.help>
 
 ##EXAMPLES:##
-        ==nuts== {{info}} **--help**
+        ##nuts## {{info}} **--help**
             shows this help and exit
        
-        ==nuts== {{info}} **--json**
+        ##nuts## {{info}} **--json**
             show info in json format

@@ -229,7 +229,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     public void printHelp() {
         String h = NutsWorkspaceExt.of(getWorkspace()).resolveDefaultHelp(getAppClass());
         if (h == null) {
-            h = "Help is @@missing@@.";
+            h = "Help is ```error missing```.";
         }
         getSession().out().println(h);
         //need flush if the help is syntactically incorrect

@@ -5,12 +5,12 @@
  */
 package net.thevpc.nuts.core.test.whitebox.utilities;
 
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.util.fprint.*;
-import net.thevpc.nuts.runtime.util.fprint.parser.DefaultTextNodeParser;
-import net.thevpc.nuts.runtime.util.fprint.parser.TextNode;
-import net.thevpc.nuts.runtime.util.fprint.renderer.AnsiUnixTermPrintRenderer;
-import net.thevpc.nuts.runtime.util.fprint.util.FormattedPrintStreamUtils;
+import net.thevpc.nuts.runtime.format.text.*;
+import net.thevpc.nuts.runtime.format.text.parser.DefaultNutsTextNodeParser;
+import net.thevpc.nuts.runtime.format.text.renderer.AnsiUnixTermPrintRenderer;
+import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.PrintStream;
@@ -44,8 +44,8 @@ public class Test07_ColorfulStream {
     @Test
     public void test2() {
 //        String msg="x{{\\?}}x";
-
-        PrintStream out = new PrintStream(new FormatOutputStream(System.out));
+        NutsWorkspace ws= Nuts.openWorkspace();
+        PrintStream out = new PrintStream(new FormatOutputStream(System.out,ws));
         for (String msg : new String[]{
                 "[]", "<>",
                 "\"\"",
@@ -55,7 +55,7 @@ public class Test07_ColorfulStream {
                 out.print(c);
             }
             out.println();
-            TestUtils.println(FormattedPrintStreamUtils.filterText(msg));
+            TestUtils.println(ws.formats().text().filterText(msg));
         }
     }
 
@@ -63,32 +63,136 @@ public class Test07_ColorfulStream {
     public void test3() {
 //        String msg="x{{\\?}}x";
 
-        PrintStream out = new PrintStream(new FormatOutputStream(System.out));
+        NutsWorkspace ws= Nuts.openWorkspace();
+        PrintStream out = new PrintStream(new FormatOutputStream(System.out,ws));
         out.println("==value             == \\= me");
     }
 
     @Test
     public void test4() {
 //        String msg="x{{\\?}}x";
-
+        NutsWorkspace ws = Nuts.openWorkspace();
 //        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        TextNodeWriter w = new TextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER);
-        TextNodeWriterStringer w2 = new TextNodeWriterStringer(System.out);
+        NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER,ws)
+                .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setNumberTitles(true))
+                ;
+        NutsTextNodeWriterStringer w2 = new NutsTextNodeWriterStringer(System.out);
 //        String text = "[#tet] hello == \\= me\n";
-        String text = "##) njob";
+        String text = "\n##) njob" +
+                "\n###) njob" +
+                "\n####) njob" +
+                "\n#####) njob" +
+                "\n######) njob" +
+                "\n#######) njob" +
+                "\n########) njob" +
+                "\n#########) njob" +
+                "\n##########) njob" +
+                "";
         System.out.println(text);
-        System.out.println("--------------------------------");
-        TextNodeParser parser = new DefaultTextNodeParser();
-        TextNode node = parser.parse(new StringReader(text));
+        System.out.println("\n--------------------------------");
+        NutsTextNodeParser parser = new DefaultNutsTextNodeParser(ws);
+        NutsTextNode node = parser.parse(new StringReader(text));
         System.out.println(node);
-        System.out.println("--------------------------------");
-        w.writeNode(node, new TextNodeWriterContext().setNumberTitles(true));
-        System.out.println("--------------------------------");
-        w2.writeNode(node, new TextNodeWriterContext().setNumberTitles(true));
+        System.out.println("\n--------------------------------");
+        w.writeNode(node);
+        System.out.println("\n--------------------------------");
+        w2.writeNode(node, new NutsTextNodeWriteConfiguration().setNumberTitles(true));
 
 //        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 //        PrintStream out = new PrintStream(new FormatOutputStream(bos));
 //        out.println("[#tet] hello == \\= me");
 //        System.out.println("as a result :: " + new String(bos.toByteArray()));
+    }
+
+    @Test
+    public void test5() {
+//        String msg="x{{\\?}}x";
+
+//        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        NutsWorkspace ws = Nuts.openWorkspace();
+        NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER,ws)
+                .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setNumberTitles(true));
+        NutsTextNodeWriterStringer w2 = new NutsTextNodeWriterStringer(System.out);
+//        String text = "[#tet] hello == \\= me\n";
+        String text =
+                "\n 1 ## text ##" +
+                "\n 2 ### text ###" +
+                "\n 3 #### text ####" +
+                "\n 4 ##### text #####" +
+                "\n 5 ###### text ######" +
+                "\n 6 ####### text #######" +
+                "\n 7 ######## text ########" +
+                "\n 8 ######### text #########" +
+                "\n 9 ########## text ##########" +
+                "\n"+
+                "\n 1 ```@@ text @@``` @@ text @@" +
+                "\n 2 ```@@@ text @@@``` @@@ text @@@" +
+                "\n 3 ```@@@@ text @@@@``` @@@@ text @@@@" +
+                "\n 4 ```@@@@@ text @@@@@``` @@@@@ text @@@@@" +
+                "\n 5 ```@@@@@@ text @@@@@@``` @@@@@@ text @@@@@@" +
+                "\n 6 ```@@@@@@@ text @@@@@@@``` @@@@@@@ text @@@@@@@" +
+                "\n 7 ```@@@@@@@@ text @@@@@@@@``` @@@@@@@@ text @@@@@@@@" +
+                "\n 8 ```@@@@@@@@@ text @@@@@@@@@``` @@@@@@@@@ text @@@@@@@@@" +
+                "\n 9 ```@@@@@@@@@@ text @@@@@@@@@@``` @@@@@@@@@@ text @@@@@@@@@@" +
+                "\n"+
+                "\n 1 ~~ text ~~" +
+                "\n 2 ~~~ text ~~~" +
+                "\n 3 ~~~~ text ~~~~" +
+                "\n 4 ~~~~~ text ~~~~~"+
+                "\n"+
+                "\n ##ø###hello###me##"+
+                "\n ## ###hello### me##"+
+                ""
+            ;
+        System.out.println(text);
+        System.out.println("\n--------------------------------");
+        NutsTextNodeParser parser = new DefaultNutsTextNodeParser(ws);
+        NutsTextNode node = parser.parse(new StringReader(text));
+        System.out.println(node);
+        System.out.println("\n--------------------------------");
+        w.writeNode(node);
+        System.out.println("\n--------------------------------");
+        w2.writeNode(node, new NutsTextNodeWriteConfiguration().setNumberTitles(true));
+
+//        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//        PrintStream out = new PrintStream(new FormatOutputStream(bos));
+//        out.println("[#tet] hello == \\= me");
+//        System.out.println("as a result :: " + new String(bos.toByteArray()));
+    }
+
+    @Test
+    public void test6() {
+//        String msg="x{{\\?}}x";
+
+//        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        NutsWorkspace ws = Nuts.openWorkspace();
+        NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER,ws)
+                .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setNumberTitles(true));
+        NutsTextNodeWriterStringer w2 = new NutsTextNodeWriterStringer(System.out);
+//        String text = "[#tet] hello == \\= me\n";
+        String text = "unable to create system terminal : %s";
+        System.out.println(text);
+        System.out.println("\n--------------------------------");
+        NutsTextNodeParser parser = new DefaultNutsTextNodeParser(ws);
+        NutsTextNode node = parser.parse(new StringReader(text));
+        System.out.println(node);
+        System.out.println("\n--------------------------------");
+        w.writeNode(node);
+        System.out.println("\n--------------------------------");
+        w2.writeNode(node, new NutsTextNodeWriteConfiguration().setNumberTitles(true));
+
+//        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//        PrintStream out = new PrintStream(new FormatOutputStream(bos));
+//        out.println("[#tet] hello == \\= me");
+//        System.out.println("as a result :: " + new String(bos.toByteArray()));
+    }
+    @Test
+    public void test7() {
+        NutsWorkspace ws = Nuts.openWorkspace();
+        String t_colors=CoreIOUtils.loadString(getClass().getResourceAsStream("nuts-help-colors.help"),true);
+        NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_colors));
+        NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER,ws)
+                .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setNumberTitles(true));
+        w.writeNode(node);
     }
 }

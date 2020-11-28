@@ -175,8 +175,8 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 if ("why".equalsIgnoreCase(r)) {
                                     PrintStream out = context.getSession().out();
                                     out.printf("\\\"==%s==\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", getBashrcName());
-                                    out.print("It helps configuring environment variables. ==nuts== make usage of such facility to update your **PATH** env variable\n");
-                                    out.print("to point to current ==nuts== workspace, so that when you call a ==nuts== command it will be resolved correctly...\n");
+                                    out.print("It helps configuring environment variables. ##nuts## make usage of such facility to update your **PATH** env variable\n");
+                                    out.print("to point to current ##nuts## workspace, so that when you call a ##nuts## command it will be resolved correctly...\n");
                                     out.printf("However updating \\\"==%s==\\\" does not affect the running process/terminal. So you have basically two choices :%n", getBashrcName());
                                     out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
                                     out.printf(" - Or to run by your self the \\\"==%s==\\\" script (don\\'t forget the leading dot)%n", ". ~/" + getBashrcName());

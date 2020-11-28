@@ -161,5 +161,4 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
     NutsWorkspaceEnvManager env();
 
-    NutsStringBuilder str();
 }

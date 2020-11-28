@@ -1,8 +1,8 @@
-==nuts== {{check-updates}}  \[**<options>**\]... \<ids\> ...
-       check if a newer version of ==nuts== is available in the current workspace without performing updates
+##nuts## {{check-updates}}  \[**<options>**\]... \<ids\> ...
+       check if a newer version of ##nuts## is available in the current workspace without performing updates
 
 ##SYNOPSYS##:
-==nuts== {{check-updates}}  \[**<options>**\]... \<ids\> ...
+##nuts## {{check-updates}}  \[**<options>**\]... \<ids\> ...
 
 ##OPTIONS:##
 **-a** or **--all**
@@ -21,8 +21,8 @@
 #!include</net/thevpc/nuts/includes/standard-command.help>
 
 ##EXAMPLES:##
-        ==nuts== {{check-updates}} **--help**
+        ##nuts## {{check-updates}} **--help**
             shows this help and exit
        
-        ==nuts== {{check-updates}}
+        ##nuts## {{check-updates}}
             check updates for current workspace

@@ -32,7 +32,6 @@ import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.manager.DefaultNutsDependencyManager;
 import net.thevpc.nuts.runtime.manager.DefaultNutsDescriptorManager;
 import net.thevpc.nuts.runtime.manager.DefaultNutsIdManager;
-import net.thevpc.nuts.runtime.main.DefaultNutsStringBuilder;
 import net.thevpc.nuts.runtime.main.wscommands.DefaultNutsUpdateStatisticsCommand;
 import net.thevpc.nuts.runtime.app.DefaultNutsCommandLineManager;
 import net.thevpc.nuts.runtime.app.DefaultNutsWorkspaceLocationManager;
@@ -223,11 +222,6 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     @Override
     public NutsWorkspaceEnvManager env() {
         return NutsWorkspaceConfigManagerExt.of(config()).env();
-    }
-
-    @Override
-    public NutsStringBuilder str() {
-        return new DefaultNutsStringBuilder(this);
     }
 
     public boolean isInitializing() {

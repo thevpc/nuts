@@ -395,7 +395,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                     //and the add to classpath
                     loadedExtensionIds.add(extension);
                     if(session.isPlainTrace()){
-                        session.out().printf("extensions %s loaded\n",new NutsString(ws.id().formatter(def.getId()).format()));
+                        session.out().printf("extension %s loaded\n",new NutsString(ws.id().formatter(def.getId()).format()));
                     }
                     someUpdates=true;
                 }

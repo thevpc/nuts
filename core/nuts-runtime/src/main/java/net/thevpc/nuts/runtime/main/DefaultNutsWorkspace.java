@@ -98,7 +98,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).log(" ");
             LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).log(escapeText0(" = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="));
             LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).log(" ");
-            LOGCSF.log("start ==nuts== **{0}** at {1}", Nuts.getVersion(), CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(info.getOptions().getCreationTime())));
+            LOGCSF.log("start ##nuts## **{0}** at {1}", Nuts.getVersion(), CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(info.getOptions().getCreationTime())));
             LOGCRF.log("open Nuts Workspace               : {0}", new NutsString(commandLine().formatter().setValue(info.getOptions().format().getBootCommand()).format()));
             LOGCRF.log("open Nuts Workspace (compact)     : {0}", new NutsString(commandLine().formatter().setValue(info.getOptions().format().compact().getBootCommand()).format()));
 
@@ -283,7 +283,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
                 if (session.isPlainTrace()) {
                     PrintStream out = session.out();
-                    out.printf("==nuts== workspace v[[%s]] created.%n", nutsVersion);
+                    out.printf("##nuts## workspace v[[%s]] created.%n", nutsVersion);
                 }
 
                 reconfigurePostInstall(session);
@@ -337,12 +337,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 this.security().login(uoptions.getUserName(), password);
             }
             LOG.with().level(Level.FINE).verb(NutsLogVerb.SUCCESS)
-                    .formatted().log("==nuts== workspace loaded in @@{0}@@",
+                    .formatted().log("##nuts## workspace loaded in @@{0}@@",
                     CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis())
             );
 
             if (CoreCommonUtils.getSysBoolNutsProperty("perf", false)) {
-                session.out().printf("==nuts== workspace loaded in [[%s]]%n",
+                session.out().printf("##nuts## workspace loaded in [[%s]]%n",
                         CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis())
                 );
             }
@@ -394,7 +394,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             CoreStringUtils.fillString(' ', 25 - version.length(), version);
             out.println(formats().text().loadFormattedString("/net/thevpc/nuts/includes/standard-header.help", getClass().getClassLoader(), "no help found"));
             out.println("{{/------------------------------------------------------------------------------\\\\}}");
-            out.println("{{|}}  This is the very {{first}} time ==nuts== has been started for this workspace...     {{|}}");
+            out.println("{{|}}  This is the very {{first}} time ##nuts## has been started for this workspace...     {{|}}");
             out.println("{{\\\\------------------------------------------------------------------------------/}}");
             out.println();
         }

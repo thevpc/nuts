@@ -611,7 +611,9 @@ final class PrivateNutsArgumentsParser {
                         parseLogLevel(logConfig, cmdLine, enabled);
                         break;
                     }
-                    case "--exclude-extension": {
+                    case "-X":
+                    case "--exclude-extension":
+                        {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
@@ -999,7 +1001,6 @@ final class PrivateNutsArgumentsParser {
                     case "-L":
                     case "-M":
                     case "-W":
-                    case "-X":
                     case "-B":
                     case "-i":
                     case "-q":
