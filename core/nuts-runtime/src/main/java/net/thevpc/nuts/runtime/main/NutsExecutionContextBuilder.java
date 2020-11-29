@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.main;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsExecutorComponent;
 
 import java.util.Map;
 

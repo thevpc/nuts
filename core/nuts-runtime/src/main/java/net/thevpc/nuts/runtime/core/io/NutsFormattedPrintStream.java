@@ -26,7 +26,7 @@
 */
 package net.thevpc.nuts.runtime.core.io;
 
-import net.thevpc.nuts.NutsComponent;
+import net.thevpc.nuts.spi.NutsComponent;
 
 import java.io.OutputStream;
 import java.io.PrintStream;

@@ -23,7 +23,10 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
+
+import net.thevpc.nuts.NutsIndexStore;
+import net.thevpc.nuts.NutsRepository;
 
 /**
  * Index Store Factory responsible of creating stores for a given repository

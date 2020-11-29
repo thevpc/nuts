@@ -25,9 +25,10 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
+
 import java.io.Serializable;
 import java.net.URL;
-import java.util.Set;
 
 /**
  * workspace initialization options.

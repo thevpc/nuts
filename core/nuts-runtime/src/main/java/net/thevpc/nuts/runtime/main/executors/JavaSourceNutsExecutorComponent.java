@@ -30,6 +30,7 @@ import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.util.common.CoreCommonUtils;
 import net.thevpc.nuts.runtime.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.DefaultNutsExecutionContext;
+import net.thevpc.nuts.NutsExecutorComponent;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;

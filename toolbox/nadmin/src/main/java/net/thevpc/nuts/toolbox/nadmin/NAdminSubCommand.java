@@ -6,7 +6,7 @@
 package net.thevpc.nuts.toolbox.nadmin;
 
 import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsComponent;
+import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsCommandLine;
 
 /**

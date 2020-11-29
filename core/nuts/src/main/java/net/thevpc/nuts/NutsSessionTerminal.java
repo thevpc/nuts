@@ -25,6 +25,9 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsSessionTerminalBase;
+import net.thevpc.nuts.spi.NutsTerminalBase;
+
 import java.io.InputStream;
 import java.io.PrintStream;
 

@@ -27,6 +27,9 @@ package net.thevpc.nuts.ext.term;
 
 import net.thevpc.nuts.*;
 import net.thevpc.jshell.JShellInterruptException;
+import net.thevpc.nuts.spi.NutsInputStreamTransparentAdapter;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.spi.NutsTerminalBase;
 import org.jline.reader.*;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.terminal.Terminal;

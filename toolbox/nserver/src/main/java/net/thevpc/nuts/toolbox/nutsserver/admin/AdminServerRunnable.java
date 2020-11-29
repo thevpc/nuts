@@ -34,6 +34,7 @@ import java.net.Socket;
 import java.util.concurrent.Executor;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.toolbox.nsh.NutsJavaShell;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServer;

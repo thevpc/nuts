@@ -31,6 +31,8 @@ import net.thevpc.nuts.runtime.config.DefaultNutsArtifactCall;
 import net.thevpc.nuts.runtime.config.DefaultNutsDescriptorBuilder;
 import net.thevpc.nuts.runtime.format.json.JsonStringBuffer;
 import net.thevpc.nuts.runtime.util.CoreNutsUtils;
+import net.thevpc.nuts.spi.NutsDescriptorContentParserComponent;
+import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
 
 import java.io.BufferedReader;
 import java.io.IOException;

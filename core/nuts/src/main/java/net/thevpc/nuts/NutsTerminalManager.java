@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.spi.NutsTerminalBase;
+
 public interface NutsTerminalManager {
 
     /**
@@ -60,7 +63,7 @@ public interface NutsTerminalManager {
      * @param terminal system terminal
      * @return {@code this} instance
      */
-    NutsTerminalManager setSystemTerminal(NutsSystemTerminalBase terminal,NutsSession session);
+    NutsTerminalManager setSystemTerminal(NutsSystemTerminalBase terminal, NutsSession session);
 
     /**
      * return workspace default terminal

@@ -23,10 +23,10 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
 
-import java.io.InputStream;
-import java.io.PrintStream;
+import net.thevpc.nuts.NutsCommandAutoCompleteProcessor;
+import net.thevpc.nuts.NutsTerminalSpec;
 
 /**
  * Created by vpc on 2/20/17.
@@ -34,25 +34,17 @@ import java.io.PrintStream;
  * @since 0.5.4
  * %category SPI Base
  */
-public interface NutsTerminalBase extends NutsComponent<NutsTerminalSpec> {
+public interface NutsSystemTerminalBase extends NutsComponent<NutsTerminalSpec>, NutsTerminalBase {
 
-    NutsTerminalBase setOutMode(NutsTerminalMode mode);
+    default NutsCommandAutoCompleteProcessor getAutoCompleteResolver(){
+        return null;
+    }
 
-    NutsTerminalMode getOutMode();
+    default boolean isAutoCompleteSupported(){
+        return false;
+    }
 
-    NutsTerminalBase setErrMode(NutsTerminalMode mode);
-
-    NutsTerminalMode getErrMode();
-
-    String readLine(PrintStream out, String prompt, Object... params);
-
-    char[] readPassword(PrintStream out, String prompt, Object... params);
-
-    InputStream getIn();
-
-    PrintStream getOut();
-
-    PrintStream getErr();
-
-    NutsTerminalBase getParent();
+    default NutsSystemTerminalBase setAutoCompleteResolver(NutsCommandAutoCompleteProcessor autoCompleteResolver){
+        return this;
+    }
 }

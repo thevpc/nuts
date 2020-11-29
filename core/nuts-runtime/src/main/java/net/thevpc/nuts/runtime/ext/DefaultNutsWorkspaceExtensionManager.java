@@ -21,6 +21,8 @@ import net.thevpc.nuts.runtime.log.NutsLogVerb;
 import net.thevpc.nuts.runtime.terminals.DefaultNutsSessionTerminal;
 import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.util.common.ListMap;
+import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.NutsExecutorComponent;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,9 +43,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     private final NutsLogger LOG;
     private final Set<Class> SUPPORTED_EXTENSION_TYPES = new HashSet<>(
-            Arrays.asList(//order is important!!because autowiring should follow this very order
+            Arrays.asList(//order is important!!because auto-wiring should follow this very order
 //                    NutsPrintStreamFormattedNull.class,
-                    NutsNonFormattedPrintStream.class,
                     NutsFormattedPrintStream.class,
                     NutsSystemTerminalBase.class,
                     NutsSessionTerminalBase.class,

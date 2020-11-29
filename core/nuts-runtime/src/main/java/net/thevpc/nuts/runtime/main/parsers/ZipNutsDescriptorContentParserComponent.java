@@ -37,6 +37,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import net.thevpc.nuts.runtime.util.io.ZipUtils;
+import net.thevpc.nuts.spi.NutsDescriptorContentParserComponent;
+import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
 
 /**
  * Created by vpc on 1/15/17.

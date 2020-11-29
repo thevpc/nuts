@@ -26,6 +26,8 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsComponent;
+
 /**
  * Component responsible of installing other artifacts.
  *

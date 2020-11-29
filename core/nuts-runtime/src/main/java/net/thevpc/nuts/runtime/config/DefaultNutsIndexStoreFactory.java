@@ -27,7 +27,7 @@
 package net.thevpc.nuts.runtime.config;
 
 import net.thevpc.nuts.NutsIndexStore;
-import net.thevpc.nuts.NutsIndexStoreFactory;
+import net.thevpc.nuts.spi.NutsIndexStoreFactory;
 import net.thevpc.nuts.NutsRepository;
 import net.thevpc.nuts.NutsSupportLevelContext;
 

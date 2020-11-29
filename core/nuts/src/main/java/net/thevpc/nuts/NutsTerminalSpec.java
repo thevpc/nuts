@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsTerminalBase;
+
 import java.io.Serializable;
 import java.util.Map;
 

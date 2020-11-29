@@ -23,7 +23,11 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
+
+import net.thevpc.nuts.NutsTerminalSpec;
+import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.spi.NutsTerminalBase;
 
 /**
  * Session Terminal Base instance are special Terminal Base classes instances that handle workspace session.

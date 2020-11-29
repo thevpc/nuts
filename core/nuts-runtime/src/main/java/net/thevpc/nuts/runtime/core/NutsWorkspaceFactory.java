@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.runtime.core;
 
-import net.thevpc.nuts.NutsComponent;
+import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsId;
 
 import java.net.URL;

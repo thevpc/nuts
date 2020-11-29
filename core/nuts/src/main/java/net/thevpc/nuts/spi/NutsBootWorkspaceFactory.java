@@ -9,6 +9,7 @@
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
+ *
  * <br>
  *
  * Copyright [2020] [thevpc]
@@ -23,17 +24,36 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
+
+import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsWorkspaceInitInformation;
+import net.thevpc.nuts.NutsWorkspaceOptions;
 
 /**
- * Created by vpc on 1/23/17.
+ * Class responsible of creating and initializing Workspace
+ * Created by vpc on 1/5/17.
  *
  * @since 0.5.4
  * %category SPI Base
  */
-public interface NutsWorkspaceArchetypeComponent extends NutsComponent<String/*archetype id*/> {
+public interface NutsBootWorkspaceFactory {
 
-    String getName();
+    /**
+     * when multiple factories are available, the best one is selected according to
+     * the maximum value of {@code getBootSupportLevel(options)}.
+     * Note that default value (for the reference implementation) is {@code NutsComponent.DEFAULT_SUPPORT}.
+     * Any value less or equal to zero is ignored (and the factory is discarded)
+     * @param options command line options
+     * @return support level
+     */
+    int getBootSupportLevel(NutsWorkspaceOptions options);
 
-    void initialize(NutsSession session);
+    /**
+     * create workspace with the given options
+     * @param options boot init options
+     * @return initialized workspace
+     */
+    NutsWorkspace createWorkspace(NutsWorkspaceInitInformation options);
+
 }

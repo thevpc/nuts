@@ -24,20 +24,25 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
+
+import net.thevpc.nuts.NutsTransportConnection;
+
+import java.io.UncheckedIOException;
 
 /**
- * Content parser component is responsible of resolving a Nuts descriptor form a content file
- *
+ * Transport component responsible of creating a connexion to remote servers.
+ * Should handle at least valid http connections.
  * @since 0.5.4
  * %category SPI Base
  */
-public interface NutsDescriptorContentParserComponent extends NutsComponent<Object/*any object or null*/> {
+public interface NutsTransportComponent extends NutsComponent<String/*url*/> {
 
     /**
-     * parse content and return a valid NutsDescriptor or null if not supported.
-     * @param parserContext context
-     * @return valid descriptor or null.
+     * open url and return a valid {@link NutsTransportConnection}
+     * @param url url to open
+     * @return new instance of {@link NutsTransportConnection}
+     * @throws UncheckedIOException when i/o exception occurs
      */
-    NutsDescriptor parse(NutsDescriptorContentParserContext parserContext);
+    NutsTransportConnection open(String url) throws UncheckedIOException;
 }

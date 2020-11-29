@@ -29,10 +29,10 @@ import net.thevpc.nuts.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 import net.thevpc.nuts.runtime.io.NamedByteArrayInputStream;
+import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
 
 /**
  * Created by vpc on 1/29/17.

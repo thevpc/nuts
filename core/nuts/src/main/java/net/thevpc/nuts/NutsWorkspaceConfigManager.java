@@ -25,6 +25,8 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsIndexStoreFactory;
+
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Set;

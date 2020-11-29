@@ -25,7 +25,7 @@
 */
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.nuts.NutsComponent;
+import net.thevpc.nuts.spi.NutsComponent;
 
 /**
  * Created by vpc on 3/7/17.

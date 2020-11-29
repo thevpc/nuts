@@ -33,6 +33,7 @@ import net.thevpc.nuts.runtime.util.common.ClassClassMap;
 import net.thevpc.nuts.runtime.util.common.CoreCommonUtils;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.util.common.ListMap;
+import net.thevpc.nuts.spi.NutsComponent;
 
 import java.net.URL;
 import java.util.*;

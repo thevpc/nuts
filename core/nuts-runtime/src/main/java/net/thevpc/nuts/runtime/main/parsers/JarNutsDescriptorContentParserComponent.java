@@ -28,7 +28,6 @@ package net.thevpc.nuts.runtime.main.parsers;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.config.DefaultNutsArtifactCall;
 import net.thevpc.nuts.runtime.config.DefaultNutsDescriptorBuilder;
-import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.bridges.maven.MavenUtils;
 import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.util.common.Ref;
@@ -47,6 +46,8 @@ import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.util.io.InputStreamVisitor;
 import net.thevpc.nuts.runtime.util.io.ZipUtils;
+import net.thevpc.nuts.spi.NutsDescriptorContentParserComponent;
+import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
 
 /**
  * Created by vpc on 1/15/17.

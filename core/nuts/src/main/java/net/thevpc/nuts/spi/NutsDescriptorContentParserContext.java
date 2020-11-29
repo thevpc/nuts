@@ -23,7 +23,10 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
+
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.InputStream;
 

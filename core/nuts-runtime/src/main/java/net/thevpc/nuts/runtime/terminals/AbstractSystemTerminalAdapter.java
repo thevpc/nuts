@@ -9,6 +9,8 @@ import java.io.PrintStream;
 import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 import net.thevpc.nuts.runtime.io.DefaultNutsQuestion;
+import net.thevpc.nuts.spi.NutsInputStreamTransparentAdapter;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal implements NutsSystemTerminal {
 

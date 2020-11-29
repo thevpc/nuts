@@ -52,6 +52,9 @@ import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.util.common.CoreCommonUtils;
 import net.thevpc.nuts.runtime.util.common.MapStringMapper;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
+import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
 
 import java.io.IOException;
 import java.io.PrintStream;

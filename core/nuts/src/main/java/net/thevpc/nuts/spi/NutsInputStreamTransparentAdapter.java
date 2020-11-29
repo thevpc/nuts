@@ -23,13 +23,24 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
+
+import java.io.InputStream;
 
 /**
- * Non formatted Print Stream Anchor Interface
- * @author vpc
+ * Interface to enable marking system streams. When creating new processes nuts
+ * will dereference NutsInputStreamTransparentAdapter to check if the
+ * InputStream i a system io. In that case nuts will "inherit" input stream
+ *
  * @since 0.5.4
- * %category Input Output
+ * %category Base
  */
-public interface NutsNonFormattedPrintStream extends NutsComponent<Object> {
+public interface NutsInputStreamTransparentAdapter {
+
+    /**
+     * de-referenced stream
+     *
+     * @return de-referenced stream
+     */
+    InputStream baseInputStream();
 }

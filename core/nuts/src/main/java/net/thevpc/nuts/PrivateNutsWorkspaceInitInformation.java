@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
+
 import java.io.File;
 import java.net.URL;
 import java.util.LinkedHashMap;

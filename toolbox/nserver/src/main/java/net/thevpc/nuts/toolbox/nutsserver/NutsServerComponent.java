@@ -25,7 +25,7 @@
 */
 package net.thevpc.nuts.toolbox.nutsserver;
 
-import net.thevpc.nuts.NutsComponent;
+import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.NutsSingleton;
 

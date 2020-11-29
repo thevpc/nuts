@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime;
 
-import net.thevpc.nuts.NutsComponent;
+import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsServiceLoader;
 
 import java.util.ArrayList;

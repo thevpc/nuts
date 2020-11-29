@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.terminals;
 
-import net.thevpc.nuts.NutsSystemTerminalBase;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 public class DefaultSystemTerminal extends AbstractSystemTerminalAdapter {
 

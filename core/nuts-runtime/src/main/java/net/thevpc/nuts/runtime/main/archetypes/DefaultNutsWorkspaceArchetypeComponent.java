@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.main.archetypes;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.main.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.util.CoreNutsUtils;
+import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;

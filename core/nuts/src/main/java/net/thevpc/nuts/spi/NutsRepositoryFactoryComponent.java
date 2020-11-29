@@ -24,23 +24,20 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
 
-import java.io.UncheckedIOException;
+import net.thevpc.nuts.*;
 
 /**
- * Transport component responsible of creating a connexion to remote servers.
- * Should handle at least valid http connections.
+ * Created by vpc on 1/15/17.
+ *
  * @since 0.5.4
  * %category SPI Base
  */
-public interface NutsTransportComponent extends NutsComponent<String/*url*/> {
+public interface NutsRepositoryFactoryComponent extends NutsComponent<NutsRepositoryConfig> {
 
-    /**
-     * open url and return a valid {@link NutsTransportConnection}
-     * @param url url to open
-     * @return new instance of {@link NutsTransportConnection}
-     * @throws UncheckedIOException when i/o exception occurs
-     */
-    NutsTransportConnection open(String url) throws UncheckedIOException;
+    NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace);
+
+    NutsRepository create(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository);
+
 }

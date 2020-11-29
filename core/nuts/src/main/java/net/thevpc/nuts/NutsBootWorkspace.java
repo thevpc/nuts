@@ -25,6 +25,8 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;

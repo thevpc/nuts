@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.main.executors;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsExecutorComponent;
 
 import java.util.ArrayList;
 import java.util.Arrays;

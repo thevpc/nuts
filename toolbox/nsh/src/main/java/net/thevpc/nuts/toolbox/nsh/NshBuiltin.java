@@ -27,7 +27,7 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.jshell.JShellBuiltin;
-import net.thevpc.nuts.NutsComponent;
+import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsCommandAutoComplete;
 
 /**

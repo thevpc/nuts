@@ -26,6 +26,8 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 

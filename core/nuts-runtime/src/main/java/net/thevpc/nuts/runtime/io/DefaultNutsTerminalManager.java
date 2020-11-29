@@ -5,7 +5,9 @@ import net.thevpc.nuts.runtime.DefaultNutsWorkspaceEvent;
 import net.thevpc.nuts.runtime.log.NutsLogVerb;
 import net.thevpc.nuts.runtime.terminals.*;
 import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.terminals.*;
+import net.thevpc.nuts.spi.NutsSessionTerminalBase;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.spi.NutsTerminalBase;
 
 import java.util.logging.Level;
 

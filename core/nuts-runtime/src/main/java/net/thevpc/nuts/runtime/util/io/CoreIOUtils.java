@@ -36,6 +36,9 @@ import net.thevpc.nuts.runtime.log.NutsLogVerb;
 import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.util.common.DefaultPersistentMap;
 import net.thevpc.nuts.runtime.util.common.PersistentMap;
+import net.thevpc.nuts.spi.NutsDescriptorContentParserComponent;
+import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
+import net.thevpc.nuts.spi.NutsTransportComponent;
 
 import java.io.*;
 import java.net.*;

@@ -27,6 +27,8 @@ package net.thevpc.nuts.runtime;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.main.DefaultNutsWorkspace;
+import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
+import net.thevpc.nuts.spi.NutsComponent;
 
 /**
  * Created by vpc on 1/5/17.

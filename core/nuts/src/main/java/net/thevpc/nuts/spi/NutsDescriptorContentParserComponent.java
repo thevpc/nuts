@@ -23,29 +23,23 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
- */
-package net.thevpc.nuts;
+*/
+package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
-
-import java.util.Comparator;
+import net.thevpc.nuts.NutsDescriptor;
 
 /**
- * 
- * @author vpc
- * %category Internal
+ * Content parser component is responsible of resolving a Nuts descriptor form a content file
+ *
+ * @since 0.5.4
+ * %category SPI Base
  */
-final class PrivateNutsBootWorkspaceFactoryComparator implements Comparator<NutsBootWorkspaceFactory> {
+public interface NutsDescriptorContentParserComponent extends NutsComponent<Object/*any object or null*/> {
 
-    private final NutsWorkspaceOptions options;
-
-    public PrivateNutsBootWorkspaceFactoryComparator(NutsWorkspaceOptions options) {
-        this.options = options;
-    }
-
-    @Override
-    public int compare(NutsBootWorkspaceFactory o1, NutsBootWorkspaceFactory o2) {
-        //sort by reverse order!
-        return Integer.compare(o2.getBootSupportLevel(options), o1.getBootSupportLevel(options));
-    }
+    /**
+     * parse content and return a valid NutsDescriptor or null if not supported.
+     * @param parserContext context
+     * @return valid descriptor or null.
+     */
+    NutsDescriptor parse(NutsDescriptorContentParserContext parserContext);
 }
