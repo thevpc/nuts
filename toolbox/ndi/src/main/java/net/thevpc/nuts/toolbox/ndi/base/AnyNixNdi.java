@@ -144,13 +144,13 @@ public class AnyNixNdi extends BaseSystemNdi {
         if (!updatedNames.isEmpty() && session.isTrace()) {
             if (!updatedNames.isEmpty()) {
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating ==%s== to point to workspace ==%s==%n",
+                    context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating ####%s#### to point to workspace ####%s####%n",
                             String.join(", ", updatedNames)
                             , ws.locations().getWorkspaceLocation());
                 }
                 context.getSession().getTerminal().ask()
                         .forBoolean(
-                                "@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.%n"
+                                "```error ATTENTION``` You may need to re-run terminal or issue \\\"####%s####\\\" in your current terminal for new environment to take effect.%n"
                                         + "Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
                                 ". ~/" + getBashrcName()
                         )
@@ -174,12 +174,12 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 }
                                 if ("why".equalsIgnoreCase(r)) {
                                     PrintStream out = context.getSession().out();
-                                    out.printf("\\\"==%s==\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", getBashrcName());
+                                    out.printf("\\\"####%s####\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", getBashrcName());
                                     out.print("It helps configuring environment variables. ##nuts## make usage of such facility to update your **PATH** env variable\n");
                                     out.print("to point to current ##nuts## workspace, so that when you call a ##nuts## command it will be resolved correctly...\n");
-                                    out.printf("However updating \\\"==%s==\\\" does not affect the running process/terminal. So you have basically two choices :%n", getBashrcName());
+                                    out.printf("However updating \\\"####%s####\\\" does not affect the running process/terminal. So you have basically two choices :%n", getBashrcName());
                                     out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
-                                    out.printf(" - Or to run by your self the \\\"==%s==\\\" script (don\\'t forget the leading dot)%n", ". ~/" + getBashrcName());
+                                    out.printf(" - Or to run by your self the \\\"####%s####\\\" script (don\\'t forget the leading dot)%n", ". ~/" + getBashrcName());
                                     throw new NutsValidationException(ws, "Try again...'");
                                 } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
                                     throw new NutsUserCancelException(ws);

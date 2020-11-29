@@ -27,7 +27,7 @@ Text                                 | Text                              | plain
 \\`\\#\\@                               | \`\#\@                               | escaped characters
 \`\`\`xml <xml n='value'></xml>\`\`\`      | ```xml <xml n='value'></xml>```             | xml formatting
 \`\`\`commandline ...\`\`\`                | ```sh cmd arg user -option=true```         | commandline formatting
-\`\`\`commandline-synopsys ...\`\`\`       | ```sh-synopsys cmd [arg] <user> -option```          | commandline synopsys formatting
+\`\`\`commandline-synopsys ...\`\`\`       | ```sh cmd [arg] <user> -option```          | commandline synopsys formatting
 \`\`\`error message\`\`\`                  | ```error message```                           | error message
 \`\`\`warn message\`\`\`                   | ```warn message```                           | warning message
 

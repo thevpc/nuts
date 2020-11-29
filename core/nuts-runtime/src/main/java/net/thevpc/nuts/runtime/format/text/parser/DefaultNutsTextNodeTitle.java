@@ -53,7 +53,7 @@ public class DefaultNutsTextNodeTitle extends AbstractNutsTextNode implements Nu
 
     public String getStyleCode() {
         int u = start.indexOf(')');
-        return start.substring(0,u);
+        return start.substring(0,u)+start.charAt(0);
     }
 
     public String getStart() {

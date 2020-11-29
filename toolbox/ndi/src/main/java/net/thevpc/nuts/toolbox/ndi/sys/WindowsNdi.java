@@ -169,7 +169,7 @@ public class WindowsNdi extends BaseSystemNdi {
             String menuSpecificVersionShortcutPath = configurePathShortcut(Target.MENU, false, apiVersion, bootConfig, null,session);
             PrintStream out = context.getSession().out();
             if (session.isTrace()) {
-                out.printf("@@ATTENTION@@ To run any nuts command you should use the pre-configured shell at \\\"==%s==\\\".%n", desktopSpecificVersionShortcutPath);
+                out.printf("```error ATTENTION``` To run any nuts command you should use the pre-configured shell at \\\"####%s####\\\".%n", desktopSpecificVersionShortcutPath);
             }
             return new UpdatedPaths(
                     new String[]{desktopGlobalShortcutPath, desktopSpecificVersionShortcutPath, menuGlobalShortcutPath, menuSpecificVersionShortcutPath},
@@ -230,7 +230,7 @@ public class WindowsNdi extends BaseSystemNdi {
         }
         if (!updatedNames.isEmpty()) {
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating ==%s== to point to workspace ==%s==%n",
+                context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating ####%s#### to point to workspace ####%s####%n",
                         String.join(", ", updatedNames)
                         , ws.locations().getWorkspaceLocation());
             }

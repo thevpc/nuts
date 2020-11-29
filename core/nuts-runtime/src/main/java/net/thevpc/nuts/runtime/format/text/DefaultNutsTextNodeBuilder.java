@@ -82,7 +82,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
 
     @Override
     public NutsTextNodeBuilder appendStyled(NutsTextNode text, NutsTextNodeStyle... decos) {
-        all.add(text1.factory().styled(text));
+        all.add(text1.factory().styled(text,decos));
         return this;
     }
 

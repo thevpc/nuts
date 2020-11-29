@@ -365,13 +365,13 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         }
 
         if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NutsConfirmationMode.ASK)) {
-            printList(out, "{{new}}", "##installed##", list.ids(x -> x.doInstall && !x.isAlreadyExists()));
-            printList(out, "{{new}}", "##required##", list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists()));
-            printList(out, "{{required}}", "##re-required##", list.ids(x -> (!x.doInstall && x.doRequire) && x.isAlreadyRequired()));
-            printList(out, "{{required}}", "##installed##", list.ids(x -> x.doInstall && x.isAlreadyRequired() && !x.isAlreadyInstalled()));
-            printList(out, "{{installed}}", "##re-reinstalled##", list.ids(x -> x.doInstall && x.isAlreadyInstalled()));
-            printList(out, "{{installed}}", "**set as default**", list.ids(x -> x.doSwitchVersion && x.isAlreadyInstalled()));
-            printList(out, "{{installed}}", "{{ignored}}", list.ids(x -> x.ignored));
+            printList(out, "###new###", "##installed##", list.ids(x -> x.doInstall && !x.isAlreadyExists()));
+            printList(out, "###new###", "##required##", list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists()));
+            printList(out, "###required###", "##re-required##", list.ids(x -> (!x.doInstall && x.doRequire) && x.isAlreadyRequired()));
+            printList(out, "###required###", "##installed##", list.ids(x -> x.doInstall && x.isAlreadyRequired() && !x.isAlreadyInstalled()));
+            printList(out, "###installed###", "##re-reinstalled##", list.ids(x -> x.doInstall && x.isAlreadyInstalled()));
+            printList(out, "###installed###", "####set as default####", list.ids(x -> x.doSwitchVersion && x.isAlreadyInstalled()));
+            printList(out, "###installed###", "########ignored########", list.ids(x -> x.ignored));
         }
         if (!list.ids(x -> !x.ignored).isEmpty() && !ws.io().term().getTerminal().ask().forBoolean("should we proceed?")
                 .defaultValue(true)

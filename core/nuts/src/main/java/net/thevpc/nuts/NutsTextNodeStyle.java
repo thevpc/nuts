@@ -57,4 +57,8 @@ public enum NutsTextNodeStyle {
     SUCCESS2,
     FAIL1,
     FAIL2,
+    VAR1,
+    VAR2,
+    VAR3,
+    VAR4,
 }

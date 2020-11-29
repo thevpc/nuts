@@ -314,7 +314,7 @@ public class NdiMain extends NutsApplication {
                 for (NdiScriptnfo ndiScriptnfo : result) {
                     context.getSession().out().printf("%s script ==%-" + namesSize + "s== for " +
                                     ws.id().formatter(ndiScriptnfo.getId().getLongNameId()).format()
-                                    + " at ==%s==%n", ndiScriptnfo.isOverride() ?
+                                    + " at ####%s####%n", ndiScriptnfo.isOverride() ?
                                     ws.formats().text().builder().appendStyled( "re-installing",NutsTextNodeStyle.SUCCESS2) :
                                     ws.formats().text().builder().appendStyled("installing",NutsTextNodeStyle.SUCCESS1),
                             ndiScriptnfo.getName(), NdiUtils.betterPath(ndiScriptnfo.getPath().toString()));

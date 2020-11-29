@@ -202,7 +202,7 @@ public class NdedMain extends NutsApplication {
         NutsDescriptorBuilder b = this.context.getWorkspace().descriptor().descriptorBuilder();
         fillArgs(b);
         final PrintStream out = this.context.getSession().out();
-        out.print("[[Creating new Nuts descriptor...]]\n");
+        out.print("####Creating new Nuts descriptor...####\n");
         while (true) {
             fillInteractive(b, true);
             if (check(b)) {
@@ -213,8 +213,8 @@ public class NdedMain extends NutsApplication {
             } catch (InterruptedException e) {
                 //
             }
-            if (confirm("Abort?")) {
-                throw new NutsExecutionException(context.getWorkspace(), "Cancelled", 1);
+            if (confirm("abort?")) {
+                throw new NutsExecutionException(context.getWorkspace(), "cancelled", 1);
             }
         }
         String path = b.getId().getGroupId().replace('.', '/')
@@ -224,16 +224,16 @@ public class NdedMain extends NutsApplication {
         File file = new File(home, path);
         file.getParentFile().mkdirs();
         NutsDescriptor desc = b.build();
-        out.printf("Writing to : ==%s==[[%s]]%n", getFilePath(new File(home)), ("/" + path).replace('/', File.separatorChar));
-        out.printf("id         : ==%s==%n", desc.getId());
-        out.printf("packaging  : ==%s==%n", desc.getPackaging() == null ? "" : desc.getPackaging());
+        out.printf("writing to : ####%s####ø#####%s#####%n", getFilePath(new File(home)), ("/" + path).replace('/', File.separatorChar));
+        out.printf("id         : ####%s####%n", desc.getId());
+        out.printf("packaging  : ####%s####%n", desc.getPackaging() == null ? "" : desc.getPackaging());
         if (desc.getLocations().length > 0) {
             out.println("locations  : ");
             for (NutsIdLocation s : b.getLocations()) {
-                out.printf("             ==%s== %s%n", s.getClassifier(),s.getUrl());
+                out.printf("             ####%s#### %s%n", s.getClassifier(),s.getUrl());
             }
         }
-        if (!confirm("Confirm ?")) {
+        if (!confirm("confirm ?")) {
             throw new NutsUserCancelException(context.getWorkspace());
         }
         NutsDescriptorFormat nutsDescriptorFormat = context.getWorkspace().descriptor().formatter(desc);

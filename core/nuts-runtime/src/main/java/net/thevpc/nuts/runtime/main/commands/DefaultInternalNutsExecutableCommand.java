@@ -51,7 +51,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
             getSession().out().println("[dry] ==show-help==");
             return;
         }
-        getSession().out().printf("[dry] ==internal== {{%s}} %s%n",getName(),String.join(" ",args));
+        getSession().out().printf("[dry] ==internal== ######{{%s}}###### %s%n",getName(),String.join(" ",args));
     }
 
 }

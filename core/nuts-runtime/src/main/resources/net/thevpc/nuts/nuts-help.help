@@ -36,7 +36,7 @@ search                   : search for existing/installable artifacts
 exec                     : execute an artifact (tool)
 
 ##SYNOPSIS##
-```sh-synopsys
+```sh
 nuts [<options>]... <command> <args> ...
 ```
 ##VERSIONS##
@@ -58,7 +58,7 @@ Java         Version: ###${java.version} (${java.vm.name})###
                     but they will be ignored elsewhere if the workspace already exists : configured parameters will be in use.
 
  ~~open exported options~~ are open (so transient, non persistent) options that will override any configured value (if any)
-                      having the ability to be exported to any java child process (as system property -D...) 
+                      having the ability to be exported to any java child process (as system property ```sh -D```...)
 
  ~~open options~~ are transient (non persistent) options that will override any configured value (if any) and will be
                      in use in the current process (and ignored elsewhere). Such options will be considered in creating workspaces
@@ -323,100 +323,100 @@ Java         Version: ###${java.version} (${java.vm.name})###
  ```sh --xml[=<format-options>]```
       define xml format as default output format
 
- ```commandline --props[=<format-options>]```
+ ```sh --props[=<format-options>]```
       define props format as default output format
 
- ```commandline --output-format-option=<format-options>```
- | ```commandline -T=<format-options>```
+ ```sh --output-format-option=<format-options>```
+ | ```sh -T=<format-options>```
                   : add specific format option
- ```commandline --read-only or -R```
+ ```sh --read-only or -R```
       read only mode. All changes to the workspace - if ever - are not persisted.
 
- ```commandline --verbose , --log-verbose  , --log-finest  , --log-info , --log-fine ,
+ ```sh --verbose , --log-verbose  , --log-finest  , --log-info , --log-fine ,
  --log-finer , --log-severe , --log-warning , --log-config ,
  --log-off , --log-off ```
       apply logging level to both terminal and file
 
- ```commandline --log-term-verbose  , --log-term-finest  , --log-term-info , --log-term-fine ,
+ ```sh --log-term-verbose  , --log-term-finest  , --log-term-info , --log-term-fine ,
  --log-term-finer , --log-term-severe , --log-term-warning , --log-term-config ,
  --log-term-off , --log-term-off```
       apply logging level to terminal
 
- ```commandline --log-file-verbose  , --log-file-finest  , --log-file-info , --log-file-fine ,
+ ```sh --log-file-verbose  , --log-file-finest  , --log-file-info , --log-file-fine ,
  --log-file-finer , --log-file-severe , --log-file-warning , --log-file-config ,
  --log-file-off , --log-file-off```
       apply logging level to terminal
 
- ```commandline --log-file-size       <size>```
+ ```sh --log-file-size       <size>```
       define the maximum number of bytes to write to any one file. size is either expressed in bytes or suffixed with unit.
       supported units are :
         [[k]] or [[kb]] : for kilo-bytes (example 10k)
         [[m]] or [[mb]] : for mega-bytes (example 10m)
         [[g]] or [[gb]] : for giga-bytes (example 10g)
 
- ```commandline --log-file-base     <log-folder-path>```
+ ```sh --log-file-base     <log-folder-path>```
       define log file folder path
 
- ```commandline --log-file-name       <log-file-name-pattern>```
+ ```sh --log-file-name       <log-file-name-pattern>```
       define log file name pattern. this defaults to "nuts-%g.log"
 
- ```commandline --log-file-count      <number>```
+ ```sh --log-file-count      <number>```
       define the number of files to use (in rotating log)
 
- ```commandline --log-inherited```
+ ```sh --log-inherited```
       calls rootLogger.setUseParentHandlers(true) to inherit log handlers.
 
- ```commandline --exclude-extension     <extension-id-list>```
+ ```sh --exclude-extension     <extension-id-list>```
       exclude extensions from being loaded at runtime. list is separated with characters " ,;"
 
- ```commandline --exclude-repository   <repository-list>```
+ ```sh --exclude-repository   <repository-list>```
       exclude repositories from being loaded at runtime. list is separated with characters " ,;"
 
- ```commandline --repository   <repository-path>```
+ ```sh --repository   <repository-path>```
       register a temporary repository at the given path
 
- ```commandline --yes | -y | --force```
+ ```sh --yes | -y | --force```
       disables interactive mode and assumes [[yes]] for all questions
 
- ```commandline --no | -n```
+ ```sh --no | -n```
       disables interactive mode and assumes [[no]] for all questions
 
- ```commandline --ask```
+ ```sh --ask```
       enables interactive mode
 
- ```commandline --error```
+ ```sh --error```
       exit with error whenever interactive mode is required
 
 ##NUTS OPEN OPTIONS:##
 
- ```commandline --recover  or -z```
+ ```sh --recover  or -z```
       try to recover from invalid workspace by ignoring cache and re-resolving dependencies. User configuration will not be altered.
-      Will bootstrap a new workspace unless ```commandline -K``` (```commandline --skip-companions```) option is armed.
+      Will bootstrap a new workspace unless ```sh -K``` (```sh --skip-companions```) option is armed.
 
- ```commandline --reset  or -Z```
+ ```sh --reset  or -Z```
       reset (delete) ##nuts## workspace folder before starting the workspace. All user configuration will not be deleted.
 
- ```commandline --dry  or -D```
+ ```sh --dry  or -D```
       perform a dry execution (with no side effects) rather than an effective one. prints actions or external command lines to
-      perform if the ```commandline --dry``` was not armed. Useful to know more about command effects.
+      perform if the ```sh --dry``` was not armed. Useful to know more about command effects.
 
- ```commandline --skip-welcome  or -K```
-      do not call welcome command if the command line is empty. This is helpful in conjunction with ```commandline --reset``` not
+ ```sh --skip-welcome  or -K```
+      do not call welcome command if the command line is empty. This is helpful in conjunction with ```sh --reset``` not
       to start a new workspace (and recreate config files) after resetting the configuration folders.
 
- ```commandline --embedded  or -b```
+ ```sh --embedded  or -b```
       when invoking a nuts artifact, it will be executed in the current process (no JVM process wil be spawn)
 
- ```commandline --external  or --spawn or -x```
+ ```sh --external  or --spawn or -x```
       when invoking a nuts artifact, it will always be executed in a newly created process (this is the default)
 
- ```commandline --user-cmd```
+ ```sh --user-cmd```
       the command is considered as a native command (not a nuts) and will be passed to the os as is.
 
- ```commandline --root-cmd```
+ ```sh --root-cmd```
       the command is considered as a native command (not a nuts) and will be passed to the os as is with root privileges (a password will be asked for).
 
- ```commandline --open-mode  <mode>```
+ ```sh --open-mode  <mode>```
       defines open mode of the workspace. three values are accepted :
       [[open-or-create]] or [[RW]] or [[ON]] or [[OC]] : this is the default, if 
                     the workspace exists, it will be opened ; if it is not it will
@@ -424,10 +424,10 @@ Java         Version: ###${java.version} (${java.vm.name})###
       [[open-existing]]  or [[R]]   or [[O]]  : will open existing workspace of fail
       [[create-new]]   or [[W]] or [[C]] or [[N]] : will create non existing workspace of fail
 
- ```commandline --open```
+ ```sh --open```
       will open existing workspace of fail
 
- ```commandline --create```
+ ```sh --create```
       will create non existing workspace of fail
 
 ##NUTS COMMAND:##
@@ -436,107 +436,107 @@ for installing. Commands support include internal commands, supported packages (
 will search for it), aliases (a commodity mechanism to extend internal commands) and even any other executable.
  Here is a lis of internal commands :
 
- ```commandline version  [-options]...
+ ```sh version  [-options]...
  or --version or -version or -v```
       show version and exit.
       for more details, type : ##nuts## help version
        
- ```commandline info  [-options]...```
+ ```sh info  [-options]...```
       show workspace detailed information (paths and libraries) and exit.
       for more details, type : ##nuts## help info
 
- ```commandline welcome  [-options]...```
+ ```sh welcome  [-options]...```
       show welcome message and exit.
       for more details, type : ##nuts## help welcome
 
- ```commandline help  [-options]... <nuts-artifact>...```
- or ```commandline --help or -? or -h```
+ ```sh help  [-options]... <nuts-artifact>...```
+ or ```sh --help or -? or -h```
       show this help and exit
       for more details, type : ##nuts## help help
 
- ```commandline license [-options]...
+ ```sh license [-options]...
       show license info and exit
       for more details, type : ##nuts## help info
 
- ```commandline install [-options]... <nuts-artifact>... <args> ...```
+ ```sh install [-options]... <nuts-artifact>... <args> ...```
       install ##nuts## package <nuts-artifact>
       for more details, type : ##nuts## help install
 
- ```commandline uninstall [-options]... <nuts-artifact>... <args> ...```
+ ```sh uninstall [-options]... <nuts-artifact>... <args> ...```
       uninstall  ##nuts## package <nuts-artifact>
       for more details, type : ##nuts## help uninstall
 
- ```commandline update [-options]... <ids> ...  <args> ...```
+ ```sh update [-options]... <ids> ...  <args> ...```
       check if a newer version of ##nuts## or any of the provided <ids>
       is available in the current workspace and perform update by downloading (fetch)
       and installing the artifact. The updated version is promoted to 'default' version.
       for more details, type : ##nuts## help update
             
- ```commandline check-updates} [-options]... <ids> ...```
+ ```sh check-updates} [-options]... <ids> ...```
       check if a newer version of ##nuts## is available in the current workspace without performing updates
-      Takes the same arguments and options as ```commandline update``` command
+      Takes the same arguments and options as ```sh update``` command
       for more details, type : ##nuts## help check-updates
 
- ```commandline search [-options]... <ids> ...```
+ ```sh search [-options]... <ids> ...```
       search for <ids>
       for more details, type : ##nuts## help search
             
- ```commandline fetch [-options]... <ids> ...```
+ ```sh fetch [-options]... <ids> ...```
       download <ids>  without installing them
       for more details, type : ##nuts## help fetch
             
- ```commandline deploy [-options]... <id> ...```
+ ```sh deploy [-options]... <id> ...```
       deploy <ids>  without installing them
       for more details, type : ##nuts## help deploy
             
- ```commandline undeploy [-options]... <id> ...```
+ ```sh undeploy [-options]... <id> ...```
       undeploy <ids>
       for more details, type : ##nuts## help undeploy
             
- ```commandline exec [-options]... [command] <args>...
- ```commandline --exec [-options]... [command] <args>...
- ```commandline -e [-options]... [command] <args>...
+ ```sh exec [-options]... [command] <args>...
+ ```sh --exec [-options]... [command] <args>...
+ ```sh -e [-options]... [command] <args>...
       run command with the given executor options ( it will be considered an option if it
-      starts with ```commandline -``` ). This is helpful to issue JVM Options to executor for instance.
+      starts with ```sh -``` ). This is helpful to issue JVM Options to executor for instance.
       for more details, type : ##nuts## help exec
 
- ```commandline which [-options]... [command] ...```
+ ```sh which [-options]... [command] ...```
       show command to be executed if run with 'exec' 
       for more details, type : ##nuts## help which
             
- ```commandline --reset [-options]...
-       reset (delete) ##nuts## workspace folder. Will bootstrap a new workspace unless ```commandline -K```
-       (```commandline --skip-welcome```) option is armed.
+ ```sh --reset [-options]...
+       reset (delete) ##nuts## workspace folder. Will bootstrap a new workspace unless ```sh -K```
+       (```sh --skip-welcome```) option is armed.
        Actually this is a special command that is available only at boot time.
        Available command options are :
-       ```commandline -y``` : to skip confirmation
+       ```sh -y``` : to skip confirmation
 
- ```commandline -``` <args>...
+ ```sh -``` <args>...
    run a nut\'s shell (nsh) command with the remaining arguments
 
 #!include</net/thevpc/nuts/includes/standard-options-format.help>
 
 ##EXAMPLES:##
-```commandline
+```sh
         nuts help
 ```
             shows this help and exit
        
-```commandline
+```sh
         nuts --workspace /home/me/some-folder --archetype=minimal
 ```
             A minimal (####minimal#### archetype) workspace will be created
             and saved if no workspace was resolved. The workspace handles local 
             packages only
        
-```commandline
+```sh
         nuts --workspace /home/me/some-folder  update
 ```
             updates ##nuts## to the very latest version using workspace location
             /home/me/some-folder.
 
-```commandline
+```sh
         nuts --workspace /home/me/some-folder  --yes -e -Xmx1G netbeans-launcher
 ```
-            run netbeans-launcher with JVM option ```commandline -Xmx1G```. If the artifact is not installed
-            it will be automatically installed ( ```commandline --yes``` modifier helps disabling interactive mode)
+            run netbeans-launcher with JVM option ```sh -Xmx1G```. If the artifact is not installed
+            it will be automatically installed ( ```sh --yes``` modifier helps disabling interactive mode)

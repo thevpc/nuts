@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.format.text.DefaultNutsTextNodeFactory;
 import net.thevpc.nuts.runtime.format.text.parser.*;
 import net.thevpc.nuts.NutsTextNode;
-import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,18 +118,17 @@ public class TypedParserStep extends ParserStep {
 
     @Override
     public NutsTextNode toNode() {
+        DefaultNutsTextNodeFactory factory0 = (DefaultNutsTextNodeFactory) ws.formats().text().factory();
         if (children.size() == 1) {
-            return new DefaultNutsTextNodeStyled(
+            return factory0.createStyled(
                     start.toString(), end.toString(),
-                    DefaultNutsTextNodeParser.createStyle(start.toString()),
                     children.get(0).toNode(), isComplete());
         }
         List<NutsTextNode> all = new ArrayList<>();
         for (ParserStep a : children) {
             all.add(a.toNode());
         }
-        return new DefaultNutsTextNodeStyled(start.toString(), end.toString(),
-                DefaultNutsTextNodeParser.createStyle(start.toString()),
+        return factory0.createStyled(start.toString(), end.toString(),
                 ws.formats().text().factory().list(all.toArray(new NutsTextNode[0])), isComplete());
     }
 
@@ -149,17 +148,24 @@ public class TypedParserStep extends ParserStep {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Typed(" + CoreStringUtils.dblQuote(start.toString()));
-        if (!started) {
-            sb.append(",<NEW>");
-        }
+//        StringBuilder sb = new StringBuilder("Typed(" + CoreStringUtils.dblQuote(start.toString()));
+//        if (!started) {
+//            sb.append(",<NEW>");
+//        }
+//        for (ParserStep parserStep : children) {
+//            sb.append(",");
+//            sb.append(parserStep.toString());
+//        }
+//        sb.append(",END(").append(CoreStringUtils.dblQuote(end.toString())).append(")");
+//        sb.append(isComplete() ? "" : ",incomplete");
+//        return sb.append(")").toString();
+        StringBuilder sb = new StringBuilder();
+        sb.append(start);
         for (ParserStep parserStep : children) {
-            sb.append(",");
             sb.append(parserStep.toString());
         }
-        sb.append(",END(").append(CoreStringUtils.dblQuote(end.toString())).append(")");
-        sb.append(isComplete() ? "" : ",incomplete");
-        return sb.append(")").toString();
+        sb.append(end);
+        return sb.toString();
     }
 
     public char endOf(char c) {

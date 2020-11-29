@@ -304,7 +304,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         if (catalinaBaseUpdated) {
             if (context.getSession().isPlainOut()) {
-                context.getSession().out().printf("==[%s]== updated catalina base ==%s==\n", getName(), catalinaBase);
+                context.getSession().out().printf("==[%s]== updated catalina base ####%s####\n", getName(), catalinaBase);
             }
             return true;
         }
@@ -446,7 +446,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                             @Override
                             public void onInstall(NutsInstallEvent event) {
                                 if (context.getSession().isPlainOut()) {
-                                    context.getSession().out().printf("==[%s]== Tomcat installed to catalina home ==%s==\n", getName(), event.getDefinition().getInstallInformation().getInstallFolder());
+                                    context.getSession().out().printf("==[%s]== Tomcat installed to catalina home ####%s####\n", getName(), event.getDefinition().getInstallInformation().getInstallFolder());
                                 }
                             }
                         })).getResult().required();
@@ -463,7 +463,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
             Path c = getDefaulDeployFolder(domain).resolve(contextName + ".war");
             if (context.getSession().isPlainOut()) {
-                context.getSession().out().printf("==[%s]== deploy file file [[%s]] to [[%s]].\n", getName(), file, c);
+                context.getSession().out().printf("==[%s]== deploy file file #####%s##### to #####%s#####.\n", getName(), file, c);
             }
             try {
                 Files.copy(file, c);
@@ -953,7 +953,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
         } catch (SAXException | IOException | ParserConfigurationException ex) {
             if (context.getSession().isPlainOut()) {
-                context.getSession().err().println("@@ERROR:@@ : " + ex);
+                context.getSession().err().println("```error ERROR:``` : " + ex);
             }
         }
         //
@@ -1006,7 +1006,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
         } catch (SAXException | IOException | ParserConfigurationException ex) {
             if (context.getSession().isPlainOut()) {
-                context.getSession().err().println("@@ERROR:@@ : " + ex);
+                context.getSession().err().println("```error ERROR:``` : " + ex);
             }
         }
         //
@@ -1062,7 +1062,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException ex) {
             if (context.getSession().isPlainOut()) {
-                context.getSession().err().println("@@ERROR:@@ : " + ex);
+                context.getSession().err().println("```error ERROR:``` : " + ex);
             }
             //
         }
@@ -1092,7 +1092,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException ex) {
             if (context.getSession().isPlainOut()) {
-                context.getSession().err().println("@@ERROR:@@ : " + ex);
+                context.getSession().err().println("```error ERROR:``` : " + ex);
             }
             //
         }

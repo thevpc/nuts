@@ -141,10 +141,10 @@ public class Nsh extends NutsApplication {
         }
         if (trace && applicationContext.getSession().isPlainOut()) {
             if (firstInstalled.size() > 0) {
-                applicationContext.getSession().out().printf("registered ==%s== nsh commands : ==%s== \n", firstInstalled.size(), firstInstalled.toString());
+                applicationContext.getSession().out().printf("registered ####%s#### nsh commands : ####%s#### \n", firstInstalled.size(), firstInstalled.toString());
             }
             if (reinstalled.size() > 0) {
-                applicationContext.getSession().out().printf("re-registered ==%s== nsh commands : ==%s== \n", reinstalled.size(), reinstalled.toString());
+                applicationContext.getSession().out().printf("re-registered ####%s#### nsh commands : ####%s#### \n", reinstalled.size(), reinstalled.toString());
             }
         }
         cfg.save(false, applicationContext.getSession());
@@ -173,7 +173,7 @@ public class Nsh extends NutsApplication {
                     ws.aliases().remove(command.getName(), new NutsRemoveOptions());
                 } catch (Exception ex) {
                     if (applicationContext.getSession().isPlainTrace()) {
-                        applicationContext.getSession().err().printf("Unable to uninstall ==%s== .\n", command.getName());
+                        applicationContext.getSession().err().printf("Unable to uninstall ####%s#### .\n", command.getName());
                     }
                 }
             }

@@ -394,7 +394,7 @@ public class NutsWorkspaceUtils {
                             .log("updated ##{0}##", event.getNewValue().getId());
                 } else {
                     u.LOG.with().level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
-                            .log("updated ##{0}## (old is @@{1}@@)",
+                            .log("updated ##{0}## (old is ```error {1}```)",
                                     event.getOldValue().getId().getLongNameId(),
                                     event.getNewValue().getId().getLongNameId());
                 }
@@ -455,7 +455,7 @@ public class NutsWorkspaceUtils {
             if (startTime != 0) {
                 long time = System.currentTimeMillis() - startTime;
                 if (time > 0) {
-                    timeMessage = " @@(" + time + "ms)@@";
+                    timeMessage = " ```error (" + time + "ms)```";
                 }
             }
             String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";

@@ -68,7 +68,7 @@ public class NOpenAPIService {
                 throw new IllegalArgumentException(e);
             }
             if(appContext.getSession().isPlainTrace()){
-                appContext.getSession().out().printf("generated [[%s]]\n",target);
+                appContext.getSession().out().printf("generated #####%s#####\n",target);
             }
         } else {
             throw new IllegalArgumentException("unsupported");
@@ -82,7 +82,7 @@ public class NOpenAPIService {
             throw new UncheckedIOException(ex);
         }
         if(appContext.getSession().isPlainTrace()){
-            appContext.getSession().out().printf("generated [[%s]]\n",target);
+            appContext.getSession().out().printf("generated #####%s#####\n",target);
         }
     }
 

@@ -155,7 +155,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                         }
                         sb.append(ff.format(acceptedValue,this));
                     }
-                    out.printf("accepts [[%s]]", sb.toString());
+                    out.printf("accepts #####%s#####", sb.toString());
                 }
                 if (!first) {
                     out.print("\\)");
@@ -189,7 +189,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 if (extraInfo) {
                     out.print("?\n");
                     out.flush();
-                    v = terminal.readPassword("\t Please enter value or @@%s@@ to cancel : ", "cancel!");
+                    v = terminal.readPassword("\t Please enter value or ```error %s``` to cancel : ", "cancel!");
                 } else {
                     out.flush();
                     v = terminal.readPassword(" ");
@@ -205,14 +205,14 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 } catch (NutsUserCancelException ex) {
                     throw ex;
                 } catch (Exception ex) {
-                    out.printf("@@ERROR@@ : %s%n", CoreStringUtils.exceptionToString(ex));
+                    out.printf("```error ERROR``` : %s%n", CoreStringUtils.exceptionToString(ex));
                 }
             } else {
                 String v;
                 if (extraInfo) {
                     out.print("?\n");
                     out.flush();
-                    v = terminal.readLine("\t Please enter value or @@%s@@ to cancel : ", "cancel!");
+                    v = terminal.readLine("\t Please enter value or ```error %s``` to cancel : ", "cancel!");
                 } else {
                     out.flush();
                     v = terminal.readLine(" ? : ");
@@ -226,7 +226,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 } catch (NutsUserCancelException ex) {
                     throw ex;
                 } catch (Exception ex) {
-                    out.printf("@@ERROR@@ : %s%n", CoreStringUtils.exceptionToString(ex));
+                    out.printf("```error ERROR``` : %s%n", CoreStringUtils.exceptionToString(ex));
                 }
             }
             extraInfo = true;

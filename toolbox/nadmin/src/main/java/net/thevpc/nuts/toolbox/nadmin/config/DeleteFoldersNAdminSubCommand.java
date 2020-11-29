@@ -63,7 +63,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
         Path storeLocation = context.getWorkspace().locations().getStoreLocation(folder);
         if (storeLocation != null) {
             if (Files.exists(storeLocation)) {
-                context.getSession().out().printf("@@Deleting@@ ##%s## for workspace ##%s## folder %s ...%n", folder.id(), context.getWorkspace().name(), storeLocation);
+                context.getSession().out().printf("```error Deleting``` ##%s## for workspace ##%s## folder %s ...%n", folder.id(), context.getWorkspace().name(), storeLocation);
                 if (force
                         || context.getSession().getTerminal().ask()
                         .forBoolean("Force Delete?").setDefaultValue(false).setSession(context.getSession())
@@ -85,7 +85,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
         Path storeLocation = context.getWorkspace().locations().getStoreLocation(folder);
         if (storeLocation != null) {
             if (Files.exists(storeLocation)) {
-                context.getSession().out().printf("@@Deleting@@ ##%s## for repository ##%s## folder %s ...%n", folder.id(), repository.getName(), storeLocation);
+                context.getSession().out().printf("```error Deleting``` ##%s## for repository ##%s## folder %s ...%n", folder.id(), repository.getName(), storeLocation);
                 if (force
                         || context.getSession().getTerminal().ask()
                         .forBoolean("Force Delete?").setDefaultValue(false).setSession(context.getSession())
@@ -126,7 +126,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
         Path s = repository.config().getStoreLocation(NutsStoreLocation.CACHE);
         if (s != null) {
             if (Files.exists(s)) {
-                context.getSession().out().printf("@@Deleting@@ ##cache## folder %s ...%n", s);
+                context.getSession().out().printf("```error Deleting``` ##cache## folder %s ...%n", s);
                 if (force
                         || context.getSession().getTerminal().ask()
                         .forBoolean("Force Delete?").setDefaultValue(false)

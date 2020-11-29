@@ -301,7 +301,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         if (resultFixes != null) {
             PrintStream out = CoreIOUtils.resolveOut(getSession());
             for (FixAction n : resultFixes) {
-                out.printf("[@@FIX@@] %s %s %n", n.getId(), n.getProblemKey());
+                out.printf("[```error FIX```] %s %s %n", n.getId(), n.getProblemKey());
             }
         }
     }
@@ -322,12 +322,12 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 }
                 for (NutsUpdateResult update : updates) {
                     if (update.isUpdateVersionAvailable()) {
-                        out.printf("((%s))  : %s => [[%s]]%n",
+                        out.printf("((%s))  : %s => #####%s#####%n",
                                 CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2),
                                 CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
                                 update.getAvailable().getId().getVersion().toString());
                     } else if (update.isUpdateStatusAvailable()) {
-                        out.printf("((%s))  : %s => [[%s]]%n",
+                        out.printf("((%s))  : %s => #####%s#####%n",
                                 CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2),
                                 CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
                                 "set as default");
@@ -534,7 +534,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         if (r.isUpdateApplied()) {
             if (r.isUpdateForced()) {
                 if (d0 == null) {
-                    out.printf("==%s== is [[updated]] to latest version ==%s==%n", simpleName, d1 == null ? null : d1.getId().getVersion());
+                    out.printf("####%s#### is [[updated]] to latest version ####%s####%n", simpleName, d1 == null ? null : d1.getId().getVersion());
                 } else if (d1 == null) {
                     //this is very interesting. Why the hell is this happening?
                 } else {
@@ -542,12 +542,12 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     NutsVersion v1 = d1.getId().getVersion();
                     if (v1.compareTo(v0) <= 0) {
                         if (v1.compareTo(v0) == 0) {
-                            out.printf("==%s== is [[forced]] to ==%s== %n", simpleName, d0.getId().getVersion());
+                            out.printf("####%s#### is [[forced]] to ####%s#### %n", simpleName, d0.getId().getVersion());
                         } else {
-                            out.printf("==%s== is [[forced]] from ==%s== to older version ==%s==%n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
+                            out.printf("####%s#### is [[forced]] from ####%s#### to older version ####%s####%n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
                         }
                     } else {
-                        out.printf("==%s== is [[updated]] from ==%s== to latest version ==%s==%n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
+                        out.printf("####%s#### is [[updated]] from ####%s#### to latest version ####%s####%n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
                     }
                 }
             }

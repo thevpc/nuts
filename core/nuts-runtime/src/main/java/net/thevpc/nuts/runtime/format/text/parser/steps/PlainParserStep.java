@@ -181,13 +181,14 @@ public class PlainParserStep extends ParserStep {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Plain(" + CoreStringUtils.dblQuote(value.toString()));
-        if (wasEscape) {
-            sb.append(",<ESCAPE>");
-        }
-        sb.append(isComplete() ? "" : ",incomplete");
-        sb.append(")");
-        return sb.toString();
+        return value.toString();
+//        StringBuilder sb = new StringBuilder("Plain(" + CoreStringUtils.dblQuote(value.toString()));
+//        if (wasEscape) {
+//            sb.append(",<ESCAPE>");
+//        }
+//        sb.append(isComplete() ? "" : ",incomplete");
+//        sb.append(")");
+//        return sb.toString();
     }
 
 }

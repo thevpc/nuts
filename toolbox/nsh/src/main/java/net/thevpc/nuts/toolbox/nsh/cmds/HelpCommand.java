@@ -106,7 +106,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                         if (code) {
                             context.out().printf("\\=\\=%s\\=\\= : ", ss.apply(StringUtils.alignLeft(cmd.getName(), max)));
                         } else {
-                            context.out().printf("==%s== : ", StringUtils.alignLeft(cmd.getName(), max));
+                            context.out().printf("####%s#### : ", StringUtils.alignLeft(cmd.getName(), max));
                         }
                         context.out().println(ss.apply(cmd.getHelpHeader())); //formatted
                     }

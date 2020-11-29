@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.format.text.DefaultNutsTextNodeFactory;
 import net.thevpc.nuts.runtime.format.text.parser.*;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.format.text.TextFormat;
@@ -38,19 +39,17 @@ public class TitleParserStep extends ParserStep {
     @Override
     public NutsTextNode toNode() {
         String s = start.toString();
-        TextFormat style = DefaultNutsTextNodeParser.createStyle(start.substring(0, start.length() - 1));
+//        NutsTextNodeFactory factory = ws.formats().text().factory();
+        DefaultNutsTextNodeFactory factory0 = (DefaultNutsTextNodeFactory) ws.formats().text().factory();
+        TextFormat style = factory0.createStyle(start.substring(0, start.length() - 1));
         if (children.size() == 1) {
-            return new DefaultNutsTextNodeTitle(s, style,children.get(0).toNode());
+            return factory0.createTitle(s, children.get(0).toNode(), style);
         }
         List<NutsTextNode> all = new ArrayList<>();
-        boolean partial = false;
         for (ParserStep a : children) {
-            if (!partial && !a.isComplete()) {
-                partial = true;
-            }
             all.add(a.toNode());
         }
-        return new DefaultNutsTextNodeTitle(s,style, ws.formats().text().factory().list(all));
+        return factory0.createTitle(s, ws.formats().text().factory().list(all), style);
     }
 
     @Override

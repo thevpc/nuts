@@ -110,7 +110,7 @@ public class JobServiceCmd {
         }
         service.addJob(t);
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("job {{%s}} (%s) added.\n",
+            context.getSession().out().printf("job ######{{%s}}###### (%s) added.\n",
                     t.getId(),
                     t.getName()
             );
@@ -284,7 +284,7 @@ public class JobServiceCmd {
         }
         service.addTask(t);
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("task {{%s}} (%s) added.\n",
+            context.getSession().out().printf("task ######{{%s}}###### (%s) added.\n",
                     t.getId(),
                     t.getName()
             );
@@ -331,7 +331,7 @@ public class JobServiceCmd {
         }
         service.addProject(t);
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("project {{%s}} (%s) added.\n",
+            context.getSession().out().printf("project ######{{%s}}###### (%s) added.\n",
                     t.getId(),
                     t.getName()
             );
@@ -437,7 +437,7 @@ public class JobServiceCmd {
             }
             service.updateProject(project);
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("project {{%s}} (##%s##) updated.\n",
+                context.getSession().out().printf("project ######{{%s}}###### (##%s##) updated.\n",
                         project.getId(),
                         project.getName()
                 );
@@ -676,7 +676,7 @@ public class JobServiceCmd {
         for (NTask task : new LinkedHashSet<>(tasks)) {
             service.updateTask(task);
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("task {{%s}} (##%s##) updated.\n",
+                context.getSession().out().printf("task ######{{%s}}###### (##%s##) updated.\n",
                         task.getId(),
                         task.getName()
                 );
@@ -790,7 +790,7 @@ public class JobServiceCmd {
         for (NJob job : new LinkedHashSet<>(jobs)) {
             service.updateJob(job);
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("job {{%s}} (##%s##) updated.\n",
+                context.getSession().out().printf("job ######{{%s}}###### (##%s##) updated.\n",
                         job.getId(),
                         job.getName()
                 );
@@ -940,12 +940,12 @@ public class JobServiceCmd {
             NJob t = findJob(a.toString(), cmd);
             if (service.removeJob(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("job {{%s}} removed.\n",
+                    context.getSession().out().printf("job ######{{%s}}###### removed.\n",
                             a.toString()
                     );
                 }
             } else {
-                context.getSession().out().printf("job {{%s}} @@not found@@.\n",
+                context.getSession().out().printf("job ######{{%s}}###### ```error not found```.\n",
                         a.toString()
                 );
             }
@@ -959,12 +959,12 @@ public class JobServiceCmd {
             NTask t = findTask(a.toString(), cmd);
             if (service.removeTask(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("task {{%s}} removed.\n",
+                    context.getSession().out().printf("task ######{{%s}}###### removed.\n",
                             a.toString()
                     );
                 }
             } else {
-                context.getSession().out().printf("task {{%s}} @@not found@@.\n",
+                context.getSession().out().printf("task ######{{%s}}###### ```error not found```.\n",
                         a.toString()
                 );
             }
@@ -978,12 +978,12 @@ public class JobServiceCmd {
             NProject t = findProject(a.toString(), cmd);
             if (service.removeProject(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("project {{%s}} removed.\n",
+                    context.getSession().out().printf("project ######{{%s}}###### removed.\n",
                             a.toString()
                     );
                 }
             } else {
-                context.getSession().out().printf("project {{%s}} @@not found@@.\n",
+                context.getSession().out().printf("project ######{{%s}}###### ```error not found```.\n",
                         a.toString()
                 );
             }
@@ -996,7 +996,7 @@ public class JobServiceCmd {
             NutsArgument a = cmd.next();
             NJob job = findJob(a.toString(), cmd);
             if (job == null) {
-                context.getSession().out().printf("<<%s>>: @@not found@@.\n",
+                context.getSession().out().printf("<<%s>>: ```error not found```.\n",
                         a.toString()
                 );
             } else {
@@ -1026,7 +1026,7 @@ public class JobServiceCmd {
             NutsArgument a = cmd.next();
             NProject project = findProject(a.toString(), cmd);
             if (project == null) {
-                context.getSession().out().printf("<<%s>>: @@not found@@.\n",
+                context.getSession().out().printf("<<%s>>: ```error not found```.\n",
                         a.toString()
                 );
             } else {
@@ -1050,7 +1050,7 @@ public class JobServiceCmd {
             NutsArgument a = cmd.next();
             NTask task = findTask(a.toString(), cmd);
             if (task == null) {
-                context.getSession().out().printf("<<%s>>: @@not found@@.\n",
+                context.getSession().out().printf("<<%s>>: ```error not found```.\n",
                         a.toString()
                 );
             } else {
@@ -1714,7 +1714,7 @@ public class JobServiceCmd {
                     if (m == null) {
                         m = ex.toString();
                     }
-                    session.err().printf("@@@error:@@@ @@%s@@\n", m);
+                    session.err().printf("@```error ERROR:```@ @@%s@@\n", m);
                 }
             }
         }

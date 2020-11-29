@@ -76,11 +76,11 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
         }
         if (!processed) {
             if (session.isPlainTrace()) {
-                session.out().printf("[[%s]] Updating workspace stats%n", getWorkspace().locations().getWorkspaceLocation());
+                session.out().printf("#####%s##### Updating workspace stats%n", getWorkspace().locations().getWorkspaceLocation());
             }
             for (NutsRepository repo : getWorkspace().repos().getRepositories(session)) {
                 if (session.isPlainTrace()) {
-                    session.out().printf("[[%s]] Updating stats %s%n", getWorkspace().locations().getWorkspaceLocation(), repo);
+                    session.out().printf("#####%s##### Updating stats %s%n", getWorkspace().locations().getWorkspaceLocation(), repo);
                 }
                 repo.updateStatistics()
                         .setSession(session)

@@ -37,8 +37,8 @@ public class DefaultNutsTextNodeCode extends NutsTextNodeSpecialBase implements 
 
     private final String text;
 
-    public DefaultNutsTextNodeCode(String start, String kind, String extraWhites, String end, String text) {
-        super(start,kind,extraWhites,end);
+    public DefaultNutsTextNodeCode(String start, String kind, String separator, String end, String text) {
+        super(start,kind,separator,end);
         this.text = text;
     }
     @Override

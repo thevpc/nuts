@@ -204,7 +204,7 @@ public class WhoamiCommand extends SimpleNshBuiltin {
             }
             if (result.repos != null) {
                 for (RepoResult repo : result.repos) {
-                    context.out().printf("[ [[%s]] ]: \n", repo.name);
+                    context.out().printf("[ #####%s##### ]: \n", repo.name);
                     if (repo.identities.length > 0) {
                         context.out().printf("    ===identities=== : %s\n", Arrays.toString(repo.identities));
                     }

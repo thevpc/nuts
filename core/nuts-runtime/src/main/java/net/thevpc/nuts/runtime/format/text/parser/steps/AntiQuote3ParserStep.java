@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.format.text.DefaultNutsTextNodeFactory;
 import net.thevpc.nuts.runtime.format.text.parser.*;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.format.text.FPrintCommands;
@@ -129,6 +130,7 @@ public class AntiQuote3ParserStep extends ParserStep {
     public NutsTextNode toNode() {
         char[] dst = new char[value.length()];
         value.getChars(0,value.length(), dst,0 );
+        DefaultNutsTextNodeFactory factory0 = (DefaultNutsTextNodeFactory) ws.formats().text().factory();
         if(dst.length>0 && !Character.isWhitespace(dst[0])){
             int i=0;
             int offset=0;
@@ -153,7 +155,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                         String start2 = this.start.toString() + "!";
                         switch (cmd){
                             case "!anchor":{
-                                return new DefaultNutsTextNodeAnchor(
+                                return factory0.createAnchor(
                                         start2,
                                         cmd0,
                                         w.toString(),
@@ -162,7 +164,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                                 );
                             }
                             case "!link":{
-                                return new DefaultNutsTextNodeLink(
+                                return factory0.createLink(
                                         start2,
                                         cmd0,
                                         w.toString(),
@@ -174,7 +176,7 @@ public class AntiQuote3ParserStep extends ParserStep {
 
                         TextFormat yy = DefaultNutsTextNodeCommand.parseTextFormat(cmd0);
                         if(yy!=null){
-                            return new DefaultNutsTextNodeCommand(
+                            return factory0.createCommand(
                                     start2,
                                     cmd.substring(1),
                                     w.toString(),
@@ -184,7 +186,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                             );
                         }
                     }
-                    return new DefaultNutsTextNodeCode(
+                    return factory0.createCommand(
                             start.toString(),
                             cmd,
                             w.toString(),
@@ -197,7 +199,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                 i++;
             }
         }
-        return new DefaultNutsTextNodeCode(
+        return factory0.createCommand(
                 start.toString(),
                 "",
                 "",

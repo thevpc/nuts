@@ -140,24 +140,24 @@ public class NVersionMain extends NutsApplication {
                 for (String k : keys) {
                     if (results.size() > 1) {
                         if (longFormat || all) {
-                            out.printf("==%s==:%n", k);
+                            out.printf("####%s####:%n", k);
                         } else {
-                            out.printf("==%s==: ", k);
+                            out.printf("####%s####: ", k);
                         }
                     }
                     Set<VersionDescriptor> v = results.get(k);
                     for (VersionDescriptor descriptor : v) {
                         if (nameFormat) {
-                            out.printf("[[%s]]%n", descriptor.getId().getShortName());
+                            out.printf("#####%s#####%n", descriptor.getId().getShortName());
                         } else if (idFormat) {
-                            out.printf("[[%s]]%n", descriptor.getId());
+                            out.printf("#####%s#####%n", descriptor.getId());
                         } else if (longFormat) {
-                            out.printf("[[%s]]%n", descriptor.getId());
+                            out.printf("#####%s#####%n", descriptor.getId());
                             NutsPropertiesFormat f = context.getWorkspace().formats().props()
                                     .setSort(true);
                             f.setValue(descriptor.getProperties()).print(out);
                         } else {
-                            out.printf("[[%s]]%n", descriptor.getId().getVersion());
+                            out.printf("#####%s#####%n", descriptor.getId().getVersion());
                         }
                         if (!all) {
                             break;

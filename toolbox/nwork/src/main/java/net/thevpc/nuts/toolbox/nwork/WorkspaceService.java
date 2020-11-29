@@ -170,7 +170,7 @@ public class WorkspaceService {
             result.sort((x, y) -> x.getId().compareTo(y.getId()));
             if (appContext.getSession().isPlainOut()) {
                 for (ProjectConfig p2 : result) {
-                    appContext.getSession().out().printf("[[%s]] {{%s}}: ==%s==%n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                    appContext.getSession().out().printf("#####%s##### ######{{%s}}######: ####%s####%n", p2.getId(), p2.getTechnologies(), p2.getPath());
                 }
             } else {
                 appContext.getWorkspace().formats().object()
@@ -475,7 +475,7 @@ public class WorkspaceService {
                     if (p3.equals(p2)) {
                         //no updates!
                         if (appContext.getSession().isPlainOut()) {
-                            appContext.getSession().out().printf("Already registered Project Folder [[%s]] {{%s}}: ==%s==%n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                            appContext.getSession().out().printf("Already registered Project Folder #####%s##### ######{{%s}}######: ####%s####%n", p2.getId(), p2.getTechnologies(), p2.getPath());
                         }
                     } else if (!p2.getPath().equals(p3.getPath())) {
                         if (appContext.getSession().isPlainOut()) {
@@ -483,9 +483,9 @@ public class WorkspaceService {
                         }
                     } else {
                         if (appContext.getSession().isPlainOut()) {
-                            appContext.getSession().out().printf("Reloaded Project Folder [[%s]] {{%s}}: ==%s==%n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                            appContext.getSession().out().printf("Reloaded Project Folder #####%s##### ######{{%s}}######: ####%s####%n", p2.getId(), p2.getTechnologies(), p2.getPath());
                         }
-//                String repo = term.readLine("Enter Repository ==%s==: ", ((p2.getAddress() == null || p2.getAddress().getNutsRepository() == null )? "" : ("(" + p2.getAddress().getNutsRepository() + ")")));
+//                String repo = term.readLine("Enter Repository ####%s####: ", ((p2.getAddress() == null || p2.getAddress().getNutsRepository() == null )? "" : ("(" + p2.getAddress().getNutsRepository() + ")")));
 //                if (!StringUtils.isEmpty(repo)) {
 //                    p2.setAddress(new );
 //                }
@@ -499,15 +499,15 @@ public class WorkspaceService {
                 } else {
                     
                     if (appContext.getSession().isPlainOut()) {
-                        appContext.getSession().out().printf("Detected Project Folder [[%s]] {{%s}}: ==%s==%n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                        appContext.getSession().out().printf("Detected Project Folder #####%s##### ######{{%s}}######: ####%s####%n", p2.getId(), p2.getTechnologies(), p2.getPath());
                     }
                     if (interactive) {
-                        String id = appContext.getSession().getTerminal().readLine("Enter Id ==%s==: ", (p2.getId() == null ? "" : ("(" + p2.getId() + ")")));
+                        String id = appContext.getSession().getTerminal().readLine("Enter Id ####%s####: ", (p2.getId() == null ? "" : ("(" + p2.getId() + ")")));
                         if (!StringUtils.isBlank(id)) {
                             p2.setId(id);
                         }
                     }
-//                String repo = term.readLine("Enter Repository ==%s==: ", ((p2.getAddress() == null || p2.getAddress().getNutsRepository() == null )? "" : ("(" + p2.getAddress().getNutsRepository() + ")")));
+//                String repo = term.readLine("Enter Repository ####%s####: ", ((p2.getAddress() == null || p2.getAddress().getNutsRepository() == null )? "" : ("(" + p2.getAddress().getNutsRepository() + ")")));
 //                if (!StringUtils.isEmpty(repo)) {
 //                    p2.setAddress(new );
 //                }

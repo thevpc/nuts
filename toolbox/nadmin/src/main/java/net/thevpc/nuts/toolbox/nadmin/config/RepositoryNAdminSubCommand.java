@@ -300,7 +300,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                                 "==" + repository.getName() + "==",
                                 repository.config().isEnabled() ?
                                         repository.isEnabled()?"ENABLED":
-                                        "@@<RT-DISABLED>@@": "@@<DISABLED>@@",
+                                        "```error <RT-DISABLED>```": "```error <DISABLED>```",
                                 repository.getRepositoryType(),
                                 repository.config().getLocation(false)
                         );

@@ -298,7 +298,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         @Override
         public void dryExec() {
             out.print("[dry] ==[exec]== ");
-            out.printf("[dry] ==embedded-java== **+cp** %s {{%s}} %s%n"
+            out.printf("[dry] ==embedded-java== **+cp** %s ######{{%s}}###### %s%n"
                     , String.join(":", joptions.getClassPath())
                     , joptions.getMainClass()
                     , String.join(":", joptions.getApp())

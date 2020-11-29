@@ -281,7 +281,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 //now search online
                 // this helps recovering from "invalid default parseVersion" issue
                 if (traceSession.isPlainTrace()) {
-                    traceSession.out().printf("##%s## is @@not installed@@, will search for it online. Type ((CTRL\\^C)) to stop...\n", commandName);
+                    traceSession.out().printf("##%s## is ```error not installed```, will search for it online. Type ```error CTRL^C``` to stop...\n", commandName);
                     traceSession.out().flush();
                 }
                 ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setFailFast(false).setOnline().setLatest(true)

@@ -335,49 +335,49 @@ public class NutsIdFormatHelper {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
                     return def.getContent().getPath().toString();
                 }
-                return "@@missing-path@@";
+                return "```error missing-path```";
             }
             case FILE_NAME: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
                     return def.getContent().getPath().getFileName().toString();
                 }
-                return "@@missing-file-name@@";
+                return "```error missing-file-name```";
             }
             case ARCH: {
                 if (desc != null) {
                     return keywordArr1(desc.getArch());
                 }
-                return "@@missing-arch@@";
+                return "```error missing-arch```";
             }
             case NAME: {
                 if (desc != null) {
                     return stringValue(desc.getName());
                 }
-                return "@@missing-name@@";
+                return "```error missing-name```";
             }
             case OS: {
                 if (desc != null) {
                     return keywordArr2(desc.getOs());
                 }
-                return "@@missing-os@@";
+                return "```error missing-os```";
             }
             case OSDIST: {
                 if (desc != null) {
                     return keywordArr2(desc.getOsdist());
                 }
-                return "@@missing-os@@";
+                return "```error missing-os```";
             }
             case PACKAGING: {
                 if (desc != null) {
                     return "{{" + stringValue(desc.getPackaging()) + "}}";
                 }
-                return "@@missing-packaging@@";
+                return "```error missing-packaging```";
             }
             case PLATFORM: {
                 if (desc != null) {
                     return keywordArr1(desc.getPlatform());
                 }
-                return "@@missing-platform@@";
+                return "```error missing-platform```";
             }
             case INSTALL_DATE: {
                 if (def != null && def.getInstallInformation() != null) {
@@ -423,49 +423,49 @@ public class NutsIdFormatHelper {
                 if (def != null && def.getInstallInformation() != null) {
                     return stringValue(def.getInstallInformation().getInstallUser());
                 }
-                return "@@nobody@@";
+                return "```error nobody```";
             }
             case CACHE_FOLDER: {
                 if (def != null) {
                     return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.CACHE));
                 }
-                return "@@nobody@@";
+                return "```error nobody```";
             }
             case CONFIG_FOLDER: {
                 if (def != null) {
                     return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.CONFIG));
                 }
-                return "@@nobody@@";
+                return "```error nobody```";
             }
             case LIB_FOLDER: {
                 if (def != null) {
                     return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.LIB));
                 }
-                return "@@nobody@@";
+                return "```error nobody```";
             }
             case LOG_FOLDER: {
                 if (def != null) {
                     return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.LOG));
                 }
-                return "@@nobody@@";
+                return "```error nobody```";
             }
             case TEMP_FOLDER: {
                 if (def != null) {
                     return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.TEMP));
                 }
-                return "@@nobody@@";
+                return "```error nobody```";
             }
             case VAR_LOCATION: {
                 if (def != null) {
                     return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.VAR));
                 }
-                return "@@nobody@@";
+                return "```error nobody```";
             }
             case APPS_FOLDER: {
                 if (def != null) {
                     return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.APPS));
                 }
-                return "@@nobody@@";
+                return "```error nobody```";
             }
             case EXEC_ENTRY: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
@@ -483,7 +483,7 @@ public class NutsIdFormatHelper {
                     }
                     return results.toString();
                 }
-                return "@@missing-class@@";
+                return "```error missing-class```";
             }
             default: {
                 throw new NutsUnsupportedArgumentException(ws, String.valueOf(dp));

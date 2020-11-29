@@ -3,7 +3,7 @@ define or display aliases
 
 ##SYNOPSIS
 
-```sh-synopsys
+```sh
 alias [<alias-name>[=string]...]
 ```
 

@@ -91,7 +91,7 @@ public class RemoteMysql {
                 case PLAIN: {
                     for (Map.Entry<String, RemoteMysqlConfig> cnf : result.entrySet()) {
                         for (Map.Entry<String, RemoteMysqlDatabaseConfig> db : cnf.getValue().getDatabases().entrySet()) {
-                            getContext().getSession().out().printf("%s\\@[[%s]]%n", db.getKey(), cnf.getKey());
+                            getContext().getSession().out().printf("%s\\@#####%s#####%n", db.getKey(), cnf.getKey());
                         }
                     }
                     break;
@@ -192,7 +192,7 @@ public class RemoteMysql {
                     if (c.getDatabaseOrNull(name.getDatabaseName()) != null) {
                         overrideExisting = true;
                         if (!context.getSession().getTerminal().ask()
-                                .forBoolean("Already exists ==%s==. override?", name)
+                                .forBoolean("Already exists ####%s####. override?", name)
                                 .defaultValue(false).getBooleanValue()) {
                             throw new NutsExecutionException(context.getWorkspace(), "Already exists " + name, 2);
                         }
@@ -201,7 +201,7 @@ public class RemoteMysql {
                     if (c.getDatabaseOrNull(name.getDatabaseName()) != null) {
                         overrideExisting = true;
                         if (!context.getSession().getTerminal().ask()
-                                .forBoolean("Already exists ==%s==. override?", name)
+                                .forBoolean("Already exists ####%s####. override?", name)
                                 .defaultValue(false).getBooleanValue()) {
                             throw new NutsExecutionException(context.getWorkspace(), "Already exists " + name, 2);
                         }
@@ -227,15 +227,15 @@ public class RemoteMysql {
                 if (context.getSession().isPlainTrace()) {
                     if (add) {
                         if (overrideExisting) {
-                            context.getSession().out().printf("adding config (with override) ==%s==%n", StringUtils.coalesce(name.getConfigName(), "default"));
+                            context.getSession().out().printf("adding config (with override) ####%s####%n", StringUtils.coalesce(name.getConfigName(), "default"));
                         } else {
-                            context.getSession().out().printf("adding config ==%s==%n", StringUtils.coalesce(name.getConfigName(), "default"));
+                            context.getSession().out().printf("adding config ####%s####%n", StringUtils.coalesce(name.getConfigName(), "default"));
                         }
                     } else {
                         if (overrideExisting) {
-                            context.getSession().out().printf("updating config (with override) ==%s==%n", StringUtils.coalesce(name.getConfigName(), "default"));
+                            context.getSession().out().printf("updating config (with override) ####%s####%n", StringUtils.coalesce(name.getConfigName(), "default"));
                         } else {
-                            context.getSession().out().printf("updating config ==%s==%n", StringUtils.coalesce(name.getConfigName(), "default"));
+                            context.getSession().out().printf("updating config ####%s####%n", StringUtils.coalesce(name.getConfigName(), "default"));
                         }
                     }
                 }
@@ -256,15 +256,15 @@ public class RemoteMysql {
                 if (context.getSession().isPlainTrace()) {
                     if (add) {
                         if (overrideExisting) {
-                            context.getSession().out().printf("adding db (with override) ==%s==%n", r.getFullName());
+                            context.getSession().out().printf("adding db (with override) ####%s####%n", r.getFullName());
                         } else {
-                            context.getSession().out().printf("adding db ==%s==%n", r.getFullName());
+                            context.getSession().out().printf("adding db ####%s####%n", r.getFullName());
                         }
                     } else {
                         if (overrideExisting) {
-                            context.getSession().out().printf("updating db (with override) ==%s==%n", r.getFullName());
+                            context.getSession().out().printf("updating db (with override) ####%s####%n", r.getFullName());
                         } else {
-                            context.getSession().out().printf("updating db ==%s==%n", r.getFullName());
+                            context.getSession().out().printf("updating db ####%s####%n", r.getFullName());
                         }
                     }
                 }

@@ -65,11 +65,11 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                 boolean showDesc = false;
                 switch (p.getType()) {
                     case SYSTEM: {
-                        out.printf("[[%s]] : ==system command== %s%n", arg, p.getDescription());
+                        out.printf("#####%s##### : ==system command== %s%n", arg, p.getDescription());
                         break;
                     }
                     case ALIAS: {
-                        out.printf("[[%s]] : ==nuts alias== (owner %s ) : %s%n", arg, p.getId() == null ? null : new NutsString(ws.id().formatter(p.getId()).format()),
+                        out.printf("#####%s##### : ==nuts alias== (owner %s ) : %s%n", arg, p.getId() == null ? null : new NutsString(ws.id().formatter(p.getId()).format()),
                                 new NutsString(ws.commandLine().create(ws.aliases().find(p.getName(), getSession()).getCommand()).toString())
                         );
                         break;
@@ -78,11 +78,11 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         if (p.getId() == null) {
                             throw new NutsNotFoundException(ws, arg);
                         }
-                        out.printf("[[%s]] : ==nuts component== %s%n", arg, new NutsString(ws.id().formatter(p.getId()).format())/*, p.getDescription()*/);
+                        out.printf("#####%s##### : ==nuts component== %s%n", arg, new NutsString(ws.id().formatter(p.getId()).format())/*, p.getDescription()*/);
                         break;
                     }
                     case INTERNAL: {
-                        out.printf("[[%s]] : ==internal command== %n", arg);
+                        out.printf("#####%s##### : ==internal command== %n", arg);
                         break;
                     }
                 }
@@ -90,7 +90,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                     out.printf("\t %s%n", arg/*, p.getDescription()*/);
                 }
             } catch (NutsNotFoundException ex) {
-                out.printf("[[%s]] : @@not found@@%n", arg);
+                out.printf("#####%s##### : ```error not found```%n", arg);
             }
         }
     }

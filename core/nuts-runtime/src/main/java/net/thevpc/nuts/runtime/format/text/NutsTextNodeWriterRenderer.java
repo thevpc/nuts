@@ -112,9 +112,9 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                         ctx.setSeq(seq);
                     }
                     NutsTextNodeWriteConfiguration.Seq a = seq.newLevel(s.getStyleCode().length());
-                    writeNode(new DefaultNutsTextNodeStyled(
+                    DefaultNutsTextNodeFactory factory0 = (DefaultNutsTextNodeFactory) ws.formats().text().factory();
+                    writeNode(factory0.createStyled(
                             s.getStyleCode(), s.getStyleCode(),
-                            s.getStyle(),
                             ws.formats().text().factory().plain(a.getString(".") + " "), true), ctx
                     );
                 }
@@ -138,10 +138,11 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             }
             case LINK: {
                 //ignore!!
+                DefaultNutsTextNodeFactory factory0 = (DefaultNutsTextNodeFactory) ws.formats().text().factory();
                 writeNode(
                         formats,
-                        new DefaultNutsTextNodeStyled(
-                                "##", "##", TextFormats.UNDERLINED,
+                        factory0.createStyled(
+                                "~~", "~~",
                                 ws.formats().text().factory().plain(
                                         ((NutsTextNodeLink) node).getValue()
                                 ), true

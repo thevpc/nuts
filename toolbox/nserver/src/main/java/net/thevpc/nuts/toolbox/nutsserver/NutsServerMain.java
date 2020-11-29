@@ -382,7 +382,7 @@ public class NutsServerMain extends NutsApplication {
             }
             if (context.getSession().isPlainOut()) {
                 for (StatusResult result : results) {
-                    context.getSession().out().printf("==%s== server at %s is %s%n", result.type, result.host, new NutsString(result.status.equals("stopped") ? "@@stopped@@" : "##alive##"));
+                    context.getSession().out().printf("####%s#### server at %s is %s%n", result.type, result.host, new NutsString(result.status.equals("stopped") ? "@@stopped@@" : "##alive##"));
                 }
             } else {
                 context.getSession().formatObject(results).println();

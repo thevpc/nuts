@@ -71,7 +71,7 @@ public class DefaultNutsSdkManager implements NutsSdkManager {
             list.add(location);
             if(notify) {
                 if (options.getSession().isPlainTrace()) {
-                    options.getSession().out().printf("install %s %s (%s) [[%s]] at ==%s==%n",
+                    options.getSession().out().printf("install %s %s (%s) #####%s##### at ####%s####%n",
                             location.getId().getShortName(),
                             location.getPackaging(),
                             location.getProduct(),

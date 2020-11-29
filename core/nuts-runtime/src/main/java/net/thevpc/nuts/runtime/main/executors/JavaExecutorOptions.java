@@ -237,14 +237,14 @@ public final class JavaExecutorOptions {
                         StringBuilder msgString = new StringBuilder();
                         List<Object> msgParams = new ArrayList<>();
 
-                        msgString.append("Multiple runnable classes detected  - actually [[%s]] . Select one :%n");
+                        msgString.append("Multiple runnable classes detected  - actually #####%s##### . Select one :%n");
                         msgParams.add(possibleClasses.size());
                         for (int i = 0; i < possibleClasses.size(); i++) {
-                            msgString.append("==[%s]== [[%s]]%n");
+                            msgString.append("==[%s]== #####%s#####%n");
                             msgParams.add((i + 1));
                             msgParams.add(possibleClasses.get(i));
                         }
-                        msgString.append("Enter class ==%s== or ==%s== to run it. Type @@%s@@ to cancel : ");
+                        msgString.append("Enter class ####%s#### or ####%s#### to run it. Type ```error %s``` to cancel : ");
                         msgParams.add("#");
                         msgParams.add("name");
                         msgParams.add("cancel!");

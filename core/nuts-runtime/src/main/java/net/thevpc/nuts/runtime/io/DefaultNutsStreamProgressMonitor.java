@@ -100,7 +100,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
                 formattedLine.append(" ([[").append(terminalFormat.escapeText(mf.format(event.getMaxValue()))).append("]])");
             }
             if (event.getError() != null) {
-                formattedLine.append(" @@ERROR@@ ");
+                formattedLine.append(" ```error ERROR``` ");
             }
             formattedLine.append(" ").append(terminalFormat.escapeText(event.getMessage())).append(" ");
             String ff = formattedLine.toString();

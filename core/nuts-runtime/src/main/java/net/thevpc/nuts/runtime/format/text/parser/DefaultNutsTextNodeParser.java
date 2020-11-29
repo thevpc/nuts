@@ -24,58 +24,7 @@ import java.util.logging.Logger;
 public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
 
     private static final Logger LOG = Logger.getLogger(DefaultNutsTextNodeParser.class.getName());
-    public static String[] AVAILABLE_FORMATS = new String[]{
-            "##",
-            "###",
-            "####",
-            "#####",
-            "######",
-            "#######",
-            "########",
-            "#########",
-            "@@",
-            "@@@",
-            "@@@@",
-            "@@@@@",
-            "@@@@@@",
-            "@@@@@@@",
-            "@@@@@@@@",
-            "@@@@@@@@@",
-            "~~",
-            "~~~",
-            "~~~~",
-            "~~~~~",
-    };
-    private static TextFormat[] FOREGROUNDS = new TextFormat[]{
-            TextFormats.FG_BLUE,
-            TextFormats.FG_GREEN,
-            TextFormats.FG_YELLOW,
-            TextFormats.FG_CYAN,
-            TextFormats.FG_YELLOW,
-            TextFormats.FG_MAGENTA,
-            TextFormats.FG_RED,
-            TextFormats.FG_GREY,
-            TextFormats.FG_BLACK,
-            TextFormats.FG_WHITE
-    };
-    private static TextFormat[] BACKGROUNDS = new TextFormat[]{
-            TextFormats.BG_BLUE,
-            TextFormats.BG_GREEN,
-            TextFormats.BG_YELLOW,
-            TextFormats.BG_CYAN,
-            TextFormats.BG_YELLOW,
-            TextFormats.BG_MAGENTA,
-            TextFormats.BG_RED,
-            TextFormats.BG_GREY,
-            TextFormats.BG_BLACK,
-            TextFormats.BG_WHITE
-    };
-    private static TextFormat[] STYLES = new TextFormat[]{
-            TextFormats.UNDERLINED,
-            TextFormats.ITALIC,
-            TextFormats.STRIKED,
-            TextFormats.REVERSED,
-    };
+
     private State state = new State();
 
     public DefaultNutsTextNodeParser(NutsWorkspace ws) {
@@ -220,64 +169,6 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
 //        return new NutsTextNodeStyled(prefix, suffix, format, y);
 //    }
 
-    public static TextFormat createStyle(String code) {
-        switch (code) {
-            case "~~":
-            case "~~~":
-            case "~~~~":
-            case "~~~~~":{
-                return styleFormat(code.length()-1);
-            }
-            case "##":
-            case "###":
-            case "####":
-            case "#####":
-            case "######":
-            case "#######":
-            case "########":
-            case "#########":
-            case "##########":{
-                return foregroundFormat(code.length()-1);
-            }
-            case "#)":
-            case "##)":
-            case "###)":
-            case "####)":
-            case "#####)":
-            case "######)":
-            case "#######)":
-            case "########)":
-            case "#########)":{
-                return foregroundFormat(code.length()-1);
-            }
-
-            case "@@":
-            case "@@@":
-            case "@@@@":
-            case "@@@@@":
-            case "@@@@@@":
-            case "@@@@@@@":
-            case "@@@@@@@@":
-            case "@@@@@@@@@":
-            case "@@@@@@@@@@":{
-                return backgroundFormat(code.length()-1);
-            }
-        }
-        throw new UnsupportedOperationException("Unsupported format " + code);
-    }
-
-    public static String getSuffix(String type, NutsWorkspace ws) {
-        if (type != null && type.length() > 1) {
-            switch (type.charAt(0)) {
-                case '#':
-                case '@':
-                case '~':
-                    return type;
-            }
-            return type;
-        }
-        throw new NutsIllegalArgumentException(ws, "Invalid format prefix : '" + type + "'");
-    }
 
 //    private static NutsTextNode convert(List<FDocNode> n) {
 //        if (n.size() == 1) {
@@ -342,79 +233,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         return sb.toString();
     }
 
-    public static TextFormat styleFormat(int index) {
-        index--;
-        if (index < 0) {
-            index = 0;
-        }
-        if (index >= STYLES.length) {
-            index = STYLES.length - 1;
-        }
-        return STYLES[index];
-    }
 
-    public static TextFormat foregroundFormat(int index) {
-        index--;
-        if (index < 0) {
-            index = 0;
-        }
-        if (index >= FOREGROUNDS.length) {
-            index = FOREGROUNDS.length - 1;
-        }
-        return FOREGROUNDS[index];
-    }
-
-    public static TextFormat backgroundFormat(int index) {
-        index--;
-        if (index < 0) {
-            index = 0;
-        }
-        if (index >= BACKGROUNDS.length) {
-            index = BACKGROUNDS.length - 1;
-        }
-        return BACKGROUNDS[index];
-    }
-
-    public static NutsTextNode plain(String t) {
-        return new DefaultNutsTextNodePlain(t);
-    }
-
-    public static NutsTextNode title(String t, int level) {
-        return title( plain(t),level);
-    }
-
-    public static NutsTextNode title(NutsTextNode t, int level) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < level; i++) {
-            sb.append("#");
-        }
-        sb.append(")");
-        return new DefaultNutsTextNodeTitle(sb.toString(), foregroundFormat(level - 1), t);
-    }
-
-    public static NutsTextNode fg(String t, int level) {
-        return fg( plain(t),level);
-    }
-
-    public static NutsTextNode fg(NutsTextNode t, int level) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < level+1; i++) {
-            sb.append("#");
-        }
-        return new DefaultNutsTextNodeStyled(sb.toString(), sb.toString(), foregroundFormat(level), t,true);
-    }
-
-    public static NutsTextNode bg(String t, int level) {
-        return bg( plain(t),level);
-    }
-
-    public static NutsTextNode bg(NutsTextNode t, int level) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < level+1; i++) {
-            sb.append("@");
-        }
-        return new DefaultNutsTextNodeStyled(sb.toString(), sb.toString(), foregroundFormat(level), t,true);
-    }
 
 
     public void write(char[] str) {

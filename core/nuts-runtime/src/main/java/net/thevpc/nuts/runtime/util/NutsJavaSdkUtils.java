@@ -153,7 +153,7 @@ public class NutsJavaSdkUtils {
                     if (r != null) {
                         all.add(r);
                         if (session != null && session.isPlainTrace()) {
-                            session.out().printf("detected java %s [[%s]] at ==%s==%n", r.getPackaging(), r.getVersion(), r.getPath());
+                            session.out().printf("detected java %s #####%s##### at ####%s####%n", r.getPackaging(), r.getVersion(), r.getPath());
                         }
                     }
                 }
@@ -183,7 +183,7 @@ public class NutsJavaSdkUtils {
                                         if(r!=null) {
                                             if (session.isPlainTrace()) {
                                                 synchronized (session.getWorkspace()) {
-                                                    session.out().printf("detected java %s [[%s]] at ==%s==%n", r.getPackaging(), r.getVersion(), r.getPath());
+                                                    session.out().printf("detected java %s #####%s##### at ####%s####%n", r.getPackaging(), r.getVersion(), r.getPath());
                                                 }
                                             }
                                         }

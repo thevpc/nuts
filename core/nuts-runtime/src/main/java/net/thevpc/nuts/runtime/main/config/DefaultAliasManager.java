@@ -135,9 +135,9 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
         if (session.isPlainTrace()) {
             PrintStream out = CoreIOUtils.resolveOut(session);
             if (forced) {
-                out.printf("[[re-install]] command alias ==%s==%n", command.getName());
+                out.printf("[[re-install]] command alias ####%s####%n", command.getName());
             } else {
-                out.printf("[[install]] command alias ==%s==%n", command.getName());
+                out.printf("[[install]] command alias ####%s####%n", command.getName());
             }
         }
         return forced;
@@ -157,7 +157,7 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
         defaultCommandFactory.uninstallCommand(name, options);
         if (session.isPlainTrace()) {
             PrintStream out = CoreIOUtils.resolveOut(session);
-            out.printf("[[uninstall]] command alias ==%s==%n", name);
+            out.printf("[[uninstall]] command alias ####%s####%n", name);
         }
         return true;
     }

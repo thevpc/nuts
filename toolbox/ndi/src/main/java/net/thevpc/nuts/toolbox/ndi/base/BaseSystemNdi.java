@@ -112,7 +112,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             boolean exists = Files.exists(ff);
             if (!options.getSession().isYes() && exists) {
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("Script already exists ==%s==%n", NdiUtils.betterPath(ff.toString()));
+                    context.getSession().out().printf("Script already exists ####%s####%n", NdiUtils.betterPath(ff.toString()));
                 }
             } else {
                 final NutsId fnutsId = nid;
@@ -141,7 +141,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NutsId nid = context.getWorkspace().id().parser().parse(id);
         Path f = getScriptFile(nid.getArtifactId());
         if (Files.isRegularFile(f)) {
-            if (session.getTerminal().ask().forBoolean("Tool ==%s== will be removed. Confirm?", NdiUtils.betterPath(f.toString()))
+            if (session.getTerminal().ask().forBoolean("Tool ####%s#### will be removed. Confirm?", NdiUtils.betterPath(f.toString()))
                     .defaultValue(true)
                     .getBooleanValue()) {
                 try {
@@ -150,7 +150,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     throw new UncheckedIOException(ex);
                 }
                 if (session.isPlainTrace()) {
-                    session.out().printf("Tool ==%s== removed.%n", NdiUtils.betterPath(f.toString()));
+                    session.out().printf("Tool ####%s#### removed.%n", NdiUtils.betterPath(f.toString()));
                 }
             }
         }
@@ -339,7 +339,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         List<NdiScriptnfo> all = new ArrayList<>();
         if (!force && Files.exists(script)) {
             if (trace && context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("Script already exists ==%s==%n", NdiUtils.betterPath(script.toString()));
+                context.getSession().out().printf("Script already exists ####%s####%n", NdiUtils.betterPath(script.toString()));
             }
         } else {
             all.add(
@@ -362,12 +362,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             boolean overridden = Files.exists(ff2);
             if (!force && Files.exists(ff2)) {
                 if (trace && context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("script already exists ==%s==%n", ff2);
+                    context.getSession().out().printf("script already exists ####%s####%n", ff2);
                 }
             } else {
                 if (trace && context.getSession().isPlainTrace()) {
                     context.getSession().out().printf((Files.exists(ff2) ? "re-installing" : "installing") +
-                            " script ==%s== %n", NdiUtils.betterPath(ff2.toString()));
+                            " script ####%s#### %n", NdiUtils.betterPath(ff2.toString()));
                 }
                 try {
                     try (BufferedWriter w = Files.newBufferedWriter(ff2)) {

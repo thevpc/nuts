@@ -124,7 +124,7 @@ public class AliasCommand extends SimpleNshBuiltin {
         List<ResultItem> r = context.getResult();
         for (ResultItem resultItem : r) {
             if (resultItem.value == null) {
-                context.out().printf("alias : %s @@not found@@%n", resultItem.name);
+                context.out().printf("alias : %s ```error not found```%n", resultItem.name);
             } else {
                 context.out().printf("alias : %s ='%s'%n", resultItem.name, resultItem.value);
             }
