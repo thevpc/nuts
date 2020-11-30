@@ -141,7 +141,7 @@ public class EnableCommand extends SimpleNshBuiltin {
             }
         } else if (context.getResult() instanceof List) {
             for (String s : ((List<String>) context.getResult())) {
-                context.out().printf("@@enable: ######{{%s}}###### : not a shell builti@@%n", s);
+                context.out().printf("```error enable: ```######%s###### ```error : not a shell builtin```%n", s);
             }
         }
     }

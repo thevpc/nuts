@@ -143,7 +143,7 @@ public class NutsMvnMain extends NutsApplication {
                 }
                 return r;
             } catch (Exception ex) {
-                LOG.log(Level.FINE,"Error executing mvn command "+ Arrays.toString(args),ex);//e.printStackTrace();
+                LOG.log(Level.FINE,"error executing mvn command "+ Arrays.toString(args),ex);//e.printStackTrace();
                 appContext.getSession().out().println("{'result':'error'}");
                 return 1;
             }

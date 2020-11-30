@@ -450,7 +450,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             PrintStream out = CoreIOUtils.resolveOut(session);
             for (FixAction n : resultFixes) {
                 n.fix(session);
-                out.printf("[@@FIX@@] unable to %s %s %n", n.getId(), n.getProblemKey());
+                out.printf("[```error FIX```] unable to %s %s %n", n.getId(), n.getProblemKey());
             }
         }
     }
@@ -583,7 +583,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     newId = ws.search().setSession(session).addId(NutsConstants.Ids.NUTS_API + "#" + v).setAnyWhere().setLatest(true).getResultIds().first();
                     newFile = newId == null ? null : latestOnlineDependencies(fetch0()).setFailFast(false).setSession(session).setId(newId).getResultDefinition();
                 } catch (NutsNotFoundException ex) {
-                    LOG.with().level(Level.SEVERE).error(ex).log("Error : {0}",ex.toString());
+                    LOG.with().level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
                     //ignore
                 }
                 break;
@@ -598,7 +598,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     try {
                         oldFile = fetch0().setId(oldId).setSession(session).setOnline().getResultDefinition();
                     } catch (NutsNotFoundException ex) {
-                        LOG.with().level(Level.SEVERE).error(ex).log("Error : {0}",ex.toString());
+                        LOG.with().level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
                         //ignore
                     }
                 }
@@ -618,7 +618,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                             .setFailFast(false)
                             .getResultDefinition();
                 } catch (NutsNotFoundException ex) {
-                    LOG.with().level(Level.SEVERE).error(ex).log("Error : {0}",ex.toString());
+                    LOG.with().level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
                     //ignore
                 }
                 break;
@@ -634,7 +634,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                         oldFile = fetch0().setId(oldId).setSession(session).getResultDefinition();
                     }
                 } catch (Exception ex) {
-                    LOG.with().level(Level.SEVERE).error(ex).log("Error : {0}",ex.toString());
+                    LOG.with().level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
                     //ignore
                 }
                 try {
@@ -656,7 +656,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                             .setOnline()
                             .getResultDefinition();
                 } catch (Exception ex) {
-                    LOG.with().level(Level.SEVERE).error(ex).log("Error : {0}",ex.toString());
+                    LOG.with().level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
                     //ignore
                 }
                 break;

@@ -47,7 +47,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
                 try {
                     d = xrepo.getIndexStore().searchVersions(id, getSession());
                 } catch (NutsException ex) {
-                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("Error find version operation with Indexer for {0} : {1}", getRepo().getName(), ex);
+                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("error finding version with Indexer for {0} : {1}", getRepo().getName(), ex);
                 }
                 if (d != null && filter != null) {
                     resultList.add(

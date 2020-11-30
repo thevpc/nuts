@@ -41,7 +41,7 @@ public interface NutsApplicationContext extends NutsConfigurable {
     /**
      * string that prefix each auto complete candidate
      */
-    String AUTO_COMPLETE_CANDIDATE_PREFIX = "@@Candidate@@: ";
+    String AUTO_COMPLETE_CANDIDATE_PREFIX = "```error Candidate```: ";
 
     /**
      * application execution mode

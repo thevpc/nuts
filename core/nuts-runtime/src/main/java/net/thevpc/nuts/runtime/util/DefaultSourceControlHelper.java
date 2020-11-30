@@ -50,7 +50,7 @@ public class DefaultSourceControlHelper {
             try {
                 newVersionFound = ws.fetch().setId(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
             } catch (NutsNotFoundException ex) {
-                LOG.with().level(Level.FINE).error(ex).log("Failed to fetch {0}", d.getId().builder().setVersion(newVersion).build());
+                LOG.with().level(Level.FINE).error(ex).log("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build());
                 //ignore
             }
             if (newVersionFound == null) {

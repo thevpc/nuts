@@ -76,7 +76,7 @@ public class NutsAlreadyInstalledException extends NutsInstallationException {
      * @param cause exception
      */
     public NutsAlreadyInstalledException(NutsWorkspace workspace, String id, String msg, Exception cause) {
-        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "Already installed " + (id == null ? "<null>" : id) : msg, cause);
+        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "already installed " + (id == null ? "<null>" : id) : msg, cause);
     }
 
 }

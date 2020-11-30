@@ -51,7 +51,7 @@ public class NutsExtensionNotFoundException extends NutsExtensionException {
      * @param extensionName extension name
      */
     public NutsExtensionNotFoundException(NutsWorkspace workspace, Class missingType, String extensionName) {
-        super(workspace, null, "Extension " + extensionName + " could ot found. Type " + missingType.getName() + " could not be wired.", null);
+        super(workspace, null, "extension " + extensionName + " could not found: type " + missingType.getName() + " could not be wired.", null);
         this.missingType = missingType;
         this.extensionName = extensionName;
     }

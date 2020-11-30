@@ -51,7 +51,7 @@ public class NutsExecutionException extends NutsException {
      * @param exitCode exit code
      */
     public NutsExecutionException(NutsWorkspace workspace, int exitCode) {
-        super(workspace, "Execution Failed with error code " + exitCode);
+        super(workspace, "execution failed with error code " + exitCode);
         this.exitCode = exitCode;
     }
 

@@ -109,10 +109,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCRF.log("   nuts-name                      : {0}", CoreNutsUtils.desc(info.getName()));
             LOGCRF.log("   nuts-api-version               : {0}", Nuts.getVersion());
             LOGCRF.log("   nuts-boot-repositories         : {0}", CoreNutsUtils.desc(info.getBootRepositories()));
-            LOGCRF.log("   nuts-runtime-dependencies      : {0}", new NutsString(Arrays.stream(info.getRuntimeBootInfo().getDependencies()).map(x -> id().formatter(id().parser().parse(x)).format()).collect(Collectors.joining(";"))));
+            LOGCRF.log("   nuts-runtime-dependencies      : {0}", new NutsString(Arrays.stream(info.getRuntimeBootDescriptor().getDependencies()).map(x -> id().formatter(id().parser().parse(x)).format()).collect(Collectors.joining(";"))));
             LOGCRF.log("   nuts-runtime-urls              : {0}", Arrays.asList(info.getClassWorldURLs()).stream().map(x -> x.toString()).collect(Collectors.joining(";")));
             LOGCRF.log("   nuts-extension-dependencies    : {0}", new NutsString(
-                    toIds(info.getExtensionsBootInfo()).stream().map(x -> id().formatter(id().parser().parse(x)).format()).collect(Collectors.joining(";"))));
+                    toIds(info.getExtensionBootDescriptors()).stream().map(x -> id().formatter(id().parser().parse(x)).format()).collect(Collectors.joining(";"))));
 //            if (hasUnsatisfiedRequirements()) {
 //                LOG.log(Level.CONFIG, "\t execution-requirements         : unsatisfied {0}", getRequirementsHelpString(true));
 //            } else {
@@ -151,8 +151,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         String workspaceLocation = info.getWorkspaceLocation();
         String apiVersion = info.getApiVersion();
         String runtimeId = info.getRuntimeId();
-//        String runtimeDependencies = String.join(";",info.getRuntimeBootInfo().getDependencies());
-//        String extensionDependencies = String.join(";",toIds(info.getExtensionsBootInfo()));
         String repositories = info.getBootRepositories();
         NutsWorkspaceOptions uoptions = info.getOptions();
         NutsBootWorkspaceFactory bootFactory = info.getBootWorkspaceFactory();
@@ -170,8 +168,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         cfg.setWorkspace(workspaceLocation);
         cfg.setApiVersion(apiVersion);
         cfg.setRuntimeId(runtimeId);
-        cfg.setRuntimeBootInfo(info.getRuntimeBootInfo());
-        cfg.setExtensionsBootInfo(info.getExtensionsBootInfo());
+        cfg.setRuntimeBootDescriptor(info.getRuntimeBootDescriptor());
+        cfg.setExtensionBootDescriptors(info.getExtensionBootDescriptors());
         NutsSession bootSession = createBootSession();
         extensionManager = new DefaultNutsWorkspaceExtensionManager(this, bootFactory, uoptions.getExcludedExtensions(),bootSession);
         boolean exists = NutsWorkspaceConfigManagerExt.of(config()).isValidWorkspaceFolder();
@@ -246,7 +244,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 aconfig.setJavaOptions(uoptions.getJavaOptions());
 
                 NutsWorkspaceConfigRuntime rconfig = new NutsWorkspaceConfigRuntime();
-                rconfig.setDependencies(String.join(";",info.getRuntimeBootInfo().getDependencies()));
+                rconfig.setDependencies(String.join(";",info.getRuntimeBootDescriptor().getDependencies()));
                 rconfig.setId(runtimeId);
 
                 bconfig.setBootRepositories(repositories);
@@ -298,7 +296,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     NutsUpdateOptions updateOptions = new NutsUpdateOptions().setSession(session);
                     configManager.setBootApiVersion(cfg.getApiVersion(), updateOptions);
                     configManager.setBootRuntimeId(cfg.getRuntimeId(), updateOptions);
-                    configManager.setBootRuntimeDependencies(String.join(";",cfg.getRuntimeBootInfo().getDependencies()), updateOptions);
+                    configManager.setBootRuntimeDependencies(String.join(";",cfg.getRuntimeBootDescriptor().getDependencies()), updateOptions);
                     configManager.setBootRepositories(cfg.getBootRepositories(), updateOptions);
                     try {
                         install().installed().getResult();
@@ -455,7 +453,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("Unable to install companions");
                 if (session.isPlainTrace()) {
                     PrintStream out = session.out();
-                    out.printf("```error Unable to install companion tools```. This happens when none of the following repositories are able to locate them : %s\n",
+                    out.printf("```error unable to install companion tools```. This happens when none of the following repositories are able to locate them : %s\n",
                             new NutsString(Arrays.stream(repos().getRepositories(session)).map(x->"####"+x.getName()+"####").collect(Collectors.joining(", ")))
                     );
                 }
@@ -714,9 +712,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         throw ex;
                     } catch (Exception ex) {
                         if (session.isPlainTrace()) {
-                            out.printf(id().formatter().value(def.getId()).format() + " ```error Failed``` to update : %s.%n", ex.toString());
+                            out.printf(id().formatter().value(def.getId()).format() + " ```error failed``` to update : %s.%n", CoreStringUtils.exceptionToString(ex));
                         }
-                        throw new NutsExecutionException(this, "Unable to update " + def.getId().toString(), ex);
+                        throw new NutsExecutionException(this, "unable to update " + def.getId().toString(), ex);
                     }
                 }
             } else if (strategy0 == InstallStrategy0.INSTALL) {
@@ -728,15 +726,15 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         throw ex;
                     } catch (Exception ex) {
                         if (session.isPlainTrace()) {
-                            out.printf("```error Error:``` " + id().formatter().value(def.getId()).format() + " ```error Failed``` to install : %s.%n", ex.toString());
+                            out.printf("```error error: failed to install``` "+id().formatter().value(def.getId()).format()+": %s.%n", CoreStringUtils.exceptionToString(ex));
                         }
                         try {
                             getInstalledRepository().uninstall(executionContext.getDefinition().getId(), session);
                         } catch (Exception ex2) {
-                            LOG.with().level(Level.FINE).error(ex).log("Failed to uninstall  {0}", executionContext.getDefinition().getId());
+                            LOG.with().level(Level.FINE).error(ex).log("failed to uninstall  {0}", executionContext.getDefinition().getId());
                             //ignore if we could not uninstall
                         }
-                        throw new NutsExecutionException(this, "Unable to install " + def.getId().toString(), ex);
+                        throw new NutsExecutionException(this, "unable to install " + def.getId().toString(), ex);
                     }
                 }
             }
@@ -1176,7 +1174,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         return d;
                     }
                 } catch (Exception ex) {
-                    LOG.with().level(Level.FINE).error(ex).log("Failed to parse {0}", eff);
+                    LOG.with().level(Level.FINE).error(ex).log("failed to parse {0}", eff);
                     //
                 }
             }
@@ -1192,7 +1190,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         try {
             descriptor().formatter(effectiveDescriptor).print(eff);
         } catch (Exception ex) {
-            LOG.with().level(Level.FINE).error(ex).log("Failed to print {0}", eff);
+            LOG.with().level(Level.FINE).error(ex).log("failed to print {0}", eff);
             //
         }
         return effectiveDescriptor;
@@ -1219,8 +1217,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
         } catch (NutsNotFoundException e) {
             return EnumSet.of(NutsInstallStatus.NOT_INSTALLED);
-        } catch (Exception e) {
-            LOG.with().level(Level.SEVERE).error(e).log("Error");
+        } catch (Exception ex) {
+            LOG.with().level(Level.SEVERE).error(ex).log("error: "+CoreStringUtils.exceptionToString(ex));
             return EnumSet.of(NutsInstallStatus.NOT_INSTALLED);
         }
         return getInstalledRepository().getInstallStatus(nutToInstall.getId(), session);
@@ -1383,9 +1381,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //            return false;
 //        }
 //    }
-    private static Set<String> toIds(NutsIdBootInfo[] all){
+    private static Set<String> toIds(NutsBootDescriptor[] all){
         Set<String> set=new LinkedHashSet<>();
-        for (NutsIdBootInfo i : all) {
+        for (NutsBootDescriptor i : all) {
             set.add(i.getId());
             Collections.addAll(set, i.getDependencies());
         }

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.bridges.maven;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 
 import java.util.logging.Level;
 
@@ -45,7 +46,7 @@ public class MvnClient {
                     }
                     status = Status.SUCCESS;
                 } catch (Exception ex) {
-                    LOG.with().level(Level.SEVERE).error(ex).log("Failed to load {0} : {1}", NET_VPC_APP_NUTS_MVN,ex.toString());
+                    LOG.with().level(Level.SEVERE).error(ex).log("failed to load {0} : {1}", NET_VPC_APP_NUTS_MVN, CoreStringUtils.exceptionToString(ex));
                     ex.printStackTrace();
                     status = Status.FAIL;
                     return false;
@@ -76,7 +77,7 @@ public class MvnClient {
                     ).setSession(session).run();
             return (b.getResult() == 0);
         } catch (Exception ex) {
-            LOG.with().level(Level.SEVERE).error(ex).log("Failed to invoke {0} : {1}", NET_VPC_APP_NUTS_MVN,ex.toString());
+            LOG.with().level(Level.SEVERE).error(ex).log("failed to invoke {0} : {1}", NET_VPC_APP_NUTS_MVN,CoreStringUtils.exceptionToString(ex));
             return false;
         }
     }

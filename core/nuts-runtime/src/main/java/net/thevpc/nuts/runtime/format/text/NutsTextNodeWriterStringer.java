@@ -87,7 +87,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                         seq = new NutsTextNodeWriteConfiguration.DefaultSeq(intTextNumber);
                         ctx.setSeq(seq);
                     }
-                    NutsTextNodeWriteConfiguration.Seq a = seq.newLevel(s.getStyleCode().length());
+                    NutsTextNodeWriteConfiguration.Seq a = seq.newLevel(s.getTextStyleCode().length());
                     String ts = a.getString(".") + " ";
 //                if(startWritten){
 //                    ts=" "+ts;

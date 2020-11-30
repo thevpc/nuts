@@ -11,6 +11,7 @@ import java.util.zip.ZipInputStream;
 import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.NutsLogger;
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 
 public class PomIdResolver {
     private final NutsLogger LOG;
@@ -71,7 +72,7 @@ public class PomIdResolver {
                 try {
                     all.add(new PomXmlParser(ws).parse(new URL(s2)).getPomId());
                 } catch (Exception ex) {
-                    LOG.with().level(Level.SEVERE).error(ex).log("Failed to parse pom file {0} : {1}", s2,ex.toString());
+                    LOG.with().level(Level.SEVERE).error(ex).log("failed to parse pom file {0} : {1}", s2, CoreStringUtils.exceptionToString(ex));
                 }
             }
         }
@@ -94,7 +95,7 @@ public class PomIdResolver {
                 all.addAll(Arrays.asList(resolvePomId(url, n)));
             }
         } catch (IOException ex) {
-            LOG.with().level(Level.SEVERE).error(ex).log("Error : {0}",ex.toString());
+            LOG.with().level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
         }
         return all.toArray(new PomId[0]);
     }

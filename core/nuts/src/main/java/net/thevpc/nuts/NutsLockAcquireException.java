@@ -50,7 +50,7 @@ public class NutsLockAcquireException extends NutsLockException {
      */
     public NutsLockAcquireException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject) {
         super(workspace,
-                message == null ? ("Unable to acquire lock for " + lockedObject)
+                message == null ? ("unable to acquire lock for " + lockedObject)
                         : message,lockedObject,lockObject
         );
     }
@@ -65,7 +65,7 @@ public class NutsLockAcquireException extends NutsLockException {
      */
     public NutsLockAcquireException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject,Throwable cause) {
         super(workspace,
-                message == null ? ("Unable to acquire lock for " + lockedObject)
+                message == null ? ("unable to acquire lock for " + lockedObject)
                         : message,lockObject,cause
         );
     }

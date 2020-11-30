@@ -251,7 +251,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                     private CoreIOUtils.ProcessExecHelper preExec() {
                         if (joptions.isShowCommand() || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
                             PrintStream out = executionContext.getExecSession().out();
-                            out.println("==[nuts-exec]== ");
+                            out.println("##[nuts-exec]## ");
                             for (int i = 0; i < xargs.size(); i++) {
                                 String xarg = xargs.get(i);
                                 if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {
@@ -299,7 +299,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         @Override
         public void dryExec() {
             out.print("[dry] ==[exec]== ");
-            out.printf("[dry] ==embedded-java== **+cp** %s ######{{%s}}###### %s%n"
+            out.printf("[dry] ==embedded-java== ```option +cp``` %s ######%s###### %s%n"
                     , String.join(":", joptions.getClassPath())
                     , joptions.getMainClass()
                     , String.join(":", joptions.getApp())
@@ -331,11 +331,11 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             }
             if (th != null) {
                 if (!(th instanceof NutsExecutionException)) {
-                    th = new NutsExecutionException(getSession().getWorkspace(), "Error Executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
+                    throw new NutsExecutionException(getSession().getWorkspace(), "error executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
                 }
                 NutsExecutionException nex = (NutsExecutionException) th;
                 if (nex.getExitCode() != 0) {
-                    throw new NutsExecutionException(getSession().getWorkspace(), "Error Executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
+                    throw new NutsExecutionException(getSession().getWorkspace(), "error executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
                 }
             }
             return 0;

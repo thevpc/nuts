@@ -207,7 +207,7 @@ public class LsCommand extends SimpleNshBuiltin {
         } else if (context.getResult() instanceof ResultError) {
             ResultError s = context.getResult();
             for (Map.Entry<String, String> e : s.result.entrySet()) {
-                out.printf("######{{%s}}###### : @@%s@@%n", e.getKey(), e.getValue());
+                out.printf("######%s###### : ```error %s```%n", e.getKey(), e.getValue());
             }
         } else {
             super.printPlainObject(context);
@@ -242,7 +242,7 @@ public class LsCommand extends SimpleNshBuiltin {
         } else if (item.exec2 || item.jperms.charAt(2) == 'x') {
             out.printf("#####%s#####\n", name);
         } else if (item.config) {
-            out.printf("######{{%s}}######\n", name);
+            out.printf("######%s######\n", name);
         } else if (item.archive) {
             out.printf("##%s##\n", name);
         } else {

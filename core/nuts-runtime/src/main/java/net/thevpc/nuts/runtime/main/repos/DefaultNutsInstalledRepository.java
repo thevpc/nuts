@@ -211,7 +211,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             }
             printJson(id, NUTS_INSTALL_FILE, ii);
         } catch (UncheckedIOException|NutsIOException ex) {
-            throw new NutsNotInstallableException(workspace, id.toString(), "Unable to install "
+            throw new NutsNotInstallableException(workspace, id.toString(), "failed to install "
                     + id.builder().setNamespace(null).build() + " : " + CoreStringUtils.exceptionToString(ex), ex);
         }
     }
@@ -293,7 +293,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         try {
             printJson(id, NUTS_INSTALL_FILE, ii);
         } catch (UncheckedIOException|NutsIOException ex) {
-            throw new NutsNotInstallableException(workspace, id.toString(), "Unable to install "
+            throw new NutsNotInstallableException(workspace, id.toString(), "failed to install "
                     + id.builder().setNamespace(null).build() + " : " + CoreStringUtils.exceptionToString(ex), ex);
         }
     }
@@ -514,7 +514,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 //            for (NutsDependency dependency : def.getDependencies()) {
 //                Iterator<NutsId> it = searchVersions().setId(dependency.getId()).setSession(NutsWorkspaceHelper.createRepositorySession(session, this, NutsFetchMode.DEPLOYED)).getResult();
 //                if (!it.hasNext()) {
-//                    throw new IllegalArgumentException("Unable to install " + def.getId() + " as dependencies are missing.");
+//                    throw new IllegalArgumentException("failed to install " + def.getId() + " as dependencies are missing.");
 //                }
 //            }
             NutsId id = def.getId();
@@ -545,7 +545,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 ii.setRequired(_require);
                 printJson(id, NUTS_INSTALL_FILE, ii);
             } catch (UncheckedIOException|NutsIOException ex) {
-                throw new NutsNotInstallableException(workspace, id.toString(), "Unable to install "
+                throw new NutsNotInstallableException(workspace, id.toString(), "failed to install "
                         + id.builder().setNamespace(null).build() + " : " + CoreStringUtils.exceptionToString(ex), ex);
             }
             DefaultNutsInstallInfo uu = (DefaultNutsInstallInfo) getInstallInformation(ii, session);

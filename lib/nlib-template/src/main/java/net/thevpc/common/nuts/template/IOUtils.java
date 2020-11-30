@@ -46,7 +46,7 @@ public class IOUtils {
         fileWriter.append("\n" + str);
 //        fileWriter.flush();
         fileWriter.close();
-        System.out.println("**[APPEND TO]** " + file.getPath());
+        System.out.println("####[APPEND TO]#### " + file.getPath());
     }
 
     public static void writeString(String str, File file, ProjectTemplate project) throws IOException {
@@ -60,7 +60,7 @@ public class IOUtils {
             }
             if (!project.isNewlyCreated(file.getPath())) {
                 if (!console.ask("override://" + file.getPath(), "override file " + file.getName(), new ValidatorFactory(project.getWorkspace()).BOOLEAN, null).equals("true")) {
-                    console.println("@@[WONT OVERRIDE]@@ " + file.getPath());
+                    console.println("```error [WONT OVERRIDE]``` " + file.getPath());
                     return;
                 }
             }
@@ -75,10 +75,10 @@ public class IOUtils {
         fileWriter.flush();
         fileWriter.close();
         if (isOverride) {
-            console.println("**[OVERRIDE]** " + file.getPath());
+            console.println("####[OVERRIDE]#### " + file.getPath());
         } else {
             project.setNewlyCreated(file.getPath());
-            console.println("**[GENERATE]** " + file.getPath());
+            console.println("####[GENERATE]#### " + file.getPath());
         }
     }
 

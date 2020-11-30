@@ -389,18 +389,18 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
     private void onLoadRepositoryError(Path file, String name, String uuid, Throwable ex) {
         NutsWorkspaceConfigManager wconfig = getWorkspace().config();
         if (wconfig.isReadOnly()) {
-            throw new UncheckedIOException("Error loading repository " + file.toString(), new IOException(ex));
+            throw new UncheckedIOException("error loading repository " + file.toString(), new IOException(ex));
         }
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
-        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
+        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, CoreStringUtils.exceptionToString(ex)});
         Path logError = getWorkspace().locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG).resolve("invalid-config");
         try {
             Files.createDirectories(logError);
         } catch (IOException ex1) {
-            throw new UncheckedIOException("Unable to log repository error while loading config file " + file.toString() + " : " + ex1.toString(), new IOException(ex));
+            throw new UncheckedIOException("unable to log repository error while loading config file " + file.toString() + " : " + ex1.toString(), new IOException(ex));
         }
         Path newfile = logError.resolve(fileName + ".json");
-        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile.toString());
+        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile.toString());
         try {
             Files.move(file, newfile);
         } catch (IOException e) {

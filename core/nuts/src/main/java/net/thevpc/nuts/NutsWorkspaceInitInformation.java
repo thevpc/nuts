@@ -48,8 +48,8 @@ public interface NutsWorkspaceInitInformation extends Serializable {
 
     String getRuntimeId();
 
-    NutsIdBootInfo getRuntimeBootInfo();
-    NutsIdBootInfo[] getExtensionsBootInfo();
+    NutsBootDescriptor getRuntimeBootDescriptor();
+    NutsBootDescriptor[] getExtensionBootDescriptors();
 
 //    String getRuntimeDependencies();
 //
@@ -85,7 +85,7 @@ public interface NutsWorkspaceInitInformation extends Serializable {
 
     String getStoreLocation(NutsStoreLocation location);
 
-    NutsIdURL getRuntimeBootURL();
+    NutsBootDependencyNode getRuntimeBootDependencyNode();
 
-    NutsIdURL[] getExtensionsBootURL();
+    NutsBootDependencyNode[] getExtensionBootDependencyNodes();
 }

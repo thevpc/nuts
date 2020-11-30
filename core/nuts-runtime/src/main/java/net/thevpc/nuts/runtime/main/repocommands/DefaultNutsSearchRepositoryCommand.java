@@ -46,7 +46,7 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
                 } catch (NutsIndexerNotAccessibleException ex) {
                     //just ignore
                 } catch (NutsException ex) {
-                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("Error search operation using Indexer for {0} : {1}", getRepo().getName(), ex);
+                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("error search operation using Indexer for {0} : {1}", getRepo().getName(), ex);
                 }
                 if (o != null) {
                     result = new IndexFirstIterator<>(o,

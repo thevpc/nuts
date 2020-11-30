@@ -51,6 +51,7 @@ import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.bridges.maven.mvnutil.MavenMetadataParser;
 import net.thevpc.nuts.runtime.CoreNutsConstants;
 import net.thevpc.nuts.runtime.DefaultNutsVersion;
+import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 import net.thevpc.nuts.runtime.util.io.FolderNutIdIterator;
 import net.thevpc.nuts.runtime.bridges.maven.mvnutil.MavenMetadata;
@@ -227,7 +228,7 @@ public class MavenRepositoryFolderHelper {
                                     old = MavenMetadataParser.of(ws).parseMavenMetaData(metadataxml);
                                 }
                             } catch (Exception ex) {
-                                LOG.with().level(Level.SEVERE).error(ex).log("Failed to parse metadata xml for {0} : {1}", metadataxml,ex.toString());
+                                LOG.with().level(Level.SEVERE).error(ex).log("failed to parse metadata xml for {0} : {1}", metadataxml, CoreStringUtils.exceptionToString(ex));
                                 //ignore any error!
                             }
                             MavenMetadata m = new MavenMetadata();

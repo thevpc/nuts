@@ -131,7 +131,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                 try (Reader rr = new InputStreamReader(u.openStream())) {
                     s = ws.formats().element().setContentType(NutsContentType.JSON).parse(rr, DefaultNutsExtensionInformation[].class);
                 } catch (IOException ex) {
-                    LOG.with().level(Level.SEVERE).error(ex).log("Failed to parse NutsExtensionInformation from {0} : {1}", u, ex.toString());
+                    LOG.with().level(Level.SEVERE).error(ex).log("failed to parse NutsExtensionInformation from {0} : {1}", u, CoreStringUtils.exceptionToString(ex));
                 }
                 if (s != null) {
                     for (NutsExtensionInformation nutsExtensionInfo : s) {
@@ -162,14 +162,14 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     public void onInitializeWorkspace(NutsWorkspaceInitInformation info,ClassLoader bootClassLoader, NutsSession session) {
         //now will iterate over Extension classes to wire them ...
         objectFactory.discoverTypes(
-               ws.id().parser().parse(info.getRuntimeBootURL().getId()),
-                info.getRuntimeBootURL().getURL(),
+               ws.id().parser().parse(info.getRuntimeBootDependencyNode().getId()),
+                info.getRuntimeBootDependencyNode().getURL(),
                 bootClassLoader
                 );
-        for (NutsIdURL nutsIdBootInfo : info.getExtensionsBootURL()) {
+        for (NutsBootDependencyNode idurl : info.getExtensionBootDependencyNodes()) {
             objectFactory.discoverTypes(
-                    ws.id().parser().parse(nutsIdBootInfo.getId()),
-                    nutsIdBootInfo.getURL(),
+                    ws.id().parser().parse(idurl.getId()),
+                    idurl.getURL(),
                     bootClassLoader
             );
         }
@@ -536,7 +536,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                         try {
                             zipFile.close();
                         } catch (IOException ex) {
-                            LOG.with().level(Level.SEVERE).error(ex).log("Failed to close zip file {0} : {1}", file.getPath(), ex.toString());
+                            LOG.with().level(Level.SEVERE).error(ex).log("failed to close zip file {0} : {1}", file.getPath(), CoreStringUtils.exceptionToString(ex));
                             //ignore return false;
                         }
                     }

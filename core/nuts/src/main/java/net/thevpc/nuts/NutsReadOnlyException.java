@@ -39,7 +39,7 @@ public class NutsReadOnlyException extends NutsException {
      * @param location location
      */
     public NutsReadOnlyException(NutsWorkspace workspace, String location) {
-        super(workspace, "Cannot update Readonly Workspace " + location);
+        super(workspace, "cannot update readonly workspace " + location);
     }
 
     /**

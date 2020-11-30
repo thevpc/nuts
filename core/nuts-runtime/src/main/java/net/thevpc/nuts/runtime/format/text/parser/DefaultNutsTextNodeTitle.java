@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.format.text.parser;
 
 import net.thevpc.nuts.NutsTextNode;
+import net.thevpc.nuts.NutsTextNodeStyle;
 import net.thevpc.nuts.NutsTextNodeTitle;
 import net.thevpc.nuts.NutsTextNodeType;
 import net.thevpc.nuts.runtime.format.text.TextFormat;
@@ -51,9 +52,14 @@ public class DefaultNutsTextNodeTitle extends AbstractNutsTextNode implements Nu
         return NutsTextNodeType.TITLE;
     }
 
-    public String getStyleCode() {
-        int u = start.indexOf(')');
-        return start.substring(0,u)+start.charAt(0);
+    public NutsTextNodeStyle getTextStyle() {
+        return NutsTextNodeStyle.values()[NutsTextNodeStyle.PRIMARY1.ordinal()+start.length()-2];
+    }
+
+    public String getTextStyleCode() {
+        String s=start.toString().trim();
+        int u = s.indexOf(')');
+        return s.substring(0,u);//+start.charAt(0);
     }
 
     public String getStart() {

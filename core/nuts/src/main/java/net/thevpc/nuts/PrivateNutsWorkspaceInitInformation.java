@@ -51,10 +51,10 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
      * workspace runtime id (group, name avec version)
      */
     private String runtimeId;
-    private NutsIdBootInfo runtimeBootInfo;
-    private NutsIdURL runtimeBootURL;
-    private NutsIdBootInfo[] extensionsBootInfo;
-    private NutsIdURL[] extensionsBootURL;
+    private NutsBootDescriptor runtimeBootDescriptor;
+    private NutsBootDependencyNode runtimeBootDependencyNode;
+    private NutsBootDescriptor[] extensionBootDescriptors;
+    private NutsBootDependencyNode[] extensionBootDependencyNodes;
 
     private NutsBootWorkspaceFactory bootWorkspaceFactory;
 
@@ -165,21 +165,21 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         return this;
     }
 
-    public NutsIdBootInfo getRuntimeBootInfo() {
-        return runtimeBootInfo;
+    public NutsBootDescriptor getRuntimeBootDescriptor() {
+        return runtimeBootDescriptor;
     }
 
-    public PrivateNutsWorkspaceInitInformation setRuntimeBootInfo(NutsIdBootInfo runtimeIdBootInfo) {
-        this.runtimeBootInfo = runtimeIdBootInfo;
+    public PrivateNutsWorkspaceInitInformation setRuntimeBootDescriptor(NutsBootDescriptor runtimeBootDescriptor) {
+        this.runtimeBootDescriptor = runtimeBootDescriptor;
         return this;
     }
 
-    public NutsIdBootInfo[] getExtensionsBootInfo() {
-        return extensionsBootInfo;
+    public NutsBootDescriptor[] getExtensionBootDescriptors() {
+        return extensionBootDescriptors;
     }
 
-    public PrivateNutsWorkspaceInitInformation setExtensionsBootInfo(NutsIdBootInfo[] extensionsIdBootInfo) {
-        this.extensionsBootInfo = extensionsIdBootInfo;
+    public PrivateNutsWorkspaceInitInformation setExtensionBootDescriptors(NutsBootDescriptor[] extensionBootDescriptors) {
+        this.extensionBootDescriptors = extensionBootDescriptors;
         return this;
     }
 
@@ -404,22 +404,22 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
     }
 
     @Override
-    public NutsIdURL getRuntimeBootURL() {
-        return runtimeBootURL;
+    public NutsBootDependencyNode getRuntimeBootDependencyNode() {
+        return runtimeBootDependencyNode;
     }
 
-    public PrivateNutsWorkspaceInitInformation setRuntimeBootURL(NutsIdURL runtimeBootURL) {
-        this.runtimeBootURL = runtimeBootURL;
+    public PrivateNutsWorkspaceInitInformation setRuntimeBootDependencyNode(NutsBootDependencyNode runtimeBootDependencyNode) {
+        this.runtimeBootDependencyNode = runtimeBootDependencyNode;
         return this;
     }
 
     @Override
-    public NutsIdURL[] getExtensionsBootURL() {
-        return extensionsBootURL;
+    public NutsBootDependencyNode[] getExtensionBootDependencyNodes() {
+        return extensionBootDependencyNodes;
     }
 
-    public PrivateNutsWorkspaceInitInformation setExtensionsBootURL(NutsIdURL[] extensionsBootURL) {
-        this.extensionsBootURL = extensionsBootURL;
+    public PrivateNutsWorkspaceInitInformation setExtensionBootDependencyNodes(NutsBootDependencyNode[] extensionBootDependencyNodes) {
+        this.extensionBootDependencyNodes = extensionBootDependencyNodes;
         return this;
     }
 

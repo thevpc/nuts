@@ -104,9 +104,9 @@ public class HelpCommand extends AbstractNshBuiltin {
                     }
                     for (JShellBuiltin cmd : commands) {
                         if (code) {
-                            context.out().printf("\\=\\=%s\\=\\= : ", ss.apply(StringUtils.alignLeft(cmd.getName(), max)));
+                            context.out().printf("```#####%s#####``` : ", ss.apply(StringUtils.alignLeft(cmd.getName(), max)));
                         } else {
-                            context.out().printf("####%s#### : ", StringUtils.alignLeft(cmd.getName(), max));
+                            context.out().printf("#####%s##### : ", StringUtils.alignLeft(cmd.getName(), max));
                         }
                         context.out().println(ss.apply(cmd.getHelpHeader())); //formatted
                     }
@@ -118,9 +118,9 @@ public class HelpCommand extends AbstractNshBuiltin {
                         } else {
                             String help = command1.getHelp();
                             if (code) {
-                                context.out().printf("\\=\\=COMMAND\\=\\= : %s\f", ss.apply(commandName));
+                                context.out().printf("```#####COMMAND#####``` : %s\f", ss.apply(commandName));
                             } else {
-                                context.out().printf("==COMMAND== : %s\f", ss.apply(commandName));
+                                context.out().printf("#####COMMAND##### : %s\f", ss.apply(commandName));
                             }
                             context.out().println(ss.apply(help));
                         }

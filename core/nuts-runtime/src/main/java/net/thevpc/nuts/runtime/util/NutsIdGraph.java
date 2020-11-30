@@ -691,9 +691,9 @@ public class NutsIdGraph {
                     return -1;
                 }
 
-                throw new NutsException(session.getWorkspace(), "Error");
+                throw new NutsException(session.getWorkspace(), "error");
             } else {
-                throw new NutsException(session.getWorkspace(), "Error");
+                throw new NutsException(session.getWorkspace(), "error");
             }
         }
 

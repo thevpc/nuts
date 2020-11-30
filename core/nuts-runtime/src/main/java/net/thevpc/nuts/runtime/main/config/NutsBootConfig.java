@@ -63,12 +63,12 @@ public final class NutsBootConfig implements Cloneable, Serializable {
     /**
      * runtime component dependencies id list (; separated)
      */
-    private NutsIdBootInfo runtimeBootInfo;
+    private NutsBootDescriptor runtimeBootDescriptor;
 
     /**
      *
      */
-    private NutsIdBootInfo[] extensionsBootInfo;
+    private NutsBootDescriptor[] extensionBootDescriptors;
 
     /**
      * bootRepositories list (; separated) where to look for runtime dependencies
@@ -141,8 +141,8 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             this.name = context.getName();
             this.apiVersion = context.getApiVersion();
             this.runtimeId = context.getRuntimeId().getLongName();
-            this.runtimeBootInfo = context.getRuntimeBootInfo();
-            this.extensionsBootInfo = context.getExtensionsBootInfo();
+            this.runtimeBootDescriptor = context.getRuntimeBootDescriptor();
+            this.extensionBootDescriptors = context.getExtensionBootDescriptors();
             this.bootRepositories = context.getBootRepositories();
             this.javaCommand = context.getJavaCommand();
             this.javaOptions = context.getJavaOptions();
@@ -160,8 +160,8 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             this.name = other.getName();
             this.apiVersion = other.getApiVersion();
             this.runtimeId = other.getRuntimeId();
-            this.runtimeBootInfo = other.getRuntimeBootInfo();
-            this.extensionsBootInfo = other.getExtensionsBootInfo();
+            this.runtimeBootDescriptor = other.getRuntimeBootDescriptor();
+            this.extensionBootDescriptors = other.getExtensionBootDescriptors();
             this.bootRepositories = other.getBootRepositories();
             this.javaCommand = other.getJavaCommand();
             this.javaOptions = other.getJavaOptions();
@@ -203,21 +203,21 @@ public final class NutsBootConfig implements Cloneable, Serializable {
         return this;
     }
 
-    public NutsIdBootInfo getRuntimeBootInfo() {
-        return runtimeBootInfo;
+    public NutsBootDescriptor getRuntimeBootDescriptor() {
+        return runtimeBootDescriptor;
     }
 
-    public NutsBootConfig setRuntimeBootInfo(NutsIdBootInfo runtimeBootInfo) {
-        this.runtimeBootInfo = runtimeBootInfo;
+    public NutsBootConfig setRuntimeBootDescriptor(NutsBootDescriptor runtimeBootDescriptor) {
+        this.runtimeBootDescriptor = runtimeBootDescriptor;
         return this;
     }
 
-    public NutsIdBootInfo[] getExtensionsBootInfo() {
-        return extensionsBootInfo;
+    public NutsBootDescriptor[] getExtensionBootDescriptors() {
+        return extensionBootDescriptors;
     }
 
-    public NutsBootConfig setExtensionsBootInfo(NutsIdBootInfo[] extensionsBootInfo) {
-        this.extensionsBootInfo = extensionsBootInfo;
+    public NutsBootConfig setExtensionBootDescriptors(NutsBootDescriptor[] extensionBootDescriptors) {
+        this.extensionBootDescriptors = extensionBootDescriptors;
         return this;
     }
 
@@ -355,11 +355,11 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             }
             sb.append("runtimeId='").append(runtimeId).append('\'');
         }
-        if (runtimeBootInfo!=null) {
+        if (runtimeBootDescriptor !=null) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
-            sb.append("runtimeDependencies=").append(runtimeBootInfo);
+            sb.append("runtimeDependencies=").append(runtimeBootDescriptor);
         }
         if (!CoreStringUtils.isBlank(bootRepositories)) {
             if (sb.length() > 0) {

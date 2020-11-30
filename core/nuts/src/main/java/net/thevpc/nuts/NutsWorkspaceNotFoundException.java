@@ -45,7 +45,7 @@ public class NutsWorkspaceNotFoundException extends NutsWorkspaceException {
      * @param workspaceLocation location
      */
     public NutsWorkspaceNotFoundException(NutsWorkspace workspace, String workspaceLocation) {
-        super(workspace, "No such workspace " + (workspaceLocation == null ? "<null>" : workspaceLocation), null);
+        super(workspace, "no such workspace " + (workspaceLocation == null ? "<null>" : workspaceLocation), null);
         this.workspaceLocation = workspaceLocation;
     }
 

@@ -644,11 +644,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             if (cconfig.getRuntimeId() == null) {
                 cconfig.setRuntimeId(initOptions.getRuntimeId());
             }
-            if (cconfig.getRuntimeBootInfo() == null) {
-                cconfig.setRuntimeBootInfo(initOptions.getRuntimeBootInfo());
+            if (cconfig.getRuntimeBootDescriptor() == null) {
+                cconfig.setRuntimeBootDescriptor(initOptions.getRuntimeBootDescriptor());
             }
-            if (cconfig.getExtensionsBootInfo() == null) {
-                cconfig.setExtensionsBootInfo(initOptions.getExtensionsBootInfo());
+            if (cconfig.getExtensionBootDescriptors() == null) {
+                cconfig.setExtensionBootDescriptors(initOptions.getExtensionBootDescriptors());
             }
             if (cconfig.getBootRepositories() == null) {
                 cconfig.setBootRepositories(initOptions.getBootRepositories());
@@ -672,8 +672,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 //always reload boot resolved versions!
                 cconfig.setApiId(ws.id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + initOptions.getApiVersion()));
                 cconfig.setRuntimeId(initOptions.getRuntimeId());
-                cconfig.setRuntimeBootInfo(initOptions.getRuntimeBootInfo());
-                cconfig.setExtensionsBootInfo(initOptions.getExtensionsBootInfo());
+                cconfig.setRuntimeBootDescriptor(initOptions.getRuntimeBootDescriptor());
+                cconfig.setExtensionBootDescriptors(initOptions.getExtensionBootDescriptors());
                 cconfig.setBootRepositories(initOptions.getBootRepositories());
             }
             setCurrentConfig(cconfig
@@ -1196,7 +1196,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             throw new UncheckedIOException("Unable to load config file " + file.toString(), new IOException(ex));
         }
         String fileName = "nuts-workspace-" + Instant.now().toString();
-        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
+        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, CoreStringUtils.exceptionToString(ex)});
         Path logError = ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.LOG).resolve("invalid-config");
         try {
             Files.createDirectories(logError);
@@ -1255,7 +1255,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
             return createNutsVersionCompat(version).parseConfig(bytes);
         } catch (Exception ex) {
-            LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
+            LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, CoreStringUtils.exceptionToString(ex)});
             throw new UncheckedIOException("Unable to load config file " + file.toString(), new IOException(ex));
         }
     }

@@ -49,7 +49,7 @@ public class NutsLockReleaseException extends NutsLockException {
      */
     public NutsLockReleaseException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject) {
         super(workspace,
-                message == null ? ("Unable to release lock for " + lockedObject)
+                message == null ? ("unable to release lock for " + lockedObject)
                         : message,lockedObject,lockObject
         );
     }
@@ -64,7 +64,7 @@ public class NutsLockReleaseException extends NutsLockException {
      */
     public NutsLockReleaseException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject,Throwable cause) {
         super(workspace,
-                message == null ? ("Unable to release lock for " + lockedObject)
+                message == null ? ("unable to release lock for " + lockedObject)
                         : message,lockObject,cause
         );
     }

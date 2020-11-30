@@ -54,7 +54,7 @@ public class NutsUnsupportedEnumException extends NutsException {
     public NutsUnsupportedEnumException(NutsWorkspace workspace, String message, Enum enumValue) {
         super(workspace,
                 message != null ? message : (
-                        "Unexpected/Unsupported enum " + enumValue + " of type " + enumValue.getClass().getName())
+                        "unexpected/unsupported enum " + enumValue + " of type " + enumValue.getClass().getName())
         );
         this.enumValue = enumValue;
     }
@@ -70,7 +70,7 @@ public class NutsUnsupportedEnumException extends NutsException {
     public NutsUnsupportedEnumException(NutsWorkspace workspace, String message, String stringValue, Enum enumValue) {
         super(workspace,
                 message == null ? (
-                        "Unexpected/Unsupported value " + stringValue + " of type " + enumValue.getClass().getName())
+                        "unexpected/unsupported value " + stringValue + " of type " + enumValue.getClass().getName())
                         : message
         );
     }

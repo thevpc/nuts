@@ -76,7 +76,7 @@ public class NutsAlreadyDeployedException extends NutsInstallationException {
      * @param cause cuse
      */
     public NutsAlreadyDeployedException(NutsWorkspace workspace, String id, String msg, Exception cause) {
-        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "Already deployed " + (id == null ? "<null>" : id) : msg, cause);
+        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "already deployed " + (id == null ? "<null>" : id) : msg, cause);
     }
 
 }

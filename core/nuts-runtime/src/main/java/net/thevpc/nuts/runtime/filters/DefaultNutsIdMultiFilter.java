@@ -79,7 +79,7 @@
 //            } catch (Exception ex) {
 //                //suppose we cannot retrieve descriptor
 //                if (LOG.isLoggable(Level.FINER)) {
-//                    LOG.log(Level.FINER, this.session.getFetchMode() + " Unable to fetch Descriptor for " + id + " from repository " + repository.config().getName() + " : " + ex.toString());
+//                    LOG.log(Level.FINER, this.session.getFetchMode() + " Unable to fetch Descriptor for " + id + " from repository " + repository.config().getName() + " : " + CoreStringUtils.exceptionToString(ex));
 //                }
 //                return false;
 //            }

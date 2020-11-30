@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.format.text.parser;
 
 import net.thevpc.nuts.NutsTextNode;
+import net.thevpc.nuts.NutsTextNodeStyle;
 import net.thevpc.nuts.NutsTextNodeStyled;
 import net.thevpc.nuts.NutsTextNodeType;
 import net.thevpc.nuts.runtime.format.text.TextFormat;
@@ -38,16 +39,23 @@ public class DefaultNutsTextNodeStyled extends AbstractNutsTextNode implements N
 
     private final String start;
     private final String end;
-    private final TextFormat style;
+    private final TextFormat textFormat;
     private NutsTextNode child;
+    private NutsTextNodeStyle textStyle;
     private boolean completed;
 
-    public DefaultNutsTextNodeStyled(String start, String end, TextFormat style, NutsTextNode child, boolean completed) {
+    public DefaultNutsTextNodeStyled(String start, String end, TextFormat textFormat, NutsTextNode child, boolean completed, NutsTextNodeStyle textStyle) {
         this.start = start;
         this.end = end;
-        this.style = style;
+        this.textFormat = textFormat;
         this.child = child;
         this.completed = completed;
+        this.textStyle = textStyle;
+    }
+
+    @Override
+    public NutsTextNodeStyle getStyle() {
+        return textStyle;
     }
 
     @Override
@@ -64,8 +72,8 @@ public class DefaultNutsTextNodeStyled extends AbstractNutsTextNode implements N
         return start;
     }
 
-    public TextFormat getStyle() {
-        return style;
+    public TextFormat getTextFormat() {
+        return textFormat;
     }
 
     @Override
@@ -75,6 +83,6 @@ public class DefaultNutsTextNodeStyled extends AbstractNutsTextNode implements N
 
     @Override
     public String toString() {
-        return style + ":" + child;
+        return textFormat + ":" + child;
     }
 }

@@ -1,88 +1,141 @@
 manage nuts workspace
 
 ##SYNOPSIS:##
-**nadmin** {{\<command\>}} [**\<options\>**]
+```sh
+nadmin <command> ...
+ ```
 manage nuts workspace
 
-##ALIAS COMMANDS:##
-{{list aliases}} ...
+##) ALIAS COMMANDS
+```sh
+nadmin list aliases ...
+```
         : list all command aliases
           If some arguments are passed to the command, it will be processed
           as name filter.
           Example :
-            {{list aliases}} nb\*
+          ```sh
+            nadmin list aliases nb*
+          ```
                will search for all aliases that start with *
 
-{{add alias}} <name>=<value> ...
-{{add alias}} <name> <value> ...
+```sh
+nadmin add alias <name>=<value> ...
+nadmin add alias <name> <value> ...
+```
         : add one or multiple new command aliases
 
-{{remove alias}} <name> ...
+```sh
+nadmin remove alias <name> ...
+```
         : remove one or multiple command aliases or aliases
 
-##IMPORT COMMANDS:##
-{{import}} <group> ...
-        : add one or multiple groups to imported groups
+##) IMPORT COMMANDS:
+```sh
+nadmin import <group> ...
+```
+        add one or multiple groups to imported groups
 
-{{unimport}} <group> ...
-        : remove one or multiple groups from imported groups
+```sh
+nadmin unimport <group> ...
+```
+        remove one or multiple groups from imported groups
 
-{{list imports}}
-        : list imported groups
+```sh
+nadmin list imports
+```
+        list imported groups
 
-{{clear imports}}
-        : remove all imported groups
+```sh
+nadmin clear imports
+```
+        remove all imported groups
 
 
-##REPOSITORY COMMANDS:##
-{{list archetypes}}
-        : list all available archetypes
+##) REPOSITORY COMMANDS
 
-{{add repo}} <repos-name> ...
-        : add repository
+```sh
+nadmin list archetypes
+```
+        list all available archetypes
 
-{{remove repo}} <repos-name> ...
-        : remove repository
+```sh
+nadmin add repo <repos-name> ...
+```
+        add repository
 
-{{list repos}}
-        : list repositories
+```sh
+nadmin remove repo <repos-name> ...
+```
+        remove repository
 
-{{edit repo}} <repoId> ...
-        : edit repository
+```sh
+nadmin list repos
+```
+        list repositories
 
-{{update stats}} <repo-folder-path> ...
-        : update local repo statistics
+```sh
+nadmin edit repo <repoId> ...
+```
+        edit repository
 
-##SECUTIRY COMMANDS:##
-{{list users}}
-        : list available users
+```sh
+nadmin update stats <repo-folder-path> ...
+```
+        update local repo statistics
 
-{{add user}} [**options**] <username> <password>
-        : add new user to the workspace
+##) SECUTIRY COMMANDS
+```sh
+nadmin list users
+```
+        list available users
 
-{{add user}} [**--repo** | **-r** <repo-name>] <username> <password> [<remote-identity> <remote-password>]
-        : add new user to the repository
+```sh
+nadmin add user [options] <username> <password>
+```
+        add new user to the workspace
 
-{{edit user}}
-        : edit user
+```sh
+nadmin add user [--repo | -r <repo-name>] <username> <password> [<remote-identity> <remote-password>]
+```
+        add new user to the repository
 
-{{passwd}}
-        : change password
+```sh
+nadmin edit user
+```
+        edit user
 
-{{secure}}
-        : switch to secure mode
+```sh
+nadmin passwd
+```
+        change password
 
-{{unsecure}}
-        : switch to un-secure mode
+```sh
+nadmin secure
+```
+        switch to secure mode
 
-##GENERAL COMMANDS:##
-{{list extension points}}|{{lxp}}
-        : list currently loaded extension points
+```sh
+nadmin unsecure
+```
+        switch to un-secure mode
 
-{{delete}} {{apps}}|{{config}}|{{var}}|{{log}}|{{temp}}|{{cache}}|{{lib}}|{{run}} ... [**--force**|**-f**]
-        : delete store folders
+##)GENERAL COMMANDS
+```sh
+nadmin list extension points|lxp
+```
+        list currently loaded extension points
 
-{{set loglevel}} verbose|fine|finer|finest|error|severe|config|all|none
+```sh
+nadmin delete apps|config|var|log|temp|cache|lib|run ... [--force|-f]
+```
+        delete store folders
 
-{{connect}} <username\@server:port> [--password <password>]
-        : connect to remote nuts server . default port is 8898
+```sh
+nadmin set loglevel verbose|fine|finer|finest|error|severe|config|all|none
+```
+
+```sh
+nadmin connect <username@server:port> [--password <password>]
+```
+        connect to remote nuts server . default port is 8898

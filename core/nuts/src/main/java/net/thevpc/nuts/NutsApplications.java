@@ -204,7 +204,7 @@ public final class NutsApplications {
         if (out == null && ws != null) {
             try {
                 out = ws.io().term().getSystemTerminal().getOut();
-                m = "@@" + m + "@@";
+                m = "```error " + m + "```";
             } catch (Exception ex2) {
                 ws.log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log("unable to get system terminal");
                 //

@@ -41,7 +41,7 @@ public class NutsRepositoryNotFoundException extends NutsRepositoryException {
      * @param repository repository
      */
     public NutsRepositoryNotFoundException(NutsWorkspace workspace, String repository) {
-        super(workspace, repository, "No such repository " + (repository == null ? "<null>" : repository), null);
+        super(workspace, repository, "no such repository " + (repository == null ? "<null>" : repository), null);
     }
 
 }

@@ -435,7 +435,7 @@ public final class NutsBootWorkspace {
                 }
             }
             if (!loadedApiConfig || PrivateNutsUtils.isBlank(workspaceInformation.getRuntimeId())
-                    || workspaceInformation.getRuntimeBootInfo() == null || workspaceInformation.getExtensionsBootInfo() == null || workspaceInformation.getBootRepositories() == null) {
+                    || workspaceInformation.getRuntimeBootDescriptor() == null || workspaceInformation.getExtensionBootDescriptors() == null || workspaceInformation.getBootRepositories() == null) {
 
                 //resolve extension id
                 if (workspaceInformation.getRuntimeId() == null) {
@@ -447,7 +447,7 @@ public final class NutsBootWorkspace {
                         LOG.log(Level.FINEST, PrivateNutsLog.FAIL, "unable to resolve latest runtime-id (is connection ok?)", new Object[0]);
                     }
                     workspaceInformation.setRuntimeId(runtimeId);
-                    workspaceInformation.setRuntimeBootInfo(null);
+                    workspaceInformation.setRuntimeBootDescriptor(null);
                     workspaceInformation.setBootRepositories(null);
                 }
                 if (workspaceInformation.getRuntimeId() == null) {
@@ -460,7 +460,7 @@ public final class NutsBootWorkspace {
 
                 Collection<String> bootRepositories0 = resolveBootRepositories();
                 //resolve runtime libraries
-                if (workspaceInformation.getRuntimeBootInfo() == null) {
+                if (workspaceInformation.getRuntimeBootDescriptor() == null) {
                     Set<String> loadedDeps = null;
                     String extraBootRepositories = null;
                     PrivateNutsId rid = PrivateNutsId.parse(workspaceInformation.getRuntimeId());
@@ -494,7 +494,7 @@ public final class NutsBootWorkspace {
                     if (loadedDeps == null) {
                         throw new IllegalArgumentException("unable to load dependencies for " + rid);
                     }
-                    workspaceInformation.setRuntimeBootInfo(new NutsIdBootInfo(
+                    workspaceInformation.setRuntimeBootDescriptor(new NutsBootDescriptor(
                             workspaceInformation.getRuntimeId(),
                             loadedDeps.toArray(new String[0])
                     ));
@@ -512,7 +512,7 @@ public final class NutsBootWorkspace {
                 }
 
                 //resolve extension libraries
-                if (workspaceInformation.getExtensionsBootInfo() == null) {
+                if (workspaceInformation.getExtensionBootDescriptors() == null) {
 //                    LinkedHashSet<String> allExtDependencies = new LinkedHashSet<>();
                     LinkedHashSet<String> excludedExtensions = new LinkedHashSet<>();
                     if (options.getExcludedExtensions() != null) {
@@ -525,7 +525,7 @@ public final class NutsBootWorkspace {
                         }
                     }
                     if (workspaceInformation.getExtensionsSet() != null) {
-                        List<NutsIdBootInfo> all=new ArrayList<>();
+                        List<NutsBootDescriptor> all=new ArrayList<>();
                         for (String extension : workspaceInformation.getExtensionsSet()) {
                             PrivateNutsId eid = PrivateNutsId.parse(extension);
                             if (!excludedExtensions.contains(eid.getShortName()) && !excludedExtensions.contains(eid.getArtifactId())) {
@@ -549,15 +549,15 @@ public final class NutsBootWorkspace {
                                     }
                                 }
                                 if (loadedDeps != null) {
-                                    all.add(new NutsIdBootInfo(extension,loadedDeps.toArray(new String[0])));
+                                    all.add(new NutsBootDescriptor(extension,loadedDeps.toArray(new String[0])));
                                 } else {
                                     throw new IllegalArgumentException("Unable to load dependencies for " + eid);
                                 }
                             }
                         }
-                        workspaceInformation.setExtensionsBootInfo(all.toArray(new NutsIdBootInfo[0]));
+                        workspaceInformation.setExtensionBootDescriptors(all.toArray(new NutsBootDescriptor[0]));
                     } else {
-                        workspaceInformation.setExtensionsBootInfo(new NutsIdBootInfo[0]);
+                        workspaceInformation.setExtensionBootDescriptors(new NutsBootDescriptor[0]);
                     }
                 }
             }
@@ -738,14 +738,14 @@ public final class NutsBootWorkspace {
             if (PrivateNutsUtils.isBlank(workspaceInformation.getApiId())
                     || PrivateNutsUtils.isBlank(workspaceInformation.getRuntimeId())
                     || PrivateNutsUtils.isBlank(workspaceInformation.getBootRepositories())
-                    || workspaceInformation.getRuntimeBootInfo() == null
-                    || workspaceInformation.getExtensionsBootInfo() == null) {
+                    || workspaceInformation.getRuntimeBootDescriptor() == null
+                    || workspaceInformation.getExtensionBootDescriptors() == null) {
                 throw new IllegalArgumentException("Invalid state");
             }
             boolean recover = options.isRecover() || options.isReset();
 
-//            LinkedHashMap<String, NutsBootClassLoader.NutsIdURL> allExtensionFiles = new LinkedHashMap<>();
-            List<NutsIdURL> deps = new ArrayList<>();
+//            LinkedHashMap<String, NutsBootClassLoader.NutsBootDependencyNode> allExtensionFiles = new LinkedHashMap<>();
+            List<NutsBootDependencyNode> deps = new ArrayList<>();
 
             String workspaceBootLibFolder = workspaceInformation.getLib();
 
@@ -755,7 +755,7 @@ public final class NutsBootWorkspace {
             rt.setId(workspaceInformation.getRuntimeId())
                     .setUrl(getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "runtime", options.getExpireTime())
                             .toURI().toURL());
-            for (String s : workspaceInformation.getRuntimeBootInfo().getDependencies()) {
+            for (String s : workspaceInformation.getRuntimeBootDescriptor().getDependencies()) {
                 NutsBootClassLoader.IdInfoBuilder x=new NutsBootClassLoader.IdInfoBuilder();
                 x.setId(s)
                         .setUrl(getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "runtime dependency", options.getExpireTime())
@@ -763,28 +763,28 @@ public final class NutsBootWorkspace {
                         );
                 rt.addDependency(x.build());
             }
-            workspaceInformation.setRuntimeBootURL(rt.build());
+            workspaceInformation.setRuntimeBootDependencyNode(rt.build());
 
-            for (NutsIdBootInfo nutsIdBootInfo : workspaceInformation.getExtensionsBootInfo()) {
+            for (NutsBootDescriptor nutsBootDescriptor : workspaceInformation.getExtensionBootDescriptors()) {
                 NutsBootClassLoader.IdInfoBuilder rt2=new NutsBootClassLoader.IdInfoBuilder();
-                rt2.setId(nutsIdBootInfo.getId())
-                        .setUrl(getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "extension "+nutsIdBootInfo.getId(), options.getExpireTime())
+                rt2.setId(nutsBootDescriptor.getId())
+                        .setUrl(getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "extension "+ nutsBootDescriptor.getId(), options.getExpireTime())
                                 .toURI().toURL());
-                for (String s : nutsIdBootInfo.getDependencies()) {
+                for (String s : nutsBootDescriptor.getDependencies()) {
                     NutsBootClassLoader.IdInfoBuilder x=new NutsBootClassLoader.IdInfoBuilder();
                     x.setId(s)
-                            .setUrl(getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "extension "+nutsIdBootInfo.getId()+" dependency", options.getExpireTime())
+                            .setUrl(getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "extension "+ nutsBootDescriptor.getId()+" dependency", options.getExpireTime())
                                     .toURI().toURL()
                             );
                     rt2.addDependency(x.build());
                 }
                 deps.add(rt2.build());
             }
-            workspaceInformation.setExtensionsBootURL(deps.toArray(new NutsIdURL[0]));
-            deps.add(0,workspaceInformation.getRuntimeBootURL());
+            workspaceInformation.setExtensionBootDependencyNodes(deps.toArray(new NutsBootDependencyNode[0]));
+            deps.add(0,workspaceInformation.getRuntimeBootDependencyNode());
 
-            bootClassWorldURLs = resolveClassWorldURLs(deps.toArray(new NutsIdURL[0]));
-            workspaceClassLoader = bootClassWorldURLs.length == 0 ? getContextClassLoader() : new NutsBootClassLoader(deps.toArray(new NutsIdURL[0]), getContextClassLoader());
+            bootClassWorldURLs = resolveClassWorldURLs(deps.toArray(new NutsBootDependencyNode[0]));
+            workspaceClassLoader = bootClassWorldURLs.length == 0 ? getContextClassLoader() : new NutsBootClassLoader(deps.toArray(new NutsBootDependencyNode[0]), getContextClassLoader());
             workspaceInformation.setWorkspaceClassLoader(workspaceClassLoader);
             workspaceInformation.setBootClassWorldURLs(bootClassWorldURLs);
             ServiceLoader<NutsBootWorkspaceFactory> serviceLoader = ServiceLoader.load(NutsBootWorkspaceFactory.class, workspaceClassLoader);
@@ -840,17 +840,17 @@ public final class NutsBootWorkspace {
         }
     }
 
-    private void fillURLs(NutsIdURL info, Set<URL> urls) {
+    private void fillBootDependencyNodes(NutsBootDependencyNode info, Set<URL> urls) {
         urls.add(info.getURL());
-        for (NutsIdURL dependency : info.getDependencies()) {
-            fillURLs(dependency,urls);
+        for (NutsBootDependencyNode dependency : info.getDependencies()) {
+            fillBootDependencyNodes(dependency,urls);
         }
     }
 
-    private URL[] resolveClassWorldURLs(NutsIdURL[] infos) {
+    private URL[] resolveClassWorldURLs(NutsBootDependencyNode[] infos) {
         LinkedHashSet<URL> urls0 = new LinkedHashSet<>();
-        for (NutsIdURL info : infos) {
-            fillURLs(info, urls0);
+        for (NutsBootDependencyNode info : infos) {
+            fillBootDependencyNodes(info, urls0);
         }
         List<URL> urls = new ArrayList<>();
         for (URL url0 : urls0) {

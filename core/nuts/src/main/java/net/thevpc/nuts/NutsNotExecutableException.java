@@ -54,7 +54,7 @@ public class NutsNotExecutableException extends NutsExecutionException {
      * @param id artifact id
      */
     public NutsNotExecutableException(NutsWorkspace workspace, String id) {
-        super(workspace, "Not executable " + (id == null ? "<null>" : id), -1);
+        super(workspace, "not executable " + (id == null ? "<null>" : id), -1);
         this.id = id;
     }
 

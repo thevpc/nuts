@@ -2,12 +2,12 @@ package net.thevpc.nuts;
 
 import java.net.URL;
 
-public class NutsIdURL {
+public class NutsBootDependencyNode {
     private String id;
     private URL url;
-    private NutsIdURL[] dependencies;
+    private NutsBootDependencyNode[] dependencies;
 
-    public NutsIdURL(String id, URL url, NutsIdURL... dependencies) {
+    public NutsBootDependencyNode(String id, URL url, NutsBootDependencyNode... dependencies) {
         this.id = id;
         this.url = url;
         this.dependencies = dependencies;
@@ -21,7 +21,7 @@ public class NutsIdURL {
         return url;
     }
 
-    public NutsIdURL[] getDependencies() {
+    public NutsBootDependencyNode[] getDependencies() {
         return dependencies;
     }
 }

@@ -28,6 +28,7 @@ import javax.xml.transform.stream.StreamResult;
 import net.thevpc.nuts.NutsLogger;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.format.xml.NutsXmlUtils;
+import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -198,7 +199,7 @@ public class MavenMetadataParser {
 
             info.setLastUpdated(lastUpdated.toString().trim().isEmpty() ? null : new SimpleDateFormat("yyyyMMddHHmmss").parse(lastUpdated.toString().trim()));
         } catch (Exception ex) {
-            LOG.with().level(Level.SEVERE).error(ex).log("Failed to parse date {0} : {1}", lastUpdated,ex.toString());
+            LOG.with().level(Level.SEVERE).error(ex).log("failed to parse date {0} : {1}", lastUpdated, CoreStringUtils.exceptionToString(ex));
         }
         for (String version : versions) {
             info.getVersions().add(version.trim());

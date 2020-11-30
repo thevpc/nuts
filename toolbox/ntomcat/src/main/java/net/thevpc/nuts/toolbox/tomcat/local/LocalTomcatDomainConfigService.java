@@ -54,7 +54,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
                 aa.remove();
             }
         }
-        context.getSession().out().printf("==[%s]== domain removed.\n", name);
+        context.getSession().out().printf("######[%s]###### domain removed.\n", name);
         return this;
     }
 

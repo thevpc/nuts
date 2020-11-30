@@ -48,7 +48,7 @@ public abstract class NutsInstallationException extends NutsException {
      * @param ex exception
      */
     public NutsInstallationException(NutsWorkspace workspace, String id, String msg, Exception ex) {
-        super(workspace, PrivateNutsUtils.isBlank(msg) ? "Unable to install " + (id == null ? "<null>" : id) : msg,ex);
+        super(workspace, PrivateNutsUtils.isBlank(msg) ? "failed to install " + (id == null ? "<null>" : id) : msg,ex);
         this.id = id;
     }
 

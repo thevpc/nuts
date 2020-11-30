@@ -32,7 +32,7 @@ public class LocalMysqlDatabaseConfigService {
 
     public LocalMysqlDatabaseConfigService remove() {
         mysql.getConfig().getDatabases().remove(name);
-        context.getSession().out().printf("==[%s]== app removed.%n", getFullName());
+        context.getSession().out().printf("######[%s]###### app removed.%n", getFullName());
         return this;
     }
 
@@ -65,7 +65,7 @@ public class LocalMysqlDatabaseConfigService {
         password = new String(credentials);
         if (path.endsWith(".sql")) {
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("==[%s]== create archive %s%n", getDatabaseName(), path);
+                context.getSession().out().printf("######[%s]###### create archive %s%n", getDatabaseName(), path);
             }
 
             NutsExecCommand cmd = context.getWorkspace().exec()
@@ -91,7 +91,7 @@ public class LocalMysqlDatabaseConfigService {
             }
         } else {
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("==[%s]== create archive %s%n", getDatabaseName(), path);
+                context.getSession().out().printf("######[%s]###### create archive %s%n", getDatabaseName(), path);
             }
 //                ProcessBuilder2 p = new ProcessBuilder2().setCommand("sh", "-c",
 //                        "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
@@ -109,7 +109,7 @@ public class LocalMysqlDatabaseConfigService {
                     .grabOutputString()
                     .setRedirectErrorStream(true);
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("==[%s]==    [EXEC] %s%n", getDatabaseName(),
+                context.getSession().out().printf("######[%s]######    [EXEC] %s%n", getDatabaseName(),
                         cmd.format().setEnvReplacer(envEntry -> {
                             if ("CMD_PWD".equals(envEntry.getName())) {
                                 return "****";
@@ -136,7 +136,7 @@ public class LocalMysqlDatabaseConfigService {
 //        }
         if (path.endsWith(".sql")) {
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("==[%s]== restore archive %s%n", getDatabaseName(), path);
+                context.getSession().out().printf("######[%s]###### restore archive %s%n", getDatabaseName(), path);
             }
             int result = context.getWorkspace().exec()
                     .setExecutionType(NutsExecutionType.USER_CMD)
@@ -154,7 +154,7 @@ public class LocalMysqlDatabaseConfigService {
             return new RestoreResult(path, result, false);
         } else {
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("==[%s]== restore archive %s%n", getDatabaseName(), path);
+                context.getSession().out().printf("######[%s]###### restore archive %s%n", getDatabaseName(), path);
             }
             int result = context.getWorkspace().exec()
                     .setExecutionType(NutsExecutionType.USER_CMD).setCommand("sh", "-c",

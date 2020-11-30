@@ -206,7 +206,7 @@ public class CorePlatformUtils {
                     }
                 }
             } catch (Exception e) {
-                System.err.printf("Error: %s%n", CoreStringUtils.exceptionToString(e));
+                System.err.printf("error: %s%n", CoreStringUtils.exceptionToString(e));
             }
         }
         Map<String, String> m = new HashMap<>();

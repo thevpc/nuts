@@ -27,7 +27,7 @@ public class TitleParserStep extends ParserStep {
         } else if (c == '\n' || c == '\r') {
             p.applyPopReject(c);
         } else {
-            p.applyStart(c, true, false);
+            p.applyStart(c, false, false);
         }
     }
 
@@ -41,7 +41,8 @@ public class TitleParserStep extends ParserStep {
         String s = start.toString();
 //        NutsTextNodeFactory factory = ws.formats().text().factory();
         DefaultNutsTextNodeFactory factory0 = (DefaultNutsTextNodeFactory) ws.formats().text().factory();
-        TextFormat style = factory0.createStyle(start.substring(0, start.length() - 1));
+        String s0=s.trim();
+        TextFormat style = factory0.createStyle(s0.substring(0,s0.length() - 1));
         if (children.size() == 1) {
             return factory0.createTitle(s, children.get(0).toNode(), style);
         }

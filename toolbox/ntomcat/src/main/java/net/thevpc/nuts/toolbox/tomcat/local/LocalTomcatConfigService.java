@@ -197,15 +197,15 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         if (context.getSession().isPlainOut()) {
             switch (getStatus()) {
                 case RUNNING: {
-                    context.getSession().out().printf("==[%s]== Tomcat {{Running}}.\n", getName());
+                    context.getSession().out().printf("######[%s]###### Tomcat ```success Running```.\n", getName());
                     break;
                 }
                 case STOPPED: {
-                    context.getSession().out().printf("==[%s]== Tomcat @@Stopped@@.\n", getName());
+                    context.getSession().out().printf("######[%s]###### Tomcat ```error Stopped```.\n", getName());
                     break;
                 }
                 case OUT_OF_MEMORY: {
-                    context.getSession().out().printf("==[%s]== Tomcat [[OutOfMemory]].\n", getName());
+                    context.getSession().out().printf("######[%s]###### Tomcat ```error OutOfMemory```.\n", getName());
                     break;
                 }
             }
@@ -304,7 +304,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         if (catalinaBaseUpdated) {
             if (context.getSession().isPlainOut()) {
-                context.getSession().out().printf("==[%s]== updated catalina base ####%s####\n", getName(), catalinaBase);
+                context.getSession().out().printf("######[%s]###### updated catalina base ####%s####\n", getName(), catalinaBase);
             }
             return true;
         }
@@ -368,7 +368,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         RunningTomcat jpsResult = getRunningTomcat();
         if (jpsResult != null) {
             if (context.getSession().isPlainOut()) {
-                context.getSession().out().printf("==[%s]== Tomcat already started on port " + getHttpConnectorPort() + ".\n", getName());
+                context.getSession().out().printf("######[%s]###### Tomcat already started on port " + getHttpConnectorPort() + ".\n", getName());
             }
             return false;
         }
@@ -381,7 +381,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
         NutsExecCommand b = invokeCatalina("start");
         if (context.getSession().isPlainOut()) {
-            context.getSession().out().printf("==[%s]== starting Tomcat on port " + getHttpConnectorPort() + ". CMD=%s.\n", getName(), b.toString());
+            context.getSession().out().printf("######[%s]###### starting Tomcat on port " + getHttpConnectorPort() + ". CMD=%s.\n", getName(), b.toString());
         }
         b.getResult();
 //        try {
@@ -446,7 +446,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                             @Override
                             public void onInstall(NutsInstallEvent event) {
                                 if (context.getSession().isPlainOut()) {
-                                    context.getSession().out().printf("==[%s]== Tomcat installed to catalina home ####%s####\n", getName(), event.getDefinition().getInstallInformation().getInstallFolder());
+                                    context.getSession().out().printf("######[%s]###### Tomcat installed to catalina home ####%s####\n", getName(), event.getDefinition().getInstallInformation().getInstallFolder());
                                 }
                             }
                         })).getResult().required();
@@ -463,7 +463,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
             Path c = getDefaulDeployFolder(domain).resolve(contextName + ".war");
             if (context.getSession().isPlainOut()) {
-                context.getSession().out().printf("==[%s]== deploy file file #####%s##### to #####%s#####.\n", getName(), file, c);
+                context.getSession().out().printf("######[%s]###### deploy file file #####%s##### to #####%s#####.\n", getName(), file, c);
             }
             try {
                 Files.copy(file, c);
@@ -478,14 +478,14 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public boolean stop() {
         if (getRunningTomcat() == null) {
             if (context.getSession().isPlainOut()) {
-                context.getSession().out().printf("==[%s]== Tomcat already stopped.\n", getName());
+                context.getSession().out().printf("######[%s]###### Tomcat already stopped.\n", getName());
             }
             return false;
         }
         LocalTomcatConfig c = getConfig();
         NutsExecCommand b = invokeCatalina("stop");
         if (context.getSession().isPlainOut()) {
-            context.getSession().out().printf("==[%s]== stopping Tomcat. CMD=%s.\n", getName(), b.toString());
+            context.getSession().out().printf("######[%s]###### stopping Tomcat. CMD=%s.\n", getName(), b.toString());
         }
         b.getResult();
         return waitForStoppedStatus(c.getShutdownWaitTime(), c.isKill());
@@ -528,13 +528,13 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
         AppStatus y = getStatus(domain, app);
         if (y == AppStatus.RUNNING) {
-            context.getSession().out().printf("==[%s]== Tomcat started on port " + getHttpConnectorPort() + ".\n", getName());
+            context.getSession().out().printf("######[%s]###### Tomcat started on port " + getHttpConnectorPort() + ".\n", getName());
             return y;
         }
         if (timeout <= 0) {
             RunningTomcat ps = getRunningTomcat();
             if (ps != null) {
-                context.getSession().out().printf("==[%s]== Tomcat started on port" + getHttpConnectorPort() + " .\n", getName());
+                context.getSession().out().printf("######[%s]###### Tomcat started on port" + getHttpConnectorPort() + " .\n", getName());
                 return AppStatus.RUNNING;
             }
             throw new NutsExecutionException(context.getWorkspace(), "Unable to start tomcat", 2);
@@ -547,12 +547,12 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
             y = getStatus(domain, app);
             if (y == AppStatus.RUNNING) {
-                context.getSession().out().printf("==[%s]== Tomcat started on port " + getHttpConnectorPort() + ".\n", getName());
+                context.getSession().out().printf("######[%s]###### Tomcat started on port " + getHttpConnectorPort() + ".\n", getName());
                 return y;
             }
         }
         if (y == AppStatus.OUT_OF_MEMORY) {
-            context.getSession().out().printf("==[%s]== Tomcat out of memory.\n", getName());
+            context.getSession().out().printf("######[%s]###### Tomcat out of memory.\n", getName());
             return y;
         }
         throw new NutsExecutionException(context.getWorkspace(), "Unable to start tomcat", 2);
@@ -562,11 +562,11 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
         RunningTomcat ps = getRunningTomcat();
         if (ps == null) {
-            context.getSession().out().printf("==[%s]== Tomcat stopped.\n", getName());
+            context.getSession().out().printf("######[%s]###### Tomcat stopped.\n", getName());
             return true;
         }
         for (int i = 0; i < timeout; i++) {
-            context.getSession().out().printf("==[%s]== waiting Tomcat process to die.\n", getName());
+            context.getSession().out().printf("######[%s]###### waiting Tomcat process to die.\n", getName());
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -574,7 +574,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
             ps = getRunningTomcat();
             if (ps == null) {
-                context.getSession().out().printf("==[%s]== Tomcat stopped.\n", getName());
+                context.getSession().out().printf("######[%s]###### Tomcat stopped.\n", getName());
                 return true;
             }
         }
@@ -583,10 +583,10 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if (ps != null) {
                 try {
                     if (PosApis.get().killProcess(ps.getPid())) {
-                        context.getSession().out().printf("==[%s]== Tomcat process killed (%s).\n", getName(), ps.getPid());
+                        context.getSession().out().printf("######[%s]###### Tomcat process killed (%s).\n", getName(), ps.getPid());
                         return true;
                     } else {
-                        context.getSession().out().printf("==[%s]== Tomcat process could not be killed ( %s).\n", getName(), ps.getPid());
+                        context.getSession().out().printf("######[%s]###### Tomcat process could not be killed ( %s).\n", getName(), ps.getPid());
                         return false;
                     }
                 } catch (IOException ex) {
@@ -596,10 +596,10 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         ps = getRunningTomcat();
         if (ps != null) {
-            context.getSession().out().printf("==[%s]== Tomcat process could not be terminated (%s).\n", getName(), ps.getPid());
+            context.getSession().out().printf("######[%s]###### Tomcat process could not be terminated (%s).\n", getName(), ps.getPid());
             return true;
         }
-        context.getSession().out().print("==Tomcat stopped==\n");
+        context.getSession().out().print("```error Tomcat stopped```\n");
         return true;
     }
 
@@ -816,7 +816,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         Path file = getLogFolder().resolve("catalina.out");
         if (Files.isRegularFile(file)) {
             if (context.getSession().isPlainOut()) {
-                context.getSession().out().printf("==[%s]== Delete log file %s.\n", getName(), file);
+                context.getSession().out().printf("######[%s]###### Delete log file %s.\n", getName(), file);
             }
             try {
                 Files.delete(file);
@@ -832,7 +832,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             try (DirectoryStream<Path> files = Files.newDirectoryStream(tempFolder)) {
                 for (Path file : files) {
                     if (context.getSession().isPlainOut()) {
-                        context.getSession().out().printf("==[%s]== delete temp file %s.\n", getName(), file);
+                        context.getSession().out().printf("######[%s]###### delete temp file %s.\n", getName(), file);
                     }
                     Files.delete(file);
                 }
@@ -848,7 +848,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             try (DirectoryStream<Path> files = Files.newDirectoryStream(workFolder)) {
                 for (Path file : files) {
                     if (context.getSession().isPlainOut()) {
-                        context.getSession().out().printf("==[%s]== delete work file %s.\n", getName(), file);
+                        context.getSession().out().printf("######[%s]###### delete work file %s.\n", getName(), file);
                     }
                     Files.delete(file);
 
@@ -892,7 +892,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                                 || n.endsWith(".log")) {
                             //this is a log file, will delete it
                             if (context.getSession().isPlainOut()) {
-                                context.getSession().out().printf("==[%s]== delete log file %s.\n", getName(), file);
+                                context.getSession().out().printf("######[%s]###### delete log file %s.\n", getName(), file);
                             }
                             Files.delete(file);
                         }

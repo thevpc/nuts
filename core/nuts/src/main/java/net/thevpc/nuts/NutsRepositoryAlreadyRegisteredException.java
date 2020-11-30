@@ -40,7 +40,7 @@ public class NutsRepositoryAlreadyRegisteredException extends NutsRepositoryExce
      * @param repository repository
      */
     public NutsRepositoryAlreadyRegisteredException(NutsWorkspace workspace, String repository) {
-        super(workspace, repository,"Repository Already registered " + (repository == null ? "<null>" : repository),null);
+        super(workspace, repository,"repository already registered " + (repository == null ? "<null>" : repository),null);
     }
 
     /**
@@ -50,6 +50,6 @@ public class NutsRepositoryAlreadyRegisteredException extends NutsRepositoryExce
      * @param err error
      */
     public NutsRepositoryAlreadyRegisteredException(NutsWorkspace workspace, String repository, Throwable err) {
-        super(workspace, repository,"Repository Already registered " + (repository == null ? "<null>" : repository), err);
+        super(workspace, repository,"repository already registered " + (repository == null ? "<null>" : repository), err);
     }
 }

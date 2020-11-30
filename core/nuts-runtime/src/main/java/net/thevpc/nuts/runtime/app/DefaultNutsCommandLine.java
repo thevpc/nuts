@@ -770,7 +770,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     private String highlightText(String text) {
-        return "{{" + getWorkspace().formats().text().escapeText(text) + "}}";
+        return "####" + getWorkspace().formats().text().escapeText(text) + "####";
     }
 
     private boolean _configureLast(NutsCommandLine commandLine, NutsConfigurable configurable) {

@@ -50,7 +50,7 @@ public class NutsRepositoryMirroringHelper {
                 try {
                     sup = CoreNutsUtils.getSupportSpeedLevel(repo, NutsRepositorySupportedAction.SEARCH, id, fetchMode, session.isTransitive(),session);
                 } catch (Exception ex) {
-                    //                errors.append(ex.toString()).append("\n");
+                    //                errors.append(CoreStringUtils.exceptionToString(ex)).append("\n");
                 }
                 if (sup > 0) {
                     list.add(IteratorUtils.safeIgnore(new LazyIterator<NutsId>() {

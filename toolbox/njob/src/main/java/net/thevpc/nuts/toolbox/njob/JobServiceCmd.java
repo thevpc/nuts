@@ -110,7 +110,7 @@ public class JobServiceCmd {
         }
         service.addJob(t);
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("job ######{{%s}}###### (%s) added.\n",
+            context.getSession().out().printf("job ######%s###### (%s) added.\n",
                     t.getId(),
                     t.getName()
             );
@@ -284,7 +284,7 @@ public class JobServiceCmd {
         }
         service.addTask(t);
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("task ######{{%s}}###### (%s) added.\n",
+            context.getSession().out().printf("task ######%s###### (%s) added.\n",
                     t.getId(),
                     t.getName()
             );
@@ -331,7 +331,7 @@ public class JobServiceCmd {
         }
         service.addProject(t);
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("project ######{{%s}}###### (%s) added.\n",
+            context.getSession().out().printf("project ######%s###### (%s) added.\n",
                     t.getId(),
                     t.getName()
             );
@@ -437,7 +437,7 @@ public class JobServiceCmd {
             }
             service.updateProject(project);
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("project ######{{%s}}###### (##%s##) updated.\n",
+                context.getSession().out().printf("project ######%s###### (##%s##) updated.\n",
                         project.getId(),
                         project.getName()
                 );
@@ -676,7 +676,7 @@ public class JobServiceCmd {
         for (NTask task : new LinkedHashSet<>(tasks)) {
             service.updateTask(task);
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("task ######{{%s}}###### (##%s##) updated.\n",
+                context.getSession().out().printf("task ######%s###### (##%s##) updated.\n",
                         task.getId(),
                         task.getName()
                 );
@@ -790,7 +790,7 @@ public class JobServiceCmd {
         for (NJob job : new LinkedHashSet<>(jobs)) {
             service.updateJob(job);
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("job ######{{%s}}###### (##%s##) updated.\n",
+                context.getSession().out().printf("job ######%s###### (##%s##) updated.\n",
                         job.getId(),
                         job.getName()
                 );
@@ -940,12 +940,12 @@ public class JobServiceCmd {
             NJob t = findJob(a.toString(), cmd);
             if (service.removeJob(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("job ######{{%s}}###### removed.\n",
+                    context.getSession().out().printf("job ######%s###### removed.\n",
                             a.toString()
                     );
                 }
             } else {
-                context.getSession().out().printf("job ######{{%s}}###### ```error not found```.\n",
+                context.getSession().out().printf("job ######%s###### ```error not found```.\n",
                         a.toString()
                 );
             }
@@ -959,12 +959,12 @@ public class JobServiceCmd {
             NTask t = findTask(a.toString(), cmd);
             if (service.removeTask(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("task ######{{%s}}###### removed.\n",
+                    context.getSession().out().printf("task ######%s###### removed.\n",
                             a.toString()
                     );
                 }
             } else {
-                context.getSession().out().printf("task ######{{%s}}###### ```error not found```.\n",
+                context.getSession().out().printf("task ######%s###### ```error not found```.\n",
                         a.toString()
                 );
             }
@@ -978,12 +978,12 @@ public class JobServiceCmd {
             NProject t = findProject(a.toString(), cmd);
             if (service.removeProject(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("project ######{{%s}}###### removed.\n",
+                    context.getSession().out().printf("project ######%s###### removed.\n",
                             a.toString()
                     );
                 }
             } else {
-                context.getSession().out().printf("project ######{{%s}}###### ```error not found```.\n",
+                context.getSession().out().printf("project ######%s###### ```error not found```.\n",
                         a.toString()
                 );
             }
@@ -1465,19 +1465,19 @@ public class JobServiceCmd {
         }
         switch (x) {
             case NONE:
-                return new NutsString("<<0>>");
+                return new NutsString("```discrete 0```ø");
             case LOW:
-                return new NutsString("<<L>>");
+                return new NutsString("```discrete L```ø");
             case NORMAL:
                 return new NutsString("N");
             case MEDIUM:
-                return new NutsString("##M##");
+                return new NutsString("##M##ø");
             case URGENT:
-                return new NutsString("{{U}}");
+                return new NutsString("###U###ø");
             case HIGH:
-                return new NutsString("**H**");
+                return new NutsString("####H####ø");
             case CRITICAL:
-                return new NutsString("@@C@@");
+                return new NutsString("```error C```ø");
         }
         return new NutsString("?");
     }
@@ -1495,15 +1495,31 @@ public class JobServiceCmd {
                 return new NutsString("((\u2611))");
 //            case WIP:return new NutsString("##\u25B6##");
             case WIP:
-                return new NutsString("##\u24CC##");
+                return new NutsString("##\u24CC##ø");
 //                return new NutsString("##\u25F6##");
             case CANCELLED:
 //                return new NutsString("@@\u2613@@");
 //                return new NutsString("@@\u2421@@");
 //                return new NutsString("@@\u26C3@@");
-                return new NutsString("@@\u2718@@");
+                return new NutsString("```error \u2718```ø");
         }
         return new NutsString("?");
+    }
+
+    private NutsString getFlagString(String x,int index) {
+        switch (index) {
+            case 1:
+                return new NutsString("##"+x+"##ø");
+            case 2:
+                return new NutsString("###"+x+"###ø");
+            case 3:
+                return new NutsString("####"+x+"####ø");
+            case 4:
+                return new NutsString("#####"+x+"#####ø");
+            case 5:
+                return new NutsString("######"+x+"######ø");
+        }
+        throw new IllegalArgumentException("Invalid index "+index);
     }
 
     private NutsString getFlagString(NFlag x) {
@@ -1513,59 +1529,61 @@ public class JobServiceCmd {
         switch (x) {
             case NONE:
                 return new NutsString("\u2690");
+
             case STAR1:
-                return new NutsString("==\u2605==");
+                return getFlagString("\u2605",1);
             case STAR2:
-                return new NutsString("{{\u2605}}");
+                return getFlagString("\u2605",2);
             case STAR3:
-                return new NutsString("##\u2605##");
+                return getFlagString("\u2605",3);
             case STAR4:
-                return new NutsString("[[\u2605]]");
+                return getFlagString("\u2605",4);
             case STAR5:
-                return new NutsString("**\u2605**");
+                return getFlagString("\u2605",5);
 
             case FLAG1:
-                return new NutsString("==\u2691==");
+                return getFlagString("\u2691",1);
             case FLAG2:
-                return new NutsString("{{\u2691}}");
+                return getFlagString("\u2691",2);
             case FLAG3:
-                return new NutsString("##\u2691##");
+                return getFlagString("\u2691",3);
             case FLAG4:
-                return new NutsString("[[\u2691]]");
+                return getFlagString("\u2691",4);
             case FLAG5:
-                return new NutsString("**\u2691**");
+                return getFlagString("\u2691",5);
 
             case KING1:
-                return new NutsString("==\u265A==");
+                return getFlagString("\u265A",1);
             case KING2:
-                return new NutsString("{{\u265A}}");
+                return getFlagString("\u265A",2);
             case KING3:
-                return new NutsString("##\u265A##");
+                return getFlagString("\u265A",3);
             case KING4:
-                return new NutsString("[[\u265A]]");
+                return getFlagString("\u265A",4);
             case KING5:
-                return new NutsString("**\u265A**");
+                return getFlagString("\u265A",5);
 
             case HEART1:
-                return new NutsString("==\u2665==");
+                return getFlagString("\u2665",1);
             case HEART2:
-                return new NutsString("{{\u2665}}");
+                return getFlagString("\u2665",2);
             case HEART3:
-                return new NutsString("##\u2665##");
+                return getFlagString("\u2665",3);
             case HEART4:
-                return new NutsString("[[\u2665]]");
+                return getFlagString("\u2665",4);
             case HEART5:
-                return new NutsString("**\u2665**");
+                return getFlagString("\u2665",5);
+
             case PHONE1:
-                return new NutsString("==\u260E==");
+                return getFlagString("\u260E",1);
             case PHONE2:
-                return new NutsString("{{\u260E}}");
+                return getFlagString("\u260E",2);
             case PHONE3:
-                return new NutsString("##\u260E##");
+                return getFlagString("\u260E",3);
             case PHONE4:
-                return new NutsString("[[\u260E]]");
+                return getFlagString("\u260E",4);
             case PHONE5:
-                return new NutsString("**\u260E**");
+                return getFlagString("\u260E",5);
         }
         return new NutsString("[" + x.toString().toLowerCase() + "]");
     }
@@ -1678,7 +1696,7 @@ public class JobServiceCmd {
         NutsSession session = context.getSession();
         context.getWorkspace().io().term().enableRichTerm(context.getSession());
 
-        session.out().println("{{" + context.getAppId().getArtifactId() + " " + context.getAppId().getVersion() + "}} interactive mode. type **q** to quit.");
+        session.out().println("##" + context.getAppId().getArtifactId() + " " + context.getAppId().getVersion() + "## interactive mode. type ```error q``` to quit.");
         InputStream in = session.getTerminal().in();
         Exception lastError = null;
         while (true) {
@@ -1706,7 +1724,7 @@ public class JobServiceCmd {
                     lastError = null;
                     boolean b = runCommands(cmd);
                     if (!b) {
-                        session.out().println("@@command not found@@");
+                        session.out().println("```error command not found```");
                     }
                 } catch (Exception ex) {
                     lastError = ex;
@@ -1714,7 +1732,7 @@ public class JobServiceCmd {
                     if (m == null) {
                         m = ex.toString();
                     }
-                    session.err().printf("@```error ERROR:```@ @@%s@@\n", m);
+                    session.err().printf("```error ERROR: %s```\n", m);
                 }
             }
         }

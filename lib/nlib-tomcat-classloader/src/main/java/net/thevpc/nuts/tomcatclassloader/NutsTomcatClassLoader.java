@@ -305,13 +305,13 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
 //                baos.write(byteChunk, 0, n);
 //            }
 //        } catch (IOException e) {
-//            log.error("Failed while reading bytes from " + url.toExternalForm() + " : " + e.getMessage());
+//            log.error("failed while reading bytes from " + url.toExternalForm() + " : " + e.getMessage());
 //        } finally {
 //            if (is != null) {
 //                try {
 //                    is.close();
 //                } catch (IOException e) {
-//                    log.error("Failed while closing " + url.toExternalForm() + " : " + e.getMessage());
+//                    log.error("failed while closing " + url.toExternalForm() + " : " + e.getMessage());
 //                }
 //            }
 //        }

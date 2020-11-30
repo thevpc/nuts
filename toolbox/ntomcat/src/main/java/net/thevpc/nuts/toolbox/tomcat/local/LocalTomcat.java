@@ -454,7 +454,7 @@ public class LocalTomcat {
             c.printStatus();
         } else {
             if (context.getSession().isPlainOut()) {
-                context.getSession().out().printf("==[%s]== Tomcat {{Not Found}}.\n", name);
+                context.getSession().out().printf("######[%s]###### Tomcat ```error Not Found```.\n", name);
             } else {
                 HashMap<String, String> r = new HashMap<>();
                 r.put("name", name);

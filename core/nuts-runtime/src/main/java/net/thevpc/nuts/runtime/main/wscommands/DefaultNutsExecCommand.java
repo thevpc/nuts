@@ -127,7 +127,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             String p = getExtraErrorMessage();
             if (p != null) {
                 result = new NutsExecutionException(ws,
-                        "Execution Failed with code " + ex.getExitCode() + " and message : " + p,
+                        "execution failed with code " + ex.getExitCode() + " and message : " + p,
                         ex, ex.getExitCode());
             } else {
                 result = ex;
@@ -136,7 +136,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             String p = getExtraErrorMessage();
             if (p != null) {
                 result = new NutsExecutionException(ws,
-                        "Execution Failed with code " + 244 + " and message : " + p,
+                        "execution failed with code " + 244 + " and message : " + p,
                         ex, 244);
             } else {
                 result = new NutsExecutionException(ws, ex, 244);

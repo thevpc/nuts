@@ -2,11 +2,11 @@ package net.thevpc.nuts;
 
 import java.util.Arrays;
 
-public class NutsIdBootInfo {
+public class NutsBootDescriptor {
     private String id;
     private String[] dependencies;
 
-    public NutsIdBootInfo(String id, String[] dependencies) {
+    public NutsBootDescriptor(String id, String[] dependencies) {
         this.id = id;
         this.dependencies = dependencies;
     }
@@ -21,7 +21,7 @@ public class NutsIdBootInfo {
 
     @Override
     public String toString() {
-        return "NutsIdBootInfo{" +
+        return "NutsBootDescriptor{" +
                 "id='" + id + '\'' +
                 ", dependencies=" + Arrays.toString(dependencies) +
                 '}';

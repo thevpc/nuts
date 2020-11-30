@@ -49,7 +49,7 @@ public class NutsLockBarrierException extends NutsLockException {
      */
     public NutsLockBarrierException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject) {
         super(workspace,
-                message == null ? ("Item Already Locked" + lockedObject)
+                message == null ? ("item already locked" + lockedObject)
                         : message,lockedObject,lockObject
         );
     }
@@ -64,7 +64,7 @@ public class NutsLockBarrierException extends NutsLockException {
      */
     public NutsLockBarrierException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject,Throwable cause) {
         super(workspace,
-                message == null ? ("Item Already Locked" + lockedObject)
+                message == null ? ("item already locked" + lockedObject)
                         : message,lockObject,cause
         );
     }

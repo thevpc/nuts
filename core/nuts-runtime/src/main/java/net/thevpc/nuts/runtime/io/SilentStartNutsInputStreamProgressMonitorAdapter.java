@@ -27,9 +27,9 @@ class SilentStartNutsInputStreamProgressMonitorAdapter implements NutsProgressMo
     public void onComplete(NutsProgressEvent event) {
         finalMonitor.onComplete(event);
         if (event.getError() != null) {
-            LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("Download Failed    : {0}", path);
+            LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("download failed    : {0}", path);
         } else {
-            LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log( "Download Succeeded : {0}", path);
+            LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log( "download succeeded : {0}", path);
         }
     }
 

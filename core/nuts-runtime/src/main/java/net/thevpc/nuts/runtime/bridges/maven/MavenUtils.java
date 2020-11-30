@@ -248,8 +248,8 @@ public class MavenUtils {
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
             LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).time(time).formatted()
-                    .log("Caching pom file {0}", urlDesc);
-            throw new NutsParseException(null, "Error Parsing " + urlDesc, e);
+                    .log("caching pom file {0}", urlDesc);
+            throw new NutsParseException(null, "error Parsing " + urlDesc, e);
         }
     }
 
@@ -385,7 +385,7 @@ public class MavenUtils {
         } catch (IOException ex) {
             throw new NutsIOException(session.getWorkspace(),ex);
         } catch (Exception ex) {
-            throw new NutsParseException(null, "Error Parsing " + urlDesc, ex);
+            throw new NutsParseException(null, "error Parsing " + urlDesc, ex);
         }
         return nutsDescriptor;
     }
@@ -538,7 +538,7 @@ public class MavenUtils {
             }
 
         } catch (Exception ex) {
-            LOG.with().level(Level.SEVERE).error(ex).log("Failed to loadDependenciesAndRepositoriesFromPomUrl {0} : {1}", url,ex.toString());
+            LOG.with().level(Level.SEVERE).error(ex).log("failed to loadDependenciesAndRepositoriesFromPomUrl {0} : {1}", url,CoreStringUtils.exceptionToString(ex));
             //ignore
         } finally {
             if (xml != null) {
@@ -630,7 +630,7 @@ public class MavenUtils {
                     //NutsConstants.Ids.NUTS_RUNTIME.replaceAll("[.:]", "/")
                 }
             } catch (Exception ex) {
-                LOG.with().level(Level.SEVERE).error(ex).log("Failed to load and parse {0} : {1}", mavenMetadataXml,ex.toString());
+                LOG.with().level(Level.SEVERE).error(ex).log("failed to load and parse {0} : {1}", mavenMetadataXml,CoreStringUtils.exceptionToString(ex));
                 // ignore any error
             }
             if (found) {

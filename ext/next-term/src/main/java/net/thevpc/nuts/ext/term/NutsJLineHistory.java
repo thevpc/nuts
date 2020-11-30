@@ -92,7 +92,7 @@ class NutsJLineHistory implements History {
             try {
                 load();
             } catch (IOException e) {
-                Log.warn("Failed to load history", e);
+                Log.warn("failed to load history", e);
             }
         }
     }
@@ -130,7 +130,7 @@ class NutsJLineHistory implements History {
                         }
                     }
                 } catch (IOException e) {
-                    Log.debug("Failed to load history; clearing", e);
+                    Log.debug("failed to load history; clearing", e);
                     internalClear();
                     throw e;
                 }
@@ -312,7 +312,7 @@ class NutsJLineHistory implements History {
             try {
                 save();
             } catch (IOException e) {
-                Log.warn("Failed to save history", e);
+                Log.warn("failed to save history", e);
             }
         }
     }

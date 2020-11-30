@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.main.repocommands;
 
 import net.thevpc.nuts.NutsIndexerNotAccessibleException;
+import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -50,7 +51,7 @@ public class IndexFirstIterator<T> implements Iterator<T> {
                     }
                     index = null;
                 } catch (NutsIndexerNotAccessibleException ex) {
-                    LOG.log(Level.SEVERE, "Error evaluating Iterator 'hasNext()' : " + ex.toString(), ex);
+                    LOG.log(Level.SEVERE, "error evaluating Iterator 'hasNext()' : " + CoreStringUtils.exceptionToString(ex), ex);
                     other = null;
                     return false;
                 }

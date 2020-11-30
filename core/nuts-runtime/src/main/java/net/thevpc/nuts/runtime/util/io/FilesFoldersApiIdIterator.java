@@ -34,6 +34,7 @@ import java.util.logging.Level;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.filters.NutsSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 
 /**
  * Created by vpc on 2/21/17.
@@ -108,7 +109,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                             .monitor().source(file.path).setSession(session).create(),
                             NutsFetchMode.LOCAL, repository, session);
                 } catch (Exception ex) {
-                    session.getWorkspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).error(ex).log("Error parsing url : {0} : {1}",file.path,toString());//e.printStackTrace();
+                    session.getWorkspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).error(ex).log("error parsing url : {0} : {1}",file.path,toString());//e.printStackTrace();
                 }
                 if (t != null) {
                     if (!CoreNutsUtils.isEffectiveId(t.getId())) {
@@ -116,7 +117,8 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                         try {
                             nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, session);
                         } catch (Exception ex) {
-                            session.getWorkspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).error(ex).log("Error resolving effective descriptor for {0} in url {1} : {2}",t.getId(),file.path,ex.toString());//e.printStackTrace();
+                            session.getWorkspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).error(ex).log("error resolving effective descriptor for {0} in url {1} : {2}",t.getId(),file.path,
+                                    CoreStringUtils.exceptionToString(ex));//e.printStackTrace();
                         }
                         t = nutsDescriptor;
                     }

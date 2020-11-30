@@ -98,7 +98,7 @@ public class DerbyMain extends NutsApplication {
             if (q != null) {
                 appContext.getSession().out().println("derby is ##running##");
             } else {
-                appContext.getSession().out().println("derby is @@stopped@@");
+                appContext.getSession().out().println("derby is ```error stopped```");
             }
         }
     }

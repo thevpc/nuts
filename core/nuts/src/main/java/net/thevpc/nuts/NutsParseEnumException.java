@@ -54,7 +54,7 @@ public class NutsParseEnumException extends NutsException {
     public NutsParseEnumException(NutsWorkspace workspace, String message, String invalidValue, Class<? extends Enum> enumType) {
         super(workspace,
                 message == null ? (
-                        "Invalid value " + invalidValue + " of type " + enumType.getName())
+                        "invalid value " + invalidValue + " of type " + enumType.getName())
                         : message
         );
         this.enumType = enumType;

@@ -40,7 +40,7 @@ public class RemoteMysqlDatabaseConfigService {
 
     public RemoteMysqlDatabaseConfigService remove() {
         client.getConfig().getDatabases().remove(name);
-        context.getSession().out().printf("==[%s]== db config removed.%n", name);
+        context.getSession().out().printf("######[%s]###### db config removed.%n", name);
         return this;
 
     }
@@ -65,7 +65,7 @@ public class RemoteMysqlDatabaseConfigService {
             localPath = context.getVarFolder().resolve(client.getName() + "-" + getName() + "-" + MysqlUtils.newDateString()).toString();
         }
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("==[%s]== remote restore%n", name);
+            context.getSession().out().printf("######[%s]###### remote restore%n", name);
         }
         String remoteTempPath = execRemoteNuts(
                 "net.thevpc.nuts.toolbox:nmysql",
@@ -76,7 +76,7 @@ public class RemoteMysqlDatabaseConfigService {
         );
         String remoteFullFilePath = new SshAddress(prepareSshServer(cconfig.getServer())).getPath(remoteTempPath).getPath();
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("==[%s]== copy '%s' to '%s'%n", name, remoteFullFilePath, localPath);
+            context.getSession().out().printf("######[%s]###### copy '%s' to '%s'%n", name, remoteFullFilePath, localPath);
         }
         context.getWorkspace().exec()
                 .addCommand("nsh",
@@ -91,7 +91,7 @@ public class RemoteMysqlDatabaseConfigService {
         loc.restore(localPath);
         if (deleteRemote) {
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("==[%s]== delete %s%n", name, remoteFullFilePath);
+                context.getSession().out().printf("######[%s]###### delete %s%n", name, remoteFullFilePath);
             }
             execRemoteNuts(
                     "nsh",
@@ -129,7 +129,7 @@ public class RemoteMysqlDatabaseConfigService {
         String remoteFullFilePath = sshAddress.getPath(remoteFilePath).getPath();
 
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("==[%s]== copy %s to %s%n", name, localPath, remoteFullFilePath);
+            context.getSession().out().printf("######[%s]###### copy %s to %s%n", name, localPath, remoteFullFilePath);
         }
         context.getWorkspace().exec()
                 .addCommand(
@@ -144,7 +144,7 @@ public class RemoteMysqlDatabaseConfigService {
                 .setFailFast(true)
                 .run();
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("==[%s]== remote restore %s%n", name, remoteFilePath);
+            context.getSession().out().printf("######[%s]###### remote restore %s%n", name, remoteFilePath);
         }
         execRemoteNuts(
                 "net.thevpc.nuts.toolbox:nmysql",
@@ -154,7 +154,7 @@ public class RemoteMysqlDatabaseConfigService {
                 remoteFilePath
         );
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("==[%s]== delete %s%n", name, remoteFilePath);
+            context.getSession().out().printf("######[%s]###### delete %s%n", name, remoteFilePath);
         }
         execRemoteNuts(
                 "nsh",

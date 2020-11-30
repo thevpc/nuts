@@ -66,12 +66,12 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
     public void dryExec(NutsExecutionContext executionContext) throws NutsExecutionException {
         NutsDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
         Path javaFile = nutMainFile.getPath();
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+//        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         NutsWorkspace ws = executionContext.getWorkspace();
         String folder = "__temp_folder";
         PrintStream out = executionContext.getTraceSession().out();
-        out.println("[[compile]]");
-        out.printf("==embedded-javac== **-d** <temp_folder> %s%n",javaFile.toString());
+        out.println("#####compile#####");
+        out.printf("```sh embedded-javac -d <temp-folder> %s```%n",javaFile.toString());
         JavaNutsExecutorComponent cc = new JavaNutsExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d);
@@ -118,7 +118,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         Path folder = ws.io().tmp().createTempFolder("jj");
         int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
         if (res != 0) {
-            throw new NutsExecutionException(ws, "Compilation Failed", res);
+            throw new NutsExecutionException(ws, "compilation failed", res);
         }
         JavaNutsExecutorComponent cc = new JavaNutsExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();

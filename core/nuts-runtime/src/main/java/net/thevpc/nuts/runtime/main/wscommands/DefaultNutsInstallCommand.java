@@ -353,7 +353,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         if (error.size() > 0) {
             StringBuilder sb = new StringBuilder();
             for (Map.Entry<String, List<InstallIdInfo>> stringListEntry : error.entrySet()) {
-                out.println("the following " + (stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is") + " cannot be @@installed@@ (" + stringListEntry.getKey() + ") : "
+                out.println("the following " + (stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
                         + stringListEntry.getValue().stream().map(x -> x.id)
                         .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format())
                         .collect(Collectors.joining(", ")));
@@ -399,14 +399,14 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         LOG.with().error(ex).verb(NutsLogVerb.WARNING).level(Level.FINE).log("failed to install " + ws.id().formatter(info.id).format());
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
-                            if (!ws.io().term().getTerminal().ask().forBoolean("@@failed to install@@ " + ws.id().formatter(info.id).format() + " and its dependencies... Continue installation?")
+                            if (!ws.io().term().getTerminal().ask().forBoolean("```error failed to install``` " + ws.id().formatter(info.id).format() + " and its dependencies... Continue installation?")
                                     .defaultValue(true)
                                     .setSession(session).getBooleanValue()) {
-                                session.out().printf(ws.id().formatter(info.id).omitNamespace().format() + " @@installation cancelled with error:@@ %s%n", CoreStringUtils.exceptionToString(ex));
+                                session.out().printf(ws.id().formatter(info.id).omitNamespace().format() + " ```error installation cancelled with error:``` %s%n", CoreStringUtils.exceptionToString(ex));
                                 result = new NutsDefinition[0];
                                 return this;
                             } else {
-                                session.out().printf(ws.id().formatter(info.id).omitNamespace().format() + " @@installation cancelled with error:@@ %s%n", CoreStringUtils.exceptionToString(ex));
+                                session.out().printf(ws.id().formatter(info.id).omitNamespace().format() + " ```error installation cancelled with error:``` %s%n", CoreStringUtils.exceptionToString(ex));
                             }
                         } else {
                             throw ex;
@@ -419,7 +419,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             failed = failedList.toArray(new NutsId[0]);
         }
         if (list.emptyCommand) {
-            throw new NutsExecutionException(ws, "Missing components to install", 1);
+            throw new NutsExecutionException(ws, "missing components to install", 1);
         }
         return this;
     }

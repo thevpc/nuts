@@ -11,10 +11,6 @@ public interface NutsTextNodeFactory {
 
     NutsTextNode list(Collection<NutsTextNode> nodes);
 
-    NutsTextNode error(String image);
-
-    NutsTextNode warn(String image);
-
     NutsTextNode styled(String other, NutsTextNodeStyle... decorations);
     NutsTextNode styled(NutsTextNode other, NutsTextNodeStyle... decorations);
 

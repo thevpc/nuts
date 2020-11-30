@@ -829,12 +829,12 @@ public class CoreIOUtils {
                     try {
                         Files.delete(file);
                         if (LOG != null) {
-                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("Delete file " + file);
+                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("delete file " + file);
                         }
                         deleted[0]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("Delete file Failed : " + file);
+                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("failed deleting file : " + file);
                         }
                         deleted[2]++;
                     }
@@ -851,12 +851,12 @@ public class CoreIOUtils {
                     try {
                         Files.delete(dir);
                         if (LOG != null) {
-                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("Delete folder " + dir);
+                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("delete folder " + dir);
                         }
                         deleted[1]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("Delete folder Failed : " + dir);
+                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("failed deleting folder: " + dir);
                         }
                         deleted[2]++;
                     }

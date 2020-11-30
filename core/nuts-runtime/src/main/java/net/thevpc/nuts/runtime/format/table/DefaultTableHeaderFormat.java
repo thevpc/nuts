@@ -17,7 +17,7 @@ public class DefaultTableHeaderFormat implements NutsTableCellFormat {
 
     @Override
     public String format(int row, int col, Object value) {
-        return "==" + String.valueOf(value) + "==";
+        return "ø##" + String.valueOf(value) + "##ø";
     }
 
     @Override

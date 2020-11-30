@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.bridges.maven;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 import net.thevpc.nuts.runtime.util.io.FolderNutIdIterator;
 import net.thevpc.nuts.runtime.util.*;
@@ -151,7 +152,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
                     try {
                         d = MavenUtils.of(session.getWorkspace()).parsePomXml(f, fetchMode, this, session);
                     } catch (Exception ex) {
-                        LOG.with().level(Level.SEVERE).error(ex).log("Failed to parse pom file {0} : {1}", f,ex.toString());
+                        LOG.with().level(Level.SEVERE).error(ex).log("failed to parse pom file {0} : {1}", f, CoreStringUtils.exceptionToString(ex));
                         //
                     }
                     if (d != null) {

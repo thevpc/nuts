@@ -497,24 +497,10 @@ public class CoreStringUtils {
      * @param ex
      * @return
      */
-//    public static String exceptionToString(Throwable ex) {
-//        for (Class aClass : new Class[]{
-//            NullPointerException.class,
-//            ArrayIndexOutOfBoundsException.class,
-//            ClassCastException.class,
-//            UnsupportedOperationException.class,
-//            ReflectiveOperationException.class,}) {
-//            if (aClass.isInstance(ex)) {
-//                return ex.toString();
-//            }
-//        }
-//        String message = ex.getMessage();
-//        if (message == null) {
-//            message = ex.toString();
-//        }
-//        return message;
-//    }
     public static String exceptionToString(Throwable ex) {
+        return exceptionToString(ex,false);
+    }
+    public static String exceptionToString(Throwable ex,boolean inner) {
         String msg = null;
         if (ex instanceof NutsNotFoundException || ex instanceof UncheckedIOException) {
             if (ex.getCause() != null) {
@@ -522,22 +508,34 @@ public class CoreStringUtils {
                 if (ex2 instanceof UncheckedIOException) {
                     ex2 = ex.getCause();
                 }
-                msg = exceptionToString(ex2);
+                msg = exceptionToString(ex2,true);
             }
         } else {
-            for (Class aClass : new Class[]{
-                    NullPointerException.class,
-                    ArrayIndexOutOfBoundsException.class,
-                    ClassCastException.class,
-                    UnsupportedOperationException.class,
-                    ReflectiveOperationException.class,}) {
-                if (aClass.isInstance(ex)) {
-                    return ex.toString();
+            String msg2 = ex.toString();
+            if(msg2.startsWith(ex.getClass().getName()+":")){
+                if(inner) {
+                    //this is  default toString for the exception
+                    msg = msg2.substring((ex.getClass().getName()).length() + 1).trim();
+                }else{
+                    msg = ex.getClass().getSimpleName() + ": " + msg2.substring((ex.getClass().getName()).length() + 1).trim();
                 }
-            }
-            msg = ex.getMessage();
-            if (msg == null) {
-                msg = ex.toString();
+            }else {
+                for (Class aClass : new Class[]{
+                        NullPointerException.class,
+                        ArrayIndexOutOfBoundsException.class,
+                        ClassCastException.class,
+                        UnsupportedOperationException.class,
+                        ReflectiveOperationException.class,
+                        Error.class,
+                }) {
+                    if (aClass.isInstance(ex)) {
+                        return ex.toString();
+                    }
+                }
+                msg = ex.getMessage();
+                if (msg == null) {
+                    msg = ex.toString();
+                }
             }
         }
         return msg;

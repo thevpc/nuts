@@ -59,10 +59,10 @@ class NutsElementTreeModel implements NutsTreeModel {
                 return stringValue(_title != null ? _title : value);
             } else {
                 if (value.type() == NutsElementType.ARRAY || value.type() == NutsElementType.OBJECT) {
-                    return "==" + stringValue(key) + "==";
+                    return "ø##" + stringValue(key) + "##ø";
                 } else {
-                    return "==" + stringValue(key) + "=="
-                            + "\\=" + stringValue(_title != null ? _title : value);
+                    return "ø##" + stringValue(key) + "##ø"
+                            + "=" + stringValue(_title != null ? _title : value);
                 }
             }
         }

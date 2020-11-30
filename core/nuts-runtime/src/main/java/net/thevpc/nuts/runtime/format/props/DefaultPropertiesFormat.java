@@ -266,7 +266,13 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
                     String s = split[i];
                     if (i == 0) {
                         out.print(prefix);
-                        out.print("=="+formattedKey+"==");
+                        if(prefix.isEmpty() || prefix.endsWith("#")){
+                            out.print("ø");
+                        }
+                        out.print("####"+formattedKey+"####");
+                        if(separator.isEmpty() || separator.startsWith("#")){
+                            out.print("ø");
+                        }
                         out.print(separator);
                         out.print( s);
                     } else {
@@ -279,7 +285,13 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             }
         } else {
             out.print(prefix);
-            out.print("=="+formattedKey+"==");
+            if(prefix.isEmpty() || prefix.endsWith("#")){
+                out.print("ø");
+            }
+            out.print("####"+formattedKey+"####");
+            if(separator.isEmpty() || separator.startsWith("#")){
+                out.print("ø");
+            }
             out.print(separator);
             out.print(value);
         }

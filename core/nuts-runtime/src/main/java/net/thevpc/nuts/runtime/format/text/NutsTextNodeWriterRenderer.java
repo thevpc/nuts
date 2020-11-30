@@ -98,7 +98,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             }
             case STYLED: {
                 DefaultNutsTextNodeStyled s = (DefaultNutsTextNodeStyled) node;
-                TextFormat[] s2 = _appendFormats(formats, s.getStyle());
+                TextFormat[] s2 = _appendFormats(formats, s.getTextFormat());
                 writeNode(s2, s.getChild(), ctx);
                 break;
             }
@@ -111,11 +111,13 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                         seq = new NutsTextNodeWriteConfiguration.DefaultSeq(new NutsTextNodeWriteConfiguration.IntTextNumber(0));
                         ctx.setSeq(seq);
                     }
-                    NutsTextNodeWriteConfiguration.Seq a = seq.newLevel(s.getStyleCode().length());
+                    NutsTextNodeWriteConfiguration.Seq a = seq.newLevel(s.getTextStyleCode().length());
                     DefaultNutsTextNodeFactory factory0 = (DefaultNutsTextNodeFactory) ws.formats().text().factory();
                     writeNode(factory0.createStyled(
-                            s.getStyleCode(), s.getStyleCode(),
-                            ws.formats().text().factory().plain(a.getString(".") + " "), true), ctx
+                            s.getTextStyleCode(), s.getTextStyleCode(),
+                            ws.formats().text().factory().plain(a.getString(".") + " "),
+                            s.getTextStyle(),
+                            true), ctx
                     );
                 }
                 writeNode(s2, s.getChild(), ctx);
@@ -145,7 +147,9 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                                 "~~", "~~",
                                 ws.formats().text().factory().plain(
                                         ((NutsTextNodeLink) node).getValue()
-                                ), true
+                                ),
+                                NutsTextNodeStyle.UNDERLINED,
+                                true
                         ),
                         ctx
                 );

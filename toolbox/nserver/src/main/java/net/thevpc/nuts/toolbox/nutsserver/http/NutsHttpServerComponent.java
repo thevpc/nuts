@@ -188,9 +188,9 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                             params.setSSLParameters(defaultSSLParameters);
                         } catch (Exception ex) {
                             if (LOG.isLoggable(Level.CONFIG)) {
-                                LOG.log(Level.CONFIG, "Failed to create HTTPS port");
+                                LOG.log(Level.CONFIG, "failed to create HTTPS port");
                             }
-                            session.err().printf("**Failed to create HTTPS port**");
+                            session.err().println("```error failed to create HTTPS port```");
                         }
                     }
                 });

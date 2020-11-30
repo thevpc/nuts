@@ -61,7 +61,7 @@ public class NutsLockException extends NutsException {
      */
     public NutsLockException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject) {
         super(workspace,
-                message == null ? ("Item Already Locked" + lockedObject)
+                message == null ? ("item already locked" + lockedObject)
                         : message
         );
         this.lockedObject=lockedObject;
@@ -78,7 +78,7 @@ public class NutsLockException extends NutsException {
      */
     public NutsLockException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject,Throwable cause) {
         super(workspace,
-                message == null ? ("Item Already Locked" + lockedObject)
+                message == null ? ("item already locked" + lockedObject)
                         : message,cause
         );
         this.lockedObject=lockedObject;

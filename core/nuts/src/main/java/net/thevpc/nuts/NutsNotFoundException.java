@@ -93,7 +93,7 @@ public class NutsNotFoundException extends NutsException {
      * @param id        artifact id
      */
     public NutsNotFoundException(NutsWorkspace workspace, String id, NutsIdInvalidDependency[] dependencies, NutsIdInvalidLocation[] locations, Exception cause) {
-        super(workspace, "Artifact not found: " + (id == null ? "<null>" : id)
+        super(workspace, "artifact not found: " + (id == null ? "<null>" : id)
                         + dependenciesToString(dependencies)
                 , cause);
         this.id = id;

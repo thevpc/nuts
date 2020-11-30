@@ -46,7 +46,7 @@ public class NutsExtensionAlreadyRegisteredException extends NutsExtensionExcept
      * @param installed installed id
      */
     public NutsExtensionAlreadyRegisteredException(NutsWorkspace workspace, String id, String installed) {
-        super(workspace, id, "Extension Already registered " + (id == null ? "<null>" + " as " + installed : id), null);
+        super(workspace, id, "extension already registered " + (id == null ? "<null>" + " as " + installed : id), null);
         this.installed = installed;
     }
 
@@ -58,7 +58,7 @@ public class NutsExtensionAlreadyRegisteredException extends NutsExtensionExcept
      * @param cause cause
      */
     public NutsExtensionAlreadyRegisteredException(NutsWorkspace workspace, String id, String installed, Throwable cause) {
-        super(workspace, id, "Extension Already registered " + (id == null ? "<null>" : id) + " as " + installed, cause);
+        super(workspace, id, "extension already registered " + (id == null ? "<null>" : id) + " as " + installed, cause);
         this.installed = installed;
     }
 

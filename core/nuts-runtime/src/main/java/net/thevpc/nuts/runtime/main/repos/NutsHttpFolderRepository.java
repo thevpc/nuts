@@ -30,6 +30,7 @@ import net.thevpc.nuts.runtime.CoreNutsConstants;
 import net.thevpc.nuts.runtime.DefaultNutsId;
 import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.util.RemoteRepoApi;
+import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 import net.thevpc.nuts.runtime.util.io.FilesFoldersApi;
 import net.thevpc.nuts.runtime.util.iter.IteratorUtils;
@@ -201,7 +202,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             }
             return n.iterator();
         } catch (Exception ex) {
-            LOG.with().level(Level.SEVERE).error(ex).log("Error Find Versions : {0}", ex.toString());
+            LOG.with().level(Level.SEVERE).error(ex).log("error find versions : {0}", CoreStringUtils.exceptionToString(ex));
 //            return IteratorUtils.emptyIterator();
             return null;
         }
@@ -295,7 +296,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                         getWorkspace().io().copy().setSession(session).from(location.getUrl()).to(localFile).safe().logProgress().run();
                         return new NutsDefaultContent(localFile, false, false);
                     } catch (Exception ex) {
-                        LOG.with().level(Level.SEVERE).error(ex).log("Unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), ex.toString());
+                        LOG.with().level(Level.SEVERE).error(ex).log("Unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), CoreStringUtils.exceptionToString(ex));
                     }
                 }
             }

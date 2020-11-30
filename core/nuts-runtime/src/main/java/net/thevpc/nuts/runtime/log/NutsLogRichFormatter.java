@@ -75,27 +75,27 @@ public class NutsLogRichFormatter extends Formatter {
             sb.append(" ");
             switch (wRecord.getLevel().intValue()) {
                 case 1000: {//Level.SEVERE
-                    sb.append("@@");
+                    sb.append("```error ");
                     sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
-                    sb.append("@@");
+                    sb.append("```");
                     break;
                 }
                 case 900: {//Level.WARNING
-                    sb.append("{{");
+                    sb.append("```warn ");
                     sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
-                    sb.append("}}");
+                    sb.append("```");
                     break;
                 }
                 case 800: {//Level.INFO
-                    sb.append("##");
+                    sb.append("```info ");
                     sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
-                    sb.append("##");
+                    sb.append("```");
                     break;
                 }
                 case 700: {//Level.CONFIG
-                    sb.append("^^");
+                    sb.append("```config ");
                     sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
-                    sb.append("^^");
+                    sb.append("```");
                     break;
                 }
                 case 500: {//Level.FINE
@@ -127,25 +127,25 @@ public class NutsLogRichFormatter extends Formatter {
             sb.append(" ");
             switch (CoreStringUtils.trim(wRecord.getVerb()).toUpperCase()) {
                 case NutsLogVerb.FAIL: {//Level.SEVERE
-                    sb.append("@@");
+                    sb.append("```error ");
                     sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
-                    sb.append("@@");
+                    sb.append("```");
                     break;
                 }
                 case NutsLogVerb.UPDATE:
                 case NutsLogVerb.WARNING:
                 case NutsLogVerb.START:
                     {//Level.WARNING
-                    sb.append("{{");
+                    sb.append("##");
                     sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
-                    sb.append("}}");
+                    sb.append("##");
                     break;
                 }
                 case NutsLogVerb.SUCCESS:
                     {//Level.INFO
-                    sb.append("##");
+                    sb.append("###");
                     sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
-                    sb.append("##");
+                    sb.append("###");
                     break;
                 }
 //                case NutsLogVerb.BIND:
@@ -157,9 +157,9 @@ public class NutsLogRichFormatter extends Formatter {
 //                }
                 case NutsLogVerb.READ:
                     {//Level.FINE
-                    sb.append("**");
+                    sb.append("###");
                     sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
-                    sb.append("**");
+                    sb.append("###");
                     break;
                 }
 //                case NutsLogVerb.INIT: {//Level.FINER
@@ -189,7 +189,7 @@ public class NutsLogRichFormatter extends Formatter {
             }
             String message = wRecord.getMessage();
             // \\{[0-9]+\\}
-            message=message.replaceAll("\\\\\\{([0-9]+)\\\\}","{$1}");
+//            message=message.replaceAll("\\\\\\{([0-9]+)\\\\}","{$1}");
             String msgStr =wRecord.getWorkspace().formats().text().formatText(
                     style, message,
                     parameters2
@@ -201,7 +201,7 @@ public class NutsLogRichFormatter extends Formatter {
                 sb.append(tf.filterText(msgStr));
             }
             if(wRecord.getTime()>0){
-                sb.append(" (@@").append(tf.escapeText(CoreCommonUtils.formatPeriodMilli(wRecord.getTime()))).append("@@)");
+                sb.append(" (```error ").append(tf.escapeText(CoreCommonUtils.formatPeriodMilli(wRecord.getTime()))).append("```)");
             }
             sb.append(NutsLogFormatHelper.LINE_SEPARATOR);
             lastMillis = wRecord.getMillis();

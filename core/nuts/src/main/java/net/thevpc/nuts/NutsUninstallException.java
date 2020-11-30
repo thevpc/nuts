@@ -75,6 +75,6 @@ public class NutsUninstallException extends NutsInstallationException {
      * @param ex exception
      */
     public NutsUninstallException(NutsWorkspace workspace, String id, String msg, Exception ex) {
-        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "Unable to uninstall " + (id == null ? "<null>" : id) : msg, ex);
+        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "unable to uninstall " + (id == null ? "<null>" : id) : msg, ex);
     }
 }

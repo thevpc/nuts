@@ -268,7 +268,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             s.flush();
             return out.toString();
         } catch (Exception ex) {
-            LOG.log(Level.FINEST, "Error parsing : \n" + text, ex);
+            LOG.log(Level.FINEST, "error parsing : \n" + text, ex);
             return text;
         }
     }

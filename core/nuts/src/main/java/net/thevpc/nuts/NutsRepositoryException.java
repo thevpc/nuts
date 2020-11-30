@@ -46,7 +46,7 @@ public abstract class NutsRepositoryException extends NutsException {
     public NutsRepositoryException(NutsWorkspace workspace, String repository, String message, Throwable ex) {
         super(workspace,
                 PrivateNutsUtils.isBlank(message)
-                ? ("Repository " + (repository == null ? "<null>" : repository) + " has encountred problem") : message, ex);
+                ? ("repository " + (repository == null ? "<null>" : repository) + " has encountered problem") : message, ex);
         this.repository = repository;
     }
 

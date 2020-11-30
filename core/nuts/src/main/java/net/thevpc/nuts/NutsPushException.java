@@ -66,7 +66,7 @@ public class NutsPushException extends NutsException {
      * @param cause cause
      */
     public NutsPushException(NutsWorkspace workspace, String id, String message, Throwable cause) {
-        super(workspace, message == null ? ("Unable to push " + id) : message, cause);
+        super(workspace, message == null ? ("unable to push " + id) : message, cause);
         this.id = id == null ? "<null>" : id;
     }
 

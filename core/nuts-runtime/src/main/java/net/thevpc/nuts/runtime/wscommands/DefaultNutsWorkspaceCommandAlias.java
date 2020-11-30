@@ -160,8 +160,8 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
                         .run()
                         .getOutputString();
             } catch (Exception ex) {
-                LOG.with().level(Level.FINE).error(ex).log( "Failed to retrieve help for {0}",getName());
-                return "Failed to retrieve help for " + getName();
+                LOG.with().level(Level.FINE).error(ex).log( "failed to retrieve help for {0}",getName());
+                return "failed to retrieve help for " + getName();
             }
         }
         return null;

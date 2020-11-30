@@ -21,8 +21,8 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     private String name;
     private NutsId apiId;
     private NutsId bootRuntime;
-    private NutsIdBootInfo bootRuntimeBootInfo;
-    private NutsIdBootInfo[] bootExtensionsBootInfo;
+    private NutsBootDescriptor runtimeBootDescriptor;
+    private NutsBootDescriptor[] extensionBootDescriptors;
     private String bootRepositories;
     private String bootJavaCommand;
     private String bootJavaOptions;
@@ -190,7 +190,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
             this.bootRuntime = CoreNutsUtils.parseNutsId(c.getId());
         }
         if (c.getDependencies() != null) {
-            this.bootRuntimeBootInfo = new NutsIdBootInfo(
+            this.runtimeBootDescriptor = new NutsBootDescriptor(
                     this.bootRuntime.toString(),
                     c.getDependencies().split(";")
             );
@@ -228,11 +228,11 @@ public final class DefaultNutsWorkspaceCurrentConfig {
                     ? CoreNutsUtils.parseNutsId(c.getRuntimeId())
                     : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId());
         }
-        if (c.getRuntimeBootInfo() != null) {
-            this.bootRuntimeBootInfo = c.getRuntimeBootInfo();
+        if (c.getRuntimeBootDescriptor() != null) {
+            this.runtimeBootDescriptor = c.getRuntimeBootDescriptor();
         }
-        if (c.getExtensionsBootInfo() != null) {
-            this.bootExtensionsBootInfo = c.getExtensionsBootInfo();
+        if (c.getExtensionBootDescriptors() != null) {
+            this.extensionBootDescriptors = c.getExtensionBootDescriptors();
         }
         if (c.getBootRepositories() != null) {
             this.bootRepositories = c.getBootRepositories();
@@ -259,8 +259,8 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
 
-    public NutsIdBootInfo[] getExtensionsBootInfo() {
-        return bootExtensionsBootInfo;
+    public NutsBootDescriptor[] getExtensionBootDescriptors() {
+        return extensionBootDescriptors;
     }
 
 
@@ -289,8 +289,8 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
 
-    public NutsIdBootInfo getRuntimeBootInfo() {
-        return bootRuntimeBootInfo;
+    public NutsBootDescriptor getRuntimeBootDescriptor() {
+        return runtimeBootDescriptor;
     }
 
 
@@ -384,13 +384,13 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         return this;
     }
 
-    public DefaultNutsWorkspaceCurrentConfig setRuntimeBootInfo(NutsIdBootInfo bootRuntimeBootInfo) {
-        this.bootRuntimeBootInfo = bootRuntimeBootInfo;
+    public DefaultNutsWorkspaceCurrentConfig setRuntimeBootDescriptor(NutsBootDescriptor runtimeBootDescriptor) {
+        this.runtimeBootDescriptor = runtimeBootDescriptor;
         return this;
     }
 
-    public DefaultNutsWorkspaceCurrentConfig setExtensionsBootInfo(NutsIdBootInfo[] bootExtensionDependencies) {
-        this.bootExtensionsBootInfo = bootExtensionDependencies;
+    public DefaultNutsWorkspaceCurrentConfig setExtensionBootDescriptors(NutsBootDescriptor[] extensionBootDescriptors) {
+        this.extensionBootDescriptors = extensionBootDescriptors;
         return this;
     }
 

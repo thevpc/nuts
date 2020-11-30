@@ -61,9 +61,9 @@ public class NutsServerMain extends NutsApplication {
             }
             for (NutsServer o : servers) {
                 if (o.isRunning()) {
-                    out.printf("==Running== %s\n", o.getServerId());
+                    out.printf("#####running##### %s\n", o.getServerId());
                 } else {
-                    out.printf("==Stopped== %s\n", o.getServerId());
+                    out.printf("#####stopped##### %s\n", o.getServerId());
                 }
             }
         }
@@ -382,7 +382,8 @@ public class NutsServerMain extends NutsApplication {
             }
             if (context.getSession().isPlainOut()) {
                 for (StatusResult result : results) {
-                    context.getSession().out().printf("####%s#### server at %s is %s%n", result.type, result.host, new NutsString(result.status.equals("stopped") ? "@@stopped@@" : "##alive##"));
+                    context.getSession().out().printf("####%s#### server at %s is %s%n", result.type, result.host, new NutsString(result.status.equals("stopped")
+                            ? "```error stopped```" : "##alive##"));
                 }
             } else {
                 context.getSession().formatObject(results).println();

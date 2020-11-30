@@ -107,24 +107,6 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
     }
 
     @Override
-    public NutsTextNode error(String image) {
-        return list(
-                bg("error:", 7),
-                plain(" "),
-                fg(image, 7)
-        );
-    }
-
-    @Override
-    public NutsTextNode warn(String image) {
-        return list(
-                bg("warning:", 5),
-                plain(" "),
-                fg(image, 5)
-        );
-    }
-
-    @Override
     public NutsTextNode styled(String other, NutsTextNodeStyle... decorations) {
         return styled(plain(other), decorations);
     }
@@ -192,11 +174,17 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
     }
 
     public NutsTextNode tilde(NutsTextNode t, int level) {
+        return tilde(t,level,NutsTextNodeStyle.values()[NutsTextNodeStyle.UNDERLINED.ordinal() + level - 1]);
+    }
+    public NutsTextNode tilde(NutsTextNode t, int level,NutsTextNodeStyle style) {
+        if(style==null){
+            throw new NullPointerException();
+        }
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i <= level; i++) {
             sb.append("~");
         }
-        return createStyled(sb.toString(), sb.toString(), t,true);
+        return createStyled(sb.toString(), sb.toString(), t, NutsTextNodeStyle.values()[NutsTextNodeStyle.UNDERLINED.ordinal() + level - 1], true);
     }
 
     public NutsTextNode title(NutsTextNode t, int level) {
@@ -212,24 +200,39 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
         return fg(plain(t), level);
     }
 
-    public NutsTextNode fg(NutsTextNode t, int level) {
+    public NutsTextNode fg(NutsTextNode t, int level, NutsTextNodeStyle textStyle) {
+        if (textStyle == null) {
+            throw new NullPointerException();
+        }
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < level + 1; i++) {
             sb.append("#");
         }
-        return createStyled(sb.toString(), sb.toString(), t, true);
+        return createStyled(sb.toString(), sb.toString(), t, textStyle, true);
+    }
+
+    public NutsTextNode fg(NutsTextNode t, int level) {
+        return fg(t,level,NutsTextNodeStyle.values()[NutsTextNodeStyle.PRIMARY1.ordinal() + level - 1]);
     }
 
     public NutsTextNode bg(String t, int level) {
         return bg(plain(t), level);
     }
 
-    public NutsTextNode bg(NutsTextNode t, int level) {
+    public NutsTextNode bg(NutsTextNode t, int level, NutsTextNodeStyle textStyle) {
+        if (textStyle == null) {
+            throw new NullPointerException();
+        }
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < level + 1; i++) {
             sb.append("@");
         }
-        return createStyled(sb.toString(), sb.toString(), t, true);
+        return createStyled(sb.toString(), sb.toString(), t, textStyle, true);
+    }
+
+    public NutsTextNode bg(NutsTextNode t, int level) {
+        NutsTextNodeStyle textStyle=NutsTextNodeStyle.values()[NutsTextNodeStyle.SECONDARY1.ordinal() + level - 1];
+        return bg(t, level, textStyle);
     }
 
     public NutsTextNode comments(String image) {
@@ -281,11 +284,18 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
     }
 
     public NutsTextNode styled(NutsTextNode other, NutsTextNodeStyle decoration) {
+        return styled(other, decoration, decoration);
+    }
+
+    public NutsTextNode styled(NutsTextNode other, NutsTextNodeStyle decoration, NutsTextNodeStyle asDecoration) {
         if (decoration == null) {
             if (other == null) {
                 return plain("");
             }
             return other;
+        }
+        if(asDecoration==null){
+            asDecoration=decoration;
         }
         switch (decoration) {
             case PRIMARY1:
@@ -297,7 +307,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
             case PRIMARY7:
             case PRIMARY8:
             case PRIMARY9: {
-                return fg(other, decoration.ordinal() - NutsTextNodeStyle.PRIMARY1.ordinal() + 1);
+                return fg(other, decoration.ordinal() - NutsTextNodeStyle.PRIMARY1.ordinal() + 1,asDecoration);
             }
             case SECONDARY1:
             case SECONDARY2:
@@ -308,107 +318,133 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
             case SECONDARY7:
             case SECONDARY8:
             case SECONDARY9: {
-                return bg(other, decoration.ordinal() - NutsTextNodeStyle.SECONDARY1.ordinal() + 1);
+                return bg(other, decoration.ordinal() - NutsTextNodeStyle.SECONDARY1.ordinal() + 1,asDecoration);
             }
             case UNDERLINED: {
-                return tilde(other, 1);
+                return tilde(other, 1,asDecoration);
             }
             case ITALIC: {
-                return tilde(other, 2);
+                return tilde(other, 2,asDecoration);
             }
             case STRIKED: {
-                return tilde(other, 3);
+                return tilde(other, 3,asDecoration);
             }
             case REVERSED: {
-                return tilde(other, 4);
+                return tilde(other, 4,asDecoration);
             }
             case KEYWORD1: {
-                return styled(other, NutsTextNodeStyle.PRIMARY1);
+                return styled(other, NutsTextNodeStyle.PRIMARY1,asDecoration);
             }
             case KEYWORD2: {
-                return styled(other, NutsTextNodeStyle.PRIMARY2);
+                return styled(other, NutsTextNodeStyle.PRIMARY2,asDecoration);
             }
             case KEYWORD3: {
-                return styled(other, NutsTextNodeStyle.PRIMARY3);
+                return styled(other, NutsTextNodeStyle.PRIMARY3,asDecoration);
             }
             case KEYWORD4: {
-                return styled(other, NutsTextNodeStyle.PRIMARY4);
+                return styled(other, NutsTextNodeStyle.PRIMARY4,asDecoration);
             }
             case OPTION1: {
-                return styled(other, NutsTextNodeStyle.PRIMARY3);
+                return styled(other, NutsTextNodeStyle.PRIMARY3,asDecoration);
             }
             case OPTION2: {
-                return styled(other, NutsTextNodeStyle.PRIMARY4);
+                return styled(other, NutsTextNodeStyle.PRIMARY4,asDecoration);
             }
             case OPTION3: {
-                return styled(other, NutsTextNodeStyle.PRIMARY5);
+                return styled(other, NutsTextNodeStyle.PRIMARY5,asDecoration);
             }
             case OPTION4: {
-                return styled(other, NutsTextNodeStyle.PRIMARY6);
+                return styled(other, NutsTextNodeStyle.PRIMARY6,asDecoration);
             }
             case ERROR1: {
-                return styled(other, NutsTextNodeStyle.PRIMARY7);
+                return styled(other, NutsTextNodeStyle.PRIMARY7,asDecoration);
             }
             case ERROR2: {
                 return list(
                         styled(plain("error:"), NutsTextNodeStyle.SECONDARY7),
                         plain(" "),
-                        styled(other, NutsTextNodeStyle.PRIMARY7)
+                        styled(other, NutsTextNodeStyle.PRIMARY7,asDecoration)
                 );
             }
             case WARNING1: {
-                return styled(other, NutsTextNodeStyle.PRIMARY3);
+                return styled(other, NutsTextNodeStyle.PRIMARY3,asDecoration);
             }
             case WARNING2: {
                 return list(
                         styled(plain("warning:"), NutsTextNodeStyle.SECONDARY3),
                         plain(" "),
-                        styled(other, NutsTextNodeStyle.PRIMARY3)
+                        styled(other, NutsTextNodeStyle.PRIMARY3,asDecoration)
+                );
+            }
+            case INFO1: {
+                return styled(other, NutsTextNodeStyle.PRIMARY4,asDecoration);
+            }
+            case INFO2: {
+                return list(
+                        styled(plain("info:"), NutsTextNodeStyle.SECONDARY4),
+                        plain(" "),
+                        styled(other, NutsTextNodeStyle.PRIMARY4,asDecoration)
+                );
+            }
+            case CONFIG1: {
+                return styled(other, NutsTextNodeStyle.PRIMARY5,asDecoration);
+            }
+            case CONFIG2: {
+                return list(
+                        styled(plain("config:"), NutsTextNodeStyle.SECONDARY5),
+                        plain(" "),
+                        styled(other, NutsTextNodeStyle.PRIMARY5,asDecoration)
                 );
             }
             case HIDDEN1:
             case HIDDEN2: {
-                return styled(other, NutsTextNodeStyle.PRIMARY8);
+                return styled(other, NutsTextNodeStyle.PRIMARY8,asDecoration);
             }
             case NUMBER1:
             case NUMBER2:
             case BOOLEAN1:
             case BOOLEAN2: {
-                return styled(other, NutsTextNodeStyle.PRIMARY1);
+                return styled(other, NutsTextNodeStyle.PRIMARY1,asDecoration);
             }
             case STRING1:
             case STRING2: {
-                return styled(other, NutsTextNodeStyle.PRIMARY2);
+                return styled(other, NutsTextNodeStyle.PRIMARY2,asDecoration);
             }
             case COMMENTS1:
             case COMMENTS2: {
-                return styled(other, NutsTextNodeStyle.PRIMARY4);
+                return styled(other, NutsTextNodeStyle.PRIMARY4,asDecoration);
             }
             case SEPARATOR1:
             case SEPARATOR2:
             case SEPARATOR3:
             case SEPARATOR4: {
-                return styled(other, NutsTextNodeStyle.PRIMARY7);
+                return styled(other, NutsTextNodeStyle.PRIMARY7,asDecoration);
             }
             case USER_INPUT1:
             case USER_INPUT2:
             case USER_INPUT3:
             case USER_INPUT4: {
-                return styled(other, NutsTextNodeStyle.PRIMARY8);
+                return styled(other, NutsTextNodeStyle.PRIMARY8,asDecoration);
             }
             case SUCCESS1:
             case SUCCESS2: {
-                return styled(other, NutsTextNodeStyle.PRIMARY3);
+                return styled(other, NutsTextNodeStyle.PRIMARY3,asDecoration);
             }
             case FAIL1:
             case FAIL2: {
-                return styled(other, NutsTextNodeStyle.PRIMARY7);
+                return styled(other, NutsTextNodeStyle.PRIMARY7,asDecoration);
             }
             case VAR1:
             case VAR2:
             case VAR3:
             case VAR4: {
-                return styled(other, NutsTextNodeStyle.PRIMARY5);
+                return styled(other, NutsTextNodeStyle.PRIMARY5,asDecoration);
+            }
+            case DISCRETE1:
+            case DISCRETE2:
+            case DISCRETE3:
+            case DISCRETE4: {
+                return styled(other, NutsTextNodeStyle.PRIMARY8,asDecoration);
             }
         }
         throw new IllegalArgumentException("Invalid " + decoration);
@@ -481,12 +517,15 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
         return new PlainSpecialTextFormatter(ws);
     }
 
-    public NutsTextNode createStyled(String start, String end, NutsTextNode child, boolean completed) {
+    public NutsTextNode createStyled(String start, String end, NutsTextNode child, NutsTextNodeStyle textStyle, boolean completed) {
+        if(textStyle==null){
+            textStyle=createTextStyle(start);
+        }
         TextFormat style1 = createStyle(start);
         if (style1 == null) {
             return child;
         }
-        return new DefaultNutsTextNodeStyled(start, end, style1, child, completed);
+        return new DefaultNutsTextNodeStyled(start, end, style1, child, completed, textStyle);
     }
 
     public NutsTextNode createCommand(String start, String kind, String separator, String end, String text) {
@@ -510,6 +549,40 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
             return child;
         }
         return new DefaultNutsTextNodeTitle(start, style, child);
+    }
+
+    public NutsTextNodeStyle createTextStyle(String code) {
+        switch (code) {
+            case "~~":
+            case "~~~":
+            case "~~~~":
+            case "~~~~~": {
+                return NutsTextNodeStyle.values()[NutsTextNodeStyle.UNDERLINED.ordinal()+code.length()-1];
+            }
+            case "##":
+            case "###":
+            case "####":
+            case "#####":
+            case "######":
+            case "#######":
+            case "########":
+            case "#########":
+            case "##########": {
+                return NutsTextNodeStyle.values()[NutsTextNodeStyle.PRIMARY1.ordinal()+code.length()-1];
+            }
+            case "@@":
+            case "@@@":
+            case "@@@@":
+            case "@@@@@":
+            case "@@@@@@":
+            case "@@@@@@@":
+            case "@@@@@@@@":
+            case "@@@@@@@@@":
+            case "@@@@@@@@@@": {
+                return NutsTextNodeStyle.values()[NutsTextNodeStyle.SECONDARY1.ordinal()+code.length()-1];
+            }
+        }
+        throw new UnsupportedOperationException("Unsupported format " + code);
     }
 
     public TextFormat createStyle(String code) {

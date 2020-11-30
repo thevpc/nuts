@@ -46,7 +46,7 @@ public class NutsInvalidWorkspaceException extends NutsWorkspaceException {
      * @param errorMessage errorMessage
      */
     public NutsInvalidWorkspaceException(NutsWorkspace workspace, String workspaceLocation, String errorMessage) {
-        super(workspace, "Invalid workspace " + (workspaceLocation == null ? "<null>" : workspaceLocation) + " : " + errorMessage, null);
+        super(workspace, "invalid workspace " + (workspaceLocation == null ? "<null>" : workspaceLocation) + " : " + errorMessage, null);
         this.workspaceLocation = workspaceLocation;
     }
 

@@ -72,7 +72,7 @@ public class DefaultNutsIODeleteAction extends AbstractNutsIODeleteAction {
                         deleted[0]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "delete file Failed : " + file);
+                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "failed deleting file : " + file);
                         }
                         deleted[2]++;
                         grabException(e);
@@ -95,7 +95,7 @@ public class DefaultNutsIODeleteAction extends AbstractNutsIODeleteAction {
                         deleted[1]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "delete folder Failed : " + dir);
+                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "failed deleting folder : " + dir);
                         }
                         deleted[2]++;
                         grabException(e);

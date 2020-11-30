@@ -79,7 +79,7 @@ public class ShowerrCommand extends SimpleNshBuiltin {
         if (r.getCode() == 0) {
             context.out().println("##Last command ended successfully with no errors.##");
         } else {
-            context.out().println("@@Last command ended abnormally with the following error :@@");
+            context.out().println("```error Last command ended abnormally with the following error :```");
             if (r.getMessage() != null) {
                 context.out().println(r.getMessage());
             }

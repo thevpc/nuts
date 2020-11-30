@@ -43,15 +43,15 @@ public class DefaultNutsRepositoryUndeployCommand extends AbstractNutsRepository
                 try {
                     xrepo.getIndexStore().invalidate(this.getId(), getSession());
                 } catch (NutsException ex) {
-                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "Error invalidating Indexer for {0} : {1}", getRepo().getName(), ex);
+                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "error invalidating Indexer for {0} : {1}", getRepo().getName(), ex);
                 }
             }
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log( "{0} Undeploy {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), this.getId());
+                LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log( "{0} undeploy {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), this.getId());
             }
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "{0} Undeploy {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), this.getId());
+                LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "{0} undeploy {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), this.getId());
             }
         }
         return this;

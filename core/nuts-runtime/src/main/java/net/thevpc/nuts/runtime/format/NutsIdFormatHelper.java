@@ -369,7 +369,7 @@ public class NutsIdFormatHelper {
             }
             case PACKAGING: {
                 if (desc != null) {
-                    return "{{" + stringValue(desc.getPackaging()) + "}}";
+                    return "####" + stringValue(desc.getPackaging()) + "####ø";
                 }
                 return "```error missing-packaging```";
             }
@@ -523,7 +523,7 @@ public class NutsIdFormatHelper {
                     this.fetched = true;
                 }
             } catch (Exception ex) {
-                LOG.with().level(Level.FINE).error(ex).log( "Failed to build id format for {0}",id);
+                LOG.with().level(Level.FINE).error(ex).log( "failed to build id format for {0}",id);
             }
 
             if (def != null) {
@@ -649,9 +649,9 @@ public class NutsIdFormatHelper {
 
     public String getFormattedStatusString() {
         if (dep != null) {
-            return "**" + status_f + status_obs +status_e + status_i + status_s + "**";
+            return "#####" + status_f + status_obs +status_e + status_i + status_s + "#####ø";
         }
-        return "**" + status_f + status_obs+ status_e + status_i + "**";
+        return "#####" + status_f + status_obs+ status_e + status_i + "#####ø";
     }
 
     public String getStatusString() {
@@ -662,19 +662,19 @@ public class NutsIdFormatHelper {
     }
 
     private String keywordArr1(String[] any) {
-        return keywordArr0(any, "[[", "]]");
+        return keywordArr0(any, "##", "##ø");
     }
 
     private String keywordArr2(String[] any) {
-        return keywordArr0(any, "{{", "}}");
+        return keywordArr0(any, "####", "####ø");
     }
 
     private String keywordArr3(String[] any) {
-        return keywordArr0(any, "**", "**");
+        return keywordArr0(any, "#####", "#####ø");
     }
 
     private String keywordArr4(String[] any) {
-        return keywordArr0(any, "==", "==");
+        return keywordArr0(any, "######", "######ø");
     }
 
     private String keywordArr0(String[] any, String a, String b) {

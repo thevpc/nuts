@@ -297,7 +297,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                     for (NutsRepository repository : linkRepositories) {
                         m.addRow(
-                                "==" + repository.getName() + "==",
+                                "#####" + repository.getName() + "#####ø",
                                 repository.config().isEnabled() ?
                                         repository.isEnabled()?"ENABLED":
                                         "```error <RT-DISABLED>```": "```error <DISABLED>```",

@@ -5,6 +5,8 @@
  */
 package net.thevpc.nuts.runtime.util.iter;
 
+import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
+
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +34,7 @@ public class ErrorHandlerIterator<T> implements Iterator<T> {
             ex = null;
             return v;
         } catch (RuntimeException ex) {
-            LOG.log(Level.SEVERE, "Error evaluating Iterator 'hasNext()' : " + ex.toString(), ex);
+            LOG.log(Level.SEVERE, "error evaluating Iterator 'hasNext()' : " + CoreStringUtils.exceptionToString(ex), ex);
             switch (type) {
                 case IGNORE: {
                     // do nothing

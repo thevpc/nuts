@@ -45,6 +45,8 @@ public class TypedParserStep extends ParserStep {
                 p.applyPush(new TypedParserStep(
                         e2, spreadLines, false,ws
                 ));
+            } else if (c == 'ø') {
+                p.applyPop();
             } else {
                 p.applyPopReject(c);
             }
@@ -81,7 +83,7 @@ public class TypedParserStep extends ParserStep {
                         p.applyPop();
                     }
 
-                } else if (lineStart && startChar!='(' && c == ')') {
+                } else if (lineStart && startChar=='#' && c == ')') {
                     //this is a title
                     p.applyDropReplace(new TitleParserStep(start.toString() + c,ws));
                 } else {
@@ -122,14 +124,17 @@ public class TypedParserStep extends ParserStep {
         if (children.size() == 1) {
             return factory0.createStyled(
                     start.toString(), end.toString(),
-                    children.get(0).toNode(), isComplete());
+                    children.get(0).toNode(), null,
+                    isComplete());
         }
         List<NutsTextNode> all = new ArrayList<>();
         for (ParserStep a : children) {
             all.add(a.toNode());
         }
         return factory0.createStyled(start.toString(), end.toString(),
-                ws.formats().text().factory().list(all.toArray(new NutsTextNode[0])), isComplete());
+                ws.formats().text().factory().list(all.toArray(new NutsTextNode[0])),
+                null,
+                isComplete());
     }
 
     @Override

@@ -112,7 +112,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
                 LOG.log(Level.CONFIG, "Unable to load help for " + getName(), e);
             }
             if (help == null) {
-                help = "@@no help@@ found for command " + getName();
+                help = "####no help``` found for command " + getName();
             }
         }
         return help;

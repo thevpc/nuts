@@ -44,10 +44,10 @@ class NutsBootClassLoader extends URLClassLoader {
      * @param urls urls
      * @param parent parent class loader
      */
-    NutsBootClassLoader(NutsIdURL[] urls, ClassLoader parent) {
+    NutsBootClassLoader(NutsBootDependencyNode[] urls, ClassLoader parent) {
         super(new URL[0], parent);
         LinkedHashSet<URL> all=new LinkedHashSet<>();
-        for (NutsIdURL url : urls) {
+        for (NutsBootDependencyNode url : urls) {
             addURL(url,all);
         }
         for (URL url : all) {
@@ -55,9 +55,9 @@ class NutsBootClassLoader extends URLClassLoader {
         }
     }
 
-    protected void addURL(NutsIdURL ids, Set<URL> urls) {
+    protected void addURL(NutsBootDependencyNode ids, Set<URL> urls) {
         urls.add(ids.getURL());
-        for (NutsIdURL dependency : ids.getDependencies()) {
+        for (NutsBootDependencyNode dependency : ids.getDependencies()) {
             addURL(dependency,urls);
         }
     }
@@ -75,7 +75,7 @@ class NutsBootClassLoader extends URLClassLoader {
     static class IdInfoBuilder{
         private String id;
         private URL url;
-        private List<NutsIdURL> dependencies=new ArrayList<>();
+        private List<NutsBootDependencyNode> dependencies=new ArrayList<>();
 
         public String getId() {
             return id;
@@ -95,22 +95,22 @@ class NutsBootClassLoader extends URLClassLoader {
             return this;
         }
 
-        public List<NutsIdURL> getDependencies() {
+        public List<NutsBootDependencyNode> getDependencies() {
             return dependencies;
         }
 
-        public IdInfoBuilder addDependency(NutsIdURL other) {
+        public IdInfoBuilder addDependency(NutsBootDependencyNode other) {
             this.dependencies.add(other);
             return this;
         }
-        public IdInfoBuilder setDependencies(List<NutsIdURL> dependencies) {
+        public IdInfoBuilder setDependencies(List<NutsBootDependencyNode> dependencies) {
             this.dependencies = dependencies;
             return this;
         }
 
-        public NutsIdURL build(){
-            return new NutsIdURL(
-                    id, url,dependencies.toArray(new NutsIdURL[0])
+        public NutsBootDependencyNode build(){
+            return new NutsBootDependencyNode(
+                    id, url,dependencies.toArray(new NutsBootDependencyNode[0])
             );
         }
     }

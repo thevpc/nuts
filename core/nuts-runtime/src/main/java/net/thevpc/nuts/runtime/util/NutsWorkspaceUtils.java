@@ -502,7 +502,7 @@ public class NutsWorkspaceUtils {
         }
         if (showCommand || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
             if (ws.io().term().getTerminalFormat().isFormatted(prepareTerminal.out())) {
-                prepareTerminal.out().print("==[exec]== ");
+                prepareTerminal.out().print("#####[exec]##### ");
                 prepareTerminal.out().println(pb.getFormattedCommandString(ws));
             } else {
                 prepareTerminal.out().print("exec ");
