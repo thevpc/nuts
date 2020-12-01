@@ -1,4 +1,4 @@
 apiVersion=`nuts -y --bot nversion ../nuts`;
 implVersion="nuts nversion ../nuts-code";
-# jarLocation=$"https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar";
-jarLocation=$"https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar";
+# jarLocation="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar";
+jarLocation="https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar";

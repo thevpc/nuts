@@ -2,7 +2,6 @@ package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
 import net.thevpc.commons.md.docusaurus.DocusaurusProject;
-import net.thevpc.commons.docusaurus.DocusaurusCtrl;
 
 public class NDocusaurusMain extends NutsApplication {
 
@@ -25,13 +24,8 @@ public class NDocusaurusMain extends NutsApplication {
                     case "--dir": {
                         if (workdir == null) {
                             workdir = cmdLine.nextString().getStringValue();
-                        } else {
-                            cmdLine.unexpectedArgument();
+                            return true;
                         }
-                        break;
-                    }
-                    default: {
-                        return false;
                     }
                 }
                 return false;
@@ -59,7 +53,7 @@ public class NDocusaurusMain extends NutsApplication {
             @Override
             public void prepare(NutsCommandLine commandline) {
                 if(!start && !build && !buildPdf){
-                    commandline.required("missing command. try ndocusaurus pdf | start | build");
+                    commandline.required("missing command. try ```sh ndocusaurus pdf | start | build```");
                 }
             }
 
@@ -69,7 +63,7 @@ public class NDocusaurusMain extends NutsApplication {
                     workdir = ".";
                 }
                 DocusaurusProject docusaurusProject = new DocusaurusProject(workdir);
-                new DocusaurusCtrl(docusaurusProject)
+                new DocusaurusCtrl(docusaurusProject,appContext)
                         .setBuildWebSite(build)
                         .setStartWebSite(start)
                         .setBuildPdf(buildPdf)

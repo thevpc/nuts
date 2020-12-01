@@ -118,11 +118,12 @@ public class AdminServerRunnable implements NutsServer, Runnable {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
                                     PrintStream eout = invokerWorkspace.io().createPrintStream(out, NutsTerminalMode.FORMATTED);
                                     NutsSession session = invokerWorkspace.createSession();
-                                    final NutsSessionTerminal terminal = invokerWorkspace.io().term().createTerminal(session);
-                                    terminal.setIn(finalAccept.getInputStream());
-                                    terminal.setOut(eout);
-                                    terminal.setErr(eout);
-                                    session.setTerminal(terminal);
+                                    session.setTerminal(
+                                            invokerWorkspace.io().term().createTerminal(
+                                                    finalAccept.getInputStream(),
+                                                    eout,eout,
+                                                    session)
+                                    );
                                     cli = new NutsJavaShell(invokerWorkspace, session,
                                             invokerWorkspace.id().resolveId(AdminServerRunnable.class),
                                             serverId);

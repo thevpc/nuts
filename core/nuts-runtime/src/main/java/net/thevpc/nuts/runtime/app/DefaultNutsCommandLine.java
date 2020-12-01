@@ -10,19 +10,19 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.app;
 
 import net.thevpc.nuts.*;
@@ -532,31 +532,24 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         commandLineProcessor.init(this);
         while (this.hasNext()) {
             a = this.peek();
+            boolean consumed;
             if (a.isOption()) {
-                if (!commandLineProcessor.nextOption(a, this)) {
-                    if (!_configureLast(this, defaultConfigurable)) {
-                        break;
-                    }
-                } else {
-                    NutsArgument next = this.peek();
-                    //reference equality!
-                    if (next == a) {
-                        //was not consumed!
-                        throw new NutsIllegalArgumentException(getWorkspace(), "processOption must consume the option: " + a);
-                    }
+                consumed = commandLineProcessor.nextOption(a, this);
+            } else {
+                consumed = commandLineProcessor.nextNonOption(a, this);
+            }
+            if (consumed) {
+                NutsArgument next = this.peek();
+                //reference equality!
+                if (next == a) {
+                    //was not consumed!
+                    throw new NutsIllegalArgumentException(getWorkspace(),
+                            (a.isOption()?"nextOption":"nextNonOption")+
+                                    " must consume the option: " + a);
                 }
             } else {
-                if (!commandLineProcessor.nextNonOption(a, this)) {
-                    if (!_configureLast(this, defaultConfigurable)) {
-                        break;
-                    }
-                } else {
-                    NutsArgument next = this.peek();
-                    //reference equality!
-                    if (next == a) {
-                        //was not consumed!
-                        throw new NutsIllegalArgumentException(getWorkspace(), "processNonOption must consume the argument : " + a);
-                    }
+                if (!_configureLast(this, defaultConfigurable)) {
+                    this.unexpectedArgument();
                 }
             }
         }
@@ -565,10 +558,8 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         // test if application is running in exec mode
         // (and not in autoComplete mode)
         if (this.isExecMode()) {
-
             //do the good staff here
             commandLineProcessor.exec();
-
         } else if (this.getAutoComplete() != null) {
             commandLineProcessor.autoComplete(this.getAutoComplete());
         }

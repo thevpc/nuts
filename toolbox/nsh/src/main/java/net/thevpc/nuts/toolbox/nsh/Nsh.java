@@ -1,15 +1,14 @@
 package net.thevpc.nuts.toolbox.nsh;
 
+import net.thevpc.common.strings.StringUtils;
+import net.thevpc.jshell.AutoCompleteCandidate;
+import net.thevpc.jshell.JShellBuiltin;
+import net.thevpc.jshell.JShellException;
 import net.thevpc.nuts.*;
 
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import net.thevpc.jshell.AutoCompleteCandidate;
-import net.thevpc.jshell.JShellException;
-import net.thevpc.jshell.JShellBuiltin;
-import net.thevpc.common.strings.StringUtils;
 
 public class Nsh extends NutsApplication {
 
@@ -25,57 +24,8 @@ public class Nsh extends NutsApplication {
     }
 
     @Override
-    public void run(NutsApplicationContext applicationContext) {
-        String[] args = applicationContext.getArguments();
-        applicationContext.getWorkspace().io().term().enableRichTerm(applicationContext.getSession());
-        applicationContext.getWorkspace().io().term().getSystemTerminal()
-                .setAutoCompleteResolver(new NutsCommandAutoCompleteProcessor() {
-                    @Override
-                    public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex, NutsWorkspace workspace) {
-                        List<NutsArgumentCandidate> candidates=new ArrayList<>();
-                        NutsShellContext nutsConsoleContext = (NutsShellContext) workspace.userProperties().get(NutsShellContext.class.getName());
-                        if (wordIndex == 0) {
-                            for (JShellBuiltin command : nutsConsoleContext.builtins().getAll()) {
-                                candidates.add(workspace.commandLine().createCandidate(command.getName()).build());
-                            }
-                        } else {
-                            List<String> autoCompleteWords = new ArrayList<>(Arrays.asList(commandline.toStringArray()));
-                            int x = commandline.getCommandName().length();
-
-                            List<AutoCompleteCandidate> autoCompleteCandidates
-                                    = nutsConsoleContext.resolveAutoCompleteCandidates(commandline.getCommandName(), autoCompleteWords, wordIndex, commandline.toString());
-                            for (Object cmdCandidate0 : autoCompleteCandidates) {
-                                AutoCompleteCandidate cmdCandidate = (AutoCompleteCandidate) cmdCandidate0;
-                                if (cmdCandidate != null) {
-                                    String value = cmdCandidate.getValue();
-                                    if (!StringUtils.isBlank(value)) {
-                                        String display = cmdCandidate.getDisplay();
-                                        if (StringUtils.isBlank(display)) {
-                                            display = value;
-                                        }
-                                        candidates.add(workspace.commandLine().createCandidate(value).setDisplay(display).build());
-                                    }
-                                }
-                            }
-                        }
-                        return candidates;
-                    }
-                });
-        NutsJavaShell c = new NutsJavaShell(applicationContext);
-        try {
-            c.executeShell(args);
-        } catch (NutsExecutionException ex) {
-            throw ex;
-        } catch (JShellException ex) {
-            throw new NutsExecutionException(applicationContext.getWorkspace(), ex.getMessage(), ex, ex.getResult());
-        } catch (Exception ex) {
-            throw new NutsExecutionException(applicationContext.getWorkspace(), ex.getMessage(), ex, 100);
-        }
-    }
-
-    @Override
     protected void onInstallApplication(NutsApplicationContext applicationContext) {
-        LOG.log(Level.FINER, "[Nsh] Installation...");
+        LOG.log(Level.FINER, "[nsh] Installation...");
         NutsCommandLine cmd = applicationContext.getCommandLine()
                 .setCommandName("nsh --nuts-exec-mode=install");
         NutsArgument a;
@@ -91,7 +41,7 @@ public class Nsh extends NutsApplication {
             }
         }
         if (trace || force) {
-            LOG.log(Level.FINER, "[Nsh] Activating options trace={0} force={1}", new Object[]{trace, force});
+            LOG.log(Level.FINER, "[nsh] Activating options trace={0} force={1}", new Object[]{trace, force});
         }
         //id will not include version or
         String nshIdStr = applicationContext.getAppId().getShortName();
@@ -118,11 +68,11 @@ public class Nsh extends NutsApplication {
             if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
                 //avoid recursive definition!
                 if (ws.aliases().add(new NutsCommandAliasConfig()
-                        .setFactoryId("nsh")
-                        .setName(command.getName())
-                        .setCommand(nshIdStr, "-c", command.getName())
-                        .setOwner(applicationContext.getAppId())
-                        .setHelpCommand(nshIdStr, "-c", "help", "--code", command.getName()),
+                                .setFactoryId("nsh")
+                                .setName(command.getName())
+                                .setCommand(nshIdStr, "-c", command.getName())
+                                .setOwner(applicationContext.getAppId())
+                                .setHelpCommand(nshIdStr, "-c", "help", "--code", command.getName()),
                         new NutsAddOptions()
                                 .setSession(sessionCopy.yes(true/*force*/).setSilent())
                 )) {
@@ -134,17 +84,23 @@ public class Nsh extends NutsApplication {
         }
 
         if (firstInstalled.size() > 0) {
-            LOG.log(Level.FINER, "[Nsh] registered {0} nsh commands : {1}", new Object[]{firstInstalled.size(), firstInstalled.toString()});
+            LOG.log(Level.FINER, "[nsh] registered {0} nsh commands : {1}", new Object[]{firstInstalled.size(),
+                    String.join(", ", firstInstalled)
+            });
         }
         if (reinstalled.size() > 0) {
-            LOG.log(Level.FINER, "[Nsh] re-registered {0} nsh commands : {1}", new Object[]{reinstalled.size(), reinstalled.toString()});
+            LOG.log(Level.FINER, "[nsh] re-registered {0} nsh commands : {1}", new Object[]{reinstalled.size(),
+                    String.join(", ", reinstalled)
+            });
         }
         if (trace && applicationContext.getSession().isPlainOut()) {
             if (firstInstalled.size() > 0) {
-                applicationContext.getSession().out().printf("registered ####%s#### nsh commands : ####%s#### \n", firstInstalled.size(), firstInstalled.toString());
+                applicationContext.getSession().out().printf("registered ####%s#### nsh commands : ####%s#### \n", firstInstalled.size(),
+                        String.join(", ", firstInstalled));
             }
             if (reinstalled.size() > 0) {
-                applicationContext.getSession().out().printf("re-registered ####%s#### nsh commands : ####%s#### \n", reinstalled.size(), reinstalled.toString());
+                applicationContext.getSession().out().printf("re-registered ####%s#### nsh commands : ####%s#### \n", reinstalled.size(),
+                        String.join(", ", reinstalled));
             }
         }
         cfg.save(false, applicationContext.getSession());
@@ -152,7 +108,7 @@ public class Nsh extends NutsApplication {
 
     @Override
     protected void onUpdateApplication(NutsApplicationContext applicationContext) {
-        LOG.log(Level.FINER, "[Nsh] Update...");
+        LOG.log(Level.FINER, "[nsh] Update...");
         NutsVersion currentVersion = applicationContext.getAppVersion();
         NutsVersion previousVersion = applicationContext.getAppPreviousVersion();
         onInstallApplication(applicationContext);
@@ -160,7 +116,7 @@ public class Nsh extends NutsApplication {
 
     @Override
     protected void onUninstallApplication(NutsApplicationContext applicationContext) {
-        LOG.log(Level.FINER, "[Nsh] Uninstallation...");
+        LOG.log(Level.FINER, "[nsh] Uninstallation...");
         try {
             NutsWorkspace ws = applicationContext.getWorkspace();
             try {
@@ -181,4 +137,11 @@ public class Nsh extends NutsApplication {
             //ignore
         }
     }
+
+    @Override
+    public void run(NutsApplicationContext applicationContext) {
+        new NutsJavaShell(applicationContext)
+                .executeShell(applicationContext.getArguments());
+    }
+
 }
