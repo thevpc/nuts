@@ -328,7 +328,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         @Override
         public void sendError(int code, String msg) throws IOException {
             if (msg == null) {
-                msg = "Error";
+                msg = "error";
             }
             byte[] bytes = msg.getBytes();
             httpExchange.sendResponseHeaders(code, bytes.length);

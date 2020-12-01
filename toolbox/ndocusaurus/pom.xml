@@ -60,8 +60,23 @@
         </dependency>
         <dependency>
             <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-docusaurus</artifactId>
+            <artifactId>thevpc-common-md-docusaurus</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-md-doc</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-file-template</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thevpc.common</groupId>
+            <artifactId>thevpc-common-md-docusaurus-to-asciidoctor</artifactId>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

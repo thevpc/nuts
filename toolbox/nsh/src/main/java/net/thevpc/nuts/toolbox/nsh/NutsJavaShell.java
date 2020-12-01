@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,31 +22,38 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.nuts.*;
-import net.thevpc.jshell.*;
-import net.thevpc.jshell.parser.nodes.Node;
+import net.thevpc.common.io.ByteArrayPrintStream;
 import net.thevpc.common.mvn.PomId;
 import net.thevpc.common.mvn.PomIdResolver;
 import net.thevpc.common.strings.StringUtils;
+import net.thevpc.jshell.*;
+import net.thevpc.jshell.parser.nodes.Node;
+import net.thevpc.nuts.*;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.thevpc.common.io.ByteArrayPrintStream;
-import net.thevpc.jshell.JShellBuiltin;
 
 public class NutsJavaShell extends JShell {
 
     private static final Logger LOG = Logger.getLogger(NutsJavaShell.class.getName());
+    List<String> boot_nonOptions = new ArrayList<>();
+    boolean boot_interactive = false;
+    boolean boot_command = false;
+    //        String command = null;
+    long boot_startMillis;
     private NutsApplicationContext appContext;
     private File histFile = null;
     private NutsId appId = null;
+    private NutsWorkspace workspace = null;
 
     public NutsJavaShell(NutsApplicationContext appContext) {
         this(appContext, null, null, null, null);
@@ -76,16 +83,23 @@ public class NutsJavaShell extends JShell {
         } else if (workspace == null) {
             this.appContext = appContext;
         } else {
-            throw new IllegalArgumentException("Please specify either context or workspace");
+            throw new IllegalArgumentException("please specify either context or workspace");
         }
         if (session == null) {
             session = this.appContext.getWorkspace().createSession();
+        }
+        if(workspace!=null) {
+            this.workspace = workspace;
+        }else if(appContext!=null) {
+            this.workspace = appContext.getWorkspace();
+        }else if(session!=null){
+            this.workspace = session.getWorkspace();
         }
         if (this.appId == null) {
             this.appId = getWorkspace().id().resolveId(NutsJavaShell.class);
         }
         if (this.appId == null) {
-            throw new IllegalArgumentException("Unable to resolve application id");
+            throw new IllegalArgumentException("unable to resolve application id");
         }
         if ((serviceName == null || serviceName.trim().isEmpty())) {
             serviceName = this.appId.getArtifactId();
@@ -101,7 +115,7 @@ public class NutsJavaShell extends JShell {
         _nrootContext.setSession(session);
         //add default commands
         List<NshBuiltin> allCommand = new ArrayList<>();
-        NutsSupportLevelContext<NutsJavaShell> constraints = new NutsDefaultSupportLevelContext<>(ws,this);
+        NutsSupportLevelContext<NutsJavaShell> constraints = new NutsDefaultSupportLevelContext<>(ws, this);
 
         for (NshBuiltin command : this.appContext.getWorkspace().extensions().
                 createServiceLoader(NshBuiltin.class, NutsJavaShell.class, NshBuiltin.class.getClassLoader(), session)
@@ -123,13 +137,27 @@ public class NutsJavaShell extends JShell {
             }
         } catch (Exception ex) {
             //ignore
-            LOG.log(Level.SEVERE, "Error resolving history file", ex);
+            LOG.log(Level.SEVERE, "error resolving history file", ex);
         }
         ws.userProperties().put(JShellHistory.class.getName(), hist);
     }
 
+    public NutsSession getSession(){
+        NutsShellContext nutsConsoleContext = (NutsShellContext) workspace.userProperties().get(NutsShellContext.class.getName());
+        return nutsConsoleContext.getSession();
+    }
+
+    public void setSession(NutsSession session){
+        NutsShellContext nutsConsoleContext = (NutsShellContext) workspace.userProperties().get(NutsShellContext.class.getName());
+        nutsConsoleContext.setSession(session);
+    }
+
     public NutsWorkspace getWorkspace() {
-        return this.appContext.getWorkspace();
+        return this.workspace;
+    }
+
+    public void setWorkspace(NutsWorkspace workspace) {
+        getRootNutsShellContext().setWorkspace(workspace);
     }
 
     public void executeCommand(String[] command, StringBuilder in, StringBuilder out, StringBuilder err) {
@@ -146,24 +174,23 @@ public class NutsJavaShell extends JShell {
         err.append(oerr.toString());
     }
 
-    @Override
-    public JShellContext createContext(JShellContext ctx) {
-        return createContext((NutsShellContext) ctx, null, null, null, null);
-    }
-
     public NutsShellContext createContext(NutsShellContext ctx, Node root, Node parent, JShellVariables env, String[] args) {
         return new NutsJavaShellEvalContext(this, args, root, parent, ctx, getWorkspace(), appContext.getSession(), env);
     }
 
-    public void setWorkspace(NutsWorkspace workspace) {
-        getRootNutsShellContext().setWorkspace(workspace);
+    public NutsShellContext getRootNutsShellContext() {
+        return (NutsShellContext) super.getRootContext();
     }
 
-    List<String> boot_nonOptions = new ArrayList<>();
-    boolean boot_interactive = false;
-    boolean boot_command = false;
-//        String command = null;
-    long boot_startMillis;
+    @Override
+    protected JShellContext createRootContext() {
+        return new NutsJavaShellEvalContext(this, null, null, null, null, getWorkspace(), appContext.getSession(), null);
+    }
+
+    @Override
+    public JShellContext createContext(JShellContext ctx) {
+        return createContext((NutsShellContext) ctx, null, null, null, null);
+    }
 
     @Override
     protected void prepareExecuteShell(String[] args) {
@@ -218,29 +245,58 @@ public class NutsJavaShell extends JShell {
 
     @Override
     public void executeShell(String[] args) {
-        prepareExecuteShell(args);
-        if (!(getWorkspace().commandLine().create(args).setAutoComplete(appContext.getAutoComplete())).isExecMode()) {
-            return;
-        }
-        executeFile(getStartupScript(), getRootContext(), true);
-        if (boot_nonOptions.size() > 0) {
-            String c = boot_nonOptions.get(0);
-            if (!boot_command) {
-                boot_nonOptions.remove(0);
-                getRootContext().setArgs(boot_nonOptions.toArray(new String[0]));
-                executeFile(c, getRootContext(), false);
-            } else {
-                executeCommand(boot_nonOptions.toArray(new String[0]));
+        try {
+            prepareExecuteShell(args);
+            if (!(getWorkspace().commandLine().create(args).setAutoComplete(appContext.getAutoComplete())).isExecMode()) {
+                return;
             }
-            return;
-        }
-        if (boot_interactive) {
-            try {
-                executeInteractive(getRootContext().out());
-            } finally {
-                executeFile(getShutdownScript(), getRootContext(), true);
+            executeFile(getStartupScript(), getRootContext(), true);
+            if (boot_nonOptions.size() > 0) {
+                String c = boot_nonOptions.get(0);
+                if (!boot_command) {
+                    boot_nonOptions.remove(0);
+                    getRootContext().setArgs(boot_nonOptions.toArray(new String[0]));
+                    executeFile(c, getRootContext(), false);
+                } else {
+                    executeCommand(boot_nonOptions.toArray(new String[0]));
+                }
+                return;
             }
+            if (boot_interactive) {
+                appContext.getWorkspace().io().term().enableRichTerm(appContext.getSession());
+                appContext.getWorkspace().io().term().getSystemTerminal()
+                        .setAutoCompleteResolver(new MshAutoCompleter());
+                try {
+                    executeInteractive(getRootContext().out());
+                } finally {
+                    executeFile(getShutdownScript(), getRootContext(), true);
+                }
+            }
+        } catch (NutsExecutionException ex) {
+            throw ex;
+        } catch (JShellException ex) {
+            throw new NutsExecutionException(appContext.getWorkspace(), ex.getMessage(), ex, ex.getResult());
+        } catch (Exception ex) {
+            throw new NutsExecutionException(appContext.getWorkspace(), ex.getMessage(), ex, 100);
         }
+    }
+
+    @Override
+    protected String readInteractiveLine(JShellContext context) {
+        NutsSessionTerminal terminal = null;
+        terminal = getRootNutsShellContext().getSession().getTerminal();
+        return terminal.readLine(getPromptString(context));
+    }
+
+    @Override
+    protected void printHeader(PrintStream out) {
+        out.printf("##nuts## shell (####Network Updatable Things Services####) ###v%s### (c) thevpc 2020\n",
+                getWorkspace().getRuntimeId().getVersion().toString());
+    }
+
+    @Override
+    protected void onQuit(JShellQuitException q) {
+        throw new NutsExecutionException(getWorkspace(), q.getMessage(), q.getResult());
     }
 
     @Override
@@ -259,37 +315,43 @@ public class NutsJavaShell extends JShell {
         return prompt;
     }
 
-    @Override
-    protected String readInteractiveLine(JShellContext context) {
-        NutsSessionTerminal terminal = null;
-        terminal = getRootNutsShellContext().getSession().getTerminal();
-        return terminal.readLine(getPromptString(context));
-    }
-
-    @Override
-    protected void onQuit(JShellQuitException q) {
-        throw new NutsExecutionException(getWorkspace(), q.getMessage(), q.getResult());
-    }
-
-    @Override
-    protected void printHeader(PrintStream out) {
-        out.printf("##nuts## shell (**Network Updatable Things Services**) [[v%s]] (c) vpc 2018\n",
-                getWorkspace().getRuntimeId().getVersion().toString());
-    }
-
     //    @Override
     @Override
     public String getVersion() {
         return PomIdResolver.resolvePomId(getClass(), new PomId("", "", "dev")).getVersion();
     }
 
-    public NutsShellContext getRootNutsShellContext() {
-        return (NutsShellContext) super.getRootContext();
-    }
+    private static class MshAutoCompleter implements NutsCommandAutoCompleteProcessor {
+        @Override
+        public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex, NutsWorkspace workspace) {
+            List<NutsArgumentCandidate> candidates = new ArrayList<>();
+            NutsShellContext nutsConsoleContext = (NutsShellContext) workspace.userProperties().get(NutsShellContext.class.getName());
+            if (wordIndex == 0) {
+                for (JShellBuiltin command : nutsConsoleContext.builtins().getAll()) {
+                    candidates.add(workspace.commandLine().createCandidate(command.getName()).build());
+                }
+            } else {
+                List<String> autoCompleteWords = new ArrayList<>(Arrays.asList(commandline.toStringArray()));
+                int x = commandline.getCommandName().length();
 
-    @Override
-    protected JShellContext createRootContext() {
-        return new NutsJavaShellEvalContext(this, null, null, null, null, getWorkspace(), appContext.getSession(), null);
+                List<AutoCompleteCandidate> autoCompleteCandidates
+                        = nutsConsoleContext.resolveAutoCompleteCandidates(commandline.getCommandName(), autoCompleteWords, wordIndex, commandline.toString());
+                for (Object cmdCandidate0 : autoCompleteCandidates) {
+                    AutoCompleteCandidate cmdCandidate = (AutoCompleteCandidate) cmdCandidate0;
+                    if (cmdCandidate != null) {
+                        String value = cmdCandidate.getValue();
+                        if (!StringUtils.isBlank(value)) {
+                            String display = cmdCandidate.getDisplay();
+                            if (StringUtils.isBlank(display)) {
+                                display = value;
+                            }
+                            candidates.add(workspace.commandLine().createCandidate(value).setDisplay(display).build());
+                        }
+                    }
+                }
+            }
+            return candidates;
+        }
     }
 
 }

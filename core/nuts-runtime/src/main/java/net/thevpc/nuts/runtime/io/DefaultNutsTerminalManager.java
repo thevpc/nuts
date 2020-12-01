@@ -9,6 +9,8 @@ import net.thevpc.nuts.spi.NutsSessionTerminalBase;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import net.thevpc.nuts.spi.NutsTerminalBase;
 
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.logging.Level;
 
 public class DefaultNutsTerminalManager implements NutsTerminalManager {
@@ -99,6 +101,21 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
         return terminalMetrics;
     }
 
+
+    @Override
+    public NutsSessionTerminal createTerminal(InputStream in, PrintStream out, PrintStream err, NutsSession session) {
+        NutsSessionTerminal t = createTerminal(session);
+        if(in!=null){
+            t.setIn(in);
+        }
+        if(out!=null){
+            t.setOut(out);
+        }
+        if(err!=null){
+            t.setErr(err);
+        }
+        return t;
+    }
 
     @Override
     public NutsSessionTerminal createTerminal(NutsSession session) {
