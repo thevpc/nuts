@@ -188,9 +188,9 @@ public class DocusaurusCtrl {
     private void runCommand(Path workFolder, boolean yes,String... cmd) {
         NutsSession s=appContext.getSession().copy();
         if(yes){
-            s=s.confirm(NutsConfirmationMode.YES);
+            s=s.setConfirm(NutsConfirmationMode.YES);
         }else{
-            s=s.confirm(NutsConfirmationMode.ERROR);
+            s=s.setConfirm(NutsConfirmationMode.ERROR);
         }
         appContext.getWorkspace().exec().addCommand(cmd).setDirectory(workFolder.toString())
                 .setSession(s)

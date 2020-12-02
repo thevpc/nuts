@@ -14,7 +14,6 @@
     <orderEntry type="library" name="Maven: net.vpc.app.nuts:nuts:0.7.2" level="project" />
     <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-md-docusaurus-preprocessor:1.0.0" level="project" />
     <orderEntry type="module" module-name="nuts" />
-    <orderEntry type="module" module-name="thevpc-common-docusaurus" />
     <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-md-docusaurus:1.1.0" level="project" />
     <orderEntry type="module" module-name="thevpc-common-ljson" />
     <orderEntry type="library" name="Maven: org.hjson:hjson:3.0.0" level="project" />

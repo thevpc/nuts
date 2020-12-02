@@ -418,7 +418,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                             dws.getInstalledRepository().deploy()
                                                     .setId(foundDefinition.getId())
                                                     .setDescriptor(foundDefinition.getDescriptor())
-                                                    .setSession(session.copy().yes())
+                                                    .setSession(session.copy().setConfirm(NutsConfirmationMode.YES))
                                                     //.setFetchMode(mode)
                                                     .setContent(content.getPath())
                                                     .run();
@@ -501,7 +501,8 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             for (NutsDependency nutsDependency : d) {
                 if (dependencyFilter == null || dependencyFilter.acceptDependency(null, nutsDependency, session)) {
                     NutsDefinition def2 = ws.search()
-                            .addId(nutsDependency.toId()).setSession(session.copy().setSilent().setProperty("monitor-allowed", false)).setEffective(true)
+                            .addId(nutsDependency.toId()).setSession(session.copy().setTrace(false)
+                                    .setProperty("monitor-allowed", false)).setEffective(true)
                             .setContent(shouldIncludeContent(this))
                             .setLatest(true).getResultDefinitions().first();
                     if (def2 != null) {

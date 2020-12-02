@@ -220,7 +220,7 @@ public class NdiMain extends NutsApplication {
         Path workspaceLocation = ws.locations().getWorkspaceLocation();
         if (cmdLine.isExecMode()) {
             if (forceAll) {
-                context.getSession().yes();
+                context.getSession().setConfirm(NutsConfirmationMode.YES);
             }
             SystemNdi ndi = createNdi(context);
             NutsWorkspaceConfigManager config = ws.config();
@@ -281,7 +281,7 @@ public class NdiMain extends NutsApplication {
         Path workspaceLocation = ws.locations().getWorkspaceLocation();
         if (cmdLine.isExecMode()) {
             if (forceAll) {
-                context.getSession().yes();
+                context.getSession().setConfirm(NutsConfirmationMode.YES);
             }
             SystemNdi ndi = createNdi(context);
             NutsWorkspaceConfigManager config = ws.config();
@@ -354,7 +354,7 @@ public class NdiMain extends NutsApplication {
             companions.add("net.thevpc.nuts.toolbox:ndi");
             companions.addAll(context.getWorkspace().companionIds().stream().map(NutsId::getShortName).collect(Collectors.toList()));
             args.addAll(companions);
-            context.getSession().yes();
+            context.getSession().setConfirm(NutsConfirmationMode.YES);
             run(context.getSession(), args.toArray(new String[0]));
         }
     }

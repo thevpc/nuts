@@ -102,7 +102,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             NutsDefinition fetched = null;
             if (nid.getVersion().isBlank()) {
                 fetched = context.getWorkspace().search()
-                        .setSession(context.getSession().copy().setSilent())
+                        .setSession(context.getSession().copy().setTrace(false))
                         .addId(options.getId()).setLatest(true).getResultDefinitions().required();
                 nid = fetched.getId().getShortNameId();
                 //nutsId=fetched.getId().getLongNameId();
@@ -319,7 +319,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
         }
         NutsDefinition f = context.getWorkspace().search()
-                .setSession(context.getSession().copy().setSilent())
+                .setSession(context.getSession().copy().setTrace(false))
                 .addId(apiId).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
         Path script=null;
         if (preferredName != null && preferredName.length() > 0) {

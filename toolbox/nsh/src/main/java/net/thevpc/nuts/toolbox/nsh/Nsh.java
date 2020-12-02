@@ -63,7 +63,7 @@ public class Nsh extends NutsApplication {
         Set<String> reinstalled = new TreeSet<>();
         Set<String> firstInstalled = new TreeSet<>();
         NutsSession sessionCopy = applicationContext.getSession().copy();
-        sessionCopy.setSilent();
+        sessionCopy.setTrace(false);
         for (JShellBuiltin command : commands) {
             if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
                 //avoid recursive definition!
@@ -74,7 +74,7 @@ public class Nsh extends NutsApplication {
                                 .setOwner(applicationContext.getAppId())
                                 .setHelpCommand(nshIdStr, "-c", "help", "--code", command.getName()),
                         new NutsAddOptions()
-                                .setSession(sessionCopy.yes(true/*force*/).setSilent())
+                                .setSession(sessionCopy.setConfirm(NutsConfirmationMode.YES).setTrace(false))
                 )) {
                     reinstalled.add(command.getName());
                 } else {

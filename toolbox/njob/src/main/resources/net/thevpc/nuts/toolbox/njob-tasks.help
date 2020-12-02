@@ -1,35 +1,43 @@
-==njob== {{tasks}} manipulate tasks
+```sh njob tasks``` manipulate tasks
 
-==njob== {{tasks|t}} {{add|a}} [options] <job-name>
-    {{on}} <<start-date>>
-    {{at}} <<start-time>>
-    {{for}} <<project>>
-    {{obs}} <<observations>>
+```sh
+njob tasks|t add|a [<options>] <job-name>
+```
+    on <start-date>
+    at <start-time>
+    for <project>
+    obs <observations>
 
     add new job
 
-==njob== {{tasks|t}} {{remove|rm}} <job-id> ...
+```sh
+njob tasks|t remove|rm <job-id> ...
+```
     remove tasks
 
-==njob== {{tasks|j}} {{show|s}} <job-id> ...
+```sh
+njob tasks|j show|s <job-id> ...
+```
     show job details
 
 
-==njob== {{tasks|j}} {{list|l}} [options]
+```sh
+njob tasks|j list|l [<options>]
+```
     list tasks.
 
-##OPTIONS:##
+##) OPTIONS:
 
-    {{-w}}=<n> last <n> weeks
-    {{-m}}=<n> last <n> months
-    {{-l}}=<n> last <n> tasks
-    {{-u|--unit}}=<unit-name> show duration in <unit-name> (h,d,mn,s,... are valid unit names)
-    {{-g|--group-by}}=p|project group by project name
-    {{-g|--group-by}}=n|name group by job name
-    {{-g|--group-by}}=s|summary show one row summary
-    -p=<s-expr>      filter by project name /../ is used for regexps, '*' is supported in non regexp.
-    -n=<s-expr>      filter by job name /../ is used for regexps, '*' is supported in non regexp.
-    -c=<s-expr>      filter by customer name /../ is used for regexps, '*' is supported in non regexp.
-    -C=<s-expr>      filter by company name /../ is used for regexps, '*' is supported in non regexp.
-    -d=<t-expr>      filter by duration. can start with '<' and other operators
-    -t=<t-expr>      filter by start date. can start with '<' and other operators. accept periods as well.
+    ```sh -w=<n>  ``` : last <n> weeks
+    ```sh -m=<n>  ``` : last <n> months
+    ```sh -l=<n>  ``` : last <n> tasks
+    ```sh -u|--unit=<unit-name>  ``` : show duration in <unit-name> (h,d,mn,s,... are valid unit names)
+    ```sh -g|--group-by=p|project ```  : group by project name
+    ```sh -g|--group-by=n|name  ``` : group by job name
+    ```sh -g|--group-by=s|summary ``` : show one row summary
+    ```sh -p=<s-expr> ```     : filter by project name /../ is used for regexps, '*' is supported in non regexp.
+    ```sh -n=<s-expr> ```     : filter by job name /../ is used for regexps, '*' is supported in non regexp.
+    ```sh -c=<s-expr> ```     : filter by customer name /../ is used for regexps, '*' is supported in non regexp.
+    ```sh -C=<s-expr> ```     : filter by company name /../ is used for regexps, '*' is supported in non regexp.
+    ```sh -d=<t-expr> ```     : filter by duration. can start with '<' and other operators
+    ```sh -t=<t-expr> ```     : filter by start date. can start with '<' and other operators. accept periods as well.

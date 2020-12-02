@@ -139,7 +139,7 @@ public class DerbyService {
     public Set<String> findVersions() {
         NutsWorkspace ws = appContext.getWorkspace();
         NutsId java = appContext.getWorkspace().env().getPlatform();
-        List<String> all = ws.search().setSession(appContext.getSession().copy().setSilent()).addId("org.apache.derby:derbynet").setDistinct(true)
+        List<String> all = ws.search().setSession(appContext.getSession().copy().setTrace(false)).addId("org.apache.derby:derbynet").setDistinct(true)
                 .setIdFilter(
                         (java.getVersion().compareTo("1.9") < 0) ? ws.version().filter().byValue("[,10.15.1.3[").to(NutsIdFilter.class) :
                                 null)
@@ -161,11 +161,11 @@ public class DerbyService {
         String currentDerbyVersion = options.derbyVersion;
         if (currentDerbyVersion == null) {
             NutsId java = appContext.getWorkspace().env().getPlatform();
-            NutsId best = ws.search().setSession(appContext.getSession().copy().setSilent()).addId("org.apache.derby:derbynet").setDistinct(true).setLatest(true)
+            NutsId best = ws.search().setSession(appContext.getSession().copy().setTrace(false)).addId("org.apache.derby:derbynet").setDistinct(true).setLatest(true)
                     .setIdFilter(
                             (java.getVersion().compareTo("1.9") < 0) ? ws.version().filter().byValue("[,10.15.1.3[").to(NutsIdFilter.class) :
                                     null)
-                    .setSession(appContext.getSession().copy().setSilent())
+                    .setSession(appContext.getSession().copy().setTrace(false))
                     .getResultIds().singleton();
             currentDerbyVersion = best.getVersion().toString();
         }

@@ -13,6 +13,8 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
     private String message;
     private Object[] messageParameters;
+    private String cancelMessage;
+    private Object[] cancelMessageParameters;
     private Object[] acceptedValues;
     private String hintMessage;
     private Object[] hintMessageParameters;
@@ -85,11 +87,19 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                     return (T) Boolean.FALSE;
                 }
                 case ERROR: {
-                    ByteArrayPrintStream os = new ByteArrayPrintStream();
-                    PrintStream os2 = ws.io().term().getTerminalFormat().prepare(os);
-                    os2.printf(message, this.getMessageParameters());
-                    os2.flush();
-                    throw new NutsUserCancelException(ws, "Cancelled : " + os.toString());
+                    if(cancelMessage!=null){
+                        ByteArrayPrintStream os = new ByteArrayPrintStream();
+                        PrintStream os2 = ws.io().term().getTerminalFormat().prepare(os);
+                        os2.printf(message, this.getCancelMessage());
+                        os2.flush();
+                        throw new NutsUserCancelException(ws, os.toString());
+                    }else {
+                        ByteArrayPrintStream os = new ByteArrayPrintStream();
+                        PrintStream os2 = ws.io().term().getTerminalFormat().prepare(os);
+                        os2.printf(message, this.getCancelMessageParameters());
+                        os2.flush();
+                        throw new NutsUserCancelException(ws, "cancelled : " + os.toString());
+                    }
                 }
             }
         }
@@ -464,4 +474,25 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         return this.validator;
     }
 
+    @Override
+    public String getCancelMessage() {
+        return cancelMessage;
+    }
+
+    @Override
+    public Object[] getCancelMessageParameters() {
+        return cancelMessageParameters;
+    }
+
+    @Override
+    public NutsQuestion<T> setCancelMessage(String message, Object... params) {
+        if(message==null){
+            this.cancelMessage=null;
+            this.cancelMessageParameters=null;
+        }else{
+            this.cancelMessage=message;
+            this.cancelMessageParameters=params==null?new Object[0] : params;
+        }
+        return this;
+    }
 }

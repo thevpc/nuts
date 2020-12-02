@@ -128,7 +128,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                         "#\n" +
                         "NUTS_VERSION='" + ws.getApiVersion() + "'\n" +
                         "NUTS_JAR='" + ws.search()
-                        .setSession(context.getSession().copy().setSilent())
+                        .setSession(context.getSession().copy().setTrace(false))
                         .addId(ws.getApiId()).getResultPaths().required() +
                         "'\n" +
                         "NUTS_WORKSPACE='" + ws.locations().getWorkspaceLocation().toString() + "'\n" +

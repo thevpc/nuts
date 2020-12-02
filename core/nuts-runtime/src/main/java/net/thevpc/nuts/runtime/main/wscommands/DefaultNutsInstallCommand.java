@@ -373,10 +373,13 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             printList(out, "###installed###", "####set as default####", list.ids(x -> x.doSwitchVersion && x.isAlreadyInstalled()));
             printList(out, "###installed###", "########ignored########", list.ids(x -> x.ignored));
         }
-        if (!list.ids(x -> !x.ignored).isEmpty() && !ws.io().term().getTerminal().ask().forBoolean("should we proceed?")
+        List<NutsId> nonIgnored = list.ids(x -> !x.ignored);
+        if (!nonIgnored.isEmpty() && !ws.io().term().getTerminal().ask().forBoolean("should we proceed?")
                 .defaultValue(true)
-                .setSession(session).getBooleanValue()) {
-            throw new NutsUserCancelException(ws,"installation cancelled");
+                .setSession(session)
+                .setCancelMessage("installation cancelled : %s ", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")))
+                .getBooleanValue()) {
+            throw new NutsUserCancelException(ws,"installation cancelled: "+ nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")));
         }
 //        List<String> cmdArgs = new ArrayList<>(Arrays.asList(this.getArgs()));
 //        if (session.isForce()) {

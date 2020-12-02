@@ -73,6 +73,7 @@ final class CoreNutsArgumentsParser {
                 .setCommandName("nuts")
                 .setExpandSimpleOptions(true)
                 .registerSpecialSimpleOption("-version");
+        boolean explicitConfirm=false;
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
 
@@ -409,6 +410,20 @@ final class CoreNutsArgumentsParser {
                         }
                         break;
                     }
+                    case "--switch": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            options.setSwitchWorkspace(a.getBooleanValue(true));
+                        }
+                        break;
+                    }
+                    case "--no-switch": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            options.setSwitchWorkspace(!a.getBooleanValue(true));
+                        }
+                        break;
+                    }
 
                     //**********************************
                     //*
@@ -498,7 +513,9 @@ final class CoreNutsArgumentsParser {
                         if (enabled && a.getBooleanValue()) {
                             options.setTerminalMode(NutsTerminalMode.FILTERED);
                             options.setProgressOptions("none");
-                            options.setConfirm(NutsConfirmationMode.ERROR);
+                            if(!explicitConfirm) {
+                                options.setConfirm(NutsConfirmationMode.ERROR);
+                            }
                             options.setTrace(false);
                             options.setDebug(false);
                             options.setGui(false);
@@ -685,6 +702,7 @@ final class CoreNutsArgumentsParser {
                     case "-y": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
+                            explicitConfirm=true;
                             options.setConfirm(NutsConfirmationMode.YES);
                         }
                         break;
@@ -693,6 +711,7 @@ final class CoreNutsArgumentsParser {
                     case "-n": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
+                            explicitConfirm=true;
                             options.setConfirm(NutsConfirmationMode.NO);
                         }
                         break;
@@ -700,6 +719,7 @@ final class CoreNutsArgumentsParser {
                     case "--error": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
+                            explicitConfirm=true;
                             options.setConfirm(NutsConfirmationMode.ERROR);
                         }
                         break;
@@ -707,6 +727,7 @@ final class CoreNutsArgumentsParser {
                     case "--ask": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
+                            explicitConfirm=true;
                             options.setConfirm(NutsConfirmationMode.ASK);
                         }
                         break;
@@ -921,6 +942,28 @@ final class CoreNutsArgumentsParser {
                         }
                         break;
                     }
+                    case "--out-line-prefix": {
+                        a = cmdLine.nextString();
+                        if (enabled) {
+                            options.setOutLinePrefix(a.getStringValue());
+                        }
+                        break;
+                    }
+                    case "--err-line-prefix": {
+                        a = cmdLine.nextString();
+                        if (enabled) {
+                            options.setErrLinePrefix(a.getStringValue());
+                        }
+                        break;
+                    }
+                    case "--line-prefix": {
+                        a = cmdLine.nextString();
+                        if (enabled) {
+                            options.setOutLinePrefix(a.getStringValue());
+                            options.setErrLinePrefix(a.getStringValue());
+                        }
+                        break;
+                    }
                     case "-e":
                     case "--exec": {
                         a = cmdLine.nextBoolean();
@@ -949,6 +992,13 @@ final class CoreNutsArgumentsParser {
                             cmdLine.skipAll();
                         } else {
                             cmdLine.skipAll();
+                        }
+                        break;
+                    }
+                    case "--skip-errors": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled) {
+                            options.setSkipErrors(a.getBooleanValue());
                         }
                         break;
                     }

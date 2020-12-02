@@ -85,7 +85,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                         if (!id0.getLongName().equals(success.getId().getLongName())) {
                             success = success.builder().setId(id0).build();
                         }
-                        cache.deployDescriptor(success.getId(), success, WriteType.FORCE, session.copy().yes());
+                        cache.deployDescriptor(success.getId(), success, WriteType.FORCE, session.copy().setConfirm(NutsConfirmationMode.YES));
                     }
                     return SuccessFailResult.success(success);
                 } else {

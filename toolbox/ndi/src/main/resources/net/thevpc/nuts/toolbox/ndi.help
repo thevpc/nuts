@@ -1,67 +1,83 @@
-==ndi== (or ##nuts## desktop integration) is a portable desktop integration companion.
-==ndi== help creation of scripts and shortcut on the host operating system to facilitate usage of nuts command line tool.
-Only [[Linux]] operating systems si supported in the current version.
+ndi (or ##nuts## desktop integration) is a portable desktop integration companion.
+##ndi## help creation of scripts and shortcut on the host operating system to facilitate usage of nuts command line tool.
 
-##SYNOPSIS:##
-==ndi== {{in}}|{{install}} **<options>** <command> ...
-    install scripts/shortcuts for the given command so that it can be called directly by it\'s name
+#) SYNOPSIS
+```sh
+ndi in|install <options> <command> ...
+```
+    install scripts/shortcuts for the given command so that it can be called directly by it's name
 
-==ndi== {{un}}|{{uninstall}} **<options>** <command> ...
+```sh
+ndi un|uninstall <options> <command> ...
+```
     uninstall scripts/shortcuts for the given
 
-==ndi== {{sw}}|{{switch}} **<options>** ...
+```sh
+ndi sw|switch <options> ...
+```
     switch default nuts workspace and/or version.
-    on linux platforms, for example, ==ndi== will update ~/.bashrc to point to the given workspace and/or version.
-    a workspace can support multiple nuts-api versions and hence, ==ndi== {{switch}} can switch between those versions.
+    on linux platforms, for example, ```sh ndi``` will update ~/.bashrc to point to the given workspace and/or version.
+    a workspace can support multiple nuts-api versions and hence, ```sh ndi switch``` can switch between those versions.
 
-==ndi== {{ln}}|{{link}} **<options>** ...
+```sh
+ndi ln|link <options> ...
+```
     create a new script to link to an existing nuts workspace and/or version.
     the link created will run 'nuts' against the selected workspace and/or version.
 
 ##OPTIONS:##
-==ndi== {{in}}|{{install}} **<options>** <command> ...
+```sh
+ndi in|install <options> <command> ...
+```
     install scripts/shortcuts for the given command so that it can be called directly by it\'s name
- **--embedded** | **-b**
+``` sh  --embedded | -b ```
     enable embedded mode
- **--external** | **--spawn** | **-x**
+``` sh  --external | --spawn | -x ```
     enable spawn process mode
- **--user-cmd**
+``` sh  --user-cmd ```
     enable user external command mode
- **--root-cmd**
+``` sh  --root-cmd ```
     enable root external command mode
- **--exec-options** | **-X** <option>
+``` sh  --exec-options | -X <option> ```
     exec options
 
-==ndi== {{un}}|{{uninstall}} **<options>** <command> ...
+```sh
+ndi {{un}}|{{uninstall}} <options> <command> ...
+```
     uninstall scripts/shortcuts for the given
- **--embedded** | **-b**
+```sh --embedded | -b ```
     enable embedded mode
- **--external** | **--spawn** | **-x**
+```sh --external | --spawn | -x ```
     enable spawn process mode
- **--user-cmd**
+```sh --user-cmd ```
     enable user external command mode
- **--root-cmd**
+```sh --root-cmd ```
     enable root external command mode
- **--exec-options** | **-X** <option>
+```sh --exec-options | -X <option> ```
     exec options
 
-==ndi== {{sw}}|{{switch}} **<options>** [<workspace>] [<api>]
+```sh
+ndi sw|switch <options> [<workspace>] [<api>]
+```
     switch default nuts workspace and/or version.
-    on linux platforms, for example, ==ndi== will update ~/.bashrc to point to the given workspace and/or version.
-    a workspace can support multiple nuts-api versions and hence, ==ndi== {{switch}} can switch between those versions.
- **--workspace** | **-w**
+    on linux platforms, for example, ```sh ndi``` will update ~/.bashrc to point to the given workspace and/or version.
+    a workspace can support multiple nuts-api versions and hence, ```sh ndi switch``` can switch between those versions.
+```sh --workspace | -w ```
     target workspace location
- **--api** | **-a**
+```sh --api | -a ```
     nuts api version
 
-==ndi== {{ln}}|{{link}} **<options>** [<name>] [<workspace>] [<api>]
+```sh
+ndi ln|link <options> [<name>] [<workspace>] [<api>]
+```
+
     create a new script to link to an existing nuts workspace and/or version.
     the link created will run 'nuts' against the selected workspace and/or version.
     if
- **--name** | **-n**
+```sh  --name | -n ```
     script name pattern. can include '%v' to append version name
- **--workspace** | **-w**
+```sh  --workspace | -w ```
     target workspace location
- **--api** | **-a**
+```sh  --api | -a ```
     nuts api version
 

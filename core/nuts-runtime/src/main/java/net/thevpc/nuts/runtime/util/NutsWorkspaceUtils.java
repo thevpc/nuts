@@ -99,7 +99,7 @@ public class NutsWorkspaceUtils {
 
     public NutsSession validateSilentSession(NutsSession session) {
         if (session == null) {
-            session = ws.createSession().setSilent();
+            session = ws.createSession().setTrace(false);
             return session;
         } else {
             return CoreNutsUtils.silent(session);

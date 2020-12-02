@@ -60,6 +60,10 @@ public interface NutsQuestion<T> extends NutsConfigurable {
 
     Object[] getMessageParameters();
 
+    String getCancelMessage();
+
+    Object[] getCancelMessageParameters();
+
     NutsQuestion<T> message(String message, Object... messageParameters);
 
     NutsQuestion<T> setMessage(String message, Object... messageParameters);
@@ -117,6 +121,8 @@ public interface NutsQuestion<T> extends NutsConfigurable {
     T getValue();
 
     NutsSession getSession();
+
+    NutsQuestion<T> setCancelMessage(String message,Object... params);
 
     NutsQuestion<T> setSession(NutsSession session);
 

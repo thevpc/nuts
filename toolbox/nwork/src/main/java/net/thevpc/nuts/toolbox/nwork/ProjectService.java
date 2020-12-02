@@ -183,7 +183,7 @@ public class ProjectService {
                                     .setReadOnly(true)
                                     .setWorkspace(a.getNutsWorkspace())
                     );
-                    s = ws2.createSession().setSilent();
+                    s = ws2.createSession().setTrace(false);
                     s.copyFrom(context.getSession());
                 } else {
                     ws2 = context.getWorkspace();
@@ -234,13 +234,13 @@ public class ProjectService {
                                             .setReadOnly(true)
                                             .setWorkspace(a.getNutsWorkspace())
                             );
-                            s = ws2.createSession().setSilent();
+                            s = ws2.createSession().setTrace(false);
                             s.copyFrom(context.getSession());
                         } else {
                             ws2 = context.getWorkspace();
                             s = context.getSession();
                         }
-                        s.setSilent();
+                        s.setTrace(false);
                         List<NutsId> found = ws2.search()
                                 .addId(g.getGroupId() + ":" + g.getArtifactId())
                                 .addRepository(nutsRepository)

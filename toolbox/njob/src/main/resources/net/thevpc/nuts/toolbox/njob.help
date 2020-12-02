@@ -1,8 +1,9 @@
-==njob== is a developer companion
+njob is a productivity tool to follow you tasks
 
-##SYNOPSIS:##
-
-==njob== {{tasks}} | {{jobs}} | {{projects}} | {{summary}}...
+##) SYNOPSIS
+```sh
+njob tasks | jobs | projects | summary...
+```
     manage tasks, jobs, projects
 
 

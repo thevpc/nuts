@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.main.commands;
 
+import net.thevpc.nuts.NutsConfirmationMode;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 
@@ -24,7 +25,9 @@ public class DefaultNutsUpdateInternalExecutable extends DefaultInternalNutsExec
             showDefaultHelp();
             return;
         }
-        getSession().getWorkspace().update().setSession(getSession().setAsk(true).setTrace(true)).configure(false, args).update();
+        getSession().getWorkspace().update().setSession(getSession()
+                .setConfirm(NutsConfirmationMode.ASK)
+                .setTrace(true)).configure(false, args).update();
 
     }
 

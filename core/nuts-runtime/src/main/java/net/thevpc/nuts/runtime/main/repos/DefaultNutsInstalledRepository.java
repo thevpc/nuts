@@ -505,7 +505,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                     .setId(def.getId())
                     .setContent(def.getPath())
                     //.setFetchMode(NutsFetchMode.LOCAL)
-                    .setSession(session.copy().yes())
+                    .setSession(session.copy().setConfirm(NutsConfirmationMode.YES))
                     .setDescriptor(def.getDescriptor())
                     .run();
         }

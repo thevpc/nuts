@@ -68,6 +68,7 @@ final class PrivateNutsArgumentsParser {
                 .setCommandName("nuts")
                 .setExpandSimpleOptions(true)
                 .registerSpecialSimpleOption("-version");
+        boolean explicitConfirm=false;
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
 
@@ -507,7 +508,9 @@ final class PrivateNutsArgumentsParser {
                         if (enabled && a.getBooleanValue()) {
                             options.setTerminalMode(NutsTerminalMode.FILTERED);
                             options.setProgressOptions("none");
-                            options.setConfirm(NutsConfirmationMode.ERROR);
+                            if(!explicitConfirm) {
+                                options.setConfirm(NutsConfirmationMode.ERROR);
+                            }
                             options.setTrace(false);
                             options.setDebug(false);
                             options.setGui(false);
@@ -694,6 +697,7 @@ final class PrivateNutsArgumentsParser {
                     case "-y": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
+                            explicitConfirm=true;
                             options.setConfirm(NutsConfirmationMode.YES);
                         }
                         break;
@@ -702,6 +706,7 @@ final class PrivateNutsArgumentsParser {
                     case "-n": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
+                            explicitConfirm=true;
                             options.setConfirm(NutsConfirmationMode.NO);
                         }
                         break;
@@ -709,6 +714,7 @@ final class PrivateNutsArgumentsParser {
                     case "--error": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
+                            explicitConfirm=true;
                             options.setConfirm(NutsConfirmationMode.ERROR);
                         }
                         break;
@@ -716,6 +722,7 @@ final class PrivateNutsArgumentsParser {
                     case "--ask": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
+                            explicitConfirm=true;
                             options.setConfirm(NutsConfirmationMode.ASK);
                         }
                         break;

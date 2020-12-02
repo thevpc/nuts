@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-runtime</artifactId>
-    <version>0.8.1.1</version><!--published 0.8.0.0-->
+    <version>0.8.1.0</version><!--published 0.8.0.0-->
     <packaging>jar</packaging>
     <name>net.thevpc.nuts.nuts-runtime</name>
     <url>https://github.com/thevpc/nuts</url>

@@ -113,12 +113,12 @@ public interface NutsSession extends NutsConfigurable {
      */
     NutsSession setTrace(boolean trace);
 
-    /**
-     * equivalent to {@code setTrace(false)}
-     *
-     * @return {@code this} instance
-     */
-    NutsSession setSilent();
+//    /**
+//     * equivalent to {@code setTrace(false)}
+//     *
+//     * @return {@code this} instance
+//     */
+//    NutsSession setSilent();
 
     /**
      * true if force flag is armed. some operations may require user
@@ -140,47 +140,47 @@ public interface NutsSession extends NutsConfigurable {
      * @return {@code this} instance
      */
     NutsSession setForce(boolean enable);
+//
+//    /**
+//     * equivalent to {@code setAsk(true)}
+//     *
+//     * @return {@code this} instance
+//     */
+//    NutsSession ask();
 
-    /**
-     * equivalent to {@code setAsk(true)}
-     *
-     * @return {@code this} instance
-     */
-    NutsSession ask();
+//    /**
+//     * equivalent to {@code setConfirm(enable?ASK:null)}
+//     *
+//     * @param enable new value
+//     * @return {@code this} instance
+//     */
+//    NutsSession setAsk(boolean enable);
 
-    /**
-     * equivalent to {@code setConfirm(enable?ASK:null)}
-     *
-     * @param enable new value
-     * @return {@code this} instance
-     */
-    NutsSession setAsk(boolean enable);
-
-    /**
-     * change YES flag value. some operations may require user confirmation
-     * before performing critical operations such as overriding existing values,
-     * deleting sensitive information ; in such cases, arming yes flag will
-     * provide an implicit confirmation.
-     *
-     * @param enable if true yes flag is armed
-     * @return {@code this} instance
-     */
-    NutsSession setYes(boolean enable);
-
-    /**
-     * equivalent to {@code setYes(true)}
-     *
-     * @return {@code this} instance
-     */
-    NutsSession yes();
-
-    /**
-     * equivalent to {@code setYes(enable)}
-     *
-     * @param enable new value
-     * @return {@code this} instance
-     */
-    NutsSession yes(boolean enable);
+//    /**
+//     * change YES flag value. some operations may require user confirmation
+//     * before performing critical operations such as overriding existing values,
+//     * deleting sensitive information ; in such cases, arming yes flag will
+//     * provide an implicit confirmation.
+//     *
+//     * @param enable if true yes flag is armed
+//     * @return {@code this} instance
+//     */
+//    NutsSession setYes(boolean enable);
+//
+//    /**
+//     * equivalent to {@code setYes(true)}
+//     *
+//     * @return {@code this} instance
+//     */
+//    NutsSession yes();
+//
+//    /**
+//     * equivalent to {@code setYes(enable)}
+//     *
+//     * @param enable new value
+//     * @return {@code this} instance
+//     */
+//    NutsSession yes(boolean enable);
 
     /**
      * true if YES is armed.
@@ -190,31 +190,31 @@ public interface NutsSession extends NutsConfigurable {
      */
     boolean isYes();
 
-    /**
-     * change no flag value. some operations may require user confirmation
-     * before performing critical operations such as overriding existing values,
-     * deleting sensitive information ; in such cases, arming no flag will
-     * provide an implicit negative confirmation.
-     *
-     * @param enable if true NO flag is armed
-     * @return {@code this} instance
-     */
-    NutsSession setNo(boolean enable);
+//    /**
+//     * change no flag value. some operations may require user confirmation
+//     * before performing critical operations such as overriding existing values,
+//     * deleting sensitive information ; in such cases, arming no flag will
+//     * provide an implicit negative confirmation.
+//     *
+//     * @param enable if true NO flag is armed
+//     * @return {@code this} instance
+//     */
+//    NutsSession setNo(boolean enable);
 
-    /**
-     * equivalent to {@code setNo(true)}
-     *
-     * @return {@code this} instance
-     */
-    NutsSession no();
-
-    /**
-     * equivalent to {@code setNo(enable)}
-     *
-     * @param enable new value
-     * @return {@code this} instance
-     */
-    NutsSession no(boolean enable);
+//    /**
+//     * equivalent to {@code setNo(true)}
+//     *
+//     * @return {@code this} instance
+//     */
+//    NutsSession no();
+//
+//    /**
+//     * equivalent to {@code setNo(enable)}
+//     *
+//     * @param enable new value
+//     * @return {@code this} instance
+//     */
+//    NutsSession no(boolean enable);
 
     /**
      * true if NO is armed.
@@ -318,13 +318,13 @@ public interface NutsSession extends NutsConfigurable {
      */
     NutsSession copyFrom(NutsSession other);
 
-    /**
-     * change fetch strategy
-     *
-     * @param mode new strategy or null
-     * @return {@code this} instance
-     */
-    NutsSession fetchStrategy(NutsFetchStrategy mode);
+//    /**
+//     * change fetch strategy
+//     *
+//     * @param mode new strategy or null
+//     * @return {@code this} instance
+//     */
+//    NutsSession fetchStrategy(NutsFetchStrategy mode);
 
     /**
      * change fetch strategy
@@ -334,26 +334,26 @@ public interface NutsSession extends NutsConfigurable {
      */
     NutsSession setFetchStrategy(NutsFetchStrategy mode);
 
-    /**
-     * change fetch strategy to REMOTE
-     *
-     * @return {@code this} instance
-     */
-    NutsSession fetchRemote();
+//    /**
+//     * change fetch strategy to REMOTE
+//     *
+//     * @return {@code this} instance
+//     */
+//    NutsSession fetchRemote();
 
-    /**
-     * change fetch strategy to OFFLINE
-     *
-     * @return {@code this} instance
-     */
-    NutsSession fetchOffline();
+//    /**
+//     * change fetch strategy to OFFLINE
+//     *
+//     * @return {@code this} instance
+//     */
+//    NutsSession fetchOffline();
 
-    /**
-     * change fetch strategy to ONLINE
-     *
-     * @return {@code this} instance
-     */
-    NutsSession fetchOnline();
+//    /**
+//     * change fetch strategy to ONLINE
+//     *
+//     * @return {@code this} instance
+//     */
+//    NutsSession fetchOnline();
 
 //    /**
 //     * change fetch strategy to INSTALLED
@@ -361,12 +361,12 @@ public interface NutsSession extends NutsConfigurable {
 //     */
 //    NutsSession fetchInstalled();
 
-    /**
-     * change fetch strategy to ANYWHERE
-     *
-     * @return {@code this} instance
-     */
-    NutsSession fetchAnyWhere();
+//    /**
+//     * change fetch strategy to ANYWHERE
+//     *
+//     * @return {@code this} instance
+//     */
+//    NutsSession fetchAnyWhere();
 
     /**
      * return current fetch strategy.
@@ -473,14 +473,6 @@ public interface NutsSession extends NutsConfigurable {
      * @return confirmation mode
      */
     NutsConfirmationMode getConfirm();
-
-    /**
-     * set confirm mode.
-     *
-     * @param confirm confirm type.
-     * @return {@code this} instance
-     */
-    NutsSession confirm(NutsConfirmationMode confirm);
 
     /**
      * set confirm mode.

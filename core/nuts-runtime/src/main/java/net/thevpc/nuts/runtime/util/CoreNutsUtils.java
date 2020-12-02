@@ -797,7 +797,7 @@ public class CoreNutsUtils {
     }
 
     public static NutsSession silent(NutsSession session) {
-        return session.isTrace() ? session.copy().setSilent() : session;
+        return session.isTrace() ? session.copy().setTrace(false) : session;
     }
 
     public static String tracePlainNutsDefinition(NutsWorkspace ws, NutsDefinition id) {

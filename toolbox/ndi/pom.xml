@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>ndi</artifactId>
-    <version>0.8.1.1</version><!--published 0.8.0.0-->
+    <version>0.8.1.0</version><!--published 0.8.0.0-->
     <name>net.thevpc.nuts.toolbox.ndi</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>

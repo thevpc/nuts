@@ -209,7 +209,7 @@ public class WindowsNdi extends BaseSystemNdi {
                 "@ECHO OFF" + CRLF +
                 "SET \"NUTS_VERSION=" + ws.getApiVersion() + "\"" + CRLF +
                 "SET \"NUTS_JAR=" + ws.search()
-                .setSession(context.getSession().copy().setSilent())
+                .setSession(context.getSession().copy().setTrace(false))
                 .addId(ws.getApiId()).getResultPaths().required() +
                 "\"" + CRLF +
                 "SET \"NUTS_WORKSPACE=" + ws.locations().getWorkspaceLocation().toString() + "\"" + CRLF +

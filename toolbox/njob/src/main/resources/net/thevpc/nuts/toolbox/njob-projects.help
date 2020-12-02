@@ -1,35 +1,45 @@
-==njob== is a developer companion
+njob is a developer companion
 
 ##SYNOPSIS:##
 
-==njob== {{add project|ap}}  [options] <project-name>
-    {{on}} <<start-date>>
-    {{at}} <<start-time>>
-    {{for}} <<customer>>
-    ==via== <<company>>
-    {{week}}=<week-day> week start day
-    {{obs}} <<observations>>
+```sh
+njob add project|ap  [options] <project-name>
+```
+    ```sh on <start-date> ```
+    ```sh at <start-time> ```
+    ```sh for <customer> ```
+    ```sh via <company> ```
+    ```sh week=<week-day>  ``` week start day
+    ```sh obs <observations> ```
 
     add new project
 
-==njob== {{update|up}} <project-name> [options]
-    {{on}} <<start-date>>
-    {{at}} <<start-time>>
-    {{for}} <<customer>>
-    ==via== <<company>>
-    {{week}}=<week-day> week start day
-    {{obs}} <<observations>>
+```sh
+njob update|up <project-name> [options]
+```
+    ```sh on <start-date> ```
+    ```sh at <start-time> ```
+    ```sh for <customer> ```
+    ```sh via <company> ```
+    ```sh week=<week-day>  ``` week start day
+    ```sh obs <observations> ```
 
     update project
 
-==njob== {{remove project|rmp}} <project-name> ...
+```sh
+njob remove project|rmp <project-name> ...
+```
     remove projects
 
-==njob== {{show project|dp}} <project-name> ...
+```sh
+njob show project|dp <project-name> ...
+```
     show project details
 
-==njob== {{list projects|lp}} [options]
-    -n=<s-expr>      filter by project name /../ is used for regexps, '*' is supported in non regexp.
+```sh
+njob list projects|lp [options]
+```
+    ```sh -n=<s-expr> ```     filter by project name /../ is used for regexps, '*' is supported in non regexp.
 
 
 

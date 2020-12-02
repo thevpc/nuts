@@ -119,10 +119,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         }
     }
 
-    @Override
-    public NutsSession fetchStrategy(NutsFetchStrategy mode) {
-        return setFetchStrategy(mode);
-    }
 
     @Override
     public NutsSession setFetchStrategy(NutsFetchStrategy mode) {
@@ -130,30 +126,34 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return this;
     }
 
-    @Override
-    public NutsSession fetchRemote() {
-        return setFetchStrategy(NutsFetchStrategy.REMOTE);
-    }
-
-    @Override
-    public NutsSession fetchOffline() {
-        return setFetchStrategy(NutsFetchStrategy.OFFLINE);
-    }
-
-    @Override
-    public NutsSession fetchOnline() {
-        return setFetchStrategy(NutsFetchStrategy.ONLINE);
-    }
-
+//    @Override
+//    public NutsSession fetchStrategy(NutsFetchStrategy mode) {
+//        return setFetchStrategy(mode);
+//    }
+//    @Override
+//    public NutsSession fetchRemote() {
+//        return setFetchStrategy(NutsFetchStrategy.REMOTE);
+//    }
+//
+//    @Override
+//    public NutsSession fetchOffline() {
+//        return setFetchStrategy(NutsFetchStrategy.OFFLINE);
+//    }
+//
+//    @Override
+//    public NutsSession fetchOnline() {
+//        return setFetchStrategy(NutsFetchStrategy.ONLINE);
+//    }
+//
 //    @Override
 //    public NutsSession fetchInstalled() {
 //        return setFetchStrategy(NutsFetchStrategy.INSTALLED);
 //    }
-
-    @Override
-    public NutsSession fetchAnyWhere() {
-        return setFetchStrategy(NutsFetchStrategy.ANYWHERE);
-    }
+//
+//    @Override
+//    public NutsSession fetchAnyWhere() {
+//        return setFetchStrategy(NutsFetchStrategy.ANYWHERE);
+//    }
 
     @Override
     public NutsFetchStrategy getFetchStrategy() {
@@ -448,14 +448,14 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "-y":
                 case "--yes": {
                     if (enabled) {
-                        this.confirm(NutsConfirmationMode.YES);
+                        this.setConfirm(NutsConfirmationMode.YES);
                     }
                     cmdLine.skip();
                     return true;
                 }
                 case "--ask": {
                     if (enabled) {
-                        this.confirm(NutsConfirmationMode.ASK);
+                        this.setConfirm(NutsConfirmationMode.ASK);
                     }
                     cmdLine.skip();
                     return true;
@@ -463,14 +463,14 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "-n":
                 case "--no": {
                     if (enabled) {
-                        this.confirm(NutsConfirmationMode.NO);
+                        this.setConfirm(NutsConfirmationMode.NO);
                     }
                     cmdLine.skip();
                     return true;
                 }
                 case "--error": {
                     if (enabled) {
-                        this.confirm(NutsConfirmationMode.ERROR);
+                        this.setConfirm(NutsConfirmationMode.ERROR);
                     }
                     cmdLine.skip();
                     return true;
@@ -637,10 +637,10 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
 
-    @Override
-    public NutsSession setSilent() {
-        return setTrace(false);
-    }
+//    @Override
+//    public NutsSession setSilent() {
+//        return setTrace(false);
+//    }
 
     @Override
     public boolean isForce() {
@@ -668,46 +668,46 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return getConfirm() == NutsConfirmationMode.ASK;
     }
 
-    @Override
-    public NutsSession setAsk(boolean ask) {
-        return setConfirm(ask ? NutsConfirmationMode.ASK : null);
-    }
+//    @Override
+//    public NutsSession setAsk(boolean ask) {
+//        return setConfirm(ask ? NutsConfirmationMode.ASK : null);
+//    }
 
 
-    @Override
-    public NutsSession setYes(boolean value) {
-        return setConfirm(value ? NutsConfirmationMode.YES : null);
-    }
-
-    @Override
-    public NutsSession yes(boolean value) {
-        return setYes(value);
-    }
-
-    @Override
-    public NutsSession setNo(boolean value) {
-        return setConfirm(value ? NutsConfirmationMode.NO : null);
-    }
-
-    @Override
-    public NutsSession no(boolean value) {
-        return setNo(value);
-    }
-
-    @Override
-    public NutsSession no() {
-        return no(true);
-    }
-
-    @Override
-    public NutsSession yes() {
-        return yes(true);
-    }
-
-    @Override
-    public NutsSession ask() {
-        return setAsk(true);
-    }
+//    @Override
+//    public NutsSession setYes(boolean value) {
+//        return setConfirm(value ? NutsConfirmationMode.YES : null);
+//    }
+//
+//    @Override
+//    public NutsSession yes(boolean value) {
+//        return setYes(value);
+//    }
+//
+//    @Override
+//    public NutsSession setNo(boolean value) {
+//        return setConfirm(value ? NutsConfirmationMode.NO : null);
+//    }
+//
+//    @Override
+//    public NutsSession no(boolean value) {
+//        return setNo(value);
+//    }
+//
+//    @Override
+//    public NutsSession no() {
+//        return no(true);
+//    }
+//
+//    @Override
+//    public NutsSession yes() {
+//        return yes(true);
+//    }
+//
+//    @Override
+//    public NutsSession ask() {
+//        return setAsk(true);
+//    }
 
     @Override
     public NutsConfirmationMode getConfirm() {
@@ -719,11 +719,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             return c;
         }
         return NutsConfirmationMode.ASK;
-    }
-
-    @Override
-    public NutsSession confirm(NutsConfirmationMode confirm) {
-        return setConfirm(confirm);
     }
 
     @Override

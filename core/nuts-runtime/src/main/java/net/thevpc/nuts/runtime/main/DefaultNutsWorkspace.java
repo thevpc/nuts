@@ -404,7 +404,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             NutsDeployRepositoryCommand desc = getInstalledRepository().deploy()
                     .setContent(bootClassWorldURL)
                     //.setFetchMode(NutsFetchMode.LOCAL)
-                    .setSession(session.copy().copy().yes())
+                    .setSession(session.copy().copy().setConfirm(NutsConfirmationMode.YES))
                     .run();
             if (desc.getId().getLongNameId().equals(getApiId().getLongNameId())
                     || desc.getId().getLongNameId().equals(getRuntimeId().getLongNameId())) {
