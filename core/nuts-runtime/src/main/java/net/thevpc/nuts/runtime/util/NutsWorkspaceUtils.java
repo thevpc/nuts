@@ -501,7 +501,7 @@ public class NutsWorkspaceUtils {
             LOG.with().level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] {0}", new NutsString(pb.getFormattedCommandString(ws)));
         }
         if (showCommand || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
-            if (ws.io().term().getTerminalFormat().isFormatted(prepareTerminal.out())) {
+            if (ws.io().term().isFormatted(prepareTerminal.out())) {
                 prepareTerminal.out().print("#####[exec]##### ");
                 prepareTerminal.out().println(pb.getFormattedCommandString(ws));
             } else {

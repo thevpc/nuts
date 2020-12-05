@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.log;
 
 import net.thevpc.nuts.NutsIOManager;
-import net.thevpc.nuts.NutsTerminalFormat;
+import net.thevpc.nuts.NutsTerminalManager;
 import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.OutputStream;
@@ -38,7 +38,7 @@ public class NutsLogConsoleHandler extends StreamHandler {
             NutsLogRecord rr = (NutsLogRecord) record;
             NutsWorkspace ws = rr.getWorkspace();
             NutsIOManager io = ws.io();
-            NutsTerminalFormat tf = io==null?null:io.term().getTerminalFormat();
+            NutsTerminalManager tf = io==null?null:io.term();
             if (tf!=null && tf.isFormatted(out)) {
                 if(!rr.isFormatted()) {
                     record=((NutsLogRecord) record).escape();

@@ -2,20 +2,20 @@ package net.thevpc.nuts.runtime.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.DefaultNutsWorkspaceEvent;
+import net.thevpc.nuts.runtime.format.text.ExtendedFormatAware;
 import net.thevpc.nuts.runtime.log.NutsLogVerb;
 import net.thevpc.nuts.runtime.terminals.*;
 import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsSessionTerminalBase;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import net.thevpc.nuts.spi.NutsTerminalBase;
 
-import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.logging.Level;
 
 public class DefaultNutsTerminalManager implements NutsTerminalManager {
     private NutsWorkspace ws;
-    private NutsTerminalFormat terminalMetrics = new DefaultNutsTerminalFormat();
     private NutsSessionTerminal terminal;
     private NutsSystemTerminal systemTerminal;
     private WorkspaceSystemTerminalAdapter workspaceSystemTerminalAdapter;
@@ -24,7 +24,6 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
     public DefaultNutsTerminalManager(NutsWorkspace ws) {
         this.ws = ws;
         this.LOG = ws.log().of(DefaultNutsTerminalManager.class);
-        NutsWorkspaceUtils.of(ws).setWorkspace(terminalMetrics);
         workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(ws);
     }
 
@@ -35,11 +34,6 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
             throw new NutsExtensionNotFoundException(ws, NutsSystemTerminalBase.class, "SystemTerminalBase");
         }
         return NutsSystemTerminal_of_NutsSystemTerminalBase(termb);
-    }
-
-    @Override
-    public NutsSystemTerminal systemTerminal() {
-        return getSystemTerminal();
     }
 
     @Override
@@ -75,11 +69,6 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
     }
 
     @Override
-    public NutsSessionTerminal terminal() {
-        return getTerminal();
-    }
-
-    @Override
     public NutsSessionTerminal getTerminal() {
         return terminal;
     }
@@ -95,12 +84,6 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
         this.terminal = terminal;
         return this;
     }
-
-    @Override
-    public NutsTerminalFormat getTerminalFormat() {
-        return terminalMetrics;
-    }
-
 
     @Override
     public NutsSessionTerminal createTerminal(InputStream in, PrintStream out, PrintStream err, NutsSession session) {
@@ -195,6 +178,34 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
             }
         }
         return this;
+    }
+
+    @Override
+    public PrintStream prepare(PrintStream out) {
+        return CoreIOUtils.toPrintStream(out,ws);
+    }
+
+    @Override
+    public PrintWriter prepare(PrintWriter out) {
+        return CoreIOUtils.toPrintWriter(out,ws);
+    }
+
+    @Override
+    public boolean isFormatted(OutputStream out) {
+        if (out instanceof ExtendedFormatAware) {
+            NutsTerminalModeOp op = ((ExtendedFormatAware) out).getModeOp();
+            return op!=NutsTerminalModeOp.NOP;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isFormatted(Writer out) {
+        if (out instanceof ExtendedFormatAware) {
+            NutsTerminalModeOp op = ((ExtendedFormatAware) out).getModeOp();
+            return op!=NutsTerminalModeOp.NOP;
+        }
+        return false;
     }
 
     public NutsWorkspace getWorkspace() {

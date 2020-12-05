@@ -29,25 +29,9 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import net.thevpc.nuts.spi.NutsTerminalBase;
 
-import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.*;
 
 public interface NutsTerminalManager {
-
-    /**
-     * return terminal format that handles metrics and format/escape methods
-     *
-     * @return terminal format that handles metrics and format/escape methods
-     */
-    NutsTerminalFormat getTerminalFormat();
-
-
-    /**
-     * return terminal format that handles metrics and format/escape methods.
-     *
-     * @return terminal format that handles metrics and format/escape methods
-     */
-    NutsSystemTerminal systemTerminal();
 
     /**
      * return workspace system terminal.
@@ -67,13 +51,6 @@ public interface NutsTerminalManager {
      * @return {@code this} instance
      */
     NutsTerminalManager setSystemTerminal(NutsSystemTerminalBase terminal, NutsSession session);
-
-    /**
-     * return workspace default terminal
-     *
-     * @return workspace default terminal
-     */
-    NutsSessionTerminal terminal();
 
     /**
      * return workspace default terminal
@@ -118,4 +95,42 @@ public interface NutsTerminalManager {
      * @return new terminal
      */
     NutsSessionTerminal createTerminal(NutsTerminalBase parent, NutsSession session);
+
+    /**
+     * prepare PrintStream to handle NutsString aware format pattern. If the instance
+     * already supports Nuts specific pattern it will be returned unmodified.
+     *
+     * @param out PrintStream to check
+     * @return NutsString pattern format capable PrintStream
+     */
+    PrintStream prepare(PrintStream out);
+
+    /**
+     * prepare PrintWriter to handle %N (escape) format pattern. If the instance
+     * already supports Nuts specific pattern it will be returned unmodified.
+     *
+     * @param out PrintWriter to check
+     * @return %N pattern format capable PrintWriter
+     */
+    PrintWriter prepare(PrintWriter out);
+
+    /**
+     * true if the stream is not null and could be resolved as Formatted Output
+     * Stream. If False is returned this does no mean necessarily that the
+     * stream is not formatted.
+     *
+     * @param out stream to check
+     * @return true if formatted
+     */
+    boolean isFormatted(OutputStream out);
+
+    /**
+     * true if the stream is not null and could be resolved as Formatted Output
+     * Stream. If False is returned this does no mean necessarily that the
+     * stream is not formatted.
+     *
+     * @param out stream to check
+     * @return true if formatted
+     */
+    boolean isFormatted(Writer out);
 }

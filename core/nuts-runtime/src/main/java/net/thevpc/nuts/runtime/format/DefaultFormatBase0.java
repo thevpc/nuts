@@ -50,7 +50,7 @@ public abstract class DefaultFormatBase0<T> implements NutsConfigurable {
         if (out == null) {
             out = getValidSession().getTerminal().getOut();
         }
-        return getWorkspace().io().term().getTerminalFormat().prepare(out);
+        return getWorkspace().io().term().prepare(out);
     }
 
     public PrintStream getValidPrintStream() {

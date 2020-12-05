@@ -43,7 +43,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
         if (out == null) {
             out = getValidSession().getTerminal().getOut();
         }
-        return getWorkspace().io().term().getTerminalFormat().prepare(out);
+        return getWorkspace().io().term().prepare(out);
     }
 
     @Override

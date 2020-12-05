@@ -157,7 +157,7 @@ public class CoreIOUtils {
 
     public static void clearMonitor(PrintStream out, NutsWorkspace ws) {
         NutsTerminalMode terminalMode = ws.config().options().getTerminalMode();
-        if (ws.io().term().getTerminalFormat().isFormatted(out)
+        if (ws.io().term().isFormatted(out)
                 &&
                 (
                         terminalMode == null
@@ -2076,7 +2076,7 @@ public class CoreIOUtils {
         }
 
         public void dryExec() {
-            if (ws.io().term().getTerminalFormat().isFormatted(out)) {
+            if (ws.io().term().isFormatted(out)) {
                 out.print("[dry] ==[exec]== ");
                 out.println(pb.getFormattedCommandString(ws));
             } else {

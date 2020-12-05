@@ -136,7 +136,7 @@ public class CatCommand extends SimpleNshBuiltin {
         } else {
             out = new PrintStream(os);
         }
-        out = context.getWorkspace().io().term().getTerminalFormat().prepare(out);
+        out = context.getWorkspace().io().term().prepare(out);
         try {
             //do not close!!
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
