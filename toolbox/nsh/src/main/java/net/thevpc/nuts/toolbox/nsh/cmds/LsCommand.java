@@ -33,10 +33,7 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.common.util.BytesSizeFormat;
 
@@ -75,7 +72,7 @@ public class LsCommand extends SimpleNshBuiltin {
 
         boolean error = true;
         String workingDir;
-        Map<String, String> result;
+        Map<String, String> result=new HashMap<>();
     }
 
     public static class ResultGroup {
@@ -181,14 +178,18 @@ public class LsCommand extends SimpleNshBuiltin {
         }
         context.setPrintlnOutObject(success);
         context.setPrintlnErrObject(errors);
-        if (exitCode != 0) {
-            throw new NutsExecutionException(context.getWorkspace(), exitCode);
-        }
+        context.setExitCode(exitCode);
+//        if (exitCode != 0) {
+//            throw new NutsExecutionException(context.getWorkspace(), exitCode);
+//        }
     }
 
     @Override
-    protected void printPlainObject(SimpleNshCommandContext context) {
-        PrintStream out = context.out();
+    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
+        if(session==null){
+            session=context.getSession();
+        }
+        PrintStream out = context.isErr()?session.err():session.out();
         Options options = context.getOptions();
         if (context.getResult() instanceof ResultSuccess) {
             ResultSuccess s = context.getResult();
@@ -210,7 +211,7 @@ public class LsCommand extends SimpleNshBuiltin {
                 out.printf("######%s###### : ```error %s```%n", e.getKey(), e.getValue());
             }
         } else {
-            super.printPlainObject(context);
+            super.printPlainObject(context, session);
         }
     }
 

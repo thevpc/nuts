@@ -62,7 +62,7 @@ public class NutsErrorHandler implements JShellErrorHandler {
 
     @Override
     public void onErrorImpl(String message, Throwable th, JShellContext context) {
-        ((NutsShellContext) context).getSession().getTerminal().err().printf("```error %s```\n", message);
+        ((NutsShellContext) context).getSession().getTerminal().err().printf("####### %s #######\n", message);
     }
     
 }

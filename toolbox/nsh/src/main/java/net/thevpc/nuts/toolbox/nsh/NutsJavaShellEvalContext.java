@@ -68,6 +68,9 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
     public NutsJavaShellEvalContext(NutsJavaShell shell, String[] args, Node root, Node parent, NutsShellContext parentContext, NutsWorkspace workspace, NutsSession session, JShellVariables vars) {
         super(shell);
         this.shellContext = parentContext;//.copy();
+        if(shellContext!=null) {
+            setCwd(shellContext.getCwd());
+        }
         this.workspace = workspace == null ? parentContext.getWorkspace() : workspace;
         if (session == null) {
             if (this.workspace != null) {

@@ -250,15 +250,16 @@ public class NutsJavaShell extends JShell {
             if (!(getWorkspace().commandLine().create(args).setAutoComplete(appContext.getAutoComplete())).isExecMode()) {
                 return;
             }
-            executeFile(getStartupScript(), getRootContext(), true);
+            JShellContext context = getRootContext();
+            executeFile(getStartupScript(), context, true);
             if (boot_nonOptions.size() > 0) {
                 String c = boot_nonOptions.get(0);
                 if (!boot_command) {
                     boot_nonOptions.remove(0);
-                    getRootContext().setArgs(boot_nonOptions.toArray(new String[0]));
-                    executeFile(c, getRootContext(), false);
+                    context.setArgs(boot_nonOptions.toArray(new String[0]));
+                    executeFile(c, context, false);
                 } else {
-                    executeCommand(boot_nonOptions.toArray(new String[0]));
+                    executeCommand(boot_nonOptions.toArray(new String[0]),context);
                 }
                 return;
             }
@@ -267,9 +268,9 @@ public class NutsJavaShell extends JShell {
                 appContext.getWorkspace().io().term().getSystemTerminal()
                         .setAutoCompleteResolver(new MshAutoCompleter());
                 try {
-                    executeInteractive(getRootContext().out());
+                    executeInteractive(context.out(),context);
                 } finally {
-                    executeFile(getShutdownScript(), getRootContext(), true);
+                    executeFile(getShutdownScript(), context, true);
                 }
             }
         } catch (NutsExecutionException ex) {

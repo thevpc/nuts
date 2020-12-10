@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.jshell.JShell;
@@ -120,7 +121,7 @@ public class AliasCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printPlainObject(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
         List<ResultItem> r = context.getResult();
         for (ResultItem resultItem : r) {
             if (resultItem.value == null) {

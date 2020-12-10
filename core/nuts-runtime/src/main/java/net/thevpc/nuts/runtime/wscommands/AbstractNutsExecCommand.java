@@ -3,10 +3,10 @@ package net.thevpc.nuts.runtime.wscommands;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.main.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.util.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.util.io.ProcessBuilder2;
 import net.thevpc.nuts.runtime.format.DefaultNutsExecCommandFormat;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.*;
@@ -250,17 +250,17 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         }
         PrintStream o = getOut();
         if (o instanceof SPrintStream) {
-            return ((SPrintStream) o).getStringBuffer();
+            return o.toString();
         }
-        throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call grabOutputString");
+        throw new NutsIllegalArgumentException(ws, "no buffer was configured; should call grabOutputString");
     }
 
     public String getOutputString0() {
         PrintStream o = getOut();
         if (o instanceof SPrintStream) {
-            return ((SPrintStream) o).getStringBuffer();
+            return o.toString();
         }
-        throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call grabOutputString");
+        throw new NutsIllegalArgumentException(ws, "no buffer was configured; should call grabOutputString");
     }
 
     @Override
@@ -273,9 +273,9 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         }
         PrintStream o = getErr();
         if (o instanceof SPrintStream) {
-            return ((SPrintStream) o).getStringBuffer();
+            return o.toString();
         }
-        throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call grabErrorString");
+        throw new NutsIllegalArgumentException(ws, "no buffer was configured; should call grabErrorString");
     }
 
 //    @Override
@@ -506,22 +506,10 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         return err instanceof SPrintStream;
     }
 
-    protected static class SPrintStream extends PrintStream {
-
-        private ByteArrayOutputStream out;
+    protected static class SPrintStream extends ByteArrayPrintStream {
 
         public SPrintStream() {
-            this(new ByteArrayOutputStream());
-        }
 
-        public SPrintStream(ByteArrayOutputStream out1) {
-            super(out1);
-            this.out = out1;
-        }
-
-        public String getStringBuffer() {
-            flush();
-            return new String(out.toByteArray());
         }
     }
 

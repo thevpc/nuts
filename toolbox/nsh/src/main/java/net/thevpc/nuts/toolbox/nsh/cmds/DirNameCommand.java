@@ -29,6 +29,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.NutsCommandLine;
@@ -115,12 +116,15 @@ public class DirNameCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printPlainObject(SimpleNshBuiltin.SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
         List<String> results = context.getResult();
         Options options = context.getOptions();
-        for (String name : results) {
+        for (int i = 0; i < results.size(); i++) {
+            String name = results.get(i);
+            if(i>0) {
+                context.out().print(options.sep);
+            }
             context.out().print(name);
-            context.out().print(options.sep);
         }
     }
 }

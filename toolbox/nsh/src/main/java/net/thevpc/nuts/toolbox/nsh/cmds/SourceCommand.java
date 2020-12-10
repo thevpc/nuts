@@ -60,7 +60,7 @@ public class SourceCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         final NutsArgument a = commandLine.peek();
         if (!a.isOption()) {
-            options.files.add(a.getString());
+            options.files.add(commandLine.next().getString());
             return true;
         }
         return false;
@@ -72,6 +72,7 @@ public class SourceCommand extends SimpleNshBuiltin {
         final String[] paths = context.getExecutionContext().getGlobalContext().vars().get("PATH", "").split(":|;");
         List<String> goodFiles = new ArrayList<>();
         for (String file : options.files) {
+            boolean found=false;
             if (!file.contains("/")) {
                 for (String path : paths) {
                     if (new File(path, file).isFile()) {
@@ -84,16 +85,20 @@ public class SourceCommand extends SimpleNshBuiltin {
                         file = new File(context.getRootContext().getCwd(), file).getPath();
                     }
                 }
-                if (!new File(file).isFile()) {
-                    throw new NutsExecutionException(context.getWorkspace(), "File not found " + file, 1);
+                if (new File(file).isFile()) {
+                    found=true;
+                    goodFiles.add(file);
                 }
+            }
+            if(!found){
                 goodFiles.add(file);
             }
         }
-        JShellContext c2 = context.getShell().createContext(context.getRootContext());
-        c2.setArgs(context.getArgs());
-        int a = 0;
+//        JShellContext c2 = context.getShell().createContext(context.getExecutionContext().getGlobalContext());
+//        c2.setArgs(context.getArgs());
+        JShellContext c2 = context.getExecutionContext().getGlobalContext();
         for (String goodFile : goodFiles) {
+            c2.setArgs(context.getArgs());
             context.getShell().executeFile(goodFile, c2, false);
         }
     }

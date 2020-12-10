@@ -28,6 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.jshell.JShell;
@@ -134,7 +135,7 @@ public class TypeCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printPlainObject(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
         List<ResultItem> result = context.getResult();
         for (ResultItem resultItem : result) {
             context.out().println(resultItem.message);

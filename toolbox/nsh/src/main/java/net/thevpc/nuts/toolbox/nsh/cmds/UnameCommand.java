@@ -25,16 +25,12 @@
 */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsSingleton;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.common.strings.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import net.thevpc.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -118,7 +114,7 @@ public class UnameCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printPlainObject(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
         Result result = context.getResult();
         List<String> sb = new ArrayList<>();
         if (result.arch != null) {

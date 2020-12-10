@@ -176,7 +176,7 @@ public class WhoamiCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printPlainObject(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
         Options options = context.getOptions();
         Result result = context.getResult();
         context.out().printf("%s\n", result.login);

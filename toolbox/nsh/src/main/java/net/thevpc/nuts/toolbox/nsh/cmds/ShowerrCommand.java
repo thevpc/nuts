@@ -26,6 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsSingleton;
 import net.thevpc.jshell.JShellResult;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
@@ -74,7 +75,7 @@ public class ShowerrCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printPlainObject(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
         JShellResult r = context.getResult();
         if (r.getCode() == 0) {
             context.out().println("##Last command ended successfully with no errors.##");

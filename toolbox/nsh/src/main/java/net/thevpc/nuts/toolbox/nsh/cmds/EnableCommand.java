@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.jshell.JShellBuiltin;
@@ -134,7 +135,7 @@ public class EnableCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printPlainObject(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
         if (context.getResult() instanceof Map) {
             for (Map.Entry<String, String> entry : ((Map<String, String>) context.getResult()).entrySet()) {
                 context.out().println(entry.getValue() + " " + entry.getKey());

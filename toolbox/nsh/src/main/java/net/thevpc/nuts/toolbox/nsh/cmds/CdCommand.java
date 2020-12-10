@@ -55,7 +55,7 @@ public class CdCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         if (commandLine.peek().isNonOption()) {
             if (options.dirname == null) {
-                options.dirname = commandLine.peek().getString();
+                options.dirname = commandLine.next().getString();
                 return true;
             } else {
                 commandLine.unexpectedArgument();
@@ -71,6 +71,6 @@ public class CdCommand extends SimpleNshBuiltin {
             options.dirname = System.getProperty("user.home");
         }
         context.getRootContext().setCwd(options.dirname);
-        context.setPrintlnOutObject("");
+        context.setPrintOutObject("");
     }
 }

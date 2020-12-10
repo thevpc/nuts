@@ -26,6 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsExecutionException;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsSingleton;
 import net.thevpc.jshell.AutoCompleteCandidate;
 
@@ -104,7 +105,7 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void printPlainObject(SimpleNshCommandContext context) {
+    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
         Properties p = context.getResult();
         for (String o : new TreeSet<String>((Set) p.keySet())) {
             if (o.startsWith("-")) {

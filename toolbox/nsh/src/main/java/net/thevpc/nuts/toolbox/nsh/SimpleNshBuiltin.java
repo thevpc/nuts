@@ -26,13 +26,13 @@
 */
 package net.thevpc.nuts.toolbox.nsh;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsObjectFormat;
+
+import net.thevpc.nuts.*;
 
 /**
  *
@@ -126,8 +126,11 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             return (T) options;
         }
 
+        public boolean isErr() {
+            return err;
+        }
         public PrintStream out() {
-            return err ? context.err() : context.out();
+            return isErr() ? context.err() : context.out();
         }
 
         public InputStream in() {
@@ -144,12 +147,19 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         }
 
         public void printObject(Object any) {
-            NutsObjectFormat objstream = context.getSession().formatObject(any);
+            printObject(any,null);
+        }
+
+        public void printObject(Object any,NutsSession session) {
+            if(session==null){
+                session=context.getSession();
+            }
+            NutsObjectFormat objstream = session.formatObject(any);
             if (err) {
                 if (errObjectNewLine) {
-                    objstream.println(context.getSession().err());
+                    objstream.println(session.err());
                 } else {
-                    objstream.print(context.getSession().err());
+                    objstream.print(session.err());
                 }
             } else {
                 if (outObjectNewLine) {
@@ -225,35 +235,57 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         }
         prepareOptions(commandLine, context2);
         createResult(commandLine, context2);
-        final Object outObject = context2.getOutObject();
-        if (outObject != null) {
-            printObject(context2.setErr(false));
-        }
-        final Object errObject = context2.getErrObject();
-        if (errObject != null) {
-            printObject(context2.setErr(true));
+        if(context2.getExitCode()==0){
+            final Object outObject = context2.getOutObject();
+            if (outObject != null) {
+                printObject(context2.setErr(false), null);
+            }
+            final Object errObject = context2.getErrObject();
+            if (errObject != null) {
+                printObject(context2.setErr(true), null);
+            }
+        }else{
+            NutsSession session = context.getSession().copy();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            PrintStream printStream = new PrintStream(bos);
+            session.setTerminal(session.getWorkspace().io().term().createTerminal(
+                    new ByteArrayInputStream(new byte[0]),
+                    printStream,
+                    printStream,
+                    session
+            ));
+            final Object errObject = context2.getErrObject();
+            if (errObject != null) {
+                if(context.getSession().isPlainOut()){
+                    printObject(context2.setErr(true), session);
+                }
+            }
+            printStream.flush();
+            throw new NutsExecutionException(context.getWorkspace(),bos.toString(), context2.getExitCode());
         }
     }
 
-    protected void printObject(SimpleNshCommandContext context) {
-        NutsSession session = context.getExecutionContext().getSession();
+    protected void printObject(SimpleNshCommandContext context, NutsSession session) {
+        if(session==null) {
+            session = context.getExecutionContext().getSession();
+        }
         if (session.isIterableTrace()) {
             //already processed
         } else {
             switch (session.getOutputFormat()) {
                 case PLAIN: {
-                    printPlainObject(context);
+                    printPlainObject(context, session);
                     break;
                 }
                 default: {
-                    context.printObject(context.getResult());
+                    context.printObject(context.getResult(),session);
                 }
             }
         }
     }
 
-    protected void printPlainObject(SimpleNshCommandContext context) {
-        context.printObject(context.getResult());
+    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
+        context.printObject(context.getResult(),session);
     }
 
 }
