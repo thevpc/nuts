@@ -1,11 +1,11 @@
-##nuts## {{which}} \[**-options**\]... \[\<command\>\] ...
+```sh nuts## which [<-options>]... [<command>] ...```
       resolves commands type
 
 #!include</net/thevpc/nuts/includes/standard-command.help>
 
-##EXAMPLES:##
-        ##nuts## {{which}} **--help**
+##) EXAMPLES:
+```sh  nuts which --help```
             shows this help and exit
        
-        ##nuts## {{which}} netbeans-launcher exec
+```sh nuts which netbeans-launcher exec```
             show netbeans-launcher and exec types. The first is a artifact the latter is an internal command

@@ -1,15 +1,16 @@
 push a ##nuts## to remote repository
+    push a ##nuts## to remote repository
 
-##SYNOPSIS:##
-==push== id
+##) SYNOPSIS:
+```sh push <id>```
 
 pushes a ##nuts## to remote server
 
 #!include</net/thevpc/nuts/includes/standard-command.help>
 
-##EXAMPLES:##
+##) EXAMPLES:
 
-##push## my-group:my-name
+```sh push my-group:my-name```
    pushes the ##nuts##
 
 

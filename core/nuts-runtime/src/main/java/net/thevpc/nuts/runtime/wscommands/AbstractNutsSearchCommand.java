@@ -678,7 +678,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             allURLs[i] = nutsDefinitions.get(i).getURL();
             allIds[i] = nutsDefinitions.get(i).getId();
         }
-        return ((DefaultNutsWorkspaceExtensionManager) ws.extensions()).getNutsURLClassLoader(allURLs, allIds,parent);
+        return ((DefaultNutsWorkspaceExtensionManager) ws.extensions()).getNutsURLClassLoader(
+                "SEARCH-"+UUID.randomUUID().toString(),
+                allURLs, allIds,parent);
     }
 
     @Override

@@ -1,25 +1,26 @@
-##nuts## [[version]]
-##nuts## **--version**
-##nuts## **-version**
-##nuts## **-v**
       show version
 
-##SYNOPSIS:##
-##nuts## ##version## \[**<options>**\]
+##) SYNOPSIS:
+```sh
+nuts version [<-options>]
+nuts --version
+nuts -version
+nuts -v
+```
 
-##OPTIONS:##
- **-a** | "**--all**
+##) OPTIONS:
+```sh  -a | --all```
       include all versions (api, runtime, java and operating system)
 
- "**--add** <key>\=<value>
-      include key\=value pair in the result
+```sh --add <key>=<value> ```
+      include key=value pair in the result
 
 #!include</net/thevpc/nuts/includes/standard-command.help>
 
-##EXAMPLES:##
-        ##nuts## {{version}} **-a**
+##) EXAMPLES
+```sh  nuts version -a```
             shows all versions
        
-        ##nuts## **-v**
+```sh nuts -v```
             show version
        

@@ -382,13 +382,10 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
                     this.applyPush(new AntiQuote3ParserStep(c, spreadLines,ws));
                     break;
                 }
-//            case '(':
-//            case '[':
-//            case '{':
-//            case '<': {
-//                this.applyPush(new StyledParserStep(c,spreadLines,false));
-//                break;
-//            }
+                case 'ø':{
+                    //ignore...
+                    break;
+                }
                 case '\n':
                 case '\r': {
                     this.applyPush(new PlainParserStep(c, spreadLines, true,ws,state()));

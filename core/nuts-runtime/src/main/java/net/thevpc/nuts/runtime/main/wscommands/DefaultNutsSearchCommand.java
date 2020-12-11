@@ -499,7 +499,9 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             all[i] = nutsDefinitions.get(i).getURL();
             allIds[i] = nutsDefinitions.get(i).getId();
         }
-        return ((DefaultNutsWorkspaceExtensionManager) ws.extensions()).getNutsURLClassLoader(all, allIds, parent);
+        return ((DefaultNutsWorkspaceExtensionManager) ws.extensions()).getNutsURLClassLoader(
+                "SEARCH-"+UUID.randomUUID().toString(),
+                all, allIds, parent);
     }
 
     private NutsResultList<NutsDefinition> getResultDefinitionsBase(boolean print, boolean sort, boolean content, boolean effective) {

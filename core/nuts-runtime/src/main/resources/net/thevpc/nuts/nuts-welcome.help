@@ -1,9 +1,9 @@
 #!include</net/thevpc/nuts/includes/standard-header.help>
 ~~location~~:${workspace}
 
-##)SYNOPSIS
+##) SYNOPSIS:
 ```sh
-nuts [<options>]... <command> <args> ...
+nuts [<-options>]... <command> <args> ...
 ```
 For Help, type ```sh nuts help```
 

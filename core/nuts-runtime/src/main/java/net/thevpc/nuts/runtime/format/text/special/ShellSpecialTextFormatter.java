@@ -46,19 +46,18 @@ public class ShellSpecialTextFormatter implements SpecialTextFormatter {
     }
 
 
-
-    public NutsTextNode next(AheadReader reader,boolean exitOnClosedCurlBrace,boolean exitOnClosedPar,boolean exitOnDblQuote,boolean exitOnAntiQuote) {
+    public NutsTextNode next(AheadReader reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote) {
         boolean lineStart = true;
         List<NutsTextNode> all = new ArrayList<>();
         NutsTextNodeFactory factory = ws.formats().text().factory();
-        boolean exit=false;
+        boolean exit = false;
         while (!exit && reader.hasNext()) {
             switch (reader.peekChar()) {
                 case '}': {
                     lineStart = false;
-                    if(exitOnClosedCurlBrace){
-                        exit=true;
-                    }else{
+                    if (exitOnClosedCurlBrace) {
+                        exit = true;
+                    } else {
                         all.add(factory.styled(
                                 reader.readChars(1), NutsTextNodeStyle.SEPARATOR1
                         ));
@@ -67,9 +66,9 @@ public class ShellSpecialTextFormatter implements SpecialTextFormatter {
                 }
                 case ')': {
                     lineStart = false;
-                    if(exitOnClosedPar){
-                        exit=true;
-                    }else{
+                    if (exitOnClosedPar) {
+                        exit = true;
+                    } else {
                         all.add(factory.styled(
                                 reader.readChars(1), NutsTextNodeStyle.SEPARATOR1
                         ));
@@ -200,16 +199,16 @@ public class ShellSpecialTextFormatter implements SpecialTextFormatter {
                 }
                 case '`': {
                     lineStart = false;
-                    if(exitOnAntiQuote){
-                        exit=true;
-                    }else{
-                        List<NutsTextNode> a=new ArrayList<>();
-                        a.add(factory.styled(reader.readChars(1),NutsTextNodeStyle.STRING1));
-                        a.add(next(reader,false,false,false,true));
-                        if(reader.hasNext() && reader.peekChar()=='`'){
-                            a.add(factory.styled(reader.readChars(1),NutsTextNodeStyle.STRING1));
-                        }else{
-                            exit=true;
+                    if (exitOnAntiQuote) {
+                        exit = true;
+                    } else {
+                        List<NutsTextNode> a = new ArrayList<>();
+                        a.add(factory.styled(reader.readChars(1), NutsTextNodeStyle.STRING1));
+                        a.add(next(reader, false, false, false, true));
+                        if (reader.hasNext() && reader.peekChar() == '`') {
+                            a.add(factory.styled(reader.readChars(1), NutsTextNodeStyle.STRING1));
+                        } else {
+                            exit = true;
                         }
                         all.add(factory.list(a));
                     }
@@ -391,7 +390,7 @@ public class ShellSpecialTextFormatter implements SpecialTextFormatter {
                     } else {
                         all.add(factory.plain(sb.toString()));
                     }
-                    lineStart=false;
+                    lineStart = false;
                     break;
                 }
             }
@@ -405,20 +404,20 @@ public class ShellSpecialTextFormatter implements SpecialTextFormatter {
             char c = reader.peekChar(1);
             switch (c) {
                 case '(': {
-                    List<NutsTextNode> a=new ArrayList<>();
-                    a.add(factory.styled(reader.readChars(1),NutsTextNodeStyle.SEPARATOR1));
-                    a.add(next(reader,false,true,false,false));
-                    if(reader.hasNext() && reader.peekChar()==')'){
-                        a.add(factory.styled(reader.readChars(1),NutsTextNodeStyle.SEPARATOR1));
+                    List<NutsTextNode> a = new ArrayList<>();
+                    a.add(factory.styled(reader.readChars(1), NutsTextNodeStyle.SEPARATOR1));
+                    a.add(next(reader, false, true, false, false));
+                    if (reader.hasNext() && reader.peekChar() == ')') {
+                        a.add(factory.styled(reader.readChars(1), NutsTextNodeStyle.SEPARATOR1));
                     }
                     return factory.list(a);
                 }
                 case '{': {
-                    List<NutsTextNode> a=new ArrayList<>();
-                    a.add(factory.styled(reader.readChars(1),NutsTextNodeStyle.SEPARATOR1));
-                    a.add(next(reader,true,false,false,false));
-                    if(reader.hasNext() && reader.peekChar()==')'){
-                        a.add(factory.styled(reader.readChars(1),NutsTextNodeStyle.SEPARATOR1));
+                    List<NutsTextNode> a = new ArrayList<>();
+                    a.add(factory.styled(reader.readChars(1), NutsTextNodeStyle.SEPARATOR1));
+                    a.add(next(reader, true, false, false, false));
+                    if (reader.hasNext() && reader.peekChar() == ')') {
+                        a.add(factory.styled(reader.readChars(1), NutsTextNodeStyle.SEPARATOR1));
                     }
                     return factory.list(a);
                 }
@@ -456,11 +455,12 @@ public class ShellSpecialTextFormatter implements SpecialTextFormatter {
             return factory.styled(reader.readChars(1), NutsTextNodeStyle.STRING1);
         }
     }
+
     public NutsTextNode nextDoubleQuotes(AheadReader reader) {
         List<NutsTextNode> all = new ArrayList<>();
         NutsTextNodeFactory factory = ws.formats().text().factory();
-        boolean exit=false;
-        StringBuilder sb=new StringBuilder();
+        boolean exit = false;
+        StringBuilder sb = new StringBuilder();
         sb.append(reader.hasNext());
         while (!exit && reader.hasNext()) {
             switch (reader.peekChar()) {
@@ -470,28 +470,28 @@ public class ShellSpecialTextFormatter implements SpecialTextFormatter {
                 }
                 case '\"': {
                     sb.append(reader.readChars(1));
-                    exit=true;
+                    exit = true;
                     break;
                 }
                 case '$': {
-                    if(sb.length()>0){
-                        all.add(factory.styled(sb.toString(),NutsTextNodeStyle.STRING1));
+                    if (sb.length() > 0) {
+                        all.add(factory.styled(sb.toString(), NutsTextNodeStyle.STRING1));
                         sb.setLength(0);
                     }
                     all.add(nextDollar(reader));
                 }
                 case '`': {
-                    if(sb.length()>0){
-                        all.add(factory.styled(sb.toString(),NutsTextNodeStyle.STRING1));
+                    if (sb.length() > 0) {
+                        all.add(factory.styled(sb.toString(), NutsTextNodeStyle.STRING1));
                         sb.setLength(0);
                     }
-                    List<NutsTextNode> a=new ArrayList<>();
-                    a.add(factory.styled(reader.readChars(1),NutsTextNodeStyle.STRING1));
-                    a.add(next(reader,false,false,false,true));
-                    if(reader.hasNext() && reader.peekChar()=='`'){
-                        a.add(factory.styled(reader.readChars(1),NutsTextNodeStyle.STRING1));
-                    }else{
-                        exit=true;
+                    List<NutsTextNode> a = new ArrayList<>();
+                    a.add(factory.styled(reader.readChars(1), NutsTextNodeStyle.STRING1));
+                    a.add(next(reader, false, false, false, true));
+                    if (reader.hasNext() && reader.peekChar() == '`') {
+                        a.add(factory.styled(reader.readChars(1), NutsTextNodeStyle.STRING1));
+                    } else {
+                        exit = true;
                     }
                     all.add(factory.list(a));
                     break;
@@ -501,8 +501,8 @@ public class ShellSpecialTextFormatter implements SpecialTextFormatter {
                 }
             }
         }
-        if(sb.length()>0){
-            all.add(factory.styled(sb.toString(),NutsTextNodeStyle.STRING1));
+        if (sb.length() > 0) {
+            all.add(factory.styled(sb.toString(), NutsTextNodeStyle.STRING1));
             sb.setLength(0);
         }
         return factory.list(all);
@@ -517,22 +517,109 @@ public class ShellSpecialTextFormatter implements SpecialTextFormatter {
             if (!all.isEmpty()) {
                 all.add(factory.plain(" "));
             }
-            if (cmdName) {
-                if (u[i].startsWith("-") || u[i].startsWith("+")) {
-                    cmdName = false;
-                    all.addAll(Arrays.asList(argToNodes(u[i])));
-                } else if (i == 0) {
-                    all.add(factory.styled(u[i], NutsTextNodeStyle.KEYWORD1));
-                } else {
-                    cmdName = false;
-                    all.addAll(Arrays.asList(argToNodes(u[i])));
-                }
+            if (i == 0 & !u[i].startsWith("-") && !u[i].startsWith("+")) {
+                all.add(factory.styled(u[i], NutsTextNodeStyle.KEYWORD1));
+            } else {
+                all.addAll(Arrays.asList(argToNodes(u[i])));
             }
         }
         return factory.list(all);
     }
 
+    private boolean isSynopsysOption(String s2) {
+        return (
+                (s2.startsWith("--") && isSynopsysWord(s2.substring(2)))
+                        || (s2.startsWith("++") && isSynopsysWord(s2.substring(2)))
+                        || (s2.startsWith("-") && isSynopsysWord(s2.substring(1)))
+                        || (s2.startsWith("+") && isSynopsysWord(s2.substring(1)))
+                        || (s2.startsWith("--!") && isSynopsysWord(s2.substring(3)))
+                        || (s2.startsWith("++!") && isSynopsysWord(s2.substring(3)))
+                        || (s2.startsWith("-!") && isSynopsysWord(s2.substring(2)))
+                        || (s2.startsWith("+!") && isSynopsysWord(s2.substring(2)))
+                        || (s2.startsWith("--~") && isSynopsysWord(s2.substring(3)))
+                        || (s2.startsWith("++~") && isSynopsysWord(s2.substring(3)))
+                        || (s2.startsWith("-~") && isSynopsysWord(s2.substring(2)))
+                        || (s2.startsWith("+~") && isSynopsysWord(s2.substring(2)))
+        );
+    }
+
+    private boolean isSynopsysWord(String s) {
+        if (s.length() > 0) {
+            if (!Character.isAlphabetic(s.charAt(0))) {
+                return false;
+            }
+            if (!Character.isAlphabetic(s.charAt(0))) {
+                return false;
+            }
+            for (int i = 0; i < s.length(); i++) {
+                if (Character.isAlphabetic(s.charAt(i))) {
+                    //ok
+                } else if (s.charAt(i) == '-') {
+                    if (s.charAt(i - 1) == '-') {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return true;
+    }
+
+    private NutsTextNode[] arrNotNull(NutsTextNode... all) {
+        return Arrays.stream(all).filter(x -> x != null).toArray(NutsTextNode[]::new);
+    }
+
     private NutsTextNode[] argToNodes(String s) {
+        NutsTextNodeFactory factory = ws.formats().text().factory();
+        NutsTextNode threePoints = null;
+        if (s.endsWith("...")) {
+            threePoints = factory.styled("...", NutsTextNodeStyle.SEPARATOR2);
+            s = s.substring(0, s.length() - 3);
+        }
+        if (s.startsWith("[") && s.endsWith("]")
+                || (s.startsWith("<") && s.endsWith(">"))
+                || (s.startsWith("(") && s.endsWith(")"))
+        ) {
+            String start=String.valueOf(s.charAt(0));
+            String end=String.valueOf(s.charAt(s.length()-1));
+            String s2 = s.substring(1, s.length() - 1);
+            if (isSynopsysOption(s2)) {
+                return arrNotNull(
+                        factory.styled(start, NutsTextNodeStyle.SEPARATOR2),
+                        factory.styled(String.valueOf(s2), NutsTextNodeStyle.OPTION1),
+                        factory.styled(end, NutsTextNodeStyle.SEPARATOR2),
+                        threePoints
+                );
+            } else if (isSynopsysWord(s2)) {
+                return arrNotNull(
+                        factory.styled(start, NutsTextNodeStyle.SEPARATOR2),
+                        factory.plain(s2),
+                        factory.styled(end, NutsTextNodeStyle.SEPARATOR2)
+                        , threePoints);
+            }
+        }
+        if (s.startsWith("[<") && s.endsWith(">]")
+        ) {
+            String start=s.substring(0,2);
+            String end=s.substring(s.length()-2);
+            String s2 = s.substring(1, s.length() - 1);
+            if (isSynopsysOption(s2)) {
+                return arrNotNull(
+                        factory.styled(start, NutsTextNodeStyle.SEPARATOR2),
+                        factory.styled(s2, NutsTextNodeStyle.OPTION1),
+                        factory.styled(end, NutsTextNodeStyle.SEPARATOR2),
+                        threePoints
+                );
+            } else if (isSynopsysWord(s2)) {
+                return arrNotNull(
+                        factory.styled(start, NutsTextNodeStyle.SEPARATOR2),
+                        factory.plain(s2),
+                        factory.styled(end, NutsTextNodeStyle.SEPARATOR2)
+                        , threePoints);
+            }
+        }
         boolean option = false;
         if (s.startsWith("-") || s.startsWith("+")) {
             option = true;
@@ -542,30 +629,29 @@ public class ShellSpecialTextFormatter implements SpecialTextFormatter {
         if (x >= 0 && isCommonName(s.substring(0, x))) {
             eq = x;
         }
-        NutsTextNodeFactory factory = ws.formats().text().factory();
 
         if (eq != -1) {
             if (option) {
-                return new NutsTextNode[]{
+                return arrNotNull(
                         factory.styled(s.substring(0, x), NutsTextNodeStyle.OPTION1),
                         factory.styled(String.valueOf(s.charAt(eq)), NutsTextNodeStyle.SEPARATOR1),
                         factory.plain(s.substring(x + 1)),
-                };
+                        threePoints);
             }
-            return new NutsTextNode[]{
+            return arrNotNull(
                     factory.plain(s.substring(0, x)),
                     factory.styled(String.valueOf(s.charAt(eq)), NutsTextNodeStyle.SEPARATOR1),
                     factory.plain(s.substring(x + 1)),
-            };
+                    threePoints);
         } else {
             if (option) {
-                return new NutsTextNode[]{
-                        factory.styled(s, NutsTextNodeStyle.OPTION1),
-                };
+                return arrNotNull(
+                        factory.styled(s, NutsTextNodeStyle.OPTION1)
+                        , threePoints);
             }
-            return new NutsTextNode[]{
+            return arrNotNull(
                     factory.plain(s),
-            };
+                    threePoints);
         }
     }
 

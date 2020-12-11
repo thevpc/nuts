@@ -1,23 +1,22 @@
-##nuts## {{install}} \<nuts-artifact\>... <args> ...
-      install ##nuts## package \<nuts-artifact\>
-       <args> ...        : provide arguments to pass to installer
+install ##nuts## package <nuts-artifact>
+    install ##nuts## package <nuts-artifact>
 
-##SYNOPSIS:##
-##nuts## {{install}} \<options\> \<nuts-artifact\>...
+##) SYNOPSIS:
+```sh nuts  install <options> <nuts-artifact>...```
 
-##OPTIONS:##
-**-c** | **--companions**
+##) OPTIONS:
+```sh -c | --companions```sh
     include companions in the install process
-**-i** | **--installed**
+```sh -i | --installed```sh
     include already installed artifacts in the install process (re-install)
-**-g** | **--args** <args> ...
+```sh -g | --args <args> ...```sh
     pass the given args to the install executor
 
 #!include</net/thevpc/app/command/includes/standard-command.help>
 
-##EXAMPLES:##
-        ##nuts## install **--help**
+##) EXAMPLES:
+```sh  nuts install --help```
             shows this help and exit
        
-        ##nuts## {{install}} netbeans-launcher
+```sh nuts install netbeans-launcher```
             install netbeans-launcher

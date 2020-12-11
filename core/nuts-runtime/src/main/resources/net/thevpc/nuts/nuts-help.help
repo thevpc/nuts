@@ -35,16 +35,16 @@ fetch,push               : download, upload to remote repositories
 search                   : search for existing/installable artifacts
 exec                     : execute an artifact (tool)
 
-##SYNOPSIS##
+##) SYNOPSIS:
 ```sh
-nuts [<options>]... <command> <args> ...
+nuts [<-options>]... <command> <args> ...
 ```
-##VERSIONS##
+##) VERSIONS
 Boot API     Version: ###${nuts.workspace-boot.version}###
 Boot Runtime Version: ###${nuts.workspace-runtime.version}###
 Java         Version: ###${java.version} (${java.vm.name})###
 
-##NUTS OPTIONS##
+##) NUTS OPTIONS
  There are four (4) types of options : 
  * ~~create options~~
  * ~~create exported options~~
@@ -65,7 +65,7 @@ Java         Version: ###${java.version} (${java.vm.name})###
                      as well but still they are not persistent.
 
 
-##NUTS CREATE EXPORTED OPTIONS##
+###) NUTS CREATE EXPORTED OPTIONS
  ```sh --workspace <workspace-location> ```
  ```sh -w <workspace-location> ```
       workspace location to open (or create).
@@ -112,60 +112,60 @@ Java         Version: ###${java.version} (${java.vm.name})###
  ```sh -O <java-options> ```
       java options to run new instance of nuts
 
-##NUTS CREATE OPTIONS:##
+###) NUTS CREATE OPTIONS:
 
  ```sh --archetype <archetype-name>```
  ```sh -A <archetype-name>```
       workspace archetype to create (if workspace not found).
       when opening a non existing workspace, ##nuts## will create it
       using the default archetype. Supported archetypes are :
-          [[default]] : should handle most cases. Will create 6 repositories
-                    [[local]]            : containing local ##nuts## (java and non java ##nuts##).
-                    [[maven-local]]      : referencing "~/.m2/repository" local maven repository.
-                    [[maven-central]]    : referencing "https://repo.maven.apache.org/maven2/" (with cache support).
-                    [[vpc-public-maven]] : referencing "https://.../vpc-public-maven/master" author\'s github maven repo (cached).
-                    [[vpc-public-nuts]]  : referencing "https://.../vpc-public-nuts/master"  author\'s github ##nuts##  repo (cached).
-                    [[system]]           : referencing global (root, system wide) repository if available.
-          [[minimal]] : will create an almost empty workspace with a single ##nuts## local repository and no users.
+          ```kw default``` : should handle most cases. Will create 6 repositories
+                    ```kw local```            : containing local ##nuts## (java and non java ##nuts##).
+                    ```kw maven-local```      : referencing "~/.m2/repository" local maven repository.
+                    ```kw maven-central```    : referencing "https://repo.maven.apache.org/maven2/" (with cache support).
+                    ```kw vpc-public-maven``` : referencing "https://.../vpc-public-maven/master" author\'s github maven repo (cached).
+                    ```kw vpc-public-nuts```  : referencing "https://.../vpc-public-nuts/master"  author\'s github ##nuts##  repo (cached).
+                    ```kw system```           : referencing global (root, system wide) repository if available.
+          ```kw minimal``` : will create an almost empty workspace with a single ##nuts## local repository and no users.
                         You should use it in conjunction with ```sh --boot-repos``` options to enable a valid location from
                         which nuts would be downloaded as well.
-          [[server]]  : will create an almost empty workspace with a single ##nuts## local repository
+          ```kw server```  : will create an almost empty workspace with a single ##nuts## local repository
                         and a couple of users ~~guest~~ (read support) and ~~contributor~~ (write support).
                         You should use it in conjunction with ```sh --boot-repos``` options to enable a valid location from
                                                 which nuts would be downloaded as well.
 
  ```sh --store-strategy <store-strategy>```
       Define store strategy used for persisting configuration and data of the workspace.
-      Valid values of <store-strategy> are [[exploded]], [[standalone]].
-      [[exploded]]   : use distinct folders for temp, var, lib, config ... folders (this is the default) 
-      [[standalone]] : use a self contained folder for all types of data of the workspace. This is interesting for sharing 
+      Valid values of <store-strategy> are ```kw exploded```, ```kw standalone```.
+      ```kw exploded```   : use distinct folders for temp, var, lib, config ... folders (this is the default)
+      ```kw standalone``` : use a self contained folder for all types of data of the workspace. This is interesting for sharing
                    workspaces across multiple machines.
 
  ```sh --standalone-workspace```
        will boot with standalone strategy so that all files will be stored in the workspace folder
-       overriding workspace config. same as  ```sh --store-strategy``` [[standalone]]
+       overriding workspace config. same as  ```sh --store-strategy``` ```kw standalone```
  
  ```sh --exploded-workspace```
        will boot with exploded strategy so that all file will be stored distinct folders (cache, and log)
        particularly will be stored elsewhere depending on on configuration.
-       same as  ```sh --store-strategy``` [[exploded]]
+       same as  ```sh --store-strategy``` ```kw exploded```
 
  ```sh --repo-store-strategy <store-strategy>```
       Defines store strategy used for persisting config and data of the repositories.
-      Valid values of <store-strategy> are [[exploded]], [[standalone]].
-      [[exploded]]   : use distinct folders for temp, var, lib, config ... folders (this is the default) 
-      [[standalone]] : use a self contained folder for all types of data of the repository (under repository\'s main folder). 
+      Valid values of <store-strategy> are ```kw exploded```, ```kw standalone```.
+      ```kw exploded```   : use distinct folders for temp, var, lib, config ... folders (this is the default)
+      ```kw standalone``` : use a self contained folder for all types of data of the repository (under repository\'s main folder).
                    This is interesting for sharing 
                    workspaces across multiple machines.
 
  ```sh --standalone-repositories```
        for newly created repos, will boot with standalone strategy so that all file will be stored in the repository\'s folder
-       overriding workspace config. same as  ```sh --repo-store-strategy``` [[standalone]]
+       overriding workspace config. same as  ```sh --repo-store-strategy``` ```kw standalone```
  
  ```sh --exploded-repositories```
        for newly created repos, boot with exploded strategy so that all file will be stored distinct folders (cache, and log)
        particularly will be stored elsewhere depending on on configuration.
-       same as  ```sh --repo-store-strategy [[exploded]] (this is default)```
+       same as  ```sh --repo-store-strategy ```kw exploded``` (this is default)```
 
  ```sh --standalone```
     Equivalent of ```sh --standalone-workspace```
@@ -177,12 +177,12 @@ Java         Version: ###${java.version} (${java.vm.name})###
       Defines store layout relatively to the running operating system. This resolves root locations of data folders.
       That is to say that all 'config' folders for instance will be located at the location defined by the layout.
 
-      Valid values of <store-layout> are [[system]], [[windows]], [[linux]], [[macos]] and [[unix]]
-      [[system]]     : resolve the running operating system (windows, linux, ...) and select appropriate folder
-      [[windows]]    : always use windows layout (even if running on iOS)
-      [[linux]]      : always use linux layout (even if running on windows)
-      [[unix]]       : always use linux/unix layout (even if running on windows)
-      [[macos]]      : always use macos layout (even if running on windows)
+      Valid values of <store-layout> are ```kw system```, ```kw windows```, ```kw linux```, ```kw macos``` and ```kw unix```
+      ```kw system```     : resolve the running operating system (windows, linux, ...) and select appropriate folder
+      ```kw windows```    : always use windows layout (even if running on iOS)
+      ```kw linux```      : always use linux layout (even if running on windows)
+      ```kw unix```       : always use linux/unix layout (even if running on windows)
+      ```kw macos```      : always use macos layout (even if running on windows)
 
       Data folders of nuts are :
         apps     : executable binaries folder
@@ -231,9 +231,9 @@ Java         Version: ###${java.version} (${java.vm.name})###
             ```sh --<os-family>-temp-home <path>```
             ```sh --<os-family>-cache-home <path>```
 
-            where <os-family> in one of [[windows]], [[linux]], [[unix]], [[macos]] or [[system]].
+            where <os-family> in one of ```kw windows```, ```kw linux```, ```kw unix```, ```kw macos``` or ```kw system```.
             This helps moving workspace folder from/to distinct os families while providing a centralized configuration.
-            when using [[system]] OS family, the effective OS family will be detected at runtime.
+            when using ```kw system``` OS family, the effective OS family will be detected at runtime.
 
  ```sh --system-layout``` or --system```
        will use current system layout to resolve folder candidates for log,config,apps ...etc.
@@ -260,7 +260,7 @@ Java         Version: ###${java.version} (${java.vm.name})###
  ```sh --skip-companions or -k ```
        skip installing companion tools.
  
-##NUTS OPEN EXPORTED OPTIONS:##
+###) NUTS OPEN EXPORTED OPTIONS
  ```sh --global  or -g```
       use root/system wide workspace instead of user\'s own workspace. 
       requires admin privileges.
@@ -287,18 +287,18 @@ Java         Version: ###${java.version} (${java.vm.name})###
 
  ```sh --color or -c```
       
-    ```sh --color=[[always]]|[[yes]]|[[true]]|[[y]]|[[formatted]]```
-      enables formatted (colorful) terminal ([[formatted]] terminal)
-    ```sh --color=[[inherited]]|[[h]]```
+    ```sh --color=always|yes|true|y|formatted```
+      enables formatted (colorful) terminal (```kw formatted``` terminal)
+    ```sh --color=inherited|h```
       use parent process terminal mode
-    ```sh --color=[[auto]]|[[system]]|[[s]]```
+    ```sh --color=auto|system|s```
       auto detected terminal (default)
-    ```sh --color=[[never]]|[[none]]|[[no]]|[[false]]|[[n]]```
+    ```sh --color=never|none|no|false|n```
       equivalent to ```sh --no-color```
     @@Attention@@ : ```sh --color``` argument, should it accept a value, it must be an immediate one (with '=')
  ```sh -C```
  ```sh --no-color```
-      disable formatted (colorful) terminal ([[filtered]] terminal).
+      disable formatted (colorful) terminal (```kw filtered``` terminal).
 
  ```sh --trace```
  ```sh -t```
@@ -306,7 +306,7 @@ Java         Version: ###${java.version} (${java.vm.name})###
 
  ```sh --progress[=<options>]```
  ```sh -P[=<options>]```
-      configure progress monitor. valid values include [[no]]|[[false]]|[[n]]|[[newline]]
+      configure progress monitor. valid values include ```kw no```|```kw false```|```kw n```|```kw newline```
 
  ```sh --plain[=<format-options>]```
       define plain text format as default output format (this is default)
@@ -350,9 +350,9 @@ Java         Version: ###${java.version} (${java.vm.name})###
  ```sh --log-file-size       <size>```
       define the maximum number of bytes to write to any one file. size is either expressed in bytes or suffixed with unit.
       supported units are :
-        [[k]] or [[kb]] : for kilo-bytes (example 10k)
-        [[m]] or [[mb]] : for mega-bytes (example 10m)
-        [[g]] or [[gb]] : for giga-bytes (example 10g)
+        ```kw k``` or ```kw kb``` : for kilo-bytes (example 10k)
+        ```kw m``` or ```kw mb``` : for mega-bytes (example 10m)
+        ```kw g``` or ```kw gb``` : for giga-bytes (example 10g)
 
  ```sh --log-file-base     <log-folder-path>```
       define log file folder path
@@ -376,10 +376,10 @@ Java         Version: ###${java.version} (${java.vm.name})###
       register a temporary repository at the given path
 
  ```sh --yes | -y | --force```
-      disables interactive mode and assumes [[yes]] for all questions
+      disables interactive mode and assumes ```kw yes``` for all questions
 
  ```sh --no | -n```
-      disables interactive mode and assumes [[no]] for all questions
+      disables interactive mode and assumes ```kw no``` for all questions
 
  ```sh --ask```
       enables interactive mode
@@ -387,7 +387,7 @@ Java         Version: ###${java.version} (${java.vm.name})###
  ```sh --error```
       exit with error whenever interactive mode is required
 
-##NUTS OPEN OPTIONS:##
+###) NUTS OPEN OPTIONS
 
  ```sh --recover  or -z```
       try to recover from invalid workspace by ignoring cache and re-resolving dependencies. User configuration will not be altered.
@@ -418,11 +418,11 @@ Java         Version: ###${java.version} (${java.vm.name})###
 
  ```sh --open-mode  <mode>```
       defines open mode of the workspace. three values are accepted :
-      [[open-or-create]] or [[RW]] or [[ON]] or [[OC]] : this is the default, if 
+      ```kw open-or-create``` or ```kw RW``` or ```kw ON``` or ```kw OC``` : this is the default, if
                     the workspace exists, it will be opened ; if it is not it will
                     be created then opened.
-      [[open-existing]]  or [[R]]   or [[O]]  : will open existing workspace of fail
-      [[create-new]]   or [[W]] or [[C]] or [[N]] : will create non existing workspace of fail
+      ```kw open-existing``` or ```kw R```   or ```kw O```  : will open existing workspace of fail
+      ```kw create-new``` or ```kw W``` or ```kw C``` or ```kw N``` : will create non existing workspace of fail
 
  ```sh --open```
       will open existing workspace of fail
@@ -430,108 +430,102 @@ Java         Version: ###${java.version} (${java.vm.name})###
  ```sh --create```
       will create non existing workspace of fail
 
-##NUTS COMMAND:##
+##) NUTS COMMAND
 ##nuts## handles a set of command to manage nuts it sel and to run/exec other programs, mainly those its was responsible
 for installing. Commands support include internal commands, supported packages (installed or not, when not installed
 will search for it), aliases (a commodity mechanism to extend internal commands) and even any other executable.
  Here is a lis of internal commands :
 
- ```sh version  [-options]...
+ ```sh version  [<-options>]...
  or --version or -version or -v```
       show version and exit.
       for more details, type : ##nuts## help version
        
- ```sh info  [-options]...```
+ ```sh info  [<-options>]...```
       show workspace detailed information (paths and libraries) and exit.
       for more details, type : ##nuts## help info
 
- ```sh welcome  [-options]...```
+ ```sh welcome  [<-options>]...```
       show welcome message and exit.
       for more details, type : ##nuts## help welcome
 
- ```sh help  [-options]... <nuts-artifact>...```
+ ```sh help  [<-options>]... <nuts-artifact>...```
  or ```sh --help or -? or -h```
       show this help and exit
       for more details, type : ##nuts## help help
 
- ```sh license [-options]...
+ ```sh license [<-options>]...```
       show license info and exit
       for more details, type : ##nuts## help info
 
- ```sh install [-options]... <nuts-artifact>... <args> ...```
+ ```sh install [<-options>]... <nuts-artifact>... <args> ...```
       install ##nuts## package <nuts-artifact>
       for more details, type : ##nuts## help install
 
- ```sh uninstall [-options]... <nuts-artifact>... <args> ...```
+ ```sh uninstall [<-options>]... <nuts-artifact>... <args> ...```
       uninstall  ##nuts## package <nuts-artifact>
       for more details, type : ##nuts## help uninstall
 
- ```sh update [-options]... <ids> ...  <args> ...```
+ ```sh update [<-options>]... <ids> ...  <args> ...```
       check if a newer version of ##nuts## or any of the provided <ids>
       is available in the current workspace and perform update by downloading (fetch)
       and installing the artifact. The updated version is promoted to 'default' version.
       for more details, type : ##nuts## help update
             
- ```sh check-updates} [-options]... <ids> ...```
+ ```sh check-updates} [<-options>]... <ids> ...```
       check if a newer version of ##nuts## is available in the current workspace without performing updates
       Takes the same arguments and options as ```sh update``` command
       for more details, type : ##nuts## help check-updates
 
- ```sh search [-options]... <ids> ...```
+ ```sh search [<-options>]... <ids> ...```
       search for <ids>
       for more details, type : ##nuts## help search
             
- ```sh fetch [-options]... <ids> ...```
+ ```sh fetch [<-options>]... <ids> ...```
       download <ids>  without installing them
       for more details, type : ##nuts## help fetch
             
- ```sh deploy [-options]... <id> ...```
+ ```sh deploy [<-options>]... <id> ...```
       deploy <ids>  without installing them
       for more details, type : ##nuts## help deploy
             
- ```sh undeploy [-options]... <id> ...```
+ ```sh undeploy [<-options>]... <id> ...```
       undeploy <ids>
       for more details, type : ##nuts## help undeploy
             
- ```sh exec [-options]... [command] <args>...
- ```sh --exec [-options]... [command] <args>...
- ```sh -e [-options]... [command] <args>...
+ ```sh exec [<-options>]... [command] <args>...```
+ ```sh --exec [<-options>]... [command] <args>...```
+ ```sh -e [<-options>]... [command] <args>...```
       run command with the given executor options ( it will be considered an option if it
       starts with ```sh -``` ). This is helpful to issue JVM Options to executor for instance.
       for more details, type : ##nuts## help exec
 
- ```sh which [-options]... [command] ...```
+ ```sh which [<-options>]... [command] ...```
       show command to be executed if run with 'exec' 
       for more details, type : ##nuts## help which
             
- ```sh --reset [-options]...
+ ```sh --reset [<-options>]...```
        reset (delete) ##nuts## workspace folder. Will bootstrap a new workspace unless ```sh -K```
        (```sh --skip-welcome```) option is armed.
        Actually this is a special command that is available only at boot time.
        Available command options are :
        ```sh -y``` : to skip confirmation
 
- ```sh -``` <args>...
-   run a nut\'s shell (nsh) command with the remaining arguments
+ ```sh - <args>...```
+   run a nuts shell (nsh) command with the remaining arguments
 
 #!include</net/thevpc/nuts/includes/standard-options-format.help>
 
-##EXAMPLES:##
-```sh
-        nuts help
-```
+##) EXAMPLES
+```sh nuts help```
             shows this help and exit
        
-```sh
-        nuts --workspace /home/me/some-folder --archetype=minimal
-```
+```sh nuts --workspace /home/me/some-folder --archetype=minimal ```
             A minimal (####minimal#### archetype) workspace will be created
             and saved if no workspace was resolved. The workspace handles local 
             packages only
        
-```sh
-        nuts --workspace /home/me/some-folder  update
-```
+```sh nuts --workspace /home/me/some-folder  update ```
             updates ##nuts## to the very latest version using workspace location
             /home/me/some-folder.
 

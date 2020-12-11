@@ -456,7 +456,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
         }
         if (kind.length() > 0) {
             switch (kind.toLowerCase()) {
-                case "shell": {
+                case "sh": {
                     return new ShellSpecialTextFormatter(ws);
                 }
                 case "json": {

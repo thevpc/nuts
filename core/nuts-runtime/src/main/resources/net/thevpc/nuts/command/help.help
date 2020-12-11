@@ -1,13 +1,15 @@
-##nuts## {{help}} \[**<options>**\]... \<command-name\>...
-      show help and exit
+show help and exit
        If no command names are provided, nuts help is displayed. Otherwise, Each command help is displayed.
        When Command is unknown or invalid, an error message is displayed.
 
+##) SYNOPSIS:
+```sh nuts help [<-options>]... <command-name>...```
+
 #!include</net/thevpc/nuts/includes/standard-command.help>
 
-##EXAMPLES:##
-        ##nuts## {{help}} **--help**
+##) EXAMPLES
+```sh nuts help --help```
             shows this help and exit
        
-        ##nuts## {{help}} update
+```sh nuts help update```
             show help for update internal command

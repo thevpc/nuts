@@ -1,11 +1,14 @@
-##nuts## {{license}}
-      show license info and exit
+show license info and exit
+    show license info and exit
+
+##) SYNOPSIS:
+```sh nuts license```
 
 #!include</net/thevpc/nuts/includes/standard-command.help>
 
-##EXAMPLES:##
-        ##nuts## {{license}} **--help**
+##) EXAMPLES
+```sh nuts license --help```sh
             shows this help and exit
        
-        ##nuts## {{license}}
+```sh nuts license```
             show license and exit

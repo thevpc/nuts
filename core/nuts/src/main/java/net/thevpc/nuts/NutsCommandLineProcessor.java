@@ -42,10 +42,10 @@ public interface NutsCommandLineProcessor {
      * Implementations <strong>MUST</strong> call one of
      * the "next" methods to
      * @param option peeked argument
-     * @param cmdLine associated commandline
+     * @param commandline associated commandline
      * @return true if the argument can be processed, false otherwise.
      */
-    boolean nextOption(NutsArgument option, NutsCommandLine cmdLine);
+    boolean nextOption(NutsArgument option, NutsCommandLine commandline);
 
     /**
      * process the given non option argument that was peeked from the command line.

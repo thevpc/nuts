@@ -77,7 +77,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                         end.append(c);
                         if (end.length() >= start.length()) {
                             p.applyPop();
-                            return;//new ConsumeResult(ConsumeResutType.POP, null);
+                            return;//new ConsumeResult(ConsumeResultType.POP, null);
                         }
                     } else {
                         switch (c) {
@@ -131,80 +131,76 @@ public class AntiQuote3ParserStep extends ParserStep {
         char[] dst = new char[value.length()];
         value.getChars(0,value.length(), dst,0 );
         DefaultNutsTextNodeFactory factory0 = (DefaultNutsTextNodeFactory) ws.formats().text().factory();
-        if(dst.length>0 && !Character.isWhitespace(dst[0])){
-            int i=0;
-            int offset=0;
-            boolean startWithExclamation=false;
-            if(dst[i]=='!'){
-                startWithExclamation=true;
-                i++;
-                offset=1;
+        int i=0;
+        int endOffset=-1;
+        if(dst.length>0 && dst[i]=='!') {
+            i++;
+        }
+        while(i<dst.length) {
+            if (Character.isWhitespace(dst[i])) {
+                endOffset = i;
+                break;
+            }else if (!Character.isAlphabetic(dst[i]) && dst[i]!='-') {
+                endOffset=i;
+                break;
             }
-            while(i<dst.length){
-                if(Character.isWhitespace(dst[i])){
-                    int i0=i;
-                    StringBuilder w=new StringBuilder();
-                    while(i<dst.length && Character.isWhitespace(dst[i])){
-                        w.append(dst[i]);
-                        i++;
-                    }
-                    String cmd = new String(dst, 0, i0);
-                    String value = new String(dst, i, dst.length - (i));
-                    if(cmd.startsWith("!")) {
-                        String cmd0 = value.substring(1);
-                        String start2 = this.start.toString() + "!";
-                        switch (cmd){
-                            case "!anchor":{
-                                return factory0.createAnchor(
-                                        start2,
-                                        cmd0,
-                                        w.toString(),
-                                        end.toString(),
-                                        value
-                                );
-                            }
-                            case "!link":{
-                                return factory0.createLink(
-                                        start2,
-                                        cmd0,
-                                        w.toString(),
-                                        end.toString(),
-                                        value
-                                );
-                            }
-                        }
+            i++;
+        }
+        if(endOffset==-1){
+            endOffset=dst.length;
+        }
 
-                        TextFormat yy = DefaultNutsTextNodeCommand.parseTextFormat(cmd0);
-                        if(yy!=null){
-                            return factory0.createCommand(
-                                    start2,
-                                    cmd.substring(1),
-                                    w.toString(),
-                                    end.toString(),
-                                    value,
-                                    yy
-                            );
-                        }
-                    }
-                    return factory0.createCommand(
-                            start.toString(),
-                            cmd,
+        StringBuilder w=new StringBuilder();
+        i=endOffset;
+        while(i<dst.length && Character.isWhitespace(dst[i])){
+            w.append(dst[i]);
+            i++;
+        }
+
+        String cmd = new String(dst, 0, endOffset);
+        String value = new String(dst, i, dst.length - i);
+        if(cmd.startsWith("!")) {
+            String cmd0 = cmd.substring(1);
+            String start2 = this.start.toString() + "!";
+            switch (cmd){
+                case "!anchor":{
+                    return factory0.createAnchor(
+                            start2,
+                            cmd0,
                             w.toString(),
                             end.toString(),
                             value
                     );
-                }else if(!Character.isAlphabetic(dst[i]) && dst[i]!='-'){
-                    break;
                 }
-                i++;
+                case "!link":{
+                    return factory0.createLink(
+                            start2,
+                            cmd0,
+                            w.toString(),
+                            end.toString(),
+                            value
+                    );
+                }
+            }
+
+            TextFormat yy = DefaultNutsTextNodeCommand.parseTextFormat(cmd0);
+            if(yy!=null){
+                return factory0.createCommand(
+                        start2,
+                        cmd.substring(1),
+                        w.toString(),
+                        end.toString(),
+                        value,
+                        yy
+                );
             }
         }
         return factory0.createCommand(
                 start.toString(),
-                "",
-                "",
+                cmd,
+                w.toString(),
                 end.toString(),
-                new String(dst)
+                value
         );
     }
 

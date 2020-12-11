@@ -1,28 +1,28 @@
-##nuts## {{check-updates}}  \[**<options>**\]... \<ids\> ...
-       check if a newer version of ##nuts## is available in the current workspace without performing updates
+check for updates
+    check if a newer version of ##nuts## is available in the current workspace without performing updates
 
-##SYNOPSYS##:
-##nuts## {{check-updates}}  \[**<options>**\]... \<ids\> ...
+##) SYNOPSYS
+```sh nuts check-updates  [<-options>]... <ids> ...```
 
-##OPTIONS:##
-**-a** or **--all**
+##) OPTIONS:
+```sh -a | --all```
     check updates for both workspace\'s api, runtime extensions and installed artifacts
-**-w** or **--ws** or **--workspace**
+```sh -w | --ws or --workspace```
     check updates for all workspace\'s related artifacts (api, runtime and extensions)
-**-i** or **--installed**
+```sh -i | --installed```
     check updates for all installed artifacts
-**-e** or **--extensions**
+```sh -e | --extensions```
     check updates for all workspace\'s extensions
-**-r** or **--runtime**
+```sh -r | --runtime```
     check updates for workspace\'s runtime artifact (minor workspace update)
-**-A** or **--api**
+```sh -A | --api```
     check updates for workspace\'s api (major workspace update)
 
 #!include</net/thevpc/nuts/includes/standard-command.help>
 
-##EXAMPLES:##
-        ##nuts## {{check-updates}} **--help**
+##) EXAMPLES
+```sh  nuts check-updates --help```
             shows this help and exit
        
-        ##nuts## {{check-updates}}
+```sh  nuts check-updates```
             check updates for current workspace

@@ -1,30 +1,30 @@
-##nuts## [[info]]
-      show workspace detailed information (paths and libraries)
+show workspace information and exit
+    show workspace detailed information (paths and libraries)
 
-##SYNOPSIS:##
-##nuts## ##info## \[**<options>**\]
+##) SYNOPSIS:
+```sh  nuts info [<-options>]```
 
-##OPTIONS:##
-**-r** | **--repos**
+##à OPTIONS
+```sh -r | --repos```
     show repositories
-**-c** | **--cmd**
+```sh -c | --cmd```
     show command arguments
-**-e** | **--env**
+```sh -e | --env```
     show environment info (java version, os version, ...)
-**-p** | **--path**
+```sh -p | --path```
     show workspace locations
-**-f** | **--fancy**
+```sh -f | --fancy```
     show paths variables in multi rows
-**--add** \<key\>=\<value\>
+```sh --add <key>=<value>```
     add extra  key=value to info list
-**-g** | **--get** <name> ...
+```sh -g | --get <name> ...```
     filter names to include only the given names
 
 #!include</net/thevpc/nuts/includes/standard-command.help>
 
-##EXAMPLES:##
-        ##nuts## {{info}} **--help**
+##) EXAMPLES
+```sh  nuts info --help```
             shows this help and exit
        
-        ##nuts## {{info}} **--json**
+```sh  nuts info --json```
             show info in json format

@@ -1,25 +1,25 @@
-##nuts## {{uninstall}} \<nuts-artifact\>... <args> ...
+```sh nuts uninstall <nuts-artifact>... <args> ...```
       uninstall one or more ##nuts## from repositories if installed
-      If no [nuts-id] is defined an error will occur
+      If no nuts-id is defined an error will occur
 
-##OPTIONS:##
-       **-e** or **--erase** : enable erase mode to delete all of artifact\'s config data as well
-       <args> ...        : provide arguments to pass to uninstaller
+##) OPTIONS:
+```sh  -e | --erase``` : enable erase mode to delete all of artifact\'s config data as well
+```sh  <args> ...```   : provide arguments to pass to uninstaller
 
 #!include</net/thevpc/nuts/includes/standard-command.help>
 
-##EXAMPLES:##
-        ##nuts## {{uninstall}} **--help**
+##) EXAMPLES
+```sh nuts uninstall --help```
             shows this help and exit
        
-        ##nuts## {{uninstall}} netbeans-launcher
+```sh nuts uninstall netbeans-launcher```
             uninstall netbeans-launcher
 
-        ##nuts## {{uninstall}} my-group:my-thing#2.3
+```sh nuts uninstall my-group:my-thing#2.3```
            uninstalls - if able to resolve it - exactly the ##nuts## "my-group:my-thing#2.3"
 
-        ##nuts## {{uninstall}} my-group:my-thing
+```sh nuts uninstall my-group:my-thing```
            uninstalls - if able to resolve it - the latest version  of "my-group:my-thing"
 
-        ##nuts## {{uninstall}} my-thing
+```sh nuts```uninstall my-thing
           uninstalls - if able to resolve it - the latest version  of "my-group:my-thing" as long as "my-group" is defined as a default import group

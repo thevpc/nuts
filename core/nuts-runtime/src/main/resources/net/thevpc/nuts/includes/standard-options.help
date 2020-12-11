@@ -1,41 +1,41 @@
-##STANDARD OPTIONS## :
+##) STANDARD OPTIONS
 Nuts commands share a set of options that are automatically supported and handled.
 
-       **--help**   : show application help and exit
-       **--version**: show application version and exit
+       ```sh --help```   : show application help and exit
+       ```sh --version```: show application version and exit
 
-       **--ask**        : all confirmations will be prompted (default)
+       ```sh --ask```        : all confirmations will be prompted (default)
 
-       **--yes**|**--y**
-      |**--force**      : all confirmations are resolved as [[yes]]. No prompt.
+       ```sh --yes | --y```
+      |```sh --force```      : all confirmations are resolved as ```kw yes```. No prompt.
 
-       **--no**|**--n** : all confirmations are resolved as [[no]] . No prompt.
+       ```sh --no | --n``` : all confirmations are resolved as ```kw no``` . No prompt.
 
-       **--error**      : all confirmations will throw error and program exist.
+       ```sh --error```      : all confirmations will throw error and program exist.
        
-       **--trace**      : further test output is printed
+       ```sh --trace```      : further test output is printed
 
-       **--color**
-          **--color**=[[always]]|[[yes]]|[[true]]|[[y]]|[[formatted]]
-            enables formatted (colorful) terminal ([[formatted]] terminal)
-          **--color**=[[inherited]]|[[h]]
+       ```sh --color```
+          ```sh --color=always|yes|true|y|formatted```
+            enables formatted (colorful) terminal (```kw formatted``` terminal)
+          ```sh --color=inherited|h```
             use parent process terminal mode
-          **--color**=[[auto]]|[[system]]|[[s]]
+          ```sh --color=auto|system|s```
             auto detected terminal (default)
-          **--color**=[[never]]|[[none]]|[[no]]|[[false]]|[[n]]
-            equivalent to **--no-color**
-          @@Attention@@ : --color argument, should it accept a value, it must be an immediate one (with '=')
-       **--no-color**
-            disable formatted (colorful) terminal ([[filtered]] terminal).
+          ```sh --color=never|none|no|false|n```
+            equivalent to ```sh --no-color```
+          @@Attention@@ : ```sh --color``` argument, should it accept a value, it must be an immediate one (with '=')
+       ```sh --no-color```
+            disable formatted (colorful) terminal (```kw filtered``` terminal).
 
-       **--output-format**=[[plain]]|[[props]]|[[json]]|[[xml]]|[[table]]|[[tree]]
-                        : define the format to trace operation. default is [[plain]]
-       **--plain**[=**<format-options>**]      : trace operation as plain text. equivalent to **--output-format**=[[plain]]
-       **--json**[=**<format-options>**]       : trace operation as json. equivalent to **--output-format**=[[json]]
-       **--xml**[=**<format-options>**]        : trace operation xml. equivalent to **--output-format**=[[xml]]
-       **--props**[=**<format-options>**]      : trace operation as (java) properties, key value list. equivalent to **--output-format**=[[props]]
-       **--table**[=**<format-options>**]      : trace operation as table. equivalent to **--output-format**=[[table]]
-       **--tree**[=**<format-options>**]       : trace operation as tree. equivalent to **--output-format**=[[tree]]
-       **--output-format-option**=<format-options>
-       |**-T**=<format-options>
+       ```sh --output-format=plain|props|json|xml|table|tree```
+                        : define the format to trace operation. default is ```kw plain```
+       ```sh --plain[=<format-options>]```      : trace operation as plain text. equivalent to ```sh --output-format=plain```
+       ```sh --json[=<format-options>]```       : trace operation as json. equivalent to ```sh --output-format=json```
+       ```sh --xml[=<format-options>]```        : trace operation xml. equivalent to ```sh --output-format=xml```
+       ```sh --props[=<format-options>]```      : trace operation as (java) properties, key value list. equivalent to ```sh --output-format=props```
+       ```sh --table[=<format-options>]```      : trace operation as table. equivalent to ```sh --output-format=table```
+       ```sh --tree[=<format-options>]```       : trace operation as tree. equivalent to ```sh --output-format=tree```
+       ```sh --output-format-option=<format-options>```
+       ```sh | -T=<format-options>```
                         : add specific format option

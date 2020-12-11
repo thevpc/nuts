@@ -313,9 +313,10 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             Throwable th = null;
             try {
                 classLoader = ((DefaultNutsWorkspaceExtensionManager) getSession().getWorkspace().extensions()).getNutsURLClassLoader(
+                        def.getId().toString(),
                         CoreIOUtils.toURL(joptions.getClassPath().toArray(new String[0])),
                         joptions.getNutsPath().stream().map(x->getSession().getWorkspace().id().parser().parse(x)).toArray(NutsId[]::new),
-                        getSession().getWorkspace().config().getBootClassLoader()
+                        null//getSession().getWorkspace().config().getBootClassLoader()
                 );
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
                 new ClassloaderAwareRunnableImpl2(def.getId(), classLoader, cls, getSession(), joptions).runAndWaitFor();

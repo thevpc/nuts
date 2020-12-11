@@ -5,7 +5,7 @@ Standard format of options is supported as follows :
       option will negated if boolean. Actually, ```sh --!option``` is equivalent to ```sh --option=false```
 
  ```sh --...=any-value```
-      equivalent to --... any-value```
+      equivalent to ```sh --... any-value```
 
  ```sh --...=true|enable|enabled|yes|always|y|on|ok|t```
       option is switched to true

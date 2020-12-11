@@ -46,12 +46,14 @@ import net.thevpc.nuts.NutsWorkspace;
 
 public class NutsURLClassLoader extends URLClassLoader {
 
+    private String name;
     private NutsWorkspace ws;
     private Set<NutsId> ids=new LinkedHashSet<>();
     private Set<URL> urls=new LinkedHashSet<>();
 
-    public NutsURLClassLoader(NutsWorkspace ws, URL[] urls, NutsId[] ids,ClassLoader parent) {
+    public NutsURLClassLoader(String name,NutsWorkspace ws, URL[] urls, NutsId[] ids,ClassLoader parent) {
         super(urls, parent);
+        this.name = name;
         this.ws = ws;
         this.urls.addAll(Arrays.asList(urls));
         for (NutsId id : ids) {
@@ -59,8 +61,9 @@ public class NutsURLClassLoader extends URLClassLoader {
         }
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws, URL[] urls,NutsId[] ids) {
+    public NutsURLClassLoader(String name,NutsWorkspace ws, URL[] urls,NutsId[] ids) {
         super(urls);
+        this.name = name;
         this.ws = ws;
         this.urls.addAll(Arrays.asList(urls));
         for (NutsId id : ids) {
@@ -68,16 +71,18 @@ public class NutsURLClassLoader extends URLClassLoader {
         }
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws, URL[] urls,NutsId[] ids, ClassLoader parent, URLStreamHandlerFactory factory) {
+    public NutsURLClassLoader(String name,NutsWorkspace ws, URL[] urls,NutsId[] ids, ClassLoader parent, URLStreamHandlerFactory factory) {
         super(urls, parent, factory);
+        this.name = name;
         this.ws = ws;
         for (NutsId id : ids) {
             this.ids.add(id);
         }
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws, String[] urls,NutsId[] ids, ClassLoader parent) throws MalformedURLException {
+    public NutsURLClassLoader(String name,NutsWorkspace ws, String[] urls,NutsId[] ids, ClassLoader parent) throws MalformedURLException {
         super(CoreIOUtils.toURL(urls), parent);
+        this.name = name;
         this.ws = ws;
         this.urls.addAll(Arrays.asList(CoreIOUtils.toURL(urls)));
         for (NutsId id : ids) {
@@ -85,8 +90,9 @@ public class NutsURLClassLoader extends URLClassLoader {
         }
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws, String[] urls,NutsId[] ids) throws MalformedURLException {
+    public NutsURLClassLoader(String name,NutsWorkspace ws, String[] urls,NutsId[] ids) throws MalformedURLException {
         super(CoreIOUtils.toURL(urls));
+        this.name = name;
         this.ws = ws;
         this.urls.addAll(Arrays.asList(CoreIOUtils.toURL(urls)));
         for (NutsId id : ids) {
@@ -94,8 +100,9 @@ public class NutsURLClassLoader extends URLClassLoader {
         }
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws, String[] urls,NutsId[] ids, ClassLoader parent, URLStreamHandlerFactory factory) throws MalformedURLException {
+    public NutsURLClassLoader(String name,NutsWorkspace ws, String[] urls,NutsId[] ids, ClassLoader parent, URLStreamHandlerFactory factory) throws MalformedURLException {
         super(CoreIOUtils.toURL(urls), parent, factory);
+        this.name = name;
         this.ws = ws;
         this.urls.addAll(Arrays.asList(CoreIOUtils.toURL(urls)));
         for (NutsId id : ids) {
@@ -103,8 +110,9 @@ public class NutsURLClassLoader extends URLClassLoader {
         }
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws, File[] urls,NutsId[] ids, ClassLoader parent) throws MalformedURLException {
+    public NutsURLClassLoader(String name,NutsWorkspace ws, File[] urls,NutsId[] ids, ClassLoader parent) throws MalformedURLException {
         super(CoreIOUtils.toURL(urls), parent);
+        this.name = name;
         this.ws = ws;
         this.urls.addAll(Arrays.asList(CoreIOUtils.toURL(urls)));
         for (NutsId id : ids) {
@@ -112,8 +120,9 @@ public class NutsURLClassLoader extends URLClassLoader {
         }
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws, File[] urls,NutsId[] ids) throws MalformedURLException {
+    public NutsURLClassLoader(String name,NutsWorkspace ws, File[] urls,NutsId[] ids) throws MalformedURLException {
         super(CoreIOUtils.toURL(urls));
+        this.name = name;
         this.ws = ws;
         this.urls.addAll(Arrays.asList(CoreIOUtils.toURL(urls)));
         for (NutsId id : ids) {
@@ -121,13 +130,18 @@ public class NutsURLClassLoader extends URLClassLoader {
         }
     }
 
-    public NutsURLClassLoader(NutsWorkspace ws, File[] urls,NutsId[] ids, ClassLoader parent, URLStreamHandlerFactory factory) throws MalformedURLException {
+    public NutsURLClassLoader(String name,NutsWorkspace ws, File[] urls,NutsId[] ids, ClassLoader parent, URLStreamHandlerFactory factory) throws MalformedURLException {
         super(CoreIOUtils.toURL(urls), parent, factory);
+        this.name = name;
         this.ws = ws;
         this.urls.addAll(Arrays.asList(CoreIOUtils.toURL(urls)));
         for (NutsId id : ids) {
             this.ids.add(id);
         }
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -176,5 +190,12 @@ public class NutsURLClassLoader extends URLClassLoader {
         } catch (UncheckedIOException| NutsIOException e) {
             throw new NutsIllegalArgumentException(ws, url.toString());
         }
+    }
+
+    @Override
+    public String toString() {
+        return "NutsURLClassLoader{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }
