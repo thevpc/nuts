@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.format.text.parser.DefaultNutsTextNodeParser;
-import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 import net.thevpc.nuts.NutsTextNode;
 
 public class PlainParserStep extends ParserStep {
@@ -13,20 +12,25 @@ public class PlainParserStep extends ParserStep {
     private boolean lineStart;
     private StringBuilder value = new StringBuilder();
     private NutsWorkspace ws;
+    private DefaultNutsTextNodeParser.State state;
 
-    public PlainParserStep(char c, boolean spreadLines, boolean lineStart,NutsWorkspace ws) {
+    public PlainParserStep(char c, boolean spreadLines, boolean lineStart, NutsWorkspace ws, DefaultNutsTextNodeParser.State state) {
+        this.state = state;
         this.spreadLines = spreadLines;
         this.ws = ws;
-        this.lineStart = lineStart;
+        this.lineStart = state.isWasNewLine();
         if (c == '\\') {
             wasEscape = true;
         } else {
             value.append(c);
         }
         last = c;
+        state.setWasNewLine(c=='\n');
     }
 
-    public PlainParserStep(String s, boolean spreadLines, boolean lineStart,NutsWorkspace ws) {
+    public PlainParserStep(String s, boolean spreadLines, boolean lineStart,NutsWorkspace ws, DefaultNutsTextNodeParser.State state) {
+        this.state = state;
+        state.setWasNewLine(s.charAt(s.length()-1)=='\n');
         this.ws = ws;
         this.spreadLines = spreadLines;
         this.lineStart = lineStart;
@@ -43,6 +47,7 @@ public class PlainParserStep extends ParserStep {
     @Override
     public void consume(char c, DefaultNutsTextNodeParser.State p) {
         char oldLast = last;
+        state.setWasNewLine(c=='\n');
         last = c;
         switch (c) {
             case '#':
@@ -69,10 +74,10 @@ public class PlainParserStep extends ParserStep {
                     if (oldLast == c) {
                         value.deleteCharAt(value.length() - 1);
                         if (value.length() == 0) {
-                            p.applyDropReplace(new TypedParserStep(c + "" + c, spreadLines, lineStart,ws));
+                            p.applyDropReplace(new StyledParserStep(c + "" + c, spreadLines, lineStart,ws));
                             return;
                         } else {
-                            p.applyPopReplace(new TypedParserStep(c + "" + c, spreadLines, lineStart,ws));
+                            p.applyPopReplace(new StyledParserStep(c + "" + c, spreadLines, lineStart,ws));
                             return;
                         }
                     }

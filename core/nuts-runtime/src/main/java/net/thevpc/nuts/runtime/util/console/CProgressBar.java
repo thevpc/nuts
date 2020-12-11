@@ -213,7 +213,7 @@ public class CProgressBar {
                         sb.append("\n");
                     }
                 } else {
-                    sb.append("`" + FPrintCommands.MOVE_LINE_START + "`");
+                    FPrintCommands.runMoveLineStart(sb);
                 }
             }
             String p = progress(percent);
@@ -234,7 +234,7 @@ public class CProgressBar {
                 if (optionNewline) {
                     sb.append("\n");
                 } else {
-                    sb.append("`" + FPrintCommands.LATER_RESET_LINE + "`");
+                    FPrintCommands.runLaterResetLine(sb);
                 }
             }
         } else {

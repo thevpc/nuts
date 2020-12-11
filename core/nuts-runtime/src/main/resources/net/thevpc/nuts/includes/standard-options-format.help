@@ -1,17 +1,17 @@
 ##STANDARD OPTIONS FORMAT##:
 Standard format of options is supported as follows :
 
- **--!...** or **-!...** 
-      option will negated if boolean. Actually, **--!option** is equivalent to **--option**=[[false]]
+ ```sh --!... or -!... or -~...```
+      option will negated if boolean. Actually, ```sh --!option``` is equivalent to ```sh --option=false```
 
- **--...**=any-value
-      equivalent to **--...** any-value
+ ```sh --...=any-value```
+      equivalent to --... any-value```
 
- **--...**=[[true]]|[[enable]]|[[enabled]]|[[yes]]|[[always]]|[[y]]|[[on]]|[[ok]]|[[t]]
-      option is switched to [[true]]
+ ```sh --...=true|enable|enabled|yes|always|y|on|ok|t```
+      option is switched to true
 
- **--...**=[[false]]|[[disable]]|[[disabled]]|[[no]]|[[none]]|[[never]]|[[n]]|[[off]]|[[ko]]|[[f]]
-      option is switched to [[false]]
+ ```sh --...=false|disable|disabled|no|none|never|n|off|ko|f```
+      option is switched to ```sh false```
 
- **--//...** or **-//...** 
+ ```sh --//... or -//... ```
       option is discarded (and all of its parameters). Though, it is up to the application to add such behavior.

@@ -269,7 +269,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
     /**
      * returns the url parameters in a map
      *
-     * @param query
+     * @param query user query string
      * @return map
      */
     public static ListValueMap<String, String> queryToMap(String query) {

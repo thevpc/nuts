@@ -24,8 +24,8 @@ import net.thevpc.nuts.runtime.AbstractNutsResultList;
 
 /**
  *
- * @author vpc
- * @param <T>
+ * @author thevpc
+ * @param <T> collection element type
  */
 public class NutsCollectionResult<T> extends AbstractNutsResultList<T> {
 

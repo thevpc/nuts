@@ -236,8 +236,8 @@ public class CorePlatformUtils {
 
     /**
      * https://en.wikipedia.org/wiki/List_of_Microsoft_Windows_versions
-     *
-     * @return
+     * @param ws workspace
+     * @return platform os name
      */
     public static String getPlatformOs(NutsWorkspace ws) {
         String property = System.getProperty("os.name").toLowerCase();
@@ -583,7 +583,7 @@ public class CorePlatformUtils {
 
     /**
      * @param stream
-     * @return
+     * @return main class type for the given
      * @throws IOException
      */
     public static MainClassType getMainClassType(InputStream stream) throws IOException {

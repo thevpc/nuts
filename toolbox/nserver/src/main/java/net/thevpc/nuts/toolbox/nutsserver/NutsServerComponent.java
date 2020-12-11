@@ -41,6 +41,7 @@ public interface NutsServerComponent extends NutsComponent<ServerConfig> {
      * server on another workspace (because server implementation may be
      * workspace dependent
      * @param config server configuration
+     * @return started server instance
      */
     NutsServer start(NutsWorkspace workspace, ServerConfig config);
 }

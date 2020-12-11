@@ -164,7 +164,7 @@ public class CoreIOUtils {
                                 || terminalMode == NutsTerminalMode.FORMATTED
                 )
         ) {
-            out.print("`move-line-start`");
+            FPrintCommands.runMoveLineStart(out);
 //                    out.print("                                                                      ");
 //                    out.print("`move-line-start`");
             out.flush();

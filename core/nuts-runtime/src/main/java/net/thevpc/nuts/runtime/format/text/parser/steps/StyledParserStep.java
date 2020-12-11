@@ -8,7 +8,7 @@ import net.thevpc.nuts.NutsTextNode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TypedParserStep extends ParserStep {
+public class StyledParserStep extends ParserStep {
 
     boolean spreadLines;
     boolean lineStart;
@@ -20,14 +20,14 @@ public class TypedParserStep extends ParserStep {
     int maxSize = 10;
     private NutsWorkspace ws;
 
-    public TypedParserStep(char c, boolean spreadLines, boolean lineStart,NutsWorkspace ws) {
+    public StyledParserStep(char c, boolean spreadLines, boolean lineStart, NutsWorkspace ws) {
         start.append(c);
         this.spreadLines = spreadLines;
         this.lineStart = lineStart;
         this.ws = ws;
     }
 
-    public TypedParserStep(String c, boolean spreadLines, boolean lineStart,NutsWorkspace ws) {
+    public StyledParserStep(String c, boolean spreadLines, boolean lineStart, NutsWorkspace ws) {
         start.append(c);
         this.spreadLines = spreadLines;
         this.lineStart = lineStart;
@@ -42,7 +42,7 @@ public class TypedParserStep extends ParserStep {
                 String e2 = end.toString();
                 end.delete(0, e2.length());
                 complete = false;
-                p.applyPush(new TypedParserStep(
+                p.applyPush(new StyledParserStep(
                         e2, spreadLines, false,ws
                 ));
             } else if (c == 'ø') {
@@ -107,7 +107,7 @@ public class TypedParserStep extends ParserStep {
                 } else {
                     String y = end.toString();
                     end.delete(0, end.length());
-                    p.applyPush(new TypedParserStep(y, spreadLines, lineStart,ws));
+                    p.applyPush(new StyledParserStep(y, spreadLines, lineStart,ws));
                 }
             }
         }

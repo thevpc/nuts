@@ -387,7 +387,7 @@ public class SimpleClassStream {
     public Constant getConstant(int index) throws IOException {
         Constant e = getConstant(index, false);
         if (e == null) {
-            throw new IllegalArgumentException("Not Found Constant of index " + index);
+            throw new IllegalArgumentException("jvm constant not found at index " + index);
         }
         return e;
     }

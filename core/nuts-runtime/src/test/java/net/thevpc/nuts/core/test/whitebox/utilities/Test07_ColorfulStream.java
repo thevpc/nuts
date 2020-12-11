@@ -258,4 +258,27 @@ public class Test07_ColorfulStream {
         }
 
     }
+
+    @Test
+    public void test10() {
+        NutsWorkspace ws = Nuts.openWorkspace();
+        {
+            String t_string =
+                    "${workspace}\n" +
+                    "\n" +
+                    "##)SYNOPSIS\n" +
+                    "```sh\n" +
+                    "nuts [<options>]... <command> <args> ...\n" +
+                    "```\n" +
+                    "For Help, type ```sh nuts help```\n" +
+                    "\n" +
+                    "Welcome to ##nuts##. Yeah, it is ###working###...";
+            NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_string));
+            System.out.println();
+            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
+                    .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setNumberTitles(true));
+            w.writeNode(node);
+        }
+
+    }
 }

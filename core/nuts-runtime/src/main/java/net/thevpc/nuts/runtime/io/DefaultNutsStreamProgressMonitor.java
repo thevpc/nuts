@@ -73,7 +73,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
             NutsTextFormatManager terminalFormat = event.getSession().getWorkspace().formats().text();
             if(!optionNewline) {
-                out.print("`" + FPrintCommands.MOVE_LINE_START + "`");
+                FPrintCommands.runMoveLineStart(out);
             }else{
                 out.print("\n");
             }

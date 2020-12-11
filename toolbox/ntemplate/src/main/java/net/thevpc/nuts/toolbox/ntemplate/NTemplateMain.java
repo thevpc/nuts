@@ -142,7 +142,7 @@ public class NTemplateMain extends NutsApplication {
                                     shell.getSession()
                             )
             );
-            shell.executeString(content);
+            shell.executeString(content,shell.getRootContext());
             out1.flush();
             return out.toString();
         }

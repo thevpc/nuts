@@ -311,9 +311,19 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
     public class State {
         Stack<ParserStep> statusStack = new Stack<>();
         private boolean lineMode = false;
+        private boolean wasNewLine = false;
 
         public State() {
             statusStack.push(new RootParserStep(true,ws));
+        }
+
+        public boolean isWasNewLine() {
+            return wasNewLine;
+        }
+
+        public State setWasNewLine(boolean wasNewLine) {
+            this.wasNewLine = wasNewLine;
+            return this;
         }
 
         public void applyPush(ParserStep r) {
@@ -376,12 +386,12 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
 //            case '[':
 //            case '{':
 //            case '<': {
-//                this.applyPush(new TypedParserStep(c,spreadLines,false));
+//                this.applyPush(new StyledParserStep(c,spreadLines,false));
 //                break;
 //            }
                 case '\n':
                 case '\r': {
-                    this.applyPush(new PlainParserStep(c, spreadLines, true,ws));
+                    this.applyPush(new PlainParserStep(c, spreadLines, true,ws,state()));
                     applyPop();
                     if (lineMode) {
                         forceEnding();
@@ -389,7 +399,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
                     break;
                 }
                 default: {
-                    this.applyPush(new PlainParserStep(c, spreadLines, lineStart,ws));
+                    this.applyPush(new PlainParserStep(c, spreadLines, lineStart,ws,state()));
                 }
             }
         }

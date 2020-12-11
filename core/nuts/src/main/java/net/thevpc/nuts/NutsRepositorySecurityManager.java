@@ -57,7 +57,7 @@ public interface NutsRepositorySecurityManager {
      *
      * @param credentialsId credentialsId
      * @param password password
-     * @param session
+     * @param session session
      * @throws NutsSecurityException when check failed
      */
     void checkCredentials(char[] credentialsId, char[] password, NutsSession session) throws NutsSecurityException;
@@ -68,7 +68,7 @@ public interface NutsRepositorySecurityManager {
      * character
      *
      * @param credentialsId credentials-id
-     * @param session
+     * @param session session
      * @return credentials
      */
     char[] getCredentials(char[] credentialsId, NutsSession session);
@@ -79,7 +79,7 @@ public interface NutsRepositorySecurityManager {
      * character
      *
      * @param credentialsId credentials-id
-     * @param session
+     * @param session session
      * @return credentials
      */
     boolean removeCredentials(char[] credentialsId, NutsSession session);
@@ -89,13 +89,13 @@ public interface NutsRepositorySecurityManager {
      * into the config. if credentialId is not null, the given credentialId will
      * be updated and the credentialId is returned. The {@code credentialsId},if
      * present or returned, <strong>MUST</strong> be prefixed with
-     * AuthenticationAgent'd id and ':' character
+     * AuthenticationAgent's id and ':' character
      *
      * @param credentials credential
-     * @param allowRetreive when true {@link #getCredentials(char[], NutsSession)} can be invoked over {@code credentialId}
+     * @param allowRetrieve when true {@link #getCredentials(char[], NutsSession)} can be invoked over {@code credentialId}
      * @param credentialId preferred credentialId, if null, a new one is created
-     * @param session
+     * @param session session
      * @return credentials-id
      */
-    char[] createCredentials(char[] credentials, boolean allowRetreive, char[] credentialId, NutsSession session);
+    char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, NutsSession session);
 }

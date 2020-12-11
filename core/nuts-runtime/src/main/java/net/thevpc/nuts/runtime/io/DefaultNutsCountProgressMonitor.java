@@ -62,7 +62,7 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
             NutsTextFormatManager terminalFormat = event.getSession().getWorkspace().formats().text();
-            out.print("`" + FPrintCommands.MOVE_LINE_START + "`");
+            FPrintCommands.runMoveLineStart(out);
             double globalSeconds = event.getTimeMillis() / 1000.0;
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentValue() / globalSeconds);
             long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialValue() / partialSeconds);

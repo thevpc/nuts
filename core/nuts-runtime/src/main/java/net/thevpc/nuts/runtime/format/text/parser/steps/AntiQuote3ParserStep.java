@@ -45,7 +45,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                     } else {
                         //too much, ignore it all and consider it as plain
                         start.append(c);
-                        p.applyDropReplace(new PlainParserStep(start.toString(),spreadLines,false,ws));
+                        p.applyDropReplace(new PlainParserStep(start.toString(),spreadLines,false,ws,p));
                     }
                 } else {
                     if (start.length() == maxSize) {
@@ -61,7 +61,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                         status = CONTENT;
                     }else{
                         start.append(c);
-                        p.applyDropReplace(new PlainParserStep(start.toString(),spreadLines,false,ws));
+                        p.applyDropReplace(new PlainParserStep(start.toString(),spreadLines,false,ws,p));
                     }
                 }
 //                    p.applyContinue();
