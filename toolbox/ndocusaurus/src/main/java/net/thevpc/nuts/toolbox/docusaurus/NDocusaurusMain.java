@@ -18,12 +18,12 @@ public class NDocusaurusMain extends NutsApplication {
             boolean buildPdf=false;
 
             @Override
-            public boolean nextOption(NutsArgument option, NutsCommandLine cmdLine) {
+            public boolean nextOption(NutsArgument option, NutsCommandLine commandline) {
                 switch (option.getStringKey()) {
                     case "-d":
                     case "--dir": {
                         if (workdir == null) {
-                            workdir = cmdLine.nextString().getStringValue();
+                            workdir = commandline.nextString().getStringValue();
                             return true;
                         }
                     }

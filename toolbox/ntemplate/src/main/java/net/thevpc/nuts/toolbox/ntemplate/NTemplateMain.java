@@ -31,26 +31,26 @@ public class NTemplateMain extends NutsApplication {
 //            private String mimeType = null;
 
             @Override
-            public boolean nextOption(NutsArgument option, NutsCommandLine cmdLine) {
+            public boolean nextOption(NutsArgument option, NutsCommandLine commandline) {
                 switch (option.getStringKey()) {
                     case "-i":
                     case "--init": {
-                        config.addInitScript(cmdLine.nextString().getStringValue());
+                        config.addInitScript(commandline.nextString().getStringValue());
                         return true;
                     }
                     case "-s":
                     case "--scriptType": {
-                        config.setScriptType(cmdLine.nextString().getStringValue());
+                        config.setScriptType(commandline.nextString().getStringValue());
                         return true;
                     }
                     case "-t":
                     case "--to": {
-                        config.setTargetFolder(cmdLine.nextString().getStringValue());
+                        config.setTargetFolder(commandline.nextString().getStringValue());
                         return true;
                     }
                     case "-p":
                     case "--project": {
-                        config.setProjectPath(cmdLine.nextString().getStringValue());
+                        config.setProjectPath(commandline.nextString().getStringValue());
                         return true;
                     }
 

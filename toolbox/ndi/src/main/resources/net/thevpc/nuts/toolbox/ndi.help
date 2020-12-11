@@ -25,7 +25,7 @@ ndi ln|link <options> ...
     create a new script to link to an existing nuts workspace and/or version.
     the link created will run 'nuts' against the selected workspace and/or version.
 
-##OPTIONS:##
+##) OPTIONS:
 ```sh
 ndi in|install <options> <command> ...
 ```

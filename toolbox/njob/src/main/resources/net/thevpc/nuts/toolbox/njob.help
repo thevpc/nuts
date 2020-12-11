@@ -1,6 +1,6 @@
 njob is a productivity tool to follow you tasks
 
-##) SYNOPSIS
+##) SYNOPSIS:
 ```sh
 njob tasks | jobs | projects | summary...
 ```

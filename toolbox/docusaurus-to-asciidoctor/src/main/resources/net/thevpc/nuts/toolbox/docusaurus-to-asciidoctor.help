@@ -2,7 +2,7 @@
 
 build:0.7.0.0#202009121741
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 
 ==docusaurus-to-asciidoctor==
     convert docusaurus project at the current folder
@@ -10,7 +10,7 @@ build:0.7.0.0#202009121741
 Only docusaurus v2 are support. "docusaurus.config.js" need to include 'customFields' 
 as show in this example.
 
-
+```json
 customFields: {
     asciidoctor: {
         path: 'pdf',
@@ -32,5 +32,5 @@ customFields: {
         }
     }
 }
-
+```
 

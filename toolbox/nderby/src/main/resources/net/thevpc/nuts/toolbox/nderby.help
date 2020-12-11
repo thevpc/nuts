@@ -1,4 +1,4 @@
-##SYNOPSIS:##
+##) SYNOPSIS:
 ==nderby== **\<command-options\>**
 manage local derby database server configurations
 
@@ -61,7 +61,7 @@ manage local derby database server configurations
             : list all available (and applicable to the current jdk) derby versions
 
 
-##COMMON OPTIONS:##
+##) COMMON OPTIONS:
         **-p** | **--port** <port>
                  : derby host port
         **--ssl** <address>
@@ -72,7 +72,7 @@ manage local derby database server configurations
 default DB_VERSION : LATEST
 See NetworkServerControl command for full commands
 
-##EXAMPLES:##
+##) EXAMPLES:
 
 ##nderby## ps --long
    show all derby processes

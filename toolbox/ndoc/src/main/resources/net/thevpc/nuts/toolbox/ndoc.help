@@ -1,6 +1,6 @@
 ==worky== is a developer companion
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 
 ==worky== {{scan}} \[{{-i}}|{{--interactive}}\]  <path>
     scan for maven projetcs

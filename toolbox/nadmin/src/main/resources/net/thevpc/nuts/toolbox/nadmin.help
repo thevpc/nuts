@@ -1,12 +1,12 @@
 manage nuts workspace
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 ```sh
 nadmin <command> ...
  ```
 manage nuts workspace
 
-##) ALIAS COMMANDS
+##) ALIAS COMMANDS:
 ```sh
 nadmin list aliases ...
 ```
@@ -52,7 +52,7 @@ nadmin clear imports
         remove all imported groups
 
 
-##) REPOSITORY COMMANDS
+##) REPOSITORY COMMANDS:
 
 ```sh
 nadmin list archetypes
@@ -84,7 +84,7 @@ nadmin update stats <repo-folder-path> ...
 ```
         update local repo statistics
 
-##) SECUTIRY COMMANDS
+##) SECUTIRY COMMANDS:
 ```sh
 nadmin list users
 ```

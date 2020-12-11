@@ -22,7 +22,7 @@ njob jobs|j show|s <job-id> ...
 
 
 ```sh
-njob jobs|j list|l [<options>]
+njob jobs|j list|l [<-options>]
 ```
     list jobs.
 

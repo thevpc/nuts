@@ -1,7 +1,7 @@
 ```sh njob tasks``` manipulate tasks
 
 ```sh
-njob tasks|t add|a [<options>] <job-name>
+njob tasks|t add|a [<-options>] <job-name>
 ```
     on <start-date>
     at <start-time>
@@ -22,7 +22,7 @@ njob tasks|j show|s <job-id> ...
 
 
 ```sh
-njob tasks|j list|l [<options>]
+njob tasks|j list|l [<-options>]
 ```
     list tasks.
 

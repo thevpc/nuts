@@ -1,4 +1,4 @@
-##SYNOPSIS:##
+##) SYNOPSIS:
 ==nmysql== \[ **--local** \| **--remote** \] {{<command>}} **\<global-options\>** **\<command-options\>**
 manage local mysql database access configurations to help backup/restore data simply
 
@@ -101,7 +101,7 @@ manage local mysql database access configurations to help backup/restore data si
     restore remote config database with local database data
 
 
-##EXAMPLES:##
+##) EXAMPLES:
 ==nmysql== add --name enisoinfo --user myuser --password mypassword
     create configuration. Password will be encrypted and stored.
 

@@ -1,4 +1,4 @@
-##SYNOPSIS:##
+##) SYNOPSIS:
 ==nuts-server== **\<global-options\>** {{<command>}} **\<command-options\>** \[\[id\]=location\]
 manage nuts server instances
 
@@ -28,7 +28,7 @@ manage nuts server instances
     list server instances
 
 
-##EXAMPLES:##
+##) EXAMPLES:
 
 nuts-server start --http
 

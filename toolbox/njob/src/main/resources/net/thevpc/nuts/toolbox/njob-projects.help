@@ -1,6 +1,6 @@
 njob is a developer companion
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 
 ```sh
 njob add project|ap  [options] <project-name>

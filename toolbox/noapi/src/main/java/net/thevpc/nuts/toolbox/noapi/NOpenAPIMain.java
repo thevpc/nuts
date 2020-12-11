@@ -26,30 +26,30 @@ public class NOpenAPIMain extends NutsApplication {
             String openAPIFormat;
 
             @Override
-            public boolean nextOption(NutsArgument option, NutsCommandLine cmdLine) {
+            public boolean nextOption(NutsArgument option, NutsCommandLine commandline) {
                 switch (option.getString()) {
                     case "--yaml": {
-                        cmdLine.nextBoolean();
+                        commandline.nextBoolean();
                         openAPIFormat = "yaml";
                         return true;
                     }
                     case "--keep": {
-                        cmdLine.nextBoolean();
+                        commandline.nextBoolean();
                         keep = true;
                         return true;
                     }
                     case "--json": {
-                        cmdLine.nextBoolean();
+                        commandline.nextBoolean();
                         openAPIFormat = "json";
                         return true;
                     }
                     case "--openAPI": {
-                        cmdLine.nextBoolean();
+                        commandline.nextBoolean();
                         openAPI = true;
                         return true;
                     }
                     case "--pdf": {
-                        cmdLine.nextBoolean();
+                        commandline.nextBoolean();
                         command = "pdf";
                         return true;
                     }

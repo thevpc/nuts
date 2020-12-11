@@ -1,6 +1,6 @@
 ##ntomcat## toolbox to start, monitor and deploy both local and remote tomcat instances
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 ##ntomcat## [\<target\>] <command> **<what>** \<**options**\> <args>...
 
 tomcat toolbox to start, monitor and remote deploy applications
@@ -92,7 +92,7 @@ tomcat toolbox to start, monitor and remote deploy applications
     {{version}} | {{catalina-version}} **<what>**
                     : show catalina version for the given config
 
-##EXAMPLES:##
+##) EXAMPLES:
 
 ##ntomcat## add my-application
    will start tomcat instance with the latest available version

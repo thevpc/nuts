@@ -1,6 +1,6 @@
 ==ndocusaurus== is a docusaurus project toolbox. It helps templating docusaurus folder and generating pdf file
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 
 ==ndocusaurus== **<options>** {{command}}
     run ndocusaurus command
@@ -35,7 +35,7 @@ customFields: {
     }
 }
 
-##OPTIONS:##
+##) OPTIONS:
  **-d**
  **--dir**   : docusaurus working directory. defaults to '.'
 
@@ -44,6 +44,6 @@ customFields: {
  {{build}}   : builds website (runs npm run-script build)
  {{start}}   : runs website locally (runs npm start)
 
-##EXAMPLES:##
+##) EXAMPLES:
 ==ndocusaurus== {{pdf}}
   generates pdf file

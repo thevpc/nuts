@@ -23,26 +23,26 @@ public class NDocMain extends NutsApplication {
             String backend;
 
             @Override
-            public boolean nextOption(NutsArgument option, NutsCommandLine cmdLine) {
+            public boolean nextOption(NutsArgument option, NutsCommandLine commandline) {
                 switch (option.getStringKey()) {
                     case "-s":
                     case "--source": {
-                        src.add(cmdLine.nextString().getStringValue());
+                        src.add(commandline.nextString().getStringValue());
                         return true;
                     }
                     case "-t":
                     case "--target": {
-                        target = cmdLine.nextString().getStringValue();
+                        target = commandline.nextString().getStringValue();
                         return true;
                     }
                     case "-p":
                     case "--package": {
-                        pck.add(cmdLine.nextString().getStringValue());
+                        pck.add(commandline.nextString().getStringValue());
                         return true;
                     }
                     case "-b":
                     case "--backend": {
-                        backend=cmdLine.nextString().getStringValue();
+                        backend= commandline.nextString().getStringValue();
                         return true;
                     }
                 }
