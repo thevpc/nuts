@@ -1,6 +1,6 @@
 list directory (or file)
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 ==ls== \[**<options>**\] <directory>
 
 -l : long format
@@ -8,7 +8,7 @@ list directory (or file)
 
 lists directory content
 
-##EXAMPLES:##
+##) EXAMPLES:
 
 ls /another/path
    lists folder content

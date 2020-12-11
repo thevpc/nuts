@@ -1,10 +1,10 @@
 strip directory and suffix from filenames
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 ==basename== path
 strip directory and suffix from filenames
 
-##EXAMPLES:##
+##) EXAMPLES:
 
 ==basename== /usr/bin/sort
     "sort"

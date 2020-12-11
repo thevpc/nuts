@@ -1,10 +1,10 @@
 read  and  execute  commands  from filename in the current shell environment
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 ==source== <filename> {{args...}}
 read  and  execute  commands  from filename in the current shell environment
 
-##EXAMPLES:##
+##) EXAMPLES:
 
 ==source== myfile.nsh
     execute myfile.nsh in the current shell

@@ -1,7 +1,7 @@
 #) xml
 manipulate and query xml input
 
-##) SYNOPSIS
+##) SYNOPSIS:
 ```sh
 xml [--file <file>] [--xpath <query>]
 ```

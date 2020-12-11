@@ -1,12 +1,12 @@
 commit (re-deploys) an already checked out folder
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 ==commit== <folder>
 
 commits (re-deploys) an already checked out folder
 
 
-##EXAMPLES:##
+##) EXAMPLES:
 
 ==commit== /my/checkeout/folder
    commits and @@DELETES@@ the checked out folder

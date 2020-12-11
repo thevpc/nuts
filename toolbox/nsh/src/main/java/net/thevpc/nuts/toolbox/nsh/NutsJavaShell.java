@@ -45,15 +45,13 @@ import java.util.logging.Logger;
 public class NutsJavaShell extends JShell {
 
     private static final Logger LOG = Logger.getLogger(NutsJavaShell.class.getName());
-    List<String> boot_nonOptions = new ArrayList<>();
-    boolean boot_interactive = false;
-    boolean boot_command = false;
     //        String command = null;
     long boot_startMillis;
     private NutsApplicationContext appContext;
     private File histFile = null;
     private NutsId appId = null;
     private NutsWorkspace workspace = null;
+    private NshOptions nshOptions = new NshOptions();
 
     public NutsJavaShell(NutsApplicationContext appContext) {
         this(appContext, null, null, null, null);
@@ -196,43 +194,11 @@ public class NutsJavaShell extends JShell {
     protected void prepareExecuteShell(String[] args) {
         boot_startMillis = appContext.getStartTimeMillis();
         NutsSession session = getRootNutsShellContext().getSession();
-        PrintStream out = session.out();
-        PrintStream err = session.err();
         NutsCommandLine cmd = null;
         cmd = getWorkspace().commandLine().create(args).setAutoComplete(appContext.getAutoComplete());
-        NutsArgument a;
-        while (cmd.hasNext()) {
-            if (boot_nonOptions.isEmpty()) {
-                if ((a = cmd.next("--help")) != null) {
-                    boot_command = true;
-                    boot_nonOptions.add("help");
-                } else if (appContext != null && appContext.configureFirst(cmd)) {
-                    //ok
-                } else if ((a = cmd.nextString("-c", "--command")) != null) {
-                    boot_command = true;
-                    String cc = a.getStringValue();
-                    if (StringUtils.isBlank(cc)) {
-                        cmd.required("missing command for -c");
-                    }
-                    boot_nonOptions.add(cc);
-                    boot_nonOptions.addAll(Arrays.asList(cmd.toStringArray()));
-                    cmd.skipAll();
-                } else if ((a = cmd.nextBoolean("-i", "--interactive")) != null) {
-                    boot_interactive = a.getBooleanValue();
-                } else if ((a = cmd.nextBoolean("-x")) != null) {
-                    getOptions().setXtrace(a.getBooleanValue());
-                } else if (cmd.peek().isOption()) {
-                    cmd.setCommandName("nsh").unexpectedArgument();
-                } else {
-                    boot_nonOptions.add(cmd.next().getString());
-                }
-            } else {
-                boot_nonOptions.add(cmd.next().getString());
-            }
-        }
-        if (boot_nonOptions.isEmpty()) {
-            boot_interactive = true;
-        }
+        nshOptions.parse(cmd,appContext);
+        getOptions().setXtrace(nshOptions.isXtrace());
+        getOptions().setVerbose(nshOptions.isVerbose());
         if (!cmd.isExecMode()) {
             return;
         }
@@ -252,21 +218,21 @@ public class NutsJavaShell extends JShell {
             }
             JShellContext context = getRootContext();
             executeFile(getStartupScript(), context, true);
-            if (boot_nonOptions.size() > 0) {
-                String c = boot_nonOptions.get(0);
-                if (!boot_command) {
-                    boot_nonOptions.remove(0);
-                    context.setArgs(boot_nonOptions.toArray(new String[0]));
+            if (nshOptions.getBoot_nonOptions().size() > 0) {
+                String c = nshOptions.getBoot_nonOptions().get(0);
+                if (!nshOptions.isBoot_command()) {
+                    nshOptions.getBoot_nonOptions().remove(0);
+                    context.setArgs(nshOptions.getBoot_nonOptions().toArray(new String[0]));
                     executeFile(c, context, false);
                 } else {
-                    executeCommand(boot_nonOptions.toArray(new String[0]),context);
+                    executeCommand(nshOptions.getBoot_nonOptions().toArray(new String[0]),context);
                 }
                 return;
             }
-            if (boot_interactive) {
+            if (nshOptions.isBoot_interactive()) {
                 appContext.getWorkspace().io().term().enableRichTerm(appContext.getSession());
                 appContext.getWorkspace().io().term().getSystemTerminal()
-                        .setAutoCompleteResolver(new MshAutoCompleter());
+                        .setAutoCompleteResolver(new NshAutoCompleter());
                 try {
                     executeInteractive(context.out(),context);
                 } finally {
@@ -322,7 +288,7 @@ public class NutsJavaShell extends JShell {
         return PomIdResolver.resolvePomId(getClass(), new PomId("", "", "dev")).getVersion();
     }
 
-    private static class MshAutoCompleter implements NutsCommandAutoCompleteProcessor {
+    private static class NshAutoCompleter implements NutsCommandAutoCompleteProcessor {
         @Override
         public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex, NutsWorkspace workspace) {
             List<NutsArgumentCandidate> candidates = new ArrayList<>();

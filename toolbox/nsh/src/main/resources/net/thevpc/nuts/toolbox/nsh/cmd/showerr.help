@@ -1,12 +1,12 @@
 show the error message of the last command if was erroneous.
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 ==showerr== [--trace]
 
 shows the error message of the last command if was erroneous
 when the --trace option is present will display the full stacktrace
 
-##EXAMPLES:##
+##) EXAMPLES:
 
 ==showerr==
    show the last error message

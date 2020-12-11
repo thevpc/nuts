@@ -1,12 +1,12 @@
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.common.strings.StringUtils;
-import net.thevpc.jshell.AutoCompleteCandidate;
 import net.thevpc.jshell.JShellBuiltin;
-import net.thevpc.jshell.JShellException;
 import net.thevpc.nuts.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -58,6 +58,8 @@ public class Nsh extends NutsApplication {
 //                        .setPriority(1)
 //                        .setParameters(parameters)
 //        );
+        applicationContext.getWorkspace().io().term().enableRichTerm(applicationContext.getSession());
+
         NutsJavaShell c = new NutsJavaShell(applicationContext);
         JShellBuiltin[] commands = c.getRootContext().builtins().getAll();
         Set<String> reinstalled = new TreeSet<>();
@@ -140,6 +142,14 @@ public class Nsh extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext applicationContext) {
+
+        //before loading JShell check if we need to activate rich term
+        NshOptions options = new NshOptions();
+        options.parse(applicationContext.getCommandLine(), applicationContext);
+
+        if (options.isBoot_interactive()) {
+            applicationContext.getWorkspace().io().term().enableRichTerm(applicationContext.getSession());
+        }
         new NutsJavaShell(applicationContext)
                 .executeShell(applicationContext.getArguments());
     }

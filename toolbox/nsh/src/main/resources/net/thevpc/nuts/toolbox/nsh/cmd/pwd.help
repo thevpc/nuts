@@ -1,10 +1,10 @@
 print working directory
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 ==pwd==
 
 prints working directory
-##EXAMPLES:##
+##) EXAMPLES:
 
 ==pwd==
    prints working directory

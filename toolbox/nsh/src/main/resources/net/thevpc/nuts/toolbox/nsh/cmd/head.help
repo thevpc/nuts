@@ -1,11 +1,11 @@
 output the first part of files
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 ==head== [<OPTION>...] <FILE> ...
 
 output the first part of files
 
-##EXAMPLES:##
+##) EXAMPLES:
 
 ==head== -100 out.txt
    print first 100 lnes

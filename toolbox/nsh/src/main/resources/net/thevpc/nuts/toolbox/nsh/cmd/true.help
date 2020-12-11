@@ -1,10 +1,10 @@
 return 0 (true/no error value)
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 ==true==
 return 0 (true/no error value)
 
-##EXAMPLES:##
+##) EXAMPLES:
 
 ==true==
     return 0 (true/no error value)

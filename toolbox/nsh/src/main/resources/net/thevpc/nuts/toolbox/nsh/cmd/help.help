@@ -1,12 +1,12 @@
 show this help
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 ==help== [<command> ...]
 
 shows help of the given command or of all commands if none is provided.
 
 
-##EXAMPLES:##
+##) EXAMPLES:
 
 ==help==
    shows all help

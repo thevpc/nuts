@@ -1,12 +1,12 @@
 show who is logged in
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 ==whoami== [ options ]
 
 shows who is logged in
 
 --all  -a   : show all information about user
-##EXAMPLES:##
+##) EXAMPLES:
 
 whoami -a
    shows all information about current user

@@ -1,13 +1,13 @@
 show version
 
-##SYNOPSIS:##
+##) SYNOPSIS:
 ==version== [ -l ] [ --long ]
 
 -l --long   : long format
 
 shows version
 
-##EXAMPLES:##
+##) EXAMPLES:
 
 ==version==
    shows version
