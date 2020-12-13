@@ -1,4 +1,4 @@
-##) STANDARD OPTIONS
+##) STANDARD OPTIONS:
 Nuts commands share a set of options that are automatically supported and handled.
 
        ```sh --help```   : show application help and exit
@@ -24,7 +24,7 @@ Nuts commands share a set of options that are automatically supported and handle
             auto detected terminal (default)
           ```sh --color=never|none|no|false|n```
             equivalent to ```sh --no-color```
-          @@Attention@@ : ```sh --color``` argument, should it accept a value, it must be an immediate one (with '=')
+          ```warn2 Attention``` : ```sh --color``` argument, should it accept a value, it must be an immediate one (with '=')
        ```sh --no-color```
             disable formatted (colorful) terminal (```kw filtered``` terminal).
 
@@ -33,7 +33,7 @@ Nuts commands share a set of options that are automatically supported and handle
        ```sh --plain[=<format-options>]```      : trace operation as plain text. equivalent to ```sh --output-format=plain```
        ```sh --json[=<format-options>]```       : trace operation as json. equivalent to ```sh --output-format=json```
        ```sh --xml[=<format-options>]```        : trace operation xml. equivalent to ```sh --output-format=xml```
-       ```sh --props[=<format-options>]```      : trace operation as (java) properties, key value list. equivalent to ```sh --output-format=props```
+       ```sh --props[=<format-options>]```      : trace operation as (~~Java™~~) properties, key value list. equivalent to ```sh --output-format=props```
        ```sh --table[=<format-options>]```      : trace operation as table. equivalent to ```sh --output-format=table```
        ```sh --tree[=<format-options>]```       : trace operation as tree. equivalent to ```sh --output-format=tree```
        ```sh --output-format-option=<format-options>```

@@ -33,7 +33,7 @@ import net.thevpc.nuts.NutsWorkspace;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  */
 public class DefaultNutsRepositoryEvent implements NutsRepositoryEvent {

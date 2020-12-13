@@ -29,7 +29,7 @@ import java.util.stream.IntStream;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class StringBuilder2 {
 

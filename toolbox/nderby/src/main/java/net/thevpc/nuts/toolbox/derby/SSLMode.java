@@ -27,7 +27,7 @@ package net.thevpc.nuts.toolbox.derby;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public enum SSLMode {
     off, basic, peerAuthentication

@@ -20,7 +20,7 @@ import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityManager {
 

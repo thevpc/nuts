@@ -36,7 +36,7 @@ import java.io.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsNodeEvaluator extends DefaultJShellNodeEvaluator implements JShellNodeEvaluator {
 

@@ -52,7 +52,7 @@
 //
 ///**
 // *
-// * @author vpc
+// * @author thevpc
 // */
 //public class DefaultNutsXmlFormat extends DefaultFormatBase<NutsXmlFormat> implements NutsXmlFormat {
 //

@@ -32,7 +32,7 @@ import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsStoreLocationsMap {
 

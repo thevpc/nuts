@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  * @param <T> Type
- * @author vpc
+ * @author thevpc
  */
 public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand> extends NutsWorkspaceCommandBase<T> {
 

@@ -32,7 +32,7 @@ import net.thevpc.nuts.runtime.util.NutsConfigurableHelper;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
 

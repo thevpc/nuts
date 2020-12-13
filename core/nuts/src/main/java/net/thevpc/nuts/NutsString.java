@@ -30,7 +30,7 @@ import java.util.Objects;
 
 /**
  * 
- * @author vpc
+ * @author thevpc
  * %category Format
  */
 public class NutsString implements NutsStringBase{

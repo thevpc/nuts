@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Non Option Argument specification
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Command Line
  */

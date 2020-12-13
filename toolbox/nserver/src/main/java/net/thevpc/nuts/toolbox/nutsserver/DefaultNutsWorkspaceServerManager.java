@@ -37,7 +37,7 @@ import java.util.Map;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsWorkspaceServerManager implements NutsWorkspaceServerManager {
 

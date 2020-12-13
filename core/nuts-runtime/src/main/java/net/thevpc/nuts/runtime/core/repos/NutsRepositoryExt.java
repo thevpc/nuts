@@ -13,7 +13,7 @@ import net.thevpc.nuts.runtime.core.NutsRepositorySupportedAction;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface NutsRepositoryExt extends NutsRepositoryExt0{
 

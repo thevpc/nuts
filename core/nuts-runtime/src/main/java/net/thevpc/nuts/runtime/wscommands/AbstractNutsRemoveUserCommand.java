@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractNutsRemoveUserCommand extends NutsWorkspaceCommandBase<NutsRemoveUserCommand> implements NutsRemoveUserCommand {
 

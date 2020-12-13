@@ -30,7 +30,7 @@ import net.thevpc.nuts.NutsDependencyTreeNode;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsDependencyTreeNode implements NutsDependencyTreeNode {
 

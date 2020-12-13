@@ -7,7 +7,7 @@
 //
 ///**
 // *
-// * @author vpc
+// * @author thevpc
 // */
 //public class FDocNode {
 //    private boolean partial;

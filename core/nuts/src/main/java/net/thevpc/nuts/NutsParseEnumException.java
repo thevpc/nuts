@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 
 /**
  * Exception Thrown when for any reason, the enum value is not expected/supported.
- * @author vpc
+ * @author thevpc
  * %category Exception
  */
 public class NutsParseEnumException extends NutsException {

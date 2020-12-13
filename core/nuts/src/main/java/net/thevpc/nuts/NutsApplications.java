@@ -33,7 +33,7 @@ import java.util.logging.Level;
 /**
  * Helper class for Nuts Applications
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Application
  */

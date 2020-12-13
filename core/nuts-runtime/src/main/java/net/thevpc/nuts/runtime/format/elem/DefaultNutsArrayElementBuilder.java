@@ -35,7 +35,7 @@ import net.thevpc.nuts.NutsElement;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
 

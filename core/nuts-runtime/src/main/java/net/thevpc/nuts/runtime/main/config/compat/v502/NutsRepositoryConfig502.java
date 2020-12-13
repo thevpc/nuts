@@ -33,7 +33,7 @@ import net.thevpc.nuts.runtime.NutsStoreLocationsMap;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  */
 public class NutsRepositoryConfig502 implements Serializable {

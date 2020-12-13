@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Class describing executable command.
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Descriptor
  */

@@ -36,7 +36,7 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOptions<NutsSearchCommand> implements NutsSearchCommand {
 

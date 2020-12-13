@@ -12,7 +12,7 @@ import net.thevpc.nuts.runtime.main.NutsExecutionContextBuilder;
 import java.util.Set;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public interface NutsWorkspaceExt {
 

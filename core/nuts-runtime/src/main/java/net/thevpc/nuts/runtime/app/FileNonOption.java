@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.app;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class FileNonOption extends DefaultNonOption {
 

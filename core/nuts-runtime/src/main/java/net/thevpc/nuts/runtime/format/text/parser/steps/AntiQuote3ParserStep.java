@@ -195,32 +195,13 @@ public class AntiQuote3ParserStep extends ParserStep {
                 );
             }
         }
-        return factory0.createCommand(
+        return factory0.createCode(
                 start.toString(),
                 cmd,
                 w.toString(),
                 end.toString(),
                 value
         );
-    }
-
-    protected TextFormat parseTextFormat(String v){
-        //this might be a command !!
-        v = v.trim();
-        switch (v) {
-            case FPrintCommands.MOVE_LINE_START: {
-                return TextFormats.MOVE_LINE_START;
-            }
-            case FPrintCommands.LATER_RESET_LINE: {
-                return TextFormats.LATER_RESET_LINE;
-            }
-            case FPrintCommands.MOVE_UP: {
-                return TextFormats.MOVE_UP;
-            }
-            default: {
-                return null;
-            }
-        }
     }
 
     @Override

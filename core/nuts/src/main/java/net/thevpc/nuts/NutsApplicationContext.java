@@ -32,7 +32,7 @@ import java.nio.file.Path;
  * Application context that store all relevant information about application
  * execution mode, workspace, etc.
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Application
  */

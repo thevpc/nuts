@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsElementFactoryXmlElement implements NutsElementFactory {
 

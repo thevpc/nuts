@@ -1,6 +1,6 @@
 execute a command
-      runs command with the given executor options \( it will be considered an option if it
-      starts with '-' \). This is helpful to issue JVM Options to executor for instance
+      runs command with the given executor options ( it will be considered an option if it
+      starts with '-' ). This is helpful to issue JVM Options to executor for instance
 
 ##) SYNOPSIS:
 ```sh nuts  exec [<-options>]... <command> <arguments>...

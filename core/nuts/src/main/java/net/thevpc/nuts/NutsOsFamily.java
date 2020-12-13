@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 
 /**
  * Supported Operating System Families
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Base
  */

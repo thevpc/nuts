@@ -36,7 +36,7 @@ import net.thevpc.nuts.runtime.DefaultNutsTokenFilter;
 import net.thevpc.nuts.NutsArgument;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsArgument {
     boolean enabled = true;

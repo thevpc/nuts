@@ -17,7 +17,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class ZipEntrySource implements Source {
 

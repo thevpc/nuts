@@ -11,7 +11,7 @@ import net.thevpc.nuts.NutsCommandLine;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class NutsObjectFormatBase extends DefaultFormatBase<NutsObjectFormat>
         implements NutsObjectFormat {

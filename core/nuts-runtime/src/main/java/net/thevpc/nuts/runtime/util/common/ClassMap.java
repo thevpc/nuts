@@ -41,7 +41,7 @@ import java.util.Queue;
 /**
  * register parent class/interface and get value for all sub classes
  *
- * @author vpc
+ * @author thevpc
  */
 public class ClassMap<V> {
 

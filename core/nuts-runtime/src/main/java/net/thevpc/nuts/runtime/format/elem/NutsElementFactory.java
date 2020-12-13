@@ -29,7 +29,7 @@ import net.thevpc.nuts.NutsElement;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface NutsElementFactory {
 

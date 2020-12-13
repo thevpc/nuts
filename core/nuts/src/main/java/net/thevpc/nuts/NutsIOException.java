@@ -32,6 +32,7 @@ public class NutsIOException extends NutsException {
 
     /**
      * Constructs a new Validation Exception
+     * @param workspace workspace
      */
     public NutsIOException(NutsWorkspace workspace) {
         super(workspace);
@@ -39,6 +40,7 @@ public class NutsIOException extends NutsException {
 
     /**
      * Constructs a new Validation Exception
+     * @param workspace workspace
      * @param message message
      */
     public NutsIOException(NutsWorkspace workspace, String message) {
@@ -47,6 +49,7 @@ public class NutsIOException extends NutsException {
 
     /**
      * Constructs a new Validation Exception
+     * @param workspace workspace
      * @param message message
      * @param cause cause
      */
@@ -56,6 +59,7 @@ public class NutsIOException extends NutsException {
 
     /**
      * Constructs a new Validation Exception
+     * @param workspace workspace
      * @param cause cause
      */
     public NutsIOException(NutsWorkspace workspace, Throwable cause) {

@@ -33,7 +33,7 @@ import net.thevpc.nuts.NutsPrimitiveElement;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractNutsElement implements NutsElement {
 

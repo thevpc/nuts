@@ -30,7 +30,7 @@ import net.thevpc.nuts.NutsApplicationContext;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface PathVersionResolver {
     public Set<VersionDescriptor> resolve(String filePath, NutsApplicationContext context);

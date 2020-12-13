@@ -32,6 +32,7 @@ public class NutsIndexerNotAccessibleException extends NutsException {
 
     /**
      * Constructs a new Validation Exception
+     * @param workspace workspace
      */
     public NutsIndexerNotAccessibleException(NutsWorkspace workspace) {
         super(workspace);
@@ -40,6 +41,7 @@ public class NutsIndexerNotAccessibleException extends NutsException {
     /**
      * Constructs a new Validation Exception
      * @param message message
+     * @param workspace workspace
      */
     public NutsIndexerNotAccessibleException(NutsWorkspace workspace, String message) {
         super(workspace,message);
@@ -47,6 +49,7 @@ public class NutsIndexerNotAccessibleException extends NutsException {
 
     /**
      * Constructs a new Validation Exception
+     * @param workspace workspace
      * @param message message
      * @param cause cause
      */

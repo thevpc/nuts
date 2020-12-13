@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class FilesFoldersApi {
     public static Item[] getFilesAndFolders(boolean files, boolean folders, String baseUrl, NutsSession session) {

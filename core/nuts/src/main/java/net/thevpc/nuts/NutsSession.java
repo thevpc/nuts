@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * session is context defining common command options and parameters.
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Base
  */

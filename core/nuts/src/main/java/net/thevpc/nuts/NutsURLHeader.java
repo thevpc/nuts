@@ -29,7 +29,7 @@ import java.time.Instant;
 
 /**
  * url header meaning ful information
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category SPI Base
  */

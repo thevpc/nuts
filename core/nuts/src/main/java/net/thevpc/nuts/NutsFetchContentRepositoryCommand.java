@@ -30,7 +30,7 @@ import java.nio.file.Path;
 
 /**
  * Repository command bound to FetchCommand used to fetch an artifact content from a specific repository.
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category SPI Base
  */

@@ -20,7 +20,7 @@ import java.util.List;
 import static net.thevpc.nuts.toolbox.ncode.SourceNavigator.navigate;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class Feenoo {
 

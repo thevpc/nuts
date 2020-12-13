@@ -34,7 +34,7 @@ import net.thevpc.nuts.NutsNamedElement;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsFormatUtils {
 

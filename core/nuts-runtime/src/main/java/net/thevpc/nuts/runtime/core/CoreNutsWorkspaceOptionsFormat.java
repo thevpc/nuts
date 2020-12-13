@@ -33,7 +33,7 @@ import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 import java.util.*;
 
 /**
- * @author vpc
+ * @author thevpc
  * %category Format
  */
 public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFormat {

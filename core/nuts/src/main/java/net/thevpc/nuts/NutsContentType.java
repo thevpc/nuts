@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Formats supported by Nuts
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Format
  */

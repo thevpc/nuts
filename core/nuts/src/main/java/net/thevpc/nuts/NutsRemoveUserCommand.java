@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Remove User Command
- * @author vpc
+ * @author thevpc
  * %category Security
  */
 public interface NutsRemoveUserCommand extends NutsWorkspaceCommand {

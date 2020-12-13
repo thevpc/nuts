@@ -11,7 +11,7 @@ import net.thevpc.nuts.runtime.util.NutsConfigurableHelper;
 
 /**
  * @param <T> Type
- * @author vpc
+ * @author thevpc
  */
 public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand> implements NutsRepositoryCommand {
 

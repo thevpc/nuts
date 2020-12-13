@@ -30,7 +30,7 @@ import org.junit.jupiter.api.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class TestNutsStartupPerf {
     public static void main(String[] args) {

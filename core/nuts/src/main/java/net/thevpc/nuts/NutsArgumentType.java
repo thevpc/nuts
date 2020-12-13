@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 /**
  * Argument parse Type
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Command Line
  */

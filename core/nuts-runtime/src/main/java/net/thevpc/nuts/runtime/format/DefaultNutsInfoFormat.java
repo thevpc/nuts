@@ -19,7 +19,7 @@ import net.thevpc.nuts.runtime.util.common.CoreCommonUtils;
 /**
  * type: Command Class
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> implements NutsInfoFormat {
 

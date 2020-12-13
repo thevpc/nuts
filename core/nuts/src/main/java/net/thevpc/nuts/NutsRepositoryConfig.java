@@ -29,7 +29,7 @@ import java.util.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Config
  */

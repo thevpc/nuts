@@ -33,7 +33,7 @@ import net.thevpc.nuts.NutsWorkspace;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsElementFactoryContext implements NutsElementFactoryContext {
 

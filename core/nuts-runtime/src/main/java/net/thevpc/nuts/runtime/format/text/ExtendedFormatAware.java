@@ -9,7 +9,7 @@ import net.thevpc.nuts.runtime.io.NutsTerminalModeOp;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface ExtendedFormatAware {
     NutsTerminalModeOp getModeOp();

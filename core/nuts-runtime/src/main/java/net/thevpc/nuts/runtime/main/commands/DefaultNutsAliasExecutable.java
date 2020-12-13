@@ -13,7 +13,7 @@ import net.thevpc.nuts.NutsWorkspaceCommandAlias;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsAliasExecutable extends AbstractNutsExecutableCommand {
 

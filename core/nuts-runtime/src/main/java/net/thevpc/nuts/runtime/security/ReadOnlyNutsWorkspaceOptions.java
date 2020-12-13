@@ -37,7 +37,7 @@ import java.util.function.Supplier;
 import net.thevpc.nuts.*;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
 

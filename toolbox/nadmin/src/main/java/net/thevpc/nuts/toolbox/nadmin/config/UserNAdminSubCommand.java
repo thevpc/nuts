@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
 

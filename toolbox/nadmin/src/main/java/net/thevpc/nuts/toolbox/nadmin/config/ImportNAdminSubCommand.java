@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
 

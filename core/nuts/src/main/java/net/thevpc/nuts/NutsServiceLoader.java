@@ -32,7 +32,7 @@ import java.util.List;
 
 /**
  * Component service class loader.
- * @author vpc
+ * @author thevpc
  * @param <T> component type
  * @param <B> component support constraint type
  * @since 0.5.4

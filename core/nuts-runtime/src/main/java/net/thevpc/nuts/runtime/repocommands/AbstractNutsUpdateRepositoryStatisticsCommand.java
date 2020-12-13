@@ -12,7 +12,7 @@ import net.thevpc.nuts.NutsUpdateRepositoryStatisticsCommand;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractNutsUpdateRepositoryStatisticsCommand extends NutsRepositoryCommandBase<NutsUpdateRepositoryStatisticsCommand>
         implements NutsUpdateRepositoryStatisticsCommand {

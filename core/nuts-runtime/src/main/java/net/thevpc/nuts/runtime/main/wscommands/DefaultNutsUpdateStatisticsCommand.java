@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.bridges.maven.MavenRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.wscommands.AbstractNutsUpdateStatisticsCommand;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatisticsCommand {
 

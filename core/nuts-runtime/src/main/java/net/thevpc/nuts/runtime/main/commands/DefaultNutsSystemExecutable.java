@@ -14,7 +14,7 @@ import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 import net.thevpc.nuts.runtime.app.DefaultNutsCommandLine;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 

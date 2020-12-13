@@ -34,7 +34,7 @@ import net.thevpc.jshell.JShellContext;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 class NutsCommandTypeResolver implements JShellCommandTypeResolver {
 

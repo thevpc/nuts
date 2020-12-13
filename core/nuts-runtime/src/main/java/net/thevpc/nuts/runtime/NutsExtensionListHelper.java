@@ -35,7 +35,7 @@ import net.thevpc.nuts.runtime.main.config.NutsWorkspaceConfigBoot;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsExtensionListHelper {
 

@@ -41,7 +41,7 @@ import net.thevpc.nuts.runtime.util.common.CoreCommonUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsIdFormatHelper {
     private NutsLogger LOG;

@@ -34,7 +34,7 @@ import java.util.Set;
  * Fetch command class helps fetching/retrieving a artifact with all of its
  * files.
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Commands
  */

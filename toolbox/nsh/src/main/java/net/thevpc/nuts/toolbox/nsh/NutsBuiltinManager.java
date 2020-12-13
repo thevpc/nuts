@@ -36,7 +36,7 @@ import net.thevpc.jshell.JShellBuiltinManager;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsBuiltinManager implements JShellBuiltinManager {
         private static final Logger LOG = Logger.getLogger(NutsBuiltinManager.class.getName());

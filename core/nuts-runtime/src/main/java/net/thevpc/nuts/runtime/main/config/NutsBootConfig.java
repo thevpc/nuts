@@ -35,7 +35,7 @@ import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 /**
  * Nuts Boot editable configuration object
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  */
 public final class NutsBootConfig implements Cloneable, Serializable {

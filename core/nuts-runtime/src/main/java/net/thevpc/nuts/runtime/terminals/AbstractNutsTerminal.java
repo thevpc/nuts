@@ -31,7 +31,7 @@ import net.thevpc.nuts.NutsWorkspaceAware;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractNutsTerminal implements NutsTerminal, NutsWorkspaceAware {
     public NutsTerminal mode(NutsTerminalMode mode) {

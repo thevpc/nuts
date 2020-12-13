@@ -40,7 +40,7 @@ import net.thevpc.nuts.NutsWorkspace;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @param <T> Type
  */
 public abstract class AbstractNutsResultList<T> implements NutsResultList<T> {

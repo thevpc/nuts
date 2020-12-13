@@ -33,7 +33,7 @@ import net.thevpc.nuts.runtime.DefaultNutsDefinition;
 import java.util.EnumSet;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
 

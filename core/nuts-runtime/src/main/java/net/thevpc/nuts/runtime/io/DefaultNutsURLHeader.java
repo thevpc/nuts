@@ -31,7 +31,7 @@ import net.thevpc.nuts.NutsURLHeader;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  */
 public class DefaultNutsURLHeader implements NutsURLHeader {

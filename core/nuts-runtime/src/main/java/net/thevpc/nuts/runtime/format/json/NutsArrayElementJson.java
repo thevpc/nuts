@@ -38,7 +38,7 @@ import net.thevpc.nuts.runtime.util.iter.IteratorBuilder;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsArrayElementJson extends AbstractNutsElement implements NutsArrayElement {
 

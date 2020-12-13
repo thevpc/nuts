@@ -32,7 +32,7 @@ import net.thevpc.nuts.NutsSession;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsIdFilterToPredicate implements Predicate<NutsId> {
     

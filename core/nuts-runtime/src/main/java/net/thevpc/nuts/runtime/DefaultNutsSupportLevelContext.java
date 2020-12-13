@@ -30,7 +30,7 @@ import net.thevpc.nuts.NutsWorkspace;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsSupportLevelContext<T> implements NutsSupportLevelContext<T> {
 

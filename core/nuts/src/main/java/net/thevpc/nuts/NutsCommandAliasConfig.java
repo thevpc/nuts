@@ -31,7 +31,7 @@ import java.util.Objects;
 
 /**
  * Command Alias definition class Config
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Config
  */

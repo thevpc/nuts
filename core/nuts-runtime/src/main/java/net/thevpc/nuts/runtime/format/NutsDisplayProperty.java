@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.format;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public enum NutsDisplayProperty {
     STATUS,

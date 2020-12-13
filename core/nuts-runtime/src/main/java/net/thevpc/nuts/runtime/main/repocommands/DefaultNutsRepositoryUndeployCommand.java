@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.log.NutsLogVerb;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * %category SPI Base
  */
 public class DefaultNutsRepositoryUndeployCommand extends AbstractNutsRepositoryUndeployCommand {

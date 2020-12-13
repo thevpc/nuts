@@ -10,7 +10,7 @@ import net.thevpc.nuts.NutsRepository;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface NutsRepositoryExt0 {
 

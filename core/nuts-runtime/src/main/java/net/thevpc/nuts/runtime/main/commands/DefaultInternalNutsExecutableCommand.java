@@ -12,7 +12,7 @@ import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsExecutableCommand {
 
@@ -41,7 +41,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
     @Override
     public String getHelpText() {
         return getSession().getWorkspace().formats().text().loadFormattedString(
-                "/net/thevpc/nuts/command/" + name + ".help",
+                "/net/thevpc/nuts/command/" + name + ".ntf",
                 getClass().getClassLoader(), "no help found for " + name);
     }
 

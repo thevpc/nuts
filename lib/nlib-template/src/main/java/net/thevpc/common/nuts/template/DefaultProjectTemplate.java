@@ -39,7 +39,7 @@ import net.thevpc.nuts.NutsQuestionValidator;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultProjectTemplate implements ProjectTemplate {
 

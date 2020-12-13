@@ -34,7 +34,7 @@ import java.util.Map;
  * Execute command.
  * This class helps executing all types of executables : internal, external, alias and system
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Commands
  */

@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.format.DefaultSearchFormatBase;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 

@@ -36,7 +36,7 @@ import java.util.logging.Level;
  * Nuts Arguments parser. Creates a {@link NutsWorkspaceOptions} instance from
  * string array of valid nuts options
  *
- * @author vpc
+ * @author thevpc
  * %category Internal
  * @since 0.5.4
  */

@@ -22,7 +22,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
 

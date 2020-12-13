@@ -11,7 +11,7 @@ import java.util.Iterator;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractNutsSearchVersionsRepositoryCommand extends NutsRepositoryCommandBase<NutsSearchVersionsRepositoryCommand> implements NutsSearchVersionsRepositoryCommand {
 

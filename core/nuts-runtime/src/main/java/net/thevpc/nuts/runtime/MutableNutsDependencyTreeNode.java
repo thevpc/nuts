@@ -31,7 +31,7 @@ import net.thevpc.nuts.NutsDependencyTreeNode;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class MutableNutsDependencyTreeNode implements NutsDependencyTreeNode {
 

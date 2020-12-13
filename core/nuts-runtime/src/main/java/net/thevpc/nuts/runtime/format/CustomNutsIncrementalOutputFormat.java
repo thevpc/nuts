@@ -30,7 +30,7 @@ import net.thevpc.nuts.NutsIterableFormat;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class CustomNutsIncrementalOutputFormat extends NutsIncrementalOutputFormatBase {
 

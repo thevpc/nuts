@@ -11,7 +11,7 @@ import java.io.PrintStream;
 import java.util.*;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
 

@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.util.iter;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public enum IteratorErrorHandlerType {
     /**

@@ -31,7 +31,7 @@ import java.util.Objects;
 /**
  * simple and dummy implementation of NutsId base functions
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Internal
  */

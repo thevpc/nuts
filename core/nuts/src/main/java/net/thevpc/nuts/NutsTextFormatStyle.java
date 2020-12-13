@@ -27,7 +27,7 @@
 package net.thevpc.nuts;
 /**
  * 
- * @author vpc
+ * @author thevpc
  * %category Format
  */
 public enum NutsTextFormatStyle {

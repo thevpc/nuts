@@ -7,7 +7,7 @@ package net.thevpc.nuts.toolbox.ncode.sources;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class FolderZipEntrySource {
 

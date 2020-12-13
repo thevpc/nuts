@@ -10,7 +10,7 @@ import net.thevpc.nuts.NutsUnsupportedOperationException;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class LazyIterator<T> implements Iterator<T> {
 

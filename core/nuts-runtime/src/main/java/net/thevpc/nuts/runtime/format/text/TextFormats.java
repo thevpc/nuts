@@ -30,7 +30,7 @@ import java.awt.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class TextFormats {
 

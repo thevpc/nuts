@@ -33,7 +33,7 @@ import net.thevpc.nuts.runtime.format.elem.NutsElementFactory;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsElementFactoryJsonElement implements NutsElementFactory {
 

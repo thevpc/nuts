@@ -32,7 +32,7 @@ import java.nio.file.Path;
 import java.util.Set;
 
 /**
- * @author vpc
+ * @author thevpc
  * %category Config
  * @since 0.5.4
  */

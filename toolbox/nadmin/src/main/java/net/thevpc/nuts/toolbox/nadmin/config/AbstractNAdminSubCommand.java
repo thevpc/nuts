@@ -12,7 +12,7 @@ import java.io.PrintStream;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractNAdminSubCommand implements NAdminSubCommand {
 

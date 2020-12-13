@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * Nuts read-only configuration
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Config
  */

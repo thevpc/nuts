@@ -74,14 +74,14 @@ See NetworkServerControl command for full commands
 
 ##) EXAMPLES:
 
-##nderby## ps --long
+```sh nderby ps --long```
    show all derby processes
 
-##nderby## ping
+```sh nderby ping```
    trigger a ping command and display a message telling it is ok
 
-##nderby## status
+```sh nderby status```
    trigger a ping command and display as short message of derby status
 
-##nderby## versions
+```sh nderby versions```
    show available versions

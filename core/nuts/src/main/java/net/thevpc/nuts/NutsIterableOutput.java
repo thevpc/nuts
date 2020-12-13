@@ -33,7 +33,7 @@ import java.io.PrintWriter;
  * Classes implementing this interface are responsible of printing objects in multiple formats
  * using {@link NutsIterableFormat}.
  * TODO : should merge with NutsIterableFormat
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Format
  */

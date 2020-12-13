@@ -31,7 +31,7 @@ import java.util.function.Predicate;
 /**
  * Format used to format command line by {@link NutsExecCommand}
  *
- * @author vpc
+ * @author thevpc
  * @see NutsExecCommand#format()
  * @since 0.5.4
  * %category Format

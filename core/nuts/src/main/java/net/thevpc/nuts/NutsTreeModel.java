@@ -29,7 +29,7 @@ import java.util.List;
 
 /**
  * Tree Model to use in tree format
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Format
  */

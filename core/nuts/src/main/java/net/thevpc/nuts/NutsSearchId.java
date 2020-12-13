@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 
 /**
  * Search id defines a uniform interface to ids, versions and descriptors
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Base
  */

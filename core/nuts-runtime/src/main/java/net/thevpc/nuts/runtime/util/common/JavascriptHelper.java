@@ -37,7 +37,7 @@ import net.thevpc.nuts.runtime.DefaultNutsVersion;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class JavascriptHelper {
 

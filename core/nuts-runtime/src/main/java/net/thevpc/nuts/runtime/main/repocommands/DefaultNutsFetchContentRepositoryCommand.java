@@ -37,7 +37,7 @@ import java.util.logging.Level;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * %category SPI Base
  */
 public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchContentRepositoryCommand {

@@ -16,7 +16,7 @@ import net.thevpc.nuts.NutsIllegalArgumentException;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class FileSystemStash {
 

@@ -30,7 +30,7 @@ import java.io.IOException;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Exception
  */

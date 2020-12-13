@@ -33,7 +33,7 @@ import java.nio.file.Path;
 /**
  * Repository Deploy command provided by Repository and used by Workspace.
  * This class is part of Nuts SPI and is not to be used by end users.
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category SPI Base
  */

@@ -11,7 +11,7 @@ import net.thevpc.nuts.runtime.util.common.Simplifiable;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsExecStatusIdFilter extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
 

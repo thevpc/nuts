@@ -18,7 +18,7 @@
 //
 ///**
 // *
-// * @author vpc
+// * @author thevpc
 // */
 //public class NutsObjectFormatXml extends NutsObjectFormatBase {
 //

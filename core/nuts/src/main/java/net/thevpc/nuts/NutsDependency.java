@@ -30,7 +30,7 @@ import java.util.Map;
 
 /**
  * NutsDependency is an <strong>immutable</strong> object that contains all information about a component's dependency.
- * @author vpc
+ * @author thevpc
  * @since 0.5.3
  * %category Descriptor
  */

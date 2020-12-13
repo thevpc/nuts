@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.format.NutsFetchDisplayOptions;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
 

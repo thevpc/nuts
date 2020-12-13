@@ -10,7 +10,7 @@ import java.io.InputStream;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class InputStreamExt extends InputStream implements InputStreamMetadataAware,Interruptible {
 

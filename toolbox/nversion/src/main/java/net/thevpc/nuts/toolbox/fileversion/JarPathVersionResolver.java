@@ -48,7 +48,7 @@ import net.thevpc.nuts.NutsContentType;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class JarPathVersionResolver implements PathVersionResolver{
     public Set<VersionDescriptor> resolve(String filePath, NutsApplicationContext context){

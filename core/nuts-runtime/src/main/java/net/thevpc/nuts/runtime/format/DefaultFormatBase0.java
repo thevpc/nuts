@@ -18,7 +18,7 @@ import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class DefaultFormatBase0<T> implements NutsConfigurable {
 

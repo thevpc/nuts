@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.format.text.parser;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class TokInfo {
 

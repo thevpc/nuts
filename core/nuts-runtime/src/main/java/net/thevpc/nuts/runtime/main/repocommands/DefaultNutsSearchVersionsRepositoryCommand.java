@@ -20,7 +20,7 @@ import net.thevpc.nuts.runtime.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.util.iter.IteratorUtils;
 
 /**
- * @author vpc
+ * @author thevpc
  * %category SPI Base
  */
 public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSearchVersionsRepositoryCommand {

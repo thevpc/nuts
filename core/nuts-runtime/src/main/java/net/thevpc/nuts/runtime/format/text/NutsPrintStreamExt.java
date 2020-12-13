@@ -30,7 +30,7 @@ import net.thevpc.nuts.NutsOutputStreamTransparentAdapter;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface NutsPrintStreamExt extends NutsOutputStreamTransparentAdapter, ExtendedFormatAware {
     PrintStream basePrintStream();

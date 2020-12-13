@@ -36,7 +36,7 @@ import java.io.Serializable;
  *     <li>1.2 = [1,'.',2]</li>
  *     <li>10.20update3 = [10,'.',20,'update',3]</li>
  * </ul>
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Descriptor
  */

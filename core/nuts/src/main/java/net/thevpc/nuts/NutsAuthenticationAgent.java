@@ -36,7 +36,7 @@ import java.util.Map;
  * gnome-keyring...). And Id of the stored password is then saved as plain text
  * in nuts config file.
  * Criteria type is a string representing authentication agent id
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Security
  */
@@ -55,7 +55,7 @@ public interface NutsAuthenticationAgent extends NutsComponent<String/* as authe
      * @param credentialsId credentialsId
      * @param password password
      * @param envProvider environment provider, nullable
-     * @param session
+     * @param session session
      * @throws NutsSecurityException when check failed
      */
     void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider, NutsSession session) throws NutsSecurityException;
@@ -67,7 +67,7 @@ public interface NutsAuthenticationAgent extends NutsComponent<String/* as authe
      *
      * @param credentialsId credentials-id
      * @param envProvider environment provider, nullable
-     * @param session
+     * @param session session
      * @return credentials
      */
     char[] getCredentials(char[] credentialsId, Map<String, String> envProvider, NutsSession session);
@@ -79,7 +79,7 @@ public interface NutsAuthenticationAgent extends NutsComponent<String/* as authe
      *
      * @param credentialsId credentials-id
      * @param envProvider environment provider, nullable
-     * @param session
+     * @param session session
      * @return credentials
      */
     boolean removeCredentials(char[] credentialsId, Map<String, String> envProvider, NutsSession session);
@@ -96,7 +96,7 @@ public interface NutsAuthenticationAgent extends NutsComponent<String/* as authe
      * can be invoked over {@code credentialId}
      * @param credentialId preferred credentialId, if null, a new one is created
      * @param envProvider environment provider, nullable
-     * @param session
+     * @param session session
      * @return credentials-id
      */
     char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, Map<String, String> envProvider, NutsSession session);

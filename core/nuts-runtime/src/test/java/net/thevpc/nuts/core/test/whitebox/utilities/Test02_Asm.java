@@ -37,7 +37,7 @@ package net.thevpc.nuts.core.test.whitebox.utilities;
 //
 ///**
 // *
-// * @author vpc
+// * @author thevpc
 // */
 //public class Test02_Asm {
 //

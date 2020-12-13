@@ -731,7 +731,7 @@ public class ProcessBuilder2 {
             if (f == null || f.acceptRedirectOutput()) {
                 r = base.redirectOutput();
                 if (null == r.type()) {
-                    sb.append("```discrete ").append(tf.escapeText(" > ")).append("```").append("{?}");
+                    sb.append("```pale ").append(tf.escapeText(" > ")).append("```").append("{?}");
                 } else {
                     switch (r.type()) {
                         //sb.append(" > ").append("{inherited}");
@@ -740,20 +740,20 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case WRITE:
-                            sb.append("```discrete ").append(tf.escapeText(" > ")).append("```").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append("```pale ").append(tf.escapeText(" > ")).append("```").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         case APPEND:
-                            sb.append("```discrete ").append(tf.escapeText(" >> ")).append("```").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append("```pale ").append(tf.escapeText(" >> ")).append("```").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         default:
-                            sb.append("```discrete ").append(tf.escapeText(" > ")).append("```").append("{?}");
+                            sb.append("```pale ").append(tf.escapeText(" > ")).append("```").append("{?}");
                             break;
                     }
                 }
             }
             if (f == null || f.acceptRedirectError()) {
                 if (base.redirectErrorStream()) {
-                    sb.append("```discrete ").append(tf.escapeText(" 2>&1")).append("```");
+                    sb.append("```pale ").append(tf.escapeText(" 2>&1")).append("```");
                 } else {
                     if (f == null || f.acceptRedirectError()) {
                         r = base.redirectError();
@@ -767,13 +767,13 @@ public class ProcessBuilder2 {
                                 case PIPE:
                                     break;
                                 case WRITE:
-                                    sb.append("```discrete ").append(tf.escapeText(" 2> ")).append("```").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                                    sb.append("```pale ").append(tf.escapeText(" 2> ")).append("```").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                                     break;
                                 case APPEND:
-                                    sb.append("```discrete ").append(tf.escapeText(" 2>> ")).append("```").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                                    sb.append("```pale ").append(tf.escapeText(" 2>> ")).append("```").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                                     break;
                                 default:
-                                    sb.append("```discrete ").append(tf.escapeText(" 2> ")).append("```").append("{?}");
+                                    sb.append("```pale ").append(tf.escapeText(" 2> ")).append("```").append("{?}");
                                     break;
                             }
                         }

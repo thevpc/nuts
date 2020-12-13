@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 
 /**
- * @author vpc
+ * @author thevpc
  * %category SPI Base
  */
 public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchRepositoryCommand {

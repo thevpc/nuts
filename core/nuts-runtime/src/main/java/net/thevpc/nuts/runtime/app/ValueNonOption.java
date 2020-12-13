@@ -34,7 +34,7 @@ import net.thevpc.nuts.NutsCommandAutoComplete;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class ValueNonOption extends DefaultNonOption {
 

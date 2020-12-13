@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Dependency Format Helper
- * @author vpc
+ * @author thevpc
  * @since 0.5.6
  * %category Format
  */

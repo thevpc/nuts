@@ -12,7 +12,7 @@ import net.thevpc.nuts.NutsTableCell;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsMutableTableModel implements NutsMutableTableModel {
 

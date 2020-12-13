@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 import java.util.*;
 
 /**
- * @author vpc
+ * @author thevpc
  * %category Format
  */
 final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFormat {

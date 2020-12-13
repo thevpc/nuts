@@ -26,7 +26,7 @@ import net.thevpc.nuts.runtime.DefaultNutsContentEvent;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsRepositoryMirroringHelper {
 

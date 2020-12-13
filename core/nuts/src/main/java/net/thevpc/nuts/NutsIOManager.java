@@ -33,7 +33,7 @@ import java.io.*;
  * I/O Manager supports a set of operations to manipulate terminals and files in a
  * handy manner that is monitorable and Workspace aware.
  *
- * @author vpc
+ * @author thevpc
  * %category Input Output
  * @since 0.5.4
  */

@@ -39,7 +39,7 @@ import java.nio.file.Path;
  * Class responsible of manipulating {@link NutsElement} type. It help parsing
  * from, converting to and formatting such types.
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Format
  */
@@ -130,6 +130,7 @@ public interface NutsElementFormat extends NutsObjectFormat {
 
     /**
      * enable compact json
+     * @param compact true to enable compat mode
      * @return {@code this} instance
      */
     NutsElementFormat setCompact(boolean compact);

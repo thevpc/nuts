@@ -37,7 +37,7 @@ import java.util.List;
  * of one or multiple resource types.
  * Default implementation should handle
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Base
  */

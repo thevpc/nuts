@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Class responsible of formatting a formatted string.
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Format
  */

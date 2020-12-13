@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsArrayElement extends AbstractNutsElement implements NutsArrayElement {
 

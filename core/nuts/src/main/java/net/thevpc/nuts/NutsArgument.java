@@ -31,7 +31,7 @@ import java.util.NoSuchElementException;
 /**
  * Command Line Argument
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Command Line
  */

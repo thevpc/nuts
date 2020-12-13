@@ -10,7 +10,7 @@ import net.thevpc.nuts.toolbox.ncode.Source;
 import net.thevpc.nuts.toolbox.ncode.sources.JavaTypeSource;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class JavaSourceFormatter implements SourceProcessor {
 

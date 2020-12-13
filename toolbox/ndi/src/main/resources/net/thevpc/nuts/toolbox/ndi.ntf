@@ -1,5 +1,5 @@
-ndi (or ##nuts## desktop integration) is a portable desktop integration companion.
-##ndi## help creation of scripts and shortcut on the host operating system to facilitate usage of nuts command line tool.
+ndi (or ```sh nuts``` desktop integration) is a portable desktop integration companion.
+    ```sh ndi``` help creation of scripts and shortcut on the host operating system to facilitate usage of nuts command line tool.
 
 #) SYNOPSIS
 ```sh
@@ -29,7 +29,7 @@ ndi ln|link <options> ...
 ```sh
 ndi in|install <options> <command> ...
 ```
-    install scripts/shortcuts for the given command so that it can be called directly by it\'s name
+    install scripts/shortcuts for the given command so that it can be called directly by it's name
 ``` sh  --embedded | -b ```
     enable embedded mode
 ``` sh  --external | --spawn | -x ```

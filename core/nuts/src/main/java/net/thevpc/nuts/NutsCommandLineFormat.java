@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 /**
  * Simple Command line Format
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.7
  * %category Command Line
  */

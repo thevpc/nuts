@@ -39,7 +39,7 @@ import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.util.io.NutsInstallStatusIdFilter;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class CoreFilterUtils {
 

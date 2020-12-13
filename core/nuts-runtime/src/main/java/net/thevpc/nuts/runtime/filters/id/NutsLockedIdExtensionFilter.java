@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsLockedIdExtensionFilter extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
     private NutsId[] lockedIds;

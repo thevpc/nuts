@@ -37,7 +37,7 @@ import net.thevpc.jshell.JShellBuiltin;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class CommandNonOption implements NutsArgumentName {
 

@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.PrintStream;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DerbyMain extends NutsApplication {
 

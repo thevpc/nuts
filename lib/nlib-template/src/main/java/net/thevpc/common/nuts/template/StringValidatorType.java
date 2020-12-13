@@ -7,7 +7,7 @@ package net.thevpc.common.nuts.template;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public enum StringValidatorType {
     BOOLEAN,

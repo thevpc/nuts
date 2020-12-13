@@ -20,7 +20,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsMonitorAction implements NutsMonitorAction {
 

@@ -33,7 +33,7 @@ import java.util.stream.Stream;
  * Find Result items from find command
  *
  * @see NutsSearchCommand#getResultIds()
- * @author vpc
+ * @author thevpc
  * @param <T> Result Type
  * @since 0.5.4
  * %category Base

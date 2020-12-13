@@ -33,7 +33,7 @@ import java.io.PrintStream;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  */
 public interface NutsFormattedPrintStream extends NutsComponent<OutputStream> {

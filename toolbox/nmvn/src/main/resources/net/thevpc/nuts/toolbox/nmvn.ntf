@@ -6,5 +6,5 @@ manage local maven configurations
 
 ##) EXAMPLES:
 
-##nmvn## clean install
+```sh nmvn clean install```
    maven clean install

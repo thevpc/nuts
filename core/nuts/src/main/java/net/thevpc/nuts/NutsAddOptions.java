@@ -31,7 +31,7 @@ import java.util.Objects;
 /**
  * Generic Add options
  *
- * @author vpc
+ * @author thevpc
  * @see NutsSdkManager#add(NutsSdkLocation,
  * NutsAddOptions)
  * @see NutsCommandAliasManager#add(NutsCommandAliasConfig,

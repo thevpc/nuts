@@ -33,7 +33,7 @@ import java.nio.file.Path;
 
 /**
  * Nuts deploy command
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Commands
  */

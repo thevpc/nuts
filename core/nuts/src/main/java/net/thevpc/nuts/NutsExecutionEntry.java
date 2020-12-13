@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 
 /**
  * Execution entry is a class that can be executed.
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Descriptor
  */

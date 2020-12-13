@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 
 /**
  * Progress event
- * @author vpc
+ * @author thevpc
  * @since 0.5.8
  */
 public interface NutsProgressEvent {

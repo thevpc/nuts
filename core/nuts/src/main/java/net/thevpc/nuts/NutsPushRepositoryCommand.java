@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Push Command
- * @author vpc
+ * @author thevpc
  * %category SPI Base
  */
 public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {

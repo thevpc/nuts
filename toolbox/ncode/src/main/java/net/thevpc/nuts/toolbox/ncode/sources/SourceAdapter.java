@@ -12,7 +12,7 @@ import java.io.InputStream;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class SourceAdapter implements Source {
 

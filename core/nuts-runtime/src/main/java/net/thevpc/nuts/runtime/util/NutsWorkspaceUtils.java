@@ -34,7 +34,7 @@ import net.thevpc.nuts.runtime.util.io.InputStreamVisitor;
 import net.thevpc.nuts.runtime.util.io.ZipUtils;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class NutsWorkspaceUtils {
 

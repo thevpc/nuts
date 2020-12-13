@@ -11,7 +11,7 @@ import java.util.Stack;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class FileDepthFirstIterator implements Iterator<File> {
 

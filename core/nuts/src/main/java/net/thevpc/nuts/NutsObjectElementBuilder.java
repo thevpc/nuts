@@ -29,7 +29,7 @@ import java.util.Collection;
 
 /**
  * Builder for manipulating {@link NutsObjectElement} instances
- * @author vpc
+ * @author thevpc
  * %category Format
  */
 public interface NutsObjectElementBuilder {

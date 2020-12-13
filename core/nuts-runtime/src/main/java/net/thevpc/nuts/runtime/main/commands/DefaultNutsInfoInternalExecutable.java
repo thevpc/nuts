@@ -11,7 +11,7 @@ import net.thevpc.nuts.runtime.util.CoreNutsUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsInfoInternalExecutable extends DefaultInternalNutsExecutableCommand {
 

@@ -59,7 +59,7 @@ import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class MavenRepositoryFolderHelper {
     private NutsLogger LOG;

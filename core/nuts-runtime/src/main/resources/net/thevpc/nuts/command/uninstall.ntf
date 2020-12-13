@@ -1,9 +1,9 @@
 ```sh nuts uninstall <nuts-artifact>... <args> ...```
-      uninstall one or more ##nuts## from repositories if installed
+      uninstall one or more ```sh nuts``` from repositories if installed
       If no nuts-id is defined an error will occur
 
 ##) OPTIONS:
-```sh  -e | --erase``` : enable erase mode to delete all of artifact\'s config data as well
+```sh  -e | --erase``` : enable erase mode to delete all of artifact's config data as well
 ```sh  <args> ...```   : provide arguments to pass to uninstaller
 
 #!include</net/thevpc/nuts/includes/standard-command.help>
@@ -16,7 +16,7 @@
             uninstall netbeans-launcher
 
 ```sh nuts uninstall my-group:my-thing#2.3```
-           uninstalls - if able to resolve it - exactly the ##nuts## "my-group:my-thing#2.3"
+           uninstalls - if able to resolve it - exactly the ```sh nuts``` "my-group:my-thing#2.3"
 
 ```sh nuts uninstall my-group:my-thing```
            uninstalls - if able to resolve it - the latest version  of "my-group:my-thing"

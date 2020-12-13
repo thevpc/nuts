@@ -1,9 +1,9 @@
-connect to a ##nuts## server
+connect to a ```sh nuts``` server
 
 ==SYNOPSIS:==
 ==connect== [user@]server[:port]
 
-connects to a ##nuts## server as user
+connects to a ```sh nuts``` server as user
 
 
 ==EXAMPLES==:

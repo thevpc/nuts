@@ -16,7 +16,7 @@ import java.util.LinkedHashSet;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractNutsUpdateStatisticsCommand extends NutsWorkspaceCommandBase<NutsUpdateStatisticsCommand> implements NutsUpdateStatisticsCommand {
 

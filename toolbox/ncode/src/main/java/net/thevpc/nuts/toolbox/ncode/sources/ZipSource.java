@@ -18,7 +18,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class ZipSource extends SourceAdapter {
     private static Logger LOG = Logger.getLogger(ZipSource.class.getName());

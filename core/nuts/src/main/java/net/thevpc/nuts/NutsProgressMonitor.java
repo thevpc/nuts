@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Monitor handles events from copy, compress and delete actions
- * @author vpc
+ * @author thevpc
  * @since 0.5.8
  * %category Base
  */

@@ -32,7 +32,7 @@ import java.nio.file.Path;
 
 /**
  * I/O Action that help monitored uncompress of one or multiple resource types.
- * @author vpc
+ * @author thevpc
  * @since 0.5.8
  */
 public interface NutsIOUncompressAction {

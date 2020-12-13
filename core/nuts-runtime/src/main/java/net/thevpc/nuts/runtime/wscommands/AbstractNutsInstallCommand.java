@@ -36,7 +36,7 @@ import java.util.function.Predicate;
  *
  * type: Command Class
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInstallCommand> implements NutsInstallCommand {
 

@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * this class is responsible of displaying general information about the current workspace and repositories.
  * Il is invoked by the "info" standard commmad,
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  */
 public interface NutsInfoFormat extends NutsFormat {

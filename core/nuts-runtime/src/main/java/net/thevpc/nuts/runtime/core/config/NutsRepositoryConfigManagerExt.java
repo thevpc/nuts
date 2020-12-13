@@ -12,7 +12,7 @@ import net.thevpc.nuts.NutsUserConfig;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface NutsRepositoryConfigManagerExt {
 

@@ -52,7 +52,7 @@ import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManager {
 

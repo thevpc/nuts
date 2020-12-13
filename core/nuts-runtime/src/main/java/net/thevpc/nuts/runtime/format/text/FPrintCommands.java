@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.format.text;
 import java.io.PrintStream;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class FPrintCommands {
 

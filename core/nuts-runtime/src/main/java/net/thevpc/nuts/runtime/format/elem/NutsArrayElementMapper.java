@@ -37,7 +37,7 @@ import net.thevpc.nuts.NutsArrayElement;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsArrayElementMapper extends AbstractNutsElement implements NutsArrayElement {
 

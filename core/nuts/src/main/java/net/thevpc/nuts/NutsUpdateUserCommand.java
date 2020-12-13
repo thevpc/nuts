@@ -30,7 +30,7 @@ import java.util.Collection;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Security
  */

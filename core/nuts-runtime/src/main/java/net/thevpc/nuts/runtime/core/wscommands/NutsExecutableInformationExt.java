@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.core.wscommands;
 import net.thevpc.nuts.NutsExecutableInformation;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public interface NutsExecutableInformationExt extends NutsExecutableInformation {
 

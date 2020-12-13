@@ -32,7 +32,7 @@ import java.nio.file.Path;
 /**
  * Monitor action enables monitoring a long lasting operation such as copying a big file.
  *
- * @author vpc
+ * @author thevpc
  */
 public interface NutsMonitorAction {
 
@@ -201,7 +201,7 @@ public interface NutsMonitorAction {
 
     /**
      *
-     * @return
+     * @return new input source
      * @since  0.8.0
      */
     NutsInput createSource();

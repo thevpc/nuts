@@ -31,7 +31,7 @@ import net.thevpc.jshell.JShellExternalExecutor;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsExternalExecutor implements JShellExternalExecutor {
     

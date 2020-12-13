@@ -37,7 +37,7 @@ import java.io.IOException;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class CommandsTest {
     private static String baseFolder;

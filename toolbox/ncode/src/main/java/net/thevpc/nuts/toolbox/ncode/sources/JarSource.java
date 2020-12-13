@@ -9,7 +9,7 @@ import net.thevpc.nuts.toolbox.ncode.Source;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class JarSource extends ZipSource {
 

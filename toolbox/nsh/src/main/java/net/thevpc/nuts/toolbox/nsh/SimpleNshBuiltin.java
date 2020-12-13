@@ -36,7 +36,7 @@ import net.thevpc.nuts.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
 

@@ -39,11 +39,11 @@ customFields: {
  **-d**
  **--dir**   : docusaurus working directory. defaults to '.'
 
-##COMMANDS:##
+##) COMMANDS:
  {{pdf}}     : runs pdf converter using asciidoctor configuration in "docusaurus.config.js"
  {{build}}   : builds website (runs npm run-script build)
  {{start}}   : runs website locally (runs npm start)
 
 ##) EXAMPLES:
-==ndocusaurus== {{pdf}}
+```sh ndocusaurus pdf```
   generates pdf file

@@ -34,7 +34,7 @@ import net.thevpc.nuts.runtime.wscommands.AbstractNutsAddUserCommand;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  */
 public class DefaultNutsAddUserCommand extends AbstractNutsAddUserCommand {

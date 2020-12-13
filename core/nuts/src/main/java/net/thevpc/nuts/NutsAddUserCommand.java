@@ -34,7 +34,7 @@ import java.util.Collection;
  * @see NutsWorkspaceSecurityManager#addUser(java.lang.String)
  * @see NutsRepositorySecurityManager#addUser(java.lang.String)
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Security
  */

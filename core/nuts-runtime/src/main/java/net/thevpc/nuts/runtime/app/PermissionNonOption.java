@@ -32,7 +32,7 @@ import java.util.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class PermissionNonOption extends DefaultNonOption {
     private final boolean existing;

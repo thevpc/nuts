@@ -30,7 +30,7 @@ import java.nio.file.Path;
 
 /**
  * Event for {@link NutsRepositoryListener} methods.
- * @author vpc
+ * @author thevpc
  * @since 0.5.3
  * %category Base
  */

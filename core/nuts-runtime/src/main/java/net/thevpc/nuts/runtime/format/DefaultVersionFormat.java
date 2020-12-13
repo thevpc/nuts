@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * type: Command Class
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> implements NutsVersionFormat {
 

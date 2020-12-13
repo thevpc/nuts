@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * type: Command Class
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdateCommand> implements NutsUpdateCommand {
 

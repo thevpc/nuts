@@ -4,7 +4,7 @@ import net.thevpc.nuts.NutsTableCellFormat;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  */
 public class DefaultTableCellFormat implements NutsTableCellFormat {

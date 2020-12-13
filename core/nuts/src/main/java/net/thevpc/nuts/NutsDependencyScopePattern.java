@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 /**
  * Supported dependency scope pattern.
  * A dependency scope pattern
- * @author vpc
+ * @author thevpc
  * @since 0.5.6
  * %category Descriptor
  */

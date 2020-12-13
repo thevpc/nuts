@@ -54,7 +54,7 @@ import java.util.zip.ZipFile;
  * the method {@link #openWorkspace()}.
  * <br>
  *
- * @author vpc
+ * @author thevpc
  * %category SPI Base
  * @since 0.5.4
  */
@@ -1099,7 +1099,7 @@ public final class NutsBootWorkspace {
             return;
         }
         NutsWorkspace workspace = this.openWorkspace();
-        String message = "Workspace started successfully";
+        String message = "workspace started successfully";
 
         NutsWorkspaceOptions o = this.getOptions();
         LOG.log(Level.CONFIG, PrivateNutsLog.SUCCESS, "running workspace in {0} mode", new Object[]{getWorkspaceRunModeString()});
@@ -1117,10 +1117,10 @@ public final class NutsBootWorkspace {
                     if (options.isDry()) {
                         System.out.println("[boot-internal-command] show-help");
                     } else {
-                        System.out.println("Nuts is a package manager mainly for java applications.");
-                        System.out.println("Unluckily it was unable to locate nuts-runtime component which is esessential for its execution.\n");
+                        System.out.println("nuts is a package manager mainly for java applications.");
+                        System.out.println("unluckily it was unable to locate nuts-runtime component which is essential for its execution.\n");
                         System.out.println("nuts-version :" + Nuts.getVersion());
-                        System.out.println("Try to reinstall nuts (with internet access available) and type 'nuts help' to get a list of global options and commands");
+                        System.out.println("try to reinstall nuts (with internet access available) and type 'nuts help' to get a list of global options and commands");
                     }
                     return;
                 }
@@ -1128,7 +1128,7 @@ public final class NutsBootWorkspace {
         }
         if (workspace == null) {
             fallbackInstallActionUnavailable(message);
-            throw new NutsExecutionException(null, "Workspace not available to run : " + new PrivateNutsCommandLine(o.getApplicationArguments()).toString(), 1);
+            throw new NutsExecutionException(null, "workspace not available to run : " + new PrivateNutsCommandLine(o.getApplicationArguments()).toString(), 1);
         }
         NutsSession session = workspace.createSession();
         if (o.getApplicationArguments().length == 0) {
@@ -1158,8 +1158,7 @@ public final class NutsBootWorkspace {
     private String getStoreLocationPath(NutsStoreLocation value) {
         Map<String, String> storeLocations = workspaceInformation.getStoreLocations();
         if (storeLocations != null) {
-            String p = storeLocations.get(value.id());
-            return p;
+            return storeLocations.get(value.id());
         }
         return null;
     }
@@ -1174,8 +1173,9 @@ public final class NutsBootWorkspace {
         if (confirm == NutsConfirmationMode.ASK
                 && this.getOptions().getOutputFormat() != null
                 && this.getOptions().getOutputFormat() != NutsContentType.PLAIN) {
-            throw new NutsExecutionException(null, "Unable to switch to interactive mode for non plain text output format. "
-                    + "You need to provide default response (-y|-n) for resetting/recovering workspace. You was asked to confirm deleting folders as part as recover/reset option.", 243);
+            throw new NutsExecutionException(null, "unable to switch to interactive mode for non plain text output format. "
+                    + "You need to provide default response (-y|-n) for resetting/recovering workspace. " +
+                      "You was asked to confirm deleting folders as part as recover/reset option.", 243);
         }
         LOG.log(Level.FINE, PrivateNutsLog.WARNING, "delete location : {0}", new Object[]{workspaceInformation.getWorkspaceLocation()});
         boolean force = false;
@@ -1228,8 +1228,8 @@ public final class NutsBootWorkspace {
         if (rbc_locations == null) {
             rbc_locations = Collections.emptyMap();
         }
-        System.err.printf("Unable to bootstrap nuts. : %s%n", extraMessage);
-        System.err.printf("Here after current environment info:%n");
+        System.err.printf("unable to bootstrap nuts. : %s%n", extraMessage);
+        System.err.printf("here after current environment info:%n");
         System.err.printf("  nuts-boot-api-version            : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getApiVersion(), "<?> Not Found!"));
         System.err.printf("  nuts-boot-runtime                : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getRuntimeId(), "<?> Not Found!"));
         System.err.printf("  nuts-boot-repositories           : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getBootRepositories(), "<?> Not Found!"));
@@ -1284,7 +1284,7 @@ public final class NutsBootWorkspace {
             System.err.printf("Here is the proper command : %n");
             System.err.printf("  java -jar nuts.jar --debug --verbose --reset [...]%n");
         }
-        System.err.printf("Now exiting Nuts, Bye!%n");
+        System.err.printf("now exiting nuts, Bye!%n");
     }
 
     /**
@@ -1319,22 +1319,22 @@ public final class NutsBootWorkspace {
         int req = unsatisfiedOnly ? newInstanceRequirements : checkRequirements(false);
         StringBuilder sb = new StringBuilder();
         if ((req & 1) != 0) {
-            sb.append("Nuts Version ").append(workspaceInformation.getApiId());
+            sb.append("nuts version ").append(workspaceInformation.getApiId());
         }
         if ((req & 2) != 0) {
             if (sb.length() > 0) {
                 sb.append(" and ");
             }
-            sb.append("Java Command ").append(workspaceInformation.getJavaCommand());
+            sb.append("java command ").append(workspaceInformation.getJavaCommand());
         }
         if ((req & 4) != 0) {
             if (sb.length() > 0) {
                 sb.append(" and ");
             }
-            sb.append("Java Options ").append(workspaceInformation.getJavaOptions());
+            sb.append("java options ").append(workspaceInformation.getJavaOptions());
         }
         if (sb.length() > 0) {
-            sb.insert(0, "Required ");
+            sb.insert(0, "required ");
             return sb.toString();
         }
         return null;

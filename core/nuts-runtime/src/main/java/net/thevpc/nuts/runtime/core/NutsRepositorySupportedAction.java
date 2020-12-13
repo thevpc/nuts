@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.core;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  */
 public enum NutsRepositorySupportedAction {

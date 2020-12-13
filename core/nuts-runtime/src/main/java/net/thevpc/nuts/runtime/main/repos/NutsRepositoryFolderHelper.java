@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class NutsRepositoryFolderHelper {
     private final NutsLogger LOG;

@@ -36,7 +36,7 @@ import java.util.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  */
 public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand {

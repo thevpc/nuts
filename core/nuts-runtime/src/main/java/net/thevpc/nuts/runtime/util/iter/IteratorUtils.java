@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 import net.thevpc.nuts.runtime.util.common.FileDepthFirstIterator;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class IteratorUtils {
 

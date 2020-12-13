@@ -30,7 +30,7 @@ import java.io.Serializable;
 
 /**
  * Dependency tree node
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Descriptor
  */

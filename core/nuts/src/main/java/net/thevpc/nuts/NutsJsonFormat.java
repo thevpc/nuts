@@ -34,7 +34,7 @@
 ///**
 // * Implementation of this interface will provide
 // * simple mechanism to write json text from given object.
-// * @author vpc
+// * @author thevpc
 // * @since 0.5.5
 // * %category Format
 // */

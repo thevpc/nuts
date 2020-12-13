@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class LogNAdminSubCommand extends AbstractNAdminSubCommand {
 

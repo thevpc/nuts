@@ -257,7 +257,7 @@ public class NutsJavaShell extends JShell {
 
     @Override
     protected void printHeader(PrintStream out) {
-        out.printf("##nuts## shell (####Network Updatable Things Services####) ###v%s### (c) thevpc 2020\n",
+        out.printf("```sh nuts``` shell (####Network Updatable Things Services####) ###v%s### (c) thevpc 2020\n",
                 getWorkspace().getRuntimeId().getVersion().toString());
     }
 

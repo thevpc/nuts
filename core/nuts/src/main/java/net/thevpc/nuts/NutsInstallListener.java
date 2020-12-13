@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * A class can implement the <code>NutsInstallListener</code> interface when it
  * wants to be informed of install artifacts actions.
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Events
  */

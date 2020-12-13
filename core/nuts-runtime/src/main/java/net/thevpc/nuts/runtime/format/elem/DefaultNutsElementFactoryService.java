@@ -42,7 +42,7 @@ import net.thevpc.nuts.runtime.util.common.ClassMap;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsElementFactoryService implements NutsElementFactoryService {
 

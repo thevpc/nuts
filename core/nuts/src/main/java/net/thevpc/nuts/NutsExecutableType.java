@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 
 /**
  * Executable command type returned by which internal command
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  */
 public enum NutsExecutableType {

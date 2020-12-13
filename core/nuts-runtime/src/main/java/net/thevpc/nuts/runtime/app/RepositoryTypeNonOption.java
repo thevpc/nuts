@@ -37,7 +37,7 @@ import java.util.TreeSet;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class RepositoryTypeNonOption extends DefaultNonOption {
 

@@ -36,7 +36,7 @@ import net.thevpc.nuts.NutsNamedElement;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 class NutsObjectElementMap2 extends NutsObjectElementBase {
 

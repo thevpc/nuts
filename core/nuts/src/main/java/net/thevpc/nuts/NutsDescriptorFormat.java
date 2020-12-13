@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 
 /**
  * Descriptor Format class that help building, formatting and parsing Descriptors.
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Format
  */

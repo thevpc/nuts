@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.bridges.maven.mvnutil;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 class URLPart {
 

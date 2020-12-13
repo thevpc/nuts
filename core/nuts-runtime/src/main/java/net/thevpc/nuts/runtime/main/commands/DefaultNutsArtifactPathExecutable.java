@@ -32,7 +32,7 @@ import net.thevpc.nuts.runtime.util.io.ZipUtils;
 import static net.thevpc.nuts.runtime.util.io.CoreIOUtils.createInputSource;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCommand {
     private final NutsLogger LOG;

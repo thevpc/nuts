@@ -48,7 +48,7 @@ import java.nio.file.Path;
  *     <li>File (file or directory)</li>
  *     <li>Path (file or directory)</li>
  * </ul>
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Input Output
  */

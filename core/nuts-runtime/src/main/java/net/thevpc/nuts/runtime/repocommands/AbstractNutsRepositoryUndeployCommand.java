@@ -12,7 +12,7 @@ import net.thevpc.nuts.NutsRepositoryUndeployCommand;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractNutsRepositoryUndeployCommand extends NutsRepositoryCommandBase<NutsRepositoryUndeployCommand> implements NutsRepositoryUndeployCommand {
 

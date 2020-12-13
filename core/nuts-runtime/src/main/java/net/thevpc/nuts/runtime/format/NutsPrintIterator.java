@@ -13,7 +13,7 @@ import net.thevpc.nuts.NutsIterableOutput;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsPrintIterator<T> implements Iterator<T> {
 

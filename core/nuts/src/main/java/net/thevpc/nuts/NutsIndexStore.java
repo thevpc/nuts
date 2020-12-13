@@ -31,7 +31,7 @@ import java.util.Iterator;
 /**
  * Classes implementations of {@code NutsIndexStore} handle
  * indexing of repositories to enable faster search.
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Base
  */
@@ -82,7 +82,7 @@ public interface NutsIndexStore {
     /**
      * invalidate the artifact from the index
      * @param id id to invalidate
-     * @param session
+     * @param session session
      * @return {@code this} instance
      */
     NutsIndexStore invalidate(NutsId id, NutsSession session);
@@ -90,7 +90,7 @@ public interface NutsIndexStore {
     /**
      * invalidate the artifact from the index and re-index it
      * @param id id to re-index
-     * @param session
+     * @param session session
      * @return {@code this} instance
      */
     NutsIndexStore revalidate(NutsId id, NutsSession session);
@@ -99,7 +99,7 @@ public interface NutsIndexStore {
      * subscribe the current repository so the indexing
      * is processed.
      * @return {@code this} instance
-     * @param session
+     * @param session session
      */
     NutsIndexStore subscribe(NutsSession session);
 
@@ -107,14 +107,14 @@ public interface NutsIndexStore {
      * unsubscribe the current repository so that the indexing
      * is disabled and the index is removed.
      * @return {@code this} instance
-     * @param session
+     * @param session session
      */
     NutsIndexStore unsubscribe(NutsSession session);
 
     /**
      * return true if the current repository is registered
      * @return true if the current repository is registered
-     * @param session
+     * @param session session
      */
     boolean isSubscribed(NutsSession session);
 }

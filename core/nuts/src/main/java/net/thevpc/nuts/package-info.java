@@ -4,7 +4,7 @@
  * and libraries for runtime execution.
  * <br>
  * <strong>nuts</strong> stands for <strong>Network Updatable Things Services</strong> tool.
- * It is a <strong>Package Manager</strong> for (mainly) java
+ * It is a <strong>Package Manager</strong> for (mainly) Java
  * and non Java world. It helps discovering, downloading, assembling and executing  remote artifacts (packages) in
  * a very handy way.
  * <br>
@@ -41,7 +41,7 @@
  *
  * <br>
  * With container concepts in mind, <strong>nuts</strong> is the perfect java application tool for <i>Docker</i>, <i>CoreOs</i>
- * and other container managers.
+ * and other container engines.
  * <br>
  * <br>
  * <strong>COMMON VERBS:</strong>

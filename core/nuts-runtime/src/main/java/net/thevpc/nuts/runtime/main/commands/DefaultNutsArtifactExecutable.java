@@ -12,7 +12,7 @@ import java.io.PrintStream;
 import java.util.*;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand {
 

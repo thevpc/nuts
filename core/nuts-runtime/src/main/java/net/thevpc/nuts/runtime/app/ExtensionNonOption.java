@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class ExtensionNonOption extends DefaultNonOption {
 

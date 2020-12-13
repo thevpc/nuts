@@ -33,7 +33,7 @@ package net.thevpc.nuts;
  * <pre>
  *     ws.
  * </pre>
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Format
  */

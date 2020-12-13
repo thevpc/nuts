@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.format.text;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class TextFormat {
 

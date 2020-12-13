@@ -7,7 +7,7 @@ package net.thevpc.nuts.toolbox.ncode;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class FindClass {
 

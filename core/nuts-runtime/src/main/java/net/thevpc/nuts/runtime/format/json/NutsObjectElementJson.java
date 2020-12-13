@@ -40,7 +40,7 @@ import net.thevpc.nuts.runtime.format.elem.NutsObjectElementBase;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsObjectElementJson extends NutsObjectElementBase {
 

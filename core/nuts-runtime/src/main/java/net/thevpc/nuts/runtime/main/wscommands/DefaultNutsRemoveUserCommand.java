@@ -15,7 +15,7 @@ import net.thevpc.nuts.runtime.wscommands.AbstractNutsRemoveUserCommand;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsRemoveUserCommand extends AbstractNutsRemoveUserCommand {
 

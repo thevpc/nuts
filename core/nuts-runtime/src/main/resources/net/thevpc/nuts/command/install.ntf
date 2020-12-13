@@ -1,5 +1,5 @@
-install ##nuts## package <nuts-artifact>
-    install ##nuts## package <nuts-artifact>
+install ```sh nuts``` package <nuts-artifact>
+    install ```sh nuts``` package <nuts-artifact>
 
 ##) SYNOPSIS:
 ```sh nuts  install <options> <nuts-artifact>...```

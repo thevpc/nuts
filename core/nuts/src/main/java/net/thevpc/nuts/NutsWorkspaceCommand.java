@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Generic Command for usual workspace operations. All Command classes have a
  * 'run' method to perform the operation.
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Commands
  */

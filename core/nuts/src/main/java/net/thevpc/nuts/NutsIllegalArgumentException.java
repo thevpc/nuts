@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Thrown to indicate that a method has been passed an illegal or inappropriate argument.
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Exception
  */

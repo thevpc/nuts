@@ -38,7 +38,7 @@ import net.thevpc.nuts.runtime.main.config.NutsWorkspaceConfigBoot;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.6
  */
 public final class NutsWorkspaceConfigBoot502 implements Serializable {

@@ -31,7 +31,7 @@ import java.util.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCommand> implements NutsPushCommand {
 

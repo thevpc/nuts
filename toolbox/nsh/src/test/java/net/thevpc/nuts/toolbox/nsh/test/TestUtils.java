@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class TestUtils {
 

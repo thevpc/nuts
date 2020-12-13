@@ -33,7 +33,7 @@ import net.thevpc.nuts.NutsConstants;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsAuthorizations {
 

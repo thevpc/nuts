@@ -34,7 +34,7 @@ import net.thevpc.nuts.runtime.core.CoreNutsWorkspaceOptions;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsHomeLocationsMap {
 

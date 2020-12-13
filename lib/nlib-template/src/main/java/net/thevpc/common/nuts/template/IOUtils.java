@@ -17,7 +17,7 @@ import java.util.Properties;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class IOUtils {
 

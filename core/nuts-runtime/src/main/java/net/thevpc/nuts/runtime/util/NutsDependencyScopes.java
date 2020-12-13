@@ -40,7 +40,7 @@ import net.thevpc.nuts.runtime.util.common.CoreCommonUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsDependencyScopes {
     private static final Logger LOG=Logger.getLogger(NutsDependencyScopes.class.getName());

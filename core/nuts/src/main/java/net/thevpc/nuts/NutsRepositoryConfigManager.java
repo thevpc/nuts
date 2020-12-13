@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 import java.nio.file.Path;
 
 /**
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Config
  */

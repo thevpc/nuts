@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 /**
  * component update result
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Commands
  */

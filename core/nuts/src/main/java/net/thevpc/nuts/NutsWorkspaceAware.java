@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * called upon its creation (by factory) with a non {@code null} argument to <strong>initialize</strong>.
  * They <strong>may</strong> accept a call with a {@code null}
  * argument later to <strong>dispose</strong> the instance.
- * @author vpc
+ * @author thevpc
  * %category SPI Base
  */
 public interface NutsWorkspaceAware {

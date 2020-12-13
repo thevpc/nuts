@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Anchor interface for all Nuts Listeners.
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Base
  */

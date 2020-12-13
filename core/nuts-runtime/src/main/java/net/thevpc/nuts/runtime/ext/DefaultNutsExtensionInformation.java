@@ -31,7 +31,7 @@ import net.thevpc.nuts.NutsId;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  */
 public class DefaultNutsExtensionInformation implements NutsExtensionInformation {

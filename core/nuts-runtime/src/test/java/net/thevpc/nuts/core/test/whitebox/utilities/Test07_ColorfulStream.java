@@ -18,7 +18,7 @@ import java.io.PrintStream;
 import java.io.StringReader;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class Test07_ColorfulStream {
 //    @Test
@@ -191,7 +191,7 @@ public class Test07_ColorfulStream {
     @Test
     public void test7() {
         NutsWorkspace ws = Nuts.openWorkspace();
-        String t_colors=CoreIOUtils.loadString(getClass().getResourceAsStream("nuts-help-colors.help"),true);
+        String t_colors=CoreIOUtils.loadString(getClass().getResourceAsStream("nuts-help-colors.ntf"),true);
         NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_colors));
         NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER,ws)
                 .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setNumberTitles(true));
@@ -272,7 +272,7 @@ public class Test07_ColorfulStream {
                             "```\n" +
                             "For Help, type ```sh nuts help```\n" +
                             "\n" +
-                            "Welcome to ##nuts##. Yeah, it is ###working###...";
+                            "Welcome to ```sh nuts```. Yeah, it is ###working###...";
             NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_string));
             System.out.println();
             NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
@@ -317,8 +317,8 @@ public class Test07_ColorfulStream {
         {
             String t_string =
                     " ```sh install [-options]... <nuts-artifact>... <args> ...```\n" +
-                            "      install ##nuts## package <nuts-artifact>\n" +
-                            "      for more details, type : ##nuts## help install\n";
+                            "      install ```sh nuts``` package <nuts-artifact>\n" +
+                            "      for more details, type : ```sh nuts``` help install\n";
             NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_string));
             System.out.println();
             NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
@@ -335,65 +335,65 @@ public class Test07_ColorfulStream {
             String t_string =
                             " ```sh license [-options]...\n" +
                             "      show license info and exit\n" +
-                            "      for more details, type : ##nuts## help info\n" +
+                            "      for more details, type : ```sh nuts``` help info\n" +
                             "\n" +
                             " ```sh install [-options]... <nuts-artifact>... <args> ...```\n" +
-                            "      install ##nuts## package <nuts-artifact>\n" +
-                            "      for more details, type : ##nuts## help install\n" +
+                            "      install ```sh nuts``` package <nuts-artifact>\n" +
+                            "      for more details, type : ```sh nuts``` help install\n" +
                             "\n" +
                             " ```sh uninstall [-options]... <nuts-artifact>... <args> ...```\n" +
-                            "      uninstall  ##nuts## package <nuts-artifact>\n" +
-                            "      for more details, type : ##nuts## help uninstall\n" +
+                            "      uninstall  ```sh nuts``` package <nuts-artifact>\n" +
+                            "      for more details, type : ```sh nuts``` help uninstall\n" +
                             "\n" +
                             " ```sh update [-options]... <ids> ...  <args> ...```\n" +
-                            "      check if a newer version of ##nuts## or any of the provided <ids>\n" +
+                            "      check if a newer version of ```sh nuts``` or any of the provided <ids>\n" +
                             "      is available in the current workspace and perform update by downloading (fetch)\n" +
                             "      and installing the artifact. The updated version is promoted to 'default' version.\n" +
-                            "      for more details, type : ##nuts## help update\n" +
+                            "      for more details, type : ```sh nuts``` help update\n" +
                             "            \n" +
                             " ```sh check-updates} [-options]... <ids> ...```\n" +
-                            "      check if a newer version of ##nuts## is available in the current workspace without performing updates\n" +
+                            "      check if a newer version of ```sh nuts``` is available in the current workspace without performing updates\n" +
                             "      Takes the same arguments and options as ```sh update``` command\n" +
-                            "      for more details, type : ##nuts## help check-updates\n" +
+                            "      for more details, type : ```sh nuts``` help check-updates\n" +
                             "\n" +
                             " ```sh search [-options]... <ids> ...```\n" +
                             "      search for <ids>\n" +
-                            "      for more details, type : ##nuts## help search\n" +
+                            "      for more details, type : ```sh nuts``` help search\n" +
                             "            \n" +
                             " ```sh fetch [-options]... <ids> ...```\n" +
                             "      download <ids>  without installing them\n" +
-                            "      for more details, type : ##nuts## help fetch\n" +
+                            "      for more details, type : ```sh nuts``` help fetch\n" +
                             "            \n" +
                             " ```sh deploy [-options]... <id> ...```\n" +
                             "      deploy <ids>  without installing them\n" +
-                            "      for more details, type : ##nuts## help deploy\n" +
+                            "      for more details, type : ```sh nuts``` help deploy\n" +
                             "            \n" +
                             " ```sh undeploy [-options]... <id> ...```\n" +
                             "      undeploy <ids>\n" +
-                            "      for more details, type : ##nuts## help undeploy\n" +
+                            "      for more details, type : ```sh nuts``` help undeploy\n" +
                             "            \n" +
                             " ```sh exec [-options]... [command] <args>...\n" +
                             " ```sh --exec [-options]... [command] <args>...\n" +
                             " ```sh -e [-options]... [command] <args>...\n" +
                             "      run command with the given executor options ( it will be considered an option if it\n" +
                             "      starts with ```sh -``` ). This is helpful to issue JVM Options to executor for instance.\n" +
-                            "      for more details, type : ##nuts## help exec\n" +
+                            "      for more details, type : ```sh nuts``` help exec\n" +
                             "\n" +
                             " ```sh which [-options]... [command] ...```\n" +
                             "      show command to be executed if run with 'exec' \n" +
-                            "      for more details, type : ##nuts## help which\n" +
+                            "      for more details, type : ```sh nuts``` help which\n" +
                             "            \n" +
                             " ```sh --reset [-options]...\n" +
-                            "       reset (delete) ##nuts## workspace folder. Will bootstrap a new workspace unless ```sh -K```\n" +
+                            "       reset (delete) ```sh nuts``` workspace folder. Will bootstrap a new workspace unless ```sh -K```\n" +
                             "       (```sh --skip-welcome```) option is armed.\n" +
                             "       Actually this is a special command that is available only at boot time.\n" +
                             "       Available command options are :\n" +
                             "       ```sh -y``` : to skip confirmation\n" +
                             "\n" +
                             " ```sh -``` <args>...\n" +
-                            "   run a nut\\'s shell (nsh) command with the remaining arguments\n" +
+                            "   run a nut's shell (nsh) command with the remaining arguments\n" +
                             "\n" +
-                            "#!include</net/thevpc/nuts/includes/standard-options-format.help>\n" +
+                            "#!include</net/thevpc/nuts/includes/standard-options-format.ntf>\n" +
                             "\n" +
                             "##EXAMPLES:##\n" +
                             "```sh\n" +
@@ -411,7 +411,7 @@ public class Test07_ColorfulStream {
                             "```sh\n" +
                             "        nuts --workspace /home/me/some-folder  update\n" +
                             "```\n" +
-                            "            updates ##nuts## to the very latest version using workspace location\n" +
+                            "            updates ```sh nuts``` to the very latest version using workspace location\n" +
                             "            /home/me/some-folder.\n" +
                             "\n" +
                             "```sh\n" +

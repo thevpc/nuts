@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.util.io;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface InputStreamMetadataAware {
 

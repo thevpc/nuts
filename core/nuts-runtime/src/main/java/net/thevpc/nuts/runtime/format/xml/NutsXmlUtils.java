@@ -54,7 +54,7 @@ import org.xml.sax.SAXParseException;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsXmlUtils {
 

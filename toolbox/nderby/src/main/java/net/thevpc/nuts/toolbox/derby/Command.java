@@ -27,7 +27,7 @@ package net.thevpc.nuts.toolbox.derby;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public enum Command {
     start, shutdown, sysinfo, help, ping, trace, tracedirectory, runtimeinfo, maxthreads, timeslice, logconnections

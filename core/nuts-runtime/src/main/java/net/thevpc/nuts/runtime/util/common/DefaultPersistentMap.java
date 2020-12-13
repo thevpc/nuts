@@ -25,7 +25,7 @@ import net.thevpc.nuts.NutsUnsupportedArgumentException;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultPersistentMap<K, V> implements PersistentMap<K, V>, AutoCloseable {
 

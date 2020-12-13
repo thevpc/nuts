@@ -35,7 +35,7 @@ import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOutput {
 

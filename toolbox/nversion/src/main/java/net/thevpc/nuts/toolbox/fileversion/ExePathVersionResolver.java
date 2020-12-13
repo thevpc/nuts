@@ -45,7 +45,7 @@ import org.boris.pecoff4j.util.ResourceHelper;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class ExePathVersionResolver implements PathVersionResolver{
     public Set<VersionDescriptor>  resolve(String filePath, NutsApplicationContext context){

@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * SearchId Filter.
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Base
  */

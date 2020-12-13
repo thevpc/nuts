@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class CoreNutsConstants {
      public static final class Versions {

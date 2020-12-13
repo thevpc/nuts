@@ -20,7 +20,7 @@ import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
 

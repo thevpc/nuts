@@ -16,7 +16,7 @@ import java.io.PrintStream;
 import java.text.DecimalFormat;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, NutsOutputStreamTransparentAdapter*/ {
 

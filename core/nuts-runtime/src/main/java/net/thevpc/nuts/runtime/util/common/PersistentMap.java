@@ -15,7 +15,7 @@ import java.util.Set;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface PersistentMap<K, V> {
 

@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Repository Event
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Events
  */

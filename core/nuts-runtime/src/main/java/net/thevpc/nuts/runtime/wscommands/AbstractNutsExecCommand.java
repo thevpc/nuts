@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * type: Command Class
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCommand> implements NutsExecCommand {
 

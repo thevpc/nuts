@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * type: Command Class
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
 

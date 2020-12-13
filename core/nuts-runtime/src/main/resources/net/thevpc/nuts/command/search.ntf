@@ -1,7 +1,7 @@
 search for artifacts
     search for artifacts
 
-##) SYNOPSYS##:
+##) SYNOPSYS:
 ```sh nuts search  [<-options>]... <ids> ...  <args> ...```
        search for <ids>
 
@@ -9,7 +9,7 @@ search for artifacts
 ```sh --lenient```
     when an id is found but its descriptor and/or its file are not found, do not raise an error and continue. default ```kw no```
 ```sh --all-versions```
-    return all versions of the same ids. if ```kw no``` will always return the ###latest### one. default ```kw yes```
+    return all versions of the same ids. if ```kw no``` will always return the ```kw latest``` one. default ```kw yes```
 ```sh --duplicates```
     return the same version from distinct repositories if found. default ```kw yes```
 ```sh --distinct```

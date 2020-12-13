@@ -22,7 +22,7 @@ import net.thevpc.nuts.runtime.util.io.Interruptible;
 import net.thevpc.nuts.runtime.util.io.*;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
 

@@ -48,6 +48,7 @@ public interface NutsTerminalManager {
      * update workspace wide system terminal
      *
      * @param terminal system terminal
+     * @param session session
      * @return {@code this} instance
      */
     NutsTerminalManager setSystemTerminal(NutsSystemTerminalBase terminal, NutsSession session);
@@ -63,7 +64,7 @@ public interface NutsTerminalManager {
      * update workspace wide terminal
      *
      * @param terminal terminal
-     * @param session
+     * @param session session
      * @return {@code this} instance
      */
     NutsTerminalManager setTerminal(NutsSessionTerminal terminal, NutsSession session);
@@ -72,7 +73,7 @@ public interface NutsTerminalManager {
      * return new terminal bound to system terminal
      *
      * @return new terminal
-     * @param session
+     * @param session session
      */
     NutsSessionTerminal createTerminal(NutsSession session);
 
@@ -91,7 +92,7 @@ public interface NutsTerminalManager {
      * return new terminal bound to the given {@code parent}
      *
      * @param parent parent terminal or null
-     * @param session
+     * @param session session
      * @return new terminal
      */
     NutsSessionTerminal createTerminal(NutsTerminalBase parent, NutsSession session);

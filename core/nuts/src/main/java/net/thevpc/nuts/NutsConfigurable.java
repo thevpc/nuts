@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 /**
  * Configurable interface define a extensible way to configure nuts commands
  * and objects using simple argument line options.
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Command Line
  */

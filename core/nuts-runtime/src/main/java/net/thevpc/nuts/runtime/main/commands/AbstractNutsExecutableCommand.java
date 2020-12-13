@@ -10,7 +10,7 @@ import net.thevpc.nuts.NutsExecutableType;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractNutsExecutableCommand implements NutsExecutableInformationExt {
 

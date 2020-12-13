@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExecutableCommand {
 

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * type: Command Class
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
 

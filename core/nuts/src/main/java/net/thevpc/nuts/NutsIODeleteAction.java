@@ -31,7 +31,7 @@ import java.nio.file.Path;
 /**
  * I/O Action that help monitored delete.
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.8
  * %category Input Output
  */

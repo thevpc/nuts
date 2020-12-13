@@ -35,7 +35,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  */
 public class DefaultNutsInstallInfo implements NutsInstallInformation {

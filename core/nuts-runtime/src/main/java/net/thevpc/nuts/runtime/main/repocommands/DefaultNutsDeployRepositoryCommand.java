@@ -36,7 +36,7 @@ import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * %category SPI Base
  */
 public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployRepositoryCommand {

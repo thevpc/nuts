@@ -30,7 +30,7 @@ import net.thevpc.nuts.NutsArgumentCandidate;
 
 /**
  * Default (simple) NutsArgumentCandidate implementation.
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  */
 public class NutsDefaultArgumentCandidate implements NutsArgumentCandidate {

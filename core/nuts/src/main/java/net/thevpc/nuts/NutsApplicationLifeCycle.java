@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  * perform specific business for each of the predefined application execution 
  * modes {@link NutsApplicationMode}.
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Application
  */

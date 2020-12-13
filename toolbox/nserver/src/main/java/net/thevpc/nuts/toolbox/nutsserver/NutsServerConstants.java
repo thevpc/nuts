@@ -27,7 +27,7 @@ package net.thevpc.nuts.toolbox.nutsserver;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsServerConstants {
 

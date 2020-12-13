@@ -35,7 +35,7 @@ import java.util.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsWorkspaceHelper {
     public static NutsFetchStrategy validate(NutsFetchStrategy mode) {

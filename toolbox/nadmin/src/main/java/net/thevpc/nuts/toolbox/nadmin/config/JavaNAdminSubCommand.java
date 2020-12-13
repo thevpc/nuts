@@ -15,7 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
 

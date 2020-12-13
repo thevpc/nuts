@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  *     <li>formatting (in Nuts Stream Format)</li>
  *     <li>parsing</li>
  * </ul>
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Format
  */

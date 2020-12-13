@@ -18,7 +18,7 @@ import net.thevpc.nuts.runtime.util.console.CProgressBar;
 import net.thevpc.nuts.runtime.format.text.FPrintCommands;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, NutsOutputStreamTransparentAdapter*/ {
 

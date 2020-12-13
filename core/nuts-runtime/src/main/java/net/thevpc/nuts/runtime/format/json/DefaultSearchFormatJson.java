@@ -13,7 +13,7 @@ import net.thevpc.nuts.runtime.format.DefaultSearchFormatBase;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
 

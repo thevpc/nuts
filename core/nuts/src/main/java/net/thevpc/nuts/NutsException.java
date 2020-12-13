@@ -30,7 +30,7 @@ import java.io.IOException;
 
 /**
  * Base Nuts Exception. Parent of all Nuts defined Exceptions.
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Exception
  */

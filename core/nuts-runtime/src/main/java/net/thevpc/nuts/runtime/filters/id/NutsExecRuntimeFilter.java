@@ -12,7 +12,7 @@ import net.thevpc.nuts.runtime.util.common.Simplifiable;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsExecRuntimeFilter extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
     private NutsId apiId;

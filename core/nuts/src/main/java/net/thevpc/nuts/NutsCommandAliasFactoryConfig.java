@@ -32,7 +32,7 @@ import java.util.Objects;
 /**
  * Command Alias Factory Definition Config
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category SPI Base
  */

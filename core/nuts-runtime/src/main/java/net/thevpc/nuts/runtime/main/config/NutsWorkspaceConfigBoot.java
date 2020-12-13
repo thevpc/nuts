@@ -33,7 +33,7 @@ import net.thevpc.nuts.NutsStoreLocationStrategy;
 import java.util.*;
 
 /**
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  */
 public final class NutsWorkspaceConfigBoot extends NutsConfigItem {

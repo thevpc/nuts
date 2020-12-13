@@ -23,7 +23,7 @@ import net.thevpc.nuts.NutsWorkspaceCommandAlias;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
     public static class AliasInfo {

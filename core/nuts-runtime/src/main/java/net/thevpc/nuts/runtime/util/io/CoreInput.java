@@ -11,7 +11,7 @@ import net.thevpc.nuts.NutsInput;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface CoreInput extends NutsInput {
 

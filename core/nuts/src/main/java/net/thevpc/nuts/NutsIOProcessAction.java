@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 /**
  * I/O Action that help monitoring processes
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.8
  */
 public interface NutsIOProcessAction {

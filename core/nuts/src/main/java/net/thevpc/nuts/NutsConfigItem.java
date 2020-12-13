@@ -30,7 +30,7 @@ import java.io.Serializable;
 
 /**
  * 
- * @author vpc
+ * @author thevpc
  * %category Config
  */
 public class NutsConfigItem implements Serializable {

@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.util;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public enum RemoteRepoApi {
 

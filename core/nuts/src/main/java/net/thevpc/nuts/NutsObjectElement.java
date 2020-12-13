@@ -30,7 +30,7 @@ import java.util.Collection;
 /**
  * Object implementation of Nuts Element type.
  * Nuts Element types are generic JSON like parsable objects.
- * @author vpc
+ * @author thevpc
  * @since 0.5.6
  * %category Elements
  */

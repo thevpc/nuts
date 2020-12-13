@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Effective (including inherited) user information
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Config
  */

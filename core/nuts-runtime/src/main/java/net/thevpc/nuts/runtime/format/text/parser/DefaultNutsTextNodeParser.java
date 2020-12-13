@@ -19,7 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
 

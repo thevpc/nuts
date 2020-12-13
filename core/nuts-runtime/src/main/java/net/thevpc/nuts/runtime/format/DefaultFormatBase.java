@@ -17,7 +17,7 @@ import net.thevpc.nuts.runtime.util.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFormatBase0<T> implements NutsFormat {
 

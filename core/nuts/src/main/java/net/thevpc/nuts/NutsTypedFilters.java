@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 /**
  * Filters helper
  *
- * @author vpc
+ * @author thevpc
  * %category Config
  * @since 0.8.0
  */

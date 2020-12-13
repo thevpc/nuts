@@ -29,7 +29,7 @@ import java.util.Objects;
 
 /**
  * SDK location
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Config
  */
@@ -52,6 +52,7 @@ public class NutsSdkLocation extends NutsConfigItem {
      * @param path sdk path
      * @param version sdk version
      * @param packaging sdk packaging. for Java SDK this is room to set JRE or JDK.
+     * @param priority sdk priority
      */
     public NutsSdkLocation(NutsId id, String product, String name, String path, String version, String packaging,int priority) {
         this.id = id;

@@ -31,7 +31,7 @@ import net.thevpc.nuts.runtime.main.config.NutsWorkspaceConfigBoot;
 import java.util.*;
 
 /**
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  */
 public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {

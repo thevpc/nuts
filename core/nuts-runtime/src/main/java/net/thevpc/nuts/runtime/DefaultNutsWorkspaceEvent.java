@@ -33,7 +33,7 @@ import net.thevpc.nuts.NutsWorkspaceEvent;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  */
 public class DefaultNutsWorkspaceEvent implements NutsWorkspaceEvent {

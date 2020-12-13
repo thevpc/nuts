@@ -81,6 +81,9 @@ public class NutsNotFoundException extends NutsException {
      *
      * @param workspace workspace
      * @param id        artifact id
+     * @param dependencies dependencies
+     * @param locations locations
+     * @param cause cause
      */
     public NutsNotFoundException(NutsWorkspace workspace, NutsId id, NutsIdInvalidDependency[] dependencies, NutsIdInvalidLocation[] locations, Exception cause) {
         this(workspace, id == null ? null : id.toString(), dependencies, locations, cause);
@@ -91,6 +94,9 @@ public class NutsNotFoundException extends NutsException {
      *
      * @param workspace workspace
      * @param id        artifact id
+     * @param dependencies dependencies
+     * @param locations locations
+     * @param cause cause
      */
     public NutsNotFoundException(NutsWorkspace workspace, String id, NutsIdInvalidDependency[] dependencies, NutsIdInvalidLocation[] locations, Exception cause) {
         super(workspace, "artifact not found: " + (id == null ? "<null>" : id)

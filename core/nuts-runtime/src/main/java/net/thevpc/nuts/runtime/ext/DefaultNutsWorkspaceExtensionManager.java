@@ -37,7 +37,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionManager {
 

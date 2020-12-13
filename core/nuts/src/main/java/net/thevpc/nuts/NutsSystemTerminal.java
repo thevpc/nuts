@@ -33,7 +33,7 @@ import java.io.OutputStream;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Input Output
  */

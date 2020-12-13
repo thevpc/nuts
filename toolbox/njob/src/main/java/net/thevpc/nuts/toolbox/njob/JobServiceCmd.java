@@ -1465,9 +1465,9 @@ public class JobServiceCmd {
         }
         switch (x) {
             case NONE:
-                return new NutsString("```discrete 0```ø");
+                return new NutsString("```pale 0```ø");
             case LOW:
-                return new NutsString("```discrete L```ø");
+                return new NutsString("```pale L```ø");
             case NORMAL:
                 return new NutsString("N");
             case MEDIUM:

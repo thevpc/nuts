@@ -31,7 +31,7 @@ import net.thevpc.nuts.NutsId;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class VersionDescriptor {
     

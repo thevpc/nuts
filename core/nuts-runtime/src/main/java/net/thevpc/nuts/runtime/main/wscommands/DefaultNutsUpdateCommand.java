@@ -30,7 +30,7 @@ import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
 /**
  * type: Command Class
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     private Comparator<NutsId> LATEST_VERSION_FIRST = (x, y) -> -x.getVersion().compareTo(y.getVersion());

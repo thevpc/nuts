@@ -36,7 +36,7 @@ import net.thevpc.nuts.runtime.format.plain.NutsObjectFormatPlain;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
 

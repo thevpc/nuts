@@ -32,7 +32,7 @@ import java.util.Map;
  * User should use available 'set' method and finally call {@link #build()}
  * to get an instance of immutable NutsDependency
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Descriptor
  */

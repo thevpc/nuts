@@ -1,4 +1,4 @@
-##STANDARD OPTIONS FORMAT##:
+##) STANDARD OPTIONS FORMAT:
 Standard format of options is supported as follows :
 
  ```sh --!... or -!... or -~...```

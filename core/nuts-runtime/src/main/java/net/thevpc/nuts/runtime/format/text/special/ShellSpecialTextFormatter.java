@@ -578,6 +578,26 @@ public class ShellSpecialTextFormatter implements SpecialTextFormatter {
             threePoints = factory.styled("...", NutsTextNodeStyle.SEPARATOR2);
             s = s.substring(0, s.length() - 3);
         }
+        if (s.startsWith("[<") && s.endsWith(">]")
+        ) {
+            String start=s.substring(0,2);
+            String end=s.substring(s.length()-2);
+            String s2 = s.substring(2, s.length() - 2);
+            if (isSynopsysOption(s2)) {
+                return arrNotNull(
+                        factory.styled(start, NutsTextNodeStyle.PALE1),
+                        factory.styled(s2, NutsTextNodeStyle.OPTION1),
+                        factory.styled(end, NutsTextNodeStyle.PALE1),
+                        threePoints
+                );
+            } else if (isSynopsysWord(s2)) {
+                return arrNotNull(
+                        factory.styled(start, NutsTextNodeStyle.PALE1),
+                        factory.plain(s2),
+                        factory.styled(end, NutsTextNodeStyle.PALE1)
+                        , threePoints);
+            }
+        }
         if (s.startsWith("[") && s.endsWith("]")
                 || (s.startsWith("<") && s.endsWith(">"))
                 || (s.startsWith("(") && s.endsWith(")"))
@@ -587,36 +607,16 @@ public class ShellSpecialTextFormatter implements SpecialTextFormatter {
             String s2 = s.substring(1, s.length() - 1);
             if (isSynopsysOption(s2)) {
                 return arrNotNull(
-                        factory.styled(start, NutsTextNodeStyle.SEPARATOR2),
+                        factory.styled(start, NutsTextNodeStyle.PALE1),
                         factory.styled(String.valueOf(s2), NutsTextNodeStyle.OPTION1),
-                        factory.styled(end, NutsTextNodeStyle.SEPARATOR2),
+                        factory.styled(end, NutsTextNodeStyle.PALE1),
                         threePoints
                 );
             } else if (isSynopsysWord(s2)) {
                 return arrNotNull(
-                        factory.styled(start, NutsTextNodeStyle.SEPARATOR2),
+                        factory.styled(start, NutsTextNodeStyle.PALE1),
                         factory.plain(s2),
-                        factory.styled(end, NutsTextNodeStyle.SEPARATOR2)
-                        , threePoints);
-            }
-        }
-        if (s.startsWith("[<") && s.endsWith(">]")
-        ) {
-            String start=s.substring(0,2);
-            String end=s.substring(s.length()-2);
-            String s2 = s.substring(1, s.length() - 1);
-            if (isSynopsysOption(s2)) {
-                return arrNotNull(
-                        factory.styled(start, NutsTextNodeStyle.SEPARATOR2),
-                        factory.styled(s2, NutsTextNodeStyle.OPTION1),
-                        factory.styled(end, NutsTextNodeStyle.SEPARATOR2),
-                        threePoints
-                );
-            } else if (isSynopsysWord(s2)) {
-                return arrNotNull(
-                        factory.styled(start, NutsTextNodeStyle.SEPARATOR2),
-                        factory.plain(s2),
-                        factory.styled(end, NutsTextNodeStyle.SEPARATOR2)
+                        factory.styled(end, NutsTextNodeStyle.PALE1)
                         , threePoints);
             }
         }

@@ -55,7 +55,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 

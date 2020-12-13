@@ -18,7 +18,7 @@ import net.thevpc.nuts.runtime.filters.AbstractNutsFilter;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsPatternIdFilter extends AbstractNutsFilter implements NutsIdFilter {
 

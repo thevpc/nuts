@@ -31,7 +31,7 @@ import java.util.Map;
  * execution context used in {@link NutsExecutorComponent} and
  * {@link NutsInstallerComponent}.
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Base
  */

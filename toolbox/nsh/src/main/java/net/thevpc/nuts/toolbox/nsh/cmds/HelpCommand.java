@@ -81,11 +81,11 @@ public class HelpCommand extends AbstractNshBuiltin {
         } : x -> x;
         if (cmdLine.isExecMode()) {
             if (showColors) {
-                String colorsText = context.getWorkspace().formats().text().loadFormattedString("/net/thevpc/nuts/toolbox/nuts-help-colors.help", HelpCommand.class.getClassLoader(), "no help found");
+                String colorsText = context.getWorkspace().formats().text().loadFormattedString("/net/thevpc/nuts/toolbox/nuts-help-colors.ntf", HelpCommand.class.getClassLoader(), "no help found");
                 context.out().println(ss.apply(colorsText));
             } else {
                 if (commandNames.isEmpty()) {
-                    String helpText = context.getWorkspace().formats().text().loadFormattedString("/net/thevpc/nuts/toolbox/nsh.help", HelpCommand.class.getClassLoader(), "no help found");
+                    String helpText = context.getWorkspace().formats().text().loadFormattedString("/net/thevpc/nuts/toolbox/nsh.ntf", HelpCommand.class.getClassLoader(), "no help found");
                     context.out().println(ss.apply(helpText));
                     context.out().println(ss.apply("##AVAILABLE COMMANDS ARE:##"));
                     JShellBuiltin[] commands = context.getGlobalContext().builtins().getAll();

@@ -32,7 +32,7 @@ import java.util.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.7
  */
 public abstract class AbstractNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsUpdateUserCommand> implements NutsUpdateUserCommand {

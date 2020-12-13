@@ -32,7 +32,7 @@ import java.util.Set;
 /**
  * Information about installed artifact
  *
- * @author vpc
+ * @author thevpc
  * %category Base
  * @since 0.5.5
  */

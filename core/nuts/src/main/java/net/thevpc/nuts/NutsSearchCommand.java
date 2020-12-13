@@ -35,7 +35,7 @@ import java.util.Set;
  * Search command class helps searching multiple artifacts with all of their
  * files.
  *
- * @author vpc
+ * @author thevpc
  * %category Commands
  * @since 0.5.4
  */

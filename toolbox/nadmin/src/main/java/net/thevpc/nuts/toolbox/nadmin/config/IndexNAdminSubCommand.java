@@ -11,7 +11,7 @@ import java.util.List;
 import net.thevpc.nuts.*;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class IndexNAdminSubCommand extends AbstractNAdminSubCommand {
 

@@ -40,7 +40,7 @@ import org.w3c.dom.Element;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsArrayElementXml extends AbstractNutsElement implements NutsArrayElement {
 

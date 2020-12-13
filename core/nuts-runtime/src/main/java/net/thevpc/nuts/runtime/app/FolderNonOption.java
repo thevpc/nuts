@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.app;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class FolderNonOption extends DefaultNonOption {
 

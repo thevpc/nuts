@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Event describing installation of an artifact
- * @author vpc
+ * @author thevpc
  * @since 0.5.6
  * %category Base
  */

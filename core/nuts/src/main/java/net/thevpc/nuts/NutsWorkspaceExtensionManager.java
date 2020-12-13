@@ -33,7 +33,7 @@ import java.util.Set;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Extensions
  */
@@ -53,7 +53,7 @@ public interface NutsWorkspaceExtensionManager {
      * @param <V> extension context type
      * @param type extension type
      * @param supportCriteria context
-     * @param session
+     * @param session session
      * @return valid instance or null if no extension implementation was found
      */
     <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, NutsSession session);
@@ -66,7 +66,7 @@ public interface NutsWorkspaceExtensionManager {
      * @param supportCriteria context
      * @param constructorParameterTypes constructor Parameter Types
      * @param constructorParameters constructor Parameters
-     * @param session
+     * @param session session
      * @return valid instance or null if no extension implementation was found
      */
     <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters, NutsSession session);
@@ -104,7 +104,7 @@ public interface NutsWorkspaceExtensionManager {
      * return loaded extensions
      *
      * @return extension ids
-     * @param session
+     * @param session session
      */
     List<NutsId> getConfigExtensions(NutsSession session);
 

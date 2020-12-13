@@ -34,7 +34,7 @@ import java.util.List;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNonOption implements NutsArgumentName {
 

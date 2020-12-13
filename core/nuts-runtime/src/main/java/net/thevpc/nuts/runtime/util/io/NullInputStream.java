@@ -10,7 +10,7 @@ import java.io.InputStream;
 /**
  * Simple reference implementation of Null (do nothing) Inputstream
  *
- * @author vpc
+ * @author thevpc
  */
 public final class NullInputStream extends InputStream {
 

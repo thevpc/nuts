@@ -41,7 +41,7 @@ import net.thevpc.nuts.NutsUnsupportedArgumentException;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 class URLParts {
 

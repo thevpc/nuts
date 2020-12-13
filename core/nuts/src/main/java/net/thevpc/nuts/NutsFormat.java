@@ -34,7 +34,7 @@ import java.nio.file.Path;
 
 /**
  * Base Format Interface used to print "things".
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Format
  */

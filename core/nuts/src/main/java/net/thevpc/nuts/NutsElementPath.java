@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Element XPath like filter
  *
- * @author vpc
+ * @author thevpc
  * %category Elements
  */
 public interface NutsElementPath {

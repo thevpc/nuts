@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.format.text.renderer.ansi;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface AnsiStyleStyleApplier {
 

@@ -15,7 +15,7 @@ import java.util.Set;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsExecCompanionFilter extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
     private NutsId apiId;

@@ -13,7 +13,7 @@ import java.util.StringTokenizer;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class JavaUtils {
 

@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 
 /**
  * Command execution type.
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Commands
  */

@@ -30,7 +30,7 @@ import java.util.Map;
 
 /**
  * Immutable Artifact id information.
- * @author vpc
+ * @author thevpc
  * @since 0.1.0
  * %category Descriptor
  */

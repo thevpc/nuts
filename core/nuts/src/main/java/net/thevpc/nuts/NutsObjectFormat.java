@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Object format is responsible of formatting to terminal
  * a given object. Multiple implementation should be available
  * to support tables, trees, json, xml,...
- * @author vpc
+ * @author thevpc
  * %category Format
  */
 public interface NutsObjectFormat extends NutsFormat {

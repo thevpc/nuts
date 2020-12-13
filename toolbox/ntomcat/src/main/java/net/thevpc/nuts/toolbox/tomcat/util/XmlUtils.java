@@ -35,7 +35,7 @@ import org.w3c.dom.NodeList;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class XmlUtils {
 

@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 
 /**
  * Nuts Element types are generic JSON like parsable objects.
- * @author vpc
+ * @author thevpc
  * @since 0.5.6
  * %category Elements
  */

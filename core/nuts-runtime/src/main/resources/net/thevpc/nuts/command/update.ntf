@@ -1,5 +1,5 @@
 ```sh nuts update ```
-       check if a newer version of ##nuts## or any of the provided <ids>
+       check if a newer version of ```sh nuts``` or any of the provided <ids>
        is available in the current workspace and perform update by downloading (fetch) 
        and installing the artifact. The updated version is promoted to 'default' version.
 
@@ -8,7 +8,7 @@
 ##) SYNOPSIS:
 ```sh nuts update [<-options>]... <ids> ...  <args> ...```
 
-   update the ##nuts## to the latest version. If --force is armed, will re-download the artifacts and its dependencies.
+   update the ```sh nuts``` to the latest version. If --force is armed, will re-download the artifacts and its dependencies.
 
 ```sh nuts update [ --to-version <version> ]```
    update the current workspace to latest version or to the given version if provided.

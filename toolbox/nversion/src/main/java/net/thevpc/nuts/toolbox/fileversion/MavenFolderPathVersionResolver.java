@@ -38,7 +38,7 @@ import net.thevpc.common.mvn.PomXmlParser;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class MavenFolderPathVersionResolver implements PathVersionResolver {
 

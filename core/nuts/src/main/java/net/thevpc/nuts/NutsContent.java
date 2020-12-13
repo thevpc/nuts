@@ -32,7 +32,7 @@ import java.nio.file.Path;
 
 /**
  * Content describes a artifact file location and its characteristics.
- * @author vpc
+ * @author thevpc
  * @since 0.5.4
  * %category Descriptor
  */

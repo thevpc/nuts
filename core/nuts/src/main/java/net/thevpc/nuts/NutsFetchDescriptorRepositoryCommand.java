@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Repository command used to fetch an artifact descriptor from a specific repository.
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category SPI Base
  */

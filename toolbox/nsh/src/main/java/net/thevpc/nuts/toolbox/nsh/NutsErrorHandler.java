@@ -35,7 +35,7 @@ import net.thevpc.common.strings.StringUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsErrorHandler implements JShellErrorHandler {
     

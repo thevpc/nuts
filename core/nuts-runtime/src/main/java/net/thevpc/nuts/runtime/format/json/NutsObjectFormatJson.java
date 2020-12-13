@@ -17,7 +17,7 @@
 //import net.thevpc.nuts.runtime.format.props.DefaultPropertiesFormat;
 //
 ///**
-// * @author vpc
+// * @author thevpc
 // */
 //public class NutsObjectFormatJson extends NutsObjectFormatBase {
 //

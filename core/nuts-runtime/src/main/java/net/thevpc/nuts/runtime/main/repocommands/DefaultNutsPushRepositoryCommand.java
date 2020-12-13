@@ -19,7 +19,7 @@ import net.thevpc.nuts.runtime.util.NutsWorkspaceUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * %category SPI Base
  */
 public class DefaultNutsPushRepositoryCommand extends AbstractNutsPushRepositoryCommand {

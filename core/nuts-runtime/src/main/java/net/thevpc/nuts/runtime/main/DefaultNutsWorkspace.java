@@ -92,7 +92,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsLoggerOp LOGCSF = LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).formatted();
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).log(" ===============================================================================");
-            String s = CoreIOUtils.loadString(getClass().getResourceAsStream("/net/thevpc/nuts/includes/standard-header.help"), true);
+            String s = CoreIOUtils.loadString(getClass().getResourceAsStream("/net/thevpc/nuts/includes/standard-header.ntf"), true);
             s=s.replace("${nuts.workspace-runtime.version}",Nuts.getVersion());
             for (String s1 : s.split("\n")) {
                 LOGCSF.log(s1);
@@ -100,7 +100,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).log(" ");
             LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).log(" = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =");
             LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).log(" ");
-            LOGCSF.log("start ##nuts## **{0}** at {1}", Nuts.getVersion(), CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(info.getOptions().getCreationTime())));
+            LOGCSF.log("start ```sh nuts``` **{0}** at {1}", Nuts.getVersion(), CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(info.getOptions().getCreationTime())));
             LOGCRF.log("open Nuts Workspace               : {0}", new NutsString(commandLine().formatter().setValue(info.getOptions().format().getBootCommand()).format()));
             LOGCRF.log("open Nuts Workspace (compact)     : {0}", new NutsString(commandLine().formatter().setValue(info.getOptions().format().compact().getBootCommand()).format()));
 
@@ -283,7 +283,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
                 if (session.isPlainTrace()) {
                     PrintStream out = session.out();
-                    out.printf("##nuts## workspace v###%s### created.%n", nutsVersion);
+                    out.printf("```sh nuts``` workspace v###%s### created.%n", nutsVersion);
                 }
 
                 reconfigurePostInstall(session);
@@ -337,12 +337,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 this.security().login(uoptions.getUserName(), password);
             }
             LOG.with().level(Level.FINE).verb(NutsLogVerb.SUCCESS)
-                    .formatted().log("##nuts## workspace loaded in ```error {0}```",
+                    .formatted().log("```sh nuts``` workspace loaded in ```error {0}```",
                     CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis())
             );
 
             if (CoreCommonUtils.getSysBoolNutsProperty("perf", false)) {
-                session.out().printf("##nuts## workspace loaded in #####%s#####%n",
+                session.out().printf("```sh nuts``` workspace loaded in #####%s#####%n",
                         CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis())
                 );
             }
@@ -392,9 +392,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
             StringBuilder version = new StringBuilder(nutsVersion);
             CoreStringUtils.fillString(' ', 25 - version.length(), version);
-            out.println(formats().text().loadFormattedString("/net/thevpc/nuts/includes/standard-header.help", getClass().getClassLoader(), "no help found"));
+            out.println(formats().text().loadFormattedString("/net/thevpc/nuts/includes/standard-header.ntf", getClass().getClassLoader(), "no help found"));
             out.println("###/------------------------------------------------------------------------------\\\\###");
-            out.println("###|###  This is the very ###first### time ##nuts## has been started for this workspace...     ###|###");
+            out.println("###|###  This is the very ###first### time ```sh nuts``` has been started for this workspace...     ###|###");
             out.println("###\\\\------------------------------------------------------------------------------/###");
             out.println();
         }
@@ -993,24 +993,24 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     @Override
     public String getWelcomeText() {
-        return this.formats().text().loadFormattedString("/net/thevpc/nuts/nuts-welcome.help", getClass().getClassLoader(), "no welcome found");
+        return this.formats().text().loadFormattedString("/net/thevpc/nuts/nuts-welcome.ntf", getClass().getClassLoader(), "no welcome found");
     }
 
     @Override
     public String getHelpText() {
-        return this.formats().text().loadFormattedString("/net/thevpc/nuts/nuts-help.help", getClass().getClassLoader(), "no help found");
+        return this.formats().text().loadFormattedString("/net/thevpc/nuts/nuts-help.ntf", getClass().getClassLoader(), "no help found");
     }
 
     @Override
     public String getLicenseText() {
-        return this.formats().text().loadFormattedString("/net/thevpc/nuts/nuts-license.help", getClass().getClassLoader(), "no license found");
+        return this.formats().text().loadFormattedString("/net/thevpc/nuts/nuts-license.ntf", getClass().getClassLoader(), "no license found");
     }
 
     @Override
     public String resolveDefaultHelp(Class clazz) {
         NutsId nutsId = id().resolveId(clazz);
         if (nutsId != null) {
-            String urlPath = "/" + nutsId.getGroupId().replace('.', '/') + "/" + nutsId.getArtifactId() + ".help";
+            String urlPath = "/" + nutsId.getGroupId().replace('.', '/') + "/" + nutsId.getArtifactId() + ".ntf";
             return formats().text().loadFormattedString(urlPath, clazz.getClassLoader(), "no help found");
         }
         return null;

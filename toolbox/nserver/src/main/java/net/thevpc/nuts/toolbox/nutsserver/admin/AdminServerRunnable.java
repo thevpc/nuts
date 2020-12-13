@@ -41,7 +41,7 @@ import net.thevpc.nuts.toolbox.nutsserver.NutsServer;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class AdminServerRunnable implements NutsServer, Runnable {
 

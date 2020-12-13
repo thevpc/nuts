@@ -32,7 +32,7 @@ import net.thevpc.nuts.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.3
  */
 public class DefaultNutsContentEvent implements NutsContentEvent {

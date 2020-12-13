@@ -15,7 +15,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
 

@@ -33,7 +33,7 @@ import java.util.logging.Level;
 /**
  * JSON Config Best Effort Loader
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.6
  * %category Internal
  */

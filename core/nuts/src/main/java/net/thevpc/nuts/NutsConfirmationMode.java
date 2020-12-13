@@ -33,7 +33,7 @@ package net.thevpc.nuts;
  * processing (YES mode), or ignoring the processing and continuing the next
  * (NO) or cancel the processing and exit with an error message (ERROR)
  *
- * @author vpc
+ * @author thevpc
  * @since 0.5.5
  * %category Base
  */

@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class ErrorHandlerIterator<T> implements Iterator<T> {
 

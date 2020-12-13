@@ -31,7 +31,7 @@ import java.util.Iterator;
 
 /**
  * 
- * @author vpc
+ * @author thevpc
  * %category Extensions
  */
 public interface NutsRepositoryModel {

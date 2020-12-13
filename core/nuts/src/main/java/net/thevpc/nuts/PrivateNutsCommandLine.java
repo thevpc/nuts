@@ -73,7 +73,7 @@ import java.util.*;
  * option may start with '!' to switch armed flags expandSimpleOptions : when
  * activated
  *
- * @author vpc
+ * @author thevpc
  * %category Internal
  * @since 0.5.5
  */
@@ -968,7 +968,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
 //    /**
 //     * Default (simple) NutsArgumentCandidate implementation.
-//     * @author vpc
+//     * @author thevpc
 //     * @since 0.5.5
 //     */
 //    private static final class CandidateImpl implements NutsArgumentCandidate {
@@ -997,7 +997,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
      * used. Instead an instance of NutsArgument can be retrieved using
      * {@link NutsCommandLineManager#createArgument(String)}
      *
-     * @author vpc
+     * @author thevpc
      * @since 0.5.5
      */
     private final static class ArgumentImpl extends PrivateNutsTokenFilter implements NutsArgument {
