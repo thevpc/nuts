@@ -32,7 +32,6 @@
         <module>toolbox/ntomcat</module>
         <module>toolbox/nmvn</module>
         <module>toolbox/nderby</module>
-        <module>toolbox/docusaurus-to-asciidoctor</module>
         <module>toolbox/ndexer</module>
         <module>toolbox/nwar</module>
         <module>toolbox/noapi</module>
