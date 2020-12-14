@@ -37,6 +37,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
         List<String> helpFor = new ArrayList<>();
         NutsCommandLine cmdLine = getSession().getWorkspace().commandLine().create(args);
         NutsContentType outputFormat = NutsContentType.PLAIN;
+        boolean helpColors=false;
         while (cmdLine.hasNext()) {
             NutsContentType of = CoreNutsUtils.readOptionOutputFormat(cmdLine);
             if (of != null) {
@@ -45,8 +46,16 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                 NutsArgument a = cmdLine.peek();
                 if (a.isOption()) {
                     switch (a.getStringKey()) {
+                        case "--colors":
+                        case "--ntf":{
+                            NutsArgument c = cmdLine.nextBoolean();
+                            if(c.isEnabled()) {
+                                helpColors = c.getBooleanValue();
+                            }
+                            break;
+                        }
                         default: {
-                            throw new NutsIllegalArgumentException(getSession().getWorkspace(), "Unsupported option " + a);
+                            cmdLine.unexpectedArgument();
                         }
                     }
                 } else {
@@ -57,10 +66,18 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                 }
             }
         }
+
+        if(helpColors){
+            getSession().getTerminal().out().print(
+                getSession().getWorkspace().formats().text().loadFormattedString(
+                    "/net/thevpc/nuts/ntf-help.ntf",
+                    getClass().getClassLoader(), "no help found for " + name)
+            );
+        }
         switch (outputFormat) {
             case PLAIN: {
                 PrintStream fout = getSession().out();
-                if (helpFor.isEmpty()) {
+                if (!helpColors && helpFor.isEmpty()) {
                     fout.println(NutsWorkspaceExt.of(getSession().getWorkspace()).getHelpText());
                     fout.flush();
                 }

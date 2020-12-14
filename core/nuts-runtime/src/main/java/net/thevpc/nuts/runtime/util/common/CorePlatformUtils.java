@@ -102,8 +102,8 @@ public class CorePlatformUtils {
      * this is inspired from
      * http://stackoverflow.com/questions/15018474/getting-linux-distro-from-java
      * so thanks //PbxMan//
-     *
-     * @return
+     * @param ws
+     * @return os distribution map including keys distId, distName, distVersion,osVersion
      */
     public static Map<String, String> getOsDistMapLinux(NutsWorkspace ws) {
         File dir = new File("/etc/");
@@ -582,11 +582,10 @@ public class CorePlatformUtils {
     }
 
     /**
-     * @param stream
+     * @param stream stream
      * @return main class type for the given
-     * @throws IOException
      */
-    public static MainClassType getMainClassType(InputStream stream) throws IOException {
+    public static MainClassType getMainClassType(InputStream stream) {
         final Ref<Boolean> mainClass = new Ref<>();
         final Ref<Boolean> nutsApp = new Ref<>();
         final Ref<String> className = new Ref<>();
@@ -607,8 +606,8 @@ public class CorePlatformUtils {
                 if (superName != null && superName.equals("net/thevpc/nuts/NutsApplication")) {
                     nutsApp.set(true);
 
-                    //this is nut version < 008.0
                 } else if (superName != null && superName.equals("net/vpc/app/nuts/NutsApplication")) {
+                    //this is nut version < 0.8.0
                     nutsApp.set(true);
                 }
                 className.set(name.replace('/', '.'));

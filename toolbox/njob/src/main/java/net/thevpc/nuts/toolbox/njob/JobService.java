@@ -1,12 +1,11 @@
 package net.thevpc.nuts.toolbox.njob;
 
-import net.thevpc.nuts.toolbox.njob.model.*;
-import net.thevpc.nuts.toolbox.njob.time.TimespanPattern;
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.toolbox.njob.model.*;
 import net.thevpc.nuts.toolbox.njob.time.TimePeriod;
 import net.thevpc.nuts.toolbox.njob.time.TimePeriods;
+import net.thevpc.nuts.toolbox.njob.time.TimespanPattern;
 import net.thevpc.nuts.toolbox.njob.time.WeekDay;
 
 import java.time.Instant;
@@ -77,12 +76,12 @@ public class JobService {
             p.setBeneficiary("unspecified");
         }
         if (p.getCompany() == null) {
-            String t = dal.search(NProject.class).filter(x -> x.getBeneficiary().equals(p.getBeneficiary()))
+            String t = findAllProjects().filter(x -> x.getBeneficiary().equals(p.getBeneficiary()))
                     .sorted(Comparator.comparing(NProject::getCreationTime).reversed())
                     .map(x -> p.getBeneficiary())
                     .findFirst().orElse(null);
-            if(t==null){
-                t=p.getBeneficiary();
+            if (t == null) {
+                t = p.getBeneficiary();
             }
             p.setCompany(t);
         }
@@ -96,6 +95,10 @@ public class JobService {
         }
 //        dal.load(NProject.class,p.getId());
         dal.store(p);
+    }
+
+    private Stream<NProject> findAllProjects() {
+        return dal.search(NProject.class);
     }
 
     public void updateProject(NProject p) {
@@ -390,7 +393,7 @@ public class JobService {
     }
 
     public Stream<NJob> findWeekJobs(Instant date) {
-        return dal.search(NJob.class).filter(x -> {
+        return findAllJobs().filter(x -> {
             WeekDay d = WeekDay.MONDAY;
             if (x.getProject() != null) {
                 WeekDay d0 = dal.load(NProject.class, x.getProject()).getStartWeekDay();
@@ -404,7 +407,7 @@ public class JobService {
 
     public Stream<NJob> findLastJobs(Instant endTime, int lastCount, ChronoUnit lastUnit, Predicate<NJob> whereFilter, NJobGroup groupBy, ChronoUnit groupTimeUnit, TimespanPattern groupPattern) {
         Instant endTime0 = endTime == null ? Instant.now() : endTime;
-        Stream<NJob> s = dal.search(NJob.class).filter(x -> {
+        Stream<NJob> s = findAllJobs().filter(x -> {
             if (!(endTime == null || x.getStartTime().compareTo(endTime) <= 0)) {
                 return false;
             }
@@ -440,7 +443,7 @@ public class JobService {
         }
         NTaskStatusFilter statusFilter0 = statusFilter;
         Instant endTime0 = endTime == null ? Instant.now() : endTime;
-        Stream<NTask> s = dal.search(NTask.class).filter(
+        Stream<NTask> s = findAllTasks().filter(
                 x -> {
 
                     switch (statusFilter0) {
@@ -451,16 +454,16 @@ public class JobService {
                             return x.getStatus() == NTaskStatus.WIP || x.getStatus() == NTaskStatus.TODO;
                         }
                         case RECENT: {
-                            if(x.getStatus() == NTaskStatus.WIP || x.getStatus() == NTaskStatus.TODO){
+                            if (x.getStatus() == NTaskStatus.WIP || x.getStatus() == NTaskStatus.TODO) {
                                 return true;
                             }
                             Instant m = x.getModificationTime();
-                            if(m==null){
+                            if (m == null) {
                                 return true;
                             }
                             //last three days...
-                            long days=(Instant.now().toEpochMilli()-m.toEpochMilli())/3600000/24;
-                            return days>-3;
+                            long days = (Instant.now().toEpochMilli() - m.toEpochMilli()) / 3600000 / 24;
+                            return days > -3;
                         }
                         case CLOSED: {
                             return x.getStatus() == NTaskStatus.DONE || x.getStatus() == NTaskStatus.CANCELLED;
@@ -520,8 +523,19 @@ public class JobService {
                     if (r != 0) {
                         return r;
                     }
+                    Instant st1 = o1.getStartTime();
+                    Instant st2 = o2.getStartTime();
+                    if (st1 == null && st2 == null) {
+                        return 0;
+                    }
+                    if (st1 == null) {
+                        return 1;
+                    }
+                    if (st2 == null) {
+                        return -1;
+                    }
                     return
-                            -o1.getStartTime().compareTo(o2.getStartTime());
+                            -st1.compareTo(st2);
                 }
         );
         if (whereFilter != null) {
@@ -544,11 +558,11 @@ public class JobService {
     }
 
     public Stream<NJob> findMonthJobs(Instant date) {
-        if(date==null){
-            date=Instant.now();
+        if (date == null) {
+            date = Instant.now();
         }
         Instant finalDate = date;
-        return dal.search(NJob.class).filter(x -> {
+        return findAllJobs().filter(x -> {
             return getStartMonth(finalDate).equals(getStartMonth(x.getStartTime()));
         });
     }
@@ -556,7 +570,7 @@ public class JobService {
     public Stream<NJob> tailWeekJobs(int count) {
         Instant w0 = getStartWeek(subWeek(count), WeekDay.SUNDAY);
         Instant w1 = getStartWeek(subWeek(count - 1), WeekDay.SUNDAY);
-        return dal.search(NJob.class).filter(x -> {
+        return findAllJobs().filter(x -> {
             return x.getStartTime().compareTo(w0) >= 0 && x.getStartTime().compareTo(w1) < 0;
         });
     }
@@ -569,56 +583,68 @@ public class JobService {
         return dal.load(NTask.class, taskId);
     }
 
+    public NProject getProjectOrError(String projectNameOrId) {
+        NProject p = getProject(projectNameOrId);
+        if (p == null) {
+            throw new IllegalArgumentException("project not found " + projectNameOrId);
+        }
+        return p;
+    }
+
     public NProject getProject(String projectNameOrId) {
         if (isIdFormat(projectNameOrId)) {
             return dal.load(NProject.class, projectNameOrId);
         } else {
-            return dal.search(NProject.class).filter(x -> x.getName().equals(projectNameOrId))
+            return findAllProjects().filter(x -> Objects.equals(x.getName(), projectNameOrId))
                     .findFirst().orElse(null);
         }
     }
 
     public boolean removeJob(String jobId) {
-        long count = dal.search(NTask.class).filter(x -> jobId.equals(x.getJobId())).count();
-        if (count>1) {
+        long count = findAllTasks().filter(x -> jobId.equals(x.getJobId())).count();
+        if (count > 1) {
             throw new IllegalArgumentException("Job is used in " + count + " tasks. It cannot be removed.");
-        }else if (count>0) {
+        } else if (count > 0) {
             throw new IllegalArgumentException("Job is used in one task. It cannot be removed.");
         }
         return dal.delete(NJob.class, jobId);
     }
 
     public boolean removeTask(String taskId) {
-        long count = dal.search(NTask.class).filter(x -> taskId.equals(x.getParentTaskId())).count();
-        if (count>1) {
+        long count = findAllTasks().filter(x -> taskId.equals(x.getParentTaskId())).count();
+        if (count > 1) {
             throw new IllegalArgumentException("Task is used in " + count + " tasks. It cannot be removed.");
-        }else if (count>0) {
+        } else if (count > 0) {
             throw new IllegalArgumentException("Task is used in one task. It cannot be removed.");
         }
         return dal.delete(NTask.class, taskId);
     }
 
     public boolean removeProject(String projectName) {
-        long countJobs = dal.search(NJob.class).filter(x -> projectName.equals(x.getProject())).count();
-        long countTasks = dal.search(NTask.class).filter(x -> projectName.equals(x.getProject())).count();
-        if(countJobs>0 || countTasks>0){
-            StringBuilder sb=new StringBuilder();
-            if(countJobs>0) {
+        long countJobs = findAllJobs().filter(x -> projectName.equals(x.getProject())).count();
+        long countTasks = findAllTasks().filter(x -> projectName.equals(x.getProject())).count();
+        if (countJobs > 0 || countTasks > 0) {
+            StringBuilder sb = new StringBuilder();
+            if (countJobs > 0) {
                 sb.append(countJobs > 1 ? "one job" : (countJobs + " jobs"));
             }
-            if(countTasks>0) {
-                if(sb.length()>0){
+            if (countTasks > 0) {
+                if (sb.length() > 0) {
                     sb.append(" and ");
                 }
                 sb.append(countTasks > 1 ? "one task" : (countTasks + " task"));
             }
-            throw new IllegalArgumentException("Project is used in "+sb+". It cannot be removed.");
+            throw new IllegalArgumentException("Project is used in " + sb + ". It cannot be removed.");
         }
         return dal.delete(NProject.class, projectName);
     }
 
+    private Stream<NJob> findAllJobs() {
+        return dal.search(NJob.class);
+    }
+
     public Stream<NProject> findProjects() {
-        return dal.search(NProject.class);
+        return findAllProjects();
     }
 
     public NJob groupJobs(Collection<NJob> value, ChronoUnit timeUnit, TimespanPattern hoursPerDay) {
@@ -663,20 +689,20 @@ public class JobService {
         TreeSet<String> projects = new TreeSet<String>();
         TreeSet<NTaskStatus> statuses = new TreeSet<NTaskStatus>();
         for (NTask t2 : value) {
-            if(t2.getStartTime()!=null) {
+            if (t2.getStartTime() != null) {
                 t.setStartTime(t2.getStartTime());
             }
-            if(t2.getDuration()!=null) {
+            if (t2.getDuration() != null) {
                 tp.add(t2.getDuration());
                 atu.add(t2.getDuration().getUnit());
             }
-            if(t2.getName()!=null) {
+            if (t2.getName() != null) {
                 names.add(t2.getName());
             }
-            if(t2.getProject()!=null) {
+            if (t2.getProject() != null) {
                 projects.add(t2.getProject());
             }
-            if(t2.getStatus()!=null) {
+            if (t2.getStatus() != null) {
                 statuses.add(t2.getStatus());
             }
         }
@@ -694,5 +720,48 @@ public class JobService {
         t.setDuration(tp.toUnit(timeUnit != null ? timeUnit : (atu0.length == 0 ? ChronoUnit.DAYS : atu0[0]), hoursPerDay));
         t.setId(UUID.randomUUID().toString());
         return t;
+    }
+
+    public boolean isUsedProject(String id) {
+        NProject destinationJob = getProject(id);
+        if (destinationJob == null) {
+            return false;
+        }
+        if (findAllTasks().filter(x -> Objects.equals(x.getProject(), destinationJob.getId()) || Objects.equals(x.getProject(), destinationJob.getName()))
+                .findFirst().orElse(null) != null) {
+            return true;
+        }
+        if (findAllJobs().filter(x -> Objects.equals(x.getProject(), destinationJob.getId()) || Objects.equals(x.getProject(), destinationJob.getName()))
+                .findFirst().orElse(null) != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public void mergeProjects(String destination, String... others) {
+        NProject destinationJob = getProjectOrError(destination);
+        List<NProject> src = Arrays.asList(others).stream().map(x -> getProjectOrError(x)).collect(Collectors.toList());
+        for (NProject s : src) {
+            findAllTasks().filter(x -> Objects.equals(x.getProject(), s.getId()) || Objects.equals(x.getProject(), s.getName()))
+                    .forEach(
+                            t -> {
+                                t.setProject(destinationJob.getId());
+                                updateTask(t);
+                            }
+                    );
+
+            findAllJobs().filter(x -> Objects.equals(x.getProject(), s.getId()) || Objects.equals(x.getProject(), s.getName()))
+                    .forEach(
+                            t -> {
+                                t.setProject(destinationJob.getId());
+                                updateJob(t);
+                            }
+                    );
+            removeProject(s.getId());
+        }
+    }
+
+    private Stream<NTask> findAllTasks() {
+        return dal.search(NTask.class);
     }
 }

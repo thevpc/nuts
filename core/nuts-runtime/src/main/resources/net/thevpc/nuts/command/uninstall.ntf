@@ -6,7 +6,7 @@
 ```sh  -e | --erase``` : enable erase mode to delete all of artifact's config data as well
 ```sh  <args> ...```   : provide arguments to pass to uninstaller
 
-#!include</net/thevpc/nuts/includes/standard-command.help>
+#!include</net/thevpc/nuts/includes/standard-command.ntf>
 
 ##) EXAMPLES
 ```sh nuts uninstall --help```

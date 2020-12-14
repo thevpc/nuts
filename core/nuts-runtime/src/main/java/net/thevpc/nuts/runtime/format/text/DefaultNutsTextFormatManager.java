@@ -70,7 +70,7 @@ public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
         Reader in = null;
         if (resource == null) {
             if (err) {
-                return "```error Not Found resource " + escapeText(urlPath) + "```";
+                return "```error not found resource " + escapeText(urlPath) + "```";
             }
             if (defaultValue == null) {
                 return null;

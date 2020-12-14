@@ -5,7 +5,7 @@ import net.thevpc.nuts.NutsTextNodeFactory;
 import net.thevpc.nuts.NutsTextNodeStyle;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.format.text.parser.*;
-import net.thevpc.nuts.runtime.format.text.special.*;
+import net.thevpc.nuts.runtime.format.text.bloc.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,8 +25,8 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
     private static TextFormat[] BACKGROUNDS = new TextFormat[]{
             TextFormats.BG_BLUE,
             TextFormats.BG_GREEN,
-            TextFormats.BG_YELLOW,
             TextFormats.BG_CYAN,
+            TextFormats.BG_YELLOW,
             TextFormats.BG_MAGENTA,
             TextFormats.BG_RED,
             TextFormats.BG_GREY,
@@ -166,8 +166,8 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
     }
 
     @Override
-    public NutsTextNode parseCode(String lang, String text) {
-        SpecialTextFormatter t = resolveFormatter(lang);
+    public NutsTextNode parseBloc(String lang, String text) {
+        BlocTextFormatter t = resolveBlocTextFormatter(lang);
         return t.toNode(text);
     }
 
@@ -367,12 +367,24 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
                         styled(other, NutsTextNodeStyle.PRIMARY6, asDecoration)
                 );
             }
-            case WARNING1: {
+            case SUCCESS1: {
+                return styled(other, NutsTextNodeStyle.PRIMARY2, asDecoration);
+            }
+            case SUCCESS2:
+            case SUCCESS3:
+            case SUCCESS4: {
+                return list(
+                        styled(plain("success:"), NutsTextNodeStyle.SECONDARY2),
+                        plain(" "),
+                        styled(other, NutsTextNodeStyle.PRIMARY2, asDecoration)
+                );
+            }
+            case WARN1: {
                 return styled(other, NutsTextNodeStyle.PRIMARY3, asDecoration);
             }
-            case WARNING2:
-            case WARNING3:
-            case WARNING4: {
+            case WARN2:
+            case WARN3:
+            case WARN4: {
                 return list(
                         styled(plain("warning:"), NutsTextNodeStyle.SECONDARY3),
                         plain(" "),
@@ -431,17 +443,17 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
             case SEPARATOR4: {
                 return styled(other, NutsTextNodeStyle.PRIMARY6, asDecoration);
             }
+            case OPERATOR1:
+            case OPERATOR2:
+            case OPERATOR3:
+            case OPERATOR4: {
+                return styled(other, NutsTextNodeStyle.PRIMARY6, asDecoration);
+            }
             case USER_INPUT1:
             case USER_INPUT2:
             case USER_INPUT3:
             case USER_INPUT4: {
                 return styled(other, NutsTextNodeStyle.PRIMARY7, asDecoration);
-            }
-            case SUCCESS1:
-            case SUCCESS2:
-            case SUCCESS3:
-            case SUCCESS4: {
-                return styled(other, NutsTextNodeStyle.PRIMARY3, asDecoration);
             }
             case FAIL1:
             case FAIL2:
@@ -465,63 +477,59 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
         throw new IllegalArgumentException("Invalid " + decoration);
     }
 
-    private SpecialTextFormatter resolveFormatter(String kind) {
+    private BlocTextFormatter resolveBlocTextFormatter(String kind) {
         if (kind == null) {
             kind = "";
         }
         if (kind.length() > 0) {
             switch (kind.toLowerCase()) {
                 case "sh": {
-                    return new ShellSpecialTextFormatter(ws);
+                    return new ShellBlocTextFormatter(ws);
                 }
                 case "json": {
-                    return new JsonSpecialTextFormatter(ws);
+                    return new JsonBlocTextFormatter(ws);
                 }
                 case "xml": {
-                    return new XmlSpecialTextFormatter(ws);
+                    return new XmlBlocTextFormatter(ws);
                 }
                 case "java": {
-                    return new JavaSpecialTextFormatter(ws);
+                    return new JavaBlocTextFormatter(ws);
                 }
 
                 //special renaming...
-                case "warn":
-                case "warn1": {
-                    return new CustomStyleSpecialTextFormatter(NutsTextNodeStyle.WARNING1, ws);
-                }
                 case "bool":
                 case "bool1": {
-                    return new CustomStyleSpecialTextFormatter(NutsTextNodeStyle.BOOLEAN1, ws);
+                    return new CustomStyleBlocTextFormatter(NutsTextNodeStyle.BOOLEAN1, ws);
                 }
                 case "bool2": {
-                    return new CustomStyleSpecialTextFormatter(NutsTextNodeStyle.BOOLEAN2, ws);
+                    return new CustomStyleBlocTextFormatter(NutsTextNodeStyle.BOOLEAN2, ws);
                 }
                 case "kw":
                 case "kw1": {
-                    return new CustomStyleSpecialTextFormatter(NutsTextNodeStyle.KEYWORD1, ws);
+                    return new CustomStyleBlocTextFormatter(NutsTextNodeStyle.KEYWORD1, ws);
                 }
                 case "kw2": {
-                    return new CustomStyleSpecialTextFormatter(NutsTextNodeStyle.KEYWORD2, ws);
+                    return new CustomStyleBlocTextFormatter(NutsTextNodeStyle.KEYWORD2, ws);
                 }
                 case "kw3": {
-                    return new CustomStyleSpecialTextFormatter(NutsTextNodeStyle.KEYWORD3, ws);
+                    return new CustomStyleBlocTextFormatter(NutsTextNodeStyle.KEYWORD3, ws);
                 }
                 case "kw4": {
-                    return new CustomStyleSpecialTextFormatter(NutsTextNodeStyle.KEYWORD4, ws);
+                    return new CustomStyleBlocTextFormatter(NutsTextNodeStyle.KEYWORD4, ws);
                 }
 
                 //Default styles...
                 default: {
                     try {
                         NutsTextNodeStyle found = NutsTextNodeStyle.valueOf(kind.toUpperCase());
-                        return new CustomStyleSpecialTextFormatter(found, ws);
+                        return new CustomStyleBlocTextFormatter(found, ws);
                     } catch (Exception ex) {
                         //ignore
                     }
                     if (!Character.isDigit(kind.charAt(kind.length() - 1))) {
                         try {
                             NutsTextNodeStyle found = NutsTextNodeStyle.valueOf(kind.toUpperCase() + "1");
-                            return new CustomStyleSpecialTextFormatter(found, ws);
+                            return new CustomStyleBlocTextFormatter(found, ws);
                         } catch (Exception ex) {
                             //ignore
                         }
@@ -529,7 +537,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
                 }
             }
         }
-        return new PlainSpecialTextFormatter(ws);
+        return new PlainBlocTextFormatter(ws);
     }
 
     public NutsTextNode createStyled(String start, String end, NutsTextNode child, NutsTextNodeStyle textStyle, boolean completed) {

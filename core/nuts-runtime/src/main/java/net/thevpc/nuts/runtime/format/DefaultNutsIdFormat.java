@@ -211,7 +211,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         NutsTextNodeBuilder sb = getWorkspace().formats().text().builder();
         if (!isOmitNamespace()) {
             if (!CoreStringUtils.isBlank(id.getNamespace())) {
-                sb.appendStyled(id.getNamespace() + "://", NutsTextNodeStyle.PRIMARY8);
+                sb.appendStyled(id.getNamespace() + "://", NutsTextNodeStyle.PALE1);
             }
         }
         if (!isOmitGroupId()) {
@@ -220,7 +220,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                 boolean importedGroup = getWorkspace().imports().getAll().contains(id.getGroupId());
                 if (!(importedGroup && isOmitImportedGroupId())) {
                     if (importedGroup || importedGroup2) {
-                        sb.appendStyled(id.getGroupId(), NutsTextNodeStyle.PRIMARY8);
+                        sb.appendStyled(id.getGroupId(), NutsTextNodeStyle.PALE1);
                     } else {
                         sb.appendPlain(id.getGroupId());
                     }
@@ -304,7 +304,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                     } else {
                         sb.appendStyled("&", NutsTextNodeStyle.SEPARATOR1);
                     }
-                    sb.appendStyled(v,NutsTextNodeStyle.PRIMARY8);
+                    sb.appendStyled(v,NutsTextNodeStyle.PALE1);
                     sb.appendStyled("=",NutsTextNodeStyle.SEPARATOR1);
                     sb.appendStyled(v);
                 }

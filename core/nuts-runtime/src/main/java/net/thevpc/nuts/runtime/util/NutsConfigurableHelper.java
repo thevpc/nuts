@@ -46,6 +46,7 @@ public class NutsConfigurableHelper {
      * @param skipUnsupported skipUnsupported
      * @param args argument to configure with
      * @param commandName commandName
+     * @param <T> {@code this} Type
      * @return {@code this} instance
      */
     public static <T> T configure(NutsConfigurable c, NutsWorkspace ws, boolean skipUnsupported, String[] args, String commandName) {

@@ -140,7 +140,7 @@ public class AntiQuote3ParserStep extends ParserStep {
             if (Character.isWhitespace(dst[i])) {
                 endOffset = i;
                 break;
-            }else if (!Character.isAlphabetic(dst[i]) && dst[i]!='-') {
+            }else if (!Character.isAlphabetic(dst[i]) && !Character.isDigit(dst[i]) && dst[i]!='-' && dst[i]!='_') {
                 endOffset=i;
                 break;
             }
@@ -194,6 +194,15 @@ public class AntiQuote3ParserStep extends ParserStep {
                         yy
                 );
             }
+        }
+        if(value.isEmpty()){
+            return factory0.createCode(
+                    start.toString(),
+                    "",
+                    "",
+                    end.toString(),
+                    cmd+w.toString()+value
+            );
         }
         return factory0.createCode(
                 start.toString(),

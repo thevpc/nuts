@@ -171,7 +171,7 @@ search for artifacts
 ```sh --highlight-scope```
     when formatting id, highlight scope
 
-#!include</net/thevpc/nuts/includes/standard-command.help>
+#!include</net/thevpc/nuts/includes/standard-command.ntf>
 
 ##) EXAMPLES
 ```sh nuts search --help```

@@ -3,7 +3,7 @@
        is available in the current workspace and perform update by downloading (fetch) 
        and installing the artifact. The updated version is promoted to 'default' version.
 
-#!include</net/thevpc/nuts/includes/standard-command.help>
+#!include</net/thevpc/nuts/includes/standard-command.ntf>
 
 ##) SYNOPSIS:
 ```sh nuts update [<-options>]... <ids> ...  <args> ...```

@@ -158,7 +158,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             }
             case CODE: {
                 DefaultNutsTextNodeCode node1 = (DefaultNutsTextNodeCode) node;
-                NutsTextNode cn = ws.formats().text().factory().parseCode(node1.getKind(), node1.getText());
+                NutsTextNode cn = ws.formats().text().factory().parseBloc(node1.getKind(), node1.getText());
                 writeNode(formats, cn, ctx);
                 break;
             }

@@ -1,13 +1,13 @@
-package net.thevpc.nuts.runtime.format.text.special;
+package net.thevpc.nuts.runtime.format.text.bloc;
 
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.NutsTextNode;
-import net.thevpc.nuts.runtime.format.text.parser.SpecialTextFormatter;
+import net.thevpc.nuts.runtime.format.text.parser.BlocTextFormatter;
 
-public class PlainSpecialTextFormatter implements SpecialTextFormatter {
+public class PlainBlocTextFormatter implements BlocTextFormatter {
     NutsWorkspace ws;
 
-    public PlainSpecialTextFormatter(NutsWorkspace ws) {
+    public PlainBlocTextFormatter(NutsWorkspace ws) {
         this.ws = ws;
     }
 

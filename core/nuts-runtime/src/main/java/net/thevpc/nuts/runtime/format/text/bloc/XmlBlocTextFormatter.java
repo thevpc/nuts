@@ -1,20 +1,20 @@
-package net.thevpc.nuts.runtime.format.text.special;
+package net.thevpc.nuts.runtime.format.text.bloc;
 
 import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsTextNodeFactory;
 import net.thevpc.nuts.NutsTextNodeStyle;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.util.common.StreamTokenizerExt;
-import net.thevpc.nuts.runtime.format.text.parser.SpecialTextFormatter;
+import net.thevpc.nuts.runtime.format.text.parser.BlocTextFormatter;
 
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class XmlSpecialTextFormatter implements SpecialTextFormatter {
+public class XmlBlocTextFormatter implements BlocTextFormatter {
     private NutsWorkspace ws;
 
-    public XmlSpecialTextFormatter(NutsWorkspace ws) {
+    public XmlBlocTextFormatter(NutsWorkspace ws) {
         this.ws = ws;
     }
 

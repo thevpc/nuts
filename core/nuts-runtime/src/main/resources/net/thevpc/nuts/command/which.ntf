@@ -1,7 +1,7 @@
 ```sh nuts## which [<-options>]... [<command>] ...```
       resolves commands type
 
-#!include</net/thevpc/nuts/includes/standard-command.help>
+#!include</net/thevpc/nuts/includes/standard-command.ntf>
 
 ##) EXAMPLES:
 ```sh  nuts which --help```

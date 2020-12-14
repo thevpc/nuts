@@ -18,7 +18,7 @@ check for updates
 ```sh -A | --api```
     check updates for workspace's api (major workspace update)
 
-#!include</net/thevpc/nuts/includes/standard-command.help>
+#!include</net/thevpc/nuts/includes/standard-command.ntf>
 
 ##) EXAMPLES
 ```sh  nuts check-updates --help```

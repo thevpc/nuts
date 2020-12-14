@@ -59,6 +59,7 @@ public class NutsIndexerNotAccessibleException extends NutsException {
 
     /**
      * Constructs a new Validation Exception
+     * @param workspace workspace
      * @param cause cause
      */
     public NutsIndexerNotAccessibleException(NutsWorkspace workspace, Throwable cause) {

@@ -12,7 +12,7 @@ install ```sh nuts``` package <nuts-artifact>
 ```sh -g | --args <args> ...```sh
     pass the given args to the install executor
 
-#!include</net/thevpc/app/command/includes/standard-command.help>
+#!include</net/thevpc/app/command/includes/standard-command.ntf>
 
 ##) EXAMPLES:
 ```sh  nuts install --help```

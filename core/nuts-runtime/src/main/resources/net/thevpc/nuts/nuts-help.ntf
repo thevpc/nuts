@@ -1,8 +1,8 @@
-#!include</net/thevpc/nuts/includes/standard-header.help>
+#!include</net/thevpc/nuts/includes/standard-header.ntf>
 
 ```sh nuts``` stands for ##Network Updatable Things Services## tool. It is a ###~~Package Manager~~### for (mainly) ~~Java™~~
-and non ~~Java™~~ world. It helps discovering, downloading, assembling and executing  remote artifacts (packages) in
-a very handy way.
+and non ~~Java™~~ world. It helps discovering, downloading, assembling and executing  remote artifacts
+(packages) in a very handy way.
 Each managed artifact  is also called a ```sh nuts``` which  is a ##Network Updatable Thing Service##.
 ```sh nuts``` artifacts are  stored  into repositories. A  ~~repository~~  may be local for  storing local ```sh nuts```
 or remote for accessing  remote artifacts (good examples  are  remote maven  repositories). It may
@@ -266,25 +266,25 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
       use root/system wide workspace instead of user's own workspace.
       requires admin privileges.
       shared/system workspace is located at :
-      Windows    : "$ProgramFiles/nuts/default-workspace"
-      Linux/Unix : "/usr/share/nuts/default-workspace"
+      Windows    : ```sh "$ProgramFiles/nuts/default-workspace" ```
+      Linux/Unix : ```sh "/usr/share/nuts/default-workspace" ```
       More generally folder homes are defines as follows :
       Windows Layout   :
-        apps     : "$ProgramFiles/nuts"
-        lib      : "$ProgramFiles/nuts"
-        config   : "$ProgramFiles/nuts"
-        var      : "$ProgramFiles/nuts"
-        log      : "$ProgramFiles/nuts"
-        temp     : "$TMP/nuts"
-        cache    : "$ProgramFiles/nuts"
+        apps     : ```sh "$ProgramFiles/nuts" ```
+        lib      : ```sh "$ProgramFiles/nuts" ```
+        config   : ```sh "$ProgramFiles/nuts" ```
+        var      : ```sh "$ProgramFiles/nuts" ```
+        log      : ```sh "$ProgramFiles/nuts" ```
+        temp     : ```sh "$TMP/nuts" ```
+        cache    : ```sh "$ProgramFiles/nuts" ```
       Linux Layout    :
-        apps     : "/opt/nuts/apps"
-        lib      : "/opt/nuts/lib"
-        config   : "/etc/opt/nuts"
-        var      : "/var/opt/nuts"
-        log      : "/var/log/nuts"
-        temp     : "/tmp/nuts/global"
-        cache    : "/var/cache/nuts"
+        apps     : ```sh "/opt/nuts/apps" ```
+        lib      : ```sh "/opt/nuts/lib" ```
+        config   : ```sh "/etc/opt/nuts" ```
+        var      : ```sh "/var/opt/nuts" ```
+        log      : ```sh "/var/log/nuts" ```
+        temp     : ```sh "/tmp/nuts/global" ```
+        cache    : ```sh "/var/cache/nuts" ```
 
  ```sh --color or -c```
       
@@ -296,7 +296,7 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
       auto detected terminal (default)
     ```sh --color=never|none|no|false|n```
       equivalent to ```sh --no-color```
-    @@Attention@@ : ```sh --color``` argument, should it accept a value, it must be an immediate one (with '=')
+    ``` warning2 Attention``` : ```sh --color``` argument, should it accept a value, it must be an immediate one (with '=')
  ```sh -C```
  ```sh --no-color```
       disable formatted (colorful) terminal (```kw filtered``` terminal).
@@ -517,7 +517,7 @@ will search for it), aliases (a commodity mechanism to extend internal commands)
  ```sh - <args>...```
    run a nuts shell (nsh) command with the remaining arguments
 
-#!include</net/thevpc/nuts/includes/standard-options-format.help>
+#!include</net/thevpc/nuts/includes/standard-options-format.ntf>
 
 ##) EXAMPLES:
 ```sh nuts help```

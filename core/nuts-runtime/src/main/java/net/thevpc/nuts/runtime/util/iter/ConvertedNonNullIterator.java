@@ -31,8 +31,8 @@ import java.util.function.Function;
 /**
  * Created by vpc on 1/9/17.
  *
- * @param <F>
- * @param <T>
+ * @param <F> From Type
+ * @param <T> To Type
  */
 public class ConvertedNonNullIterator<F, T> implements Iterator<T> {
 

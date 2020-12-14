@@ -191,7 +191,9 @@ public class Test07_ColorfulStream {
     @Test
     public void test7() {
         NutsWorkspace ws = Nuts.openWorkspace();
-        String t_colors=CoreIOUtils.loadString(getClass().getResourceAsStream("nuts-help-colors.ntf"),true);
+        String t_colors=CoreIOUtils.loadString(getClass().getResourceAsStream(
+                "/net/thevpc/nuts/ntf-help.ntf"
+        ),true);
         NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_colors));
         NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER,ws)
                 .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setNumberTitles(true));
@@ -333,7 +335,7 @@ public class Test07_ColorfulStream {
         NutsWorkspace ws = Nuts.openWorkspace();
         {
             String t_string =
-                            " ```sh license [-options]...\n" +
+                            " ```sh license [-options]...```\n" +
                             "      show license info and exit\n" +
                             "      for more details, type : ```sh nuts``` help info\n" +
                             "\n" +
@@ -372,9 +374,9 @@ public class Test07_ColorfulStream {
                             "      undeploy <ids>\n" +
                             "      for more details, type : ```sh nuts``` help undeploy\n" +
                             "            \n" +
-                            " ```sh exec [-options]... [command] <args>...\n" +
-                            " ```sh --exec [-options]... [command] <args>...\n" +
-                            " ```sh -e [-options]... [command] <args>...\n" +
+                            " ```sh exec [-options]... [command] <args>...```\n" +
+                            " ```sh --exec [-options]... [command] <args>...```\n" +
+                            " ```sh -e [-options]... [command] <args>...```\n" +
                             "      run command with the given executor options ( it will be considered an option if it\n" +
                             "      starts with ```sh -``` ). This is helpful to issue JVM Options to executor for instance.\n" +
                             "      for more details, type : ```sh nuts``` help exec\n" +
@@ -383,14 +385,14 @@ public class Test07_ColorfulStream {
                             "      show command to be executed if run with 'exec' \n" +
                             "      for more details, type : ```sh nuts``` help which\n" +
                             "            \n" +
-                            " ```sh --reset [-options]...\n" +
+                            " ```sh --reset [-options]...```\n" +
                             "       reset (delete) ```sh nuts``` workspace folder. Will bootstrap a new workspace unless ```sh -K```\n" +
                             "       (```sh --skip-welcome```) option is armed.\n" +
                             "       Actually this is a special command that is available only at boot time.\n" +
                             "       Available command options are :\n" +
                             "       ```sh -y``` : to skip confirmation\n" +
                             "\n" +
-                            " ```sh -``` <args>...\n" +
+                            " ```sh - <args>...```\n" +
                             "   run a nut's shell (nsh) command with the remaining arguments\n" +
                             "\n" +
                             "#!include</net/thevpc/nuts/includes/standard-options-format.ntf>\n" +
@@ -419,6 +421,69 @@ public class Test07_ColorfulStream {
                             "```\n" +
                             "            run netbeans-launcher with JVM option ```sh -Xmx1G```. If the artifact is not installed\n" +
                             "            it will be automatically installed ( ```sh --yes``` modifier helps disabling interactive mode)\n";
+            NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_string));
+            System.out.println();
+            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
+                    .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setNumberTitles(true));
+            w.writeNode(node);
+        }
+
+    }
+
+    @Test
+    public void test15() {
+        NutsWorkspace ws = Nuts.openWorkspace();
+        {
+            String t_string =
+                    " ```sh \"hello\" <hello> <-hello> -hello [-hello] [<-hello>] \"world\"  'I am here' `where are you`? ```\n"
+                    ;
+            NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_string));
+            System.out.println();
+            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
+                    .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setNumberTitles(true));
+            w.writeNode(node);
+        }
+
+    }
+
+    @Test
+    public void test16() {
+        NutsWorkspace ws = Nuts.openWorkspace();
+        {
+            String t_string =
+                    " ```sh \"$HOME/AppData/Roaming/nuts/apps\" $HOME/AppData/Roaming/nuts/apps \"${HOME:dd}/AppData/Roaming/nuts/apps\"```\n"
+                    ;
+            NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_string));
+            System.out.println();
+            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
+                    .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setNumberTitles(true));
+            w.writeNode(node);
+        }
+
+    }
+
+    @Test
+    public void test17() {
+        NutsWorkspace ws = Nuts.openWorkspace();
+        {
+            String t_string =
+                    "###\\####"
+                    ;
+            NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_string));
+            System.out.println();
+            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
+                    .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setNumberTitles(true));
+            w.writeNode(node);
+        }
+
+    }
+    @Test
+    public void test18() {
+        NutsWorkspace ws = Nuts.openWorkspace();
+        {
+            String t_string =
+                    "```Text```"
+                    ;
             NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_string));
             System.out.println();
             NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)

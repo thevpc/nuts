@@ -7,8 +7,8 @@ njob tasks | jobs | projects | summary...
     manage tasks, jobs, projects
 
 
-#!include</net/thevpc/nuts/toolbox/njob-jobs.help>
-#!include</net/thevpc/nuts/toolbox/njob-tasks.help>
-#!include</net/thevpc/nuts/toolbox/njob-projects.help>
+#!include</net/thevpc/nuts/toolbox/njob-jobs.ntf>
+#!include</net/thevpc/nuts/toolbox/njob-tasks.ntf>
+#!include</net/thevpc/nuts/toolbox/njob-projects.ntf>
 
 

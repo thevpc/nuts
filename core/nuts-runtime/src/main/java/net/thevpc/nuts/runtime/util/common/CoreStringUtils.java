@@ -484,8 +484,8 @@ public class CoreStringUtils {
     /**
      * copied from StringUtils (in order to remove dependency)
      *
-     * @param c
-     * @return
+     * @param c builder
+     * @return builder
      */
     public static StringBuilder clear(StringBuilder c) {
         return c.delete(0, c.length());
@@ -494,12 +494,13 @@ public class CoreStringUtils {
     /**
      * copied from StringUtils (in order to remove dependency)
      *
-     * @param ex
-     * @return
+     * @param ex ex
+     * @return String from exception
      */
     public static String exceptionToString(Throwable ex) {
         return exceptionToString(ex,false);
     }
+
     public static String exceptionToString(Throwable ex,boolean inner) {
         String msg = null;
         if (ex instanceof NutsNotFoundException || ex instanceof UncheckedIOException) {
@@ -543,8 +544,8 @@ public class CoreStringUtils {
     /**
      * copied from StringUtils (in order to remove dependency)
      *
-     * @param cmd
-     * @return
+     * @param cmd string array
+     * @return the first non empty element of the array
      */
     public static String coalesce(String... cmd) {
         for (String string : cmd) {
@@ -558,9 +559,9 @@ public class CoreStringUtils {
     /**
      * copied from StringUtils (in order to remove dependency)
      *
-     * @param x
-     * @param width
-     * @return
+     * @param x x
+     * @param width width
+     * @return string filled
      */
     public static String fillString(char x, int width) {
         if(width<=0) {
@@ -634,9 +635,9 @@ public class CoreStringUtils {
     /**
      * copied from StringUtils (in order to remove dependency)
      *
-     * @param text
-     * @param entrySeparators
-     * @return
+     * @param text text
+     * @param entrySeparators entry separators
+     * @return parsed map
      */
     public static Map<String, String> parseMap(String text, String entrySeparators) {
         return parseMap(text, "=", entrySeparators);
@@ -645,10 +646,10 @@ public class CoreStringUtils {
     /**
      * copied from StringUtils (in order to remove dependency)
      *
-     * @param text
-     * @param eqSeparators
-     * @param entrySeparators
-     * @return
+     * @param text text to parse
+     * @param eqSeparators equality separators
+     * @param entrySeparators entry separators
+     * @return parsed map
      */
     public static Map<String, String> parseMap(String text, String eqSeparators, String entrySeparators) {
         Map<String, String> m = new LinkedHashMap<>();

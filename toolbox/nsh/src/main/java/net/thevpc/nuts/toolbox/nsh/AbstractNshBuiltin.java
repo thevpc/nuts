@@ -104,7 +104,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
     public String getHelp() {
         if (help == null) {
             try {
-                URL resource = getClass().getResource("/net/thevpc/nuts/toolbox/nsh/cmd/" + getName() + ".help");
+                URL resource = getClass().getResource("/net/thevpc/nuts/toolbox/nsh/cmd/" + getName() + ".ntf");
                 if (resource != null) {
                     help = IOUtils.loadString(resource);
                 }
@@ -112,7 +112,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
                 LOG.log(Level.CONFIG, "Unable to load help for " + getName(), e);
             }
             if (help == null) {
-                help = "####no help``` found for command " + getName();
+                help = "```error no help found for command " + getName()+"```";
             }
         }
         return help;

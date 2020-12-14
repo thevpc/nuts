@@ -5,7 +5,7 @@ show help and exit
 ##) SYNOPSIS:
 ```sh nuts help [<-options>]... <command-name>...```
 
-#!include</net/thevpc/nuts/includes/standard-command.help>
+#!include</net/thevpc/nuts/includes/standard-command.ntf>
 
 ##) EXAMPLES
 ```sh nuts help --help```

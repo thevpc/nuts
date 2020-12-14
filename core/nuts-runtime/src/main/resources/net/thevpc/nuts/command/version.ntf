@@ -15,7 +15,7 @@ nuts -v
 ```sh --add <key>=<value> ```
       include key=value pair in the result
 
-#!include</net/thevpc/nuts/includes/standard-command.help>
+#!include</net/thevpc/nuts/includes/standard-command.ntf>
 
 ##) EXAMPLES
 ```sh  nuts version -a```

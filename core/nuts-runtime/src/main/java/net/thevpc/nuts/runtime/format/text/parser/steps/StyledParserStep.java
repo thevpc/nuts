@@ -35,33 +35,33 @@ public class StyledParserStep extends ParserStep {
     }
 
     @Override
-    public void consume(char c, DefaultNutsTextNodeParser.State p) {
+    public void consume(char c, DefaultNutsTextNodeParser.State state) {
         if (complete) {
             if (c == start.charAt(0)) {
                 end.append(c);
                 String e2 = end.toString();
                 end.delete(0, e2.length());
                 complete = false;
-                p.applyPush(new StyledParserStep(
+                state.applyPush(new StyledParserStep(
                         e2, spreadLines, false,ws
                 ));
             } else if (c == 'ø') {
-                p.applyPop();
+                state.applyPop();
             } else {
-                p.applyPopReject(c);
+                state.applyPopReject(c);
             }
             return;
         }
         if (!spreadLines && (c == '\n' || c == '\r')) {
-            p.applyPopReject(c);
+            state.applyPopReject(c);
             return;
         }
         if (c == 'ø') {
             if (!started) {
                 started = true;
-                p.applyPush(new DispatchAction(false, false));
+                state.applyPush(new DispatchAction(false, false));
             } else {
-                p.applyPop();
+                state.applyPop();
             }
             return;
         }
@@ -71,7 +71,7 @@ public class StyledParserStep extends ParserStep {
                     start.append(c);
                 } else {
                     started = true;
-                    p.applyStart(c, spreadLines, false);
+                    state.applyStart(c, spreadLines, false);
                 }
             } else {
                 char startChar = start.charAt(0);
@@ -80,21 +80,21 @@ public class StyledParserStep extends ParserStep {
                 if (c == endChar) {
                     end.append(c);
                     if (end.length() >= start.length()) {
-                        p.applyPop();
+                        state.applyPop();
                     }
 
                 } else if (lineStart && startChar=='#' && c == ')') {
                     //this is a title
-                    p.applyDropReplace(new TitleParserStep(start.toString() + c,ws));
+                    state.applyDropReplace(new TitleParserStep(start.toString() + c,ws));
                 } else {
-                    p.applyStart(c, spreadLines, false);
+                    state.applyStart(c, spreadLines, false);
                 }
             }
         } else {
             char endChar = endOf(start.charAt(0));
             if (c == endChar) {
                 if (end.length() >= start.length()) {
-                    p.applyPopReject(c);
+                    state.applyPopReject(c);
                 } else {
                     end.append(c);
                     if (end.length() >= start.length()) {
@@ -103,11 +103,15 @@ public class StyledParserStep extends ParserStep {
                 }
             } else {
                 if (end.length() == 0) {
-                    p.applyStart(c, spreadLines, false);
+                    state.applyStart(c, spreadLines, false);
                 } else {
                     String y = end.toString();
                     end.delete(0, end.length());
-                    p.applyPush(new StyledParserStep(y, spreadLines, lineStart,ws));
+                    if(y.length()>1) {
+                        state.applyPush(new StyledParserStep(y, spreadLines, lineStart, ws));
+                    }else{
+                        state.applyPush(new PlainParserStep(y, spreadLines, lineStart, ws,state));
+                    }
                 }
             }
         }

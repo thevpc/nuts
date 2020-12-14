@@ -54,9 +54,9 @@ public class DerbyService {
     /**
      * should promote this to FileUtils !!
      *
-     * @param path
-     * @param cwd
-     * @return
+     * @param path path
+     * @param cwd cwd
+     * @return absolute path
      */
     public static String getAbsoluteFile(String path, String cwd) {
         if (new File(path).isAbsolute()) {

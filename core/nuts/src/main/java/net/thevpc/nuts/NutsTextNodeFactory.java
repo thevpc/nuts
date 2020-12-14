@@ -16,5 +16,5 @@ public interface NutsTextNodeFactory {
 
     NutsTextNode command(String command, String args);
     NutsTextNode code(String lang, String text);
-    NutsTextNode parseCode(String lang, String text);
+    NutsTextNode parseBloc(String lang, String text);
 }

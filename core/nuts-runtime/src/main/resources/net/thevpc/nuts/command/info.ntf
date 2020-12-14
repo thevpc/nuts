@@ -20,7 +20,7 @@ show workspace information and exit
 ```sh -g | --get <name> ...```
     filter names to include only the given names
 
-#!include</net/thevpc/nuts/includes/standard-command.help>
+#!include</net/thevpc/nuts/includes/standard-command.ntf>
 
 ##) EXAMPLES
 ```sh  nuts info --help```

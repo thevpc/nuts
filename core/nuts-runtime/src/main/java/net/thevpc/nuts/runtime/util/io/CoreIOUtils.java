@@ -573,6 +573,7 @@ public class CoreIOUtils {
      *
      * @param in  entree
      * @param out sortie
+     * @return size copied
      */
     public static long copy(java.io.InputStream in, OutputStream out) {
         return copy(in, out, DEFAULT_BUFFER_SIZE);

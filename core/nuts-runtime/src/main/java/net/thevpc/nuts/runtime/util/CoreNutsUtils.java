@@ -904,18 +904,23 @@ public class CoreNutsUtils {
                 return CoreCommonUtils.parseEnumString(a.getStringValue(), NutsContentType.class, false);
             }
             case "--json": {
+                a = cmdLine.nextString();
                 return (NutsContentType.JSON);
             }
             case "--props": {
+                a = cmdLine.nextString();
                 return (NutsContentType.PROPS);
             }
             case "--table": {
+                a = cmdLine.nextString();
                 return (NutsContentType.TABLE);
             }
             case "--tree": {
+                a = cmdLine.nextString();
                 return (NutsContentType.TREE);
             }
             case "--plain": {
+                a = cmdLine.nextString();
                 return (NutsContentType.PLAIN);
             }
         }

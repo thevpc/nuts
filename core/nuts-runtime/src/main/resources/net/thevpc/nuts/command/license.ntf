@@ -4,7 +4,7 @@ show license info and exit
 ##) SYNOPSIS:
 ```sh nuts license```
 
-#!include</net/thevpc/nuts/includes/standard-command.help>
+#!include</net/thevpc/nuts/includes/standard-command.ntf>
 
 ##) EXAMPLES
 ```sh nuts license --help```sh
