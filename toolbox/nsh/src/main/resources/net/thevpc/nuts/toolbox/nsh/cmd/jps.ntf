@@ -1,0 +1,15 @@
+jps tool - list the instrumented JVMs on the target system
+
+##) SYNOPSIS:
+==jps== [**-q**] [**-mlvV**] [<hostid>]
+
+
+
+list the instrumented JVMs on the target system
+
+##) EXAMPLES:
+
+==jps== -l
+   list local java processes
+
+
