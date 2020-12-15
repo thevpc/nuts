@@ -142,7 +142,7 @@ public class NdiMain extends NutsApplication {
                         )
                                 .setPreferredScriptName(linkName)
                                 .setSession(context.getSession().copy().setTrace(subTrace))
-                                .setForceBoot(context.getSession().isForce())
+                                .setForceBoot(context.getSession().isYes())
                                 .setFetch(fetch)
                                 .setExecType(execType)
                                 .setExecutorOptions(executorOptions)
@@ -162,13 +162,11 @@ public class NdiMain extends NutsApplication {
         boolean fetch = false;
         boolean missingAnyArgument = true;
         NutsArgument a;
-        boolean forceAll = false;
+//        boolean forceAll = false;
         Boolean persistentConfig = null;
         while (cmdLine.hasNext()) {
             if (context.configureFirst(cmdLine)) {
 
-            } else if ((a = cmdLine.nextBoolean("-F", "--force-all")) != null) {
-                forceAll = a.getBooleanValue();
             } else if ((a = cmdLine.nextBoolean("-t", "--fetch")) != null) {
                 fetch = a.getBooleanValue();
             } else if ((a = cmdLine.nextBoolean("-x", "--external", "--spawn")) != null) {
@@ -190,13 +188,13 @@ public class NdiMain extends NutsApplication {
             } else if ((a = cmdLine.nextString("-X", "--exec-options")) != null) {
                 executorOptions.add(a.getStringValue());
             } else if ((a = cmdLine.nextString("-i", "--installed")) != null) {
-                forceAll = true;
+                context.getSession().setConfirm(NutsConfirmationMode.YES);
                 for (NutsId resultId : ws.search().addInstallStatus(NutsInstallStatus.INSTALLED).getResultIds()) {
                     idsToInstall.add(resultId.getLongName());
                     missingAnyArgument = false;
                 }
             } else if ((a = cmdLine.nextString("-c", "--companions")) != null) {
-                forceAll = true;
+                context.getSession().setConfirm(NutsConfirmationMode.YES);
                 for (NutsId companion : ws.companionIds()) {
                     idsToInstall.add(ws.search().addId(companion).setLatest(true).getResultIds().required().getLongName());
                     missingAnyArgument = false;
@@ -219,9 +217,6 @@ public class NdiMain extends NutsApplication {
         }
         Path workspaceLocation = ws.locations().getWorkspaceLocation();
         if (cmdLine.isExecMode()) {
-            if (forceAll) {
-                context.getSession().setConfirm(NutsConfirmationMode.YES);
-            }
             SystemNdi ndi = createNdi(context);
             NutsWorkspaceConfigManager config = ws.config();
             if (ndi == null) {
@@ -244,7 +239,7 @@ public class NdiMain extends NutsApplication {
                                         ndi.createNutsScript(
                                                 new NdiScriptOptions().setId(id)
                                                         .setSession(context.getSession().copy().setTrace(subTrace))
-                                                        .setForceBoot(forceAll)
+                                                        .setForceBoot(context.getSession().isYes())
                                                         .setFetch(fetch)
                                                         .setExecType(execType)
                                                         .setExecutorOptions(executorOptions)

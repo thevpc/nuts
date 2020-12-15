@@ -1,5 +1,9 @@
 thisDir='/data/public/git/nuts/dir-template/'
+echo "$(dirname $0)";
+echo "nuts -y --bot nversion $thisDir/../core/nuts";
 apiVersion=`nuts -y --bot nversion $thisDir/../core/nuts`;
+echo bye$apiVersion
+echo hello=$apiVersion
 implVersion=`nuts nversion $thisDir/../core/nuts-runtime`;
 # jarLocation="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar";
 jarLocation="https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar";

@@ -440,7 +440,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 PrintStream out = session.out();
                 Set<NutsId> companionIds = companionIds();
                 out.println("looking for recommended companion tools to install... detected : " + companionIds.stream()
-                        .map(x -> id().formatter(x).format()).collect(Collectors.toList())
+                        .map(x -> id().formatter(x).format()).collect(Collectors.joining(", "))
                 );
             }
             try {

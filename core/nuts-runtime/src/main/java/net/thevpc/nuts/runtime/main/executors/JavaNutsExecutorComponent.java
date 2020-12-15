@@ -358,8 +358,15 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
         @Override
         public Object runWithContext() throws Throwable {
-            boolean isNutsApp = false;
             Method mainMethod = null;
+            if(cls.getName().equals("net.thevpc.nuts.Nuts")){
+                mainMethod = cls.getMethod("run", NutsSession.class, String[].class);
+                mainMethod.setAccessible(true);
+                NutsApplications.getSharedMap().put("nuts.embedded.application.id", id);
+                mainMethod.invoke(null, new Object[]{getSession(), joptions.getApp().toArray(new String[0])});
+                return null;
+            }
+            boolean isNutsApp = false;
             Object nutsApp = null;
             try {
                 mainMethod = cls.getMethod("run", NutsSession.class, String[].class);
@@ -395,8 +402,8 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         .format().exported().compact().getBootCommandLine()
                 );
                 mainMethod = cls.getMethod("main", String[].class);
-                List<String> nargs = new ArrayList<>();
-                nargs.addAll(joptions.getApp());
+//                List<String> nargs = new ArrayList<>();
+//                nargs.addAll(joptions.getApp());
                 mainMethod.invoke(null, new Object[]{joptions.getApp().toArray(new String[0])});
             }
             return null;

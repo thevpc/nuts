@@ -91,10 +91,10 @@ public class SshCommand extends AbstractNshBuiltin {
             }
         }
         if (o.address == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "Missing ssh address", 2);
+            throw new NutsExecutionException(context.getWorkspace(), "missing ssh address", 2);
         }
         if (o.cmd.isEmpty()) {
-            throw new NutsExecutionException(context.getWorkspace(), "Missing ssh command. Interactive ssh is not yet supported!", 2);
+            throw new NutsExecutionException(context.getWorkspace(), "missing ssh command. Interactive ssh is not yet supported!", 2);
         }
         final NutsWorkspace ws = context.getWorkspace();
         ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(context.getSession());
@@ -147,8 +147,8 @@ public class SshCommand extends AbstractNshBuiltin {
                             } else {
                                 javaCmd = ("java");
                             }
-                            if (sshSession.exec(javaCmd, "-jar", workspace + "/" + bootApiFileName, "-y", "install", "ndi", "--force") != 0) {
-                                throw new NutsExecutionException(context.getWorkspace(), "Install remote nuts failed", 2);
+                            if (sshSession.exec(javaCmd, "-jar", workspace + "/" + bootApiFileName, "-y", "install", "ndi", "--yes") != 0) {
+                                throw new NutsExecutionException(context.getWorkspace(), "install remote nuts failed", 2);
                             }
                         }
                     }

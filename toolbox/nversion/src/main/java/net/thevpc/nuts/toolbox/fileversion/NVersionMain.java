@@ -5,6 +5,9 @@ import net.thevpc.common.io.FileUtils;
 import net.thevpc.common.xfile.XFile;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class NVersionMain extends NutsApplication {
@@ -28,7 +31,21 @@ public class NVersionMain extends NutsApplication {
                 return x;
             }
         }
-        throw new NutsExecutionException(context.getWorkspace(), "file-version: unsupported file : " + filePath, 2);
+        try{
+            Path p = Paths.get(filePath);
+            if(!Files.exists(p)){
+                throw new NutsExecutionException(context.getWorkspace(), "file-version: file does not exist: " + filePath, 2);
+            }
+            if(!Files.isDirectory(p)){
+                throw new NutsExecutionException(context.getWorkspace(), "file-version: unsupported directory: " + filePath, 2);
+            }
+            if(!Files.isDirectory(p)){
+                throw new NutsExecutionException(context.getWorkspace(), "file-version: unsupported file: " + filePath, 2);
+            }
+        }catch (Exception ex){
+            //
+        }
+        throw new NutsExecutionException(context.getWorkspace(), "file-version: unsupported path: " + filePath, 2);
     }
 
     @Override

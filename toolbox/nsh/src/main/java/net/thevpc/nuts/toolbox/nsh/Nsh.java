@@ -28,20 +28,10 @@ public class Nsh extends NutsApplication {
         LOG.log(Level.FINER, "[nsh] Installation...");
         NutsCommandLine cmd = applicationContext.getCommandLine()
                 .setCommandName("nsh --nuts-exec-mode=install");
-        NutsArgument a;
-        boolean force = false;
-        boolean trace = applicationContext.getSession().isTrace();
-        while (cmd.hasNext()) {
-            if ((a = cmd.nextBoolean("-f", "--force")) != null) {
-                force = a.getBooleanValue();
-            } else if ((a = cmd.nextBoolean("-t", "--trace")) != null) {
-                trace = a.getBooleanValue();
-            } else {
-                cmd.unexpectedArgument();
-            }
-        }
-        if (trace || force) {
-            LOG.log(Level.FINER, "[nsh] Activating options trace={0} force={1}", new Object[]{trace, force});
+        NutsSession session = applicationContext.getSession();
+        cmd.process(session, NutsCommandLineProcessor.NOP);
+        if (session.isTrace() || session.isYes()) {
+            LOG.log(Level.FINER, "[nsh] activating options trace={0} yes={1}", new Object[]{session.isTrace(), session.isYes()});
         }
         //id will not include version or
         String nshIdStr = applicationContext.getAppId().getShortName();
@@ -58,13 +48,13 @@ public class Nsh extends NutsApplication {
 //                        .setPriority(1)
 //                        .setParameters(parameters)
 //        );
-        applicationContext.getWorkspace().io().term().enableRichTerm(applicationContext.getSession());
+        applicationContext.getWorkspace().io().term().enableRichTerm(session);
 
         NutsJavaShell c = new NutsJavaShell(applicationContext);
         JShellBuiltin[] commands = c.getRootContext().builtins().getAll();
         Set<String> reinstalled = new TreeSet<>();
         Set<String> firstInstalled = new TreeSet<>();
-        NutsSession sessionCopy = applicationContext.getSession().copy();
+        NutsSession sessionCopy = session.copy();
         sessionCopy.setTrace(false);
         for (JShellBuiltin command : commands) {
             if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
@@ -95,22 +85,22 @@ public class Nsh extends NutsApplication {
                     String.join(", ", reinstalled)
             });
         }
-        if (trace && applicationContext.getSession().isPlainOut()) {
+        if (session.isPlainTrace()) {
             if (firstInstalled.size() > 0) {
-                applicationContext.getSession().out().printf("registered ####%s#### nsh commands : ####%s#### \n", firstInstalled.size(),
+                session.out().printf("registered ####%s#### nsh commands : ####%s#### \n", firstInstalled.size(),
                         String.join(", ", firstInstalled));
             }
             if (reinstalled.size() > 0) {
-                applicationContext.getSession().out().printf("re-registered ####%s#### nsh commands : ####%s#### \n", reinstalled.size(),
+                session.out().printf("re-registered ####%s#### nsh commands : ####%s#### \n", reinstalled.size(),
                         String.join(", ", reinstalled));
             }
         }
-        cfg.save(false, applicationContext.getSession());
+        cfg.save(false, session);
     }
 
     @Override
     protected void onUpdateApplication(NutsApplicationContext applicationContext) {
-        LOG.log(Level.FINER, "[nsh] Update...");
+        LOG.log(Level.FINER, "[nsh] update...");
         NutsVersion currentVersion = applicationContext.getAppVersion();
         NutsVersion previousVersion = applicationContext.getAppPreviousVersion();
         onInstallApplication(applicationContext);
@@ -118,7 +108,7 @@ public class Nsh extends NutsApplication {
 
     @Override
     protected void onUninstallApplication(NutsApplicationContext applicationContext) {
-        LOG.log(Level.FINER, "[nsh] Uninstallation...");
+        LOG.log(Level.FINER, "[nsh] uninstallation...");
         try {
             NutsWorkspace ws = applicationContext.getWorkspace();
             try {
@@ -131,7 +121,7 @@ public class Nsh extends NutsApplication {
                     ws.aliases().remove(command.getName(), new NutsRemoveOptions());
                 } catch (Exception ex) {
                     if (applicationContext.getSession().isPlainTrace()) {
-                        applicationContext.getSession().err().printf("Unable to uninstall ####%s#### .\n", command.getName());
+                        applicationContext.getSession().err().printf("unable to uninstall ####%s#### .\n", command.getName());
                     }
                 }
             }

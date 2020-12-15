@@ -111,7 +111,7 @@ public interface NutsSession extends NutsConfigurable {
      * @param trace new value
      * @return {@code this} instance
      */
-    NutsSession setTrace(boolean trace);
+    NutsSession setTrace(Boolean trace);
 
 //    /**
 //     * equivalent to {@code setTrace(false)}
@@ -120,26 +120,26 @@ public interface NutsSession extends NutsConfigurable {
 //     */
 //    NutsSession setSilent();
 
-    /**
-     * true if force flag is armed. some operations may require user
-     * confirmation before performing critical operations such as overriding
-     * existing values, deleting sensitive informations ; in such cases, arming
-     * force flag will provide an implicit confirmation.
-     *
-     * @return true if force flag is armed.
-     */
-    boolean isForce();
+//    /**
+//     * true if force flag is armed. some operations may require user
+//     * confirmation before performing critical operations such as overriding
+//     * existing values, deleting sensitive information ; in such cases, arming
+//     * force flag will provide an implicit confirmation.
+//     *
+//     * @return true if force flag is armed.
+//     */
+//    boolean isForce();
 
-    /**
-     * change force flag value. some operations may require user confirmation
-     * before performing critical operations such as overriding existing values,
-     * deleting sensitive information ; in such cases, arming force flag will
-     * provide an implicit confirmation.
-     *
-     * @param enable if true force flag is armed
-     * @return {@code this} instance
-     */
-    NutsSession setForce(boolean enable);
+//    /**
+//     * change force flag value. some operations may require user confirmation
+//     * before performing critical operations such as overriding existing values,
+//     * deleting sensitive information ; in such cases, arming force flag will
+//     * provide an implicit confirmation.
+//     *
+//     * @param enable if true force flag is armed
+//     * @return {@code this} instance
+//     */
+//    NutsSession setForce(Boolean enable);
 //
 //    /**
 //     * equivalent to {@code setAsk(true)}
@@ -318,13 +318,13 @@ public interface NutsSession extends NutsConfigurable {
      */
     NutsSession copyFrom(NutsSession other);
 
-//    /**
-//     * change fetch strategy
-//     *
-//     * @param mode new strategy or null
-//     * @return {@code this} instance
-//     */
-//    NutsSession fetchStrategy(NutsFetchStrategy mode);
+    /**
+     * copy into this instance from the given value
+     *
+     * @param options other workspace otions to copy from
+     * @return return {@code this} instance
+     */
+    NutsSession copyFrom(NutsWorkspaceOptions options);
 
     /**
      * change fetch strategy
@@ -652,4 +652,20 @@ public interface NutsSession extends NutsConfigurable {
      * @since 0.6.0
      */
     NutsObjectFormat formatObject(Object any);
+
+    boolean isGui();
+
+    NutsSession setGui(Boolean gui);
+
+    String getErrLinePrefix();
+
+    NutsSession setErrLinePrefix(String errLinePrefix);
+
+    String getOutLinePrefix();
+
+    NutsSession setOutLinePrefix(String outLinePrefix);
+
+    boolean isDry();
+
+    NutsSession setDry(boolean dry);
 }

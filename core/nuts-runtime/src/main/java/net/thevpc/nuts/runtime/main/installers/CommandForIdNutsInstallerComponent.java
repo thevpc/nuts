@@ -91,7 +91,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
                     );
             executionContext.getWorkspace().exec()
                     .setCommand(def2)
-                    .addCommand("--nuts-exec-mode=update","--force")
+                    .addCommand("--nuts-exec-mode=update","--yes")
 //                    .addCommand(id.builder().setNamespace(null).build().toString(), "--nuts-exec-mode=update", "--force")
                     .addExecutorOptions().addCommand(executionContext.getArguments())
                     .setFailFast(true).run();
@@ -109,7 +109,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
             for (NutsExecutionEntry executionEntry : executionEntries) {
                 if (executionEntry.isApp()) {
                     //
-                    int r = ws.exec().addCommand(id.getLongName(), "--nuts-exec-mode=uninstall", "--force").addCommand(executionContext.getArguments()).getResult();
+                    int r = ws.exec().addCommand(id.getLongName(), "--nuts-exec-mode=uninstall", "--yes").addCommand(executionContext.getArguments()).getResult();
                     session.out().printf("Installation Exited with code : " + r + " %n");
                 }
             }

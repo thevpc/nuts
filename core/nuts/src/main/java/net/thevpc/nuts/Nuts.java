@@ -90,6 +90,29 @@ public final class Nuts {
         }
     }
 
+    public static void run(NutsSession session,String[] args) {
+        NutsWorkspace workspace = session.getWorkspace();
+        NutsWorkspaceOptionsBuilder o = createOptions().parseArguments(args);
+        String[] appArgs;
+        if (o.getApplicationArguments().length == 0) {
+            if (o.isSkipWelcome()) {
+                return;
+            }
+            appArgs=new String[]{"welcome"};
+        } else {
+            appArgs=o.getApplicationArguments();
+        }
+        session.configure(true,args);
+        workspace.exec()
+                .setSession(session)
+                .addCommand(appArgs)
+                .addExecutorOptions(o.getExecutorOptions())
+                .setExecutionType(o.getExecutionType())
+                .setFailFast(true)
+                .setDry(o.isDry())
+                .run();
+    }
+
     /**
      * opens a workspace using "nuts.boot.args" and "nut.args" system
      * properties. "nuts.boot.args" is to be passed by nuts parent process.

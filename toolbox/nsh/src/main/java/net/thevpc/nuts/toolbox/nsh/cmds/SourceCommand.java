@@ -98,8 +98,7 @@ public class SourceCommand extends SimpleNshBuiltin {
 //        c2.setArgs(context.getArgs());
         JShellContext c2 = context.getExecutionContext().getGlobalContext();
         for (String goodFile : goodFiles) {
-            c2.setArgs(context.getArgs());
-            context.getShell().executeFile(goodFile, c2, false);
+            context.getShell().executeFile(goodFile, context.getArgs(),c2);
         }
     }
 

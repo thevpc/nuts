@@ -89,5 +89,21 @@ public interface NutsCommandLineProcessor {
     default void autoComplete(NutsCommandAutoComplete autoComplete){
         
     }
+    NutsCommandLineProcessor NOP =new NutsCommandLineProcessor() {
+        @Override
+        public boolean nextOption(NutsArgument option, NutsCommandLine commandline) {
+            return false;
+        }
+
+        @Override
+        public boolean nextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
+            return false;
+        }
+
+        @Override
+        public void exec() {
+
+        }
+    };
 
 }

@@ -1,9 +1,6 @@
 package net.thevpc.nuts.toolbox.ntemplate;
 
-import net.thevpc.commons.filetemplate.ExprEvaluator;
-import net.thevpc.commons.filetemplate.FileTemplater;
-import net.thevpc.commons.filetemplate.MimeTypeConstants;
-import net.thevpc.commons.filetemplate.TemplateConfig;
+import net.thevpc.commons.filetemplate.*;
 import net.thevpc.commons.filetemplate.util.StringUtils;
 import net.thevpc.jshell.JShellVar;
 import net.thevpc.jshell.JShellVarListener;
@@ -16,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 public class NTemplateMain extends NutsApplication {
 
@@ -67,6 +65,30 @@ public class NTemplateMain extends NutsApplication {
             @Override
             public void init(NutsCommandLine commandline) {
                 fileTemplater.setDefaultExecutor(MimeTypeConstants.FTEX, new NshEvaluator(appContext, config,fileTemplater));
+                fileTemplater.setLog(new TemplateLog() {
+                    NutsLogger LOG;
+                    @Override
+                    public void info(String title, String message) {
+                        log().log(Level.FINE, "INFO",title+" : "+message);
+                    }
+
+                    @Override
+                    public void debug(String title, String message) {
+                        log().log(Level.FINER, "DEBUG",title+" : "+message);
+                    }
+
+                    @Override
+                    public void error(String title, String message) {
+                        log().log(Level.SEVERE, "FAIL",title+" : "+message);
+                    }
+
+                    private NutsLogger log() {
+                        if(LOG==null) {
+                            LOG = appContext.getWorkspace().log().of(NTemplateMain.class);
+                        }
+                        return LOG;
+                    }
+                });
             }
 
             @Override

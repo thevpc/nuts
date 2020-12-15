@@ -35,7 +35,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
                 locationsToDelete.add(value);
                 while (cmdLine.hasNext()) {
                     NutsArgument a;
-                    if ((a = cmdLine.nextBoolean("-f", "--force")) != null) {
+                    if ((a = cmdLine.nextBoolean("-y", "--yes")) != null) {
                         force = a.getBooleanValue();
                     } else if (!cmdLine.peek().isOption()) {
                         String s = cmdLine.peek().toString();
@@ -144,18 +144,5 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
                 deleteRepoCache(mirror, context, force);
             }
         }
-    }
-
-    private boolean readForce(NutsCommandLine cmdLine, String name) {
-        boolean force = false;
-        NutsArgument a;
-        while (cmdLine.hasNext()) {
-            if ((a = cmdLine.nextBoolean("-f", "--force")) != null) {
-                force = a.getBooleanValue();
-            } else {
-                cmdLine.setCommandName(name).unexpectedArgument();
-            }
-        }
-        return force;
     }
 }

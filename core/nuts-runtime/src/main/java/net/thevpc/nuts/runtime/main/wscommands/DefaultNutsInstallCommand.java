@@ -106,11 +106,10 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
     private boolean doThis(NutsId id, InstallIdList list, NutsSession session) {
         List<String> cmdArgs = new ArrayList<>(Arrays.asList(this.getArgs()));
-        if (session.isForce()) {
-            cmdArgs.add(0, "--force");
+        if (session.isYes()) {
+            cmdArgs.add(0, "--yes");
         }
         if (session.isTrace()) {
-            cmdArgs.add(0, "--force");
             cmdArgs.add(0, "--trace");
         }
 

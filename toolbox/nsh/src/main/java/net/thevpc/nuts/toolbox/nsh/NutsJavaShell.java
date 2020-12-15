@@ -217,13 +217,12 @@ public class NutsJavaShell extends JShell {
                 return;
             }
             JShellContext context = getRootContext();
-            executeFile(getStartupScript(), context, true);
+            executeFileIfExists(getStartupScript(), new String[0], context);
             if (nshOptions.getBoot_nonOptions().size() > 0) {
                 String c = nshOptions.getBoot_nonOptions().get(0);
                 if (!nshOptions.isBoot_command()) {
                     nshOptions.getBoot_nonOptions().remove(0);
-                    context.setArgs(nshOptions.getBoot_nonOptions().toArray(new String[0]));
-                    executeFile(c, context, false);
+                    executeFile(c, nshOptions.getBoot_nonOptions().toArray(new String[0]),context, false);
                 } else {
                     executeCommand(nshOptions.getBoot_nonOptions().toArray(new String[0]),context);
                 }
@@ -236,7 +235,7 @@ public class NutsJavaShell extends JShell {
                 try {
                     executeInteractive(context.out(),context);
                 } finally {
-                    executeFile(getShutdownScript(), context, true);
+                    executeFile(getShutdownScript(), new String[0], context);
                 }
             }
         } catch (NutsExecutionException ex) {
