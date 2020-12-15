@@ -515,7 +515,54 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     }
                     return true;
                 }
-                case "--color": {
+                case "--no-progress": {
+                    a = cmdLine.nextBoolean();
+                    if (enabled && a.getBooleanValue()) {
+                        this.setProgressOptions("none");
+                    }
+                    return true;
+                }
+                case "-f":
+                case "--fetch": {
+                    NutsArgument v = cmdLine.nextString();
+                    if (enabled) {
+                        this.setFetchStrategy(NutsFetchStrategy.valueOf(a.getStringValue().toUpperCase().replace("-", "_")));
+                    }
+                    return true;
+                }
+                case "-a":
+                case "--anywhere": {
+                    a = cmdLine.nextBoolean();
+                    if (enabled && a.getBooleanValue()) {
+                        this.setFetchStrategy(NutsFetchStrategy.ANYWHERE);
+                    }
+                    return true;
+                }
+                case "-F":
+                case "--offline": {
+                    a = cmdLine.nextBoolean();
+                    if (enabled && a.getBooleanValue()) {
+                        this.setFetchStrategy(NutsFetchStrategy.OFFLINE);
+                    }
+                    return true;
+                }
+                case "--online": {
+                    a = cmdLine.nextBoolean();
+                    if (enabled && a.getBooleanValue()) {
+                        this.setFetchStrategy(NutsFetchStrategy.ONLINE);
+                    }
+                    return true;
+                }
+                case "--remote": {
+                    a = cmdLine.nextBoolean();
+                    if (enabled && a.getBooleanValue()) {
+                        this.setFetchStrategy(NutsFetchStrategy.REMOTE);
+                    }
+                    return true;
+                }
+                case "-c":
+                case "--color":
+                    {
                     //if the value is not imediately attatched with '=' don't consider
                     a = cmdLine.next();
                     if (enabled) {
@@ -573,18 +620,44 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 }
                 case "--bot": {
                     a = cmdLine.nextBoolean();
-                    if (enabled) {
+                    if (enabled && a.getBooleanValue()) {
                         getTerminal().setMode(NutsTerminalMode.FILTERED);
                         setProgressOptions("none");
                         setConfirm(NutsConfirmationMode.ERROR);
                         setTrace(false);
+//                        setDebug(false);
+                        setGui(false);
                     }
                     return true;
                 }
-                case "--dry": {
+                case "--dry":
+                case "-D":
+                    {
                     a = cmdLine.nextBoolean();
                     if (enabled) {
                         setDry(a.getBooleanValue());
+                    }
+                    return true;
+                }
+                case "--out-line-prefix": {
+                    a = cmdLine.nextString();
+                    if (enabled) {
+                        this.setOutLinePrefix(a.getStringValue());
+                    }
+                    return true;
+                }
+                case "--err-line-prefix": {
+                    a = cmdLine.nextString();
+                    if (enabled) {
+                        this.setErrLinePrefix(a.getStringValue());
+                    }
+                    return true;
+                }
+                case "--line-prefix": {
+                    a = cmdLine.nextString();
+                    if (enabled) {
+                        this.setOutLinePrefix(a.getStringValue());
+                        this.setErrLinePrefix(a.getStringValue());
                     }
                     return true;
                 }

@@ -350,7 +350,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         private final NutsId id;
 
         public ClassloaderAwareRunnableImpl2(NutsId id, ClassLoader classLoader, Class<?> cls, NutsSession session, JavaExecutorOptions joptions) {
-            super(session, classLoader);
+            super(session.copy(), classLoader);
             this.id = id;
             this.cls = cls;
             this.joptions = joptions;
