@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 
 /**
  * @author thevpc

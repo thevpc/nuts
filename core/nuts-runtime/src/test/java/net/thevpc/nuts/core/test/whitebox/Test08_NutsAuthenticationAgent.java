@@ -30,8 +30,8 @@ import net.thevpc.nuts.NutsAuthenticationAgent;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.security.DefaultNutsAuthenticationAgent;
-import net.thevpc.nuts.runtime.security.PlainNutsAuthenticationAgent;
+import net.thevpc.nuts.runtime.standalone.security.DefaultNutsAuthenticationAgent;
+import net.thevpc.nuts.runtime.standalone.security.PlainNutsAuthenticationAgent;
 import org.junit.jupiter.api.*;
 
 import java.util.LinkedHashMap;

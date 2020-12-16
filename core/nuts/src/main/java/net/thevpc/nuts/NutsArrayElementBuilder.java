@@ -63,6 +63,132 @@ public interface NutsArrayElementBuilder {
     NutsArrayElementBuilder addAll(NutsArrayElement value);
 
     /**
+     * all all elements in the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder addAll(NutsElement[] value);
+
+    /**
+     * all all elements in the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder addAll(String[] value);
+
+    /**
+     * add element to the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder add(int value);
+
+    /**
+     * add element to the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder add(long value);
+
+    /**
+     * add element to the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder add(double value);
+
+    /**
+     * add element to the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder add(float value);
+
+    /**
+     * add element to the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder add(byte value);
+
+    /**
+     * add element to the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder add(boolean value);
+
+    /**
+     * add element to the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder add(char value);
+
+    /**
+     * add element to the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    public NutsArrayElementBuilder add(Number value);
+
+    /**
+     * add element to the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder add(String value);
+
+    /**
+     * all all elements in the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder addAll(int[] value);
+
+    /**
+     * all all elements in the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder addAll(double[] value);
+
+    /**
+     * all all elements in the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder addAll(long[] value);
+
+    /**
+     * all all elements in the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder addAll(float[] value);
+
+    /**
+     * all all elements in the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder addAll(boolean[] value);
+
+    /**
+     * all all elements in the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder addAll(char[] value);
+
+    /**
+     * all all elements in the given array
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder addAll(byte[] value);
+
+    /**
      * all all elements in the given array builder
      * @param value value
      * @return {@code this} instance

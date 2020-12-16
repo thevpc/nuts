@@ -109,7 +109,7 @@ public final class Nuts {
                 .addExecutorOptions(o.getExecutorOptions())
                 .setExecutionType(o.getExecutionType())
                 .setFailFast(true)
-                .setDry(o.isDry())
+                .setDry(session.isDry())
                 .run();
     }
 

@@ -37,7 +37,7 @@ import net.thevpc.nuts.NutsElementBuilder;
 import net.thevpc.nuts.NutsElementFormat;
 import net.thevpc.nuts.NutsObjectFormat;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
 /**

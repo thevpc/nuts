@@ -219,4 +219,6 @@ public interface NutsElementFormat extends NutsObjectFormat {
      * @return instance of type {@code T} converted from {@code element}
      */
     <T> T convert(Object any, Class<T> to);
+
+    NutsElement toElement(Object any);
 }

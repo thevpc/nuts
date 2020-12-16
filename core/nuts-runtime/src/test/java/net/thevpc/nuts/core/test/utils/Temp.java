@@ -1,6 +1,6 @@
 package net.thevpc.nuts.core.test.utils;
 
-import net.thevpc.nuts.runtime.util.console.CProgressBar;
+import net.thevpc.nuts.runtime.standalone.util.console.CProgressBar;
 
 public class Temp {
     public static void main(String[] args) {

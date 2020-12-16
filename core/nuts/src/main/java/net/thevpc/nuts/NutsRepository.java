@@ -123,55 +123,6 @@ public interface NutsRepository {
     NutsRepositorySecurityManager security();
 
     /**
-     * create deploy command
-     * @return deploy command
-     */
-    NutsDeployRepositoryCommand deploy();
-
-    /**
-     * create undeploy command
-     * @return undeploy command
-     */
-    NutsRepositoryUndeployCommand undeploy();
-
-    /**
-     * create push command
-     * @return push command
-     */
-    NutsPushRepositoryCommand push();
-
-    /**
-     * create fetchDescriptor command
-     * @return fetchDescriptor command
-     */
-    NutsFetchDescriptorRepositoryCommand fetchDescriptor();
-
-    /**
-     * create fetchContent command
-     * @return fetchContent command
-     */
-    NutsFetchContentRepositoryCommand fetchContent();
-
-    /**
-     * create search command
-     * @return search command
-     */
-    NutsSearchRepositoryCommand search();
-
-    /**
-     * create searchVersions command
-     * @return searchVersions command
-     */
-    NutsSearchVersionsRepositoryCommand searchVersions();
-
-    /**
-     * create update statistics command
-     *
-     * @return update statistics command
-     */
-    NutsUpdateRepositoryStatisticsCommand updateStatistics();
-
-    /**
      * remove repository listener
      *
      * @param listener listener

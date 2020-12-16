@@ -7,7 +7,7 @@ package net.thevpc.nuts.core.test.blackbox;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
 import java.io.BufferedWriter;

@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.core;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.main.NutsExecutionContextBuilder;
+import net.thevpc.nuts.runtime.standalone.main.NutsExecutionContextBuilder;
 
 import java.util.Set;
 

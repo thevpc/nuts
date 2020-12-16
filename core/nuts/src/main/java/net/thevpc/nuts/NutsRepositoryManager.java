@@ -109,5 +109,4 @@ public interface NutsRepositoryManager {
 
     void removeAllRepositories(NutsRemoveOptions options);
 
-    NutsRepository createRepository(NutsAddRepositoryOptions options, Path rootFolder, NutsRepository parentRepository);
 }

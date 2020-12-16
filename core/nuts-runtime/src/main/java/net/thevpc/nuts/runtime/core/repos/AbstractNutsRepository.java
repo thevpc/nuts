@@ -28,8 +28,9 @@ package net.thevpc.nuts.runtime.core.repos;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.common.DefaultObservableMap;
 import net.thevpc.nuts.runtime.core.common.ObservableMap;
-import net.thevpc.nuts.runtime.main.repos.DefaultNutsRepositoryEnvManager;
-import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.main.repos.DefaultNutsRepositoryEnvManager;
+import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -37,7 +38,7 @@ import java.util.*;
 /**
  * Created by vpc on 1/18/17.
  */
-public abstract class AbstractNutsRepository implements NutsRepository {
+public abstract class AbstractNutsRepository implements NutsRepository, NutsRepositorySPI {
 
     private static final long serialVersionUID = 1L;
 

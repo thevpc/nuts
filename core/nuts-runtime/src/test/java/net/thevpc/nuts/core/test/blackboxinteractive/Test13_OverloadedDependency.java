@@ -8,8 +8,7 @@ package net.thevpc.nuts.core.test.blackboxinteractive;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
-import org.junit.jupiter.api.*;
+import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,0 +1,40 @@
+package net.thevpc.nuts.runtime.standalone.format.text.parser.steps;
+
+import net.thevpc.nuts.runtime.standalone.format.text.parser.DefaultNutsTextNodeParser;
+import net.thevpc.nuts.NutsTextNode;
+
+public class DispatchAction extends ParserStep {
+    private boolean spreadLines;
+    private boolean lineStart;
+
+    public DispatchAction(boolean spreadLines, boolean lineStart) {
+        this.spreadLines = spreadLines;
+        this.lineStart = lineStart;
+    }
+
+    @Override
+    public void consume(char c, DefaultNutsTextNodeParser.State p) {
+        p.applyDrop();
+        p.applyStart(c, spreadLines, lineStart);
+    }
+
+    @Override
+    public void appendChild(ParserStep tt) {
+        throw new IllegalArgumentException();
+    }
+
+    @Override
+    public NutsTextNode toNode() {
+        throw new IllegalArgumentException();
+    }
+
+    @Override
+    public void end(DefaultNutsTextNodeParser.State p) {
+        p.applyDrop();
+    }
+
+    @Override
+    public boolean isComplete() {
+        return false;
+    }
+}

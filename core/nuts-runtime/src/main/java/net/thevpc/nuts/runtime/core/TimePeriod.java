@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.core;
 
-import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;

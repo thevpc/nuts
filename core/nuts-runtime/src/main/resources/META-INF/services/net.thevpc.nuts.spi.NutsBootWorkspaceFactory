@@ -1,1 +1,1 @@
-net.thevpc.nuts.runtime.DefaultNutsBootWorkspaceFactory
+net.thevpc.nuts.runtime.standalone.DefaultNutsBootWorkspaceFactory

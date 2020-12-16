@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.core;
 
+import net.thevpc.nuts.NutsConfirmationMode;
 import net.thevpc.nuts.NutsLogger;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.log.NutsLogVerb;
+import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
 
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -14,15 +15,15 @@ public class DefaultWriteTypeProcessor {
     private Object[] logMessageParams;
     private Supplier<RuntimeException> error;
     private NutsLogger log;
-    private WriteType writeType;
+    private NutsConfirmationMode writeType;
     private NutsSession session;
 
-    public DefaultWriteTypeProcessor(WriteType writeType, NutsSession session) {
+    public DefaultWriteTypeProcessor(NutsConfirmationMode writeType, NutsSession session) {
         this.writeType = writeType;
         this.session = session;
     }
 
-    public static DefaultWriteTypeProcessor of(WriteType writeType, NutsSession session) {
+    public static DefaultWriteTypeProcessor of(NutsConfirmationMode writeType, NutsSession session) {
         return new DefaultWriteTypeProcessor(writeType, session);
     }
 
@@ -105,7 +106,7 @@ public class DefaultWriteTypeProcessor {
                 }
                 break;
             }
-            case IGNORE: {
+            case NO: {
                 getLog().with().level(Level.FINE).verb(NutsLogVerb.WARNING).log( getLogMessage(), getLogMessageParams());
                 return false;
             }

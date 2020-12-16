@@ -10,7 +10,7 @@ import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
 import java.io.File;

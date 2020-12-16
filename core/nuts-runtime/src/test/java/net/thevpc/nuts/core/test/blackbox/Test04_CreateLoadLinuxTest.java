@@ -14,7 +14,7 @@ import java.util.Map;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsStoreLocation;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
 /**

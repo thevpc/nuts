@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 
 import java.nio.file.Path;
 
-import net.thevpc.nuts.runtime.main.config.*;
+import net.thevpc.nuts.runtime.standalone.main.config.*;
 
 public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManager {
 

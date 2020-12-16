@@ -26,9 +26,9 @@
 package net.thevpc.nuts.runtime.core;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.app.NutsCommandLineUtils;
-import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.app.NutsCommandLineUtils;
+import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 
 import java.util.*;
 

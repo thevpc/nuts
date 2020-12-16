@@ -10,6 +10,9 @@ import java.util.Iterator;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsRepositorySupportedAction;
+import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
+import net.thevpc.nuts.spi.NutsPushRepositoryCommand;
+import net.thevpc.nuts.spi.NutsRepositoryUndeployCommand;
 
 /**
  *

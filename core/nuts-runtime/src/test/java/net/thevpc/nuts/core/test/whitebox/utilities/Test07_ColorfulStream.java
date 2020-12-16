@@ -7,10 +7,10 @@ package net.thevpc.nuts.core.test.whitebox.utilities;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.format.text.*;
-import net.thevpc.nuts.runtime.format.text.parser.DefaultNutsTextNodeParser;
-import net.thevpc.nuts.runtime.format.text.renderer.AnsiUnixTermPrintRenderer;
-import net.thevpc.nuts.runtime.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.format.text.*;
+import net.thevpc.nuts.runtime.standalone.format.text.parser.DefaultNutsTextNodeParser;
+import net.thevpc.nuts.runtime.standalone.format.text.renderer.AnsiUnixTermPrintRenderer;
+import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

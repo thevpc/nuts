@@ -26,8 +26,8 @@
 package net.thevpc.nuts.runtime.core;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 
 import java.io.InputStream;
 import java.io.PrintStream;
