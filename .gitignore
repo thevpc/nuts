@@ -97,3 +97,5 @@ toolbox/worky/worky.iml
 /lib/nlib-servlet/target/
 /lib/nlib-tomcat-classloader/target/
 /lib/nlib-servlet/nuts-servlet.iml
+/lib/nlib-talk-agent/nlib-talk-agent.iml
+/core/ntalk-agent/target/
