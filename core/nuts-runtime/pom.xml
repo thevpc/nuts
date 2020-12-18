@@ -17,7 +17,7 @@
 
     <organization>
         <name>vpc open source initiative</name>
-        <url>http://tahabensalah.net</url>
+        <url>http://thevpc.net</url>
     </organization>
 
     <developers>
@@ -60,7 +60,7 @@
             <version>0.8.1</version>
         </dependency>
         <dependency>
-            <groupId>net.thevpc.nuts</groupId>
+            <groupId>net.thevpc.nuts.lib</groupId>
             <artifactId>nlib-talk-agent</artifactId>
             <version>0.8.1.0</version>
         </dependency>

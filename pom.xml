@@ -10,9 +10,11 @@
     <packaging>pom</packaging>
     <modules>
         <module>core/nuts</module>
+
         <module>lib/nlib-talk-agent</module>
+        <module>toolbox/ntalk-agent</module>
+
         <module>core/nuts-runtime</module>
-        <module>core/ntalk-agent</module>
 <!--        <module>nuts-installer</module>-->
         <module>ext/next-term</module>
         <module>lib/nlib-template</module>
@@ -20,10 +22,8 @@
         <module>lib/nlib-tomcat-classloader</module>
         <module>toolbox/nadmin</module>
         <module>toolbox/nsh</module>
-        <module>toolbox/ndi</module>
         <module>toolbox/nserver</module>
         <module>toolbox/ncode</module>
-        <module>toolbox/nded</module>
         <module>toolbox/ntemplate</module>
         <module>toolbox/nwork</module>
         <module>toolbox/njob</module>
@@ -37,7 +37,6 @@
         <module>toolbox/ndexer</module>
         <module>toolbox/nwar</module>
         <module>toolbox/noapi</module>
-        <module>lib/nlib-talk-agent</module>
         <!--<module>toolbox/nuts-clown</module>-->
     </modules>
     <properties>

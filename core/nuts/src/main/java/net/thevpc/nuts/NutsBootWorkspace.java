@@ -575,7 +575,7 @@ public final class NutsBootWorkspace {
     }
 
     private void ndiUndo() {
-        //need to unset ndi configuration.
+        //need to unset nadmin configuration.
         //what is the safest way to do so?
         NutsOsFamily os = Nuts.getPlatformOsFamily();
         //windows is ignored because it does not define a global nuts environment

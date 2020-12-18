@@ -17,7 +17,7 @@
 
     <organization>
         <name>vpc open source initiative</name>
-        <url>http://tahabensalah.net</url>
+        <url>http://thevpc.net</url>
     </organization>
 
     <developers>
@@ -67,6 +67,11 @@
             <groupId>net.thevpc.common</groupId>
             <artifactId>thevpc-common-io</artifactId>
             <version>1.3.12</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.vatbub</groupId>
+            <artifactId>mslinks</artifactId>
+            <version>1.0.5</version>
         </dependency>
     </dependencies>
     <distributionManagement>

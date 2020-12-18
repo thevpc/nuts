@@ -120,7 +120,94 @@ nadmin unsecure
 ```
         switch to un-secure mode
 
-##)GENERAL COMMANDS
+##) DESKTOP INTEGRATION COMMANDS:
+
+desktop integration is a portable desktop integration sub command that helps creation of scripts and shortcut on
+the host operating system to facilitate usage of nuts command line tool.
+
+###) SYNOPSIS
+```sh
+nadmin install script <options> <command> ...
+```
+    install scripts/shortcuts for the given command so that it can be called directly by it's name
+
+```sh
+nadmin uninstall script <options> <command> ...
+```
+    uninstall scripts/shortcuts for the given
+
+```sh
+nadmin switch <options> ...
+```
+    switch default nuts workspace and/or version.
+    on linux platforms, for example, ```sh nadmin``` will update ~/.bashrc to point to the given workspace and/or version.
+    a workspace can support multiple nuts-api versions and hence, ```sh nadmin switch``` can switch between those versions.
+
+```sh
+nadmin add link <options> ...
+```
+    create a new script to link to an existing nuts workspace and/or version.
+    the link created will run 'nuts' against the selected workspace and/or version.
+
+###) OPTIONS:
+```sh
+nadmin install script <options> <command> ...
+```
+    install scripts/shortcuts for the given command so that it can be called directly by it's name
+``` sh  --embedded | -b ```
+    enable embedded mode
+``` sh  --external | --spawn | -x ```
+    enable spawn process mode
+``` sh  --user-cmd ```
+    enable user external command mode
+``` sh  --root-cmd ```
+    enable root external command mode
+``` sh  --exec-options | -X <option> ```
+    exec options
+
+```sh
+nadmin uninstall script <options> <command> ...
+```
+    uninstall scripts/shortcuts for the given
+```sh --embedded | -b ```
+    enable embedded mode
+```sh --external | --spawn | -x ```
+    enable spawn process mode
+```sh --user-cmd ```
+    enable user external command mode
+```sh --root-cmd ```
+    enable root external command mode
+```sh --exec-options | -X <option> ```
+    exec options
+
+```sh
+nadmin switch <options> [<workspace>] [<api>]
+```
+    switch default nuts workspace and/or version.
+    on linux platforms, for example, ```sh nadmin``` will update ~/.bashrc to point to the given workspace and/or version.
+    a workspace can support multiple nuts-api versions and hence, ```sh nadmin switch``` can switch between those versions.
+```sh --workspace | -w ```
+    target workspace location
+```sh --api | -a ```
+    nuts api version
+
+```sh
+nadmin add link <options> [<name>] [<workspace>] [<api>]
+```
+
+    create a new script to link to an existing nuts workspace and/or version.
+    the link created will run 'nuts' against the selected workspace and/or version.
+
+```sh  --name | -n ```
+    script name pattern. can include '%v' to append version name
+```sh  --workspace | -w ```
+    target workspace location
+```sh  --api | -a ```
+    nuts api version
+
+
+
+##) GENERAL COMMANDS:
 ```sh
 nadmin list extension points|lxp
 ```

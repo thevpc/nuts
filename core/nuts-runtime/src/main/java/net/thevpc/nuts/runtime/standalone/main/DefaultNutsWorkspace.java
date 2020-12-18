@@ -430,12 +430,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
             try {
                 install().companions().setSession(session.copy().setTrace(session.isTrace() && session.isPlainOut()))
-                        .addConditionalArgs(d->d.getId().getShortName().equals("net.thevpc.nuts:ndi")
+                        .addConditionalArgs(d->d.getId().getShortName().equals("net.thevpc.nuts:nadmin")
                                 && config().options().getSwitchWorkspace()!=null
                                 ,"--switch="+config().options().getSwitchWorkspace())
                         .run();
             } catch (Exception ex) {
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("Unable to install companions");
+                LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("unable to install companions : "+ex.toString());
                 if (session.isPlainTrace()) {
                     PrintStream out = session.out();
                     out.printf("```error unable to install companion tools```. This happens when none of the following repositories are able to locate them : %s\n",
@@ -960,8 +960,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 new HashSet<>(
                         Arrays.asList(
                                 id().parser().parse("net.thevpc.nuts.toolbox:nsh"),
-                                id().parser().parse("net.thevpc.nuts.toolbox:nadmin"),
-                                id().parser().parse("net.thevpc.nuts.toolbox:ndi")
+                                id().parser().parse("net.thevpc.nuts.toolbox:nadmin")
                                 //            "net.thevpc.nuts.toolbox:mvn"
                         )
                 )

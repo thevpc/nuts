@@ -3,13 +3,11 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>net.thevpc.nuts</groupId>
+    <groupId>net.thevpc.nuts.lib</groupId>
     <artifactId>nlib-talk-agent</artifactId>
     <version>0.8.1.0</version>
-    <name>net.thevpc.nuts.nlib-talk-agent</name>
-
     <packaging>jar</packaging>
+    <name>net.thevpc.nuts.lib.nlib-talk-agent</name>
     <url>https://github.com/thevpc/nuts</url>
     <description>NTalk Client To Client Agent</description>
     <scm>
@@ -63,12 +61,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -93,21 +86,6 @@
                     <showDeprecation>true</showDeprecation>
                     <debug>true</debug>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>net.thevpc.maven</groupId>
-                <artifactId>writer-maven-plugin</artifactId>
-                <version>1.1.0</version>
-                <configuration>
-                    <outputFile>target/classes/META-INF/nuts/net.thevpc.nuts/nuts/nuts.properties</outputFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>write-properties</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

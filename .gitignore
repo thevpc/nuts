@@ -5,13 +5,11 @@
 /nuts-core/runtime/
 /deprecated/
 /toolbox/mvn/target/
-/toolbox/ndi/target/
 /toolbox/nsh/target/
 /toolbox/derby/target/
 /toolbox/nadmin/target/
 /toolbox/feenoo/target/
 /toolbox/mysql/target/
-/toolbox/nded/target/
 /toolbox/tomcat/target/
 /toolbox/worky/target/
 /toolbox/file-version/target/
@@ -41,8 +39,6 @@ toolbox/file-version/file-version.iml
 toolbox/mvn/mvn.iml
 toolbox/mysql/mysql.iml
 toolbox/nadmin/nadmin.iml
-toolbox/nded/nded.iml
-toolbox/ndi/ndi.iml
 toolbox/nsh/nsh.iml
 toolbox/nuts-http-repo/nuts-http-repo.iml
 toolbox/nuts-server/nuts-server.iml
