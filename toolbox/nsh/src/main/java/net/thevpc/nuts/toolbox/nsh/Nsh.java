@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.jshell.JShellBuiltin;
+import net.thevpc.jshell.JShellOptions;
 import net.thevpc.nuts.*;
 
 import java.util.Arrays;
@@ -50,7 +51,7 @@ public class Nsh extends NutsApplication {
 //        );
         applicationContext.getWorkspace().io().term().enableRichTerm(session);
 
-        NutsJavaShell c = new NutsJavaShell(applicationContext);
+        NutsJavaShell c = new NutsJavaShell(applicationContext,null);
         JShellBuiltin[] commands = c.getRootContext().builtins().getAll();
         Set<String> reinstalled = new TreeSet<>();
         Set<String> firstInstalled = new TreeSet<>();
@@ -64,7 +65,7 @@ public class Nsh extends NutsApplication {
                                 .setName(command.getName())
                                 .setCommand(nshIdStr, "-c", command.getName())
                                 .setOwner(applicationContext.getAppId())
-                                .setHelpCommand(nshIdStr, "-c", "help", "--code", command.getName()),
+                                .setHelpCommand(nshIdStr, "-c", "help", "--ntf", command.getName()),
                         new NutsAddOptions()
                                 .setSession(sessionCopy.setConfirm(NutsConfirmationMode.YES).setTrace(false))
                 )) {
@@ -134,14 +135,15 @@ public class Nsh extends NutsApplication {
     public void run(NutsApplicationContext applicationContext) {
 
         //before loading JShell check if we need to activate rich term
-        NshOptions options = new NshOptions();
-        options.parse(applicationContext.getCommandLine(), applicationContext);
+        NshOptionsParser options = new NshOptionsParser(applicationContext);
+        JShellOptions o = options.parse(applicationContext.getCommandLine().toStringArray());
 
-        if (options.isBoot_interactive()) {
+        if (o.isEffectiveInteractive()) {
             applicationContext.getWorkspace().io().term().enableRichTerm(applicationContext.getSession());
         }
-        new NutsJavaShell(applicationContext)
-                .executeShell(applicationContext.getArguments());
+        new NutsJavaShell(applicationContext,
+                null/*inherit args from applicationContext*/
+        ).run();
     }
 
 }

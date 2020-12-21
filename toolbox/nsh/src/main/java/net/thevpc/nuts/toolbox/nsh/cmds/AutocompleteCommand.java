@@ -28,7 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsSingleton;
-import net.thevpc.jshell.AutoCompleteCandidate;
+import net.thevpc.jshell.JShellAutoCompleteCandidate;
 
 import java.util.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
@@ -82,18 +82,18 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.cmd == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "Missing Command", 1);
+            throw new NutsExecutionException(context.getWorkspace(), "Missing JShellCommandNode", 1);
         }
         if (options.index < 0) {
             options.index = options.items.size();
             options.items.add("");
         }
-        List<AutoCompleteCandidate> aa = context.getRootContext().resolveAutoCompleteCandidates(
+        List<JShellAutoCompleteCandidate> aa = context.getRootContext().resolveAutoCompleteCandidates(
                 options.cmd, options.items, options.index,
-                context.getWorkspace().commandLine().create(options.items).toString()
-        );
+                context.getWorkspace().commandLine().create(options.items).toString(),
+                context.getExecutionContext().getGlobalContext());
         Properties p = new Properties();
-        for (AutoCompleteCandidate autoCompleteCandidate : aa) {
+        for (JShellAutoCompleteCandidate autoCompleteCandidate : aa) {
             String value = autoCompleteCandidate.getValue();
             String dvalue = autoCompleteCandidate.getDisplay();
             if (dvalue != null && dvalue.equals(value)) {

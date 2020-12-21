@@ -79,7 +79,7 @@ import java.util.*;
  */
 final class PrivateNutsCommandLine implements NutsCommandLine {
 
-    private static final String NOT_SUPPORTED = "This a minimal implementation of NutsCommand used to bootstrap. This Method is not supported.";
+    private static final String NOT_SUPPORTED = "this a minimal implementation of NutsCommandLine used to bootstrap; this method is not supported.";
     private final LinkedList<String> args = new LinkedList<>();
     private final List<NutsArgument> lookahead = new ArrayList<>();
     private final Set<String> specialSimpleOptions = new HashSet<>();
@@ -160,10 +160,10 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                             break;
                         }
                         case '\'': {
-                            throw new NutsParseException(null, "Illegal char " + c);
+                            throw new NutsParseException(null, "illegal char " + c);
                         }
                         case '"': {
-                            throw new NutsParseException(null, "Illegal char " + c);
+                            throw new NutsParseException(null, "illegal char " + c);
                         }
                         case '\\': {
                             i++;
@@ -232,7 +232,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new NutsParseException(null, "Expected '");
+                throw new NutsParseException(null, "expected '");
             }
         }
         return args.toArray(new String[0]);
@@ -393,7 +393,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
     @Override
     public NutsCommandLine requireNonOption() {
         if (!hasNext() || !peek().isNonOption()) {
-            throwError("Expected value");
+            throwError("expected value");
         }
         return this;
     }
@@ -433,7 +433,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 //                skipAll();
 //                return this;
 //            }
-            throwError((errorMessage == null || errorMessage.trim().isEmpty()) ? "Missing Arguments" : errorMessage);
+            throwError((errorMessage == null || errorMessage.trim().isEmpty()) ? "missing arguments" : errorMessage);
         }
         return this;
     }
@@ -441,7 +441,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
     @Override
     public NutsCommandLine pushBack(NutsArgument arg) {
         if (arg == null) {
-            throwError("Null Argument");
+            throwError("null argument");
         }
         lookahead.add(0, arg);
         return this;
@@ -554,7 +554,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                             }
                         }
                         default: {
-                            throwError("Unsupported " + highlightText(String.valueOf(expectValue)));
+                            throwError("unsupported " + highlightText(String.valueOf(expectValue)));
                         }
                     }
                 }
@@ -726,7 +726,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine parseLine(String commandLine) {
-        throw new NutsException(null, "Unsupported");
+        throw new NutsException(null, "unsupported parseLine");
     }
 
     public NutsCommandLine setArguments(List<String> arguments) {
@@ -753,7 +753,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
     @Override
     public void process(NutsConfigurable defaultConfigurable, NutsCommandLineProcessor processor) {
-        throw new UnsupportedOperationException("Not supported operation process(...)");
+        throw new UnsupportedOperationException("not supported operation process(...)");
     }
 
     private boolean isPrefixed(String[] nameSeqArray) {
@@ -801,9 +801,9 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                 return null;//return new Argument("");
             }
             if (hasNext() && (!forceNonOption || !peek().isOption())) {
-                throwError("Unexpected option " + highlightText(String.valueOf(peek())));
+                throwError("unexpected option " + highlightText(String.valueOf(peek())));
             }
-            throwError("Missing argument " + highlightText((name == null ? "value" : name.getName())));
+            throwError("missing argument " + highlightText((name == null ? "value" : name.getName())));
         }
         //ignored
         return null;
@@ -818,7 +818,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
             return createArgument(v);
         } else {
             if (required) {
-                throwError("Missing argument");
+                throwError("missing argument");
             }
             return null;
         }
@@ -1141,7 +1141,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         @Override
         public int getInt() {
             if (PrivateNutsUtils.isBlank(expression)) {
-                throw new NumberFormatException("Missing value");
+                throw new NumberFormatException("missing value");
             }
             return Integer.parseInt(expression);
         }
@@ -1206,7 +1206,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         @Override
         public long getLong() {
             if (PrivateNutsUtils.isBlank(expression)) {
-                throw new NumberFormatException("Missing value");
+                throw new NumberFormatException("missing value");
             }
             return Long.parseLong(expression);
         }
@@ -1239,7 +1239,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         @Override
         public double getDouble() {
             if (PrivateNutsUtils.isBlank(expression)) {
-                throw new NumberFormatException("Missing value");
+                throw new NumberFormatException("missing value");
             }
             return Double.parseDouble(expression);
         }
@@ -1278,7 +1278,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         @Override
         public NutsArgument required() {
             if (expression == null) {
-                throw new NoSuchElementException("Missing value");
+                throw new NoSuchElementException("missing value");
             }
             return this;
         }
@@ -1327,7 +1327,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public String getStringOptionPrefix() {
-            throw new NutsException(null, "Unsupported");
+            throw new NutsException(null, "unsupported operation getStringOptionPrefix");
         }
 
         @Override
@@ -1337,12 +1337,12 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public NutsArgument getArgumentOptionName() {
-            throw new NutsException(null, "Unsupported");
+            throw new NutsException(null, "unsupported operation getArgumentOptionName");
         }
 
         @Override
         public String getStringOptionName() {
-            throw new NutsException(null, "Unsupported");
+            throw new NutsException(null, "unsupported operation getStringOptionName");
         }
 
         @Override

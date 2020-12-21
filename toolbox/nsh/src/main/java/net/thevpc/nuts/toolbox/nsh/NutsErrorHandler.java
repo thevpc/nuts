@@ -26,11 +26,8 @@
 */
 package net.thevpc.nuts.toolbox.nsh;
 
+import net.thevpc.jshell.*;
 import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.jshell.JShellContext;
-import net.thevpc.jshell.JShellErrorHandler;
-import net.thevpc.jshell.JShellException;
-import net.thevpc.jshell.JShellQuitException;
 import net.thevpc.common.strings.StringUtils;
 
 /**
@@ -50,7 +47,7 @@ public class NutsErrorHandler implements JShellErrorHandler {
             return ((NutsExecutionException) th).getExitCode();
         }
         if (th instanceof JShellException) {
-            return ((NutsExecutionException) th).getExitCode();
+            return ((JShellException) th).getResult();
         }
         return 1;
     }
@@ -61,8 +58,8 @@ public class NutsErrorHandler implements JShellErrorHandler {
     }
 
     @Override
-    public void onErrorImpl(String message, Throwable th, JShellContext context) {
-        ((NutsShellContext) context).getSession().getTerminal().err().printf("####### %s #######\n", message);
+    public void onErrorImpl(String message, Throwable th, JShellFileContext context) {
+        ((NutsShellContext) (context.getShellContext())).getSession().getTerminal().err().printf("####### %s #######\n", message);
     }
     
 }

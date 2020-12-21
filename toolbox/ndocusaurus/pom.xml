@@ -79,6 +79,11 @@
             <version>1.0.1</version>
         </dependency>
         <dependency>
+            <groupId>net.thevpc.nuts.toolbox</groupId>
+            <artifactId>nsh</artifactId>
+            <version>0.8.1.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.5.0</version>

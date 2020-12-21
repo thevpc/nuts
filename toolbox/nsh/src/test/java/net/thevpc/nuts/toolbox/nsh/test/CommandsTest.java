@@ -43,8 +43,8 @@ public class CommandsTest {
     private static String baseFolder;
 
     @Test
-    public void testDiname() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
+    public void testDirname() {
+        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
         StringBuilder out = new StringBuilder();
         StringBuilder err = new StringBuilder();
         c.executeCommand(new String[]{"dirname", "/", "a", "/a", "/a/"}, null, out, err);
@@ -59,7 +59,7 @@ public class CommandsTest {
 
     @Test
     public void testBasename() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
+        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
         StringBuilder out = new StringBuilder();
         StringBuilder err = new StringBuilder();
         c.executeCommand(new String[]{"basename", "-a", "/", "a", "/a", "/a/"}, null, out, err);
@@ -74,7 +74,7 @@ public class CommandsTest {
 
     @Test
     public void testEnv() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
+        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
         {
             StringBuilder out = new StringBuilder();
             StringBuilder err = new StringBuilder();
@@ -93,7 +93,7 @@ public class CommandsTest {
 
     @Test
     public void testCheck() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()));
+        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
         {
             StringBuilder out = new StringBuilder();
             StringBuilder err = new StringBuilder();

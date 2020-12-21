@@ -27,7 +27,7 @@ package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.common.strings.StringUtils;
 import net.thevpc.jshell.*;
-import net.thevpc.jshell.parser.nodes.Node;
+import net.thevpc.jshell.JShellNode;
 import net.thevpc.nuts.*;
 
 import java.io.InputStream;
@@ -36,39 +36,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class NutsJavaShellEvalContext extends DefaultJShellContext implements NutsShellContext {
+public class DefaultNutsShellContext extends DefaultJShellContext implements NutsShellContext {
 
-    private NutsShellContext shellContext;
     private NutsWorkspace workspace;
     private NutsSession session;
     //    private NutsSessionTerminal terminal;
     private NutsCommandAutoComplete autoComplete;
 
-    public NutsJavaShellEvalContext() {
-        super();
-    }
+//    public DefaultNutsShellContext(NutsJavaShell shell,NutsWorkspace workspace) {
+//        super(shell);
+//        this.workspace = workspace;
+//        this.session = (workspace == null ? null : workspace.createSession());
+//    }
 
-    public NutsJavaShellEvalContext(NutsWorkspace workspace) {
-        super();
-        this.workspace = workspace;
-        this.session = (workspace == null ? null : workspace.createSession());
-    }
-
-    public NutsJavaShellEvalContext(JShellContext parentContext) {
-        super(parentContext);
-//        if (parentContext instanceof NutsJavaShellEvalContext) {
-        NutsJavaShellEvalContext parentContext1 = (NutsJavaShellEvalContext) parentContext;
-        this.shellContext = (NutsShellContext) parentContext1.shellContext.copy();
-        this.shellContext.getUserProperties().put(JShellContext.class.getName(), this);
-        this.workspace = parentContext1.workspace;
-        this.session = (this.workspace == null ? null : this.workspace.createSession());
-    }
-
-    public NutsJavaShellEvalContext(NutsJavaShell shell, String[] args, Node root, Node parent, NutsShellContext parentContext, NutsWorkspace workspace, NutsSession session, JShellVariables vars) {
+    public DefaultNutsShellContext(NutsJavaShell shell, JShellNode rootNode, JShellNode parentNode,
+                                   NutsShellContext parentContext, NutsWorkspace workspace, NutsSession session, JShellVariables vars) {
         super(shell);
-        this.shellContext = parentContext;//.copy();
-        if (shellContext != null) {
-            setCwd(shellContext.getCwd());
+        this.parentContext = parentContext;//.copy();
+        if (parentContext != null) {
+            setCwd(parentContext.getCwd());
         }
         this.workspace = workspace != null ? workspace : parentContext != null ? parentContext.getWorkspace() : null;
         if (session == null) {
@@ -77,11 +63,9 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
             }
         }
         this.session = session;
-        setRoot(root);
-        setArgs(args);
-        setParent(parent);
+        setRoot(rootNode);
+        setParentNode(parentNode);
         if (parentContext != null) {
-            setServiceName(parentContext.getServiceName());//.copy();
             vars().set(parentContext.vars());
             setBuiltins(parentContext.builtins());
             for (String a : parentContext.aliases().getAll()) {
@@ -148,28 +132,26 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
         this.autoComplete = autoComplete;
     }
 
-    public NutsShellContext getShellContext() {
-        return shellContext;
+    public NutsShellContext getParentContext() {
+        return (NutsShellContext) super.getParentContext();
     }
 
     @Override
     public void copyFrom(JShellContext other) {
         super.copyFrom(other);
-        if (other instanceof NutsJavaShellEvalContext) {
-            NutsJavaShellEvalContext o = (NutsJavaShellEvalContext) other;
+        if (other instanceof DefaultNutsShellContext) {
+            DefaultNutsShellContext o = (DefaultNutsShellContext) other;
             this.workspace = o.workspace;
-            this.serviceName = o.serviceName;
-            this.shellContext = o.shellContext;
             this.session = o.session == null ? null : o.session.copy();
         }
     }
 
-    @Override
-    public NutsShellContext copy() {
-        NutsJavaShellEvalContext c = new NutsJavaShellEvalContext();
-        c.copyFrom(this);
-        return c;
-    }
+//    @Override
+//    public NutsShellContext copy() {
+//        DefaultNutsShellContext c = new DefaultNutsShellContext();
+//        c.copyFrom(this);
+//        return c;
+//    }
 
     //    @Override
 //    public NutsSessionTerminal getTerminal() {
@@ -211,15 +193,15 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
         return this;
     }
 
-    public JShellExecutionContext createCommandContext(JShellBuiltin command) {
-        DefaultNshExecutionContext c = new DefaultNshExecutionContext(this, (NshBuiltin) command);
+    public JShellExecutionContext createCommandContext(JShellBuiltin command, JShellFileContext context) {
+        DefaultNshExecutionContext c = new DefaultNshExecutionContext(this, (NshBuiltin) command,context);
 //        c.setMode(getTerminalMode());
 //        c.setVerbose(isVerbose());
         return c;
     }
 
     @Override
-    public List<AutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine) {
+    public List<JShellAutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine, JShellFileContext ctx) {
         JShellBuiltin command = this.builtins().find(commandName);
         NutsCommandAutoComplete autoComplete = new NutsCommandAutoCompleteBase() {
             @Override
@@ -245,7 +227,7 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
         };
 
         if (command != null && command instanceof NshBuiltin) {
-            ((NshBuiltin) command).autoComplete(new DefaultNshExecutionContext(this, (NshBuiltin) command), autoComplete);
+            ((NshBuiltin) command).autoComplete(new DefaultNshExecutionContext(this, (NshBuiltin) command,ctx), autoComplete);
         } else {
             NutsWorkspace ws = this.getWorkspace();
             List<NutsId> nutsIds = ws.search()
@@ -313,9 +295,9 @@ public class NutsJavaShellEvalContext extends DefaultJShellContext implements Nu
             }
 
         }
-        List<AutoCompleteCandidate> all = new ArrayList<>();
+        List<JShellAutoCompleteCandidate> all = new ArrayList<>();
         for (NutsArgumentCandidate a : autoComplete.getCandidates()) {
-            all.add(new AutoCompleteCandidate(a.getValue(), a.getDisplay()));
+            all.add(new JShellAutoCompleteCandidate(a.getValue(), a.getDisplay()));
         }
         return all;
     }

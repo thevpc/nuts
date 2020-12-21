@@ -62,7 +62,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                 //
             } else if (cmdLine.next("-c", "--colors") != null) {
                 showColors = true;
-            } else if (cmdLine.next("--code") != null) {
+            } else if (cmdLine.next("--ntf") != null) {
                 code = true;
                 context.getSession().getTerminal().setMode(NutsTerminalMode.FILTERED);
             } else if (cmdLine.peek().isOption()) {
@@ -70,7 +70,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                     throw new NutsIllegalArgumentException(context.getWorkspace(), "Invalid option " + cmdLine.next().getString());
                 }
             } else {
-                commandNames.add(cmdLine.nextNonOption(new CommandNonOption("command", context.getGlobalContext())).required().getString());
+                commandNames.add(cmdLine.nextNonOption(new CommandNonOption("command", context.getNutsShellContext())).required().getString());
             }
         }
         Function<String, String> ss = code ? new Function<String, String>() {
@@ -114,7 +114,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                     for (String commandName : commandNames) {
                         JShellBuiltin command1 = context.getGlobalContext().builtins().find(commandName);
                         if (command1 == null) {
-                            context.err().printf("Command not found : %s\n", ss.apply(commandName));
+                            context.err().printf("JShellCommandNode not found : %s\n", ss.apply(commandName));
                         } else {
                             String help = command1.getHelp();
                             if (code) {

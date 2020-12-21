@@ -3,9 +3,9 @@
 //import NutsSession;
 //import NutsWorkspace;
 //import net.thevpc.javashell.ConsoleContext;
-//import net.thevpc.javashell.cmds.Command;
+//import net.thevpc.javashell.cmds.JShellCommandNode;
 //
-//class NutsShellInternalCmd implements Command {
+//class NutsShellInternalCmd implements JShellCommandNode {
 //
 //    private final NshCommand ncommand;
 //    private final NutsJavaShell component;
@@ -17,7 +17,7 @@
 //
 //    @Override
 //    public int exec(String[] command, ConsoleContext shell) throws Exception {
-//        NutsJavaShellEvalContext ncontext = (NutsJavaShellEvalContext) shell;
+//        DefaultNutsShellContext ncontext = (DefaultNutsShellContext) shell;
 //        NutsConsoleContext commandContext = ncontext.getCommandContext();
 //        NutsConsoleContext context = component.getContext();
 //        NutsSession session = context.getSession().copy();

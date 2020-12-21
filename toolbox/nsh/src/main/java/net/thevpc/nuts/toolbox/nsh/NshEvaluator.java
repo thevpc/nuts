@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.jshell.*;
-import net.thevpc.jshell.parser.nodes.InstructionNode;
+import net.thevpc.jshell.JShellCommandNode;
 import net.thevpc.jshell.util.JavaShellNonBlockingInputStream;
 import net.thevpc.jshell.util.JavaShellNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.NutsSessionTerminal;
@@ -38,15 +38,15 @@ import java.io.*;
  *
  * @author thevpc
  */
-public class NutsNodeEvaluator extends DefaultJShellNodeEvaluator implements JShellNodeEvaluator {
+public class NshEvaluator extends DefaultJShellEvaluator implements JShellEvaluator {
 
     @Override
-    public void evalBinaryPipeOperation(InstructionNode left, InstructionNode right, JShellContext context) {
+    public void evalBinaryPipeOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
         final PrintStream nout;
         final PipedOutputStream out;
         final PipedInputStream in;
         final JavaShellNonBlockingInputStream in2;
-        NutsShellContext ncontext = (NutsShellContext) context;
+        NutsShellContext ncontext = (NutsShellContext) (context.getShellContext());
         try {
             out = new PipedOutputStream();
             nout = ncontext.getWorkspace().io().createPrintStream(out, NutsTerminalMode.FORMATTED);
@@ -55,13 +55,13 @@ public class NutsNodeEvaluator extends DefaultJShellNodeEvaluator implements JSh
         } catch (IOException ex) {
             throw new JShellException(1, ex);
         }
-        final JShellContext leftContext = context.getShell().createContext(context).setOut(nout);
+        final JShellFileContext leftContext = context.getShell().createNewContext(context).setOut(nout);
         final JShellUniformException[] a = new JShellUniformException[2];
         Thread j1 = new Thread() {
             @Override
             public void run() {
                 try {
-                    context.getShell().uniformException(new NodeEvalUnsafeRunnable(left, leftContext));
+                    context.getShell().uniformException(new JShellNodeUnsafeRunnable(left, leftContext));
                 } catch (JShellUniformException e) {
                     if (e.isQuit()) {
                         e.throwQuit();
@@ -74,9 +74,9 @@ public class NutsNodeEvaluator extends DefaultJShellNodeEvaluator implements JSh
 
         };
         j1.start();
-        JShellContext rightContext = context.getShell().createContext(context).setIn((InputStream) in2);
+        JShellFileContext rightContext = context.getShell().createNewContext(context).setIn((InputStream) in2);
         try {
-            context.getShell().uniformException(new NodeEvalUnsafeRunnable(right, rightContext));
+            context.getShell().uniformException(new JShellNodeUnsafeRunnable(right, rightContext));
         } catch (JShellUniformException e) {
             if (e.isQuit()) {
                 e.throwQuit();
@@ -94,19 +94,18 @@ public class NutsNodeEvaluator extends DefaultJShellNodeEvaluator implements JSh
         }
     }
     @Override
-    public String evalCommandAndReturnString(InstructionNode command, JShellContext context) {
+    public String evalCommandAndReturnString(JShellCommandNode command, JShellFileContext context) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        NutsJavaShellEvalContext c2 = (NutsJavaShellEvalContext) context.getShell().createContext(context)
-                //need to inherit service name and arguments!!
-                .setServiceName(context.getServiceName())
-                .setArgs(context.getArgsArray());
-        c2.setSession(c2.getSession().copy());
+        JShellFileContext c1 = context.getShell().createNewContext(context);
+        DefaultNutsShellContext c2 = (DefaultNutsShellContext)c1.getShellContext();
+                c2.setSession(c2.getSession().copy());
         PrintStream p = new PrintStream(out);
         NutsSessionTerminal terminal = c2.getWorkspace().io().term().createTerminal(new ByteArrayInputStream(new byte[0]), p, p, c2.getSession());
         terminal.setOutMode(NutsTerminalMode.FILTERED);
         c2.getSession().setTerminal(terminal);
-        command.eval(c2);
+        command.eval(c1);
         p.flush();
-        return (context.getShell().escapeString(out.toString()));
+        String str = evalFieldSubstitutionAfterCommandSubstitution(out.toString(),context);
+        return (context.getShell().escapeString(str));
     }
 }

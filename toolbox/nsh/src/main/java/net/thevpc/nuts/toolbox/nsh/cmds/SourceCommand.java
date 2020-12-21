@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -10,30 +10,30 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
+
+import net.thevpc.jshell.JShellFileContext;
+import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsSingleton;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.jshell.JShellContext;
-import net.thevpc.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -43,11 +43,6 @@ public class SourceCommand extends SimpleNshBuiltin {
 
     public SourceCommand() {
         super("source", DEFAULT_SUPPORT);
-    }
-
-    private static class Options {
-
-        List<String> files = new ArrayList<>();
     }
 
     @Override
@@ -72,7 +67,7 @@ public class SourceCommand extends SimpleNshBuiltin {
         final String[] paths = context.getExecutionContext().getGlobalContext().vars().get("PATH", "").split(":|;");
         List<String> goodFiles = new ArrayList<>();
         for (String file : options.files) {
-            boolean found=false;
+            boolean found = false;
             if (!file.contains("/")) {
                 for (String path : paths) {
                     if (new File(path, file).isFile()) {
@@ -86,20 +81,28 @@ public class SourceCommand extends SimpleNshBuiltin {
                     }
                 }
                 if (new File(file).isFile()) {
-                    found=true;
+                    found = true;
                     goodFiles.add(file);
                 }
             }
-            if(!found){
+            if (!found) {
                 goodFiles.add(file);
             }
         }
 //        JShellContext c2 = context.getShell().createContext(context.getExecutionContext().getGlobalContext());
 //        c2.setArgs(context.getArgs());
-        JShellContext c2 = context.getExecutionContext().getGlobalContext();
+        JShellFileContext c2 = context.getExecutionContext().getGlobalContext();
         for (String goodFile : goodFiles) {
-            context.getShell().executeFile(goodFile, context.getArgs(),c2);
+            context.getShell().executeFile(
+                    context.getShell().createSourceFileContext(c2, goodFile, context.getArgs()),
+                    false
+            );
         }
+    }
+
+    private static class Options {
+
+        List<String> files = new ArrayList<>();
     }
 
 }

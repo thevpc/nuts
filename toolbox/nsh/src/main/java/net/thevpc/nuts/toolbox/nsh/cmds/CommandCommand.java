@@ -79,7 +79,7 @@ public class CommandCommand extends SimpleNshBuiltin {
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.commandName != null) {
-            context.getShell().executePreparedCommand(options.args.toArray(new String[0]), false, true, true, context.getRootContext());
+            context.getShell().executePreparedCommand(options.args.toArray(new String[0]), false, true, true, context.getGlobalContext());
         }
     }
 

@@ -176,7 +176,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     @Override
     public NutsCommandLine requireNonOption() {
         if (!hasNext() || !peek().isNonOption()) {
-            throwError("Expected value");
+            throwError("expected value");
         }
         return this;
     }
@@ -331,7 +331,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                             }
                         }
                         default: {
-                            throwError("Unsupported " + highlightText(String.valueOf(expectValue)));
+                            throwError("unsupported " + highlightText(String.valueOf(expectValue)));
                         }
                     }
                 }
@@ -612,9 +612,9 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 return null;//return new Argument("");
             }
             if (hasNext() && (!forceNonOption || !peek().isOption())) {
-                throwError("Unexpected option " + highlightText(String.valueOf(peek())));
+                throwError("unexpected option " + highlightText(String.valueOf(peek())));
             }
-            throwError("Missing argument " + highlightText((name == null ? "value" : name.getName())));
+            throwError("missing argument " + highlightText((name == null ? "value" : name.getName())));
         }
         //ignored
         return null;
@@ -629,7 +629,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             return createArgument(v);
         } else {
             if (required) {
-                throwError("Missing argument");
+                throwError("missing argument");
             }
             return null;
         }

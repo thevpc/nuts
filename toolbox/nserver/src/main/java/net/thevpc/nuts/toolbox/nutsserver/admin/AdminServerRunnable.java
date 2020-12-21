@@ -126,10 +126,10 @@ public class AdminServerRunnable implements NutsServer, Runnable {
                                     );
                                     cli = new NutsJavaShell(invokerWorkspace, session,
                                             invokerWorkspace.id().resolveId(AdminServerRunnable.class),
-                                            serverId);
+                                            serverId,new String[0]);
                                     cli.getRootContext().builtins().unset("connect");
                                     cli.getRootContext().builtins().set(new StopServerBuiltin2(finalServerSocket));
-                                    cli.executeShell(new String[0]);
+                                    cli.run();
                                 } finally {
                                     finalAccept.close();
                                 }

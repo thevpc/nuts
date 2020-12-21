@@ -40,6 +40,7 @@ nadmin import <group> ...
 nadmin unimport <group> ...
 ```
         remove one or multiple groups from imported groups
+        remove one or multiple groups from imported groups
 
 ```sh
 nadmin list imports
@@ -84,7 +85,7 @@ nadmin update stats <repo-folder-path> ...
 ```
         update local repo statistics
 
-##) SECUTIRY COMMANDS:
+##) SECURITY COMMANDS:
 ```sh
 nadmin list users
 ```
@@ -151,7 +152,7 @@ nadmin add link <options> ...
 
 ###) OPTIONS:
 ```sh
-nadmin install script <options> <command> ...
+nadmin add script <options> <command> ...
 ```
     install scripts/shortcuts for the given command so that it can be called directly by it's name
 ``` sh  --embedded | -b ```
@@ -164,9 +165,18 @@ nadmin install script <options> <command> ...
     enable root external command mode
 ``` sh  --exec-options | -X <option> ```
     exec options
+``` sh  --name=<name> | -n=<name> ```
+    script name pattern
+      the default pattern is '%n-%v' for 'nuts' and '%' for other ids.
+      '%g' is replaced by the artifactId
+      '%n' is replaced by the groupId
+      '%v' is replaced by the version
+
+``` sh  --workspace=<location> | -w=<location> ```
+    target workspace
 
 ```sh
-nadmin uninstall script <options> <command> ...
+nadmin remove script <options> <command> ...
 ```
     uninstall scripts/shortcuts for the given
 ```sh --embedded | -b ```
@@ -190,21 +200,6 @@ nadmin switch <options> [<workspace>] [<api>]
     target workspace location
 ```sh --api | -a ```
     nuts api version
-
-```sh
-nadmin add link <options> [<name>] [<workspace>] [<api>]
-```
-
-    create a new script to link to an existing nuts workspace and/or version.
-    the link created will run 'nuts' against the selected workspace and/or version.
-
-```sh  --name | -n ```
-    script name pattern. can include '%v' to append version name
-```sh  --workspace | -w ```
-    target workspace location
-```sh  --api | -a ```
-    nuts api version
-
 
 
 ##) GENERAL COMMANDS:

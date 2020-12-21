@@ -125,7 +125,7 @@ public class NutsBuiltinManager implements JShellBuiltinManager {
         boolean b = commands.remove(command) != null;
         if (LOG.isLoggable(Level.FINE)) {
             if (b) {
-                LOG.log(Level.FINE, "Uninstalling Command : " + command);
+                LOG.log(Level.FINE, "Uninstalling JShellCommandNode : " + command);
             }
         }
         return b;

@@ -407,6 +407,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 if (preferredName.contains("%v")) {
                     preferredName = preferredName.replace("%v", fnutsId.getVersion().toString());
                 }
+                if (preferredName.contains("%n")) {
+                    preferredName = preferredName.replace("%n", fnutsId.getArtifactId());
+                }
+                if (preferredName.contains("%g")) {
+                    preferredName = preferredName.replace("%g", fnutsId.getGroupId());
+                }
                 script = Paths.get(preferredName);
             }
             if (script.getParent() != null) {

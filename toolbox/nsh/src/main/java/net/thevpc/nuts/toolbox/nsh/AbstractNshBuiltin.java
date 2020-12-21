@@ -57,7 +57,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
 
     protected NutsCommandLine cmdLine(String[] args, NshExecutionContext context) {
         return context.getWorkspace().commandLine().create(args)
-                .setAutoComplete(context.getGlobalContext().getAutoComplete())
+                .setAutoComplete(context.getNutsShellContext().getAutoComplete())
                 .setCommandName(getName());
     }
 
@@ -120,8 +120,8 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
 
     @Override
     public void autoComplete(NshExecutionContext context, NutsCommandAutoComplete autoComplete) {
-        NutsCommandAutoComplete oldAutoComplete = context.getGlobalContext().getAutoComplete();
-        context.getGlobalContext().setAutoComplete(autoComplete);
+        NutsCommandAutoComplete oldAutoComplete = context.getNutsShellContext().getAutoComplete();
+        context.getNutsShellContext().setAutoComplete(autoComplete);
         try {
             if (autoComplete == null) {
                 throw new NutsIllegalArgumentException(context.getWorkspace(), "Missing Auto Complete");
@@ -139,7 +139,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
                 }
             }
         } finally {
-            context.getGlobalContext().setAutoComplete(oldAutoComplete);
+            context.getNutsShellContext().setAutoComplete(oldAutoComplete);
         }
     }
 

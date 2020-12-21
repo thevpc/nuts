@@ -2,8 +2,7 @@ package net.thevpc.nuts.toolbox.ntemplate;
 
 import net.thevpc.commons.filetemplate.*;
 import net.thevpc.commons.filetemplate.util.StringUtils;
-import net.thevpc.jshell.JShellVar;
-import net.thevpc.jshell.JShellVarListener;
+import net.thevpc.jshell.*;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
@@ -12,6 +11,7 @@ import net.thevpc.nuts.toolbox.nsh.NutsJavaShell;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 
@@ -25,7 +25,7 @@ public class NTemplateMain extends NutsApplication {
     public void run(NutsApplicationContext appContext) {
         appContext.processCommandLine(new NutsCommandLineProcessor() {
             TemplateConfig config = new TemplateConfig();
-            private FileTemplater fileTemplater = new FileTemplater();
+            private FileTemplater fileTemplater;
 //            private String mimeType = null;
 
             @Override
@@ -63,32 +63,8 @@ public class NTemplateMain extends NutsApplication {
             }
 
             @Override
-            public void init(NutsCommandLine commandline) {
-                fileTemplater.setDefaultExecutor(MimeTypeConstants.FTEX, new NshEvaluator(appContext, config,fileTemplater));
-                fileTemplater.setLog(new TemplateLog() {
-                    NutsLogger LOG;
-                    @Override
-                    public void info(String title, String message) {
-                        log().log(Level.FINE, "INFO",title+" : "+message);
-                    }
-
-                    @Override
-                    public void debug(String title, String message) {
-                        log().log(Level.FINER, "DEBUG",title+" : "+message);
-                    }
-
-                    @Override
-                    public void error(String title, String message) {
-                        log().log(Level.SEVERE, "FAIL",title+" : "+message);
-                    }
-
-                    private NutsLogger log() {
-                        if(LOG==null) {
-                            LOG = appContext.getWorkspace().log().of(NTemplateMain.class);
-                        }
-                        return LOG;
-                    }
-                });
+            public void prepare(NutsCommandLine commandline) {
+                fileTemplater= new NFileTemplater(appContext);
             }
 
             @Override
@@ -101,30 +77,28 @@ public class NTemplateMain extends NutsApplication {
 
     private static class NshEvaluator implements ExprEvaluator {
         private NutsApplicationContext appContext;
-        private TemplateConfig config;
         private NutsJavaShell shell;
         private FileTemplater fileTemplater;
 
-        public NshEvaluator(NutsApplicationContext appContext, TemplateConfig config, FileTemplater fileTemplater) {
+        public NshEvaluator(NutsApplicationContext appContext, FileTemplater fileTemplater) {
             this.appContext = appContext;
-            this.config = config;
             this.fileTemplater = fileTemplater;
-            shell = new NutsJavaShell(appContext);
+            shell = new NutsJavaShell(appContext,new String[0]);
             shell.setSession(shell.getSession().copy());
-            shell.getRootContext().vars().addListener(
+            shell.getRootContext().vars().addVarListener(
                     new JShellVarListener() {
                         @Override
-                        public void varAdded(JShellVar jShellVar) {
+                        public void varAdded(JShellVar jShellVar, JShellVariables vars, JShellContext context) {
                             setVar(jShellVar.getName(), jShellVar.getValue());
                         }
 
                         @Override
-                        public void varValueUpdated(JShellVar jShellVar, String oldValue) {
+                        public void varValueUpdated(JShellVar jShellVar, String oldValue, JShellVariables vars, JShellContext context) {
                             setVar(jShellVar.getName(), jShellVar.getValue());
                         }
 
                         @Override
-                        public void varRemoved(JShellVar jShellVar) {
+                        public void varRemoved(JShellVar jShellVar, JShellVariables vars, JShellContext context) {
                             setVar(jShellVar.getName(), null);
                         }
                     }
@@ -164,7 +138,11 @@ public class NTemplateMain extends NutsApplication {
                                     shell.getSession()
                             )
             );
-            shell.executeString(content,shell.getRootContext());
+            JShellFileContext ctx = shell.createSourceFileContext(
+                    shell.getRootContext(),
+                    context.getSourcePath().orElseGet(()->"nsh"),new String[0]
+            );
+            shell.executeString(content,ctx);
             out1.flush();
             return out.toString();
         }
@@ -172,6 +150,41 @@ public class NTemplateMain extends NutsApplication {
         @Override
         public String toString() {
             return "nsh";
+        }
+    }
+
+    private static class NFileTemplater extends FileTemplater {
+        public NFileTemplater(NutsApplicationContext appContext) {
+            this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(appContext, this));
+            setProjectFileName("project.nsh");
+            this.setLog(new TemplateLog() {
+                NutsLogger LOG;
+                @Override
+                public void info(String title, String message) {
+                    log().log(Level.FINE, "INFO",title+" : "+message);
+                }
+
+                @Override
+                public void debug(String title, String message) {
+                    log().log(Level.FINER, "DEBUG",title+" : "+message);
+                }
+
+                @Override
+                public void error(String title, String message) {
+                    log().log(Level.SEVERE, "FAIL",title+" : "+message);
+                }
+
+                private NutsLogger log() {
+                    if(LOG==null) {
+                        LOG = appContext.getWorkspace().log().of(NTemplateMain.class);
+                    }
+                    return LOG;
+                }
+            });
+        }
+
+        public void executeProjectFile(Path path, String mimeTypesString) {
+            executeRegularFile(path,"text/ntemplate-nsh-project");
         }
     }
 }

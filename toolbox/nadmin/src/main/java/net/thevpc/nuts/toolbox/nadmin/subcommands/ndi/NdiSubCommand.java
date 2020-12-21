@@ -14,11 +14,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class NdiSubCommand extends AbstractNAdminSubCommand{
+public class NdiSubCommand extends AbstractNAdminSubCommand {
 
     public SystemNdi createNdi(NutsApplicationContext appContext) {
         SystemNdi ndi = null;
@@ -43,129 +41,6 @@ public class NdiSubCommand extends AbstractNAdminSubCommand{
         return ndi;
     }
 
-    public void runSwitch(NutsCommandLine cmdLine, NutsApplicationContext context) {
-        NutsWorkspace ws = context.getWorkspace();
-        String switchWorkspaceLocation = null;
-        String switchWorkspaceApi = null;
-        List<NdiScriptnfo> result = new ArrayList<NdiScriptnfo>();
-        ArrayList<String> executorOptions = new ArrayList<>();
-        NutsExecutionType execType = null;
-        NutsArgument a;
-        Runnable action = null;
-        boolean ignoreUnsupportedOs = false;
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //consumed
-            } else if ((a = cmdLine.nextString("--ignore-unsupported-os")) != null) {
-                if (a.isEnabled()) {
-                    ignoreUnsupportedOs=a.getBooleanValue();
-                }
-            } else if (cmdLine.peek().getStringKey().equals("-w") || cmdLine.peek().getStringKey().equals("--workspace")) {
-                switchWorkspaceLocation = cmdLine.nextString().getStringValue();
-            } else if (cmdLine.peek().getStringKey().equals("-a") || cmdLine.peek().getStringKey().equals("--api")) {
-                switchWorkspaceApi = cmdLine.nextString().getStringValue();
-            } else if (cmdLine.peek().isOption()) {
-                cmdLine.unexpectedArgument();
-            } else if (switchWorkspaceLocation == null) {
-                switchWorkspaceLocation = cmdLine.next().getString();
-            } else if (switchWorkspaceApi == null) {
-                switchWorkspaceApi = cmdLine.next().getString();
-            } else {
-                cmdLine.unexpectedArgument();
-            }
-        }
-        if (cmdLine.isExecMode()) {
-            SystemNdi ndi = createNdi(context);
-            if (ndi == null) {
-                if(ignoreUnsupportedOs){
-                    return;
-                }
-                throw new NutsExecutionException(ws, "platform not supported : " + ws.env().getOs(), 2);
-            }
-            boolean subTrace = context.getSession().isTrace();
-            if (!context.getSession().isPlainTrace()) {
-                subTrace = false;
-            }
-            if (switchWorkspaceLocation != null || switchWorkspaceApi != null) {
-                ndi.switchWorkspace(switchWorkspaceLocation, switchWorkspaceApi);
-            }
-        }
-
-    }
-
-    public void runLink(NutsCommandLine cmdLine, NutsApplicationContext context) {
-        NutsWorkspace ws = context.getWorkspace();
-        String switchWorkspaceLocation = null;
-        String switchWorkspaceApi = null;
-        String linkName = null;
-        boolean fetch = false;
-        ArrayList<String> executorOptions = new ArrayList<>();
-        NutsExecutionType execType = null;
-        boolean ignoreUnsupportedOs = false;
-        NutsArgument a;
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //consumed
-            } else if ((a = cmdLine.nextString("--ignore-unsupported-os")) != null) {
-                if (a.isEnabled()) {
-                    ignoreUnsupportedOs=a.getBooleanValue();
-                }
-            } else if (cmdLine.peek().getStringKey().equals("-w") || cmdLine.peek().getStringKey().equals("--workspace")) {
-                switchWorkspaceLocation = cmdLine.nextString().getStringValue();
-            } else if (cmdLine.peek().getStringKey().equals("-a") || cmdLine.peek().getStringKey().equals("--api")) {
-                switchWorkspaceApi = cmdLine.nextString().getStringValue();
-            } else if (cmdLine.peek().getStringKey().equals("-n") || cmdLine.peek().getStringKey().equals("--name")) {
-                linkName = cmdLine.nextString().getStringValue();
-            } else if (cmdLine.peek().isOption()) {
-                cmdLine.unexpectedArgument();
-            } else if (linkName == null) {
-                linkName = cmdLine.next().getString();
-            } else if (switchWorkspaceLocation == null) {
-                switchWorkspaceLocation = cmdLine.next().getString();
-            } else if (switchWorkspaceApi == null) {
-                switchWorkspaceApi = cmdLine.next().getString();
-            } else {
-                cmdLine.unexpectedArgument();
-            }
-        }
-        if (linkName == null) {
-            linkName="nuts-%v";
-        }else if(Files.isDirectory(Paths.get(linkName))){
-            linkName=Paths.get(linkName).resolve("nuts-%v").toString();
-        }else if(linkName.endsWith("/") || linkName.endsWith("\\")){
-            linkName=Paths.get(linkName).resolve("nuts-%v").toString();
-        }
-        if (cmdLine.isExecMode()) {
-            SystemNdi ndi = createNdi(context);
-            if (ndi == null) {
-                if(ignoreUnsupportedOs){
-                    return;
-                }
-                throw new NutsExecutionException(ws, "platform not supported : " + ws.env().getOs(), 2);
-            }
-            boolean subTrace = context.getSession().isTrace();
-            if (!context.getSession().isPlainTrace()) {
-                subTrace = false;
-            }
-            if (linkName != null) {
-                NdiScriptnfo[] r = ndi.createNutsScript(
-                        new NdiScriptOptions().setId(
-                                switchWorkspaceApi == null ? ws.getApiId().toString() :
-                                        ws.getApiId().builder().setVersion(switchWorkspaceApi).build().toString()
-                        )
-                                .setPreferredScriptName(linkName)
-                                .setSession(context.getSession().copy().setTrace(subTrace))
-                                .setForceBoot(context.getSession().isYes())
-                                .setFetch(fetch)
-                                .setExecType(execType)
-                                .setExecutorOptions(executorOptions)
-                                .setIncludeEnv(true)
-                );
-                printResults(context, Arrays.asList(r), ws);
-            }
-        }
-    }
-
     public void runInstall(NutsCommandLine cmdLine, NutsApplicationContext context) {
         ArrayList<String> idsToInstall = new ArrayList<>();
         NutsWorkspace ws = context.getWorkspace();
@@ -178,6 +53,10 @@ public class NdiSubCommand extends AbstractNAdminSubCommand{
 //        boolean forceAll = false;
         Boolean persistentConfig = null;
         boolean ignoreUnsupportedOs = false;
+
+        String switchWorkspaceLocation = null;
+        String linkName = null;
+
         while (cmdLine.hasNext()) {
             if (context.configureFirst(cmdLine)) {
 
@@ -220,7 +99,17 @@ public class NdiSubCommand extends AbstractNAdminSubCommand{
                 }
             } else if ((a = cmdLine.nextString("--ignore-unsupported-os")) != null) {
                 if (a.isEnabled()) {
-                    ignoreUnsupportedOs=a.getBooleanValue();
+                    ignoreUnsupportedOs = a.getBooleanValue();
+                }
+            } else if (cmdLine.peek().getStringKey().equals("-w") || cmdLine.peek().getStringKey().equals("--workspace")) {
+                a=cmdLine.nextString();
+                if (a.isEnabled()) {
+                    switchWorkspaceLocation = a.getStringValue();
+                }
+            } else if (cmdLine.peek().getStringKey().equals("-n") || cmdLine.peek().getStringKey().equals("--name")) {
+                a=cmdLine.nextString();
+                if (a.isEnabled()) {
+                    linkName = a.getStringValue();
                 }
             } else if (cmdLine.peek().isOption()) {
                 cmdLine.unexpectedArgument();
@@ -237,7 +126,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand{
         if (cmdLine.isExecMode()) {
             SystemNdi ndi = createNdi(context);
             if (ndi == null) {
-                if(ignoreUnsupportedOs){
+                if (ignoreUnsupportedOs) {
                     return;
                 }
                 throw new NutsExecutionException(ws, "platform not supported : " + ws.env().getOs(), 2);
@@ -246,14 +135,34 @@ public class NdiSubCommand extends AbstractNAdminSubCommand{
             if (!context.getSession().isPlainTrace()) {
                 subTrace = false;
             }
+
             if (!idsToInstall.isEmpty()) {
-                if (workspaceLocation.equals(Paths.get(System.getProperty("user.home")).resolve(".config/nuts/default-workspace"))) {
-                    persistentConfig = true;
-                } else {
-                    persistentConfig = false;
+                if(persistentConfig==null) {
+                    if (workspaceLocation.equals(Paths.get(System.getProperty("user.home")).resolve(".config/nuts/default-workspace"))) {
+                        persistentConfig = true;
+                    } else {
+                        persistentConfig = false;
+                    }
                 }
                 for (String id : idsToInstall) {
                     try {
+                        NutsId nid = ws.id().parser().parse(id);
+                        if(nid==null){
+                            throw new NutsExecutionException(ws, "unable to create script for " + id + " : invalid id",100);
+                        }
+                        boolean includeEnv=false;
+                        if(nid.getShortName().equals("nuts") || nid.getShortName().equals("net.thevpc.nuts:nuts")){
+                            if(!nid.getVersion().isBlank()){
+                                includeEnv=true;
+                            }else if(nid.getVersion().toString().equalsIgnoreCase("current")){
+                                id=nid.builder().setVersion(ws.getApiId().getVersion()).build().toString();
+                                includeEnv=true;
+                            }
+                        }
+                        String linkNameCurrent=linkName;
+                        if(includeEnv){
+                            linkNameCurrent=prepareLinkName(linkNameCurrent);
+                        }
                         result.addAll(
                                 Arrays.asList(
                                         ndi.createNutsScript(
@@ -263,10 +172,12 @@ public class NdiSubCommand extends AbstractNAdminSubCommand{
                                                         .setFetch(fetch)
                                                         .setExecType(execType)
                                                         .setExecutorOptions(executorOptions)
+                                                        .setIncludeEnv(includeEnv)
+                                                        .setPreferredScriptName(linkNameCurrent)
                                         )
                                 ));
                     } catch (UncheckedIOException e) {
-                        throw new NutsExecutionException(ws, "Unable to run script " + id + " : " + e.toString(), e);
+                        throw new NutsExecutionException(ws, "unable to add script for " + id + " : " + e.toString(), e);
                     }
                 }
                 ndi.configurePath(context.getSession(), persistentConfig);
@@ -275,19 +186,30 @@ public class NdiSubCommand extends AbstractNAdminSubCommand{
         }
     }
 
+    private String prepareLinkName(String linkName) {
+        if (linkName == null) {
+            linkName = "%n-%v";
+        } else if (Files.isDirectory(Paths.get(linkName))) {
+            linkName = Paths.get(linkName).resolve("%n-%v").toString();
+        } else if (linkName.endsWith("/") || linkName.endsWith("\\")) {
+            linkName = Paths.get(linkName).resolve("%n-%v").toString();
+        }
+        return linkName;
+    }
+
     public void runUninstall(NutsCommandLine cmdLine, NutsApplicationContext context) {
         ArrayList<String> idsToUninstall = new ArrayList<>();
         boolean forceAll = false;
         NutsWorkspace ws = context.getWorkspace();
         boolean missingAnyArgument = true;
         NutsArgument a;
-        boolean ignoreUnsupportedOs=false;
+        boolean ignoreUnsupportedOs = false;
         while (cmdLine.hasNext()) {
             if (context.configureFirst(cmdLine)) {
                 //consumed
             } else if ((a = cmdLine.nextString("--ignore-unsupported-os")) != null) {
                 if (a.isEnabled()) {
-                    ignoreUnsupportedOs=a.getBooleanValue();
+                    ignoreUnsupportedOs = a.getBooleanValue();
                 }
             } else if (cmdLine.peek().isOption()) {
                 cmdLine.unexpectedArgument();
@@ -306,7 +228,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand{
             }
             SystemNdi ndi = createNdi(context);
             if (ndi == null) {
-                if(ignoreUnsupportedOs){
+                if (ignoreUnsupportedOs) {
                     return;
                 }
                 throw new NutsExecutionException(ws, "platform not supported : " + ws.env().getOs(), 2);
@@ -330,6 +252,53 @@ public class NdiSubCommand extends AbstractNAdminSubCommand{
         }
     }
 
+
+    public void runSwitch(NutsCommandLine cmdLine, NutsApplicationContext context) {
+        NutsWorkspace ws = context.getWorkspace();
+        String switchWorkspaceLocation = null;
+        String switchWorkspaceApi = null;
+        List<NdiScriptnfo> result = new ArrayList<NdiScriptnfo>();
+        ArrayList<String> executorOptions = new ArrayList<>();
+        NutsExecutionType execType = null;
+        NutsArgument a;
+        Runnable action = null;
+        boolean ignoreUnsupportedOs = false;
+        while (cmdLine.hasNext()) {
+            if (context.configureFirst(cmdLine)) {
+                //consumed
+            } else if ((a = cmdLine.nextString("--ignore-unsupported-os")) != null) {
+                if (a.isEnabled()) {
+                    ignoreUnsupportedOs = a.getBooleanValue();
+                }
+            } else if (cmdLine.peek().getStringKey().equals("-w") || cmdLine.peek().getStringKey().equals("--workspace")) {
+                switchWorkspaceLocation = cmdLine.nextString().getStringValue();
+            } else if (cmdLine.peek().getStringKey().equals("-a") || cmdLine.peek().getStringKey().equals("--api")) {
+                switchWorkspaceApi = cmdLine.nextString().getStringValue();
+            } else if (cmdLine.peek().isOption()) {
+                cmdLine.unexpectedArgument();
+            } else if (switchWorkspaceLocation == null) {
+                switchWorkspaceLocation = cmdLine.next().getString();
+            } else if (switchWorkspaceApi == null) {
+                switchWorkspaceApi = cmdLine.next().getString();
+            } else {
+                cmdLine.unexpectedArgument();
+            }
+        }
+        if (cmdLine.isExecMode()) {
+            SystemNdi ndi = createNdi(context);
+            if (ndi == null) {
+                if (ignoreUnsupportedOs) {
+                    return;
+                }
+                throw new NutsExecutionException(ws, "platform not supported : " + ws.env().getOs(), 2);
+            }
+            if (switchWorkspaceLocation != null || switchWorkspaceApi != null) {
+                ndi.switchWorkspace(switchWorkspaceLocation, switchWorkspaceApi);
+            }
+        }
+
+    }
+
     private void printResults(NutsApplicationContext context, List<NdiScriptnfo> result, NutsWorkspace ws) {
         if (context.getSession().isTrace()) {
             if (context.getSession().isPlainTrace()) {
@@ -338,8 +307,8 @@ public class NdiSubCommand extends AbstractNAdminSubCommand{
                     context.getSession().out().printf("%s script ##%-" + namesSize + "s## for " +
                                     ws.id().formatter(ndiScriptnfo.getId().getLongNameId()).format()
                                     + " at ####%s####%n", ndiScriptnfo.isOverride() ?
-                                    ws.formats().text().builder().appendStyled( "re-installing",NutsTextNodeStyle.SUCCESS2) :
-                                    ws.formats().text().builder().appendStyled("installing",NutsTextNodeStyle.SUCCESS1),
+                                    ws.formats().text().builder().appendStyled("re-installing", NutsTextNodeStyle.SUCCESS2) :
+                                    ws.formats().text().builder().appendStyled("installing", NutsTextNodeStyle.SUCCESS1),
                             ndiScriptnfo.getName(), NdiUtils.betterPath(ndiScriptnfo.getPath().toString()));
                 }
 
@@ -350,20 +319,16 @@ public class NdiSubCommand extends AbstractNAdminSubCommand{
     }
 
 
-
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
-        if (cmdLine.next("install script", "inscr") != null) {
+        if (cmdLine.next("add script", "sca") != null) {
             runInstall(cmdLine, context);
             return true;
-        }else if (cmdLine.next("uninstall script", "uninscr") != null) {
+        } else if (cmdLine.next("remove script", "scrm") != null) {
             runUninstall(cmdLine, context);
             return true;
-        }else if (cmdLine.next("switch", "sw") != null) {
+        } else if (cmdLine.next("switch", "sw") != null) {
             runSwitch(cmdLine, context);
-            return true;
-        }else if (cmdLine.next("add link", "addln") != null) {
-            runLink(cmdLine, context);
             return true;
         }
         return false;

@@ -22,7 +22,7 @@ public class ExecFacadeCommand extends AbstractFacadeCommand {
 
 //                String boundary = context.getRequestHeaderFirstValue("Content-type");
 //                if (StringUtils.isEmpty(boundary)) {
-//                    context.sendError(400, "Invalid Command Arguments : " + getName() + " . Invalid format.");
+//                    context.sendError(400, "Invalid JShellCommandNode Arguments : " + getName() + " . Invalid format.");
 //                    return;
 //                }
 //                MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary);
@@ -46,7 +46,7 @@ public class ExecFacadeCommand extends AbstractFacadeCommand {
 //                    }
 //                }
 //                if (contentFile == null) {
-//                    context.sendError(400, "Invalid Command Arguments : " + getName() + " : Missing File");
+//                    context.sendError(400, "Invalid JShellCommandNode Arguments : " + getName() + " : Missing File");
 //                }
         ListValueMap<String, String> parameters = context.getParameters();
         List<String> cmd = parameters.getValues("cmd");

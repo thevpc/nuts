@@ -69,7 +69,7 @@ public class ZipCommand extends AbstractNshBuiltin {
             } else if (cmdLine.next("-r") != null) {
                 options.r = true;
             } else if (cmdLine.peek().isOption()) {
-                throw new NutsExecutionException(context.getWorkspace(), "Not yet supported", 2);
+                cmdLine.unexpectedArgument();
             } else {
                 String path = cmdLine.required().nextNonOption(nutsCommandLineFormat.createName("file")).getString();
                 File file = new File(context.getGlobalContext().getAbsolutePath(path));
@@ -80,11 +80,11 @@ public class ZipCommand extends AbstractNshBuiltin {
                 }
             }
         }
-        if (outZip == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "Not yet supported", 2);
-        }
         if (files.isEmpty()) {
-            throw new NutsExecutionException(context.getWorkspace(), "Not yet supported", 2);
+            cmdLine.required("missing input-files");
+        }
+        if (outZip == null) {
+            cmdLine.required("missing out-zip");
         }
         try {
             ZipUtils.zip(outZip.getPath(), new ZipOptions(), files.toArray(new String[0]));

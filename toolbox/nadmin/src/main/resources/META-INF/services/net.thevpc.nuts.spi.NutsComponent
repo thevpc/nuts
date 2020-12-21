@@ -1,5 +1,4 @@
 net.thevpc.nuts.toolbox.nadmin.subcommands.ArchetypeNAdminSubCommand
-#net.thevpc.nuts.toolbox.nadmin.config.ExtensionNAdminSubCommand
 net.thevpc.nuts.toolbox.nadmin.subcommands.ImportNAdminSubCommand
 net.thevpc.nuts.toolbox.nadmin.subcommands.LogNAdminSubCommand
 net.thevpc.nuts.toolbox.nadmin.subcommands.RepositoryNAdminSubCommand
@@ -9,3 +8,4 @@ net.thevpc.nuts.toolbox.nadmin.subcommands.DeleteFoldersNAdminSubCommand
 net.thevpc.nuts.toolbox.nadmin.subcommands.IndexNAdminSubCommand
 net.thevpc.nuts.toolbox.nadmin.subcommands.ConnectNAdminSubCommand
 net.thevpc.nuts.toolbox.nadmin.subcommands.AliasNAdminSubCommand
+net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.NdiSubCommand

@@ -4,7 +4,7 @@ import net.thevpc.nuts.NutsArgumentCandidate;
 import net.thevpc.nuts.NutsCommandAutoCompleteProcessor;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.jshell.AutoCompleteCandidate;
+import net.thevpc.jshell.JShellAutoCompleteCandidate;
 import net.thevpc.common.strings.StringUtils;
 import org.jline.reader.Candidate;
 import org.jline.reader.Completer;
@@ -35,7 +35,7 @@ class NutsJLineCompleter implements Completer {
             List<NutsArgumentCandidate> nutsArgumentCandidates = autoCompleteResolver.resolveCandidates(commandline, line.wordIndex(),workspace);
             if(nutsArgumentCandidates!=null) {
                 for (Object cmdCandidate0 : nutsArgumentCandidates) {
-                    AutoCompleteCandidate cmdCandidate = (AutoCompleteCandidate) cmdCandidate0;
+                    JShellAutoCompleteCandidate cmdCandidate = (JShellAutoCompleteCandidate) cmdCandidate0;
                     if (cmdCandidate != null) {
                         String value = cmdCandidate.getValue();
                         if (!StringUtils.isBlank(value)) {

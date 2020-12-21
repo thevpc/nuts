@@ -70,7 +70,7 @@ public class NAdminMain extends NutsApplication {
         }
 
         List<String> args = new ArrayList<>();
-        args.addAll(Arrays.asList("install", "script", "--ignore-unsupported-os", "--embedded"));
+        args.addAll(Arrays.asList("add", "script", "--ignore-unsupported-os", "--embedded"));
         LinkedHashSet<String> companions = new LinkedHashSet<>();
         companions.add("net.thevpc.nuts:nuts");
         companions.add("net.thevpc.nuts.toolbox:nadmin");
@@ -104,7 +104,7 @@ public class NAdminMain extends NutsApplication {
         ws.config().save(applicationContext.getSession());
 
         List<String> args = new ArrayList<>();
-        args.addAll(Arrays.asList("install", "script", "--ignore-unsupported-os", "--embedded"));
+        args.addAll(Arrays.asList("add", "script", "--ignore-unsupported-os", "--embedded"));
         LinkedHashSet<String> companions = new LinkedHashSet<>();
         companions.add("net.thevpc.nuts:nuts");
         companions.add("net.thevpc.nuts.toolbox:nadmin");

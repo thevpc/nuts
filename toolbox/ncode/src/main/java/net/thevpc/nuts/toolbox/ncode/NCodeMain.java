@@ -22,7 +22,7 @@ import static net.thevpc.nuts.toolbox.ncode.SourceNavigator.navigate;
 /**
  * @author thevpc
  */
-public class Feenoo {
+public class NCodeMain {
 
     public static void main(String[] args) {
         StringComparator type = null;

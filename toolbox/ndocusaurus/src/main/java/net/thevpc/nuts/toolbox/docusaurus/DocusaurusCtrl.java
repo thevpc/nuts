@@ -7,25 +7,25 @@ package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.commons.filetemplate.*;
 import net.thevpc.commons.filetemplate.util.FileProcessorUtils;
+import net.thevpc.commons.filetemplate.util.StringUtils;
 import net.thevpc.commons.ljson.LJSON;
 import net.thevpc.commons.md.convert.Docusaurus2Asciidoctor;
 import net.thevpc.commons.md.docusaurus.DocusaurusFolder;
 import net.thevpc.commons.md.docusaurus.DocusaurusProject;
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsConfirmationMode;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsString;
+import net.thevpc.jshell.*;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.NutsJavaShell;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.function.Function;
+import java.util.logging.Level;
 
 /**
  * @author thevpc
@@ -84,7 +84,7 @@ public class DocusaurusCtrl {
         boolean genSidebarMenu=Boolean.parseBoolean(genSidebarMenuString);
         Path basePath = base;
         Path preProcessor = getPreProcessorBaseDir();
-        if (Files.isDirectory(preProcessor) && Files.isRegularFile(preProcessor.resolve(FileTemplater.PROJECT_FTEX_FILENAME))) {
+        if (Files.isDirectory(preProcessor) && Files.isRegularFile(preProcessor.resolve("project.nsh"))) {
 //            Files.walk(base).filter(x->Files.isDirectory(base))
             try {
                 Path docs = basePath.resolve("docs");
@@ -96,7 +96,10 @@ public class DocusaurusCtrl {
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
-            new FileTemplater()
+            TemplateConfig config = new TemplateConfig()
+                    .setProjectPath(preProcessor.toString())
+                    .setTargetFolder(getTargetBaseDir().toString());
+            new NFileTemplater(appContext)
                     .setWorkingDir(base.toString())
                     .setMimeTypeResolver(
                             new DefaultMimeTypeResolver()
@@ -106,9 +109,7 @@ public class DocusaurusCtrl {
                     .setDefaultProcessor(DocusaurusProject.DOCUSAURUS_FOLDER_CONFIG_MIMETYPE, new FolderConfigProcessor())
                     .setCustomVarEvaluator(new DocusaurusCustomVarEvaluator())
                     .processProject(
-                            new TemplateConfig()
-                                    .setProjectPath(preProcessor.toString())
-                                    .setTargetFolder(getTargetBaseDir().toString())
+                            config
                     );
         }
         if (genSidebarMenu) {
@@ -194,6 +195,7 @@ public class DocusaurusCtrl {
         }
         appContext.getWorkspace().exec().addCommand(cmd).setDirectory(workFolder.toString())
                 .setSession(s)
+                .setExecutionType(NutsExecutionType.EMBEDDED)
                 .setFailFast(true).getResult();
     }
 
@@ -330,4 +332,119 @@ public class DocusaurusCtrl {
             return "DocusaurusFolderConfig";
         }
     }
+
+
+    private static class NshEvaluator implements ExprEvaluator {
+        private NutsApplicationContext appContext;
+        private NutsJavaShell shell;
+        private FileTemplater fileTemplater;
+
+        public NshEvaluator(NutsApplicationContext appContext, FileTemplater fileTemplater) {
+            this.appContext = appContext;
+            this.fileTemplater = fileTemplater;
+            shell = new NutsJavaShell(appContext,new String[0]);
+            shell.setSession(shell.getSession().copy());
+            shell.getRootContext().vars().addVarListener(
+                    new JShellVarListener() {
+                        @Override
+                        public void varAdded(JShellVar jShellVar, JShellVariables vars, JShellContext context) {
+                            setVar(jShellVar.getName(), jShellVar.getValue());
+                        }
+
+                        @Override
+                        public void varValueUpdated(JShellVar jShellVar, String oldValue, JShellVariables vars, JShellContext context) {
+                            setVar(jShellVar.getName(), jShellVar.getValue());
+                        }
+
+                        @Override
+                        public void varRemoved(JShellVar jShellVar, JShellVariables vars, JShellContext context) {
+                            setVar(jShellVar.getName(), null);
+                        }
+                    }
+            );
+            shell.getRootContext()
+                    .builtins()
+                    .set(
+                            new AbstractNshBuiltin("process", 10) {
+                                @Override
+                                public void exec(String[] args, NshExecutionContext context) {
+                                    if (args.length != 1) {
+                                        throw new IllegalStateException(getName() + " : invalid arguments count");
+                                    }
+                                    String pathString = args[0];
+                                    fileTemplater.getLog().debug("eval", getName() + "(" + StringUtils.toLiteralString(pathString) + ")");
+                                    fileTemplater.executeRegularFile(Paths.get(pathString), null);
+                                }
+                            }
+                    );
+        }
+
+        public void setVar(String varName, String newValue) {
+            fileTemplater.getLog().debug("eval", varName + "=" + StringUtils.toLiteralString(newValue));
+            fileTemplater.setVar(varName, newValue);
+        }
+
+        @Override
+        public Object eval(String content, FileTemplater context) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            PrintStream out1 = new PrintStream(out);
+            shell.getSession().setTerminal(
+                    shell.getWorkspace().io().term()
+                            .createTerminal(
+                                    new ByteArrayInputStream(new byte[0]),
+                                    out1,
+                                    out1,
+                                    shell.getSession()
+                            )
+            );
+            JShellFileContext ctx = shell.createSourceFileContext(
+                    shell.getRootContext(),
+                    context.getSourcePath().orElseGet(()->"nsh"),new String[0]
+            );
+            shell.executeString(content,ctx);
+            out1.flush();
+            return out.toString();
+        }
+
+        @Override
+        public String toString() {
+            return "nsh";
+        }
+    }
+
+    private static class NFileTemplater extends FileTemplater {
+        public NFileTemplater(NutsApplicationContext appContext) {
+            this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(appContext, this));
+            setProjectFileName("project.nsh");
+            this.setLog(new TemplateLog() {
+                NutsLogger LOG;
+                @Override
+                public void info(String title, String message) {
+                    log().log(Level.FINE, "INFO",title+" : "+message);
+                }
+
+                @Override
+                public void debug(String title, String message) {
+                    log().log(Level.FINER, "DEBUG",title+" : "+message);
+                }
+
+                @Override
+                public void error(String title, String message) {
+                    log().log(Level.SEVERE, "FAIL",title+" : "+message);
+                }
+
+                private NutsLogger log() {
+                    if(LOG==null) {
+                        LOG = appContext.getWorkspace().log().of(DocusaurusCtrl.class);
+                    }
+                    return LOG;
+                }
+            });
+        }
+
+        public void executeProjectFile(Path path, String mimeTypesString) {
+            executeRegularFile(path,"text/ntemplate-nsh-project");
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh;
 
+import net.thevpc.jshell.JShellFileContext;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalMode;
 import net.thevpc.nuts.NutsWorkspace;
@@ -17,10 +18,12 @@ public class DefaultNshExecutionContext implements NshExecutionContext {
     private NutsShellContext shellContext;
     private NshBuiltin builtin;
     private NutsTerminalMode terminalMode = null;
+    private JShellFileContext fileContext = null;
 
-    public DefaultNshExecutionContext(NutsShellContext shellContext, NshBuiltin command) {
+    public DefaultNshExecutionContext(NutsShellContext shellContext, NshBuiltin command, JShellFileContext fileContext) {
         this.shellContext = shellContext;
         this.builtin = command;
+        this.fileContext = fileContext;
     }
 
     @Override
@@ -29,7 +32,12 @@ public class DefaultNshExecutionContext implements NshExecutionContext {
     }
 
     @Override
-    public NutsShellContext getGlobalContext() {
+    public JShellFileContext getGlobalContext() {
+        return fileContext;
+    }
+
+    @Override
+    public NutsShellContext getNutsShellContext() {
         return shellContext;
     }
 

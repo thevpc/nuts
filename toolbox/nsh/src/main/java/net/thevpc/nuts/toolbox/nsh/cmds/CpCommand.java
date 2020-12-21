@@ -42,6 +42,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +65,7 @@ public class CpCommand extends SimpleNshBuiltin {
     public static class Options {
 
         boolean mkdir;
+        boolean recursive;
         ShellHelper.WsSshListener sshlistener;
         List<String> files = new ArrayList<>();
         List<XFile> xfiles = new ArrayList<>();
@@ -76,12 +80,23 @@ public class CpCommand extends SimpleNshBuiltin {
     protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         NutsArgument a;
-        if ((a = commandLine.nextBoolean("--mkdir")) != null) {
-            options.mkdir = a.getBooleanValue();
-            return true;
-        } else if (commandLine.peek().isNonOption()) {
-            options.files.add(commandLine.next().getString());
-            return true;
+        switch (commandLine.peek().getStringKey()){
+            case "--mkdir":{
+                options.mkdir = commandLine.nextBoolean().getBooleanValue();
+                return true;
+            }
+            case "-r":
+            case "-R":
+            case "--recursive":{
+                options.recursive = commandLine.nextBoolean().getBooleanValue();
+                return true;
+            }
+            default:{
+                if(commandLine.peek().isNonOption()){
+                    options.files.add(commandLine.next().getString());
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -113,14 +128,20 @@ public class CpCommand extends SimpleNshBuiltin {
                 if (to1.isDirectory() || to.getPath().endsWith("/") || to.getPath().endsWith("\\")) {
                     to1 = new File(to1, from1.getName());
                 }
-            } else if (from1.isDirectory()) {
+            } else if (to1.isDirectory()) {
                 if (to.getPath().endsWith("/") || to.getPath().endsWith("\\")) {
                     to1 = new File(to1, from1.getName());
                 }
-
             }
             if (o.mkdir) {
                 FileUtils.createParents(to1);
+            }
+            if(from1.isDirectory()){
+                if(o.recursive) {
+                    copyFolder(from1, to1);
+                }else{
+                    copyFolder(from1, to1);
+                }
             }
             if (context.getSession().isPlainTrace()) {
                 context.out().printf("[[\\[CP\\]]] %s -> %s\n", from, to);
@@ -170,6 +191,24 @@ public class CpCommand extends SimpleNshBuiltin {
             }
         } else {
             throw new NutsIllegalArgumentException(context.getWorkspace(), "cp: Unsupported protocols " + from + "->" + to);
+        }
+    }
+
+    private void copyFolder(File from1, File to1) {
+        try {
+            Files.walk(from1.toPath())
+                    .forEach(source -> {
+                        Path destination = Paths.get(to1.getPath(), source.toString()
+                                .substring(to1.getPath().length()));
+                        FileUtils.createParents(destination.toFile());
+                        try {
+                            Files.copy(source, destination);
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    });
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 

@@ -27,10 +27,11 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import java.io.File;
+
+import net.thevpc.jshell.JShellFileContext;
 import net.thevpc.nuts.NutsExecutableInformation;
 import net.thevpc.jshell.JShellCommandType;
 import net.thevpc.jshell.JShellCommandTypeResolver;
-import net.thevpc.jshell.JShellContext;
 
 /**
  *
@@ -39,8 +40,8 @@ import net.thevpc.jshell.JShellContext;
 class NutsCommandTypeResolver implements JShellCommandTypeResolver {
 
     @Override
-    public JShellCommandType type(String item, JShellContext context) {
-        NutsShellContext ncontext=(NutsShellContext)context;
+    public JShellCommandType type(String item, JShellFileContext context) {
+        NutsShellContext ncontext=(NutsShellContext)(context.getShellContext());
         String a = context.aliases().get(item);
         if (a != null) {
             return new JShellCommandType(item, "shell alias", a, item + " is aliased to " + a);

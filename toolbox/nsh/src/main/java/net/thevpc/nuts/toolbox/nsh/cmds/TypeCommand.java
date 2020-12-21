@@ -106,7 +106,7 @@ public class TypeCommand extends SimpleNshBuiltin {
                             cmd + " is aliased to `" + alias + "`"
                     ));
                 } else {
-                    JShellCommandType pp = shell.getCommandTypeResolver().type(cmd, context.getRootContext());
+                    JShellCommandType pp = shell.getCommandTypeResolver().type(cmd, context.getGlobalContext());
                     if (pp != null) {
                         result.add(new ResultItem(
                                 cmd,

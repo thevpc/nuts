@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 
+import net.thevpc.jshell.JShellFileContext;
 import net.thevpc.nuts.*;
 
 /**
@@ -178,9 +179,14 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             return context.getGlobalContext().getCwd();
         }
 
-        public NutsShellContext getRootContext() {
+        public JShellFileContext getGlobalContext() {
             return context.getGlobalContext();
         }
+
+        public NutsShellContext getRootContext() {
+            return context.getNutsShellContext();
+        }
+
     }
 
     protected abstract Object createOptions();
@@ -198,7 +204,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         boolean conf = false;
         int maxLoops = 1000;
         boolean robustMode = false;
-        NutsCommandLine commandLine = context.getWorkspace().commandLine().create(args);
+        NutsCommandLine commandLine = context.getWorkspace().commandLine().create(args).setCommandName(getName());
         SimpleNshCommandContext context2 = new SimpleNshCommandContext(args, context, createOptions());
         while (commandLine.hasNext()) {
             if (robustMode) {
@@ -212,8 +218,8 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
                 }
                 String[] after = commandLine.toStringArray();
                 if (Arrays.equals(before, after)) {
-                    throw new IllegalStateException("Bad implementation of configureFirst in class " + getClass().getName() + "."
-                            + " Commandline is not consumed. Perhaps missing skip() class."
+                    throw new IllegalStateException("bad implementation of configureFirst in class " + getClass().getName() + "."
+                            + " Commandline is not consumed; perhaps missing skip() class."
                             + " args = " + Arrays.toString(after));
                 }
             } else {
