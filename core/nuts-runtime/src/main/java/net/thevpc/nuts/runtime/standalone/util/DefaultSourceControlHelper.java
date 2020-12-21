@@ -35,9 +35,9 @@ public class DefaultSourceControlHelper {
     //    @Override
     public NutsId commit(Path folder, NutsSession session) {
         session = NutsWorkspaceUtils.of(ws).validateSession(session);
-        ws.security().checkAllowed(NutsConstants.Permissions.DEPLOY, "commit");
+        ws.security().checkAllowed(NutsConstants.Permissions.DEPLOY, "commit", session);
         if (folder == null || !Files.isDirectory(folder)) {
-            throw new NutsIllegalArgumentException(ws, "Not a directory " + folder);
+            throw new NutsIllegalArgumentException(ws, "not a directory " + folder);
         }
 
         Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
@@ -75,7 +75,7 @@ public class DefaultSourceControlHelper {
     //    @Override
     public NutsDefinition checkout(NutsId id, Path folder, NutsSession session) {
         session = NutsWorkspaceUtils.of(ws).validateSession(session);
-        ws.security().checkAllowed(NutsConstants.Permissions.INSTALL, "checkout");
+        ws.security().checkAllowed(NutsConstants.Permissions.INSTALL, "checkout", session);
         NutsDefinition nutToInstall = ws.fetch().setId(id).setSession(session).setOptional(false).setDependencies(true).getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 

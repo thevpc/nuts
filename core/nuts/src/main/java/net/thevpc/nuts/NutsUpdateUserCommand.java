@@ -94,8 +94,6 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     String getUsername();
 
-    NutsUpdateUserCommand username(String login);
-
     NutsUpdateUserCommand setUsername(String login);
 
     boolean isResetPermissions();

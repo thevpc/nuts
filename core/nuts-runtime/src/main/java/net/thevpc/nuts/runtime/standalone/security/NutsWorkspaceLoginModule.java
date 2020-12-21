@@ -98,7 +98,7 @@ public class NutsWorkspaceLoginModule implements LoginModule {
                 return true;
             }
 
-            NutsUserConfig registeredUser = NutsWorkspaceConfigManagerExt.of(workspace.config()).getUser(name);
+            NutsUserConfig registeredUser = NutsWorkspaceConfigManagerExt.of(workspace.config()).getUser(name, workspace.createSession());
             if (registeredUser != null) {
                 try {
                     workspace.security().checkCredentials(registeredUser.getCredentials().toCharArray(),

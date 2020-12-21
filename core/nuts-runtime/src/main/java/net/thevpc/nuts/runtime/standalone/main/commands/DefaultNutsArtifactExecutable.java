@@ -77,8 +77,8 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
     public void execute() {
         Set<NutsInstallStatus> installStatus = def.getInstallInformation().getInstallStatus();
         if (autoInstall && !installStatus.contains(NutsInstallStatus.INSTALLED)) {
-            traceSession.getWorkspace().install().id(def.getId()).run();
-            Set<NutsInstallStatus> st = traceSession.getWorkspace().fetch().setId(def.getId()).getResultDefinition().getInstallInformation().getInstallStatus();
+            traceSession.getWorkspace().install().setSession(traceSession).id(def.getId()).run();
+            Set<NutsInstallStatus> st = traceSession.getWorkspace().fetch().setSession(traceSession).setId(def.getId()).getResultDefinition().getInstallInformation().getInstallStatus();
             if (!st.contains(NutsInstallStatus.INSTALLED)) {
                 return;
             }
@@ -92,7 +92,9 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
                     &&scope!=NutsDependencyScope.TEST_PROVIDED
                     &&scope!=NutsDependencyScope.TEST_RUNTIME;
             if(acceptedScope) {
-                Set<NutsInstallStatus> st = traceSession.getWorkspace().fetch().setOffline().setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
+                Set<NutsInstallStatus> st = traceSession.getWorkspace().fetch()
+                        .setSession(traceSession)
+                        .setOffline().setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
                 if (st.contains(NutsInstallStatus.OBSOLETE) || st.contains(NutsInstallStatus.NOT_INSTALLED)) {
                     reinstall.add(dependency);
                 }
@@ -119,7 +121,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
     @Override
     public void dryExecute() {
         if (autoInstall && !def.getInstallInformation().getInstallStatus().contains(NutsInstallStatus.INSTALLED)) {
-            execSession.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
+            execSession.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName, execSession);
             PrintStream out = execSession.out();
             out.printf("[dry] ==install== %s%n", def.getId().getLongName());
         }

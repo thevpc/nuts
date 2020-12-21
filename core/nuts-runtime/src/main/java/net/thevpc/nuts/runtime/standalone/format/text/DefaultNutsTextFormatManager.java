@@ -25,6 +25,7 @@ public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
         nodesFactory=new DefaultNutsTextNodeFactory(ws);
     }
 
+
     @Override
     public NutsTextNodeFactory factory() {
         return nodesFactory;
@@ -192,6 +193,7 @@ public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
     }
 
     /**
+     * @param session session
      * @param style style
      * @param locale locale
      * @param format format
@@ -199,20 +201,20 @@ public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
      * @return formatted text
      */
     @Override
-    public String formatText(NutsTextFormatStyle style, Locale locale, String format, Object... args) {
+    public String formatText(NutsSession session,NutsTextFormatStyle style, Locale locale, String format, Object... args) {
         if (style == NutsTextFormatStyle.CSTYLE) {
-            return FormattedPrintStreamUtils.formatCStyle(ws,locale, format, args);
+            return FormattedPrintStreamUtils.formatCStyle(session,locale, format, args);
         } else {
-            return FormattedPrintStreamUtils.formatPositionalStyle(ws,locale, format, args);
+            return FormattedPrintStreamUtils.formatPositionalStyle(session,locale, format, args);
         }
     }
 
     @Override
-    public String formatText(NutsTextFormatStyle style, String format, Object... args) {
+    public String formatText(NutsSession session,NutsTextFormatStyle style, String format, Object... args) {
         if (style == NutsTextFormatStyle.CSTYLE) {
-            return FormattedPrintStreamUtils.formatCStyle(ws,Locale.getDefault(), format, args);
+            return FormattedPrintStreamUtils.formatCStyle(session,Locale.getDefault(), format, args);
         } else {
-            return FormattedPrintStreamUtils.formatPositionalStyle(ws,Locale.getDefault(), format, args);
+            return FormattedPrintStreamUtils.formatPositionalStyle(session,Locale.getDefault(), format, args);
         }
     }
 

@@ -9,7 +9,6 @@
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
  * <br>
  *
  * Copyright [2020] [thevpc]
@@ -27,61 +26,22 @@
 package net.thevpc.nuts;
 
 /**
- * Remove User Command
+ * classes that implement this class will have their method {@link #setSession(NutsSession)}
+ * called upon its creation (by factory) with a non {@code null} argument to <strong>initialize</strong>.
+ * They <strong>may</strong> accept a call with a {@code null}
+ * argument later to <strong>dispose</strong> the instance.
  * @author thevpc
- * %category Security
+ * %category SPI Base
  */
-public interface NutsRemoveUserCommand extends NutsWorkspaceCommand {
+public interface NutsSessionAware {
 
     /**
-     * username of user to remove
-     * @return user name
+     * initialize or dispose the instance.
+     * when session is not null, the instance should initialize it values
+     * accordingly.
+     * when session is null, the instance should dispose resources.
+     * @param session session reference or null
      */
-    String getUsername();
+    void setSession(NutsSession session);
 
-
-    /**
-     * set username of user to remove
-     * @param username user name
-     * @return {@code this} instance
-     */
-    NutsRemoveUserCommand setUsername(String username);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NutsRemoveUserCommand copySession();
-
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NutsRemoveUserCommand setSession(NutsSession session);
-
-    /**
-     * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
-     * to help return a more specific return type;
-     *
-     * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
-     * @return {@code this} instance
-     */
-    @Override
-    NutsRemoveUserCommand configure(boolean skipUnsupported, String... args);
-
-    /**
-     * execute the command and return this instance
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NutsRemoveUserCommand run();
 }

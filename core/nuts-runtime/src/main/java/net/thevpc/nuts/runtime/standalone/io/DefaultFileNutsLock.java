@@ -136,7 +136,7 @@ public class DefaultFileNutsLock implements NutsLock {
     @Override
     public synchronized boolean tryLock(long time, TimeUnit unit) {
         if (unit == null) {
-            throw new NutsIllegalArgumentException(ws, "Missing unit");
+            throw new NutsIllegalArgumentException(ws, "missing unit");
         }
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(time, unit);
@@ -158,7 +158,7 @@ public class DefaultFileNutsLock implements NutsLock {
 
     public synchronized boolean tryLockInterruptibly(long time, TimeUnit unit) throws InterruptedException {
         if (unit == null) {
-            throw new NutsIllegalArgumentException(ws, "Missing unit");
+            throw new NutsIllegalArgumentException(ws, "missing unit");
         }
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(time, unit);

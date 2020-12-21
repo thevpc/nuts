@@ -49,7 +49,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                                                 .setType(repoType))
                 );
                 if (repository == null) {
-                    throw new NutsIllegalArgumentException(context.getWorkspace(), "Unable to configure repository : " + repositoryName);
+                    throw new NutsIllegalArgumentException(context.getWorkspace(), "unable to configure repository : " + repositoryName);
                 }
                 trySave(context, ws, repository, autoSave, null);
             }

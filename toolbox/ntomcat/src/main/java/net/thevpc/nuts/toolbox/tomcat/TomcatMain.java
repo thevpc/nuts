@@ -15,7 +15,7 @@ public class TomcatMain extends NutsApplication {
     public void run(NutsApplicationContext appContext) {
         NutsRepository apacheRepo = appContext.getWorkspace().repos().findRepository("apache-tomcat", appContext.getSession());
         if(apacheRepo==null){
-            appContext.getWorkspace().repos().addRepository(new ApacheTomcatRepositoryModel(), appContext.getSession());
+            appContext.getWorkspace().repos().addRepository(new ApacheTomcatRepositoryModel(), new NutsAddOptions().setSession(appContext.getSession()));
         }
         NutsCommandLine cmdLine = appContext.getCommandLine();
         Boolean local = null;

@@ -262,7 +262,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                     Files.move(tempPath, path, StandardCopyOption.REPLACE_EXISTING);
                 }
             } else {
-                throw new NutsIllegalArgumentException(iom.getWorkspace(), "Unsupported target " + target);
+                throw new NutsIllegalArgumentException(iom.getWorkspace(), "unsupported target " + target);
             }
         } catch (IOException ex) {
             LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log( "error compressing {0} to {1} : {2}", sources, target.getSource(), CoreStringUtils.exceptionToString(ex));

@@ -313,7 +313,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
             if (Files.isDirectory(_source.getPath())) {
                 // this is a directory!!!
                 if (!target.isPath()) {
-                    throw new NutsIllegalArgumentException(this.iom.getWorkspace(), "Unsupported copy of directory to " + target);
+                    throw new NutsIllegalArgumentException(this.iom.getWorkspace(), "unsupported copy of directory to " + target);
                 }
                 Path toPath = target.getPath();
                 CopyData cd = new CopyData();
@@ -533,7 +533,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
         NutsInput _source = source;
         boolean _target_isPath = target.isPath();
         if (checker != null && !_target_isPath && !safe) {
-            throw new NutsIllegalArgumentException(this.iom.getWorkspace(), "Unsupported validation if neither safeCopy is armed nor path is defined");
+            throw new NutsIllegalArgumentException(this.iom.getWorkspace(), "unsupported validation if neither safeCopy is armed nor path is defined");
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
             _source = iom.monitor().source(_source).setSession(session)

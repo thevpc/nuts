@@ -187,7 +187,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         return new DefaultNutsSearch(
                 goodIds.toArray(new String[0]),
                 _repositoryFilter,
-                _idFilter, _descriptorFilter, getSession());
+                _idFilter, _descriptorFilter, getValidWorkspaceSession());
     }
 
 
@@ -311,7 +311,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
     }
 
     private NutsId[] findDependencies(List<NutsId> ids) {
-        NutsSession _session = this.getSession() == null ? ws.createSession() : this.getSession();
+        NutsSession _session = this.getValidWorkspaceSession();
         NutsDependencyFilter _dependencyFilter = ws.dependency().filter().byScope(getScope())
                 .and(ws.dependency().filter().byOptional(getOptional()))
                 .and(getDependencyFilter());

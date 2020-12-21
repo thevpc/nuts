@@ -193,7 +193,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
 
     protected void checkSession(NutsSession session) {
         if (session == null) {
-            throw new NutsIllegalArgumentException(workspace, "Missing Session");
+            throw new NutsIllegalArgumentException(workspace, "missing session");
         }
     }
 }

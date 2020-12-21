@@ -286,7 +286,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             }
             return ret.iterator();
         } else {
-            throw new NutsIllegalArgumentException(getWorkspace(), "Expected single version in " + id);
+            throw new NutsIllegalArgumentException(getWorkspace(), "expected single version in " + id);
         }
     }
 

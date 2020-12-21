@@ -49,7 +49,9 @@ public class NshEvaluator extends DefaultJShellEvaluator implements JShellEvalua
         NutsShellContext ncontext = (NutsShellContext) (context.getShellContext());
         try {
             out = new PipedOutputStream();
-            nout = ncontext.getWorkspace().io().createPrintStream(out, NutsTerminalMode.FORMATTED);
+            nout = ncontext.getWorkspace().io().createPrintStream(out, NutsTerminalMode.FORMATTED,
+                    ((NutsShellContext)context.getShellContext()).getSession()
+                    );
             in = new PipedInputStream(out, 1024);
             in2 = (in instanceof JavaShellNonBlockingInputStream) ? (JavaShellNonBlockingInputStream) in : new JavaShellNonBlockingInputStreamAdapter("jpipe-" + right.toString(), in);
         } catch (IOException ex) {

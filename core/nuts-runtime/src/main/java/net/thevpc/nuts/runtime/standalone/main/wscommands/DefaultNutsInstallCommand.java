@@ -154,10 +154,10 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
     @Override
     public NutsInstallCommand run() {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        NutsSession session = getSession();
+        NutsSession session = getValidWorkspaceSession();
         NutsSession searchSession = CoreNutsUtils.silent(session);
         PrintStream out = CoreIOUtils.resolveOut(session);
-        ws.security().checkAllowed(NutsConstants.Permissions.INSTALL, "install");
+        ws.security().checkAllowed(NutsConstants.Permissions.INSTALL, "install", session);
 //        LinkedHashMap<NutsId, Boolean> allToInstall = new LinkedHashMap<>();
         InstallIdList list = new InstallIdList(NutsInstallStrategy.INSTALL);
         for (Map.Entry<NutsId, NutsInstallStrategy> idAndStrategy : this.getIdMap().entrySet()) {
@@ -363,7 +363,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             throw new NutsInstallException(getWorkspace(), "", sb.toString().trim(), null);
         }
 
-        if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NutsConfirmationMode.ASK)) {
+        if (getValidWorkspaceSession().isPlainTrace() || (!list.emptyCommand && getValidWorkspaceSession().getConfirm() == NutsConfirmationMode.ASK)) {
             printList(out, "###new###", "##installed##", list.ids(x -> x.doInstall && !x.isAlreadyExists()));
             printList(out, "###new###", "##required##", list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists()));
             printList(out, "###required###", "##re-required##", list.ids(x -> (!x.doInstall && x.doRequire) && x.isAlreadyRequired()));

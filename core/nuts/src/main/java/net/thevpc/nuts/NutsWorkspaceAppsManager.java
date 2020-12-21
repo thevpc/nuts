@@ -35,9 +35,10 @@ public interface NutsWorkspaceAppsManager {
      * @param appClass        application class
      * @param storeId         application store id or null
      * @param startTimeMillis application start time
+     * @param session session
      * @return new instance of {@link NutsApplicationContext}
      */
-    NutsApplicationContext createApplicationContext(String[] args, Class appClass, String storeId, long startTimeMillis);
+    NutsApplicationContext createApplicationContext(String[] args, Class appClass, String storeId, long startTimeMillis, NutsSession session);
 
     NutsExecutionEntryManager execEntries();
 }

@@ -11,6 +11,7 @@ import java.util.Objects;
 
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
@@ -44,7 +45,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 //                startTimeMillis
 //        );
 //    }
-    public DefaultNutsApplicationContext(NutsWorkspace workspace, String[] args, Class appClass, String storeId, long startTimeMillis) {
+    public DefaultNutsApplicationContext(NutsWorkspace workspace, NutsSession session,String[] args, Class appClass, String storeId, long startTimeMillis) {
         this.startTimeMillis = startTimeMillis <= 0 ? System.currentTimeMillis() : startTimeMillis;
         int wordIndex = -1;
         if (args.length > 0 && args[0].startsWith("--nuts-exec-mode=")) {
@@ -102,7 +103,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         this.args = (args);
         this.appId = (_appId);
         this.appClass = appClass;
-        this.session = (workspace.createSession());
+        this.session = NutsWorkspaceUtils.of(workspace).validateSession(session);
         NutsWorkspaceConfigManager cfg = workspace.config();
         for (NutsStoreLocation folder : NutsStoreLocation.values()) {
             setFolder(folder, workspace.locations().getStoreLocation(this.appId, folder));
@@ -113,7 +114,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             if (wordIndex < 0) {
                 wordIndex = args.length;
             }
-            autoComplete = new AppCommandAutoComplete(session, args, wordIndex, getSession().out());
+            autoComplete = new AppCommandAutoComplete(this.session, args, wordIndex, getSession().out());
         } else {
             autoComplete = null;
         }

@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.format.text;
 
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsSessionAware;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.NutsWorkspaceAware;
 import net.thevpc.nuts.runtime.standalone.format.text.util.FormattedPrintStreamUtils;
@@ -8,10 +10,11 @@ import net.thevpc.nuts.runtime.standalone.io.NutsTerminalModeOp;
 import java.io.*;
 import java.util.Locale;
 
-public class PrintStreamExt extends PrintStream implements ExtendedFormatAware, NutsWorkspaceAware {
+public class PrintStreamExt extends PrintStream implements ExtendedFormatAware, NutsWorkspaceAware, NutsSessionAware {
     private OutputStream out;
     private boolean autoFlash2;
     private NutsWorkspace ws;
+    private NutsSession session;
 
     public PrintStreamExt(OutputStream out) {
         super(out);
@@ -50,6 +53,10 @@ public class PrintStreamExt extends PrintStream implements ExtendedFormatAware, 
         this(new FileOutputStream(file), false, csn);
         this.autoFlash2 = false;
     }
+    @Override
+    public void setSession(NutsSession session) {
+        this.session=session;
+    }
 
     public boolean isAutoFlash() {
         return autoFlash2;
@@ -86,13 +93,13 @@ public class PrintStreamExt extends PrintStream implements ExtendedFormatAware, 
 
     @Override
     public PrintStreamExt format(Locale l, String format, Object... args) {
-        print(FormattedPrintStreamUtils.formatCStyle(ws,l, format, args));
+        print(FormattedPrintStreamUtils.formatCStyle(session,l, format, args));
         return this;
     }
 
     @Override
     public PrintStream format(String format, Object... args) {
-        print(FormattedPrintStreamUtils.formatCStyle(ws,Locale.getDefault(), format, args));
+        print(FormattedPrintStreamUtils.formatCStyle(session,Locale.getDefault(), format, args));
         return this;
     }
 

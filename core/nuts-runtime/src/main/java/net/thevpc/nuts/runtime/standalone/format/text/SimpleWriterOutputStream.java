@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.format.text;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.io.NutsTerminalModeOp;
 
@@ -25,42 +26,44 @@ public class SimpleWriterOutputStream extends OutputStream implements ExtendedFo
     private final ByteBuffer decoderIn = ByteBuffer.allocate(128);
     private final CharBuffer decoderOut;
     private final NutsWorkspace ws;
-    public SimpleWriterOutputStream(Writer writer, CharsetDecoder decoder,NutsWorkspace ws) {
-        this(writer, decoder, DEFAULT_BUFFER_SIZE, false,ws);
+    private final NutsSession session;
+    public SimpleWriterOutputStream(Writer writer, CharsetDecoder decoder,NutsSession session) {
+        this(writer, decoder, DEFAULT_BUFFER_SIZE, false,session);
     }
 
-    public SimpleWriterOutputStream(Writer writer, CharsetDecoder decoder, int bufferSize, boolean writeImmediately,NutsWorkspace ws) {
-        this.ws = ws;
+    public SimpleWriterOutputStream(Writer writer, CharsetDecoder decoder, int bufferSize, boolean writeImmediately,NutsSession session) {
+        this.session = session;
+        this.ws = session.getWorkspace();
         this.writer = writer;
         this.decoder = decoder;
         this.writeImmediately = writeImmediately;
         decoderOut = CharBuffer.allocate(bufferSize);
     }
 
-    public SimpleWriterOutputStream(Writer writer, Charset charset, int bufferSize, boolean writeImmediately,NutsWorkspace ws) {
+    public SimpleWriterOutputStream(Writer writer, Charset charset, int bufferSize, boolean writeImmediately,NutsSession session) {
         this(writer,
                 charset.newDecoder()
                         .onMalformedInput(CodingErrorAction.REPLACE)
                         .onUnmappableCharacter(CodingErrorAction.REPLACE)
                         .replaceWith("?"),
                 bufferSize,
-                writeImmediately,ws);
+                writeImmediately,session);
     }
 
-    public SimpleWriterOutputStream(Writer writer, Charset charset,NutsWorkspace ws) {
-        this(writer, charset, DEFAULT_BUFFER_SIZE, false,ws);
+    public SimpleWriterOutputStream(Writer writer, Charset charset,NutsSession session) {
+        this(writer, charset, DEFAULT_BUFFER_SIZE, false,session);
     }
 
-    public SimpleWriterOutputStream(Writer writer, String charsetName, int bufferSize, boolean writeImmediately,NutsWorkspace ws) {
-        this(writer, Charset.forName(charsetName), bufferSize, writeImmediately,ws);
+    public SimpleWriterOutputStream(Writer writer, String charsetName, int bufferSize, boolean writeImmediately,NutsSession session) {
+        this(writer, Charset.forName(charsetName), bufferSize, writeImmediately,session);
     }
 
-    public SimpleWriterOutputStream(Writer writer, String charsetName,NutsWorkspace ws) {
-        this(writer, charsetName, DEFAULT_BUFFER_SIZE, false,ws);
+    public SimpleWriterOutputStream(Writer writer, String charsetName,NutsSession session) {
+        this(writer, charsetName, DEFAULT_BUFFER_SIZE, false,session);
     }
 
-    public SimpleWriterOutputStream(Writer writer,NutsWorkspace ws) {
-        this(writer, Charset.defaultCharset(), DEFAULT_BUFFER_SIZE, false,ws);
+    public SimpleWriterOutputStream(Writer writer,NutsSession session) {
+        this(writer, Charset.defaultCharset(), DEFAULT_BUFFER_SIZE, false,session);
     }
 
     @Override

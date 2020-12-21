@@ -877,7 +877,7 @@ final class CoreNutsArgumentsParser {
                         cmdLine.skip();
                         if (enabled) {
                             if (!a.getArgumentValue().isNull()) {
-                                throw new NutsIllegalArgumentException(null, "Invalid argument for workspace : " + a.getString());
+                                throw new NutsIllegalArgumentException(null, "invalid argument for workspace: " + a.getString());
                             }
                             applicationArguments.add(NutsConstants.Ids.NUTS_SHELL);
                             if (!cmdLine.isEmpty()) {

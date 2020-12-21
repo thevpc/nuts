@@ -333,7 +333,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 if (CoreStringUtils.isBlank(password)) {
                     password = io().term().getTerminal().readPassword("Password : ");
                 }
-                this.security().login(uoptions.getUserName(), password);
+                this.security().login(uoptions.getUserName(), password, session);
             }
             LOG.with().level(Level.FINE).verb(NutsLogVerb.SUCCESS)
                     .formatted().log("```sh nuts``` workspace loaded in ```error {0}```",
@@ -543,7 +543,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
         //has all rights (by default)
         //no right nor group is needed for admin user
-        security().updateUser(NutsConstants.Users.ADMIN).setCredentials("admin".toCharArray()).run();
+        security().updateUser(NutsConstants.Users.ADMIN, session).setCredentials("admin".toCharArray()).run();
 
         instance.initialize(session);
 
@@ -565,7 +565,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         def.getContent();
         def.getEffectiveDescriptor();
         if (def.getInstallInformation() == null) {
-            throw new NutsIllegalArgumentException(this, "Missing Install Information");
+            throw new NutsIllegalArgumentException(this, "missing Install Information");
         }
         boolean reinstall = false;
         if (session.isPlainTrace()) {
@@ -638,6 +638,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsInstalledRepository installedRepository = getInstalledRepository();
         if (def.getPath() != null) {
             NutsExecutionContextBuilder cc = createExecutionContext()
+                    .setTraceSession(traceSession)
+                    .setExecSession(session)
                     .setDefinition(def).setArguments(args).setFailFast(true).setTemporary(false)
                     .setExecutionType(config().options().getExecutionType());
             NutsArtifactCall installer = def.getDescriptor().getInstaller();
@@ -669,6 +671,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                             NutsDefinition dd = search().addId(dependency.toId()).setContent(true).setLatest(true)
                                     //.setDependencies(true)
                                     .setEffective(true)
+                                    .setSession(traceSession)
                                     .getResultDefinitions().first();
                             if (dd != null) {
                                 installedRepositorySPI.deploy()
@@ -884,12 +887,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     session.setTerminal(sessionCopy.getTerminal());
                 }
             }
-            NutsUserConfig adminSecurity = NutsWorkspaceConfigManagerExt.of(config()).getUser(NutsConstants.Users.ADMIN);
+            NutsUserConfig adminSecurity = NutsWorkspaceConfigManagerExt.of(config()).getUser(NutsConstants.Users.ADMIN, session);
             if (adminSecurity == null || CoreStringUtils.isBlank(adminSecurity.getCredentials())) {
                 if (LOG.isLoggable(Level.CONFIG)) {
                     LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log(NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
                 }
-                security().updateUser(NutsConstants.Users.ADMIN).credentials("admin".toCharArray()).setSession(session).run();
+                security().updateUser(NutsConstants.Users.ADMIN, session).credentials("admin".toCharArray()).setSession(session).run();
             }
             for (NutsCommandAliasFactoryConfig commandFactory : aliases().getFactories(session)) {
                 try {

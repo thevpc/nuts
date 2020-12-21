@@ -589,7 +589,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsFetchCommand toFetch() {
         NutsFetchCommand t = new DefaultNutsFetchCommand(ws).copyFromDefaultNutsQueryBaseOptions(this)
-                .setSession(evalSession(true));
+                .setSession(getValidWorkspaceSession());
         if (getDisplayOptions().isRequireDefinition()) {
             t.setContent(true);
         }
@@ -681,25 +681,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     public String getExecType() {
         return execType;
-    }
-
-    private NutsSession evalSession(boolean create) {
-        NutsSession s = getSession();
-        if (create) {
-            if (s == null) {
-                s = ws.createSession();
-            }
-        }
-        return s;
-//        if (mode != null) {
-//            if (s == null) {
-//                s = ws.createSession();
-//            }
-//            s.setFetchMode(mode);
-//            return s;
-//        } else {
-//            return s;
-//        }
     }
 
     @Override
@@ -903,7 +884,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 if (enabled) {
                     String sv = aa.getStringValue();
                     if (sv == null || sv.isEmpty()) {
-                        throw new NutsIllegalArgumentException(getWorkspace(), "Invalid status");
+                        throw new NutsIllegalArgumentException(getWorkspace(), "invalid status");
                     }
                     List<NutsInstallStatus> ss = new ArrayList<>();
                     for (String s : sv.split("[&+]")) {
@@ -1285,7 +1266,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     protected NutsSession getSearchSession() {
-        return getSession();
+        return getValidWorkspaceSession();
     }
 
 
@@ -1331,8 +1312,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         @Override
         public Iterator<NutsDefinition> iterator() {
             Iterator<NutsId> base = getResultIdsBase(false, sort).iterator();
-            NutsFetchCommand fetch = toFetch().setContent(content).setEffective(effective);
-            NutsFetchCommand ofetch = toFetch().setContent(content).setEffective(effective).copySession().setOffline();
+            NutsFetchCommand fetch = toFetch().setContent(content).setEffective(effective).setSession(getValidWorkspaceSession());
+            NutsFetchCommand ofetch = toFetch().setContent(content).setEffective(effective).copySession().setOffline().setSession(getValidWorkspaceSession());
             fetch.getSession().setTrace(false);
             final boolean hasRemote = fetch.getFetchStrategy() == null || Arrays.stream(fetch.getFetchStrategy().modes()).anyMatch(x -> x == NutsFetchMode.REMOTE);
             Iterator<NutsDefinition> ii = new NamedIterator<NutsDefinition>("Id->Definition") {

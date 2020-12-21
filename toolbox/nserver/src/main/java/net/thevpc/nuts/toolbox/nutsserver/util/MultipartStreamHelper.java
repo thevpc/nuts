@@ -60,7 +60,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                 return s.substring("boundary=".length()).getBytes();
             }
         }
-        throw new NutsIllegalArgumentException(null, "Invalid boundary");
+        throw new NutsIllegalArgumentException(null, "invalid boundary");
     }
 
     public Iterator<ItemStreamInfo> iterator() {

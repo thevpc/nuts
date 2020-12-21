@@ -31,11 +31,6 @@ public abstract class AbstractNutsRemoveUserCommand extends NutsWorkspaceCommand
     }
 
     @Override
-    public NutsRemoveUserCommand username(String username) {
-        return setUsername(username);
-    }
-
-    @Override
     public NutsRemoveUserCommand setUsername(String username) {
         this.login = username;
         return this;

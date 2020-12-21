@@ -216,7 +216,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     @Override
     public <T> void registerInstance(Class<T> extensionPoint, T implementation) {
         if (isRegisteredInstance(extensionPoint, implementation)) {
-            throw new NutsIllegalArgumentException(workspace, "Already Registered Extension " + implementation + " for " + extensionPoint.getName());
+            throw new NutsIllegalArgumentException(workspace, "already registered Extension " + implementation + " for " + extensionPoint.getName());
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
@@ -248,7 +248,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     @Override
     public void registerType(Class extensionPoint, Class implementation, NutsId source) {
         if (isRegisteredType(extensionPoint, implementation.getName())) {
-            throw new NutsIllegalArgumentException(workspace, "Already Registered Extension " + implementation.getName() + " for " + extensionPoint.getName());
+            throw new NutsIllegalArgumentException(workspace, "already registered Extension " + implementation.getName() + " for " + extensionPoint.getName());
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
@@ -407,7 +407,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
         if (singleton) {
             if (argTypes.length > 0) {
-                throw new NutsIllegalArgumentException(workspace, "Singletons should have no arg types");
+                throw new NutsIllegalArgumentException(workspace, "singletons should have no arg types");
             }
             Object o = singletons.get(type);
             if (o == null) {

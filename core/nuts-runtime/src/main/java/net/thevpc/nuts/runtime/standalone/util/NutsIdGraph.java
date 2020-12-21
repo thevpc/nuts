@@ -580,7 +580,7 @@ public class NutsIdGraph {
 
         public NutsIdNode(NutsId id, List<Integer> path, NutsDependencyFilter dependencyFilter, NutsSession session, boolean optional) {
             if (!CoreNutsUtils.isEffectiveId(id)) {
-                throw new NutsIllegalArgumentException(null, id + " is a Non effective Id");
+                throw new NutsIllegalArgumentException(null, id + " is a non effective Id");
             }
             this.id0 = id;
             this.id = cleanup(id0);
@@ -593,7 +593,7 @@ public class NutsIdGraph {
 
         public NutsIdNode(NutsId id, List<Integer> parentPath, int order, NutsId parent, NutsDependencyFilter dependencyFilter, NutsSession session, boolean optional) {
             if (!CoreNutsUtils.isEffectiveId(id)) {
-                throw new NutsIllegalArgumentException(null, id + " is a Non effective Id");
+                throw new NutsIllegalArgumentException(null, id + " is a non effective Id");
             }
             this.id0 = id;
             this.id = cleanup(id0);

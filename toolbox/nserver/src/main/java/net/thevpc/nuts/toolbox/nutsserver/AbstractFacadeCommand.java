@@ -32,6 +32,7 @@ import javax.security.auth.login.LoginException;
 import java.io.IOException;
 
 import net.thevpc.common.util.ListValueMap;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspaceSecurityManager;
 
 /**
@@ -57,17 +58,18 @@ public abstract class AbstractFacadeCommand implements FacadeCommand {
         String userPasswordS = parameters.getFirst("up");
         char[] userPassword = userPasswordS == null ? null : userPasswordS.toCharArray();
         NutsWorkspaceSecurityManager secu = context.getWorkspace().security();
-        userLogin = userLogin == null ? null :new String(secu.getCredentials(userLogin.toCharArray(), context.getSession()));
-        userPassword = userPassword==null?null:secu.getCredentials(userPassword, context.getSession());
+        NutsSession session = context.getSession();
+        userLogin = userLogin == null ? null :new String(secu.getCredentials(userLogin.toCharArray(), session));
+        userPassword = userPassword==null?null:secu.getCredentials(userPassword, session);
         if (!StringUtils.isBlank(userLogin)) {
             boolean loggedId = false;
             try {
-                context.getWorkspace().security().login(userLogin, userPassword);
+                context.getWorkspace().security().login(userLogin, userPassword, session);
                 loggedId = true;
                 executeImpl(context);
             } finally {
                 if (loggedId) {
-                    context.getWorkspace().security().logout();
+                    context.getWorkspace().security().logout(session);
                 }
             }
         } else {

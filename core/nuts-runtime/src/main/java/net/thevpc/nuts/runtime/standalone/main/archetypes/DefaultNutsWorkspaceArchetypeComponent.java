@@ -57,7 +57,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         LinkedHashSet<String> br = new LinkedHashSet<>(rm.resolveBootRepositories());
         LinkedHashMap<String, NutsRepositoryDefinition> def = new LinkedHashMap<>();
         for (NutsRepositoryDefinition d : rm.getDefaultRepositories(session)) {
-            def.put(ws.io().expandPath(d.getLocation(),null), d);
+            def.put(ws.io().expandPath(d.getLocation(),null), d.setSession(session));
         }
         for (String s : br) {
             String sloc = ws.io().expandPath(CoreNutsUtils.repositoryStringToDefinition(s).getLocation(),null);
@@ -76,13 +76,13 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
                 "net.thevpc"
         }, new NutsAddOptions().setSession(session));
 
-        ws.security().updateUser(NutsConstants.Users.ANONYMOUS)
+        ws.security().updateUser(NutsConstants.Users.ANONYMOUS, session)
                 .resetPermissions()
                 //.addRights(NutsConstants.Rights.FETCH_DESC, NutsConstants.Rights.FETCH_CONTENT)
                 .run();
 
         //has read rights
-        ws.security().addUser("user").setCredentials("user".toCharArray()).addPermissions(
+        ws.security().addUser("user", session).setCredentials("user".toCharArray()).addPermissions(
                 NutsConstants.Permissions.FETCH_DESC,
                 NutsConstants.Permissions.FETCH_CONTENT,
                 NutsConstants.Permissions.DEPLOY,

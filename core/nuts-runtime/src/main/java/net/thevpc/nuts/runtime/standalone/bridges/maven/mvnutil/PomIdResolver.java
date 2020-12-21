@@ -224,7 +224,7 @@ public class PomIdResolver {
             return null;
         }
         if (v.length >= 2) {
-            throw new NutsIllegalArgumentException(null, "Too many Ids");
+            throw new NutsIllegalArgumentException(null, "too many Ids");
         }
         return v[0];
     }

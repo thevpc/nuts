@@ -114,7 +114,7 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
             return getResultListJava("");
         } else {
             if (isFailFast()) {
-                throw new NutsIllegalArgumentException(ws, "Unsupported list processes of type : " + processType);
+                throw new NutsIllegalArgumentException(ws, "unsupported list processes of type : " + processType);
             }
             return new NutsCollectionResult<>(ws, "process-" + processType, Collections.emptyList());
         }

@@ -1005,25 +1005,25 @@ final class PrivateNutsUtils {
                                     }
                                 }
                                 if (isBlank(groupId)) {
-                                    throw new NutsIllegalArgumentException(null, "Unexpected empty groupId");
+                                    throw new NutsIllegalArgumentException(null, "unexpected empty groupId");
                                 } else if (groupId.contains("$")) {
-                                    throw new NutsIllegalArgumentException(null, "Unexpected maven variable in groupId=" + groupId);
+                                    throw new NutsIllegalArgumentException(null, "unexpected maven variable in groupId=" + groupId);
                                 }
                                 if (isBlank(artifactId)) {
-                                    throw new NutsIllegalArgumentException(null, "Unexpected empty artifactId");
+                                    throw new NutsIllegalArgumentException(null, "unexpected empty artifactId");
                                 } else if (artifactId.contains("$")) {
-                                    throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + artifactId);
+                                    throw new NutsIllegalArgumentException(null, "unexpected maven variable in artifactId=" + artifactId);
                                 }
                                 if (isBlank(version)) {
-                                    throw new NutsIllegalArgumentException(null, "Unexpected empty artifactId");
+                                    throw new NutsIllegalArgumentException(null, "unexpected empty artifactId");
                                 } else if (version.contains("$")) {
-                                    throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + version);
+                                    throw new NutsIllegalArgumentException(null, "unexpected maven variable in artifactId=" + version);
                                 }
                                 //this is maven dependency, using "compile"
                                 if (isBlank(scope) || scope.equals("compile")) {
                                     depsAndRepos.deps.add(groupId + ":" + artifactId + "#" + version);
                                 } else if (version.contains("$")) {
-                                    throw new NutsIllegalArgumentException(null, "Unexpected maven variable in artifactId=" + version);
+                                    throw new NutsIllegalArgumentException(null, "unexpected maven variable in artifactId=" + version);
                                 }
                             }
                         }

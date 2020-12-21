@@ -34,9 +34,9 @@ public class FormattedPrintStreamUtils {
         }
         return count;
     }
-    public static String formatPositionalStyle(NutsWorkspace ws,Locale locale, String format, Object... args) {
-        if(ws==null){
-            throw new RuntimeException("Missing Workspace");
+    public static String formatPositionalStyle(NutsSession session,Locale locale, String format, Object... args) {
+        if(session==null){
+            throw new RuntimeException("missing session");
         }
         Object[] args2=Arrays.copyOf(args,args.length);
         for (int i = 0; i < args2.length; i++) {
@@ -46,11 +46,11 @@ public class FormattedPrintStreamUtils {
             }else if(a instanceof NutsStringBase){
                 args2[i]=String.valueOf(a);
             }else if(a instanceof NutsFormattable){
-                if(ws==null){
+                if(session==null){
                     args2[i]=escapeText(String.valueOf(a));
                 }else{
                     try {
-                        args2[i] = ws.formats().of((NutsFormattable) a).format();
+                        args2[i] = session.getWorkspace().formats().of((NutsFormattable) a).setSession(session).format();
                     }catch(Exception ex){
                         args2[i]=escapeText(String.valueOf(a));
                     }
@@ -86,8 +86,8 @@ public class FormattedPrintStreamUtils {
         }
         return MessageFormat.format(sb.toString(), args2);
     }
-    public static String formatCStyle(NutsWorkspace ws,Locale locale, String format, Object... args) {
-        return format0(ws,locale,format,args);
+    public static String formatCStyle(NutsSession session,Locale locale, String format, Object... args) {
+        return format0(session,locale,format,args);
 //        StringBuilder sb = new StringBuilder();
 //        Matcher m = PRINTF_PATTERN.matcher(format);
 //        int x = 0;
@@ -123,9 +123,9 @@ public class FormattedPrintStreamUtils {
 //        return sb.toString();
     }
 
-    public static String format0(NutsWorkspace ws,Locale locale, String format, Object ...args) {
-        if(ws==null){
-            throw new RuntimeException("Missing Workspace");
+    public static String format0(NutsSession session,Locale locale, String format, Object ...args) {
+        if(session==null){
+            throw new RuntimeException("Missing Session");
         }
         Object[] args2=Arrays.copyOf(args,args.length);
         for (int i = 0; i < args2.length; i++) {
@@ -135,11 +135,11 @@ public class FormattedPrintStreamUtils {
             }else if(a instanceof NutsStringBase){
                 args2[i]=String.valueOf(a);
             }else if(a instanceof NutsFormattable){
-                if(ws==null){
+                if(session==null){
                     args2[i]=escapeText(String.valueOf(a));
                 }else{
                     try {
-                        args2[i] = ws.formats().of((NutsFormattable) a).format();
+                        args2[i] = session.getWorkspace().formats().of((NutsFormattable) a).setSession(session).format();
                     }catch (Exception ex){
                         args2[i]=escapeText(String.valueOf(a));
                     }

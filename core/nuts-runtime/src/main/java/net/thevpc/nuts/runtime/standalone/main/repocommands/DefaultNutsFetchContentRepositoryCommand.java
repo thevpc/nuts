@@ -54,29 +54,30 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
     @Override
     public NutsFetchContentRepositoryCommand run() {
         NutsRepository repo = getRepo();
-        NutsWorkspaceUtils.of(repo.getWorkspace()).checkSession(getSession());
+        NutsSession session = getValidWorkspaceSession();
+        NutsWorkspaceUtils.of(repo.getWorkspace()).checkSession(session);
         NutsDescriptor descriptor0 = descriptor;
         if (descriptor0 == null) {
             NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(getRepo().getWorkspace()).repoSPI(repo);
-            descriptor0 = repoSPI.fetchDescriptor().setId(id).setSession(getSession())
+            descriptor0 = repoSPI.fetchDescriptor().setId(id).setSession(session)
                     .setFetchMode(getFetchMode())
                     .getResult();
         }
         id = id.builder().setFaceContent().build();
-        repo.security().checkAllowed(NutsConstants.Permissions.FETCH_CONTENT, "fetch-content");
+        repo.security().checkAllowed(NutsConstants.Permissions.FETCH_CONTENT, "fetch-content", session);
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(repo);
-        xrepo.checkAllowedFetch(id, getSession());
+        xrepo.checkAllowedFetch(id, session);
         long startTime = System.currentTimeMillis();
         try {
-            NutsContent f = xrepo.fetchContentImpl(id, descriptor0, localPath, getFetchMode(), getSession());
+            NutsContent f = xrepo.fetchContentImpl(id, descriptor0, localPath, getFetchMode(), session);
             if (f == null) {
                 throw new NutsNotFoundException(repo.getWorkspace(), id);
             }
-            CoreNutsUtils.traceMessage(LOG, Level.FINER, repo.getName(), getSession(), getFetchMode(), id.getLongNameId(), TraceResult.SUCCESS, "fetch component", startTime, null);
+            CoreNutsUtils.traceMessage(LOG, Level.FINER, repo.getName(), session, getFetchMode(), id.getLongNameId(), TraceResult.SUCCESS, "fetch component", startTime, null);
             result = f;
         } catch (RuntimeException ex) {
             if (!CoreNutsUtils.isUnsupportedFetchModeException(ex)) {
-                CoreNutsUtils.traceMessage(LOG, Level.FINEST, repo.getName(), getSession(), getFetchMode(), id.getLongNameId(), TraceResult.FAIL, "fetch component", startTime, CoreStringUtils.exceptionToString(ex));
+                CoreNutsUtils.traceMessage(LOG, Level.FINEST, repo.getName(), session, getFetchMode(), id.getLongNameId(), TraceResult.FAIL, "fetch component", startTime, CoreStringUtils.exceptionToString(ex));
             }
             throw ex;
         }

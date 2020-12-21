@@ -147,7 +147,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         NutsWorkspaceUtils.of(ws).checkReadOnly();
         session = NutsWorkspaceUtils.of(ws).validateSession(session);
         boolean ok = false;
-        ws.security().checkAllowed(NutsConstants.Permissions.SAVE, "save");
+        ws.security().checkAllowed(NutsConstants.Permissions.SAVE, "save", session);
         Path apiVersionSpecificLocation = ws.locations().getStoreLocation(getApiId(), NutsStoreLocation.CONFIG);
         if (force || storeModelBootChanged) {
 
@@ -294,7 +294,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 }
                 _ws = configLoaded.getWorkspace();
                 if (i >= maxDepth - 1) {
-                    throw new NutsIllegalArgumentException(null, "Cyclic Workspace resolution");
+                    throw new NutsIllegalArgumentException(null, "cyclic workspace resolution");
                 }
             }
             if(lastConfigLoaded==null){
@@ -387,9 +387,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsRepositoryDefinition[] getDefaultRepositories(NutsSession session) {
+        session=NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
         List<NutsRepositoryDefinition> all = new ArrayList<>();
         for (NutsRepositoryFactoryComponent provider : ws.extensions().createAll(NutsRepositoryFactoryComponent.class, session)) {
-            all.addAll(Arrays.asList(provider.getDefaultRepositories(ws)));
+            for (NutsRepositoryDefinition d : provider.getDefaultRepositories(ws)) {
+                all.add(d.setSession(session));
+            }
         }
         Collections.sort(all, new Comparator<NutsRepositoryDefinition>() {
             @Override
@@ -597,7 +600,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             m.put("javaOptions", javaOptions);
             ws.formats().element().setContentType(NutsContentType.JSON).setValue(m).print(apiConfigFile);
         }
-        downloadId(apiId, force, null, true);
+        downloadId(apiId, force, null, true,session);
     }
 
     @Override
@@ -733,19 +736,21 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsUserConfig getUser(String userId) {
+    public NutsUserConfig getUser(String userId, NutsSession session) {
+        session=NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
         NutsUserConfig _config = getSecurity(userId);
         if (_config == null) {
             if (NutsConstants.Users.ADMIN.equals(userId) || NutsConstants.Users.ANONYMOUS.equals(userId)) {
                 _config = new NutsUserConfig(userId, null, null, null);
-                setUser(_config, new NutsUpdateOptions().setSession(ws.createSession()));
+                setUser(_config, new NutsUpdateOptions().setSession(session));
             }
         }
         return _config;
     }
 
     @Override
-    public NutsUserConfig[] getUsers() {
+    public NutsUserConfig[] getUsers(NutsSession session) {
+        session=NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
         return configUsers.values().toArray(new NutsUserConfig[0]);
     }
 
@@ -760,17 +765,18 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public void removeUser(String userId, NutsRemoveOptions options) {
+        options = CoreNutsUtils.validate(options, ws);
         NutsUserConfig old = getSecurity(userId);
         if (old != null) {
             configUsers.remove(userId);
-            fireConfigurationChanged("users", options == null ? null : options.getSession(), ConfigEventType.SECURITY);
+            fireConfigurationChanged("users", options.getSession(), ConfigEventType.SECURITY);
         }
     }
 
     @Override
     public void setSecure(boolean secure, NutsUpdateOptions options) {
+        options = CoreNutsUtils.validate(options, ws);
         if (secure != storeModelSecurity.isSecure()) {
-            options = CoreNutsUtils.validate(options, ws);
             storeModelSecurity.setSecure(secure);
             fireConfigurationChanged("secure", options.getSession(), ConfigEventType.SECURITY);
         }
@@ -778,6 +784,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public void fireConfigurationChanged(String configName, NutsSession session, ConfigEventType t) {
+        session=NutsWorkspaceUtils.of(ws).validateSession(session);
         ((DefaultImportManager) imports()).invalidateCache();
         switch (t) {
             case API: {
@@ -848,6 +855,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent, NutsSession session) {
+        session=NutsWorkspaceUtils.of(ws).validateSession(session);
         authenticationAgent = CoreStringUtils.trim(authenticationAgent);
         NutsAuthenticationAgent supported = null;
         if (authenticationAgent.isEmpty()) {
@@ -864,6 +872,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             throw new NutsExtensionNotFoundException(ws, NutsAuthenticationAgent.class, "AuthenticationAgent");
         }
         NutsWorkspaceUtils.of(ws).setWorkspace(supported);
+        NutsWorkspaceUtils.setSession(supported,session);
         return supported;
     }
 
@@ -875,7 +884,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public void setUsers(NutsUserConfig[] users, NutsUpdateOptions options) {
         options = CoreNutsUtils.validate(options, ws);
-        for (NutsUserConfig u : getUsers()) {
+        for (NutsUserConfig u : getUsers(options.getSession())) {
             removeUser(u.getUser(), CoreNutsUtils.toRemoveOptions(options));
         }
         for (NutsUserConfig conf : users) {
@@ -1044,6 +1053,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     public void prepareBootRuntimeOrExtension(NutsId id, boolean force, boolean runtime, NutsSession session) {
+        session=NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
         Path configFile = ws.locations().getStoreLocation(NutsStoreLocation.CACHE)
                 .resolve(NutsConstants.Folders.ID).resolve(ws.locations().getDefaultIdBasedir(id)).resolve(runtime
                         ? NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME
@@ -1097,9 +1107,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (force || !Files.isRegularFile(configFile)) {
             ws.formats().element().setContentType(NutsContentType.JSON).setValue(m).print(configFile);
         }
-        downloadId(id, force, (def != null && def.getContent().getPath() != null) ? def.getContent().getPath() : null, false);
+        downloadId(id, force, (def != null && def.getContent().getPath() != null) ? def.getContent().getPath() : null, false,session);
         for (NutsId dep : deps) {
-            downloadId(dep, force, null, true);
+            downloadId(dep, force, null, true,session);
         }
     }
 
@@ -1112,25 +1122,26 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //    public String getExtensionDependencies() {
 //        return current().getExtensionDependencies();
 //    }
-    private void downloadId(NutsId id, boolean force, Path path, boolean fetch) {
+    private void downloadId(NutsId id, boolean force, Path path, boolean fetch,NutsSession session) {
+        session=NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
         String idFileName = ws.locations().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build());
         Path jarFile = ws.locations().getStoreLocation(NutsStoreLocation.LIB)
                 .resolve(NutsConstants.Folders.ID).resolve(ws.locations().getDefaultIdBasedir(id))
                 .resolve(idFileName);
         if (force || !Files.isRegularFile(jarFile)) {
             if (path != null) {
-                ws.io().copy().from(path).to(jarFile).run();
+                ws.io().copy().from(path).to(jarFile).setSession(session).run();
             } else {
                 if (fetch) {
                     NutsDefinition def = ws.fetch().setId(id).setDependencies(true)
                             .setOptional(false)
+                            .setSession(session.copy().setTrace(false))
                             .addScope(NutsDependencyScopePattern.RUN)
                             .setContent(true)
-                            .setSession(ws.createSession().setTrace(false))
                             .setFailFast(false)
                             .getResultDefinition();
                     if (def != null) {
-                        ws.io().copy().from(def.getPath()).to(jarFile).run();
+                        ws.io().copy().from(def.getPath()).to(jarFile).setSession(session).run();
                         return;
                     }
                 }
@@ -1158,7 +1169,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                         }
                     }
                 }
-                throw new NutsIllegalArgumentException(ws, "Unable to load " + id);
+                throw new NutsIllegalArgumentException(ws, "unable to load " + id);
             }
         }
     }

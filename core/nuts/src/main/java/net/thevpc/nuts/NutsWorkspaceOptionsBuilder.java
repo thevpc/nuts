@@ -47,9 +47,9 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     NutsWorkspaceOptionsBuilder setName(String workspaceName);
 
-    NutsWorkspaceOptionsBuilder setGlobal(boolean global);
+    NutsWorkspaceOptionsBuilder setGlobal(Boolean global);
 
-    NutsWorkspaceOptionsBuilder setGui(boolean gui);
+    NutsWorkspaceOptionsBuilder setGui(Boolean gui);
 
     NutsWorkspaceOptionsBuilder setArchetype(String archetype);
 
@@ -63,23 +63,23 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     NutsWorkspaceOptionsBuilder setExecutionType(NutsExecutionType executionType);
 
-    NutsWorkspaceOptionsBuilder setInherited(boolean inherited);
+    NutsWorkspaceOptionsBuilder setInherited(Boolean inherited);
 
     NutsWorkspaceOptionsBuilder setTerminalMode(NutsTerminalMode terminalMode);
 
-    NutsWorkspaceOptionsBuilder setSkipErrors(boolean value);
+    NutsWorkspaceOptionsBuilder setSkipErrors(Boolean value);
 
     NutsWorkspaceOptionsBuilder setSwitchWorkspace(Boolean value);
 
     NutsWorkspaceOptionsBuilder setErrors(String[] errors);
 
-    NutsWorkspaceOptionsBuilder setDry(boolean dry);
+    NutsWorkspaceOptionsBuilder setDry(Boolean dry);
 
     NutsWorkspaceOptionsBuilder setCreationTime(long creationTime);
 
-    NutsWorkspaceOptionsBuilder setReadOnly(boolean readOnly);
+    NutsWorkspaceOptionsBuilder setReadOnly(Boolean readOnly);
 
-    NutsWorkspaceOptionsBuilder setTrace(boolean trace);
+    NutsWorkspaceOptionsBuilder setTrace(Boolean trace);
 
     NutsWorkspaceOptionsBuilder setProgressOptions(String progressOptions);
 
@@ -95,11 +95,11 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     NutsWorkspaceOptionsBuilder setExecutorOptions(String[] executorOptions);
 
-    NutsWorkspaceOptionsBuilder setRecover(boolean recover);
+    NutsWorkspaceOptionsBuilder setRecover(Boolean recover);
 
-    NutsWorkspaceOptionsBuilder setReset(boolean reset);
+    NutsWorkspaceOptionsBuilder setReset(Boolean reset);
 
-    NutsWorkspaceOptionsBuilder setDebug(boolean debug);
+    NutsWorkspaceOptionsBuilder setDebug(Boolean debug);
 
     NutsWorkspaceOptionsBuilder setTransientRepositories(String[] transientRepositories);
 
@@ -117,7 +117,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     NutsWorkspaceOptionsBuilder setHomeLocation(NutsOsFamily layout, NutsStoreLocation location, String value);
 
-    NutsWorkspaceOptionsBuilder setSkipCompanions(boolean skipInstallCompanions);
+    NutsWorkspaceOptionsBuilder setSkipCompanions(Boolean skipInstallCompanions);
 
     /**
      * if true, do not bootstrap workspace after reset/recover.
@@ -130,9 +130,9 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
      * @return if true, do not run welcome when no application arguments were resolved
      * @since 0.6.0
      */
-    NutsWorkspaceOptionsBuilder setSkipBoot(boolean skipBoot);
+    NutsWorkspaceOptionsBuilder setSkipBoot(Boolean skipBoot);
 
-    NutsWorkspaceOptionsBuilder setSkipWelcome(boolean skipWelcome);
+    NutsWorkspaceOptionsBuilder setSkipWelcome(Boolean skipWelcome);
 
     NutsWorkspaceOptionsBuilder setOpenMode(NutsWorkspaceOpenMode openMode);
 
@@ -146,11 +146,11 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     NutsWorkspaceOptionsBuilder setFetchStrategy(NutsFetchStrategy fetchStrategy);
 
-    NutsWorkspaceOptionsBuilder setCached(boolean cached);
+    NutsWorkspaceOptionsBuilder setCached(Boolean cached);
 
-    NutsWorkspaceOptionsBuilder setIndexed(boolean indexed);
+    NutsWorkspaceOptionsBuilder setIndexed(Boolean indexed);
 
-    NutsWorkspaceOptionsBuilder setTransitive(boolean transitive);
+    NutsWorkspaceOptionsBuilder setTransitive(Boolean transitive);
 
     NutsWorkspaceOptionsBuilder setStdin(InputStream stdin);
 

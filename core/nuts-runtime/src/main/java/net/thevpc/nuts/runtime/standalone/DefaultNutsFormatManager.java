@@ -85,7 +85,7 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
         if(any instanceof NutsCommandLine){
             return ws.commandLine().formatter((NutsCommandLine) any);
         }
-        throw new NutsIllegalArgumentException(ws,"Unsupported formattable "+((any==null)?"null":any.getClass().getName()));
+        throw new NutsIllegalArgumentException(ws,"unsupported formattable "+((any==null)?"null":any.getClass().getName()));
     }
 
 

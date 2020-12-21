@@ -31,8 +31,8 @@ import java.util.Collection;
  * Command class for adding users to workspaces and repositories. All Command
  * classes have a 'run' method to perform the operation.
  *
- * @see NutsWorkspaceSecurityManager#addUser(java.lang.String)
- * @see NutsRepositorySecurityManager#addUser(java.lang.String)
+ * @see NutsWorkspaceSecurityManager#addUser(String, NutsSession)
+ * @see NutsRepositorySecurityManager#addUser(String, NutsSession)
  *
  * @author thevpc
  * @since 0.5.5

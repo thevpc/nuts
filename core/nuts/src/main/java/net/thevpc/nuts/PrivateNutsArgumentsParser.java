@@ -805,7 +805,7 @@ final class PrivateNutsArgumentsParser {
                     // [[open options]] are transient (non persistent) options that will 
                     // override any configured value (if any) and will be 
                     // in use in the current process (and ignored elsewhere). 
-                    // Such options will be considered in creating worspaces 
+                    // Such options will be considered in creating workspaces
                     // as well but still they are not persistent.
                     case "--embedded":
                     case "-b": {
@@ -872,7 +872,7 @@ final class PrivateNutsArgumentsParser {
                         cmdLine.skip();
                         if (enabled) {
                             if (!a.getArgumentValue().isNull()) {
-                                throw new NutsIllegalArgumentException(null, "Invalid argument for workspace : " + a.getString());
+                                throw new NutsIllegalArgumentException(null, "invalid argument for workspace : " + a.getString());
                             }
                             applicationArguments.add(NutsConstants.Ids.NUTS_SHELL);
                             if (!cmdLine.isEmpty()) {

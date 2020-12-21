@@ -59,7 +59,7 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
             homes[type.ordinal()] = Nuts.getPlatformHomeFolder(storeLocationLayout, type, homeLocations,
                     global, name);
             if (CoreStringUtils.isBlank(homes[type.ordinal()])) {
-                throw new NutsIllegalArgumentException(ws, "Missing Home for " + type.id());
+                throw new NutsIllegalArgumentException(ws, "missing Home for " + type.id());
             }
         }
         if (storeLocationStrategy == null) {

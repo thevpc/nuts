@@ -63,46 +63,47 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
     public NutsFetchDescriptorRepositoryCommand run() {
         NutsWorkspace ws = getRepo().getWorkspace();
         NutsWorkspaceUtils.of(ws).checkLongNameNutsId(id);
-        NutsWorkspaceUtils.of(ws).checkSession(getSession());
-        getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_DESC, "fetch-descriptor");
+        NutsSession session = getValidWorkspaceSession();
+        NutsWorkspaceUtils.of(ws).checkSession(session);
+        getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_DESC, "fetch-descriptor", session);
         Map<String, String> queryMap = id.getProperties();
         queryMap.remove(NutsConstants.IdProperties.OPTIONAL);
         queryMap.remove(NutsConstants.IdProperties.SCOPE);
         queryMap.put(NutsConstants.IdProperties.FACE, NutsConstants.QueryFaces.DESCRIPTOR);
         id = id.builder().setProperties(queryMap).build();
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
-        xrepo.checkAllowedFetch(id, getSession());
+        xrepo.checkAllowedFetch(id, session);
         long startTime = System.currentTimeMillis();
         try {
             String versionString = id.getVersion().getValue();
             NutsDescriptor d = null;
             if (DefaultNutsVersion.isBlank(versionString)) {
-                NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), null, getFetchMode(), getSession());
+                NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), null, getFetchMode(), session);
                 if (a == null) {
                     throw new NutsNotFoundException(ws, id.getLongNameId());
                 }
                 a = a.builder().setFaceDescriptor().build();
-                d = xrepo.fetchDescriptorImpl(a, getFetchMode(), getSession());
+                d = xrepo.fetchDescriptorImpl(a, getFetchMode(), session);
             } else if (DefaultNutsVersion.isStaticVersionPattern(versionString)) {
                 id = id.builder().setFaceDescriptor().build();
-                d = xrepo.fetchDescriptorImpl(id, getFetchMode(), getSession());
+                d = xrepo.fetchDescriptorImpl(id, getFetchMode(), session);
             } else {
                 NutsIdFilter filter = CoreFilterUtils.idFilterOf(id.getProperties(), ws.id().filter().byName(id.getFullName()), null,ws);
-                NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), filter, getFetchMode(), getSession());
+                NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), filter, getFetchMode(), session);
                 if (a == null) {
                     throw new NutsNotFoundException(ws, id.getLongNameId());
                 }
                 a = a.builder().setFaceDescriptor().build();
-                d = xrepo.fetchDescriptorImpl(a, getFetchMode(), getSession());
+                d = xrepo.fetchDescriptorImpl(a, getFetchMode(), session);
             }
             if (d == null) {
                 throw new NutsNotFoundException(ws, id.getLongNameId());
             }
-            CoreNutsUtils.traceMessage(LOG, Level.FINER, getRepo().getName(), getSession(), getFetchMode(), id.getLongNameId(), TraceResult.SUCCESS, "fetch descriptor", startTime, null);
+            CoreNutsUtils.traceMessage(LOG, Level.FINER, getRepo().getName(), session, getFetchMode(), id.getLongNameId(), TraceResult.SUCCESS, "fetch descriptor", startTime, null);
             result = d;
         } catch (Exception ex) {
             if (!CoreNutsUtils.isUnsupportedFetchModeException(ex)) {
-                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().getName(), getSession(), getFetchMode(), id.getLongNameId(), TraceResult.FAIL, "fetch descriptor", startTime, CoreStringUtils.exceptionToString(ex));
+                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().getName(), session, getFetchMode(), id.getLongNameId(), TraceResult.FAIL, "fetch descriptor", startTime, CoreStringUtils.exceptionToString(ex));
             }
             throw ex;
         }

@@ -50,7 +50,7 @@ public class DefaultNutsAddUserCommand extends AbstractNutsAddUserCommand {
     @Override
     public NutsAddUserCommand run() {
         if (CoreStringUtils.isBlank(getUsername())) {
-            throw new NutsIllegalArgumentException(ws, "Invalid user");
+            throw new NutsIllegalArgumentException(ws, "invalid user");
         }
         if (repo != null) {
             NutsUserConfig security = new NutsUserConfig(getUsername(),
@@ -58,14 +58,14 @@ public class DefaultNutsAddUserCommand extends AbstractNutsAddUserCommand {
                     getGroups(), getPermissions());
             security.setRemoteIdentity(getRemoteIdentity());
             security.setRemoteCredentials(CoreStringUtils.chrToStr(repo.security().createCredentials(getRemoteCredentials(), true, null, session)));
-            NutsRepositoryConfigManagerExt.of(repo.config()).setUser(security, new NutsUpdateOptions().setSession(getSession()));
+            NutsRepositoryConfigManagerExt.of(repo.config()).setUser(security, new NutsUpdateOptions().setSession(getValidWorkspaceSession()));
         } else {
             NutsUserConfig security = new NutsUserConfig(getUsername(),
                     CoreStringUtils.chrToStr(ws.security().createCredentials(getCredentials(), false, null, session)),
                     getGroups(), getPermissions());
             security.setRemoteIdentity(getRemoteIdentity());
             security.setRemoteCredentials(CoreStringUtils.chrToStr(ws.security().createCredentials(getRemoteCredentials(), true, null, session)));
-            NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(security, new NutsUpdateOptions().setSession(getSession()));
+            NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(security, new NutsUpdateOptions().setSession(getValidWorkspaceSession()));
         }
         return this;
     }

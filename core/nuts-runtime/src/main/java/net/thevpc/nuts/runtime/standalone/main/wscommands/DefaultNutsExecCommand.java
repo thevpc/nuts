@@ -39,7 +39,8 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     public NutsExecutableInformation which() {
         DefaultNutsSessionTerminal terminal = new DefaultNutsSessionTerminal();
         NutsWorkspaceUtils.of(ws).setWorkspace(terminal);
-        NutsSession traceSession = getSession();
+        NutsWorkspaceUtils.setSession(terminal,getValidWorkspaceSession());
+        NutsSession traceSession = getValidWorkspaceSession();
         terminal.setParent(traceSession.getTerminal());
         terminal.setOutMode(traceSession.getTerminal().getOutMode());
         terminal.setErrMode(traceSession.getTerminal().getErrMode());
@@ -69,10 +70,17 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         NutsExecutableInformationExt exec = null;
         NutsSession execSession = traceSession.copy();
         execSession.setTerminal(terminal);
+        NutsExecutionType executionType = this.getExecutionType();
+        if(executionType==null){
+            executionType=session.getExecutionType();
+        }
+        if(executionType==null){
+            executionType=NutsExecutionType.SPAWN;
+        }
         switch (executionType) {
             case USER_CMD: {
                 if (commandDefinition != null) {
-                    throw new NutsIllegalArgumentException(ws, "Unable to run nuts as user-cmd");
+                    throw new NutsIllegalArgumentException(ws, "unable to run nuts as user-cmd");
                 }
                 exec = new DefaultNutsSystemExecutable(ts, getExecutorOptions(),
                         traceSession,
@@ -84,7 +92,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             }
             case ROOT_CMD: {
                 if (commandDefinition != null) {
-                    throw new NutsIllegalArgumentException(ws, "Unable to run nuts as root-cmd");
+                    throw new NutsIllegalArgumentException(ws, "unable to run nuts as root-cmd");
                 }
                 exec = new DefaultNutsSystemExecutable(ts, getExecutorOptions(),
                         traceSession,
@@ -105,7 +113,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(ws, "Invalid executionType " + executionType);
+                throw new NutsUnsupportedArgumentException(ws, "invalid executionType " + executionType);
             }
         }
         return exec;
@@ -168,7 +176,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
 
     private NutsExecutableInformationExt execEmbeddedOrExternal(String[] cmd, String[] executorOptions, NutsSession prepareSession, NutsSession execSession) {
         if (cmd == null || cmd.length == 0) {
-            throw new NutsIllegalArgumentException(ws, "Missing command");
+            throw new NutsIllegalArgumentException(ws, "missing command");
         }
         String[] args = new String[cmd.length - 1];
         System.arraycopy(cmd, 1, args, 0, args.length);
@@ -223,6 +231,13 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             case "exec": {
                 return new DefaultNutsExecInternalExecutable(args, execSession, this);
             }
+        }
+        NutsExecutionType executionType = getExecutionType();
+        if(executionType==null){
+            executionType=session.getExecutionType();
+        }
+        if(executionType==null){
+            executionType=NutsExecutionType.SPAWN;
         }
         if (cmdName.contains("/") || cmdName.contains("\\")) {
             return new DefaultNutsArtifactPathExecutable(cmdName, args, executorOptions, executionType, prepareSession, execSession, this);
@@ -316,7 +331,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             NutsSession traceSession,
             NutsSession execSession,
             NutsExecutionType executionType, boolean dry) {
-        ws.security().checkAllowed(NutsConstants.Permissions.EXEC, commandName);
+        ws.security().checkAllowed(NutsConstants.Permissions.EXEC, commandName, session);
         execSession = NutsWorkspaceUtils.of(ws).validateSession(execSession);
         if (def != null && def.getPath() != null) {
             NutsDescriptor descriptor = def.getDescriptor();

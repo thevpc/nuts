@@ -162,7 +162,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     @Override
     public InputStream create() {
         if (source == null || sourceKind == null) {
-            throw new NutsIllegalArgumentException(ws, "Missing Source");
+            throw new NutsIllegalArgumentException(ws, "missing Source");
         }
         switch (sourceKind) {
             case "inputSource": {

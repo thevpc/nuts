@@ -54,6 +54,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     public WorkspaceAndApiVersion persistConfig(NutsWorkspaceBootConfig bootConfig, String apiVersion, String preferredName, NutsSession session) {
         NutsWorkspace ws = context.getWorkspace();
+        if(session==null){
+            throw new NutsIllegalArgumentException(ws,"missing session");
+        }
         if (apiVersion == null) {
             if (bootConfig == null) {
                 apiVersion = ws.getApiVersion();
@@ -79,7 +82,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
         }
         NutsId apiId = ws.getApiId().builder().setVersion(apiVersion).build();
-        ws.fetch().setId(apiId).setFailFast(true).getResultDefinition();
+        ws.fetch().setSession(session).setId(apiId).setFailFast(true).getResultDefinition();
         String wsEff = bootConfig != null ? bootConfig.getEffectiveWorkspace() :
                 ws.locations().getWorkspaceLocation().toString();
         UpdatedPaths t = persistConfig2(bootConfig, apiId, preferredName, session);
@@ -162,7 +165,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (switchWorkspaceLocation != null) {
             bootconfig = context.getWorkspace().config().loadBootConfig(switchWorkspaceLocation, false, true, context.getSession());
             if (bootconfig == null) {
-                throw new NutsIllegalArgumentException(context.getWorkspace(), "Invalid workspace: " + switchWorkspaceLocation);
+                throw new NutsIllegalArgumentException(context.getWorkspace(), "invalid workspace: " + switchWorkspaceLocation);
             }
         }
         WorkspaceAndApiVersion v = persistConfig(bootconfig, apiVersion, preferredScriptName, context.getSession());
@@ -177,7 +180,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (switchWorkspaceLocation != null) {
             bootconfig = context.getWorkspace().config().loadBootConfig(switchWorkspaceLocation, false, true, context.getSession());
             if (bootconfig == null) {
-                throw new NutsIllegalArgumentException(context.getWorkspace(), "Invalid workspace: " + switchWorkspaceLocation);
+                throw new NutsIllegalArgumentException(context.getWorkspace(), "invalid workspace: " + switchWorkspaceLocation);
             }
         }
         WorkspaceAndApiVersion v = persistConfig(bootconfig, apiVersion, null, context.getSession());

@@ -37,80 +37,74 @@ import javax.security.auth.callback.CallbackHandler;
 public interface NutsWorkspaceSecurityManager {
 
     /**
-     * equivalent to {@link #getCurrentUsername()}.
-     *
-     * @return current login
-     */
-    String currentUsername();
-
-    /**
      * current user
      * @return current user
+     * @param session session
      */
-    String getCurrentUsername();
-
-    /**
-     * equivalent to {@link #getCurrentLoginStack()}.
-     *
-     * @return current login
-     */
-    String[] currentLoginStack();
+    String getCurrentUsername(NutsSession session);
 
     /**
      * current user stack.
      * this is useful when login with multiple user identities.
      * @return current user stack
+     * @param session session
      */
-    String[] getCurrentLoginStack();
+    String[] getCurrentLoginStack(NutsSession session);
 
     /**
      * impersonate user and log as a distinct user with the given credentials.
      * @param username user name
      * @param password user password
+     * @param session session
      * @return {@code this} instance
      */
-    NutsWorkspaceSecurityManager login(String username, char[] password);
+    NutsWorkspaceSecurityManager login(String username, char[] password, NutsSession session);
 
     /**
      * impersonate user and log as a distinct user with the given credentials and stack
      * user name so that it can be retrieved using @{code getCurrentLoginStack()}.
      * @param handler security handler
+     * @param session session
      * @return {@code this} instance
      */
-    NutsWorkspaceSecurityManager login(CallbackHandler handler);
+    NutsWorkspaceSecurityManager login(CallbackHandler handler, NutsSession session);
 
     /**
      * log out from last logged in user (if any) and pop out from user name stack.
      * @return {@code this} instance
+     * @param session session
      */
-    NutsWorkspaceSecurityManager logout();
+    NutsWorkspaceSecurityManager logout(NutsSession session);
 
     /**
      * create a User Create command.
      * No user will be added when simply calling this method.
      * You must fill in command parameters then call {@link NutsAddUserCommand#run()}.
      * @param name user name
+     * @param session session
      * @return create add user command.
      */
-    NutsAddUserCommand addUser(String name);
+    NutsAddUserCommand addUser(String name, NutsSession session);
 
     /**
      * create a Update Create command.
      * No user will be updated when simply calling this method.
      * You must fill in command parameters then call {@link NutsUpdateUserCommand#run()}.
      * @param name user name
+     * @param session session
      * @return create update user command.
      */
-    NutsUpdateUserCommand updateUser(String name);
+    NutsUpdateUserCommand updateUser(String name, NutsSession session);
 
     /**
      * create a Remove Create command.
      * No user will be removed when simply calling this method.
      * You must fill in command parameters then call {@link NutsRemoveUserCommand#run()}.
      * @param name user name
+     * @param session session
      * @return create remove user command.
      */
-    NutsRemoveUserCommand removeUser(String name);
+    NutsRemoveUserCommand removeUser(String name, NutsSession session);
 
     /**
      * find all registered users
@@ -122,24 +116,27 @@ public interface NutsWorkspaceSecurityManager {
     /**
      * find user with the given name or null.
      * @param username user name
+     * @param session session
      * @return user effective information
      */
-    NutsUser findUser(String username);
+    NutsUser findUser(String username, NutsSession session);
 
     /**
      * return true if permission is valid and allowed for the current user.
      * @param permission permission name. see {@code NutsConstants.Rights } class
+     * @param session session
      * @return true if permission is valid and allowed for the current user
      */
-    boolean isAllowed(String permission);
+    boolean isAllowed(String permission, NutsSession session);
 
     /**
      * check if allowed and throw a Security exception if not.
      * @param permission permission name. see {@code NutsConstants.Rights } class
      * @param operationName operation name
+     * @param session session
      * @return {@code this} instance
      */
-    NutsWorkspaceSecurityManager checkAllowed(String permission, String operationName);
+    NutsWorkspaceSecurityManager checkAllowed(String permission, String operationName, NutsSession session);
 
     /**
      * switch from/to secure mode.
@@ -156,8 +153,9 @@ public interface NutsWorkspaceSecurityManager {
      * return true if current user has admin privileges
      *
      * @return true if current user has admin privileges
+     * @param session session
      */
-    boolean isAdmin();
+    boolean isAdmin(NutsSession session);
 
     /**
      * update default authentication agent.
@@ -180,8 +178,9 @@ public interface NutsWorkspaceSecurityManager {
      * return true if workspace is running secure mode
      *
      * @return true if workspace is running secure mode
+     * @param session session
      */
-    boolean isSecure();
+    boolean isSecure(NutsSession session);
 
     /**
      * check if the given <code>password</code> is valid against the one stored

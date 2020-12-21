@@ -8,15 +8,21 @@ import java.util.Map;
 
 import net.thevpc.nuts.runtime.standalone.util.io.CoreSecurityUtils;
 
-public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsWorkspaceAware {
+public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsWorkspaceAware,NutsSessionAware {
 
     private final String name;
     private NutsWorkspace ws;
+    private NutsSession session;
     private int supportLevel;
 
     public AbstractNutsAuthenticationAgent(String name, int supportLevel) {
         this.name = name;
         this.supportLevel = supportLevel;
+    }
+
+    @Override
+    public void setSession(NutsSession session) {
+        this.session=session;
     }
 
     @Override

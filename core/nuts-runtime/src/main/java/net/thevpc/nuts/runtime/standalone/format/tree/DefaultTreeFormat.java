@@ -139,7 +139,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     @Override
     public String toString() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
-        PrintStream out = CoreIOUtils.toPrintStream(b,getWorkspace());
+        PrintStream out = CoreIOUtils.toPrintStream(b,getSession());
         NutsTreeModel tree = getModel();
         print(tree,"", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0,false);
         out.flush();

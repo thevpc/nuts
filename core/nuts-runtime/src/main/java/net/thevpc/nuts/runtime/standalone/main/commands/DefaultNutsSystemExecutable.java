@@ -58,7 +58,8 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     private String[] resolveUserOrRootCommand() {
         if (root) {
-            switch (execCommand.getSession().getWorkspace().env().getOsFamily()) {
+            NutsSession session=NutsWorkspaceUtils.of(execSession.getWorkspace()).validateSession(execCommand.getSession());
+            switch (session.getWorkspace().env().getOsFamily()) {
                 case LINUX:
                 case UNIX:
                 case MACOS:
@@ -69,9 +70,9 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
                     return a.toArray(new String[0]);
                 }
                 case WINDOWS:{
-                    String s = (String)execCommand.getSession().getProperty("WINDOWS_ROOT_USER");
+                    String s = (String) session.getProperty("WINDOWS_ROOT_USER");
                     if(s==null) {
-                        s = execCommand.getSession().getWorkspace().env().get("WINDOWS_ROOT_USER", null);
+                        s = session.getWorkspace().env().get("WINDOWS_ROOT_USER", null);
                     }
                     if(CoreStringUtils.isBlank(s)){
                         s="Administrator";
@@ -82,7 +83,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
                     return a.toArray(new String[0]);
                 }
                 default:{
-                    throw new NutsExecutionException(execCommand.getSession().getWorkspace(),"ROOT_CMD: Unsupported Platform "+execCommand.getSession().getWorkspace().env().getOsFamily(),12);
+                    throw new NutsExecutionException(session.getWorkspace(),"ROOT_CMD: Unsupported Platform "+ session.getWorkspace().env().getOsFamily(),12);
                 }
             }
         } else {

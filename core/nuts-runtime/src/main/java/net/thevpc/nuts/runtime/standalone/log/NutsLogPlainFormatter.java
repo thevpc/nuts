@@ -52,6 +52,7 @@ public class NutsLogPlainFormatter extends Formatter {
             String msgStr=null;
             if(wRecord.isFormatted()){
                 msgStr =wRecord.getWorkspace().formats().text().formatText(
+                        wRecord.getSession(),
                         wRecord.getFormatStyle(), wRecord.getMessage(),
                         parameters2
                 );

@@ -30,7 +30,7 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
     public void addFactory(NutsCommandAliasFactoryConfig commandFactoryConfig, NutsAddOptions options) {
         options = CoreNutsUtils.validate(options, ws);
         if (commandFactoryConfig == null || commandFactoryConfig.getFactoryId() == null || commandFactoryConfig.getFactoryId().isEmpty() || !commandFactoryConfig.getFactoryId().trim().equals(commandFactoryConfig.getFactoryId())) {
-            throw new NutsIllegalArgumentException(ws, "Invalid WorkspaceCommandFactory " + commandFactoryConfig);
+            throw new NutsIllegalArgumentException(ws, "invalid WorkspaceCommandFactory " + commandFactoryConfig);
         }
         for (NutsWorkspaceCommandFactory factory : commandFactories) {
             if (commandFactoryConfig.getFactoryId().equals(factory.getFactoryId())) {
@@ -77,7 +77,7 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
     public boolean removeFactory(String factoryId, NutsRemoveOptions options) {
         options = CoreNutsUtils.validate(options, ws);
         if (factoryId == null || factoryId.isEmpty()) {
-            throw new NutsIllegalArgumentException(ws, "Invalid WorkspaceCommandFactory " + factoryId);
+            throw new NutsIllegalArgumentException(ws, "invalid WorkspaceCommandFactory " + factoryId);
         }
         NutsWorkspaceCommandFactory removeMe = null;
         NutsCommandAliasFactoryConfig removeMeConfig = null;
@@ -103,7 +103,7 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
             }
         }
         if (removeMe == null && removeMeConfig == null) {
-            throw new NutsIllegalArgumentException(ws, "Command Factory does not exists " + factoryId);
+            throw new NutsIllegalArgumentException(ws, "command factory does not exists " + factoryId);
         }
         return true;
     }
@@ -117,7 +117,7 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
                 || command.getName().contains("/") || command.getName().contains("\\")
                 || command.getCommand() == null
                 || command.getCommand().length == 0) {
-            throw new NutsIllegalArgumentException(ws, "Invalid command alias " + (command == null ? "<NULL>" : command.getName()));
+            throw new NutsIllegalArgumentException(ws, "invalid command alias " + (command == null ? "<NULL>" : command.getName()));
         }
         boolean forced = false;
         NutsSession session = options.getSession();
@@ -128,7 +128,7 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
                         new NutsRemoveOptions().setSession(session.copy().setTrace(false))
                 );
             } else {
-                throw new NutsIllegalArgumentException(ws, "Command alias already exists " + command.getName());
+                throw new NutsIllegalArgumentException(ws, "command alias already exists " + command.getName());
             }
         }
         defaultCommandFactory.installCommand(command, options);
@@ -146,13 +146,13 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
     @Override
     public boolean remove(String name, NutsRemoveOptions options) {
         if (CoreStringUtils.isBlank(name)) {
-            throw new NutsIllegalArgumentException(ws, "Invalid command alias " + (name == null ? "<NULL>" : name));
+            throw new NutsIllegalArgumentException(ws, "invalid command alias " + (name == null ? "<NULL>" : name));
         }
         options = CoreNutsUtils.validate(options, ws);
         NutsSession session = options.getSession();
         NutsCommandAliasConfig command = defaultCommandFactory.findCommand(name, ws);
         if (command == null) {
-            throw new NutsIllegalArgumentException(ws, "Command alias does not exists " + name);
+            throw new NutsIllegalArgumentException(ws, "command alias does not exists " + name);
         }
         defaultCommandFactory.uninstallCommand(name, options);
         if (session.isPlainTrace()) {

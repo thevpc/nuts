@@ -67,7 +67,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                 context.getSession().getTerminal().setMode(NutsTerminalMode.FILTERED);
             } else if (cmdLine.peek().isOption()) {
                 if (cmdLine.isExecMode()) {
-                    throw new NutsIllegalArgumentException(context.getWorkspace(), "Invalid option " + cmdLine.next().getString());
+                    throw new NutsIllegalArgumentException(context.getWorkspace(), "invalid option " + cmdLine.next().getString());
                 }
             } else {
                 commandNames.add(cmdLine.nextNonOption(new CommandNonOption("command", context.getNutsShellContext())).required().getString());

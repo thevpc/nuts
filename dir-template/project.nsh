@@ -1,3 +1,4 @@
 echo "running project..."
-source "`dirname $0`/vars.nsh";
-targetFolder="..";
+here=`dirname $0`;
+source "$here/vars.nsh";
+targetFolder="$here/..";

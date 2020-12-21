@@ -57,7 +57,7 @@ public class PermissionNonOption extends DefaultNonOption {
         }
         Iterator<NutsArgumentCandidate> i = all.iterator();
         NutsRepository repository=context.get(NutsRepository.class);
-        NutsUser info = repository != null ? repository.security().getEffectiveUser(user, context.getSession()) : context.getWorkspace().security().findUser(user);
+        NutsUser info = repository != null ? repository.security().getEffectiveUser(user, context.getSession()) : context.getWorkspace().security().findUser(user, context.getSession());
         Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : Arrays.asList(info.getPermissions()));
         while (i.hasNext()) {
             NutsArgumentCandidate right = i.next();

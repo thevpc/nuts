@@ -184,7 +184,7 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
             }
             this.out = null;
         } else {
-            this.out = CoreIOUtils.toPrintStream(out,getWorkspace());
+            this.out = CoreIOUtils.toPrintStream(out,getSession());
         }
         return this;
     }
@@ -203,7 +203,7 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
         if (out == null) {
             out = getValidSession().getTerminal().getOut();
         }
-        return ws.io().term().prepare(out);
+        return ws.io().term().prepare(out, session);
     }
 
     public PrintStream getValidPrintStream() {

@@ -215,6 +215,7 @@ public class NutsJavaSdkUtils {
     }
 
     public NutsSdkLocation resolveJdkLocation(Path path, String preferredName, NutsSession session) {
+        session=NutsWorkspaceUtils.of(ws).validateSession(session);
         if (path == null) {
             throw new NutsException(session.getWorkspace(), "Missing path");
         }
@@ -233,7 +234,9 @@ public class NutsJavaSdkUtils {
             //I do not know why but sometimes, the process exists before receiving stdout result!!
             final int MAX_ITER=5;
             for (int i = 0; i < MAX_ITER; i++) {
-                NutsExecCommand cmd = session.getWorkspace().exec().userCmd().addCommand(javaExePath.toString(), "-version")
+                NutsExecCommand cmd = session.getWorkspace().exec()
+                        .setSession(session)
+                        .userCmd().addCommand(javaExePath.toString(), "-version")
                         .setRedirectErrorStream(true)
                         .grabOutputString().setFailFast(true).run();
                 cmdRresult = cmd.getResult();

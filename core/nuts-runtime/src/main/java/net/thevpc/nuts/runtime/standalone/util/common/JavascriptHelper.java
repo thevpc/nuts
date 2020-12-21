@@ -121,7 +121,7 @@ public class JavascriptHelper {
             }
         }
         if (code == null) {
-            throw new NutsIllegalArgumentException(session.getWorkspace(), "Illegal js filter : empty content");
+            throw new NutsIllegalArgumentException(session.getWorkspace(), "illegal js filter : empty content");
         }
         if (!code.contains("return")) {
             throw new NutsIllegalArgumentException(session.getWorkspace(), "js filter must contain a return clause");

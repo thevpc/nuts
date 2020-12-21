@@ -107,14 +107,15 @@ public class WhoamiCommand extends SimpleNshBuiltin {
             result.login = System.getProperty("user.name");
         } else {
             NutsWorkspace validWorkspace = context.getWorkspace();
-            String login = validWorkspace.security().getCurrentUsername();
+            NutsSession session = context.getSession();
+            String login = validWorkspace.security().getCurrentUsername(session);
             result.login = login;
             if (config.argAll) {
-                NutsUser user = validWorkspace.security().findUser(login);
+                NutsUser user = validWorkspace.security().findUser(login, session);
                 Set<String> groups = new TreeSet<>(Arrays.asList(user.getGroups()));
                 Set<String> rights = new TreeSet<>(Arrays.asList(user.getPermissions()));
                 Set<String> inherited = new TreeSet<>(Arrays.asList(user.getInheritedPermissions()));
-                result.loginStack = validWorkspace.security().getCurrentLoginStack();
+                result.loginStack = validWorkspace.security().getCurrentLoginStack(session);
                 if (result.loginStack.length <= 1) {
                     result.loginStack = null;
                 }
@@ -140,8 +141,8 @@ public class WhoamiCommand extends SimpleNshBuiltin {
                     result.remoteId = user.getRemoteIdentity();
                 }
                 List<RepoResult> rr = new ArrayList<>();
-                for (NutsRepository repository : context.getWorkspace().repos().getRepositories(context.getSession())) {
-                    NutsUser ruser = repository.security().getEffectiveUser(login, context.getSession());
+                for (NutsRepository repository : context.getWorkspace().repos().getRepositories(session)) {
+                    NutsUser ruser = repository.security().getEffectiveUser(login, session);
                     if (ruser != null && (ruser.getGroups().length > 0
                             || ruser.getPermissions().length > 0
                             || !StringUtils.isBlank(ruser.getRemoteIdentity()))) {

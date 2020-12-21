@@ -31,19 +31,20 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
 
     @Override
     public NutsSearchRepositoryCommand run() {
-        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession(getSession());
-        getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_DESC, "search");
+        NutsSession session = getValidWorkspaceSession();
+        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession(session);
+        getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_DESC, "search", session);
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
-        xrepo.checkAllowedFetch(null, getSession());
+        xrepo.checkAllowedFetch(null, session);
         try {
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log("{0} Search components", CoreStringUtils.alignLeft(getRepo().getName(), 20));
             }
-            boolean processIndexFirst = getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled();
+            boolean processIndexFirst = session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled();
             if (processIndexFirst) {
                 Iterator<NutsId> o = null;
                 try {
-                    o = xrepo.getIndexStore().search(filter, getSession());
+                    o = xrepo.getIndexStore().search(filter, session);
                 } catch (NutsIndexerNotAccessibleException ex) {
                     //just ignore
                 } catch (NutsException ex) {
@@ -51,7 +52,7 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
                 }
                 if (o != null) {
                     result = new IndexFirstIterator<>(o,
-                            xrepo.searchImpl(filter, getFetchMode(), getSession())
+                            xrepo.searchImpl(filter, getFetchMode(), session)
                     );
                     if (LOG.isLoggable(Level.FINEST)) {
                         LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log("{0} Search components (indexer)", CoreStringUtils.alignLeft(getRepo().getName(), 20));
@@ -59,7 +60,7 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
                     return this;
                 }
             }
-            result = xrepo.searchImpl(filter, getFetchMode(), getSession());
+            result = xrepo.searchImpl(filter, getFetchMode(), session);
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log("{0} Search components", CoreStringUtils.alignLeft(getRepo().getName(), 20));
             }

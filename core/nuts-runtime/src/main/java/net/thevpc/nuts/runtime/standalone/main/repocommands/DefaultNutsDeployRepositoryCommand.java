@@ -52,16 +52,17 @@ public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployReposi
 
     @Override
     public NutsDeployRepositoryCommand run() {
-        getRepo().security().checkAllowed(NutsConstants.Permissions.DEPLOY, "deploy");
+        NutsSession session = getValidWorkspaceSession();
+        getRepo().security().checkAllowed(NutsConstants.Permissions.DEPLOY, "deploy", session);
         checkParameters();
         try {
             NutsRepositoryExt xrepo = NutsRepositoryExt.of(repo);
             NutsDescriptor rep = xrepo.deployImpl(this);
             this.setDescriptor(rep);
             this.setId(rep.getId());
-            if (getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
+            if (session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 try {
-                    xrepo.getIndexStore().revalidate(this.getId(), getSession());
+                    xrepo.getIndexStore().revalidate(this.getId(), session);
                 } catch (NutsException ex) {
                     LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "error revalidating Indexer for {0} : {1}", getRepo().getName(), ex);
                 }

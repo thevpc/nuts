@@ -103,11 +103,12 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     @Override
     public PrintStream nullPrintStream() {
-        return createPrintStream(NullOutputStream.INSTANCE, NutsTerminalMode.FILTERED);
+        return new PrintStream(NullOutputStream.INSTANCE);
+        //return createPrintStream(NullOutputStream.INSTANCE, NutsTerminalMode.FILTERED, session);
     }
 
     @Override
-    public PrintStream createPrintStream(OutputStream out, NutsTerminalMode expectedMode) {
+    public PrintStream createPrintStream(OutputStream out, NutsTerminalMode expectedMode, NutsSession session) {
         if (out == null) {
             return null;
         }
@@ -120,7 +121,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 expectedMode = NutsTerminalMode.FILTERED;
             }
         }
-        return CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(out, expectedMode, ws), ws);
+        return CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(out, expectedMode, ws), session);
     }
 
     @Override

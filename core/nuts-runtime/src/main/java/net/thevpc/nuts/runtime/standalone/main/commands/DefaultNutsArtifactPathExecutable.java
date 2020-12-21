@@ -127,7 +127,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             c.contentFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, ws);
             Path fileSource = c.contentFile.getPath();
             if (!Files.exists(fileSource)) {
-                throw new NutsIllegalArgumentException(ws, "File does not exists " + fileSource);
+                throw new NutsIllegalArgumentException(ws, "file does not exists " + fileSource);
             }
             if (Files.isDirectory(fileSource)) {
                 Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
@@ -143,7 +143,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         c.contentFile = ws.io().input().setMultiRead(true).of(zipFilePath);
                         c.addTemp(zipFilePath);
                     } else {
-                        throw new NutsIllegalArgumentException(ws, "Invalid Nut Folder source. expected 'zip' ext in descriptor");
+                        throw new NutsIllegalArgumentException(ws, "invalid nuts folder source. expected 'zip' ext in descriptor");
                     }
                 }
             } else if (Files.isRegularFile(fileSource)) {
@@ -191,7 +191,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         }
                     }
                     if (c.contentFile == null) {
-                        throw new NutsIllegalArgumentException(ws, "Unable to locale component for " + c.baseFile);
+                        throw new NutsIllegalArgumentException(ws, "unable to locale component for " + c.baseFile);
                     }
                 } else {
                     c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
@@ -203,7 +203,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     }
                 }
             } else {
-                throw new NutsIllegalArgumentException(ws, "Path does not denote a valid file or folder " + c.baseFile);
+                throw new NutsIllegalArgumentException(ws, "path does not denote a valid file or folder " + c.baseFile);
             }
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

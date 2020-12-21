@@ -131,7 +131,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
     @Override
     public NutsIOHashAction writeHash(OutputStream out) {
         if (type == null || value == null) {
-            throw new NutsIllegalArgumentException(ws, "Missing Source");
+            throw new NutsIllegalArgumentException(ws, "missing Source");
         }
         switch (type) {
             case "stream": {
@@ -177,7 +177,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
     @Override
     public byte[] computeBytes() {
         if (type == null || value == null) {
-            throw new NutsIllegalArgumentException(ws, "Missing Source");
+            throw new NutsIllegalArgumentException(ws, "missing Source");
         }
         switch (type) {
             case "stream": {

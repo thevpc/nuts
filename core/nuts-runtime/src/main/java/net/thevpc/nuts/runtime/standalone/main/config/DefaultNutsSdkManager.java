@@ -36,16 +36,16 @@ public class DefaultNutsSdkManager implements NutsSdkManager {
         options = CoreNutsUtils.validate(options, ws);
         if (location != null) {
             if (CoreStringUtils.isBlank(location.getProduct())) {
-                throw new NutsIllegalArgumentException(ws, "Sdk Type should not be null");
+                throw new NutsIllegalArgumentException(ws, "sdk type should not be null");
             }
             if (CoreStringUtils.isBlank(location.getName())) {
-                throw new NutsIllegalArgumentException(ws, "Sdk Name should not be null");
+                throw new NutsIllegalArgumentException(ws, "sdk name should not be null");
             }
             if (CoreStringUtils.isBlank(location.getVersion())) {
-                throw new NutsIllegalArgumentException(ws, "Sdk Version should not be null");
+                throw new NutsIllegalArgumentException(ws, "sdk version should not be null");
             }
             if (CoreStringUtils.isBlank(location.getPath())) {
-                throw new NutsIllegalArgumentException(ws, "Sdk Path should not be null");
+                throw new NutsIllegalArgumentException(ws, "sdk path should not be null");
             }
             List<NutsSdkLocation> list = getSdk().get(location.getProduct());
             if (list == null) {

@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.wscommands;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.main.wscommands.DefaultNutsExecCommand;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  *
@@ -20,6 +21,8 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
     protected NutsSession session;
     private final String commandName;
     protected final NutsLogger LOG;
+    private NutsSession validSession;
+    private boolean sessionCopy = false;
 
     public NutsWorkspaceCommandBase(NutsWorkspace ws, String commandName) {
         this.ws = ws;
@@ -38,13 +41,25 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
         }
         return (T) this;
     }
+    public NutsSession getValidWorkspaceSessionCopy() {
+        NutsSession s = getValidWorkspaceSession();
+        if (!sessionCopy) {
+            s = validSession = s.copy();
+            sessionCopy = true;
+        }
+        return s;
+    }
 
-    //@Override
+    public NutsSession getValidWorkspaceSession() {
+        if (validSession == null) {
+            validSession = NutsWorkspaceUtils.of(getWorkspace()).validateSession(getSession());
+            sessionCopy = true;
+        }
+        return validSession;
+    }
+
     @Override
     public NutsSession getSession() {
-        if (session == null) {
-            session = ws.createSession();
-        }
         return session;
     }
 
@@ -91,7 +106,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
 //        switch (a.getStringKey()) {
 //        }
 
-        if (getSession().configureFirst(cmdLine)) {
+        if (getValidWorkspaceSession().configureFirst(cmdLine)) {
             return true;
         }
         return false;

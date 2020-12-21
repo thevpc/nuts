@@ -51,19 +51,19 @@ public class NutsJavaShell extends JShell {
     private NutsWorkspace workspace = null;
 
     public NutsJavaShell(NutsApplicationContext appContext,String[] args) {
-        this(appContext, null, null, null, null,args);
+        this(appContext, null, appContext.getSession(), null, null,args);
     }
 
     public NutsJavaShell(NutsWorkspace workspace,String[] args) {
-        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0), workspace, null, null, null,args);
+        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, null), workspace, null, null, null,args);
     }
 
     public NutsJavaShell(NutsWorkspace workspace, NutsSession session, NutsId appId,String[] args) {
-        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0), workspace, session, appId, null,args);
+        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, session), workspace, session, appId, null,args);
     }
 
     public NutsJavaShell(NutsWorkspace workspace, NutsSession session, NutsId appId, String serviceName,String[] args) {
-        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0), workspace, session, appId, serviceName,args);
+        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, session), workspace, session, appId, serviceName,args);
     }
 
     private NutsJavaShell(NutsApplicationContext appContext, NutsWorkspace workspace, NutsSession session, NutsId appId, String serviceName,String[] args) {
@@ -232,7 +232,7 @@ public class NutsJavaShell extends JShell {
 //        String wss = ws == null ? "" : new File(getRootContext().getAbsolutePath(ws.config().getWorkspaceLocation().toString())).getName();
         String login = null;
         if (ws != null) {
-            login = ws.security().getCurrentUsername();
+            login = ws.security().getCurrentUsername(((NutsShellContext) context.getShellContext()).getSession());
         }
         String prompt = ((login != null && login.length() > 0 && !"anonymous".equals(login)) ? (login + "@") : "");//+ wss;
         if (!StringUtils.isBlank(getRootContext().getServiceName())) {

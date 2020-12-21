@@ -102,18 +102,20 @@ public interface NutsTerminalManager {
      * already supports Nuts specific pattern it will be returned unmodified.
      *
      * @param out PrintStream to check
+     * @param session session
      * @return NutsString pattern format capable PrintStream
      */
-    PrintStream prepare(PrintStream out);
+    PrintStream prepare(PrintStream out, NutsSession session);
 
     /**
      * prepare PrintWriter to handle %N (escape) format pattern. If the instance
      * already supports Nuts specific pattern it will be returned unmodified.
      *
      * @param out PrintWriter to check
+     * @param session session
      * @return %N pattern format capable PrintWriter
      */
-    PrintWriter prepare(PrintWriter out);
+    PrintWriter prepare(PrintWriter out, NutsSession session);
 
     /**
      * true if the stream is not null and could be resolved as Formatted Output

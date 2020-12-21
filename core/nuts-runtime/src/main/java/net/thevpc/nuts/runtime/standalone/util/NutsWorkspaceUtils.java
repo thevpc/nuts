@@ -199,20 +199,20 @@ public class NutsWorkspaceUtils {
 
     public void checkSimpleNameNutsId(NutsId id) {
         if (id == null) {
-            throw new NutsIllegalArgumentException(ws, "Missing id");
+            throw new NutsIllegalArgumentException(ws, "missing id");
         }
         if (CoreStringUtils.isBlank(id.getGroupId())) {
-            throw new NutsIllegalArgumentException(ws, "Missing group for " + id);
+            throw new NutsIllegalArgumentException(ws, "missing group for " + id);
         }
         if (CoreStringUtils.isBlank(id.getArtifactId())) {
-            throw new NutsIllegalArgumentException(ws, "Missing name for " + id);
+            throw new NutsIllegalArgumentException(ws, "missing name for " + id);
         }
     }
 
     public void checkLongNameNutsId(NutsId id) {
         checkSimpleNameNutsId(id);
         if (CoreStringUtils.isBlank(id.getVersion().toString())) {
-            throw new NutsIllegalArgumentException(ws, "Missing version for " + id);
+            throw new NutsIllegalArgumentException(ws, "missing version for " + id);
         }
     }
 
@@ -270,7 +270,7 @@ public class NutsWorkspaceUtils {
 
     public void checkSession(NutsSession session) {
         if (session == null) {
-            throw new NutsIllegalArgumentException(ws, "Missing Session");
+            throw new NutsIllegalArgumentException(ws, "missing Session");
         }
     }
 
@@ -341,20 +341,20 @@ public class NutsWorkspaceUtils {
 
     public static void checkNutsIdBase(NutsWorkspace ws, NutsId id) {
         if (id == null) {
-            throw new NutsIllegalArgumentException(ws, "Missing id");
+            throw new NutsIllegalArgumentException(ws, "missing id");
         }
         if (CoreStringUtils.isBlank(id.getGroupId())) {
-            throw new NutsIllegalArgumentException(ws, "Missing group for " + id);
+            throw new NutsIllegalArgumentException(ws, "missing group for " + id);
         }
         if (CoreStringUtils.isBlank(id.getArtifactId())) {
-            throw new NutsIllegalArgumentException(ws, "Missing name for " + id);
+            throw new NutsIllegalArgumentException(ws, "missing name for " + id);
         }
     }
 
     public void checkNutsId(NutsId id) {
         checkNutsIdBase(ws, id);
         if (id.getVersion().isBlank()) {
-            throw new NutsIllegalArgumentException(ws, "Missing name for " + id);
+            throw new NutsIllegalArgumentException(ws, "missing name for " + id);
         }
     }
 
@@ -705,6 +705,14 @@ public class NutsWorkspaceUtils {
     public boolean setWorkspace(Object o) {
         if (o instanceof NutsWorkspaceAware) {
             ((NutsWorkspaceAware) o).setWorkspace(ws);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean setSession(Object o,NutsSession session) {
+        if (o instanceof NutsSessionAware) {
+            ((NutsSessionAware) o).setSession(session);
             return true;
         }
         return false;

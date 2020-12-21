@@ -33,15 +33,15 @@ package net.thevpc.nuts;
  */
 public interface NutsRepositorySecurityManager {
 
-    boolean isAllowed(String right);
+    boolean isAllowed(String right, NutsSession session);
 
-    NutsRepositorySecurityManager checkAllowed(String right, String operationName) throws SecurityException;
+    NutsRepositorySecurityManager checkAllowed(String right, String operationName, NutsSession session) throws SecurityException;
 
-    NutsAddUserCommand addUser(String name);
+    NutsAddUserCommand addUser(String name, NutsSession session);
 
-    NutsUpdateUserCommand updateUser(String name);
+    NutsUpdateUserCommand updateUser(String name, NutsSession session);
 
-    NutsRemoveUserCommand removeUser(String name);
+    NutsRemoveUserCommand removeUser(String name, NutsSession session);
 
     NutsUser[] findUsers(NutsSession session);
 

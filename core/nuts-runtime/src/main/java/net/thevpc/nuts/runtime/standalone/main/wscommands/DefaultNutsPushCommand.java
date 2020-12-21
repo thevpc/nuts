@@ -62,22 +62,22 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
 
     @Override
     public NutsPushCommand run() {
-        NutsSession session = NutsWorkspaceUtils.of(ws).validateSession(this.getSession());
+        NutsSession session = this.getValidWorkspaceSession();
         NutsRepositoryFilter repositoryFilter = null;
         Map<NutsId, NutsDefinition> toProcess = new LinkedHashMap<>();
         for (NutsId id : this.getIds()) {
             if (CoreStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
-                throw new NutsIllegalArgumentException(ws, "Invalid Version " + id.getVersion());
+                throw new NutsIllegalArgumentException(ws, "invalid Version " + id.getVersion());
             }
             NutsDefinition file = ws.fetch().setId(id).setSession(session).setContent(true).setTransitive(false).getResultDefinition();
             if (file == null) {
-                throw new NutsIllegalArgumentException(ws, "Nothing to push");
+                throw new NutsIllegalArgumentException(ws, "nothing to push");
             }
             toProcess.put(id, file);
         }
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         if (toProcess.isEmpty()) {
-            throw new NutsIllegalArgumentException(ws, "Missing component to push");
+            throw new NutsIllegalArgumentException(ws, "missing component to push");
         }
         for (Map.Entry<NutsId, NutsDefinition> entry : toProcess.entrySet()) {
             NutsId id = entry.getKey();
@@ -120,7 +120,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
             } else {
                 NutsRepository repo = ws.repos().getRepository(this.getRepository(), session.copy().setTransitive(true));
                 if (!repo.config().isEnabled()) {
-                    throw new NutsIllegalArgumentException(ws, "Repository " + repo.getName() + " is disabled");
+                    throw new NutsIllegalArgumentException(ws, "repository " + repo.getName() + " is disabled");
                 }
                 NutsId effId = ws.config().createContentFaceId(id.builder().setProperties("").build(), file.getDescriptor())
 //                        .setAlternative(CoreStringUtils.trim(file.getDescriptor().getAlternative()))

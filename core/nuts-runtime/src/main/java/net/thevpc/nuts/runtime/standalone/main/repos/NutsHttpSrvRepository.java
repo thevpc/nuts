@@ -222,7 +222,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     private String[] resolveEncryptedAuth(NutsSession session) {
-        String login = getWorkspace().security().getCurrentUsername();
+        String login = getWorkspace().security().getCurrentUsername(session);
         NutsUserConfig security = NutsRepositoryConfigManagerExt.of(config()).getUser(login);
         String newLogin = "";
         char[] credentials = new char[0];
@@ -232,7 +232,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         } else {
             newLogin = security.getRemoteIdentity();
             if (CoreStringUtils.isBlank(newLogin)) {
-                NutsUser security2 = getWorkspace().security().findUser(login);
+                NutsUser security2 = getWorkspace().security().findUser(login, session);
                 if (security2 != null) {
                     newLogin = security2.getRemoteIdentity();
                 }

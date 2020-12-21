@@ -102,7 +102,7 @@ public final class Nuts {
         } else {
             appArgs=o.getApplicationArguments();
         }
-        session.configure(true,args);
+        session.configure(o);
         workspace.exec()
                 .setSession(session)
                 .addCommand(appArgs)

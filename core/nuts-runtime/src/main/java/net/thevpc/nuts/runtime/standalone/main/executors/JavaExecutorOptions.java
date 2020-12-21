@@ -169,16 +169,16 @@ public final class JavaExecutorOptions {
         if (this.jar) {
             if (this.mainClass != null) {
                 if (session.isPlainOut()) {
-                    session.getTerminal().err().printf("Ignored main-class=%s. running jar!%n", getMainClass());
+                    session.getTerminal().err().printf("ignored main-class=%s. running jar!%n", getMainClass());
                 }
             }
             if (!classPath0.isEmpty()) {
                 if (session.isPlainOut()) {
-                    session.getTerminal().err().printf("Ignored class-path=%s. running jar!%n", classPath0);
+                    session.getTerminal().err().printf("ignored class-path=%s. running jar!%n", classPath0);
                 }
             }
             if (this.excludeBase) {
-                throw new NutsIllegalArgumentException(getWorkspace(), "Cannot exclude base with jar modifier");
+                throw new NutsIllegalArgumentException(getWorkspace(), "cannot exclude base with jar modifier");
             }
         } else {
             if (mainClass == null) {
@@ -194,7 +194,7 @@ public final class JavaExecutorOptions {
                 }
             }
             if (mainClass == null) {
-                throw new NutsIllegalArgumentException(getWorkspace(), "Missing Main Class for " + id);
+                throw new NutsIllegalArgumentException(getWorkspace(), "missing Main Class for " + id);
             }
             boolean baseDetected = false;
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
@@ -213,7 +213,7 @@ public final class JavaExecutorOptions {
             }
             if (!isExcludeBase() && !baseDetected) {
                 if (path == null) {
-                    throw new NutsIllegalArgumentException(getWorkspace(), "Missing Path for " + id);
+                    throw new NutsIllegalArgumentException(getWorkspace(), "missing Path for " + id);
                 }
                 nutsPath.add(0, nutsIdFormat.value(id).format());
                 classPath.add(0, path.toString());
@@ -226,7 +226,7 @@ public final class JavaExecutorOptions {
                 List<String> possibleClasses = CoreStringUtils.split(getMainClass(), ":");
                 switch (possibleClasses.size()) {
                     case 0:
-                        throw new NutsIllegalArgumentException(getWorkspace(), "Missing Main-Class in Manifest for " + id);
+                        throw new NutsIllegalArgumentException(getWorkspace(), "missing Main-Class in Manifest for " + id);
                     case 1:
                         //
                         break;

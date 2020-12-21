@@ -7,9 +7,10 @@ import java.util.Arrays;
 import java.util.Map;
 
 @NutsSingleton
-public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsWorkspaceAware {
+public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsWorkspaceAware, NutsSessionAware {
 
     private NutsWorkspace ws;
+    private NutsSession session;
 
     @Override
     public String getId() {
@@ -19,6 +20,11 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
     @Override
     public void setWorkspace(NutsWorkspace workspace) {
         this.ws = workspace;
+    }
+
+    @Override
+    public void setSession(NutsSession session) {
+        this.session=session;
     }
 
     @Override

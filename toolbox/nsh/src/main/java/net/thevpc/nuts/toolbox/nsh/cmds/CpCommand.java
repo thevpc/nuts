@@ -42,9 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -190,7 +188,7 @@ public class CpCommand extends SimpleNshBuiltin {
                 throw new UncheckedIOException(ex);
             }
         } else {
-            throw new NutsIllegalArgumentException(context.getWorkspace(), "cp: Unsupported protocols " + from + "->" + to);
+            throw new NutsIllegalArgumentException(context.getWorkspace(), "cp: unsupported protocols " + from + "->" + to);
         }
     }
 
@@ -199,12 +197,16 @@ public class CpCommand extends SimpleNshBuiltin {
             Files.walk(from1.toPath())
                     .forEach(source -> {
                         Path destination = Paths.get(to1.getPath(), source.toString()
-                                .substring(to1.getPath().length()));
-                        FileUtils.createParents(destination.toFile());
-                        try {
-                            Files.copy(source, destination);
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
+                                .substring(from1.getPath().length()));
+                        if(Files.isDirectory(source)){
+                            destination.toFile().mkdirs();
+                        }else {
+                            FileUtils.createParents(destination.toFile());
+                            try {
+                                Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+                            } catch (IOException e) {
+                                throw new UncheckedIOException(e);
+                            }
                         }
                     });
         } catch (IOException e) {

@@ -12,6 +12,7 @@ import java.util.Scanner;
 public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements NutsSessionTerminal {
 
     protected NutsWorkspace ws;
+    protected NutsSession session;
     protected final OutInfo out = new OutInfo(true);
     protected final OutInfo err = new OutInfo(false);
     protected InputStream in;
@@ -27,6 +28,11 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
             this.out.session = this;
             this.err.session = this;
         }
+    }
+
+    @Override
+    public void setSession(NutsSession session) {
+        this.session=session;
     }
 
     @Override
@@ -306,7 +312,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
             }
             if (formatted == null || baseOld != b) {
                 baseOld = b;
-                formatted = session.ws.io().createPrintStream(b, NutsTerminalMode.FORMATTED);
+                formatted = session.ws.io().createPrintStream(b, NutsTerminalMode.FORMATTED, session.session);
             }
             return formatted;
         }
@@ -318,7 +324,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
             }
             if (filtered == null || baseOld != b) {
                 baseOld = b;
-                filtered = session.ws.io().createPrintStream(b, NutsTerminalMode.FILTERED);
+                filtered = session.ws.io().createPrintStream(b, NutsTerminalMode.FILTERED, session.session);
             }
             return filtered;
         }

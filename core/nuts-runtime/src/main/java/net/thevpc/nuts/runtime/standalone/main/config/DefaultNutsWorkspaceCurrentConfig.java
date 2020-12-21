@@ -113,7 +113,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         for (NutsStoreLocation type : NutsStoreLocation.values()) {
             String ss = Nuts.getPlatformHomeFolder(getStoreLocationLayout(), type, homeLocations, isGlobal(), getName());
             if (CoreStringUtils.isBlank(ss)) {
-                throw new NutsIllegalArgumentException(null, "Missing Home for " + type.id());
+                throw new NutsIllegalArgumentException(null, "missing Home for " + type.id());
             }
             homes[type.ordinal()] = Paths.get(ss);
         }

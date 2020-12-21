@@ -136,7 +136,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
         HashSet<NutsId> baseRegulars = new HashSet<>(ids);
         if (isInstalled()) {
-            baseRegulars.addAll(ws.search().setSession(CoreNutsUtils.silent(getSession()))
+            baseRegulars.addAll(ws.search().setSession(CoreNutsUtils.silent(getValidWorkspaceSession()))
                     .addInstallStatus(NutsInstallStatus.INSTALLED)
                     .getResultIds().stream().map(NutsId::getShortNameId).collect(Collectors.toList()));
             // This bloc is to handle packages that were installed by their jar/content was removed for any reason!
@@ -194,7 +194,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         resultFixes = null;
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsInstalledRepository ir = dws.getInstalledRepository();
-        NutsSession session = NutsWorkspaceUtils.of(ws).validateSession(this.getSession());
+        NutsSession session = NutsWorkspaceUtils.of(ws).validateSession(this.getValidWorkspaceSession());
         resultFixes = IteratorUtils.toList(IteratorUtils.convertNonNull(ir.searchInstallInformation(session), new Function<NutsInstallInformation, FixAction>() {
             @Override
             public FixAction apply(NutsInstallInformation nutsInstallInformation) {
@@ -223,7 +223,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
 //        NutsWorkspaceCurrentConfig actualBootConfig = ws.config().current();
 //        NutsWorkspaceCurrentConfig jsonBootConfig = getConfigManager().getBootContext();
-        NutsSession session = NutsWorkspaceUtils.of(ws).validateSession(this.getSession());
+        NutsSession session = NutsWorkspaceUtils.of(ws).validateSession(this.getValidWorkspaceSession());
         Map<String, NutsUpdateResult> allUpdates = new LinkedHashMap<>();
         Map<String, NutsUpdateResult> extUpdates = new LinkedHashMap<>();
         Map<String, NutsUpdateResult> regularUpdates = new HashMap<>();
@@ -299,7 +299,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     protected void traceFixes() {
         if (resultFixes != null) {
-            PrintStream out = CoreIOUtils.resolveOut(getSession());
+            PrintStream out = CoreIOUtils.resolveOut(getValidWorkspaceSession());
             for (FixAction n : resultFixes) {
                 out.printf("[```error FIX```] %s %s %n", n.getId(), n.getProblemKey());
             }
@@ -307,8 +307,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     }
 
     protected void traceUpdates(NutsWorkspaceUpdateResult result) {
-        if (getSession().isPlainTrace()) {
-            PrintStream out = CoreIOUtils.resolveOut(getSession());
+        if (getValidWorkspaceSession().isPlainTrace()) {
+            PrintStream out = CoreIOUtils.resolveOut(getValidWorkspaceSession());
             NutsUpdateResult[] updates = result.getAllUpdates();
             if (updates.length == 0) {
                 out.printf("All components are [[up-to-date]]. You are running latest version%s.%n", result.getAllResults().length > 1 ? "s" : "");
@@ -360,11 +360,11 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     }
 
     protected NutsUpdateResult checkRegularUpdate(NutsId id) {
-        NutsSession session = getSession();
+        NutsSession session = getValidWorkspaceSession();
         NutsSession searchSession = CoreNutsUtils.silent(session);
         NutsVersion version = id.getVersion();
         if (version.isSingleValue()) {
-            throw new NutsIllegalArgumentException(ws, id + " : Version is too restrictive. You should use fetch or install instead");
+            throw new NutsIllegalArgumentException(ws, id + " : version is too restrictive. You should use fetch or install instead");
         }
 
         DefaultNutsUpdateResult r = new DefaultNutsUpdateResult();
@@ -411,7 +411,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         r.setAvailable(d1);
         if (d0 == null) {
             if (!this.isEnableInstall()) {
-                throw new NutsIllegalArgumentException(ws, "No version is installed to be updated for " + id);
+                throw new NutsIllegalArgumentException(ws, "no version is installed to be updated for " + id);
             }
             if (d1 == null) {
                 throw new NutsNotFoundException(ws, id);
@@ -446,7 +446,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     private void applyFixes() {
         if(resultFixes!=null){
-            NutsSession session = getSession();
+            NutsSession session = getValidWorkspaceSession();
             PrintStream out = CoreIOUtils.resolveOut(session);
             for (FixAction n : resultFixes) {
                 n.fix(session);
@@ -463,11 +463,12 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         }
         NutsWorkspaceUtils.of(ws).checkReadOnly();
         boolean requireSave = false;
-        final PrintStream out = CoreIOUtils.resolveOut(getSession());
+        NutsSession validWorkspaceSession = getValidWorkspaceSession();
+        final PrintStream out = CoreIOUtils.resolveOut(validWorkspaceSession);
         boolean accept = ws.io().term().getTerminal().ask()
                 .forBoolean("Would you like to apply updates?").setDefaultValue(true)
-                .setSession(getSession()).getValue();
-        if (getSession().isAsk() && !accept) {
+                .setSession(validWorkspaceSession).getValue();
+        if (validWorkspaceSession.isAsk() && !accept) {
             throw new NutsUserCancelException(ws);
         }
         NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(ws.config());
@@ -478,14 +479,14 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsId finalApiId = apiUpdateAvailable ? apiUpdate.getAvailable().getId() : ws.getApiId();
         NutsId finalRuntimeId = runtimeUpdateApplicable ? runtimeUpdate.getAvailable().getId() : ws.getRuntimeId();
         if (apiUpdateApplicable || runtimeUpdateApplicable) {
-            wcfg.prepareBootApi(finalApiId, finalRuntimeId, true, getSession());
+            wcfg.prepareBootApi(finalApiId, finalRuntimeId, true, validWorkspaceSession);
         }
         if (apiUpdateApplicable) {
             ((DefaultNutsUpdateResult) apiUpdate).setUpdateApplied(true);
             traceSingleUpdate(apiUpdate);
         }
         if (runtimeUpdateApplicable) {
-            wcfg.prepareBootRuntime(finalRuntimeId, true, getSession());
+            wcfg.prepareBootRuntime(finalRuntimeId, true, validWorkspaceSession);
         }
         if (runtimeUpdateApplicable) {
             ((DefaultNutsUpdateResult) runtimeUpdate).setUpdateApplied(true);
@@ -493,7 +494,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         }
         for (NutsUpdateResult extension : result.getExtensions()) {
             NutsId finalExtensionId = extension.getAvailable() == null ? extension.getLocal().getId() : extension.getAvailable().getId();
-            wcfg.prepareBootExtension(finalExtensionId, true, getSession());
+            wcfg.prepareBootExtension(finalExtensionId, true, validWorkspaceSession);
         }
         NutsExtensionListHelper h = new NutsExtensionListHelper(wcfg.getStoredConfigBoot().getExtensions())
                 .save();
@@ -502,7 +503,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 if (extension.getAvailable() != null) {
                     h.add(extension.getAvailable().getId());
                     if (h.hasChanged()) {
-                        NutsWorkspaceExt.of(ws).deployBoot(getSession(), extension.getAvailable().getId(), true);
+                        NutsWorkspaceExt.of(ws).deployBoot(validWorkspaceSession, extension.getAvailable().getId(), true);
                     }
                 }
                 ((DefaultNutsUpdateResult) extension).setUpdateApplied(true);
@@ -513,12 +514,12 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             applyRegularUpdate((DefaultNutsUpdateResult) component);
         }
 
-        if (ws.config().save(requireSave, getSession())) {
+        if (ws.config().save(requireSave, validWorkspaceSession)) {
             if (LOG.isLoggable(Level.INFO)) {
                 LOG.with().level(Level.INFO).verb(NutsLogVerb.WARNING).log( "Workspace is updated. Nuts should be restarted for changes to take effect.");
             }
             if (apiUpdate != null && apiUpdate.isUpdateAvailable() && !apiUpdate.isUpdateApplied()) {
-                if (getSession().isPlainTrace()) {
+                if (validWorkspaceSession.isPlainTrace()) {
                     out.println("Workspace is updated. Nuts should be restarted for changes to take effect.");
                 }
             }
@@ -530,7 +531,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsDefinition d0 = r.getLocal();
         NutsDefinition d1 = r.getAvailable();
         final String simpleName = d0 != null ? d0.getId().getShortName() : d1 != null ? d1.getId().getShortName() : id.getShortName();
-        final PrintStream out = CoreIOUtils.resolveOut(getSession());
+        final PrintStream out = CoreIOUtils.resolveOut(getValidWorkspaceSession());
         if (r.isUpdateApplied()) {
             if (r.isUpdateForced()) {
                 if (d0 == null) {
@@ -690,13 +691,14 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             return;
         }
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        final PrintStream out = CoreIOUtils.resolveOut(getSession());
+        NutsSession session = getValidWorkspaceSession();
+        final PrintStream out = CoreIOUtils.resolveOut(session);
         NutsId id = r.getId();
         NutsDefinition d0 = r.getLocal();
         NutsDefinition d1 = r.getAvailable();
         if (d0 == null) {
-            ws.security().checkAllowed(NutsConstants.Permissions.UPDATE, "update");
-            dws.updateImpl(d1, new String[0], null, getSession(), true);
+            ws.security().checkAllowed(NutsConstants.Permissions.UPDATE, "update", this.session);
+            dws.updateImpl(d1, new String[0], null, session, true);
             r.setUpdateApplied(true);
         } else if (d1 == null) {
             //this is very interesting. Why the hell is this happening?
@@ -705,17 +707,17 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             NutsVersion v1 = d1.getId().getVersion();
             if (v1.compareTo(v0) <= 0) {
                 //no update needed!
-                if (getSession().isYes()) {
-                    ws.security().checkAllowed(NutsConstants.Permissions.UPDATE, "update");
-                    dws.updateImpl(d1, new String[0], null, getSession(), true);
+                if (session.isYes()) {
+                    ws.security().checkAllowed(NutsConstants.Permissions.UPDATE, "update", this.session);
+                    dws.updateImpl(d1, new String[0], null, session, true);
                     r.setUpdateApplied(true);
                     r.setUpdateForced(true);
                 } else {
-                    dws.getInstalledRepository().setDefaultVersion(d1.getId(), getSession());
+                    dws.getInstalledRepository().setDefaultVersion(d1.getId(), session);
                 }
             } else {
-                ws.security().checkAllowed(NutsConstants.Permissions.UPDATE, "update");
-                dws.updateImpl(d1, new String[0], null, getSession(), true);
+                ws.security().checkAllowed(NutsConstants.Permissions.UPDATE, "update", this.session);
+                dws.updateImpl(d1, new String[0], null, session, true);
                 r.setUpdateApplied(true);
             }
         }

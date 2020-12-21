@@ -10,11 +10,42 @@ Network Updatable Things Services
 
 website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
 
-**nuts** is a Package manager for Java (and other things). It stands for **Network Updatable Things Services** tool. Think of it as **npm** for javascript or **pip** for python. But it lots more... It is a simple tool  for managing remote artifacts, installing these  artifacts to the current machine and executing such  artifacts on need. Each managed artifact  is also called a **nuts** which  is a **Network Updatable Thing Service** . Nuts artifacts are  stored  into repositories. A  **repository**  may be local for  storing local Nuts or remote for accessing  remote artifacts (good examples  are  remote maven  repositories). 
+**nuts** is a Package manager for Java (and other things).
 
-One manages a set of repositories called a **workspace**. Managed **nuts**  (artifacts)  have descriptors that depict dependencies between them. This dependency is seamlessly handled by  **nuts**  (tool) to resolve and download on-need dependencies over the wire. 
 
-**nuts** is a swiss army knife tool as it acts like (and supports) **maven** build tool to have an abstract view of the the  artifacts dependency and like  **npm**, **pip** or **zypper/apt-get**  package manager tools to  install and uninstall artifacts allowing multiple versions of the very same artifact to  be installed.
+## SYNOPSYS
 
-What makes **nuts** very helpful is that it simplifies application deployments by not including dependencies in the release bundle. All dependencies will be downloaded at installation time. They also will be shared among all application which reduces storage space as well. Offline deployment is still supported though. Besides, multiple versions of the same application can be installed simultaneously.
+This is just enough info to get you up and running ```nuts``` .
+Much more info is available in [nuts documentation website](https://thevpc.github.io/nuts).
+Even more information will is available via ```nuts help``` once it's installed.
 
+To check current nuts version
+```
+nuts --version
+```
+
+It should show a result in the format : nuts-api-version/nuts-impl-version
+
+```
+0.8.1/0.8.1.0
+```
+
+## Run a command
+
+
+To install a command using **nuts** just type
+
+```
+nuts install <artifact-id>
+```
+
+To run an artifact using **nuts** just type
+
+```
+nuts <artifact-id>
+```
+
+Several commands are available, and you can always manually run any java and non java application. More info is available in the Nuts official [wiki](https://github.com/thevpc/nuts/wiki) .
+
+## Call for Contribution
+Nuts have lots of ways to be improved. Please feel free to join the journey.

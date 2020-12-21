@@ -90,6 +90,11 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
     }
 
     @Override
+    public void setSession(NutsSession session) {
+        //do nothing
+    }
+
+    @Override
     public String readLine(String promptFormat, Object... params) {
         return getBase().readLine(promptFormat, params);
     }

@@ -39,7 +39,7 @@ public interface NutsRepositoryManager {
      * @param session    session
      * @return repository
      */
-    NutsRepository addRepository(NutsRepositoryModel repository, NutsSession session);
+    NutsRepository addRepository(NutsRepositoryModel repository, NutsAddOptions session);
 
     NutsRepository addRepository(NutsRepositoryDefinition definition);
 

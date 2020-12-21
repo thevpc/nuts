@@ -205,7 +205,7 @@ public final class NutsBootWorkspace {
                     options.getWorkspace(), null,
                     errors.toString()
             );
-            throw new NutsIllegalArgumentException(null, "Unable to load " + NutsConstants.Ids.NUTS_API + "#" + workspaceInformation.getApiVersion());
+            throw new NutsIllegalArgumentException(null, "unable to load " + NutsConstants.Ids.NUTS_API + "#" + workspaceInformation.getApiVersion());
         }
 
         List<String> cmd = new ArrayList<>();
@@ -293,7 +293,7 @@ public final class NutsBootWorkspace {
                     }
                     _ws = configLoaded.getWorkspaceLocation();
                     if (i >= maxDepth - 1) {
-                        throw new NutsIllegalArgumentException(null, "Cyclic Workspace resolution");
+                        throw new NutsIllegalArgumentException(null, "cyclic workspace resolution");
                     }
                 }
                 workspaceName = PrivateNutsUtils.resolveValidWorkspaceName(options.getWorkspace());
@@ -326,7 +326,7 @@ public final class NutsBootWorkspace {
                 homes[type.ordinal()] = PrivateNutsPlatformUtils.getPlatformHomeFolder(workspaceInformation.getStoreLocationLayout(), type, homeLocations,
                         workspaceInformation.isGlobal(), workspaceInformation.getName());
                 if (PrivateNutsUtils.isBlank(homes[type.ordinal()])) {
-                    throw new NutsIllegalArgumentException(null, "Missing Home for " + type.id());
+                    throw new NutsIllegalArgumentException(null, "missing Home for " + type.id());
                 }
             }
             NutsStoreLocationStrategy storeLocationStrategy = workspaceInformation.getStoreLocationStrategy();
@@ -395,7 +395,7 @@ public final class NutsBootWorkspace {
                     || NutsConstants.Versions.RELEASE.equalsIgnoreCase(workspaceInformation.getApiVersion())) {
                 String s = PrivateNutsUtils.Mvn.resolveLatestMavenId(PrivateNutsId.parse(NutsConstants.Ids.NUTS_API), null, LOG, resolveBootRepositories());
                 if (s == null) {
-                    throw new NutsIllegalArgumentException(null, "Unable to load latest nuts version");
+                    throw new NutsIllegalArgumentException(null, "unable to load latest nuts version");
                 }
                 workspaceInformation.setApiVersion(PrivateNutsId.parse(s).getVersion());
             }

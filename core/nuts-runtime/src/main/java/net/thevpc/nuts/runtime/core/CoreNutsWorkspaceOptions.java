@@ -10,19 +10,19 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.core;
 
 import net.thevpc.nuts.*;
@@ -45,6 +45,10 @@ import java.util.function.Supplier;
  */
 public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, NutsWorkspaceOptionsBuilder {
     private static final long serialVersionUID = 1;
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
+    private final List<String> outputFormatOptions = new ArrayList<>();
     /**
      * nuts api version to boot option-type : exported (inherited in child
      * workspaces)
@@ -73,18 +77,17 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      */
     private String workspace = null;
 
-
     /**
      * out line prefix, option-type : exported (inherited in child
      * workspaces)
      */
-    private String outLinePrefix=null;
+    private String outLinePrefix = null;
 
     /**
      * err line prefix, option-type : exported (inherited in child
      * workspaces)
      */
-    private String errLinePrefix=null;
+    private String errLinePrefix = null;
 
     /**
      * user friendly workspace name option-type : exported (inherited in child
@@ -96,7 +99,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * if true, do not install nuts companion tools upon workspace creation
      * option-type : exported (inherited in child workspaces)
      */
-    private boolean skipCompanions;
+    private Boolean skipCompanions;
 
     /**
      * if true, do not run welcome when no application arguments were resolved.
@@ -104,7 +107,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      *
      * @since 0.5.5
      */
-    private boolean skipWelcome;
+    private Boolean skipWelcome;
 
     /**
      * if true, do not bootstrap workspace after reset/recover.
@@ -112,21 +115,21 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      *
      * @since 0.6.0
      */
-    private boolean skipBoot;
+    private Boolean skipBoot;
 
     /**
      * if true consider global/system repository
      * <br>
      * option-type : exported (inherited in child workspaces)
      */
-    private boolean global;
+    private Boolean global;
 
     /**
      * if true consider GUI/Swing mode
      * <br>
      * option-type : exported (inherited in child workspaces)
      */
-    private boolean gui;
+    private Boolean gui;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -161,12 +164,12 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private boolean readOnly = false;
+    private Boolean readOnly;
 
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private boolean trace = true;
+    private Boolean trace;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -189,11 +192,6 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     private NutsContentType outputFormat = null;
 
     /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private final List<String> outputFormatOptions = new ArrayList<>();
-
-    /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private String[] applicationArguments;
@@ -212,7 +210,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * if true no real execution, wil dry exec
      * option-type : runtime (available only for the current workspace instance)
      */
-    private boolean dry = false;
+    private Boolean dry;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -227,22 +225,22 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private boolean recover = false;
+    private Boolean recover;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private boolean reset = false;
+    private Boolean reset;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private boolean debug = false;
+    private Boolean debug;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private boolean inherited = false;
+    private Boolean inherited;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -296,18 +294,21 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * option-type : exported (inherited in child workspaces)
      */
     private NutsFetchStrategy fetchStrategy = NutsFetchStrategy.ONLINE;
+
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private boolean cached = true;
+    private Boolean cached;
+
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private boolean indexed = true;
+    private Boolean indexed;
+
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private boolean transitive = true;
+    private Boolean transitive;
 
     /**
      * not parsed
@@ -339,7 +340,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     private String bootRepositories = null;
     private Instant expireTime = null;
     private String[] errors = new String[0];
-    private boolean skipErrors = false;
+    private Boolean skipErrors;
     private NutsWorkspace ws = null;
 
     public CoreNutsWorkspaceOptions(NutsWorkspace ws) {
@@ -368,16 +369,16 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         this.setJavaOptions(other.getJavaOptions());
         this.setWorkspace(other.getWorkspace());
         this.setName(other.getName());
-        this.setSkipCompanions(other.isSkipCompanions());
-        this.setSkipWelcome(other.isSkipWelcome());
-        this.setSkipBoot(other.isSkipBoot());
-        this.setGlobal(other.isGlobal());
-        this.setGui(other.isGui());
+        this.setSkipCompanions(other.getSkipCompanions());
+        this.setSkipWelcome(other.getSkipWelcome());
+        this.setSkipBoot(other.getSkipBoot());
+        this.setGlobal(other.getGlobal());
+        this.setGui(other.getGui());
         this.setUsername(other.getUserName());
         this.setCredentials(other.getCredentials());
         this.setTerminalMode(other.getTerminalMode());
-        this.setReadOnly(other.isReadOnly());
-        this.setTrace(other.isTrace());
+        this.setReadOnly(other.getReadOnly());
+        this.setTrace(other.getTrace());
         this.setProgressOptions(other.getProgressOptions());
         this.setLogConfig(other.getLogConfig() == null ? null : new NutsLogConfig(other.getLogConfig())); //TODO
         this.setConfirm(other.getConfirm());
@@ -386,13 +387,13 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         this.setOutputFormatOptions(other.getOutputFormatOptions());
         this.setOpenMode(other.getOpenMode());
         this.setCreationTime(other.getCreationTime());
-        this.setDry(other.isDry());
+        this.setDry(other.getDry());
         this.setClassLoaderSupplier(other.getClassLoaderSupplier());
         this.setExecutorOptions(other.getExecutorOptions());
-        this.setRecover(other.isRecover());
-        this.setReset(other.isReset());
-        this.setDebug(other.isDebug());
-        this.setInherited(other.isInherited());
+        this.setRecover(other.getRecover());
+        this.setReset(other.getReset());
+        this.setDebug(other.getDebug());
+        this.setInherited(other.getInherited());
         this.setExecutionType(other.getExecutionType());
         this.setArchetype(other.getArchetype());
         this.setStoreLocationStrategy(other.getStoreLocationStrategy());
@@ -402,9 +403,9 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         this.setStoreLocationStrategy(other.getStoreLocationStrategy());
         this.setRepositoryStoreLocationStrategy(other.getRepositoryStoreLocationStrategy());
         this.setFetchStrategy(other.getFetchStrategy());
-        this.setCached(other.isCached());
-        this.setIndexed(other.isIndexed());
-        this.setTransitive(other.isTransitive());
+        this.setCached(other.getCached());
+        this.setIndexed(other.getIndexed());
+        this.setTransitive(other.getTransitive());
         this.setStdin(other.getStdin());
         this.setStdout(other.getStdout());
         this.setStderr(other.getStderr());
@@ -417,7 +418,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         this.setApplicationArguments(other.getApplicationArguments() == null ? null : Arrays.copyOf(other.getApplicationArguments(), other.getApplicationArguments().length));
         this.setExpireTime(other.getExpireTime());
         this.setErrors(other.getErrors());
-        this.setSkipErrors(other.isSkipErrors());
+        this.setSkipErrors(other.getSkipErrors());
         this.setSwitchWorkspace(other.getSwitchWorkspace());
         return this;
     }
@@ -464,7 +465,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setGlobal(boolean global) {
+    public NutsWorkspaceOptionsBuilder setGlobal(Boolean global) {
         this.global = global;
         return this;
     }
@@ -476,7 +477,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setGui(boolean gui) {
+    public NutsWorkspaceOptionsBuilder setGui(Boolean gui) {
         this.gui = gui;
         return this;
     }
@@ -560,7 +561,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setInherited(boolean inherited) {
+    public NutsWorkspaceOptionsBuilder setInherited(Boolean inherited) {
         this.inherited = inherited;
         return this;
     }
@@ -578,8 +579,13 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public NutsWorkspaceOptionsBuilder setSkipErrors(boolean value) {
+    public NutsWorkspaceOptionsBuilder setSkipErrors(Boolean value) {
         this.skipErrors = value;
+        return this;
+    }
+
+    public NutsWorkspaceOptionsBuilder setSwitchWorkspace(Boolean switchWorkspace) {
+        this.switchWorkspace = switchWorkspace;
         return this;
     }
 
@@ -596,7 +602,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setDry(boolean dry) {
+    public NutsWorkspaceOptionsBuilder setDry(Boolean dry) {
         this.dry = dry;
         return this;
     }
@@ -620,7 +626,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setReadOnly(boolean readOnly) {
+    public NutsWorkspaceOptionsBuilder setReadOnly(Boolean readOnly) {
         this.readOnly = readOnly;
         return this;
     }
@@ -632,7 +638,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setTrace(boolean trace) {
+    public NutsWorkspaceOptionsBuilder setTrace(Boolean trace) {
         this.trace = trace;
         return this;
     }
@@ -716,7 +722,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setRecover(boolean recover) {
+    public NutsWorkspaceOptionsBuilder setRecover(Boolean recover) {
         this.recover = recover;
         return this;
     }
@@ -728,7 +734,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setReset(boolean reset) {
+    public NutsWorkspaceOptionsBuilder setReset(Boolean reset) {
         this.reset = reset;
         return this;
     }
@@ -740,7 +746,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setDebug(boolean debug) {
+    public NutsWorkspaceOptionsBuilder setDebug(Boolean debug) {
         this.debug = debug;
         return this;
     }
@@ -860,7 +866,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setSkipCompanions(boolean skipInstallCompanions) {
+    public NutsWorkspaceOptionsBuilder setSkipCompanions(Boolean skipInstallCompanions) {
         this.skipCompanions = skipInstallCompanions;
         return this;
     }
@@ -872,7 +878,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setSkipBoot(boolean skipBoot) {
+    public NutsWorkspaceOptionsBuilder setSkipBoot(Boolean skipBoot) {
         this.skipBoot = skipBoot;
         return this;
     }
@@ -884,7 +890,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setSkipWelcome(boolean skipWelcome) {
+    public NutsWorkspaceOptionsBuilder setSkipWelcome(Boolean skipWelcome) {
         this.skipWelcome = skipWelcome;
         return this;
     }
@@ -965,19 +971,19 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public NutsWorkspaceOptionsBuilder setCached(boolean cached) {
+    public NutsWorkspaceOptionsBuilder setCached(Boolean cached) {
         this.cached = cached;
         return this;
     }
 
     @Override
-    public NutsWorkspaceOptionsBuilder setIndexed(boolean indexed) {
+    public NutsWorkspaceOptionsBuilder setIndexed(Boolean indexed) {
         this.indexed = indexed;
         return this;
     }
 
     @Override
-    public NutsWorkspaceOptionsBuilder setTransitive(boolean transitive) {
+    public NutsWorkspaceOptionsBuilder setTransitive(Boolean transitive) {
         this.transitive = transitive;
         return this;
     }
@@ -1085,6 +1091,11 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
 
     @Override
     public boolean isDry() {
+        return dry != null && dry;
+    }
+
+    @Override
+    public Boolean getDry() {
         return dry;
     }
 
@@ -1096,6 +1107,27 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     @Override
     public String[] getExcludedExtensions() {
         return excludedExtensions;
+    }
+
+    @Override
+    public boolean isExcludedExtension(String extensionId) {
+        if (extensionId != null) {
+            NutsId pnid = CoreNutsUtils.parseNutsId(extensionId);
+            String shortName = pnid.getShortName();
+            String artifactId = pnid.getArtifactId();
+            if (excludedExtensions != null) {
+                for (String excludedExtensionList : excludedExtensions) {
+                    for (String s : excludedExtensionList.split("[;, ]")) {
+                        if (s.length() > 0) {
+                            if (s.equals(shortName) || s.equals(artifactId)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -1216,56 +1248,126 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
 
     @Override
     public boolean isDebug() {
+        return debug != null && debug;
+    }
+
+    @Override
+    public Boolean getDebug() {
         return debug;
     }
 
     @Override
     public boolean isGlobal() {
+        return global != null && global;
+    }
+
+    @Override
+    public Boolean getGlobal() {
         return global;
     }
 
     @Override
     public boolean isGui() {
+        return gui != null && gui;
+    }
+
+    @Override
+    public Boolean getGui() {
         return gui;
     }
 
     @Override
     public boolean isInherited() {
+        return inherited != null && inherited;
+    }
+
+    @Override
+    public Boolean getInherited() {
         return inherited;
     }
 
     @Override
     public boolean isReadOnly() {
+        return readOnly != null && readOnly;
+    }
+
+    @Override
+    public Boolean getReadOnly() {
         return readOnly;
     }
 
     @Override
     public boolean isRecover() {
+        return recover != null && recover;
+    }
+
+    @Override
+    public Boolean getRecover() {
         return recover;
     }
 
     @Override
     public boolean isReset() {
+        return reset != null && reset;
+    }
+
+    @Override
+    public Boolean getReset() {
         return reset;
     }
 
     @Override
     public boolean isSkipCompanions() {
+        return skipCompanions != null && skipCompanions;
+    }
+
+    @Override
+    public Boolean getSkipCompanions() {
         return skipCompanions;
     }
 
     @Override
     public boolean isSkipWelcome() {
+        return skipWelcome != null && skipWelcome;
+    }
+
+    @Override
+    public Boolean getSkipWelcome() {
         return skipWelcome;
     }
 
     @Override
+    public String getOutLinePrefix() {
+        return outLinePrefix;
+    }
+
+    public CoreNutsWorkspaceOptions setOutLinePrefix(String outLinePrefix) {
+        this.outLinePrefix = outLinePrefix;
+        return this;
+    }
+
+    @Override
+    public String getErrLinePrefix() {
+        return errLinePrefix;
+    }
+
+    @Override
     public boolean isSkipBoot() {
+        return skipBoot != null && skipBoot;
+    }
+
+    @Override
+    public Boolean getSkipBoot() {
         return skipBoot;
     }
 
     @Override
     public boolean isTrace() {
+        return trace == null || trace;
+    }
+
+    @Override
+    public Boolean getTrace() {
         return trace;
     }
 
@@ -1274,14 +1376,29 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     public boolean isCached() {
+        return cached == null || cached;
+    }
+
+    @Override
+    public Boolean getCached() {
         return cached;
     }
 
     public boolean isIndexed() {
+        return indexed == null || indexed;
+    }
+
+    @Override
+    public Boolean getIndexed() {
         return indexed;
     }
 
     public boolean isTransitive() {
+        return transitive == null || transitive;
+    }
+
+    @Override
+    public Boolean getTransitive() {
         return transitive;
     }
 
@@ -1318,7 +1435,22 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
 
     @Override
     public boolean isSkipErrors() {
+        return skipErrors != null && skipErrors;
+    }
+
+    @Override
+    public Boolean getSkipErrors() {
         return skipErrors;
+    }
+
+    @Override
+    public boolean isSwitchWorkspace() {
+        return switchWorkspace != null && switchWorkspace;
+    }
+
+    @Override
+    public Boolean getSwitchWorkspace() {
+        return switchWorkspace;
     }
 
     @Override
@@ -1327,58 +1459,13 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public String toString() {
-        return format().getBootCommandLine();
-    }
-
-
-    @Override
-    public Boolean getSwitchWorkspace() {
-        return switchWorkspace;
-    }
-
-    public NutsWorkspaceOptionsBuilder setSwitchWorkspace(Boolean switchWorkspace) {
-        this.switchWorkspace = switchWorkspace;
-        return this;
-    }
-
-    @Override
-    public String getOutLinePrefix() {
-        return outLinePrefix;
-    }
-
-    public CoreNutsWorkspaceOptions setOutLinePrefix(String outLinePrefix) {
-        this.outLinePrefix = outLinePrefix;
-        return this;
-    }
-
-    public String getErrLinePrefix() {
-        return errLinePrefix;
-    }
-
     public CoreNutsWorkspaceOptions setErrLinePrefix(String errLinePrefix) {
         this.errLinePrefix = errLinePrefix;
         return this;
     }
 
     @Override
-    public boolean isExcludedExtension(String extensionId) {
-        if(extensionId!=null){
-            NutsId pnid = CoreNutsUtils.parseNutsId(extensionId);
-            String shortName = pnid.getShortName();
-            String artifactId = pnid.getArtifactId();
-            if(excludedExtensions!=null){
-                for (String excludedExtensionList : excludedExtensions) {
-                    for (String s : excludedExtensionList.split("[;, ]")) {
-                        if(s.length()>0){
-                            if(s.equals(shortName)||s.equals(artifactId)){
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return false;
+    public String toString() {
+        return format().getBootCommandLine();
     }
 }

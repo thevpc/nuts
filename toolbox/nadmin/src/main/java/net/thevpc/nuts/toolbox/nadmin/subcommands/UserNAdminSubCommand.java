@@ -24,6 +24,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
 
     public static boolean exec(NutsRepository editedRepo, NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
         NutsWorkspace workspace = context.getWorkspace();
+        NutsSession session = context.getSession();
         NutsCommandLineManager commandLineFormat = context.getWorkspace().commandLine();
         if (cmdLine.next("add user", "au") != null) {
             NutsRepository repository = null;
@@ -31,14 +32,14 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.next("--repo", "-r") != null) {
-                    repository = workspace.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString(), context.getSession());
+                    repository = workspace.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString(), session);
                 }
             }
             if (repository == null) {
                 String user = cmdLine.required().nextNonOption(commandLineFormat.createName("Username")).getString();
                 char[] password = cmdLine.nextNonOption(commandLineFormat.createName("Password")).getString().toCharArray();
                 if (cmdLine.isExecMode()) {
-                    workspace.security().addUser(user).setCredentials(password).run();
+                    workspace.security().addUser(user, session).setCredentials(password).run();
                 }
             } else {
                 String user = cmdLine.required().nextNonOption(commandLineFormat.createName("Username")).getString();
@@ -50,7 +51,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     remotePassword = cmdLine.nextNonOption(commandLineFormat.createName("RemotePassword")).getString().toCharArray();
                 }
                 if (cmdLine.isExecMode()) {
-                    repository.security().addUser(user).setCredentials(password).setRemoteIdentity(mappedUser).setRemoteCredentials(remotePassword).run();
+                    repository.security().addUser(user, session).setCredentials(password).setRemoteIdentity(mappedUser).setRemoteCredentials(remotePassword).run();
                 }
             }
             if (cmdLine.isExecMode()) {
@@ -58,22 +59,22 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             return true;
         } else {
-            PrintStream out = context.getSession().out();
+            PrintStream out = session.out();
             if (cmdLine.next("list users", "lu") != null) {
                 NutsRepository repository = null;
                 if (editedRepo != null) {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = workspace.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("repository")).getString(), context.getSession());
+                        repository = workspace.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("repository")).getString(), session);
                     }
                 }
                 if (cmdLine.isExecMode()) {
                     NutsUser[] security;
                     if (repository == null) {
-                        security = workspace.security().findUsers(context.getSession());
+                        security = workspace.security().findUsers(session);
                     } else {
-                        security = repository.security().findUsers(context.getSession());
+                        security = repository.security().findUsers(session);
                     }
                     for (NutsUser u : security) {
                         out.printf("User: %s%n", u.getUser());
@@ -93,7 +94,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = workspace.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString(), context.getSession());
+                        repository = workspace.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString(), session);
                     }
                 }
 
@@ -114,22 +115,22 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                 if (cmdLine.isExecMode()) {
                     boolean admin;
                     if (repository == null) {
-                        admin = workspace.security().isAllowed(NutsConstants.Permissions.ADMIN);
+                        admin = workspace.security().isAllowed(NutsConstants.Permissions.ADMIN, session);
                     } else {
-                        admin = repository.security().isAllowed(NutsConstants.Permissions.ADMIN);
+                        admin = repository.security().isAllowed(NutsConstants.Permissions.ADMIN, session);
                     }
 
                     if (oldPassword == null && !admin) {
-                        oldPassword = context.getSession().getTerminal().readPassword("Old Password:");
+                        oldPassword = session.getTerminal().readPassword("Old Password:");
                     }
                     if (password == null) {
-                        password = context.getSession().getTerminal().readPassword("Password:");
+                        password = session.getTerminal().readPassword("Password:");
                     }
 
                     if (repository == null) {
-                        workspace.security().updateUser(user).setCredentials(password).setOldCredentials(oldPassword).run();
+                        workspace.security().updateUser(user, session).setCredentials(password).setOldCredentials(oldPassword).run();
                     } else {
-                        repository.security().updateUser(user).setCredentials(password).setOldCredentials(oldPassword).run();
+                        repository.security().updateUser(user, session).setCredentials(password).setOldCredentials(oldPassword).run();
                     }
                     trySave(context, workspace, repository, autoSave, null);
                 }
@@ -141,7 +142,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = workspace.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString(), context.getSession());
+                        repository = workspace.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString(), session);
                     }
                 }
 
@@ -149,9 +150,9 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                 if (cmdLine.isExecMode()) {
                     NutsUser u = null;
                     if (repository == null) {
-                        u = workspace.security().findUser(user);
+                        u = workspace.security().findUser(user, session);
                     } else {
-                        u = repository.security().getEffectiveUser(user, context.getSession());
+                        u = repository.security().getEffectiveUser(user, session);
                     }
                     if (u == null) {
                         throw new NutsElementNotFoundException(workspace, "No such user " + user);
@@ -188,9 +189,9 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                                 String a = cmdLine.required().nextNonOption(commandLineFormat.createName("Group")).getString();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
-                                        repository.security().updateUser(user).addGroup(a).run();
+                                        repository.security().updateUser(user, session).addGroup(a).run();
                                     } else {
-                                        workspace.security().updateUser(user).addGroup(a).run();
+                                        workspace.security().updateUser(user, session).addGroup(a).run();
                                     }
                                 }
                                 break;
@@ -199,9 +200,9 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                                 String a = cmdLine.required().nextNonOption(commandLineFormat.createName("Group")).getString();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
-                                        repository.security().updateUser(user).removeGroup(a).run();
+                                        repository.security().updateUser(user, session).removeGroup(a).run();
                                     } else {
-                                        workspace.security().updateUser(user).removeGroup(a).run();
+                                        workspace.security().updateUser(user, session).removeGroup(a).run();
                                     }
                                 }
                                 break;
@@ -210,9 +211,9 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                                 String a = cmdLine.required().nextNonOption(commandLineFormat.createName("Right")).getString();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
-                                        repository.security().updateUser(user).addPermission(a).run();
+                                        repository.security().updateUser(user, session).addPermission(a).run();
                                     } else {
-                                        workspace.security().updateUser(user).addPermission(a).run();
+                                        workspace.security().updateUser(user, session).addPermission(a).run();
                                     }
                                 }
                                 break;
@@ -221,9 +222,9 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                                 String a = cmdLine.required().nextNonOption(commandLineFormat.createName("Right")).getString();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
-                                        repository.security().updateUser(user).removePermission(a).run();
+                                        repository.security().updateUser(user, session).removePermission(a).run();
                                     } else {
-                                        workspace.security().updateUser(user).removePermission(a).run();
+                                        workspace.security().updateUser(user, session).removePermission(a).run();
                                     }
                                 }
                                 break;
@@ -232,9 +233,9 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                                 String a = cmdLine.required().nextNonOption(commandLineFormat.createName("RemoteIdentity")).getString();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
-                                        repository.security().updateUser(user).setRemoteIdentity(a).run();
+                                        repository.security().updateUser(user, session).setRemoteIdentity(a).run();
                                     } else {
-                                        workspace.security().updateUser(user).setRemoteIdentity(a).run();
+                                        workspace.security().updateUser(user, session).setRemoteIdentity(a).run();
                                     }
                                 }
                                 break;
@@ -244,9 +245,9 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                                 char[] old = (cmdLine.required().nextNonOption(commandLineFormat.createName("password", "OldPassword")).getString()).toCharArray();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
-                                        repository.security().updateUser(user).setCredentials(pwd).setOldCredentials(old).run();
+                                        repository.security().updateUser(user, session).setCredentials(pwd).setOldCredentials(old).run();
                                     } else {
-                                        workspace.security().updateUser(user).setCredentials(pwd).setOldCredentials(old).run();
+                                        workspace.security().updateUser(user, session).setCredentials(pwd).setOldCredentials(old).run();
                                     }
                                 }
                                 Arrays.fill(pwd, '\0');
@@ -269,16 +270,16 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = workspace.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString(), context.getSession());
+                        repository = workspace.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString(), session);
                     }
                 }
                 //unsecure-box
                 if (cmdLine.isExecMode()) {
                     char[] credentials = null;
-                    if (!context.getWorkspace().security().isAdmin()) {
-                        credentials = context.getSession().getTerminal().readPassword("Enter password : ");
+                    if (!context.getWorkspace().security().isAdmin(session)) {
+                        credentials = session.getTerminal().readPassword("Enter password : ");
                     }
-                    if (workspace.security().setSecureMode(false,credentials, new NutsUpdateOptions().setSession(context.getSession()))) {
+                    if (workspace.security().setSecureMode(false,credentials, new NutsUpdateOptions().setSession(session))) {
                         out.println("<<unsecure box activated.Anonymous has all rights.>>");
                     } else {
                         out.println("<<unsecure box is already activated.>>");
@@ -291,20 +292,20 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                 return true;
             } else if (cmdLine.next("secure") != null) {
                 char[] credentials = null;
-                if (!context.getWorkspace().security().isAdmin()) {
-                    credentials = context.getSession().getTerminal().readPassword("Enter password : ");
+                if (!context.getWorkspace().security().isAdmin(session)) {
+                    credentials = session.getTerminal().readPassword("Enter password : ");
                 }
                 NutsRepository repository = null;
                 if (editedRepo != null) {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = workspace.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString(), context.getSession());
+                        repository = workspace.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString(), session);
                     }
                 }
                 //secure-box
                 if (cmdLine.isExecMode()) {
-                    if (workspace.security().setSecureMode(true,credentials, new NutsUpdateOptions().setSession(context.getSession()))) {
+                    if (workspace.security().setSecureMode(true,credentials, new NutsUpdateOptions().setSession(session))) {
                         out.println("\"\"secure box activated.\"\"");
                     } else {
                         out.println("\"\"secure box already activated.\"\"");

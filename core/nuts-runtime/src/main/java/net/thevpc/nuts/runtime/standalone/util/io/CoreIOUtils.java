@@ -78,7 +78,7 @@ public class CoreIOUtils {
     private static final char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
     public static String newLineString = null;
 
-    public static PrintWriter toPrintWriter(Writer writer, NutsWorkspace ws) {
+    public static PrintWriter toPrintWriter(Writer writer, NutsSession session) {
         if (writer == null) {
             return null;
         }
@@ -88,39 +88,44 @@ public class CoreIOUtils {
             }
         }
         ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer);
-        NutsWorkspaceUtils.of(ws).setWorkspace(s);
+        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
+        NutsWorkspaceUtils.setSession(s,session);
         return s;
     }
 
-    public static PrintWriter toPrintWriter(OutputStream writer, NutsWorkspace ws) {
+    public static PrintWriter toPrintWriter(OutputStream writer, NutsSession session) {
         if (writer == null) {
             return null;
         }
         ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer);
-        NutsWorkspaceUtils.of(ws).setWorkspace(s);
+        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
+        NutsWorkspaceUtils.setSession(s,session);
         return s;
     }
 
-    public static PrintStream toPrintStream(Writer writer, NutsWorkspace ws) {
+    public static PrintStream toPrintStream(Writer writer, NutsSession session) {
         if (writer == null) {
             return null;
         }
-        SimpleWriterOutputStream s = new SimpleWriterOutputStream(writer,ws);
-        NutsWorkspaceUtils.of(ws).setWorkspace(s);
-        return toPrintStream(s, ws);
+        SimpleWriterOutputStream s = new SimpleWriterOutputStream(writer,session);
+        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
+        NutsWorkspaceUtils.setSession(s,session);
+        return toPrintStream(s, session);
     }
 
-    public static PrintStream toPrintStream(OutputStream os, NutsWorkspace ws) {
+    public static PrintStream toPrintStream(OutputStream os, NutsSession session) {
         if (os == null) {
             return null;
         }
         if (os instanceof PrintStream) {
             PrintStream y = (PrintStream) os;
-            NutsWorkspaceUtils.of(ws).setWorkspace(y);
+            NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(y);
+            NutsWorkspaceUtils.setSession(y,session);
             return y;
         }
         PrintStreamExt s = new PrintStreamExt(os, false);
-        NutsWorkspaceUtils.of(ws).setWorkspace(s);
+        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
+        NutsWorkspaceUtils.setSession(s,session);
         return s;
     }
 
@@ -1242,7 +1247,7 @@ public class CoreIOUtils {
 
     public static URL resolveURLFromResource(Class cls, String urlPath) {
         if (!urlPath.startsWith("/")) {
-            throw new NutsIllegalArgumentException(null, "Unable to resolve url from " + urlPath);
+            throw new NutsIllegalArgumentException(null, "unable to resolve url from " + urlPath);
         }
         URL url = cls.getResource(urlPath);
         String urlFile = url.getFile();
@@ -1273,7 +1278,7 @@ public class CoreIOUtils {
                     throw new UncheckedIOException(ex);
                 }
             }
-            throw new NutsIllegalArgumentException(null, "Unable to resolve url from " + urlPath);
+            throw new NutsIllegalArgumentException(null, "unable to resolve url from " + urlPath);
         }
     }
 

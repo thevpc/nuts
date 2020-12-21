@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  * Created by vpc on 2/20/17.
  */
 @NutsPrototype
-public class NutsJLineTerminal implements NutsSystemTerminalBase,NutsWorkspaceAware {
+public class NutsJLineTerminal implements NutsSystemTerminalBase,NutsWorkspaceAware,NutsSessionAware {
 
     private static final Logger LOG = Logger.getLogger(NutsJLineTerminal.class.getName());
     private Terminal terminal;
@@ -52,9 +52,15 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase,NutsWorkspaceAw
     private PrintStream err;
     private InputStream in;
     private NutsWorkspace workspace;
+    private NutsSession session;
     private NutsTerminalMode outMode;
     private NutsTerminalMode errMode;
     private NutsCommandAutoCompleteProcessor autoCompleteResolver;
+
+    @Override
+    public void setSession(NutsSession session) {
+        this.session=session;
+    }
 
     public NutsJLineTerminal() {
     }
@@ -126,13 +132,13 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase,NutsWorkspaceAw
                             new PrintStream(reader.getTerminal().output(), true),
                             System.out
                     ),
-                    NutsTerminalMode.FORMATTED);
+                    NutsTerminalMode.FORMATTED, session);
             this.err = workspace.io().createPrintStream(
                     new TransparentPrintStream(
                             new PrintStream(reader.getTerminal().output(), true),
                             System.err
                     ),
-                    NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
+                    NutsTerminalMode.FORMATTED, session);//.setColor(NutsPrintStream.RED);
             this.in = new TransparentInputStream(reader.getTerminal().input(), System.in);
         }else{
             try {

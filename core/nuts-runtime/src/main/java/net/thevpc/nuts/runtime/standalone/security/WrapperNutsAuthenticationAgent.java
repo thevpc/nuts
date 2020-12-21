@@ -9,26 +9,28 @@ import net.thevpc.nuts.NutsAuthenticationAgent;
 import net.thevpc.nuts.NutsSecurityException;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 
 class WrapperNutsAuthenticationAgent {
 
     protected NutsWorkspace ws;
-    protected Function<String, NutsAuthenticationAgent> provider;
+    protected NutsAuthenticationAgentProvider provider;
     protected Supplier<Map<String,String>> envProvider;
     private final Map<String, NutsAuthenticationAgent> cache = new HashMap<>();
 
-    public WrapperNutsAuthenticationAgent(NutsWorkspace ws, Supplier<Map<String,String>> envProvider, Function<String, NutsAuthenticationAgent> agentProvider) {
+    public WrapperNutsAuthenticationAgent(NutsWorkspace ws, Supplier<Map<String,String>> envProvider, NutsAuthenticationAgentProvider agentProvider) {
         this.envProvider = envProvider;
         this.provider = agentProvider;
         this.ws = ws;
     }
 
-    public NutsAuthenticationAgent getCachedAuthenticationAgent(String name) {
+    public NutsAuthenticationAgent getCachedAuthenticationAgent(String name,NutsSession session) {
+        session= NutsWorkspaceUtils.of(ws).validateSession(session);
         name = CoreStringUtils.trim(name);
         NutsAuthenticationAgent a = cache.get(name);
         if (a == null) {
-            a = provider.apply(name);
+            a = provider.create(name,session);
             cache.put(name, a);
             if (!a.getId().equals(name)) {
                 cache.put(a.getId(), a);
@@ -38,11 +40,13 @@ class WrapperNutsAuthenticationAgent {
     }
 
     public boolean removeCredentials(char[] credentialsId, NutsSession session) {
-        return getCachedAuthenticationAgent(extractId(credentialsId)).removeCredentials(credentialsId, envProvider.get(), session);
+        session= NutsWorkspaceUtils.of(ws).validateSession(session);
+        return getCachedAuthenticationAgent(extractId(credentialsId),session).removeCredentials(credentialsId, envProvider.get(), session);
     }
 
     public void checkCredentials(char[] credentialsId, char[] password, NutsSession session) {
-        getCachedAuthenticationAgent(extractId(credentialsId)).checkCredentials(credentialsId, password, envProvider.get(), session);
+        session= NutsWorkspaceUtils.of(ws).validateSession(session);
+        getCachedAuthenticationAgent(extractId(credentialsId),session).checkCredentials(credentialsId, password, envProvider.get(), session);
     }
 
     protected String extractId(char[] a) {
@@ -60,14 +64,15 @@ class WrapperNutsAuthenticationAgent {
     }
 
     public char[] getCredentials(char[] credentialsId, NutsSession session) {
-        return getCachedAuthenticationAgent(extractId(credentialsId)).getCredentials(credentialsId, envProvider.get(), session);
+        return getCachedAuthenticationAgent(extractId(credentialsId),session).getCredentials(credentialsId, envProvider.get(), session);
     }
 
-    public char[] createCredentials(char[] credentials, boolean allowRetreive, char[] credentialId, NutsSession session) {
+    public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, NutsSession session) {
+        session= NutsWorkspaceUtils.of(ws).validateSession(session);
         if (credentialId != null) {
-            return getCachedAuthenticationAgent(extractId(credentialId)).createCredentials(credentials, allowRetreive, credentialId, envProvider.get(), session);
+            return getCachedAuthenticationAgent(extractId(credentialId),session).createCredentials(credentials, allowRetrieve, credentialId, envProvider.get(), session);
         } else {
-            return getCachedAuthenticationAgent("").createCredentials(credentials, allowRetreive, credentialId, envProvider.get(), session);
+            return getCachedAuthenticationAgent("",session).createCredentials(credentials, allowRetrieve, credentialId, envProvider.get(), session);
         }
     }
 }

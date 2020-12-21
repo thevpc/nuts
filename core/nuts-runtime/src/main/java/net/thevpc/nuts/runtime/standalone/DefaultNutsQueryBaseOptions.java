@@ -78,7 +78,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 
     //@Override
     public boolean isCached() {
-        return getSession().isCached();
+        return getValidWorkspaceSession().isCached();
     }
 
     //@Override
@@ -93,18 +93,18 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 
     //@Override
     public T setCached(boolean cached) {
-        getSession().setCached(cached);
+        getValidWorkspaceSession().setCached(cached);
         return (T) this;
     }
 
     //@Override
     public boolean isTransitive() {
-        return getSession().isTransitive();
+        return getValidWorkspaceSession().isTransitive();
     }
 
     //@Override
     public T setTransitive(boolean transitive) {
-        getSession().setTransitive(transitive);
+        getValidWorkspaceSession().setTransitive(transitive);
         return (T) this;
     }
 
@@ -115,7 +115,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 
     //@Override
     public T setFetchStrategy(NutsFetchStrategy mode) {
-        getSession().setFetchStrategy(mode);
+        getValidWorkspaceSession().setFetchStrategy(mode);
         return (T) this;
     }
 
@@ -146,12 +146,12 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 
     //@Override
     public NutsFetchStrategy getFetchStrategy() {
-        return getSession().getFetchStrategy();
+        return getValidWorkspaceSession().getFetchStrategy();
     }
 
     //@Override
     public boolean isIndexed() {
-        return getSession().isIndexed();
+        return getValidWorkspaceSession().isIndexed();
     }
 
     public T indexed(Boolean indexEnabled) {
@@ -160,7 +160,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 
     //@Override
     public T setIndexed(Boolean indexEnabled) {
-        getSession().setIndexed(indexEnabled);
+        getValidWorkspaceSession().setIndexed(indexEnabled);
         return (T) this;
     }
    //@Override

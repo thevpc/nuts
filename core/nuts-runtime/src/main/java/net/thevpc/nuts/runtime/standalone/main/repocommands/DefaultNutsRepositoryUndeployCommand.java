@@ -35,14 +35,15 @@ public class DefaultNutsRepositoryUndeployCommand extends AbstractNutsRepository
 
     @Override
     public NutsRepositoryUndeployCommand run() {
-        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession( getSession());
-        getRepo().security().checkAllowed(NutsConstants.Permissions.UNDEPLOY, "undeploy");
+        NutsSession session = getValidWorkspaceSession();
+        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession(session);
+        getRepo().security().checkAllowed(NutsConstants.Permissions.UNDEPLOY, "undeploy", session);
         try {
             NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
             xrepo.undeployImpl(this);
-            if (getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
+            if (session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 try {
-                    xrepo.getIndexStore().invalidate(this.getId(), getSession());
+                    xrepo.getIndexStore().invalidate(this.getId(), session);
                 } catch (NutsException ex) {
                     LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "error invalidating Indexer for {0} : {1}", getRepo().getName(), ex);
                 }

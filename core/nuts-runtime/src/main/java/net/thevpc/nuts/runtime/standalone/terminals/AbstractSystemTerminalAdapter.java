@@ -15,6 +15,7 @@ import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal implements NutsSystemTerminal {
 
     private NutsWorkspace ws;
+    private NutsSession session;
 
     @Override
     public void setWorkspace(NutsWorkspace workspace) {
@@ -25,6 +26,10 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         } else {
             NutsWorkspaceUtils.of(ws).setWorkspace(parent);
         }
+    }
+    @Override
+    public void setSession(NutsSession session) {
+        this.session=session;
     }
 
 

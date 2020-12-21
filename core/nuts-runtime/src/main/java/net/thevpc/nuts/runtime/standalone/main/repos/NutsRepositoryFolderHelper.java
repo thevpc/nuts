@@ -52,7 +52,7 @@ public class NutsRepositoryFolderHelper {
         this.repo = repo;
         this.ws = ws != null ? ws : repo == null ? null : repo.getWorkspace();
         if (ws == null && repo == null) {
-            throw new NutsIllegalArgumentException(null, "Both ws and repo are null");
+            throw new NutsIllegalArgumentException(null, "both workspace and repository are null");
         }
         this.rootPath = rootPath;
         this.cacheFolder = cacheFolder;
@@ -318,10 +318,10 @@ public class NutsRepositoryFolderHelper {
 
     public NutsDescriptor deploy(NutsDeployRepositoryCommand deployment, NutsConfirmationMode writeType) {
         if (!isWriteEnabled()) {
-            throw new NutsIllegalArgumentException(getWorkspace(),"Read only Repository");
+            throw new NutsIllegalArgumentException(getWorkspace(),"read-only repository");
         }
         if (deployment.getContent() == null) {
-            throw new NutsIllegalArgumentException(getWorkspace(),"Invalid deployment. Missing content for "+deployment.getId());
+            throw new NutsIllegalArgumentException(getWorkspace(),"invalid deployment; missing content for "+deployment.getId());
         }
         NutsDescriptor descriptor = deployment.getDescriptor();
         NutsInput inputSource = ws.io().input().setTypeName("artifact content").setMultiRead(true).of(deployment.getContent());

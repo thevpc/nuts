@@ -44,7 +44,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
             String login = null;
             int port = -1;
             if (server == null) {
-                throw new NutsIllegalArgumentException(context.getWorkspace(), "Missing address");
+                throw new NutsIllegalArgumentException(context.getWorkspace(), "missing address");
             }
             if (server.contains("@")) {
                 login = server.substring(0, server.indexOf("@"));

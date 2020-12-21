@@ -65,7 +65,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     public DefaultNutsWorkspaceSecurityManager(final DefaultNutsWorkspace ws) {
         this.ws = ws;
         LOG=ws.log().of(DefaultNutsWorkspaceSecurityManager.class);
-        this.agent = new WrapperNutsAuthenticationAgent(ws, ()->ws.env().toMap(), x -> getAuthenticationAgent(x, ws.createSession()));
+        this.agent = new WrapperNutsAuthenticationAgent(ws, ()->ws.env().toMap(), (x,s) -> getAuthenticationAgent(x, s));
         ws.events().addWorkspaceListener(new NutsWorkspaceListener() {
             @Override
             public void onConfigurationChanged(NutsWorkspaceEvent event) {
@@ -75,7 +75,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     }
 
     @Override
-    public NutsWorkspaceSecurityManager login(final String username, final char[] password) {
+    public NutsWorkspaceSecurityManager login(final String username, final char[] password, NutsSession session) {
         login(new CallbackHandler() {
             @Override
             public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
@@ -87,11 +87,11 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
                         PasswordCallback passwordCallback = (PasswordCallback) callback;
                         passwordCallback.setPassword(password);
                     } else {
-                        throw new UnsupportedCallbackException(callback, "The submitted Callback is unsupported");
+                        throw new UnsupportedCallbackException(callback, "the submitted Callback is unsupported");
                     }
                 }
             }
-        });
+        }, session);
         return this;
     }
 
@@ -109,12 +109,12 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         if (adminPassword == null) {
             adminPassword = new char[0];
         }
-        NutsUser adminSecurity = findUser(NutsConstants.Users.ADMIN);
+        NutsUser adminSecurity = findUser(NutsConstants.Users.ADMIN, options.getSession());
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
             if (LOG.isLoggable(Level.CONFIG)) {
                 LOG.with().level(Level.CONFIG).verb(NutsLogVerb.WARNING).log( NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
             }
-            NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(NutsConstants.Users.ADMIN);
+            NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(NutsConstants.Users.ADMIN, options.getSession());
             u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null, options.getSession())));
             NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(u, options);
         }
@@ -126,7 +126,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         }
         Arrays.fill(credentials, '\0');
         boolean activated = false;
-        if (isSecure()) {
+        if (isSecure(options.getSession())) {
             NutsWorkspaceConfigManagerExt.of(ws.config()).setSecure(false, options);
             activated = true;
         }
@@ -142,10 +142,10 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         char[] credentials = CoreIOUtils.evalSHA1(adminPassword);
         if (Arrays.equals(credentials, adminPassword)) {
             Arrays.fill(credentials, '\0');
-            throw new NutsSecurityException(ws, "Invalid credentials");
+            throw new NutsSecurityException(ws, "invalid credentials");
         }
         Arrays.fill(credentials, '\0');
-        if (!isSecure()) {
+        if (!isSecure(options.getSession())) {
             NutsWorkspaceConfigManagerExt.of(ws.config()).setSecure(true, options);
             deactivated = true;
         }
@@ -153,15 +153,15 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     }
 
     @Override
-    public boolean isAdmin() {
-        return NutsConstants.Users.ADMIN.equals(getCurrentUsername());
+    public boolean isAdmin(NutsSession session) {
+        return NutsConstants.Users.ADMIN.equals(getCurrentUsername(session));
     }
 
     @Override
-    public NutsWorkspaceSecurityManager logout() {
+    public NutsWorkspaceSecurityManager logout(NutsSession session) {
         Stack<LoginContext> r = loginContextStack.get();
         if (r == null || r.isEmpty()) {
-            throw new NutsLoginException(ws, "Not logged in");
+            throw new NutsLoginException(ws, "not logged in");
         }
         try {
             LoginContext loginContext = r.pop();
@@ -173,8 +173,8 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     }
 
     @Override
-    public NutsUser findUser(String username) {
-        NutsUserConfig security = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(username);
+    public NutsUser findUser(String username, NutsSession session) {
+        NutsUserConfig security = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(username, session);
         Stack<String> inherited = new Stack<>();
         if (security != null) {
             Stack<String> visited = new Stack<>();
@@ -184,7 +184,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
             while (!curr.empty()) {
                 String s = curr.pop();
                 visited.add(s);
-                NutsUserConfig ss = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(s);
+                NutsUserConfig ss = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(s, session);
                 if (ss != null) {
                     inherited.addAll(Arrays.asList(ss.getPermissions()));
                     for (String group : ss.getGroups()) {
@@ -201,30 +201,30 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     @Override
     public NutsUser[] findUsers(NutsSession session) {
         List<NutsUser> all = new ArrayList<>();
-        for (NutsUserConfig secu : NutsWorkspaceConfigManagerExt.of(ws.config()).getUsers()) {
-            all.add(findUser(secu.getUser()));
+        for (NutsUserConfig secu : NutsWorkspaceConfigManagerExt.of(ws.config()).getUsers(session)) {
+            all.add(findUser(secu.getUser(), session));
         }
         return all.toArray(new NutsUser[0]);
     }
 
     @Override
-    public NutsAddUserCommand addUser(String name) {
-        return new DefaultNutsAddUserCommand(ws).setUsername(name);
+    public NutsAddUserCommand addUser(String name, NutsSession session) {
+        return new DefaultNutsAddUserCommand(ws).setUsername(name).setSession(session);
     }
 
     @Override
-    public NutsUpdateUserCommand updateUser(String name) {
-        return new DefaultNutsUpdateUserCommand(ws).username(name);
+    public NutsUpdateUserCommand updateUser(String name, NutsSession session) {
+        return new DefaultNutsUpdateUserCommand(ws).setUsername(name).setSession(session);
     }
 
     @Override
-    public NutsRemoveUserCommand removeUser(String name) {
-        return new DefaultNutsRemoveUserCommand(ws).username(name);
+    public NutsRemoveUserCommand removeUser(String name, NutsSession session) {
+        return new DefaultNutsRemoveUserCommand(ws).setUsername(name).setSession(session);
     }
 
     @Override
-    public NutsWorkspaceSecurityManager checkAllowed(String permission, String operationName) {
-        if (!isAllowed(permission)) {
+    public NutsWorkspaceSecurityManager checkAllowed(String permission, String operationName, NutsSession session) {
+        if (!isAllowed(permission, session)) {
             if (CoreStringUtils.isBlank(operationName)) {
                 throw new NutsSecurityException(ws, permission + " not allowed!");
             } else {
@@ -234,12 +234,12 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         return this;
     }
 
-    private NutsAuthorizations getAuthorizations(String n) {
+    private NutsAuthorizations getAuthorizations(String n, NutsSession session) {
         NutsAuthorizations aa = authorizations.get(n);
         if (aa != null) {
             return aa;
         }
-        NutsUserConfig s = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(n);
+        NutsUserConfig s = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(n, session);
         if (s != null) {
             String[] rr = s.getPermissions();
             aa = new NutsAuthorizations(Arrays.asList(rr == null ? new String[0] : rr));
@@ -251,11 +251,11 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     }
 
     @Override
-    public boolean isAllowed(String permission) {
-        if (!isSecure()) {
+    public boolean isAllowed(String permission, NutsSession session) {
+        if (!isSecure(session)) {
             return true;
         }
-        String name = getCurrentUsername();
+        String name = getCurrentUsername(session);
         if (CoreStringUtils.isBlank(name)) {
             return false;
         }
@@ -268,12 +268,12 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         items.push(name);
         while (!items.isEmpty()) {
             String n = items.pop();
-            NutsAuthorizations s = getAuthorizations(n);
+            NutsAuthorizations s = getAuthorizations(n, session);
             Boolean ea = s.explicitAccept(permission);
             if (ea != null) {
                 return ea;
             }
-            NutsUserConfig uc = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(n);
+            NutsUserConfig uc = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(n, session);
             if (uc != null) {
                 for (String g : uc.getGroups()) {
                     if (!visitedGroups.contains(g)) {
@@ -287,7 +287,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     }
 
     @Override
-    public String[] getCurrentLoginStack() {
+    public String[] getCurrentLoginStack(NutsSession session) {
         List<String> logins = new ArrayList<String>();
         Stack<LoginContext> c = loginContextStack.get();
         if (c != null) {
@@ -312,7 +312,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     }
 
     @Override
-    public String getCurrentUsername() {
+    public String getCurrentUsername(NutsSession session) {
         if (ws.isInitializing()) {
             return NutsConstants.Users.ADMIN;
         }
@@ -340,7 +340,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     }
 
     @Override
-    public NutsWorkspaceSecurityManager login(CallbackHandler handler) {
+    public NutsWorkspaceSecurityManager login(CallbackHandler handler, NutsSession session) {
         NutsWorkspaceLoginModule.configure(ws); //initialize it
         //        if (!NutsConstants.Misc.USER_ANONYMOUS.equals(getCurrentLogin())) {
         //            throw new NutsLoginException("Already logged in");
@@ -395,7 +395,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         NutsWorkspaceConfigManagerExt cc = NutsWorkspaceConfigManagerExt.of(ws.config());
 
         if (cc.createAuthenticationAgent(authenticationAgentId,options.getSession()) == null) {
-            throw new NutsIllegalArgumentException(ws, "Unsupported Authentication Agent " + authenticationAgentId);
+            throw new NutsIllegalArgumentException(ws, "unsupported Authentication Agent " + authenticationAgentId);
         }
 
         NutsWorkspaceConfigSecurity conf = cc.getStoredConfigSecurity();
@@ -407,18 +407,8 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     }
 
     @Override
-    public boolean isSecure() {
+    public boolean isSecure(NutsSession session) {
         return NutsWorkspaceConfigManagerExt.of(ws.config()).getStoredConfigSecurity().isSecure();
-    }
-
-    @Override
-    public String currentUsername() {
-        return getCurrentUsername();
-    }
-
-    @Override
-    public String[] currentLoginStack() {
-        return getCurrentLoginStack();
     }
 
     @Override

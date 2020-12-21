@@ -56,9 +56,9 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     void setBootRepositories(String value, NutsUpdateOptions options);
 
-    NutsUserConfig getUser(String userId);
+    NutsUserConfig getUser(String userId, NutsSession session);
 
-    NutsUserConfig[] getUsers();
+    NutsUserConfig[] getUsers(NutsSession session);
 
     void setUser(NutsUserConfig config, NutsUpdateOptions options);
 

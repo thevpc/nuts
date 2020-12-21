@@ -194,7 +194,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     @Override
     public void install(NutsId id, NutsSession session, NutsId forId) {
         Instant now = Instant.now();
-        String user = workspace.security().getCurrentUsername();
+        String user = workspace.security().getCurrentUsername(session);
         NutsWorkspaceUtils.of(workspace).checkReadOnly();
         InstallInfoConfig ii;
         try {
@@ -518,7 +518,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 //                }
 //            }
             NutsId id = def.getId();
-            String user = workspace.security().getCurrentUsername();
+            String user = workspace.security().getCurrentUsername(session);
             NutsWorkspaceUtils.of(workspace).checkReadOnly();
             try {
                 boolean _install = false;
@@ -1048,17 +1048,17 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
         @Override
         public NutsRepository addMirror(NutsRepositoryDefinition definition) {
-            throw new NutsIllegalArgumentException(ws, "Not supported : addMirror");
+            throw new NutsIllegalArgumentException(ws, "not supported : addMirror");
         }
 
         @Override
         public NutsRepository addMirror(NutsAddRepositoryOptions options) {
-            throw new NutsIllegalArgumentException(ws, "Not supported : addMirror");
+            throw new NutsIllegalArgumentException(ws, "not supported : addMirror");
         }
 
         @Override
         public NutsRepositoryConfigManager removeMirror(String repositoryId, NutsRemoveOptions options) {
-            throw new NutsIllegalArgumentException(ws, "Not supported : removeMirror");
+            throw new NutsIllegalArgumentException(ws, "not supported : removeMirror");
         }
 
         //        @Override

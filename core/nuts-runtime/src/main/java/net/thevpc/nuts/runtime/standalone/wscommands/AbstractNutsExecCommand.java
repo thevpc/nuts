@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.main.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.io.ProcessBuilder2;
@@ -285,7 +284,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public NutsExecCommand setOut(PrintStream out) {
-        this.out = (out == null ? null : ws.io().createPrintStream(out, NutsTerminalMode.FORMATTED));
+        this.out = (out == null ? null : ws.io().createPrintStream(out, NutsTerminalMode.FORMATTED, session));
         return this;
     }
 
@@ -296,7 +295,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public NutsExecCommand setErr(PrintStream err) {
-        this.err = (err == null ? null : ws.io().createPrintStream(err, NutsTerminalMode.FORMATTED));
+        this.err = (err == null ? null : ws.io().createPrintStream(err, NutsTerminalMode.FORMATTED, session));
         return this;
     }
 
@@ -328,9 +327,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public NutsExecCommand setExecutionType(NutsExecutionType executionType) {
-        if (executionType == null) {
-            executionType = NutsExecutionType.SPAWN;
-        }
         this.executionType = executionType;
         return this;
     }

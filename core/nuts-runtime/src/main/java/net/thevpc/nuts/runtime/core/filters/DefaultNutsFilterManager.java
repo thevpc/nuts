@@ -45,7 +45,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
     @Override
     public <T extends NutsFilter> T always(Class<T> type) {
         if (type == null) {
-            throw new NutsIllegalArgumentException(ws, "Unable to detected Filter type");
+            throw new NutsIllegalArgumentException(ws, "unable to detected Filter type");
         }
         switch (type.getName()) {
             case "net.thevpc.nuts.NutsDependencyFilter": {
@@ -79,13 +79,13 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 return (T) nutsDescriptorFilterTrue;
             }
         }
-        throw new NutsIllegalArgumentException(ws, "Unsupported Filter type: " + type);
+        throw new NutsIllegalArgumentException(ws, "unsupported filter type: " + type);
     }
 
     @Override
     public <T extends NutsFilter> T never(Class<T> type) {
         if (type == null) {
-            throw new NutsIllegalArgumentException(ws, "Unable to detected Filter type");
+            throw new NutsIllegalArgumentException(ws, "unable to detected Filter type");
         }
         switch (type.getName()) {
             case "net.thevpc.nuts.NutsDependencyFilter": {
@@ -119,7 +119,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 return (T) nutsDescriptorFilterFalse;
             }
         }
-        throw new NutsIllegalArgumentException(ws, "Unsupported Filter type: " + type);
+        throw new NutsIllegalArgumentException(ws, "unsupported filter type: " + type);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
             all.addAll(Arrays.asList(others));
             type = detectType(all.toArray(new NutsFilter[0]));
             if (type == null) {
-                throw new NutsIllegalArgumentException(ws, "Unable to detected Filter type");
+                throw new NutsIllegalArgumentException(ws, "unable to detected Filter type");
             }
         }
         switch (type.getName()) {
@@ -215,7 +215,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 return (T) new NutsDescriptorFilterAnd(ws, all.toArray(new NutsDescriptorFilter[0]));
             }
         }
-        throw new NutsIllegalArgumentException(ws, "Unsupported Filter type: " + type);
+        throw new NutsIllegalArgumentException(ws, "unsupported filter type: " + type);
     }
 
     @Override
@@ -231,7 +231,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
             all.addAll(Arrays.asList(others));
             type = detectType(all.toArray(new NutsFilter[0]));
             if (type == null) {
-                throw new NutsIllegalArgumentException(ws, "Unable to detected Filter type");
+                throw new NutsIllegalArgumentException(ws, "unable to detected Filter type");
             }
         }
         switch (type.getName()) {
@@ -316,7 +316,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 return (T) new NutsDescriptorFilterOr(ws, all.toArray(new NutsDescriptorFilter[0]));
             }
         }
-        throw new NutsIllegalArgumentException(ws, "Unsupported Filter type: " + type);
+        throw new NutsIllegalArgumentException(ws, "unsupported filter type: " + type);
     }
 
     @Override
@@ -329,7 +329,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
         if (type == null || type.equals(NutsFilter.class)) {
             type = (Class<T>) detectType(other);
             if (type == null) {
-                throw new NutsIllegalArgumentException(ws, "Unable to detected Filter type");
+                throw new NutsIllegalArgumentException(ws, "unable to detected Filter type");
             }
         }
         switch (type.getName()) {
@@ -349,7 +349,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 return (T) new NutsDescriptorFilterNone(ws, (NutsDescriptorFilter) other);
             }
         }
-        throw new NutsIllegalArgumentException(ws, "Unsupported Filter type: " + type);
+        throw new NutsIllegalArgumentException(ws, "unsupported filter type: " + type);
     }
 
     @Override
@@ -365,7 +365,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
             all.addAll(Arrays.asList(others));
             type = detectType(all.toArray(new NutsFilter[0]));
             if (type == null) {
-                throw new NutsIllegalArgumentException(ws, "Unable to detected Filter type");
+                throw new NutsIllegalArgumentException(ws, "unable to detected Filter type");
             }
         }
         switch (type.getName()) {
@@ -435,7 +435,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 return (T) new NutsDescriptorFilterNone(ws, all.toArray(new NutsDescriptorFilter[0]));
             }
         }
-        throw new NutsIllegalArgumentException(ws, "Unsupported Filter type: " + type);
+        throw new NutsIllegalArgumentException(ws, "unsupported filter type: " + type);
     }
 
     @Override
@@ -462,7 +462,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 return (T) toDescriptorFilter(filter);
             }
         }
-        throw new NutsIllegalArgumentException(ws, "Unsupported Filter type: " + toFilterInterface);
+        throw new NutsIllegalArgumentException(ws, "unsupported filter type: " + toFilterInterface);
     }
 
     @Override
@@ -564,7 +564,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
                 return (T) asDescriptorFilter(filter);
             }
         }
-        throw new NutsIllegalArgumentException(ws, "Unsupported Filter type: " + toFilterInterface);
+        throw new NutsIllegalArgumentException(ws, "unsupported filter type: " + toFilterInterface);
     }
 
     public <T extends NutsFilter> Class<T> detectType(NutsFilter... others) {
@@ -603,7 +603,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
         if (NutsDependencyFilter.class.isAssignableFrom(c1)) {
             return (Class<T>) NutsDependencyFilter.class;
         }
-        throw new NutsIllegalArgumentException(ws, "Cannot detect filter type for " + c1);
+        throw new NutsIllegalArgumentException(ws, "cannot detect filter type for " + c1);
     }
 
     public <T extends NutsFilter> Class<T> detectType(Class<? extends NutsFilter> c1, Class<? extends NutsFilter> c2) {
@@ -617,7 +617,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
             if (NutsDescriptorFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NutsDescriptorFilter.class;
             }
-            throw new NutsIllegalArgumentException(ws, "Cannot detect common type for " + c1 + " and " + c2);
+            throw new NutsIllegalArgumentException(ws, "cannot detect common type for " + c1 + " and " + c2);
         }
         if (NutsIdFilter.class.isAssignableFrom(c1)) {
             if (NutsVersionFilter.class.isAssignableFrom(c2)) {
@@ -629,7 +629,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
             if (NutsDescriptorFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NutsDescriptorFilter.class;
             }
-            throw new NutsIllegalArgumentException(ws, "Cannot detect common type for " + c1 + " and " + c2);
+            throw new NutsIllegalArgumentException(ws, "cannot detect common type for " + c1 + " and " + c2);
         }
         if (NutsDescriptorFilter.class.isAssignableFrom(c1)) {
             if (NutsVersionFilter.class.isAssignableFrom(c2)) {
@@ -641,21 +641,21 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
             if (NutsDescriptorFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NutsDescriptorFilter.class;
             }
-            throw new NutsIllegalArgumentException(ws, "Cannot detect common type for " + c1 + " and " + c2);
+            throw new NutsIllegalArgumentException(ws, "cannot detect common type for " + c1 + " and " + c2);
         }
         if (NutsDependencyFilter.class.isAssignableFrom(c1)) {
             if (NutsDependencyFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NutsDependencyFilter.class;
             }
-            throw new NutsIllegalArgumentException(ws, "Cannot detect common type for " + c1 + " and " + c2);
+            throw new NutsIllegalArgumentException(ws, "cannot detect common type for " + c1 + " and " + c2);
         }
         if (NutsRepositoryFilter.class.isAssignableFrom(c1)) {
             if (NutsRepositoryFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NutsRepositoryFilter.class;
             }
-            throw new NutsIllegalArgumentException(ws, "Cannot detect common type for " + c1 + " and " + c2);
+            throw new NutsIllegalArgumentException(ws, "cannot detect common type for " + c1 + " and " + c2);
         }
-        throw new NutsIllegalArgumentException(ws, "Cannot detect common type for " + c1 + " and " + c2);
+        throw new NutsIllegalArgumentException(ws, "cannot detect common type for " + c1 + " and " + c2);
     }
 
     public NutsRepositoryFilter asRepositoryFilter(NutsFilter a) {
@@ -708,7 +708,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
         }
         NutsRepositoryFilter t = asRepositoryFilter(a);
         if (t == null) {
-            throw new NutsIllegalArgumentException(ws, "Not a RepositoryFilter");
+            throw new NutsIllegalArgumentException(ws, "not a RepositoryFilter");
         }
         return t;
     }
@@ -719,7 +719,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
         }
         NutsDependencyFilter t = asDependencyFilter(a);
         if (t == null) {
-            throw new NutsIllegalArgumentException(ws, "Not a NutsDependencyFilter");
+            throw new NutsIllegalArgumentException(ws, "not a NutsDependencyFilter");
         }
         return t;
     }
@@ -730,7 +730,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
         }
         NutsIdFilter t = asIdFilter(a);
         if (t == null) {
-            throw new NutsIllegalArgumentException(ws, "Not a IdFilter");
+            throw new NutsIllegalArgumentException(ws, "not a IdFilter");
         }
         return t;
     }
@@ -741,7 +741,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
         }
         NutsVersionFilter t = asVersionFilter(a);
         if (t == null) {
-            throw new NutsIllegalArgumentException(ws, "Not a VersionFilter");
+            throw new NutsIllegalArgumentException(ws, "not a VersionFilter");
         }
         return t;
     }
@@ -752,7 +752,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
         }
         NutsDescriptorFilter t = asDescriptorFilter(a);
         if (t == null) {
-            throw new NutsIllegalArgumentException(ws, "Not a DescriptorFilter");
+            throw new NutsIllegalArgumentException(ws, "not a DescriptorFilter");
         }
         return t;
     }

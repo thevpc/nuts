@@ -28,9 +28,9 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     @Override
     public PrintWriter getValidPrintWriter(Writer out) {
         return (out == null) ?
-                CoreIOUtils.toPrintWriter(getValidSession().getTerminal().getOut(), getWorkspace())
+                CoreIOUtils.toPrintWriter(getValidSession().getTerminal().getOut(), getValidSession())
                 :
-                CoreIOUtils.toPrintWriter(out, getWorkspace());
+                CoreIOUtils.toPrintWriter(out, getValidSession());
     }
 
     @Override
@@ -43,7 +43,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
         if (out == null) {
             out = getValidSession().getTerminal().getOut();
         }
-        return getWorkspace().io().term().prepare(out);
+        return getWorkspace().io().term().prepare(out, getValidSession());
     }
 
     @Override
@@ -131,7 +131,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
             print(pout);
             pout.flush();
         } else {
-            PrintStream pout = CoreIOUtils.toPrintStream(out, getWorkspace());
+            PrintStream pout = CoreIOUtils.toPrintStream(out, getValidSession());
             print(pout);
             pout.flush();
         }
@@ -139,7 +139,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
 
     @Override
     public void print(OutputStream out) {
-        PrintStream p = CoreIOUtils.toPrintStream(out, getWorkspace());
+        PrintStream p = CoreIOUtils.toPrintStream(out, getValidSession());
         if (p == null) {
             p = getValidPrintStream();
         }
@@ -162,7 +162,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
             println(pout);
             pout.flush();
         } else {
-            PrintStream pout = CoreIOUtils.toPrintStream(w, getWorkspace());
+            PrintStream pout = CoreIOUtils.toPrintStream(w, getValidSession());
             println(pout);
             pout.flush();
         }

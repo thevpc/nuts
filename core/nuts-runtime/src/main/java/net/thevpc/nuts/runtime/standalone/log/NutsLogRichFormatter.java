@@ -26,6 +26,7 @@ public class NutsLogRichFormatter extends Formatter {
             Object[] p = wRecord.getParameters();
             NutsWorkspace ws = wRecord.getWorkspace();
             String msgStr = ws.formats().text().formatText(
+                    wRecord.getSession(),
                     wRecord.getFormatStyle(), wRecord.getMessage(),
                     p
             );
@@ -191,6 +192,7 @@ public class NutsLogRichFormatter extends Formatter {
             // \\{[0-9]+\\}
 //            message=message.replaceAll("\\\\\\{([0-9]+)\\\\}","{$1}");
             String msgStr =wRecord.getWorkspace().formats().text().formatText(
+                    wRecord.getSession(),
                     style, message,
                     parameters2
             );

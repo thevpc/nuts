@@ -33,7 +33,7 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
         if (termb == null) {
             throw new NutsExtensionNotFoundException(ws, NutsSystemTerminalBase.class, "SystemTerminalBase");
         }
-        return NutsSystemTerminal_of_NutsSystemTerminalBase(termb);
+        return NutsSystemTerminal_of_NutsSystemTerminalBase(termb, spec.getSession());
     }
 
     @Override
@@ -115,26 +115,30 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
             throw new NutsExtensionNotFoundException(ws, NutsSessionTerminal.class, "SessionTerminalBase");
         }
         NutsWorkspaceUtils.of(ws).setWorkspace(termb);
+        NutsWorkspaceUtils.setSession(termb,session);
         try {
             NutsSessionTerminal term = null;
             if (termb instanceof NutsSessionTerminal) {
                 term = (NutsSessionTerminal) termb;
                 NutsWorkspaceUtils.of(ws).setWorkspace(term);
+                NutsWorkspaceUtils.setSession(term,session);
                 term.setParent(parent);
             } else {
                 term = new DefaultNutsSessionTerminal();
                 NutsWorkspaceUtils.of(ws).setWorkspace(term);
+                NutsWorkspaceUtils.setSession(term,session);
                 term.setParent(termb);
             }
             return term;
         } catch (Exception anyException) {
             final NutsSessionTerminal c = new DefaultNutsSessionTerminal();
             NutsWorkspaceUtils.of(ws).setWorkspace(c);
+            NutsWorkspaceUtils.setSession(c,session);
             c.setParent(parent);
             return c;
         }
     }
-    private NutsSystemTerminal NutsSystemTerminal_of_NutsSystemTerminalBase(NutsSystemTerminalBase terminal){
+    private NutsSystemTerminal NutsSystemTerminal_of_NutsSystemTerminalBase(NutsSystemTerminalBase terminal, NutsSession session){
         if (terminal == null) {
             throw new NutsExtensionNotFoundException(getWorkspace(), NutsSystemTerminalBase.class, "SystemTerminalBase");
         }
@@ -145,11 +149,12 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
             try {
                 syst = new DefaultSystemTerminal(terminal);
                 NutsWorkspaceUtils.of(ws).setWorkspace(syst);
+                NutsWorkspaceUtils.setSession(syst,session);
             } catch (Exception ex) {
                 LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("unable to create system terminal : %s",ex.getMessage());
                 syst = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBase());
                 NutsWorkspaceUtils.of(ws).setWorkspace(syst);
-
+                NutsWorkspaceUtils.setSession(syst,session);
             }
         }
         return syst;
@@ -159,7 +164,7 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
         if (terminal == null) {
             throw new NutsExtensionNotFoundException(getWorkspace(), NutsSystemTerminalBase.class, "SystemTerminalBase");
         }
-        NutsSystemTerminal syst=NutsSystemTerminal_of_NutsSystemTerminalBase(terminal);
+        NutsSystemTerminal syst=NutsSystemTerminal_of_NutsSystemTerminalBase(terminal, session);
         if (this.systemTerminal != null) {
             NutsWorkspaceUtils.unsetWorkspace(this.systemTerminal);
         }
@@ -181,13 +186,15 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
     }
 
     @Override
-    public PrintStream prepare(PrintStream out) {
-        return CoreIOUtils.toPrintStream(out,ws);
+    public PrintStream prepare(PrintStream out, NutsSession session) {
+        session=NutsWorkspaceUtils.of(ws).validateSession(session);
+        return CoreIOUtils.toPrintStream(out,session);
     }
 
     @Override
-    public PrintWriter prepare(PrintWriter out) {
-        return CoreIOUtils.toPrintWriter(out,ws);
+    public PrintWriter prepare(PrintWriter out, NutsSession session) {
+        session=NutsWorkspaceUtils.of(ws).validateSession(session);
+        return CoreIOUtils.toPrintWriter(out,session);
     }
 
     @Override

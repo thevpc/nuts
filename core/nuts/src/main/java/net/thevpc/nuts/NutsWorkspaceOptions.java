@@ -105,6 +105,8 @@ public interface NutsWorkspaceOptions extends Serializable {
      */
     boolean isDry();
 
+    Boolean getDry();
+
     /**
      * workspace creation evaluated time.
      * <br>
@@ -334,6 +336,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return if true, extra debug information is written to standard output.
      */
     boolean isDebug();
+    Boolean getDebug();
 
     /**
      * if true consider global/system repository
@@ -342,6 +345,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return if true consider global/system repository
      */
     boolean isGlobal();
+    Boolean getGlobal();
 
     /**
      * if true consider GUI/Swing mode
@@ -350,6 +354,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return if true consider GUI/Swing mode
      */
     boolean isGui();
+    Boolean getGui();
 
     /**
      * if true, workspace were invoked from parent process and hence inherits its options.
@@ -358,6 +363,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return  if true, workspace were invoked from parent process and hence inherits its options.
      */
     boolean isInherited();
+    Boolean getInherited();
 
     /**
      * if true, workspace configuration are non modifiable.
@@ -367,6 +373,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return if true, workspace configuration are non modifiable.
      */
     boolean isReadOnly();
+    Boolean getReadOnly();
 
     /**
      * if true, boot, cache and temp folder are deleted.
@@ -375,6 +382,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return if true, boot, cache and temp folder are deleted.
      */
     boolean isRecover();
+    Boolean getRecover();
 
     /**
      * if true, workspace will be reset (all configuration and runtime files deleted).
@@ -383,6 +391,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return if true, workspace will be reset (all configuration and runtime files deleted).
      */
     boolean isReset();
+    Boolean getReset();
 
     /**
      * if true, do not install nuts companion tools upon workspace creation.
@@ -391,6 +400,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return if true, do not install nuts companion tools upon workspace creation.
      */
     boolean isSkipCompanions();
+    Boolean getSkipCompanions();
 
     /**
      * if true, do not run welcome when no application arguments were resolved.
@@ -402,6 +412,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @since 0.5.5
      */
     boolean isSkipWelcome();
+    Boolean getSkipWelcome();
 
 
     /**
@@ -437,6 +448,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @since 0.6.0
      */
     boolean isSkipBoot();
+    Boolean getSkipBoot();
 
     /**
      * when true, extra trace user-friendly information is written to standard output.
@@ -445,6 +457,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return  when true, extra trace user-friendly information is written to standard output.
      */
     boolean isTrace();
+    Boolean getTrace();
 
     /**
      * return progress options string.
@@ -463,6 +476,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return  use cache when true
      */
     boolean isCached();
+    Boolean getCached();
 
     /**
      * when true, use index
@@ -471,6 +485,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return  use index when true
      */
     boolean isIndexed();
+    Boolean getIndexed();
 
     /**
      * when true, use transitive repositories
@@ -479,6 +494,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return  use transitive repositories when true
      */
     boolean isTransitive();
+    Boolean getTransitive();
 
     /**
      * default fetch strategy
@@ -549,6 +565,10 @@ public interface NutsWorkspaceOptions extends Serializable {
     Instant getExpireTime();
 
     boolean isSkipErrors();
+
+    Boolean getSkipErrors();
+
+    boolean isSwitchWorkspace();
 
     Boolean getSwitchWorkspace();
 

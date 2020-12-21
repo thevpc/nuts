@@ -112,7 +112,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 result = v;
             } else {
                 if (!isLenient()) {
-                    throw new NutsIllegalArgumentException(getWorkspace(), "Property not found : " + key);
+                    throw new NutsIllegalArgumentException(getWorkspace(), "property not found : " + key);
                 }
             }
         } else {
@@ -124,7 +124,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                     e.put(request, t.get(request));
                 } else {
                     if (!isLenient()) {
-                        throw new NutsIllegalArgumentException(getWorkspace(), "Property not found : " + request);
+                        throw new NutsIllegalArgumentException(getWorkspace(), "property not found : " + request);
                     }
                 }
             }
@@ -289,7 +289,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             props.put("nuts-workspace-" + folderType.id(), stringValue(ws.locations().getStoreLocation(folderType).toString()));
         }
         props.put("nuts-open-mode", stringValue(options.getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
-        props.put("nuts-secure", (ws.security().isSecure()));
+        props.put("nuts-secure", (ws.security().isSecure(getValidSession())));
         props.put("nuts-gui", options.isGui());
         props.put("nuts-inherited", options.isInherited());
         props.put("nuts-recover", options.isRecover());

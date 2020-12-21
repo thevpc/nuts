@@ -353,4 +353,89 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     public boolean isExcludedExtension(String extensionId) {
         return options.isExcludedExtension(extensionId);
     }
+
+    @Override
+    public Boolean getDry() {
+        return options.getDry();
+    }
+
+    @Override
+    public Boolean getDebug() {
+        return options.getDebug();
+    }
+
+    @Override
+    public Boolean getGlobal() {
+        return options.getGlobal();
+    }
+
+    @Override
+    public Boolean getGui() {
+        return options.getGui();
+    }
+
+    @Override
+    public Boolean getInherited() {
+        return options.getInherited();
+    }
+
+    @Override
+    public Boolean getReadOnly() {
+        return options.getReadOnly();
+    }
+
+    @Override
+    public Boolean getRecover() {
+        return options.getRecover();
+    }
+
+    @Override
+    public Boolean getReset() {
+        return options.getReset();
+    }
+
+    @Override
+    public Boolean getSkipCompanions() {
+        return options.getSkipCompanions();
+    }
+
+    @Override
+    public Boolean getSkipWelcome() {
+        return options.getSkipWelcome();
+    }
+
+    @Override
+    public Boolean getSkipBoot() {
+        return options.getSkipBoot();
+    }
+
+    @Override
+    public Boolean getTrace() {
+        return options.getTrace();
+    }
+
+    @Override
+    public Boolean getCached() {
+        return options.getCached();
+    }
+
+    @Override
+    public Boolean getIndexed() {
+        return options.getIndexed();
+    }
+
+    @Override
+    public Boolean getTransitive() {
+        return options.getTransitive();
+    }
+
+    @Override
+    public Boolean getSkipErrors() {
+        return options.getSkipErrors();
+    }
+
+    @Override
+    public boolean isSwitchWorkspace() {
+        return options.isSwitchWorkspace();
+    }
 }

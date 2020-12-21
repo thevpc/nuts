@@ -11,6 +11,7 @@ import java.util.*;
 
 import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.main.wscommands.DefaultNutsAddUserCommand;
 import net.thevpc.nuts.runtime.standalone.main.wscommands.DefaultNutsRemoveUserCommand;
@@ -32,7 +33,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
 
     public DefaultNutsRepositorySecurityManager(final NutsRepository repo) {
         this.repo = repo;
-        this.agent = new WrapperNutsAuthenticationAgent(repo.getWorkspace(), ()->repo.env().toMap(), x -> getAuthenticationAgent(x, repo.getWorkspace().createSession()));
+        this.agent = new WrapperNutsAuthenticationAgent(repo.getWorkspace(), ()->repo.env().toMap(), (x,s) -> getAuthenticationAgent(x, s));
         this.repo.addRepositoryListener(new NutsRepositoryListener() {
             @Override
             public void onConfigurationChanged(NutsRepositoryEvent event) {
@@ -43,8 +44,9 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
     }
 
     @Override
-    public NutsRepositorySecurityManager checkAllowed(String right, String operationName) {
-        if (!isAllowed(right)) {
+    public NutsRepositorySecurityManager checkAllowed(String right, String operationName, NutsSession session) {
+        session= NutsWorkspaceUtils.of(repo.getWorkspace()).validateSession(session);
+        if (!isAllowed(right, session)) {
             if (CoreStringUtils.isBlank(operationName)) {
                 throw new NutsSecurityException(repo.getWorkspace(), right + " not allowed!");
             } else {
@@ -55,21 +57,21 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
     }
 
     @Override
-    public NutsAddUserCommand addUser(String name) {
+    public NutsAddUserCommand addUser(String name, NutsSession session) {
         return new DefaultNutsAddUserCommand(repo);
     }
 
     @Override
-    public NutsUpdateUserCommand updateUser(String name) {
+    public NutsUpdateUserCommand updateUser(String name, NutsSession session) {
         return new DefaultNutsUpdateUserCommand(repo);
     }
 
     @Override
-    public NutsRemoveUserCommand removeUser(String name) {
+    public NutsRemoveUserCommand removeUser(String name, NutsSession session) {
         return new DefaultNutsRemoveUserCommand(repo);
     }
 
-    private NutsAuthorizations getAuthorizations(String n) {
+    private NutsAuthorizations getAuthorizations(String n,NutsSession session) {
         NutsAuthorizations aa = authorizations.get(n);
         if (aa != null) {
             return aa;
@@ -86,11 +88,11 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
     }
 
     @Override
-    public boolean isAllowed(String right) {
-        if (!repo.getWorkspace().security().isSecure()) {
+    public boolean isAllowed(String right, NutsSession session) {
+        if (!repo.getWorkspace().security().isSecure(session)) {
             return true;
         }
-        String name = repo.getWorkspace().security().getCurrentUsername();
+        String name = repo.getWorkspace().security().getCurrentUsername(session);
         if (NutsConstants.Users.ADMIN.equals(name)) {
             return true;
         }
@@ -100,7 +102,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
         items.push(name);
         while (!items.isEmpty()) {
             String n = items.pop();
-            NutsAuthorizations s = getAuthorizations(n);
+            NutsAuthorizations s = getAuthorizations(n,session);
             Boolean ea = s.explicitAccept(right);
             if (ea != null) {
                 return ea;
@@ -115,7 +117,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
                 }
             }
         }
-        return repo.getWorkspace().security().isAllowed(right);
+        return repo.getWorkspace().security().isAllowed(right, session);
     }
 
     @Override
@@ -170,7 +172,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
         DefaultNutsRepoConfigManager cc = (DefaultNutsRepoConfigManager) repo.config();
 
         if (NutsWorkspaceConfigManagerExt.of(repo.getWorkspace().config()).createAuthenticationAgent(authenticationAgent, options.getSession()) == null) {
-            throw new NutsIllegalArgumentException(repo.getWorkspace(), "Unsupported Authentication Agent " + authenticationAgent);
+            throw new NutsIllegalArgumentException(repo.getWorkspace(), "unsupported Authentication Agent " + authenticationAgent);
         }
 
         NutsRepositoryConfig conf = cc.getStoredConfig();

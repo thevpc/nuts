@@ -92,7 +92,7 @@ public class ItemStreamInfo {
                 return substring;
             }
         }
-        throw new NutsIllegalArgumentException(null, "Invalid boundary");
+        throw new NutsIllegalArgumentException(null, "invalid boundary");
     }
 
 //    private static class ErrInputStream extends InputStream {

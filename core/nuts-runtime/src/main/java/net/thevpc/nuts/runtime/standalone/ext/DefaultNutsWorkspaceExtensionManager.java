@@ -118,7 +118,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     // @Override
     public List<NutsExtensionInformation> findExtensions(NutsId id, String extensionType, NutsSession session) {
         if (id.getVersion().isBlank()) {
-            throw new NutsIllegalArgumentException(ws, "Missing version");
+            throw new NutsIllegalArgumentException(ws, "missing version");
         }
         List<NutsExtensionInformation> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
@@ -228,7 +228,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     @Override
     public Set<Class> discoverTypes(NutsId id,ClassLoader classLoader, NutsSession session) {
-        URL url = ws.fetch().setId(id).setContent(true).getResultContent().getURL();
+        URL url = ws.fetch().setId(id).setSession(session).setContent(true).getResultContent().getURL();
         return objectFactory.discoverTypes(id,url,classLoader);
     }
 
@@ -362,6 +362,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     }
 
     public NutsWorkspaceExtensionManager loadExtensions(NutsSession session,NutsId... extensions) {
+        session=NutsWorkspaceUtils.of(ws).validateSession(session);
         boolean someUpdates = false;
         for (NutsId extension : extensions) {
             if (extension != null) {
@@ -374,7 +375,9 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                     someUpdates = true;
                 } else {
                     //load extension
-                    NutsDefinition def = ws.search().addId(extension).setTargetApiVersion(ws.getApiVersion())
+                    NutsDefinition def = ws.search()
+                            .setSession(session)
+                            .addId(extension).setTargetApiVersion(ws.getApiVersion())
                             .setDependencies(true)
                             .setDependencyFilter(ws.dependency().filter().byScope(NutsDependencyScopePattern.RUN).and(
                                     ws.dependency().filter().byOptional(false)
@@ -382,14 +385,16 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                             .setLatest(true)
                             .getResultDefinitions().required();
                     if (def.getType() != NutsIdType.EXTENSION) {
-                        throw new NutsIllegalArgumentException(ws, "Not an extension: " + extension);
+                        throw new NutsIllegalArgumentException(ws, "not an extension: " + extension);
                     }
-                    ws.install().id(def.getId());
+                    ws.install().setSession(session).id(def.getId());
                     workspaceExtensionsClassLoader.addId(def.getId().getLongNameId());
                     workspaceExtensionsClassLoader.addPath(def.getContent().getPath());
                     for (NutsDependency dependency : def.getDependencies()) {
                         workspaceExtensionsClassLoader.addId(dependency.getId().getLongNameId());
-                        workspaceExtensionsClassLoader.addPath(ws.fetch().setId(dependency.getId()).getResultContent().getPath());
+                        workspaceExtensionsClassLoader.addPath(ws.fetch().setId(dependency.getId())
+                                .setSession(session)
+                                .getResultContent().getPath());
                     }
                     objectFactory.discoverTypes(def.getId(),def.getContent().getURL(),workspaceExtensionsClassLoader);
                     //should check current classpath
@@ -403,17 +408,18 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             }
         }
         if(someUpdates) {
-            updateLoadedExtensionURLs();
+            updateLoadedExtensionURLs(session);
         }
         return this;
     }
 
-    private void updateLoadedExtensionURLs() {
+    private void updateLoadedExtensionURLs(NutsSession session) {
         loadedExtensionURLs.clear();
         for (NutsDefinition def : ws.search().addIds(loadedExtensionIds.toArray(new NutsId[0])).setTargetApiVersion(ws.getApiVersion())
                 .setDependencies(true)
                 .setDependencyFilter(ws.dependency().filter().byScope(NutsDependencyScopePattern.RUN))
                 .setLatest(true)
+                .setSession(session)
                 .getResultDefinitions().list()) {
             loadedExtensionURLs.add(def.getContent().getURL());
         }
@@ -435,7 +441,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             }
         }
         if (someUpdates) {
-            updateLoadedExtensionURLs();
+            updateLoadedExtensionURLs(session);
         }
         return this;
     }
@@ -449,14 +455,14 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         NutsSession session = NutsWorkspaceUtils.of(ws).validateSession(options.getSession());
         NutsSession searchSession = session.setTrace(false);
         if (id == null) {
-            throw new NutsIllegalArgumentException(ws, "Extension Id could not be null");
+            throw new NutsIllegalArgumentException(ws, "extension Id could not be null");
         }
         NutsId wired = CoreNutsUtils.findNutsIdBySimpleName(id, extensions.keySet());
         if (wired != null) {
             throw new NutsExtensionAlreadyRegisteredException(ws, id.toString(), wired.toString());
         }
 
-        LOG.with().level(Level.FINE).verb(NutsLogVerb.UPDATE).log("Installing extension {0}", id);
+        LOG.with().level(Level.FINE).verb(NutsLogVerb.UPDATE).log("installing extension {0}", id);
         List<NutsDefinition> nutsDefinitions = ws.search()
                 .copyFrom(options)
                 .setSession(searchSession)
@@ -594,6 +600,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         }
         NutsSessionTerminal term = new DefaultNutsSessionTerminal();
         NutsWorkspaceUtils.of(ws).setWorkspace(term);
+        NutsWorkspaceUtils.setSession(term,spec.getSession());
         term.setParent(termb);
         return term;
 

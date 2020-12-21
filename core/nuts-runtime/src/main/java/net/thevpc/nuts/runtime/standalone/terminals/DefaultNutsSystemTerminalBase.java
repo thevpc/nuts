@@ -14,7 +14,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 
 @NutsPrototype
-public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, NutsWorkspaceAware {
+public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, NutsWorkspaceAware,NutsSessionAware {
 
     private NutsLogger LOG;
     private Scanner scanner;
@@ -24,6 +24,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
     private PrintStream err;
     private InputStream in;
     private NutsWorkspace workspace;
+    private NutsSession session;
 
     @Override
     public void setWorkspace(NutsWorkspace workspace) {
@@ -38,13 +39,17 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
             setOutMode(terminalMode);
             setErrMode(terminalMode);
             NutsIOManager ioManager = workspace.io();
-            this.out = ioManager.createPrintStream(CoreIOUtils.out(workspace), NutsTerminalMode.FORMATTED);
-            this.err = ioManager.createPrintStream(CoreIOUtils.err(workspace), NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
+            this.out = ioManager.createPrintStream(CoreIOUtils.out(workspace), NutsTerminalMode.FORMATTED, session);
+            this.err = ioManager.createPrintStream(CoreIOUtils.err(workspace), NutsTerminalMode.FORMATTED, session);//.setColor(NutsPrintStream.RED);
             this.in = CoreIOUtils.in(workspace);
             this.scanner = new Scanner(this.in);
         }else{
             //on uninstall do nothing
         }
+    }
+    @Override
+    public void setSession(NutsSession session) {
+        this.session=session;
     }
 
     @Override

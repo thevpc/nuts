@@ -9,6 +9,7 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsLogger;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsPushRepositoryCommand;
 import net.thevpc.nuts.NutsRepository;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
@@ -32,8 +33,9 @@ public class DefaultNutsPushRepositoryCommand extends AbstractNutsPushRepository
 
     @Override
     public NutsPushRepositoryCommand run() {
-        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession(getSession());
-        getRepo().security().checkAllowed(NutsConstants.Permissions.PUSH, "push");
+        NutsSession session = getValidWorkspaceSession();
+        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession(session);
+        getRepo().security().checkAllowed(NutsConstants.Permissions.PUSH, "push", session);
         try {
             NutsRepositoryExt.of(getRepo()).pushImpl(this);
             if (LOG.isLoggable(Level.FINEST)) {

@@ -36,8 +36,8 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
     public NutsUninstallCommand run() {
         NutsWorkspaceUtils.of(ws).checkReadOnly();
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        NutsSession session = NutsWorkspaceUtils.of(ws).validateSession(this.getSession());
-        ws.security().checkAllowed(NutsConstants.Permissions.UNINSTALL, "uninstall");
+        NutsSession session = this.getValidWorkspaceSession();
+        ws.security().checkAllowed(NutsConstants.Permissions.UNINSTALL, "uninstall", session);
         NutsSession searchSession = CoreNutsUtils.silent(session);
         List<NutsDefinition> defs = new ArrayList<>();
         for (NutsId id : this.getIds()) {
@@ -91,7 +91,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                 wcfg.getStoredConfigBoot().setExtensions(h.getConfs());
                 wcfg.fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
             }
-            if (getSession().isPlainTrace()) {
+            if (getValidWorkspaceSession().isPlainTrace()) {
                 out.println(ws.id().formatter(id).format() + " uninstalled ##successfully##");
             }
             NutsWorkspaceUtils.of(ws).events().fireOnUninstall(new DefaultNutsInstallEvent(def, session,new NutsId[0], isErase()));

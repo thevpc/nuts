@@ -25,6 +25,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.terminals;
 
+import net.thevpc.nuts.NutsSessionAware;
 import net.thevpc.nuts.NutsTerminal;
 import net.thevpc.nuts.NutsTerminalMode;
 import net.thevpc.nuts.NutsWorkspaceAware;
@@ -33,7 +34,7 @@ import net.thevpc.nuts.NutsWorkspaceAware;
  *
  * @author thevpc
  */
-public abstract class AbstractNutsTerminal implements NutsTerminal, NutsWorkspaceAware {
+public abstract class AbstractNutsTerminal implements NutsTerminal, NutsWorkspaceAware, NutsSessionAware {
     public NutsTerminal mode(NutsTerminalMode mode) {
         return setMode(mode);
     }

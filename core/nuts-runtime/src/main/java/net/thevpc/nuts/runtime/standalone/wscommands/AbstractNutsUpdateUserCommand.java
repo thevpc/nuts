@@ -357,11 +357,6 @@ protected boolean resetPermissions;
     }
 
     @Override
-    public NutsUpdateUserCommand username(String login) {
-        return setUsername(login);
-    }
-
-    @Override
     public NutsUpdateUserCommand setUsername(String login) {
         this.login = login;
         return this;

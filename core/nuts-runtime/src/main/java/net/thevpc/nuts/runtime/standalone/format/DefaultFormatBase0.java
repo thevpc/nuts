@@ -37,9 +37,9 @@ public abstract class DefaultFormatBase0<T> implements NutsConfigurable {
 
     public PrintWriter getValidPrintWriter(Writer out) {
         return (out == null) ?
-                CoreIOUtils.toPrintWriter(getValidSession().getTerminal().getOut(), getWorkspace())
+                CoreIOUtils.toPrintWriter(getValidSession().getTerminal().getOut(), getValidSession())
                 :
-                CoreIOUtils.toPrintWriter(out, getWorkspace());
+                CoreIOUtils.toPrintWriter(out, getValidSession());
     }
 
     public PrintWriter getValidPrintWriter() {
@@ -50,7 +50,7 @@ public abstract class DefaultFormatBase0<T> implements NutsConfigurable {
         if (out == null) {
             out = getValidSession().getTerminal().getOut();
         }
-        return getWorkspace().io().term().prepare(out);
+        return getWorkspace().io().term().prepare(out, session);
     }
 
     public PrintStream getValidPrintStream() {

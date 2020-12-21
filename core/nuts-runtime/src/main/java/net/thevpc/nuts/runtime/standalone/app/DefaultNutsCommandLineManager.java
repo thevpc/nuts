@@ -72,7 +72,7 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
             return new NutsDefaultArgumentCandidate(value, CoreStringUtils.isBlank(label) ? value : label);
         }
 
-        public static NutsArgumentName createName0(NutsSession ws, String type, String label) {
+        public static NutsArgumentName createName0(NutsSession session, String type, String label) {
             if (type == null) {
                 type = "";
             }
@@ -87,7 +87,7 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
                     return new PackagingNonOption(label);
                 }
                 case "extension": {
-                    return new ExtensionNonOption(type, null);
+                    return new ExtensionNonOption(type, session);
                 }
                 case "file": {
                     return new FileNonOption(type);

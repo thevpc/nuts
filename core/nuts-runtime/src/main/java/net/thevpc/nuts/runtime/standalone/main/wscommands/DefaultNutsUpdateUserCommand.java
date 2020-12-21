@@ -53,44 +53,45 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
     @Override
     public NutsUpdateUserCommand run() {
         if (!CoreStringUtils.isBlank(getCredentials())) {
-            ws.security().checkAllowed(NutsConstants.Permissions.SET_PASSWORD, "set-user-credentials");
-            String currentLogin = ws.security().getCurrentUsername();
+            ws.security().checkAllowed(NutsConstants.Permissions.SET_PASSWORD, "set-user-credentials", session);
+            String currentLogin = ws.security().getCurrentUsername(session);
             if (CoreStringUtils.isBlank(login)) {
                 if (!NutsConstants.Users.ANONYMOUS.equals(currentLogin)) {
                     login = currentLogin;
                 } else {
-                    throw new NutsIllegalArgumentException(ws, "Not logged in");
+                    throw new NutsIllegalArgumentException(ws, "not logged in");
                 }
             }
+            NutsSession session = getValidWorkspaceSession();
             if (repo != null) {
                 NutsUserConfig u = NutsRepositoryConfigManagerExt.of(repo.config()).getUser(login);
                 if (u == null) {
-                    throw new NutsIllegalArgumentException(ws, "No such user " + login);
+                    throw new NutsIllegalArgumentException(ws, "no such user " + login);
                 }
                 fillNutsUserConfig(u);
 
-                NutsRepositoryConfigManagerExt.of(repo.config()).setUser(u, new NutsUpdateOptions().setSession(getSession()));
+                NutsRepositoryConfigManagerExt.of(repo.config()).setUser(u, new NutsUpdateOptions().setSession(session));
 
             } else {
 
-                NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(login);
+                NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(login, session);
                 if (u == null) {
-                    throw new NutsIllegalArgumentException(ws, "No such user " + login);
+                    throw new NutsIllegalArgumentException(ws, "no such user " + login);
                 }
 
                 fillNutsUserConfig(u);
-                NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(u, new NutsUpdateOptions().setSession(getSession()));
+                NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(u, new NutsUpdateOptions().setSession(session));
             }
         }
         return this;
     }
 
     protected void fillNutsUserConfig(NutsUserConfig u) {
-        String currentLogin = ws.security().getCurrentUsername();
+        String currentLogin = ws.security().getCurrentUsername(session);
         if (!currentLogin.equals(login)) {
-            repo.security().checkAllowed(NutsConstants.Permissions.ADMIN, "set-user-credentials");
+            repo.security().checkAllowed(NutsConstants.Permissions.ADMIN, "set-user-credentials", session);
         }
-        if (!ws.security().isAllowed(NutsConstants.Permissions.ADMIN)) {
+        if (!ws.security().isAllowed(NutsConstants.Permissions.ADMIN, session)) {
             ws.security().checkCredentials(u.getCredentials().toCharArray(),
                     getOldCredentials(), session);
 //

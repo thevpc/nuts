@@ -95,7 +95,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 case TREE:
                 case TABLE:
                 case PLAIN:{
-                    throw new NutsIllegalArgumentException(getWorkspace(),"Invalid content type "+contentType+". Only structured content types re allowed.");
+                    throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
                 }
             }
             this.contentType=contentType;
@@ -138,7 +138,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 }
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(),"Invalid content type "+contentType+". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
     }
 
     @Override
@@ -149,7 +149,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 return parseXml(new InputStreamReader(inputStream), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(),"Invalid content type "+contentType+". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
     }
 
     @Override
@@ -160,7 +160,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 return parse(new StringReader(string), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(),"Invalid content type "+contentType+". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
     }
 
     @Override
@@ -171,7 +171,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 return parse(new InputStreamReader(new ByteArrayInputStream(bytes)), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(),"Invalid content type "+contentType+". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
     }
 
     @Override
@@ -184,7 +184,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 return parseXml(reader, clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(),"Invalid content type "+contentType+". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
     }
 
     @Override
@@ -199,7 +199,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 }
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(),"Invalid content type "+contentType+". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
     }
 
     @Override
@@ -214,7 +214,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 }
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(),"Invalid content type "+contentType+". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
     }
 
     @Override

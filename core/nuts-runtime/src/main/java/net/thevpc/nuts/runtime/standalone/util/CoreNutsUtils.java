@@ -356,7 +356,7 @@ public class CoreNutsUtils {
             Map<String, String> queryMap = CoreStringUtils.parseMap(face, "&");
             for (String s : queryMap.keySet()) {
                 if (!DEPENDENCY_SUPPORTED_PARAMS.contains(s)) {
-                    throw new NutsIllegalArgumentException(ws, "Unsupported parameter " + CoreStringUtils.simpleQuote(s, false, "") + " in " + nutFormat);
+                    throw new NutsIllegalArgumentException(ws, "unsupported parameter " + CoreStringUtils.simpleQuote(s, false, "") + " in " + nutFormat);
                 }
             }
             if (name == null) {
@@ -782,6 +782,7 @@ public class CoreNutsUtils {
         o.setTemporary(def.isTemporary());
         o.setDeployOrder(def.getDeployOrder());
         o.setEnabled(true); ///????
+        o.setSession(def.getSession()); ///????
         if (def.isReference()) {
             o.setLocation(location);
         } else {

@@ -66,7 +66,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     protected void init(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
         NutsRepositoryConfig optionsConfig = options.getConfig();
         if (optionsConfig == null) {
-            throw new NutsIllegalArgumentException(workspace, "Null Config");
+            throw new NutsIllegalArgumentException(workspace, "null config");
         }
         this.workspace = workspace;
         this.parentRepository = parent;

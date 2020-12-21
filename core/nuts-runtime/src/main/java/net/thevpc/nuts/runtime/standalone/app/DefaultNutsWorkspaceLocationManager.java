@@ -33,7 +33,7 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     @Override
     public void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folder, String location, NutsUpdateOptions options) {
         if (folder == null) {
-            throw new NutsIllegalArgumentException(ws, "Invalid store root folder null");
+            throw new NutsIllegalArgumentException(ws, "invalid store root folder null");
         }
         options = CoreNutsUtils.validate(options, ws);
         cfg().onPreUpdateConfig("home-location", options);
@@ -59,7 +59,7 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     @Override
     public void setStoreLocation(NutsStoreLocation folderType, String location, NutsUpdateOptions options) {
         if (folderType == null) {
-            throw new NutsIllegalArgumentException(ws, "Invalid store root folder null");
+            throw new NutsIllegalArgumentException(ws, "invalid store root folder null");
         }
         options = CoreNutsUtils.validate(options, ws);
         cfg().onPreUpdateConfig("store-location", options);
@@ -172,7 +172,7 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     @Override
     public String getDefaultIdContentExtension(String packaging) {
         if (CoreStringUtils.isBlank(packaging)) {
-            throw new NutsIllegalArgumentException(ws, "Unsupported empty Packaging");
+            throw new NutsIllegalArgumentException(ws, "unsupported empty Packaging");
         }
         switch (packaging) {
             case "jar":
@@ -233,9 +233,9 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
                     return "." + f;
                 }
                 if (CoreStringUtils.isBlank(f)) {
-                    throw new NutsIllegalArgumentException(ws, "Missing face in " + id);
+                    throw new NutsIllegalArgumentException(ws, "missing face in " + id);
                 }
-                throw new NutsIllegalArgumentException(ws, "Unsupported face " + f + " in " + id);
+                throw new NutsIllegalArgumentException(ws, "unsupported face " + f + " in " + id);
             }
         }
     }

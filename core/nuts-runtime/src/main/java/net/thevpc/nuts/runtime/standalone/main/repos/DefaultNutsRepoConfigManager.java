@@ -42,16 +42,16 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     public DefaultNutsRepoConfigManager(NutsRepository repository, NutsSession session, String storeLocation, NutsRepositoryConfig config, int speed, int deployPriority, boolean temporary, boolean enabled, String globalName, boolean supportedMirroring, String repositoryName, String repositoryType) {
         LOG=repository.getWorkspace().log().of(DefaultNutsRepoConfigManager.class);
         if (CoreStringUtils.isBlank(repositoryType)) {
-            throw new NutsIllegalArgumentException(repository.getWorkspace(), "Missing Repository Type");
+            throw new NutsIllegalArgumentException(repository.getWorkspace(), "missing repository type");
         }
         if (CoreStringUtils.isBlank(repositoryName)) {
-            throw new NutsIllegalArgumentException(repository.getWorkspace(), "Missing Repository Name");
+            throw new NutsIllegalArgumentException(repository.getWorkspace(), "missing repository name");
         }
         if (CoreStringUtils.isBlank(globalName)) {
-            throw new NutsIllegalArgumentException(repository.getWorkspace(), "Missing Repository Global Name");
+            throw new NutsIllegalArgumentException(repository.getWorkspace(), "missing repository global name");
         }
         if (CoreStringUtils.isBlank(storeLocation)) {
-            throw new NutsIllegalArgumentException(repository.getWorkspace(), "Missing folder");
+            throw new NutsIllegalArgumentException(repository.getWorkspace(), "missing folder");
         }
         Path pfolder = Paths.get(storeLocation);
         if ((Files.exists(pfolder) && !Files.isDirectory(pfolder))) {
@@ -205,7 +205,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
 
                 }
                 default: {
-                    throw new NutsIllegalArgumentException(repository.getWorkspace(), "Unsupported strategy type " + getStoreLocation());
+                    throw new NutsIllegalArgumentException(repository.getWorkspace(), "unsupported strategy type " + getStoreLocation());
                 }
             }
         }
@@ -218,7 +218,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
 
     public void setConfig(NutsRepositoryConfig newConfig, NutsSession session, boolean fireChange, NutsUpdateOptions options) {
         if (newConfig == null) {
-            throw new NutsIllegalArgumentException(repository.getWorkspace(), "Missing Config");
+            throw new NutsIllegalArgumentException(repository.getWorkspace(), "missing config");
         }
         options=CoreNutsUtils.validate(options,repository.getWorkspace());
         this.config = newConfig;
@@ -234,7 +234,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
             fireChange = true;
             config.setType(repositoryType);
         } else if (!config.getType().equals(repositoryType)) {
-            throw new NutsIllegalArgumentException(repository.getWorkspace(), "Invalid Repository Type : expected " + repositoryType + ", found " + config.getType());
+            throw new NutsIllegalArgumentException(repository.getWorkspace(), "invalid Repository Type : expected " + repositoryType + ", found " + config.getType());
         }
 
         this.globalName = newConfig.getName();
@@ -358,7 +358,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         boolean ok = false;
         if (force || (!repository.getWorkspace().config().isReadOnly() && isConfigurationChanged())) {
             NutsWorkspaceUtils.of(repository.getWorkspace()).checkReadOnly();
-            repository.security().checkAllowed(NutsConstants.Permissions.SAVE, "save");
+            repository.security().checkAllowed(NutsConstants.Permissions.SAVE, "save", session);
             Path file = getStoreLocation().resolve(NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
             boolean created = false;
             if (!Files.exists(file)) {
@@ -483,7 +483,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
             throw new NutsUnsupportedOperationException(repository.getWorkspace());
         }
         options=CoreNutsUtils.validate(options,repository.getWorkspace());
-        repository.security().checkAllowed(NutsConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
+        repository.security().checkAllowed(NutsConstants.Permissions.REMOVE_REPOSITORY, "remove-repository", options.getSession());
         final NutsRepository r = repositoryRegistryHelper.removeRepository(repositoryId);
         if (r != null) {
             NutsRepositoryUtils.of(repository).events().fireOnRemoveRepository(new DefaultNutsRepositoryEvent(options.getSession(), repository, r, "mirror", r, null));
@@ -520,7 +520,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NutsIllegalArgumentException(repository.getWorkspace(), "Ambigous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
+                        throw new NutsIllegalArgumentException(repository.getWorkspace(), "ambiguous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
                     }
                 }
 
@@ -542,7 +542,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NutsIllegalArgumentException(repository.getWorkspace(), "Ambigous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
+                        throw new NutsIllegalArgumentException(repository.getWorkspace(), "ambiguous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
                     }
                 }
 
@@ -564,7 +564,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NutsIllegalArgumentException(repository.getWorkspace(), "Ambigous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
+                        throw new NutsIllegalArgumentException(repository.getWorkspace(), "ambiguous repository name " + repositoryNameOrId + "; found two Ids " + y.getUuid() + " and " + m.getUuid());
                     }
                 }
 

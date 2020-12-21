@@ -667,5 +667,17 @@ public interface NutsSession extends NutsConfigurable {
 
     boolean isDry();
 
-    NutsSession setDry(boolean dry);
+    NutsSession setDry(Boolean dry);
+
+    /**
+     * configure session based on Workspace options
+     * @param options options to configure from
+     * @return {@code this} instance
+     * @since 0.8.1
+     */
+    NutsSession configure(NutsWorkspaceOptions options);
+
+    NutsExecutionType getExecutionType();
+
+    NutsSession setExecutionType(NutsExecutionType executionType);
 }

@@ -70,7 +70,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NutsIllegalArgumentException(getWorkspace(), "Ambiguous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
+                        throw new NutsIllegalArgumentException(getWorkspace(), "ambiguous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
                     }
                     return m;
                 }
@@ -92,7 +92,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NutsIllegalArgumentException(getWorkspace(), "Ambiguous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
+                        throw new NutsIllegalArgumentException(getWorkspace(), "ambiguous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
                     }
                     return m;
                 }
@@ -114,7 +114,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NutsIllegalArgumentException(getWorkspace(), "Ambiguous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
+                        throw new NutsIllegalArgumentException(getWorkspace(), "ambiguous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
                     }
                     return m;
                 }
@@ -125,6 +125,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
 
     @Override
     public NutsRepository getRepository(String repositoryIdOrName, NutsSession session) throws NutsRepositoryNotFoundException {
+        session=NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
         if (DefaultNutsInstalledRepository.INSTALLED_REPO_UUID.equals(repositoryIdOrName)) {
             return NutsWorkspaceExt.of(getWorkspace()).getInstalledRepository();
         }
@@ -137,13 +138,8 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
 
     @Override
     public NutsRepositoryManager removeRepository(String repositoryId, NutsRemoveOptions options) {
-        getWorkspace().security().checkAllowed(NutsConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
-        if (options == null) {
-            options = new NutsRemoveOptions();
-        }
-        if (options.getSession() == null) {
-            options.setSession(getWorkspace().createSession());
-        }
+        options = CoreNutsUtils.validate(options, getWorkspace());
+        getWorkspace().security().checkAllowed(NutsConstants.Permissions.REMOVE_REPOSITORY, "remove-repository", options.getSession());
         final NutsRepository repository = repositoryRegistryHelper.removeRepository(repositoryId);
         if (repository != null) {
             NutsWorkspaceConfigManagerExt config = NutsWorkspaceConfigManagerExt.of(getWorkspace().config());
@@ -155,12 +151,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
 
     @Override
     public void removeAllRepositories(NutsRemoveOptions options) {
-        if (options == null) {
-            options = new NutsRemoveOptions();
-        }
-        if (options.getSession() == null) {
-            options.setSession(getWorkspace().createSession());
-        }
+        options = CoreNutsUtils.validate(options, getWorkspace());
         for (NutsRepository repository : repositoryRegistryHelper.getRepositories()) {
             removeRepository(repository.getUuid(), options);
         }
@@ -180,7 +171,8 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
 
 
     @Override
-    public NutsRepository addRepository(NutsRepositoryModel repository, NutsSession session) {
+    public NutsRepository addRepository(NutsRepositoryModel repository, NutsAddOptions options) {
+        options = CoreNutsUtils.validate(options, getWorkspace());
         NutsRepositoryConfig config = new NutsRepositoryConfig();
         String name = repository.getName();
         String uuid = repository.getUuid();
@@ -194,16 +186,16 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         config.setType("custom");
         config.setUuid(uuid);
         config.setStoreLocationStrategy(repository.getStoreLocationStrategy());
-        NutsAddRepositoryOptions options = new NutsAddRepositoryOptions();
+        NutsAddRepositoryOptions options2 = new NutsAddRepositoryOptions();
         Path rootFolder = NutsWorkspaceConfigManagerExt.of(getWorkspace().config()).getRepositoriesRoot();
-        options.setName(config.getName());
-        options.setConfig(config);
-        options.setDeployOrder(repository.getDeployOrder());
-        options.setSession(session);
-        options.setTemporary(true);
-        options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, getWorkspace()));
-        NutsRepository r = new NutsSimpleRepositoryWrapper(options, getWorkspace(), null, repository);
-        addRepository(null, r, new NutsAddOptions().setSession(session));
+        options2.setName(config.getName());
+        options2.setConfig(config);
+        options2.setDeployOrder(repository.getDeployOrder());
+        options2.setSession(options.getSession());
+        options2.setTemporary(true);
+        options2.setLocation(CoreIOUtils.resolveRepositoryPath(options2, rootFolder, getWorkspace()));
+        NutsRepository r = new NutsSimpleRepositoryWrapper(options2, getWorkspace(), null, repository);
+        addRepository(null, r, options);
         return r;
     }
 

@@ -140,7 +140,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setIn(InputStream in) {
         if (baseIO) {
-            throw new NutsIllegalArgumentException(ws, "Already used Base IO Redirection");
+            throw new NutsIllegalArgumentException(ws, "already used base IO redirection");
         }
         this.in = in;
         return this;
@@ -165,7 +165,7 @@ public class ProcessBuilder2 {
         if (o instanceof SPrintStream) {
             return ((SPrintStream) o).getStringBuffer();
         }
-        throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call setOutString");
+        throw new NutsIllegalArgumentException(ws, "no buffer was configured; should call setOutString");
     }
 
     public String getErrorString() {
@@ -176,12 +176,12 @@ public class ProcessBuilder2 {
         if (o instanceof SPrintStream) {
             return ((SPrintStream) o).getStringBuffer();
         }
-        throw new NutsIllegalArgumentException(ws, "No Buffer was configured. Should call setOutString");
+        throw new NutsIllegalArgumentException(ws, "no buffer was configured; should call setErrString");
     }
 
     public ProcessBuilder2 setOutput(PrintStream out) {
         if (baseIO) {
-            throw new IllegalArgumentException("Already used Base IO Redirection");
+            throw new IllegalArgumentException("already used base IO redirection");
         }
         this.out = out;
         return this;
@@ -193,7 +193,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setErr(PrintStream err) {
         if (baseIO) {
-            throw new NutsIllegalArgumentException(ws, "Already used Base IO Redirection");
+            throw new NutsIllegalArgumentException(ws, "already used base IO redirection");
         }
         this.err = err;
         return this;

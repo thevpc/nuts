@@ -35,29 +35,30 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
 
     @Override
     public NutsSearchVersionsRepositoryCommand run() {
-        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession(getSession());
+        NutsSession session = getValidWorkspaceSession();
+        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession(session);
         //id = id.builder().setFaceContent().build();
-        getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_DESC, "find-versions");
+        getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_DESC, "find-versions", session);
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
         NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSimpleNameNutsId(id);
-        xrepo.checkAllowedFetch(id, getSession());
+        xrepo.checkAllowedFetch(id, session);
         try {
             List<Iterator<NutsId>> resultList = new ArrayList<>();
-            if (getSession().isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
+            if (session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 Iterator<NutsId> d = null;
                 try {
-                    d = xrepo.getIndexStore().searchVersions(id, getSession());
+                    d = xrepo.getIndexStore().searchVersions(id, session);
                 } catch (NutsException ex) {
                     LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("error finding version with Indexer for {0} : {1}", getRepo().getName(), ex);
                 }
                 if (d != null && filter != null) {
                     resultList.add(
                             IteratorUtils.safeIgnore(
-                                    IteratorBuilder.of(d).filter(x -> filter.acceptId(x, getSession())).iterator())
+                                    IteratorBuilder.of(d).filter(x -> filter.acceptId(x, session)).iterator())
                             );
                 }
             }
-            Iterator<NutsId> rr = xrepo.searchVersionsImpl(id, getFilter(), getFetchMode(), getSession());
+            Iterator<NutsId> rr = xrepo.searchVersionsImpl(id, getFilter(), getFetchMode(), session);
             if (rr != null) {
                 resultList.add(rr);
             }
