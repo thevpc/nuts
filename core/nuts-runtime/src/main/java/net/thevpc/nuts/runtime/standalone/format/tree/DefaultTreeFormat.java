@@ -141,7 +141,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         PrintStream out = CoreIOUtils.toPrintStream(b,getWorkspace());
         NutsTreeModel tree = getModel();
-        print(tree,"", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0);
+        print(tree,"", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0,false);
         out.flush();
         return b.toString();
     }
@@ -149,17 +149,20 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     @Override
     public void print(PrintStream out) {
         NutsTreeModel tree = getModel();
-        print(tree,"", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0);
+        print(tree,"", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0,false);
         out.flush();
     }
 
-    private void print(NutsTreeModel tree,String prefix, NutsPositionType type, Object o, PrintStream out, boolean hideRoot, int depth) {
+    private boolean print(NutsTreeModel tree,String prefix, NutsPositionType type, Object o, PrintStream out, boolean hideRoot, int depth,boolean prefixNewLine) {
         if (!hideRoot) {
+            if(prefixNewLine){
+                out.println();
+            }
             out.print(prefix);
             out.print(linkFormatter.formatMain(type));
             out.print(formatter.format(o, depth));
-//            out.println();
             out.flush();
+            prefixNewLine=true;
         }
         List<Object> children = tree.getChildren(o);
         if (children == null) {
@@ -173,11 +176,12 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         while (childrenIter.hasNext()) {
             Object c = last;
             last = childrenIter.next();
-            print(tree,prefix + linkFormatter.formatChild(type), NutsPositionType.CENTER, c, out, false, depth + 1);
+            prefixNewLine|=print(tree,prefix + linkFormatter.formatChild(type), NutsPositionType.CENTER, c, out, false, depth + 1,prefixNewLine);
         }
         if (last != null) {
-            print(tree,prefix + linkFormatter.formatChild(type), (infinite && "".equals(prefix)) ? NutsPositionType.CENTER : NutsPositionType.LAST, last, out, false, depth + 1);
+            prefixNewLine|=print(tree,prefix + linkFormatter.formatChild(type), (infinite && "".equals(prefix)) ? NutsPositionType.CENTER : NutsPositionType.LAST, last, out, false, depth + 1,prefixNewLine);
         }
+        return prefixNewLine;
     }
 
     private void print(NutsTreeModel tree,String prefix, NutsPositionType type, Object o, PrintWriter out, boolean hideRoot, int depth) {

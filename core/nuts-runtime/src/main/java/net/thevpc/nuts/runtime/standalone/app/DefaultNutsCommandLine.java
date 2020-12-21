@@ -188,7 +188,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 skipAll();
                 return this;
             }
-            String m = "Unexpected Argument " + highlightText(String.valueOf(peek()));
+            String m = "unexpected argument " + highlightText(String.valueOf(peek()));
             if (errorMessage != null && errorMessage.trim().length() > 0) {
                 m += " , " + errorMessage;
             }
@@ -214,7 +214,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 skipAll();
                 return this;
             }
-            throwError((errorMessage == null || errorMessage.trim().isEmpty()) ? "Missing Arguments" : errorMessage);
+            throwError((errorMessage == null || errorMessage.trim().isEmpty()) ? "missing arguments" : errorMessage);
         }
         return this;
     }
@@ -222,7 +222,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     @Override
     public NutsCommandLine pushBack(NutsArgument arg) {
         if (arg == null) {
-            throwError("Null Argument");
+            throwError("null argument");
         }
         lookahead.add(0, arg);
         return this;
