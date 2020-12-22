@@ -114,26 +114,26 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
         if (termb == null) {
             throw new NutsExtensionNotFoundException(ws, NutsSessionTerminal.class, "SessionTerminalBase");
         }
-        NutsWorkspaceUtils.of(ws).setWorkspace(termb);
         NutsWorkspaceUtils.setSession(termb,session);
+        NutsWorkspaceUtils.of(ws).setWorkspace(termb);
         try {
             NutsSessionTerminal term = null;
             if (termb instanceof NutsSessionTerminal) {
                 term = (NutsSessionTerminal) termb;
-                NutsWorkspaceUtils.of(ws).setWorkspace(term);
                 NutsWorkspaceUtils.setSession(term,session);
+                NutsWorkspaceUtils.of(ws).setWorkspace(term);
                 term.setParent(parent);
             } else {
                 term = new DefaultNutsSessionTerminal();
-                NutsWorkspaceUtils.of(ws).setWorkspace(term);
                 NutsWorkspaceUtils.setSession(term,session);
+                NutsWorkspaceUtils.of(ws).setWorkspace(term);
                 term.setParent(termb);
             }
             return term;
         } catch (Exception anyException) {
             final NutsSessionTerminal c = new DefaultNutsSessionTerminal();
-            NutsWorkspaceUtils.of(ws).setWorkspace(c);
             NutsWorkspaceUtils.setSession(c,session);
+            NutsWorkspaceUtils.of(ws).setWorkspace(c);
             c.setParent(parent);
             return c;
         }
@@ -148,13 +148,13 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
         } else {
             try {
                 syst = new DefaultSystemTerminal(terminal);
-                NutsWorkspaceUtils.of(ws).setWorkspace(syst);
                 NutsWorkspaceUtils.setSession(syst,session);
+                NutsWorkspaceUtils.of(ws).setWorkspace(syst);
             } catch (Exception ex) {
                 LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("unable to create system terminal : %s",ex.getMessage());
                 syst = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBase());
-                NutsWorkspaceUtils.of(ws).setWorkspace(syst);
                 NutsWorkspaceUtils.setSession(syst,session);
+                NutsWorkspaceUtils.of(ws).setWorkspace(syst);
             }
         }
         return syst;

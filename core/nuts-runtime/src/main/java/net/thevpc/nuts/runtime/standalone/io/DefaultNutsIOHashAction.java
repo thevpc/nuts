@@ -31,11 +31,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import net.thevpc.nuts.NutsDescriptor;
-import net.thevpc.nuts.NutsIOHashAction;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsUnsupportedArgumentException;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 
@@ -49,6 +45,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
     private String type;
     private String algorithm;
     private NutsWorkspace ws;
+    private NutsSession session;
 
     public DefaultNutsIOHashAction(NutsWorkspace ws) {
         this.ws = ws;
@@ -75,6 +72,17 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
         } catch (NoSuchAlgorithmException ex) {
             throw new IllegalArgumentException(ex);
         }
+        return this;
+    }
+
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsIOHashAction setSession(NutsSession session) {
+        this.session = session;
         return this;
     }
 
@@ -199,7 +207,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
             }
             case "desc": {
                 ByteArrayOutputStream o = new ByteArrayOutputStream();
-                ws.descriptor().formatter((NutsDescriptor) value).compact().print(new OutputStreamWriter(o));
+                ws.descriptor().formatter((NutsDescriptor) value).compact().setSession(session).print(new OutputStreamWriter(o));
                 try (InputStream is = new ByteArrayInputStream(o.toByteArray())) {
                     return CoreIOUtils.evalHash(is, getValidAlgo());
                 } catch (IOException ex) {

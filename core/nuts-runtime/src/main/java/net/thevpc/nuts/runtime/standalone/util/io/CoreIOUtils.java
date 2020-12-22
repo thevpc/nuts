@@ -88,8 +88,8 @@ public class CoreIOUtils {
             }
         }
         ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer);
-        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
         NutsWorkspaceUtils.setSession(s,session);
+        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
         return s;
     }
 
@@ -98,8 +98,8 @@ public class CoreIOUtils {
             return null;
         }
         ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer);
-        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
         NutsWorkspaceUtils.setSession(s,session);
+        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
         return s;
     }
 
@@ -108,8 +108,8 @@ public class CoreIOUtils {
             return null;
         }
         SimpleWriterOutputStream s = new SimpleWriterOutputStream(writer,session);
-        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
         NutsWorkspaceUtils.setSession(s,session);
+        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
         return toPrintStream(s, session);
     }
 
@@ -119,13 +119,13 @@ public class CoreIOUtils {
         }
         if (os instanceof PrintStream) {
             PrintStream y = (PrintStream) os;
-            NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(y);
             NutsWorkspaceUtils.setSession(y,session);
+            NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(y);
             return y;
         }
         PrintStreamExt s = new PrintStreamExt(os, false);
-        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
         NutsWorkspaceUtils.setSession(s,session);
+        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
         return s;
     }
 

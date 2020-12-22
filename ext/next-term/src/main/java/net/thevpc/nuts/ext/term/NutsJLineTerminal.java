@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  * Created by vpc on 2/20/17.
  */
 @NutsPrototype
-public class NutsJLineTerminal implements NutsSystemTerminalBase,NutsWorkspaceAware,NutsSessionAware {
+public class NutsJLineTerminal implements NutsSystemTerminalBase,NutsSessionAware {
 
     private static final Logger LOG = Logger.getLogger(NutsJLineTerminal.class.getName());
     private Terminal terminal;
@@ -57,10 +57,6 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase,NutsWorkspaceAw
     private NutsTerminalMode errMode;
     private NutsCommandAutoCompleteProcessor autoCompleteResolver;
 
-    @Override
-    public void setSession(NutsSession session) {
-        this.session=session;
-    }
 
     public NutsJLineTerminal() {
     }
@@ -104,9 +100,10 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase,NutsWorkspaceAw
     }
 
     @Override
-    public void setWorkspace(NutsWorkspace workspace) {
+    public void setSession(NutsSession session) {
+        this.session=session;
+        this.workspace = session==null?null:session.getWorkspace();
         if(workspace!=null) {
-            this.workspace = workspace;
             TerminalBuilder builder = TerminalBuilder.builder();
             builder.streams(System.in, System.out);
             builder.system(true);
@@ -144,7 +141,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase,NutsWorkspaceAw
             try {
                 reader.getTerminal().close();
             } catch (IOException ex) {
-                LOG.log(Level.SEVERE, "Error closing terminal", ex);
+                LOG.log(Level.SEVERE, "error closing terminal", ex);
             }
         }
     }

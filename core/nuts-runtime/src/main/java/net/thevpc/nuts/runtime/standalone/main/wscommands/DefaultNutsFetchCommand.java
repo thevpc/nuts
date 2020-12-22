@@ -230,7 +230,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
 //        }
         if (result != null) {
             try {
-                ws.formats().element().setContentType(NutsContentType.JSON).setValue(result).print(cachePath);
+                ws.formats().element().setContentType(NutsContentType.JSON).setSession(session).setValue(result).print(cachePath);
             } catch (Exception ex) {
                 //
             }
@@ -563,7 +563,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         map = new LinkedHashMap<>();
                         map.put("executable", String.valueOf(executable));
                         map.put("nutsApplication", String.valueOf(nutsApp));
-                        ws.formats().element().setContentType(NutsContentType.JSON).setValue(map).print(cachePath);
+                        ws.formats().element().setContentType(NutsContentType.JSON).setSession(session).setValue(map).print(cachePath);
                     } catch (Exception ex) {
                         //
                     }

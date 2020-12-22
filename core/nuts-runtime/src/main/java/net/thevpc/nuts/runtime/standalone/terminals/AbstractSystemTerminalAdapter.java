@@ -12,24 +12,22 @@ import net.thevpc.nuts.runtime.standalone.io.DefaultNutsQuestion;
 import net.thevpc.nuts.spi.NutsInputStreamTransparentAdapter;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
-public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal implements NutsSystemTerminal {
+public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal implements NutsSystemTerminal,NutsSessionAware {
 
     private NutsWorkspace ws;
     private NutsSession session;
 
-    @Override
-    public void setWorkspace(NutsWorkspace workspace) {
-        this.ws = workspace;
-        NutsSystemTerminalBase parent = getParent();
-        if (ws == null) {
-            NutsWorkspaceUtils.unsetWorkspace(parent);
-        } else {
-            NutsWorkspaceUtils.of(ws).setWorkspace(parent);
-        }
-    }
+
     @Override
     public void setSession(NutsSession session) {
-        this.session=session;
+        if(session!=null && this.session!=null){
+            //ignore
+        }else {
+            this.session = session;
+            this.ws = session==null?null:session.getWorkspace();
+        }
+        NutsSystemTerminalBase parent = getParent();
+        NutsWorkspaceUtils.setSession(parent,session);
     }
 
 

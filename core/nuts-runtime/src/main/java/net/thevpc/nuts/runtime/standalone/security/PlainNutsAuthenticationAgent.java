@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 @NutsSingleton
-public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsWorkspaceAware, NutsSessionAware {
+public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsSessionAware {
 
     private NutsWorkspace ws;
     private NutsSession session;
@@ -18,13 +18,9 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
     }
 
     @Override
-    public void setWorkspace(NutsWorkspace workspace) {
-        this.ws = workspace;
-    }
-
-    @Override
     public void setSession(NutsSession session) {
         this.session=session;
+        this.ws=session==null?null:session.getWorkspace();
     }
 
     @Override

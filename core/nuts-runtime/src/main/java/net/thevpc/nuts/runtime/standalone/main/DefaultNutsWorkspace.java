@@ -357,11 +357,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsSession s = new DefaultNutsSession(this);
         DefaultNutsSessionTerminal t = new DefaultNutsSessionTerminal();
         DefaultNutsSystemTerminalBase base = new DefaultNutsSystemTerminalBase();
-        base.setWorkspace(this);
+        base.setSession(s);
         DefaultSystemTerminal sys = new DefaultSystemTerminal(base);
-        sys.setWorkspace(this);
+        sys.setSession(s);
         t.setParent(sys);
-        t.setWorkspace(this);
+        t.setSession(s);
         s.setTerminal(t);
         return s;
     }
@@ -1177,7 +1177,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             eff = l.resolve(nn);
         }
         try {
-            descriptor().formatter(effectiveDescriptor).print(eff);
+            descriptor().formatter(effectiveDescriptor).setSession(session).print(eff);
         } catch (Exception ex) {
             LOG.with().level(Level.FINE).error(ex).log("failed to print {0}", eff);
             //

@@ -209,7 +209,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 ii.setSourceRepoName(r.getName());
                 ii.setSourceRepoUUID(r.getUuid());
             }
-            printJson(id, NUTS_INSTALL_FILE, ii);
+            printJson(id, NUTS_INSTALL_FILE, ii,session);
         } catch (UncheckedIOException|NutsIOException ex) {
             throw new NutsNotInstallableException(workspace, id.toString(), "failed to install "
                     + id.builder().setNamespace(null).build() + " : " + CoreStringUtils.exceptionToString(ex), ex);
@@ -291,7 +291,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         }
         ii.setCreatedDate(instant);
         try {
-            printJson(id, NUTS_INSTALL_FILE, ii);
+            printJson(id, NUTS_INSTALL_FILE, ii,session);
         } catch (UncheckedIOException|NutsIOException ex) {
             throw new NutsNotInstallableException(workspace, id.toString(), "failed to install "
                     + id.builder().setNamespace(null).build() + " : " + CoreStringUtils.exceptionToString(ex), ex);
@@ -317,17 +317,21 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         }
         if (!fi.required) {
             fi.required = true;
-            printJson(from, NUTS_INSTALL_FILE, fi);
+            printJson(from, NUTS_INSTALL_FILE, fi,session);
         }
         Set<NutsId> list = findDependenciesFrom(from, scope);
         if (!list.contains(to)) {
             list.add(to);
-            workspace.formats().element().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDeps(from, true, scope));
+            workspace.formats().element().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0]))
+                    .setSession(session)
+                    .print(getDeps(from, true, scope));
         }
         list = findDependenciesTo(to, scope);
         if (!list.contains(from)) {
             list.add(from);
-            workspace.formats().element().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDeps(to, false, scope));
+            workspace.formats().element().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0]))
+                    .setSession(session)
+                    .print(getDeps(to, false, scope));
         }
     }
 
@@ -357,7 +361,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         }
         if (fi.required != stillRequired) {
             fi.required = true;
-            printJson(from, NUTS_INSTALL_FILE, fi);
+            printJson(from, NUTS_INSTALL_FILE, fi,session);
         }
     }
 
@@ -543,7 +547,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 ii.setInstallUser(user);
                 ii.setInstalled(_install);
                 ii.setRequired(_require);
-                printJson(id, NUTS_INSTALL_FILE, ii);
+                printJson(id, NUTS_INSTALL_FILE, ii,session);
             } catch (UncheckedIOException|NutsIOException ex) {
                 throw new NutsNotInstallableException(workspace, id.toString(), "failed to install "
                         + id.builder().setNamespace(null).build() + " : " + CoreStringUtils.exceptionToString(ex), ex);
@@ -571,7 +575,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             }
             ii.setInstalled(_install);
             ii.setRequired(_require);
-            printJson(ii.getId(), NUTS_INSTALL_FILE, ii);
+            printJson(ii.getId(), NUTS_INSTALL_FILE, ii,session);
             DefaultNutsInstallInfo uu = (DefaultNutsInstallInfo) getInstallInformation(ii, session);
             uu.setWasInstalled(wasInstalled);
             uu.setWasRequired(wasRequired);
@@ -589,13 +593,13 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         }
     }
 
-    public <T> T readJson(NutsId id, String name, Class<T> clazz) {
-        return workspace.formats().element().setContentType(NutsContentType.JSON).parse(getPath(id, name), clazz);
+    public <T> T readJson(NutsId id, String name, Class<T> clazz,NutsSession session) {
+        return workspace.formats().element().setContentType(NutsContentType.JSON).setSession(session).parse(getPath(id, name), clazz);
     }
 
-    public void printJson(NutsId id, String name, InstallInfoConfig value) {
+    public void printJson(NutsId id, String name, InstallInfoConfig value, NutsSession session) {
         value.setConfigVersion(workspace.getApiVersion());
-        workspace.formats().element().setContentType(NutsContentType.JSON).setValue(value).print(getPath(id, name));
+        workspace.formats().element().setContentType(NutsContentType.JSON).setValue(value).setSession(session).print(getPath(id, name));
     }
 
     public void remove(NutsId id, String name) {

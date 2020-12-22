@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.Scanner;
 
 @NutsPrototype
-public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements NutsSessionTerminal {
+public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements NutsSessionTerminal,NutsSessionAware {
 
     protected NutsWorkspace ws;
     protected NutsSession session;
@@ -22,17 +22,17 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
     protected NutsTerminalMode errMode = NutsTerminalMode.FORMATTED;
 
     @Override
-    public void setWorkspace(NutsWorkspace workspace) {
-        this.ws = workspace;
-        if(this.ws!=null) {
-            this.out.session = this;
-            this.err.session = this;
-        }
-    }
-
-    @Override
     public void setSession(NutsSession session) {
-        this.session=session;
+        if(session!=null && this.session!=null){
+            //ignore
+        }else {
+            this.session = session;
+            this.ws = session==null?null:session.getWorkspace();
+            if(this.ws!=null) {
+                this.out.session = this;
+                this.err.session = this;
+            }
+        }
     }
 
     @Override

@@ -10,7 +10,7 @@ import net.thevpc.nuts.runtime.standalone.io.NutsTerminalModeOp;
 import java.io.*;
 import java.util.Locale;
 
-public class PrintStreamExt extends PrintStream implements ExtendedFormatAware, NutsWorkspaceAware, NutsSessionAware {
+public class PrintStreamExt extends PrintStream implements ExtendedFormatAware, NutsSessionAware {
     private OutputStream out;
     private boolean autoFlash2;
     private NutsWorkspace ws;
@@ -53,10 +53,7 @@ public class PrintStreamExt extends PrintStream implements ExtendedFormatAware, 
         this(new FileOutputStream(file), false, csn);
         this.autoFlash2 = false;
     }
-    @Override
-    public void setSession(NutsSession session) {
-        this.session=session;
-    }
+
 
     public boolean isAutoFlash() {
         return autoFlash2;
@@ -87,8 +84,9 @@ public class PrintStreamExt extends PrintStream implements ExtendedFormatAware, 
     }
 
     @Override
-    public void setWorkspace(NutsWorkspace workspace) {
-        this.ws=workspace;
+    public void setSession(NutsSession session) {
+        this.session=session;
+        this.ws=session==null?null:session.getWorkspace();
     }
 
     @Override

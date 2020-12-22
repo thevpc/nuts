@@ -599,8 +599,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             return null;
         }
         NutsSessionTerminal term = new DefaultNutsSessionTerminal();
-        NutsWorkspaceUtils.of(ws).setWorkspace(term);
         NutsWorkspaceUtils.setSession(term,spec.getSession());
+        NutsWorkspaceUtils.of(ws).setWorkspace(term);
         term.setParent(termb);
         return term;
 

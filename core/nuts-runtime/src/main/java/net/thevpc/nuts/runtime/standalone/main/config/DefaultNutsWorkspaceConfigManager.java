@@ -159,7 +159,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     extension.setConfigVersion(null);
                 }
             }
-            ws.formats().element().setContentType(NutsContentType.JSON).setValue(storeModelBoot).print(file);
+            ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelBoot).print(file);
             storeModelBootChanged = false;
             ok = true;
         }
@@ -176,7 +176,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     extension.setConfigVersion(null);
                 }
             }
-            ws.formats().element().setContentType(NutsContentType.JSON).setValue(storeModelSecurity).print(file);
+            ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelSecurity).print(file);
             storeModelSecurityChanged = false;
             ok = true;
         }
@@ -207,7 +207,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     item.setConfigVersion(null);
                 }
             }
-            ws.formats().element().setContentType(NutsContentType.JSON).setValue(storeModelMain).print(file);
+            ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelMain).print(file);
             storeModelMainChanged = false;
             ok = true;
         }
@@ -221,7 +221,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     item.setConfigVersion(null);
                 }
             }
-            ws.formats().element().setContentType(NutsContentType.JSON).setValue(storeModelApi).print(afile);
+            ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelApi).print(afile);
             storeModelApiChanged = false;
             ok = true;
         }
@@ -230,7 +230,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     .resolve(NutsConstants.Folders.ID).resolve(ws.locations().getDefaultIdBasedir(getRuntimeId()));
             Path afile = runtimeVersionSpecificLocation.resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CONFIG_FILE_NAME);
             storeModelRuntime.setConfigVersion(current().getApiVersion());
-            ws.formats().element().setContentType(NutsContentType.JSON).setValue(storeModelRuntime).print(afile);
+            ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelRuntime).print(afile);
             storeModelRuntimeChanged = false;
             ok = true;
         }
@@ -871,8 +871,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (supported == null) {
             throw new NutsExtensionNotFoundException(ws, NutsAuthenticationAgent.class, "AuthenticationAgent");
         }
-        NutsWorkspaceUtils.of(ws).setWorkspace(supported);
         NutsWorkspaceUtils.setSession(supported,session);
+        NutsWorkspaceUtils.of(ws).setWorkspace(supported);
         return supported;
     }
 

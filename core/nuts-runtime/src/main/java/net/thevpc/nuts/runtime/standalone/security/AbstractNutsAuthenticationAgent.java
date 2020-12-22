@@ -8,7 +8,7 @@ import java.util.Map;
 
 import net.thevpc.nuts.runtime.standalone.util.io.CoreSecurityUtils;
 
-public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsWorkspaceAware,NutsSessionAware {
+public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsSessionAware {
 
     private final String name;
     private NutsWorkspace ws;
@@ -23,16 +23,12 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
     @Override
     public void setSession(NutsSession session) {
         this.session=session;
+        this.ws=session==null?null:session.getWorkspace();
     }
 
     @Override
     public String getId() {
         return name;
-    }
-
-    @Override
-    public void setWorkspace(NutsWorkspace workspace) {
-        this.ws = workspace;
     }
 
     @Override

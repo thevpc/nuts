@@ -386,12 +386,12 @@ public class NutsRepositoryFolderHelper {
         }
         return ws.concurrent().lock().source(descFile).call(() -> {
 
-            getWorkspace().descriptor().formatter(desc).print(descFile);
+            getWorkspace().descriptor().formatter(desc).setSession(session).print(descFile);
             getWorkspace().io().copy().setSession(session)
                     .from(
                             getWorkspace().io().input().setName("sha1(" + desc.getId() + ")")
                                     .setTypeName("descriptor hash")
-                                    .of(getWorkspace().io().hash().sha1().source(desc).computeString().getBytes())
+                                    .of(getWorkspace().io().hash().sha1().source(desc).setSession(session).computeString().getBytes())
                     ).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safe().run();
             return descFile;
         });

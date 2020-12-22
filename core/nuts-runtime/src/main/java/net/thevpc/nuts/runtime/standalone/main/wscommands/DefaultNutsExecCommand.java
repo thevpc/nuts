@@ -38,8 +38,8 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     @Override
     public NutsExecutableInformation which() {
         DefaultNutsSessionTerminal terminal = new DefaultNutsSessionTerminal();
-        NutsWorkspaceUtils.of(ws).setWorkspace(terminal);
         NutsWorkspaceUtils.setSession(terminal,getValidWorkspaceSession());
+        NutsWorkspaceUtils.of(ws).setWorkspace(terminal);
         NutsSession traceSession = getValidWorkspaceSession();
         terminal.setParent(traceSession.getTerminal());
         terminal.setOutMode(traceSession.getTerminal().getOutMode());

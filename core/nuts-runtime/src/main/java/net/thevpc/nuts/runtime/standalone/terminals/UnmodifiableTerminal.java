@@ -84,15 +84,6 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
         return getBase().copy();
     }
 
-    @Override
-    public void setWorkspace(NutsWorkspace workspace) {
-        //do nothing, it is unmodifiable!
-    }
-
-    @Override
-    public void setSession(NutsSession session) {
-        //do nothing
-    }
 
     @Override
     public String readLine(String promptFormat, Object... params) {

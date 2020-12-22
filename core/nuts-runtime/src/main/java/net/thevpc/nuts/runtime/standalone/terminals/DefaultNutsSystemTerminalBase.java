@@ -14,7 +14,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 
 @NutsPrototype
-public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, NutsWorkspaceAware,NutsSessionAware {
+public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, NutsSessionAware {
 
     private NutsLogger LOG;
     private Scanner scanner;
@@ -27,8 +27,9 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
     private NutsSession session;
 
     @Override
-    public void setWorkspace(NutsWorkspace workspace) {
-        this.workspace=workspace;
+    public void setSession(NutsSession session) {
+        this.session=session;
+        this.workspace=session==null?null:session.getWorkspace();
         if(workspace!=null) {
             LOG = ((DefaultNutsWorkspace) workspace).LOG;
 //        LOG=workspace.log().of(DefaultNutsSystemTerminalBase.class);
@@ -46,10 +47,6 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
         }else{
             //on uninstall do nothing
         }
-    }
-    @Override
-    public void setSession(NutsSession session) {
-        this.session=session;
     }
 
     @Override

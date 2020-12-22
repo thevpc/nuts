@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Locale;
 
-public class ExtendedFormatAwarePrintWriter extends PrintWriter implements ExtendedFormatAware, NutsWorkspaceAware, NutsSessionAware {
+public class ExtendedFormatAwarePrintWriter extends PrintWriter implements ExtendedFormatAware, NutsSessionAware {
     private NutsWorkspace ws;
     private NutsSession session;
     private Object base = null;
@@ -38,13 +38,9 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
     }
 
     @Override
-    public void setWorkspace(NutsWorkspace workspace) {
-        this.ws = workspace;
-    }
-
-    @Override
     public void setSession(NutsSession session) {
         this.session = session;
+        this.ws = session==null?null:session.getWorkspace();
     }
 
     @Override

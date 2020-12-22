@@ -92,6 +92,10 @@ public interface NutsIOHashAction {
      */
     NutsIOHashAction md5();
 
+    NutsSession getSession();
+
+    NutsIOHashAction setSession(NutsSession session);
+
     /**
      * select MD5 hash algorithm
      * @return {@code this} instance
