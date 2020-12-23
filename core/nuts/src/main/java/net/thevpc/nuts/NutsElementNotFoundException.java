@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * Generic exception to be thrown when an element is not found.
  * @author thevpc
  * @since 0.5.4
- * %category Exception
+ * @category Exception
  */
 public class NutsElementNotFoundException extends NutsException {
 

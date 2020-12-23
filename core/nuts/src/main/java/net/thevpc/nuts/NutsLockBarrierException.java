@@ -28,6 +28,7 @@ package net.thevpc.nuts;
 /**
  * Exception Thrown when a locked object is invoked.
  * @author thevpc
+ * @category Exception
  */
 public class NutsLockBarrierException extends NutsLockException {
     /**

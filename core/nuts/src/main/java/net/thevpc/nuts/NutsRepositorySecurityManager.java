@@ -30,6 +30,7 @@ package net.thevpc.nuts;
  *
  * @author thevpc
  * @since 0.5.4
+ * @category Security
  */
 public interface NutsRepositorySecurityManager {
 

@@ -30,6 +30,7 @@ import java.util.Collection;
 /**
  * @author thevpc
  * @since 0.5.4
+ * @category Commands
  */
 public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 

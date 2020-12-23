@@ -28,6 +28,9 @@ package net.thevpc.nuts;
 
 import java.nio.file.Path;
 
+/**
+ * @category Input Output
+ */
 public interface NutsTempManager {
 
     /**

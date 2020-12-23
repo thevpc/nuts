@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 /**
  * Exception thrown when the package could not be resolved
  *
- * %category Exception
+ * @category Exception
  * @since 0.5.4
  */
 public class NutsNotFoundException extends NutsException {
@@ -183,6 +183,9 @@ public class NutsNotFoundException extends NutsException {
         return locations;
     }
 
+    /**
+     * @category Exception
+     */
     public static class NutsIdInvalidDependency implements Serializable {
         private String id;
         private Set<NutsIdInvalidDependency> cause;
@@ -215,6 +218,9 @@ public class NutsNotFoundException extends NutsException {
         }
     }
 
+    /**
+     * @category Exception
+     */
     public static class NutsIdInvalidLocation implements Serializable {
         private String repository;
         private String url;

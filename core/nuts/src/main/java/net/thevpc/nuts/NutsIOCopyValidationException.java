@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 /**
  * Exception thrown when copy validation fails
+ * @category Exception
  */
 public class NutsIOCopyValidationException extends NutsIOException {
 

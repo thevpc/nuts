@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Effective (including inherited) user information
  * @author thevpc
  * @since 0.5.4
- * %category Config
+ * @category Config
  */
 public interface NutsUser {
 

@@ -31,6 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * @category Config
+ */
 public interface NutsWorkspaceBootConfig {
     boolean isImmediateLocation();
 
@@ -70,6 +73,9 @@ public interface NutsWorkspaceBootConfig {
 
     Path getHomeLocation(NutsStoreLocation storeLocation);
 
+    /**
+     * @category Config
+     */
     interface Extension {
         NutsId getId();
         boolean isEnabled();

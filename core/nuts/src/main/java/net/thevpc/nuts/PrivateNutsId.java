@@ -33,7 +33,7 @@ import java.util.Objects;
  *
  * @author thevpc
  * @since 0.5.4
- * %category Internal
+ * @category Internal
  */
 final class PrivateNutsId {
 

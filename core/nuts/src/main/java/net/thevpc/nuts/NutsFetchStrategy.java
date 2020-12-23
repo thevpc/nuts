@@ -33,7 +33,7 @@ import java.util.Iterator;
  * Fetch strategy defines modes (see {@link NutsFetchMode}) to use when searching for an artifact.
  * @author thevpc
  * @since 0.5.4
- * %category Commands
+ * @category Commands
  */
 public enum NutsFetchStrategy implements Iterable<NutsFetchMode> {
     /**

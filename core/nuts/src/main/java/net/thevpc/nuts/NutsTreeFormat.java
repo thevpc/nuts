@@ -35,7 +35,7 @@ package net.thevpc.nuts;
  * </pre>
  * @author thevpc
  * @since 0.5.5
- * %category Format
+ * @category Format
  */
 public interface NutsTreeFormat extends NutsObjectFormat {
 

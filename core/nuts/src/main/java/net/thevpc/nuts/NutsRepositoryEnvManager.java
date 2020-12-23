@@ -28,6 +28,9 @@ package net.thevpc.nuts;
 
 import java.util.Map;
 
+/**
+ * @category Core
+ */
 public interface NutsRepositoryEnvManager {
     Map<String, String> toMap(boolean inherit);
 

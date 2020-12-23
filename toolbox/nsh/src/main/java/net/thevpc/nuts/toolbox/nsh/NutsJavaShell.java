@@ -283,4 +283,8 @@ public class NutsJavaShell extends JShell {
         }
     }
 
+    public NshOptions getOptions() {
+        return (NshOptions) super.getOptions();
+    }
+
 }

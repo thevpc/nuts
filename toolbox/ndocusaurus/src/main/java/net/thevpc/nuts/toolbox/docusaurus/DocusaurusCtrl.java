@@ -117,9 +117,14 @@ public class DocusaurusCtrl {
             root = new DocusaurusFolder(
                     "someSidebar", "someSidebar", 0, LJSON.NULL, root.getChildren()
             );
-//            String s = "module.exports = {\n" +
-//                    root.toJSON(1)
-//                    + "\n};";
+            String s = "module.exports = {\n" +
+                    root.toJSON(1)
+                    + "\n};";
+            try {
+                Files.write(base.resolve("sidebars.js"),s.getBytes());
+            } catch (IOException e) {
+                throw new NutsIOException(appContext.getWorkspace(),e.getMessage());
+            }
 //            System.out.println(s);
         }
         if (isBuildPdf() && !project.getConfig().get("customFields.asciidoctor.path").isUndefined()) {
@@ -180,7 +185,7 @@ public class DocusaurusCtrl {
         NutsSession s=appContext.getSession();
         appContext.getWorkspace()
                 .exec()
-                .userCmd()
+                .embedded()
                 .addCommand(cmd).setDirectory(workFolder.toString())
                 .setSession(s)
                 .setFailFast(true).getResult();

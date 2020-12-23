@@ -28,6 +28,9 @@ package net.thevpc.nuts;
 
 import java.util.List;
 
+/**
+ * @category Config
+ */
 public interface NutsCommandAliasManager {
 
     NutsCommandAliasFactoryConfig[] getFactories(NutsSession session);

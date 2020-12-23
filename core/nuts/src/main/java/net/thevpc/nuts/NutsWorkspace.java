@@ -34,7 +34,7 @@ import java.util.Set;
  * Created by vpc on 1/5/17.
  *
  * @since 0.5.4
- * %category Base
+ * @category Base
  */
 public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 

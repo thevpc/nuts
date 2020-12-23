@@ -28,6 +28,9 @@ package net.thevpc.nuts;
 
 import java.util.List;
 
+/**
+ * @category Command Line
+ */
 public interface NutsCommandAutoCompleteProcessor {
     List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex,NutsWorkspace workspace);
 }

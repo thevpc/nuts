@@ -1,5 +1,8 @@
 package net.thevpc.nuts;
 
+/**
+ * @category Format
+ */
 public interface NutsTextNodeBuilder extends NutsStringBase{
     NutsTextNodeWriteConfiguration getWriteConfiguration();
 

@@ -35,7 +35,7 @@ import java.util.logging.Level;
  *
  * @author thevpc
  * @since 0.5.5
- * %category Application
+ * @category Application
  */
 public final class NutsApplications {
 

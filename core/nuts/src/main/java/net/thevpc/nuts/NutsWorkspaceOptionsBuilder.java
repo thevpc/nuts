@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 
 /**
  * Mutable Workspace options
- * %category Config
+ * @category Config
  */
 public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
     NutsWorkspaceOptionsBuilder setAll(NutsWorkspaceOptions other);

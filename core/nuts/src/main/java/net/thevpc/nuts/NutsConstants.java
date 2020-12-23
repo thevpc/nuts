@@ -34,12 +34,13 @@ import java.util.*;
  * Created by vpc on 1/14/17.
  *
  * @since 0.1.0
- * %category Constants
+ * @category Constants
  */
 public final class NutsConstants {
 
     /**
      * name constants
+     * @category Constants
      */
     public static final class Names {
 
@@ -62,6 +63,9 @@ public final class NutsConstants {
 
     }
 
+    /**
+     * @category Constants
+     */
     public static final class RepoTypes {
 
         /**
@@ -97,6 +101,7 @@ public final class NutsConstants {
      * <br>
      * This class defines all standard key names and their default values in the
      * query part.
+     * @category Constants
      */
     public static final class IdProperties {
 
@@ -240,6 +245,7 @@ public final class NutsConstants {
 
     /**
      * valid values for Query parameter "face"
+     * @category Constants
      */
     public static final class QueryFaces {
 
@@ -270,6 +276,9 @@ public final class NutsConstants {
         }
     }
 
+    /**
+     * @category Constants
+     */
     public static final class BootstrapURLs {
 
         /**
@@ -298,6 +307,7 @@ public final class NutsConstants {
 
     /**
      * nuts standard user names
+     * @category Constants
      */
     public static final class Users {
 
@@ -322,6 +332,7 @@ public final class NutsConstants {
 
     /**
      * standard right keys for distinct operations in nuts.
+     * @category Constants
      */
     public static final class Permissions {
 
@@ -416,6 +427,7 @@ public final class NutsConstants {
 
     /**
      * file related constants
+     * @category Constants
      */
     public static final class Files {
 
@@ -472,6 +484,7 @@ public final class NutsConstants {
 
     /**
      * identifier related constants
+     * @category Constants
      */
     public static final class Ids {
 
@@ -497,6 +510,7 @@ public final class NutsConstants {
 
     /**
      * default folder names
+     * @category Constants
      */
     public static final class Folders {
 
@@ -530,6 +544,7 @@ public final class NutsConstants {
 
     /**
      * version special names
+     * @category Constants
      */
     public static final class Versions {
 

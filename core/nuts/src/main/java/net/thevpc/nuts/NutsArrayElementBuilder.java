@@ -31,7 +31,7 @@ import java.util.List;
  * Array element Builder is a mutable NutsArrayElement that helps 
  * manipulating arrays.
  * @author thevpc
- * %category Elements
+ * @category Elements
  */
 public interface NutsArrayElementBuilder {
 

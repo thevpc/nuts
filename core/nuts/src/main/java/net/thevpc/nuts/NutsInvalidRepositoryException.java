@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * This Exception is thrown when the repository fails to initialize.
  *
  * @since 0.5.4
- * %category Exception
+ * @category Exception
  */
 public class NutsInvalidRepositoryException extends NutsRepositoryException {
 

@@ -15,6 +15,10 @@ public class NshOptionsParser extends DefaultJShellOptionsParser {
         this.appContext = appContext;
     }
 
+    protected JShellOptions createOptions() {
+        return new NshOptions();
+    }
+
     @Override
     protected void parseUnsupportedNextArgument(List<String> args, JShellOptions options) {
         NutsCommandLine a = appContext.getWorkspace().commandLine().create(args);

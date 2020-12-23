@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * Filters helper
  *
  * @author thevpc
- * %category Config
+ * @category Config
  * @since 0.8.0
  */
 public interface NutsFilterManager {

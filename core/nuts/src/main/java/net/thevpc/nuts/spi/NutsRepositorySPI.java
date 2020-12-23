@@ -33,7 +33,7 @@ import java.util.Map;
  * Nuts repository manages a set of packages
  *
  * @since 0.5.4
- * %category Base
+ * @category Base
  */
 public interface NutsRepositorySPI {
 

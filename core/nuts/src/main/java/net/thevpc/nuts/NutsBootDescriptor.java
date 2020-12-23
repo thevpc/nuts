@@ -2,6 +2,9 @@ package net.thevpc.nuts;
 
 import java.util.Arrays;
 
+/**
+ * @category Boot
+ */
 public class NutsBootDescriptor {
     private String id;
     private String[] dependencies;

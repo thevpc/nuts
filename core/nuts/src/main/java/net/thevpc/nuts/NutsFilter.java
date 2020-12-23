@@ -28,6 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Top Level filter
+ * @category Core
  */
 public interface NutsFilter {
 

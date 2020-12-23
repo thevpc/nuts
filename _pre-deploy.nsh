@@ -1,8 +1,13 @@
 #!/bin/nuts
-ntemplate -p dir-template
-#ndocusaurus -d website build
-here=`dirname $0`
-cp -r $here/website/build $here/docs
-_nuts_version=$(nuts nsh -c props get apiVersion --props $here/METADATA)
-cp ~/.m2/repository/net/thevpc/nuts/nuts/${_nuts_version}/nuts-${_nuts_version}.jar $here/nuts.jar
+here=$(dirname $0)
+source $here/dir-template/vars.nsh
+here=$(dirname $0)
+echo run ntemplate
+ntemplate   -p $here/dir-template
+echo copy nuts.jar
+echo cp ~/.m2/repository/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar $here/website/static/nuts.jar
+cp ~/.m2/repository/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar $here/website/static/nuts.jar
+echo run ndocusaurus
+ndocusaurus -d website build
+
 

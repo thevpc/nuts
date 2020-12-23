@@ -35,7 +35,7 @@ import java.util.Set;
  *
  * @author thevpc
  * @since 0.5.4
- * %category Extensions
+ * @category Extensions
  */
 public interface NutsWorkspaceExtensionManager {
 

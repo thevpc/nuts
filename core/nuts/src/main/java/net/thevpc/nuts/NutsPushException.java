@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Push Exception
  *
  * @since 0.5.4
- * %category Exception
+ * @category Exception
  */
 public class NutsPushException extends NutsException {
 

@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Artifacts are organized according to {@code NutsIdType} to reflect how the artifact
  * should be managed by the workspace.
  * This information is available in {@link NutsDefinition}
- * %category Base
+ * @category Base
  */
 public enum NutsIdType {
     /**

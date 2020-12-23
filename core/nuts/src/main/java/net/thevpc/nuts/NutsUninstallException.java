@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * This Exception is thrown when an artifact fails to be uninstalled
  *
  * @since 0.5.4
- * %category Exception
+ * @category Exception
  */
 public class NutsUninstallException extends NutsInstallationException {
 

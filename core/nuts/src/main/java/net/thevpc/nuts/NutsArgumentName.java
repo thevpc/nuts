@@ -33,7 +33,7 @@ import java.util.List;
  *
  * @author thevpc
  * @since 0.5.5
- * %category Command Line
+ * @category Command Line
  */
 public interface NutsArgumentName extends Serializable {
 

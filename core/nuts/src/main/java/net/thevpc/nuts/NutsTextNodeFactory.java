@@ -2,6 +2,9 @@ package net.thevpc.nuts;
 
 import java.util.Collection;
 
+/**
+ * @category Format
+ */
 public interface NutsTextNodeFactory {
     NutsTextNode plain(String t);
 

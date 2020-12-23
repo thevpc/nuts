@@ -28,6 +28,9 @@ package net.thevpc.nuts;
 
 import java.util.Collection;
 
+/**
+ * @category Core
+ */
 public interface NutsDependencyFilterManager extends NutsTypedFilters<NutsDependencyFilter>{
     NutsDependencyFilter byScope(NutsDependencyScopePattern scope);
     NutsDependencyFilter byScope(NutsDependencyScope scope);

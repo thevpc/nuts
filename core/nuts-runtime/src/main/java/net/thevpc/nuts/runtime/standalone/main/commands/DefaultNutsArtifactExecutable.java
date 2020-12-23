@@ -115,7 +115,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
                 }
             }
         }
-        execCommand.ws_exec(def, commandName, appArgs, executorOptions, env, dir, failFast, false, traceSession, execSession, executionType, false);
+        execCommand.ws_execId(def, commandName, appArgs, executorOptions, env, dir, failFast, false, traceSession, execSession, executionType, false);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
             PrintStream out = execSession.out();
             out.printf("[dry] ==install== %s%n", def.getId().getLongName());
         }
-        execCommand.ws_exec(def, commandName, appArgs, executorOptions, env, dir, failFast, false, traceSession, execSession, executionType, true);
+        execCommand.ws_execId(def, commandName, appArgs, executorOptions, env, dir, failFast, false, traceSession, execSession, executionType, true);
     }
 
     @Override

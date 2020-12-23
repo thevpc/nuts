@@ -107,7 +107,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     idType, null
             );
             try {
-                execCommand.ws_exec(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(), true, traceSession,execSession, executionType, dry);
+                execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(), true, traceSession,execSession, executionType, dry);
             } finally {
                 try {
                     CoreIOUtils.delete(ws, tempFolder);

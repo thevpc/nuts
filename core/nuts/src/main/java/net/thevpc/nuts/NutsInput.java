@@ -30,6 +30,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
 
+/**
+ * @category Input Output
+ */
 public interface NutsInput extends AutoCloseable {
     String getName();
 

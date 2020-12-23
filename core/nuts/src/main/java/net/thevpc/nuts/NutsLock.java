@@ -32,7 +32,7 @@ import java.util.concurrent.locks.Lock;
  * It adds no extra functionality but rather is provided as
  * a base for future changes.
  * @since 0.5.8
- * %category Input Output
+ * @category Input Output
  */
 public interface NutsLock extends Lock {
 }

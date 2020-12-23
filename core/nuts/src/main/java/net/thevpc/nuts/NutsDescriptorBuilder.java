@@ -36,7 +36,7 @@ import java.util.function.UnaryOperator;
  * It help creating an instance of {@link NutsDescriptor} by calling {@link #build()}
  *
  * @since 0.5.4
- * %category Descriptor
+ * @category Descriptor
  */
 public interface NutsDescriptorBuilder extends Serializable {
 

@@ -152,7 +152,7 @@ package net.thevpc.nuts;
  * </pre>
  *
  * @since 0.5.5
- * %category Application
+ * @category Application
  */
 public abstract class NutsApplication {
 
@@ -276,6 +276,7 @@ public abstract class NutsApplication {
 
     /**
      * Default NutsApplicationLifeCycle implementation based on NutsApplication class.
+     * @category Application
      */
     private static class NutsApplicationLifeCycleImpl implements NutsApplicationLifeCycle {
         /**

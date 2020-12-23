@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * This exception is thrown when an artifact fails to be installed.
  *
  * @since 0.5.4
- * %category Exception
+ * @category Exception
  */
 public class NutsNotInstallableException extends NutsInstallationException {
 

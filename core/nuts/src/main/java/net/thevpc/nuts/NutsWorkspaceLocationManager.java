@@ -29,6 +29,9 @@ package net.thevpc.nuts;
 import java.nio.file.Path;
 import java.util.Map;
 
+/**
+ * @category Core
+ */
 public interface NutsWorkspaceLocationManager {
     Path getHomeLocation(NutsStoreLocation folderType);
 

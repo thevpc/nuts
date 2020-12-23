@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Modes Application can run with
  *
  * @since 0.5.5
- * %category Application
+ * @category Application
  */
 public enum NutsApplicationMode {
     /**

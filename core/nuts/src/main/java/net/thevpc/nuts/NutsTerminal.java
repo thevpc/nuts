@@ -34,7 +34,7 @@ import java.io.PrintStream;
  * A Terminal handles in put stream, an output stream and an error stream to communicate
  * with user.
  * @since 0.5.4
- * %category Input Output
+ * @category Input Output
  */
 public interface NutsTerminal extends NutsTerminalBase {
 

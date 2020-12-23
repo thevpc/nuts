@@ -35,7 +35,7 @@ import net.thevpc.nuts.NutsWorkspaceOptions;
  * Created by vpc on 1/5/17.
  *
  * @since 0.5.4
- * %category SPI Base
+ * @category SPI Base
  */
 public interface NutsBootWorkspaceFactory {
 

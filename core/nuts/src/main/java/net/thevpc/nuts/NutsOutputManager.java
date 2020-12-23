@@ -31,6 +31,9 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 
+/**
+ * @category Input Output
+ */
 public interface NutsOutputManager {
     NutsOutput of(Object any);
 

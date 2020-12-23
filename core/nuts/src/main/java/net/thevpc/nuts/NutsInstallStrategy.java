@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 /**
  * Install strategy defines the strategy used by installer
 
- * %category Base
+ * @category Base
  */
 public enum NutsInstallStrategy {
     /**

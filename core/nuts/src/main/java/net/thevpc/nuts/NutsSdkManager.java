@@ -29,6 +29,9 @@ package net.thevpc.nuts;
 import java.nio.file.Path;
 import java.util.function.Predicate;
 
+/**
+ * @category Toolkit
+ */
 public interface NutsSdkManager {
     String[] findSdkTypes();
 

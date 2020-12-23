@@ -31,7 +31,7 @@ import java.time.Instant;
  * url header meaning ful information
  * @author thevpc
  * @since 0.5.4
- * %category SPI Base
+ * @category SPI Base
  */
 public interface NutsURLHeader {
 

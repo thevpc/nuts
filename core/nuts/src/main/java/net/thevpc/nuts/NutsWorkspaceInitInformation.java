@@ -36,7 +36,7 @@ import java.net.URL;
  * Created by vpc on 1/23/17.
  *
  * @since 0.5.7
- * %category SPI Base
+ * @category SPI Base
  */
 public interface NutsWorkspaceInitInformation extends Serializable {
 

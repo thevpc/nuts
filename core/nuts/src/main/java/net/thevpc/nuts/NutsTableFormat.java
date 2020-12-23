@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  *
  * @author thevpc
  * @since 0.5.5
- * %category Format
+ * @category Format
  */
 public interface NutsTableFormat extends NutsObjectFormat {
 
@@ -78,6 +78,9 @@ public interface NutsTableFormat extends NutsObjectFormat {
 
     NutsTableFormat setModel(NutsTableModel model);
 
+    /**
+     * @category Format
+     */
     enum Separator {
         FIRST_ROW_START,
         FIRST_ROW_LINE,

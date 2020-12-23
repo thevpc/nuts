@@ -14,11 +14,11 @@
     <orderEntry type="library" name="Maven: net.vpc.app.nuts:nuts:0.7.2" level="project" />
     <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-md-docusaurus-preprocessor:1.0.0" level="project" />
     <orderEntry type="module" module-name="nuts" />
-    <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-md-docusaurus:1.1.0" level="project" />
+    <orderEntry type="module" module-name="thevpc-common-md-docusaurus" />
     <orderEntry type="module" module-name="thevpc-common-ljson" />
     <orderEntry type="library" name="Maven: org.hjson:hjson:3.0.0" level="project" />
-    <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-md:1.1.0" level="project" />
-    <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-md-doc:1.1.0" level="project" />
+    <orderEntry type="module" module-name="thevpc-common-md" />
+    <orderEntry type="module" module-name="thevpc-common-md-doc" />
     <orderEntry type="library" name="Maven: com.github.javaparser:javaparser-symbol-solver-core:3.16.1" level="project" />
     <orderEntry type="library" name="Maven: org.javassist:javassist:3.27.0-GA" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:29.0-jre" level="project" />

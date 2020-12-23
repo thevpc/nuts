@@ -32,7 +32,7 @@ import java.util.Map;
  * Immutable Artifact id information.
  * @author thevpc
  * @since 0.1.0
- * %category Descriptor
+ * @category Descriptor
  */
 public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId>,NutsFormattable {
 

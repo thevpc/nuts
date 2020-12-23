@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * Base exception for Extension related exceptions
  *
  * @since 0.5.4
- * %category Exception
+ * @category Exception
  */
 public abstract class NutsExtensionException extends NutsException {
 

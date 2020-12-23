@@ -32,7 +32,7 @@ import java.util.Collection;
  *
  * @author thevpc
  * @since 0.5.4
- * %category Commands
+ * @category Commands
  */
 public interface NutsUninstallCommand extends NutsWorkspaceCommand {
 

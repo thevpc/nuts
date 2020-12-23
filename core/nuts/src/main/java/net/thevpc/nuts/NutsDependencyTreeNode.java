@@ -32,7 +32,7 @@ import java.io.Serializable;
  * Dependency tree node
  * @author thevpc
  * @since 0.5.5
- * %category Descriptor
+ * @category Descriptor
  */
 public interface NutsDependencyTreeNode extends Serializable{
 

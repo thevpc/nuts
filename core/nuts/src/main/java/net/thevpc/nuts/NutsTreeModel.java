@@ -31,7 +31,7 @@ import java.util.List;
  * Tree Model to use in tree format
  * @author thevpc
  * @since 0.5.5
- * %category Format
+ * @category Format
  */
 public interface NutsTreeModel {
 

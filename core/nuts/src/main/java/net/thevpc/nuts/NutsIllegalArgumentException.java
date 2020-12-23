@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Thrown to indicate that a method has been passed an illegal or inappropriate argument.
  * @author thevpc
  * @since 0.5.4
- * %category Exception
+ * @category Exception
  */
 public class NutsIllegalArgumentException extends NutsException {
 

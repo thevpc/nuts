@@ -34,8 +34,8 @@ import java.util.function.Predicate;
  * Command for installing artifacts
  * @author thevpc
  * @since 0.5.4
- * %category Base
- * %category Commands
+ * @category Base
+ * @category Commands
  */
 public interface NutsInstallCommand extends NutsWorkspaceCommand {
 

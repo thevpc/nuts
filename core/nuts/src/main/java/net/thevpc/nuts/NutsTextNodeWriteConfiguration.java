@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @category Format
+ */
 public class NutsTextNodeWriteConfiguration {
     private boolean filtered;
     private boolean numberTitles;
@@ -37,6 +40,9 @@ public class NutsTextNodeWriteConfiguration {
         return this;
     }
 
+    /**
+     * @category Format
+     */
     public interface Seq {
         TextNumber[] getPattern();
         Seq newLevel(int level);
@@ -45,6 +51,9 @@ public class NutsTextNodeWriteConfiguration {
 //        Seq setValue(TextNumber[] newValue);
     }
 
+    /**
+     * @category Format
+     */
     public static class DefaultSeq implements Seq {
         private TextNumber[] value;
 
@@ -165,6 +174,9 @@ public class NutsTextNodeWriteConfiguration {
         }
     }
 
+    /**
+     * @category Format
+     */
     public interface TextNumber{
         TextNumber next();
         TextNumber first();
@@ -172,6 +184,9 @@ public class NutsTextNodeWriteConfiguration {
         boolean isNone();
     }
 
+    /**
+     * @category Format
+     */
     public static class AlphabetTextNumber implements TextNumber{
         String[] names;
         String separator;
@@ -275,6 +290,9 @@ public class NutsTextNodeWriteConfiguration {
         }
     }
 
+    /**
+     * @category Format
+     */
     public static class IntTextNumber implements TextNumber{
         private int value;
 

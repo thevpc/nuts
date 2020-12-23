@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * This Exception is thrown when the workspace fails to initialize.
  *
  * @since 0.5.4
- * %category Exception
+ * @category Exception
  */
 public class NutsInvalidWorkspaceException extends NutsWorkspaceException {
 

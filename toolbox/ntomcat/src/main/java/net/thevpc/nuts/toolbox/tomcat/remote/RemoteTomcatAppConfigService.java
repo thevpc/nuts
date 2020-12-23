@@ -65,7 +65,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                 .run();
         String v = config.getVersionCommand();
         if (StringUtils.isBlank(v)) {
-            v = "nsh file-version --color=never %file";
+            v = "nsh nversion --color=never %file";
         }
         List<String> cmd = Arrays.asList(StringUtils.parseCommandline(v));
         boolean fileAdded = false;

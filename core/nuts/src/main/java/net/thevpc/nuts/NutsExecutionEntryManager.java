@@ -30,6 +30,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
 
+/**
+ * @category Core
+ */
 public interface NutsExecutionEntryManager {
 
     /**

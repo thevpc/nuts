@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts;
 
+/**
+ * @category Events
+ */
 public interface NutsWorkspaceEventManager {
     void removeRepositoryListener(NutsRepositoryListener listener);
 

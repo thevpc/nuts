@@ -2,6 +2,9 @@ package net.thevpc.nuts;
 
 import java.net.URL;
 
+/**
+ * @category Boot
+ */
 public class NutsBootDependencyNode {
     private String id;
     private URL url;

@@ -39,7 +39,7 @@ import java.util.Objects;
  * @see NutsCommandAliasManager#addFactory(NutsCommandAliasFactoryConfig,
  * NutsAddOptions)
  * @since 0.5.4
- * %category Config
+ * @category Config
  */
 public class NutsAddOptions implements Serializable {
     private static final long serialVersionUID = 1;

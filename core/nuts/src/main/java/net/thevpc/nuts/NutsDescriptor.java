@@ -43,7 +43,7 @@ import java.util.Map;
  * A versatile way to change descriptor is to use builder ({@link #builder()}).
  *
  * @since 0.1.0
- * %category Descriptor
+ * @category Descriptor
  */
 public interface NutsDescriptor extends Serializable {
 

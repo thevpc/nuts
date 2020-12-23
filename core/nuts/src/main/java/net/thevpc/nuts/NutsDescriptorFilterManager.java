@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts;
 
+/**
+ * @category Core
+ */
 public interface NutsDescriptorFilterManager extends NutsTypedFilters<NutsDescriptorFilter>{
     NutsDescriptorFilter byExpression(String expression);
 

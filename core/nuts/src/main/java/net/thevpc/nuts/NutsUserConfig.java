@@ -32,7 +32,7 @@ import java.util.Objects;
  *
  * @author thevpc
  * @since 0.5.4
- * %category Config
+ * @category Config
  */
 public final class NutsUserConfig extends NutsConfigItem {
 

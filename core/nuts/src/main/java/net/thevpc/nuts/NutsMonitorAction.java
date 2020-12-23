@@ -33,6 +33,7 @@ import java.nio.file.Path;
  * Monitor action enables monitoring a long lasting operation such as copying a big file.
  *
  * @author thevpc
+ * @category Toolkit
  */
 public interface NutsMonitorAction {
 

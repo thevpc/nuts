@@ -34,7 +34,7 @@ import java.nio.file.Path;
  * Content describes a artifact file location and its characteristics.
  * @author thevpc
  * @since 0.5.4
- * %category Descriptor
+ * @category Descriptor
  */
 public interface NutsContent extends Serializable {
 

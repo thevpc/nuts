@@ -28,6 +28,9 @@ package net.thevpc.nuts;
 
 import java.io.Serializable;
 
+/**
+ * @category Format
+ */
 public interface NutsWorkspaceOptionsFormat extends Serializable {
     boolean isInit();
 

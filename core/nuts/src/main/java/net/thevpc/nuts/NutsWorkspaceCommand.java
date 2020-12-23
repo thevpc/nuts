@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  *
  * @author thevpc
  * @since 0.5.5
- * %category Commands
+ * @category Commands
  */
 public interface NutsWorkspaceCommand extends NutsConfigurable {
 

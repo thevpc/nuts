@@ -361,11 +361,15 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     @Override
     public int getResult() {
         if (!executed) {
-            try {
+//            try {
                 run();
-            } catch (Exception ex) {
-                // ignore;
-            }
+//            } catch (Exception ex) {
+//                // ignore;
+//            }
+        }
+        if (result != null && result.getExitCode()!=0 && failFast) {
+            throw result;
+//            checkFailFast(result.getExitCode());
         }
         return result == null ? 0 : result.getExitCode();
     }

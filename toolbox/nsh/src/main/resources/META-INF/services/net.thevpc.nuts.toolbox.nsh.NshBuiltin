@@ -35,6 +35,7 @@ net.thevpc.nuts.toolbox.nsh.cmds.PropsCommand
 net.thevpc.nuts.toolbox.nsh.cmds.MkdirCommand
 net.thevpc.nuts.toolbox.nsh.cmds.AutocompleteCommand
 net.thevpc.nuts.toolbox.nsh.cmds.DirNameCommand
+net.thevpc.nuts.toolbox.nsh.cmds.DateCommand
 net.thevpc.nuts.toolbox.nsh.cmds.BaseNameCommand
 net.thevpc.nuts.toolbox.nsh.cmds.TrueCommand
 net.thevpc.nuts.toolbox.nsh.cmds.FalseCommand

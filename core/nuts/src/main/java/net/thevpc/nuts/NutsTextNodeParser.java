@@ -3,6 +3,9 @@ package net.thevpc.nuts;
 import java.io.InputStream;
 import java.io.Reader;
 
+/**
+ * @category Format
+ */
 public interface NutsTextNodeParser {
 //    NutsTextNode parse(String text);
 

@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts;
 
+/**
+ * @category Core
+ */
 public interface NutsRepositoryFilterManager extends NutsTypedFilters<NutsRepositoryFilter>{
     NutsRepositoryFilter byName(String... names);
     NutsRepositoryFilter byUuid(String... uuids);

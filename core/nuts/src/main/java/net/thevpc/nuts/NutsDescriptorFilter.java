@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Descriptor filter
  *
  * @since 0.5.4
- * %category Descriptor
+ * @category Descriptor
  */
 public interface NutsDescriptorFilter extends NutsArtifactFilter {
 

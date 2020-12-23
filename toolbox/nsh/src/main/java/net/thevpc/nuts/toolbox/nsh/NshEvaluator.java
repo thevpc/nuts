@@ -105,7 +105,11 @@ public class NshEvaluator extends DefaultJShellEvaluator implements JShellEvalua
         NutsSessionTerminal terminal = c2.getWorkspace().io().term().createTerminal(new ByteArrayInputStream(new byte[0]), p, p, c2.getSession());
         terminal.setOutMode(NutsTerminalMode.FILTERED);
         c2.getSession().setTerminal(terminal);
-        command.eval(c1);
+        try {
+            command.eval(c1);
+        }catch (Exception ex){
+            terminal.getErr().println(ex);
+        }
         p.flush();
         String str = evalFieldSubstitutionAfterCommandSubstitution(out.toString(),context);
         return (context.getShell().escapeString(str));

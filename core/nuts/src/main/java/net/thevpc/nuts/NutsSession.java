@@ -35,7 +35,7 @@ import java.util.Map;
  *
  * @author thevpc
  * @since 0.5.4
- * %category Base
+ * @category Base
  */
 public interface NutsSession extends NutsConfigurable {
 

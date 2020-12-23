@@ -37,7 +37,7 @@ import java.util.logging.Level;
  * string array of valid nuts options
  *
  * @author thevpc
- * %category Internal
+ * @category Internal
  * @since 0.5.4
  */
 final class PrivateNutsArgumentsParser {

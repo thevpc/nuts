@@ -51,7 +51,7 @@ import java.util.regex.Pattern;
  * Created by vpc on 1/15/17.
  *
  * @since 0.5.4
- * %category Internal
+ * @category Internal
  */
 final class PrivateNutsUtils {
 
@@ -463,6 +463,9 @@ final class PrivateNutsUtils {
         return javaHome + File.separator + "bin" + File.separator + exe;
     }
 
+    /**
+     * @category Internal
+     */
     private static class SimpleConfirmDelete implements ConfirmDelete {
         private boolean force;
         private List<File> ignoreDeletion = new ArrayList<>();
@@ -493,6 +496,9 @@ final class PrivateNutsUtils {
         }
     }
 
+    /**
+     * @category Internal
+     */
     private interface ConfirmDelete {
         boolean isForce();
 
@@ -815,6 +821,9 @@ final class PrivateNutsUtils {
         return new LinkedHashSet<>(PrivateNutsUtils.split(s, ";", false));
     }
 
+    /**
+     * @category Internal
+     */
     public static class Mvn {
 
 //        public static String resolveMavenReleaseVersion(String mavenURLBase, String nutsId) {
@@ -1219,6 +1228,9 @@ final class PrivateNutsUtils {
         return proceed;
     }
 
+    /**
+     * @category Internal
+     */
     public static class Deps {
 
         LinkedHashSet<String> deps = new LinkedHashSet<>();

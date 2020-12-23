@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Format class responsible of formatting prefix of a tree
  * @author thevpc
  * @since 0.5.5
- * %category Format
+ * @category Format
  */
 public interface NutsTreeLinkFormat {
 

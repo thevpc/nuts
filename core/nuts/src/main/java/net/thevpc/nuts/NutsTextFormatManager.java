@@ -5,6 +5,9 @@ import java.io.Reader;
 import java.util.Formatter;
 import java.util.Locale;
 
+/**
+ * @category Format
+ */
 public interface NutsTextFormatManager {
     /**
      * load resource as a formatted string to be used mostly as a help string.

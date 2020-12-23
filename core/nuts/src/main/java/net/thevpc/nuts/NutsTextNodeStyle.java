@@ -1,5 +1,8 @@
 package net.thevpc.nuts;
 
+/**
+ * @category Format
+ */
 public enum NutsTextNodeStyle {
     PRIMARY1,
     PRIMARY2,

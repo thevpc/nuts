@@ -28,6 +28,9 @@ package net.thevpc.nuts;
 
 import java.util.Set;
 
+/**
+ * @category Core
+ */
 public interface NutsIdFilterManager extends NutsTypedFilters<NutsIdFilter> {
     NutsIdFilter byExpression(String expression);
 

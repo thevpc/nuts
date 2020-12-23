@@ -28,6 +28,9 @@ package net.thevpc.nuts;
 
 import java.util.List;
 
+/**
+ * @category Command Line
+ */
 public interface NutsCommandLineManager {
     NutsCommandLineFormat formatter();
 

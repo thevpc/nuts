@@ -33,7 +33,7 @@ import java.util.Objects;
  * repository creation options
  * @author thevpc
  * @since 0.5.4
- * %category Config
+ * @category Config
  */
 public class NutsAddRepositoryOptions implements Serializable {
     private static final long serialVersionUID = 1;

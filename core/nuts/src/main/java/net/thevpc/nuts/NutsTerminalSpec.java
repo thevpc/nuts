@@ -31,6 +31,9 @@ import net.thevpc.nuts.spi.NutsTerminalBase;
 import java.io.Serializable;
 import java.util.Map;
 
+/**
+ * @category Input Output
+ */
 public interface NutsTerminalSpec extends Serializable {
     NutsTerminalBase getParent();
 

@@ -36,7 +36,7 @@ import java.nio.file.Path;
  * Base Format Interface used to print "things".
  * @author thevpc
  * @since 0.5.5
- * %category Format
+ * @category Format
  */
 public interface NutsFormat extends NutsConfigurable {
 

@@ -34,7 +34,7 @@ package net.thevpc.nuts;
  *  <li>{@code prepare}: called when the command line is fully consumed</li>
  *  <li>{@code exec}|{@code autoComplete}: called to process execution of autcomplete</li>
  * </ul>
- * %category Command Line
+ * @category Command Line
  */
 public interface NutsCommandLineProcessor {
     /**

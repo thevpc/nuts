@@ -36,7 +36,7 @@ import java.util.List;
  * @param <T> component type
  * @param <B> component support constraint type
  * @since 0.5.4
- * %category SPI Base
+ * @category SPI Base
  */
 public interface NutsServiceLoader<T extends NutsComponent<B>, B> {
 

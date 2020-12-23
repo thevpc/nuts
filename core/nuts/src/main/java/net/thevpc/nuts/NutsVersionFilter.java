@@ -53,7 +53,7 @@ package net.thevpc.nuts;
  *
  * Created by vpc on 1/8/17.
  * @since 0.5.4
- * %category Descriptor
+ * @category Descriptor
  */
 public interface NutsVersionFilter extends NutsArtifactFilter {
 

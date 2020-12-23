@@ -61,12 +61,12 @@
         <dependency>
             <groupId>net.thevpc.common</groupId>
             <artifactId>thevpc-common-md-docusaurus</artifactId>
-            <version>1.1.0</version>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.common</groupId>
             <artifactId>thevpc-common-md-doc</artifactId>
-            <version>1.1.0</version>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.common</groupId>
@@ -76,7 +76,7 @@
         <dependency>
             <groupId>net.thevpc.common</groupId>
             <artifactId>thevpc-common-md-docusaurus-to-asciidoctor</artifactId>
-            <version>1.0.1</version>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.nuts.toolbox</groupId>

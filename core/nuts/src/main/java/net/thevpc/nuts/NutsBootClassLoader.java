@@ -35,7 +35,7 @@ import java.util.Set;
 
 /**
  * Simple Implementation of Nuts BootClassLoader
- * %category SPI Base
+ * @category SPI Base
  */
 class NutsBootClassLoader extends URLClassLoader {
 
@@ -72,6 +72,9 @@ class NutsBootClassLoader extends URLClassLoader {
         super.addURL(url);
     }
 
+    /**
+     * @category Internal
+     */
     static class IdInfoBuilder{
         private String id;
         private URL url;

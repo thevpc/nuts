@@ -205,6 +205,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         int maxLoops = 1000;
         boolean robustMode = false;
         NutsCommandLine commandLine = context.getWorkspace().commandLine().create(args).setCommandName(getName());
+        initCommandLine(commandLine);
         SimpleNshCommandContext context2 = new SimpleNshCommandContext(args, context, createOptions());
         while (commandLine.hasNext()) {
             if (robustMode) {
@@ -269,6 +270,10 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             printStream.flush();
             throw new NutsExecutionException(context.getWorkspace(),bos.toString(), context2.getExitCode());
         }
+    }
+
+    protected void initCommandLine(NutsCommandLine commandLine) {
+
     }
 
     protected void printObject(SimpleNshCommandContext context, NutsSession session) {

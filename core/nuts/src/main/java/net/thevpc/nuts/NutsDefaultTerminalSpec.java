@@ -32,6 +32,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * @category Input Output
+ */
 public class NutsDefaultTerminalSpec implements NutsTerminalSpec {
     private Boolean autoComplete;
     private NutsTerminalBase parent;

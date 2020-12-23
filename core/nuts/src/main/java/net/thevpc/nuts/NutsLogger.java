@@ -31,7 +31,7 @@ import java.util.logging.*;
 
 /**
  * Workspace aware Logger
- * %category Logging
+ * @category Logging
  */
 public interface NutsLogger {
 

@@ -32,6 +32,7 @@ import java.util.Objects;
  *
  * @author thevpc
  * @since 0.5.4
+ * @category Core
  */
 public class NutsRepositoryRef extends NutsConfigItem {
 

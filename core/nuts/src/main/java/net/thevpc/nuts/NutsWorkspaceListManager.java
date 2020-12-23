@@ -34,7 +34,7 @@ import java.util.*;
  * @author Nasreddine Bac Ali
  * date 2019-03-02
  * @since 0.5.4
- * %category Config
+ * @category Config
  */
 public interface NutsWorkspaceListManager {
 

@@ -1,7 +1,8 @@
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.NutsTextNode;
-
+/**
+ * @category Format
+ */
 public interface NutsTextNodeVisitor {
     void visit(NutsTextNode node);
 }

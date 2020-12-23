@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts;
 
+/**
+ * @category Core
+ */
 public interface NutsIdParser {
     NutsIdParser setLenient(boolean lenient);
 

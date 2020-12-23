@@ -38,7 +38,7 @@ import java.util.Set;
 /**
  * 
  * @author thevpc
- * %category Internal
+ * @category Internal
  */
 final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInformation {
 

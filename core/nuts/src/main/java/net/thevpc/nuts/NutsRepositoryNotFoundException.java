@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  * the repository config files are missing.
  *
  * @since 0.5.4
- * %category Exception
+ * @category Exception
  */
 public class NutsRepositoryNotFoundException extends NutsRepositoryException {
 
