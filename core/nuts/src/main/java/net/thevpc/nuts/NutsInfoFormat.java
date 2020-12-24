@@ -32,7 +32,7 @@ import java.util.Map;
  * Il is invoked by the "info" standard commmad,
  * @author thevpc
  * @since 0.5.4
- * @category Core
+ * @category Base
  */
 public interface NutsInfoFormat extends NutsFormat {
 

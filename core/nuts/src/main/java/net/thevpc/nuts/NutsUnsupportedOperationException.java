@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  *
  * @author thevpc
  * @since 0.5.4
- * @category Exception
+ * @category Exceptions
  */
 public class NutsUnsupportedOperationException extends NutsException {
 

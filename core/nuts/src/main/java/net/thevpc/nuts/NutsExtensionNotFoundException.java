@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Exception thrown when extension could not be resolved.
  *
  * @since 0.5.4
- * @category Exception
+ * @category Exceptions
  */
 public class NutsExtensionNotFoundException extends NutsExtensionException {
 

@@ -45,7 +45,7 @@ To run an artifact using **nuts** just type
 nuts <artifact-id>
 ```
 
-Several commands are available, and you can always manually run any java and non java application. More info is available in the Nuts official [wiki](https://github.com/thevpc/nuts/wiki) .
+Several commands are available, and you can always manually run any java and non java application. More info is available in the Nuts official website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts).
 
 ## Call for Contribution
 Nuts have lots of ways to be improved. Please feel free to join the journey.

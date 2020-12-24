@@ -27,7 +27,7 @@
 package net.thevpc.nuts;
 
 /**
- * @category Core
+ * @category Base
  */
 public interface NutsVersionFilterManager extends NutsTypedFilters<NutsVersionFilter>{
     NutsVersionFilter byValue(String version);

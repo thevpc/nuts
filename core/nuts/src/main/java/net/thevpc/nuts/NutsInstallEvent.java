@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Event describing installation of an artifact
  * @author thevpc
  * @since 0.5.6
- * @category Base
+ * @category Events
  */
 public interface NutsInstallEvent {
 

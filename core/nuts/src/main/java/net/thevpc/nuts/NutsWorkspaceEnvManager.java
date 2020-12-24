@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 import java.util.Map;
 
 /**
- * @category Core
+ * @category Base
  */
 public interface NutsWorkspaceEnvManager {
     Map<String, String> toMap();

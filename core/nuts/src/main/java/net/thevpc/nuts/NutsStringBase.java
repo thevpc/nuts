@@ -27,7 +27,7 @@
 package net.thevpc.nuts;
 
 /**
- * @category Core
+ * @category Base
  */
 public interface NutsStringBase {
     NutsString toNutsString();

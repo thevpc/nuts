@@ -1,9 +1,8 @@
 #!/bin/nuts
-here=$(dirname $0)
-source $here/dir-template/vars.nsh
+source $(dirname $0)/dir-template/vars.nsh
 here=$(dirname $0)
 echo run ntemplate
-ntemplate   -p $here/dir-template
+ntemplate -p $here/dir-template
 echo copy nuts.jar
 echo cp ~/.m2/repository/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar $here/website/static/nuts.jar
 cp ~/.m2/repository/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar $here/website/static/nuts.jar

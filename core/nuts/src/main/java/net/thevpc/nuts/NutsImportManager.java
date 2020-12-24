@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 import java.util.Set;
 
 /**
- * @category Core
+ * @category Base
  */
 public interface NutsImportManager {
     void add(String[] importExpression, NutsAddOptions options);

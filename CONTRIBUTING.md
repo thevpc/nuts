@@ -1,4 +1,4 @@
-# Contributing to Deeplearning4j
+# Contributing to Nuts
 
 Thanks for your interest in nuts. Our goal is to levrage le power of java and maven to build to build a rock solid package manager.
 

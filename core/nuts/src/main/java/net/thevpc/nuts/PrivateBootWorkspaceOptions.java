@@ -37,7 +37,7 @@ import java.util.function.Supplier;
  * Workspace creation/opening options class.
  *
  * @since 0.5.4
- * @category Config
+ * @category Internal
  */
 final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, NutsWorkspaceOptionsBuilder {
     private static final long serialVersionUID = 1;

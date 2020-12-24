@@ -3,7 +3,7 @@ package net.thevpc.nuts;
 import java.net.URL;
 
 /**
- * @category Boot
+ * @category Internal
  */
 public class NutsBootDependencyNode {
     private String id;

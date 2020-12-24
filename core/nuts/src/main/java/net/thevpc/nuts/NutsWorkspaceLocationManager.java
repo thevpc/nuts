@@ -30,7 +30,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 /**
- * @category Core
+ * @category Base
  */
 public interface NutsWorkspaceLocationManager {
     Path getHomeLocation(NutsStoreLocation folderType);

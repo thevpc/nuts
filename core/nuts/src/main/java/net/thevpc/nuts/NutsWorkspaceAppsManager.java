@@ -27,7 +27,7 @@
 package net.thevpc.nuts;
 
 /**
- * @category Core
+ * @category Application
  */
 public interface NutsWorkspaceAppsManager {
 

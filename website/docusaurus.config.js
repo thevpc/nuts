@@ -36,12 +36,16 @@ module.exports = {
           title: 'Docs',
           items: [
             {
-              label: 'Style Guide',
+              label: 'Documentation',
               to: 'docs/',
             },
             {
-              label: 'Second Doc',
-              to: 'docs/doc2/',
+              label: 'FAQ',
+              to: 'docs/info/faq',
+            },
+            {
+              label: 'Change Log',
+              to: 'docs/info/changelog',
             },
           ],
         },
@@ -53,13 +57,21 @@ module.exports = {
               href: 'https://stackoverflow.com/questions/tagged/nuts',
             },
             {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/nuts',
+              label: 'Features Request',
+              href: 'https://github.com/thevpc/nuts/issues',
             },
             {
-              label: 'Twitter',
-              href: 'https://twitter.com/nuts',
+              label: 'Issues Tracker',
+              href: 'https://github.com/thevpc/nuts/issues',
             },
+//            {
+//              label: 'Discord',
+//              href: 'https://discordapp.com/invite/nuts',
+//            },
+//            {
+//              label: 'Twitter',
+//              href: 'https://twitter.com/nuts',
+//            },
           ],
         },
         {

@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 import java.nio.file.Path;
 
 /**
- * @category Core
+ * @category Base
  */
 public interface NutsRepositoryManager {
     NutsRepositoryFilterManager filter();

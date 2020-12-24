@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * NutsWorkspaceException is the base class for Workspace related exceptions.
  *
  * @since 0.5.4
- * @category Exception
+ * @category Exceptions
  */
 public abstract class NutsWorkspaceException extends NutsException {
 

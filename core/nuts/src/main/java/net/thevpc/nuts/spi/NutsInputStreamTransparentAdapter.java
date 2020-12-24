@@ -33,7 +33,7 @@ import java.io.InputStream;
  * InputStream i a system io. In that case nuts will "inherit" input stream
  *
  * @since 0.5.4
- * @category Base
+ * @category SPI Base
  */
 public interface NutsInputStreamTransparentAdapter {
 
