@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * @since 0.5.5
  * @category Command Line
  */
-public interface NutsConfigurable {
+public interface NutsCommandLineConfigurable {
 
     /**
      * configure the current command with the given arguments.
@@ -65,4 +65,5 @@ public interface NutsConfigurable {
      * @return true when the at least one argument was processed
      */
     boolean configureFirst(NutsCommandLine commandLine);
+
 }

@@ -96,11 +96,11 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
                     getOldCredentials(), session);
 //
 //            if (CoreStringUtils.isEmpty(password)) {
-//                throw new NutsSecurityException("Missing old password");
+//                throw new NutsSecurityException("missing old password");
 //            }
 //            //check old password
 //            if (CoreStringUtils.isEmpty(u.getCredentials()) || u.getCredentials().equals(CoreSecurityUtils.evalSHA1(password))) {
-//                throw new NutsSecurityException("Invalid password");
+//                throw new NutsSecurityException("invalid password");
 //            }
         }
         if (getCredentials() != null) {

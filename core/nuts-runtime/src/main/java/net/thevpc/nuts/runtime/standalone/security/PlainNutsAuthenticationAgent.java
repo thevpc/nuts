@@ -37,13 +37,13 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
     @Override
     public void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider, NutsSession session) {
         if (CoreStringUtils.isBlank(password)) {
-            throw new NutsSecurityException(ws, "Missing old password");
+            throw new NutsSecurityException(ws, "missing old password");
         }
         char[] iid = extractId(credentialsId);
         if (Arrays.equals(iid, password)) {
             return;
         }
-        throw new NutsSecurityException(ws, "Invalid login or password");
+        throw new NutsSecurityException(ws, "invalid login or password");
     }
 
     private char[] extractId(char[] a) {

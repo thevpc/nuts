@@ -36,9 +36,9 @@ public class DefaultNutsIODeleteAction extends AbstractNutsIODeleteAction {
         Path t = CoreIOUtils.toPath(getTarget());
         if (t == null) {
             if (getTarget() == null) {
-                throw new NutsException(getWs(), "Missing Target to delete");
+                throw new NutsException(getWs(), "missing target to delete");
             }
-            throw new NutsException(getWs(), "Unsupported Target to delete");
+            throw new NutsException(getWs(), "unsupported target to delete");
         }
         if (!Files.exists(t)) {
             grabException(new FileNotFoundException(t.toString()));

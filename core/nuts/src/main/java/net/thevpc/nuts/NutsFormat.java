@@ -38,7 +38,7 @@ import java.nio.file.Path;
  * @since 0.5.5
  * @category Format
  */
-public interface NutsFormat extends NutsConfigurable {
+public interface NutsFormat extends NutsCommandLineConfigurable {
 
     /**
      * equivalent to {@link #format() }
@@ -166,7 +166,7 @@ public interface NutsFormat extends NutsConfigurable {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...)
+     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...)
      * }
      * to help return a more specific return type;
      *

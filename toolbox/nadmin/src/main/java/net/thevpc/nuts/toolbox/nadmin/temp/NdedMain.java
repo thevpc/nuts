@@ -22,9 +22,7 @@ public class NdedMain  {
         NutsCommandLine commandLine = context.getCommandLine();
         NutsArgument a;
         while (commandLine.hasNext()) {
-            if (context.configureFirst(commandLine)) {
-
-            } else if ((a = commandLine.nextString("--home")) != null) {
+            if ((a = commandLine.nextString("--home")) != null) {
                 home = a.getStringValue();
             } else if ((a = commandLine.nextString("--id")) != null) {
                 String v = a.getStringValue();
@@ -73,6 +71,8 @@ public class NdedMain  {
                         );
             } else if ((a = commandLine.nextBoolean("-i", "--interactive")) != null) {
                 interactive = a.getBooleanValue();
+            } else if (commandLine.peek().isOption()) {
+                context.configureLast(commandLine);
             } else {
                 commandLine.setCommandName("nded").unexpectedArgument();
             }
@@ -146,29 +146,29 @@ public class NdedMain  {
         boolean error = false;
         if (b.getId() == null) {
             error = true;
-            context.getSession().err().print("Missing id\n");
+            context.getSession().err().print("missing id\n");
         } else {
             if (b.getId().getArtifactId() == null) {
                 error = true;
-                context.getSession().err().print("Missing id name\n");
+                context.getSession().err().print("missing id name\n");
             }
             if (b.getId().getGroupId() == null) {
                 error = true;
-                context.getSession().err().print("Missing id group\n");
+                context.getSession().err().print("missing id group\n");
             }
             if (b.getId().getVersion() == null) {
                 error = true;
-                context.getSession().err().print("Missing id version\n");
+                context.getSession().err().print("missing id version\n");
             }
 
         }
         if (isBlank(b.getPackaging())) {
             error = true;
-            context.getSession().err().print("Missing packaging\n");
+            context.getSession().err().print("missing packaging\n");
         }
         if (isBlank(home)) {
             error = true;
-            context.getSession().err().print("Missing nuts-bootstrap\n");
+            context.getSession().err().print("missing nuts-bootstrap\n");
         }
         return !error;
     }

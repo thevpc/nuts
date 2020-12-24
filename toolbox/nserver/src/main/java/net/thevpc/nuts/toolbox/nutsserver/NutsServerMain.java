@@ -28,6 +28,7 @@ public class NutsServerMain extends NutsApplication {
     @Override
     public void run(NutsApplicationContext context) {
         NutsCommandLine cmdLine = context.getCommandLine().setCommandName("nuts-server");
+        cmdLine.setCommandName("nuts-server");
         while (cmdLine.hasNext()) {
             if (cmdLine.next("start") != null) {
                 start(context, cmdLine);
@@ -41,10 +42,8 @@ public class NutsServerMain extends NutsApplication {
             } else if (cmdLine.next("status") != null) {
                 status(context, cmdLine);
                 return;
-            } else if (context.configureFirst(cmdLine)) {
-                //okkay
             } else {
-                cmdLine.setCommandName("nuts-server").unexpectedArgument();
+                context.configureLast(cmdLine);
             }
         }
         list(context, cmdLine);
@@ -88,29 +87,27 @@ public class NutsServerMain extends NutsApplication {
         }
     }
 
-    private void start(NutsApplicationContext context, NutsCommandLine cmdLine) {
+    private void start(NutsApplicationContext context, NutsCommandLine commandLine) {
         NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getWorkspace());
         NutsCommandLineManager commandLineFormat = context.getWorkspace().commandLine();
         SrvInfoList servers = new SrvInfoList(context.getWorkspace());
         NutsArgument a;
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //default options
-            } else if (cmdLine.next("--http") != null) {
+        while (commandLine.hasNext()) {
+            if (commandLine.next("--http") != null) {
                 servers.add().serverType = "http";
-            } else if (cmdLine.next("--https") != null) {
+            } else if (commandLine.next("--https") != null) {
                 servers.add().serverType = "https";
-            } else if (cmdLine.next("--admin") != null) {
+            } else if (commandLine.next("--admin") != null) {
                 servers.add().serverType = "admin";
-            } else if ((a = cmdLine.nextBoolean("-R", "--read-only")) != null) {
+            } else if ((a = commandLine.nextBoolean("-R", "--read-only")) != null) {
                 servers.current().readOnly = a.getBooleanValue();
-            } else if ((a = cmdLine.nextString("-n", "--name")) != null) {
+            } else if ((a = commandLine.nextString("-n", "--name")) != null) {
                 servers.current().name = a.getStringValue();
-            } else if ((a = cmdLine.nextString("-a", "--address")) != null) {
+            } else if ((a = commandLine.nextString("-a", "--address")) != null) {
                 servers.current().addr = a.getStringValue();
-            } else if ((a = cmdLine.nextString("-p", "--port")) != null) {
+            } else if ((a = commandLine.nextString("-p", "--port")) != null) {
                 servers.current().port = a.getArgumentValue().getInt();
-            } else if ((a = cmdLine.nextString("-h", "--host")) != null || (a = cmdLine.nextNonOption()) != null) {
+            } else if ((a = commandLine.nextString("-h", "--host")) != null || (a = commandLine.nextNonOption()) != null) {
                 StringBuilder s = new StringBuilder();
                 if (a.getStringKey().equals("-h") || a.getStringKey().equals("--host")) {
                     s.append(a.getStringValue());
@@ -122,13 +119,13 @@ public class NutsServerMain extends NutsApplication {
                     u.protocol = "http";
                 }
                 servers.add().set(u);
-            } else if ((a = cmdLine.nextString("-l", "--backlog")) != null) {
+            } else if ((a = commandLine.nextString("-l", "--backlog")) != null) {
                 servers.current().port = a.getArgumentValue().getInt();
-            } else if ((a = cmdLine.nextString("--ssl-certificate")) != null) {
+            } else if ((a = commandLine.nextString("--ssl-certificate")) != null) {
                 servers.current().sslCertificate = a.getStringValue();
-            } else if ((a = cmdLine.nextString("--ssl-passphrase")) != null) {
+            } else if ((a = commandLine.nextString("--ssl-passphrase")) != null) {
                 servers.current().sslPassphrase = a.getStringValue();
-            } else if ((a = cmdLine.nextString("-w", "--workspace")) != null) {
+            } else if ((a = commandLine.nextString("-w", "--workspace")) != null) {
                 String ws = a.getString();
                 String serverContext = "";
                 if (ws.contains("@")) {
@@ -140,11 +137,11 @@ public class NutsServerMain extends NutsApplication {
                 }
                 servers.current().workspaceLocations.put(serverContext, ws);
             } else {
-                cmdLine.unexpectedArgument();
+                context.configureLast(commandLine);
             }
 
         }
-        if (cmdLine.isExecMode()) {
+        if (commandLine.isExecMode()) {
             if (servers.all.isEmpty()) {
                 servers.add().set(new HostStr("http","0.0.0.0",-1));
             }
@@ -295,25 +292,23 @@ public class NutsServerMain extends NutsApplication {
         }
     }
 
-    private void status(NutsApplicationContext context, NutsCommandLine cmdLine) {
+    private void status(NutsApplicationContext context, NutsCommandLine commandLine) {
         NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getWorkspace());
         NutsCommandLineManager commandLineFormat = context.getWorkspace().commandLine();
         SrvInfoList servers = new SrvInfoList(context.getWorkspace());
         NutsArgument a;
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //default options
-            } else if (cmdLine.next("--http") != null) {
+        while (commandLine.hasNext()) {
+            if (commandLine.next("--http") != null) {
                 servers.add().serverType = "http";
-            } else if (cmdLine.next("--https") != null) {
+            } else if (commandLine.next("--https") != null) {
                 servers.add().serverType = "https";
-            } else if (cmdLine.next("--admin") != null) {
+            } else if (commandLine.next("--admin") != null) {
                 servers.add().serverType = "admin";
-            } else if ((a = cmdLine.nextString("-a", "--address")) != null) {
+            } else if ((a = commandLine.nextString("-a", "--address")) != null) {
                 servers.current().addr = a.getStringValue();
-            } else if ((a = cmdLine.nextString("-p", "--port")) != null) {
+            } else if ((a = commandLine.nextString("-p", "--port")) != null) {
                 servers.current().port = a.getArgumentValue().getInt();
-            } else if ((a = cmdLine.nextString("-h", "--host")) != null || (a = cmdLine.nextNonOption()) != null) {
+            } else if ((a = commandLine.nextString("-h", "--host")) != null || (a = commandLine.nextNonOption()) != null) {
                 StringBuilder s = new StringBuilder();
                 if (a.getStringKey().equals("-h") || a.getStringKey().equals("--host")) {
                     s.append(a.getStringValue());
@@ -323,11 +318,11 @@ public class NutsServerMain extends NutsApplication {
                 HostStr u = parseHostStr(s.toString(), context,false);
                 servers.add().set(u);
             } else {
-                cmdLine.unexpectedArgument();
+                context.configureLast(commandLine);
             }
 
         }
-        if (cmdLine.isExecMode()) {
+        if (commandLine.isExecMode()) {
             if (servers.all.isEmpty()) {
                 servers.add().set(new HostStr("http", "localhost", NutsServerConstants.DEFAULT_HTTP_SERVER_PORT));
                 servers.add().set(new HostStr("https", "localhost", NutsServerConstants.DEFAULT_HTTP_SERVER_PORT));

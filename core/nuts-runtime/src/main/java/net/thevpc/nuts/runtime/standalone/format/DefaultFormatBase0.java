@@ -9,7 +9,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 
-import net.thevpc.nuts.NutsConfigurable;
+import net.thevpc.nuts.NutsCommandLineConfigurable;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
@@ -20,7 +20,7 @@ import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
  *
  * @author thevpc
  */
-public abstract class DefaultFormatBase0<T> implements NutsConfigurable {
+public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurable {
 
     private NutsWorkspace workspace;
     private NutsSession session;
@@ -80,7 +80,7 @@ public abstract class DefaultFormatBase0<T> implements NutsConfigurable {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param args argument to configure with

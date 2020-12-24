@@ -147,7 +147,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...)
+     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...)
      * }
      * to help return a more specific return type;
      *
@@ -182,7 +182,10 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         }
         boolean enabled = a.isEnabled();
         switch (a.getStringKey()) {
-            case "--help": {
+            case "-?":
+            case "-h":
+            case "--help":
+                {
                 cmd.skip();
                 if (enabled) {
                     if (cmd.isExecMode()) {
@@ -424,12 +427,9 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
-    public boolean configureLast(NutsCommandLine commandLine) {
+    public void configureLast(NutsCommandLine commandLine) {
         if (!configureFirst(commandLine)) {
             commandLine.unexpectedArgument();
-            return false;
-        } else {
-            return true;
         }
     }
 

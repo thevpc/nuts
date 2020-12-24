@@ -58,14 +58,12 @@ public class RemoteMysql {
         args.setCommandName("mysql --remote list");
         AtName name = null;
         while (args.hasNext()) {
-            if (context.configureFirst(args)) {
-                //
-            } else if (args.peek().getStringKey().equals("--name")) {
+            if (args.peek().getStringKey().equals("--name")) {
                 name = AtName.nextConfigOption(args);
             } else if (name == null && args.peek().isNonOption()) {
                 name = AtName.nextConfigNonOption(args);
             } else {
-                args.unexpectedArgument();
+                context.configureLast(args);
             }
         }
         LinkedHashMap<String, RemoteMysqlConfig> result = new LinkedHashMap<>();
@@ -120,15 +118,13 @@ public class RemoteMysql {
         AtName remoteName = null;
         String server = null;
         while (commandLine.hasNext()) {
-            if (context.configureFirst(commandLine)) {
-                //
-            } else if (commandLine.peek().isOption()) {
+            if (commandLine.peek().isOption()) {
                 switch (commandLine.peek().getStringKey()) {
                     case "--name": {
                         if (name == null) {
                             name = AtName.nextAppOption(commandLine);
                         } else {
-                            commandLine.unexpectedArgument("Already defined");
+                            commandLine.unexpectedArgument("already defined");
                         }
                         break;
                     }
@@ -136,7 +132,7 @@ public class RemoteMysql {
                         if (localName == null) {
                             localName = AtName.nextAppOption(commandLine);
                         } else {
-                            commandLine.unexpectedArgument("Already defined");
+                            commandLine.unexpectedArgument("already defined");
                         }
                         break;
                     }
@@ -144,7 +140,7 @@ public class RemoteMysql {
                         if (remoteName == null) {
                             remoteName = AtName.nextAppOption(commandLine);
                         } else {
-                            commandLine.unexpectedArgument("Already defined");
+                            commandLine.unexpectedArgument("already defined");
                         }
                         break;
                     }
@@ -152,15 +148,19 @@ public class RemoteMysql {
                         if (server == null) {
                             server = commandLine.nextString().getStringValue();
                         } else {
-                            commandLine.unexpectedArgument("Already defined");
+                            commandLine.unexpectedArgument("already defined");
                         }
                         break;
                     }
                     default: {
-                        if (name == null) {
-                            name = AtName.nextAppOption(commandLine);
-                        } else {
-                            commandLine.unexpectedArgument("Already defined");
+                        if(commandLine.peek().isNonOption()){
+                            if (name == null) {
+                                name = AtName.nextAppOption(commandLine);
+                            } else {
+                                commandLine.unexpectedArgument("already defined");
+                            }
+                        }else{
+                            context.configureLast(commandLine);
                         }
                         break;
                     }
@@ -282,27 +282,25 @@ public class RemoteMysql {
         AtName name = null;
         NutsArgument a;
         while (commandLine.hasNext()) {
-            if (context.configureFirst(commandLine)) {
-                //
-            } else if (commandLine.peek().isOption()) {
+             if (commandLine.peek().isOption()) {
                 switch (commandLine.peek().getStringKey()) {
                     case "--name": {
                         if (name == null) {
                             name = AtName.nextAppOption(commandLine);
                         } else {
-                            commandLine.unexpectedArgument("Already defined");
+                            commandLine.unexpectedArgument("already defined");
                         }
                         break;
                     }
                     default: {
-                        commandLine.unexpectedArgument();
+                        context.configureLast(commandLine);
                     }
                 }
             } else {
                 if (name == null) {
                     name = AtName.nextAppNonOption(commandLine);
                 } else {
-                    commandLine.unexpectedArgument("Already defined");
+                    commandLine.unexpectedArgument("already defined");
                 }
                 commandLine.unexpectedArgument();
             }
@@ -325,15 +323,13 @@ public class RemoteMysql {
         String path = null;
         NutsArgument a;
         while (commandLine.hasNext()) {
-            if (context.configureFirst(commandLine)) {
-                //
-            } else if (commandLine.peek().isOption()) {
+            if (commandLine.peek().isOption()) {
                 switch (commandLine.peek().getStringKey()) {
                     case "--name": {
                         if (name == null) {
                             name = AtName.nextAppOption(commandLine);
                         } else {
-                            commandLine.unexpectedArgument("Already defined");
+                            commandLine.unexpectedArgument("already defined");
                         }
                         break;
                     }
@@ -348,9 +344,12 @@ public class RemoteMysql {
                             }
                             path = commandLine.nextString().getStringValue();
                         } else {
-                            commandLine.unexpectedArgument("Already defined");
+                            commandLine.unexpectedArgument("already defined");
                         }
                         break;
+                    }
+                    default:{
+                        context.configureLast(commandLine);
                     }
                 }
             } else {

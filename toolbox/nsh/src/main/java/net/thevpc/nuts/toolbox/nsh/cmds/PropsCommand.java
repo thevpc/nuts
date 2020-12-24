@@ -77,135 +77,134 @@ public class PropsCommand extends AbstractNshBuiltin {
     }
 
     public void exec(String[] args, NshExecutionContext context) {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine commandLine = cmdLine(args, context);
         Options o = new Options();
         NutsArgument a;
         NutsCommandLineManager commandLineFormat = context.getWorkspace().commandLine();
+        commandLine.setCommandName(getName());
         do {
-            if (context.configureFirst(cmdLine)) {
-                //
-            } else if (cmdLine.next("get") != null) {
-                o.property = cmdLine.next().getString();
+            if (commandLine.next("get") != null) {
+                o.property = commandLine.next().getString();
                 o.action = "get";
-                while (cmdLine.hasNext()) {
-                    if (cmdLine.next("--xml") != null) {
+                while (commandLine.hasNext()) {
+                    if (commandLine.next("--xml") != null) {
                         o.sourceFormat = Format.XML;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
+                        o.sourceFile = commandLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
 
-                    } else if (cmdLine.next("--system") != null) {
+                    } else if (commandLine.next("--system") != null) {
                         o.sourceFormat = Format.PROPS;
                         o.sourceType = SourceType.SYSTEM;
                         o.sourceFile = null;
 
-                    } else if (cmdLine.next("--props") != null) {
+                    } else if (commandLine.next("--props") != null) {
                         o.sourceFormat = Format.PROPS;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
+                        o.sourceFile = commandLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
 
-                    } else if (cmdLine.next("--file") != null) {
+                    } else if (commandLine.next("--file") != null) {
                         o.sourceFormat = Format.AUTO;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
+                        o.sourceFile = commandLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
                     } else {
-                        cmdLine.setCommandName(getName()).unexpectedArgument();
+                        commandLine.setCommandName(getName()).unexpectedArgument();
                     }
 
                 }
-            } else if (cmdLine.next("set") != null) {
-                String k = cmdLine.next().getString();
-                String v = cmdLine.next().getString();
+            } else if (commandLine.next("set") != null) {
+                String k = commandLine.next().getString();
+                String v = commandLine.next().getString();
                 o.updates.put(k, v);
                 o.action = "set";
-                while (cmdLine.hasNext()) {
-                    if (cmdLine.next("--comments") != null) {
-                        o.comments = cmdLine.next().getStringValue();
-                    } else if (cmdLine.next("--to-props-file") != null) {
+                while (commandLine.hasNext()) {
+                    if (commandLine.next("--comments") != null) {
+                        o.comments = commandLine.next().getStringValue();
+                    } else if (commandLine.next("--to-props-file") != null) {
                         o.targetFormat = Format.PROPS;
                         o.targetType = TargetType.FILE;
-                        o.targetFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
+                        o.targetFile = commandLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
 
-                    } else if (cmdLine.next("--to-xml-file") != null) {
+                    } else if (commandLine.next("--to-xml-file") != null) {
                         o.targetFormat = Format.XML;
                         o.targetType = TargetType.FILE;
-                        o.targetFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
-                    } else if (cmdLine.next("--to-file") != null) {
+                        o.targetFile = commandLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
+                    } else if (commandLine.next("--to-file") != null) {
                         o.targetFormat = Format.AUTO;
                         o.targetType = TargetType.FILE;
-                        o.targetFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
+                        o.targetFile = commandLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
 
-                    } else if (cmdLine.next("--print-props") != null) {
+                    } else if (commandLine.next("--print-props") != null) {
                         o.targetFormat = Format.PROPS;
                         o.targetType = TargetType.CONSOLE;
                         o.targetFile = null;
 
-                    } else if (cmdLine.next("--print-xml") != null) {
+                    } else if (commandLine.next("--print-xml") != null) {
                         o.targetFormat = Format.XML;
                         o.targetType = TargetType.CONSOLE;
                         o.targetFile = null;
 
-                    } else if (cmdLine.next("--save") != null) {
+                    } else if (commandLine.next("--save") != null) {
                         o.targetFormat = Format.AUTO;
                         o.targetType = TargetType.CONSOLE;
                         o.targetFile = null;
-                    } else if (cmdLine.next("--sort") != null) {
+                    } else if (commandLine.next("--sort") != null) {
                         o.sort = true;
                         context.getSession().addOutputFormatOptions("--sort");
-                    } else if (cmdLine.next("--xml") != null) {
+                    } else if (commandLine.next("--xml") != null) {
                         o.sourceFormat = Format.XML;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
+                        o.sourceFile = commandLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
 
-                    } else if (cmdLine.next("--system") != null) {
+                    } else if (commandLine.next("--system") != null) {
                         o.sourceFormat = Format.PROPS;
                         o.sourceType = SourceType.SYSTEM;
                         o.sourceFile = null;
 
-                    } else if (cmdLine.next("--props") != null) {
+                    } else if (commandLine.next("--props") != null) {
                         o.sourceFormat = Format.PROPS;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
-                    } else if (cmdLine.next("--file") != null) {
+                        o.sourceFile = commandLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
+                    } else if (commandLine.next("--file") != null) {
                         o.sourceFormat = Format.AUTO;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
+                        o.sourceFile = commandLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
                     } else {
-                        cmdLine.setCommandName(getName()).unexpectedArgument();
+                        commandLine.setCommandName(getName()).unexpectedArgument();
                     }
                 }
-            } else if (cmdLine.next("list") != null) {
+            } else if (commandLine.next("list") != null) {
                 o.action = "list";
-                while (cmdLine.hasNext()) {
-                    if (cmdLine.next("--xml") != null) {
+                while (commandLine.hasNext()) {
+                    if (commandLine.next("--xml") != null) {
                         o.sourceFormat = Format.XML;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
+                        o.sourceFile = commandLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
 
-                    } else if (cmdLine.next("--system") != null) {
+                    } else if (commandLine.next("--system") != null) {
                         o.sourceFormat = Format.PROPS;
                         o.sourceType = SourceType.SYSTEM;
                         o.sourceFile = null;
 
-                    } else if (cmdLine.next("--props") != null) {
+                    } else if (commandLine.next("--props") != null) {
                         o.sourceFormat = Format.PROPS;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
+                        o.sourceFile = commandLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
 
-                    } else if (cmdLine.next("--file") != null) {
+                    } else if (commandLine.next("--file") != null) {
                         o.sourceFormat = Format.AUTO;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
-                    } else if (cmdLine.next("--sort") != null) {
+                        o.sourceFile = commandLine.required().nextNonOption(commandLineFormat.createName("file")).getString();
+                    } else if (commandLine.next("--sort") != null) {
                         o.sort = true;
                         context.getSession().addOutputFormatOptions("--sort");
                     } else {
-                        cmdLine.setCommandName(getName()).unexpectedArgument();
+                        commandLine.setCommandName(getName()).unexpectedArgument();
                     }
                 }
             } else {
-                cmdLine.setCommandName(getName()).unexpectedArgument();
+                context.configureLast(commandLine);
             }
-        } while (cmdLine.hasNext());
+        } while (commandLine.hasNext());
         if (o.sourceType != SourceType.FILE && o.sourceFile != null) {
             throw new NutsExecutionException(context.getWorkspace(), "props: Should not use file with --system flag", 2);
         }

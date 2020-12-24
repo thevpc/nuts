@@ -478,6 +478,6 @@ public interface NutsCommandLine extends Iterable<NutsArgument>,NutsFormattable{
      * @param defaultConfigurable default configurable
      * @param processor processor 
      */
-    void process(NutsConfigurable defaultConfigurable, NutsCommandLineProcessor processor);
+    void process(NutsCommandLineConfigurable defaultConfigurable, NutsCommandLineProcessor processor);
 
 }

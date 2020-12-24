@@ -156,9 +156,9 @@ public class NAdminMain extends NutsApplication {
         } while (cmdLine.hasNext());
         if (empty) {
             PrintStream out = applicationContext.getSession().err();
-            out.printf("Missing nadmin command%n");
+            out.printf("missing nadmin command%n");
             out.printf("type for more help : nadmin -h%n");
-            throw new NutsExecutionException(applicationContext.getWorkspace(), "Missing nadmin command", 1);
+            throw new NutsExecutionException(applicationContext.getWorkspace(), "missing nadmin command", 1);
         }
     }
 

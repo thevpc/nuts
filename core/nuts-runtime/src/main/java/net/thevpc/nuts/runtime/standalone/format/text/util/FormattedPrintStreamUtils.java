@@ -125,7 +125,7 @@ public class FormattedPrintStreamUtils {
 
     public static String format0(NutsSession session,Locale locale, String format, Object ...args) {
         if(session==null){
-            throw new RuntimeException("Missing Session");
+            throw new RuntimeException("missing session");
         }
         Object[] args2=Arrays.copyOf(args,args.length);
         for (int i = 0; i < args2.length; i++) {

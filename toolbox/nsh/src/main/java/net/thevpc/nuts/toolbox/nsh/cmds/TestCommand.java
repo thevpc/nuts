@@ -218,10 +218,10 @@ public class TestCommand extends AbstractNshBuiltin {
             }
             reduce(operators, operands, 0);
             if (operands.size() != 1) {
-                throw new IllegalArgumentException("Missing operand");
+                throw new IllegalArgumentException("missing operand");
             }
             if (!operators.isEmpty()) {
-                throw new IllegalArgumentException("Too many operators");
+                throw new IllegalArgumentException("too many operators");
             }
             int result = operands.pop().eval(context);
             if (result != 0) {

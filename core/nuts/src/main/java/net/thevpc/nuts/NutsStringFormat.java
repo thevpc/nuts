@@ -91,7 +91,7 @@ public interface NutsStringFormat extends NutsFormat {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(boolean, String...)
+     * override of the {@link NutsCommandLineConfigurable#configure(boolean, String...)
      * }
      * to help return a more specific return type;
      *

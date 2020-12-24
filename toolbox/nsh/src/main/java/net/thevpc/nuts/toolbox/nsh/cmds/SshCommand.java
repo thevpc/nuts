@@ -57,37 +57,37 @@ public class SshCommand extends AbstractNshBuiltin {
     }
 
     public void exec(String[] args, NshExecutionContext context) {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine commandLine = cmdLine(args, context);
         Options o = new Options();
         NutsArgument a;
         // address --nuts [nuts options] args
         boolean acceptDashNuts = true;
-        while (cmdLine.hasNext()) {
+        while (commandLine.hasNext()) {
             if (!o.cmd.isEmpty()) {
-                o.cmd.add(cmdLine.next().getString());
-            } else if (cmdLine.peek().isNonOption()) {
+                o.cmd.add(commandLine.next().getString());
+            } else if (commandLine.peek().isNonOption()) {
                 if (o.address == null) {
-                    o.address = cmdLine.next().getString();
+                    o.address = commandLine.next().getString();
                 } else {
-                    o.cmd.add(cmdLine.next().getString());
+                    o.cmd.add(commandLine.next().getString());
                 }
-            } else if ((a = cmdLine.next("--nuts")) != null) {
+            } else if ((a = commandLine.next("--nuts")) != null) {
                 if (acceptDashNuts) {
                     o.invokeNuts = true;
                 } else {
                     o.cmd.add(a.getString());
                 }
-            } else if ((a = cmdLine.next("--nuts-jre")) != null) {
+            } else if ((a = commandLine.next("--nuts-jre")) != null) {
                 if (acceptDashNuts) {
                     o.nutsJre = a.getStringValue();
                 } else {
                     o.cmd.add(a.getString());
                 }
-            } else if (o.address == null && context.configureFirst(cmdLine)) {
-                //okkay
-            } else {
+            } else if (o.address == null || commandLine.peek().isNonOption()) {
                 acceptDashNuts = false;
-                o.cmd.add(cmdLine.next().getString());
+                o.cmd.add(commandLine.next().getString());
+            } else {
+                context.configureLast(commandLine);
             }
         }
         if (o.address == null) {

@@ -40,7 +40,7 @@ public class NutsIndexerApplication extends NutsApplication {
         public NutsApplicationContext getApplicationContext() {
             if (applicationContext == null) {
                 if(__bootApplicationContext ==null){
-                    throw new IllegalStateException("Missing Boot Application context");
+                    throw new IllegalStateException("missing Boot Application context");
                 }
                 applicationContext= __bootApplicationContext;
             }

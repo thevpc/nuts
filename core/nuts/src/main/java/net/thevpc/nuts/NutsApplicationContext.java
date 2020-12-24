@@ -36,7 +36,7 @@ import java.nio.file.Path;
  * @since 0.5.5
  * @category Application
  */
-public interface NutsApplicationContext extends NutsConfigurable {
+public interface NutsApplicationContext extends NutsCommandLineConfigurable {
 
     /**
      * string that prefix each auto complete candidate
@@ -67,7 +67,7 @@ public interface NutsApplicationContext extends NutsConfigurable {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
@@ -336,12 +336,13 @@ public interface NutsApplicationContext extends NutsConfigurable {
     boolean isExecMode();
     
     /**
-     * calls configureFirst and ensure this is the last test 
+     * calls configureFirst and ensure this is the last test.
+     * If the argument is not supported, throws unsupported argument
+     * by calling {@link NutsCommandLine#unexpectedArgument()}
      *
      * @param commandLine arguments to configure with
-     * @return boolean when at least one argument was processed
      * @since 0.7.1
      */
-    boolean configureLast(NutsCommandLine commandLine);
+    void configureLast(NutsCommandLine commandLine);
     
 }

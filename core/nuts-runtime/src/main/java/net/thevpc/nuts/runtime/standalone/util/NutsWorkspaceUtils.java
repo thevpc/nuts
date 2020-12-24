@@ -66,10 +66,10 @@ public class NutsWorkspaceUtils {
 
     public NutsId createSdkId(String type, String version) {
         if (CoreStringUtils.isBlank(type)) {
-            throw new NutsException(ws, "Missing sdk type");
+            throw new NutsException(ws, "missing sdk type");
         }
         if (CoreStringUtils.isBlank(version)) {
-            throw new NutsException(ws, "Missing version");
+            throw new NutsException(ws, "missing version");
         }
         if ("java".equalsIgnoreCase(type)) {
             return NutsJavaSdkUtils.of(ws).createJdkId(version);
@@ -98,7 +98,7 @@ public class NutsWorkspaceUtils {
             session = ws.createSession();
         } else {
             if (session.getWorkspace() != ws) {
-                throw new IllegalArgumentException("Session was created with a different Workspace");
+                throw new IllegalArgumentException("session was created with a different Workspace");
             }
         }
         return session;
@@ -170,13 +170,13 @@ public class NutsWorkspaceUtils {
                         try {
                             d = CoreNutsUtils.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive(), session);
                         } catch (Exception ex) {
-                            LOG.with().level(Level.FINE).error(ex).log("Unable to resolve support deploy level for : {0}", repository.getName());
+                            LOG.with().level(Level.FINE).error(ex).log("unable to resolve support deploy level for : {0}", repository.getName());
                         }
                     }
                     try {
                         t = CoreNutsUtils.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive(), session);
                     } catch (Exception ex) {
-                        LOG.with().level(Level.FINE).error(ex).log("Unable to resolve support speed level for : {0}", repository.getName());
+                        LOG.with().level(Level.FINE).error(ex).log("unable to resolve support speed level for : {0}", repository.getName());
                     }
                     if (t > 0) {
                         repos2.add(new RepoAndLevel(repository, d, t, postComp));
@@ -241,7 +241,7 @@ public class NutsWorkspaceUtils {
     public static NutsId parseRequiredNutsId0(String nutFormat) {
         NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
         if (id == null) {
-            throw new NutsParseException(null, "Invalid Id format : " + nutFormat);
+            throw new NutsParseException(null, "invalid Id format : " + nutFormat);
         }
         return id;
     }
@@ -249,7 +249,7 @@ public class NutsWorkspaceUtils {
     public NutsId parseRequiredNutsId(String nutFormat) {
         NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
         if (id == null) {
-            throw new NutsParseException(ws, "Invalid Id format : " + nutFormat);
+            throw new NutsParseException(ws, "invalid Id format : " + nutFormat);
         }
         return id;
     }
@@ -632,7 +632,7 @@ public class NutsWorkspaceUtils {
         try {
             mainClass = CorePlatformUtils.getMainClassType(classStream);
         } catch (Exception ex) {
-            LOG.with().level(Level.FINE).error(ex).log("Invalid file format {0}", sourceName);
+            LOG.with().level(Level.FINE).error(ex).log("invalid file format {0}", sourceName);
         }
         if (mainClass != null) {
             return new DefaultNutsExecutionEntry(

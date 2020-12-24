@@ -1,8 +1,11 @@
 package net.thevpc.nuts.toolbox.nmysql.local;
 
-import net.thevpc.nuts.NutsExecutionException;
+import net.thevpc.common.strings.StringUtils;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nmysql.local.config.LocalMysqlConfig;
 import net.thevpc.nuts.toolbox.nmysql.local.config.LocalMysqlDatabaseConfig;
+import net.thevpc.nuts.toolbox.nmysql.util.AtName;
+import net.thevpc.nuts.toolbox.nmysql.util.MysqlUtils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -16,16 +19,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.common.strings.StringUtils;
-import net.thevpc.nuts.toolbox.nmysql.util.AtName;
-import net.thevpc.nuts.toolbox.nmysql.util.MysqlUtils;
-import net.thevpc.nuts.NutsCommandLine;
-
 public class LocalMysql {
-    private static final Logger LOG=Logger.getLogger(LocalMysql.class.getName());
+    private static final Logger LOG = Logger.getLogger(LocalMysql.class.getName());
     private NutsApplicationContext context;
 
     public LocalMysql(NutsApplicationContext ws) {
@@ -33,62 +28,62 @@ public class LocalMysql {
     }
 
     public void runArgs(String[] args) {
-        NutsCommandLine cmd = context.getWorkspace().commandLine().create(args)
+        NutsCommandLine commandLine = context.getWorkspace().commandLine().create(args)
                 .setCommandName("mysql --local");
-        while (cmd.hasNext()) {
-            if (context.configureFirst(cmd)) {
-                //
+        while (commandLine.hasNext()) {
+            if (commandLine.peek().isOption()) {
+                context.configureLast(commandLine);
             } else {
-                NutsArgument val = cmd.requireNonOption().next();
+                NutsArgument val = commandLine.requireNonOption().next();
                 switch (val.getString()) {
                     case "list":
                     case "ls":
-                        list(cmd);
-                        cmd.unexpectedArgument();
+                        list(commandLine);
+                        commandLine.unexpectedArgument();
                         return;
                     case "add":
                     case "create":
-                        create(cmd);
-                        cmd.unexpectedArgument();
+                        create(commandLine);
+                        commandLine.unexpectedArgument();
                         return;
                     case "set":
                     case "update":
-                        update(cmd);
-                        cmd.unexpectedArgument();
+                        update(commandLine);
+                        commandLine.unexpectedArgument();
                         return;
                     case "remove":
                     case "delete":
-                        remove(cmd);
-                        cmd.unexpectedArgument();
+                        remove(commandLine);
+                        commandLine.unexpectedArgument();
                         return;
                     case "backup":
-                        backup(cmd);
-                        cmd.unexpectedArgument();
+                        backup(commandLine);
+                        commandLine.unexpectedArgument();
                         return;
                     case "restore":
-                        restore(cmd);
-                        cmd.unexpectedArgument();
+                        restore(commandLine);
+                        commandLine.unexpectedArgument();
                         return;
                     default:
-                        cmd.unexpectedArgument();
+                        commandLine.unexpectedArgument();
                 }
             }
         }
-        cmd.required("missing command (list,add,set,remove,backup or restore)");
+        commandLine.required("missing command (list,add,set,remove,backup or restore)");
     }
 
-    public void list(NutsCommandLine args) {
-        args.setCommandName("mysql --local list");
+    public void list(NutsCommandLine commandLine) {
+        commandLine.setCommandName("mysql --local list");
         AtName name = null;
-        while (args.hasNext()) {
-            if (context.configureFirst(args)) {
-                //
-            } else if (args.peek().getStringKey().equals("--name")) {
-                name = AtName.nextConfigOption(args);
-            } else if (name == null && args.peek().isNonOption()) {
-                name = AtName.nextConfigNonOption(args);
+        while (commandLine.hasNext()) {
+            if (commandLine.peek().getStringKey().equals("--name")) {
+                name = AtName.nextConfigOption(commandLine);
+            } else if (name == null && commandLine.peek().isNonOption()) {
+                name = AtName.nextConfigNonOption(commandLine);
+            } else if (commandLine.peek().isOption()) {
+                context.configureLast(commandLine);
             } else {
-                args.unexpectedArgument();
+                commandLine.unexpectedArgument();
             }
         }
         LinkedHashMap<String, LocalMysqlConfig> result = new LinkedHashMap<>();
@@ -155,15 +150,13 @@ public class LocalMysql {
         String dbname = null;
         boolean askPassword = false;
         while (commandLine.hasNext()) {
-            if (context.configureFirst(commandLine)) {
-                //
-            } else if (commandLine.peek().isOption()) {
+            if (commandLine.peek().isOption()) {
                 switch (commandLine.peek().getStringKey()) {
                     case "--name": {
                         if (name == null) {
                             name = AtName.nextAppOption(commandLine);
                         } else {
-                            commandLine.unexpectedArgument("Already defined");
+                            commandLine.unexpectedArgument("already defined");
                         }
                         break;
                     }
@@ -216,10 +209,14 @@ public class LocalMysql {
                         break;
                     }
                     default: {
-                        if (name == null) {
-                            name = AtName.nextAppOption(commandLine);
-                        } else {
-                            commandLine.unexpectedArgument("Already defined");
+                        if(commandLine.peek().isNonOption()){
+                            if (name == null) {
+                                name = AtName.nextAppOption(commandLine);
+                            } else {
+                                commandLine.unexpectedArgument("already defined");
+                            }
+                        }else{
+                            context.configureLast(commandLine);
                         }
                         break;
                     }
@@ -348,13 +345,13 @@ public class LocalMysql {
                     );
                 }
                 if (r.getConfig().getUser() == null) {
-                    throw new NutsExecutionException(context.getWorkspace(), "Missing --user", 2);
+                    throw new NutsExecutionException(context.getWorkspace(), "missing --user", 2);
                 }
                 if (r.getConfig().getPassword() == null) {
-                    throw new NutsExecutionException(context.getWorkspace(), "Missing --password", 2);
+                    throw new NutsExecutionException(context.getWorkspace(), "missing --password", 2);
                 }
                 if (r.getConfig().getDatabaseName() == null) {
-                    throw new NutsExecutionException(context.getWorkspace(), "Missing --name", 2);
+                    throw new NutsExecutionException(context.getWorkspace(), "missing --name", 2);
                 }
                 if (context.getSession().isPlainTrace()) {
                     if (add) {
@@ -385,27 +382,25 @@ public class LocalMysql {
         AtName name = null;
         NutsArgument a;
         while (commandLine.hasNext()) {
-            if (context.configureFirst(commandLine)) {
-                //
-            } else if (commandLine.peek().isOption()) {
+            if (commandLine.peek().isOption()) {
                 switch (commandLine.peek().getStringKey()) {
                     case "--name": {
                         if (name == null) {
                             name = AtName.nextAppOption(commandLine);
                         } else {
-                            commandLine.unexpectedArgument("Already defined");
+                            commandLine.unexpectedArgument("already defined");
                         }
                         break;
                     }
                     default: {
-                        commandLine.unexpectedArgument();
+                        context.configureLast(commandLine);
                     }
                 }
             } else {
                 if (name == null) {
                     name = AtName.nextAppNonOption(commandLine);
                 } else {
-                    commandLine.unexpectedArgument("Already defined");
+                    commandLine.unexpectedArgument("already defined");
                 }
                 commandLine.unexpectedArgument();
             }
@@ -428,15 +423,13 @@ public class LocalMysql {
         String path = null;
         NutsArgument a;
         while (commandLine.hasNext()) {
-            if (context.configureFirst(commandLine)) {
-                //
-            } else if (commandLine.peek().isOption()) {
+            if (commandLine.peek().isOption()) {
                 switch (commandLine.peek().getStringKey()) {
                     case "--name": {
                         if (name == null) {
                             name = AtName.nextAppOption(commandLine);
                         } else {
-                            commandLine.unexpectedArgument("Already defined");
+                            commandLine.unexpectedArgument("already defined");
                         }
                         break;
                     }
@@ -444,9 +437,12 @@ public class LocalMysql {
                         if (path == null) {
                             path = commandLine.nextString().getStringValue();
                         } else {
-                            commandLine.unexpectedArgument("Already defined");
+                            commandLine.unexpectedArgument("already defined");
                         }
                         break;
+                    }
+                    default: {
+                        context.configureLast(commandLine);
                     }
                 }
             } else {
@@ -498,14 +494,14 @@ public class LocalMysql {
 
     public LocalMysqlConfigService[] listConfig() {
         List<LocalMysqlConfigService> all = new ArrayList<>();
-        if(Files.isDirectory(getContext().getSharedConfigFolder())) {
+        if (Files.isDirectory(getContext().getSharedConfigFolder())) {
             try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(getContext().getSharedConfigFolder(), pathname -> pathname.getFileName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT))) {
                 for (Path file1 : configFiles) {
                     try {
                         LocalMysqlConfigService c = loadMysqlConfig(file1);
                         all.add(c);
                     } catch (Exception ex) {
-                        LOG.log(Level.FINE,"Error loading config url : "+file1,ex);//e.printStackTrace();
+                        LOG.log(Level.FINE, "Error loading config url : " + file1, ex);//e.printStackTrace();
                         //ignore
                     }
                 }

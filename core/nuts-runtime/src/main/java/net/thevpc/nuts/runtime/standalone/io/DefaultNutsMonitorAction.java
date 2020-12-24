@@ -249,7 +249,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             session = ws.createSession();
         }
         if (CoreStringUtils.isBlank(path)) {
-            throw new UncheckedIOException(new IOException("Missing Path"));
+            throw new UncheckedIOException(new IOException("missing path"));
         }
         if (CoreStringUtils.isBlank(sourceName)) {
             sourceName = String.valueOf(path);
@@ -299,7 +299,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             session = ws.createSession();
         }
         if (inputSource==null) {
-            throw new UncheckedIOException(new IOException("Missing inputSource"));
+            throw new UncheckedIOException(new IOException("missing inputSource"));
         }
         if (CoreStringUtils.isBlank(sourceName)) {
             sourceName = inputSource.getName();

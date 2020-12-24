@@ -217,7 +217,7 @@ public class NutsJavaSdkUtils {
     public NutsSdkLocation resolveJdkLocation(Path path, String preferredName, NutsSession session) {
         session=NutsWorkspaceUtils.of(ws).validateSession(session);
         if (path == null) {
-            throw new NutsException(session.getWorkspace(), "Missing path");
+            throw new NutsException(session.getWorkspace(), "missing path");
         }
         String appSuffix = session.getWorkspace().env().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
         Path bin = path.resolve("bin");
@@ -244,7 +244,7 @@ public class NutsJavaSdkUtils {
                 if (cmdOutputString.length() > 0) {
                     break;
                 }else{
-                    LOG.with().level(i==(MAX_ITER-1)?Level.WARNING:Level.FINER).verb(NutsLogVerb.WARNING).log("Unable to execute {0}. returned empty string ({1}/{2})", javaExePath,i+1,MAX_ITER);
+                    LOG.with().level(i==(MAX_ITER-1)?Level.WARNING:Level.FINER).verb(NutsLogVerb.WARNING).log("unable to execute {0}. returned empty string ({1}/{2})", javaExePath,i+1,MAX_ITER);
                 }
             }
             if (cmdOutputString.length() > 0) {
@@ -274,11 +274,11 @@ public class NutsJavaSdkUtils {
             }
         } catch (Exception ex) {
             loggedError=true;
-            LOG.with().error(ex).level(Level.SEVERE).verb(NutsLogVerb.WARNING).log("Unable to execute {0}. JDK Home ignored", javaExePath);
+            LOG.with().error(ex).level(Level.SEVERE).verb(NutsLogVerb.WARNING).log("unable to execute {0}. JDK Home ignored", javaExePath);
         }
         if (jdkVersion == null) {
             if(!loggedError) {
-                LOG.with().level(Level.SEVERE).verb(NutsLogVerb.WARNING).log("Execute {0} failed with result code {1} and result string \"{2}\". JDK Home ignored", javaExePath.toString(),cmdRresult,cmdOutputString);
+                LOG.with().level(Level.SEVERE).verb(NutsLogVerb.WARNING).log("execute {0} failed with result code {1} and result string \"{2}\". JDK Home ignored", javaExePath.toString(),cmdRresult,cmdOutputString);
             }
             return null;
         }
@@ -304,7 +304,7 @@ public class NutsJavaSdkUtils {
 
     public NutsId createJdkId(String version) {
         if (CoreStringUtils.isBlank(version)) {
-            throw new NutsException(ws, "Missing version");
+            throw new NutsException(ws, "missing version");
         }
         NutsVersion jv = ws.version().parser().parse(version);
         int n1 = jv.getNumber(0, 0);

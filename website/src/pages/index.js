@@ -77,7 +77,7 @@ function Home() {
                         'button button--secondary button--lg',
                         styles.getStarted,
                         )}
-                    to={'https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.0/nuts-0.7.0.jar'}>
+                    to={'https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar'}>
                 Download
                 </Link>
             </div>

@@ -23,6 +23,8 @@ public interface NshExecutionContext extends JShellExecutionContext {
 
     boolean configureFirst(NutsCommandLine cmd);
 
+    void configureLast(NutsCommandLine cmd);
+
     @Override
     NutsJavaShell getShell();
 }

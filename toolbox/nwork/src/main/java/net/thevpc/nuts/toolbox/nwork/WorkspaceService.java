@@ -127,35 +127,34 @@ public class WorkspaceService {
         }
     }
     
-    public void enableScan(NutsCommandLine cmd, NutsApplicationContext context, boolean enable) {
+    public void enableScan(NutsCommandLine commandLine, NutsApplicationContext context, boolean enable) {
         int count = 0;
-        while (cmd.hasNext()) {
-            if (context.configureFirst(cmd)) {
-                //consumed
-            } else {
-                String expression = cmd.next().getString();
-                if (cmd.isExecMode()) {
+        while (commandLine.hasNext()) {
+            if(commandLine.peek().isNonOption()){
+                String expression = commandLine.next().getString();
+                if (commandLine.isExecMode()) {
                     setScanEnabled(Paths.get(expression), enable);
                     count++;
                 }
+            }else{
+                context.configureLast(commandLine);
             }
         }
         
         if (count == 0) {
-            throw new NutsExecutionException(context.getWorkspace(), "Missing projects", 1);
+            throw new NutsExecutionException(context.getWorkspace(), "missing projects", 1);
         }
     }
     
     public void list(NutsCommandLine cmd, NutsApplicationContext appContext) {
         NutsArgument a;
         List<String> filters = new ArrayList<>();
+        cmd.setCommandName("worky list");
         while (cmd.hasNext()) {
-            if (appContext.configureFirst(cmd)) {
-                //consumed
-            } else if ((a = cmd.requireNonOption().next()) != null) {
+            if ((a = cmd.requireNonOption().next()) != null) {
                 filters.add(a.getString());
             } else {
-                cmd.setCommandName("worky list").unexpectedArgument();
+                appContext.configureLast(cmd);
             }
         }
         if (cmd.isExecMode()) {
@@ -186,16 +185,16 @@ public class WorkspaceService {
         boolean run = false;
         NutsCommandLineManager commandLineFormat = context.getWorkspace().commandLine();
         while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //consumed
-            } else if ((a = cmdLine.nextBoolean("-i", "--interactive")) != null) {
+            if ((a = cmdLine.nextBoolean("-i", "--interactive")) != null) {
                 interactive = a.getBooleanValue();
-            } else {
+            } else if(cmdLine.peek().isNonOption()){
                 String folder = cmdLine.nextNonOption(commandLineFormat.createName("Folder")).getString();
                 run = true;
                 if (cmdLine.isExecMode()) {
                     scan(new File(folder), interactive);
                 }
+            }else{
+                context.configureLast(cmdLine);
             }
         }
         if (!run) {

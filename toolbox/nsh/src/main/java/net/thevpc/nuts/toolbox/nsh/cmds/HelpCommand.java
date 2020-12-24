@@ -52,25 +52,21 @@ public class HelpCommand extends AbstractNshBuiltin {
 
     @Override
     public void exec(String[] args, NshExecutionContext context) {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine commandLine = cmdLine(args, context);
         boolean showColors = false;
         List<String> commandNames = new ArrayList<>();
         NutsArgument a;
         boolean code = false;
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //
-            } else if (cmdLine.next("-c", "--colors") != null) {
+        while (commandLine.hasNext()) {
+            if (commandLine.next("-c", "--colors") != null) {
                 showColors = true;
-            } else if (cmdLine.next("--ntf") != null) {
+            } else if (commandLine.next("--ntf") != null) {
                 code = true;
                 context.getSession().getTerminal().setMode(NutsTerminalMode.FILTERED);
-            } else if (cmdLine.peek().isOption()) {
-                if (cmdLine.isExecMode()) {
-                    throw new NutsIllegalArgumentException(context.getWorkspace(), "invalid option " + cmdLine.next().getString());
-                }
+            }else if (commandLine.peek().isNonOption()){
+                commandNames.add(commandLine.nextNonOption(new CommandNonOption("command", context.getNutsShellContext())).required().getString());
             } else {
-                commandNames.add(cmdLine.nextNonOption(new CommandNonOption("command", context.getNutsShellContext())).required().getString());
+                context.configureLast(commandLine);
             }
         }
         Function<String, String> ss = code ? new Function<String, String>() {
@@ -79,7 +75,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                 return context.getWorkspace().formats().text().escapeText(t);
             }
         } : x -> x;
-        if (cmdLine.isExecMode()) {
+        if (commandLine.isExecMode()) {
             if (showColors) {
                 String colorsText = context.getWorkspace().formats().text().loadFormattedString("/net/thevpc/nuts/toolbox/nuts-help-colors.ntf", HelpCommand.class.getClassLoader(), "no help found");
                 context.out().println(ss.apply(colorsText));

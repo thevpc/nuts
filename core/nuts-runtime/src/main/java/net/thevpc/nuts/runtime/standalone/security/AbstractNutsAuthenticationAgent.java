@@ -45,7 +45,7 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
     @Override
     public void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider, NutsSession session) {
         if (CoreStringUtils.isBlank(password)) {
-            throw new NutsSecurityException(ws, "Missing old password");
+            throw new NutsSecurityException(ws, "missing old password");
         }
         CredentialsId iid = extractId(credentialsId);
         switch (iid.type) {

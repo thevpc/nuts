@@ -55,19 +55,17 @@ public class TailCommand extends AbstractNshBuiltin {
     }
 
     public void exec(String[] args, NshExecutionContext context) {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine commandLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
         PrintStream out = context.out();
-        while (cmdLine.hasNext()) {
-            NutsArgument a = cmdLine.next();
+        while (commandLine.hasNext()) {
+            NutsArgument a = commandLine.peek();
             if (a.isOption()) {
-                if (context.configureFirst(cmdLine)) {
-                    //
-                } else if (ShellHelper.isInt(a.getString().substring(1))) {
-                    options.max = Integer.parseInt(a.getString().substring(1));
+                if (ShellHelper.isInt(a.getString().substring(1))) {
+                    options.max = Integer.parseInt(commandLine.next().getString().substring(1));
                 } else {
-                    throw new NutsExecutionException(context.getWorkspace(), "Not yet supported", 2);
+                    context.configureLast(commandLine);
                 }
             } else {
                 String path = a.getString();

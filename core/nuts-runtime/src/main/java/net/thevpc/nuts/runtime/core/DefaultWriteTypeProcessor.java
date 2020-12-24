@@ -29,7 +29,7 @@ public class DefaultWriteTypeProcessor {
 
     public DefaultWriteTypeProcessor ask(String m, Object... p) {
         if (m == null) {
-            throw new IllegalArgumentException("Missing Ask Message");
+            throw new IllegalArgumentException("missing ask message");
         }
         this.askMessage = m;
         this.askMessageParams = p;
@@ -38,11 +38,11 @@ public class DefaultWriteTypeProcessor {
 
     public DefaultWriteTypeProcessor withLog(NutsLogger log, String m, Object... p) {
         if (log == null) {
-            throw new IllegalArgumentException("Missing Ask Log");
+            throw new IllegalArgumentException("missing ask log");
         }
         this.log = log;
         if (m == null) {
-            throw new IllegalArgumentException("Missing Log Message");
+            throw new IllegalArgumentException("missing log message");
         }
         this.logMessage = m;
         this.logMessageParams = p;
@@ -51,7 +51,7 @@ public class DefaultWriteTypeProcessor {
 
     public DefaultWriteTypeProcessor onError(Supplier<RuntimeException> error) {
         if (error == null) {
-            throw new IllegalArgumentException("Missing Error Handler");
+            throw new IllegalArgumentException("missing error handler");
         }
         this.error = error;
         return this;
@@ -59,7 +59,7 @@ public class DefaultWriteTypeProcessor {
 
     private String getAskMessage() {
         if (askMessage == null) {
-            throw new IllegalArgumentException("Missing Ask message");
+            throw new IllegalArgumentException("missing ask message");
         }
         return askMessage;
     }
@@ -70,7 +70,7 @@ public class DefaultWriteTypeProcessor {
 
     private String getLogMessage() {
         if (logMessage == null) {
-            throw new IllegalArgumentException("Missing Log Message");
+            throw new IllegalArgumentException("missing log message");
         }
         return logMessage;
     }
@@ -81,14 +81,14 @@ public class DefaultWriteTypeProcessor {
 
     private Supplier<RuntimeException> getError() {
         if (error == null) {
-            throw new IllegalArgumentException("Missing Error Handler");
+            throw new IllegalArgumentException("missing error handler");
         }
         return error;
     }
 
     private NutsLogger getLog() {
         if (log == null) {
-            throw new IllegalArgumentException("Missing Log");
+            throw new IllegalArgumentException("missing log");
         }
         return log;
     }

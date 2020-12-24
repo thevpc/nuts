@@ -140,7 +140,7 @@ public class NutsHttpServletFacade {
         FacadeCommand facadeCommand = commands.get(ii.command);
         if (facadeCommand == null) {
             if (ii.command.isEmpty()) {
-                context.sendError(404, "Missing command");
+                context.sendError(404, "missing command");
             } else {
                 context.sendError(404, "JShellCommandNode Not found : " + ii.command);
             }

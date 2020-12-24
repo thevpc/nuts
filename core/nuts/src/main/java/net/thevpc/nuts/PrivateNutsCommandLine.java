@@ -752,7 +752,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
-    public void process(NutsConfigurable defaultConfigurable, NutsCommandLineProcessor processor) {
+    public void process(NutsCommandLineConfigurable defaultConfigurable, NutsCommandLineProcessor processor) {
         throw new UnsupportedOperationException("not supported operation process(...)");
     }
 

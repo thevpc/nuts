@@ -22,23 +22,23 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
     public static final int DEFAULT_ADMIN_SERVER_PORT = 8898;
 
     @Override
-    public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
+    public boolean exec(NutsCommandLine commandLine, Boolean autoSave, NutsApplicationContext context) {
         NutsCommandLineManager commandLineFormat = context.getWorkspace().commandLine();
-        if (cmdLine.next("connect") != null) {
+        if (commandLine.next("connect") != null) {
             char[] password = null;
             String server = null;
             NutsArgument a;
-            while (cmdLine.hasNext()) {
-                if (context.configureFirst(cmdLine)) {
-                    //
-                } else if ((a = cmdLine.nextString("--password")) != null) {
+            while (commandLine.hasNext()) {
+                if ((a = commandLine.nextString("--password")) != null) {
                     password = a.getStringValue("").toCharArray();
+                } else if (commandLine.peek().isOption()) {
+                    context.configureLast(commandLine);
                 } else {
-                    server = cmdLine.nextRequiredNonOption(commandLineFormat.createName("ServerAddress")).getString();
-                    cmdLine.setCommandName("nadmin connect").unexpectedArgument();
+                    server = commandLine.nextRequiredNonOption(commandLineFormat.createName("ServerAddress")).getString();
+                    commandLine.setCommandName("nadmin connect").unexpectedArgument();
                 }
             }
-            if (!cmdLine.isExecMode()) {
+            if (!commandLine.isExecMode()) {
                 return true;
             }
             String login = null;

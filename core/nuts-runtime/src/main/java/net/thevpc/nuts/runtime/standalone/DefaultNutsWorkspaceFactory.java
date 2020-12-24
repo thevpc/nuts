@@ -510,10 +510,10 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             }
         }
 //        if(bestObj==null){
-//            throw new NutsElementNotFoundException("Not Found implementation for "+type.getName());
+//            throw new NutsElementNotFoundException("not found implementation for "+type.getName());
 //        }
 //        if(bestObj==null){
-//            throw new NutsElementNotFoundException(workspace,"Missing Implementation for Extension Point "+type);
+//            throw new NutsElementNotFoundException(workspace,"missing Implementation for Extension Point "+type);
 //        }
         return bestObj;
     }
@@ -534,10 +534,10 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             }
         }
 //        if(bestObj==null){
-//            throw new NutsElementNotFoundException("Not Found implementation for "+type.getName());
+//            throw new NutsElementNotFoundException("not found implementation for "+type.getName());
 //        }
 //        if(bestObj==null){
-//            throw new NutsElementNotFoundException(workspace,"Missing Implementation for Extension Point "+type);
+//            throw new NutsElementNotFoundException(workspace,"missing implementation for Extension Point "+type);
 //        }
         return bestObj;
     }

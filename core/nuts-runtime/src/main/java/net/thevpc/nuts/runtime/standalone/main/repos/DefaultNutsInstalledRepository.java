@@ -385,7 +385,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     public InstallInfoConfig getInstallInfoConfig(NutsId id, Path path, NutsSession session) {
         if (id == null && path == null) {
-            throw new IllegalArgumentException("Missing id or path");
+            throw new IllegalArgumentException("missing id or path");
         }
         if (path == null) {
             path = getPath(id, NUTS_INSTALL_FILE);

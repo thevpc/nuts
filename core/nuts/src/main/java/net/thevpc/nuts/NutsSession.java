@@ -37,7 +37,7 @@ import java.util.Map;
  * @since 0.5.4
  * @category Base
  */
-public interface NutsSession extends NutsConfigurable {
+public interface NutsSession extends NutsCommandLineConfigurable {
 
     /**
      * When true, operations are invited to print to output stream extra

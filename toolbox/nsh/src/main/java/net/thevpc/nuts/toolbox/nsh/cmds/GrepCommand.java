@@ -57,50 +57,50 @@ public class GrepCommand extends AbstractNshBuiltin {
     }
 
     public void exec(String[] args, NshExecutionContext context) {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine commandLine = cmdLine(args, context);
         Options options = new Options();
         List<File> files = new ArrayList<>();
         String expression = null;
         PrintStream out = context.out();
         NutsArgument a;
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //
-            } else if (cmdLine.next("-") != null) {
+        while (commandLine.hasNext()) {
+            if (commandLine.next("-") != null) {
                 files.add(null);
-            } else if (cmdLine.next("-e", "--regexp") != null) {
+            } else if (commandLine.next("-e", "--regexp") != null) {
                 options.regexp = true;
-            } else if (cmdLine.next("-v", "--invert-match") != null) {
+            } else if (commandLine.next("-v", "--invert-match") != null) {
                 options.invertMatch = true;
-            } else if (cmdLine.next("-w", "--word-regexp") != null) {
+            } else if (commandLine.next("-w", "--word-regexp") != null) {
                 options.word = true;
-            } else if (cmdLine.next("-x", "--line-regexp") != null) {
+            } else if (commandLine.next("-x", "--line-regexp") != null) {
                 options.lineRegexp = true;
-            } else if (cmdLine.next("-i", "--ignore-case") != null) {
+            } else if (commandLine.next("-i", "--ignore-case") != null) {
                 options.ignoreCase = true;
-            } else if (cmdLine.next("--version") != null) {
+            } else if (commandLine.next("--version") != null) {
                 out.printf("%s\n", "1.0");
                 return;
-            } else if (cmdLine.next("-n") != null) {
+            } else if (commandLine.next("-n") != null) {
                 options.n = true;
-            } else if (cmdLine.next("--help") != null) {
+            } else if (commandLine.next("--help") != null) {
                 out.printf("%s\n", getHelp());
                 return;
-            } else {
+            }else if (commandLine.peek().isNonOption()){
                 if (expression == null) {
-                    expression = cmdLine.next().getString();
+                    expression = commandLine.next().getString();
                 } else {
-                    String path = cmdLine.next().getString();
+                    String path = commandLine.next().getString();
                     File file = new File(context.getGlobalContext().getAbsolutePath(path));
                     files.add(file);
                 }
+            } else {
+                context.configureLast(commandLine);
             }
         }
         if (files.isEmpty()) {
             files.add(null);
         }
         if (expression == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "Missing Expression", 2);
+            throw new NutsExecutionException(context.getWorkspace(), "missing Expression", 2);
         }
         String baseExpr = options.regexp ? ("^" + simpexpToRegexp(expression, false) + "$") : expression;
         if (options.word) {

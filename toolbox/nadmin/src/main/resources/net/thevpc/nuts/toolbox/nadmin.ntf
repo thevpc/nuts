@@ -128,14 +128,14 @@ the host operating system to facilitate usage of nuts command line tool.
 
 ###) SYNOPSIS
 ```sh
-nadmin install script <options> <command> ...
+nadmin add script <options> <command> ...
 ```
-    install scripts/shortcuts for the given command so that it can be called directly by it's name
+    add scripts/shortcuts for the given command so that it can be called directly by it's name
 
 ```sh
-nadmin uninstall script <options> <command> ...
+nadmin remove script <options> <command> ...
 ```
-    uninstall scripts/shortcuts for the given
+    remove scripts/shortcuts for the given
 
 ```sh
 nadmin switch <options> ...
@@ -201,6 +201,12 @@ nadmin switch <options> [<workspace>] [<api>]
 ```sh --api | -a ```
     nuts api version
 
+###) EXAMPLES:
+```sh nadmin add script nuts ```
+    creates a nuts shortcut (named nuts) for nuts
+
+```sh nadmin add script nuts#current ```
+    creates a nuts shortcut named  nuts#0.8.1 (assuming the current version is 0.8.1
 
 ##) GENERAL COMMANDS:
 ```sh

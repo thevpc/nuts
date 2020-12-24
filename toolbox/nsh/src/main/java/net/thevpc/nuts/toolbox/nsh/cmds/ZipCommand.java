@@ -56,35 +56,35 @@ public class ZipCommand extends AbstractNshBuiltin {
 
     @Override
     public void exec(String[] args, NshExecutionContext context) {
-        NutsCommandLine cmdLine = cmdLine(args, context);
+        NutsCommandLine commandLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
 //        NutsPrintStream out = context.out();
         File outZip = null;
         NutsArgument a;
         NutsCommandLineManager nutsCommandLineFormat = context.getWorkspace().commandLine();
-        while (cmdLine.hasNext()) {
-            if (context.configureFirst(cmdLine)) {
-                //
-            } else if (cmdLine.next("-r") != null) {
+        while (commandLine.hasNext()) {
+            if (commandLine.next("-r") != null) {
                 options.r = true;
-            } else if (cmdLine.peek().isOption()) {
-                cmdLine.unexpectedArgument();
-            } else {
-                String path = cmdLine.required().nextNonOption(nutsCommandLineFormat.createName("file")).getString();
+            } else if (commandLine.peek().isOption()) {
+                commandLine.unexpectedArgument();
+            } else if(commandLine.peek().isNonOption()){
+                String path = commandLine.required().nextNonOption(nutsCommandLineFormat.createName("file")).getString();
                 File file = new File(context.getGlobalContext().getAbsolutePath(path));
                 if (outZip == null) {
                     outZip = file;
                 } else {
                     files.add(file.getPath());
                 }
+            }else{
+                context.configureLast(commandLine);
             }
         }
         if (files.isEmpty()) {
-            cmdLine.required("missing input-files");
+            commandLine.required("missing input-files");
         }
         if (outZip == null) {
-            cmdLine.required("missing out-zip");
+            commandLine.required("missing out-zip");
         }
         try {
             ZipUtils.zip(outZip.getPath(), new ZipOptions(), files.toArray(new String[0]));

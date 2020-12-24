@@ -527,7 +527,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         throw new NutsIllegalArgumentException(getWorkspace(), m.toString());
     }
 
-    public void process(NutsConfigurable defaultConfigurable, NutsCommandLineProcessor commandLineProcessor) {
+    public void process(NutsCommandLineConfigurable defaultConfigurable, NutsCommandLineProcessor commandLineProcessor) {
         NutsArgument a;
         commandLineProcessor.init(this);
         while (this.hasNext()) {
@@ -764,7 +764,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         return "####" + getWorkspace().formats().text().escapeText(text) + "####";
     }
 
-    private boolean _configureLast(NutsCommandLine commandLine, NutsConfigurable configurable) {
+    private boolean _configureLast(NutsCommandLine commandLine, NutsCommandLineConfigurable configurable) {
         if (configurable == null) {
             commandLine.unexpectedArgument();
             return false;

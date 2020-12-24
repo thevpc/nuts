@@ -211,9 +211,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             if (robustMode) {
                 String[] before = commandLine.toStringArray();
                 if (!this.configureFirst(commandLine, context2)) {
-                    if (!context.configureFirst(commandLine)) {
-                        commandLine.unexpectedArgument();
-                    }
+                    context.configureLast(commandLine);
                 } else {
                     conf = true;
                 }
@@ -225,9 +223,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
                 }
             } else {
                 if (!this.configureFirst(commandLine, context2)) {
-                    if (!context.configureFirst(commandLine)) {
-                        commandLine.unexpectedArgument();
-                    }
+                    context.configureLast(commandLine);
                 } else {
                     conf = true;
                 }

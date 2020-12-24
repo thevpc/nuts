@@ -70,9 +70,7 @@ public class NVersionMain extends NutsApplication {
         NutsArgument a;
         int processed = 0;
         while (commandLine.hasNext()) {
-            if (context.configureFirst(commandLine)) {
-                //
-            } else if ((a = commandLine.nextBoolean("--maven")) != null) {
+            if ((a = commandLine.nextBoolean("--maven")) != null) {
                 maven = a.getBooleanValue();
             } else if ((a = commandLine.nextBoolean("--win-pe")) != null) {
                 winPE = a.getBooleanValue();
@@ -94,9 +92,11 @@ public class NVersionMain extends NutsApplication {
                 table = a.getBooleanValue();
             } else if ((a = commandLine.nextBoolean("--error")) != null) {
                 error = a.getBooleanValue();
-            } else {
+            } else if(commandLine.peek().isOption()){
                 a = commandLine.next();
                 jarFiles.add(a.getString());
+            }else{
+                context.configureLast(commandLine);
             }
         }
         if (commandLine.isExecMode()) {

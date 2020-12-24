@@ -73,6 +73,13 @@ public class DefaultNshExecutionContext implements NshExecutionContext {
         return false;
     }
 
+    @Override
+    public void configureLast(NutsCommandLine cmd) {
+        if(!configureFirst(cmd)){
+            cmd.unexpectedArgument();
+        }
+    }
+
     private void showHelp() {
         out().println(builtin.getHelp());
     }

@@ -82,7 +82,7 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.cmd == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "Missing JShellCommandNode", 1);
+            throw new NutsExecutionException(context.getWorkspace(), "missing JShellCommandNode", 1);
         }
         if (options.index < 0) {
             options.index = options.items.size();

@@ -109,11 +109,11 @@ public class RemoteMysqlDatabaseConfigService {
             localPath = loc.backup(localPath).path;
         } else {
             if (StringUtils.isBlank(localPath)) {
-                throw new NutsExecutionException(context.getWorkspace(), "Missing local path", 2);
+                throw new NutsExecutionException(context.getWorkspace(), "missing local path", 2);
             }
         }
         if (!new File(localPath).isFile()) {
-            throw new NutsExecutionException(context.getWorkspace(), "Invalid local path " + localPath, 2);
+            throw new NutsExecutionException(context.getWorkspace(), "invalid local path " + localPath, 2);
         }
         RemoteMysqlDatabaseConfig cconfig = getConfig();
         String remoteTempPath = null;

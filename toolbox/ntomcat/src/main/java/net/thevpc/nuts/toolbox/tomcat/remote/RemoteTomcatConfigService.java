@@ -142,14 +142,14 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService loadConfig() {
         if (name == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "Missing instance name", 2);
+            throw new NutsExecutionException(context.getWorkspace(), "missing instance name", 2);
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
             config = context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(f, RemoteTomcatConfig.class);
             return this;
         }
-        throw new NamedItemNotFoundException("Instance not found : " + getName(),getName());
+        throw new NamedItemNotFoundException("instance not found : " + getName(),getName());
     }
 
     @Override
@@ -191,7 +191,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatAppConfigService getAppOrError(String appName) {
         RemoteTomcatAppConfig a = getConfig().getApps().get(appName);
         if (a == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "App not found :" + appName, 2);
+            throw new NutsExecutionException(context.getWorkspace(), "app not found :" + appName, 2);
         }
         return new RemoteTomcatAppConfigService(appName, a, this);
     }
