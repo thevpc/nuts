@@ -72,7 +72,7 @@ public final class NutsApplications {
     public static void runApplication(String[] args, NutsSession session, Class appClass,NutsApplicationLifeCycle lifeCycle) {
         long startTimeMillis = System.currentTimeMillis();
         if (lifeCycle == null) {
-            throw new NullPointerException("Null Application");
+            throw new NullPointerException("null application");
         }
         boolean inherited = false;
         NutsWorkspace ws=session==null?null:session.getWorkspace();
@@ -87,7 +87,7 @@ public final class NutsApplications {
             appClass=lifeCycle.getClass();
         }
         ws.log().of(NutsApplications.class).with().session(session).level(Level.FINE).verb("START").formatted()
-                .log("Running Application {0}: {1} {2}", inherited ? "(inherited)" : "",
+                .log("running application {0}: {1} {2}", inherited ? "(inherited)" : "",
                 lifeCycle, new NutsString(ws.commandLine().formatter(ws.commandLine().create(args)).format())
         );
         NutsApplicationContext applicationContext = null;
@@ -130,7 +130,7 @@ public final class NutsApplications {
                 return;
             }
         }
-        throw new NutsExecutionException(ws, "Unsupported execution mode " + applicationContext.getMode(), 204);
+        throw new NutsExecutionException(ws, "unsupported execution mode " + applicationContext.getMode(), 204);
     }
 
     /**

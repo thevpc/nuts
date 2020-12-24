@@ -458,21 +458,16 @@ public class NutsWorkspaceUtils {
 
     public void traceMessage(NutsFetchStrategy fetchMode, NutsId id, TraceResult tracePhase, String message, long startTime, NutsSession session) {
         if (LOG.isLoggable(Level.FINEST)) {
-            String timeMessage = "";
-            if (startTime != 0) {
-                long time = System.currentTimeMillis() - startTime;
-                if (time > 0) {
-                    timeMessage = " ```error (" + time + "ms)```";
-                }
-            }
+
+            long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
             String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
             LOG.with().session(session).level(Level.FINEST)
-                    .verb(tracePhase.toString()).formatted()
-                    .log("{0}{1} {2}{3}",
+                    .verb(tracePhase.toString()).formatted().time(time)
+                    .log("{0}{1} {2}",
                             fetchString,
                             id,
-                            CoreStringUtils.alignLeft(message, 18),
-                            timeMessage);
+                            CoreStringUtils.alignLeft(message, 18)
+                    );
         }
     }
 

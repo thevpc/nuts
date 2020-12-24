@@ -230,8 +230,8 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
         sb.appendStyled(id.getArtifactId(), NutsTextNodeStyle.PRIMARY1);
         if (!CoreStringUtils.isBlank(id.getVersion().getValue())) {
-            sb.appendPlain("#");
-            sb.appendPlain(id.getVersion().toString());
+            sb.appendStyled("#", NutsTextNodeStyle.SEPARATOR1);
+            sb.appendStyled(id.getVersion().toString(), NutsTextNodeStyle.CONFIG1);
         }
         boolean firstQ = true;
 

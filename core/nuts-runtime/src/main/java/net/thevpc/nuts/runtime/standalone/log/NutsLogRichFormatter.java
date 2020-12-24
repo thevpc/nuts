@@ -216,7 +216,7 @@ public class NutsLogRichFormatter extends Formatter {
             if(wRecord.getTime()>0){
                 sb.appendPlain(" (");
                 sb.appendStyled(CoreCommonUtils.formatPeriodMilli(wRecord.getTime()),NutsTextNodeStyle.ERROR1);
-                sb.appendPlain("```)");
+                sb.appendPlain(")");
             }
             sb.appendPlain(NutsLogFormatHelper.LINE_SEPARATOR);
             lastMillis = wRecord.getMillis();
