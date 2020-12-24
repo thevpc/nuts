@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.NutsLoggerOp;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextFormatStyle;
 
 import java.util.function.Supplier;
@@ -51,6 +52,11 @@ public class NoOpNutsLoggerOp implements NutsLoggerOp {
 
     @Override
     public NutsLoggerOp style(NutsTextFormatStyle style) {
+        return this;
+    }
+
+    @Override
+    public NutsLoggerOp session(NutsSession session) {
         return this;
     }
 }

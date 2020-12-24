@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.bridges.maven;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsId;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -233,7 +233,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             } catch (UncheckedIOException|NutsIOException ex) {
                 return null;
             }
-            MavenMetadata info = MavenUtils.of(session.getWorkspace()).parseMavenMetaData(metadataStream);
+            MavenMetadata info = MavenUtils.of(session.getWorkspace()).parseMavenMetaData(metadataStream,session);
             if (info != null) {
                 for (String version : info.getVersions()) {
                     final NutsId nutsId = id.builder().setVersion(version).build();
@@ -473,7 +473,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     }
                 }).run();
             } catch (UncheckedIOException|NutsIOException ex) {
-                LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log( id.toString() + " : " + CoreStringUtils.exceptionToString(ex));
+                LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log( id.toString() + " : " + CoreStringUtils.exceptionToString(ex));
                 throw new NutsNotFoundException(getWorkspace(), id, null, ex);
             }
             return new NutsDefaultContent(localPath, false, false);

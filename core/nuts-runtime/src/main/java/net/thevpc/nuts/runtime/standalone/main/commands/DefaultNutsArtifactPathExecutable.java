@@ -22,7 +22,7 @@ import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.main.wscommands.DefaultNutsExecCommand;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsInstallInfo;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.URLBuilder;
@@ -96,7 +96,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             }
             Path tempFolder = ws.io().tmp().createTempFolder("exec-path-");
             NutsId _id = c.descriptor.getId();
-            NutsIdType idType = NutsWorkspaceExt.of(ws).resolveNutsIdType(_id);
+            NutsIdType idType = NutsWorkspaceExt.of(ws).resolveNutsIdType(_id, traceSession);
             NutsDefinition nutToRun = new DefaultNutsDefinition(
                     null,
                     null,
@@ -110,9 +110,9 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(), true, traceSession,execSession, executionType, dry);
             } finally {
                 try {
-                    CoreIOUtils.delete(ws, tempFolder);
+                    CoreIOUtils.delete(traceSession, tempFolder);
                 } catch (UncheckedIOException|NutsIOException e) {
-                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "Unable to delete temp folder created for execution : " + tempFolder);
+                    LOG.with().session(traceSession).level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "Unable to delete temp folder created for execution : " + tempFolder);
                 }
             }
         }

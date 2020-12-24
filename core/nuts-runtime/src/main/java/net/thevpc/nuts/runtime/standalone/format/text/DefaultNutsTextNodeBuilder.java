@@ -87,6 +87,25 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
     }
 
     @Override
+    public NutsTextNodeBuilder append(NutsTextNode node) {
+        if(node!=null) {
+            all.add(node);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsTextNodeBuilder append(NutsStringBase str) {
+        if(str!=null){
+            NutsTextNode n = ws.formats().text().parser().parse(new StringReader(str.toString()));
+            if(n!=null){
+                append(n);
+            }
+        }
+        return this;
+    }
+
+    @Override
     public NutsTextNode build() {
         return text1.factory().list(all);
     }

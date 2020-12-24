@@ -20,17 +20,17 @@ public interface NutsWorkspaceExt {
         return (NutsWorkspaceExt) ws;
     }
 
-    String getWelcomeText();
+    String getWelcomeText(NutsSession session);
 
-    String getHelpText();
+    String getHelpText(NutsSession session);
 
-    String getLicenseText();
+    String getLicenseText(NutsSession session);
 
-    String resolveDefaultHelp(Class clazz);
+    String resolveDefaultHelp(Class clazz, NutsSession session);
 
     NutsId resolveEffectiveId(NutsDescriptor descriptor, NutsSession options);
 
-    NutsIdType resolveNutsIdType(NutsId id);
+    NutsIdType resolveNutsIdType(NutsId id, NutsSession session);
 
     NutsInstallerComponent getInstaller(NutsDefinition nutToInstall, NutsSession session);
 

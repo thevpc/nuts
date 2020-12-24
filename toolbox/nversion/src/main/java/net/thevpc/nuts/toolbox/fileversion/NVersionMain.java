@@ -92,7 +92,7 @@ public class NVersionMain extends NutsApplication {
                 table = a.getBooleanValue();
             } else if ((a = commandLine.nextBoolean("--error")) != null) {
                 error = a.getBooleanValue();
-            } else if(commandLine.peek().isOption()){
+            } else if(commandLine.peek().isNonOption()){
                 a = commandLine.next();
                 jarFiles.add(a.getString());
             }else{

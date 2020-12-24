@@ -103,7 +103,7 @@ public class FolderObjectIterator<T> implements Iterator<T> {
                             try {
                                 return (deep && Files.isDirectory(pathname)) || model.isObjectFile(pathname);
                             } catch (Exception ex) {
-                                session.getWorkspace().log().of(FolderObjectIterator.class).with().level(Level.FINE).error(ex).log("Unable to test desk file {0}" ,pathname);
+                                session.getWorkspace().log().of(FolderObjectIterator.class).with().session(session).level(Level.FINE).error(ex).log("Unable to test desk file {0}" ,pathname);
                                 return false;
                             }
                         }

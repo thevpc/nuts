@@ -42,8 +42,8 @@ public interface NutsWorkspaceCommandFactory {
 
     String getFactoryId();
 
-    NutsCommandAliasConfig findCommand(String name, NutsWorkspace workspace);
+    NutsCommandAliasConfig findCommand(String name, NutsSession session);
 
-    List<NutsCommandAliasConfig> findCommands(NutsWorkspace workspace);
+    List<NutsCommandAliasConfig> findCommands(NutsSession session);
 
 }

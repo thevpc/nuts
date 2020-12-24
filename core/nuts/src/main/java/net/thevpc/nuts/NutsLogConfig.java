@@ -28,6 +28,7 @@ package net.thevpc.nuts;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.logging.Filter;
 import java.util.logging.Level;
 
 /**
@@ -36,11 +37,13 @@ import java.util.logging.Level;
  * @since 0.5.4
  * @category Logging
  */
-public class NutsLogConfig implements Serializable{
+public class NutsLogConfig implements Serializable,Cloneable{
     private static final long serialVersionUID = 1;
 
     private Level logFileLevel = Level.OFF;
+    private Filter logFileFilter = null;
     private Level logTermLevel = Level.OFF;
+    private Filter logTermFilter = null;
     private int logFileSize = 0;
     private int logFileCount = 0;
     private String logFileName = null;
@@ -55,12 +58,32 @@ public class NutsLogConfig implements Serializable{
         if(other!=null){
             this.logFileLevel = other.logFileLevel;
             this.logTermLevel = other.logTermLevel;
+            this.logFileFilter = other.logFileFilter;
+            this.logTermFilter = other.logTermFilter;
             this.logFileSize = other.logFileSize;
             this.logFileCount = other.logFileCount;
             this.logFileName = other.logFileName;
             this.logFileBase = other.logFileBase;
             this.logInherited = other.logInherited;
         }
+    }
+
+    public Filter getLogFileFilter() {
+        return logFileFilter;
+    }
+
+    public NutsLogConfig setLogFileFilter(Filter logFileFilter) {
+        this.logFileFilter = logFileFilter;
+        return this;
+    }
+
+    public Filter getLogTermFilter() {
+        return logTermFilter;
+    }
+
+    public NutsLogConfig setLogTermFilter(Filter logTermFilter) {
+        this.logTermFilter = logTermFilter;
+        return this;
     }
 
     public Level getLogFileLevel() {
@@ -126,6 +149,14 @@ public class NutsLogConfig implements Serializable{
     public NutsLogConfig setLogInherited(boolean logInherited) {
         this.logInherited = logInherited;
         return this;
+    }
+
+    public NutsLogConfig copy(){
+        try {
+            return (NutsLogConfig) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalArgumentException("Unsupported clone");
+        }
     }
 
     @Override

@@ -215,33 +215,78 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         if(sourceKind0.equalsIgnoreCase("inputSource")){
             return monitorInputStream(((NutsInput) source), sourceOrigin, sourceName, session);
         }
-
-        return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0) {
-            @Override
-            public InputStream open() {
-                switch (sourceKind0) {
-                    case "stream": {
-                        return monitorInputStream((InputStream) source,sourceOrigin, length, sourceName, session);
-                    }
-                    case "string": {
+        switch (sourceKind0) {
+            case "string": {
+                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0) {
+                    @Override
+                    public InputStream open() {
                         return monitorInputStream((String) source, sourceOrigin, sourceName, session);
                     }
-                    case "path": {
+
+                    @Override
+                    public String toString() {
+                        return (String) source;
+                    }
+                    @Override
+                    public long length() {
+                        return base.length();
+                    }
+                };
+            }
+            case "path": {
+                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0) {
+                    @Override
+                    public InputStream open() {
                         return monitorInputStream(((Path) source).toString(), sourceOrigin, sourceName, session);
                     }
-                    case "file": {
+
+                    @Override
+                    public String toString() {
+                        return ((Path) source).toString();
+                    }
+                    @Override
+                    public long length() {
+                        return base.length();
+                    }
+                };
+            }
+            case "file": {
+                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0) {
+                    @Override
+                    public InputStream open() {
                         return monitorInputStream(((File) source).getPath(), sourceOrigin, sourceName, session);
                     }
-                    default:
-                        throw new NutsUnsupportedArgumentException(ws, sourceKind);
-                }
-            }
 
-            @Override
-            public long length() {
-                return base.length();
+                    @Override
+                    public String toString() {
+                        return ((File) source).getPath();
+                    }
+                    @Override
+                    public long length() {
+                        return base.length();
+                    }
+                };
             }
-        };
+            case "stream": {
+                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0) {
+                    @Override
+                    public InputStream open() {
+                        return monitorInputStream((InputStream) source,sourceOrigin, length, sourceName, session);
+                    }
+
+                    @Override
+                    public String toString() {
+                        return ((InputStream) source).toString();
+                    }
+                    @Override
+                    public long length() {
+                        return base.length();
+                    }
+                };
+            }
+            default:
+                throw new NutsUnsupportedArgumentException(ws, sourceKind);
+        }
     }
 
     public InputStream monitorInputStream(String path, Object source, String sourceName, NutsSession session) {
@@ -278,9 +323,9 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             size=getLength();
         }
 //        if (path.toLowerCase().startsWith("file://")) {
-//            LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log( "Downloading file {0}", new Object[]{path});
+//            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "Downloading file {0}", new Object[]{path});
 //        } else {
-//            LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log( "Download url {0}", new Object[]{path});
+//            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "Download url {0}", new Object[]{path});
 //        }
 
         InputStream openedStream = stream.open();
@@ -326,9 +371,9 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             size=getLength();
         }
 //        if (path.toLowerCase().startsWith("file://")) {
-//            LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log( "Downloading file {0}", new Object[]{path});
+//            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "Downloading file {0}", new Object[]{path});
 //        } else {
-//            LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log( "Download url {0}", new Object[]{path});
+//            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "Download url {0}", new Object[]{path});
 //        }
 
         if (monitor == null) {

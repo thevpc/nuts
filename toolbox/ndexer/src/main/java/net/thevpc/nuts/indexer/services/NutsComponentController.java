@@ -51,7 +51,7 @@ public class NutsComponentController {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 List<Map<String, String>> rows = this.dataService.
-                        getAllData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()));
+                        getAllData(NutsIndexerUtils.getCacheDir(ws.createSession(), subscriber.cacheFolderName()));
                 List<Map<String, Object>> resData = cleanNutsIdMap(ws, rows);
                 return ResponseEntity.ok(resData);
             }
@@ -79,6 +79,7 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
+                NutsSession session = ws.createSession();
                 NutsId id = ws.id().builder()
                         .setArtifactId(name)
                         .setNamespace(namespace)
@@ -92,9 +93,9 @@ public class NutsComponentController {
                         .build();
                 List<Map<String, String>> result;
                 if (all) {
-                    result = this.dataService.getAllDependencies(ws, NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), id);
+                    result = this.dataService.getAllDependencies(ws, NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), id);
                 } else {
-                    result = this.dataService.getDependencies(ws, NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), id);
+                    result = this.dataService.getDependencies(ws, NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), id);
                 }
                 return ResponseEntity.ok(result);
             }
@@ -131,7 +132,7 @@ public class NutsComponentController {
                         .setFace(face)
 //                        .setAlternative(alternative)
                         .build();
-                List<Map<String, String>> rows = this.dataService.getAllVersions(ws, NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), id);
+                List<Map<String, String>> rows = this.dataService.getAllVersions(ws, NutsIndexerUtils.getCacheDir(ws.createSession(), subscriber.cacheFolderName()), id);
                 List<Map<String, Object>> resData = cleanNutsIdMap(ws, rows);
                 return ResponseEntity.ok(resData);
             }
@@ -171,7 +172,7 @@ public class NutsComponentController {
                                 .setFace(face)
 //                                .setAlternative(alternative)
                                 .build());
-                this.dataService.deleteData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), data);
+                this.dataService.deleteData(NutsIndexerUtils.getCacheDir(ws.createSession(), subscriber.cacheFolderName()), data);
                 return ResponseEntity.ok(true);
             }
         }
@@ -210,7 +211,8 @@ public class NutsComponentController {
 //                        .setAlternative(alternative)
                         .build();
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(id);
-                List<Map<String, String>> list = this.dataService.searchData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), data, null);
+                NutsSession session = ws.createSession();
+                List<Map<String, String>> list = this.dataService.searchData(NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), data, null);
                 if (list.isEmpty()) {
                     Iterator<NutsDefinition> it = ws.search()
                             .setRepositoryFilter(
@@ -226,7 +228,7 @@ public class NutsComponentController {
                         NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();
                         data.put("dependencies", ws.formats().element().setContentType(NutsContentType.JSON).setValue(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList())).format());
 
-                        this.dataService.indexData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), data);
+                        this.dataService.indexData(NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), data);
                     } else {
                         ResponseEntity.ok(false);
                     }

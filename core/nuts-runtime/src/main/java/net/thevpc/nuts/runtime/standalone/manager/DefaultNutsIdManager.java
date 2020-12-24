@@ -35,8 +35,8 @@ public class DefaultNutsIdManager implements NutsIdManager {
     }
 
     @Override
-    public NutsId resolveId(Class clazz) {
-        PomId u = PomIdResolver.of(getWorkspace()).resolvePomId(clazz, null);
+    public NutsId resolveId(Class clazz, NutsSession session) {
+        PomId u = PomIdResolver.of(getWorkspace()).resolvePomId(clazz, null, session);
         if (u == null) {
             return null;
         }
@@ -44,8 +44,8 @@ public class DefaultNutsIdManager implements NutsIdManager {
     }
 
     @Override
-    public NutsId[] resolveIds(Class clazz) {
-        PomId[] u = PomIdResolver.of(getWorkspace()).resolvePomIds(clazz);
+    public NutsId[] resolveIds(Class clazz, NutsSession session) {
+        PomId[] u = PomIdResolver.of(getWorkspace()).resolvePomIds(clazz,session);
         NutsId[] all = new NutsId[u.length];
         NutsIdParser parser = parser();
         for (int i = 0; i < all.length; i++) {

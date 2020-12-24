@@ -308,7 +308,7 @@ public class NutsRepositoryFolderHelper {
                             bestId = id2;
                         }
                     } else {
-                        CoreIOUtils.delete(versionFolder.toPath());
+                        CoreIOUtils.delete(session,versionFolder.toPath());
                     }
                 }
             }
@@ -443,7 +443,7 @@ public class NutsRepositoryFolderHelper {
         Path localFolder = getLongNameIdLocalFile(options.getId());
         if (localFolder != null && Files.exists(localFolder)) {
             if (ws.concurrent().lock().source(localFolder).call(() -> {
-                CoreIOUtils.delete(ws, localFolder);
+                CoreIOUtils.delete(options.getSession(), localFolder);
                 return false;
             })) {
                 if (repo != null) {

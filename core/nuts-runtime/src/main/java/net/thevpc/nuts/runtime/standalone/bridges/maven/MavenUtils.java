@@ -34,7 +34,7 @@ import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsDependencyBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
@@ -95,10 +95,10 @@ public class MavenUtils {
         return a;
     }
 
-    public NutsDependency[] toNutsDependencies(PomDependency[] deps) {
+    public NutsDependency[] toNutsDependencies(PomDependency[] deps, NutsSession session) {
         NutsDependency[] a = new NutsDependency[deps.length];
         for (int i = 0; i < deps.length; i++) {
-            a[i] = toNutsDependency(deps[i]);
+            a[i] = toNutsDependency(deps[i], session);
         }
         return a;
     }
@@ -113,7 +113,7 @@ public class MavenUtils {
         );
     }
 
-    public NutsDependency toNutsDependency(PomDependency d) {
+    public NutsDependency toNutsDependency(PomDependency d, NutsSession session) {
         String s = d.getScope();
         if(s==null){
             s="";
@@ -150,7 +150,7 @@ public class MavenUtils {
             default:{
                 nds= NutsDependencyScopes.parseScope(s,true);
                 if(nds==null){
-                    LOG.with().level(Level.FINER).verb(NutsLogVerb.FAIL).log( "unable to parse maven scope {0} for {1}",s,d);
+                    LOG.with().session(session).level(Level.FINER).verb(NutsLogVerb.FAIL).log( "unable to parse maven scope {0} for {1}",s,d);
                     nds=NutsDependencyScope.API;
                 }
             }
@@ -190,7 +190,7 @@ public class MavenUtils {
                 return null;
             }
             byte[] bytes = CoreIOUtils.loadByteArray(stream);
-            Pom pom = new PomXmlParser(session.getWorkspace()).parse(new NamedByteArrayInputStream(bytes,urlDesc));
+            Pom pom = new PomXmlParser(session.getWorkspace()).parse(new NamedByteArrayInputStream(bytes,urlDesc), session);
             boolean executable = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             boolean application = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             if ("true".equals(pom.getProperties().get("nuts.executable"))) {
@@ -226,7 +226,7 @@ public class MavenUtils {
 
             long time = System.currentTimeMillis() - startTime;
             String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.id(), 7) + "] ";
-            LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).time(time).formatted()
+            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).time(time).formatted()
                     .log("{0}{1} parse pom    {2}", fetchString
                             , CoreStringUtils.alignLeft(repository==null?"<no-repo>":repository.getName(), 20)
                             ,urlDesc
@@ -241,13 +241,13 @@ public class MavenUtils {
                     .setName(pom.getArtifactId())
                     .setDescription(pom.getDescription())
                     .setPlatform(new String[]{"java"})
-                    .setDependencies(toNutsDependencies(pom.getDependencies()))
-                    .setStandardDependencies(toNutsDependencies(pom.getDependenciesManagement()))
+                    .setDependencies(toNutsDependencies(pom.getDependencies(), session))
+                    .setStandardDependencies(toNutsDependencies(pom.getDependenciesManagement(), session))
                     .setProperties(pom.getProperties())
                     .build();
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
-            LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).time(time).formatted()
+            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).time(time).formatted()
                     .log("caching pom file {0}", urlDesc);
             throw new NutsParseException(null, "error Parsing " + urlDesc, e);
         }
@@ -267,7 +267,7 @@ public class MavenUtils {
                 if (nutsDescriptor.getId().getArtifactId() == null) {
                     //why name is null ? should checkout!
                     if (LOG.isLoggable(Level.FINE)) {
-                        LOG.with().level(Level.FINE).verb(NutsLogVerb.FAIL).log( "Unable to fetch Valid Nuts from " + path + " : resolved id was " + nutsDescriptor.getId());
+                        LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log( "Unable to fetch Valid Nuts from " + path + " : resolved id was " + nutsDescriptor.getId());
                     }
                     return null;
                 }
@@ -400,8 +400,8 @@ public class MavenUtils {
         return IteratorBuilder.of(it).convert(pomId -> toNutsId(pomId),"PomId->NutsId").build();
     }
 
-    public MavenMetadata parseMavenMetaData(InputStream metadataStream) {
-        MavenMetadata s = MavenMetadataParser.of(ws).parseMavenMetaData(metadataStream);
+    public MavenMetadata parseMavenMetaData(InputStream metadataStream,NutsSession session) {
+        MavenMetadata s = new MavenMetadataParser(session).parseMavenMetaData(metadataStream);
         if (s == null) {
             return s;
         }
@@ -415,23 +415,23 @@ public class MavenUtils {
     }
 
 
-    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid,Collection<String> bootRepositories) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid, Collection<String> bootRepositories, NutsSession session) {
         String urlPath = CoreNutsUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
-        return loadDependenciesAndRepositoriesFromPomPath(urlPath,bootRepositories);
+        return loadDependenciesAndRepositoriesFromPomPath(urlPath,bootRepositories, session);
     }
 
-    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath,Collection<String> bootRepositories) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath, Collection<String> bootRepositories, NutsSession session) {
         DepsAndRepos depsAndRepos = null;
 //        if (!NO_M2) {
             File mavenNutsCorePom = new File(System.getProperty("user.home"), (".m2/repository/" + urlPath).replace("/", File.separator));
             if (mavenNutsCorePom.isFile()) {
-                depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(mavenNutsCorePom.getPath());
+                depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(mavenNutsCorePom.getPath(), session);
             }
 //        }
         if (depsAndRepos == null || depsAndRepos.deps.isEmpty()) {
             for (String baseUrl : bootRepositories) {
                 String location = CoreNutsUtils.repositoryStringToDefinition(baseUrl).getLocation();
-                depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(location + "/" + urlPath);
+                depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(location + "/" + urlPath, session);
                 if (!depsAndRepos.deps.isEmpty()) {
                     break;
                 }
@@ -440,7 +440,7 @@ public class MavenUtils {
         return depsAndRepos;
     }
 
-    public DepsAndRepos loadDependenciesAndRepositoriesFromPomUrl(String url) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomUrl(String url, NutsSession session) {
         SearchTraceHelper.progressIndeterminate("load "+CoreIOUtils.compressUrl(url),ws.createSession());
         DepsAndRepos depsAndRepos = new DepsAndRepos();
 //        String repositories = null;
@@ -538,7 +538,7 @@ public class MavenUtils {
             }
 
         } catch (Exception ex) {
-            LOG.with().level(Level.SEVERE).error(ex).log("failed to loadDependenciesAndRepositoriesFromPomUrl {0} : {1}", url,CoreStringUtils.exceptionToString(ex));
+            LOG.with().session(session).level(Level.SEVERE).error(ex).log("failed to loadDependenciesAndRepositoriesFromPomUrl {0} : {1}", url,CoreStringUtils.exceptionToString(ex));
             //ignore
         } finally {
             if (xml != null) {
@@ -556,11 +556,12 @@ public class MavenUtils {
     /**
      * find latest maven component
      *
-     * @param filter filter
      * @param zId id
+     * @param filter filter
+     * @param session
      * @return latest runtime version
      */
-    public NutsId resolveLatestMavenId(NutsId zId, Predicate<String> filter) {
+    public NutsId resolveLatestMavenId(NutsId zId, Predicate<String> filter, NutsSession session) {
         String path = zId.getGroupId().replace('.', '/') + '/' + zId.getArtifactId();
         String bestVersion = null;
 //        if (!NO_M2) {
@@ -630,7 +631,7 @@ public class MavenUtils {
                     //NutsConstants.Ids.NUTS_RUNTIME.replaceAll("[.:]", "/")
                 }
             } catch (Exception ex) {
-                LOG.with().level(Level.SEVERE).error(ex).log("failed to load and parse {0} : {1}", mavenMetadataXml,CoreStringUtils.exceptionToString(ex));
+                LOG.with().session(session).level(Level.SEVERE).error(ex).log("failed to load and parse {0} : {1}", mavenMetadataXml,CoreStringUtils.exceptionToString(ex));
                 // ignore any error
             }
             if (found) {

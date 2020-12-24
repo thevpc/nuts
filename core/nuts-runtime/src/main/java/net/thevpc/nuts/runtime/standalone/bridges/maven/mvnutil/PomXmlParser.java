@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -52,14 +53,14 @@ public class PomXmlParser {
         this.ws = ws;
     }
 
-    public Pom parse(URL url) throws IOException, SAXException, ParserConfigurationException {
-        return parse(url, null);
+    public Pom parse(URL url, NutsSession session) throws IOException, SAXException, ParserConfigurationException {
+        return parse(url, null, session);
     }
 
-    public Pom parse(URL url, PomDomVisitor visitor) throws IOException, SAXException, ParserConfigurationException {
+    public Pom parse(URL url, PomDomVisitor visitor, NutsSession session) throws IOException, SAXException, ParserConfigurationException {
         InputStream is = null;
         try {
-            return parse((is = url.openStream()), visitor);
+            return parse((is = url.openStream()), visitor, session);
         } finally {
             if (is != null) {
                 is.close();
@@ -67,14 +68,14 @@ public class PomXmlParser {
         }
     }
 
-    public Pom parse(URI uri) throws IOException, SAXException, ParserConfigurationException {
-        return parse(uri, null);
+    public Pom parse(URI uri, NutsSession session) throws IOException, SAXException, ParserConfigurationException {
+        return parse(uri, null, session);
     }
 
-    public Pom parse(URI uri, PomDomVisitor visitor) throws IOException, SAXException, ParserConfigurationException {
+    public Pom parse(URI uri, PomDomVisitor visitor, NutsSession session) throws IOException, SAXException, ParserConfigurationException {
         InputStream is = null;
         try {
-            return parse(is = uri.toURL().openStream());
+            return parse(is = uri.toURL().openStream(), session);
         } finally {
             if (is != null) {
                 is.close();
@@ -84,14 +85,14 @@ public class PomXmlParser {
 //        return parse(doc, visitor);
     }
 
-    public Pom parse(File file) throws IOException, SAXException, ParserConfigurationException {
-        return parse(file, null);
+    public Pom parse(File file, NutsSession session) throws IOException, SAXException, ParserConfigurationException {
+        return parse(file, null, session);
     }
 
-    public Pom parse(File file, PomDomVisitor visitor) throws IOException, SAXException, ParserConfigurationException {
+    public Pom parse(File file, PomDomVisitor visitor, NutsSession session) throws IOException, SAXException, ParserConfigurationException {
         InputStream is = null;
         try {
-            return parse(new FileInputStream(file));
+            return parse(new FileInputStream(file), session);
         } finally {
             if (is != null) {
                 is.close();
@@ -101,12 +102,12 @@ public class PomXmlParser {
 //        return parse(doc, visitor);
     }
 
-    public Pom parse(InputStream stream) throws IOException, SAXException, ParserConfigurationException {
-        return parse(stream, null);
+    public Pom parse(InputStream stream, NutsSession session) throws IOException, SAXException, ParserConfigurationException {
+        return parse(stream, null, session);
     }
 
-    public Pom parse(InputStream stream, PomDomVisitor visitor) throws IOException, SAXException, ParserConfigurationException {
-        Document doc = NutsXmlUtils.createDocumentBuilder(true,ws).parse(preValidateStream(stream));
+    public Pom parse(InputStream stream, PomDomVisitor visitor, NutsSession session) throws IOException, SAXException, ParserConfigurationException {
+        Document doc = NutsXmlUtils.createDocumentBuilder(true,session).parse(preValidateStream(stream, session));
         return parse(doc, visitor);
     }
 
@@ -124,7 +125,7 @@ public class PomXmlParser {
         return o.toByteArray();
     }
 
-    private InputStream preValidateStream(InputStream in) throws IOException {
+    private InputStream preValidateStream(InputStream in, NutsSession session) throws IOException {
         byte[] bytes0 = loadAllBytes(in);
         int skip = 0;
         while (skip < bytes0.length && Character.isWhitespace(bytes0[skip])) {
@@ -139,7 +140,7 @@ public class PomXmlParser {
             if (v != null) {
                 m.appendReplacement(sb, v);
             } else {
-                ws.log().of(NutsXmlUtils.class).with()
+                ws.log().of(NutsXmlUtils.class).with().session(session)
                         .level(Level.FINEST).verb(NutsLogVerb.WARNING).log("[PomXmlParser] Unsupported  xml entity declaration : {0}",key);
                 m.appendReplacement(sb, key);
             }

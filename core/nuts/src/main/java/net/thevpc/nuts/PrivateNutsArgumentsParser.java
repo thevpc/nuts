@@ -514,6 +514,10 @@ final class PrivateNutsArgumentsParser {
                             options.setTrace(false);
                             options.setDebug(false);
                             options.setGui(false);
+                            NutsLogConfig lc = options.getLogConfig();
+                            if(lc!=null){
+                                lc.setLogTermLevel(Level.OFF);
+                            }
                         }
                         break;
                     }

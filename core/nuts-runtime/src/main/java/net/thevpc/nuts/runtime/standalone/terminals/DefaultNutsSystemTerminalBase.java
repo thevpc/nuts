@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.terminals;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.main.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.format.text.FPrint;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import net.thevpc.nuts.spi.NutsTerminalBase;
@@ -25,24 +25,45 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
     private InputStream in;
     private NutsWorkspace workspace;
     private NutsSession session;
+    private boolean bootSession;
+
+    public DefaultNutsSystemTerminalBase() {
+
+    }
+    public DefaultNutsSystemTerminalBase(boolean bootSession) {
+        this.bootSession=bootSession;
+    }
+
 
     @Override
     public void setSession(NutsSession session) {
+        setSession(session,bootSession,session.getWorkspace().config().options());
+    }
+
+    public void setSession(NutsSession session,boolean bootSession,NutsWorkspaceOptions options) {
         this.session=session;
         this.workspace=session==null?null:session.getWorkspace();
         if(workspace!=null) {
             LOG = ((DefaultNutsWorkspace) workspace).LOG;
 //        LOG=workspace.log().of(DefaultNutsSystemTerminalBase.class);
-            NutsTerminalMode terminalMode = workspace.config().options().getTerminalMode();
+            NutsTerminalMode terminalMode = options.getTerminalMode();
             if (terminalMode == null) {
                 terminalMode = NutsTerminalMode.FORMATTED;
             }
-            setOutMode(terminalMode);
-            setErrMode(terminalMode);
-            NutsIOManager ioManager = workspace.io();
-            this.out = ioManager.createPrintStream(CoreIOUtils.out(workspace), NutsTerminalMode.FORMATTED, session);
-            this.err = ioManager.createPrintStream(CoreIOUtils.err(workspace), NutsTerminalMode.FORMATTED, session);//.setColor(NutsPrintStream.RED);
-            this.in = CoreIOUtils.in(workspace);
+            if(bootSession) {
+                this.outMode = terminalMode;
+                this.errMode = terminalMode;
+                this.out=CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(System.out, terminalMode, workspace), session);
+                this.err=CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(System.err, terminalMode, workspace), session);
+                this.in = System.in;
+            }else{
+                setOutMode(terminalMode);
+                setErrMode(terminalMode);
+                NutsIOManager ioManager = workspace.io();
+                this.out = ioManager.createPrintStream(CoreIOUtils.out(workspace), NutsTerminalMode.FORMATTED, session);
+                this.err = ioManager.createPrintStream(CoreIOUtils.err(workspace), NutsTerminalMode.FORMATTED, session);//.setColor(NutsPrintStream.RED);
+                this.in = CoreIOUtils.in(workspace);
+            }
             this.scanner = new Scanner(this.in);
         }else{
             //on uninstall do nothing
@@ -60,7 +81,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
             mode = NutsTerminalMode.FORMATTED;
         }
         if(LOG!=null) {
-            LOG.with().level(Level.CONFIG).verb( NutsLogVerb.UPDATE).formatted().log("change terminal Out mode : ##{0}##", mode.id());
+            LOG.with().session(session).level(Level.CONFIG).verb( NutsLogVerb.UPDATE).formatted().log("change terminal Out mode : ##{0}##", mode.id());
         }
         FPrint.installStdOut(this.outMode = mode,this.workspace);
         return this;
@@ -72,7 +93,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
             mode = NutsTerminalMode.FORMATTED;
         }
         if(LOG!=null) {
-            LOG.with().level(Level.CONFIG).verb( NutsLogVerb.UPDATE).formatted().log("change terminal Err mode : ##{0}##", mode.id());
+            LOG.with().session(session).level(Level.CONFIG).verb( NutsLogVerb.UPDATE).formatted().log("change terminal Err mode : ##{0}##", mode.id());
         }
         FPrint.installStdErr(this.errMode = mode,this.workspace);
         return this;

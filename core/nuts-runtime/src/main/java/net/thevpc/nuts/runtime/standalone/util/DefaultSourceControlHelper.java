@@ -50,7 +50,7 @@ public class DefaultSourceControlHelper {
             try {
                 newVersionFound = ws.fetch().setId(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
             } catch (NutsNotFoundException ex) {
-                LOG.with().level(Level.FINE).error(ex).log("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build());
+                LOG.with().session(session).level(Level.FINE).error(ex).log("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build());
                 //ignore
             }
             if (newVersionFound == null) {
@@ -60,7 +60,7 @@ public class DefaultSourceControlHelper {
             }
             NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
             ws.descriptor().formatter(d).print(file);
-            CoreIOUtils.delete(ws, folder);
+            CoreIOUtils.delete(session, folder);
             return newId;
         } else {
             throw new NutsUnsupportedOperationException(ws, "commit not supported");
@@ -80,7 +80,7 @@ public class DefaultSourceControlHelper {
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
             try {
-                ZipUtils.unzip(ws, nutToInstall.getPath().toString(), ws.io().expandPath(folder.toString()), new UnzipOptions().setSkipRoot(false));
+                ZipUtils.unzip(session, nutToInstall.getPath().toString(), ws.io().expandPath(folder.toString()), new UnzipOptions().setSkipRoot(false));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -93,7 +93,7 @@ public class DefaultSourceControlHelper {
 
             ws.descriptor().formatter(d).print(file);
 
-            NutsIdType idType = NutsWorkspaceExt.of(ws).resolveNutsIdType(newId);
+            NutsIdType idType = NutsWorkspaceExt.of(ws).resolveNutsIdType(newId, session);
             return new DefaultNutsDefinition(
                     nutToInstall.getRepositoryUuid(),
                     nutToInstall.getRepositoryName(),

@@ -19,17 +19,18 @@ public class DefaultNutsLogger implements NutsLogger {
     private int suspendedMax = 100;
     private boolean suspendTerminalMode = false;
 
-    public DefaultNutsLogger(NutsWorkspace workspace, Class log) {
-        this(workspace, log.getName());
+    public DefaultNutsLogger(NutsWorkspace workspace, NutsSession session,Class log) {
+        this(workspace,session, log.getName());
     }
 
-    public DefaultNutsLogger(NutsWorkspace workspace, String log) {
-        this(workspace, Logger.getLogger(log));
+    public DefaultNutsLogger(NutsWorkspace workspace, NutsSession session,String log) {
+        this(workspace, session, Logger.getLogger(log));
     }
 
-    public DefaultNutsLogger(NutsWorkspace workspace, Logger log) {
+    public DefaultNutsLogger(NutsWorkspace workspace, NutsSession session,Logger log) {
         this.workspace = workspace;
         this.log = log;
+        this.session = session;
     }
 
     public NutsWorkspace getWorkspace() {
@@ -73,6 +74,10 @@ public class DefaultNutsLogger implements NutsLogger {
     }
 
     public void log(Level level, String msg, Throwable thrown) {
+        log(session, level, msg, thrown);
+    }
+
+    public void log(NutsSession session, Level level, String msg, Throwable thrown) {
         if (!isLoggable(level)) {
             return;
         }
@@ -82,6 +87,10 @@ public class DefaultNutsLogger implements NutsLogger {
     }
 
     public void log(Level level, String verb, String msg) {
+        log(session,level, verb, msg);
+    }
+
+    public void log(NutsSession session,Level level, String verb, String msg) {
         if (!isLoggable(level)) {
             return;
         }
@@ -90,6 +99,9 @@ public class DefaultNutsLogger implements NutsLogger {
     }
 
     public void log(Level level, String verb, Supplier<String> msgSupplier) {
+        log(session, level, verb, msgSupplier);
+    }
+    public void log(NutsSession session,Level level, String verb, Supplier<String> msgSupplier) {
         if (!isLoggable(level)) {
             return;
         }
@@ -98,6 +110,10 @@ public class DefaultNutsLogger implements NutsLogger {
     }
 
     public void log(Level level, String verb, String msg, Object[] params) {
+        log(session,level, verb, msg, params);
+    }
+
+    public void log(NutsSession session,Level level, String verb, String msg, Object[] params) {
         if (!isLoggable(level)) {
             return;
         }
@@ -107,18 +123,18 @@ public class DefaultNutsLogger implements NutsLogger {
     }
 
     // private support method for logging.
-    private void doLog(LogRecord lr) {
-        lr.setLoggerName(log.getName());
+    private void doLog(LogRecord record) {
+        record.setLoggerName(log.getName());
         //ignore resource bundling...
-        if (!isLoggable(lr)) {
+        if (!isLoggable(record)) {
             return;
         }
-        log0(lr);
+        log0(record);
     }
 
     @Override
     public NutsLoggerOp with() {
-        return new DefaultNutsLoggerOp(this);
+        return new DefaultNutsLoggerOp(this).session(getSession());
     }
 
     private boolean isLoggable(LogRecord record) {

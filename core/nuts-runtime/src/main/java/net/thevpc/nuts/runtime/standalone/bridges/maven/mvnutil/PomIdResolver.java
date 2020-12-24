@@ -10,6 +10,7 @@ import java.util.zip.ZipInputStream;
 
 import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.NutsLogger;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 
@@ -32,7 +33,7 @@ public class PomIdResolver {
         LOG=ws.log().of(PomIdResolver.class);
     }
 
-    public PomId[] resolvePomId(URL baseUrl, String referenceResourcePath) {
+    public PomId[] resolvePomId(URL baseUrl, String referenceResourcePath, NutsSession session) {
         List<PomId> all = new ArrayList<PomId>();
         final URLParts aa = new URLParts(baseUrl);
         String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - referenceResourcePath.length());
@@ -70,9 +71,9 @@ public class PomIdResolver {
                 String s2 = basePath.substring(0, basePath.length() - "/target/classes/".length()) + "/pom.xml";
                 //this is most likely to be a maven project
                 try {
-                    all.add(new PomXmlParser(ws).parse(new URL(s2)).getPomId());
+                    all.add(new PomXmlParser(ws).parse(new URL(s2), session).getPomId());
                 } catch (Exception ex) {
-                    LOG.with().level(Level.SEVERE).error(ex).log("failed to parse pom file {0} : {1}", s2, CoreStringUtils.exceptionToString(ex));
+                    LOG.with().session(session).level(Level.SEVERE).error(ex).log("failed to parse pom file {0} : {1}", s2, CoreStringUtils.exceptionToString(ex));
                 }
             }
         }
@@ -86,26 +87,26 @@ public class PomIdResolver {
      * @param clazz class
      * @return artifacts array in the form groupId:artfcatId#version
      */
-    public PomId[] resolvePomIds(Class clazz) {
+    public PomId[] resolvePomIds(Class clazz,NutsSession session) {
         List<PomId> all = new ArrayList<PomId>();
         try {
             final String n = clazz.getName().replace('.', '/').concat(".class");
             final Enumeration<URL> r = clazz.getClassLoader().getResources(n);
             for (URL url : Collections.list(r)) {
-                all.addAll(Arrays.asList(resolvePomId(url, n)));
+                all.addAll(Arrays.asList(resolvePomId(url, n,session)));
             }
         } catch (IOException ex) {
-            LOG.with().level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
+            LOG.with().session(session).level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
         }
         return all.toArray(new PomId[0]);
     }
 
-    public PomId resolvePomId(Class clazz) {
-        return resolvePomId(clazz, new PomId("dev", "dev", "dev"));
+    public PomId resolvePomId(Class clazz, NutsSession session) {
+        return resolvePomId(clazz, new PomId("dev", "dev", "dev"), session);
     }
 
-    public PomId resolvePomId(Class clazz, PomId defaultValue) {
-        PomId[] pomIds = resolvePomIds(clazz);
+    public PomId resolvePomId(Class clazz, PomId defaultValue, NutsSession session) {
+        PomId[] pomIds = resolvePomIds(clazz,session);
 //        if(pomIds.length>1){
 //            System.out.println("==== Multiple ids found : "+Arrays.asList(pomIds));
 //        }else{

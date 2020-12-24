@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 
 import java.io.*;
@@ -211,7 +211,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         if (isLogProgress() || getProgressMonitorFactory() != null) {
             //how to monitor???
         }
-        LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log( "compress {0} to {1}", sources, target);
+        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "compress {0} to {1}", sources, target);
         try {
             OutputStream fW = null;
             ZipOutputStream zip = null;
@@ -265,7 +265,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                 throw new NutsIllegalArgumentException(iom.getWorkspace(), "unsupported target " + target);
             }
         } catch (IOException ex) {
-            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log( "error compressing {0} to {1} : {2}", sources, target.getSource(), CoreStringUtils.exceptionToString(ex));
+            LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log( "error compressing {0} to {1} : {2}", sources, target.getSource(), CoreStringUtils.exceptionToString(ex));
             throw new UncheckedIOException(ex);
         }
     }

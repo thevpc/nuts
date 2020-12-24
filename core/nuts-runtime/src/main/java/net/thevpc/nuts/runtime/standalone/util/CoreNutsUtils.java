@@ -888,7 +888,7 @@ public class CoreNutsUtils {
         }
         long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
         String modeString = CoreStringUtils.alignLeft(fetchMode.id(), 7);
-        log.with().level(lvl).verb(tracePhase.name()).time(time).formatted()
+        log.with().session(session).level(lvl).verb(tracePhase.name()).time(time).formatted()
                 .log("[{0}] {1} {2} {3} {4}",
                         modeString,
                         CoreStringUtils.alignLeft(name, 20),

@@ -9,7 +9,7 @@ import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.main.repos.NutsRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.standalone.main.repos.NutsSimpleRepositoryWrapper;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspaceEvent;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
@@ -311,7 +311,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
             NutsRepositoryConfig conf = options.getConfig();
             if (conf == null) {
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, getWorkspace()));
-                conf = loadRepository(Paths.get(options.getLocation(), NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName(), getWorkspace());
+                conf = loadRepository(Paths.get(options.getLocation(), NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName(), getWorkspace(), options.getSession());
                 if (conf == null) {
                     if (options.isFailSafe()) {
                         return null;
@@ -350,7 +350,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         return addRepository(CoreNutsUtils.defToOptions(CoreNutsUtils.repositoryStringToDefinition(repositoryNamedUrl).setSession(session)));
     }
 
-    public NutsRepositoryConfig loadRepository(Path file, String name, NutsWorkspace ws) {
+    public NutsRepositoryConfig loadRepository(Path file, String name, NutsWorkspace ws, NutsSession session) {
         NutsRepositoryConfig conf = null;
         if (Files.isRegularFile(file) && Files.isReadable(file)) {
             byte[] bytes;
@@ -371,7 +371,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
                 }
                 conf = ws.formats().element().setContentType(NutsContentType.JSON).parse(file, NutsRepositoryConfig.class);
             } catch (Exception ex) {
-                onLoadRepositoryError(file, name, null, ex);
+                onLoadRepositoryError(file, name, null, ex, session);
             }
         }
         return conf;
@@ -382,13 +382,13 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         return (NutsRepositorySPI) repo;
     }
 
-    private void onLoadRepositoryError(Path file, String name, String uuid, Throwable ex) {
+    private void onLoadRepositoryError(Path file, String name, String uuid, Throwable ex, NutsSession session) {
         NutsWorkspaceConfigManager wconfig = getWorkspace().config();
         if (wconfig.isReadOnly()) {
             throw new UncheckedIOException("error loading repository " + file.toString(), new IOException(ex));
         }
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
-        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, CoreStringUtils.exceptionToString(ex)});
+        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, CoreStringUtils.exceptionToString(ex)});
         Path logError = getWorkspace().locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG).resolve("invalid-config");
         try {
             Files.createDirectories(logError);
@@ -396,7 +396,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
             throw new UncheckedIOException("unable to log repository error while loading config file " + file.toString() + " : " + ex1.toString(), new IOException(ex));
         }
         Path newfile = logError.resolve(fileName + ".json");
-        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile.toString());
+        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile.toString());
         try {
             Files.move(file, newfile);
         } catch (IOException e) {

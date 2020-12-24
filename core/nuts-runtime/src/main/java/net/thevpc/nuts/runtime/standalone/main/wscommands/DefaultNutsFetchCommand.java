@@ -11,7 +11,7 @@ import net.thevpc.nuts.runtime.standalone.DefaultNutsInstallInfo;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsQueryBaseOptions;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsDependency;
 import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
@@ -178,7 +178,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                 //this is invalid cache!
                                 Files.delete(cachePath);
                             } else {
-                                NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.CACHED, "Fetch definition", startTime);
+                                NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.CACHED, "Fetch definition", startTime, session);
                                 return d;
                             }
                         }
@@ -200,7 +200,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                 //ignore
                 LOG.with().error(ex).level(Level.SEVERE).log("Unexpected error while fetching descriptor for {0}", id);
                 if (LOG.isLoggable(Level.FINEST)) {
-                    NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetch def", startTime);
+                    NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetch def", startTime, session);
                 }
             }
         }
@@ -258,7 +258,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         foundDefinition.setEffectiveDescriptor(dws.resolveEffectiveDescriptor(foundDefinition.getDescriptor(), session));
                     } catch (NutsNotFoundException ex) {
                         //ignore
-                        LOG.with().level(Level.WARNING).verb(NutsLogVerb.WARNING).log("Nuts Descriptor found, but its parent is not: {0} with parent {1}", id.getLongName(), Arrays.toString(foundDefinition.getDescriptor().getParents()));
+                        LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.WARNING).log("Nuts Descriptor found, but its parent is not: {0} with parent {1}", id.getLongName(), Arrays.toString(foundDefinition.getDescriptor().getParents()));
                         foundDefinition = null;
                     }
                 }
@@ -395,7 +395,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                             }
                         }
                         if (!contentSuccessful && DefaultNutsInstalledRepository.INSTALLED_REPO_UUID.equals(foundDefinition.getRepositoryUuid())) {
-                            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetched Descriptor but failed to fetch installed Component for " + id, startTime);
+                            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetched Descriptor but failed to fetch installed Component for " + id, startTime, session);
                             //this happens if the jar content is no more installed while its descriptor is still installed.
                             for (NutsFetchMode mode : nutsFetchModes) {
 
@@ -420,7 +420,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                             contentSuccessful = true;
                                             foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content.getPath()));
 
-                                            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Re-deploy installed component for " + id, startTime);
+                                            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Re-deploy installed component for " + id, startTime, session);
                                             NutsRepositorySPI installedRepositorySPI = NutsWorkspaceUtils.of(ws).repoSPI(installedRepository);
                                             installedRepositorySPI.deploy()
                                                     .setId(foundDefinition.getId())
@@ -443,7 +443,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                             }
                         }
                         if (!contentSuccessful && includedRemote) {
-                            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetched Descriptor but failed to fetch Component", startTime);
+                            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetched Descriptor but failed to fetch Component", startTime, session);
                         }
                     }
                     if (foundDefinition != null && includeInstallInfo) {
@@ -460,10 +460,10 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             }
         } catch (NutsNotFoundException ex) {
             reasons.add(ex);
-            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetch definition", startTime);
+            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "Fetch definition", startTime, session);
             throw ex;
         } catch (RuntimeException ex) {
-            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "[Unexpected] Fetch definition", startTime);
+            NutsWorkspaceUtils.of(ws).traceMessage(nutsFetchModes, id.getLongNameId(), TraceResult.FAIL, "[Unexpected] Fetch definition", startTime, session);
             throw ex;
         }
         if (foundDefinition != null) {

@@ -94,7 +94,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         if (_appId != null) {
             //("=== Inherited "+_appId);
         } else {
-            _appId = workspace.id().resolveId(appClass);
+            _appId = workspace.id().resolveId(appClass, session);
         }
         if (_appId == null) {
             throw new NutsExecutionException(workspace, "Invalid Nuts Application (" + appClass.getName() + "). Id cannot be resolved", 203);
@@ -213,7 +213,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                 cmd.skip();
                 if (enabled) {
                     if (cmd.isExecMode()) {
-                        getSession().out().printf("%s%n", getWorkspace().id().resolveId(getClass()).getVersion().toString());
+                        getSession().out().printf("%s%n", getWorkspace().id().resolveId(getClass(), session).getVersion().toString());
                         cmd.skipAll();
                     }
                     throw new NutsExecutionException(workspace, "Version", 0);
@@ -231,7 +231,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public void printHelp() {
-        String h = NutsWorkspaceExt.of(getWorkspace()).resolveDefaultHelp(getAppClass());
+        String h = NutsWorkspaceExt.of(getWorkspace()).resolveDefaultHelp(getAppClass(), session);
         if (h == null) {
             h = "Help is ```error missing```.";
         }

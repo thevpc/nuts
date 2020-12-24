@@ -30,7 +30,7 @@ import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.main.config.ConfigEventType;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.main.config.NutsWorkspaceConfigSecurity;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CorePlatformUtils;
 
@@ -112,7 +112,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         NutsUser adminSecurity = findUser(NutsConstants.Users.ADMIN, options.getSession());
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
             if (LOG.isLoggable(Level.CONFIG)) {
-                LOG.with().level(Level.CONFIG).verb(NutsLogVerb.WARNING).log( NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
+                LOG.with().session(options.getSession()).level(Level.CONFIG).verb(NutsLogVerb.WARNING).log( NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
             }
             NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(NutsConstants.Users.ADMIN, options.getSession());
             u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null, options.getSession())));

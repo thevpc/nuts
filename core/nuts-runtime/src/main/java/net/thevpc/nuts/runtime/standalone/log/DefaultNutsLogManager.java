@@ -23,9 +23,11 @@ public class DefaultNutsLogManager implements NutsLogManager {
     private List<Handler> extraHandlers = new ArrayList<>();
     private static Handler[] EMPTY = new Handler[0];
     private Path logFolder;
+    private NutsSession defaultSession;
 
-    public DefaultNutsLogManager(NutsWorkspace ws, NutsWorkspaceInitInformation options) {
+    public DefaultNutsLogManager(NutsWorkspace ws, NutsWorkspaceInitInformation options,NutsSession defaultSession) {
         this.ws = ws;
+        this.defaultSession =defaultSession;
         logFolder= Paths.get(options.getStoreLocation(NutsStoreLocation.LOG));
         NutsLogConfig lc = options.getOptions().getLogConfig();
         if(lc!=null){
@@ -41,6 +43,15 @@ public class DefaultNutsLogManager implements NutsLogManager {
             logConfig.setLogFileSize(lc.getLogFileSize());
             logConfig.setLogInherited(lc.isLogInherited());
         }
+    }
+
+    public NutsSession getDefaultSession() {
+        return defaultSession;
+    }
+
+    public DefaultNutsLogManager setDefaultSession(NutsSession defaultSession) {
+        this.defaultSession = defaultSession;
+        return this;
     }
 
     @Override
@@ -75,12 +86,12 @@ public class DefaultNutsLogManager implements NutsLogManager {
 
     @Override
     public NutsLogger of(String name) {
-        return new DefaultNutsLogger(ws, name);
+        return new DefaultNutsLogger(ws, defaultSession,name);
     }
 
     @Override
     public NutsLogger of(Class clazz) {
-        return new DefaultNutsLogger(ws, clazz);
+        return new DefaultNutsLogger(ws, defaultSession,clazz);
     }
 
     @Override
@@ -162,10 +173,17 @@ public class DefaultNutsLogManager implements NutsLogManager {
         if(out!=this.out || consoleHandler==null){
             this.out=out;
             if(consoleHandler!=null){
-                consoleHandler.close();
+                if(consoleHandler instanceof NutsLogConsoleHandler){
+                    ((NutsLogConsoleHandler) consoleHandler).setOutputStream(out,false);
+                    consoleHandler.setLevel(logConfig.getLogTermLevel());
+                }else {
+                    consoleHandler.flush(); // do not close!!
+                    consoleHandler.setLevel(logConfig.getLogTermLevel());
+                }
+            }else {
+                consoleHandler = new NutsLogConsoleHandler(out, false);
+                consoleHandler.setLevel(logConfig.getLogTermLevel());
             }
-            consoleHandler=new NutsLogConsoleHandler(out,true);
-            consoleHandler.setLevel(logConfig.getLogTermLevel());
         }
     }
 }

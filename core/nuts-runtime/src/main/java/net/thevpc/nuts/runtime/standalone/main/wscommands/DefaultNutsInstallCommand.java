@@ -30,7 +30,7 @@ import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsInstallCommand;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsCollectionResult;
 import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;

@@ -12,7 +12,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.Simplifiable;
@@ -54,7 +54,7 @@ public class NutsDescriptorIdFilter extends AbstractNutsFilter implements NutsId
                     //NutsWorkspace ws = repository.getWorkspace();
                     nutsDescriptor = NutsWorkspaceExt.of(session.getWorkspace()).resolveEffectiveDescriptor(descriptor, session);
                 } catch (Exception ex) {
-                    LOG.with().level(Level.FINE).error(ex).log( "failed to resolve effective desc {0} for {1}", descriptor.getId(),id);
+                    LOG.with().session(session).level(Level.FINE).error(ex).log( "failed to resolve effective desc {0} for {1}", descriptor.getId(),id);
                     //throw new NutsException(e);
                 }
                 descriptor = nutsDescriptor;
@@ -62,7 +62,7 @@ public class NutsDescriptorIdFilter extends AbstractNutsFilter implements NutsId
         } catch (Exception ex) {
             //suppose we cannot retrieve descriptor
             if (LOG.isLoggable(Level.FINER)) {
-                LOG.with().level(Level.FINER).verb(NutsLogVerb.FAIL).log( "Unable to fetch Descriptor for " + id + " : " + CoreStringUtils.exceptionToString(ex));
+                LOG.with().session(session).level(Level.FINER).verb(NutsLogVerb.FAIL).log( "Unable to fetch Descriptor for " + id + " : " + CoreStringUtils.exceptionToString(ex));
             }
             return false;
         }

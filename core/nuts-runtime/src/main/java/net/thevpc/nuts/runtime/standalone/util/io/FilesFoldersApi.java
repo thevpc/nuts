@@ -10,7 +10,7 @@ import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsVersion;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,7 +71,7 @@ public class FilesFoldersApi {
                 }
             }
         } catch (UncheckedIOException | NutsIOException ex) {
-            session.getWorkspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}", dotFilesUrl);
+            session.getWorkspace().log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}", dotFilesUrl);
         }
         if (versionString.compareTo("0.5.7") < 0) {
             if (folders) {
@@ -82,7 +82,7 @@ public class FilesFoldersApi {
                     foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(stream, true), "\n\r")
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NutsIOException ex) {
-                    session.getWorkspace().log().of(FilesFoldersApi.class).with().level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}", dotFolderUrl);
+                    session.getWorkspace().log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}", dotFolderUrl);
                 }
                 if (foldersFileContent != null) {
                     for (String folder : foldersFileContent) {

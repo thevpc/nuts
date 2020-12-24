@@ -80,10 +80,13 @@ public final class NutsApplications {
             inherited = true;
             ws = Nuts.openInheritedWorkspace(args);
         }
+        if(session==null){
+            session=ws.createSession();
+        }
         if(appClass==null){
             appClass=lifeCycle.getClass();
         }
-        ws.log().of(NutsApplications.class).with().level(Level.FINE).verb("START").formatted()
+        ws.log().of(NutsApplications.class).with().session(session).level(Level.FINE).verb("START").formatted()
                 .log("Running Application {0}: {1} {2}", inherited ? "(inherited)" : "",
                 lifeCycle, new NutsString(ws.commandLine().formatter(ws.commandLine().create(args)).format())
         );
@@ -195,7 +198,7 @@ public final class NutsApplications {
             try {
                 showTrace = ws.config().getOptions().isDebug();
             } catch (Exception ex2) {
-                ws.log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log("unable to check if option debug is enabled");
+                ws.log().of(NutsApplications.class).with().session(ws.createSession()).level(Level.FINE).error(ex2).log("unable to check if option debug is enabled");
             }
         }
 //        if (showTrace) {
@@ -206,7 +209,7 @@ public final class NutsApplications {
                 out = ws.io().term().getSystemTerminal().getOut();
                 m = "```error " + m + "```";
             } catch (Exception ex2) {
-                ws.log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log("unable to get system terminal");
+                ws.log().of(NutsApplications.class).with().session(ws.createSession()).level(Level.FINE).error(ex2).log("unable to get system terminal");
                 //
             }
         }

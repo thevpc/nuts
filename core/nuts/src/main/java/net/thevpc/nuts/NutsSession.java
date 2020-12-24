@@ -29,6 +29,9 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.time.Instant;
 import java.util.Map;
+import java.util.logging.Filter;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 /**
  * session is context defining common command options and parameters.
@@ -669,6 +672,15 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 
     NutsSession setDry(Boolean dry);
 
+    Level getLogTermLevel();
+
+    NutsSession setLogLevel(Level level);
+
+    Filter getLogTermFilter();
+
+    NutsSession setLogFilter(Filter filter);
+
+
     /**
      * configure session based on Workspace options
      * @param options options to configure from
@@ -677,7 +689,21 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      */
     NutsSession configure(NutsWorkspaceOptions options);
 
+    Level getLogFileLevel();
+
+    NutsSession setLogFileLevel(Level logFileLevel);
+
+    Filter getLogFileFilter();
+
+    NutsSession setLogFileFilter(Filter logFileFilter);
+
     NutsExecutionType getExecutionType();
 
     NutsSession setExecutionType(NutsExecutionType executionType);
+
+    boolean isDebug();
+
+    Boolean getDebug();
+
+    NutsSession setDebug(Boolean debug);
 }

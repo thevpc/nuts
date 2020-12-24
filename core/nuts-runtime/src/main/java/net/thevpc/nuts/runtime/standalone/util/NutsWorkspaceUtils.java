@@ -14,7 +14,7 @@ import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.ProcessBuilder2;
 import net.thevpc.nuts.runtime.standalone.io.DefaultNutsExecutionEntry;
 import net.thevpc.nuts.runtime.standalone.format.plain.DefaultSearchFormatPlain;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CorePlatformUtils;
 
@@ -170,13 +170,13 @@ public class NutsWorkspaceUtils {
                         try {
                             d = CoreNutsUtils.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive(), session);
                         } catch (Exception ex) {
-                            LOG.with().level(Level.FINE).error(ex).log("unable to resolve support deploy level for : {0}", repository.getName());
+                            LOG.with().session(session).level(Level.FINE).error(ex).log("unable to resolve support deploy level for : {0}", repository.getName());
                         }
                     }
                     try {
                         t = CoreNutsUtils.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive(), session);
                     } catch (Exception ex) {
-                        LOG.with().level(Level.FINE).error(ex).log("unable to resolve support speed level for : {0}", repository.getName());
+                        LOG.with().session(session).level(Level.FINE).error(ex).log("unable to resolve support speed level for : {0}", repository.getName());
                     }
                     if (t > 0) {
                         repos2.add(new RepoAndLevel(repository, d, t, postComp));
@@ -372,7 +372,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnInstall(NutsInstallEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.with().level(Level.FINEST).verb(NutsLogVerb.UPDATE).log("installed ##{0}##", event.getDefinition().getId());
+                u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).log("installed ##{0}##", event.getDefinition().getId());
             }
             for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
                 listener.onInstall(event);
@@ -384,7 +384,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnRequire(NutsInstallEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.with().level(Level.FINEST).verb(NutsLogVerb.UPDATE).log("required ##{0}##", event.getDefinition().getId());
+                u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).log("required ##{0}##", event.getDefinition().getId());
             }
             for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
                 listener.onRequire(event);
@@ -397,10 +397,10 @@ public class NutsWorkspaceUtils {
         public void fireOnUpdate(NutsUpdateEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
                 if (event.getOldValue() == null) {
-                    u.LOG.with().level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
+                    u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
                             .log("updated ##{0}##", event.getNewValue().getId());
                 } else {
-                    u.LOG.with().level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
+                    u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
                             .log("updated ##{0}## (old is ```error {1}```)",
                                     event.getOldValue().getId().getLongNameId(),
                                     event.getNewValue().getId().getLongNameId());
@@ -416,7 +416,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnUninstall(NutsInstallEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.with().level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
+                u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
                         .log("uninstalled ##{0}##", event.getDefinition().getId());
             }
             for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
@@ -429,7 +429,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnAddRepository(NutsWorkspaceEvent event) {
             if (u.LOG.isLoggable(Level.CONFIG)) {
-                u.LOG.with().level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted()
+                u.LOG.with().session(event.getSession()).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted()
                         .log("added Repo ##{0}##", event.getRepository().getName());
             }
 
@@ -443,7 +443,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnRemoveRepository(NutsWorkspaceEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.with().level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
+                u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
                         .log("removed Repo ##{0}##", event.getRepository().getName());
             }
             for (NutsWorkspaceListener listener : u.ws.events().getWorkspaceListeners()) {
@@ -456,7 +456,7 @@ public class NutsWorkspaceUtils {
 
     }
 
-    public void traceMessage(NutsFetchStrategy fetchMode, NutsId id, TraceResult tracePhase, String message, long startTime) {
+    public void traceMessage(NutsFetchStrategy fetchMode, NutsId id, TraceResult tracePhase, String message, long startTime, NutsSession session) {
         if (LOG.isLoggable(Level.FINEST)) {
             String timeMessage = "";
             if (startTime != 0) {
@@ -466,7 +466,7 @@ public class NutsWorkspaceUtils {
                 }
             }
             String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
-            LOG.with().level(Level.FINEST)
+            LOG.with().session(session).level(Level.FINEST)
                     .verb(tracePhase.toString()).formatted()
                     .log("{0}{1} {2}{3}",
                             fetchString,
@@ -477,7 +477,7 @@ public class NutsWorkspaceUtils {
     }
 
     public CoreIOUtils.ProcessExecHelper execAndWait(String[] args, Map<String, String> env, Path directory, NutsSessionTerminal prepareTerminal,
-                                                     NutsSessionTerminal execTerminal, boolean showCommand, boolean failFast,long sleep) {
+                                                     NutsSessionTerminal execTerminal, boolean showCommand, boolean failFast, long sleep, NutsSession session) {
         PrintStream out = execTerminal.out();
         PrintStream err = execTerminal.err();
         InputStream in = execTerminal.in();
@@ -505,7 +505,7 @@ public class NutsWorkspaceUtils {
         }
 
         if (LOG.isLoggable(Level.FINE)) {
-            LOG.with().level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] {0}", new NutsString(pb.getFormattedCommandString(ws)));
+            LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] {0}", new NutsString(pb.getFormattedCommandString(ws)));
         }
         if (showCommand || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
             if (ws.io().term().isFormatted(prepareTerminal.out())) {
@@ -624,15 +624,15 @@ public class NutsWorkspaceUtils {
             pdirectory = workspace.locations().getWorkspaceLocation().resolve(directory);
         }
         return execAndWait(args, envmap, pdirectory, prepareSession.getTerminal(), execSession.getTerminal(), showCommand, failFast,
-                sleep);
+                sleep, prepareSession);
     }
 
-    public NutsExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName) {
+    public NutsExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName, NutsSession session) {
         CorePlatformUtils.MainClassType mainClass = null;
         try {
             mainClass = CorePlatformUtils.getMainClassType(classStream);
         } catch (Exception ex) {
-            LOG.with().level(Level.FINE).error(ex).log("invalid file format {0}", sourceName);
+            LOG.with().session(session).level(Level.FINE).error(ex).log("invalid file format {0}", sourceName);
         }
         if (mainClass != null) {
             return new DefaultNutsExecutionEntry(
@@ -644,7 +644,7 @@ public class NutsWorkspaceUtils {
         return null;
     }
 
-    public NutsExecutionEntry[] parseJarExecutionEntries(InputStream jarStream, String sourceName) {
+    public NutsExecutionEntry[] parseJarExecutionEntries(InputStream jarStream, String sourceName, NutsSession session) {
         if (!(jarStream instanceof BufferedInputStream)) {
             jarStream = new BufferedInputStream(jarStream);
         }
@@ -661,7 +661,7 @@ public class NutsWorkspaceUtils {
                 @Override
                 public boolean visit(String path, InputStream inputStream) throws IOException {
                     if (path.endsWith(".class")) {
-                        NutsExecutionEntry mainClass = parseClassExecutionEntry(inputStream, path);
+                        NutsExecutionEntry mainClass = parseClassExecutionEntry(inputStream, path, session);
                         if (mainClass != null) {
                             classes.add(mainClass);
                         }
@@ -696,18 +696,10 @@ public class NutsWorkspaceUtils {
             }
         }
         if (defaultEntry != null && !defaultFound) {
-            LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("invalid default entry " + defaultEntry + " in " + sourceName);
+            LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("invalid default entry " + defaultEntry + " in " + sourceName);
 //            entries.add(new DefaultNutsExecutionEntry(defaultEntry, true, false));
         }
         return entries.toArray(new NutsExecutionEntry[0]);
-    }
-
-    public boolean setWorkspace(Object o) {
-        if (o instanceof NutsWorkspaceAware) {
-            ((NutsWorkspaceAware) o).setWorkspace(ws);
-            return true;
-        }
-        return false;
     }
 
     public static boolean setSession(Object o,NutsSession session) {

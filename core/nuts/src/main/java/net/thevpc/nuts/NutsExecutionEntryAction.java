@@ -33,7 +33,7 @@ import java.nio.file.Path;
 /**
  * @category Base
  */
-public interface NutsExecutionEntryManager {
+public interface NutsExecutionEntryAction {
 
     /**
      * parse Execution Entries
@@ -60,4 +60,8 @@ public interface NutsExecutionEntryManager {
      * @return execution entries (class names with main method)
      */
     NutsExecutionEntry[] parse(InputStream inputStream, String type, String sourceName);
+
+    NutsSession getSession();
+
+    NutsExecutionEntryAction setSession(NutsSession session);
 }

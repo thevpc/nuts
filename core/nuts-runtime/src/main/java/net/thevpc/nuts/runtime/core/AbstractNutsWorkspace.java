@@ -65,6 +65,7 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     private DefaultNutsWorkspaceAppsManager apps;
     private DefaultNutsCommandLineManager defaultNutsCommandLineManager;
     private NutsWorkspaceLocationManager locationManager;
+    protected NutsSession bootSession;
 
     public AbstractNutsWorkspace(NutsWorkspaceInitInformation info) {
         userProperties = new DefaultObservableMap<>();
@@ -137,7 +138,7 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     @Override
     public NutsSession createSession() {
         NutsSession nutsSession = new DefaultNutsSession(this);
-        nutsSession.setTerminal(io().term().createTerminal(io().term().getSystemTerminal(), nutsSession));
+        nutsSession.setTerminal(io().term().createTerminal(io().term().getSystemTerminal(), bootSession));
         nutsSession.setExpireTime(config().options().getExpireTime());
         return nutsSession;
     }

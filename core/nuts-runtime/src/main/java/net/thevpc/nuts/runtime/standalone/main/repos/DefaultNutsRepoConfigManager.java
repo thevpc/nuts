@@ -7,7 +7,7 @@ import net.thevpc.nuts.runtime.standalone.main.DefaultNutsRepositoryManager;
 import net.thevpc.nuts.runtime.standalone.util.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.NutsStoreLocationsMap;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 
 import java.nio.file.Files;
@@ -378,9 +378,9 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
             configurationChanged = false;
             if (LOG.isLoggable(Level.CONFIG)) {
                 if (created) {
-                    LOG.with().level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log( CoreStringUtils.alignLeft(repository.getName(), 20) + " Created repository " + repository.getName() + " at " + getStoreLocation());
+                    LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log( CoreStringUtils.alignLeft(repository.getName(), 20) + " created repository " + repository.getName() + " at " + getStoreLocation());
                 } else {
-                    LOG.with().level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log( CoreStringUtils.alignLeft(repository.getName(), 20) + " Updated repository " + repository.getName() + " at " + getStoreLocation());
+                    LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log( CoreStringUtils.alignLeft(repository.getName(), 20) + " updated repository " + repository.getName() + " at " + getStoreLocation());
                 }
             }
             ok = true;
@@ -520,7 +520,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NutsIllegalArgumentException(repository.getWorkspace(), "ambiguous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
+                        throw new NutsIllegalArgumentException(repository.getWorkspace(), "ambiguous repository name " + repositoryNameOrId + " ; found two Ids " + y.getUuid() + " and " + m.getUuid());
                     }
                 }
 
@@ -542,7 +542,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NutsIllegalArgumentException(repository.getWorkspace(), "ambiguous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
+                        throw new NutsIllegalArgumentException(repository.getWorkspace(), "ambiguous repository name " + repositoryNameOrId + " ; found two Ids " + y.getUuid() + " and " + m.getUuid());
                     }
                 }
 

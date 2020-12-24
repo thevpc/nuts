@@ -268,10 +268,10 @@ final class PrivateNutsUtils {
                         inputStream = new FileInputStream(cacheFile);
                         props.load(inputStream);
                         long time = System.currentTimeMillis() - startTime;
-                        LOG.log(Level.CONFIG, PrivateNutsLog.SUCCESS, "loaded cached file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{cacheFile.getPath(), formatPeriodMilli(time)});
+                        LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "loaded cached file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{cacheFile.getPath(), formatPeriodMilli(time)});
                         return props;
                     } catch (IOException ex) {
-                        LOG.log(Level.CONFIG, PrivateNutsLog.FAIL, "invalid cache. Ignored {0} : {1}", new Object[]{cacheFile.getPath(), ex.toString()});
+                        LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "invalid cache. Ignored {0} : {1}", new Object[]{cacheFile.getPath(), ex.toString()});
                     } finally {
                         if (inputStream != null) {
                             try {
@@ -314,18 +314,18 @@ final class PrivateNutsUtils {
                                 }
                                 long time = System.currentTimeMillis() - startTime;
                                 if (cachedRecovered) {
-                                    LOG.log(Level.CONFIG, PrivateNutsLog.CACHE, "recover cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), new Object[]{cacheFile.getPath(), urlString, formatPeriodMilli(time)});
+                                    LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "recover cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), new Object[]{cacheFile.getPath(), urlString, formatPeriodMilli(time)});
                                 } else {
-                                    LOG.log(Level.CONFIG, PrivateNutsLog.CACHE, "cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), new Object[]{cacheFile.getPath(), urlString, formatPeriodMilli(time)});
+                                    LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), new Object[]{cacheFile.getPath(), urlString, formatPeriodMilli(time)});
                                 }
                                 return props;
                             }
                         }
                         long time = System.currentTimeMillis() - startTime;
-                        LOG.log(Level.CONFIG, PrivateNutsLog.SUCCESS, "loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, formatPeriodMilli(time)});
+                        LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, formatPeriodMilli(time)});
                     } else {
                         long time = System.currentTimeMillis() - startTime;
-                        LOG.log(Level.CONFIG, PrivateNutsLog.FAIL, "loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, formatPeriodMilli(time)});
+                        LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, formatPeriodMilli(time)});
                     }
                 }
             } finally {
@@ -335,7 +335,7 @@ final class PrivateNutsUtils {
             }
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
-            LOG.log(Level.CONFIG, PrivateNutsLog.FAIL, "loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{
+            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{
                     String.valueOf(url),
                     formatPeriodMilli(time)});
         }
@@ -568,7 +568,7 @@ final class PrivateNutsUtils {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         Files.delete(file);
-                        LOG.log(Level.FINEST, PrivateNutsLog.WARNING, "delete file   : {0}", file);
+                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "delete file   : {0}", file);
                         return FileVisitResult.CONTINUE;
                     }
 
@@ -579,7 +579,7 @@ final class PrivateNutsUtils {
                         return FileVisitResult.CONTINUE;
                     }
                 });
-                LOG.log(Level.FINEST, PrivateNutsLog.WARNING, "delete folder : {0}", directory);
+                LOG.log(Level.FINEST, NutsLogVerb.WARNING, "delete folder : {0}", directory);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -715,7 +715,7 @@ final class PrivateNutsUtils {
         try {
             Files.copy(ff.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ex) {
-            LOG.log(Level.CONFIG, PrivateNutsLog.FAIL, "error copying {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
+            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "error copying {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
             throw ex;
         }
     }
@@ -730,7 +730,7 @@ final class PrivateNutsUtils {
                 if (!to.getParentFile().isDirectory()) {
                     boolean mkdirs = to.getParentFile().mkdirs();
                     if (!mkdirs) {
-                        LOG.log(Level.CONFIG, PrivateNutsLog.FAIL, "error creating folder {0}", new Object[]{url});
+                        LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "error creating folder {0}", new Object[]{url});
                     }
                 }
             }
@@ -738,7 +738,7 @@ final class PrivateNutsUtils {
             FileOutputStream fos = new FileOutputStream(to);
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
         } catch (IOException ex) {
-            LOG.log(Level.CONFIG, PrivateNutsLog.FAIL, "error copying {0} to {1} : {2}", new Object[]{url, to, ex.toString()});
+            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "error copying {0} to {1} : {2}", new Object[]{url, to, ex.toString()});
             throw ex;
         }
     }
@@ -877,7 +877,7 @@ final class PrivateNutsUtils {
                 }
             }
             for (String r : repositories) {
-                LOG.log(Level.FINE, PrivateNutsLog.CACHE, "checking {0} from {1}", new Object[]{nutsId, r});
+                LOG.log(Level.FINE, NutsLogVerb.CACHE, "checking {0} from {1}", new Object[]{nutsId, r});
 //                File file = toFile(r);
                 if (includeDesc) {
                     String path = resolveMavenFullPath(r, nutsId, "pom");
@@ -885,7 +885,7 @@ final class PrivateNutsUtils {
                     try {
                         copy(new URL(path), cachedPomFile, LOG);
                     } catch (Exception ex) {
-                        LOG.log(Level.SEVERE, PrivateNutsLog.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
+                        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
                         continue;
                         //ex.printStackTrace();
                         //throw new NutsIllegalArgumentException("Unable to load nuts from " + mvnUrl);
@@ -896,7 +896,7 @@ final class PrivateNutsUtils {
 //                        if (f.isFile()) {
 //                            return f;
 //                        } else {
-//                            LOG.log(Level.SEVERE, PrivateNutsLog.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
+//                            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
 //                        }
 //                    }
                 }
@@ -904,10 +904,10 @@ final class PrivateNutsUtils {
 //                if (file == null) {
                 try {
                     copy(new URL(path), cachedJarFile, LOG);
-                    LOG.log(Level.CONFIG, PrivateNutsLog.CACHE, "cache jar file {0}", new Object[]{cachedJarFile.getPath()});
+                    LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "cache jar file {0}", new Object[]{cachedJarFile.getPath()});
                     return cachedJarFile;
                 } catch (Exception ex) {
-                    LOG.log(Level.SEVERE, PrivateNutsLog.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
+                    LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
                     //ex.printStackTrace();
                     //throw new NutsIllegalArgumentException("Unable to load nuts from " + mvnUrl);
                 }
@@ -917,7 +917,7 @@ final class PrivateNutsUtils {
 //                    if (f.isFile()) {
 //                        return f;
 //                    } else {
-//                        LOG.log(Level.SEVERE, PrivateNutsLog.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
+//                        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
 //                    }
 //                }
             }
@@ -1077,7 +1077,7 @@ final class PrivateNutsUtils {
          * @return latest runtime version
          */
         static String resolveLatestMavenId(PrivateNutsId zId, Predicate<String> filter, PrivateNutsLog LOG, Collection<String> bootRepositories) {
-            LOG.log(Level.FINEST, PrivateNutsLog.START, "looking for " + zId);
+            LOG.log(Level.FINEST, NutsLogVerb.START, "looking for {0}", zId);
             String path = zId.getGroupId().replace('.', '/') + '/' + zId.getArtifactId();
             String bestVersion = null;
             String bestPath = null;
@@ -1128,7 +1128,7 @@ final class PrivateNutsUtils {
                             //ignore
                         }
                         if (is != null) {
-                            LOG.log(Level.FINEST, PrivateNutsLog.SUCCESS, "parsing " + mavenMetadata);
+                            LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "parsing " + mavenMetadata);
                             Document doc = builder.parse(is);
                             Element c = doc.getDocumentElement();
                             for (int i = 0; i < c.getChildNodes().getLength(); i++) {
@@ -1169,7 +1169,7 @@ final class PrivateNutsUtils {
                 return null;
             }
             String s = zId.getGroupId() + ":" + zId.getArtifactId() + "#" + bestVersion;
-            LOG.log(Level.FINEST, PrivateNutsLog.SUCCESS, "resolved " + s + " from " + bestPath);
+            LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "resolved " + s + " from " + bestPath);
             return s;
         }
 
@@ -1222,7 +1222,7 @@ final class PrivateNutsUtils {
                     }
                 }
             } catch (Exception ex0) {
-                LOG.log(Level.FINEST, PrivateNutsLog.FAIL, "unable to get LastModifiedTime for file : {0}", new String[]{path.toString(), ex0.toString()});
+                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "unable to get LastModifiedTime for file : {0}", new String[]{path.toString(), ex0.toString()});
             }
         }
         return proceed;

@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 
-import net.thevpc.nuts.NutsTextFormatManager;
-import net.thevpc.nuts.NutsTextFormatStyle;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
@@ -61,92 +59,84 @@ public class NutsLogRichFormatter extends Formatter {
             NutsLogRecord wRecord = (NutsLogRecord) record;
             NutsTextFormatStyle style = wRecord.getFormatStyle();
             NutsTextFormatManager tf = wRecord.getWorkspace().formats().text();
-            StringBuilder sb = new StringBuilder();
+
+            NutsTextNodeBuilder sb = tf.builder();
+            NutsTextNodeFactory ff = tf.factory();
             String date = CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(wRecord.getMillis()));
-            sb.append("<<").append(tf.escapeText(date)).append(">>");
+
+            sb.appendStyled(ff.styled(date,NutsTextNodeStyle.PALE1));
             boolean verboseLog = false;//read from session or workspace;
             if (verboseLog) {
-                sb.append(" ");
-                int len = sb.length() + 4;
+                sb.appendPlain(" ");
+                int len = date.length() + 5;
+                StringBuilder sb2=new StringBuilder(5);
                 if (lastMillis > 0) {
-                    sb.append(wRecord.getMillis() - lastMillis);
+                    sb2.append(String.valueOf(wRecord.getMillis() - lastMillis));
                 }
-                NutsLogFormatHelper.ensureSize(sb, len);
+                while(sb2.length()<5){
+                    sb2.append(' ');
+                }
+                sb.appendPlain(sb.toString());
             }
-            sb.append(" ");
+            sb.appendPlain(" ");
             switch (wRecord.getLevel().intValue()) {
                 case 1000: {//Level.SEVERE
-                    sb.append("```error ");
-                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
-                    sb.append("```");
+                    sb.appendStyled(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextNodeStyle.ERROR1);
                     break;
                 }
                 case 900: {//Level.WARNING
-                    sb.append("```warn ");
-                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
-                    sb.append("```");
+                    sb.appendStyled(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextNodeStyle.WARN1);
                     break;
                 }
                 case 800: {//Level.INFO
-                    sb.append("```info ");
-                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
-                    sb.append("```");
+                    sb.appendStyled(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextNodeStyle.INFO1);
                     break;
                 }
                 case 700: {//Level.CONFIG
-                    sb.append("```config ");
-                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
-                    sb.append("```");
+                    sb.appendStyled(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextNodeStyle.CONFIG1);
                     break;
                 }
                 case 500: {//Level.FINE
-                    sb.append("**");
-                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
-                    sb.append("**");
+                    sb.appendStyled(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextNodeStyle.PRIMARY4);
                     break;
                 }
                 case 400: {//Level.FINER
 //                    sb.append("[[");
-                    sb.append("<<");
-                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
-                    sb.append(">>");
+                    sb.appendStyled(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextNodeStyle.PALE1);
 //                    sb.append("]]");
                     break;
                 }
                 case 300: {//Level.FINEST
-                    sb.append("<<");
-                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
-                    sb.append(">>");
+                    sb.appendStyled(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextNodeStyle.PALE1);
                     break;
                 }
                 default: {
-                    sb.append(tf.escapeText(NutsLogFormatHelper.logLevel(wRecord.getLevel())));
+                    sb.appendPlain(NutsLogFormatHelper.logLevel(wRecord.getLevel()));
                     break;
                 }
             }
 
-            sb.append(" ");
+            sb.appendPlain(" ");
             switch (CoreStringUtils.trim(wRecord.getVerb()).toUpperCase()) {
-                case NutsLogVerb.FAIL: {//Level.SEVERE
-                    sb.append("```error ");
-                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
-                    sb.append("```");
+                case NutsLogVerb.FAIL:
+                    {//Level.SEVERE
+                    sb.appendStyled(NutsLogFormatHelper.logVerb(wRecord.getVerb()),NutsTextNodeStyle.ERROR1);
+                    break;
+                }
+                case NutsLogVerb.WARNING:
+                {//Level.WARNING
+                    sb.appendStyled(NutsLogFormatHelper.logVerb(wRecord.getVerb()),NutsTextNodeStyle.WARN1);
                     break;
                 }
                 case NutsLogVerb.UPDATE:
-                case NutsLogVerb.WARNING:
                 case NutsLogVerb.START:
                     {//Level.WARNING
-                    sb.append("##");
-                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
-                    sb.append("##");
+                        sb.appendStyled(NutsLogFormatHelper.logVerb(wRecord.getVerb()),NutsTextNodeStyle.INFO1);
                     break;
                 }
                 case NutsLogVerb.SUCCESS:
                     {//Level.INFO
-                    sb.append("###");
-                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
-                    sb.append("###");
+                        sb.appendStyled(NutsLogFormatHelper.logVerb(wRecord.getVerb()),NutsTextNodeStyle.SUCCESS1);
                     break;
                 }
 //                case NutsLogVerb.BIND:
@@ -156,11 +146,16 @@ public class NutsLogRichFormatter extends Formatter {
 //                    sb.append("^^");
 //                    break;
 //                }
+                case NutsLogVerb.INFO:
                 case NutsLogVerb.READ:
                     {//Level.FINE
-                    sb.append("###");
-                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
-                    sb.append("###");
+                        sb.appendStyled(NutsLogFormatHelper.logVerb(wRecord.getVerb()),NutsTextNodeStyle.OPTION1);
+                    break;
+                }
+                case NutsLogVerb.CACHE:
+                case NutsLogVerb.DEBUG:
+                    {//Level.FINE
+                        sb.appendStyled(NutsLogFormatHelper.logVerb(wRecord.getVerb()),NutsTextNodeStyle.PALE1);
                     break;
                 }
 //                case NutsLogVerb.INIT: {//Level.FINER
@@ -176,14 +171,14 @@ public class NutsLogRichFormatter extends Formatter {
 //                    break;
 //                }
                 default: {
-                    sb.append(tf.escapeText(NutsLogFormatHelper.logVerb(wRecord.getVerb())));
+                    sb.appendPlain(NutsLogFormatHelper.logVerb(wRecord.getVerb()));
                     break;
                 }
             }
 
-            sb.append(" ")
-                    .append(tf.escapeText(NutsLogFormatHelper.formatClassName(wRecord.getSourceClassName())))
-                    .append(": ");
+            sb.appendPlain(" "
+                    +NutsLogFormatHelper.formatClassName(wRecord.getSourceClassName())
+                    +": ");
             Object[] parameters2 = wRecord.getParameters();
             if(parameters2==null){
                 parameters2=new Object[0];
@@ -198,17 +193,19 @@ public class NutsLogRichFormatter extends Formatter {
             );
 //                    formatMessage(wRecord);
             if(wRecord.isFormatted()) {
-                sb.append(msgStr);
+                sb.append(new NutsString(msgStr));
             }else{
-                sb.append(tf.filterText(msgStr));
+                sb.appendPlain(msgStr);
             }
             if(wRecord.getTime()>0){
-                sb.append(" (```error ").append(tf.escapeText(CoreCommonUtils.formatPeriodMilli(wRecord.getTime()))).append("```)");
+                sb.appendPlain(" (");
+                sb.appendStyled(CoreCommonUtils.formatPeriodMilli(wRecord.getTime()),NutsTextNodeStyle.ERROR1);
+                sb.appendPlain("```)");
             }
-            sb.append(NutsLogFormatHelper.LINE_SEPARATOR);
+            sb.appendPlain(NutsLogFormatHelper.LINE_SEPARATOR);
             lastMillis = wRecord.getMillis();
             if (wRecord.getThrown() != null) {
-                sb.append(NutsLogFormatHelper.stacktrace(wRecord.getThrown()));
+                sb.appendPlain(NutsLogFormatHelper.stacktrace(wRecord.getThrown()));
             }
             return sb.toString();
         } else {

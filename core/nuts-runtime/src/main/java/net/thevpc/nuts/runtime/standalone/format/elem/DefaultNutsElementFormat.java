@@ -300,7 +300,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         if (doc == null) {
             if (defaultDocument == null) {
                 try {
-                    defaultDocument = NutsXmlUtils.createDocument(getWorkspace());
+                    defaultDocument = NutsXmlUtils.createDocument(getSession());
                 } catch (ParserConfigurationException ex) {
                     throw new NutsException(null, "Unable to create Document", ex);
                 }
@@ -584,7 +584,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     public <T> T parseXml(Reader reader, Class<T> clazz) {
         Document doc = null;
         try {
-            doc = NutsXmlUtils.createDocumentBuilder(false,getWorkspace()).parse(new InputSource(reader));
+            doc = NutsXmlUtils.createDocumentBuilder(false,getSession()).parse(new InputSource(reader));
         } catch (SAXException | ParserConfigurationException ex) {
             throw new NutsIOException(getWorkspace(),new IOException(ex));
         } catch (IOException ex) {
@@ -611,7 +611,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
             }
             Document document;
             try {
-                document = NutsXmlUtils.createDocument(getWorkspace());
+                document = NutsXmlUtils.createDocument(getSession());
             } catch (ParserConfigurationException ex) {
                 throw new NutsIllegalArgumentException(getWorkspace(), ex);
             }
@@ -627,7 +627,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 if (org.w3c.dom.Document.class.isAssignableFrom(to)) {
                     Document document;
                     try {
-                        document = NutsXmlUtils.createDocument(getWorkspace());
+                        document = NutsXmlUtils.createDocument(getSession());
                     } catch (ParserConfigurationException ex) {
                         throw new NutsIllegalArgumentException(getWorkspace(), ex);
                     }
@@ -895,7 +895,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         public org.w3c.dom.Document deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             Document doc;
             try {
-                doc = NutsXmlUtils.createDocument(getWorkspace());
+                doc = NutsXmlUtils.createDocument(getSession());
             } catch (ParserConfigurationException ex) {
                 throw new JsonParseException(CoreStringUtils.exceptionToString(ex), ex);
             }

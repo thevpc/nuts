@@ -25,7 +25,7 @@ public class DefaultNutsLicenseInternalExecutable extends DefaultInternalNutsExe
             showDefaultHelp();
             return;
         }
-        getSession().out().println(NutsWorkspaceExt.of(getSession().getWorkspace()).getLicenseText());
+        getSession().out().println(NutsWorkspaceExt.of(getSession().getWorkspace()).getLicenseText(getSession()));
     }
 
 }

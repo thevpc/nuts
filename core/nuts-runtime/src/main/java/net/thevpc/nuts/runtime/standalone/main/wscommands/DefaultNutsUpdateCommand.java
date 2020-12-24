@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsUpdateCommand;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsUpdateResult;
@@ -516,7 +516,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
         if (ws.config().save(requireSave, validWorkspaceSession)) {
             if (LOG.isLoggable(Level.INFO)) {
-                LOG.with().level(Level.INFO).verb(NutsLogVerb.WARNING).log( "Workspace is updated. Nuts should be restarted for changes to take effect.");
+                LOG.with().session(session).level(Level.INFO).verb(NutsLogVerb.WARNING).log( "Workspace is updated. Nuts should be restarted for changes to take effect.");
             }
             if (apiUpdate != null && apiUpdate.isUpdateAvailable() && !apiUpdate.isUpdateApplied()) {
                 if (validWorkspaceSession.isPlainTrace()) {
@@ -584,7 +584,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     newId = ws.search().setSession(session).addId(NutsConstants.Ids.NUTS_API + "#" + v).setAnyWhere().setLatest(true).getResultIds().first();
                     newFile = newId == null ? null : latestOnlineDependencies(fetch0()).setFailFast(false).setSession(session).setId(newId).getResultDefinition();
                 } catch (NutsNotFoundException ex) {
-                    LOG.with().level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
+                    LOG.with().session(session).level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
                     //ignore
                 }
                 break;
@@ -599,7 +599,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     try {
                         oldFile = fetch0().setId(oldId).setSession(session).setOnline().getResultDefinition();
                     } catch (NutsNotFoundException ex) {
-                        LOG.with().level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
+                        LOG.with().session(session).level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
                         //ignore
                     }
                 }
@@ -619,7 +619,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                             .setFailFast(false)
                             .getResultDefinition();
                 } catch (NutsNotFoundException ex) {
-                    LOG.with().level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
+                    LOG.with().session(session).level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
                     //ignore
                 }
                 break;
@@ -635,7 +635,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                         oldFile = fetch0().setId(oldId).setSession(session).getResultDefinition();
                     }
                 } catch (Exception ex) {
-                    LOG.with().level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
+                    LOG.with().session(session).level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
                     //ignore
                 }
                 try {
@@ -657,7 +657,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                             .setOnline()
                             .getResultDefinition();
                 } catch (Exception ex) {
-                    LOG.with().level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
+                    LOG.with().session(session).level(Level.SEVERE).error(ex).log("error : {0}",CoreStringUtils.exceptionToString(ex));
                     //ignore
                 }
                 break;

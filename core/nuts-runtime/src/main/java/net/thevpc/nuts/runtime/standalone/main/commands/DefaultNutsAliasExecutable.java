@@ -49,7 +49,7 @@ public class DefaultNutsAliasExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public String getHelpText() {
-        String t = command.getHelpText();
+        String t = command.getHelpText(session);
         if (t != null) {
             return t;
         }

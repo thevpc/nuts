@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.main.DefaultNutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.common.ClassClassMap;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
@@ -79,7 +79,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         public IdCache(NutsId id) {
             this.id = id;
         }
-        public IdCache(NutsId id, URL url,ClassLoader bootClassLoader,NutsLogger LOG,Class[] extensionPoints) {
+        public IdCache(NutsId id, URL url,ClassLoader bootClassLoader,NutsLogger LOG,Class[] extensionPoints,NutsSession session) {
             this.id = id;
             this.url = url;
             for (Class extensionPoint : extensionPoints) {
@@ -91,11 +91,11 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                     try {
                         c = Class.forName(n, false, bootClassLoader);
                     } catch (ClassNotFoundException x) {
-                        LOG.log(Level.WARNING, "","not a valid type " + c,x);
+                        LOG.with().session(session).verb(NutsLogVerb.WARNING).level(Level.FINE).error(x).log("not a valid type {0}", c);
                     }
                     if(c!=null) {
                         if (!serviceClass.isAssignableFrom(c)) {
-                            LOG.log(Level.WARNING, "", "not a valid type " + c + " <> " + serviceClass, "ignore...");
+                            LOG.with().session(session).verb(NutsLogVerb.WARNING).level(Level.FINE).log("not a valid type {0} <> {1}, ignore...", c,serviceClass);
                         } else {
                             cc.add(c);
                         }
@@ -137,14 +137,14 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     }
 
     @Override
-    public Set<Class> discoverTypes(NutsId id, URL url, ClassLoader bootClassLoader) {
-        return discoverTypes(id,url,bootClassLoader,new Class[]{NutsComponent.class});
+    public Set<Class> discoverTypes(NutsId id, URL url, ClassLoader bootClassLoader, NutsSession session) {
+        return discoverTypes(id,url,bootClassLoader,new Class[]{NutsComponent.class}, session);
     }
 
     @Override
-    public Set<Class> discoverTypes(NutsId id, URL url, ClassLoader bootClassLoader, Class[] extensionPoints) {
+    public Set<Class> discoverTypes(NutsId id, URL url, ClassLoader bootClassLoader, Class[] extensionPoints, NutsSession session) {
         if(!discoveredCacheById.containsKey(id)){
-            discoveredCacheById.put(id,new IdCache(id,url,bootClassLoader,LOG,extensionPoints));
+            discoveredCacheById.put(id,new IdCache(id,url,bootClassLoader,LOG,extensionPoints,session));
         }
         return null;
     }
@@ -160,7 +160,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 //                if (!discoveredCacheByClass.containsExactKey(type)) {
 //                    if (type.isInterface()
 //                            || (type.getModifiers() & Modifier.ABSTRACT) != 0) {
-//                        LOG.with().level(Level.WARNING).verb( NutsLogVerb.WARNING).formatted()
+//                        LOG.with().session(session).level(Level.WARNING).verb( NutsLogVerb.WARNING).formatted()
 //                        .log("abstract type {0} is defined as implementation. Ignored.", type.getName());
 //                        it.remove();
 //                    } else {
@@ -173,7 +173,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 //    }
 
     @Override
-    public Set<Class> getExtensionTypes(Class type) {
+    public Set<Class> getExtensionTypes(Class type, NutsSession session) {
         LinkedHashSet<Class> all=new LinkedHashSet<>();
         for (IdCache v : discoveredCacheById.values()) {
             all.addAll(v.getExtensionTypes(type));
@@ -190,17 +190,17 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 //        return valid;
 //    }
     @Override
-    public boolean isRegisteredInstance(Class extensionPoint, Object implementation) {
+    public boolean isRegisteredInstance(Class extensionPoint, Object implementation, NutsSession session) {
         return instances.contains(extensionPoint, implementation);
     }
 
     @Override
-    public boolean isRegisteredType(Class extensionPoint, Class implementation) {
-        return getExtensionTypes(extensionPoint).contains(implementation);
+    public boolean isRegisteredType(Class extensionPoint, Class implementation, NutsSession session) {
+        return getExtensionTypes(extensionPoint, session).contains(implementation);
     }
 
-    public Class findRegisteredType(Class extensionPoint, String implementation) {
-        for (Class cls : getExtensionTypes(extensionPoint)) {
+    public Class findRegisteredType(Class extensionPoint, String implementation, NutsSession session) {
+        for (Class cls : getExtensionTypes(extensionPoint, session)) {
             if (cls.getName().equals(implementation)) {
                 return cls;
             }
@@ -209,17 +209,17 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     }
 
     @Override
-    public boolean isRegisteredType(Class extensionPoint, String implementation) {
-        return findRegisteredType(extensionPoint, implementation) != null;
+    public boolean isRegisteredType(Class extensionPoint, String implementation, NutsSession session) {
+        return findRegisteredType(extensionPoint, implementation, session) != null;
     }
 
     @Override
-    public <T> void registerInstance(Class<T> extensionPoint, T implementation) {
-        if (isRegisteredInstance(extensionPoint, implementation)) {
+    public <T> void registerInstance(Class<T> extensionPoint, T implementation, NutsSession session) {
+        if (isRegisteredInstance(extensionPoint, implementation, session)) {
             throw new NutsIllegalArgumentException(workspace, "already registered Extension " + implementation + " for " + extensionPoint.getName());
         }
         if (LOG.isLoggable(Level.CONFIG)) {
-            LOG.with().level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
+            LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
             .log("bind    {0} for __impl instance__ {1}", CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getClass().getName());
         }
         instances.add(extensionPoint, implementation);
@@ -246,12 +246,12 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     }
 
     @Override
-    public void registerType(Class extensionPoint, Class implementation, NutsId source) {
-        if (isRegisteredType(extensionPoint, implementation.getName())) {
+    public void registerType(Class extensionPoint, Class implementation, NutsId source, NutsSession session) {
+        if (isRegisteredType(extensionPoint, implementation.getName(), session)) {
             throw new NutsIllegalArgumentException(workspace, "already registered Extension " + implementation.getName() + " for " + extensionPoint.getName());
         }
         if (LOG.isLoggable(Level.CONFIG)) {
-            LOG.with().level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
+            LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
             .log("bind    {0} for __impl type__ {1}", CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getName());
         }
         IdCache t = discoveredCacheById.get(source);
@@ -269,7 +269,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 //        Class registered = findRegisteredType(extensionPoint, implementation.getName());
 //        if (registered != null) {
 //            if (LOG.isLoggable(Level.FINEST)) {
-//                LOG.with().level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
+//                LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
 //                .log("unbind  {0} for __impl type__ {1}", extensionPoint, registered.getName());
 //            }
 //            ClassExtension found = classes.getAll(extensionPoint).stream().filter(x->x.clazz.equals(registered)).findFirst().orElse(null);
@@ -283,7 +283,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 //        Class registered = findRegisteredType(extensionPoint, implementation);
 //        if (registered != null) {
 //            if (LOG.isLoggable(Level.FINEST)) {
-//                LOG.with().level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
+//                LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
 //                .log("unbind  Unregistering {0} for __impl type__ {1}", extensionPoint, registered.getName());
 //            }
 //            ClassExtension found = classes.getAll(extensionPoint).stream().filter(x->x.clazz.equals(registered)).findFirst().orElse(null);
@@ -293,13 +293,13 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 //        }
 //    }
 
-    protected <T> T instantiate0(Class<T> t) {
+    protected <T> T instantiate0(Class<T> t, NutsSession session) {
         T theInstance = null;
         try {
             theInstance = t.newInstance();
         } catch (InstantiationException e) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().level(Level.FINEST).verb( NutsLogVerb.FAIL).formatted().error(e)
+                LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.FAIL).formatted().error(e)
                 .log("unable to instantiate {0}", t);
             }
             Throwable cause = e.getCause();
@@ -317,13 +317,13 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         return theInstance;
     }
 
-    protected <T> T instantiate0(Class<T> t, Class[] argTypes, Object[] args) {
+    protected <T> T instantiate0(Class<T> t, Class[] argTypes, Object[] args, NutsSession session) {
         T t1 = null;
         try {
             t1 = t.getConstructor(argTypes).newInstance(args);
         } catch (InstantiationException e) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().level(Level.FINEST).verb( NutsLogVerb.FAIL).formatted().error(e)
+                LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.FAIL).formatted().error(e)
                 .log( "unable to instantiate {0}" , t);
             }
             Throwable cause = e.getCause();
@@ -336,7 +336,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             throw new NutsFactoryException(workspace, cause);
         } catch (Exception e) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().level(Level.FINEST).verb( NutsLogVerb.FAIL).formatted().error(e)
+                LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.FAIL).formatted().error(e)
                 .log( "unable to instantiate {0}",t);
             }
             if (e instanceof RuntimeException) {
@@ -348,7 +348,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         return t1;
     }
 
-    protected <T> T resolveInstance(Class<T> type, Class<T> baseType) {
+    protected <T> T resolveInstance(Class<T> type, Class<T> baseType, NutsSession session) {
         if (type == null) {
             return null;
         }
@@ -369,25 +369,25 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         if (singleton) {
             Object o = singletons.get(type);
             if (o == null) {
-                o = instantiate0(type);
+                o = instantiate0(type, session);
                 singletons.put(type, o);
                 if (LOG.isLoggable(Level.CONFIG)) {
-                    LOG.with().level(Level.FINEST).verb( NutsLogVerb.READ).formatted()
-                            .log("resolve {0} to  __singleton__ {1}", CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName());
+                    LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.READ).formatted()
+                            .log("resolve {0} to  ```underlined singleton``` {1}", CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName());
                 }
             }
             return (T) o;
         } else {
-            T o = instantiate0(type);
+            T o = instantiate0(type, session);
             if (LOG.isLoggable(Level.CONFIG)) {
-                LOG.with().level(Level.FINEST).verb( NutsLogVerb.READ).formatted()
-                .log("resolve {0} to  __prototype__ {1}", CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName());
+                LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.READ).formatted()
+                .log("resolve {0} to  ```underlined prototype``` {1}", CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName());
             }
             return o;
         }
     }
 
-    protected <T> T resolveInstance(Class<T> type, Class<T> baseType, Class[] argTypes, Object[] args) {
+    protected <T> T resolveInstance(Class<T> type, Class<T> baseType, Class[] argTypes, Object[] args, NutsSession session) {
         if (type == null) {
             return null;
         }
@@ -411,59 +411,59 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             }
             Object o = singletons.get(type);
             if (o == null) {
-                o = instantiate0(type);
+                o = instantiate0(type, session);
                 singletons.put(type, o);
                 if (LOG.isLoggable(Level.CONFIG)) {
-                    LOG.with().level(Level.FINEST).verb( NutsLogVerb.READ).formatted()
-                    .log("resolve {0} to  __singleton__ {1}", CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName());
+                    LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.READ).formatted()
+                    .log("resolve {0} to  ```underlined singleton``` {1}", CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName());
                 }
             }
             return (T) o;
         } else {
-            T o = instantiate0(type, argTypes, args);
+            T o = instantiate0(type, argTypes, args, session);
             if (LOG.isLoggable(Level.CONFIG)) {
-                LOG.with().level(Level.FINEST).verb( NutsLogVerb.READ).formatted()
-                .log("resolve {0} to  __prototype__ {1}", CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName());
+                LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.READ).formatted()
+                .log("resolve {0} to  ```underlined prototype``` {1}", CoreStringUtils.alignLeft(baseType.getSimpleName(), 40), o.getClass().getName());
             }
             return o;
         }
     }
 
     //    @Override
-    public <T> T create(Class<T> type) {
+    public <T> T create(Class<T> type, NutsSession session) {
         Object one = instances.getOne(type);
         if (one != null) {
             //if static instance found, always return it!
             if (LOG.isLoggable(Level.CONFIG)) {
-                LOG.with().level(Level.FINEST).verb( NutsLogVerb.READ).formatted()
+                LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.READ).formatted()
                 .log("resolve {0} to singleton {1}", CoreStringUtils.alignLeft(type.getSimpleName(), 40), one.getClass().getName());
             }
             return (T) one;
         }
-        Set<Class> extensionTypes = getExtensionTypes(type);
+        Set<Class> extensionTypes = getExtensionTypes(type, session);
         for (Class e : extensionTypes) {
-            return (T) resolveInstance(e, type);
+            return (T) resolveInstance(e, type, session);
         }
         for (Class<T> t : extensionTypes) {
-            return (T) instantiate0(t);
+            return (T) instantiate0(t, session);
         }
         throw new NutsElementNotFoundException(workspace, "Type " + type + " not found");
     }
 
     @Override
-    public <T> List<T> createAll(Class<T> type) {
+    public <T> List<T> createAll(Class<T> type, NutsSession session) {
         List<T> all = new ArrayList<T>();
         for (Object obj : instances.getAll(type)) {
             all.add((T) obj);
         }
         LinkedHashSet<Class> allTypes = new LinkedHashSet<>();
-        allTypes.addAll(getExtensionTypes(type));
+        allTypes.addAll(getExtensionTypes(type, session));
         for (Class c : allTypes) {
             T obj = null;
             try {
-                obj = (T) resolveInstance(c, type);
+                obj = (T) resolveInstance(c, type, session);
             } catch (Exception e) {
-                LOG.with().level(Level.FINEST).verb( NutsLogVerb.FAIL).formatted().error(e)
+                LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.FAIL).formatted().error(e)
                 .log( "unable to instantiate {0} for {1} : {2}" ,c,type, CoreStringUtils.exceptionToString(e));
             }
             if (obj != null) {
@@ -473,14 +473,14 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         return all;
     }
 
-    public <T> List<T> createAll(Class<T> type, Class[] argTypes, Object[] args) {
+    public <T> List<T> createAll(Class<T> type, Class[] argTypes, Object[] args, NutsSession session) {
         List<T> all = new ArrayList<T>();
-        for (Class c : getExtensionTypes(type)) {
+        for (Class c : getExtensionTypes(type, session)) {
             T obj = null;
             try {
-                obj = (T) resolveInstance(c, type, argTypes, args);
+                obj = (T) resolveInstance(c, type, argTypes, args, session);
             } catch (Exception e) {
-                LOG.with().level(Level.WARNING).verb(NutsLogVerb.FAIL).formatted().error(e)
+                LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.FAIL).formatted().error(e)
                         .log("unable to instantiate {0} for {1} : {2}", c, type, CoreStringUtils.exceptionToString(e));
             }
             if (obj != null) {
@@ -495,8 +495,8 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     }
 
     @Override
-    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters) {
-        List<T> list = createAll(type, constructorParameterTypes, constructorParameters);
+    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters, NutsSession session) {
+        List<T> list = createAll(type, constructorParameterTypes, constructorParameters, session);
         int bestSupportLevel = Integer.MIN_VALUE;
         NutsSupportLevelContext<V> lc=new DefaultNutsSupportLevelContext<V>(workspace,supportCriteria);
         T bestObj = null;
@@ -519,8 +519,8 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     }
 
     @Override
-    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria) {
-        List<T> list = createAll(type);
+    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, NutsSession session) {
+        List<T> list = createAll(type, session);
         int bestSupportLevel = Integer.MIN_VALUE;
         T bestObj = null;
         DefaultNutsSupportLevelContext<V> context = new DefaultNutsSupportLevelContext<>(workspace, supportCriteria);
@@ -543,8 +543,8 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     }
 
     @Override
-    public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria) {
-        List<T> list = createAll(type);
+    public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria, NutsSession session) {
+        List<T> list = createAll(type, session);
         DefaultNutsSupportLevelContext<V> context = new DefaultNutsSupportLevelContext<>(workspace, supportCriteria);
         for (Iterator<T> iterator = list.iterator(); iterator.hasNext();) {
             T t = iterator.next();

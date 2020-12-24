@@ -26,6 +26,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 
 import net.thevpc.nuts.NutsLogger;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.format.xml.NutsXmlUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
@@ -35,20 +36,20 @@ import org.w3c.dom.Element;
 public class MavenMetadataParser {
     private final NutsLogger LOG;
 
-    private NutsWorkspace ws;
-    public static MavenMetadataParser of(NutsWorkspace ws) {
-        Map<String, Object> up = ws.userProperties();
-        MavenMetadataParser wp = (MavenMetadataParser) up.get(MavenMetadataParser.class.getName());
-        if (wp == null) {
-            wp = new MavenMetadataParser(ws);
-            up.put(MavenMetadataParser.class.getName(), wp);
-        }
-        return wp;
-    }
+    private NutsSession session;
+//    public static MavenMetadataParser of(NutsWorkspace ws) {
+//        Map<String, Object> up = ws.userProperties();
+//        MavenMetadataParser wp = (MavenMetadataParser) up.get(MavenMetadataParser.class.getName());
+//        if (wp == null) {
+//            wp = new MavenMetadataParser(ws);
+//            up.put(MavenMetadataParser.class.getName(), wp);
+//        }
+//        return wp;
+//    }
 
-    public MavenMetadataParser(NutsWorkspace ws) {
-        this.ws = ws;
-        LOG=ws.log().of(MavenMetadataParser.class);
+    public MavenMetadataParser(NutsSession session) {
+        this.session = session;
+        LOG=session.getWorkspace().log().of(MavenMetadataParser.class);
     }
 
     public String toXmlString(MavenMetadata m) {
@@ -75,7 +76,7 @@ public class MavenMetadataParser {
     }
 
     public void writeMavenMetaData(MavenMetadata m, StreamResult writer) throws TransformerException, ParserConfigurationException {
-        Document document = NutsXmlUtils.createDocument(ws);
+        Document document = NutsXmlUtils.createDocument(session);
 
         Element metadata = document.createElement("metadata");
         document.appendChild(metadata);
@@ -199,7 +200,7 @@ public class MavenMetadataParser {
 
             info.setLastUpdated(lastUpdated.toString().trim().isEmpty() ? null : new SimpleDateFormat("yyyyMMddHHmmss").parse(lastUpdated.toString().trim()));
         } catch (Exception ex) {
-            LOG.with().level(Level.SEVERE).error(ex).log("failed to parse date {0} : {1}", lastUpdated, CoreStringUtils.exceptionToString(ex));
+            LOG.with().session(session).level(Level.SEVERE).error(ex).log("failed to parse date {0} : {1}", lastUpdated, CoreStringUtils.exceptionToString(ex));
         }
         for (String version : versions) {
             info.getVersions().add(version.trim());

@@ -37,6 +37,8 @@ import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
 import java.lang.reflect.Array;
 import java.time.Instant;
 import java.util.*;
+import java.util.logging.Filter;
+import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.standalone.format.CustomNutsIncrementalOutputFormat;
 
@@ -49,9 +51,14 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private NutsPropertiesHolder properties = new NutsPropertiesHolder();
     private Map<Class, LinkedHashSet<NutsListener>> listeners = new HashMap<>();
     private Boolean trace;
+    private Boolean debug;
     private NutsExecutionType executionType;
 //    private Boolean force;
     private Boolean dry;
+    private Level logTermLevel;
+    private Filter logTermFilter;
+    private Level logFileLevel;
+    private Filter logFileFilter;
     private NutsConfirmationMode confirm = null;
     private NutsContentType outputFormat;
     protected NutsIterableFormat iterFormatHandler = null;
@@ -73,10 +80,16 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         copyFrom(ws.config().options());
     }
 
+    public DefaultNutsSession(NutsWorkspace ws,NutsWorkspaceOptions options) {
+        this.ws = ws;
+        copyFrom(options);
+    }
+
     @Override
     public NutsSession copyFrom(NutsWorkspaceOptions options) {
         if(options!=null){
             this.trace = options.isTrace();
+            this.debug = options.isDebug();
             this.progressOptions = options.getProgressOptions();
             this.dry = options.isDry();
             this.cached = options.isCached();
@@ -90,6 +103,14 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             this.outputFormatOptions.clear();
             this.outputFormatOptions.addAll(Arrays.asList(options.getOutputFormatOptions()));
             this.outputFormatOptions.addAll(Arrays.asList(options.getOutputFormatOptions()));
+            NutsLogConfig logConfig = options.getLogConfig();
+            if(logConfig!=null) {
+                this.logTermLevel = logConfig.getLogTermLevel();
+                this.logTermFilter = logConfig.getLogTermFilter();
+                this.logFileLevel = logConfig.getLogFileLevel();
+                this.logFileFilter = logConfig.getLogFileFilter();
+            }
+
         }
         return this;
     }
@@ -125,6 +146,10 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         this.outputFormatOptions.clear();
         this.outputFormatOptions.addAll(Arrays.asList(other.getOutputFormatOptions()));
         this.progressOptions = other.getProgressOptions();
+        this.logTermLevel = other.getLogTermLevel();
+        this.logTermFilter = other.getLogTermFilter();
+        this.logFileLevel = other.getLogFileLevel();
+        this.logFileFilter = other.getLogFileFilter();
         return this;
     }
 
@@ -1093,6 +1118,50 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
+    public Level getLogTermLevel() {
+        return logTermLevel;
+    }
+
+    @Override
+    public Filter getLogTermFilter() {
+        return logTermFilter;
+    }
+
+    @Override
+    public NutsSession setLogLevel(Level level) {
+        this.logTermLevel =level;
+        return this;
+    }
+
+    @Override
+    public NutsSession setLogFilter(Filter filter) {
+        this.logTermFilter =filter;
+        return this;
+    }
+
+    @Override
+    public Level getLogFileLevel() {
+        return logFileLevel;
+    }
+
+    @Override
+    public NutsSession setLogFileLevel(Level logFileLevel) {
+        this.logFileLevel = logFileLevel;
+        return this;
+    }
+
+    @Override
+    public Filter getLogFileFilter() {
+        return logFileFilter;
+    }
+
+    @Override
+    public NutsSession setLogFileFilter(Filter logFileFilter) {
+        this.logFileFilter = logFileFilter;
+        return this;
+    }
+
+    @Override
     public NutsExecutionType getExecutionType() {
         if(executionType!=null) {
             return executionType;
@@ -1103,6 +1172,25 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public NutsSession setExecutionType(NutsExecutionType executionType) {
         this.executionType = executionType;
+        return this;
+    }
+
+    @Override
+    public boolean isDebug() {
+        if(debug==null){
+            return ws.config().options().isDebug();
+        }
+        return debug;
+    }
+
+    @Override
+    public Boolean getDebug() {
+        return debug;
+    }
+
+    @Override
+    public NutsSession setDebug(Boolean debug) {
+        this.debug = debug;
         return this;
     }
 }

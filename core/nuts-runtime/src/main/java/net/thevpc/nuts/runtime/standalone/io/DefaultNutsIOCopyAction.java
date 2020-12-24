@@ -16,7 +16,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.DefaultNutsProgressEvent;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.io.InterruptException;
 import net.thevpc.nuts.runtime.standalone.util.io.Interruptible;
 
@@ -541,7 +541,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     .logProgress(isLogProgress())
                     .createSource();
         }
-        LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log("copy {0} to {1}", _source, target);
+        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log("copy {0} to {1}", _source, target);
         try {
             if (safe) {
                 Path temp = null;
@@ -617,7 +617,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                 }
             }
         } catch (IOException ex) {
-            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log("error copying {0} to {1} : {2}", _source.getSource(), target.getSource(), CoreStringUtils.exceptionToString(ex));
+            LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log("error copying {0} to {1} : {2}", _source.getSource(), target.getSource(), CoreStringUtils.exceptionToString(ex));
             throw new UncheckedIOException(ex);
         }
     }

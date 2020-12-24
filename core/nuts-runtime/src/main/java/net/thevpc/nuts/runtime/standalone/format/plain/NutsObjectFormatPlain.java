@@ -90,7 +90,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
         } else if (value instanceof org.w3c.dom.Element) {
             try {
                 Element elem = (org.w3c.dom.Element) value;
-                Document doc = NutsXmlUtils.createDocument(getWorkspace());
+                Document doc = NutsXmlUtils.createDocument(getSession());
                 doc.appendChild(doc.importNode(elem, true));
                 NutsXmlUtils.writeDocument(doc, new StreamResult(w), false, false);
             } catch (TransformerException | ParserConfigurationException ex) {

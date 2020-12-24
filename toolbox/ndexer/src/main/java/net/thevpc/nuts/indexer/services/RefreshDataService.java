@@ -50,8 +50,9 @@ public class RefreshDataService {
         if (iterator.hasNext()) {
             NutsWorkspaceLocation workspaceLocation = iterator.next();
             NutsWorkspace ws = workspacePool.openWorkspace(workspaceLocation.getLocation());
+            NutsSession session = ws.createSession();
             Map<String, NutsId> oldData = this.dataService
-                    .getAllData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()))
+                    .getAllData(NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()))
                     .stream()
                     .collect(Collectors.toMap(map -> map.get("stringId"), map -> NutsIndexerUtils.mapToNutsId(map, ws), (v1, v2) -> v1));
             Iterator<NutsDefinition> definitions = ws.search()
@@ -80,8 +81,8 @@ public class RefreshDataService {
                 id.put("dependencies", ws.formats().element().setContentType(NutsContentType.JSON).setValue(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList())).format());
                 dataToIndex.add(id);
             }
-            this.dataService.indexMultipleData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), dataToIndex);
-            this.dataService.deleteMultipleData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()),
+            this.dataService.indexMultipleData(NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), dataToIndex);
+            this.dataService.deleteMultipleData(NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()),
                     oldData.values().stream()
                             .map(NutsIndexerUtils::nutsIdToMap)
                             .collect(Collectors.toList()));

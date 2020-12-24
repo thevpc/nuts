@@ -34,6 +34,8 @@ import java.util.logging.Level;
  * @category Logging
  */
 public interface NutsLoggerOp {
+    NutsLoggerOp session(NutsSession session);
+
     /**
      * set or unset formatted mode (Nuts Stream Format)
      * @param value formatted flag

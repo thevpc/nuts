@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspaceEvent;
 import net.thevpc.nuts.runtime.standalone.format.text.ExtendedFormatAware;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.terminals.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
@@ -52,12 +52,12 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
                 );
                 setSystemTerminal(systemTerminal, session);
                 if(getSystemTerminal().isAutoCompleteSupported()) {
-                    LOG.with().level(Level.FINE).verb(NutsLogVerb.SUCCESS).log("enable rich terminal");
+                    LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.SUCCESS).log("enable rich terminal");
                 }else{
-                    LOG.with().level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to enable rich terminal");
+                    LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to enable rich terminal");
                 }
             }else{
-                LOG.with().level(Level.FINE).verb(NutsLogVerb.WARNING).log("enableRichTerm discarded; next-term is excluded.");
+                LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.WARNING).log("enableRichTerm discarded; next-term is excluded.");
             }
         }
         return this;
@@ -115,25 +115,21 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
             throw new NutsExtensionNotFoundException(ws, NutsSessionTerminal.class, "SessionTerminalBase");
         }
         NutsWorkspaceUtils.setSession(termb,session);
-        NutsWorkspaceUtils.of(ws).setWorkspace(termb);
         try {
             NutsSessionTerminal term = null;
             if (termb instanceof NutsSessionTerminal) {
                 term = (NutsSessionTerminal) termb;
                 NutsWorkspaceUtils.setSession(term,session);
-                NutsWorkspaceUtils.of(ws).setWorkspace(term);
                 term.setParent(parent);
             } else {
                 term = new DefaultNutsSessionTerminal();
                 NutsWorkspaceUtils.setSession(term,session);
-                NutsWorkspaceUtils.of(ws).setWorkspace(term);
                 term.setParent(termb);
             }
             return term;
         } catch (Exception anyException) {
             final NutsSessionTerminal c = new DefaultNutsSessionTerminal();
             NutsWorkspaceUtils.setSession(c,session);
-            NutsWorkspaceUtils.of(ws).setWorkspace(c);
             c.setParent(parent);
             return c;
         }
@@ -149,12 +145,10 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
             try {
                 syst = new DefaultSystemTerminal(terminal);
                 NutsWorkspaceUtils.setSession(syst,session);
-                NutsWorkspaceUtils.of(ws).setWorkspace(syst);
             } catch (Exception ex) {
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("unable to create system terminal : %s",ex.getMessage());
+                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("unable to create system terminal : %s",ex.getMessage());
                 syst = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBase());
                 NutsWorkspaceUtils.setSession(syst,session);
-                NutsWorkspaceUtils.of(ws).setWorkspace(syst);
             }
         }
         return syst;

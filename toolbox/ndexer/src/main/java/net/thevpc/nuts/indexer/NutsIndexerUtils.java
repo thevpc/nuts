@@ -13,12 +13,13 @@ import java.util.stream.Collectors;
 
 public class NutsIndexerUtils {
 
-    public static Path getCacheDir(NutsWorkspace ws, String entity) {
+    public static Path getCacheDir(NutsSession session, String entity) {
         String k = "NutsIndexerUtils.CACHE." + entity;
+        NutsWorkspace ws = session.getWorkspace();
         String m = (String) ws.userProperties().get(k);
         if (m == null) {
             m = ws.locations()
-                    .getStoreLocation(ws.id().resolveId(NutsIndexerUtils.class),
+                    .getStoreLocation(ws.id().resolveId(NutsIndexerUtils.class, session),
                             NutsStoreLocation.CACHE) + File.separator + entity;
             ws.userProperties().put(k, m);
         }

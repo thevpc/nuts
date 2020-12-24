@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 
 import java.io.*;
 import java.net.URL;
@@ -275,7 +275,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 //        if (!path.toLowerCase().startsWith("file://")) {
 //            LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
 //        } else {
-        LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log( "uncompress {0} to {1}", _source, target);
+        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "uncompress {0} to {1}", _source, target);
 //        }
         try {
 
@@ -318,7 +318,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
                             Files.createDirectories(newFile);
                         } else {
                             Path newFile = folder.resolve(fileName);
-                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "file unzip : " + newFile);
+                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "file unzip : " + newFile);
                             //create all non exists folders
                             //else you will hit FileNotFoundException for compressed folder
                             if (newFile.getParent() != null) {
@@ -339,7 +339,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
                 _in.close();
             }
         } catch (IOException ex) {
-            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).log( "error uncompressing {0} to {1} : {2}", _source.getSource(), target.getSource(), CoreStringUtils.exceptionToString(ex));
+            LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log( "error uncompressing {0} to {1} : {2}", _source.getSource(), target.getSource(), CoreStringUtils.exceptionToString(ex));
             throw new UncheckedIOException(ex);
         }
     }

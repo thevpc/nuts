@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.runtime.core;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsId;
 
@@ -40,33 +41,33 @@ import java.util.Set;
  */
 public interface NutsWorkspaceFactory {
 
-    Set<Class> discoverTypes(NutsId id, URL url, ClassLoader bootClassLoader);
-    Set<Class> discoverTypes(NutsId id, URL url, ClassLoader bootClassLoader, Class[] extensionPoints);
+    Set<Class> discoverTypes(NutsId id, URL url, ClassLoader bootClassLoader, NutsSession session);
+    Set<Class> discoverTypes(NutsId id, URL url, ClassLoader bootClassLoader, Class[] extensionPoints, NutsSession session);
 
 //    Set<Class> discoverTypes(ClassLoader bootClassLoader);
 
-    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria);
+    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, NutsSession session);
 
-    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters);
+    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters, NutsSession session);
 
-    <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria);
+    <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria, NutsSession session);
 
-    <T> List<T> createAll(Class<T> type);
+    <T> List<T> createAll(Class<T> type, NutsSession session);
 
 //    Set<Class> getExtensionPoints();
 
-    Set<Class> getExtensionTypes(Class extensionPoint);
+    Set<Class> getExtensionTypes(Class extensionPoint, NutsSession session);
 
     List<Object> getExtensionObjects(Class extensionPoint);
 
-    boolean isRegisteredType(Class extensionPointType, String name);
+    boolean isRegisteredType(Class extensionPointType, String name, NutsSession session);
 
-    boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl);
+    boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl, NutsSession session);
 
-    <T> void registerInstance(Class<T> extensionPoint, T implementation);
+    <T> void registerInstance(Class<T> extensionPoint, T implementation, NutsSession session);
 
-    void registerType(Class extensionPointType, Class extensionType, NutsId source);
+    void registerType(Class extensionPointType, Class extensionType, NutsId source, NutsSession session);
 
-    boolean isRegisteredType(Class extensionPointType, Class extensionType);
+    boolean isRegisteredType(Class extensionPointType, Class extensionType, NutsSession session);
 
 }

@@ -12,7 +12,7 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.repocommands.AbstractNutsSearchVersionsRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
@@ -49,7 +49,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
                 try {
                     d = xrepo.getIndexStore().searchVersions(id, session);
                 } catch (NutsException ex) {
-                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("error finding version with Indexer for {0} : {1}", getRepo().getName(), ex);
+                    LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("error finding version with Indexer for {0} : {1}", getRepo().getName(), ex);
                 }
                 if (d != null && filter != null) {
                     resultList.add(
@@ -66,7 +66,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
             return this;
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "[{0}] {1} {2} {3}", CoreStringUtils.alignLeft(getFetchMode().toString(), 7), CoreStringUtils.alignLeft(getRepo().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id);
+                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "[{0}] {1} {2} {3}", CoreStringUtils.alignLeft(getFetchMode().toString(), 7), CoreStringUtils.alignLeft(getRepo().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id);
             }
             throw ex;
         }

@@ -7,7 +7,7 @@ import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.CommandNutsWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.wscommands.ConfigNutsWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsWorkspaceCommandAlias;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 
 import java.io.PrintStream;
@@ -121,7 +121,7 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
         }
         boolean forced = false;
         NutsSession session = options.getSession();
-        if (defaultCommandFactory.findCommand(command.getName(), ws) != null) {
+        if (defaultCommandFactory.findCommand(command.getName(), options.getSession()) != null) {
             if (session.isYes()) {
                 forced = true;
                 remove(command.getName(),
@@ -150,7 +150,7 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
         }
         options = CoreNutsUtils.validate(options, ws);
         NutsSession session = options.getSession();
-        NutsCommandAliasConfig command = defaultCommandFactory.findCommand(name, ws);
+        NutsCommandAliasConfig command = defaultCommandFactory.findCommand(name, options.getSession());
         if (command == null) {
             throw new NutsIllegalArgumentException(ws, "command alias does not exists " + name);
         }
@@ -168,10 +168,10 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
 
     @Override
     public NutsWorkspaceCommandAlias find(String name, NutsSession session) {
-        NutsCommandAliasConfig c = defaultCommandFactory.findCommand(name, ws);
+        NutsCommandAliasConfig c = defaultCommandFactory.findCommand(name, session);
         if (c == null) {
             for (NutsWorkspaceCommandFactory commandFactory : commandFactories) {
-                c = commandFactory.findCommand(name, ws);
+                c = commandFactory.findCommand(name, session);
                 if (c != null) {
                     break;
                 }
@@ -180,19 +180,19 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
         if (c == null) {
             return null;
         }
-        return toDefaultNutsWorkspaceCommand(c);
+        return toDefaultNutsWorkspaceCommand(c, session);
     }
 
     @Override
     public List<NutsWorkspaceCommandAlias> findAll(NutsSession session) {
         HashMap<String, NutsWorkspaceCommandAlias> all = new HashMap<>();
-        for (NutsCommandAliasConfig command : defaultCommandFactory.findCommands(ws)) {
-            all.put(command.getName(), toDefaultNutsWorkspaceCommand(command));
+        for (NutsCommandAliasConfig command : defaultCommandFactory.findCommands(session)) {
+            all.put(command.getName(), toDefaultNutsWorkspaceCommand(command, session));
         }
         for (NutsWorkspaceCommandFactory commandFactory : commandFactories) {
-            for (NutsCommandAliasConfig command : commandFactory.findCommands(ws)) {
+            for (NutsCommandAliasConfig command : commandFactory.findCommands(session)) {
                 if (!all.containsKey(command.getName())) {
-                    all.put(command.getName(), toDefaultNutsWorkspaceCommand(command));
+                    all.put(command.getName(), toDefaultNutsWorkspaceCommand(command, session));
                 }
             }
         }
@@ -202,16 +202,16 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
     @Override
     public List<NutsWorkspaceCommandAlias> findByOwner(NutsId id, NutsSession session) {
         HashMap<String, NutsWorkspaceCommandAlias> all = new HashMap<>();
-        for (NutsCommandAliasConfig command : defaultCommandFactory.findCommands(id, ws)) {
-            all.put(command.getName(), toDefaultNutsWorkspaceCommand(command));
+        for (NutsCommandAliasConfig command : defaultCommandFactory.findCommands(id, session)) {
+            all.put(command.getName(), toDefaultNutsWorkspaceCommand(command, session));
         }
         return new ArrayList<>(all.values());
     }
 
-    private NutsWorkspaceCommandAlias toDefaultNutsWorkspaceCommand(NutsCommandAliasConfig c) {
+    private NutsWorkspaceCommandAlias toDefaultNutsWorkspaceCommand(NutsCommandAliasConfig c, NutsSession session) {
         if (c.getCommand() == null || c.getCommand().length == 0) {
 
-            LOG.with().level(Level.WARNING).verb(NutsLogVerb.FAIL).log("invalid command definition ''{0}''. Missing command. Ignored", c.getName());
+            LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.FAIL).log("invalid command definition ''{0}''. Missing command. Ignored", c.getName());
             return null;
         }
 //        if (c.getOwner() == null) {

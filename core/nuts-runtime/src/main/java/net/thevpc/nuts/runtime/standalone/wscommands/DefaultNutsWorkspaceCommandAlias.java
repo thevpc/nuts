@@ -146,7 +146,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
     }
 
     @Override
-    public String getHelpText() throws NutsExecutionException {
+    public String getHelpText(NutsSession session) throws NutsExecutionException {
         if (!CoreStringUtils.isBlank(helpText)) {
             return helpText;
         }
@@ -160,7 +160,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
                         .run()
                         .getOutputString();
             } catch (Exception ex) {
-                LOG.with().level(Level.FINE).error(ex).log( "failed to retrieve help for {0}",getName());
+                LOG.with().session(session).level(Level.FINE).error(ex).log( "failed to retrieve help for {0}",getName());
                 return "failed to retrieve help for " + getName();
             }
         }

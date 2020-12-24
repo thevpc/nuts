@@ -232,19 +232,19 @@ public final class JavaExecutorOptions {
                         break;
                     default:
                         if (!session.isPlainOut()) {
-                            throw new NutsExecutionException(getWorkspace(), "Multiple runnable classes detected : " + possibleClasses, 102);
+                            throw new NutsExecutionException(getWorkspace(), "multiple runnable classes detected : " + possibleClasses, 102);
                         }
                         StringBuilder msgString = new StringBuilder();
                         List<Object> msgParams = new ArrayList<>();
 
-                        msgString.append("Multiple runnable classes detected  - actually #####%s##### . Select one :%n");
+                        msgString.append("multiple runnable classes detected  - actually #####%s##### . Select one :%n");
                         msgParams.add(possibleClasses.size());
                         for (int i = 0; i < possibleClasses.size(); i++) {
                             msgString.append("######[%s]###### #####%s#####%n");
                             msgParams.add((i + 1));
                             msgParams.add(possibleClasses.get(i));
                         }
-                        msgString.append("Enter class ####%s#### or ####%s#### to run it. Type ```error %s``` to cancel : ");
+                        msgString.append("enter class ####%s#### or ####%s#### to run it. Type ```error %s``` to cancel : ");
                         msgParams.add("#");
                         msgParams.add("name");
                         msgParams.add("cancel!");

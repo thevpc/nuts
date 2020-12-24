@@ -14,7 +14,7 @@ import net.thevpc.nuts.spi.NutsPushRepositoryCommand;
 import net.thevpc.nuts.NutsRepository;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.repocommands.AbstractNutsPushRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -40,12 +40,12 @@ public class DefaultNutsPushRepositoryCommand extends AbstractNutsPushRepository
             NutsRepositoryExt.of(getRepo()).pushImpl(this);
             if (LOG.isLoggable(Level.FINEST)) {
 
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log( "{0} Push {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), getId());
+                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log( "{0} Push {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), getId());
             }
         } catch (RuntimeException ex) {
 
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "{0} Push {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), getId());
+                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "{0} Push {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), getId());
             }
         }
         return this;

@@ -380,15 +380,15 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
                 );
             }
             case WARN1: {
-                return styled(other, NutsTextNodeStyle.PRIMARY3, asDecoration);
+                return styled(other, NutsTextNodeStyle.PRIMARY4, asDecoration);
             }
             case WARN2:
             case WARN3:
             case WARN4: {
                 return list(
-                        styled(plain("warning:"), NutsTextNodeStyle.SECONDARY3),
+                        styled(plain("warning:"), NutsTextNodeStyle.PRIMARY4),
                         plain(" "),
-                        styled(other, NutsTextNodeStyle.PRIMARY3, asDecoration)
+                        styled(other, NutsTextNodeStyle.PRIMARY4, asDecoration)
                 );
             }
             case INFO1: {
@@ -398,9 +398,9 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
             case INFO3:
             case INFO4: {
                 return list(
-                        styled(plain("info:"), NutsTextNodeStyle.SECONDARY4),
+                        styled(plain("info:"), NutsTextNodeStyle.SECONDARY3),
                         plain(" "),
-                        styled(other, NutsTextNodeStyle.PRIMARY4, asDecoration)
+                        styled(other, NutsTextNodeStyle.PRIMARY3, asDecoration)
                 );
             }
             case CONFIG1: {

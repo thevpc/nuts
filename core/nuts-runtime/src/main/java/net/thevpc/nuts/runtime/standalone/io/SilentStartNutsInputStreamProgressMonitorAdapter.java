@@ -4,7 +4,7 @@ import net.thevpc.nuts.NutsProgressEvent;
 import net.thevpc.nuts.NutsProgressMonitor;
 import net.thevpc.nuts.NutsLogger;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 
 import java.util.logging.Level;
 
@@ -27,9 +27,9 @@ class SilentStartNutsInputStreamProgressMonitorAdapter implements NutsProgressMo
     public void onComplete(NutsProgressEvent event) {
         finalMonitor.onComplete(event);
         if (event.getError() != null) {
-            LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("download failed    : {0}", path);
+            LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("download failed    : {0}", path);
         } else {
-            LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log( "download succeeded : {0}", path);
+            LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log( "download succeeded : {0}", path);
         }
     }
 

@@ -59,7 +59,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
                     || x.getName().equals("project-summary.html")
             );
             if (mavenRepoRootFiles != null && mavenRepoRootFiles.length > 3) {
-                new MavenRepositoryFolderHelper(null, ws, repositoryPath).reindexFolder();
+                new MavenRepositoryFolderHelper(null, ws, repositoryPath).reindexFolder(getSession());
                 if (session.isPlainTrace()) {
                     session.getTerminal().out().printf("[%s] updated maven index %s%n", getWorkspace().locations().getWorkspaceLocation(), repositoryPath);
                 }

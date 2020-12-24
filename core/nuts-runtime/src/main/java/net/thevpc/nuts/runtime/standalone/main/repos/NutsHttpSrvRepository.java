@@ -30,7 +30,7 @@ import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.io.CoreSecurityUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 
@@ -57,7 +57,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         try {
             remoteId = NutsWorkspaceUtils.of(workspace).parseRequiredNutsId((options.getLocation() + "/version"));
         } catch (Exception ex) {
-            LOG.with().level(Level.WARNING).verb(NutsLogVerb.FAIL).log( "Unable to initialize Repository NutsId for repository {0}", options.getLocation());
+            LOG.with().session(options.getSession()).level(Level.WARNING).verb(NutsLogVerb.FAIL).log( "Unable to initialize Repository NutsId for repository {0}", options.getLocation());
         }
     }
 
@@ -70,7 +70,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             try {
                 remoteId = NutsWorkspaceUtils.of(getWorkspace()).parseRequiredNutsId( httpGetString(getUrl("/version"),session));
             } catch (Exception ex) {
-                LOG.with().level(Level.WARNING).verb(NutsLogVerb.FAIL).log("Unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
+                LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.FAIL).log("Unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
             }
         }
         return remoteId;
@@ -207,12 +207,12 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     private String httpGetString(String url,NutsSession session) {
-        LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log( "Get URL{0}", url);
+        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "Get URL{0}", url);
         return CoreIOUtils.loadString(CoreIOUtils.getHttpClientFacade(session, url).open(), true);
     }
 
     private InputStream httpUpload(String url,NutsSession session, NutsTransportParamPart... parts) {
-        LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log( "Uploading URL {0}", url);
+        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "Uploading URL {0}", url);
         return CoreIOUtils.getHttpClientFacade(session, url).upload(parts);
     }
 

@@ -32,7 +32,7 @@ import net.thevpc.nuts.runtime.standalone.io.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsDescriptorContentParserContext;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.DefaultPersistentMap;
 import net.thevpc.nuts.runtime.standalone.util.common.PersistentMap;
@@ -89,7 +89,6 @@ public class CoreIOUtils {
         }
         ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer);
         NutsWorkspaceUtils.setSession(s,session);
-        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
         return s;
     }
 
@@ -99,7 +98,6 @@ public class CoreIOUtils {
         }
         ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer);
         NutsWorkspaceUtils.setSession(s,session);
-        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
         return s;
     }
 
@@ -109,7 +107,6 @@ public class CoreIOUtils {
         }
         SimpleWriterOutputStream s = new SimpleWriterOutputStream(writer,session);
         NutsWorkspaceUtils.setSession(s,session);
-        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
         return toPrintStream(s, session);
     }
 
@@ -120,12 +117,10 @@ public class CoreIOUtils {
         if (os instanceof PrintStream) {
             PrintStream y = (PrintStream) os;
             NutsWorkspaceUtils.setSession(y,session);
-            NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(y);
             return y;
         }
         PrintStreamExt s = new PrintStreamExt(os, false);
         NutsWorkspaceUtils.setSession(s,session);
-        NutsWorkspaceUtils.of(session.getWorkspace()).setWorkspace(s);
         return s;
     }
 
@@ -155,7 +150,7 @@ public class CoreIOUtils {
                 return aw.convert(NutsTerminalModeOp.FILTER);
             }
             default: {
-                throw new IllegalArgumentException("Unsupported " + expected);
+                throw new IllegalArgumentException("unsupported terminal mode " + expected);
             }
         }
     }
@@ -798,19 +793,19 @@ public class CoreIOUtils {
         return new MonitoredInputStream(from, source, sourceName, length, monitor, session);
     }
 
-    public static void delete(File file) {
-        delete(null, file);
-    }
+//    public static void delete(File file) {
+//        delete(null, file);
+//    }
 
-    public static void delete(NutsWorkspace ws, File file) {
-        delete(ws, file.toPath());
+    public static void delete(NutsSession session, File file) {
+        delete(session, file.toPath());
     }
+//
+//    public static void delete(Path file) {
+//        delete(null, file);
+//    }
 
-    public static void delete(Path file) {
-        delete(null, file);
-    }
-
-    public static void delete(NutsWorkspace ws, Path file) {
+    public static void delete(NutsSession session, Path file) {
         if (!Files.exists(file)) {
             return;
         }
@@ -822,7 +817,7 @@ public class CoreIOUtils {
             }
         }
         final int[] deleted = new int[]{0, 0, 0};
-        NutsLogger LOG = ws == null ? null : ws.log().of(CoreIOUtils.class);
+        NutsLogger LOG = session == null ? null : session.getWorkspace().log().of(CoreIOUtils.class);
         try {
             Files.walkFileTree(file, new FileVisitor<Path>() {
                 @Override
@@ -835,12 +830,12 @@ public class CoreIOUtils {
                     try {
                         Files.delete(file);
                         if (LOG != null) {
-                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("delete file " + file);
+                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("delete file " + file);
                         }
                         deleted[0]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("failed deleting file : " + file);
+                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("failed deleting file : " + file);
                         }
                         deleted[2]++;
                     }
@@ -857,12 +852,12 @@ public class CoreIOUtils {
                     try {
                         Files.delete(dir);
                         if (LOG != null) {
-                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("delete folder " + dir);
+                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("delete folder " + dir);
                         }
                         deleted[1]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("failed deleting folder: " + dir);
+                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("failed deleting folder: " + dir);
                         }
                         deleted[2]++;
                     }

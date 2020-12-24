@@ -39,7 +39,7 @@ public class Test04_CreateLoadLinuxTest {
         TestUtils.setSystemProperties(extraProperties);
         clearUpExtraSystemProperties = extraProperties;
 
-        CoreIOUtils.delete(base);
+        CoreIOUtils.delete(null,base);
         Nuts.runWorkspace("--reset",
                 "--system-apps-home", new File(base, "system.apps").getPath(),
                 "--system-config-home", new File(base, "system.config").getPath(),

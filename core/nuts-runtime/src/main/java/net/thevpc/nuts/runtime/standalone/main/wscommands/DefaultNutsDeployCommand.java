@@ -203,7 +203,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     characterizedFile.close();
                 }
                 if (tempFile != null) {
-                    CoreIOUtils.delete(ws,tempFile);
+                    CoreIOUtils.delete(getValidWorkspaceSession(),tempFile);
                 }
             }
 

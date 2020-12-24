@@ -158,27 +158,32 @@ public class NTemplateMain extends NutsApplication {
             this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(appContext, this));
             setProjectFileName("project.nsh");
             this.setLog(new TemplateLog() {
-                NutsLogger LOG;
+                NutsLoggerOp logOp;
                 @Override
                 public void info(String title, String message) {
-                    log().log(Level.FINE, "INFO",title+" : "+message);
+                    log().verb(NutsLogVerb.INFO).level(Level.FINER)
+                            .log( "{0} : {1}",title,message);
                 }
 
                 @Override
                 public void debug(String title, String message) {
-                    log().log(Level.FINER, "DEBUG",title+" : "+message);
+                    log().verb(NutsLogVerb.DEBUG).level(Level.FINER)
+                            .log( "{0} : {1}",title,message);
                 }
 
                 @Override
                 public void error(String title, String message) {
-                    log().log(Level.SEVERE, "FAIL",title+" : "+message);
+                    log().verb(NutsLogVerb.FAIL).level(Level.FINER).log( "{0} : {1}",title,message);
                 }
 
-                private NutsLogger log() {
-                    if(LOG==null) {
-                        LOG = appContext.getWorkspace().log().of(NTemplateMain.class);
+                private NutsLoggerOp log() {
+                    if(logOp==null) {
+                         logOp = appContext.getWorkspace().log().of(NTemplateMain.class)
+                                 .with().session(appContext.getSession())
+                                 .style(NutsTextFormatStyle.POSITIONAL)
+                                ;
                     }
-                    return LOG;
+                    return logOp;
                 }
             });
         }

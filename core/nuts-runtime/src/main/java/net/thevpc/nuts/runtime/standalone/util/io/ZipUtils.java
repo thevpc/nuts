@@ -25,8 +25,9 @@
 */
 package net.thevpc.nuts.runtime.standalone.util.io;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -185,13 +186,13 @@ public class ZipUtils {
     /**
      * Unzip it
      *
-     * @param ws workspace
+     * @param session workspace
      * @param zipFile input zip file
      * @param outputFolder zip file output folder
      * @param options options
      * @throws IOException io exception
      */
-    public static void unzip(NutsWorkspace ws,String zipFile, String outputFolder, UnzipOptions options) throws IOException {
+    public static void unzip(NutsSession session, String zipFile, String outputFolder, UnzipOptions options) throws IOException {
         if (options == null) {
             options = new UnzipOptions();
         }
@@ -233,7 +234,7 @@ public class ZipUtils {
                     newFile.mkdirs();
                 } else {
                     File newFile = new File(outputFolder + File.separator + fileName);
-                    ws.log().of(ZipUtils.class).with().level(Level.FINEST).verb(NutsLogVerb.WARNING).log("file unzip : {0}",newFile.getAbsoluteFile());
+                    session.getWorkspace().log().of(ZipUtils.class).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("file unzip : {0}",newFile.getAbsoluteFile());
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     newFile.getParentFile().mkdirs();

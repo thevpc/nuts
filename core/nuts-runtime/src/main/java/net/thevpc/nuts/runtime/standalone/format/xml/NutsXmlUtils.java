@@ -43,7 +43,7 @@ import javax.xml.transform.stream.StreamResult;
 import net.thevpc.nuts.*;
 
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -57,19 +57,19 @@ import org.xml.sax.SAXParseException;
  */
 public class NutsXmlUtils {
 
-    public static void print(String name, Object object, long elemIndex, Writer out, boolean compact, boolean headerDeclaration, NutsWorkspace ws) {
+    public static void print(String name, Object object, long elemIndex, Writer out, boolean compact, boolean headerDeclaration, NutsSession ws) {
         print(name, object, elemIndex, (Object) out, compact, headerDeclaration, ws);
     }
 
-    public static void print(String name, Object object, long elemIndex, PrintStream out, boolean compact, boolean headerDeclaration, NutsWorkspace ws) {
-        print(name, object, elemIndex, (Object) out, compact, headerDeclaration, ws);
+    public static void print(String name, Object object, long elemIndex, PrintStream out, boolean compact, boolean headerDeclaration, NutsSession session) {
+        print(name, object, elemIndex, (Object) out, compact, headerDeclaration, session);
     }
 
-    private static void print(String name, Object object, long elemIndex, Object out, boolean compact, boolean headerDeclaration, NutsWorkspace ws) {
+    private static void print(String name, Object object, long elemIndex, Object out, boolean compact, boolean headerDeclaration, NutsSession session) {
         try {
-            Document document = NutsXmlUtils.createDocument(ws);
+            Document document = NutsXmlUtils.createDocument(session);
             String rootName = name;
-            document.appendChild(createElement(CoreStringUtils.isBlank(rootName) ? "root" : rootName, object, elemIndex,document, ws));
+            document.appendChild(createElement(CoreStringUtils.isBlank(rootName) ? "root" : rootName, object, elemIndex,document, session));
             StreamResult streamResult = null;
             if (out instanceof PrintStream) {
                 streamResult = new StreamResult((PrintStream) out);
@@ -84,29 +84,29 @@ public class NutsXmlUtils {
             }
 
         } catch (ParserConfigurationException | TransformerException ex) {
-            throw new NutsIOException(ws,new IOException(ex));
+            throw new NutsIOException(session.getWorkspace(),new IOException(ex));
         } catch (IOException ex) {
-            throw new NutsIOException(ws,ex);
+            throw new NutsIOException(session.getWorkspace(),ex);
         }
     }
 
-    public static Document createDocument(String name, Object object, NutsWorkspace ws) {
+    public static Document createDocument(String name, Object object, NutsSession session) {
         try {
-            Document document = createDocument(ws);
-            document.appendChild(createElement(CoreStringUtils.isBlank(name) ? "root" : name, object, -1,document, ws));
+            Document document = createDocument(session);
+            document.appendChild(createElement(CoreStringUtils.isBlank(name) ? "root" : name, object, -1,document, session));
             return document;
         } catch (ParserConfigurationException ex) {
             throw new NutsException(null, ex);
         }
     }
 
-    public static Element createElement(String name, Object o,long elemIndex, Document document, NutsWorkspace ws) {
+    public static Element createElement(String name, Object o, long elemIndex, Document document, NutsSession session) {
         // root element
         Element elem = document.createElement(createElementName(name));
         if(elemIndex>=0){
             elem.setAttribute("index",CoreCommonUtils.stringValue(elemIndex));
         }
-        NutsElement elem2 = ws.formats().element().convert(o,NutsElement.class);
+        NutsElement elem2 = session.getWorkspace().formats().element().convert(o,NutsElement.class);
         switch (elem2.type()){
             case STRING:{
                 elem.setAttribute("type", "string");
@@ -158,7 +158,7 @@ public class NutsXmlUtils {
             case OBJECT:{
                 elem.setAttribute("type", "object");
                 for (NutsNamedElement child : elem2.object().children()) {
-                    elem.appendChild(createElement(child.getName(), child.getValue(),-1, document, ws));
+                    elem.appendChild(createElement(child.getName(), child.getValue(),-1, document, session));
                 }
                 break;
             }
@@ -166,7 +166,7 @@ public class NutsXmlUtils {
                 elem.setAttribute("type", "array");
                 int index=0;
                 for (NutsElement child : elem2.array().children()) {
-                    Element item = createElement("item", child, (long)index,document, ws);
+                    Element item = createElement("item", child, (long)index,document, session);
                     elem.appendChild(item);
                     index++;
                 }
@@ -209,11 +209,11 @@ public class NutsXmlUtils {
         return new String(r);
     }
 
-    public static Document createDocument(NutsWorkspace ws) throws ParserConfigurationException {
-        return createDocumentBuilder(false,ws).newDocument();
+    public static Document createDocument(NutsSession session) throws ParserConfigurationException {
+        return createDocumentBuilder(false, session).newDocument();
     }
 
-    public static DocumentBuilder createDocumentBuilder(boolean safe, NutsWorkspace ws) throws ParserConfigurationException {
+    public static DocumentBuilder createDocumentBuilder(boolean safe, NutsSession session) throws ParserConfigurationException {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         if (safe) {
             documentFactory.setExpandEntityReferences(false);
@@ -247,19 +247,19 @@ public class NutsXmlUtils {
         b.setErrorHandler(new ErrorHandler() {
             @Override
             public void warning(SAXParseException exception) throws SAXException {
-                ws.log().of(NutsXmlUtils.class).with()
+                session.getWorkspace().log().of(NutsXmlUtils.class).with().session(session)
                         .level(Level.FINEST).verb(NutsLogVerb.WARNING).log(exception.toString());
             }
 
             @Override
             public void error(SAXParseException exception) throws SAXException {
-                ws.log().of(NutsXmlUtils.class).with()
+                session.getWorkspace().log().of(NutsXmlUtils.class).with().session(session)
                         .level(Level.FINEST).verb(NutsLogVerb.WARNING).log(exception.toString());
             }
 
             @Override
             public void fatalError(SAXParseException exception) throws SAXException {
-                ws.log().of(NutsXmlUtils.class).with()
+                session.getWorkspace().log().of(NutsXmlUtils.class).with().session(session)
                         .level(Level.FINEST).verb(NutsLogVerb.WARNING).log(exception.toString());
             }
         });
@@ -284,10 +284,10 @@ public class NutsXmlUtils {
         }
     }
 
-    public static String elementToString(Element elem,NutsWorkspace ws) {
+    public static String elementToString(Element elem,NutsSession session) {
         try {
             ByteArrayOutputStream b = new ByteArrayOutputStream();
-            Document d = createDocument(ws);
+            Document d = createDocument(session);
             elem = (Element) d.importNode(elem, true);
             d.appendChild(elem);
             writeDocument(d, new StreamResult(b), true,false);

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.NutsLogConfig;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 
@@ -9,7 +10,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.logging.FileHandler;
+import java.util.logging.Filter;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 public class NutsLogFileHandler extends FileHandler {
 
@@ -65,6 +68,42 @@ public class NutsLogFileHandler extends FileHandler {
             parentFile.mkdirs();
         }
         return pattern;
+    }
+
+    public boolean isLoggable(LogRecord record) {
+        if (!super.isLoggable(record)) {
+            return false;
+        }
+        if (record instanceof NutsLogRecord) {
+            NutsSession session = ((NutsLogRecord) record).getSession();
+            if (session != null) {
+                NutsLogConfig logConfig = session.getWorkspace().config().options().getLogConfig();
+                Level sessionLogLevel = session.getLogFileLevel();
+                if (sessionLogLevel == null) {
+                    if (logConfig != null) {
+                        sessionLogLevel = logConfig.getLogFileLevel();
+                    }
+                    if (sessionLogLevel == null) {
+                        sessionLogLevel = Level.OFF;
+                    }
+                }
+                final int sessionLogLevelValue = sessionLogLevel.intValue();
+                Level recLogLevel = record.getLevel();
+                if (recLogLevel.intValue() < sessionLogLevelValue || sessionLogLevelValue == Level.OFF.intValue()) {
+                    return false;
+                }
+                Filter sessionLogFilter = session.getLogFileFilter();
+                if (sessionLogFilter == null && logConfig != null) {
+                    sessionLogFilter = logConfig.getLogFileFilter();
+                }
+                if (sessionLogFilter != null) {
+                    if (!sessionLogFilter.isLoggable(record)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
 }

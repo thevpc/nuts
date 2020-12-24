@@ -30,7 +30,7 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.repocommands.AbstractNutsDeployRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
@@ -64,15 +64,15 @@ public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployReposi
                 try {
                     xrepo.getIndexStore().revalidate(this.getId(), session);
                 } catch (NutsException ex) {
-                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "error revalidating Indexer for {0} : {1}", getRepo().getName(), ex);
+                    LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "error revalidating Indexer for {0} : {1}", getRepo().getName(), ex);
                 }
             }
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log( "{0} deploy {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), this.getId());
+                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log( "{0} deploy {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), this.getId());
             }
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "{0} deploy {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), this.getId());
+                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "{0} deploy {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), this.getId());
             }
             throw ex;
         }

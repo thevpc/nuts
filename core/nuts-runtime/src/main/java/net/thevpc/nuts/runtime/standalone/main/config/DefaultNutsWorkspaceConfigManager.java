@@ -30,7 +30,7 @@ import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenUtils;
 import net.thevpc.nuts.runtime.core.CoreNutsWorkspaceOptions;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.main.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.main.config.compat.CompatUtils;
 import net.thevpc.nuts.runtime.standalone.main.config.compat.NutsVersionCompat;
@@ -268,7 +268,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             lastConfigPath = Nuts.getPlatformHomeFolder(null, null, null,
                     global,
                     CoreNutsUtils.resolveValidWorkspaceName(effWorkspaceName));
-            lastConfigLoaded = parseBootConfig(Paths.get(lastConfigPath));
+            lastConfigLoaded = parseBootConfig(Paths.get(lastConfigPath), session);
             defaultLocation = true;
             return new DefaultNutsWorkspaceBootConfig(ws, _ws0, lastConfigPath, effWorkspaceName, defaultLocation, lastConfigLoaded);
         } else if (followLinks) {
@@ -283,7 +283,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                         CoreNutsUtils.resolveValidWorkspaceName(_ws)
                 ) : CoreIOUtils.getAbsolutePath(_ws);
 
-                NutsWorkspaceConfigBoot configLoaded = parseBootConfig(Paths.get(lastConfigPath));
+                NutsWorkspaceConfigBoot configLoaded = parseBootConfig(Paths.get(lastConfigPath), session);
                 if (configLoaded == null) {
                     //not loaded
                     break;
@@ -312,7 +312,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     CoreNutsUtils.resolveValidWorkspaceName(_ws)
             ) : CoreIOUtils.getAbsolutePath(_ws);
 
-            lastConfigLoaded = parseBootConfig(Paths.get(lastConfigPath));
+            lastConfigLoaded = parseBootConfig(Paths.get(lastConfigPath), session);
             if (lastConfigLoaded == null) {
                 return null;
             }
@@ -347,7 +347,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsWorkspaceListManager createWorkspaceListManager(String name, NutsSession session) {
-        return new DefaultNutsWorkspaceListManager(ws, name);
+        return new DefaultNutsWorkspaceListManager(ws,session, name);
     }
 
     //    @Override
@@ -585,8 +585,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
             if (runtimeId == null) {
                 runtimeId = MavenUtils.of(ws).resolveLatestMavenId(ws.id().parser().parse(NutsConstants.Ids.NUTS_RUNTIME),
-                        (rtVersion) -> rtVersion.startsWith(apiId.getVersion().getValue() + ".")
-                );
+                        (rtVersion) -> rtVersion.startsWith(apiId.getVersion().getValue() + "."),
+                        session);
             }
             if (runtimeId == null) {
                 throw new NutsNotFoundException(ws, runtimeId);
@@ -636,7 +636,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public boolean loadWorkspace(NutsSession session) {
         try {
             session = NutsWorkspaceUtils.of(ws).validateSession(session);
-            NutsWorkspaceConfigBoot _config = parseBootConfig();
+            NutsWorkspaceConfigBoot _config = parseBootConfig(session);
             if (_config == null) {
                 return false;
             }
@@ -694,7 +694,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             storeModelMainChanged = false;
             return true;
         } catch (Exception ex) {
-            onLoadWorkspaceError(ex);
+            onLoadWorkspaceError(ex, session);
         }
         return false;
     }
@@ -872,7 +872,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             throw new NutsExtensionNotFoundException(ws, NutsAuthenticationAgent.class, "AuthenticationAgent");
         }
         NutsWorkspaceUtils.setSession(supported,session);
-        NutsWorkspaceUtils.of(ws).setWorkspace(supported);
         return supported;
     }
 
@@ -1079,7 +1078,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (def == null) {
             //selected repositories cannot reach runtime component
             //fallback to default
-            MavenUtils.DepsAndRepos dd = MavenUtils.of(ws).loadDependenciesAndRepositoriesFromPomPath(id, resolveBootRepositories());
+            MavenUtils.DepsAndRepos dd = MavenUtils.of(ws).loadDependenciesAndRepositoriesFromPomPath(id, resolveBootRepositories(), session);
             if (dd == null) {
                 throw new NutsNotFoundException(ws, id);
             }
@@ -1200,14 +1199,14 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         fireConfigurationChanged(confName, options.getSession(), ConfigEventType.API);
     }
 
-    private void onLoadWorkspaceError(Throwable ex) {
+    private void onLoadWorkspaceError(Throwable ex, NutsSession session) {
         NutsWorkspaceConfigManager wconfig = this;
         Path file = ws.locations().getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         if (wconfig.isReadOnly()) {
             throw new UncheckedIOException("Unable to load config file " + file.toString(), new IOException(ex));
         }
         String fileName = "nuts-workspace-" + Instant.now().toString();
-        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, CoreStringUtils.exceptionToString(ex)});
+        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, CoreStringUtils.exceptionToString(ex)});
         Path logError = ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.LOG).resolve("invalid-config");
         try {
             Files.createDirectories(logError);
@@ -1215,7 +1214,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             throw new UncheckedIOException("Unable to log workspace error while loading config file " + file.toString() + " : " + ex1.toString(), new IOException(ex));
         }
         Path newfile = logError.resolve(fileName + ".json");
-        LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file will be replaced by a fresh one. Old config is copied to {0}", newfile.toString());
+        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file will be replaced by a fresh one. Old config is copied to {0}", newfile.toString());
         try {
             Files.move(file, newfile);
         } catch (IOException e) {
@@ -1245,18 +1244,18 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         return configUsers.get(id);
     }
 
-    private NutsWorkspaceConfigBoot parseBootConfig() {
-        return parseBootConfig(ws.locations().getWorkspaceLocation());
+    private NutsWorkspaceConfigBoot parseBootConfig(NutsSession session) {
+        return parseBootConfig(ws.locations().getWorkspaceLocation(), session);
     }
 
-    private NutsWorkspaceConfigBoot parseBootConfig(Path path) {
+    private NutsWorkspaceConfigBoot parseBootConfig(Path path, NutsSession session) {
         Path file = path.resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(file);
         if (bytes == null) {
             return null;
         }
         try {
-            Map<String, Object> a_config0 = ws.formats().element().setContentType(NutsContentType.JSON).parse(bytes, Map.class);
+            Map<String, Object> a_config0 = ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).parse(bytes, Map.class);
             String version = (String) a_config0.get("configVersion");
             if (version == null) {
                 version = (String) a_config0.get("createApiVersion");
@@ -1266,7 +1265,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
             return createNutsVersionCompat(version).parseConfig(bytes);
         } catch (Exception ex) {
-            LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, CoreStringUtils.exceptionToString(ex)});
+            LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, CoreStringUtils.exceptionToString(ex)});
             throw new UncheckedIOException("Unable to load config file " + file.toString(), new IOException(ex));
         }
     }

@@ -47,15 +47,17 @@ public interface NutsIdManager {
      * detect nuts id from resources containing the given class
      * or null if not found. If multiple resolutions return the first.
      * @param clazz to search for
+     * @param session
      * @return nuts id detected from resources containing the given class
      */
-    NutsId resolveId(Class clazz);
+    NutsId resolveId(Class clazz, NutsSession session);
 
     /**
      * detect all nuts ids from resources containing the given class.
      * @param clazz to search for
+     * @param session
      * @return all nuts ids detected from resources containing the given class
      */
-    NutsId[] resolveIds(Class clazz);
+    NutsId[] resolveIds(Class clazz, NutsSession session);
 
 }

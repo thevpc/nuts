@@ -39,30 +39,6 @@ import java.util.regex.Pattern;
  * @category Internal
  */
 public class PrivateNutsLog {
-    /**
-     * Log verb used for tracing the start of an operation
-     */
-    public static final String START = "START";
-    /**
-     * Log verb used for tracing a I/O read operation
-     */
-    public static final String READ = "READ";
-    /**
-     * Log verb used for tracing the successful termination of an operation
-     */
-    public static final String SUCCESS = "SUCCESS";
-    /**
-     * Log verb used for tracing the failure to run an operation
-     */
-    public static final String FAIL = "FAIL";
-    /**
-     * Log verb used for tracing cache related operations
-     */
-    public static final String CACHE = "CACHE";
-    /**
-     * Log verb used for tracing general purpose warnings
-     */
-    public static final String WARNING = "WARNING";
 
     /**
      * Universal Data and time format "yyyy-MM-dd HH:mm:ss.SSS"
@@ -97,7 +73,7 @@ public class PrivateNutsLog {
 
     public void log(Level lvl, String message, Throwable err) {
         if (isLoggable(lvl)) {
-            doLog(lvl, FAIL, message);
+            doLog(lvl, NutsLogVerb.FAIL, message);
             err.printStackTrace(System.err);
         }
         //LOG.log(lvl, s, err);

@@ -85,7 +85,7 @@ public class NutsJavaShell extends JShell {
         }
 
         if (this.appId == null) {
-            this.appId = getWorkspace().id().resolveId(NutsJavaShell.class);
+            this.appId = getWorkspace().id().resolveId(NutsJavaShell.class, session);
         }
         if (this.appId == null) {
             throw new IllegalArgumentException("unable to resolve application id");
@@ -136,7 +136,7 @@ public class NutsJavaShell extends JShell {
     private static String resolveServiceName(NutsApplicationContext appContext, String serviceName, NutsId appId) {
         if ((serviceName == null || serviceName.trim().isEmpty())) {
             if (appId == null) {
-                appId = appContext.getWorkspace().id().resolveId(NutsJavaShell.class);
+                appId = appContext.getWorkspace().id().resolveId(NutsJavaShell.class, appContext.getSession());
             }
             serviceName = appId.getArtifactId();
         }

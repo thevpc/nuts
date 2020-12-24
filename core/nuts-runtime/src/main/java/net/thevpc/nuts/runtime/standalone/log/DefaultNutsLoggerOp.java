@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.NutsLoggerOp;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextFormatStyle;
 
 import java.util.function.Supplier;
@@ -8,6 +9,7 @@ import java.util.logging.Level;
 
 public class DefaultNutsLoggerOp implements NutsLoggerOp {
     public static final Object[] OBJECTS0 = new Object[0];
+    private NutsSession session;
     private DefaultNutsLogger logger;
     private Level level = Level.FINE;
     private String verb;
@@ -21,6 +23,16 @@ public class DefaultNutsLoggerOp implements NutsLoggerOp {
 
     public DefaultNutsLoggerOp(DefaultNutsLogger logger) {
         this.logger = logger;
+    }
+
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsLoggerOp session(NutsSession session) {
+        this.session = session;
+        return this;
     }
 
     @Override
@@ -84,9 +96,13 @@ public class DefaultNutsLoggerOp implements NutsLoggerOp {
             if (msgSupplier != null) {
                 m = msgSupplier.get();
             }
+            NutsSession s=session;
+            if(s==null){
+                s=logger.getSession();
+            }
             NutsLogRecord record = new NutsLogRecord(
                     logger.getWorkspace(),
-                    logger.getSession(),
+                    s,
                     level,
                     verb,
                     m,

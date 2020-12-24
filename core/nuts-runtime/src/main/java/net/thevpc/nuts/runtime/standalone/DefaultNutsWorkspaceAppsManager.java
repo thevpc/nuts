@@ -1,16 +1,16 @@
 package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.io.DefaultNutsExecutionEntryManager;
+import net.thevpc.nuts.runtime.standalone.io.DefaultNutsExecutionEntryAction;
 import net.thevpc.nuts.runtime.standalone.app.DefaultNutsApplicationContext;
 
 public class DefaultNutsWorkspaceAppsManager implements NutsWorkspaceAppsManager {
     private NutsWorkspace ws;
-    private DefaultNutsExecutionEntryManager execEntry;
+    private DefaultNutsExecutionEntryAction execEntry;
 
     public DefaultNutsWorkspaceAppsManager(NutsWorkspace ws) {
         this.ws = ws;
-        execEntry=new DefaultNutsExecutionEntryManager(ws);
+        execEntry=new DefaultNutsExecutionEntryAction(ws);
     }
 
     @Override
@@ -19,7 +19,7 @@ public class DefaultNutsWorkspaceAppsManager implements NutsWorkspaceAppsManager
     }
 
     @Override
-    public NutsExecutionEntryManager execEntries() {
+    public NutsExecutionEntryAction execEntries() {
         return execEntry;
     }
 }

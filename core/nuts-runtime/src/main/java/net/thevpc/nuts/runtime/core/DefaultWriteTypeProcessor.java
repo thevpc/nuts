@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.core;
 import net.thevpc.nuts.NutsConfirmationMode;
 import net.thevpc.nuts.NutsLogger;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -107,11 +107,11 @@ public class DefaultWriteTypeProcessor {
                 break;
             }
             case NO: {
-                getLog().with().level(Level.FINE).verb(NutsLogVerb.WARNING).log( getLogMessage(), getLogMessageParams());
+                getLog().with().session(session).level(Level.FINE).verb(NutsLogVerb.WARNING).log( getLogMessage(), getLogMessageParams());
                 return false;
             }
         }
-        getLog().with().level(Level.FINE).verb(NutsLogVerb.WARNING).log( getLogMessage(), getLogMessageParams());
+        getLog().with().session(session).level(Level.FINE).verb(NutsLogVerb.WARNING).log( getLogMessage(), getLogMessageParams());
         return true;
     }
 }

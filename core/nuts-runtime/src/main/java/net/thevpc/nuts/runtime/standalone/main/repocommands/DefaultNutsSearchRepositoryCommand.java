@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.main.repocommands;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.log.NutsLogVerb;
+import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.repocommands.AbstractNutsSearchRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSearchRepositoryCommand;
@@ -38,7 +38,7 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
         xrepo.checkAllowedFetch(null, session);
         try {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.START).log("{0} Search components", CoreStringUtils.alignLeft(getRepo().getName(), 20));
+                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log("{0} Search components", CoreStringUtils.alignLeft(getRepo().getName(), 20));
             }
             boolean processIndexFirst = session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled();
             if (processIndexFirst) {
@@ -48,30 +48,30 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
                 } catch (NutsIndexerNotAccessibleException ex) {
                     //just ignore
                 } catch (NutsException ex) {
-                    LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("error search operation using Indexer for {0} : {1}", getRepo().getName(), ex);
+                    LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("error search operation using Indexer for {0} : {1}", getRepo().getName(), ex);
                 }
                 if (o != null) {
                     result = new IndexFirstIterator<>(o,
                             xrepo.searchImpl(filter, getFetchMode(), session)
                     );
                     if (LOG.isLoggable(Level.FINEST)) {
-                        LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log("{0} Search components (indexer)", CoreStringUtils.alignLeft(getRepo().getName(), 20));
+                        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log("{0} Search components (indexer)", CoreStringUtils.alignLeft(getRepo().getName(), 20));
                     }
                     return this;
                 }
             }
             result = xrepo.searchImpl(filter, getFetchMode(), session);
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log("{0} Search components", CoreStringUtils.alignLeft(getRepo().getName(), 20));
+                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log("{0} Search components", CoreStringUtils.alignLeft(getRepo().getName(), 20));
             }
         } catch (NutsNotFoundException | SecurityException ex) {
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL).log("{0} Search components", CoreStringUtils.alignLeft(getRepo().getName(), 20));
+                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("{0} Search components", CoreStringUtils.alignLeft(getRepo().getName(), 20));
             }
             throw ex;
         } catch (RuntimeException ex) {
             if (LOG.isLoggable(Level.SEVERE)) {
-                LOG.with().level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("{0} Search components", CoreStringUtils.alignLeft(getRepo().getName(), 20));
+                LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("{0} Search components", CoreStringUtils.alignLeft(getRepo().getName(), 20));
             }
             throw ex;
         }

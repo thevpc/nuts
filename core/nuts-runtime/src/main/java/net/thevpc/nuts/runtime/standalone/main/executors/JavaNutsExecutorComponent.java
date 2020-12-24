@@ -44,6 +44,8 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.Future;
+import java.util.logging.Filter;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -92,9 +94,10 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 executionContext.getExecutorArguments(),
                 CoreStringUtils.isBlank(executionContext.getCwd()) ? System.getProperty("user.dir") : executionContext.getCwd(),
                 executionContext.getTraceSession().copy().setProgressOptions("none"));
+        final NutsSession execSession = executionContext.getExecSession();
         switch (executionContext.getExecutionType()) {
             case EMBEDDED: {
-                return new EmbeddedProcessExecHelper(def, executionContext.getExecSession(), joptions, executionContext.getExecSession().out());
+                return new EmbeddedProcessExecHelper(def, execSession, joptions, execSession.out());
             }
             case SPAWN:
             default: {
@@ -111,18 +114,23 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 NutsWorkspaceOptionsBuilder options = ws.config().options().copy();
 
                 //copy session parameters to new created workspace
-                options.setTrace(executionContext.getExecSession().isTrace());
-                options.setCached(executionContext.getExecSession().isCached());
-                options.setIndexed(executionContext.getExecSession().isIndexed());
-                options.setConfirm(executionContext.getExecSession().getConfirm());
-                options.setTransitive(executionContext.getExecSession().isTransitive());
-                options.setOutputFormat(executionContext.getExecSession().getOutputFormat());
+                options.setDry(execSession.isDry());
+                options.setGui(execSession.isGui());
+                options.setOutLinePrefix(execSession.getOutLinePrefix());
+                options.setErrLinePrefix(execSession.getErrLinePrefix());
+                options.setDebug(execSession.isDebug());
+                options.setTrace(execSession.isTrace());
+                options.setCached(execSession.isCached());
+                options.setIndexed(execSession.isIndexed());
+                options.setConfirm(execSession.getConfirm());
+                options.setTransitive(execSession.isTransitive());
+                options.setOutputFormat(execSession.getOutputFormat());
                 if (options.getTerminalMode() == NutsTerminalMode.FILTERED) {
                     //retain filtered
                 } else if (options.getTerminalMode() == NutsTerminalMode.INHERITED) {
                     //retain inherited
                 } else {
-                    options.setTerminalMode(executionContext.getExecSession().getTerminal().getOutMode());
+                    options.setTerminalMode(execSession.getTerminal().getOutMode());
                 }
                 NutsVersion nutsDependencyVersion = null;
                 for (String s : joptions.getClassPath()) {
@@ -135,10 +143,36 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                     }
                 }
 //                List<String> validBootCommand = new ArrayList<>();
-                options.setTrace(executionContext.getExecSession().isTrace());
-                options.setExpireTime(executionContext.getExecSession().getExpireTime());
-                options.setOutputFormat(executionContext.getExecSession().getOutputFormat());
-                options.setConfirm(executionContext.getExecSession().getConfirm());
+                options.setTrace(execSession.isTrace());
+                options.setExpireTime(execSession.getExpireTime());
+                options.setOutputFormat(execSession.getOutputFormat());
+                options.setConfirm(execSession.getConfirm());
+
+                Filter logFileFilter = execSession.getLogFileFilter();
+                Filter logTermFilter = execSession.getLogTermFilter();
+                Level logTermLevel = execSession.getLogTermLevel();
+                Level logFileLevel = execSession.getLogFileLevel();
+                if(logFileFilter!=null || logTermFilter!=null || logTermLevel!=null || logFileLevel!=null){
+                    NutsLogConfig lc = options.getLogConfig();
+                    if(lc==null){
+                        lc=new NutsLogConfig();
+                    }else {
+                        lc=lc.copy();
+                    }
+                    if(logTermLevel!=null){
+                        lc.setLogTermLevel(logTermLevel);
+                    }
+                    if(logFileLevel!=null){
+                        lc.setLogFileLevel(logFileLevel);
+                    }
+                    if(logTermFilter!=null){
+                        lc.setLogTermFilter(logTermFilter);
+                    }
+                    if(logFileFilter!=null){
+                        lc.setLogFileFilter(logFileFilter);
+                    }
+                }
+                options.setConfirm(execSession.getConfirm());
 
                 String[] bootCommand = options.format().exported().setApiVersion(nutsDependencyVersion == null ? null : nutsDependencyVersion.toString())
                         .compact().getBootCommand();
@@ -178,10 +212,10 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 currentDepth++;
                 if (currentDepth > maxDepth) {
                     System.err.println("############# Process Stack Overflow Error");
-                    System.err.println("It is very likely that you executed an infinite process creation recusion in your program.");
-                    System.err.println("At least " + currentDepth + " (>=" + maxDepth + ") prcosses were created.");
-                    System.err.println("Are ou aware of such misconception ?");
-                    System.err.println("Sorry but nee to end all of this disgracely...");
+                    System.err.println("it is very likely that you executed an infinite process creation recursion in your program.");
+                    System.err.println("at least " + currentDepth + " (>=" + maxDepth + ") processes were created.");
+                    System.err.println("are ou aware of such misconception ?");
+                    System.err.println("sorry but nee to end all of this disgracefully...");
                     System.exit(233);
                 }
 
@@ -216,10 +250,10 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 }
                 xargs.addAll(joptions.getApp());
                 args.addAll(joptions.getApp());
-                return new AbstractSyncIProcessExecHelper(executionContext.getExecSession()) {
+                return new AbstractSyncIProcessExecHelper(execSession) {
                     @Override
                     public void dryExec() {
-                        PrintStream out = executionContext.getExecSession().out();
+                        PrintStream out = execSession.out();
                         out.println("[dry] ==[nuts-exec]== ");
                         for (int i = 0; i < xargs.size(); i++) {
                             String xarg = xargs.get(i);
@@ -234,7 +268,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
                         NutsWorkspaceUtils.of(executionContext.getWorkspace()).execAndWait(def,
                                 executionContext.getTraceSession(),
-                                executionContext.getExecSession(),
+                                execSession,
                                 executionContext.getExecutorProperties(),
                                 args.toArray(new String[0]),
                                 osEnv, directory, joptions.isShowCommand(), true,
@@ -250,7 +284,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
                     private CoreIOUtils.ProcessExecHelper preExec() {
                         if (joptions.isShowCommand() || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
-                            PrintStream out = executionContext.getExecSession().out();
+                            PrintStream out = execSession.out();
                             out.println("##[nuts-exec]## ");
                             for (int i = 0; i < xargs.size(); i++) {
                                 String xarg = xargs.get(i);
@@ -266,7 +300,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
                         return NutsWorkspaceUtils.of(executionContext.getWorkspace()).execAndWait(def,
                                 executionContext.getTraceSession(),
-                                executionContext.getExecSession(),
+                                execSession,
                                 executionContext.getExecutorProperties(),
                                 args.toArray(new String[0]),
                                 osEnv, directory, joptions.isShowCommand(), true,

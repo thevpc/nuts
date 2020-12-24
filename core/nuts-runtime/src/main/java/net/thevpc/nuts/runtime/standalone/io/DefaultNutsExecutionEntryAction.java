@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.NutsExecutionEntryManager;
+import net.thevpc.nuts.NutsExecutionEntryAction;
 import net.thevpc.nuts.NutsExecutionEntry;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -12,10 +13,11 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class DefaultNutsExecutionEntryManager implements NutsExecutionEntryManager {
+public class DefaultNutsExecutionEntryAction implements NutsExecutionEntryAction {
     private NutsWorkspace ws;
+    private NutsSession session;
 
-    public DefaultNutsExecutionEntryManager(NutsWorkspace ws) {
+    public DefaultNutsExecutionEntryAction(NutsWorkspace ws) {
         this.ws = ws;
     }
 
@@ -50,12 +52,22 @@ public class DefaultNutsExecutionEntryManager implements NutsExecutionEntryManag
     @Override
     public NutsExecutionEntry[] parse(InputStream inputStream, String type, String sourceName) {
         if ("java".equals(type)) {
-            return NutsWorkspaceUtils.of(ws).parseJarExecutionEntries(inputStream, sourceName);
+            return NutsWorkspaceUtils.of(ws).parseJarExecutionEntries(inputStream, sourceName, getSession());
         } else if ("class".equals(type)) {
-            NutsExecutionEntry u = NutsWorkspaceUtils.of(ws).parseClassExecutionEntry(inputStream, sourceName);
+            NutsExecutionEntry u = NutsWorkspaceUtils.of(ws).parseClassExecutionEntry(inputStream, sourceName, getSession());
             return u == null ? new NutsExecutionEntry[0] : new NutsExecutionEntry[]{u};
         }
         return new NutsExecutionEntry[0];
     }
 
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsExecutionEntryAction setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
 }

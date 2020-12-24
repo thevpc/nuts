@@ -65,7 +65,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     @Override
-    public NutsCommandAliasConfig findCommand(String name, NutsWorkspace workspace) {
+    public NutsCommandAliasConfig findCommand(String name, NutsSession session) {
         Path file = getStoreLocation().resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (Files.exists(file)) {
             NutsCommandAliasConfig c = ws.formats().element().setContentType(NutsContentType.JSON).parse(file, NutsCommandAliasConfig.class);
@@ -78,24 +78,24 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     @Override
-    public List<NutsCommandAliasConfig> findCommands(NutsWorkspace workspace) {
-        return findCommands((Predicate<NutsCommandAliasConfig>) null);
+    public List<NutsCommandAliasConfig> findCommands(NutsSession session) {
+        return findCommands((Predicate<NutsCommandAliasConfig>) null, session);
     }
 
-    public List<NutsCommandAliasConfig> findCommands(NutsId id, NutsWorkspace workspace) {
+    public List<NutsCommandAliasConfig> findCommands(NutsId id, NutsSession session) {
         return findCommands(new Predicate<NutsCommandAliasConfig>() {
             @Override
             public boolean test(NutsCommandAliasConfig value) {
                 return CoreNutsUtils.matchesSimpleNameStaticVersion(value.getOwner(), id);
             }
-        });
+        }, session);
     }
 
-    public List<NutsCommandAliasConfig> findCommands(Predicate<NutsCommandAliasConfig> filter) {
+    public List<NutsCommandAliasConfig> findCommands(Predicate<NutsCommandAliasConfig> filter, NutsSession session) {
         List<NutsCommandAliasConfig> all = new ArrayList<>();
         try {
             if (!Files.isDirectory(getStoreLocation())) {
-                LOG.with().level(Level.SEVERE).log("Unable to locate commands. Invalid store locate {0}", getStoreLocation());
+                LOG.with().session(session).level(Level.SEVERE).log("Unable to locate commands. Invalid store locate {0}", getStoreLocation());
                 return all;
             }
             Files.list(getStoreLocation()).forEach(file -> {
@@ -105,7 +105,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
                     try {
                         c = ws.formats().element().setContentType(NutsContentType.JSON).parse(file, NutsCommandAliasConfig.class);
                     } catch (Exception ex) {
-                        LOG.with().level(Level.FINE).error(ex).log("unable to parse {0}", file);
+                        LOG.with().session(session).level(Level.FINE).error(ex).log("unable to parse {0}", file);
                         //
                     }
                     if (c != null) {

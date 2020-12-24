@@ -27,64 +27,70 @@ public class FormattedPrintStreamUtils {
         return DefaultNutsTextNodeParser.escapeText0(text);
     }
 
-    static int countRepeatable(char c,char[] cc,int offset){
-        int count=0;
-        while((offset+count)<cc.length && cc[offset+count]==c){
-            count++;
+//    static int countRepeatable(char c,char[] cc,int offset){
+//        int count=0;
+//        while((offset+count)<cc.length && cc[offset+count]==c){
+//            count++;
+//        }
+//        return count;
+//    }
+
+    public static Object formatArgument(Object a, NutsSession session) {
+        if(a instanceof Number && a instanceof Number && a instanceof Date  && a instanceof Temporal) {
+            //do nothing
+            return a;
+        }else if(a instanceof NutsStringBase){
+            return String.valueOf(a);
+        }else if(a instanceof NutsFormattable){
+            if(session==null){
+                return escapeText(String.valueOf(a));
+            }else{
+                try {
+                    return  session.getWorkspace().formats().of((NutsFormattable) a).setSession(session).format();
+                }catch (Exception ex){
+                    return escapeText(String.valueOf(a));
+                }
+            }
+        }else {
+            return escapeText(String.valueOf(a));
         }
-        return count;
     }
+
     public static String formatPositionalStyle(NutsSession session,Locale locale, String format, Object... args) {
         if(session==null){
             throw new RuntimeException("missing session");
         }
         Object[] args2=Arrays.copyOf(args,args.length);
         for (int i = 0; i < args2.length; i++) {
-            Object a = args2[i];
-            if(a instanceof Number && a instanceof Number && a instanceof Date  && a instanceof Temporal) {
-                //do nothing
-            }else if(a instanceof NutsStringBase){
-                args2[i]=String.valueOf(a);
-            }else if(a instanceof NutsFormattable){
-                if(session==null){
-                    args2[i]=escapeText(String.valueOf(a));
-                }else{
-                    try {
-                        args2[i] = session.getWorkspace().formats().of((NutsFormattable) a).setSession(session).format();
-                    }catch(Exception ex){
-                        args2[i]=escapeText(String.valueOf(a));
-                    }
-                }
-            }else {
-                args2[i]=escapeText(String.valueOf(a));
-            }
+            args2[i]= formatArgument(args2[i],session);
         }
-        char[] m = format.toCharArray();
-        StringBuilder sb=new StringBuilder();
-        for (int i = 0; i < m.length; i++) {
-            if(m[i]=='{' || m[i]=='}') {
-                int r = countRepeatable(m[i], m, i);
-                if (r > 1) {
-                    sb.append('\'');
-                    sb.append(m, i, r);
-                    sb.append('\'');
-                } else {
-                    sb.append(m[i]);
-                }
-                i += r - 1;
-            }else if(m[i]=='\\' && i+1<m.length && m[i+1]=='\''){
-                sb.append("''");
-                i++;
-            }else if(m[i]=='\\' && i+1<m.length){
-                sb.append('\'');
-                sb.append(m[i+1]);
-                sb.append('\'');
-                i++;
-            }else{
-                sb.append(m[i]);
-            }
-        }
-        return MessageFormat.format(sb.toString(), args2);
+//        char[] m = format.toCharArray();
+//        StringBuilder sb=new StringBuilder();
+//        for (int i = 0; i < m.length; i++) {
+//            if(m[i]=='{' || m[i]=='}') {
+//                int r = countRepeatable(m[i], m, i);
+//                if (r > 1) {
+//                    sb.append('\'');
+//                    sb.append(m, i, r);
+//                    sb.append('\'');
+//                } else {
+//                    sb.append(m[i]);
+//                }
+//                i += r - 1;
+//            }else if(m[i]=='\\' && i+1<m.length && m[i+1]=='\''){
+//                sb.append("''");
+//                i++;
+//            }else if(m[i]=='\\' && i+1<m.length){
+//                sb.append('\'');
+//                sb.append(m[i+1]);
+//                sb.append('\'');
+//                i++;
+//            }else{
+//                sb.append(m[i]);
+//            }
+//        }
+//        return MessageFormat.format(sb.toString(), args2);
+        return MessageFormat.format(format, args2);
     }
     public static String formatCStyle(NutsSession session,Locale locale, String format, Object... args) {
         return format0(session,locale,format,args);
@@ -129,26 +135,8 @@ public class FormattedPrintStreamUtils {
         }
         Object[] args2=Arrays.copyOf(args,args.length);
         for (int i = 0; i < args2.length; i++) {
-            Object a = args2[i];
-            if(a instanceof Number && a instanceof Number && a instanceof Date  && a instanceof Temporal) {
-                //do nothing
-            }else if(a instanceof NutsStringBase){
-                args2[i]=String.valueOf(a);
-            }else if(a instanceof NutsFormattable){
-                if(session==null){
-                    args2[i]=escapeText(String.valueOf(a));
-                }else{
-                    try {
-                        args2[i] = session.getWorkspace().formats().of((NutsFormattable) a).setSession(session).format();
-                    }catch (Exception ex){
-                        args2[i]=escapeText(String.valueOf(a));
-                    }
-                }
-            }else {
-                args2[i]=escapeText(String.valueOf(a));
-            }
+            args2[i]= formatArgument(args2[i],session);
         }
-
         StringBuilder sb = new StringBuilder();
         new Formatter(sb, locale).format(format, args2);
         return sb.toString();

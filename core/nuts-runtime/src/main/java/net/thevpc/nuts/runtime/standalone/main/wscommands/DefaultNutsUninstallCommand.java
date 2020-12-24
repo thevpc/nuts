@@ -75,12 +75,12 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
             }
 
             dws.getInstalledRepository().uninstall(id, session);
-            CoreIOUtils.delete(ws, ws.locations().getStoreLocation(id, NutsStoreLocation.APPS).toFile());
-            CoreIOUtils.delete(ws, ws.locations().getStoreLocation(id, NutsStoreLocation.TEMP).toFile());
-            CoreIOUtils.delete(ws, ws.locations().getStoreLocation(id, NutsStoreLocation.LOG).toFile());
+            CoreIOUtils.delete(getValidWorkspaceSession(), ws.locations().getStoreLocation(id, NutsStoreLocation.APPS).toFile());
+            CoreIOUtils.delete(getValidWorkspaceSession(), ws.locations().getStoreLocation(id, NutsStoreLocation.TEMP).toFile());
+            CoreIOUtils.delete(getValidWorkspaceSession(), ws.locations().getStoreLocation(id, NutsStoreLocation.LOG).toFile());
             if (this.isErase()) {
-                CoreIOUtils.delete(ws, ws.locations().getStoreLocation(id, NutsStoreLocation.VAR).toFile());
-                CoreIOUtils.delete(ws, ws.locations().getStoreLocation(id, NutsStoreLocation.CONFIG).toFile());
+                CoreIOUtils.delete(getValidWorkspaceSession(), ws.locations().getStoreLocation(id, NutsStoreLocation.VAR).toFile());
+                CoreIOUtils.delete(getValidWorkspaceSession(), ws.locations().getStoreLocation(id, NutsStoreLocation.CONFIG).toFile());
             }
 
             if (def.getType() == NutsIdType.EXTENSION) {

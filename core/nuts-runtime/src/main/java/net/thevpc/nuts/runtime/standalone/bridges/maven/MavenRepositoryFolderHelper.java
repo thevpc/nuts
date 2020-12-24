@@ -170,11 +170,11 @@ public class MavenRepositoryFolderHelper {
         return bestId;
     }
 
-    public void reindexFolder() {
-        reindexFolder(getStoreLocation(), true);
+    public void reindexFolder(NutsSession session) {
+        reindexFolder(getStoreLocation(), true,session);
     }
 
-    private void reindexFolder(Path path, boolean applyRawNavigation) {
+    private void reindexFolder(Path path, boolean applyRawNavigation,NutsSession session) {
         try {
             Files.walkFileTree(path, new FileVisitor<Path>() {
                 @Override
@@ -224,10 +224,10 @@ public class MavenRepositoryFolderHelper {
                             MavenMetadata old = null;
                             try {
                                 if (Files.exists(metadataxml)) {
-                                    old = MavenMetadataParser.of(ws).parseMavenMetaData(metadataxml);
+                                    old = new MavenMetadataParser(session).parseMavenMetaData(metadataxml);
                                 }
                             } catch (Exception ex) {
-                                LOG.with().level(Level.SEVERE).error(ex).log("failed to parse metadata xml for {0} : {1}", metadataxml, CoreStringUtils.exceptionToString(ex));
+                                LOG.with().session(session).level(Level.SEVERE).error(ex).log("failed to parse metadata xml for {0} : {1}", metadataxml, CoreStringUtils.exceptionToString(ex));
                                 //ignore any error!
                             }
                             MavenMetadata m = new MavenMetadata();
@@ -257,7 +257,7 @@ public class MavenRepositoryFolderHelper {
                                 m.setLastUpdated(new Date());
                             }
 //                            println(MavenMetadataParser.toXmlString(m));
-                            MavenMetadataParser.of(ws).writeMavenMetaData(m, metadataxml);
+                            new MavenMetadataParser(session).writeMavenMetaData(m, metadataxml);
                             String md5 = CoreIOUtils.evalMD5Hex(metadataxml).toLowerCase();
                             Files.write(metadataxml.resolveSibling("maven-metadata.xml.md5"), md5.getBytes());
                             String sha1 = CoreIOUtils.evalSHA1Hex(metadataxml).toLowerCase();

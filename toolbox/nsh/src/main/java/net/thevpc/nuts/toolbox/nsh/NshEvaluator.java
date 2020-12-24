@@ -26,16 +26,15 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.jshell.*;
-import net.thevpc.jshell.JShellCommandNode;
 import net.thevpc.jshell.util.JavaShellNonBlockingInputStream;
 import net.thevpc.jshell.util.JavaShellNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.NutsSessionTerminal;
 import net.thevpc.nuts.NutsTerminalMode;
 
 import java.io.*;
+import java.util.logging.Level;
 
 /**
- *
  * @author thevpc
  */
 public class NshEvaluator extends DefaultJShellEvaluator implements JShellEvaluator {
@@ -50,8 +49,8 @@ public class NshEvaluator extends DefaultJShellEvaluator implements JShellEvalua
         try {
             out = new PipedOutputStream();
             nout = ncontext.getWorkspace().io().createPrintStream(out, NutsTerminalMode.FORMATTED,
-                    ((NutsShellContext)context.getShellContext()).getSession()
-                    );
+                    ((NutsShellContext) context.getShellContext()).getSession()
+            );
             in = new PipedInputStream(out, 1024);
             in2 = (in instanceof JavaShellNonBlockingInputStream) ? (JavaShellNonBlockingInputStream) in : new JavaShellNonBlockingInputStreamAdapter("jpipe-" + right.toString(), in);
         } catch (IOException ex) {
@@ -95,23 +94,26 @@ public class NshEvaluator extends DefaultJShellEvaluator implements JShellEvalua
             a[1].throwAny();
         }
     }
+
     @Override
     public String evalCommandAndReturnString(JShellCommandNode command, JShellFileContext context) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         JShellFileContext c1 = context.getShell().createNewContext(context);
-        DefaultNutsShellContext c2 = (DefaultNutsShellContext)c1.getShellContext();
-                c2.setSession(c2.getSession().copy());
+        DefaultNutsShellContext c2 = (DefaultNutsShellContext) c1.getShellContext();
+        c2.setSession(c2.getSession().copy());
+        c2.getSession().setLogLevel(Level.OFF);
+        c2.getSession().setTrace(false);
         PrintStream p = new PrintStream(out);
         NutsSessionTerminal terminal = c2.getWorkspace().io().term().createTerminal(new ByteArrayInputStream(new byte[0]), p, p, c2.getSession());
         terminal.setOutMode(NutsTerminalMode.FILTERED);
         c2.getSession().setTerminal(terminal);
         try {
             command.eval(c1);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             terminal.getErr().println(ex);
         }
         p.flush();
-        String str = evalFieldSubstitutionAfterCommandSubstitution(out.toString(),context);
+        String str = evalFieldSubstitutionAfterCommandSubstitution(out.toString(), context);
         return (context.getShell().escapeString(str));
     }
 }

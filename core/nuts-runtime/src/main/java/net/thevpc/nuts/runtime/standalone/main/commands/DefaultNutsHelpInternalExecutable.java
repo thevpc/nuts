@@ -78,7 +78,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
             case PLAIN: {
                 PrintStream fout = getSession().out();
                 if (!helpColors && helpFor.isEmpty()) {
-                    fout.println(NutsWorkspaceExt.of(getSession().getWorkspace()).getHelpText());
+                    fout.println(NutsWorkspaceExt.of(getSession().getWorkspace()).getHelpText(getSession()));
                     fout.flush();
                 }
                 for (String arg : helpFor) {
@@ -91,7 +91,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                         try {
                             w = getSession().getWorkspace().exec().addCommand(arg).which();
                         } catch (Exception ex) {
-                            LOG.with().level(Level.FINE).error(ex).log( "failed to execute : {0}", arg);
+                            LOG.with().session(getSession()).level(Level.FINE).error(ex).log( "failed to execute : {0}", arg);
                             //ignore
                         }
                         if (w != null) {

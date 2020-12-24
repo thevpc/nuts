@@ -22,6 +22,10 @@ public interface NutsTextNodeBuilder extends NutsStringBase{
 
     NutsTextNodeBuilder appendStyled(NutsTextNode text, NutsTextNodeStyle... decos);
 
+    NutsTextNodeBuilder append(NutsTextNode node);
+
+    NutsTextNodeBuilder append(NutsStringBase str);
+
     NutsTextNode build();
 
     String toString();

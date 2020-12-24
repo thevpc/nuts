@@ -14,13 +14,13 @@ public class NutsIndexSubscriberListManager {
     private NutsIndexSubscriberListConfig config;
     private NutsWorkspace defaultWorkspace;
 
-    public NutsIndexSubscriberListManager(NutsWorkspace ws, String name) {
+    public NutsIndexSubscriberListManager(NutsWorkspace ws, NutsSession session,String name) {
         this.defaultWorkspace = ws;
         if (StringUtils.isBlank(name)) {
             name = "default";
         }
         this.name = name.trim();
-        Path file = getConfigFile();
+        Path file = getConfigFile(session);
         if (Files.exists(file)) {
             this.config = this.defaultWorkspace.formats().element().setContentType(NutsContentType.JSON).parse(file, NutsIndexSubscriberListConfig.class);
             if (this.config.getSubscribers() != null) {
@@ -32,16 +32,16 @@ public class NutsIndexSubscriberListManager {
             this.config = new NutsIndexSubscriberListConfig()
                     .setUuid(UUID.randomUUID().toString())
                     .setName("default-config");
-            this.save();
+            this.save(session);
         }
     }
 
-    private Path getConfigFile() {
+    private Path getConfigFile(NutsSession session) {
         return this.defaultWorkspace
                 .locations()
                 .getStoreLocation(
                         this.defaultWorkspace
-                                .id().resolveId(NutsIndexSubscriberListManager.class),
+                                .id().resolveId(NutsIndexSubscriberListManager.class, session),
                         NutsStoreLocation.CONFIG).resolve(
                         name + "-nuts-subscriber-list.json");
     }
@@ -72,7 +72,7 @@ public class NutsIndexSubscriberListManager {
         return this;
     }
 
-    public NutsIndexSubscriber subscribe(String repositoryUuid, NutsWorkspaceLocation workspaceLocation) {
+    public NutsIndexSubscriber subscribe(String repositoryUuid, NutsWorkspaceLocation workspaceLocation, NutsSession session) {
         if (subscribers.containsKey(repositoryUuid)) {
             subscribers.get(repositoryUuid)
                     .getWorkspaceLocations().put(workspaceLocation.getUuid(), workspaceLocation.copy());
@@ -82,7 +82,7 @@ public class NutsIndexSubscriberListManager {
                     .setName(getRepositoryNameFromUuid(repositoryUuid))
                     .setWorkspaceLocations(Collections.singletonMap(workspaceLocation.getUuid(), workspaceLocation.copy())));
         }
-        this.save();
+        this.save(session);
         return subscribers.get(repositoryUuid);
     }
 
@@ -97,22 +97,22 @@ public class NutsIndexSubscriberListManager {
         throw new NoSuchElementException();
     }
 
-    private void save() {
+    private void save(NutsSession session) {
         this.config.setSubscribers(this.subscribers.isEmpty()
                 ? null
                 : new ArrayList<>(this.subscribers.values()));
-        Path file = getConfigFile();
+        Path file = getConfigFile(session);
         this.defaultWorkspace.formats().element().setContentType(NutsContentType.JSON).setValue(this.config).print(file);
     }
 
-    public boolean unsubscribe(String repositoryUuid, NutsWorkspaceLocation workspaceLocation) {
+    public boolean unsubscribe(String repositoryUuid, NutsWorkspaceLocation workspaceLocation, NutsSession session) {
         boolean b = subscribers.get(repositoryUuid)
                 .getWorkspaceLocations().remove(workspaceLocation.getUuid()) != null;
         if (subscribers.get(repositoryUuid).getWorkspaceLocations().isEmpty()) {
             b = subscribers.remove(repositoryUuid) != null;
         }
         if (b) {
-            save();
+            save(session);
         }
         return b;
     }
@@ -120,5 +120,9 @@ public class NutsIndexSubscriberListManager {
     public boolean isSubscribed(String repositoryUuid, NutsWorkspaceLocation workspaceLocation) {
         return this.subscribers.containsKey(repositoryUuid)
                 && this.subscribers.get(repositoryUuid).getWorkspaceLocations().containsKey(workspaceLocation.getUuid());
+    }
+
+    public NutsWorkspace getDefaultWorkspace() {
+        return defaultWorkspace;
     }
 }

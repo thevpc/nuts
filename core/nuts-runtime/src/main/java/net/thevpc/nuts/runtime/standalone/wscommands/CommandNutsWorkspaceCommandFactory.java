@@ -86,11 +86,11 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
     }
 
     @Override
-    public NutsCommandAliasConfig findCommand(String name, NutsWorkspace workspace) {
+    public NutsCommandAliasConfig findCommand(String name, NutsSession session) {
         if (findCommand.length > 0 && execCommand.length > 0) {
             String[] fc = replaceParam(findCommand, name);
             String[] ec = replaceParam(execCommand, name);
-            NutsExecCommand exec = workspace.exec().addCommand(fc)
+            NutsExecCommand exec = ws.exec().addCommand(fc).setSession(session)
                     //                        .setExecutorOptions("--show-command")
                     .setRedirectErrorStream(true)
                     .grabOutputString()
@@ -108,10 +108,10 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
     }
 
     @Override
-    public List<NutsCommandAliasConfig> findCommands(NutsWorkspace workspace) {
+    public List<NutsCommandAliasConfig> findCommands(NutsSession session) {
         List<NutsCommandAliasConfig> c = new ArrayList<>();
         if (listCommand.length > 0) {
-            NutsExecCommand b = workspace.exec().addCommand(listCommand)
+            NutsExecCommand b = ws.exec().addCommand(listCommand).setSession(session)
                     .setRedirectErrorStream(true)
                     .grabOutputString();
             int r = b.getResult();

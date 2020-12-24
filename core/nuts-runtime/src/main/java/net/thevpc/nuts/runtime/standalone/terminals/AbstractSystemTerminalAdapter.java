@@ -20,14 +20,20 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
 
     @Override
     public void setSession(NutsSession session) {
+        setSession(session,false);
+    }
+
+    public void setSession(NutsSession session,boolean boot) {
         if(session!=null && this.session!=null){
             //ignore
         }else {
             this.session = session;
             this.ws = session==null?null:session.getWorkspace();
         }
-        NutsSystemTerminalBase parent = getParent();
-        NutsWorkspaceUtils.setSession(parent,session);
+        if(!boot) {
+            NutsSystemTerminalBase parent = getParent();
+            NutsWorkspaceUtils.setSession(parent, session);
+        }
     }
 
 

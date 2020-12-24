@@ -2,6 +2,8 @@ package net.thevpc.nuts.indexer;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import net.thevpc.nuts.NutsSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +17,8 @@ public class NutsIndexSubscriberListManagerPool {
     public synchronized NutsIndexSubscriberListManager openSubscriberListManager(String name) {
         NutsIndexSubscriberListManager o = pool.get(name);
         if (o == null) {
-            o = new NutsIndexSubscriberListManager(app.getApplicationContext().getWorkspace(), name);
+            NutsSession session=app.getApplicationContext().getWorkspace().createSession();
+            o = new NutsIndexSubscriberListManager(app.getApplicationContext().getWorkspace(), session,name);
             pool.put(name, o);
         }
         return o;

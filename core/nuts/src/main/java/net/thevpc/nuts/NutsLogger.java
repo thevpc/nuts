@@ -51,7 +51,7 @@ public interface NutsLogger {
      * @param msg message
      * @param thrown error thrown
      */
-    void log(Level level, String msg, Throwable thrown);
+    void log(NutsSession session, Level level, String msg, Throwable thrown);
 
     /**
      * log message using the given verb and level
@@ -59,7 +59,7 @@ public interface NutsLogger {
      * @param verb message verb / category
      * @param msg message
      */
-    void log(Level level, String verb, String msg);
+    void log(NutsSession session, Level level, String verb, String msg);
 
     /**
      * log message using the given verb and level
@@ -68,7 +68,7 @@ public interface NutsLogger {
      * @param msg message
      * @param params message parameters
      */
-    void log(Level level, String verb, String msg, Object... params);
+    void log(NutsSession session, Level level, String verb, String msg, Object... params);
 
     /**
      * log message using the given verb and level
@@ -76,7 +76,7 @@ public interface NutsLogger {
      * @param verb message verb / category
      * @param msgSupplier message supplier
      */
-    void log(Level level, String verb, Supplier<String> msgSupplier);
+    void log(NutsSession session, Level level, String verb, Supplier<String> msgSupplier);
 
     /**
      * create a logger op.
