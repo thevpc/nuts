@@ -7,6 +7,6 @@ echo copy nuts.jar
 echo cp ~/.m2/repository/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar $here/website/static/nuts.jar
 cp ~/.m2/repository/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar $here/website/static/nuts.jar
 echo run ndocusaurus
-ndocusaurus -d website build
+ndocusaurus -d website pdf build
 
 

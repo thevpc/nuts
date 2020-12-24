@@ -111,7 +111,9 @@ public class DefaultWriteTypeProcessor {
                 return false;
             }
         }
-        getLog().with().session(session).level(Level.FINE).verb(NutsLogVerb.WARNING).log( getLogMessage(), getLogMessageParams());
+        getLog().with().session(session).level(Level.FINE).verb(NutsLogVerb.WARNING)
+                .formatted()
+                .log( getLogMessage(), getLogMessageParams());
         return true;
     }
 }

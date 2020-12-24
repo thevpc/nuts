@@ -35,6 +35,10 @@ public class FormattedPrintStreamUtils {
 //        return count;
 //    }
 
+    public static boolean isSpecialFormattedObject(Object a) {
+        return (a instanceof NutsFormattable) || (a instanceof NutsStringBase) ;
+    }
+
     public static Object formatArgument(Object a, NutsSession session) {
         if(a instanceof Number && a instanceof Number && a instanceof Date  && a instanceof Temporal) {
             //do nothing

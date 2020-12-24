@@ -2,11 +2,13 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.format.text.util.FormattedPrintStreamUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
@@ -186,6 +188,20 @@ public class NutsLogRichFormatter extends Formatter {
             String message = wRecord.getMessage();
             // \\{[0-9]+\\}
 //            message=message.replaceAll("\\\\\\{([0-9]+)\\\\}","{$1}");
+            NutsFormatManager formats = wRecord.getWorkspace().formats();
+            NutsTextFormatManager text = formats.text();
+            if(!wRecord.isFormatted()){
+                parameters2= Arrays.copyOf(parameters2,parameters2.length);
+                for (int i = 0; i < parameters2.length; i++) {
+                    if (parameters2[i] instanceof NutsStringBase) {
+                        parameters2[i] = text.filterText(parameters2[i].toString());
+                    } else if (parameters2[i] instanceof NutsFormattable) {
+                        parameters2[i] = text.filterText(
+                                formats.of((NutsFormattable) parameters2[i]).format()
+                        );
+                    }
+                }
+            }
             String msgStr =wRecord.getWorkspace().formats().text().formatText(
                     wRecord.getSession(),
                     style, message,

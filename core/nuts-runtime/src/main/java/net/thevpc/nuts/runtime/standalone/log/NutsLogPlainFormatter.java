@@ -1,10 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 
+import net.thevpc.nuts.NutsFormatManager;
 import net.thevpc.nuts.NutsFormattable;
 import net.thevpc.nuts.NutsStringBase;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
+import net.thevpc.nuts.NutsTextFormatManager;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
 
 import java.text.MessageFormat;
 import java.time.Instant;
@@ -14,8 +16,8 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 public class NutsLogPlainFormatter extends Formatter {
-    private long lastMillis = -1;
     public static final NutsLogPlainFormatter PLAIN = new NutsLogPlainFormatter();
+    private long lastMillis = -1;
 
     public NutsLogPlainFormatter() {
 
@@ -46,43 +48,45 @@ public class NutsLogPlainFormatter extends Formatter {
                     .append(NutsLogFormatHelper.formatClassName(wRecord.getSourceClassName()))
                     .append(": ");
             Object[] parameters2 = wRecord.getParameters();
-            if(parameters2==null){
-                parameters2=new Object[0];
+            if (parameters2 == null) {
+                parameters2 = new Object[0];
             }
-            String msgStr=null;
-            if(wRecord.isFormatted()){
-                msgStr =wRecord.getWorkspace().formats().text().formatText(
+            String msgStr = null;
+            NutsFormatManager formats = wRecord.getWorkspace().formats();
+            NutsTextFormatManager text = formats.text();
+            if (wRecord.isFormatted()) {
+                msgStr = text.formatText(
                         wRecord.getSession(),
                         wRecord.getFormatStyle(), wRecord.getMessage(),
                         parameters2
                 );
-                msgStr=wRecord.getWorkspace().formats().text().filterText(msgStr);
-            }else{
-                parameters2= Arrays.copyOf(parameters2,parameters2.length);
+                msgStr = text.filterText(msgStr);
+            } else {
+                parameters2 = Arrays.copyOf(parameters2, parameters2.length);
                 for (int i = 0; i < parameters2.length; i++) {
-                    if(parameters2[i] instanceof NutsStringBase){
-                        parameters2[i]=wRecord.getWorkspace().formats().text().filterText(parameters2[i].toString());
-                    }else if(parameters2[i] instanceof NutsFormattable){
-                        parameters2[i]=wRecord.getWorkspace().formats().text().filterText(
-                                wRecord.getWorkspace().formats().of((NutsFormattable) parameters2[i]).format()
+                    if (parameters2[i] instanceof NutsStringBase) {
+                        parameters2[i] = text.filterText(parameters2[i].toString());
+                    } else if (parameters2[i] instanceof NutsFormattable) {
+                        parameters2[i] = text.filterText(
+                                formats.of((NutsFormattable) parameters2[i]).format()
                         );
                     }
                 }
-                switch (wRecord.getFormatStyle()){
-                    case POSITIONAL:{
-                        msgStr=MessageFormat.format(wRecord.getMessage(),parameters2);
+                switch (wRecord.getFormatStyle()) {
+                    case POSITIONAL: {
+                        msgStr = MessageFormat.format(wRecord.getMessage(), parameters2);
                         break;
                     }
-                    case CSTYLE:{
-                        StringBuilder sb2=new StringBuilder();
-                        new java.util.Formatter(sb2, Locale.getDefault()).format(wRecord.getMessage(),parameters2);
-                        msgStr=sb2.toString();
+                    case CSTYLE: {
+                        StringBuilder sb2 = new StringBuilder();
+                        new java.util.Formatter(sb2, Locale.getDefault()).format(wRecord.getMessage(), parameters2);
+                        msgStr = sb2.toString();
                         break;
                     }
                 }
             }
             sb.append(msgStr);
-            if(wRecord.getTime()>0){
+            if (wRecord.getTime() > 0) {
                 sb.append(" (").append(CoreCommonUtils.formatPeriodMilli(wRecord.getTime())).append(")");
             }
             sb.append(NutsLogFormatHelper.LINE_SEPARATOR);

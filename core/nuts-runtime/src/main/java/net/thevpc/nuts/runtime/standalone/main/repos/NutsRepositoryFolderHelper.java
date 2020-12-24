@@ -419,7 +419,7 @@ public class NutsRepositoryFolderHelper {
             if (!DefaultWriteTypeProcessor
                     .of(writeType, session)
                     .ask("Override content file for %s?", id)
-                    .withLog(LOG, "Nuts content file Overridden {0}", id)
+                    .withLog(LOG, "nuts content file overridden {0}", id)
                     .onError(() -> new NutsAlreadyDeployedException(ws, id.toString()))
                     .process()) {
                 return pckFile;

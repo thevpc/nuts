@@ -54,7 +54,11 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
         switch (node.getType()) {
             case PLAIN:
                 NutsTextNodePlain p = (NutsTextNodePlain) node;
-                writeRaw(p.getText());
+                if (ctx.isFiltered()) {
+                    writeRaw(p.getText());
+                }else{
+                    writeEscaped(p.getText());
+                }
                 break;
             case LIST: {
                 NutsTextNodeList s = (NutsTextNodeList) node;
@@ -165,6 +169,57 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 sb.append('\\');
             }
             sb.append(cc[i]);
+        }
+        writeRaw(sb.toString());
+    }
+
+    public final void writeEscaped(String rawString) {
+        char[] cc=rawString.toCharArray();
+        StringBuilder sb=new StringBuilder();
+        for (int i = 0; i < cc.length; i++) {
+            switch (cc[i]){
+                case '\\':
+                case 'ø':{
+                    sb.append('\\');
+                    sb.append(cc[i]);
+                    break;
+                }
+                case '`':{
+                    if(i<cc.length-3) {
+                        if (cc[i] == '`' && cc[i + 1] == '`' && cc[i + 2] == '`') {
+                            sb.append('\\');
+                            sb.append(cc[i]);
+                        } else {
+                            sb.append(cc[i]);
+                        }
+                    }else if(i<cc.length-1){
+                        if (cc[i] == '`' && cc[i + 1] == '`') {
+                            sb.append('\\');
+                            sb.append(cc[i]);
+                        } else {
+                            sb.append(cc[i]);
+                        }
+                    }else{
+                        sb.append('\\');
+                        sb.append(cc[i]);
+                    }
+                    break;
+                }
+                case '#':
+                case '@':
+                case '~':{
+                    if(i<cc.length-1 && cc[i+1]!=cc[i]){
+                        sb.append(cc[i]);
+                    }else{
+                        sb.append('\\');
+                        sb.append(cc[i]);
+                    }
+                    break;
+                }
+                default:{
+                    sb.append(cc[i]);
+                }
+            }
         }
         writeRaw(sb.toString());
     }
