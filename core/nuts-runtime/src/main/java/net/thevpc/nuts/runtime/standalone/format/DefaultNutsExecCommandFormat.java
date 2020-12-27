@@ -152,6 +152,9 @@ public class DefaultNutsExecCommandFormat extends DefaultFormatBase<NutsExecComm
         }
         for (int i = 0; i < command.length; i++) {
             String s = command[i];
+            if(s==null){
+                s="";
+            }
             DefaultArgEntry aa = new DefaultArgEntry(i, s);
             if (getArgumentFilter()!=null && !getArgumentFilter().test(aa)) {
                 continue;

@@ -510,6 +510,8 @@ public class CoreStringUtils {
                     ex2 = ex.getCause();
                 }
                 msg = exceptionToString(ex2,true);
+            }else{
+                msg = ex.getMessage();
             }
         } else {
             String msg2 = ex.toString();

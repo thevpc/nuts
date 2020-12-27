@@ -12,7 +12,7 @@ sidebar_label: File system
 \_\ \/\__,_/\__/____/    version v${apiVersion}
 ```
 
-**```nuts```** manages multiple workspaces. It has a default one located at ~/.config/nuts (~ is the user home directory). Each workspace handles a database and files related to the installed applications. The workspace has a specific layout to store different types of files relatives to your applications. **Nuts** is largely inspired by [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) and hence defines several  store locations for each file type. Such organization of folders is called Layout and is dependent on the current operating system, the layout strategy and any custom configuration.
+**```nuts```** manages multiple workspaces. It has a default one located at ~/.config/nuts (~ is the user home directory). Each workspace handles a database and files related to the installed applications. The workspace has a specific layout to store different types of files relatives to your applications. **nuts** is largely inspired by [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) and hence defines several  store locations for each file type. Such organization of folders is called Layout and is dependent on the current operating system, the layout strategy and any custom configuration.
 
 ## Store Locations
 Supported Store Locations are : 
@@ -63,7 +63,7 @@ C:/Users/me/AppData/Roaming/nuts/log/nuts/personal/config/id/net/vpc/app/netbean
 When you install any application using the **```nuts```** command a set of specific folders for the presented Store Locations are created. For that, 
 two strategies exist : **Exploded strategy** (the default) and **Standalone strategy**.  
 
-In **Exploded strategy**  **```nuts```** defines top level folders (in linux ~/.config for config Store Location etc), and then creates withing each top level Store Location a sub folder for the given application (or application version to be more specific). This helps putting all your config files in a SSD partition for instance and make **Nuts** run faster. However if you are interested in the backup or roaming of your workspace, this may be not the best approach.
+In **Exploded strategy**  **```nuts```** defines top level folders (in linux ~/.config for config Store Location etc), and then creates withing each top level Store Location a sub folder for the given application (or application version to be more specific). This helps putting all your config files in a SSD partition for instance and make **nuts** run faster. However if you are interested in the backup or roaming of your workspace, this may be not the best approach.
 
 The **Standalone strategy**   is indeed provided mainly for Roaming workspaces that can be shared, copied, moved to other locations. A single root folder will contain all of the Store Locations.
 

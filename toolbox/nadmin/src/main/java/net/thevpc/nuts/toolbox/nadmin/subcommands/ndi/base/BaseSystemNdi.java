@@ -33,7 +33,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     protected abstract String createNutsScriptCommand(NutsId fnutsId, NdiScriptOptions options);
 
-    public String createBootScriptCommand(NutsDefinition f,boolean includeEnv) {
+    public String createBootScriptCommand(NutsDefinition f, boolean includeEnv) {
         String txt = NdiUtils.generateScriptAsString("/net/thevpc/nuts/toolbox/nadmin/" + getTemplateNutsName(),
                 ss -> {
                     switch (ss) {
@@ -43,19 +43,19 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     return null;
                 }
         );
-        if(includeEnv){
+        if (includeEnv) {
             Path ndiAppsFolder = context.getAppsFolder();
             Path ndiConfigFile = ndiAppsFolder.resolve(getExecFileName(".nadmin-bashrc"));
-            txt=getCallScriptCommand(ndiConfigFile.toString())+"\n"
-                    +txt;
+            txt = getCallScriptCommand(ndiConfigFile.toString()) + "\n"
+                    + txt;
         }
         return txt;
     }
 
     public WorkspaceAndApiVersion persistConfig(NutsWorkspaceBootConfig bootConfig, String apiVersion, String preferredName, NutsSession session) {
         NutsWorkspace ws = context.getWorkspace();
-        if(session==null){
-            throw new NutsIllegalArgumentException(ws,"missing session");
+        if (session == null) {
+            throw new NutsIllegalArgumentException(ws, "missing session");
         }
         if (apiVersion == null) {
             if (bootConfig == null) {
@@ -96,12 +96,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             return createBootScript(
                     options.getPreferredScriptName(),
                     nid.getVersion().toString(),
-                    options.isForceBoot() || options.getSession().isYes(), options.getSession().isTrace(),options.isIncludeEnv());
+                    options.isForceBoot() || options.getSession().isYes(), options.getSession().isTrace(), options.isIncludeEnv());
         } else {
             List<NdiScriptnfo> r = new ArrayList<>(Arrays.asList(createBootScript(
                     null,
                     null,
-                    false, false,options.isIncludeEnv())));
+                    false, false, options.isIncludeEnv())));
             NutsDefinition fetched = null;
             if (nid.getVersion().isBlank()) {
                 fetched = context.getWorkspace().search()
@@ -113,11 +113,14 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             String n = nid.getArtifactId();
             Path ff = getScriptFile(n);
             boolean exists = Files.exists(ff);
-            if (!options.getSession().isYes() && exists) {
-                if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("Script already exists ####%s####%n", NdiUtils.betterPath(ff.toString()));
+            boolean gen = true;
+            if (exists) {
+                if (!context.getSession().getTerminal().ask().setSession(context.getSession())
+                        .forBoolean("override existing script ####%s#### ?", NdiUtils.betterPath(ff.toString())).getBooleanValue()) {
+                    gen = false;
                 }
-            } else {
+            }
+            if (gen) {
                 final NutsId fnutsId = nid;
                 NdiScriptnfo p = createScript(n, options.getPreferredScriptName(), fnutsId, options.getSession().isTrace(), nid.toString(),
                         x -> {
@@ -306,43 +309,43 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     protected abstract String getCallScriptCommand(String path);
 
-    public NdiScriptnfo[] createBootScript(String preferredName, String apiVersion,boolean force, boolean trace, boolean includeEnv) {
-        boolean currId=false;
-        NutsId apiId=null;
+    public NdiScriptnfo[] createBootScript(String preferredName, String apiVersion, boolean force, boolean trace, boolean includeEnv) {
+        boolean currId = false;
+        NutsId apiId = null;
         NutsId b = context.getWorkspace().getApiId();
-        if(apiVersion==null || apiVersion.isEmpty()){
-            apiId=b;
-            apiVersion=b.getVersion().toString();
-            currId=true;
-        }else{
-            if(!apiVersion.equals(b.getVersion().toString())){
-                apiId=b.builder().setVersion(apiVersion).build();
-            }else{
-                apiId=b;
+        if (apiVersion == null || apiVersion.isEmpty()) {
+            apiId = b;
+            apiVersion = b.getVersion().toString();
+            currId = true;
+        } else {
+            if (!apiVersion.equals(b.getVersion().toString())) {
+                apiId = b.builder().setVersion(apiVersion).build();
+            } else {
+                apiId = b;
             }
         }
         NutsDefinition f = context.getWorkspace().search()
                 .setSession(context.getSession().copy().setTrace(false))
                 .addId(apiId).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
-        Path script=null;
+        Path script = null;
         if (preferredName != null && preferredName.length() > 0) {
             if (preferredName.contains("%v")) {
                 preferredName = preferredName.replace("%v", apiId.getVersion().toString());
             }
             script = Paths.get(preferredName);
-        }else{
-            if(currId) {
+        } else {
+            if (currId) {
                 script = getScriptFile("nuts");
-            }else{
-                script = getScriptFile("nuts-"+apiVersion);
+            } else {
+                script = getScriptFile("nuts-" + apiVersion);
             }
         }
-        script=script.toAbsolutePath();
-        String scriptString=script.toString();
+        script = script.toAbsolutePath();
+        String scriptString = script.toString();
         List<NdiScriptnfo> all = new ArrayList<>();
         if (!force && Files.exists(script)) {
             if (trace && context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("Script already exists ####%s####%n", NdiUtils.betterPath(script.toString()));
+                context.getSession().out().printf("script already exists ####%s####%n", NdiUtils.betterPath(script.toString()));
             }
         } else {
             all.add(
@@ -354,20 +357,25 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                                     case "GENERATOR":
                                         return context.getAppId().toString();
                                     case "BODY":
-                                        return createBootScriptCommand(f,includeEnv);
+                                        return createBootScriptCommand(f, includeEnv);
                                 }
                                 return null;
                             }
                     ));
         }
-        if(currId) {
+        if (currId) {
             Path ff2 = context.getWorkspace().locations().getWorkspaceLocation().resolve("nuts");
             boolean overridden = Files.exists(ff2);
+            boolean gen = true;
+
             if (!force && Files.exists(ff2)) {
-                if (trace && context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("script already exists ####%s####%n", ff2);
+                if (!context.getSession().getTerminal().ask().setSession(context.getSession())
+                        .forBoolean("override existing script ####%s#### ?", NdiUtils.betterPath(ff2.toString())).getBooleanValue()) {
+                    gen = false;
                 }
-            } else {
+            }
+            if(gen) {
+
                 if (trace && context.getSession().isPlainTrace()) {
                     context.getSession().out().printf((Files.exists(ff2) ? "re-installing" : "installing") +
                             " script ####%s#### %n", NdiUtils.betterPath(ff2.toString()));

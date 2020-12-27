@@ -8,6 +8,7 @@ import net.thevpc.nuts.runtime.standalone.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.NutsStoreLocationsMap;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -89,6 +90,25 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     @Override
     public Path getStoreLocation(String id, NutsStoreLocation folderType) {
         return getStoreLocation(ws.id().parser().parse(id), folderType);
+    }
+
+    @Override
+    public Path getStoreLocation(NutsStoreLocation folderType,String repositoryIdOrName,NutsSession session) {
+        if(repositoryIdOrName==null){
+            return getStoreLocation(folderType);
+        }
+        NutsRepository repositoryById = ws.repos().getRepository(repositoryIdOrName, session);
+        NutsRepositorySPI nutsRepositorySPI = NutsWorkspaceUtils.of(getWorkspace()).repoSPI(repositoryById);
+        return nutsRepositorySPI.config().getStoreLocation(folderType);
+    }
+
+    @Override
+    public Path getStoreLocation(NutsId id, NutsStoreLocation folderType, String repositoryIdOrName,NutsSession session) {
+        if(repositoryIdOrName==null){
+            return getStoreLocation(id,folderType);
+        }
+        Path storeLocation=getStoreLocation(folderType,repositoryIdOrName,session);
+        return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
     }
 
     @Override

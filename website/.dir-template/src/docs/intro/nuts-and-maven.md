@@ -119,7 +119,7 @@ Thus non-root installation is made easy while it remains possible to overlap bet
 Roaming is also supported, so that a workspaces can be copied/moved across machines.
 
 ## Application Framework
-**Nuts** can also be embedded as a library in you application. This enables you to wire classes on the fly by its network 
+**nuts** can also be embedded as a library in you application. This enables you to wire classes on the fly by its network 
 dependency-aware classloading mechanisms. The library allows as well building solid and well integrated applications, 
 mainly console applications. Indeed, ```nuts``` comes with rich outputs that support automatic formatting to json, xml, table, 
 tree and plain texts. It handles standard File Systems layouts; XDG Base Directory Specification is implemented 

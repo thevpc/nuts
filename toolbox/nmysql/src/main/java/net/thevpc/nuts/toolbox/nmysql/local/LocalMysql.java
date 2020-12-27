@@ -465,14 +465,16 @@ public class LocalMysql {
                 if (path == null) {
                     path = d.getDatabaseName() + "-" + MysqlUtils.newDateString();
                 }
-                d.backup(path);
+                LocalMysqlDatabaseConfigService.ArchiveResult result = d.backup(path);
+                context.getSession().formatObject(result).println();
                 break;
             }
             case "restore": {
                 if (path == null) {
                     commandLine.required("missing --path");
                 }
-                d.restore(path);
+                LocalMysqlDatabaseConfigService.RestoreResult result = d.restore(path);
+                context.getSession().formatObject(result).println();
                 break;
             }
         }

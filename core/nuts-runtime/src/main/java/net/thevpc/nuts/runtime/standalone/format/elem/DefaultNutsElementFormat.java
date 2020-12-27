@@ -649,7 +649,6 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         }
         Gson gson = getGson(true);
         JsonElement t = gson.toJsonTree(any);
-        print(System.out);
         return gson.fromJson(t, to);
     }
 

@@ -16,7 +16,6 @@ public class NMysqlMain extends NutsApplication {
 
     @Override
     public void run(NutsApplicationContext context) {
-        context.getWorkspace().info().print();
         String[] args = context.getArguments();
         if (args.length == 0) {
             throw new NutsExecutionException(context.getWorkspace(), "Expected --remote or --local", 2);

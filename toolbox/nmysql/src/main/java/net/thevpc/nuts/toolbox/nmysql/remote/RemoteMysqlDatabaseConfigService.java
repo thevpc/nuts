@@ -1,6 +1,8 @@
 package net.thevpc.nuts.toolbox.nmysql.remote;
 
 import java.io.File;
+
+import net.thevpc.common.ssh.SshPath;
 import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.common.io.FileUtils;
 import net.thevpc.common.io.IOUtils;
@@ -13,6 +15,7 @@ import net.thevpc.nuts.toolbox.nmysql.local.LocalMysqlDatabaseConfigService;
 
 import java.io.PrintStream;
 import java.io.StringReader;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -67,6 +70,7 @@ public class RemoteMysqlDatabaseConfigService {
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("######[%s]###### remote restore%n", name);
         }
+
         String remoteTempPath = execRemoteNuts(
                 "net.thevpc.nuts.toolbox:nmysql",
                 "backup",
@@ -74,15 +78,31 @@ public class RemoteMysqlDatabaseConfigService {
                 config.getRemoteName(),
                 ""
         );
-        String remoteFullFilePath = new SshAddress(prepareSshServer(cconfig.getServer())).getPath(remoteTempPath).getPath();
-        if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("######[%s]###### copy '%s' to '%s'%n", name, remoteFullFilePath, localPath);
+        //TODO: workaround, must fix me later
+        int t = remoteTempPath.indexOf('{');
+        if(t>0){
+            remoteTempPath=remoteTempPath.substring(t);
         }
-        context.getWorkspace().exec()
+        Map<String,Object> resMap=context.getWorkspace().formats().element().parse(remoteTempPath.getBytes(),Map.class);
+        String ppath=(String)resMap.get("path");
+
+//        String ppath="/home/vpc/enisoinfodb-202012271551.sql.zip";
+//        localPath="/home/vpc/.config/nuts/eniso-info/var/id/net/thevpc/nuts/toolbox/nmysql/0.8.1.0/default-enisoinfodb-2020-12-27-161457-685";
+        if (StringUtils.isBlank(localPath)) {
+//            localPath = context.getVarFolder().resolve(client.getName() + "-" + getName() + "-" + MysqlUtils.newDateString()).toString();
+            localPath = context.getVarFolder().resolve(Paths.get(ppath).getFileName().toString()).toString();
+        }
+        SshPath remoteFullFilePath = new SshAddress(prepareSshServer(cconfig.getServer())).getPath(ppath);
+        if (context.getSession().isPlainTrace()) {
+            context.getSession().out().printf("######[%s]###### copy '%s' to '%s'%n", name, remoteFullFilePath.toString(), localPath);
+        }
+        context.getWorkspace().exec().embedded()
+                .setSession(context.getSession().copy().setTrace(false))
                 .addCommand("nsh",
                         "--bot",
+                        "-c",
                         "cp",
-                        remoteFullFilePath, localPath).setSession(context.getSession())
+                        remoteFullFilePath.toString(), localPath).setSession(context.getSession())
                 .setRedirectErrorStream(true)
                 .grabOutputString()
                 .setFailFast(true)
@@ -91,12 +111,13 @@ public class RemoteMysqlDatabaseConfigService {
         loc.restore(localPath);
         if (deleteRemote) {
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("######[%s]###### delete %s%n", name, remoteFullFilePath);
+                context.getSession().out().printf("######[%s]###### delete %s%n", name, remoteFullFilePath.toString());
             }
             execRemoteNuts(
                     "nsh",
+                    "-c",
                     "rm",
-                    remoteFullFilePath
+                    remoteFullFilePath.getPath()
             );
         }
         return localPath;
@@ -169,16 +190,24 @@ public class RemoteMysqlDatabaseConfigService {
 
     public String execRemoteNuts(String... cmd) {
         NutsExecCommand b = context.getWorkspace().exec()
-                .setSession(context.getSession());
+                .setSession(context.getSession().copy().setTrace(false));
         if ("localhost".equals(this.config.getServer())) {
             b.addCommand("nuts");
+            b.addCommand("-b");
+            b.addCommand("-y");
             b.addCommand("--bot");
+            b.addCommand("--trace=false");
+            b.addCommand("--json");
             b.addCommand(cmd);
         } else {
             b.addCommand("nsh", "-c", "ssh");
             b.addCommand(this.config.getServer());
-            b.addCommand("nuts");
+            b.addCommand("/home/vpc/bin/nuts");
+            b.addCommand("-b");
+            b.addCommand("-y");
+            b.addCommand("--trace=false");
             b.addCommand("--bot");
+            b.addCommand("--json");
             b.addCommand(cmd);
         }
         if (context.getSession().isPlainTrace()) {

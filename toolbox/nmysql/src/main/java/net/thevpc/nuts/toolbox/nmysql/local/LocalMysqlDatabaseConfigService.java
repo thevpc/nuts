@@ -6,6 +6,7 @@ import net.thevpc.nuts.toolbox.nmysql.local.config.LocalMysqlDatabaseConfig;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -60,6 +61,7 @@ public class LocalMysqlDatabaseConfigService {
         if (!path.endsWith(".sql.zip") && !path.endsWith(".zip") && !path.endsWith(".sql")) {
             path = path + ".sql.zip";
         }
+        path= Paths.get(path).toAbsolutePath().normalize().toString();
         String password = getConfig().getPassword();
         char[] credentials = context.getWorkspace().security().getCredentials(password.toCharArray(), context.getSession());
         password = new String(credentials);
@@ -134,6 +136,8 @@ public class LocalMysqlDatabaseConfigService {
 //        if(!path.endsWith(".sql") && !path.endsWith(".sql.zip") && !path.endsWith(".zip")){
 //            path=path+
 //        }
+        char[] password = context.getWorkspace().security().getCredentials(getConfig().getPassword().toCharArray(),context.getSession());
+
         if (path.endsWith(".sql")) {
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("######[%s]###### restore archive %s%n", getDatabaseName(), path);
@@ -145,7 +149,7 @@ public class LocalMysqlDatabaseConfigService {
                     )
                     .setEnv("CMD_FILE", path)
                     .setEnv("CMD_USER", getConfig().getUser())
-                    .setEnv("CMD_PWD", getConfig().getPassword())
+                    .setEnv("CMD_PWD", new String(password))
                     .setEnv("CMD_DB", getDatabaseName())
                     .setEnv("CMD_HOST", "localhost")
                     //.inheritIO()
@@ -156,13 +160,14 @@ public class LocalMysqlDatabaseConfigService {
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("######[%s]###### restore archive %s%n", getDatabaseName(), path);
             }
+
             int result = context.getWorkspace().exec()
                     .setExecutionType(NutsExecutionType.USER_CMD).setCommand("sh", "-c",
                             "gunzip -c \"$CMD_FILE\" | \"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
                     )
                     .setEnv("CMD_FILE", path)
                     .setEnv("CMD_USER", getConfig().getUser())
-                    .setEnv("CMD_PWD", getConfig().getPassword())
+                    .setEnv("CMD_PWD", new String(password))
                     .setEnv("CMD_DB", getDatabaseName())
                     .setEnv("CMD_HOST", "localhost")
 //                        .start()

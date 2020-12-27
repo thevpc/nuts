@@ -61,7 +61,20 @@ public enum NutsContentType {
     /**
      * plain (no) format
      */
-    PLAIN;
+    PLAIN,
+
+    /**
+     * Typed Simple Object Notation
+     * @since 0.8.1
+     */
+    TSON,
+
+    /**
+     * YAML Ain't Markup Language
+     * @since 0.8.1
+     */
+    YAML,
+    ;
 
     /**
      * lower-cased identifier for the enum entry

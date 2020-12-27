@@ -11,26 +11,40 @@ In few words maven manages dependencies to build applications, nuts uses maven d
 
 ## What does Nuts mean and why ?
 **```nuts```** stands for "Network Updatable Things Services". It helps managing things (artifacts of any type, not only java).
-The Name also helps depicting another idea : **```nuts```** is a good companion and complement to Maven tool. The word maven (MAY-vin), from Yiddish, means a super-enthusiastic expert/fan/connoisseur/Wizard.
-And where wizards are, fools and **```nuts```** must be. **```nuts```** is the foolish tool to support the deployment and not the build. 
+The Name also helps depicting another idea : **```nuts```** is a good companion and complement to Maven tool. 
+The word maven (MAY-vin), from Yiddish, means a super-enthusiastic expert/fan/connoisseur/Wizard.
+And where wizards are, fools and **```nuts```** must be. 
+**```nuts```** is the foolish tool to support the deployment and not the build. 
 Hence the name.
 
 
 ## Does nuts support only jar packaging
-Not only. **```nuts```** supports all packagings supported by maven. This includes  pom , jar , maven-plugin , ejb , war , ear , rar.
+Not only. **```nuts```** supports all packagings supported by maven. 
+This includes  pom , jar , maven-plugin , ejb , war , ear , rar.
 However **```nuts```** is also intended to support any "thing" including "exe" ,"dll", "so", "zip" files, etc.
 **```nuts```** differs from maven as it defines other properties to the artifact descriptor (aka pom in maven) : os (operating system), 
 arch (hardware architecture), osdist (relevant for linux for instance : opensuse, ubuntu) and platform (relevant to vm platforms like java vm, dotnet clr, etc).
-Such properties are queried to download the most appropriate binaries for the the current characteristics.
+Such properties are queried to download the most appropriate binaries for the the current environment.
 
 
 ## Can I contribute to the project
-I hoped you would ask this question. Sure. 
-You can drop me an email to add you as contributor or fork the repository and ping a pull request. 
+I hoped you would ask this question. Of course. 
+You can drop me an email (see my github profile email) to add you as contributor or fork the repository and ping a pull request. 
 You can also open a new issue for feature implementation to invite any other contributor to implement that feature (or even implement it your self).
 
 ## Where can I find Documentation about the Project
-The doc folder is intended to include documentation. The wiki also should help. 
+Mainly all of the documentation car be found in 2 places:
+
+* this website: it includes both user documentation and javadocs (code documentation)
+* each command help option. when you type 
+  ```sh 
+  nuts --help
+  ``` 
+  or 
+  ```sh 
+  nsh --help
+  ``` 
+  you will get more details on nuts or on the tool (here nsh)
 
 ## How can I make my application "Nuts aware"
 If by **```nuts```** aware you mean that you would download your application and run it using **```nuts```**, then you just need to create the application using maven and deploy your application to the public maven central.
@@ -40,7 +54,8 @@ Or, you can also use NAF (**```nuts```** Application Framework) make your applic
 ## Why should I consider implementing my terminal application using Nuts Application Framework (NAF)
 First of all, NAF is a simple 300k jar so for what it provided to you, you would be surprised. 
 Indeed, implementing your application using NAF will provide you a clean way to :
-* seamless integration with **```nuts```** and all other NAF applications
+
+* seamless integration with **```nuts```** and all other NAF applications (obviously!)
 
 * support standard file system layout (XDG) where config files and log files are not necessarily in the same folder see [Nuts File System](../advanced/filesystem.md) for more details.
 
@@ -50,9 +65,9 @@ Indeed, implementing your application using NAF will provide you a clean way to 
 
 * dynamic dependency aware class loading
 
-* terminal coloring and components (progress bar, etc...)
+* terminal coloring, and terminal components (progress bar, etc...)
 
-* json,xml,table,tree and plain format support out of the box
+* json,xml,table,tree and plain format support out of the box as output to all your commands
 
 * pipe manipulation when calling sub processes
 
@@ -60,7 +75,7 @@ Indeed, implementing your application using NAF will provide you a clean way to 
 
 * standard ways to support and use installed platforms (installed JRE, JDK, ...)
 
-* and more...
+* and lots more...
 
 
 ## Can I use NAF for non terminal applications, Swing or JavaFX perhaps
@@ -69,5 +84,6 @@ Check netbeans-launcher in github. It's a good example of how interesting is to 
 
 
 ## What is the License used in Nuts
-**```nuts```** is published under GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later.
+**```nuts```** is published under Licensed under the Apache License, Version 2.0. 
+ 
 

@@ -239,7 +239,7 @@ public class DocusaurusCtrl {
     }
 
     private Path getPreProcessorBaseDir() {
-        return Paths.get(project.getDocusaurusBaseFolder()).resolve("dir-template");
+        return Paths.get(project.getDocusaurusBaseFolder()).resolve(".dir-template");
     }
 
     public boolean isAutoInstallNutsPackages() {

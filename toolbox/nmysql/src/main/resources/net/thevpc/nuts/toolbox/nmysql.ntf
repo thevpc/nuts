@@ -1,5 +1,5 @@
 ##) SYNOPSIS:
-```sh nmysql [ --local \| --remote ] <command> <global-options> <command-options>```
+```sh nmysql [ --local | --remote ] <command> <global-options> <command-options>```
 manage local mysql database access configurations to help backup/restore data simply
 
 ###) MYSQL LOCAL:
@@ -10,7 +10,7 @@ manage local mysql database access configurations to help backup/restore data si
     list all databases for the given config-name
 
 
-```sh nmysql [--local] add --name <db\@config-name> <command-options>```
+```sh nmysql [--local] add --name <db@config-name> <command-options>```
 
     add database config
 

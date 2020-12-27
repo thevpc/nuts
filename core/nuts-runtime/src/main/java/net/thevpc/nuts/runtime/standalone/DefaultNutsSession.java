@@ -605,7 +605,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--fetch": {
                     NutsArgument v = cmdLine.nextString();
                     if (enabled) {
-                        this.setFetchStrategy(NutsFetchStrategy.valueOf(a.getStringValue().toUpperCase().replace("-", "_")));
+                        this.setFetchStrategy(NutsFetchStrategy.valueOf(a.getStringValue("").toUpperCase().replace("-", "_")));
                     }
                     return true;
                 }

@@ -6,7 +6,7 @@ sidebar_label: Command Line Arguments
 ${include($"${resources}/header.md")}
 
 # Nuts Commandline
-**Nuts** supports a specific format for command line arguments. This format is the format supported in **```nuts```** Application Framewok (NAF) and as such all NAF applications support the same command line arguments format.
+**nuts** supports a specific format for command line arguments. This format is the format supported in **```nuts```** Application Framewok (NAF) and as such all NAF applications support the same command line arguments format.
 Arguments in **```nuts```** can be options or non options. Options always start with dash (-). 
 
 ## Short vs Long Options

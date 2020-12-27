@@ -43,10 +43,16 @@ public interface NutsWorkspaceLocationManager {
 
     void setStoreLocationLayout(NutsOsFamily layout, NutsUpdateOptions options);
 
+    Path getStoreLocation(NutsStoreLocation folderType,String repositoryIdOrName,NutsSession session) ;
+
     Path getStoreLocation(String id, NutsStoreLocation folderType);
 
     Path getStoreLocation(NutsId id, NutsStoreLocation folderType);
+
+    Path getStoreLocation(NutsId id, NutsStoreLocation folderType,String repositoryIdOrName,NutsSession session);
+
     void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location, NutsUpdateOptions options);
+
     NutsStoreLocationStrategy getStoreLocationStrategy();
 
     NutsStoreLocationStrategy getRepositoryStoreLocationStrategy();

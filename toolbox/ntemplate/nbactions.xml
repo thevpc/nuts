@@ -11,7 +11,7 @@
         </goals>
         <properties>
             <exec.args>-Dnuts.debug=true -Dnuts.args=--progress=newline -classpath %classpath
-                net.thevpc.nuts.toolbox.ntemplate.NTemplateMain -p dir-template</exec.args>
+                net.thevpc.nuts.toolbox.ntemplate.NTemplateMain -p .dir-template</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir>/data/public/git/nuts/</exec.workingdir>
         </properties>
@@ -29,7 +29,7 @@
             <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Dnuts.debug=true
                 -Dnuts.args=--progress=newline -classpath %classpath net.thevpc.nuts.toolbox.ntemplate.NTemplateMain
                 -p
-                dir-template</exec.args>
+                .dir-template</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
             <exec.workingdir>/data/public/git/nuts/</exec.workingdir>
@@ -46,7 +46,7 @@
         </goals>
         <properties>
             <exec.args>-Dnuts.debug=true -Dnuts.args=--progress=newline -classpath %classpath
-                net.thevpc.nuts.toolbox.ntemplate.NTemplateMain -p dir-template</exec.args>
+                net.thevpc.nuts.toolbox.ntemplate.NTemplateMain -p .dir-template</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir>/data/public/git/nuts/</exec.workingdir>
         </properties>
