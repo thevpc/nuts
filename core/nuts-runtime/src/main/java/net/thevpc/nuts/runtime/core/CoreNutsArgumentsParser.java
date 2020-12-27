@@ -95,7 +95,7 @@ final class CoreNutsArgumentsParser {
 
                     case "--boot-repos": {
                         a = cmdLine.nextString();
-                        String bootRepos = a.getStringValue();
+                        String bootRepos = a.getStringValue("");
                         if (enabled) {
                             options.setBootRepositories(bootRepos);
                         }
@@ -104,7 +104,7 @@ final class CoreNutsArgumentsParser {
                     case "-w":
                     case "--workspace": {
                         a = cmdLine.nextString();
-                        String file = a.getStringValue();
+                        String file = a.getStringValue("");
                         if (enabled) {
                             options.setWorkspace(file);
                         }
@@ -113,7 +113,7 @@ final class CoreNutsArgumentsParser {
                     case "--user":
                     case "-u": {
                         a = cmdLine.nextString();
-                        String v = a.getStringValue();
+                        String v = a.getStringValue("");
                         if (enabled) {
                             options.setUsername(v);
                         }
@@ -122,7 +122,7 @@ final class CoreNutsArgumentsParser {
                     case "--password":
                     case "-p": {
                         a = cmdLine.nextString();
-                        String v = a.getStringValue();
+                        String v = a.getStringValue("");
                         if (enabled) {
                             options.setCredentials(v.toCharArray());
                         }
@@ -140,7 +140,7 @@ final class CoreNutsArgumentsParser {
                     }
                     case "--boot-runtime": {
                         a = cmdLine.nextString();
-                        String br = a.getStringValue();
+                        String br = a.getStringValue("");
                         if (enabled) {
                             if (br.indexOf("#") > 0) {
                                 //this is a full id
@@ -155,7 +155,7 @@ final class CoreNutsArgumentsParser {
                     case "--boot-java":
                     case "-j": {
                         a = cmdLine.nextString();
-                        String v = a.getStringValue();
+                        String v = a.getStringValue("");
                         if (enabled) {
                             options.setJavaCommand(v);
                         }
@@ -174,7 +174,7 @@ final class CoreNutsArgumentsParser {
                     case "--boot-java-options":
                     case "-J": {
                         a = cmdLine.nextString();
-                        String v = a.getStringValue();
+                        String v = a.getStringValue("");
                         if (enabled) {
                             options.setJavaOptions(v);
                         }
@@ -209,7 +209,7 @@ final class CoreNutsArgumentsParser {
                     }
                     case "--store-strategy": {
                         a = cmdLine.nextString();
-                        String v = a.getStringValue();
+                        String v = a.getStringValue("");
                         if (enabled) {
                             options.setStoreLocationStrategy(parseNutsStoreLocationStrategy(v));
                         }
@@ -1040,6 +1040,7 @@ final class CoreNutsArgumentsParser {
                     case "-U":
                     case "-S":
                     case "-G":
+                    case "-H":
                     case "-M":
                     case "-L":
                     case "-W":

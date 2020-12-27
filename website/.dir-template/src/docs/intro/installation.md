@@ -77,7 +77,7 @@ __using curl:__
 ```
 NDVER=${apiVersion} && curl -OL https://repo.maven.apache.org/maven2\
 /net/thevpc/nuts/nuts/$NDVER/nuts-$NDVER.jar && java -jar \
-      nuts-$NDVER.jar -zy && ~/.bashrc
+      nuts-$NDVER.jar -zy && . ~/.bashrc
 ```
 
 __using wget:__
@@ -89,7 +89,7 @@ NDVER=${apiVersion} && wget -https://repo.maven.apache.org/maven2\
 
 __Using helper script:__
 ```
-curl -OL -http://thevpc.net/nuts-install.sh && ./nuts-install.sh
+curl -OL -http://thevpc.net/nuts-install.sh && . ./nuts-install.sh
 ```
 
 Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
