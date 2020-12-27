@@ -54,7 +54,7 @@ final class PrivateNutsArgumentsParser {
      * nuts options
      *
      * @param bootArguments input arguments to parse
-     * @param options       options instance to fill
+     * @param options options instance to fill
      */
     public static void parseNutsArguments(String[] bootArguments, NutsWorkspaceOptionsBuilder options) {
         List<String> showError = new ArrayList<>();
@@ -156,8 +156,7 @@ final class PrivateNutsArgumentsParser {
                         break;
                     }
                     case "--java-home":
-                    case "--boot-java-home":
-                    case "--J": {
+                    case "--boot-java-home": {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
@@ -167,7 +166,7 @@ final class PrivateNutsArgumentsParser {
                     }
                     case "--java-options":
                     case "--boot-java-options":
-                    case "-O": {
+                    case "-J": {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
@@ -532,7 +531,7 @@ final class PrivateNutsArgumentsParser {
                     case "-t":
                     case "--trace": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getBooleanValue()) {
+                        if (enabled) {
                             options.setTrace(a.getBooleanValue());
                         }
                         break;
@@ -619,8 +618,7 @@ final class PrivateNutsArgumentsParser {
                         break;
                     }
                     case "-X":
-                    case "--exclude-extension":
-                        {
+                    case "--exclude-extension": {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
@@ -653,6 +651,35 @@ final class PrivateNutsArgumentsParser {
                             options.addOutputFormatOptions(cmdLine.nextString().getStringValue());
                         } else {
                             cmdLine.skip();
+                        }
+                        break;
+                    case "-O":
+                    case "--output-format":
+                        a = cmdLine.nextString();
+                        if (enabled) {
+                            String t = a.getStringValue("");
+                            int i = PrivateNutsUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
+                            if(i>0){
+                                options.setOutputFormat(NutsContentType.valueOf(t.substring(0,i).toUpperCase()));
+                                options.addOutputFormatOptions(t.substring(i+1).toUpperCase());
+                            }else{
+                                options.setOutputFormat(NutsContentType.valueOf(t.toUpperCase()));
+                                options.addOutputFormatOptions("");
+                            }
+                        }
+                        break;
+                    case "--tson":
+                        a = cmdLine.next();
+                        if (enabled) {
+                            options.setOutputFormat(NutsContentType.TSON);
+                            options.addOutputFormatOptions(a.getStringValue(""));
+                        }
+                        break;
+                    case "--yaml":
+                        a = cmdLine.next();
+                        if (enabled) {
+                            options.setOutputFormat(NutsContentType.YAML);
+                            options.addOutputFormatOptions(a.getStringValue(""));
                         }
                         break;
                     case "--json":
@@ -876,7 +903,7 @@ final class PrivateNutsArgumentsParser {
                         cmdLine.skip();
                         if (enabled) {
                             if (!a.getArgumentValue().isNull()) {
-                                throw new NutsIllegalArgumentException(null, "invalid argument for workspace : " + a.getString());
+                                throw new NutsIllegalArgumentException(null, "invalid argument for workspace: " + a.getString());
                             }
                             applicationArguments.add(NutsConstants.Ids.NUTS_SHELL);
                             if (!cmdLine.isEmpty()) {
@@ -1008,9 +1035,8 @@ final class PrivateNutsArgumentsParser {
                     case "-S":
                     case "-G":
                     case "-H":
-                    case "-J":
-                    case "-L":
                     case "-M":
+                    case "-L":
                     case "-W":
                     case "-B":
                     case "-i":

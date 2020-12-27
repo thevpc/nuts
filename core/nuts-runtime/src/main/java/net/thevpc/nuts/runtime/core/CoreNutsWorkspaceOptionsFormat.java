@@ -140,7 +140,8 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
         if (exportedOptions || isImplicitAll()) {
             fillOption("--boot-runtime", null, options.getRuntimeId(), arguments, false);
             fillOption("--java", "-j", options.getJavaCommand(), arguments, false);
-            fillOption("--java-options", "-O", options.getJavaOptions(), arguments, false);
+            fillOption("--java-home", "-J", options.getJavaCommand(), arguments, false);
+            fillOption("--java-options", "-J", options.getJavaOptions(), arguments, false);
             String wsString = options.getWorkspace();
             if (CoreStringUtils.isBlank(wsString)) {
                 //default workspace name

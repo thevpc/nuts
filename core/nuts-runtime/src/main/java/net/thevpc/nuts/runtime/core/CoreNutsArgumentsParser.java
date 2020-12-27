@@ -10,25 +10,26 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.core;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.app.DefaultNutsCommandLine;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
+import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -39,11 +40,11 @@ import java.util.logging.Level;
 
 /**
  * Nuts Arguments parser. Creates a {@link NutsWorkspaceOptions} instance from
- * string array of valid nuts options
+ * string array of valid nuts options.
+ * This is a rewrite of PrivateNutsArgumentsParser.
  *
  * @author thevpc
  * @since 0.5.4
- * %category Internal
  */
 final class CoreNutsArgumentsParser {
 
@@ -61,7 +62,7 @@ final class CoreNutsArgumentsParser {
      * @param bootArguments input arguments to parse
      * @param options options instance to fill
      */
-    public static void parseNutsArguments(NutsWorkspace ws,String[] bootArguments, NutsWorkspaceOptionsBuilder options) {
+    public static void parseNutsArguments(NutsWorkspace ws, String[] bootArguments, NutsWorkspaceOptionsBuilder options) {
         List<String> showError = new ArrayList<>();
         HashSet<String> excludedExtensions = new HashSet<>();
         HashSet<String> excludedRepositories = new HashSet<>();
@@ -69,11 +70,11 @@ final class CoreNutsArgumentsParser {
         List<String> executorOptions = new ArrayList<>();
         NutsLogConfig logConfig = null;
         List<String> applicationArguments = new ArrayList<>();
-        NutsCommandLine cmdLine = new DefaultNutsCommandLine(ws,bootArguments)
+        NutsCommandLine cmdLine = new DefaultNutsCommandLine(ws, bootArguments)
                 .setCommandName("nuts")
                 .setExpandSimpleOptions(true)
                 .registerSpecialSimpleOption("-version");
-        boolean explicitConfirm=false;
+        boolean explicitConfirm = false;
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
 
@@ -161,8 +162,7 @@ final class CoreNutsArgumentsParser {
                         break;
                     }
                     case "--java-home":
-                    case "--boot-java-home":
-                    case "--J": {
+                    case "--boot-java-home": {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
@@ -172,7 +172,7 @@ final class CoreNutsArgumentsParser {
                     }
                     case "--java-options":
                     case "--boot-java-options":
-                    case "-O": {
+                    case "-J": {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
@@ -513,14 +513,14 @@ final class CoreNutsArgumentsParser {
                         if (enabled && a.getBooleanValue()) {
                             options.setTerminalMode(NutsTerminalMode.FILTERED);
                             options.setProgressOptions("none");
-                            if(!explicitConfirm) {
+                            if (!explicitConfirm) {
                                 options.setConfirm(NutsConfirmationMode.ERROR);
                             }
                             options.setTrace(false);
                             options.setDebug(false);
                             options.setGui(false);
                             NutsLogConfig lc = options.getLogConfig();
-                            if(lc!=null){
+                            if (lc != null) {
                                 lc.setLogTermLevel(Level.OFF);
                             }
                         }
@@ -537,7 +537,7 @@ final class CoreNutsArgumentsParser {
                     case "-t":
                     case "--trace": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getBooleanValue()) {
+                        if (enabled) {
                             options.setTrace(a.getBooleanValue());
                         }
                         break;
@@ -624,8 +624,7 @@ final class CoreNutsArgumentsParser {
                         break;
                     }
                     case "-X":
-                    case "--exclude-extension":
-                        {
+                    case "--exclude-extension": {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
@@ -658,6 +657,35 @@ final class CoreNutsArgumentsParser {
                             options.addOutputFormatOptions(cmdLine.nextString().getStringValue());
                         } else {
                             cmdLine.skip();
+                        }
+                        break;
+                    case "-O":
+                    case "--output-format":
+                        a = cmdLine.nextString();
+                        if (enabled) {
+                            String t = a.getStringValue("");
+                            int i = CoreStringUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
+                            if (i > 0) {
+                                options.setOutputFormat(NutsContentType.valueOf(t.substring(0, i).toUpperCase()));
+                                options.addOutputFormatOptions(t.substring(i + 1).toUpperCase());
+                            } else {
+                                options.setOutputFormat(NutsContentType.valueOf(t.toUpperCase()));
+                                options.addOutputFormatOptions("");
+                            }
+                        }
+                        break;
+                    case "--tson":
+                        a = cmdLine.next();
+                        if (enabled) {
+                            options.setOutputFormat(NutsContentType.TSON);
+                            options.addOutputFormatOptions(a.getStringValue(""));
+                        }
+                        break;
+                    case "--yaml":
+                        a = cmdLine.next();
+                        if (enabled) {
+                            options.setOutputFormat(NutsContentType.YAML);
+                            options.addOutputFormatOptions(a.getStringValue(""));
                         }
                         break;
                     case "--json":
@@ -706,7 +734,7 @@ final class CoreNutsArgumentsParser {
                     case "-y": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
-                            explicitConfirm=true;
+                            explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.YES);
                         }
                         break;
@@ -715,7 +743,7 @@ final class CoreNutsArgumentsParser {
                     case "-n": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
-                            explicitConfirm=true;
+                            explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.NO);
                         }
                         break;
@@ -723,7 +751,7 @@ final class CoreNutsArgumentsParser {
                     case "--error": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
-                            explicitConfirm=true;
+                            explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.ERROR);
                         }
                         break;
@@ -731,7 +759,7 @@ final class CoreNutsArgumentsParser {
                     case "--ask": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
-                            explicitConfirm=true;
+                            explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.ASK);
                         }
                         break;
@@ -814,7 +842,7 @@ final class CoreNutsArgumentsParser {
                     // [[open options]] are transient (non persistent) options that will 
                     // override any configured value (if any) and will be 
                     // in use in the current process (and ignored elsewhere). 
-                    // Such options will be considered in creating worspaces 
+                    // Such options will be considered in creating workspaces
                     // as well but still they are not persistent.
                     case "--embedded":
                     case "-b": {
@@ -938,9 +966,9 @@ final class CoreNutsArgumentsParser {
                     case "--expire": {
                         a = cmdLine.next();
                         if (enabled) {
-                            if (a.getStringValue()!=null) {
+                            if (a.getStringValue() != null) {
                                 options.setExpireTime(Instant.parse(a.getStringValue()));
-                            }else{
+                            } else {
                                 options.setExpireTime(Instant.now());
                             }
                         }
@@ -1012,10 +1040,8 @@ final class CoreNutsArgumentsParser {
                     case "-U":
                     case "-S":
                     case "-G":
-                    case "-H":
-                    case "-J":
-                    case "-L":
                     case "-M":
+                    case "-L":
                     case "-W":
                     case "-B":
                     case "-i":

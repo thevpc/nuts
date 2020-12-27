@@ -1236,4 +1236,17 @@ final class PrivateNutsUtils {
         LinkedHashSet<String> deps = new LinkedHashSet<>();
         LinkedHashSet<String> repos = new LinkedHashSet<>();
     }
+
+
+    public static int firstIndexOf(String string,char[] chars) {
+        char[] value = string.toCharArray();
+        for (int i = 0; i < value.length; i++) {
+            for (int j = 0; j < chars.length; j++) {
+                if (value[i] == chars[j]) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
 }

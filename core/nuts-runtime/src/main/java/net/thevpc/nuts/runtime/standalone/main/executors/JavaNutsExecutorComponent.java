@@ -113,7 +113,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 HashMap<String, String> osEnv = new HashMap<>();
                 NutsWorkspaceOptionsBuilder options = ws.config().options().copy();
 
-                //copy session parameters to new created workspace
+                //copy session parameters to the newly created workspace
                 options.setDry(execSession.isDry());
                 options.setGui(execSession.isGui());
                 options.setOutLinePrefix(execSession.getOutLinePrefix());
@@ -143,10 +143,10 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                     }
                 }
 //                List<String> validBootCommand = new ArrayList<>();
-                options.setTrace(execSession.isTrace());
+//                options.setTrace(execSession.isTrace());
                 options.setExpireTime(execSession.getExpireTime());
-                options.setOutputFormat(execSession.getOutputFormat());
-                options.setConfirm(execSession.getConfirm());
+//                options.setOutputFormat(execSession.getOutputFormat());
+//                options.setConfirm(execSession.getConfirm());
 
                 Filter logFileFilter = execSession.getLogFileFilter();
                 Filter logTermFilter = execSession.getLogTermFilter();
@@ -172,7 +172,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         lc.setLogFileFilter(logFileFilter);
                     }
                 }
-                options.setConfirm(execSession.getConfirm());
+//                options.setConfirm(execSession.getConfirm());
 
                 String[] bootCommand = options.format().exported().setApiVersion(nutsDependencyVersion == null ? null : nutsDependencyVersion.toString())
                         .compact().getBootCommand();
@@ -228,11 +228,11 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 args.add(joptions.getJavaHome());
                 args.addAll(joptions.getJvmArgs());
 
-                if (!CoreStringUtils.isBlank(bootArgumentsString)) {
-                    String Dnuts_boot_args = "-Dnuts.boot.args=" + bootArgumentsString;
-                    xargs.add(Dnuts_boot_args);
-                    args.add(Dnuts_boot_args);
-                }
+//                if (!CoreStringUtils.isBlank(bootArgumentsString)) {
+//                    String Dnuts_boot_args = "-Dnuts.boot.args=" + bootArgumentsString;
+//                    xargs.add(Dnuts_boot_args);
+//                    args.add(Dnuts_boot_args);
+//                }
                 if (joptions.isJar()) {
                     xargs.add("-jar");
                     xargs.add(ws.id().formatter(def.getId()).format());

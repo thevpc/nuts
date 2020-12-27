@@ -501,6 +501,18 @@ public class CoreStringUtils {
         return exceptionToString(ex,false);
     }
 
+    public static int firstIndexOf(String string,char[] chars) {
+        char[] value = string.toCharArray();
+        for (int i = 0; i < value.length; i++) {
+            for (int j = 0; j < chars.length; j++) {
+                if (value[i] == chars[j]) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
     public static String exceptionToString(Throwable ex,boolean inner) {
         String msg = null;
         if (ex instanceof NutsNotFoundException || ex instanceof UncheckedIOException) {

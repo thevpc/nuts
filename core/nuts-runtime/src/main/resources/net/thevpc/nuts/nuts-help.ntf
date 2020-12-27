@@ -110,7 +110,7 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
 
  ```sh --java-options      <java-options> ```
  ```sh --boot-java-options  <java-options> ```
- ```sh -O <java-options> ```
+ ```sh -J <java-options> ```
       ~~Java™~~ options to run new instance of nuts
 
 ###) NUTS CREATE OPTIONS:
@@ -311,6 +311,11 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
 
  ```sh --plain[=<format-options>]```
       define plain text format as default output format (this is default)
+
+ ```sh -T[=<format-type>[:<format-options>]]```
+ ```sh --output-format[=<format-options>[:<format-options>]]```
+      define format as default output format. ```sh --output-format=json``` is equivalent to ```sh --json```
+      beside one  specify some extra options for the format, such as ```sh --output-format=json:lenient```
 
  ```sh --json[=<format-options>]```
       define json format as default output format

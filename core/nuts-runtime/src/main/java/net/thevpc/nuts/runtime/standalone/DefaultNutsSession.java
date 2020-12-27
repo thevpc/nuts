@@ -478,14 +478,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (a != null) {
             boolean enabled = a.isEnabled();
             switch (a.getStringKey()) {
-                case "--output-format": {
-                    a = cmdLine.nextString();
-                    if (enabled) {
-                        NutsContentType outf = CoreCommonUtils.parseEnumString(a.getStringValue(), NutsContentType.class, false);
-                        this.setOutputFormat(outf);
-                    }
-                    return true;
-                }
                 case "-T":
                 case "--output-format-option": {
                     a = cmdLine.nextString();
@@ -494,11 +486,45 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     }
                     return true;
                 }
+                case "-O":
+                case "--output-format":
+                    a = cmdLine.nextString();
+                    if (enabled) {
+                        String t = a.getStringValue("");
+                        int i = CoreStringUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
+                        if (i > 0) {
+                            this.setOutputFormat(NutsContentType.valueOf(t.substring(0, i).toUpperCase()));
+                            this.addOutputFormatOptions(t.substring(i + 1).toUpperCase());
+                        } else {
+                            this.setOutputFormat(NutsContentType.valueOf(t.toUpperCase()));
+                        }
+                    }
+                    break;
+                case "--tson":
+                    a = cmdLine.next();
+                    if (enabled) {
+                        this.setOutputFormat(NutsContentType.TSON);
+                        if(a.getStringValue()!=null) {
+                            this.addOutputFormatOptions(a.getStringValue());
+                        }
+                    }
+                    break;
+                case "--yaml":
+                    a = cmdLine.next();
+                    if (enabled) {
+                        this.setOutputFormat(NutsContentType.YAML);
+                        if(a.getStringValue()!=null) {
+                            this.addOutputFormatOptions(a.getStringValue());
+                        }
+                    }
+                    break;
                 case "--json": {
                     a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsContentType.JSON);
-                        this.addOutputFormatOptions(a.getStringValue(""));
+                        if(a.getStringValue()!=null) {
+                            this.addOutputFormatOptions(a.getStringValue());
+                        }
                     }
                     return true;
                 }
@@ -506,7 +532,9 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsContentType.PROPS);
-                        this.addOutputFormatOptions(a.getStringValue(""));
+                        if(a.getStringValue()!=null) {
+                            this.addOutputFormatOptions(a.getStringValue());
+                        }
                     }
                     return true;
                 }
@@ -514,7 +542,9 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsContentType.PLAIN);
-                        this.addOutputFormatOptions(a.getStringValue(""));
+                        if(a.getStringValue()!=null) {
+                            this.addOutputFormatOptions(a.getStringValue());
+                        }
                     }
                     return true;
                 }
@@ -522,7 +552,9 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsContentType.TABLE);
-                        this.addOutputFormatOptions(a.getStringValue(""));
+                        if(a.getStringValue()!=null) {
+                            this.addOutputFormatOptions(a.getStringValue());
+                        }
                     }
                     return true;
                 }
@@ -530,7 +562,9 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsContentType.TREE);
-                        this.addOutputFormatOptions(a.getStringValue(""));
+                        if(a.getStringValue()!=null) {
+                            this.addOutputFormatOptions(a.getStringValue());
+                        }
                     }
                     return true;
                 }
@@ -538,7 +572,9 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsContentType.XML);
-                        this.addOutputFormatOptions(a.getStringValue(""));
+                        if(a.getStringValue()!=null) {
+                            this.addOutputFormatOptions(a.getStringValue());
+                        }
                     }
                     return true;
                 }
