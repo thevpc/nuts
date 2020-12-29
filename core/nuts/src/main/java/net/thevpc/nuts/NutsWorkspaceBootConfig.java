@@ -65,13 +65,13 @@ public interface NutsWorkspaceBootConfig {
 
     boolean isGlobal();
 
-    Path getStoreLocation(NutsId id, NutsStoreLocation folderType);
+    String getStoreLocation(NutsId id, NutsStoreLocation folderType);
 
-    Path getStoreLocation(NutsStoreLocation storeLocation);
+    String getStoreLocation(NutsStoreLocation storeLocation);
 
-    Path getHomeLocation(NutsOsFamily osFamily, NutsStoreLocation storeLocation);
+    String getHomeLocation(NutsOsFamily osFamily, NutsStoreLocation storeLocation);
 
-    Path getHomeLocation(NutsStoreLocation storeLocation);
+    String getHomeLocation(NutsStoreLocation storeLocation);
 
     /**
      * @category Config

@@ -21,6 +21,7 @@ import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -310,7 +311,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         boolean contentSuccessful = false;
                         boolean includedRemote = false;
                         String repositoryUuid = foundDefinition.getRepositoryUuid();
-                        NutsRepository repo0 = ws.repos().getRepository(repositoryUuid, this.getValidWorkspaceSession().copy().setTransitive(true));
+                        NutsRepository repo0 = ws.repos().getRepository(repositoryUuid, session);
                         NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(ws).repoSPI(repo0);
                         for (NutsFetchMode mode : nutsFetchModes) {
                             try {
@@ -319,7 +320,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                 }
                                 NutsContent content = repoSPI.fetchContent()
                                         .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-                                        .setLocalPath(copyTo)
+                                        .setLocalPath(copyTo==null?null:copyTo.toString())
                                         .setSession(session)
                                         .setFetchMode(mode)
                                         .getResult();
@@ -327,7 +328,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                     if (content.getPath() == null) {
                                         content = repoSPI.fetchContent()
                                                 .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-                                                .setLocalPath(copyTo)
+                                                .setLocalPath(copyTo==null?null:copyTo.toString())
                                                 .setSession(session)
                                                 .setFetchMode(mode)
                                                 .getResult();
@@ -359,7 +360,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                         NutsRepositorySPI repoSPI2 = NutsWorkspaceUtils.of(ws).repoSPI(repo);
                                         NutsContent content = repoSPI2.fetchContent()
                                                 .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-                                                .setLocalPath(copyTo)
+                                                .setLocalPath(copyTo==null?null:copyTo.toString())
                                                 .setSession(session)
                                                 .setFetchMode(mode)
                                                 .getResult();
@@ -480,7 +481,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         boolean executable = nutsDescriptor.isExecutable();
         boolean nutsApp = nutsDescriptor.isApplication();
         if (jar.getFileName().toString().toLowerCase().endsWith(".jar") && Files.isRegularFile(jar)) {
-            Path cachePath = ws.locations().getStoreLocation(nutsDescriptor.getId(), NutsStoreLocation.CACHE)
+            Path cachePath = Paths.get(ws.locations().getStoreLocation(nutsDescriptor.getId(), NutsStoreLocation.CACHE))
                     .resolve(ws.locations().getDefaultIdFilename(nutsDescriptor.getId()
                                     .builder()
                                     .setFace("info.cache")
@@ -500,7 +501,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                 nutsApp = "true".equals(map.get("nutsApplication"));
             } else {
                 try {
-                    NutsExecutionEntry[] t = ws.apps().execEntries().parse(jar);
+                    NutsExecutionEntry[] t = ws.apps().execEntries().setSession(getValidWorkspaceSession()).parse(jar);
                     if (t.length > 0) {
                         executable = true;
                         if (t[0].isApp()) {
@@ -511,7 +512,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         map = new LinkedHashMap<>();
                         map.put("executable", String.valueOf(executable));
                         map.put("nutsApplication", String.valueOf(nutsApp));
-                        ws.formats().element().setContentType(NutsContentType.JSON).setSession(session).setValue(map).print(cachePath);
+                        ws.formats().element().setContentType(NutsContentType.JSON).setSession(getValidWorkspaceSession()).setValue(map).print(cachePath);
                     } catch (Exception ex) {
                         //
                     }
@@ -533,7 +534,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
 
         Path cachePath = null;
         if(withCache){
-            cachePath = ws.locations().getStoreLocation(id, NutsStoreLocation.CACHE,repo.getUuid(),session)
+            cachePath = Paths.get(ws.locations().getStoreLocation(id, NutsStoreLocation.CACHE,repo.getUuid(), session))
                     .resolve(ws.locations().getDefaultIdFilename(id.builder().setFace("def.cache").build()));
             if (Files.isRegularFile(cachePath)) {
                 try {

@@ -33,6 +33,7 @@ import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -151,8 +152,8 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         String loc = config().getLocation(false);
         String impl = getClass().getSimpleName();
         if (c != null) {
-            Path storeLocation = c.getStoreLocation();
-            storePath = storeLocation == null ? null : storeLocation.toAbsolutePath().toString();
+            String storeLocation = c.getStoreLocation();
+            storePath = storeLocation == null ? null : Paths.get(storeLocation).toAbsolutePath().toString();
         }
         LinkedHashMap<String, String> a = new LinkedHashMap<>();
         if (name != null) {

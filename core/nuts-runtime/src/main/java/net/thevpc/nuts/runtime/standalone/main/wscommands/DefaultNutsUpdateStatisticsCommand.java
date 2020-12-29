@@ -32,7 +32,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
         NutsSession session = getValidWorkspaceSession();
         for (String repository : getRepositrories()) {
             processed = true;
-            NutsRepository repo = ws.repos().getRepository(repository, session.copy().setTransitive(false));
+            NutsRepository repo = ws.repos().getRepository(repository, session);
             NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(ws).repoSPI(repo);
             repoSPI.updateStatistics()
                     .setSession(session)

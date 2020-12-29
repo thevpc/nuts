@@ -58,8 +58,8 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     public NutsCachedRepository(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
         super(options, workspace, parent, speed, supportedMirroring, repositoryType);
         LOG = workspace.log().of(DefaultNutsRepoConfigManager.class);
-        cache = new NutsRepositoryFolderHelper(this, workspace, config().getStoreLocation(NutsStoreLocation.CACHE),true);
-        lib = new NutsRepositoryFolderHelper(this, workspace, config().getStoreLocation(NutsStoreLocation.LIB),false);
+        cache = new NutsRepositoryFolderHelper(this, workspace, Paths.get(config().getStoreLocation(NutsStoreLocation.CACHE)),true);
+        lib = new NutsRepositoryFolderHelper(this, workspace, Paths.get(config().getStoreLocation(NutsStoreLocation.LIB)),false);
         mirroring = new NutsRepositoryMirroringHelper(this, cache);
     }
 
@@ -161,7 +161,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     }
 
     @Override
-    public final NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsSession session) {
+    public final NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
             NutsContent c = lib.fetchContentImpl(id, localPath, session);
             if (c != null) {
@@ -180,9 +180,9 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         SuccessFailResult<NutsContent, RuntimeException> res = workspace.concurrent().lock().source(id.builder().setFaceContent().build()).call(() -> {
             if (cache.isWriteEnabled()) {
                 Path cachePath = cache.getLongNameIdLocalFile(id);
-                NutsContent c2 = fetchContentCore(id, descriptor, cachePath, fetchMode, session);
+                NutsContent c2 = fetchContentCore(id, descriptor, cachePath.toString(), fetchMode, session);
                 if (c2 != null) {
-                    Path localPath2 = localPath;
+                    String localPath2 = localPath;
                     //already deployed because fetchContentImpl2 is run against cachePath
 //                cache.deployContent(id, c.getPath(), session);
                     if (localPath2 != null) {
@@ -190,9 +190,9 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                                 .setSession(session)
                                 .from(cachePath).to(localPath2).run();
                     } else {
-                        localPath2 = cachePath;
+                        localPath2 = cachePath.toString();
                     }
-                    return SuccessFailResult.success(new NutsDefaultContent(localPath2, true, false));
+                    return SuccessFailResult.success(new NutsDefaultContent(localPath2.toString(), true, false));
                 } else {
                     return SuccessFailResult.fail(new NutsNotFoundException(session.getWorkspace(), id));
                 }
@@ -200,7 +200,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 NutsContent c2 = null;
                 RuntimeException impl2Ex = null;
                 try {
-                    c2 = fetchContentCore(id, descriptor, localPath, fetchMode, session);
+                    c2 = fetchContentCore(id, descriptor, localPath.toString(), fetchMode, session);
                 } catch (RuntimeException ex) {
                     impl2Ex = ex;
                 }
@@ -348,7 +348,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         return null;
     }
 
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 

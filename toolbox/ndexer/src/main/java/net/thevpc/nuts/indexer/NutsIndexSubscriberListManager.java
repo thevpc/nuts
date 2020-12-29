@@ -5,6 +5,7 @@ import net.thevpc.common.strings.StringUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class NutsIndexSubscriberListManager {
@@ -37,12 +38,12 @@ public class NutsIndexSubscriberListManager {
     }
 
     private Path getConfigFile(NutsSession session) {
-        return this.defaultWorkspace
+        return Paths.get(this.defaultWorkspace
                 .locations()
                 .getStoreLocation(
                         this.defaultWorkspace
                                 .id().resolveId(NutsIndexSubscriberListManager.class, session),
-                        NutsStoreLocation.CONFIG).resolve(
+                        NutsStoreLocation.CONFIG)).resolve(
                         name + "-nuts-subscriber-list.json");
     }
 
@@ -53,7 +54,7 @@ public class NutsIndexSubscriberListManager {
     public NutsIndexSubscriber getSubscriber(String uuid) {
         NutsIndexSubscriber subscriber = subscribers.get(uuid);
         if (subscriber == null) {
-            throw new NoSuchElementException("Subscriber with " + uuid + " does not exist!");
+            throw new NoSuchElementException("subscriber with " + uuid + " does not exist");
         }
         return subscriber.copy();
     }

@@ -59,10 +59,10 @@ public class DefaultNutsIOManager implements NutsIOManager {
 //            }
             if (path.startsWith("~")) {
                 if (path.equals("~~")) {
-                    Path nutsHome = ws.locations().getHomeLocation(NutsStoreLocation.CONFIG);
+                    Path nutsHome = Paths.get(ws.locations().getHomeLocation(NutsStoreLocation.CONFIG));
                     return nutsHome.normalize().toString();
                 } else if (path.startsWith("~~") && path.length() > 2 && (path.charAt(2) == '/' || path.charAt(2) == '\\')) {
-                    Path nutsHome = ws.locations().getHomeLocation(NutsStoreLocation.CONFIG);
+                    Path nutsHome = Paths.get(ws.locations().getHomeLocation(NutsStoreLocation.CONFIG));
                     return nutsHome.resolve(path.substring(3)).normalize().toString();
                 } else if (path.equals("~")) {
                     return (System.getProperty("user.home"));

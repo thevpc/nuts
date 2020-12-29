@@ -121,6 +121,12 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
         return this;
     }
 
+    @Override
+    public NutsIOCopyAction setTarget(String target) {
+        this.target = iom.output().of(target);
+        return this;
+    }
+
     public DefaultNutsIOCopyAction setSource(Object source) {
         this.source = iom.input().of(source);
         return this;
@@ -550,7 +556,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     CoreIOUtils.mkdirs(to.getParent());
                     temp = to.resolveSibling(to.getFileName() + "~");
                 } else {
-                    temp = iom.tmp().createTempFile("temp~");
+                    temp = Paths.get(iom.tmp().createTempFile("temp~", session));
                 }
                 try {
                     if (_source.isPath()) {

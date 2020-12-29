@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
@@ -48,12 +49,13 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
     }
 
     private Path getConfigFile(NutsSession session) {
-        return this.defaultWorkspace
+        return Paths.get(this.defaultWorkspace
                 .locations()
                 .getStoreLocation(
                         this.defaultWorkspace
                                 .id().resolveId(DefaultNutsWorkspaceListManager.class, session),
-                        NutsStoreLocation.CONFIG).resolve(name + "-nuts-workspace-list.json");
+                        NutsStoreLocation.CONFIG))
+                .resolve(name + "-nuts-workspace-list.json");
     }
 
     @Override
@@ -87,7 +89,9 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         NutsWorkspace workspace = this.createWorkspace(path);
         NutsWorkspaceLocation workspaceLocation = new NutsWorkspaceLocation()
                 .setUuid(workspace.uuid())
-                .setName(workspace.locations().getWorkspaceLocation().getFileName().toString())
+                .setName(
+                        Paths.get(workspace.locations().getWorkspaceLocation())
+                        .getFileName().toString())
                 .setLocation(workspace.locations().getWorkspaceLocation().toString());
         workspaces.put(workspace.uuid(), workspaceLocation);
         this.save(session);

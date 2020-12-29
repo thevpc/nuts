@@ -1148,14 +1148,14 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsResultList<Path> getResultInstallFolders() {
+    public NutsResultList<String> getResultInstallFolders() {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionsBase(false, false, false, false).iterator())
                 .map(x -> (x.getInstallInformation() == null) ? null : x.getInstallInformation().getInstallFolder())
                 .notNull());
     }
 
     @Override
-    public NutsResultList<Path> getResultStoreLocations(NutsStoreLocation location) {
+    public NutsResultList<String> getResultStoreLocations(NutsStoreLocation location) {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionsBase(false, false, false, false).iterator())
                 .map(x -> ws.locations().getStoreLocation(x.getId(), location))
                 .notNull());
@@ -1192,7 +1192,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return postProcessResult(IteratorBuilder.of(getResultDefinitionsBase(false, false, true, isEffective()).iterator())
                 .mapMulti(x
                         -> (x.getContent() == null || x.getContent().getPath() == null) ? Collections.emptyList()
-                        : Arrays.asList(ws.apps().execEntries().parse(x.getContent().getPath()))));
+                        : Arrays.asList(ws.apps().execEntries().setSession(getValidWorkspaceSession()).parse(x.getContent().getPath()))));
     }
 
     @Override

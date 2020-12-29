@@ -26,8 +26,6 @@
 */
 package net.thevpc.nuts.runtime.standalone;
 
-import java.nio.file.Path;
-
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsRepositoryCommand;
 
@@ -42,12 +40,12 @@ public class DefaultNutsContentEvent implements NutsContentEvent {
     /**
      * stored deployment Path, this is Repository dependent
      */
-    private final Path path;
+    private final String location;
     private final NutsSession session;
     private final NutsRepository repository;
 
-    public DefaultNutsContentEvent(Path path, NutsRepositoryCommand command, NutsSession session, NutsRepository repository) {
-        this.path = path;
+    public DefaultNutsContentEvent(String location, NutsRepositoryCommand command, NutsSession session, NutsRepository repository) {
+        this.location = location;
         this.command = command;
         this.session = session;
         this.repository = repository;
@@ -59,8 +57,8 @@ public class DefaultNutsContentEvent implements NutsContentEvent {
     }
 
     @Override
-    public Path getPath() {
-        return path;
+    public String getLocation() {
+        return location;
     }
 
 //    @Override

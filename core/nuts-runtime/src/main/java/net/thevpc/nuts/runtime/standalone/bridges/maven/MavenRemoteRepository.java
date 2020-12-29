@@ -412,7 +412,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
         }
@@ -436,9 +436,9 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             Path content = getMavenLocalFolderContent(id);
             if (content != null && Files.exists(content)) {
                 if (localPath == null) {
-                    return new NutsDefaultContent(content, true, false);
+                    return new NutsDefaultContent(content.toString(), true, false);
                 } else {
-                    Path tempFile = getWorkspace().io().tmp().createTempFile(content.getFileName().toString(), this);
+                    String tempFile = getWorkspace().io().tmp().createTempFile(content.getFileName().toString(), this, session);
                     getWorkspace().io().copy()
                             .setSession(session)
                             .from(content).to(tempFile).safe().run();
@@ -448,7 +448,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         }
         if (localPath == null) {
             String p = helper.getIdPath(id);
-            Path tempFile = getWorkspace().io().tmp().createTempFile(new File(p).getName(), this);
+            String tempFile = getWorkspace().io().tmp().createTempFile(new File(p).getName(), this, session);
             try {
                 getWorkspace().io().copy()
                         .setSession(session)

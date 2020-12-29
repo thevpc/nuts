@@ -18,21 +18,21 @@ public class NutsWorkspaceVarExpansionFunction implements Function<String, Strin
     public String apply(String from) {
         switch (from) {
             case "home.config":
-                return ws.locations().getHomeLocation(NutsStoreLocation.CONFIG).toString();
+                return ws.locations().getHomeLocation(NutsStoreLocation.CONFIG);
             case "home.apps":
-                return ws.locations().getHomeLocation(NutsStoreLocation.APPS).toString();
+                return ws.locations().getHomeLocation(NutsStoreLocation.APPS);
             case "home.lib":
-                return ws.locations().getHomeLocation(NutsStoreLocation.LIB).toString();
+                return ws.locations().getHomeLocation(NutsStoreLocation.LIB);
             case "home.temp":
-                return ws.locations().getHomeLocation(NutsStoreLocation.TEMP).toString();
+                return ws.locations().getHomeLocation(NutsStoreLocation.TEMP);
             case "home.var":
-                return ws.locations().getHomeLocation(NutsStoreLocation.VAR).toString();
+                return ws.locations().getHomeLocation(NutsStoreLocation.VAR);
             case "home.cache":
-                return ws.locations().getHomeLocation(NutsStoreLocation.CACHE).toString();
+                return ws.locations().getHomeLocation(NutsStoreLocation.CACHE);
             case "home.log":
-                return ws.locations().getHomeLocation(NutsStoreLocation.LOG).toString();
+                return ws.locations().getHomeLocation(NutsStoreLocation.LOG);
             case "home.run":
-                return ws.locations().getHomeLocation(NutsStoreLocation.RUN).toString();
+                return ws.locations().getHomeLocation(NutsStoreLocation.RUN);
             case "workspace":
                 return ws.locations().getWorkspaceLocation().toString();
             case "user.home":

@@ -101,7 +101,7 @@ public class NutsJavaSdkUtils {
         }
         List<NutsSdkLocation> all = new ArrayList<>();
         for (String s : conf) {
-            all.addAll(Arrays.asList(searchJdkLocations(Paths.get(s), session)));
+            all.addAll(Arrays.asList(searchJdkLocations(s, session)));
         }
         return all.toArray(new NutsSdkLocation[0]);
     }
@@ -144,12 +144,13 @@ public class NutsJavaSdkUtils {
         });
     }
 
-    public NutsSdkLocation[] searchJdkLocations(Path s, NutsSession session) {
+    public NutsSdkLocation[] searchJdkLocations(String loc, NutsSession session) {
+        Path s=Paths.get(loc);
         List<NutsSdkLocation> all = new ArrayList<>();
         if (Files.isDirectory(s)) {
             try (final DirectoryStream<Path> it = Files.newDirectoryStream(s)) {
                 for (Path d : it) {
-                    NutsSdkLocation r = resolveJdkLocation(d, null, session);
+                    NutsSdkLocation r = resolveJdkLocation(d.toString(), null, session);
                     if (r != null) {
                         all.add(r);
                         if (session != null && session.isPlainTrace()) {
@@ -179,7 +180,7 @@ public class NutsJavaSdkUtils {
                                 public NutsSdkLocation call() throws Exception {
                                     NutsSdkLocation r=null;
                                     try {
-                                        r = resolveJdkLocation(d, null, session);
+                                        r = resolveJdkLocation(d.toString(), null, session);
                                         if(r!=null) {
                                             if (session.isPlainTrace()) {
                                                 synchronized (session.getWorkspace()) {
@@ -214,13 +215,13 @@ public class NutsJavaSdkUtils {
         });
     }
 
-    public NutsSdkLocation resolveJdkLocation(Path path, String preferredName, NutsSession session) {
+    public NutsSdkLocation resolveJdkLocation(String path, String preferredName, NutsSession session) {
         session=NutsWorkspaceUtils.of(ws).validateSession(session);
         if (path == null) {
             throw new NutsException(session.getWorkspace(), "missing path");
         }
         String appSuffix = session.getWorkspace().env().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
-        Path bin = path.resolve("bin");
+        Path bin = Paths.get(path).resolve("bin");
         Path javaExePath = bin.resolve("java" + appSuffix);
         if (!Files.isRegularFile(javaExePath)) {
             return null;
@@ -327,7 +328,7 @@ public class NutsJavaSdkUtils {
     public String resolveJavaCommandByVersion(String requestedJavaVersion, boolean javaw, NutsSession session) {
         String bestJavaPath = resolveJdkLocation(requestedJavaVersion, session).getPath();
         if (bestJavaPath.contains("/") || bestJavaPath.contains("\\") || bestJavaPath.equals(".") || bestJavaPath.equals("..")) {
-            Path file = ws.locations().getWorkspaceLocation().resolve(bestJavaPath);
+            Path file = Paths.get(ws.locations().getWorkspaceLocation()).resolve(bestJavaPath);
             if (Files.isDirectory(file) && Files.isDirectory(file.resolve("bin"))) {
                 boolean winOs = ws.env().getOsFamily() == NutsOsFamily.WINDOWS;
                 if (winOs) {

@@ -65,7 +65,7 @@ public class RemoteMysqlDatabaseConfigService {
         LocalMysqlDatabaseConfigService loc = ms.loadDatabaseOrError(getConfig().getLocalName());
         RemoteMysqlDatabaseConfig cconfig = getConfig();
         if (StringUtils.isBlank(localPath)) {
-            localPath = context.getVarFolder().resolve(client.getName() + "-" + getName() + "-" + MysqlUtils.newDateString()).toString();
+            localPath = Paths.get(context.getVarFolder()).resolve(client.getName() + "-" + getName() + "-" + MysqlUtils.newDateString()).toString();
         }
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("######[%s]###### remote restore%n", name);
@@ -90,7 +90,7 @@ public class RemoteMysqlDatabaseConfigService {
 //        localPath="/home/vpc/.config/nuts/eniso-info/var/id/net/thevpc/nuts/toolbox/nmysql/0.8.1.0/default-enisoinfodb-2020-12-27-161457-685";
         if (StringUtils.isBlank(localPath)) {
 //            localPath = context.getVarFolder().resolve(client.getName() + "-" + getName() + "-" + MysqlUtils.newDateString()).toString();
-            localPath = context.getVarFolder().resolve(Paths.get(ppath).getFileName().toString()).toString();
+            localPath = Paths.get(context.getVarFolder()).resolve(Paths.get(ppath).getFileName().toString()).toString();
         }
         SshPath remoteFullFilePath = new SshAddress(prepareSshServer(cconfig.getServer())).getPath(ppath);
         if (context.getSession().isPlainTrace()) {

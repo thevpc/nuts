@@ -33,25 +33,15 @@ import java.util.Map;
  * @category Base
  */
 public interface NutsWorkspaceLocationManager {
-    Path getHomeLocation(NutsStoreLocation folderType);
+    String getHomeLocation(NutsStoreLocation folderType);
 
-    Path getStoreLocation(NutsStoreLocation folderType);
+    String getStoreLocation(NutsStoreLocation folderType);
 
-    void setStoreLocation(NutsStoreLocation folderType, String location, NutsUpdateOptions options);
+    String getStoreLocation(NutsId id, NutsStoreLocation folderType);
 
-    void setStoreLocationStrategy(NutsStoreLocationStrategy strategy, NutsUpdateOptions options);
+    String getStoreLocation(NutsStoreLocation folderType, String repositoryIdOrName, NutsSession session) ;
 
-    void setStoreLocationLayout(NutsOsFamily layout, NutsUpdateOptions options);
-
-    Path getStoreLocation(NutsStoreLocation folderType,String repositoryIdOrName,NutsSession session) ;
-
-    Path getStoreLocation(String id, NutsStoreLocation folderType);
-
-    Path getStoreLocation(NutsId id, NutsStoreLocation folderType);
-
-    Path getStoreLocation(NutsId id, NutsStoreLocation folderType,String repositoryIdOrName,NutsSession session);
-
-    void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location, NutsUpdateOptions options);
+    String getStoreLocation(NutsId id, NutsStoreLocation folderType, String repositoryIdOrName, NutsSession session);
 
     NutsStoreLocationStrategy getStoreLocationStrategy();
 
@@ -67,18 +57,6 @@ public interface NutsWorkspaceLocationManager {
      */
     Map<String, String> getStoreLocations();
 
-    /**
-     * all home locations key/value map where keys are in the form
-     * "osfamily:location" and values are absolute paths.
-     *
-     * @return home locations mapping
-     */
-    Map<String, String> getHomeLocations();
-
-    Path getHomeLocation(NutsOsFamily layout, NutsStoreLocation location);
-
-    Path getWorkspaceLocation();
-
     String getDefaultIdFilename(NutsId id);
 
     String getDefaultIdBasedir(NutsId id);
@@ -86,5 +64,28 @@ public interface NutsWorkspaceLocationManager {
     String getDefaultIdContentExtension(String packaging);
 
     String getDefaultIdExtension(NutsId id);
+
+    /**
+     * all home locations key/value map where keys are in the form
+     * "osfamily:location" and values are absolute paths.
+     *
+     * @return home locations mapping
+     * @param session session
+     */
+    Map<String, String> getHomeLocations(NutsSession session);
+
+    String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location, NutsSession session);
+
+    String getWorkspaceLocation();
+
+    void setStoreLocation(NutsStoreLocation folderType, String location, NutsUpdateOptions options);
+
+    void setStoreLocationStrategy(NutsStoreLocationStrategy strategy, NutsUpdateOptions options);
+
+    void setStoreLocationLayout(NutsOsFamily layout, NutsUpdateOptions options);
+
+    void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location, NutsUpdateOptions options);
+
+
 
 }

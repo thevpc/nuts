@@ -12,6 +12,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -496,8 +497,9 @@ public class LocalMysql {
 
     public LocalMysqlConfigService[] listConfig() {
         List<LocalMysqlConfigService> all = new ArrayList<>();
-        if (Files.isDirectory(getContext().getSharedConfigFolder())) {
-            try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(getContext().getSharedConfigFolder(), pathname -> pathname.getFileName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT))) {
+        Path sharedConfigFolder = Paths.get(getContext().getSharedConfigFolder());
+        if (Files.isDirectory(sharedConfigFolder)) {
+            try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(sharedConfigFolder, pathname -> pathname.getFileName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT))) {
                 for (Path file1 : configFiles) {
                     try {
                         LocalMysqlConfigService c = loadMysqlConfig(file1);

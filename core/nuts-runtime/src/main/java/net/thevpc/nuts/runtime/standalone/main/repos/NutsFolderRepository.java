@@ -28,7 +28,6 @@ package net.thevpc.nuts.runtime.standalone.main.repos;
 import net.thevpc.nuts.*;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -59,7 +58,7 @@ public class NutsFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode == NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
         }

@@ -1,15 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.main.config.compat.v507;
 
-import net.thevpc.nuts.NutsConstants;
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.NutsStoreLocation;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.main.config.*;
 import net.thevpc.nuts.runtime.standalone.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.main.config.compat.AbstractNutsVersionCompat;
 import net.thevpc.nuts.runtime.standalone.main.config.compat.CompatUtils;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
     public NutsVersionCompat507(NutsWorkspace ws, String apiVersion) {
@@ -17,7 +15,7 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigBoot parseConfig(byte[] bytes) {
+    public NutsWorkspaceConfigBoot parseConfig(byte[] bytes, NutsSession session) {
         return parseConfig507(bytes);//.toWorkspaceConfig();
     }
 
@@ -26,8 +24,8 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigApi parseApiConfig() {
-        Path path = getWorkspace().locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.CONFIG)
+    public NutsWorkspaceConfigApi parseApiConfig(NutsSession session) {
+        Path path = Paths.get(getWorkspace().locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.CONFIG))
                 .resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NutsWorkspaceConfigApi c = bytes==null?null:getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(bytes, NutsWorkspaceConfigApi.class);
@@ -38,8 +36,8 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigRuntime parseRuntimeConfig() {
-        Path path = getWorkspace().locations().getStoreLocation(getWorkspace().getRuntimeId(), NutsStoreLocation.CONFIG)
+    public NutsWorkspaceConfigRuntime parseRuntimeConfig(NutsSession session) {
+        Path path = Paths.get(getWorkspace().locations().getStoreLocation(getWorkspace().getRuntimeId(), NutsStoreLocation.CONFIG))
                 .resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NutsWorkspaceConfigRuntime c = bytes==null?null:getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(bytes, NutsWorkspaceConfigRuntime.class);
@@ -50,9 +48,9 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigSecurity parseSecurityConfig() {
-        Path path = getWorkspace().locations().getStoreLocation(getWorkspace().getApiId()
-                .builder().setVersion(NutsConstants.Versions.RELEASE).build(), NutsStoreLocation.CONFIG)
+    public NutsWorkspaceConfigSecurity parseSecurityConfig(NutsSession session) {
+        Path path = Paths.get(getWorkspace().locations().getStoreLocation(getWorkspace().getApiId()
+                .builder().setVersion(NutsConstants.Versions.RELEASE).build(), NutsStoreLocation.CONFIG))
                 .resolve(CoreNutsConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NutsWorkspaceConfigSecurity c = bytes==null?null:getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(bytes, NutsWorkspaceConfigSecurity.class);
@@ -60,11 +58,11 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigMain parseMainConfig() {
-        Path path = getWorkspace().locations().getStoreLocation(getWorkspace().getApiId()
+    public NutsWorkspaceConfigMain parseMainConfig(NutsSession session) {
+        Path path = Paths.get(getWorkspace().locations().getStoreLocation(getWorkspace().getApiId()
                 .builder().setVersion(NutsConstants.Versions.RELEASE)
                 .build()
-                , NutsStoreLocation.CONFIG)
+                , NutsStoreLocation.CONFIG))
                 .resolve(CoreNutsConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NutsWorkspaceConfigMain c = bytes==null?null:getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(bytes, NutsWorkspaceConfigMain.class);

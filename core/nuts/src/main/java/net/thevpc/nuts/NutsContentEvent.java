@@ -40,7 +40,7 @@ public interface NutsContentEvent {
      * artifact path
      * @return artifact path
      */
-    Path getPath();
+    String getLocation();
 
     /**
      * current workspace

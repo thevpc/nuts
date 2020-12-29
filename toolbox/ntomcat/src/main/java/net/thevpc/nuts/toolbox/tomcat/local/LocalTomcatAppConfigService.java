@@ -43,7 +43,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     public Path getArchiveFile(String version) {
         String runningFolder = tomcat.getConfig().getArchiveFolder();
         if (runningFolder == null || runningFolder.trim().isEmpty()) {
-            runningFolder = context.getVarFolder().resolve("archive").toString();
+            runningFolder = Paths.get(context.getVarFolder()).resolve("archive").toString();
         }
         String packaging = "war";
         return Paths.get(runningFolder).resolve(name + "-" + version + "." + packaging);
@@ -57,14 +57,14 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         String _runningFolder = tomcat.getConfig().getRunningFolder();
         Path runningFolder = (_runningFolder == null || _runningFolder.trim().isEmpty()) ? null : Paths.get(_runningFolder);
         if (runningFolder == null) {
-            runningFolder = context.getVarFolder().resolve("running");
+            runningFolder = Paths.get(context.getVarFolder()).resolve("running");
         }
         String packaging = "war";
         return runningFolder.resolve(name + "." + packaging);
     }
 
     public Path getVersionFile() {
-        return context.getSharedConfigFolder().resolve(name + ".version");
+        return Paths.get(context.getSharedConfigFolder()).resolve(name + ".version");
     }
 
     public String getCurrentVersion() {

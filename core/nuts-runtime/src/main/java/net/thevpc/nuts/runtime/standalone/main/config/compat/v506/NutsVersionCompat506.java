@@ -1,13 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.main.config.compat.v506;
 
-import net.thevpc.nuts.NutsConstants;
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.NutsUserConfig;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.main.config.*;
 import net.thevpc.nuts.runtime.standalone.main.config.compat.AbstractNutsVersionCompat;
 import net.thevpc.nuts.runtime.standalone.main.config.compat.CompatUtils;
 
+import java.nio.file.Paths;
 import java.util.List;
 
 public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
@@ -16,15 +14,17 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigBoot parseConfig(byte[] bytes) {
+    public NutsWorkspaceConfigBoot parseConfig(byte[] bytes, NutsSession session) {
         return parseConfig506(bytes).toWorkspaceConfig();
     }
 
     @Override
-    public NutsWorkspaceConfigApi parseApiConfig() {
+    public NutsWorkspaceConfigApi parseApiConfig(NutsSession session) {
         NutsWorkspaceConfigApi cc = new NutsWorkspaceConfigApi();
         cc.setApiVersion(getApiVersion());
-        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(getWorkspace().locations().getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(
+                Paths.get(getWorkspace().locations().getWorkspaceLocation())
+                .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
 //            cc.setConfigVersion(???);
             cc.setApiVersion(c.getApiVersion());
@@ -37,10 +37,12 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigRuntime parseRuntimeConfig() {
+    public NutsWorkspaceConfigRuntime parseRuntimeConfig(NutsSession session) {
         NutsWorkspaceConfigRuntime cc = new NutsWorkspaceConfigRuntime();
 //        cc.setApiVersion(getApiVersion());
-        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(getWorkspace().locations().getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(
+                Paths.get(getWorkspace().locations().getWorkspaceLocation())
+                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
 //            cc.setConfigVersion(???);
             cc.setDependencies(c.getRuntimeDependencies());
@@ -54,9 +56,11 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigSecurity parseSecurityConfig() {
+    public NutsWorkspaceConfigSecurity parseSecurityConfig(NutsSession session) {
         NutsWorkspaceConfigSecurity cc = new NutsWorkspaceConfigSecurity();
-        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(getWorkspace().locations().getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(
+                Paths.get(getWorkspace().locations().getWorkspaceLocation())
+                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
 //            cc.setConfigVersion(???);
             cc.setSecure(c.isSecure());
@@ -68,9 +72,11 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigMain parseMainConfig() {
+    public NutsWorkspaceConfigMain parseMainConfig(NutsSession session) {
         NutsWorkspaceConfigMain cc = new NutsWorkspaceConfigMain();
-        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(getWorkspace().locations().getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+        NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(
+                Paths.get(getWorkspace().locations().getWorkspaceLocation())
+                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
             c.setRepositories(CompatUtils.copyNutsRepositoryRefList(c.getRepositories()));
             c.setCommandFactories(CompatUtils.copyNutsCommandAliasFactoryConfigList(c.getCommandFactories()));

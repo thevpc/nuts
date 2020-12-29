@@ -43,11 +43,12 @@ public class BackupNAdminSubCommand extends AbstractNAdminSubCommand {
                 List<ZipUtils.Folder> all = new ArrayList<>();
                 all.add(new ZipUtils.Folder(
                         "",
-                        context.getWorkspace().locations().getWorkspaceLocation().resolve("nuts-workspace.json").toString(),
+                        Paths.get(context.getWorkspace().locations().getWorkspaceLocation())
+                                .resolve("nuts-workspace.json").toString(),
                         null
                 ));
                 for (NutsStoreLocation value : NutsStoreLocation.values()) {
-                    Path r = context.getWorkspace().locations().getStoreLocation(value);
+                    Path r = Paths.get(context.getWorkspace().locations().getStoreLocation(value));
                     if (Files.isDirectory(r)) {
                         ZipUtils.Folder folder = new ZipUtils.Folder(
                                 value.id(),

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -60,8 +61,9 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteWorkspaceFolder(NutsApplicationContext context, NutsStoreLocation folder, boolean force) {
-        Path storeLocation = context.getWorkspace().locations().getStoreLocation(folder);
-        if (storeLocation != null) {
+        String sstoreLocation = context.getWorkspace().locations().getStoreLocation(folder);
+        if (sstoreLocation != null) {
+            Path storeLocation = Paths.get(sstoreLocation);
             if (Files.exists(storeLocation)) {
                 context.getSession().out().printf("```error Deleting``` ##%s## for workspace ##%s## folder %s ...%n", folder.id(), context.getWorkspace().name(), storeLocation);
                 if (force
@@ -82,8 +84,9 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteRepoFolder(NutsRepository repository, NutsApplicationContext context, NutsStoreLocation folder, boolean force) {
-        Path storeLocation = context.getWorkspace().locations().getStoreLocation(folder);
-        if (storeLocation != null) {
+        String sstoreLocation = context.getWorkspace().locations().getStoreLocation(folder);
+        if (sstoreLocation != null) {
+            Path storeLocation=Paths.get(sstoreLocation);
             if (Files.exists(storeLocation)) {
                 context.getSession().out().printf("```error Deleting``` ##%s## for repository ##%s## folder %s ...%n", folder.id(), repository.getName(), storeLocation);
                 if (force
@@ -106,8 +109,9 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteCache(NutsApplicationContext context, boolean force) {
-        Path storeLocation = context.getWorkspace().locations().getStoreLocation(NutsStoreLocation.CACHE);
-        if (storeLocation != null) {
+        String sstoreLocation = context.getWorkspace().locations().getStoreLocation(NutsStoreLocation.CACHE);
+        if (sstoreLocation != null) {
+            Path storeLocation = Paths.get(sstoreLocation);
 //            File cache = new File(storeLocation);
             if (Files.exists(storeLocation)) {
                 try {
@@ -123,7 +127,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private static void deleteRepoCache(NutsRepository repository, NutsApplicationContext context, boolean force) {
-        Path s = repository.config().getStoreLocation(NutsStoreLocation.CACHE);
+        Path s = Paths.get(repository.config().getStoreLocation(NutsStoreLocation.CACHE));
         if (s != null) {
             if (Files.exists(s)) {
                 context.getSession().out().printf("```error Deleting``` ##cache## folder %s ...%n", s);

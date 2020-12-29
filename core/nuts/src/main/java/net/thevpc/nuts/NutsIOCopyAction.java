@@ -187,6 +187,13 @@ public interface NutsIOCopyAction {
      * @param target target to copy to
      * @return {@code this} instance
      */
+    NutsIOCopyAction setTarget(String target);
+
+    /**
+     * update target to copy from
+     * @param target target to copy to
+     * @return {@code this} instance
+     */
     NutsIOCopyAction setTarget(File target);
 
     /**

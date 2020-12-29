@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -142,7 +143,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
     }
 
     @Override
-    public NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
+    public NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
         if(fetchMode!=NutsFetchMode.REMOTE){
             return null;
         }
@@ -158,11 +159,12 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         return null;
     }
 
-    public Path getIdLocalFile(NutsId id, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
+    public String getIdLocalFile(NutsId id, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
-        return repository.config().getStoreLocation().resolve(
+        return Paths.get(repository.config().getStoreLocation())
+                .resolve(
                 ws.locations().getDefaultIdBasedir(id)
-        ).resolve(ws.locations().getDefaultIdFilename(id));
+        ).resolve(ws.locations().getDefaultIdFilename(id)).toString();
     }
 
     private String[] list(String url, String regexp, NutsSession session) {

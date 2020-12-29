@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -281,7 +280,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localFile, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localFile, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id, new NutsFetchModeNotSupportedException(getWorkspace(), this, fetchMode, id.toString(), null));
         }

@@ -10,6 +10,7 @@ import net.thevpc.nuts.toolbox.nwork.config.RepositoryAddress;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class ProjectService {
@@ -44,7 +45,7 @@ public class ProjectService {
     }
 
     public Path getConfigFile() {
-        Path storeLocation = context.getSharedConfigFolder().resolve("projects");
+        Path storeLocation = Paths.get(context.getSharedConfigFolder()).resolve("projects");
         return storeLocation.resolve(config.getId().replace(":", "-") + ".config");
     }
 

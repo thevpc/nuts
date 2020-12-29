@@ -62,6 +62,7 @@ import java.io.Writer;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
 import java.util.logging.Level;
@@ -1154,7 +1155,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     public NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session) {
         Path eff = null;
         if (!descriptor.getId().getVersion().isBlank() && descriptor.getId().getVersion().isSingleValue() && descriptor.getId().toString().indexOf('$') < 0) {
-            Path l = locations().getStoreLocation(descriptor.getId(), NutsStoreLocation.CACHE);
+            Path l = Paths.get(locations().getStoreLocation(descriptor.getId(), NutsStoreLocation.CACHE));
             String nn = locations().getDefaultIdFilename(descriptor.getId().builder().setFace("eff-nuts.cache").build());
             eff = l.resolve(nn);
             if (Files.isRegularFile(eff)) {
@@ -1173,7 +1174,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         }
         NutsDescriptor effectiveDescriptor = _resolveEffectiveDescriptor(descriptor, session);
         if (eff == null) {
-            Path l = locations().getStoreLocation(effectiveDescriptor.getId(), NutsStoreLocation.CACHE);
+            Path l = Paths.get(locations().getStoreLocation(effectiveDescriptor.getId(), NutsStoreLocation.CACHE));
             String nn = locations().getDefaultIdFilename(effectiveDescriptor.getId().builder().setFace("eff-nuts.cache").build());
             eff = l.resolve(nn);
         }
@@ -1275,7 +1276,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
         }
         for (NutsDefinition def : defs.values()) {
-            Path bootstrapFolder = locations().getStoreLocation(NutsStoreLocation.LIB).resolve(NutsConstants.Folders.ID);
+            Path bootstrapFolder = Paths.get(locations().getStoreLocation(NutsStoreLocation.LIB)).resolve(NutsConstants.Folders.ID);
             NutsId id2 = def.getId();
             this.io().copy().setSession(session).from(def.getPath())
                     .to(bootstrapFolder.resolve(locations().getDefaultIdBasedir(id2))

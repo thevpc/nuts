@@ -76,15 +76,15 @@ public class MavenRepositoryFolderHelper {
         LOG=this.ws.log().of(MavenRepositoryFolderHelper.class);
     }
 
-    public Path getIdLocalFile(NutsId id) {
+    public Path getIdLocalFile(NutsId id, NutsSession session) {
         return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id))
                 .resolve(ws.locations().getDefaultIdFilename(id));
     }
 
     public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsSession session) {
-        Path cacheContent = getIdLocalFile(id);
+        Path cacheContent = getIdLocalFile(id, session);
         if (cacheContent != null && Files.exists(cacheContent)) {
-            return new NutsDefaultContent(cacheContent, true, false);
+            return new NutsDefaultContent(cacheContent.toString(), true, false);
         }
         return null;
     }
@@ -93,7 +93,7 @@ public class MavenRepositoryFolderHelper {
         return ws;
     }
 
-    protected String getIdFilename(NutsId id) {
+    protected String getIdFilename(NutsId id, NutsSession session) {
         if (repo == null) {
             return ws.locations().getDefaultIdFilename(id);
         }
@@ -109,7 +109,7 @@ public class MavenRepositoryFolderHelper {
     public Iterator<NutsId> searchVersions(NutsId id, final NutsIdFilter filter, boolean deep, NutsSession session) {
         if (id.getVersion().isSingleValue()) {
             NutsId id1 = id.builder().setFaceDescriptor().build();
-            Path localFile = getIdLocalFile(id1);
+            Path localFile = getIdLocalFile(id1, session);
             if (localFile != null && Files.isRegularFile(localFile)) {
                 return Collections.singletonList(id.builder().setNamespace(repo == null ? null : repo.getName()).build()).iterator();
             }

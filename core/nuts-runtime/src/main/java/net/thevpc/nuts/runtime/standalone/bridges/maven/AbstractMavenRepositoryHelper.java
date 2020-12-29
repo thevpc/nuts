@@ -146,7 +146,7 @@ public abstract class AbstractMavenRepositoryHelper {
                 return repository.getWorkspace().locations().getDefaultIdContentExtension(packaging);
             }
             default: {
-                throw new NutsUnsupportedArgumentException(repository.getWorkspace(), "Unsupported fact " + f);
+                throw new NutsUnsupportedArgumentException(repository.getWorkspace(), "unsupported fact " + f);
             }
         }
     }

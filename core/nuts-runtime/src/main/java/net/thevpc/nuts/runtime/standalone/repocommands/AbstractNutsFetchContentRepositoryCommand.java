@@ -41,7 +41,7 @@ public abstract class AbstractNutsFetchContentRepositoryCommand extends NutsRepo
     protected NutsId id;
     protected NutsContent result;
     protected NutsDescriptor descriptor;
-    protected Path localPath;
+    protected String localPath;
 
     public AbstractNutsFetchContentRepositoryCommand(NutsRepository repo) {
         super(repo, "fetch");
@@ -67,12 +67,12 @@ public abstract class AbstractNutsFetchContentRepositoryCommand extends NutsRepo
     }
 
     @Override
-    public Path getLocalPath() {
+    public String getLocalPath() {
         return localPath;
     }
 
     @Override
-    public NutsFetchContentRepositoryCommand setLocalPath(Path localPath) {
+    public NutsFetchContentRepositoryCommand setLocalPath(String localPath) {
         this.localPath = localPath;
         return this;
     }

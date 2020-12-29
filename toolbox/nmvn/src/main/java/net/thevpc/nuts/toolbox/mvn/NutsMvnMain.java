@@ -3,10 +3,7 @@ package net.thevpc.nuts.toolbox.mvn;
 import net.thevpc.nuts.*;
 
 import java.io.*;
-import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,7 +95,7 @@ public class NutsMvnMain extends NutsApplication {
                     if (repo != null) {
                         cli.setRepoUrl(repo);
                     }
-                    Path dir = createTempPom(appContext.getWorkspace());
+                    Path dir = createTempPom(appContext.getSession());
                     cli.setWorkingDirectory(dir.toString());
                     int r = callMvn(cli,appContext, o,  "dependency:get");
                     try {
@@ -152,8 +149,9 @@ public class NutsMvnMain extends NutsApplication {
         }
     }
 
-    private static Path createTempPom(NutsWorkspace ws) {
-        Path d = ws.io().tmp().createTempFolder(null);
+    private static Path createTempPom(NutsSession session) {
+        NutsWorkspace ws=session.getWorkspace();
+        Path d = Paths.get(ws.io().tmp().createTempFolder(null, session));
         try (Writer out = Files.newBufferedWriter(d.resolve("pom.xml"))) {
             out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                     + "<project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"

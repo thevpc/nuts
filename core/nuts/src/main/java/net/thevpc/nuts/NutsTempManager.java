@@ -37,33 +37,37 @@ public interface NutsTempManager {
      * create temp file in the workspace's temp folder
      *
      * @param name file name
+     * @param session session
      * @return new file path
      */
-    Path createTempFile(String name);
+    String createTempFile(String name, NutsSession session);
 
     /**
      * create temp file in the repository's temp folder
      *
      * @param name       file name
      * @param repository repository
+     * @param session session
      * @return new file path
      */
-    Path createTempFile(String name, NutsRepository repository);
+    String createTempFile(String name, NutsRepository repository, NutsSession session);
 
     /**
      * create temp folder in the workspace's temp folder
      *
      * @param name folder name
+     * @param session session
      * @return new folder path
      */
-    Path createTempFolder(String name);
+    String createTempFolder(String name, NutsSession session);
 
     /**
      * create temp folder in the repository's temp folder
      *
      * @param name       folder name
      * @param repository repository
+     * @param session
      * @return new folder path
      */
-    Path createTempFolder(String name, NutsRepository repository);
+    String createTempFolder(String name, NutsRepository repository, NutsSession session);
 }

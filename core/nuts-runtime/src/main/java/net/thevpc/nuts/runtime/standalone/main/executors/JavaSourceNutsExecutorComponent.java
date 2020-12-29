@@ -76,7 +76,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d);
         ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
-                Paths.get(folder),
+                folder,
                 false,
                 true
         ));
@@ -115,7 +115,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         Path javaFile = nutMainFile.getPath();
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         NutsWorkspace ws = executionContext.getWorkspace();
-        Path folder = ws.io().tmp().createTempFolder("jj");
+        Path folder = Paths.get(ws.io().tmp().createTempFolder("jj", executionContext.getTraceSession()));
         int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
         if (res != 0) {
             throw new NutsExecutionException(ws, "compilation failed", res);
@@ -124,7 +124,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d);
         ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
-                folder,
+                folder.toString(),
                 false,
                 true
         ));

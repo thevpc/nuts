@@ -93,14 +93,14 @@ public interface NutsFetchContentRepositoryCommand extends NutsRepositoryCommand
      * path to store to
      * @return path to store to
      */
-    Path getLocalPath();
+    String getLocalPath();
 
     /**
      * set localPath to store to.
      * @param localPath localPath to store to
      * @return {@code this} instance
      */
-    NutsFetchContentRepositoryCommand setLocalPath(Path localPath);
+    NutsFetchContentRepositoryCommand setLocalPath(String localPath);
 
     /**
      * description

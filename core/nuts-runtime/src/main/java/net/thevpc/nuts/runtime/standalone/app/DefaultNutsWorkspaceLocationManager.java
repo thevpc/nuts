@@ -16,11 +16,11 @@ import java.util.Map;
 
 public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocationManager {
     private NutsWorkspace ws;
-    private Path workspaceLocation;
+    private String workspaceLocation;
 
     public DefaultNutsWorkspaceLocationManager(NutsWorkspace ws,NutsWorkspaceInitInformation info) {
         this.ws=ws;
-        this.workspaceLocation = Paths.get(info.getWorkspaceLocation());
+        this.workspaceLocation = Paths.get(info.getWorkspaceLocation()).toString();
     }
 
     public NutsWorkspace getWorkspace() {
@@ -43,17 +43,17 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     }
 
     @Override
-    public Path getWorkspaceLocation() {
+    public String getWorkspaceLocation() {
         return workspaceLocation;
     }
 
     @Override
-    public Path getHomeLocation(NutsStoreLocation folderType) {
+    public String getHomeLocation(NutsStoreLocation folderType) {
         return cfg().current().getHomeLocation(folderType);
     }
 
     @Override
-    public Path getStoreLocation(NutsStoreLocation folderType) {
+    public String getStoreLocation(NutsStoreLocation folderType) {
         return cfg().current().getStoreLocation(folderType);
     }
 
@@ -88,12 +88,7 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     }
 
     @Override
-    public Path getStoreLocation(String id, NutsStoreLocation folderType) {
-        return getStoreLocation(ws.id().parser().parse(id), folderType);
-    }
-
-    @Override
-    public Path getStoreLocation(NutsStoreLocation folderType,String repositoryIdOrName,NutsSession session) {
+    public String getStoreLocation(NutsStoreLocation folderType, String repositoryIdOrName, NutsSession session) {
         if(repositoryIdOrName==null){
             return getStoreLocation(folderType);
         }
@@ -103,21 +98,21 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     }
 
     @Override
-    public Path getStoreLocation(NutsId id, NutsStoreLocation folderType, String repositoryIdOrName,NutsSession session) {
+    public String getStoreLocation(NutsId id, NutsStoreLocation folderType, String repositoryIdOrName, NutsSession session) {
         if(repositoryIdOrName==null){
             return getStoreLocation(id,folderType);
         }
-        Path storeLocation=getStoreLocation(folderType,repositoryIdOrName,session);
-        return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
+        String storeLocation=getStoreLocation(folderType,repositoryIdOrName,session);
+        return Paths.get(storeLocation).resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id)).toString();
     }
 
     @Override
-    public Path getStoreLocation(NutsId id, NutsStoreLocation folderType) {
-        Path storeLocation = getStoreLocation(folderType);
+    public String getStoreLocation(NutsId id, NutsStoreLocation folderType) {
+        String storeLocation = getStoreLocation(folderType);
         if (storeLocation == null) {
             return null;
         }
-        return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
+        return Paths.get(storeLocation).resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id)).toString();
 //        switch (folderType) {
 //            case CACHE:
 //                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
@@ -147,12 +142,12 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     }
 
     @Override
-    public Map<String, String> getHomeLocations() {
+    public Map<String, String> getHomeLocations(NutsSession session) {
         return cfg().current().getHomeLocations();
     }
 
     @Override
-    public Path getHomeLocation(NutsOsFamily layout, NutsStoreLocation location) {
+    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location, NutsSession session) {
         return cfg().current().getHomeLocation(layout, location);
     }
 

@@ -35,7 +35,7 @@ import net.thevpc.nuts.runtime.standalone.util.io.CoreSecurityUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 
 import java.io.*;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -179,7 +179,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
         }
@@ -188,14 +188,14 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         if (localPath == null) {
             temp = true;
             String p = getIdFilename(id);
-            localPath = getWorkspace().io().tmp().createTempFile(new File(p).getName(), this);
+            localPath = getWorkspace().io().tmp().createTempFile(new File(p).getName(), this, session);
         }
 
         try {
             String location = getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session));
             getWorkspace().io().copy().setSession(session).from(location).to(localPath).safe().logProgress().run();
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)),session);
-            String lhash = CoreIOUtils.evalSHA1Hex(localPath);
+            String lhash = CoreIOUtils.evalSHA1Hex(Paths.get(localPath));
             if (rhash.equalsIgnoreCase(lhash)) {
                 return new NutsDefaultContent(localPath, false, temp);
             }
@@ -207,12 +207,12 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     private String httpGetString(String url,NutsSession session) {
-        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "Get URL{0}", url);
+        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "get URL{0}", url);
         return CoreIOUtils.loadString(CoreIOUtils.getHttpClientFacade(session, url).open(), true);
     }
 
     private InputStream httpUpload(String url,NutsSession session, NutsTransportParamPart... parts) {
-        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "Uploading URL {0}", url);
+        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "uploading URL {0}", url);
         return CoreIOUtils.getHttpClientFacade(session, url).upload(parts);
     }
 

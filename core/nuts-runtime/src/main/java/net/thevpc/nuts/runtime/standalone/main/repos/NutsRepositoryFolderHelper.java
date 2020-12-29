@@ -98,10 +98,10 @@ public class NutsRepositoryFolderHelper {
         return getStoreLocation().resolve(NutsRepositoryExt0.of(repo).getIdBasedir(id.builder().setVersion("").build()));
     }
 
-    public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsSession session) {
+    public NutsContent fetchContentImpl(NutsId id, String localPath, NutsSession session) {
         Path cacheContent = getLongNameIdLocalFile(id);
         if (cacheContent != null && pathExists(cacheContent, session)) {
-            return new NutsDefaultContent(cacheContent, true, false);
+            return new NutsDefaultContent(cacheContent.toString(), true, false);
         }
         return null;
     }
@@ -363,7 +363,7 @@ public class NutsRepositoryFolderHelper {
         deployDescriptor(id, descriptor, writeType, deployment.getSession());
         Path pckFile = deployContent(id, inputSource, descriptor, writeType, deployment.getSession());
         if (repo != null) {
-            NutsRepositoryUtils.of(repo).events().fireOnDeploy(new DefaultNutsContentEvent(pckFile, deployment, deployment.getSession(), repo));
+            NutsRepositoryUtils.of(repo).events().fireOnDeploy(new DefaultNutsContentEvent(pckFile.toString(), deployment, deployment.getSession(), repo));
         }
         return descriptor.builder().setId(id.getLongNameId()).build();
     }
@@ -447,7 +447,7 @@ public class NutsRepositoryFolderHelper {
                 return false;
             })) {
                 if (repo != null) {
-                    NutsRepositoryUtils.of(repo).events().fireOnUndeploy(new DefaultNutsContentEvent(localFolder, options, options.getSession(), repo));
+                    NutsRepositoryUtils.of(repo).events().fireOnUndeploy(new DefaultNutsContentEvent(localFolder.toString(), options, options.getSession(), repo));
                     return true;
                 }
             }

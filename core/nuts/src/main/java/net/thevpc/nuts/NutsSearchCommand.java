@@ -1092,7 +1092,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return query result
      */
-    NutsResultList<Path> getResultInstallFolders();
+    NutsResultList<String> getResultInstallFolders();
 
     /**
      * execute query and return store location path
@@ -1100,7 +1100,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param location location type to return
      * @return query result
      */
-    NutsResultList<Path> getResultStoreLocations(NutsStoreLocation location);
+    NutsResultList<String> getResultStoreLocations(NutsStoreLocation location);
 
     /**
      * execute query and return the selected columns.

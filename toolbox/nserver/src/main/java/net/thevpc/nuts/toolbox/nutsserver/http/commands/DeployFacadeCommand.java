@@ -32,7 +32,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
         NutsDescriptor descriptor = null;
         String receivedContentHash = null;
         InputStream content = null;
-        Path contentFile = null;
+        String contentFile = null;
         for (ItemStreamInfo info : stream) {
             String name = info.resolveVarInHeader("Content-Disposition", "name");
             switch (name) {
@@ -54,8 +54,8 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                     contentFile = context.getWorkspace().io().tmp().createTempFile(
                             context.getWorkspace().locations().getDefaultIdFilename(
                                     descriptor.getId().builder().setFaceDescriptor().build()
-                            )
-                    );
+                            ),
+                            context.getSession());
                     context.getWorkspace().io().copy()
                             .setSession(context.getSession())
                             .setSource(info.getContent())
@@ -65,7 +65,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
             }
         }
         if (contentFile == null) {
-            context.sendError(400, "Invalid JShellCommandNode Arguments : " + getName() + " : Missing File");
+            context.sendError(400, "invalid JShellCommandNode arguments : " + getName() + " : missing File");
         }
         NutsId id = context.getWorkspace().deploy().setContent(contentFile)
                 .setSha1(receivedContentHash)

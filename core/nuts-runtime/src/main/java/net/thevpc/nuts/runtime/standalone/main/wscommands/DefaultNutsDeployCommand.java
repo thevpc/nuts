@@ -85,7 +85,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     descriptor = characterizedFile.descriptor;
                 }
                 String name = ws.locations().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
-                tempFile = ws.io().tmp().createTempFile(name);
+                tempFile = Paths.get(ws.io().tmp().createTempFile(name, session));
                 ws.io().copy().setSession(validWorkspaceSession).from(contentSource.open()).to(tempFile).safe().run();
                 contentFile2 = tempFile;
 
@@ -167,7 +167,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                             return this;
                         }
                     } else {
-                        NutsRepository repo = ws.repos().getRepository(repository, session.copy().setTransitive(true));
+                        NutsRepository repo = ws.repos().getRepository(repository, session);
                         if (repo == null) {
                             throw new NutsRepositoryNotFoundException(ws, repository);
                         }
@@ -288,7 +288,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         session = NutsWorkspaceUtils.of(ws).validateSession( session);
         CharacterizedDeployFile c = new CharacterizedDeployFile();
         try {
-            c.baseFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, ws);
+            c.baseFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, session);
             c.contentFile = contentFile;
             Path fileSource = c.contentFile.getPath();
             if (!Files.exists(fileSource)) {

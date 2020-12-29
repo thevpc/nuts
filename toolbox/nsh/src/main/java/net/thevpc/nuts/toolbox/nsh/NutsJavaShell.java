@@ -34,6 +34,7 @@ import net.thevpc.nuts.*;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -113,8 +114,8 @@ public class NutsJavaShell extends JShell {
         _rootContext.builtins().set(allCommand.toArray(new JShellBuiltin[0]));
         _rootContext.getUserProperties().put(JShellContext.class.getName(), _rootContext);
         try {
-            histFile = ws.locations().getStoreLocation(this.appId,
-                    NutsStoreLocation.VAR).resolve(serviceName + ".history").toFile();
+            histFile = Paths.get(ws.locations().getStoreLocation(this.appId,
+                    NutsStoreLocation.VAR)).resolve(serviceName + ".history").toFile();
             hist.setHistoryFile(histFile);
             if (histFile.exists()) {
                 hist.load(histFile);

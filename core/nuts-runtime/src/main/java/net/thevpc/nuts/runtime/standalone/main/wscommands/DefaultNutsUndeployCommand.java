@@ -35,7 +35,7 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
                     .setDistinct(true)
                     .setFailFast(true)
                     .getResultDefinitions().required();
-            NutsRepository repository1 = ws.repos().getRepository(p.getRepositoryUuid(), session.copy().setTransitive(true));
+            NutsRepository repository1 = ws.repos().getRepository(p.getRepositoryUuid(), session);
             NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(ws).repoSPI(repository1);
             repoSPI.undeploy()
                     .setId(p.getId()).setSession(getValidWorkspaceSession())

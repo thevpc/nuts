@@ -70,8 +70,8 @@ public class WindowsNdi extends BaseSystemNdi {
             ws.fetch().setId(apiId).setFailFast(true).getResultDefinition();
 
             Path apiConfigFolder =
-                    bootConfig != null ? bootConfig.getStoreLocation(apiId, NutsStoreLocation.APPS) :
-                            ws.locations().getStoreLocation(apiId, NutsStoreLocation.APPS);
+                    bootConfig != null ? Paths.get(bootConfig.getStoreLocation(apiId, NutsStoreLocation.APPS)) :
+                            Paths.get(ws.locations().getStoreLocation(apiId, NutsStoreLocation.APPS));
             Path startNutsFile = apiConfigFolder.resolve(getExecFileName("start-nuts"));
             ShellLink sl = ShellLink.createLink(startNutsFile.toString())
                     .setWorkingDir(System.getProperty("user.home"))
@@ -186,11 +186,11 @@ public class WindowsNdi extends BaseSystemNdi {
 
     @Override
     public void configurePath(NutsSession session, boolean persistentConfig) {
-        Path ndiAppsFolder = context.getAppsFolder();
+        Path ndiAppsFolder = Paths.get(context.getAppsFolder());
         //Path ndiConfigFolder = context.getConfigFolder();
         NutsWorkspace ws = context.getWorkspace();
         NutsWorkspaceConfigManager wsconfig = ws.config();
-        Path apiConfigFolder = ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
+        Path apiConfigFolder = Paths.get(ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS));
         Path startNutsFile = apiConfigFolder.resolve(getExecFileName("start-nuts"));
         Path apiConfigFile = apiConfigFolder.resolve(getExecFileName(".nuts-batrc"));
         Path ndiConfigFile = ndiAppsFolder.resolve(getExecFileName(".nadmin-batrc"));

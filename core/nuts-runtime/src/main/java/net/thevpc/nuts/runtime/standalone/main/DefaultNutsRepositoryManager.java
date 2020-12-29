@@ -187,13 +187,13 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         config.setUuid(uuid);
         config.setStoreLocationStrategy(repository.getStoreLocationStrategy());
         NutsAddRepositoryOptions options2 = new NutsAddRepositoryOptions();
-        Path rootFolder = NutsWorkspaceConfigManagerExt.of(getWorkspace().config()).getRepositoriesRoot();
+        String rootFolder = NutsWorkspaceConfigManagerExt.of(getWorkspace().config()).getRepositoriesRoot();
         options2.setName(config.getName());
         options2.setConfig(config);
         options2.setDeployOrder(repository.getDeployOrder());
         options2.setSession(options.getSession());
         options2.setTemporary(true);
-        options2.setLocation(CoreIOUtils.resolveRepositoryPath(options2, rootFolder, getWorkspace()));
+        options2.setLocation(CoreIOUtils.resolveRepositoryPath(options2, Paths.get(rootFolder), options.getSession()));
         NutsRepository r = new NutsSimpleRepositoryWrapper(options2, getWorkspace(), null, repository);
         addRepository(null, r, options);
         return r;
@@ -210,7 +210,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         o1.setSession(options.getSession());
         NutsWorkspace ws = getWorkspace();
         NutsWorkspaceConfigManagerExt cc = NutsWorkspaceConfigManagerExt.of(ws.config());
-        NutsRepository r = this.createRepository(o1, cc.getRepositoriesRoot(), null);
+        NutsRepository r = this.createRepository(o1, Paths.get(cc.getRepositoriesRoot()), null);
         addRepository(ref, r, options);
         return r;
     }
@@ -299,7 +299,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
             }
         } else {
             NutsRepositoryRef ref = options.isTemporary() ? null : CoreNutsUtils.optionsToRef(options);
-            NutsRepository r = this.createRepository(options, NutsWorkspaceConfigManagerExt.of(getWorkspace().config()).getRepositoriesRoot(), null);
+            NutsRepository r = this.createRepository(options, Paths.get(NutsWorkspaceConfigManagerExt.of(getWorkspace().config()).getRepositoriesRoot()), null);
             addRepository(ref, r, new NutsAddOptions().setSession(options.getSession()));
             return r;
         }
@@ -310,7 +310,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         try {
             NutsRepositoryConfig conf = options.getConfig();
             if (conf == null) {
-                options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, getWorkspace()));
+                options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, options.getSession()));
                 conf = loadRepository(Paths.get(options.getLocation(), NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName(), getWorkspace(), options.getSession());
                 if (conf == null) {
                     if (options.isFailSafe()) {
@@ -320,7 +320,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
                 }
                 options.setConfig(conf);
             } else {
-                options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, getWorkspace()));
+                options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, options.getSession()));
             }
             if (CoreStringUtils.isBlank(conf.getType())) {
                 conf.setType(NutsConstants.RepoTypes.NUTS);
@@ -389,7 +389,8 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         }
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
         LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, CoreStringUtils.exceptionToString(ex)});
-        Path logError = getWorkspace().locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG).resolve("invalid-config");
+        Path logError = Paths.get(getWorkspace().locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG))
+                .resolve("invalid-config");
         try {
             Files.createDirectories(logError);
         } catch (IOException ex1) {

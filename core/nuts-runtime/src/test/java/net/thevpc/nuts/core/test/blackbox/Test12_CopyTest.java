@@ -39,9 +39,9 @@ public class Test12_CopyTest {
                 "--yes",
                 "--log-info",
                 "--skip-companions");
-
-        Path from = ws.io().tmp().createTempFolder("source");
-        Path to = ws.io().tmp().createTempFolder("target");
+        NutsSession session = ws.createSession();
+        Path from = Paths.get(ws.io().tmp().createTempFolder("source", session));
+        Path to = Paths.get(ws.io().tmp().createTempFolder("target", session));
         TestUtils.println("from="+from);
         TestUtils.println("to="+to);
         long collect = Files.list(from).collect(Collectors.counting());

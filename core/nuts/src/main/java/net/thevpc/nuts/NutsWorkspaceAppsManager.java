@@ -43,5 +43,9 @@ public interface NutsWorkspaceAppsManager {
      */
     NutsApplicationContext createApplicationContext(String[] args, Class appClass, String storeId, long startTimeMillis, NutsSession session);
 
+    /**
+     * create a new exec entries action
+     * @return exec entries action
+     */
     NutsExecutionEntryAction execEntries();
 }

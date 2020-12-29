@@ -73,8 +73,8 @@ public class AnyNixNdi extends BaseSystemNdi {
         }
         NutsWorkspace ws = context.getWorkspace();
         Path apiAppsFolder =
-                bootConfig != null ? bootConfig.getStoreLocation(nutsId, NutsStoreLocation.APPS) :
-                        ws.locations().getStoreLocation(nutsId, NutsStoreLocation.APPS);
+                bootConfig != null ? Paths.get(bootConfig.getStoreLocation(nutsId, NutsStoreLocation.APPS)) :
+                        Paths.get(ws.locations().getStoreLocation(nutsId, NutsStoreLocation.APPS));
         Path apiConfigFile = apiAppsFolder.resolve(getExecFileName(".nuts-bashrc"));
 
         boolean force = session.isYes();
@@ -94,10 +94,10 @@ public class AnyNixNdi extends BaseSystemNdi {
 
     @Override
     public void configurePath(NutsSession session, boolean persistentConfig) {
-        Path ndiAppsFolder = context.getAppsFolder();
+        Path ndiAppsFolder = Paths.get(context.getAppsFolder());
         final NutsWorkspace ws = context.getWorkspace();
         NutsWorkspaceConfigManager wsconfig = ws.config();
-        Path apiAppsFolder = ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
+        Path apiAppsFolder = Paths.get(ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS));
         Path apiConfigFile = apiAppsFolder.resolve(getExecFileName(".nuts-bashrc"));
         Path ndiConfigFile = ndiAppsFolder.resolve(getExecFileName(".nadmin-bashrc"));
         List<String> updatedNames = new ArrayList<>();

@@ -79,7 +79,7 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     NutsWorkspace getWorkspace();
 
-    Path getRepositoriesRoot();
+    String getRepositoriesRoot();
 
     boolean isValidWorkspaceFolder();
 

@@ -82,7 +82,7 @@ public interface NutsWorkspaceConfigManager {
 
     Set<String> getAvailableArchetypes(NutsSession session);
 
-    Path resolveRepositoryPath(String repositoryLocation, NutsSession session);
+    String resolveRepositoryPath(String repositoryLocation, NutsSession session);
 
     NutsIndexStoreFactory getIndexStoreClientFactory();
 

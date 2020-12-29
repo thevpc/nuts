@@ -8,7 +8,6 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
-import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
@@ -114,7 +113,7 @@ public class DefaultNutsSdkManager implements NutsSdkManager {
     }
 
     @Override
-    public NutsSdkLocation findByPath(String type, Path path, NutsSession session) {
+    public NutsSdkLocation findByPath(String type, String path, NutsSession session) {
         return findOne(type, location -> location.getPath() != null && location.getPath().equals(path.toString()), session);
     }
 
@@ -172,7 +171,7 @@ public class DefaultNutsSdkManager implements NutsSdkManager {
     }
 
     @Override
-    public NutsSdkLocation[] searchSystem(String sdkType, Path path, NutsSession session) {
+    public NutsSdkLocation[] searchSystem(String sdkType, String path, NutsSession session) {
         session = NutsWorkspaceUtils.of(ws).validateSession(session);
         if ("java".equals(sdkType)) {
             return NutsJavaSdkUtils.of(session.getWorkspace()).searchJdkLocations(path, session);
@@ -181,7 +180,7 @@ public class DefaultNutsSdkManager implements NutsSdkManager {
     }
 
     @Override
-    public NutsSdkLocation resolve(String sdkType, Path path, String preferredName, NutsSession session) {
+    public NutsSdkLocation resolve(String sdkType, String path, String preferredName, NutsSession session) {
         session = NutsWorkspaceUtils.of(ws).validateSession(session);
         if ("java".equals(sdkType)) {
             return NutsJavaSdkUtils.of(session.getWorkspace()).resolveJdkLocation(path, null, session);

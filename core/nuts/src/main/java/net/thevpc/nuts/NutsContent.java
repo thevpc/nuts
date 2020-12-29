@@ -46,6 +46,8 @@ public interface NutsContent extends Serializable {
 
     URL getURL();
 
+    String getLocation();
+
     /**
      * when true, the content was retrieved from cache rather then from remote location.
      * @return true if content is cached

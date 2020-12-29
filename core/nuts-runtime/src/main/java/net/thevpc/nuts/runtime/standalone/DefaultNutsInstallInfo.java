@@ -47,12 +47,12 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
     private Instant lasModifiedDate;
     private Instant createdDate;
     private String installUser;
-    private Path installFolder;
+    private String installFolder;
     private String sourceRepositoryName;
     private String sourceRepositoryUUID;
     private boolean justInstalled;
     private boolean justRequired;
-    public DefaultNutsInstallInfo(NutsId id, Set<NutsInstallStatus> installStatus, Path installFolder, Instant createdDate, Instant lasModifiedDate, String installUser, String sourceRepositoryName, String sourceRepositoryUUID,boolean justInstalled,boolean justRequired) {
+    public DefaultNutsInstallInfo(NutsId id, Set<NutsInstallStatus> installStatus, String installFolder, Instant createdDate, Instant lasModifiedDate, String installUser, String sourceRepositoryName, String sourceRepositoryUUID,boolean justInstalled,boolean justRequired) {
         this.id = id;
         this.installStatus = EnumSet.copyOf(installStatus);
         this.installFolder = installFolder;
@@ -110,7 +110,7 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
     }
 
     @Override
-    public Path getInstallFolder() {
+    public String getInstallFolder() {
         return installFolder;
     }
 
@@ -179,7 +179,7 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
         return this;
     }
 
-    public DefaultNutsInstallInfo setInstallFolder(Path installFolder) {
+    public DefaultNutsInstallInfo setInstallFolder(String installFolder) {
         this.installFolder = installFolder;
         return this;
     }

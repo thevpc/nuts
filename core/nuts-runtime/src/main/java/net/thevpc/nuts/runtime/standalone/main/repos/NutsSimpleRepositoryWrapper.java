@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.main.repos;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsRepositorySupportedAction;
 
-import java.nio.file.Path;
 import java.util.Iterator;
 
 public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
@@ -36,7 +35,7 @@ public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
         return base.fetchDescriptor(id, fetchMode, this, session);
     }
 
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         return base.fetchContent(id, descriptor, localPath, fetchMode, this, session);
     }
 

@@ -13,6 +13,7 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -218,7 +219,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
             if (this.target.isPath()) {
                 Path tempPath = null;
                 if (isSafe()) {
-                    tempPath = iom.tmp().createTempFile("zip");
+                    tempPath = Paths.get(iom.tmp().createTempFile("zip", session));
                 }
                 Path path = this.target.getPath();
                 if (path.getParent() != null) {

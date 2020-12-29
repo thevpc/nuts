@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import net.thevpc.nuts.*;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -36,7 +37,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     public Path getStoreLocation() {
-        return ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS);
+        return Paths.get(ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS));
     }
 
     @Override
@@ -83,12 +84,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     public List<NutsCommandAliasConfig> findCommands(NutsId id, NutsSession session) {
-        return findCommands(new Predicate<NutsCommandAliasConfig>() {
-            @Override
-            public boolean test(NutsCommandAliasConfig value) {
-                return CoreNutsUtils.matchesSimpleNameStaticVersion(value.getOwner(), id);
-            }
-        }, session);
+        return findCommands(value -> CoreNutsUtils.matchesSimpleNameStaticVersion(value.getOwner(), id), session);
     }
 
     public List<NutsCommandAliasConfig> findCommands(Predicate<NutsCommandAliasConfig> filter, NutsSession session) {

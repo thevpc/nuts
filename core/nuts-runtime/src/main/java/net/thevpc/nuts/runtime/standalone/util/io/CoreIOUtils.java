@@ -452,7 +452,8 @@ public class CoreIOUtils {
         return s.replace('/', File.separatorChar);
     }
 
-    public static String resolveRepositoryPath(NutsAddRepositoryOptions options, Path rootFolder, NutsWorkspace ws) {
+    public static String resolveRepositoryPath(NutsAddRepositoryOptions options, Path rootFolder, NutsSession session) {
+        NutsWorkspace ws=session.getWorkspace();
         String loc = options.getLocation();
         String goodName = options.getName();
         if (CoreStringUtils.isBlank(goodName)) {
@@ -476,7 +477,7 @@ public class CoreIOUtils {
                 if (goodName.length() < 3) {
                     goodName = goodName + "-repo";
                 }
-                loc = ws.io().tmp().createTempFolder(goodName + "-").toString();
+                loc = ws.io().tmp().createTempFolder(goodName + "-", session).toString();
             } else {
                 if (CoreStringUtils.isBlank(loc)) {
                     if (CoreStringUtils.isBlank(goodName)) {
@@ -1509,7 +1510,7 @@ public class CoreIOUtils {
     }
 
     public static NutsInput getCachedUrlWithSHA1(NutsWorkspace ws, String path, String sourceTypeName, NutsSession session) {
-        final Path cacheBasePath = ws.locations().getStoreLocation(ws.getRuntimeId(), NutsStoreLocation.CACHE);
+        final Path cacheBasePath = Paths.get(ws.locations().getStoreLocation(ws.getRuntimeId(), NutsStoreLocation.CACHE));
         final Path urlContent = cacheBasePath.resolve("urls-content");
         ByteArrayOutputStream t = new ByteArrayOutputStream();
         ws.io().copy()
@@ -1568,10 +1569,11 @@ public class CoreIOUtils {
         final String k = PersistentMap.class.getName() + ":getCachedUrls";
         PersistentMap<String, String> m = (PersistentMap<String, String>) ws.userProperties().get(k);
         if (m == null) {
-            m = new DefaultPersistentMap<String, String>(String.class, String.class, ws.locations().getStoreLocation(
+            m = new DefaultPersistentMap<String, String>(String.class, String.class,
+                    Paths.get(
+                    ws.locations().getStoreLocation(
                     ws.getRuntimeId(),
-                    NutsStoreLocation.CACHE
-            ).resolve("urls-db").toFile());
+                    NutsStoreLocation.CACHE)).resolve("urls-db").toFile());
             ws.userProperties().put(k, m);
         }
         return m;
@@ -1671,15 +1673,16 @@ public class CoreIOUtils {
         return buffer.toString();
     }
 
-    public static NutsInput toPathInputSource(NutsInput is, List<Path> tempPaths, NutsWorkspace ws) {
+    public static NutsInput toPathInputSource(NutsInput is, List<Path> tempPaths, NutsSession session) {
+        NutsWorkspace ws=session.getWorkspace();
         if (is.getSource() instanceof Path) {
             //okkay
             return is;
         } else if (is.getSource() instanceof File) {
             return ws.io().input().setMultiRead(true).of(((File) is.getSource()).toPath());
         } else {
-            Path temp = ws.io().tmp().createTempFile(is.getName());
-            ws.io().copy().safe(false).from(is).to(temp).run();
+            Path temp = Paths.get(ws.io().tmp().createTempFile(is.getName(), session));
+            ws.io().copy().safe(false).from(is).to(temp).setSession(session).run();
             tempPaths.add(temp);
             return ws.io().input().setMultiRead(true).of(temp);
         }

@@ -65,7 +65,7 @@ public interface NutsInstallInformation {
      *
      * @return installation formation path
      */
-    Path getInstallFolder();
+    String getInstallFolder();
 
 
     boolean isWasInstalled();

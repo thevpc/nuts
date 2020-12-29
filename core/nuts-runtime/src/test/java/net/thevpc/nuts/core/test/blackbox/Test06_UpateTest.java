@@ -100,13 +100,13 @@ public class Test06_UpateTest {
 
         if (!fromToAPI.isIdentity()) {
             uws.deploy()
-                    .setContent(replaceAPIJar(api.getPath(), fromToAPI, uws))
+                    .setContent(replaceAPIJar(api.getPath(), fromToAPI, uws.createSession()))
                     .setDescriptor(api.getDescriptor().builder().setId(api.getId().builder().setVersion(apiv2).build()).build())
                     //                        .setRepository("local")
                     .run();
         }
         uws.deploy()
-                .setContent(replaceRuntimeJar(rt.getPath(), fromToAPI, fromToImpl, uws))
+                .setContent(replaceRuntimeJar(rt.getPath(), fromToAPI, fromToImpl, uws.createSession()))
                 .setDescriptor(
                         rt.getDescriptor()
                                 .builder()
@@ -161,9 +161,9 @@ public class Test06_UpateTest {
         final String newRuntimeVersion = foundUpdates.getResult().getRuntime().getAvailable().getId().getVersion().toString();
 //        Path bootFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
 //        Path bootCompFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
-        Path bootCacheFolder = nws.locations().getStoreLocation(NutsStoreLocation.CACHE).resolve(NutsConstants.Folders.ID);
-        Path libFolder = nws.locations().getStoreLocation(NutsStoreLocation.LIB).resolve(NutsConstants.Folders.ID);
-        Path configFolder = nws.locations().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
+        Path bootCacheFolder = Paths.get(nws.locations().getStoreLocation(NutsStoreLocation.CACHE)).resolve(NutsConstants.Folders.ID);
+        Path libFolder = Paths.get(nws.locations().getStoreLocation(NutsStoreLocation.LIB)).resolve(NutsConstants.Folders.ID);
+        Path configFolder = Paths.get(nws.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID);
         Assertions.assertTrue(Files.exists(libFolder.resolve("net/thevpc/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));
@@ -200,9 +200,10 @@ public class Test06_UpateTest {
         Assertions.assertEquals(newRuntimeVersion, m.get("nuts-runtime-version"));
     }
 
-    private Path replaceAPIJar(Path p, FromTo api, NutsWorkspace ws) {
+    private Path replaceAPIJar(Path p, FromTo api, NutsSession session) {
+        NutsWorkspace ws=session.getWorkspace();
         try {
-            Path zipFilePath = ws.io().tmp().createTempFile(".zip");
+            Path zipFilePath = Paths.get(ws.io().tmp().createTempFile(".zip", session));
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
 
@@ -238,9 +239,10 @@ public class Test06_UpateTest {
         }
     }
 
-    private Path replaceRuntimeJar(Path p, FromTo api, FromTo impl, NutsWorkspace ws) {
+    private Path replaceRuntimeJar(Path p, FromTo api, FromTo impl, NutsSession session) {
+        NutsWorkspace ws=session.getWorkspace();
         try {
-            Path zipFilePath = ws.io().tmp().createTempFile(".zip");
+            Path zipFilePath = Paths.get(ws.io().tmp().createTempFile(".zip", session));
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
 

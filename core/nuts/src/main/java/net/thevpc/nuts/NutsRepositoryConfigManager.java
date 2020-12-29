@@ -25,7 +25,6 @@
 */
 package net.thevpc.nuts;
 
-import java.nio.file.Path;
 
 /**
  * @author thevpc
@@ -75,9 +74,9 @@ public interface NutsRepositoryConfigManager {
      */
     String getLocation(boolean expand);
 
-    Path getStoreLocation();
+    String getStoreLocation();
 
-    Path getStoreLocation(NutsStoreLocation folderType);
+    String getStoreLocation(NutsStoreLocation folderType);
 
     boolean save(boolean force, NutsSession session);
 

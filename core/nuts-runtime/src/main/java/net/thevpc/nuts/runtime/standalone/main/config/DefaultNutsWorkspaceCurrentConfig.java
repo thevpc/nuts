@@ -102,7 +102,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         return this;
     }
 
-    public DefaultNutsWorkspaceCurrentConfig build(Path workspaceLocation) {
+    public DefaultNutsWorkspaceCurrentConfig build(String workspaceLocation) {
         if (storeLocationStrategy == null) {
             storeLocationStrategy = NutsStoreLocationStrategy.EXPLODED;
         }
@@ -126,7 +126,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
                     if (CoreStringUtils.isBlank(typeLocation)) {
                         switch (storeLocationStrategy) {
                             case STANDALONE: {
-                                storeLocations.put(typeId, workspaceLocation.resolve(location.id()).toString());
+                                storeLocations.put(typeId, Paths.get(workspaceLocation).resolve(location.id()).toString());
                                 break;
                             }
                             case EXPLODED: {
@@ -137,7 +137,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
                     } else if (!CoreIOUtils.isAbsolutePath(typeLocation)) {
                         switch (storeLocationStrategy) {
                             case STANDALONE: {
-                                storeLocations.put(typeId, workspaceLocation.resolve(location.id()).toString());
+                                storeLocations.put(typeId, Paths.get(workspaceLocation).resolve(location.id()).toString());
                                 break;
                             }
                             case EXPLODED: {
@@ -329,23 +329,23 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
 
-    public Path getStoreLocation(NutsStoreLocation folderType) {
-        return effStoreLocationPath[folderType.ordinal()];
+    public String getStoreLocation(NutsStoreLocation folderType) {
+        return effStoreLocationPath[folderType.ordinal()].toString();
     }
 
 
-    public Path getHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType) {
+    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType) {
         String path = new NutsHomeLocationsMap(homeLocations).get(layout, folderType);
-        return path == null ? null : Paths.get(path);
+        return path;
     }
 
 
-    public Path getHomeLocation(NutsStoreLocation folderType) {
+    public String getHomeLocation(NutsStoreLocation folderType) {
         return Paths.get(Nuts.getPlatformHomeFolder(getStoreLocationLayout(),
                 folderType, getHomeLocations(),
                 isGlobal(),
                 getName()
-        ));
+        )).toString();
     }
 
 
@@ -490,23 +490,23 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
     //
-    public Path getStoreLocation(String id, NutsStoreLocation folderType) {
-        return getStoreLocation(ws.id().parser().parse(id), folderType);
+    public String getStoreLocation(String id, NutsStoreLocation folderType, NutsSession session) {
+        return getStoreLocation(ws.id().parser().parse(id), folderType, session);
     }
 
     //
-    public Path getStoreLocation(NutsId id, NutsStoreLocation folderType) {
-        Path storeLocation = getStoreLocation(folderType);
+    public String getStoreLocation(NutsId id, NutsStoreLocation folderType, NutsSession session) {
+        String storeLocation = getStoreLocation(folderType);
         if (storeLocation == null) {
             return null;
         }
         switch (folderType) {
             case CACHE:
-                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(ws.locations().getDefaultIdBasedir(id));
+                return Paths.get(storeLocation).resolve(NutsConstants.Folders.ID).resolve(ws.locations().getDefaultIdBasedir(id)).toString();
             case CONFIG:
-                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(ws.locations().getDefaultIdBasedir(id));
+                return Paths.get(storeLocation).resolve(NutsConstants.Folders.ID).resolve(ws.locations().getDefaultIdBasedir(id)).toString();
         }
-        return storeLocation.resolve(ws.locations().getDefaultIdBasedir(id));
+        return Paths.get(storeLocation).resolve(ws.locations().getDefaultIdBasedir(id)).toString();
     }
 
 //    

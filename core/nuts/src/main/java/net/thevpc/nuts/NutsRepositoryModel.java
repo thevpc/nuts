@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts;
 
-import java.nio.file.Path;
 import java.util.Iterator;
 
 /**
@@ -92,7 +91,7 @@ public interface NutsRepositoryModel {
         return null;
     }
 
-    default NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
+    default NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
         return null;
     }
 

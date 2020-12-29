@@ -27,7 +27,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public Path getScriptFile(String name) {
-        Path bin = context.getAppsFolder();
+        Path bin = Paths.get(context.getAppsFolder());
         return bin.resolve(getExecFileName(name));
     }
 
@@ -44,7 +44,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 }
         );
         if (includeEnv) {
-            Path ndiAppsFolder = context.getAppsFolder();
+            Path ndiAppsFolder = Paths.get(context.getAppsFolder());
             Path ndiConfigFile = ndiAppsFolder.resolve(getExecFileName(".nadmin-bashrc"));
             txt = getCallScriptCommand(ndiConfigFile.toString()) + "\n"
                     + txt;
@@ -63,7 +63,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             } else {
                 NutsVersion _latestVersion = null;
                 try {
-                    _latestVersion = Files.list(bootConfig.getStoreLocation(ws.getApiId(), NutsStoreLocation.CONFIG).getParent())
+                    _latestVersion = Files.list(
+                            Paths.get(bootConfig.getStoreLocation(ws.getApiId(), NutsStoreLocation.CONFIG))
+                            .getParent())
                             .filter(
                                     f ->
                                             ws.version().parser().parse(f.getFileName().toString()).getNumber(0, -1) != -1
@@ -364,7 +366,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     ));
         }
         if (currId) {
-            Path ff2 = context.getWorkspace().locations().getWorkspaceLocation().resolve("nuts");
+            Path ff2 = Paths.get(context.getWorkspace().locations().getWorkspaceLocation())
+                    .resolve("nuts");
             boolean overridden = Files.exists(ff2);
             boolean gen = true;
 
@@ -443,7 +446,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     protected NdiConfig loadNdiConfig(String nutsVersion) {
-        Path t = context.getWorkspace().locations().getStoreLocation(context.getAppId(), NutsStoreLocation.CONFIG).resolve("nadmin-config.json");
+        Path t = Paths.get(context.getWorkspace().locations().getStoreLocation(context.getAppId(), NutsStoreLocation.CONFIG))
+                .resolve("nadmin-config.json");
         if (Files.isRegularFile(t)) {
             return context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(t, NdiConfig.class);
         }
@@ -451,7 +455,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     protected void saveNdiConfig(NdiConfig config) {
-        Path t = context.getWorkspace().locations().getStoreLocation(context.getAppId(), NutsStoreLocation.CONFIG).resolve("nadmin-config.json");
+        Path t = Paths.get(context.getWorkspace().locations().getStoreLocation(context.getAppId(), NutsStoreLocation.CONFIG))
+                .resolve("nadmin-config.json");
         context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setCompact(false).setValue(config)
                 .print(t);
     }

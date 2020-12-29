@@ -94,7 +94,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             if (c.descriptor == null) {
                 throw new NutsNotFoundException(ws, "", "Unable to resolve a valid descriptor for " + cmdName, null);
             }
-            Path tempFolder = ws.io().tmp().createTempFolder("exec-path-");
+            String tempFolder = ws.io().tmp().createTempFolder("exec-path-", execCommand.getSession());
             NutsId _id = c.descriptor.getId();
             NutsIdType idType = NutsWorkspaceExt.of(ws).resolveNutsIdType(_id, traceSession);
             NutsDefinition nutToRun = new DefaultNutsDefinition(
@@ -102,7 +102,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     null,
                     _id,
                     c.descriptor,
-                    new NutsDefaultContent(c.getContentPath(), false, c.temps.size() > 0),
+                    new NutsDefaultContent(c.getContentLocation(), false, c.temps.size() > 0),
                     DefaultNutsInstallInfo.notInstalled(_id),
                     idType, null
             );
@@ -110,7 +110,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(), true, traceSession,execSession, executionType, dry);
             } finally {
                 try {
-                    CoreIOUtils.delete(traceSession, tempFolder);
+                    CoreIOUtils.delete(traceSession, Paths.get(tempFolder));
                 } catch (UncheckedIOException|NutsIOException e) {
                     LOG.with().session(traceSession).level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "Unable to delete temp folder created for execution : " + tempFolder);
                 }
@@ -124,7 +124,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         CharacterizedExecFile c = new CharacterizedExecFile();
         try {
             c.baseFile = contentFile;
-            c.contentFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, ws);
+            c.contentFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, session);
             Path fileSource = c.contentFile.getPath();
             if (!Files.exists(fileSource)) {
                 throw new NutsIllegalArgumentException(ws, "file does not exists " + fileSource);
@@ -157,7 +157,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         try {
                             c.contentFile = CoreIOUtils.toPathInputSource(
                                     ws.io().input().of(ub.resolveSibling(ws.locations().getDefaultIdFilename(c.descriptor.getId())).toURL()),
-                                    c.temps, ws);
+                                    c.temps, session);
                         } catch (Exception ex) {
 
                         }
@@ -170,7 +170,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                                     try {
                                         c.contentFile = CoreIOUtils.toPathInputSource(
                                                 ws.io().input().of(new URL(location)),
-                                                c.temps, ws);
+                                                c.temps, session);
                                     } catch (Exception ex) {
 
                                     }
@@ -179,7 +179,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                                     try {
                                         c.contentFile = CoreIOUtils.toPathInputSource(
                                                 ws.io().input().of(ub.resolveSibling(ws.locations().getDefaultIdFilename(c.descriptor.getId())).toURL()),
-                                                c.temps, ws);
+                                                c.temps, session);
                                     } catch (Exception ex) {
 
                                     }
@@ -226,6 +226,10 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
         public Path getContentPath() {
             return (Path) contentFile.getSource();
+        }
+
+        public String getContentLocation() {
+            return ((Path) contentFile.getSource()).toString();
         }
 
         public void addTemp(Path f) {

@@ -36,6 +36,7 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -122,7 +123,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase,NutsSessionAwar
                     //                .completer(completer)
                     //                .parse(parse)
                     .build();
-            reader.setVariable(LineReader.HISTORY_FILE, workspace.locations().getWorkspaceLocation().resolve("history").normalize().toFile());
+            reader.setVariable(LineReader.HISTORY_FILE, Paths.get(workspace.locations().getWorkspaceLocation()).resolve("history").normalize().toFile());
             ((LineReaderImpl) reader).setHistory(new NutsJLineHistory(reader, workspace));
             this.out = workspace.io().createPrintStream(
                     new TransparentPrintStream(

@@ -200,12 +200,12 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
     }
 
     @Override
-    public Path getStoreLocation(NutsId id, NutsStoreLocation folderType) {
-        Path storeLocation = getStoreLocation(folderType);
+    public String getStoreLocation(NutsId id, NutsStoreLocation folderType) {
+        String storeLocation = getStoreLocation(folderType);
         if (storeLocation == null) {
             return null;
         }
-        return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
+        return Paths.get(storeLocation).resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id)).toString();
 //        switch (folderType) {
 //            case CACHE:
 //                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
@@ -216,25 +216,24 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
     }
 
     @Override
-    public Path getStoreLocation(NutsStoreLocation storeLocation) {
-        return Paths.get(storeLocations.get(storeLocation.id()));
+    public String getStoreLocation(NutsStoreLocation storeLocation) {
+        return storeLocations.get(storeLocation.id());
     }
 
 
     @Override
-    public Path getHomeLocation(NutsOsFamily osFamily, NutsStoreLocation storeLocation) {
-        String path = new NutsHomeLocationsMap(homeLocations).get(osFamily, storeLocation);
-        return path == null ? null : Paths.get(path);
+    public String getHomeLocation(NutsOsFamily osFamily, NutsStoreLocation storeLocation) {
+        return new NutsHomeLocationsMap(homeLocations).get(osFamily, storeLocation);
     }
 
 
     @Override
-    public Path getHomeLocation(NutsStoreLocation storeLocation) {
-        return Paths.get(Nuts.getPlatformHomeFolder(getStoreLocationLayout(),
+    public String getHomeLocation(NutsStoreLocation storeLocation) {
+        return Nuts.getPlatformHomeFolder(getStoreLocationLayout(),
                 storeLocation, getHomeLocations(),
                 isGlobal(),
                 getName()
-        ));
+        );
     }
 
 }

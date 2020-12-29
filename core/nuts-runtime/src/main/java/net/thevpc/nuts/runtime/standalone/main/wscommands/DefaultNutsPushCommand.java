@@ -118,7 +118,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                     throw new NutsRepositoryNotFoundException(ws, this.getRepository() + " : " + String.join("\n", errors));
                 }
             } else {
-                NutsRepository repo = ws.repos().getRepository(this.getRepository(), session.copy().setTransitive(true));
+                NutsRepository repo = ws.repos().getRepository(this.getRepository(), session);
                 if (!repo.config().isEnabled()) {
                     throw new NutsIllegalArgumentException(ws, "repository " + repo.getName() + " is disabled");
                 }

@@ -111,7 +111,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode == NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
         }
@@ -123,7 +123,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
             throw new NutsNotFoundException(getWorkspace(), id,new IOException("File not found : "+f));
         }
         if (localPath == null) {
-            return new NutsDefaultContent(f, true, false);
+            return new NutsDefaultContent(f.toString(), true, false);
         } else {
             getWorkspace().io().copy()
                     .setSession(session)

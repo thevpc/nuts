@@ -17,6 +17,7 @@ import net.thevpc.nuts.runtime.standalone.NutsExtensionListHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 
 import java.io.PrintStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -75,12 +76,12 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
             }
 
             dws.getInstalledRepository().uninstall(id, session);
-            CoreIOUtils.delete(getValidWorkspaceSession(), ws.locations().getStoreLocation(id, NutsStoreLocation.APPS).toFile());
-            CoreIOUtils.delete(getValidWorkspaceSession(), ws.locations().getStoreLocation(id, NutsStoreLocation.TEMP).toFile());
-            CoreIOUtils.delete(getValidWorkspaceSession(), ws.locations().getStoreLocation(id, NutsStoreLocation.LOG).toFile());
+            CoreIOUtils.delete(getValidWorkspaceSession(), Paths.get(ws.locations().getStoreLocation(id, NutsStoreLocation.APPS)).toFile());
+            CoreIOUtils.delete(getValidWorkspaceSession(), Paths.get(ws.locations().getStoreLocation(id, NutsStoreLocation.TEMP)).toFile());
+            CoreIOUtils.delete(getValidWorkspaceSession(), Paths.get(ws.locations().getStoreLocation(id, NutsStoreLocation.LOG)).toFile());
             if (this.isErase()) {
-                CoreIOUtils.delete(getValidWorkspaceSession(), ws.locations().getStoreLocation(id, NutsStoreLocation.VAR).toFile());
-                CoreIOUtils.delete(getValidWorkspaceSession(), ws.locations().getStoreLocation(id, NutsStoreLocation.CONFIG).toFile());
+                CoreIOUtils.delete(getValidWorkspaceSession(), Paths.get(ws.locations().getStoreLocation(id, NutsStoreLocation.VAR)).toFile());
+                CoreIOUtils.delete(getValidWorkspaceSession(), Paths.get(ws.locations().getStoreLocation(id, NutsStoreLocation.CONFIG)).toFile());
             }
 
             if (def.getType() == NutsIdType.EXTENSION) {

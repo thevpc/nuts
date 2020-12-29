@@ -97,7 +97,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     @Override
     public Iterator<NutsInstallInformation> searchInstallInformation(NutsSession session) {
-        Path rootFolder = workspace.locations().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
+        Path rootFolder = Paths.get(workspace.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID);
         return new FolderObjectIterator<NutsInstallInformation>("NutsInstallInformation",
                 rootFolder,
                 null, -1, session, new FolderObjectIterator.FolderIteratorModel<NutsInstallInformation>() {
@@ -131,9 +131,10 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 return p;
             }
         }
-        Path pp = workspace.locations().getStoreLocation(id
+        Path pp = Paths.get(workspace.locations().getStoreLocation(id
                 //.setAlternative("")
-                .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG).resolveSibling("default-version");
+                .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG))
+                .resolveSibling("default-version");
         String defaultVersion = "";
         if (Files.isRegularFile(pp)) {
             try {
@@ -152,9 +153,10 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     public void setDefaultVersion(NutsId id, NutsSession session) {
         NutsId baseVersion = id.getShortNameId();
         String version = id.getVersion().getValue();
-        Path pp = workspace.locations().getStoreLocation(id
+        Path pp = Paths.get(workspace.locations().getStoreLocation(id
                 //                .setAlternative("")
-                .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG).resolveSibling("default-version");
+                .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG))
+                .resolveSibling("default-version");
         if (CoreStringUtils.isBlank(version)) {
             if (Files.isRegularFile(pp)) {
                 try {
@@ -271,7 +273,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public NutsId pathToId(Path path) {
-        Path rootFolder = workspace.locations().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
+        Path rootFolder = Paths.get(workspace.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID);
         String p = path.toString().substring(rootFolder.toString().length());
         List<String> split = CoreStringUtils.split(p, "/\\");
         if (split.size() >= 4) {
@@ -440,7 +442,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public Iterator<InstallInfoConfig> searchInstallConfig(NutsSession session) {
-        Path rootFolder = workspace.locations().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
+        Path rootFolder = Paths.get(workspace.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID);
         return new FolderObjectIterator<InstallInfoConfig>("InstallInfoConfig",
                 rootFolder,
                 null, -1, session, new FolderObjectIterator.FolderIteratorModel<InstallInfoConfig>() {
@@ -616,7 +618,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public Path getPath(NutsId id, String name) {
-        return workspace.locations().getStoreLocation(id, NutsStoreLocation.CONFIG).resolve(name);
+        return Paths.get(workspace.locations().getStoreLocation(id, NutsStoreLocation.CONFIG)).resolve(name);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -713,8 +715,9 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                     result = new LazyIterator<NutsId>() {
                         @Override
                         protected Iterator<NutsId> iterator() {
-                            File installFolder = workspace.locations().getStoreLocation(getId()
-                                    .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG).toFile().getParentFile();
+                            File installFolder =
+                                    Paths.get(workspace.locations().getStoreLocation(getId()
+                                    .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG)).toFile().getParentFile();
                             if (installFolder.isDirectory()) {
                                 final NutsVersionFilter filter0 = getId().getVersion().filter();
                                 return IteratorBuilder.of(Arrays.asList(installFolder.listFiles()).iterator())
@@ -946,12 +949,12 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         }
 
         @Override
-        public Path getStoreLocation() {
+        public String getStoreLocation() {
             return null;
         }
 
         @Override
-        public Path getStoreLocation(NutsStoreLocation folderType) {
+        public String getStoreLocation(NutsStoreLocation folderType) {
             return null;
         }
 

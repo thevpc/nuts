@@ -99,7 +99,7 @@ public class DefaultSourceControlHelper {
                     nutToInstall.getRepositoryName(),
                     newId,
                     d,
-                    new NutsDefaultContent(folder,
+                    new NutsDefaultContent(folder.toString(),
                             false,
                             false),
                     null,

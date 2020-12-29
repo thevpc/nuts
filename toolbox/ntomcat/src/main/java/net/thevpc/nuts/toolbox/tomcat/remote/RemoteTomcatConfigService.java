@@ -12,6 +12,7 @@ import net.thevpc.nuts.toolbox.tomcat.util.TomcatUtils;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,7 +59,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     }
 
     public Path getConfigPath() {
-        return context.getSharedConfigFolder().resolve(name + REMOTE_CONFIG_EXT);
+        return Paths.get(context.getSharedConfigFolder()).resolve(name + REMOTE_CONFIG_EXT);
     }
 
     public RemoteTomcatConfigService save() {

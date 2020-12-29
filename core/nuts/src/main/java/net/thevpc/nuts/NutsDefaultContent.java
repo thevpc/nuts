@@ -30,6 +30,7 @@ import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 
@@ -41,18 +42,18 @@ import java.util.Objects;
  */
 public class NutsDefaultContent implements NutsContent {
 
-    private final Path file;
+    private final String location;
     private final boolean cached;
     private final boolean temporary;
 
     /**
      * Default Content implementation constructor
-     * @param file content file path
+     * @param location content file path
      * @param cached true if the file is cached (may be not up to date)
      * @param temporary true if file is temporary (should be deleted later)
      */
-    public NutsDefaultContent(Path file, boolean cached, boolean temporary) {
-        this.file = file;
+    public NutsDefaultContent(String location, boolean cached, boolean temporary) {
+        this.location = location;
         this.cached = cached;
         this.temporary = temporary;
     }
@@ -63,13 +64,18 @@ public class NutsDefaultContent implements NutsContent {
      */
     @Override
     public Path getPath() {
-        return file;
+        return location==null?null:Paths.get(location);
+    }
+
+    @Override
+    public String getLocation() {
+        return location;
     }
 
     @Override
     public URL getURL() {
         try {
-            return file==null?null:file.toUri().toURL();
+            return location ==null?null: getPath().toUri().toURL();
         } catch (MalformedURLException e) {
             throw new UncheckedIOException(e);
         }
@@ -95,7 +101,7 @@ public class NutsDefaultContent implements NutsContent {
 
     @Override
     public String toString() {
-        return "Content{" + "file=" + file + ", cached=" + cached + ", temporary=" + temporary + '}';
+        return "Content{" + "file=" + location + ", cached=" + cached + ", temporary=" + temporary + '}';
     }
 
     @Override
@@ -105,11 +111,11 @@ public class NutsDefaultContent implements NutsContent {
         NutsDefaultContent that = (NutsDefaultContent) o;
         return cached == that.cached &&
                 temporary == that.temporary &&
-                Objects.equals(file, that.file);
+                Objects.equals(location, that.location);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(file, cached, temporary);
+        return Objects.hash(location, cached, temporary);
     }
 }

@@ -144,7 +144,7 @@ public class Test03_CreateLayoutLinuxTest {
             nadminId = ws.search().addInstallStatus(NutsInstallStatus.INSTALLED).addId("nadmin").getResultIds().singleton();
         }
         Assertions.assertTrue(nadminId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
-        Path c = ws.locations().getStoreLocation(NutsStoreLocation.CONFIG);
+        String c = ws.locations().getStoreLocation(NutsStoreLocation.CONFIG);
         TestUtils.println(c);
         TestUtils.println(new File(base, "config").getPath());
         Assertions.assertEquals(

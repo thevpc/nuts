@@ -120,7 +120,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
         if (missingAnyArgument) {
             commandLine.required();
         }
-        Path workspaceLocation = ws.locations().getWorkspaceLocation();
+        Path workspaceLocation = Paths.get(ws.locations().getWorkspaceLocation());
         if (commandLine.isExecMode()) {
             SystemNdi ndi = createNdi(context);
             if (ndi == null) {
@@ -221,7 +221,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
         if (missingAnyArgument) {
             commandLine.required();
         }
-        Path workspaceLocation = ws.locations().getWorkspaceLocation();
+        Path workspaceLocation = Paths.get(ws.locations().getWorkspaceLocation());
         if (commandLine.isExecMode()) {
             if (forceAll) {
                 context.getSession().setConfirm(NutsConfirmationMode.YES);

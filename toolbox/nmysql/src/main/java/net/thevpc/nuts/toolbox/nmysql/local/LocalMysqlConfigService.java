@@ -12,6 +12,7 @@ import net.thevpc.nuts.toolbox.nmysql.local.config.LocalMysqlConfig;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class LocalMysqlConfigService {
@@ -66,7 +67,7 @@ public class LocalMysqlConfigService {
     }
 
     private Path getServerConfigPath() {
-        return context.getSharedConfigFolder().resolve(getName() + SERVER_CONFIG_EXT);
+        return Paths.get(context.getSharedConfigFolder()).resolve(getName() + SERVER_CONFIG_EXT);
     }
 
     public String[] parseApps(String[] args) {

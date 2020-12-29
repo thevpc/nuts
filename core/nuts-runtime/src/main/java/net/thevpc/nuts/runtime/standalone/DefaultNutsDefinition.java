@@ -150,6 +150,12 @@ public class DefaultNutsDefinition implements NutsDefinition {
     }
 
     @Override
+    public String getLocation() {
+        NutsContent c = getContent();
+        return c==null?null:c.getLocation();
+    }
+
+    @Override
     public URL getURL() {
         Path p = getPath();
         if(p!=null){

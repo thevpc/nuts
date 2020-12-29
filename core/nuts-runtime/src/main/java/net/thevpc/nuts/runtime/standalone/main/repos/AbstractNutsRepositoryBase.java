@@ -38,6 +38,7 @@ import net.thevpc.nuts.runtime.standalone.util.common.TraceResult;
 import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 import net.thevpc.nuts.spi.*;
 
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -108,7 +109,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         String loc = config().getLocation(false);
         String impl = getClass().getSimpleName();
         if (c != null) {
-            storePath = c.getStoreLocation().toAbsolutePath().toString();
+            storePath = Paths.get(c.getStoreLocation()).toAbsolutePath().toString();
         }
         LinkedHashMap<String, String> a = new LinkedHashMap<>();
         if (name != null) {

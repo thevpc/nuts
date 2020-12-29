@@ -172,12 +172,12 @@ public class DerbyService {
 
         Path derbyDataHome = null;
         if (options.derbyDataHomeReplace != null) {
-            derbyDataHome = appContext.getVarFolder();
+            derbyDataHome = Paths.get(appContext.getVarFolder());
         } else {
             if (options.derbyDataHomeRoot != null && options.derbyDataHomeRoot.trim().length() > 0) {
                 derbyDataHome = Paths.get(getAbsoluteFile(options.derbyDataHomeRoot, appContext.getVarFolder().toString()));
             } else {
-                derbyDataHome = appContext.getVarFolder().resolve("derby-db");
+                derbyDataHome = Paths.get(appContext.getVarFolder()).resolve("derby-db");
             }
         }
         Path derbyDataHomeRoot = derbyDataHome.getParent();
@@ -186,7 +186,7 @@ public class DerbyService {
         } catch (IOException ex) {
             throw new NutsExecutionException(ws, 1);
         }
-        Path derbyBinHome = ws.locations().getStoreLocation(appContext.getAppId(), NutsStoreLocation.APPS).resolve(currentDerbyVersion);
+        Path derbyBinHome = Paths.get(ws.locations().getStoreLocation(appContext.getAppId(), NutsStoreLocation.APPS)).resolve(currentDerbyVersion);
         Path derbyLibHome = derbyBinHome.resolve("lib");
         Path derby = download("org.apache.derby:derby#" + currentDerbyVersion, derbyLibHome, false);
         Path derbynet = download("org.apache.derby:derbynet#" + currentDerbyVersion, derbyLibHome, false);

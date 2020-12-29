@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.runtime.core.repos;
 
-import java.nio.file.Path;
 import java.util.Iterator;
 
 import net.thevpc.nuts.*;
@@ -38,7 +37,7 @@ public interface NutsRepositoryExt extends NutsRepositoryExt0{
 
     Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session);
 
-    NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsFetchMode fetchMode, NutsSession session);
+    NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session);
 
     Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session);
 

@@ -66,6 +66,15 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
     NutsContent getContent();
 
     /**
+     * return artifact content file location.
+     * this is an <strong>optional</strong> property. It must be requested (see {@link NutsSearchCommand#setContent(boolean)}) to be available.
+     *
+     * @return artifact content file path
+     * @throws NutsElementNotFoundException if the property is not requested
+     */
+    String getLocation();
+
+    /**
      * return artifact content file path.
      * this is an <strong>optional</strong> property. It must be requested (see {@link NutsSearchCommand#setContent(boolean)}) to be available.
      *

@@ -164,8 +164,8 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     @Override
-    public Path getStoreLocation() {
-        return Paths.get(storeLocation);
+    public String getStoreLocation() {
+        return storeLocation;
     }
 
     @Override
@@ -178,7 +178,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     @Override
-    public Path getStoreLocation(NutsStoreLocation folderType) {
+    public String getStoreLocation(NutsStoreLocation folderType) {
         NutsStoreLocationsMap hlm = new NutsStoreLocationsMap(config.getStoreLocations());
 
 //        String n = CoreNutsUtils.getArrItem(config.getStoreLocations(), folderType.ordinal());
@@ -188,7 +188,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
                 n = folderType.toString().toLowerCase();
                 n = n.trim();
             }
-            return getStoreLocation().resolve(n);
+            return Paths.get(getStoreLocation()).resolve(n).toString();
         }else {
             switch (getStoreLocationStrategy()) {
                 case STANDALONE: {
@@ -196,12 +196,12 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
                         n = folderType.toString().toLowerCase();
                     }
                     n = n.trim();
-                    return getStoreLocation().resolve(n);
+                    return Paths.get(getStoreLocation()).resolve(n).toString();
                 }
                 case EXPLODED: {
-                    Path storeLocation = repository.getWorkspace().locations().getStoreLocation(folderType);
+                    Path storeLocation = Paths.get(repository.getWorkspace().locations().getStoreLocation(folderType));
                     //uuid is added as
-                    return storeLocation.resolve(NutsConstants.Folders.REPOSITORIES).resolve(getName()).resolve(getUuid());
+                    return storeLocation.resolve(NutsConstants.Folders.REPOSITORIES).resolve(getName()).resolve(getUuid()).toString();
 
                 }
                 default: {
@@ -359,12 +359,12 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         if (force || (!repository.getWorkspace().config().isReadOnly() && isConfigurationChanged())) {
             NutsWorkspaceUtils.of(repository.getWorkspace()).checkReadOnly();
             repository.security().checkAllowed(NutsConstants.Permissions.SAVE, "save", session);
-            Path file = getStoreLocation().resolve(NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
+            Path file = Paths.get(getStoreLocation()).resolve(NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
             boolean created = false;
             if (!Files.exists(file)) {
                 created = true;
             }
-            CoreIOUtils.mkdirs(getStoreLocation());
+            CoreIOUtils.mkdirs(Paths.get(getStoreLocation()));
             config.setConfigVersion(repository.getWorkspace().getApiVersion());
             if (config.getEnv() != null && config.getEnv().isEmpty()) {
                 config.setEnv(null);
@@ -601,7 +601,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     public Path getMirrorsRoot() {
-        return getStoreLocation().resolve(NutsConstants.Folders.REPOSITORIES);
+        return Paths.get(getStoreLocation()).resolve(NutsConstants.Folders.REPOSITORIES);
     }
 
     public NutsRepositoryConfig getStoredConfig() {

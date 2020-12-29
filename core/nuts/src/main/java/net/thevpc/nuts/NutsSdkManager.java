@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts;
 
-import java.nio.file.Path;
 import java.util.function.Predicate;
 
 /**
@@ -43,7 +42,7 @@ public interface NutsSdkManager {
 
     NutsSdkLocation findByName(String sdkType, String locationName, NutsSession session);
 
-    NutsSdkLocation findByPath(String sdkType, Path path, NutsSession session);
+    NutsSdkLocation findByPath(String sdkType, String path, NutsSession session);
 
     NutsSdkLocation findByVersion(String sdkType, String version, NutsSession session);
 
@@ -54,7 +53,7 @@ public interface NutsSdkManager {
 
     NutsSdkLocation[] searchSystem(String sdkType, NutsSession session);
 
-    NutsSdkLocation[] searchSystem(String sdkType, Path path, NutsSession session);
+    NutsSdkLocation[] searchSystem(String sdkType, String path, NutsSession session);
 
     /**
      * verify if the path is a valid sdk path and return null if not
@@ -65,7 +64,7 @@ public interface NutsSdkManager {
      * @param session       session
      * @return null if not a valid jdk path
      */
-    NutsSdkLocation resolve(String sdkType, Path path, String preferredName, NutsSession session);
+    NutsSdkLocation resolve(String sdkType, String path, String preferredName, NutsSession session);
 
     NutsSdkLocation findOne(String type, Predicate<NutsSdkLocation> filter, NutsSession session);
 

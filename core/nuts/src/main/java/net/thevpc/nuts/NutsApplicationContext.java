@@ -26,7 +26,6 @@
 */
 package net.thevpc.nuts;
 
-import java.nio.file.Path;
 
 /**
  * Application context that store all relevant information about application
@@ -117,28 +116,28 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      *
      * @return path to the apps folder of this application
      */
-    Path getAppsFolder();
+    String getAppsFolder();
 
     /**
      * path to the configuration folder of this application
      *
      * @return path to the configuration folder of this application
      */
-    Path getConfigFolder();
+    String getConfigFolder();
 
     /**
      * path to the log folder of this application
      *
      * @return path to the log folder of this application
      */
-    Path getLogFolder();
+    String getLogFolder();
 
     /**
      * path to the temporary files folder of this application
      *
      * @return path to the temporary files folder of this application
      */
-    Path getTempFolder();
+    String getTempFolder();
 
     /**
      * path to the variable files (aka /var in POSIX systems) folder of this
@@ -147,7 +146,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      * @return path to the variable files (aka /var in POSIX systems) folder of
      * this application
      */
-    Path getVarFolder();
+    String getVarFolder();
 
     /**
      * path to the libraries files (non applications) folder of this application
@@ -155,7 +154,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      * @return path to the libraries files (non applications) folder of this
      * application
      */
-    Path getLibFolder();
+    String getLibFolder();
 
     /**
      * path to the temporary run files (non essential sockets etc...) folder of
@@ -164,30 +163,30 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      * @return path to the temporary run files (non essential sockets etc...)
      * folder of this application
      */
-    Path getRunFolder();
+    String getRunFolder();
 
     /**
      * path to the cache files folder of this application
      *
      * @return path to the cache files folder of this application
      */
-    Path getCacheFolder();
+    String getCacheFolder();
 
-    Path getSharedAppsFolder();
+    String getSharedAppsFolder();
 
-    Path getSharedConfigFolder();
+    String getSharedConfigFolder();
 
-    Path getSharedLogFolder();
+    String getSharedLogFolder();
 
-    Path getSharedTempFolder();
+    String getSharedTempFolder();
 
-    Path getSharedVarFolder();
+    String getSharedVarFolder();
 
-    Path getSharedLibFolder();
+    String getSharedLibFolder();
 
-    Path getSharedRunFolder();
+    String getSharedRunFolder();
 
-    Path getSharedFolder(NutsStoreLocation location);
+    String getSharedFolder(NutsStoreLocation location);
 
     /**
      * application nuts id
@@ -327,7 +326,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      * @param location location type
      * @return application store folder path for the given {@code location}
      */
-    Path getFolder(NutsStoreLocation location);
+    String getFolder(NutsStoreLocation location);
 
     /**
      * return true if {@code getAutoComplete()==null }

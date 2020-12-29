@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.NutsRepository;
-import net.thevpc.nuts.NutsStoreLocation;
-import net.thevpc.nuts.NutsTempManager;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
 
@@ -11,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class DefaultTempManager implements NutsTempManager {
     private NutsWorkspace ws;
@@ -20,17 +18,17 @@ public class DefaultTempManager implements NutsTempManager {
     }
 
     @Override
-    public Path createTempFile(String name) {
+    public String createTempFile(String name, NutsSession session) {
         return createTempFile(name, null);
     }
 
     @Override
-    public Path createTempFile(String name, NutsRepository repository) {
+    public String createTempFile(String name, NutsRepository repository, NutsSession session) {
         File folder = null;
         if (repository == null) {
-            folder = ws.locations().getStoreLocation(NutsStoreLocation.TEMP).toFile();
+            folder = Paths.get(ws.locations().getStoreLocation(NutsStoreLocation.TEMP)).toFile();
         } else {
-            folder = repository.config().getStoreLocation(NutsStoreLocation.TEMP).toFile();
+            folder = Paths.get(repository.config().getStoreLocation(NutsStoreLocation.TEMP)).toFile();
         }
         folder.mkdirs();
         String prefix = "temp-";
@@ -51,7 +49,7 @@ public class DefaultTempManager implements NutsTempManager {
             }
         }
         try {
-            return File.createTempFile(prefix, "-nuts" + (ext != null ? ("." + ext) : ""), folder).toPath();
+            return File.createTempFile(prefix, "-nuts" + (ext != null ? ("." + ext) : ""), folder).toPath().toString();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -59,17 +57,17 @@ public class DefaultTempManager implements NutsTempManager {
 
 
     @Override
-    public Path createTempFolder(String name) {
+    public String createTempFolder(String name, NutsSession session) {
         return createTempFolder(name, null);
     }
 
     @Override
-    public Path createTempFolder(String name, NutsRepository repository) {
+    public String createTempFolder(String name, NutsRepository repository, NutsSession session) {
         File folder = null;
         if (repository == null) {
-            folder = ws.locations().getStoreLocation(NutsStoreLocation.TEMP).toFile();
+            folder = Paths.get(ws.locations().getStoreLocation(NutsStoreLocation.TEMP)).toFile();
         } else {
-            folder = repository.config().getStoreLocation(NutsStoreLocation.TEMP).toFile();
+            folder = Paths.get(repository.config().getStoreLocation(NutsStoreLocation.TEMP)).toFile();
         }
         folder.mkdirs();
         final File temp;
@@ -91,7 +89,7 @@ public class DefaultTempManager implements NutsTempManager {
             throw new UncheckedIOException(new IOException("Could not create temp directory: " + temp.getAbsolutePath()));
         }
 
-        return (temp.toPath());
+        return (temp.toPath()).toString();
     }
 
 

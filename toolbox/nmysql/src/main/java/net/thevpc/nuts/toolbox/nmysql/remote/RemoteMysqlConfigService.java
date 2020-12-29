@@ -9,6 +9,7 @@ import net.thevpc.nuts.toolbox.nmysql.remote.config.RemoteMysqlConfig;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -51,7 +52,7 @@ public class RemoteMysqlConfigService {
     }
 
     private Path getConfigPath() {
-        return context.getSharedConfigFolder().resolve(name + CLIENT_CONFIG_EXT);
+        return Paths.get(context.getSharedConfigFolder()).resolve(name + CLIENT_CONFIG_EXT);
     }
 
     public boolean existsConfig() {

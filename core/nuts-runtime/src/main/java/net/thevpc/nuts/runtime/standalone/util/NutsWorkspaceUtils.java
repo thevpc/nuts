@@ -21,6 +21,7 @@ import net.thevpc.nuts.runtime.standalone.util.common.CorePlatformUtils;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -518,7 +519,7 @@ public class NutsWorkspaceUtils {
         NutsWorkspace workspace = execSession.getWorkspace();
         NutsId id = nutMainFile.getId();
         Path installerFile = nutMainFile.getPath();
-        Path storeFolder = nutMainFile.getInstallInformation().getInstallFolder();
+        String storeFolder = nutMainFile.getInstallInformation().getInstallFolder();
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
 //        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
@@ -556,7 +557,7 @@ public class NutsWorkspaceUtils {
         if (storeFolder == null && installerFile != null) {
             map.put("nuts.store", installerFile.getParent().toString());
         } else if (storeFolder != null) {
-            map.put("nuts.store", storeFolder.toString());
+            map.put("nuts.store", storeFolder);
         }
         if (env != null) {
             map.putAll(env);
@@ -608,15 +609,15 @@ public class NutsWorkspaceUtils {
         }
         args = args2.toArray(new String[0]);
 
-        Path path = workspace.locations().getWorkspaceLocation().resolve(args[0]).normalize();
+        Path path = Paths.get(workspace.locations().getWorkspaceLocation()).resolve(args[0]).normalize();
         if (Files.exists(path)) {
             CoreIOUtils.setExecutable(path);
         }
         Path pdirectory = null;
         if (CoreStringUtils.isBlank(directory)) {
-            pdirectory = workspace.locations().getWorkspaceLocation();
+            pdirectory = Paths.get(workspace.locations().getWorkspaceLocation());
         } else {
-            pdirectory = workspace.locations().getWorkspaceLocation().resolve(directory);
+            pdirectory = Paths.get(workspace.locations().getWorkspaceLocation()).resolve(directory);
         }
         return execAndWait(args, envmap, pdirectory, prepareSession.getTerminal(), execSession.getTerminal(), showCommand, failFast,
                 sleep, prepareSession);

@@ -10,6 +10,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -326,8 +327,9 @@ public class RemoteTomcat {
 
     public RemoteTomcatConfigService[] listConfig() {
         List<RemoteTomcatConfigService> all = new ArrayList<>();
-        if(Files.isDirectory(getContext().getSharedConfigFolder())) {
-            try (DirectoryStream<Path> pp = Files.newDirectoryStream(getContext().getSharedConfigFolder(),
+        Path sharedConfigFolder = Paths.get(getContext().getSharedConfigFolder());
+        if(Files.isDirectory(sharedConfigFolder)) {
+            try (DirectoryStream<Path> pp = Files.newDirectoryStream(sharedConfigFolder,
                     (Path entry) -> entry.getFileName().toString().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT))) {
                 for (Path entry : pp) {
                     try {
