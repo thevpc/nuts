@@ -19,11 +19,11 @@ import java.util.stream.Stream;
 
 public class JobService {
     private NutsApplicationContext context;
-    private NDal dal;
+    private NJobConfigStore dal;
 
     public JobService(NutsApplicationContext context) {
         this.context = context;
-        this.dal = new NDal(context);
+        this.dal = new NJobConfigStore(context);
     }
 
     public static String wildcardToRegex(String pattern) {

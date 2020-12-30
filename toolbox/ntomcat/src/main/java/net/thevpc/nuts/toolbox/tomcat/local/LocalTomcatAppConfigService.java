@@ -1,8 +1,10 @@
 package net.thevpc.nuts.toolbox.tomcat.local;
 
 import net.thevpc.nuts.NutsContentType;
+import net.thevpc.nuts.NutsStoreLocation;
 import net.thevpc.nuts.NutsWorkspaceOpenMode;
 import net.thevpc.common.strings.StringUtils;
+import net.thevpc.nuts.toolbox.tomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.tomcat.local.config.LocalTomcatAppConfig;
 import net.thevpc.nuts.toolbox.tomcat.util.TomcatUtils;
 
@@ -23,12 +25,14 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     private LocalTomcatAppConfig config;
     private LocalTomcatConfigService tomcat;
     private NutsApplicationContext context;
+    private Path sharedConfigFolder;
 
     public LocalTomcatAppConfigService(String name, LocalTomcatAppConfig config, LocalTomcatConfigService tomcat) {
         this.name = name;
         this.config = config;
         this.tomcat = tomcat;
         this.context = tomcat.getTomcatServer().getContext();
+        sharedConfigFolder = Paths.get(tomcat.getContext().getVersionFolderFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT));
     }
 
     @Override
@@ -43,7 +47,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     public Path getArchiveFile(String version) {
         String runningFolder = tomcat.getConfig().getArchiveFolder();
         if (runningFolder == null || runningFolder.trim().isEmpty()) {
-            runningFolder = Paths.get(context.getVarFolder()).resolve("archive").toString();
+            runningFolder = Paths.get(context.getSharedConfigFolder()).resolve("archive").toString();
         }
         String packaging = "war";
         return Paths.get(runningFolder).resolve(name + "-" + version + "." + packaging);
@@ -57,14 +61,14 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         String _runningFolder = tomcat.getConfig().getRunningFolder();
         Path runningFolder = (_runningFolder == null || _runningFolder.trim().isEmpty()) ? null : Paths.get(_runningFolder);
         if (runningFolder == null) {
-            runningFolder = Paths.get(context.getVarFolder()).resolve("running");
+            runningFolder = Paths.get(context.getSharedConfigFolder()).resolve("running");
         }
         String packaging = "war";
         return runningFolder.resolve(name + "." + packaging);
     }
 
     public Path getVersionFile() {
-        return Paths.get(context.getSharedConfigFolder()).resolve(name + ".version");
+        return sharedConfigFolder.resolve(name + ".version");
     }
 
     public String getCurrentVersion() {

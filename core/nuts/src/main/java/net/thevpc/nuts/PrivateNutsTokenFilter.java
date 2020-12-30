@@ -52,12 +52,12 @@ class PrivateNutsTokenFilter implements NutsTokenFilter {
 
     @Override
     public boolean like(String pattern) {
-        throw new UnsupportedOperationException("Unsupported Operation");
+        throw new UnsupportedOperationException("unsupported operation: like");
     }
 
     @Override
     public boolean matches(String pattern) {
-        throw new UnsupportedOperationException("Unsupported Operation");
+        throw new UnsupportedOperationException("unsupported operation: matches");
     }
 
     @Override

@@ -167,7 +167,7 @@ public class PlainParserStep extends ParserStep {
 
     @Override
     public void appendChild(ParserStep tt) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("unsupported operation: appendChild");
     }
 
     @Override

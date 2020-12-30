@@ -63,7 +63,7 @@ public class NutsFolderRepository extends NutsCachedRepository {
             throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
         }
         NutsId id2 = id.builder().setFaceContent().build();
-        throw new NutsNotFoundException(getWorkspace(), id,new IOException("File Not Found : "+lib.getGoodPath(id2)));
+        throw new NutsNotFoundException(getWorkspace(), id,new IOException("file not found : "+lib.getGoodPath(id2)));
     }
 
     @Override

@@ -605,7 +605,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
                 return NutsTextNodeStyle.values()[NutsTextNodeStyle.SECONDARY1.ordinal() + code.length() - 1];
             }
         }
-        throw new UnsupportedOperationException("Unsupported format " + code);
+        throw new UnsupportedOperationException("unsupported format " + code);
     }
 
     public TextFormat createStyle(String code) {
@@ -651,7 +651,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
                 return backgroundFormat(code.length() - 1);
             }
         }
-        throw new UnsupportedOperationException("Unsupported format " + code);
+        throw new UnsupportedOperationException("unsupported format " + code);
     }
 
 }

@@ -23,9 +23,11 @@ public class WorkspaceService {
     public static final String SCAN = "net.thevpc.nuts.toolbox.worky.scan";
     private WorkspaceConfig config;
     private NutsApplicationContext appContext;
-    
+    private Path sharedConfigFolder;
+
     public WorkspaceService(NutsApplicationContext appContext) {
         this.appContext = appContext;
+        sharedConfigFolder = Paths.get(appContext.getVersionFolderFolder(NutsStoreLocation.CONFIG, NWorkConfigVersions.CURRENT));
         Path c = getConfigFile();
         if (Files.isRegularFile(c)) {
             try {
@@ -429,12 +431,12 @@ public class WorkspaceService {
     }
     
     public Path getConfigFile() {
-        return Paths.get(appContext.getSharedConfigFolder()).resolve("workspace.projects");
+        return sharedConfigFolder.resolve("workspace.projects");
     }
     
     public List<ProjectService> findProjectServices() {
         List<ProjectService> all = new ArrayList<>();
-        Path storeLocation = Paths.get(appContext.getSharedConfigFolder()).resolve("projects");
+        Path storeLocation = sharedConfigFolder.resolve("projects");
         
         if (Files.isDirectory(storeLocation)) {
             try (DirectoryStream<Path> ds = Files.newDirectoryStream(storeLocation)) {

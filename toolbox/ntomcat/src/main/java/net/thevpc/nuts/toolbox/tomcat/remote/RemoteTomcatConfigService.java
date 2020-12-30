@@ -2,6 +2,8 @@ package net.thevpc.nuts.toolbox.tomcat.remote;
 
 import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.NutsExecutionException;
+import net.thevpc.nuts.NutsStoreLocation;
+import net.thevpc.nuts.toolbox.tomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.tomcat.local.LocalTomcatConfigService;
 import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.toolbox.tomcat.remote.config.RemoteTomcatAppConfig;
@@ -26,11 +28,13 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     RemoteTomcatConfig config;
     NutsApplicationContext context;
     RemoteTomcat client;
+    Path sharedConfigFolder;
 
     public RemoteTomcatConfigService(String name, RemoteTomcat client) {
         setName(name);
         this.client = client;
         this.context = client.context;
+        sharedConfigFolder = Paths.get(client.getContext().getVersionFolderFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT));
     }
 
     public RemoteTomcatConfigService(Path file, RemoteTomcat client) {
@@ -59,7 +63,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     }
 
     public Path getConfigPath() {
-        return Paths.get(context.getSharedConfigFolder()).resolve(name + REMOTE_CONFIG_EXT);
+        return sharedConfigFolder.resolve(name + REMOTE_CONFIG_EXT);
     }
 
     public RemoteTomcatConfigService save() {

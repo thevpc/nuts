@@ -18,11 +18,13 @@ public class ProjectService {
     private ProjectConfig config;
     private NutsApplicationContext context;
     private RepositoryAddress defaultRepositoryAddress;
+    private Path sharedConfigFolder;
 
     public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, Path file) throws IOException {
         this.context = context;
         this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
         config = context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(file, ProjectConfig.class);
+        sharedConfigFolder = Paths.get(context.getVersionFolderFolder(NutsStoreLocation.CONFIG, NWorkConfigVersions.CURRENT));
     }
 
     public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
@@ -45,7 +47,7 @@ public class ProjectService {
     }
 
     public Path getConfigFile() {
-        Path storeLocation = Paths.get(context.getSharedConfigFolder()).resolve("projects");
+        Path storeLocation = sharedConfigFolder.resolve("projects");
         return storeLocation.resolve(config.getId().replace(":", "-") + ".config");
     }
 

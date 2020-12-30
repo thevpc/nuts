@@ -9,8 +9,8 @@ import net.thevpc.common.io.IOUtils;
 import net.thevpc.common.ssh.SshAddress;
 import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.NutsContentType;
+import net.thevpc.nuts.toolbox.nmysql.NMySqlService;
 import net.thevpc.nuts.toolbox.nmysql.remote.config.RemoteMysqlDatabaseConfig;
-import net.thevpc.nuts.toolbox.nmysql.local.LocalMysql;
 import net.thevpc.nuts.toolbox.nmysql.local.LocalMysqlDatabaseConfigService;
 
 import java.io.PrintStream;
@@ -21,6 +21,7 @@ import java.util.Map;
 
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsExecCommand;
+import net.thevpc.nuts.toolbox.nmysql.util.AtName;
 import net.thevpc.nuts.toolbox.nmysql.util.MysqlUtils;
 
 public class RemoteMysqlDatabaseConfigService {
@@ -61,8 +62,10 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public String pull(String localPath, boolean restore, boolean deleteRemote) {
-        LocalMysql ms = new LocalMysql(context);
-        LocalMysqlDatabaseConfigService loc = ms.loadDatabaseOrError(getConfig().getLocalName());
+        NMySqlService ms = new NMySqlService(context);
+        AtName locName = new AtName(getConfig().getLocalName());
+        LocalMysqlDatabaseConfigService loc = ms.loadLocalMysqlConfig(locName.getConfigName(), NMySqlService.NotFoundAction.ERROR)
+                .getDatabase(locName.getDatabaseName(), NMySqlService.NotFoundAction.ERROR);
         RemoteMysqlDatabaseConfig cconfig = getConfig();
         if (StringUtils.isBlank(localPath)) {
             localPath = Paths.get(context.getVarFolder()).resolve(client.getName() + "-" + getName() + "-" + MysqlUtils.newDateString()).toString();
@@ -124,8 +127,10 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public void push(String localPath, boolean backup) {
-        LocalMysql ms = new LocalMysql(context);
-        LocalMysqlDatabaseConfigService loc = ms.loadDatabaseOrError(getConfig().getLocalName());
+        NMySqlService ms = new NMySqlService(context);
+        AtName locName = new AtName(getConfig().getLocalName());
+        LocalMysqlDatabaseConfigService loc = ms.loadLocalMysqlConfig(locName.getConfigName(), NMySqlService.NotFoundAction.ERROR)
+                .getDatabase(locName.getDatabaseName(), NMySqlService.NotFoundAction.ERROR);
         if (backup) {
             localPath = loc.backup(localPath).path;
         } else {

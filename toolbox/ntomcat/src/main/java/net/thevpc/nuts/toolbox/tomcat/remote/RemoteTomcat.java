@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.tomcat.remote;
 
 import net.thevpc.nuts.*;
 import net.thevpc.common.strings.StringUtils;
+import net.thevpc.nuts.toolbox.tomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.tomcat.remote.config.RemoteTomcatConfig;
 import net.thevpc.nuts.toolbox.tomcat.util.TomcatUtils;
 
@@ -18,10 +19,12 @@ public class RemoteTomcat {
 
     public NutsApplicationContext context;
     public NutsCommandLine cmdLine;
+    public Path sharedConfigFolder;
 
-    public RemoteTomcat(NutsApplicationContext ws, NutsCommandLine cmdLine) {
-        this.setContext(ws);
+    public RemoteTomcat(NutsApplicationContext applicationContext, NutsCommandLine cmdLine) {
+        this.setContext(applicationContext);
         this.cmdLine = cmdLine;
+        sharedConfigFolder = Paths.get(applicationContext.getVersionFolderFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT));
     }
 
     public void runArgs() {
@@ -327,7 +330,6 @@ public class RemoteTomcat {
 
     public RemoteTomcatConfigService[] listConfig() {
         List<RemoteTomcatConfigService> all = new ArrayList<>();
-        Path sharedConfigFolder = Paths.get(getContext().getSharedConfigFolder());
         if(Files.isDirectory(sharedConfigFolder)) {
             try (DirectoryStream<Path> pp = Files.newDirectoryStream(sharedConfigFolder,
                     (Path entry) -> entry.getFileName().toString().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT))) {

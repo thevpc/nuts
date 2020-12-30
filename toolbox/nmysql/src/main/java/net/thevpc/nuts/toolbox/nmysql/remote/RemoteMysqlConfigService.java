@@ -1,8 +1,9 @@
 package net.thevpc.nuts.toolbox.nmysql.remote;
 
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.NutsExecutionException;
+import net.thevpc.nuts.*;
 import net.thevpc.common.io.FileUtils;
+import net.thevpc.nuts.toolbox.nmysql.NMySqlConfigVersions;
+import net.thevpc.nuts.toolbox.nmysql.NMySqlService;
 import net.thevpc.nuts.toolbox.nmysql.remote.config.RemoteMysqlDatabaseConfig;
 import net.thevpc.nuts.toolbox.nmysql.remote.config.RemoteMysqlConfig;
 
@@ -13,7 +14,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import net.thevpc.nuts.NutsApplicationContext;
 
 public class RemoteMysqlConfigService {
 
@@ -21,12 +21,12 @@ public class RemoteMysqlConfigService {
     private String name;
     RemoteMysqlConfig config;
     NutsApplicationContext context;
-    RemoteMysql client;
+    Path sharedConfigFolder;
 
-    public RemoteMysqlConfigService(String name, RemoteMysql client) {
+    public RemoteMysqlConfigService(String name, NutsApplicationContext context) {
         setName(name);
-        this.client = client;
-        this.context = client.context;
+        this.context = context;
+        sharedConfigFolder = Paths.get(context.getVersionFolderFolder(NutsStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT));
     }
 
     public RemoteMysqlConfigService setName(String name) {
@@ -52,7 +52,7 @@ public class RemoteMysqlConfigService {
     }
 
     private Path getConfigPath() {
-        return Paths.get(context.getSharedConfigFolder()).resolve(name + CLIENT_CONFIG_EXT);
+        return sharedConfigFolder.resolve(name + CLIENT_CONFIG_EXT);
     }
 
     public boolean existsConfig() {
@@ -118,6 +118,21 @@ public class RemoteMysqlConfigService {
         if (a == null) {
             a = new RemoteMysqlDatabaseConfig();
             getConfig().getDatabases().put(appName, a);
+        }
+        return new RemoteMysqlDatabaseConfigService(appName, a, this);
+    }
+    public RemoteMysqlDatabaseConfigService getDatabase(String appName, NMySqlService.NotFoundAction action) {
+        RemoteMysqlDatabaseConfig a = getConfig().getDatabases().get(appName);
+        if (a == null) {
+            switch (action){
+                case NULL:return null;
+                case ERROR:throw new NutsIllegalArgumentException(context.getWorkspace(),"remote instance not found:"+appName+"@"+getName());
+                case CREATE:{
+                    a = new RemoteMysqlDatabaseConfig();
+                    getConfig().getDatabases().put(appName, a);
+                    break;
+                }
+            }
         }
         return new RemoteMysqlDatabaseConfigService(appName, a, this);
     }

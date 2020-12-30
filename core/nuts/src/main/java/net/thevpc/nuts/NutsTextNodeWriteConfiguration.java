@@ -75,7 +75,7 @@ public class NutsTextNodeWriteConfiguration {
                         break;
                     }
                     default:{
-                        throw new UnsupportedOperationException("Unsupported");
+                        throw new UnsupportedOperationException("unsupported sequence type "+pattern+" (error at '"+c+"')");
                     }
                 }
             }

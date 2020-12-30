@@ -1,11 +1,10 @@
 package net.thevpc.nuts.toolbox.nmysql.local;
 
 import net.thevpc.common.io.FileUtils;
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.NutsDefinition;
-import net.thevpc.nuts.NutsExecutionException;
+import net.thevpc.nuts.*;
 import net.thevpc.common.strings.StringUtils;
+import net.thevpc.nuts.toolbox.nmysql.NMySqlConfigVersions;
+import net.thevpc.nuts.toolbox.nmysql.NMySqlService;
 import net.thevpc.nuts.toolbox.nmysql.local.config.LocalMysqlDatabaseConfig;
 import net.thevpc.nuts.toolbox.nmysql.local.config.LocalMysqlConfig;
 
@@ -19,24 +18,24 @@ public class LocalMysqlConfigService {
 
     public static final String SERVER_CONFIG_EXT = ".local-config";
     private String name;
-    private LocalMysql app;
     private LocalMysqlConfig config;
     private NutsApplicationContext context;
     private NutsDefinition catalinaNutsDefinition;
     private String catalinaVersion;
+    private Path sharedConfigFolder;
 
-    public LocalMysqlConfigService(Path file, LocalMysql app) {
+    public LocalMysqlConfigService(Path file, NutsApplicationContext context) {
         this(
                 file.getFileName().toString().substring(0, file.getFileName().toString().length() - LocalMysqlConfigService.SERVER_CONFIG_EXT.length()),
-                app
+                context
         );
         loadConfig();
     }
 
-    public LocalMysqlConfigService(String name, LocalMysql app) {
-        this.app = app;
+    public LocalMysqlConfigService(String name, NutsApplicationContext context) {
         setName(name);
-        this.context = app.getContext();
+        this.context = context;
+        sharedConfigFolder = Paths.get(getContext().getVersionFolderFolder(NutsStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT));
     }
 
     public LocalMysqlConfigService setName(String name) {
@@ -67,7 +66,7 @@ public class LocalMysqlConfigService {
     }
 
     private Path getServerConfigPath() {
-        return Paths.get(context.getSharedConfigFolder()).resolve(getName() + SERVER_CONFIG_EXT);
+        return sharedConfigFolder.resolve(getName() + SERVER_CONFIG_EXT);
     }
 
     public String[] parseApps(String[] args) {
@@ -98,7 +97,7 @@ public class LocalMysqlConfigService {
             saveConfig();
             return this;
         }
-        throw new NoSuchElementException("Config not found : " + name);
+        throw new NoSuchElementException("config not found : " + name);
     }
 
     public LocalMysqlConfigService removeConfig() {
@@ -120,10 +119,23 @@ public class LocalMysqlConfigService {
         return this;
     }
 
-    public LocalMysqlDatabaseConfigService getDatabase(String dbName) {
-        return getDatabaseOrError(dbName);
-    }
+    public LocalMysqlDatabaseConfigService getDatabase(String dbName, NMySqlService.NotFoundAction action) {
+        dbName = FileUtils.toValidFileName(dbName, "default");
+        LocalMysqlDatabaseConfig a = getConfig().getDatabases().get(dbName);
+        if (a == null) {
+            switch (action){
+                case NULL:return null;
+                case ERROR:throw new NutsIllegalArgumentException(context.getWorkspace(),"local instance not found:"+dbName+"@"+getName());
+                case CREATE:{
+                    a = new LocalMysqlDatabaseConfig();
+                    getConfig().getDatabases().put(dbName, a);
+                    break;
+                }
+            }
 
+        }
+        return new LocalMysqlDatabaseConfigService(dbName, a, this);
+    }
     public LocalMysqlDatabaseConfigService getDatabaseOrNull(String dbName) {
         dbName = FileUtils.toValidFileName(dbName, "default");
         LocalMysqlDatabaseConfig a = getConfig().getDatabases().get(dbName);
@@ -158,10 +170,6 @@ public class LocalMysqlConfigService {
             a.add(new LocalMysqlDatabaseConfigService(s, getConfig().getDatabases().get(s), this));
         }
         return a;
-    }
-
-    public LocalMysql getMysqlServer() {
-        return app;
     }
 
     public NutsApplicationContext getContext() {

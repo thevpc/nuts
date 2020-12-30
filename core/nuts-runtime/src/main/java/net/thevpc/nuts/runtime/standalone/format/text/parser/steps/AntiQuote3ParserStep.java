@@ -121,7 +121,7 @@ public class AntiQuote3ParserStep extends ParserStep {
 
     @Override
     public void appendChild(ParserStep tt) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("unsupported operation: appendChild");
     }
 
     @Override
@@ -194,6 +194,15 @@ public class AntiQuote3ParserStep extends ParserStep {
             }
         }
         if(value.isEmpty()){
+            if(w.length()>0 && cmd.length()>0){
+                return factory0.createCode(
+                        start.toString(),
+                        cmd,
+                        w.toString(),
+                        end.toString(),
+                        value
+                );
+            }
             return factory0.createCode(
                     start.toString(),
                     "",

@@ -1140,7 +1140,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                             .setContent(true)
                             .setFailFast(false)
                             .getResultDefinition();
-                    if (def != null) {
+                    if (def != null && def.getPath()!=null) {
                         ws.io().copy().from(def.getPath()).to(jarFile).setSession(session).run();
                         return;
                     }

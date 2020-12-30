@@ -3,6 +3,7 @@ package net.thevpc.nuts.toolbox.tomcat.local;
 import net.thevpc.common.io.LineSource;
 import net.thevpc.common.io.TextFiles;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.toolbox.tomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.tomcat.util.*;
 import net.thevpc.common.io.PosApis;
 import net.thevpc.nuts.toolbox.tomcat.local.config.LocalTomcatAppConfig;
@@ -34,6 +35,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     private NutsApplicationContext context;
     private NutsDefinition catalinaNutsDefinition;
     private String catalinaVersion;
+    private Path sharedConfigFolder;
 
     public LocalTomcatConfigService(Path file, LocalTomcat app) {
         this(
@@ -47,6 +49,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         this.app = app;
         setName(name);
         this.context = app.getContext();
+        sharedConfigFolder = Paths.get(app.getContext().getVersionFolderFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT));
     }
 
     public LocalTomcatConfigService setName(String name) {
@@ -111,7 +114,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     public Path getConfigPath() {
-        return Paths.get(context.getSharedConfigFolder()).resolve(getName() + LOCAL_CONFIG_EXT);
+        return sharedConfigFolder.resolve(getName() + LOCAL_CONFIG_EXT);
     }
 
     public boolean existsConfig() {
@@ -152,7 +155,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if (x2 > 0) {
                 v = v.substring(0, x2);
             }
-            catalinaBase = Paths.get(context.getVarFolder()).resolve("catalina-base-" + v).resolve("default");
+            catalinaBase = Paths.get(context.getSharedConfigFolder()).resolve("catalina-base-" + v).resolve("default");
         } else {
             if (!catalinaBase.isAbsolute()) {
                 String v = getValidCatalinaVersion();
@@ -161,7 +164,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 if (x2 > 0) {
                     v = v.substring(0, x2);
                 }
-                catalinaBase = Paths.get(context.getVarFolder()).resolve("catalina-base-" + v).resolve(catalinaBase);
+                catalinaBase = Paths.get(context.getSharedConfigFolder()).resolve("catalina-base-" + v).resolve(catalinaBase);
             }
         }
         return catalinaBase;
@@ -680,7 +683,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public LocalTomcatConfigService loadConfig() {
         String name = getName();
-        Path f = Paths.get(context.getSharedConfigFolder()).resolve(name + LOCAL_CONFIG_EXT);
+        Path f = sharedConfigFolder.resolve(name + LOCAL_CONFIG_EXT);
         if (Files.exists(f)) {
             config = context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(f, LocalTomcatConfig.class);
             return this;
@@ -696,7 +699,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     @Override
     public LocalTomcatConfigService remove() {
         try {
-            Files.delete(Paths.get(context.getSharedConfigFolder()).resolve(getName() + LOCAL_CONFIG_EXT));
+            Files.delete(sharedConfigFolder.resolve(getName() + LOCAL_CONFIG_EXT));
             return this;
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

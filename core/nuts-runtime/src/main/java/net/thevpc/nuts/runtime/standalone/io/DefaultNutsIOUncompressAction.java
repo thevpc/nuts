@@ -260,10 +260,10 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
     private void runZip(){
         NutsInput _source = source;
         if (_source == null) {
-            throw new UnsupportedOperationException("missing source");
+            throw new NutsIllegalArgumentException(iom.getWorkspace(),"missing source");
         }
         if (target == null) {
-            throw new UnsupportedOperationException("missing target");
+            throw new NutsIllegalArgumentException(iom.getWorkspace(),"missing target");
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
             _source = iom.monitor().source(_source).setSession(session)

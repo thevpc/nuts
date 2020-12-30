@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.tomcat.local;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.toolbox.tomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.tomcat.util.NamedItemNotFoundException;
 import net.thevpc.nuts.toolbox.tomcat.util.RunningTomcat;
 import net.thevpc.nuts.toolbox.tomcat.util.TomcatUtils;
@@ -18,10 +19,12 @@ public class LocalTomcat {
 
     private NutsApplicationContext context;
     private NutsCommandLine cmdLine;
+    private Path sharedConfigFolder;
 
-    public LocalTomcat(NutsApplicationContext ws, NutsCommandLine cmdLine) {
-        this.setContext(ws);
+    public LocalTomcat(NutsApplicationContext applicationContext, NutsCommandLine cmdLine) {
+        this.setContext(applicationContext);
         this.cmdLine = cmdLine;
+        sharedConfigFolder = Paths.get(applicationContext.getVersionFolderFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT));
     }
 
     public void runArgs() {
@@ -836,7 +839,6 @@ public class LocalTomcat {
 
     public LocalTomcatConfigService[] listConfig() {
         List<LocalTomcatConfigService> all = new ArrayList<>();
-        Path sharedConfigFolder = Paths.get(getContext().getSharedConfigFolder());
         if (Files.isDirectory(sharedConfigFolder)) {
             try (DirectoryStream<Path> pp = Files.newDirectoryStream(sharedConfigFolder,
                     (Path entry) -> entry.getFileName().toString().endsWith(LocalTomcatConfigService.LOCAL_CONFIG_EXT))) {

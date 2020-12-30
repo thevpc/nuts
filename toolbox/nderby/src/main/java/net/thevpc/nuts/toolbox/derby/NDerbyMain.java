@@ -13,12 +13,12 @@ import java.io.PrintStream;
 /**
  * @author thevpc
  */
-public class DerbyMain extends NutsApplication {
+public class NDerbyMain extends NutsApplication {
 
     private NutsApplicationContext appContext;
 
     public static void main(String[] args) {
-        new DerbyMain().runAndExit(args);
+        new NDerbyMain().runAndExit(args);
     }
 
     @Override

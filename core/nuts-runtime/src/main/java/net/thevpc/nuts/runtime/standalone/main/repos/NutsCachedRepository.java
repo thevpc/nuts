@@ -200,7 +200,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 NutsContent c2 = null;
                 RuntimeException impl2Ex = null;
                 try {
-                    c2 = fetchContentCore(id, descriptor, localPath.toString(), fetchMode, session);
+                    c2 = fetchContentCore(id, descriptor, localPath, fetchMode, session);
                 } catch (RuntimeException ex) {
                     impl2Ex = ex;
                 }

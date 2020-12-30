@@ -29,7 +29,7 @@ public class StringReaderExt {
     public String peekChars(int max) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < max; i++) {
-            if (hasNext()) {
+            if (hasNext(i)) {
                 sb.append(peekChar(i));
             } else {
                 break;

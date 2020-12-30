@@ -172,6 +172,8 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      */
     String getCacheFolder();
 
+    String getVersionFolderFolder(NutsStoreLocation location, String version);
+
     String getSharedAppsFolder();
 
     String getSharedConfigFolder();
@@ -343,5 +345,8 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      * @since 0.7.1
      */
     void configureLast(NutsCommandLine commandLine);
-    
+
+    NutsAppVersionStoreLocationSupplier getAppVersionStoreLocationSupplier();
+
+    NutsApplicationContext setAppVersionStoreLocationSupplier(NutsAppVersionStoreLocationSupplier appVersionStoreLocationSupplier);
 }

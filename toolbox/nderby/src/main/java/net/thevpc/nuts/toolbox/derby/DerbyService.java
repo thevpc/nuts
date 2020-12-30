@@ -172,12 +172,12 @@ public class DerbyService {
 
         Path derbyDataHome = null;
         if (options.derbyDataHomeReplace != null) {
-            derbyDataHome = Paths.get(appContext.getVarFolder());
+            derbyDataHome = Paths.get(appContext.getSharedVarFolder());
         } else {
             if (options.derbyDataHomeRoot != null && options.derbyDataHomeRoot.trim().length() > 0) {
-                derbyDataHome = Paths.get(getAbsoluteFile(options.derbyDataHomeRoot, appContext.getVarFolder().toString()));
+                derbyDataHome = Paths.get(getAbsoluteFile(options.derbyDataHomeRoot, appContext.getSharedVarFolder().toString()));
             } else {
-                derbyDataHome = Paths.get(appContext.getVarFolder()).resolve("derby-db");
+                derbyDataHome = Paths.get(appContext.getSharedVarFolder()).resolve("derby-db");
             }
         }
         Path derbyDataHomeRoot = derbyDataHome.getParent();
@@ -196,7 +196,7 @@ public class DerbyService {
         Path policy = derbyBinHome.resolve("derby.policy");
         if (!Files.exists(policy) || appContext.getSession().isYes()) {
             try {
-                String permissions = IOUtils.loadString(DerbyMain.class.getResourceAsStream("policy-file.policy"))
+                String permissions = IOUtils.loadString(NDerbyMain.class.getResourceAsStream("policy-file.policy"))
                         .replace("${{DB_PATH}}", derbyDataHomeRoot.toString());
                 Files.write(policy, permissions.getBytes());
             } catch (IOException ex) {

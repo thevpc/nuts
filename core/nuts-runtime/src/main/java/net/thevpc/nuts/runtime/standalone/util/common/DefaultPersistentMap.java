@@ -372,7 +372,7 @@ public class DefaultPersistentMap<K, V> implements PersistentMap<K, V>, AutoClos
 
         @Override
         void writeLob(String name, InputStream out) throws IOException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("unsupported operation: writeLob");
         }
     }
 
@@ -387,7 +387,7 @@ public class DefaultPersistentMap<K, V> implements PersistentMap<K, V>, AutoClos
 
         @Override
         InputStream readLob(String name) throws IOException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("unsupported operation: readLob");
         }
 
     }

@@ -157,7 +157,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 break;
             }
             default:
-                throw new UnsupportedOperationException("Invalid node type : " + node.getClass().getSimpleName());
+                throw new UnsupportedOperationException("invalid node type : " + node.getClass().getSimpleName());
         }
     }
 

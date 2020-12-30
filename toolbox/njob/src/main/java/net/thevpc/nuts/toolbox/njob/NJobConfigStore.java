@@ -16,14 +16,18 @@ import java.util.UUID;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class NDal {
+public class NJobConfigStore {
     private NutsApplicationContext context;
     private NutsElementFormat json;
+    private Path dbPath;
 
-    public NDal(NutsApplicationContext context) {
-        this.context = context;
-        json = context.getWorkspace().formats().element().setContentType(NutsContentType.JSON);
+    public NJobConfigStore(NutsApplicationContext applicationContext) {
+        this.context = applicationContext;
+        json = applicationContext.getWorkspace().formats().element().setContentType(NutsContentType.JSON);
         json.setCompact(false);
+        //ensure we always consider the latest config version
+        dbPath = Paths.get(applicationContext.getVersionFolderFolder(NutsStoreLocation.CONFIG, NJobConfigVersions.CURRENT))
+        .resolve("db");
     }
 
     private Field getKeyField(Class o) {
@@ -34,7 +38,7 @@ public class NDal {
                 return declaredField;
             }
         }
-        throw new RuntimeException("@Id field Not found");
+        throw new RuntimeException("missing @Id field");
     }
 
     private Object getKey(Object o) {
@@ -54,7 +58,7 @@ public class NDal {
     }
 
     private Path getFile(String entityName, Object id) {
-        return Paths.get(context.getVarFolder()).resolve("db").resolve(entityName).resolve(id + ".json");
+        return dbPath.resolve(entityName).resolve(id + ".json");
     }
 
     public <T> Stream<T> search(Class<T> type) {

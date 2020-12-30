@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
@@ -23,6 +24,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     private long startTimeMillis;
     private String[] args;
     private NutsApplicationMode mode = NutsApplicationMode.RUN;
+    private NutsAppVersionStoreLocationSupplier appVersionStoreLocationSupplier;
 
     /**
      * previous parse for "update" mode
@@ -106,7 +108,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         NutsWorkspaceConfigManager cfg = workspace.config();
         for (NutsStoreLocation folder : NutsStoreLocation.values()) {
             setFolder(folder, workspace.locations().getStoreLocation(this.appId, folder));
-            setSharedFolder(folder, workspace.locations().getStoreLocation(this.appId.builder().setVersion(NutsConstants.Versions.RELEASE).build(), folder));
+            setSharedFolder(folder, workspace.locations().getStoreLocation(this.appId.builder().setVersion("SHARED").build(), folder));
         }
         if (mode == NutsApplicationMode.AUTO_COMPLETE) {
             this.workspace.io().term().getSystemTerminal().setMode(NutsTerminalMode.FILTERED);
@@ -310,6 +312,25 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return folders[location.ordinal()];
     }
 
+    @Override
+    public String getVersionFolderFolder(NutsStoreLocation location, String version) {
+        if(version==null
+                || version.isEmpty()
+                || version.equalsIgnoreCase("current")
+                || version.equals(getAppId().getVersion().getValue())){
+            return getFolder(location);
+        }
+        if(appVersionStoreLocationSupplier !=null){
+            String r = appVersionStoreLocationSupplier.getStoreLocation(location,version);
+            if(r!=null) {
+                return r;
+            }
+        }
+        return workspace.locations().getStoreLocation(
+                this.getAppId().builder().setVersion(version).build()
+                , location);
+    }
+
     public NutsApplicationContext setFolder(NutsStoreLocation location, String folder) {
         this.folders[location.ordinal()] = folder;
         return this;
@@ -483,4 +504,14 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         }
     }
 
+    @Override
+    public NutsAppVersionStoreLocationSupplier getAppVersionStoreLocationSupplier() {
+        return appVersionStoreLocationSupplier;
+    }
+
+    @Override
+    public NutsApplicationContext setAppVersionStoreLocationSupplier(NutsAppVersionStoreLocationSupplier appVersionStoreLocationSupplier) {
+        this.appVersionStoreLocationSupplier = appVersionStoreLocationSupplier;
+        return this;
+    }
 }

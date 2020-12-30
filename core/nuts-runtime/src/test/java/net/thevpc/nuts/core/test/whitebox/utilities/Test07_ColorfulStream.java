@@ -477,6 +477,7 @@ public class Test07_ColorfulStream {
         }
 
     }
+
     @Test
     public void test18() {
         NutsWorkspace ws = Nuts.openWorkspace();
@@ -490,6 +491,21 @@ public class Test07_ColorfulStream {
                     .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setNumberTitles(true));
             w.writeNode(node);
         }
+    }
 
+    @Test
+    public void test19() {
+        NutsWorkspace ws = Nuts.openWorkspace();
+        {
+            String t_string =
+                    "```sh ```"
+                    ;
+            NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_string));
+            System.out.println();
+            Assertions.assertTrue(node instanceof NutsTextNodeCode);
+            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
+                    .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setNumberTitles(true));
+            w.writeNode(node);
+        }
     }
 }

@@ -204,10 +204,10 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
 
     public void runZip() {
         if (sources.isEmpty()) {
-            throw new UnsupportedOperationException("missing source");
+            throw new NutsIllegalArgumentException(iom.getWorkspace(),"missing source");
         }
         if (target == null) {
-            throw new UnsupportedOperationException("missing target");
+            throw new NutsIllegalArgumentException(iom.getWorkspace(),"missing target");
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
             //how to monitor???

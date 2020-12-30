@@ -20,7 +20,7 @@ public class LocalMysqlDatabaseConfigService {
         this.name = name;
         this.config = config;
         this.mysql = mysql;
-        this.context = mysql.getMysqlServer().getContext();
+        this.context = mysql.getContext();
     }
 
     public LocalMysqlDatabaseConfig getConfig() {

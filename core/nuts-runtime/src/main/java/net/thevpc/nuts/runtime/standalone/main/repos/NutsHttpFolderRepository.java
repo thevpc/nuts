@@ -295,7 +295,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                         getWorkspace().io().copy().setSession(session).from(location.getUrl()).to(localFile).safe().logProgress().run();
                         return new NutsDefaultContent(localFile, false, false);
                     } catch (Exception ex) {
-                        LOG.with().session(session).level(Level.SEVERE).error(ex).log("Unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), CoreStringUtils.exceptionToString(ex));
+                        LOG.with().session(session).level(Level.SEVERE).error(ex).log("unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), CoreStringUtils.exceptionToString(ex));
                     }
                 }
             }

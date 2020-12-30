@@ -163,7 +163,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                 break;
             }
             default: {
-                throw new UnsupportedOperationException("Unsupported NutsTextNode type " + node.getClass().getSimpleName());
+                throw new UnsupportedOperationException("unsupported NutsTextNode type " + node.getClass().getSimpleName());
             }
         }
     }

@@ -310,10 +310,10 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
     public NutsIOCopyAction run() {
         NutsInput _source = source;
         if (_source == null) {
-            throw new UnsupportedOperationException("missing source");
+            throw new NutsIllegalArgumentException(iom.getWorkspace(),"missing source");
         }
         if (target == null) {
-            throw new UnsupportedOperationException("missing target");
+            throw new NutsIllegalArgumentException(iom.getWorkspace(),"missing target");
         }
         if (_source.isPath()) {
             if (Files.isDirectory(_source.getPath())) {
