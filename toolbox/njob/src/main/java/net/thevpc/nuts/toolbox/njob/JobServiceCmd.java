@@ -857,7 +857,7 @@ public class JobServiceCmd {
         context.getSession().out().printf("##%s## project%s\n", projectsCount, projectsCount == 1 ? "" : "s");
         context.getSession().out().printf("##%s## open task%s\n", tasksCount, tasksCount == 1 ? "" : "s");
         context.getSession().out().printf("##%s## job%s %s\n", allJobsCount, allJobsCount == 1 ? "" : "s",
-                allJobsCount == 0 ? "" : new NutsString(
+                allJobsCount == 0 ? "" : NutsString.of(
                         "(##" + jobsCount + "## this month)"
                 )
         );
@@ -1239,7 +1239,7 @@ public class JobServiceCmd {
             r.forEach(x -> {
                 NutsString durationString = ws.formats().text().builder()
                         .appendStyled(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)),NutsTextNodeStyle.KEYWORD1)
-                        .toNutsString();
+                        .immutable();
                 index[0]++;
                 lastResults.add(x);
                 m.newRow().addCells(
@@ -1253,7 +1253,7 @@ public class JobServiceCmd {
 
                                 } : new Object[]{
                                 createHashId(index[0], -1),
-                                ws.formats().text().builder().appendStyled(x.getId(),NutsTextNodeStyle.PALE1).toNutsString(),
+                                ws.formats().text().builder().appendStyled(x.getId(),NutsTextNodeStyle.PALE1).immutable(),
                                 getFormattedDate(x.getStartTime()),
                                 durationString,
                                 getFormattedProject(x.getProject() == null ? "*" : x.getProject()),
@@ -1478,14 +1478,14 @@ public class JobServiceCmd {
                 getFlagString(x.getFlag()),
                 getStatusString(x.getStatus()),
                 getPriorityString(x.getPriority()),
-                dte.toNutsString(),
+                dte.immutable(),
                 getFormattedProject(projectName),
                 x.getName()
         };
     }
 
     private NutsString getFormattedProject(String projectName) {
-        return ws.formats().text().builder().appendHashedStyle(projectName).toNutsString();
+        return ws.formats().text().builder().appendHashedStyle(projectName).immutable();
     }
 
     private String getFormattedDate(Instant x) {
@@ -1500,74 +1500,74 @@ public class JobServiceCmd {
 
     private NutsString getCheckedString(Boolean x) {
         if (x == null) {
-            return new NutsString("");
+            return NutsString.of("");
         }
         if (x) {
-            return new NutsString("\u2611");
+            return NutsString.of("\u2611");
         } else {
-            return new NutsString("\u25A1");
+            return NutsString.of("\u25A1");
         }
     }
 
     private NutsString getPriorityString(NPriority x) {
         if (x == null) {
-            return new NutsString("N");
+            return NutsString.of("N");
         }
         switch (x) {
             case NONE:
-                return new NutsString("```pale 0```ø");
+                return NutsString.of("```pale 0```ø");
             case LOW:
-                return new NutsString("```pale L```ø");
+                return NutsString.of("```pale L```ø");
             case NORMAL:
-                return new NutsString("N");
+                return NutsString.of("N");
             case MEDIUM:
-                return new NutsString("##M##ø");
+                return NutsString.of("##M##ø");
             case URGENT:
-                return new NutsString("###U###ø");
+                return NutsString.of("###U###ø");
             case HIGH:
-                return new NutsString("####H####ø");
+                return NutsString.of("####H####ø");
             case CRITICAL:
-                return new NutsString("```error C```ø");
+                return NutsString.of("```error C```ø");
         }
-        return new NutsString("?");
+        return NutsString.of("?");
     }
 
     private NutsString getStatusString(NTaskStatus x) {
         if (x == null) {
-            return new NutsString("*");
+            return NutsString.of("*");
         }
         switch (x) {
             case TODO:
-//                return new NutsString("\u2B58");
-                return new NutsString("\u24c9");
-//            case TODO:return new NutsString("\u25A1");
+//                return new NutsImmutableString("\u2B58");
+                return NutsString.of("\u24c9");
+//            case TODO:return new NutsImmutableString("\u25A1");
             case DONE:
-                return new NutsString("ø```success \u2611```ø");
-//            case WIP:return new NutsString("##\u25B6##");
+                return NutsString.of("ø```success \u2611```ø");
+//            case WIP:return new NutsImmutableString("##\u25B6##");
             case WIP:
-                return new NutsString("##\u24CC##ø");
-//                return new NutsString("##\u25F6##");
+                return NutsString.of("##\u24CC##ø");
+//                return new NutsImmutableString("##\u25F6##");
             case CANCELLED:
-//                return new NutsString("@@\u2613@@");
-//                return new NutsString("@@\u2421@@");
-//                return new NutsString("@@\u26C3@@");
-                return new NutsString("```error \u2718```ø");
+//                return new NutsImmutableString("@@\u2613@@");
+//                return new NutsImmutableString("@@\u2421@@");
+//                return new NutsImmutableString("@@\u26C3@@");
+                return NutsString.of("```error \u2718```ø");
         }
-        return new NutsString("?");
+        return NutsString.of("?");
     }
 
-    private NutsString getFlagString(String x,int index) {
+    private NutsString getFlagString(String x, int index) {
         switch (index) {
             case 1:
-                return new NutsString("##"+x+"##ø");
+                return NutsString.of("##"+x+"##ø");
             case 2:
-                return new NutsString("###"+x+"###ø");
+                return NutsString.of("###"+x+"###ø");
             case 3:
-                return new NutsString("####"+x+"####ø");
+                return NutsString.of("####"+x+"####ø");
             case 4:
-                return new NutsString("#####"+x+"#####ø");
+                return NutsString.of("#####"+x+"#####ø");
             case 5:
-                return new NutsString("######"+x+"######ø");
+                return NutsString.of("######"+x+"######ø");
         }
         throw new IllegalArgumentException("Invalid index "+index);
     }
@@ -1578,7 +1578,7 @@ public class JobServiceCmd {
         }
         switch (x) {
             case NONE:
-                return new NutsString("\u2690");
+                return NutsString.of("\u2690");
 
             case STAR1:
                 return getFlagString("\u2605",1);
@@ -1635,7 +1635,7 @@ public class JobServiceCmd {
             case PHONE5:
                 return getFlagString("\u260E",5);
         }
-        return new NutsString("[" + x.toString().toLowerCase() + "]");
+        return NutsString.of("[" + x.toString().toLowerCase() + "]");
     }
 
     private void runProjectList(NutsCommandLine cmd) {

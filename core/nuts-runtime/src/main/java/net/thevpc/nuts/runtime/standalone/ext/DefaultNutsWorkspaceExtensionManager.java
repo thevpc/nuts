@@ -402,7 +402,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                     loadedExtensionIds.add(extension);
                     LOG.with().session(session).verb(NutsLogVerb.SUCCESS)
                             .style(NutsTextFormatStyle.CSTYLE)
-                            .log("extension %s loaded",new NutsString(ws.id().formatter(def.getId()).format()));
+                            .log("extension %s loaded",NutsString.of(ws.id().formatter(def.getId()).format()));
                     someUpdates=true;
                 }
             }
@@ -433,7 +433,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             ).findFirst().orElse(null);
             if (u != null) {
                 if(session.isPlainTrace()){
-                    session.out().printf("extensions %s unloaded\n",new NutsString(ws.id().formatter(u).format()));
+                    session.out().printf("extensions %s unloaded\n",NutsString.of(ws.id().formatter(u).format()));
                 }
                 loadedExtensionIds.remove(u);
                 unloadedExtensions.add(u);

@@ -3,7 +3,7 @@ package net.thevpc.nuts;
 /**
  * @category Format
  */
-public interface NutsTextNodeBuilder extends NutsStringBase{
+public interface NutsTextNodeBuilder extends NutsString {
     NutsTextNodeWriteConfiguration getWriteConfiguration();
 
     NutsTextNodeBuilder setWriteConfiguration(NutsTextNodeWriteConfiguration writeConfiguration);
@@ -24,7 +24,7 @@ public interface NutsTextNodeBuilder extends NutsStringBase{
 
     NutsTextNodeBuilder append(NutsTextNode node);
 
-    NutsTextNodeBuilder append(NutsStringBase str);
+    NutsTextNodeBuilder append(NutsString str);
 
     NutsTextNode build();
 

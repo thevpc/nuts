@@ -248,7 +248,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
         }
 
         if (runtimeOptions || isImplicitAll()) {
-            if (!(omitDefaults && (options.getOpenMode() == null || options.getOpenMode() == NutsWorkspaceOpenMode.OPEN_OR_CREATE))) {
+            if (!(omitDefaults && (options.getOpenMode() == null || options.getOpenMode() == NutsOpenMode.OPEN_OR_CREATE))) {
                 fillOption(options.getOpenMode(), arguments, false);
             }
             fillOption(options.getExecutionType(), arguments, false);
@@ -398,13 +398,13 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
     private boolean tryFillOptionShort(Enum value, List<String> arguments, boolean forceSingle) {
         if (value != null) {
             if (shortOptions) {
-                if (value instanceof NutsWorkspaceOpenMode) {
-                    switch ((NutsWorkspaceOpenMode) value) {
-                        case OPEN_EXISTING: {
+                if (value instanceof NutsOpenMode) {
+                    switch ((NutsOpenMode) value) {
+                        case OPEN_OR_ERROR: {
                             fillOption0("-o", "r", arguments, forceSingle);
                             return true;
                         }
-                        case CREATE_NEW: {
+                        case CREATE_OR_ERROR: {
                             fillOption0("-o", "w", arguments, forceSingle);
                             return true;
                         }
@@ -412,6 +412,10 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                             if (!omitDefaults) {
                                 fillOption0("-o", "rw", arguments, forceSingle);
                             }
+                            return true;
+                        }
+                        case OPEN_OR_NULL: {
+                            fillOption0("-o", "on", arguments, forceSingle);
                             return true;
                         }
                     }

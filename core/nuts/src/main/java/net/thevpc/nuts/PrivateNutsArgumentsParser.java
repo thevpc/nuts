@@ -882,14 +882,14 @@ final class PrivateNutsArgumentsParser {
                     case "--open": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
-                            options.setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING);
+                            options.setOpenMode(NutsOpenMode.OPEN_OR_ERROR);
                         }
                         break;
                     }
                     case "--create": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
-                            options.setOpenMode(NutsWorkspaceOpenMode.CREATE_NEW);
+                            options.setOpenMode(NutsOpenMode.CREATE_OR_ERROR);
                         }
                         break;
                     }
@@ -1261,7 +1261,7 @@ final class PrivateNutsArgumentsParser {
         throw new IllegalArgumentException("Unable to parse value for NutsTerminalMode : " + s0);
     }
 
-    private static NutsWorkspaceOpenMode parseNutsWorkspaceOpenMode(String s) {
+    private static NutsOpenMode parseNutsWorkspaceOpenMode(String s) {
         String s0 = s;
         if (s == null || s.isEmpty()) {
             return null;
@@ -1272,7 +1272,7 @@ final class PrivateNutsArgumentsParser {
             case "READ":
             case "O":
             case "OPEN": {
-                return NutsWorkspaceOpenMode.OPEN_EXISTING;
+                return NutsOpenMode.OPEN_OR_ERROR;
             }
             case "W":
             case "WRITE":
@@ -1280,7 +1280,7 @@ final class PrivateNutsArgumentsParser {
             case "NEW":
             case "C":
             case "CREATE": {
-                return NutsWorkspaceOpenMode.CREATE_NEW;
+                return NutsOpenMode.CREATE_OR_ERROR;
             }
             case "RW":
             case "R_W":
@@ -1291,10 +1291,10 @@ final class PrivateNutsArgumentsParser {
             case "OC":
             case "O_C":
             case "OPEN_CREATE": {
-                return NutsWorkspaceOpenMode.OPEN_OR_CREATE;
+                return NutsOpenMode.OPEN_OR_CREATE;
             }
         }
-        throw new IllegalArgumentException("Unable to parse value for NutsWorkspaceOpenMode : " + s0);
+        throw new IllegalArgumentException("Unable to parse value for NutsOpenMode : " + s0);
     }
 
     private static Level parseLevel(String s) {

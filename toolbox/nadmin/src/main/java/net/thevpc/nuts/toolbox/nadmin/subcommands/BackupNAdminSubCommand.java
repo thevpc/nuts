@@ -25,7 +25,6 @@ public class BackupNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
     public boolean exec(NutsCommandLine commandLine, Boolean autoSave, NutsApplicationContext context) {
-        NutsCommandLineManager commandLineFormat = context.getWorkspace().commandLine();
         if (commandLine.next("backup") != null) {
             commandLine.setCommandName("nadmin backup");
             String file = null;

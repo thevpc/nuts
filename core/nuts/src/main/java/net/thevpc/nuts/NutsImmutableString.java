@@ -26,11 +26,44 @@
  */
 package net.thevpc.nuts;
 
-/**
- * @category Base
- */
-public interface NutsStringBase {
-    NutsString toNutsString();
+import java.util.Objects;
 
-    String toString();
+/**
+ * 
+ * @author thevpc
+ * @category Format
+ */
+public class NutsImmutableString implements NutsString {
+    private final String value;
+
+    public NutsImmutableString(String value) {
+        this.value = value == null ? "" : value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsImmutableString that = (NutsImmutableString) o;
+        return value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
+
+    @Override
+    public NutsImmutableString immutable() {
+        return this;
+    }
 }

@@ -134,7 +134,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     NutsWorkspaceOptionsBuilder setSkipWelcome(Boolean skipWelcome);
 
-    NutsWorkspaceOptionsBuilder setOpenMode(NutsWorkspaceOpenMode openMode);
+    NutsWorkspaceOptionsBuilder setOpenMode(NutsOpenMode openMode);
 
     NutsWorkspaceOptionsBuilder setConfirm(NutsConfirmationMode confirm);
 

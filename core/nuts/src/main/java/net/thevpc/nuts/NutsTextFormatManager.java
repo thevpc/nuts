@@ -68,7 +68,7 @@ public interface NutsTextFormatManager {
     /**
      * format string. supports {@link Formatter#format(java.util.Locale, java.lang.String, java.lang.Object...)
      * }
-     * pattern format and adds NutsString special format to print unfiltered strings.
+     * pattern format and adds NutsImmutableString special format to print unfiltered strings.
      *
      *
      * @param session session
@@ -83,7 +83,7 @@ public interface NutsTextFormatManager {
     /**
      * format string. supports {@link Formatter#format(java.lang.String, java.lang.Object...)
      * }
-     * pattern format and adds NutsString special format to print unfiltered strings.
+     * pattern format and adds NutsImmutableString special format to print unfiltered strings.
      *
      *
      * @param session session

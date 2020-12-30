@@ -1,13 +1,13 @@
 package net.thevpc.nuts.toolbox.nmysql;
 
 import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsOpenMode;
 import net.thevpc.nuts.NutsStoreLocation;
 import net.thevpc.nuts.toolbox.nmysql.local.LocalMysqlConfigService;
-import net.thevpc.nuts.toolbox.nmysql.local.LocalMysqlDatabaseConfigService;
 import net.thevpc.nuts.toolbox.nmysql.local.config.LocalMysqlConfig;
 import net.thevpc.nuts.toolbox.nmysql.remote.RemoteMysqlConfigService;
 import net.thevpc.nuts.toolbox.nmysql.remote.config.RemoteMysqlConfig;
-import net.thevpc.nuts.toolbox.nmysql.util.AtName;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -53,20 +53,23 @@ public class NMySqlService {
 
 
 
-    public LocalMysqlConfigService loadLocalMysqlConfig(String name, NotFoundAction action) {
+    public LocalMysqlConfigService loadLocalMysqlConfig(String name, NutsOpenMode action) {
         LocalMysqlConfigService t = new LocalMysqlConfigService(name, context);
         if (t.existsConfig()) {
+            if(action==NutsOpenMode.CREATE_OR_ERROR){
+                throw new NutsIllegalArgumentException(context.getWorkspace(),"local mysql config already exist: " + name);
+            }
             t.loadConfig();
         } else {
             switch (action){
-                case CREATE:{
+                case OPEN_OR_CREATE:{
                     t.setConfig(new LocalMysqlConfig());
                     break;
                 }
-                case ERROR:{
-                    throw new IllegalArgumentException("no such local mysql config " + name);
+                case OPEN_OR_ERROR:{
+                    throw new NutsIllegalArgumentException(context.getWorkspace(),"no such local mysql config: " + name);
                 }
-                case NULL:{
+                case OPEN_OR_NULL:{
                     t=null;
                     break;
                 }
@@ -75,20 +78,27 @@ public class NMySqlService {
         return t;
     }
 
-    public RemoteMysqlConfigService loadRemoteMysqlConfig(String name, NotFoundAction action) {
+    public RemoteMysqlConfigService loadRemoteMysqlConfig(String name, NutsOpenMode action) {
         RemoteMysqlConfigService t = new RemoteMysqlConfigService(name, context);
         if (t.existsConfig()) {
+            if(action==NutsOpenMode.CREATE_OR_ERROR){
+                throw new NutsIllegalArgumentException(context.getWorkspace(),"remote mysql config already exist: " + name);
+            }
             t.loadConfig();
         } else {
             switch (action){
-                case CREATE:{
+                case OPEN_OR_CREATE:{
                     t.setConfig(new RemoteMysqlConfig());
                      break;
                 }
-                case ERROR:{
-                    throw new IllegalArgumentException("no such remote mysql config " + name);
+                case OPEN_OR_ERROR:{
+                    throw new NutsIllegalArgumentException(context.getWorkspace(),"no such remote mysql config: " + name);
                 }
-                case NULL:{
+                case OPEN_OR_NULL:{
+                    t=null;
+                    break;
+                }
+                case CREATE_OR_ERROR:{
                     t=null;
                     break;
                 }
@@ -132,12 +142,4 @@ public class NMySqlService {
         }
         return all.toArray(new RemoteMysqlConfigService[0]);
     }
-
-
-    public enum NotFoundAction{
-        CREATE,
-        ERROR,
-        NULL
-    }
-
 }

@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.text.parser.DefaultNutsTextNodeParser;
+import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 
 public class FormattedPrintStreamUtils {
 
@@ -36,14 +37,17 @@ public class FormattedPrintStreamUtils {
 //    }
 
     public static boolean isSpecialFormattedObject(Object a) {
-        return (a instanceof NutsFormattable) || (a instanceof NutsStringBase) ;
+        return (a instanceof NutsFormattable) || (a instanceof NutsString) ;
     }
 
     public static Object formatArgument(Object a, NutsSession session) {
         if(a instanceof Number && a instanceof Number && a instanceof Date  && a instanceof Temporal) {
             //do nothing
             return a;
-        }else if(a instanceof NutsStringBase){
+        }else if(a instanceof Throwable) {
+            //do nothing
+            return escapeText(CoreStringUtils.exceptionToString((Throwable) a));
+        }else if(a instanceof NutsString){
             return String.valueOf(a);
         }else if(a instanceof NutsFormattable){
             if(session==null){

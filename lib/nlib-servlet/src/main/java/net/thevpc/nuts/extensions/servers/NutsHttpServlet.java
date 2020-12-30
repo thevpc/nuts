@@ -29,7 +29,7 @@ import net.thevpc.common.util.Collections2;
 import net.thevpc.common.util.ListValueMap;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsWorkspaceOpenMode;
+import net.thevpc.nuts.NutsOpenMode;
 import net.thevpc.nuts.toolbox.nutsserver.AdminServerConfig;
 import net.thevpc.nuts.toolbox.nutsserver.DefaultNutsWorkspaceServerManager;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServer;
@@ -144,7 +144,7 @@ public class NutsHttpServlet extends HttpServlet {
                 Nuts.createOptions()
                         .setRuntimeId(runtimeId)
                         .setWorkspace(workspaceLocation)
-                        .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)
+                        .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
                         .setArchetype("server")
         );
         DefaultNutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(workspace);
@@ -165,7 +165,7 @@ public class NutsHttpServlet extends HttpServlet {
                         Nuts.createOptions()
                         .setRuntimeId(runtimeId)
                         .setWorkspace(location)
-                        .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)
+                        .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
                         .setArchetype("server")
                 );
                 workspacesByLocation.put(location, ws);

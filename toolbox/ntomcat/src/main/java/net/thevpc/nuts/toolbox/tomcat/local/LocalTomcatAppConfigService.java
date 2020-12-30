@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.tomcat.local;
 
 import net.thevpc.nuts.NutsContentType;
+import net.thevpc.nuts.NutsOpenMode;
 import net.thevpc.nuts.NutsStoreLocation;
-import net.thevpc.nuts.NutsWorkspaceOpenMode;
 import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.toolbox.tomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.tomcat.local.config.LocalTomcatAppConfig;
@@ -105,7 +105,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     }
 
     public Path getDeployFile() {
-        LocalTomcatDomainConfigService d = tomcat.getDomain(getConfig().getDomain(), NutsWorkspaceOpenMode.OPEN_EXISTING);
+        LocalTomcatDomainConfigService d = tomcat.getDomain(getConfig().getDomain(), NutsOpenMode.OPEN_OR_ERROR);
         String deployName = getConfig().getDeployName();
         if (TomcatUtils.isBlank(deployName)) {
             deployName = name + ".war";

@@ -102,7 +102,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         return Nuts.openWorkspace(
                 this.defaultWorkspace.config().optionsBuilder()
                 .setWorkspace(path)
-                .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)
+                .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
                 .setSkipCompanions(true)
         );
     }

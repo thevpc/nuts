@@ -25,8 +25,12 @@
 */
 package net.thevpc.nuts.runtime.standalone.util.io;
 
+import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.NutsWorkspace;
+
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
 
 public class PipeThread extends Thread implements StopMonitor {
 
@@ -36,11 +40,13 @@ public class PipeThread extends Thread implements StopMonitor {
     private long pipedBytesCount = 0;
     private boolean requestStop = false;
     private boolean stopped = false;
+    private NutsWorkspace ws;
 
-    public PipeThread(String name, NonBlockingInputStream in, OutputStream out) {
+    public PipeThread(String name, NonBlockingInputStream in, OutputStream out, NutsWorkspace ws) {
         super(name);
         this.in = in;
         this.out = out;
+        this.ws = ws;
     }
 
     @Override
@@ -55,7 +61,11 @@ public class PipeThread extends Thread implements StopMonitor {
                 try {
                     lock.wait();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    ws.log().of(PipeThread.class).with().session(ws.createSession())
+                            .error(e)
+                            .level(Level.FINEST)
+                            .verb(NutsLogVerb.WARNING)
+                            .log("lock-wait interrupted");
                 }
             }
         }
@@ -82,7 +92,11 @@ public class PipeThread extends Thread implements StopMonitor {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            ws.log().of(PipeThread.class).with().session(ws.createSession())
+                    .error(e)
+                    .level(Level.FINEST)
+                    .verb(NutsLogVerb.WARNING)
+                    .log("pipe-thread exits with error: "+e.toString());
         }
         stopped = true;
         synchronized (lock) {

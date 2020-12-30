@@ -870,8 +870,8 @@ public class ProcessBuilder2 {
         return setFailFast(true);
     }
 
-    private static PipeThread pipe(String name, final NonBlockingInputStream in, final OutputStream out) {
-        PipeThread p = new PipeThread(name, in, out);
+    private PipeThread pipe(String name, final NonBlockingInputStream in, final OutputStream out) {
+        PipeThread p = new PipeThread(name, in, out,ws);
         p.start();
         return p;
     }

@@ -4,7 +4,6 @@ import net.thevpc.common.io.FileUtils;
 import net.thevpc.nuts.*;
 import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.toolbox.nmysql.NMySqlConfigVersions;
-import net.thevpc.nuts.toolbox.nmysql.NMySqlService;
 import net.thevpc.nuts.toolbox.nmysql.local.config.LocalMysqlDatabaseConfig;
 import net.thevpc.nuts.toolbox.nmysql.local.config.LocalMysqlConfig;
 
@@ -97,7 +96,7 @@ public class LocalMysqlConfigService {
             saveConfig();
             return this;
         }
-        throw new NoSuchElementException("config not found : " + name);
+        throw new NutsIllegalArgumentException(context.getWorkspace(),"no such mysql config : " + name);
     }
 
     public LocalMysqlConfigService removeConfig() {
@@ -119,50 +118,41 @@ public class LocalMysqlConfigService {
         return this;
     }
 
-    public LocalMysqlDatabaseConfigService getDatabase(String dbName, NMySqlService.NotFoundAction action) {
+    public LocalMysqlDatabaseConfigService getDatabase(String dbName, NutsOpenMode action) {
         dbName = FileUtils.toValidFileName(dbName, "default");
         LocalMysqlDatabaseConfig a = getConfig().getDatabases().get(dbName);
         if (a == null) {
-            switch (action){
-                case NULL:return null;
-                case ERROR:throw new NutsIllegalArgumentException(context.getWorkspace(),"local instance not found:"+dbName+"@"+getName());
-                case CREATE:{
+            switch (action) {
+                case OPEN_OR_NULL:
+                    return null;
+                case OPEN_OR_ERROR:
+                    throw new NutsIllegalArgumentException(context.getWorkspace(), "local instance not found:" + dbName + "@" + getName());
+                case CREATE_OR_ERROR:
+                case OPEN_OR_CREATE: {
                     a = new LocalMysqlDatabaseConfig();
                     getConfig().getDatabases().put(dbName, a);
-                    break;
+                    return new LocalMysqlDatabaseConfigService(dbName, a, this);
+                }
+                default: {
+                    throw new NutsIllegalArgumentException(context.getWorkspace(), "unexpected error");
                 }
             }
-
         }
-        return new LocalMysqlDatabaseConfigService(dbName, a, this);
-    }
-    public LocalMysqlDatabaseConfigService getDatabaseOrNull(String dbName) {
-        dbName = FileUtils.toValidFileName(dbName, "default");
-        LocalMysqlDatabaseConfig a = getConfig().getDatabases().get(dbName);
-        if (a == null) {
-            return null;
+        switch (action) {
+            case CREATE_OR_ERROR: {
+                throw new NutsIllegalArgumentException(context.getWorkspace(), "local instance not found:" + dbName + "@" + getName());
+            }
+            case OPEN_OR_ERROR:
+            case OPEN_OR_NULL:
+            case OPEN_OR_CREATE: {
+                return new LocalMysqlDatabaseConfigService(dbName, a, this);
+            }
+            default: {
+                throw new NutsIllegalArgumentException(context.getWorkspace(), "unexpected error");
+            }
         }
-        return new LocalMysqlDatabaseConfigService(dbName, a, this);
-    }
-
-    public LocalMysqlDatabaseConfigService getDatabaseOrError(String appName) {
-        LocalMysqlDatabaseConfigService a = getDatabaseOrNull(appName);
-        if (a == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "Database not found :" + appName, 2);
-        }
-        return a;
     }
 
-    public LocalMysqlDatabaseConfigService getDatabaseOrCreate(String dbName) {
-        dbName = FileUtils.toValidFileName(dbName, "default");
-        LocalMysqlDatabaseConfigService a = getDatabaseOrNull(dbName);
-        if (a == null) {
-            LocalMysqlDatabaseConfig c = new LocalMysqlDatabaseConfig();
-            getConfig().getDatabases().put(dbName, c);
-            a = getDatabaseOrNull(dbName);
-        }
-        return a;
-    }
 
     public List<LocalMysqlDatabaseConfigService> getDatabases() {
         List<LocalMysqlDatabaseConfigService> a = new ArrayList<>();

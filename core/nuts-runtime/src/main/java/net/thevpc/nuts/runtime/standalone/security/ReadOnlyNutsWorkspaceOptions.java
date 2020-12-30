@@ -145,7 +145,7 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public NutsWorkspaceOpenMode getOpenMode() {
+    public NutsOpenMode getOpenMode() {
         return options.getOpenMode();
     }
 

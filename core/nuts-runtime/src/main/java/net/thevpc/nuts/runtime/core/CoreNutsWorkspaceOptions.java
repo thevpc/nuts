@@ -199,7 +199,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private NutsWorkspaceOpenMode openMode = NutsWorkspaceOpenMode.OPEN_OR_CREATE;
+    private NutsOpenMode openMode = NutsOpenMode.OPEN_OR_CREATE;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -902,7 +902,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setOpenMode(NutsWorkspaceOpenMode openMode) {
+    public NutsWorkspaceOptionsBuilder setOpenMode(NutsOpenMode openMode) {
         this.openMode = openMode;
         return this;
     }
@@ -1177,7 +1177,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public NutsWorkspaceOpenMode getOpenMode() {
+    public NutsOpenMode getOpenMode() {
         return openMode;
     }
 

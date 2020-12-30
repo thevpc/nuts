@@ -95,7 +95,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
     }
 
     @Override
-    public NutsTextNodeBuilder append(NutsStringBase str) {
+    public NutsTextNodeBuilder append(NutsString str) {
         if(str!=null){
             NutsTextNode n = ws.formats().text().parser().parse(new StringReader(str.toString()));
             if(n!=null){
@@ -111,16 +111,16 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
     }
 
     @Override
-    public NutsString toNutsString() {
+    public NutsString immutable() {
         ByteArrayOutputStream out=new ByteArrayOutputStream();
         NutsTextNodeWriterStringer ss=new NutsTextNodeWriterStringer(out);
         ss.writeNode(build(),getWriteConfiguration());
-        return new NutsString(out.toString());
+        return NutsString.of(out.toString());
     }
 
     @Override
     public String toString() {
-        return toNutsString().toString();
+        return immutable().toString();
     }
 
     @Override
@@ -140,7 +140,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
         NutsTextNode v;
         if(text instanceof NutsTextNode) {
             v = (NutsTextNode) text;
-        }else if(text instanceof NutsStringBase){
+        }else if(text instanceof NutsString){
             v=ws.formats().text().parser().parse(new StringReader(text.toString()));
         }else if(text instanceof CharSequence){
             v=ws.formats().text().factory().plain((String) text);

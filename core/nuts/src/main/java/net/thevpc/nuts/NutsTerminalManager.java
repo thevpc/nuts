@@ -101,12 +101,12 @@ public interface NutsTerminalManager {
     NutsSessionTerminal createTerminal(NutsTerminalBase parent, NutsSession session);
 
     /**
-     * prepare PrintStream to handle NutsString aware format pattern. If the instance
+     * prepare PrintStream to handle NutsImmutableString aware format pattern. If the instance
      * already supports Nuts specific pattern it will be returned unmodified.
      *
      * @param out PrintStream to check
      * @param session session
-     * @return NutsString pattern format capable PrintStream
+     * @return NutsImmutableString pattern format capable PrintStream
      */
     PrintStream prepare(PrintStream out, NutsSession session);
 

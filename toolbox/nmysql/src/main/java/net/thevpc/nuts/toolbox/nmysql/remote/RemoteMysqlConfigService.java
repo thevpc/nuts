@@ -1,13 +1,14 @@
 package net.thevpc.nuts.toolbox.nmysql.remote;
 
-import net.thevpc.nuts.*;
 import net.thevpc.common.io.FileUtils;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nmysql.NMySqlConfigVersions;
-import net.thevpc.nuts.toolbox.nmysql.NMySqlService;
-import net.thevpc.nuts.toolbox.nmysql.remote.config.RemoteMysqlDatabaseConfig;
 import net.thevpc.nuts.toolbox.nmysql.remote.config.RemoteMysqlConfig;
+import net.thevpc.nuts.toolbox.nmysql.remote.config.RemoteMysqlDatabaseConfig;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,10 +19,10 @@ import java.util.NoSuchElementException;
 public class RemoteMysqlConfigService {
 
     public static final String CLIENT_CONFIG_EXT = ".remote-config";
-    private String name;
     RemoteMysqlConfig config;
     NutsApplicationContext context;
     Path sharedConfigFolder;
+    private String name;
 
     public RemoteMysqlConfigService(String name, NutsApplicationContext context) {
         setName(name);
@@ -29,13 +30,13 @@ public class RemoteMysqlConfigService {
         sharedConfigFolder = Paths.get(context.getVersionFolderFolder(NutsStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT));
     }
 
+    public String getName() {
+        return name;
+    }
+
     public RemoteMysqlConfigService setName(String name) {
         this.name = FileUtils.toValidFileName(name, "default");
         return this;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public RemoteMysqlConfig getConfig() {
@@ -43,6 +44,11 @@ public class RemoteMysqlConfigService {
             loadConfig();
         }
         return config;
+    }
+
+    public RemoteMysqlConfigService setConfig(RemoteMysqlConfig config) {
+        this.config = config;
+        return this;
     }
 
     public RemoteMysqlConfigService saveConfig() {
@@ -88,31 +94,6 @@ public class RemoteMysqlConfigService {
         return this;
     }
 
-    public RemoteMysqlConfigService setConfig(RemoteMysqlConfig config) {
-        this.config = config;
-        return this;
-    }
-
-    public RemoteMysqlDatabaseConfigService getDatabase(String appName) {
-        return getDatabaseOrError(appName);
-    }
-
-    public RemoteMysqlDatabaseConfigService getDatabaseOrNull(String appName) {
-        RemoteMysqlDatabaseConfig a = getConfig().getDatabases().get(appName);
-        if (a == null) {
-            return null;
-        }
-        return new RemoteMysqlDatabaseConfigService(appName, a, this);
-    }
-
-    public RemoteMysqlDatabaseConfigService getDatabaseOrError(String appName) {
-        RemoteMysqlDatabaseConfig a = getConfig().getDatabases().get(appName);
-        if (a == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "app not found :" + appName, 2);
-        }
-        return new RemoteMysqlDatabaseConfigService(appName, a, this);
-    }
-
     public RemoteMysqlDatabaseConfigService getDatabaseOrCreate(String appName) {
         RemoteMysqlDatabaseConfig a = getConfig().getDatabases().get(appName);
         if (a == null) {
@@ -121,20 +102,40 @@ public class RemoteMysqlConfigService {
         }
         return new RemoteMysqlDatabaseConfigService(appName, a, this);
     }
-    public RemoteMysqlDatabaseConfigService getDatabase(String appName, NMySqlService.NotFoundAction action) {
-        RemoteMysqlDatabaseConfig a = getConfig().getDatabases().get(appName);
+
+    public RemoteMysqlDatabaseConfigService getDatabase(String dbName, NutsOpenMode action) {
+        dbName = FileUtils.toValidFileName(dbName, "default");
+        RemoteMysqlDatabaseConfig a = getConfig().getDatabases().get(dbName);
         if (a == null) {
-            switch (action){
-                case NULL:return null;
-                case ERROR:throw new NutsIllegalArgumentException(context.getWorkspace(),"remote instance not found:"+appName+"@"+getName());
-                case CREATE:{
+            switch (action) {
+                case OPEN_OR_NULL:
+                    return null;
+                case OPEN_OR_ERROR:
+                    throw new NutsIllegalArgumentException(context.getWorkspace(), "remote instance not found:" + dbName + "@" + getName());
+                case CREATE_OR_ERROR:
+                case OPEN_OR_CREATE: {
                     a = new RemoteMysqlDatabaseConfig();
-                    getConfig().getDatabases().put(appName, a);
-                    break;
+                    getConfig().getDatabases().put(dbName, a);
+                    return new RemoteMysqlDatabaseConfigService(dbName, a, this);
+                }
+                default: {
+                    throw new NutsIllegalArgumentException(context.getWorkspace(), "unexpected error");
                 }
             }
         }
-        return new RemoteMysqlDatabaseConfigService(appName, a, this);
+        switch (action) {
+            case CREATE_OR_ERROR: {
+                throw new NutsIllegalArgumentException(context.getWorkspace(), "remote instance not found:" + dbName + "@" + getName());
+            }
+            case OPEN_OR_ERROR:
+            case OPEN_OR_NULL:
+            case OPEN_OR_CREATE: {
+                return new RemoteMysqlDatabaseConfigService(dbName, a, this);
+            }
+            default: {
+                throw new NutsIllegalArgumentException(context.getWorkspace(), "unexpected error");
+            }
+        }
     }
 
     public List<RemoteMysqlDatabaseConfigService> getDatabases() {

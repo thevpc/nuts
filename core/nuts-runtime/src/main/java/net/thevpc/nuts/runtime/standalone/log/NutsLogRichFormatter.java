@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.format.text.util.FormattedPrintStreamUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
@@ -193,7 +192,7 @@ public class NutsLogRichFormatter extends Formatter {
             if(!wRecord.isFormatted()){
                 parameters2= Arrays.copyOf(parameters2,parameters2.length);
                 for (int i = 0; i < parameters2.length; i++) {
-                    if (parameters2[i] instanceof NutsStringBase) {
+                    if (parameters2[i] instanceof NutsString) {
                         parameters2[i] = text.filterText(parameters2[i].toString());
                     } else if (parameters2[i] instanceof NutsFormattable) {
                         parameters2[i] = text.filterText(
@@ -209,7 +208,7 @@ public class NutsLogRichFormatter extends Formatter {
             );
 //                    formatMessage(wRecord);
             if(wRecord.isFormatted()) {
-                sb.append(new NutsString(msgStr));
+                sb.append(NutsString.of(msgStr));
             }else{
                 sb.appendPlain(msgStr);
             }

@@ -165,7 +165,7 @@ public class NutsServerMain extends NutsApplication {
                             nutsWorkspace = Nuts.openWorkspace(
                                     Nuts.createOptions()
                                             .setWorkspace(wsLocation)
-                                            .setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING)
+                                            .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(server.readOnly)
                             );
                             server.workspaces.put(wsContext, nutsWorkspace);
@@ -377,7 +377,7 @@ public class NutsServerMain extends NutsApplication {
             }
             if (context.getSession().isPlainOut()) {
                 for (StatusResult result : results) {
-                    context.getSession().out().printf("####%s#### server at %s is %s%n", result.type, result.host, new NutsString(result.status.equals("stopped")
+                    context.getSession().out().printf("####%s#### server at %s is %s%n", result.type, result.host, NutsString.of(result.status.equals("stopped")
                             ? "```error stopped```" : "##alive##"));
                 }
             } else {

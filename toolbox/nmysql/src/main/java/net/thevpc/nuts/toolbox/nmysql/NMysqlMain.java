@@ -136,8 +136,8 @@ public class NMysqlMain extends NutsApplication {
         if (name == null) {
             name = new AtName("");
         }
-        RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(name.getConfigName(), NMySqlService.NotFoundAction.ERROR);
-        RemoteMysqlDatabaseConfigService d = c.getDatabaseOrError(name.getDatabaseName());
+        RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(name.getConfigName(), NutsOpenMode.OPEN_OR_ERROR);
+        RemoteMysqlDatabaseConfigService d = c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR);
         if(pull){
             d.pull(path, true, true);
         }else{
@@ -186,8 +186,8 @@ public class NMysqlMain extends NutsApplication {
         if (name == null) {
             name = new AtName("");
         }
-        LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.getConfigName(), NMySqlService.NotFoundAction.ERROR);
-        LocalMysqlDatabaseConfigService d = c.getDatabase(name.getDatabaseName(), NMySqlService.NotFoundAction.ERROR);
+        LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.getConfigName(), NutsOpenMode.OPEN_OR_ERROR);
+        LocalMysqlDatabaseConfigService d = c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR);
         if (backup) {
             if (path == null) {
                 path = d.getDatabaseName() + "-" + MysqlUtils.newDateString();
@@ -434,11 +434,11 @@ public class NMysqlMain extends NutsApplication {
         }
         if (commandLine.isExecMode()) {
             if(!expectedRemote) {
-                LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.getConfigName(), add?NMySqlService.NotFoundAction.CREATE:NMySqlService.NotFoundAction.ERROR);
+                LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.getConfigName(), add?NutsOpenMode.OPEN_OR_CREATE:NutsOpenMode.OPEN_OR_ERROR);
                 boolean overrideExisting = false;
                 if (add) {
                     if (name.getDatabaseName().isEmpty()) {
-                        if (c.getDatabase(name.getDatabaseName(), NMySqlService.NotFoundAction.NULL) != null) {
+                        if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!service.getContext().getSession().getTerminal().ask()
                                     .forBoolean("already exists ####%s####. override?", name)
@@ -447,7 +447,7 @@ public class NMysqlMain extends NutsApplication {
                             }
                         }
                     } else {
-                        if (c.getDatabase(name.getDatabaseName(), NMySqlService.NotFoundAction.NULL) != null) {
+                        if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!service.getContext().getSession().getTerminal().ask()
                                     .forBoolean("already exists ####%s####. override?", name)
@@ -458,11 +458,11 @@ public class NMysqlMain extends NutsApplication {
                     }
                 } else {
                     if (name.getDatabaseName().isEmpty()) {
-                        if (c.getDatabase(name.getDatabaseName(), NMySqlService.NotFoundAction.NULL) == null) {
+                        if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
                             throw new NutsExecutionException(service.getContext().getWorkspace(), "not found " + name, 2);
                         }
                     } else {
-                        if (c.getDatabase(name.getDatabaseName(), NMySqlService.NotFoundAction.NULL) == null) {
+                        if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
                             throw new NutsExecutionException(service.getContext().getWorkspace(), "not found  " + name, 2);
                         }
                     }
@@ -517,7 +517,7 @@ public class NMysqlMain extends NutsApplication {
                         }
                     }
                 } else {
-                    LocalMysqlDatabaseConfigService r = c.getDatabaseOrCreate(name.getDatabaseName());
+                    LocalMysqlDatabaseConfigService r = c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_CREATE);
                     if (user != null) {
                         someUpdates = true;
                         r.getConfig().setUser(user);
@@ -584,12 +584,12 @@ public class NMysqlMain extends NutsApplication {
                 }else if(forRemote_remoteName==null){
                     forRemote_remoteName=forRemote_localName;
                 }
-                service.loadLocalMysqlConfig(forRemote_localName.toString(), NMySqlService.NotFoundAction.ERROR);
-                RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(name.getConfigName(), NMySqlService.NotFoundAction.CREATE);
+                service.loadLocalMysqlConfig(forRemote_localName.toString(), NutsOpenMode.OPEN_OR_ERROR);
+                RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(name.getConfigName(), NutsOpenMode.OPEN_OR_CREATE);
                 boolean overrideExisting = false;
                 if (add) {
                     if (name.getDatabaseName().isEmpty()) {
-                        if (c.getDatabaseOrNull(name.getDatabaseName()) != null) {
+                        if (c.getDatabase(name.getDatabaseName(),NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!service.getContext().getSession().getTerminal().ask()
                                     .forBoolean("already exists ####%s####. override?", name)
@@ -598,7 +598,7 @@ public class NMysqlMain extends NutsApplication {
                             }
                         }
                     } else {
-                        if (c.getDatabaseOrNull(name.getDatabaseName()) != null) {
+                        if (c.getDatabase(name.getDatabaseName(),NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!service.getContext().getSession().getTerminal().ask()
                                     .forBoolean("already exists ####%s####. override?", name)
@@ -609,11 +609,11 @@ public class NMysqlMain extends NutsApplication {
                     }
                 } else {
                     if (name.getDatabaseName().isEmpty()) {
-                        if (c.getDatabaseOrNull(name.getDatabaseName()) == null) {
+                        if (c.getDatabase(name.getDatabaseName(),NutsOpenMode.OPEN_OR_NULL) == null) {
                             throw new NutsExecutionException(service.getContext().getWorkspace(), "not found " + name, 2);
                         }
                     } else {
-                        if (c.getDatabaseOrNull(name.getDatabaseName()) == null) {
+                        if (c.getDatabase(name.getDatabaseName(),NutsOpenMode.OPEN_OR_NULL) == null) {
                             throw new NutsExecutionException(service.getContext().getWorkspace(), "not found  " + name, 2);
                         }
                     }
@@ -723,11 +723,11 @@ public class NMysqlMain extends NutsApplication {
         }
         for (AtName localName : localNames) {
             if (localName.getDatabaseName().isEmpty()) {
-                service.loadLocalMysqlConfig(localName.getConfigName(), NMySqlService.NotFoundAction.ERROR).removeConfig();
+                service.loadLocalMysqlConfig(localName.getConfigName(), NutsOpenMode.OPEN_OR_ERROR).removeConfig();
             } else {
-                LocalMysqlConfigService c = service.loadLocalMysqlConfig(localName.toString(), NMySqlService.NotFoundAction.NULL);
+                LocalMysqlConfigService c = service.loadLocalMysqlConfig(localName.toString(), NutsOpenMode.OPEN_OR_NULL);
                 if(c!=null) {
-                    LocalMysqlDatabaseConfigService v = c.getDatabase(localName.getDatabaseName(), NMySqlService.NotFoundAction.NULL);
+                    LocalMysqlDatabaseConfigService v = c.getDatabase(localName.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL);
                     if (v != null) {
                         v.remove();
                         c.saveConfig();
@@ -737,14 +737,14 @@ public class NMysqlMain extends NutsApplication {
         }
         for (AtName remoteName : remoteNames) {
             if (remoteName.getDatabaseName().isEmpty()) {
-                RemoteMysqlConfigService v = service.loadRemoteMysqlConfig(remoteName.getConfigName(), NMySqlService.NotFoundAction.NULL);
+                RemoteMysqlConfigService v = service.loadRemoteMysqlConfig(remoteName.getConfigName(), NutsOpenMode.OPEN_OR_NULL);
                 if(v!=null) {
                     v.removeConfig();
                 }
             } else {
-                RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(remoteName.getConfigName(), NMySqlService.NotFoundAction.NULL);
+                RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(remoteName.getConfigName(), NutsOpenMode.OPEN_OR_NULL);
                 if(c!=null) {
-                    RemoteMysqlDatabaseConfigService v = c.getDatabase(remoteName.getDatabaseName(), NMySqlService.NotFoundAction.NULL);
+                    RemoteMysqlDatabaseConfigService v = c.getDatabase(remoteName.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL);
                     if(v!=null) {
                         v.remove();
                         c.saveConfig();
@@ -801,11 +801,11 @@ public class NMysqlMain extends NutsApplication {
             }
         }else{
             for (AtName localName : localNames) {
-                LocalMysqlConfigService c = service.loadLocalMysqlConfig(localName.getConfigName(), NMySqlService.NotFoundAction.ERROR);
+                LocalMysqlConfigService c = service.loadLocalMysqlConfig(localName.getConfigName(), NutsOpenMode.OPEN_OR_ERROR);
                 result.add(new LocaleOrRemote(c.getName(), c.getConfig(),null));
             }
             for (AtName localName : remoteNames) {
-                RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(localName.getConfigName(), NMySqlService.NotFoundAction.ERROR);
+                RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(localName.getConfigName(), NutsOpenMode.OPEN_OR_ERROR);
                 result.add(new LocaleOrRemote(c.getName(), null,c.getConfig()));
             }
         }

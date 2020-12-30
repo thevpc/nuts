@@ -288,7 +288,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
             props.put("nuts-workspace-" + folderType.id(), stringValue(ws.locations().getStoreLocation(folderType).toString()));
         }
-        props.put("nuts-open-mode", stringValue(options.getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
+        props.put("nuts-open-mode", stringValue(options.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
         props.put("nuts-secure", (ws.security().isSecure(getValidSession())));
         props.put("nuts-gui", options.isGui());
         props.put("nuts-inherited", options.isInherited());

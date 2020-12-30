@@ -29,30 +29,44 @@ package net.thevpc.nuts;
 /**
  *
  * @author thevpc
- * @since 0.5.4
+ * @since 0.5.4 (renamed from NutsWorkspaceOpenMode to NutsOpenMode in 0.8.1)
  * @category Config
  */
-public enum NutsWorkspaceOpenMode {
+public enum NutsOpenMode {
     /**
      * Open or Create. Default Mode. If the workspace is found, it will be
      * created otherwise it will be opened
+     * if not exists, then create and open
+     * if exists, then error
      */
     OPEN_OR_CREATE,
     /**
      * Create Workspace (if not found) or throw Error (if found)
+     * if not exists, then create and open
+     * if exists, then error
      */
-    CREATE_NEW,
+    CREATE_OR_ERROR,
+
     /**
      * Open Workspace (if found) or throw Error (if not found)
+     * if not exists, then error
+     * if exists, then open
      */
-    OPEN_EXISTING;
+     OPEN_OR_ERROR,
+
+    /**
+     * Open Workspace (if found) or return null
+     * if not exists, then open
+     * if exists, then return null
+     */
+     OPEN_OR_NULL;
 
     /**
      * lower-cased identifier for the enum entry
      */
     private final String id;
 
-    NutsWorkspaceOpenMode() {
+    NutsOpenMode() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 

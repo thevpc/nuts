@@ -718,7 +718,7 @@ public final class NutsBootWorkspace {
     public NutsWorkspace openWorkspace() {
         prepareWorkspace();
         if (hasUnsatisfiedRequirements()) {
-            throw new NutsUnsatisfiedRequirementsException(null, "Unable to open a distinct version : " + getRequirementsHelpString(true) + " from nuts#" + Nuts.getVersion());
+            throw new NutsUnsatisfiedRequirementsException(null, "unable to open a distinct version : " + getRequirementsHelpString(true) + " from nuts#" + Nuts.getVersion());
         }
         //if recover or reset mode with -K option (SkipWelcome)
         //as long as there are no applications to run, wil exit before creating workspace
@@ -730,10 +730,14 @@ public final class NutsBootWorkspace {
         ClassLoader workspaceClassLoader;
         NutsWorkspace nutsWorkspace = null;
         try {
-            if (options.getOpenMode() == NutsWorkspaceOpenMode.OPEN_EXISTING) {
+            if (options.getOpenMode() == NutsOpenMode.OPEN_OR_ERROR) {
                 //add fail fast test!!
                 if (!new File(workspaceInformation.getWorkspaceLocation(), NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME).isFile()) {
                     throw new NutsWorkspaceNotFoundException(null, workspaceInformation.getWorkspaceLocation());
+                }
+            }else if (options.getOpenMode() == NutsOpenMode.CREATE_OR_ERROR) {
+                if (new File(workspaceInformation.getWorkspaceLocation(), NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME).exists()) {
+                    throw new NutsWorkspaceAlreadyExistsException(null, workspaceInformation.getWorkspaceLocation());
                 }
             }
             if (PrivateNutsUtils.isBlank(workspaceInformation.getApiId())
@@ -741,7 +745,7 @@ public final class NutsBootWorkspace {
                     || PrivateNutsUtils.isBlank(workspaceInformation.getBootRepositories())
                     || workspaceInformation.getRuntimeBootDescriptor() == null
                     || workspaceInformation.getExtensionBootDescriptors() == null) {
-                throw new IllegalArgumentException("Invalid state");
+                throw new IllegalArgumentException("invalid workspace state");
             }
             boolean recover = options.isRecover() || options.isReset();
 
@@ -840,7 +844,7 @@ public final class NutsBootWorkspace {
             if (ex instanceof NutsException) {
                 throw (NutsException) ex;
             }
-            throw new NutsIllegalArgumentException(null, "Unable to locate valid nuts-runtime components", ex);
+            throw new NutsIllegalArgumentException(null, "unable to locate valid nuts-runtime components", ex);
         }
     }
 
@@ -900,7 +904,7 @@ public final class NutsBootWorkspace {
         PrivateNutsId vid = PrivateNutsId.parse(id);
         File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire);
         if (f == null) {
-            throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(), "Unable to load " + name + " " + vid + " from repositories " + Arrays.asList(repositories));
+            throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(), "unable to load " + name + " " + vid + " from repositories " + Arrays.asList(repositories));
         }
         return f;
     }
@@ -984,7 +988,7 @@ public final class NutsBootWorkspace {
             }
         } else {
             File file = new File(repoFolder, path.replace('/', File.separatorChar));
-            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "locating {0} . Repository is not a valid folder : {1}", new Object[]{file, repoFolder});
+            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "locating {0} ; repository is not a valid folder : {1}", new Object[]{file, repoFolder});
         }
 
         if (ff != null) {
@@ -1030,7 +1034,7 @@ public final class NutsBootWorkspace {
                 try {
                     file = new File(url.toURI());
                 }catch (URISyntaxException e){
-                    throw new IllegalArgumentException("Unsupported");
+                    throw new IllegalArgumentException("unsupported classpath item; expected a file path: "+url);
                 }
                 ZipFile zipFile = null;
                 try {
@@ -1219,7 +1223,7 @@ public final class NutsBootWorkspace {
                 } else if (ovalue instanceof File) {
                     folders.add(((File) ovalue));
                 } else {
-                    throw new IllegalArgumentException("Unsupported path type : " + ovalue);
+                    throw new IllegalArgumentException("unsupported path type : " + ovalue);
                 }
             }
         }
@@ -1257,7 +1261,7 @@ public final class NutsBootWorkspace {
         System.err.printf("  option-read-only                 : %s%n", options.isReadOnly());
         System.err.printf("  option-trace                     : %s%n", options.isTrace());
         System.err.printf("  option-progress                  : %s%n", PrivateNutsUtils.desc(options.getProgressOptions()));
-        System.err.printf("  option-open-mode                 : %s%n", PrivateNutsUtils.desc(options.getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
+        System.err.printf("  option-open-mode                 : %s%n", PrivateNutsUtils.desc(options.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
         if (bootClassWorldURLs == null || bootClassWorldURLs.length == 0) {
             System.err.printf("  nuts-runtime-classpath           : %s%n", "<none>");
         } else {

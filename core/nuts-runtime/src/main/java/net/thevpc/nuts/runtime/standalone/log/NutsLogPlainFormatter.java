@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.NutsFormatManager;
 import net.thevpc.nuts.NutsFormattable;
-import net.thevpc.nuts.NutsStringBase;
+import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.NutsTextFormatManager;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
@@ -64,7 +64,7 @@ public class NutsLogPlainFormatter extends Formatter {
             } else {
                 parameters2 = Arrays.copyOf(parameters2, parameters2.length);
                 for (int i = 0; i < parameters2.length; i++) {
-                    if (parameters2[i] instanceof NutsStringBase) {
+                    if (parameters2[i] instanceof NutsString) {
                         parameters2[i] = text.filterText(parameters2[i].toString());
                     } else if (parameters2[i] instanceof NutsFormattable) {
                         parameters2[i] = text.filterText(

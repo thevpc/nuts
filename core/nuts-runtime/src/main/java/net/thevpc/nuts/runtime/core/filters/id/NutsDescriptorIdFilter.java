@@ -62,7 +62,10 @@ public class NutsDescriptorIdFilter extends AbstractNutsFilter implements NutsId
         } catch (Exception ex) {
             //suppose we cannot retrieve descriptor
             if (LOG.isLoggable(Level.FINER)) {
-                LOG.with().session(session).level(Level.FINER).verb(NutsLogVerb.FAIL).log( "Unable to fetch Descriptor for " + id + " : " + CoreStringUtils.exceptionToString(ex));
+                LOG.with().session(session).level(Level.FINER).verb(NutsLogVerb.FAIL).log(
+                        "unable to fetch descriptor for {0} : {1}",
+                        id,ex
+                        );
             }
             return false;
         }

@@ -182,7 +182,7 @@ public class ProjectService {
                 if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(context.getWorkspace().locations().getWorkspaceLocation().toString())) {
                     ws2 = Nuts.openWorkspace(
                             Nuts.createOptions()
-                                    .setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING)
+                                    .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                     .setReadOnly(true)
                                     .setWorkspace(a.getNutsWorkspace())
                     );
@@ -233,7 +233,7 @@ public class ProjectService {
                         if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(context.getWorkspace().locations().getWorkspaceLocation().toString())) {
                             ws2 = Nuts.openWorkspace(
                                     context.getWorkspace().config().optionsBuilder()
-                                            .setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING)
+                                            .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(true)
                                             .setWorkspace(a.getNutsWorkspace())
                             );

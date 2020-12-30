@@ -60,7 +60,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return this;
     }
 
-    public void open(NutsWorkspaceOpenMode autoCreate) {
+    public void open(NutsOpenMode autoCreate) {
         switch (autoCreate) {
             case OPEN_OR_CREATE: {
                 if (this.existsConfig()) {
@@ -71,14 +71,14 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 }
                 break;
             }
-            case OPEN_EXISTING: {
+            case OPEN_OR_ERROR: {
                 if (!this.existsConfig()) {
                     throw new NamedItemNotFoundException("Instance not found : " + this.getName(), this.getName());
                 }
                 this.loadConfig();
                 break;
             }
-            case CREATE_NEW: {
+            case CREATE_OR_ERROR: {
                 if (this.existsConfig()) {
                     throw new NamedItemNotFoundException("Instance already exists : " + this.getName(), this.getName());
                 }
@@ -376,7 +376,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             return false;
         }
         for (String app : new HashSet<String>(Arrays.asList(parseApps(deployApps)))) {
-            getApp(app, NutsWorkspaceOpenMode.OPEN_EXISTING).deploy(null);
+            getApp(app, NutsOpenMode.OPEN_OR_ERROR).deploy(null);
         }
         if (deleteLog) {
             deleteOutLog();
@@ -619,13 +619,13 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             String shutdownMessage = null;
             String logFile = null;
             if (app != null) {
-                LocalTomcatAppConfigService a = getApp(app, NutsWorkspaceOpenMode.OPEN_EXISTING);
+                LocalTomcatAppConfigService a = getApp(app, NutsOpenMode.OPEN_OR_ERROR);
                 domain = a.getConfig().getDomain();
                 startupMessage = a.getConfig().getStartupMessage();
                 shutdownMessage = a.getConfig().getShutdownMessage();
             }
             if (domain != null) {
-                LocalTomcatDomainConfigService tomcatDomain = getDomain(domain, NutsWorkspaceOpenMode.OPEN_EXISTING);
+                LocalTomcatDomainConfigService tomcatDomain = getDomain(domain, NutsOpenMode.OPEN_OR_ERROR);
                 startupMessage = tomcatDomain.getConfig().getStartupMessage();
                 shutdownMessage = tomcatDomain.getConfig().getShutdownMessage();
                 logFile = tomcatDomain.getConfig().getLogFile();
@@ -730,7 +730,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return this;
     }
 
-    public LocalTomcatAppConfigService getApp(String appName, NutsWorkspaceOpenMode mode) {
+    public LocalTomcatAppConfigService getApp(String appName, NutsOpenMode mode) {
         appName = TomcatUtils.toValidFileName(appName, "default");
         LocalTomcatAppConfig a = getConfig().getApps().get(appName);
         if (mode == null) {
@@ -739,13 +739,13 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
         } else {
             switch (mode) {
-                case OPEN_EXISTING: {
+                case OPEN_OR_ERROR: {
                     if (a == null) {
                         throw new NutsExecutionException(context.getWorkspace(), "App not found :" + appName, 2);
                     }
                     break;
                 }
-                case CREATE_NEW: {
+                case CREATE_OR_ERROR: {
                     if (a == null) {
                         a = new LocalTomcatAppConfig();
                         getConfig().getApps().put(appName, a);
@@ -766,7 +766,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return new LocalTomcatAppConfigService(appName, a, this);
     }
 
-    public LocalTomcatDomainConfigService getDomain(String domainName, NutsWorkspaceOpenMode mode) {
+    public LocalTomcatDomainConfigService getDomain(String domainName, NutsOpenMode mode) {
         domainName = TomcatUtils.toValidFileName(domainName, "");
         LocalTomcatDomainConfig a = getConfig().getDomains().get(domainName);
         if (mode == null) {
@@ -775,13 +775,13 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
         } else {
             switch (mode) {
-                case OPEN_EXISTING: {
+                case OPEN_OR_ERROR: {
                     if (a == null) {
                         throw new NutsExecutionException(context.getWorkspace(), "Domain not found :" + domainName, 2);
                     }
                     break;
                 }
-                case CREATE_NEW: {
+                case CREATE_OR_ERROR: {
                     if (a == null) {
                         a = new LocalTomcatDomainConfig();
                         getConfig().getDomains().put(domainName, a);

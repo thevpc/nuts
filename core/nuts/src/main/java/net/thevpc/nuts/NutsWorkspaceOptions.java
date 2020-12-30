@@ -210,7 +210,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
      * @return mode used to open workspace.
      */
-    NutsWorkspaceOpenMode getOpenMode();
+    NutsOpenMode getOpenMode();
 
     /**
      * default output format type.

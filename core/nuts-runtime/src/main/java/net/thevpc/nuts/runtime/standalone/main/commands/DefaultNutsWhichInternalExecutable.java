@@ -69,8 +69,8 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         break;
                     }
                     case ALIAS: {
-                        out.printf("#####%s##### : ==nuts alias== (owner %s ) : %s%n", arg, p.getId() == null ? null : new NutsString(ws.id().formatter(p.getId()).format()),
-                                new NutsString(ws.commandLine().create(ws.aliases().find(p.getName(), getSession()).getCommand()).toString())
+                        out.printf("#####%s##### : ==nuts alias== (owner %s ) : %s%n", arg, p.getId() == null ? null : NutsString.of(ws.id().formatter(p.getId()).format()),
+                                NutsString.of(ws.commandLine().create(ws.aliases().find(p.getName(), getSession()).getCommand()).toString())
                         );
                         break;
                     }
@@ -78,7 +78,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         if (p.getId() == null) {
                             throw new NutsNotFoundException(ws, arg);
                         }
-                        out.printf("#####%s##### : ==nuts component== %s%n", arg, new NutsString(ws.id().formatter(p.getId()).format())/*, p.getDescription()*/);
+                        out.printf("#####%s##### : ==nuts component== %s%n", arg, NutsString.of(ws.id().formatter(p.getId()).format())/*, p.getDescription()*/);
                         break;
                     }
                     case INTERNAL: {
