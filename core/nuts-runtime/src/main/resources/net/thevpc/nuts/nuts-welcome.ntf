@@ -1,5 +1,5 @@
 #!include</net/thevpc/nuts/includes/standard-header.ntf>
-~~location~~:${workspace}
+##&_:location##:##&path:${workspace}##
 
 ##) SYNOPSIS:
 ```sh

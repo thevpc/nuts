@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.NutsLogConfig;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.File;
 import java.io.IOException;

@@ -30,7 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
  * Nuts Boot editable configuration object

@@ -323,4 +323,6 @@ public interface NutsIdBuilder extends Serializable {
      * @return new instance of {@link NutsId} initialized with this builder values.
      */
     NutsId build();
+
+    NutsIdBuilder omitImportedGroupId();
 }

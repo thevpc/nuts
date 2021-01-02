@@ -13,9 +13,8 @@ import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.Simplifiable;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 /**
  *

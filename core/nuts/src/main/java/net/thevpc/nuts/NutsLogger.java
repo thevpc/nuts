@@ -47,6 +47,7 @@ public interface NutsLogger {
 
     /**
      * log message using 'FAIL' verb
+     * @param session session
      * @param level message level
      * @param msg message
      * @param thrown error thrown
@@ -55,6 +56,7 @@ public interface NutsLogger {
 
     /**
      * log message using the given verb and level
+     * @param session session
      * @param level message level
      * @param verb message verb / category
      * @param msg message
@@ -63,6 +65,7 @@ public interface NutsLogger {
 
     /**
      * log message using the given verb and level
+     * @param session session
      * @param level message level
      * @param verb message verb / category
      * @param msg message
@@ -72,6 +75,7 @@ public interface NutsLogger {
 
     /**
      * log message using the given verb and level
+     * @param session session
      * @param level message level
      * @param verb message verb / category
      * @param msgSupplier message supplier

@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspaceEvent;
-import net.thevpc.nuts.runtime.standalone.format.text.ExtendedFormatAware;
+import net.thevpc.nuts.runtime.core.events.DefaultNutsWorkspaceEvent;
+import net.thevpc.nuts.runtime.core.format.text.ExtendedFormatAware;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.standalone.terminals.*;
+import net.thevpc.nuts.runtime.core.terminals.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsSessionTerminalBase;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import net.thevpc.nuts.spi.NutsTerminalBase;
@@ -43,7 +43,7 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
             //that's ok
         } else {
             NutsId extId = ws.id().parser().parse("net.thevpc.nuts.ext:next-term#" + getWorkspace().getApiVersion());
-            if(!getWorkspace().config().options().isExcludedExtension(extId.toString())) {
+            if(!getWorkspace().config().isExcludedExtension(extId.toString(),getWorkspace().config().options())) {
                 NutsWorkspaceExtensionManager extensions = getWorkspace().extensions();
                 extensions.loadExtension(extId, session);
                 NutsSystemTerminal systemTerminal = createSystemTerminal(new NutsDefaultTerminalSpec()
@@ -207,6 +207,18 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
             return op!=NutsTerminalModeOp.NOP;
         }
         return false;
+    }
+
+    @Override
+    public NutsTerminalManager sendCommand(PrintStream out, String command, String args) {
+        out.printf("%s",ws.formats().text().factory().command(command,args));
+        out.flush();
+        return this;
+    }
+
+    @Override
+    public NutsTerminalManager sendCommand(PrintStream out, String command) {
+        return sendCommand(out,command,"");
     }
 
     public NutsWorkspace getWorkspace() {

@@ -26,10 +26,7 @@
 package net.thevpc.nuts;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -61,6 +58,7 @@ final class PrivateNutsArgumentsParser {
         HashSet<String> excludedExtensions = new HashSet<>();
         HashSet<String> excludedRepositories = new HashSet<>();
         HashSet<String> tempRepositories = new HashSet<>();
+        Set<String> tempProps = new LinkedHashSet<>();
         List<String> executorOptions = new ArrayList<>();
         NutsLogConfig logConfig = null;
         List<String> applicationArguments = new ArrayList<>();
@@ -1046,8 +1044,12 @@ final class PrivateNutsArgumentsParser {
                     case "-l":
                     case "-m":
                     default: {
-                        cmdLine.skip();
-                        showError.add("nuts: invalid option " + a.getString());
+                        if(k.startsWith("---") && k.length()>3 && k.charAt(3)!='-'){
+                            tempProps.add(k.substring(3));
+                        }else {
+                            cmdLine.skip();
+                            showError.add("nuts: invalid option " + a.getString());
+                        }
                     }
                 }
             } else {
@@ -1056,6 +1058,7 @@ final class PrivateNutsArgumentsParser {
             }
         }
 
+        options.setProperties(tempProps.toArray(new String[0]));
         options.setLogConfig(logConfig);
         options.setExcludedExtensions(excludedExtensions.toArray(new String[0]));
         options.setExcludedRepositories(excludedRepositories.toArray(new String[0]));
@@ -1209,7 +1212,7 @@ final class PrivateNutsArgumentsParser {
             case "EXPLODED":
                 return NutsStoreLocationStrategy.EXPLODED;
         }
-        throw new IllegalArgumentException("Unable to parse value for NutsStoreLocationStrategy : " + s0);
+        throw new NutsBootException("unable to parse value for NutsStoreLocationStrategy : " + s0);
     }
 
     private static NutsOsFamily parseNutsStoreLocationLayout(String s) {
@@ -1238,7 +1241,7 @@ final class PrivateNutsArgumentsParser {
             case "SYSTEM":
                 return null;
         }
-        throw new IllegalArgumentException("Unable to parse value for NutsStoreLocationLayout : " + s0);
+        throw new NutsBootException("Unable to parse value for NutsStoreLocationLayout : " + s0);
     }
 
     private static NutsTerminalMode parseNutsTerminalMode(String s) {
@@ -1258,7 +1261,7 @@ final class PrivateNutsArgumentsParser {
             case "INHERITED":
                 return NutsTerminalMode.INHERITED;
         }
-        throw new IllegalArgumentException("Unable to parse value for NutsTerminalMode : " + s0);
+        throw new NutsBootException("Unable to parse value for NutsTerminalMode : " + s0);
     }
 
     private static NutsOpenMode parseNutsWorkspaceOpenMode(String s) {
@@ -1271,30 +1274,40 @@ final class PrivateNutsArgumentsParser {
             case "R":
             case "READ":
             case "O":
-            case "OPEN": {
+            case "OE":
+            case "O_E":
+            case "OPEN":
+            case "OPEN_ERROR":
+            case "OPEN_OR_ERROR":{
                 return NutsOpenMode.OPEN_OR_ERROR;
             }
             case "W":
             case "WRITE":
-            case "N":
-            case "NEW":
             case "C":
-            case "CREATE": {
+            case "CE":
+            case "C_E":
+            case "CREATE":
+            case "CREATE_ERROR":
+            case"CREATE_OR_ERROR": {
                 return NutsOpenMode.CREATE_OR_ERROR;
             }
             case "RW":
             case "R_W":
             case "READ_WRITE":
-            case "ON":
-            case "O_N":
-            case "OPEN_NEW":
             case "OC":
             case "O_C":
-            case "OPEN_CREATE": {
+            case "OPEN_CREATE":
+            case "OPEN_OR_CREATE":{
                 return NutsOpenMode.OPEN_OR_CREATE;
             }
+            case "ON":
+            case "O_N":
+            case "OPEN_NULL":
+            case "OPEN_OR_NULL": {
+                return NutsOpenMode.OPEN_OR_NULL;
+            }
         }
-        throw new IllegalArgumentException("Unable to parse value for NutsOpenMode : " + s0);
+        throw new NutsBootException("unable to parse value for NutsOpenMode : " + s0);
     }
 
     private static Level parseLevel(String s) {

@@ -94,4 +94,10 @@ public interface NutsTextFormatManager {
      */
     String formatText(NutsSession session,NutsTextFormatStyle style, String format, Object... args);
 
+
+    NutsTitleNumberSequence createTitleNumberSequence();
+
+    NutsTitleNumberSequence createTitleNumberSequence(String pattern);
+
+
 }

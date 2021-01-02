@@ -29,6 +29,7 @@ package net.thevpc.nuts.toolbox.nsh;
 import net.thevpc.jshell.*;
 import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.common.strings.StringUtils;
+import net.thevpc.nuts.NutsTextNodeStyle;
 
 /**
  *
@@ -59,7 +60,10 @@ public class NutsErrorHandler implements JShellErrorHandler {
 
     @Override
     public void onErrorImpl(String message, Throwable th, JShellFileContext context) {
-        ((NutsShellContext) (context.getShellContext())).getSession().getTerminal().err().printf("####### %s #######\n", message);
+        ((NutsShellContext) (context.getShellContext())).getSession().getTerminal().err().printf(
+                "%s\n",
+                ((NutsShellContext)context.getShellContext()).getWorkspace().formats().text().builder().append(message, NutsTextNodeStyle.error())
+                );
     }
     
 }

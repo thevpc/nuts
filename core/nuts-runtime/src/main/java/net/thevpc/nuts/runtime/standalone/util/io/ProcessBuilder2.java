@@ -29,8 +29,8 @@ import java.io.*;
 import java.util.*;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.app.DefaultNutsArgument;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 public class ProcessBuilder2 {
 
@@ -701,7 +701,9 @@ public class ProcessBuilder2 {
                 if (sb.length() > 0) {
                     sb.append(" ");
                 }
-                sb.append("#####").append(CoreStringUtils.enforceDoubleQuote(k, ws)).append("#####").append("=").append(CoreStringUtils.enforceDoubleQuote(v, ws));
+                sb.append(
+                        ws.formats().text().factory().styled(CoreStringUtils.enforceDoubleQuote(k, ws),NutsTextNodeStyle.primary(4))
+                ).append("=").append(CoreStringUtils.enforceDoubleQuote(v, ws));
             }
         }
         boolean commandFirstTokenVisited = false;
@@ -835,21 +837,22 @@ public class ProcessBuilder2 {
     }
 
     private static String formatArg(String s, NutsWorkspace ws) {
-        DefaultNutsArgument a = new DefaultNutsArgument(s, '=');
+        DefaultNutsArgument a = new DefaultNutsArgument(s);
         StringBuilder sb = new StringBuilder();
+        NutsTextNodeFactory factory = ws.formats().text().factory();
         if (a.isKeyValue()) {
             if (a.isOption()) {
-                sb.append("####").append(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), ws)).append("####");
+                sb.append(factory.styled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), ws),NutsTextNodeStyle.option()));
                 sb.append("=");
                 sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), ws));
             } else {
-                sb.append("#####").append(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), ws)).append("#####");
+                sb.append(factory.styled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), ws),NutsTextNodeStyle.primary(4)));
                 sb.append("=");
                 sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), ws));
             }
         } else {
             if (a.isOption()) {
-                sb.append("####").append(CoreStringUtils.enforceDoubleQuote(a.getString(), ws)).append("####");
+                sb.append(factory.styled(CoreStringUtils.enforceDoubleQuote(a.getString(), ws),NutsTextNodeStyle.option()));
             } else {
                 sb.append(CoreStringUtils.enforceDoubleQuote(a.getString(), ws));
             }

@@ -27,7 +27,7 @@ package net.thevpc.nuts.core.test.whitebox;
 
 import net.thevpc.nuts.NutsVersionFilter;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsVersion;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.core.filters.version.DefaultNutsVersionFilter;
 import org.junit.jupiter.api.*;
 

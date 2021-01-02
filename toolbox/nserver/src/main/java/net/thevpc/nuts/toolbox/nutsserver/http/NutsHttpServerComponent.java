@@ -29,14 +29,11 @@ package net.thevpc.nuts.toolbox.nutsserver.http;
 import com.sun.net.httpserver.*;
 import net.thevpc.common.util.Collections2;
 import net.thevpc.common.util.ListValueMap;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServer;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServerComponent;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServerConstants;
 import net.thevpc.nuts.toolbox.nutsserver.ServerConfig;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSupportLevelContext;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.common.strings.StringUtils;
 
 import javax.net.ssl.*;
@@ -207,9 +204,12 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         });
         server.start();
         PrintStream out = session.out();
-        out.printf("Nuts Http Service '%s' running "+(
-                (httpConfig.isTls()?"##https##":"##http##")
-                )+" at %s\n", serverId, inetSocketAddress);
+        NutsTextNodeFactory factory = session.getWorkspace().formats().text().factory();
+        out.printf("Nuts Http Service '%s' running %s at %s\n", serverId,
+                factory.styled(
+                        (httpConfig.isTls()?"https":"http"),NutsTextNodeStyle.primary(1)
+                ),
+                inetSocketAddress);
         if(workspaces.size()==1){
             out.print("Serving workspace : ");
             for (Map.Entry<String, NutsWorkspace> entry : workspaces.entrySet()) {

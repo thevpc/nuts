@@ -26,9 +26,8 @@
 package net.thevpc.nuts.runtime.standalone.main.executors;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.NutsExecutorComponent;
 
 import java.io.File;
@@ -42,7 +41,8 @@ import java.util.List;
 @NutsSingleton
 public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
 
-    public static final NutsId ID = CoreNutsUtils.parseNutsId("net.thevpc.nuts.exec:exec-nsh");
+    public static NutsId ID;
+    NutsWorkspace ws;
 
     @Override
     public NutsId getId() {
@@ -51,11 +51,13 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
-        if (nutsDefinition != null) {
-            if ("nsh".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())
-                    || "nuts".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())) {
-                return DEFAULT_SUPPORT + 1;
-            }
+        this.ws=nutsDefinition.getWorkspace();
+        if(ID==null){
+            ID=ws.id().parser().parse("net.thevpc.nuts.exec:exec-nsh");
+        }
+        if ("nsh".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())
+                || "nuts".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())) {
+            return DEFAULT_SUPPORT + 1;
         }
         return NO_SUPPORT;
     }

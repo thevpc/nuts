@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.main.config.compat.v507;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.main.config.*;
-import net.thevpc.nuts.runtime.standalone.CoreNutsConstants;
+import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.main.config.compat.AbstractNutsVersionCompat;
 import net.thevpc.nuts.runtime.standalone.main.config.compat.CompatUtils;
 

@@ -7,9 +7,9 @@ import net.thevpc.nuts.NutsFilterOp;
 import net.thevpc.nuts.NutsRepository;
 import net.thevpc.nuts.NutsRepositoryFilter;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
-import net.thevpc.nuts.runtime.standalone.util.common.Simplifiable;
+import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 import java.util.Objects;
 import java.util.Set;

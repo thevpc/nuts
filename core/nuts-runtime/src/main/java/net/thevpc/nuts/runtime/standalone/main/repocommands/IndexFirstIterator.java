@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.main.repocommands;
 
 import net.thevpc.nuts.NutsIndexerNotAccessibleException;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.Iterator;
 import java.util.logging.Level;

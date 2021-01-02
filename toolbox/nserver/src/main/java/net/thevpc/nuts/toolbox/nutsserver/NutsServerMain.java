@@ -58,11 +58,17 @@ public class NutsServerMain extends NutsApplication {
             if (servers.isEmpty()) {
                 out.print("No Server is Running by current instance\n");
             }
+            NutsTextFormatManager text = context.getWorkspace().formats().text();
             for (NutsServer o : servers) {
                 if (o.isRunning()) {
-                    out.printf("#####running##### %s\n", o.getServerId());
+                    out.printf("%s %s\n",
+                            text.builder().append("running",NutsTextNodeStyle.primary(4)),
+                            o.getServerId()
+                    );
                 } else {
-                    out.printf("#####stopped##### %s\n", o.getServerId());
+                    out.printf("%s %s\n",
+                            text.builder().append("stopped",NutsTextNodeStyle.primary(4)),
+                            o.getServerId());
                 }
             }
         }
@@ -376,9 +382,16 @@ public class NutsServerMain extends NutsApplication {
                 }
             }
             if (context.getSession().isPlainOut()) {
+                NutsTextFormatManager text = context.getWorkspace().formats().text();
                 for (StatusResult result : results) {
-                    context.getSession().out().printf("####%s#### server at %s is %s%n", result.type, result.host, NutsString.of(result.status.equals("stopped")
-                            ? "```error stopped```" : "##alive##"));
+                    context.getSession().out().printf(
+                            "%s server at %s is %s%n",
+                            text.builder().append(result.type,NutsTextNodeStyle.primary(4)),
+                            result.host,
+                            result.status.equals("stopped")?
+                            text.builder().append("stopped",NutsTextNodeStyle.error()):
+                            text.builder().append("alive",NutsTextNodeStyle.success())
+                    );
                 }
             } else {
                 context.getSession().formatObject(results).println();

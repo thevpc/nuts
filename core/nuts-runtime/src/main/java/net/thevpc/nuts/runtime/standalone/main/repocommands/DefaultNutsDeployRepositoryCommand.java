@@ -32,7 +32,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.repocommands.AbstractNutsDeployRepositoryCommand;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
 
 /**

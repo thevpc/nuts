@@ -5,6 +5,8 @@
  */
 package net.thevpc.common.nuts.template;
 
+import net.thevpc.nuts.NutsTextNodeStyle;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -46,7 +48,7 @@ public class IOUtils {
         fileWriter.append("\n" + str);
 //        fileWriter.flush();
         fileWriter.close();
-        System.out.println("####[APPEND TO]#### " + file.getPath());
+//        System.out.println("####[APPEND TO]#### " + file.getPath());
     }
 
     public static void writeString(String str, File file, ProjectTemplate project) throws IOException {
@@ -75,10 +77,10 @@ public class IOUtils {
         fileWriter.flush();
         fileWriter.close();
         if (isOverride) {
-            console.println("####[OVERRIDE]#### " + file.getPath());
+            console.println("[OVERRIDE] %s%n",project.getWorkspace().formats().text().factory().styled(file.getPath(), NutsTextNodeStyle.path()));
         } else {
             project.setNewlyCreated(file.getPath());
-            console.println("####[GENERATE]#### " + file.getPath());
+            console.println("[GENERATE] %s%n" + project.getWorkspace().formats().text().factory().styled(file.getPath(),NutsTextNodeStyle.path()));
         }
     }
 

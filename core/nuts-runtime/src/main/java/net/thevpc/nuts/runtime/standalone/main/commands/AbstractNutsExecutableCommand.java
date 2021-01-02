@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.main.commands;
 
-import net.thevpc.nuts.runtime.core.wscommands.NutsExecutableInformationExt;
+import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutableInformationExt;
 import net.thevpc.nuts.NutsExecutableType;
 
 /**

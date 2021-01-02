@@ -5,8 +5,7 @@
  */
 package net.thevpc.nuts.toolbox.nadmin.subcommands;
 
-import net.thevpc.nuts.NutsRepository;
-import net.thevpc.nuts.NutsStoreLocation;
+import net.thevpc.nuts.*;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -15,10 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
-
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandLine;
 
 /**
  * @author thevpc
@@ -63,12 +58,16 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
     private void deleteWorkspaceFolder(NutsApplicationContext context, NutsStoreLocation folder, boolean force) {
         String sstoreLocation = context.getWorkspace().locations().getStoreLocation(folder);
         if (sstoreLocation != null) {
+            NutsTextNodeFactory factory = context.getWorkspace().formats().text().factory();
             Path storeLocation = Paths.get(sstoreLocation);
             if (Files.exists(storeLocation)) {
-                context.getSession().out().printf("```error Deleting``` ##%s## for workspace ##%s## folder %s ...%n", folder.id(), context.getWorkspace().name(), storeLocation);
+                context.getSession().out().printf("```error deleting``` %s for workspace %s folder %s ...%n",
+                        factory.styled(folder.id(),NutsTextNodeStyle.primary(1)),
+                        factory.styled(context.getWorkspace().name(),NutsTextNodeStyle.primary(1)),
+                        factory.styled(storeLocation.toString(),NutsTextNodeStyle.path()));
                 if (force
                         || context.getSession().getTerminal().ask()
-                        .forBoolean("Force Delete?").setDefaultValue(false).setSession(context.getSession())
+                        .forBoolean("force delete?").setDefaultValue(false).setSession(context.getSession())
                         .getBooleanValue()) {
                     try {
                         Files.delete(storeLocation);
@@ -87,8 +86,12 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
         String sstoreLocation = context.getWorkspace().locations().getStoreLocation(folder);
         if (sstoreLocation != null) {
             Path storeLocation=Paths.get(sstoreLocation);
+            NutsTextNodeFactory factory = context.getWorkspace().formats().text().factory();
             if (Files.exists(storeLocation)) {
-                context.getSession().out().printf("```error Deleting``` ##%s## for repository ##%s## folder %s ...%n", folder.id(), repository.getName(), storeLocation);
+                context.getSession().out().printf("```error deleting``` %s for repository %s folder %s ...%n",
+                        factory.styled(folder.id(),NutsTextNodeStyle.primary(1)),
+                        factory.styled(repository.getName(),NutsTextNodeStyle.primary(1)),
+                        factory.styled(storeLocation.toString(),NutsTextNodeStyle.path()));
                 if (force
                         || context.getSession().getTerminal().ask()
                         .forBoolean("Force Delete?").setDefaultValue(false).setSession(context.getSession())
@@ -130,10 +133,12 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
         Path s = Paths.get(repository.config().getStoreLocation(NutsStoreLocation.CACHE));
         if (s != null) {
             if (Files.exists(s)) {
-                context.getSession().out().printf("```error Deleting``` ##cache## folder %s ...%n", s);
+                context.getSession().out().printf("```error deleting``` %s folder %s ...%n",
+                        context.getWorkspace().formats().text().factory().styled("cache",NutsTextNodeStyle.primary(1))
+                        ,s);
                 if (force
                         || context.getSession().getTerminal().ask()
-                        .forBoolean("Force Delete?").setDefaultValue(false)
+                        .forBoolean("force delete?").setDefaultValue(false)
                         .setSession(context.getSession()).getBooleanValue()) {
                     try {
                         Files.delete(s);

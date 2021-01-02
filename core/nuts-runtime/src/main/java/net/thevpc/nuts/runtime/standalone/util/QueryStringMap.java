@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.*;
 

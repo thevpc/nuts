@@ -29,7 +29,7 @@ import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsUserConfig;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import com.sun.security.auth.UserPrincipal;
 
 import javax.security.auth.Subject;

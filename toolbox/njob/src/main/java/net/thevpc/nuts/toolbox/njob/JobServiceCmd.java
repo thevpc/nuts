@@ -110,8 +110,8 @@ public class JobServiceCmd {
         }
         service.addJob(t);
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("job ######%s###### (%s) added.\n",
-                    t.getId(),
+            context.getSession().out().printf("job %s (%s) added.\n",
+                    context.getWorkspace().formats().text().builder().append(t.getId(), NutsTextNodeStyle.primary(5)),
                     t.getName()
             );
         }
@@ -284,8 +284,8 @@ public class JobServiceCmd {
         }
         service.addTask(t);
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("task ######%s###### (%s) added.\n",
-                    t.getId(),
+            context.getSession().out().printf("task %s (%s) added.\n",
+                    context.getWorkspace().formats().text().builder().append(t.getId(), NutsTextNodeStyle.primary(5)),
                     t.getName()
             );
         }
@@ -331,8 +331,8 @@ public class JobServiceCmd {
         }
         service.addProject(t);
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("project ######%s###### (%s) added.\n",
-                    t.getId(),
+            context.getSession().out().printf("project %s (%s) added.\n",
+                    context.getWorkspace().formats().text().builder().append(t.getId(), NutsTextNodeStyle.primary(5)),
                     t.getName()
             );
         }
@@ -348,7 +348,7 @@ public class JobServiceCmd {
         List<NProject> projects = new ArrayList<>();
         boolean list = false;
         boolean show = false;
-        String mergeTo=null;
+        String mergeTo = null;
         List<Consumer<NProject>> runLater = new ArrayList<>();
         while (cmd.hasNext()) {
             NutsArgument a = cmd.peek();
@@ -402,12 +402,12 @@ public class JobServiceCmd {
                 }
                 case "--merge-to": {
                     NutsArgument c = cmd.nextString();
-                    if(c.isEnabled()){
-                        if(mergeTo!=null){
+                    if (c.isEnabled()) {
+                        if (mergeTo != null) {
                             cmd.pushBack(c);
                             cmd.unexpectedArgument();
-                        }else{
-                            mergeTo=c.getStringValue();
+                        } else {
+                            mergeTo = c.getStringValue();
                         }
                     }
                     break;
@@ -444,22 +444,25 @@ public class JobServiceCmd {
         if (projects.isEmpty()) {
             cmd.throwError("project name expected");
         }
+        NutsTextFormatManager text = context.getWorkspace().formats().text();
         for (NProject project : projects) {
             for (Consumer<NProject> c : runLater) {
                 c.accept(project);
             }
             service.updateProject(project);
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("project ######%s###### (##%s##) updated.\n",
-                        project.getId(),
-                        project.getName()
+                context.getSession().out().printf("project %s (%s) updated.\n",
+                        text.builder().append(project.getId(), NutsTextNodeStyle.primary(5)),
+                        text.builder().append(project.getName(), NutsTextNodeStyle.primary(1))
                 );
             }
         }
-        if(mergeTo!=null){
-            service.mergeProjects(mergeTo,projects.stream().map(x->x.getId()).toArray(String[]::new));
+        if (mergeTo != null) {
+            service.mergeProjects(mergeTo, projects.stream().map(x -> x.getId()).toArray(String[]::new));
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("projects mer to ######%s######.\n",mergeTo);
+                context.getSession().out().printf("projects mer to %s.\n",
+                        context.getWorkspace().formats().text().builder().append(mergeTo,NutsTextNodeStyle.primary(5))
+                );
             }
         }
         if (show) {
@@ -692,12 +695,13 @@ public class JobServiceCmd {
                 c.accept(task);
             }
         }
+        NutsTextFormatManager text = context.getWorkspace().formats().text();
         for (NTask task : new LinkedHashSet<>(tasks)) {
             service.updateTask(task);
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("task ######%s###### (##%s##) updated.\n",
-                        task.getId(),
-                        task.getName()
+                context.getSession().out().printf("task %s (%s) updated.\n",
+                        text.builder().append(task.getId(), NutsTextNodeStyle.primary(5)),
+                        text.builder().append(task.getName(), NutsTextNodeStyle.primary(1))
                 );
             }
         }
@@ -806,12 +810,13 @@ public class JobServiceCmd {
                 c.accept(job);
             }
         }
+        NutsTextFormatManager text = context.getWorkspace().formats().text();
         for (NJob job : new LinkedHashSet<>(jobs)) {
             service.updateJob(job);
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("job ######%s###### (##%s##) updated.\n",
-                        job.getId(),
-                        job.getName()
+                context.getSession().out().printf("job %s (%s) updated.\n",
+                        text.builder().append(job.getId(), NutsTextNodeStyle.primary(5)),
+                        text.builder().append(job.getName(), NutsTextNodeStyle.primary(1))
                 );
             }
         }
@@ -854,12 +859,16 @@ public class JobServiceCmd {
         long tasksCount = service.findTasks(NTaskStatusFilter.OPEN, null, -1, null, null, null, null, null).count();
         long jobsCount = service.findMonthJobs(null).count();
         long allJobsCount = service.findLastJobs(null, -1, null, null, null, null, null).count();
-        context.getSession().out().printf("##%s## project%s\n", projectsCount, projectsCount == 1 ? "" : "s");
-        context.getSession().out().printf("##%s## open task%s\n", tasksCount, tasksCount == 1 ? "" : "s");
-        context.getSession().out().printf("##%s## job%s %s\n", allJobsCount, allJobsCount == 1 ? "" : "s",
-                allJobsCount == 0 ? "" : NutsString.of(
-                        "(##" + jobsCount + "## this month)"
-                )
+        NutsTextFormatManager text = context.getWorkspace().formats().text();
+        NutsTextNodeFactory factory = text.factory();
+        context.getSession().out().printf("%s project%s\n", factory.styled(""+projectsCount,NutsTextNodeStyle.primary(1)), projectsCount == 1 ? "" : "s");
+        context.getSession().out().printf("%s open task%s\n", factory.styled(""+tasksCount,NutsTextNodeStyle.primary(1)), tasksCount == 1 ? "" : "s");
+        context.getSession().out().printf("%s job%s %s\n", factory.styled(""+allJobsCount,NutsTextNodeStyle.primary(1)), allJobsCount == 1 ? "" : "s",
+                allJobsCount == 0 ? "" :
+                        text.builder()
+                                .append("(")
+                                .append(""+jobsCount,NutsTextNodeStyle.primary(1))
+                                .append(" this month)")
         );
     }
 
@@ -954,18 +963,20 @@ public class JobServiceCmd {
     }
 
     private void runJobRemove(NutsCommandLine cmd) {
+        NutsTextFormatManager text = context.getWorkspace().formats().text();
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
             NJob t = findJob(a.toString(), cmd);
             if (service.removeJob(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("job ######%s###### removed.\n",
-                            a.toString()
+                    context.getSession().out().printf("job %s removed.\n",
+                            text.builder().append(a.toString(), NutsTextNodeStyle.primary(5))
                     );
                 }
             } else {
-                context.getSession().out().printf("job ######%s###### ```error not found```.\n",
-                        a.toString()
+                context.getSession().out().printf("job %s %s.\n",
+                        text.builder().append(a.toString(), NutsTextNodeStyle.primary(5)),
+                        text.builder().append("not found", NutsTextNodeStyle.error())
                 );
             }
         }
@@ -973,18 +984,20 @@ public class JobServiceCmd {
     }
 
     private void runTaskRemove(NutsCommandLine cmd) {
+        NutsTextFormatManager text = context.getWorkspace().formats().text();
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
             NTask t = findTask(a.toString(), cmd);
             if (service.removeTask(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("task ######%s###### removed.\n",
-                            a.toString()
+                    context.getSession().out().printf("task %s removed.\n",
+                            text.builder().append(a.toString(), NutsTextNodeStyle.primary(5))
                     );
                 }
             } else {
-                context.getSession().out().printf("task ######%s###### ```error not found```.\n",
-                        a.toString()
+                context.getSession().out().printf("task %s %s.\n",
+                        text.builder().append(a.toString(), NutsTextNodeStyle.primary(5)),
+                        text.builder().append("not found", NutsTextNodeStyle.error())
                 );
             }
         }
@@ -992,18 +1005,20 @@ public class JobServiceCmd {
     }
 
     private void runProjectRemove(NutsCommandLine cmd) {
+        NutsTextFormatManager text = context.getWorkspace().formats().text();
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
             NProject t = findProject(a.toString(), cmd);
             if (service.removeProject(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("project ######%s###### removed.\n",
-                            a.toString()
+                    context.getSession().out().printf("project %s removed.\n",
+                            text.builder().append(a.toString(), NutsTextNodeStyle.primary(5))
                     );
                 }
             } else {
-                context.getSession().out().printf("project ######%s###### ```error not found```.\n",
-                        a.toString()
+                context.getSession().out().printf("project %s %s.\n",
+                        text.builder().append(a.toString(), NutsTextNodeStyle.primary(5)),
+                        text.builder().append("not found", NutsTextNodeStyle.error())
                 );
             }
         }
@@ -1114,15 +1129,13 @@ public class JobServiceCmd {
             NutsArgument a = cmd.peek();
             switch (a.getStringKey()) {
                 case "-w":
-                case "--weeks":
-                    {
+                case "--weeks": {
                     countType = ChronoUnit.WEEKS;
                     count = cmd.nextString().getIntValue();
                     break;
                 }
                 case "-m":
-                case "--months":
-                    {
+                case "--months": {
                     countType = ChronoUnit.MONTHS;
                     count = cmd.nextString().getIntValue();
                     break;
@@ -1166,16 +1179,14 @@ public class JobServiceCmd {
                     break;
                 }
                 case "-p":
-                case "--project":
-                    {
+                case "--project": {
                     String s = cmd.nextString().getStringValue();
                     Predicate<String> sp = createProjectFilter(s);
                     Predicate<NJob> t = x -> sp.test(x.getProject());
                     whereFilter = appendPredicate(whereFilter, t);
                     break;
                 }
-                case "--name":
-                    {
+                case "--name": {
                     String s = cmd.nextString().getStringValue();
                     Predicate<String> sp = createStringFilter(s);
                     Predicate<NJob> t = x -> sp.test(x.getName());
@@ -1183,8 +1194,7 @@ public class JobServiceCmd {
                     break;
                 }
                 case "-b":
-                case "--beneficiary":
-                    {
+                case "--beneficiary": {
                     String s = cmd.nextString().getStringValue();
                     Predicate<String> sp = createStringFilter(s);
                     Predicate<NJob> t = x -> {
@@ -1195,8 +1205,7 @@ public class JobServiceCmd {
                     break;
                 }
                 case "-c":
-                case "--company":
-                    {
+                case "--company": {
                     String s = cmd.nextString().getStringValue();
                     Predicate<String> sp = createStringFilter(s);
                     Predicate<NJob> t = x -> {
@@ -1207,8 +1216,7 @@ public class JobServiceCmd {
                     break;
                 }
                 case "-d":
-                case "--duration":
-                    {
+                case "--duration": {
                     String s = cmd.nextString().getStringValue();
                     Predicate<TimePeriod> p = TimePeriod.parseFilter(s, false);
                     Predicate<NJob> t = x -> p.test(x.getDuration());
@@ -1217,8 +1225,7 @@ public class JobServiceCmd {
                 }
                 case "-t":
                 case "--startTime":
-                case "--start-time":
-                    {
+                case "--start-time": {
                     String s = cmd.nextString().getStringValue();
                     Predicate<Instant> t = new TimeParser().parseInstantFilter(s, false);
                     whereFilter = appendPredicate(whereFilter, x -> t.test(x.getStartTime()));
@@ -1238,7 +1245,7 @@ public class JobServiceCmd {
             int[] index = new int[1];
             r.forEach(x -> {
                 NutsString durationString = ws.formats().text().builder()
-                        .appendStyled(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)),NutsTextNodeStyle.KEYWORD1)
+                        .append(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)), NutsTextNodeStyle.keyword())
                         .immutable();
                 index[0]++;
                 lastResults.add(x);
@@ -1253,7 +1260,7 @@ public class JobServiceCmd {
 
                                 } : new Object[]{
                                 createHashId(index[0], -1),
-                                ws.formats().text().builder().appendStyled(x.getId(),NutsTextNodeStyle.PALE1).immutable(),
+                                ws.formats().text().builder().append(x.getId(), NutsTextNodeStyle.pale()).immutable(),
                                 getFormattedDate(x.getStartTime()),
                                 durationString,
                                 getFormattedProject(x.getProject() == null ? "*" : x.getProject()),
@@ -1283,15 +1290,13 @@ public class JobServiceCmd {
             NutsArgument a = cmd.peek();
             switch (a.getStringKey()) {
                 case "-w":
-                case "--weeks":
-                    {
+                case "--weeks": {
                     countType = ChronoUnit.WEEKS;
                     count = cmd.nextString().getIntValue();
                     break;
                 }
                 case "-m":
-                case "--months":
-                    {
+                case "--months": {
                     countType = ChronoUnit.MONTHS;
                     count = cmd.nextString().getIntValue();
                     break;
@@ -1381,8 +1386,7 @@ public class JobServiceCmd {
                     break;
                 }
                 case "-n":
-                case "--name":
-                    {
+                case "--name": {
                     String s = cmd.nextString().getStringValue();
                     Predicate<String> sp = createStringFilter(s);
                     Predicate<NTask> t = x -> sp.test(x.getName());
@@ -1390,8 +1394,7 @@ public class JobServiceCmd {
                     break;
                 }
                 case "-b":
-                case "--beneficiary":
-                    {
+                case "--beneficiary": {
                     String s = cmd.nextString().getStringValue();
                     Predicate<String> sp = createStringFilter(s);
                     Predicate<NTask> t = x -> {
@@ -1402,8 +1405,7 @@ public class JobServiceCmd {
                     break;
                 }
                 case "-c":
-                case "--company":
-                    {
+                case "--company": {
                     String s = cmd.nextString().getStringValue();
                     Predicate<String> sp = createStringFilter(s);
                     Predicate<NTask> t = x -> {
@@ -1414,8 +1416,7 @@ public class JobServiceCmd {
                     break;
                 }
                 case "-d":
-                case "--duration":
-                    {
+                case "--duration": {
                     String s = cmd.nextString().getStringValue();
                     Predicate<TimePeriod> p = TimePeriod.parseFilter(s, false);
                     Predicate<NTask> t = x -> p.test(x.getDuration());
@@ -1424,8 +1425,7 @@ public class JobServiceCmd {
                 }
                 case "-t":
                 case "--startTime":
-                case "--start-time":
-                    {
+                case "--start-time": {
                     String s = cmd.nextString().getStringValue();
                     Predicate<Instant> t = new TimeParser().parseInstantFilter(s, false);
                     whereFilter = appendPredicate(whereFilter, x -> t.test(x.getStartTime()));
@@ -1465,16 +1465,16 @@ public class JobServiceCmd {
         String dte0 = getFormattedDate(x.getDueTime());
         NutsTextNodeBuilder dte = ws.formats().text().builder();
         if (s == NTaskStatus.CANCELLED || s == NTaskStatus.DONE) {
-            dte.appendStyled(dte0, NutsTextNodeStyle.PALE1);
+            dte.append(dte0, NutsTextNodeStyle.pale());
         } else if (x.getDueTime() != null && x.getDueTime().compareTo(Instant.now()) < 0) {
-            dte.appendStyled(dte0, NutsTextNodeStyle.ERROR1);
+            dte.append(dte0, NutsTextNodeStyle.error());
         } else {
-            dte.appendStyled(dte0, NutsTextNodeStyle.KEYWORD2);
+            dte.append(dte0, NutsTextNodeStyle.keyword(2));
         }
         String projectName = p != null ? p.getName() : project != null ? project : "*";
         return new Object[]{
                 index,
-                ws.formats().text().builder().appendStyled(x.getId(),NutsTextNodeStyle.PALE1),
+                ws.formats().text().builder().append(x.getId(), NutsTextNodeStyle.pale()),
                 getFlagString(x.getFlag()),
                 getStatusString(x.getStatus()),
                 getPriorityString(x.getPriority()),
@@ -1485,7 +1485,7 @@ public class JobServiceCmd {
     }
 
     private NutsString getFormattedProject(String projectName) {
-        return ws.formats().text().builder().appendHashedStyle(projectName).immutable();
+        return ws.formats().text().builder().appendHash(projectName).immutable();
     }
 
     private String getFormattedDate(Instant x) {
@@ -1515,43 +1515,37 @@ public class JobServiceCmd {
         }
         switch (x) {
             case NONE:
-                return NutsString.of("```pale 0```ø");
+                return ws.formats().text().builder().append("0",NutsTextNodeStyle.pale());
             case LOW:
-                return NutsString.of("```pale L```ø");
+                return ws.formats().text().builder().append("L",NutsTextNodeStyle.pale());
             case NORMAL:
-                return NutsString.of("N");
+                return ws.formats().text().builder().append("N");
             case MEDIUM:
-                return NutsString.of("##M##ø");
+                return ws.formats().text().builder().append("M",NutsTextNodeStyle.primary(1));
             case URGENT:
-                return NutsString.of("###U###ø");
+                return ws.formats().text().builder().append("U",NutsTextNodeStyle.primary(2));
             case HIGH:
-                return NutsString.of("####H####ø");
+                return ws.formats().text().builder().append("H",NutsTextNodeStyle.primary(3));
             case CRITICAL:
-                return NutsString.of("```error C```ø");
+                return ws.formats().text().builder().append("C",NutsTextNodeStyle.fail());
         }
         return NutsString.of("?");
     }
 
     private NutsString getStatusString(NTaskStatus x) {
+        NutsTextFormatManager text = ws.formats().text();
         if (x == null) {
-            return NutsString.of("*");
+            return text.builder().append("*");
         }
         switch (x) {
             case TODO:
-//                return new NutsImmutableString("\u2B58");
-                return NutsString.of("\u24c9");
-//            case TODO:return new NutsImmutableString("\u25A1");
+                return text.builder().append("\u24c9");
             case DONE:
-                return NutsString.of("ø```success \u2611```ø");
-//            case WIP:return new NutsImmutableString("##\u25B6##");
+                return text.builder().append("\u2611",NutsTextNodeStyle.success());
             case WIP:
-                return NutsString.of("##\u24CC##ø");
-//                return new NutsImmutableString("##\u25F6##");
+                return text.builder().append("\u24CC",NutsTextNodeStyle.primary(1));
             case CANCELLED:
-//                return new NutsImmutableString("@@\u2613@@");
-//                return new NutsImmutableString("@@\u2421@@");
-//                return new NutsImmutableString("@@\u26C3@@");
-                return NutsString.of("```error \u2718```ø");
+                return text.builder().append("\u2718",NutsTextNodeStyle.fail());
         }
         return NutsString.of("?");
     }
@@ -1559,17 +1553,17 @@ public class JobServiceCmd {
     private NutsString getFlagString(String x, int index) {
         switch (index) {
             case 1:
-                return NutsString.of("##"+x+"##ø");
+                return ws.formats().text().builder().append(x,NutsTextNodeStyle.primary(1));
             case 2:
-                return NutsString.of("###"+x+"###ø");
+                return ws.formats().text().builder().append(x,NutsTextNodeStyle.primary(2));
             case 3:
-                return NutsString.of("####"+x+"####ø");
+                return ws.formats().text().builder().append(x,NutsTextNodeStyle.primary(3));
             case 4:
-                return NutsString.of("#####"+x+"#####ø");
+                return ws.formats().text().builder().append(x,NutsTextNodeStyle.primary(4));
             case 5:
-                return NutsString.of("######"+x+"######ø");
+                return ws.formats().text().builder().append(x,NutsTextNodeStyle.primary(5));
         }
-        throw new IllegalArgumentException("Invalid index "+index);
+        throw new NutsIllegalArgumentException(ws,"Invalid index " + index);
     }
 
     private NutsString getFlagString(NFlag x) {
@@ -1581,59 +1575,59 @@ public class JobServiceCmd {
                 return NutsString.of("\u2690");
 
             case STAR1:
-                return getFlagString("\u2605",1);
+                return getFlagString("\u2605", 1);
             case STAR2:
-                return getFlagString("\u2605",2);
+                return getFlagString("\u2605", 2);
             case STAR3:
-                return getFlagString("\u2605",3);
+                return getFlagString("\u2605", 3);
             case STAR4:
-                return getFlagString("\u2605",4);
+                return getFlagString("\u2605", 4);
             case STAR5:
-                return getFlagString("\u2605",5);
+                return getFlagString("\u2605", 5);
 
             case FLAG1:
-                return getFlagString("\u2691",1);
+                return getFlagString("\u2691", 1);
             case FLAG2:
-                return getFlagString("\u2691",2);
+                return getFlagString("\u2691", 2);
             case FLAG3:
-                return getFlagString("\u2691",3);
+                return getFlagString("\u2691", 3);
             case FLAG4:
-                return getFlagString("\u2691",4);
+                return getFlagString("\u2691", 4);
             case FLAG5:
-                return getFlagString("\u2691",5);
+                return getFlagString("\u2691", 5);
 
             case KING1:
-                return getFlagString("\u265A",1);
+                return getFlagString("\u265A", 1);
             case KING2:
-                return getFlagString("\u265A",2);
+                return getFlagString("\u265A", 2);
             case KING3:
-                return getFlagString("\u265A",3);
+                return getFlagString("\u265A", 3);
             case KING4:
-                return getFlagString("\u265A",4);
+                return getFlagString("\u265A", 4);
             case KING5:
-                return getFlagString("\u265A",5);
+                return getFlagString("\u265A", 5);
 
             case HEART1:
-                return getFlagString("\u2665",1);
+                return getFlagString("\u2665", 1);
             case HEART2:
-                return getFlagString("\u2665",2);
+                return getFlagString("\u2665", 2);
             case HEART3:
-                return getFlagString("\u2665",3);
+                return getFlagString("\u2665", 3);
             case HEART4:
-                return getFlagString("\u2665",4);
+                return getFlagString("\u2665", 4);
             case HEART5:
-                return getFlagString("\u2665",5);
+                return getFlagString("\u2665", 5);
 
             case PHONE1:
-                return getFlagString("\u260E",1);
+                return getFlagString("\u260E", 1);
             case PHONE2:
-                return getFlagString("\u260E",2);
+                return getFlagString("\u260E", 2);
             case PHONE3:
-                return getFlagString("\u260E",3);
+                return getFlagString("\u260E", 3);
             case PHONE4:
-                return getFlagString("\u260E",4);
+                return getFlagString("\u260E", 4);
             case PHONE5:
-                return getFlagString("\u260E",5);
+                return getFlagString("\u260E", 5);
         }
         return NutsString.of("[" + x.toString().toLowerCase() + "]");
     }
@@ -1644,8 +1638,7 @@ public class JobServiceCmd {
             NutsArgument a = cmd.peek();
             switch (a.getStringKey()) {
                 case "-b":
-                case "-beneficiary":
-                    {
+                case "-beneficiary": {
                     String s = cmd.nextString().getStringValue();
                     Predicate<String> sp = createStringFilter(s);
                     Predicate<NProject> t = x -> sp.test(x.getBeneficiary());
@@ -1653,8 +1646,7 @@ public class JobServiceCmd {
                     break;
                 }
                 case "-c":
-                case "-company":
-                    {
+                case "-company": {
                     String s = cmd.nextString().getStringValue();
                     Predicate<String> sp = createStringFilter(s);
                     Predicate<NProject> t = x -> sp.test(x.getCompany());
@@ -1662,25 +1654,22 @@ public class JobServiceCmd {
                     break;
                 }
                 case "-n":
-                case "--name":
-                    {
+                case "--name": {
                     String s = cmd.nextString().getStringValue();
                     Predicate<String> sp = createStringFilter(s);
                     Predicate<NProject> t = x -> sp.test(x.getName());
                     whereFilter = appendPredicate(whereFilter, t);
                     break;
                 }
-                case "--unused":
-                    {
+                case "--unused": {
                     boolean unused = cmd.nextBoolean().getBooleanValue();
-                    Predicate<NProject> t = x -> service.isUsedProject(x.getId())!=unused;
+                    Predicate<NProject> t = x -> service.isUsedProject(x.getId()) != unused;
                     whereFilter = appendPredicate(whereFilter, t);
                     break;
                 }
                 case "-t":
                 case "--startTime":
-                case "--start-time":
-                    {
+                case "--start-time": {
                     String s = cmd.nextString().getStringValue();
                     Predicate<Instant> t = new TimeParser().parseInstantFilter(s, false);
                     whereFilter = appendPredicate(whereFilter, x -> t.test(x.getStartTime()));
@@ -1762,8 +1751,14 @@ public class JobServiceCmd {
     public void runInteractive(NutsCommandLine cmdLine) {
         NutsSession session = context.getSession();
         context.getWorkspace().io().term().enableRichTerm(context.getSession());
+        NutsTextFormatManager text = context.getWorkspace().formats().text();
+        NutsTextNodeFactory factory = text.factory();
 
-        session.out().println("##" + context.getAppId().getArtifactId() + " " + context.getAppId().getVersion() + "## interactive mode. type ```error q``` to quit.");
+        session.out().printf(
+                "%s interactive mode. type %s to quit.%n",
+                factory.styled(context.getAppId().getArtifactId() + " " + context.getAppId().getVersion(),NutsTextNodeStyle.primary(1)),
+                factory.styled("q",NutsTextNodeStyle.error())
+        );
         InputStream in = session.getTerminal().in();
         Exception lastError = null;
         while (true) {

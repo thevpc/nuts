@@ -174,7 +174,7 @@ public class ProjectService {
             }
             String nutsRepository = a.getNutsRepository();
             if (StringUtils.isBlank(nutsRepository)) {
-                throw new NutsExecutionException(context.getWorkspace(), "missing repository. try 'worky set -r vpc-public-maven' or something like that", 2);
+                throw new NutsExecutionException(context.getWorkspace(), "missing repository. try 'nwork set -r vpc-public-maven' or something like that", 2);
             }
             try {
                 NutsWorkspace ws2 = null;
@@ -224,7 +224,7 @@ public class ProjectService {
                     }
                     String nutsRepository = a.getNutsRepository();
                     if (StringUtils.isBlank(nutsRepository)) {
-                        throw new NutsExecutionException(context.getWorkspace(), "missing repository. try 'worky set -r vpc-public-maven' or something like that", 2);
+                        throw new NutsExecutionException(context.getWorkspace(), "missing repository. try 'nwork set -r vpc-public-maven' or something like that", 2);
                     }
                     try {
                         Pom g = new PomXmlParser().parse(new File(f, "pom.xml"));

@@ -10,31 +10,30 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.standalone.main.wscommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsInstallCommand;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
-import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsCollectionResult;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsInstallCommand;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -67,7 +66,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 return def.definition;
             }
         } else {
-            def = loaded.addForInstall(id, installStrategy,false);
+            def = loaded.addForInstall(id, installStrategy, false);
             def.extra = true;
             def.doRequire = true;
             if (forId != null) {
@@ -98,7 +97,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         def.doRequire = true;
         if (includeDeps) {
             for (NutsDependency dependency : def.definition.getDependencies()) {
-                _loadIdContent(dependency.toId(), id, session, includeDeps, loaded,NutsInstallStrategy.REQUIRE);
+                _loadIdContent(dependency.toId(), id, session, includeDeps, loaded, NutsInstallStrategy.REQUIRE);
             }
         }
         return def.definition;
@@ -116,10 +115,10 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         InstallIdInfo info = list.get(id);
         if (info.doInstall) {
-            _loadIdContent(info.id, null, session, true, list,info.strategy);
-            if(info.definition!=null) {
+            _loadIdContent(info.id, null, session, true, list, info.strategy);
+            if (info.definition != null) {
                 for (ConditionalArguments conditionalArgument : conditionalArguments) {
-                    if (conditionalArgument.getPredicate().test(info.definition)){
+                    if (conditionalArgument.getPredicate().test(info.definition)) {
                         cmdArgs.addAll(conditionalArgument.getArgs());
                     }
                 }
@@ -127,7 +126,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             dws.installImpl(info.definition, cmdArgs.toArray(new String[0]), null, session, info.doSwitchVersion);
             return true;
         } else if (info.doRequire) {
-            _loadIdContent(info.id, null, session, true, list,info.strategy);
+            _loadIdContent(info.id, null, session, true, list, info.strategy);
             dws.requireImpl(info.definition, session, info.doRequireDependencies, new NutsId[0]);
             return true;
         } else if (info.doSwitchVersion) {
@@ -363,14 +362,36 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             throw new NutsInstallException(getWorkspace(), "", sb.toString().trim(), null);
         }
 
+        NutsTextFormatManager text = ws.formats().text();
         if (getValidWorkspaceSession().isPlainTrace() || (!list.emptyCommand && getValidWorkspaceSession().getConfirm() == NutsConfirmationMode.ASK)) {
-            printList(out, "###new###", "##installed##", list.ids(x -> x.doInstall && !x.isAlreadyExists()));
-            printList(out, "###new###", "##required##", list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists()));
-            printList(out, "###required###", "##re-required##", list.ids(x -> (!x.doInstall && x.doRequire) && x.isAlreadyRequired()));
-            printList(out, "###required###", "##installed##", list.ids(x -> x.doInstall && x.isAlreadyRequired() && !x.isAlreadyInstalled()));
-            printList(out, "###installed###", "##re-reinstalled##", list.ids(x -> x.doInstall && x.isAlreadyInstalled()));
-            printList(out, "###installed###", "####set as default####", list.ids(x -> x.doSwitchVersion && x.isAlreadyInstalled()));
-            printList(out, "###installed###", "########ignored########", list.ids(x -> x.ignored));
+            printList(out, text.builder().append("new", NutsTextNodeStyle.primary(2)),
+                    text.builder().append("installed", NutsTextNodeStyle.primary(1)),
+                    list.ids(x -> x.doInstall && !x.isAlreadyExists()));
+
+            printList(out, text.builder().append("new", NutsTextNodeStyle.primary(2)),
+                    text.builder().append("required", NutsTextNodeStyle.primary(1)),
+                    list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists()));
+            printList(out,
+                    text.builder().append("required", NutsTextNodeStyle.primary(2)),
+                    text.builder().append("re-required", NutsTextNodeStyle.primary(1)),
+                    list.ids(x -> (!x.doInstall && x.doRequire) && x.isAlreadyRequired()));
+            printList(out,
+                    text.builder().append("required", NutsTextNodeStyle.primary(2)),
+                    text.builder().append("installed", NutsTextNodeStyle.primary(1)),
+                    list.ids(x -> x.doInstall && x.isAlreadyRequired() && !x.isAlreadyInstalled()));
+
+            printList(out,
+                    text.builder().append("required", NutsTextNodeStyle.primary(2)),
+                    text.builder().append("re-reinstalled", NutsTextNodeStyle.primary(1)),
+                    list.ids(x -> x.doInstall && x.isAlreadyInstalled()));
+            printList(out,
+                    text.builder().append("installed", NutsTextNodeStyle.primary(2)),
+                    text.builder().append("set as default", NutsTextNodeStyle.primary(3)),
+                    list.ids(x -> x.doSwitchVersion && x.isAlreadyInstalled()));
+            printList(out,
+                    text.builder().append("installed", NutsTextNodeStyle.primary(2)),
+                    text.builder().append("ignored", NutsTextNodeStyle.pale()),
+                    list.ids(x -> x.ignored));
         }
         List<NutsId> nonIgnored = list.ids(x -> !x.ignored);
         if (!nonIgnored.isEmpty() && !ws.io().term().getTerminal().ask().forBoolean("should we proceed?")
@@ -378,7 +399,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 .setSession(session)
                 .setCancelMessage("installation cancelled : %s ", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")))
                 .getBooleanValue()) {
-            throw new NutsUserCancelException(ws,"installation cancelled: "+ nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")));
+            throw new NutsUserCancelException(ws, "installation cancelled: " + nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")));
         }
 //        List<String> cmdArgs = new ArrayList<>(Arrays.asList(this.getArgs()));
 //        if (session.isForce()) {
@@ -426,12 +447,22 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         return this;
     }
 
-    private void printList(PrintStream out, String kind, String action, List<NutsId> all) {
+    private void printList(PrintStream out, NutsString kind, NutsString action, List<NutsId> all) {
         if (all.size() > 0) {
-            out.println("the following " + kind + " " + (all.size() > 1 ? "artifacts are" : "artifact is") + " going to be " + action + " : "
-                    + all.stream()
-                    .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format())
-                    .collect(Collectors.joining(", ")));
+
+            NutsTextNodeBuilder msg = ws.formats().text().builder();
+            msg.append("the following ")
+                    .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
+                    .append(" going to be ").append(action).append(" : ")
+                    .appendJoined(
+                            ws.formats().text().factory().plain(", "),
+                            all.stream().map(x ->
+                                    ws.formats().text().factory().formatted(
+                                            x.builder().omitImportedGroupId().build()
+                                    )
+                            ).collect(Collectors.toList())
+                    );
+            out.println(msg);
         }
     }
 
@@ -491,7 +522,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         }
 
         private String normalizeId(NutsId id) {
-            return id.builder().setNamespace(null).setProperty("optional",null).build().toString();
+            return id.builder().setNamespace(null).setProperty("optional", null).build().toString();
         }
 
         public List<NutsId> ids(Predicate<InstallIdInfo> filter) {

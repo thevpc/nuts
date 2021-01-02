@@ -208,8 +208,8 @@ final class PrivateNutsBootConfigLoader {
             k = folderName502.toLowerCase() + "SystemHome";
             v = (String) jsonObject.get(k);
             homeLocations.put(PrivateBootWorkspaceOptions.createHomeLocationKey(null, folder), v);
-            for (NutsOsFamily layout : NutsOsFamily.values()) {
-                switch (layout) {
+            for (NutsOsFamily osFamily : NutsOsFamily.values()) {
+                switch (osFamily) {
                     case LINUX: {
                         k = folderName502.toLowerCase() + "LinuxHome";
                         break;
@@ -231,11 +231,11 @@ final class PrivateNutsBootConfigLoader {
                         break;
                     }
                     default: {
-                        throw new IllegalArgumentException("Unsupported " + layout);
+                        throw new NutsBootException("unsupported os-family " + osFamily);
                     }
                 }
                 v = (String) jsonObject.get(k);
-                homeLocations.put(PrivateBootWorkspaceOptions.createHomeLocationKey(layout, folder), v);
+                homeLocations.put(PrivateBootWorkspaceOptions.createHomeLocationKey(osFamily, folder), v);
             }
         }
         config.setHomeLocations(homeLocations);

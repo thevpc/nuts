@@ -40,7 +40,7 @@ public class ItemFactory {
                 return new Literal(((NutsPrimitiveElement) o).getValue());
             }
         }
-        throw new IllegalArgumentException("Invalid");
+        throw new IllegalArgumentException("invalid");
     }
 
     public interface Item {
@@ -131,17 +131,17 @@ public class ItemFactory {
 
         @Override
         public String asString() {
-            throw new IllegalArgumentException("Not a string");
+            throw new IllegalArgumentException("not a string");
         }
 
         @Override
         public boolean asBoolean() {
-            throw new IllegalArgumentException("Not a boolean");
+            throw new IllegalArgumentException("not a boolean");
         }
 
         @Override
         public Number asNumber() {
-            throw new IllegalArgumentException("Not a number");
+            throw new IllegalArgumentException("not a number");
         }
     }
 
@@ -251,7 +251,7 @@ public class ItemFactory {
                 String s = (String) value;
                 return Double.parseDouble(s);
             }
-            throw new IllegalArgumentException("Not a number");
+            throw new IllegalArgumentException("not a number");
         }
 
     }

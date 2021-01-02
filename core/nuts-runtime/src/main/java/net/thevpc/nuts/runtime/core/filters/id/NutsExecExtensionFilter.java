@@ -7,8 +7,8 @@ package net.thevpc.nuts.runtime.core.filters.id;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.Simplifiable;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 /**
  *

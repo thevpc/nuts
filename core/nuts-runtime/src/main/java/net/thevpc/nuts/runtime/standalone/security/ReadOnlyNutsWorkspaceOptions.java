@@ -350,11 +350,6 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public boolean isExcludedExtension(String extensionId) {
-        return options.isExcludedExtension(extensionId);
-    }
-
-    @Override
     public Boolean getDry() {
         return options.getDry();
     }
@@ -437,5 +432,10 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     @Override
     public boolean isSwitchWorkspace() {
         return options.isSwitchWorkspace();
+    }
+
+    @Override
+    public String[] getProperties() {
+        return options.getProperties();
     }
 }

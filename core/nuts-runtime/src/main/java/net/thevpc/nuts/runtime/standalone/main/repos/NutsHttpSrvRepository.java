@@ -29,10 +29,10 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.io.CoreSecurityUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -55,7 +55,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
         LOG=workspace.log().of(NutsHttpSrvRepository.class);
         try {
-            remoteId = NutsWorkspaceUtils.of(workspace).parseRequiredNutsId((options.getLocation() + "/version"));
+            remoteId = workspace.id().parser().setLenient(false).parse((options.getLocation() + "/version"));
         } catch (Exception ex) {
             LOG.with().session(options.getSession()).level(Level.WARNING).verb(NutsLogVerb.FAIL).log( "Unable to initialize Repository NutsId for repository {0}", options.getLocation());
         }
@@ -68,7 +68,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     public NutsId getRemoteId(NutsSession session) {
         if (remoteId == null) {
             try {
-                remoteId = NutsWorkspaceUtils.of(getWorkspace()).parseRequiredNutsId( httpGetString(getUrl("/version"),session));
+                remoteId = workspace.id().parser().setLenient(false).parse( httpGetString(getUrl("/version"),session));
             } catch (Exception ex) {
                 LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.FAIL).log("Unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
             }

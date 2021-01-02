@@ -8,11 +8,11 @@ package net.thevpc.nuts.runtime.standalone.main.wscommands;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsUpdateCommand;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsUpdateResult;
+import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsUpdateResult;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspaceUpdateResult;
 import net.thevpc.nuts.runtime.standalone.NutsExtensionListHelper;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
@@ -23,8 +23,8 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
@@ -279,7 +279,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsId[] lockedIds = this.getLockedIds();
         if (lockedIds.length > 0) {
             for (NutsId d : new HashSet<>(Arrays.asList(lockedIds))) {
-                NutsDependency dd = CoreNutsUtils.parseNutsDependency(ws, d.toString());
+                NutsDependency dd = getWorkspace().dependency().parser().parseDependency(d.toString());
                 if (regularUpdates.containsKey(dd.getSimpleName())) {
                     NutsUpdateResult updated = regularUpdates.get(dd.getSimpleName());
                     //FIX ME
@@ -313,24 +313,26 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             if (updates.length == 0) {
                 out.printf("All components are [[up-to-date]]. You are running latest version%s.%n", result.getAllResults().length > 1 ? "s" : "");
             } else {
-                out.printf("Workspace has ##%s## component%s to update.%n", updates.length, (updates.length > 1 ? "s" : ""));
+                out.printf("Workspace has %s component%s to update.%n", ws.formats().text().factory().styled(""+updates.length,NutsTextNodeStyle.primary(1)),
+                        (updates.length > 1 ? "s" : ""));
                 int widthCol1 = 2;
                 int widthCol2 = 2;
                 for (NutsUpdateResult update : updates) {
                     widthCol1 = Math.max(widthCol1, update.getAvailable().getId().getShortName().length());
                     widthCol2 = Math.max(widthCol2, update.getLocal().getId().getVersion().toString().length());
                 }
+                NutsTextNodeFactory factory = getWorkspace().formats().text().factory();
                 for (NutsUpdateResult update : updates) {
                     if (update.isUpdateVersionAvailable()) {
-                        out.printf("((%s))  : %s => #####%s#####%n",
-                                CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2),
+                        out.printf("%s  : %s => %s%n",
+                                factory.styled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2),NutsTextNodeStyle.primary(6)),
                                 CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
-                                update.getAvailable().getId().getVersion().toString());
+                                factory.styled(update.getAvailable().getId().getVersion().toString()),NutsTextNodeStyle.primary(4));
                     } else if (update.isUpdateStatusAvailable()) {
-                        out.printf("((%s))  : %s => #####%s#####%n",
-                                CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2),
+                        out.printf("%s  : %s => %s%n",
+                                factory.styled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2),NutsTextNodeStyle.primary(6)),
                                 CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
-                                "set as default");
+                                factory.styled("set as default",NutsTextNodeStyle.primary(4)));
                     }
                 }
             }
@@ -532,10 +534,14 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsDefinition d1 = r.getAvailable();
         final String simpleName = d0 != null ? d0.getId().getShortName() : d1 != null ? d1.getId().getShortName() : id.getShortName();
         final PrintStream out = CoreIOUtils.resolveOut(getValidWorkspaceSession());
+        NutsTextNodeFactory factory = ws.formats().text().factory();
         if (r.isUpdateApplied()) {
             if (r.isUpdateForced()) {
                 if (d0 == null) {
-                    out.printf("####%s#### is [[updated]] to latest version ####%s####%n", simpleName, d1 == null ? null : d1.getId().getVersion());
+                    out.printf("%s is [updated] to latest version %s%n",
+                            factory.styled(simpleName,NutsTextNodeStyle.primary(3)),
+                            d1 == null ? null : d1.getId().getVersion()
+                    );
                 } else if (d1 == null) {
                     //this is very interesting. Why the hell is this happening?
                 } else {
@@ -543,12 +549,14 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     NutsVersion v1 = d1.getId().getVersion();
                     if (v1.compareTo(v0) <= 0) {
                         if (v1.compareTo(v0) == 0) {
-                            out.printf("####%s#### is [[forced]] to ####%s#### %n", simpleName, d0.getId().getVersion());
+                            out.printf("%s is [forced] to %s %n", factory.styled(simpleName,NutsTextNodeStyle.primary(3)), d0.getId().getVersion());
                         } else {
-                            out.printf("####%s#### is [[forced]] from ####%s#### to older version ####%s####%n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
+                            out.printf("%s is [forced] from %s to older version %s%n",
+                                    factory.styled(simpleName,NutsTextNodeStyle.primary(3)), d0.getId().getVersion(), d1.getId().getVersion());
                         }
                     } else {
-                        out.printf("####%s#### is [[updated]] from ####%s#### to latest version ####%s####%n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
+                        out.printf("%s is [updated] from %s to latest version %s%n", factory.styled(simpleName,NutsTextNodeStyle.primary(3)),
+                                d0.getId().getVersion(), d1.getId().getVersion());
                     }
                 }
             }

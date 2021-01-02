@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.manager;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.format.DefaultVersionFormat;
-import net.thevpc.nuts.runtime.standalone.parser.DefaultNutsVersionParser;
+import net.thevpc.nuts.runtime.core.format.DefaultVersionFormat;
+import net.thevpc.nuts.runtime.core.parser.DefaultNutsVersionParser;
 
 public class DefaultNutsVersionManager implements NutsVersionManager {
     private NutsWorkspace workspace;

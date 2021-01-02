@@ -36,7 +36,7 @@ import net.thevpc.nuts.NutsDependencyFilter;
 import net.thevpc.nuts.NutsDependencyScope;
 import net.thevpc.nuts.NutsDependencyScopePattern;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 
 /**
  *

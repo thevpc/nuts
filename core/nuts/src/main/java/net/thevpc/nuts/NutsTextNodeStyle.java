@@ -3,95 +3,237 @@ package net.thevpc.nuts;
 /**
  * @category Format
  */
-public enum NutsTextNodeStyle {
-    PRIMARY1,
-    PRIMARY2,
-    PRIMARY3,
-    PRIMARY4,
-    PRIMARY5,
-    PRIMARY6,
-    PRIMARY7,
-    PRIMARY8,
-    PRIMARY9,
-    SECONDARY1,
-    SECONDARY2,
-    SECONDARY3,
-    SECONDARY4,
-    SECONDARY5,
-    SECONDARY6,
-    SECONDARY7,
-    SECONDARY8,
-    SECONDARY9,
-    UNDERLINED,
-    ITALIC,
-    STRIKED,
-    REVERSED,
-    ERROR1,
-    ERROR2,
-    ERROR3,
-    ERROR4,
-    WARN1,
-    WARN2,
-    WARN3,
-    WARN4,
-    INFO1,
-    INFO2,
-    INFO3,
-    INFO4,
-    CONFIG1,
-    CONFIG2,
-    CONFIG3,
-    CONFIG4,
-    COMMENTS1,
-    COMMENTS2,
-    COMMENTS3,
-    COMMENTS4,
-    STRING1,
-    STRING2,
-    STRING3,
-    STRING4,
-    NUMBER1,
-    NUMBER2,
-    NUMBER3,
-    NUMBER4,
-    BOOLEAN1,
-    BOOLEAN2,
-    BOOLEAN3,
-    BOOLEAN4,
-    KEYWORD1,
-    KEYWORD2,
-    KEYWORD3,
-    KEYWORD4,
-    OPTION1,
-    OPTION2,
-    OPTION3,
-    OPTION4,
-    USER_INPUT1,
-    USER_INPUT2,
-    USER_INPUT3,
-    USER_INPUT4,
-    SEPARATOR1,
-    SEPARATOR2,
-    SEPARATOR3,
-    SEPARATOR4,
-    OPERATOR1,
-    OPERATOR2,
-    OPERATOR3,
-    OPERATOR4,
-    SUCCESS1,
-    SUCCESS2,
-    SUCCESS3,
-    SUCCESS4,
-    FAIL1,
-    FAIL2,
-    FAIL3,
-    FAIL4,
-    VAR1,
-    VAR2,
-    VAR3,
-    VAR4,
-    PALE1,
-    PALE2,
-    PALE3,
-    PALE4,
+public class NutsTextNodeStyle {
+    private NutsTextNodeStyleType type;
+    private int variant;
+
+    public NutsTextNodeStyle(NutsTextNodeStyleType type, int variant) {
+        this.type = type;
+        this.variant = variant;
+    }
+
+    public static NutsTextNodeStyle of(NutsTextNodeStyleType style) {
+        return of(style, 0);
+    }
+
+    public static NutsTextNodeStyle of(NutsTextNodeStyleType style, int variant) {
+        return new NutsTextNodeStyle(style, variant);
+    }
+
+    public static NutsTextNodeStyle primary(int variant) {
+        return of(NutsTextNodeStyleType.PRIMARY, variant);
+    }
+
+    public static NutsTextNodeStyle fail(int variant) {
+        return of(NutsTextNodeStyleType.FAIL, variant);
+    }
+
+    public static NutsTextNodeStyle fail() {
+        return of(NutsTextNodeStyleType.FAIL);
+    }
+
+    public static NutsTextNodeStyle danger(int variant) {
+        return of(NutsTextNodeStyleType.DANGER, variant);
+    }
+
+    public static NutsTextNodeStyle danger() {
+        return of(NutsTextNodeStyleType.DANGER);
+    }
+
+    public static NutsTextNodeStyle title(int variant) {
+        return of(NutsTextNodeStyleType.TITLE, variant);
+    }
+
+    public static NutsTextNodeStyle secondary(int variant) {
+        return of(NutsTextNodeStyleType.SECONDARY, variant);
+    }
+
+    public static NutsTextNodeStyle error() {
+        return of(NutsTextNodeStyleType.ERROR);
+    }
+
+    public static NutsTextNodeStyle error(int variant) {
+        return of(NutsTextNodeStyleType.ERROR, variant);
+    }
+
+    public static NutsTextNodeStyle option() {
+        return of(NutsTextNodeStyleType.OPTION);
+    }
+
+    public static NutsTextNodeStyle option(int variant) {
+        return of(NutsTextNodeStyleType.OPTION, variant);
+    }
+
+    public static NutsTextNodeStyle separator() {
+        return of(NutsTextNodeStyleType.SEPARATOR);
+    }
+
+    public static NutsTextNodeStyle separator(int variant) {
+        return of(NutsTextNodeStyleType.SEPARATOR, variant);
+    }
+
+    public static NutsTextNodeStyle version() {
+        return of(NutsTextNodeStyleType.VERSION);
+    }
+
+    public static NutsTextNodeStyle version(int variant) {
+        return of(NutsTextNodeStyleType.VERSION, variant);
+    }
+
+    public static NutsTextNodeStyle keyword() {
+        return of(NutsTextNodeStyleType.KEYWORD);
+    }
+
+    public static NutsTextNodeStyle keyword(int variant) {
+        return of(NutsTextNodeStyleType.KEYWORD, variant);
+    }
+
+    public static NutsTextNodeStyle reversed() {
+        return of(NutsTextNodeStyleType.REVERSED);
+    }
+
+    public static NutsTextNodeStyle underlined() {
+        return of(NutsTextNodeStyleType.UNDERLINED);
+    }
+
+    public static NutsTextNodeStyle striked() {
+        return of(NutsTextNodeStyleType.STRIKED);
+    }
+
+    public static NutsTextNodeStyle italic() {
+        return of(NutsTextNodeStyleType.ITALIC);
+    }
+
+    public static NutsTextNodeStyle bold() {
+        return of(NutsTextNodeStyleType.BOLD);
+    }
+
+    public static NutsTextNodeStyle bool() {
+        return of(NutsTextNodeStyleType.BOOLEAN);
+    }
+
+    public static NutsTextNodeStyle bool(int variant) {
+        return of(NutsTextNodeStyleType.BOOLEAN, variant);
+    }
+
+    public static NutsTextNodeStyle blink() {
+        return of(NutsTextNodeStyleType.BLINK);
+    }
+
+    public static NutsTextNodeStyle pale() {
+        return of(NutsTextNodeStyleType.PALE);
+    }
+
+    public static NutsTextNodeStyle success() {
+        return of(NutsTextNodeStyleType.SUCCESS);
+    }
+
+    public static NutsTextNodeStyle success(int variant) {
+        return of(NutsTextNodeStyleType.SUCCESS, variant);
+    }
+
+    public static NutsTextNodeStyle path() {
+        return of(NutsTextNodeStyleType.PATH);
+    }
+
+    public static NutsTextNodeStyle path(int variant) {
+        return of(NutsTextNodeStyleType.PATH, variant);
+    }
+
+    public static NutsTextNodeStyle warn() {
+        return of(NutsTextNodeStyleType.WARN);
+    }
+
+    public static NutsTextNodeStyle warn(int variant) {
+        return of(NutsTextNodeStyleType.WARN, variant);
+    }
+
+    public static NutsTextNodeStyle config() {
+        return of(NutsTextNodeStyleType.CONFIG);
+    }
+
+    public static NutsTextNodeStyle config(int variant) {
+        return of(NutsTextNodeStyleType.CONFIG, variant);
+    }
+
+    public static NutsTextNodeStyle info() {
+        return of(NutsTextNodeStyleType.INFO);
+    }
+
+    public static NutsTextNodeStyle info(int variant) {
+        return of(NutsTextNodeStyleType.INFO, variant);
+    }
+
+    public static NutsTextNodeStyle string() {
+        return of(NutsTextNodeStyleType.STRING);
+    }
+
+    public static NutsTextNodeStyle string(int variant) {
+        return of(NutsTextNodeStyleType.STRING, variant);
+    }
+
+    public static NutsTextNodeStyle operator() {
+        return of(NutsTextNodeStyleType.OPERATOR);
+    }
+
+    public static NutsTextNodeStyle operator(int variant) {
+        return of(NutsTextNodeStyleType.OPERATOR, variant);
+    }
+
+    public static NutsTextNodeStyle userInput() {
+        return of(NutsTextNodeStyleType.USER_INPUT);
+    }
+
+    public static NutsTextNodeStyle userInput(int variant) {
+        return of(NutsTextNodeStyleType.USER_INPUT, variant);
+    }
+
+    public static NutsTextNodeStyle comments() {
+        return of(NutsTextNodeStyleType.COMMENTS);
+    }
+
+    public static NutsTextNodeStyle comments(int variant) {
+        return of(NutsTextNodeStyleType.COMMENTS, variant);
+    }
+
+    public static NutsTextNodeStyle variable() {
+        return of(NutsTextNodeStyleType.VAR);
+    }
+
+    public static NutsTextNodeStyle variable(int variant) {
+        return of(NutsTextNodeStyleType.VAR, variant);
+    }
+
+    public static NutsTextNodeStyle number() {
+        return of(NutsTextNodeStyleType.VAR);
+    }
+
+    public static NutsTextNodeStyle number(int variant) {
+        return of(NutsTextNodeStyleType.VAR, variant);
+    }
+
+    public static NutsTextNodeStyle foregroundColor(int variant) {
+        return of(NutsTextNodeStyleType.FORE_COLOR, variant);
+    }
+
+    public static NutsTextNodeStyle foregroundTrueColor(int variant) {
+        return of(NutsTextNodeStyleType.FORE_TRUE_COLOR, variant);
+    }
+
+    public static NutsTextNodeStyle backgroundColor(int variant) {
+        return of(NutsTextNodeStyleType.BACK_COLOR, variant);
+    }
+
+    public static NutsTextNodeStyle backgroundTrueColor(int variant) {
+        return of(NutsTextNodeStyleType.BACK_TRUE_COLOR, variant);
+    }
+
+    public NutsTextNodeStyleType getType() {
+        return type;
+    }
+
+    public int getVariant() {
+        return variant;
+    }
+
 }

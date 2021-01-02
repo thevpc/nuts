@@ -32,8 +32,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 /**
  *

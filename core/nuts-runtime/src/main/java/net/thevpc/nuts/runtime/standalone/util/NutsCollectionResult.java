@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import net.thevpc.nuts.NutsUnsupportedArgumentException;
-import net.thevpc.nuts.runtime.standalone.AbstractNutsResultList;
+import net.thevpc.nuts.runtime.core.commands.ws.AbstractNutsResultList;
 
 /**
  *

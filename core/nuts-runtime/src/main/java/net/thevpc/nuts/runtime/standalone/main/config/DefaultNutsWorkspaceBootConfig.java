@@ -2,11 +2,10 @@ package net.thevpc.nuts.runtime.standalone.main.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.NutsHomeLocationsMap;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;

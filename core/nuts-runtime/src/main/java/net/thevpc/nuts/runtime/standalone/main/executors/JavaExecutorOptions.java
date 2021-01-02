@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.main.executors;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -234,41 +234,41 @@ public final class JavaExecutorOptions {
                         if (!session.isPlainOut()) {
                             throw new NutsExecutionException(getWorkspace(), "multiple runnable classes detected : " + possibleClasses, 102);
                         }
-                        StringBuilder msgString = new StringBuilder();
-                        List<Object> msgParams = new ArrayList<>();
+                        NutsTextFormatManager text = getWorkspace().formats().text();
+                        NutsTextNodeBuilder msgString = text.builder();
 
-                        msgString.append("multiple runnable classes detected  - actually #####%s##### . Select one :%n");
-                        msgParams.add(possibleClasses.size());
+
+                        NutsTextNodeFactory tfactory = text.factory();
+                        msgString.append("multiple runnable classes detected  - actually ")
+                                .append(tfactory.styled(""+possibleClasses.size(),NutsTextNodeStyle.primary(5)))
+                                .append(" . Select one :\n");
                         for (int i = 0; i < possibleClasses.size(); i++) {
-                            msgString.append("######[%s]###### #####%s#####%n");
-                            msgParams.add((i + 1));
-                            msgParams.add(possibleClasses.get(i));
+                                msgString.append(""+(i + 1),NutsTextNodeStyle.primary(4));
+                                msgString.append(possibleClasses.get(i),NutsTextNodeStyle.primary(4));
+                                msgString.append("\n");
                         }
-                        msgString.append("enter class ####%s#### or ####%s#### to run it. Type ```error %s``` to cancel : ");
-                        msgParams.add("#");
-                        msgParams.add("name");
-                        msgParams.add("cancel!");
+                        msgString.append("enter class ")
+                        .append("#",NutsTextNodeStyle.primary(5)).append(" or ").append("name",NutsTextNodeStyle.primary(5))
+                                .append(" to run it. type ").append("cancel!",NutsTextNodeStyle.error())
+                        .append(" to cancel : ");
 
                         mainClass = session.getTerminal()
-                                .ask().forString(msgString.toString(), msgParams.toArray())
-                                .setValidator(new NutsQuestionValidator<String>() {
-                                    @Override
-                                    public String validate(String value, NutsQuestion<String> question) throws NutsValidationException {
-                                        Integer anyInt = CoreCommonUtils.convertToInteger(value, null);
-                                        if (anyInt != null) {
-                                            int i = anyInt;
-                                            if (i >= 1 && i <= possibleClasses.size()) {
-                                                return possibleClasses.get(i - 1);
-                                            }
-                                        } else {
-                                            for (String possibleClass : possibleClasses) {
-                                                if (possibleClass.equals(value)) {
-                                                    return possibleClass;
-                                                }
+                                .ask().forString(msgString.toString())
+                                .setValidator((value, question) -> {
+                                    Integer anyInt = CoreCommonUtils.convertToInteger(value, null);
+                                    if (anyInt != null) {
+                                        int i = anyInt;
+                                        if (i >= 1 && i <= possibleClasses.size()) {
+                                            return possibleClasses.get(i - 1);
+                                        }
+                                    } else {
+                                        for (String possibleClass : possibleClasses) {
+                                            if (possibleClass.equals(value)) {
+                                                return possibleClass;
                                             }
                                         }
-                                        throw new NutsValidationException(getWorkspace());
                                     }
+                                    throw new NutsValidationException(getWorkspace());
                                 }).getValue();
                         break;
                 }

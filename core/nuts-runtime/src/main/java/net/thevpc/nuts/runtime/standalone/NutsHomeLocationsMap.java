@@ -29,8 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.NutsStoreLocation;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.CoreNutsWorkspaceOptions;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
 
 /**
  *

@@ -27,9 +27,9 @@ package net.thevpc.nuts.runtime.standalone.main.wscommands;
 
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.AbstractDefaultNutsPushCommand;
-import net.thevpc.nuts.runtime.standalone.CoreNutsConstants;
+import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;

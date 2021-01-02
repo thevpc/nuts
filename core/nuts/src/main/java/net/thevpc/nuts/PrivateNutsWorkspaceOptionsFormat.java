@@ -261,6 +261,13 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             arguments.addAll(Arrays.asList(options.getExecutorOptions()));
             arguments.addAll(Arrays.asList(options.getApplicationArguments()));
         }
+        if (PrivateNutsUtils.isBlank(apiVersion) || PrivateNutsUtils.compareRuntimeVersion(apiVersion, "0.8.1") >= 0) {
+            if(options.getProperties()!=null) {
+                for (String property : options.getProperties()) {
+                    arguments.add("---" + property);
+                }
+            }
+        }
         return arguments.toArray(new String[0]);
     }
 
@@ -530,6 +537,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 shortOptions == that.shortOptions &&
                 singleArgOptions == that.singleArgOptions &&
                 omitDefaults == that.omitDefaults &&
+                Objects.equals(apiVersion, that.apiVersion)&&
                 Objects.equals(options, that.options);
     }
 

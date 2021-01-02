@@ -1,8 +1,6 @@
 package net.thevpc.nuts.toolbox.tomcat.local;
 
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.NutsOpenMode;
-import net.thevpc.nuts.NutsStoreLocation;
+import net.thevpc.nuts.*;
 import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.toolbox.tomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.tomcat.local.config.LocalTomcatAppConfig;
@@ -17,7 +15,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
-import net.thevpc.nuts.NutsApplicationContext;
 
 public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
 
@@ -82,20 +79,34 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         }
         return null;
     }
+    public NutsString getFormattedPath(String str) {
+        return context.getWorkspace().formats().text().builder()
+                .append(str,NutsTextNodeStyle.path());
+    }
+    public NutsString getFormattedVersion(String str) {
+        return context.getWorkspace().formats().text().builder()
+                .append(str,NutsTextNodeStyle.version());
+    }
+    public NutsString getFormattedPrefix(String str) {
+        return context.getWorkspace().formats().text().builder()
+                .append("[")
+                .append(str,NutsTextNodeStyle.primary(5))
+                .append("]");
+    }
 
     public LocalTomcatAppConfigService setCurrentVersion(String version) {
         try {
             if (version == null || version.trim().isEmpty()) {
-                context.getSession().out().printf("######[%s]###### unset version.\n", getFullName());
+                context.getSession().out().printf("%s unset version.\n", getFormattedPrefix(getFullName()));
                 Files.delete(getVersionFile());
-                context.getSession().out().printf("######[%s]###### [LOG] delete version file #####%s#####.\n", getFullName(), getVersionFile());
+                context.getSession().out().printf("%s [LOG] delete version file %s.\n", getFormattedPrefix(getFullName()), getFormattedPath(getVersionFile().toString()));
                 Files.delete(getRunningFile());
-                context.getSession().out().printf("######[%s]###### [LOG] delete running file #####%s#####.\n", getFullName(), getRunningFile());
+                context.getSession().out().printf("%s [LOG] delete running file %s.\n", getFormattedPrefix(getFullName()), getFormattedPath(getRunningFile().toString()));
             } else {
-                context.getSession().out().printf("######[%s]###### set version #####%s#####.\n", getFullName(), version);
-                context.getSession().out().printf("######[%s]###### [LOG] updating version file #####%s##### to #####%s#####.\n", getFullName(), StringUtils.coalesce(version, "<DEFAULT>"), getVersionFile());
+                context.getSession().out().printf("%s set version %s.\n", getFullName(), getFormattedVersion(version));
+                context.getSession().out().printf("%s [LOG] updating version file %s to %s.\n", getFormattedPrefix(getFullName()), getFormattedVersion(StringUtils.coalesce(version, "<DEFAULT>")), getFormattedPath(getVersionFile().toString()));
                 Files.write(getVersionFile(), version.getBytes());
-                context.getSession().out().printf("######[%s]###### [LOG] updating archive file #####%s##### -> #####%s#####.\n", getFullName(), getArchiveFile(version), getRunningFile());
+                context.getSession().out().printf("%s [LOG] updating archive file %s -> %s.\n", getFormattedPrefix(getFullName()), getFormattedPath(getArchiveFile(version).toString()), getFormattedPath(getRunningFile().toString()));
                 Files.copy(getArchiveFile(version), getRunningFile());
             }
         } catch (IOException ex) {
@@ -125,7 +136,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     public LocalTomcatAppConfigService resetDeployment() {
         Path deployFile = getDeployFile();
         Path deployFolder = getDeployFolder();
-        context.getSession().out().printf("######[%s]###### reset deployment (delete #####%s##### ).\n", getFullName(), deployFile);
+        context.getSession().out().printf("%s reset deployment (delete %s ).\n", getFormattedPrefix(getFullName()), getFormattedPath(deployFile.toString()));
         try {
             Files.delete(deployFile);
             Files.delete(deployFolder);
@@ -141,7 +152,9 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         }
         Path runningFile = getRunningFile();
         Path deployFile = getDeployFile();
-        context.getSession().out().printf("######[%s]###### deploy #####%s##### as file #####%s##### to #####%s#####.\n", getFullName(), StringUtils.coalesce(version, "<DEFAULT>"), runningFile, deployFile);
+        context.getSession().out().printf("%s deploy %s as file %s to %s.\n",
+                getFormattedPrefix(getFullName()), getFormattedVersion(StringUtils.coalesce(version, "<DEFAULT>")),
+                getFormattedPath(runningFile.toString()), getFormattedPath(deployFile.toString()));
         try {
             Files.copy(runningFile, deployFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ex) {
@@ -161,7 +174,8 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
             }
             Path domainDeployPath = getArchiveFile(version);
             Files.createDirectories(domainDeployPath.getParent());
-            context.getSession().out().printf("######[%s]###### install version #####%s##### : #####%s#####->#####%s#####.\n", getFullName(), version, f, domainDeployPath);
+            context.getSession().out().printf("%s install version %s : %s->%s.\n",
+                    getFormattedPrefix(getFullName()), getFormattedVersion(version), getFormattedPath(f.toString()), getFormattedPath(domainDeployPath.toString()));
             Files.copy(f, domainDeployPath);
             if (setVersion) {
                 setCurrentVersion(version);
@@ -185,7 +199,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     @Override
     public LocalTomcatAppConfigService remove() {
         tomcat.getConfig().getApps().remove(name);
-        context.getSession().out().printf("######[%s]###### app removed.\n", getFullName());
+        context.getSession().out().printf("%s app removed.\n", getFormattedPrefix(getFullName()));
         return this;
     }
 

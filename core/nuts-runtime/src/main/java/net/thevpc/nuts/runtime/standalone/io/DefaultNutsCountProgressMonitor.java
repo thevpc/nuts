@@ -9,8 +9,8 @@ import net.thevpc.nuts.NutsProgressEvent;
 import net.thevpc.nuts.NutsProgressMonitor;
 import net.thevpc.nuts.NutsTextFormatManager;
 import net.thevpc.nuts.runtime.standalone.util.common.BytesSizeFormat;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.format.text.FPrintCommands;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;

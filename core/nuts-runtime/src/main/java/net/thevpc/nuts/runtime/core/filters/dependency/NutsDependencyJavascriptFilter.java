@@ -27,11 +27,10 @@
 package net.thevpc.nuts.runtime.core.filters.dependency;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsId;
 import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.JavascriptHelper;
-import net.thevpc.nuts.runtime.standalone.util.common.Simplifiable;
+import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 import java.util.Objects;
 
@@ -40,7 +39,7 @@ import java.util.Objects;
  */
 public class NutsDependencyJavascriptFilter extends AbstractNutsFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter>, JsNutsDependencyFilter {
 
-    private static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("sample", "sample", "sample", "sample", "sample");
+//    private static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("sample", "sample", "sample", "sample", "sample");
 
     private String code;
 

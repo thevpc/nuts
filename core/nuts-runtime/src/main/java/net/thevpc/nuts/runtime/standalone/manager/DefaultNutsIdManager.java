@@ -2,10 +2,10 @@ package net.thevpc.nuts.runtime.standalone.manager;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.PomIdResolver;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsIdBuilder;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsIdBuilder;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.PomId;
-import net.thevpc.nuts.runtime.standalone.format.DefaultNutsIdFormat;
-import net.thevpc.nuts.runtime.standalone.parser.DefaultNutsIdParser;
+import net.thevpc.nuts.runtime.core.format.DefaultNutsIdFormat;
+import net.thevpc.nuts.runtime.core.parser.DefaultNutsIdParser;
 
 public class DefaultNutsIdManager implements NutsIdManager {
     private NutsWorkspace ws;
@@ -31,7 +31,7 @@ public class DefaultNutsIdManager implements NutsIdManager {
 
     @Override
     public NutsIdBuilder builder() {
-        return new DefaultNutsIdBuilder();
+        return new DefaultNutsIdBuilder(ws);
     }
 
     @Override

@@ -29,7 +29,6 @@ import net.thevpc.common.mvn.PomId;
 import net.thevpc.common.mvn.PomIdResolver;
 import net.thevpc.common.strings.StringUtils;
 import net.thevpc.jshell.*;
-import net.thevpc.jshell.JShellNode;
 import net.thevpc.nuts.*;
 
 import java.io.File;
@@ -51,24 +50,24 @@ public class NutsJavaShell extends JShell {
     private NutsId appId = null;
     private NutsWorkspace workspace = null;
 
-    public NutsJavaShell(NutsApplicationContext appContext,String[] args) {
-        this(appContext, null, appContext.getSession(), null, null,args);
+    public NutsJavaShell(NutsApplicationContext appContext, String[] args) {
+        this(appContext, null, appContext.getSession(), null, null, args);
     }
 
-    public NutsJavaShell(NutsWorkspace workspace,String[] args) {
-        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, null), workspace, null, null, null,args);
+    public NutsJavaShell(NutsWorkspace workspace, String[] args) {
+        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, null), workspace, null, null, null, args);
     }
 
-    public NutsJavaShell(NutsWorkspace workspace, NutsSession session, NutsId appId,String[] args) {
-        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, session), workspace, session, appId, null,args);
+    public NutsJavaShell(NutsWorkspace workspace, NutsSession session, NutsId appId, String[] args) {
+        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, session), workspace, session, appId, null, args);
     }
 
-    public NutsJavaShell(NutsWorkspace workspace, NutsSession session, NutsId appId, String serviceName,String[] args) {
-        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, session), workspace, session, appId, serviceName,args);
+    public NutsJavaShell(NutsWorkspace workspace, NutsSession session, NutsId appId, String serviceName, String[] args) {
+        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, session), workspace, session, appId, serviceName, args);
     }
 
-    private NutsJavaShell(NutsApplicationContext appContext, NutsWorkspace workspace, NutsSession session, NutsId appId, String serviceName,String[] args) {
-        super(resolveServiceName(appContext, serviceName, appId), resolveArgs(appContext,args), new NshOptionsParser(appContext),
+    private NutsJavaShell(NutsApplicationContext appContext, NutsWorkspace workspace, NutsSession session, NutsId appId, String serviceName, String[] args) {
+        super(resolveServiceName(appContext, serviceName, appId), resolveArgs(appContext, args), new NshOptionsParser(appContext),
                 new NshEvaluator(), new NutsCommandTypeResolver(), new NutsErrorHandler(), new NutsExternalExecutor(),
                 null
         );
@@ -128,7 +127,7 @@ public class NutsJavaShell extends JShell {
     }
 
     private static String[] resolveArgs(NutsApplicationContext appContext, String[] args) {
-        if(args!=null){
+        if (args != null) {
             return args;
         }
         return appContext.getArguments();
@@ -170,15 +169,11 @@ public class NutsJavaShell extends JShell {
     public NutsShellContext createContext(NutsShellContext ctx, JShellNode root, JShellNode parent, JShellVariables env) {
         return new DefaultNutsShellContext(this, root, parent, ctx, getWorkspace(), appContext.getSession(), env);
     }
+
     @Override
     protected JShellContext createRootContext() {
-        return createContext(null,null,null,null);
+        return createContext(null, null, null, null);
     }
-
-    public NutsShellContext getRootNutsShellContext() {
-        return (NutsShellContext) super.getRootContext().getShellContext();
-    }
-
 
     @Override
     public JShellContext createContext(JShellContext ctx) {
@@ -210,8 +205,11 @@ public class NutsJavaShell extends JShell {
 
     @Override
     protected void printHeader(PrintStream out) {
-        out.printf("```sh nuts``` shell ###v%s### (c) thevpc 2020\n",
-                getWorkspace().getRuntimeId().getVersion().toString());
+        out.println(appContext.getWorkspace().formats().text().builder()
+                .appendCode("sh", "nuts")
+                .append(" shell ")
+                .append("v" + getWorkspace().getRuntimeId().getVersion().toString(), NutsTextNodeStyle.version())
+                .append(" (c) thevpc 2020"));
     }
 
     @Override
@@ -243,10 +241,18 @@ public class NutsJavaShell extends JShell {
         return prompt;
     }
 
+    public NshOptions getOptions() {
+        return (NshOptions) super.getOptions();
+    }
+
     //    @Override
     @Override
     public String getVersion() {
         return PomIdResolver.resolvePomId(getClass(), new PomId("", "", "dev")).getVersion();
+    }
+
+    public NutsShellContext getRootNutsShellContext() {
+        return (NutsShellContext) super.getRootContext().getShellContext();
     }
 
     private static class NshAutoCompleter implements NutsCommandAutoCompleteProcessor {
@@ -282,10 +288,6 @@ public class NutsJavaShell extends JShell {
             }
             return candidates;
         }
-    }
-
-    public NshOptions getOptions() {
-        return (NshOptions) super.getOptions();
     }
 
 }

@@ -1,9 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.util.console;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.NutsTextNodeBuilder;
+import net.thevpc.nuts.NutsTextNodeStyle;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.format.text.FPrintCommands;
+import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
 
 import java.io.PrintStream;
 import java.util.Calendar;
@@ -62,37 +64,14 @@ public class CProgressBar {
     }
 
     private String getStartBracket() {
-        if (formatted) {
-            return "\\[";
-        }
         return "[";
     }
 
     private String getEndBracket() {
-        if (formatted) {
-            return "\\]";
-        }
         return "]";
     }
 
-    private String getStartFormat() {
-        if (formatted) {
-            return "##";
-        }
-        return "";
-    }
-
-    private String getEndFormat() {
-        if (formatted) {
-            return "##";
-        }
-        return "";
-    }
-
     private String getChar() {
-        if (formatted) {
-            return "\\*";
-        }
         return "*";
     }
 
@@ -128,6 +107,12 @@ public class CProgressBar {
     }
 
     public String progress(int percent) {
+        if(session!=null){
+            return progressWithSession(percent);
+        }
+        return progressWithoutSession(percent);
+    }
+    public String progressWithoutSession(int percent) {
         long now = System.currentTimeMillis();
         if (now < lastPrint + minPeriod) {
             return "";
@@ -137,7 +122,6 @@ public class CProgressBar {
         if (indeterminate) {
             StringBuilder formattedLine = new StringBuilder();
             formattedLine.append(getStartBracket());
-            formattedLine.append(getStartFormat());
             int indeterminateSize = (int) (this.indeterminateSize * size);
             if (indeterminateSize >= size) {
                 indeterminateSize = size - 1;
@@ -165,7 +149,6 @@ public class CProgressBar {
             }
             CoreStringUtils.fillString(" ", x, formattedLine);
             CoreStringUtils.fillString(getChar(), indeterminateSize, formattedLine);
-            formattedLine.append(getEndFormat());
             int r = size - x - indeterminateSize;
             CoreStringUtils.fillString(' ', r, formattedLine);
             formattedLine.append(getEndBracket());
@@ -178,11 +161,73 @@ public class CProgressBar {
             StringBuilder formattedLine = new StringBuilder();
             formattedLine.append(getStartBracket());
             if (x > 0) {
-                formattedLine.append(getStartFormat());
                 CoreStringUtils.fillString(getChar(), x, formattedLine);
-                formattedLine.append(getEndFormat());
             }
             CoreStringUtils.fillString(' ', size - x, formattedLine);
+            formattedLine.append(getEndBracket());
+            return formattedLine.toString();
+        }
+    }
+    public String progressWithSession(int percent) {
+        long now = System.currentTimeMillis();
+        if (now < lastPrint + minPeriod) {
+            return "";
+        }
+        lastPrint = now;
+        boolean indeterminate = percent < 0;
+        if (indeterminate) {
+            NutsTextNodeBuilder formattedLine = session.getWorkspace().formats().text().builder();
+            formattedLine.append(getStartBracket());
+            int indeterminateSize = (int) (this.indeterminateSize * size);
+            if (indeterminateSize >= size) {
+                indeterminateSize = size - 1;
+            }
+            if (indeterminateSize < 1) {
+                indeterminateSize = 1;
+            }
+            int x = 0;
+            if (indeterminateSize < size) {
+                int p = this.size - indeterminateSize;
+                int h = indeterminatePosition.evalIndeterminatePos(this, 2 * p);
+                if (h < 0) {
+                    h = -h;
+                }
+                x = h % (2 * p);//(int) ((s * 2 * size) / 60.0);
+                if (x >= p) {
+                    x = 2 * p - x;
+                }
+            } else {
+                x = 0;
+            }
+
+            if (x < 0) {
+                x = 0;
+            }
+            StringBuilder sb=new StringBuilder();
+            CoreStringUtils.fillString(" ", x, sb);
+            CoreStringUtils.fillString(getChar(), indeterminateSize, sb);
+            formattedLine.append(sb.toString(), NutsTextNodeStyle.primary(1));
+            int r = size - x - indeterminateSize;
+            sb.setLength(0);
+            CoreStringUtils.fillString(' ', r, sb);
+            formattedLine.append(sb.toString());
+            formattedLine.append(getEndBracket());
+            return formattedLine.toString();
+        } else {
+            if (percent > 100) {
+                percent = 100 - percent;
+            }
+            int x = (int) (size / 100.0 * percent);
+            NutsTextNodeBuilder formattedLine = session.getWorkspace().formats().text().builder();
+            formattedLine.append(getStartBracket());
+            if (x > 0) {
+                StringBuilder sb=new StringBuilder();
+                CoreStringUtils.fillString(getChar(), x, sb);
+                formattedLine.append(sb.toString(),NutsTextNodeStyle.primary(1));
+            }
+            StringBuilder sb=new StringBuilder();
+            CoreStringUtils.fillString(' ', size - x, sb);
+            formattedLine.append(sb.toString());
             formattedLine.append(getEndBracket());
             return formattedLine.toString();
         }

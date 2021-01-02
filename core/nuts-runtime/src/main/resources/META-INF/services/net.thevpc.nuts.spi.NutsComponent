@@ -3,8 +3,8 @@ net.thevpc.nuts.runtime.standalone.io.DefaultHttpTransportComponent
 net.thevpc.nuts.runtime.standalone.main.repos.DefaultNutsRepoFactoryComponent
 
 
-net.thevpc.nuts.runtime.standalone.terminals.DefaultNutsSessionTerminal
-net.thevpc.nuts.runtime.standalone.terminals.DefaultNutsSystemTerminalBase
+net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal
+net.thevpc.nuts.runtime.core.terminals.DefaultNutsSystemTerminalBase
 
 net.thevpc.nuts.runtime.standalone.main.archetypes.ServerNutsWorkspaceArchetypeComponent
 net.thevpc.nuts.runtime.standalone.main.archetypes.MinimalNutsWorkspaceArchetypeComponent

@@ -29,7 +29,7 @@ package net.thevpc.nuts.runtime.core.filters.descriptor;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.filters.id.NutsScriptAwareIdFilter;
-import net.thevpc.nuts.runtime.standalone.util.common.Simplifiable;
+import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 import java.util.Objects;
 

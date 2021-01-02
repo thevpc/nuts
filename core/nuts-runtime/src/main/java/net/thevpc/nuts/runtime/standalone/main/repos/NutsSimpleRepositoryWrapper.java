@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.main.repos;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.NutsRepositorySupportedAction;
+import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
 
 import java.util.Iterator;
 

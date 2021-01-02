@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io;
 import net.thevpc.nuts.NutsProgressFactory;
 import net.thevpc.nuts.NutsProgressMonitor;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 import java.util.logging.Logger;
 

@@ -68,6 +68,8 @@ public interface NutsWorkspaceConfigManager {
 
     NutsWorkspaceOptionsBuilder optionsBuilder();
 
+    boolean isExcludedExtension(String extensionId,NutsWorkspaceOptions options) ;
+
     NutsWorkspaceOptions options();
 
     NutsWorkspaceOptions getOptions();

@@ -30,7 +30,7 @@ import net.thevpc.nuts.*;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
 import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
 

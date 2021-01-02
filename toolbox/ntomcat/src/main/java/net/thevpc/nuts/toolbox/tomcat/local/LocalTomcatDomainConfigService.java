@@ -1,6 +1,8 @@
 package net.thevpc.nuts.toolbox.tomcat.local;
 
 import net.thevpc.nuts.NutsContentType;
+import net.thevpc.nuts.NutsString;
+import net.thevpc.nuts.NutsTextNodeStyle;
 import net.thevpc.nuts.toolbox.tomcat.local.config.LocalTomcatDomainConfig;
 
 import java.io.PrintStream;
@@ -54,8 +56,14 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
                 aa.remove();
             }
         }
-        context.getSession().out().printf("######[%s]###### domain removed.\n", name);
+        context.getSession().out().printf("%s domain removed.\n", getBracketsPrefix(name));
         return this;
+    }
+    public NutsString getBracketsPrefix(String str) {
+        return context.getWorkspace().formats().text().builder()
+                .append("[")
+                .append(str, NutsTextNodeStyle.primary(5))
+                .append("]");
     }
 
     public LocalTomcatDomainConfigService print(PrintStream out) {

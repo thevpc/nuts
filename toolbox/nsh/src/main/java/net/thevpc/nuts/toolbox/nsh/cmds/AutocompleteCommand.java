@@ -25,14 +25,11 @@
 */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.*;
 import net.thevpc.jshell.JShellAutoCompleteCandidate;
 
 import java.util.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -106,15 +103,18 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
 
     @Override
     protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
+        NutsTextFormatManager text = session.getWorkspace().formats().text();
         Properties p = context.getResult();
         for (String o : new TreeSet<String>((Set) p.keySet())) {
             if (o.startsWith("-")) {
                 // option
-                context.out().printf("#####%s#####\n", o);
+                context.out().printf("%s\n", text.builder().append(o,NutsTextNodeStyle.primary(4)));
             } else if (o.startsWith("<")) {
-                context.out().printf("###%s###\n", o);
+                context.out().printf("%s\n", text.builder().append(o,NutsTextNodeStyle.primary(1)));
             } else {
-                context.out().printf("#########%s#########\n", o);
+                context.out().printf("%s\n",
+                        text.builder().append(o,NutsTextNodeStyle.pale())
+                );
             }
         }
     }

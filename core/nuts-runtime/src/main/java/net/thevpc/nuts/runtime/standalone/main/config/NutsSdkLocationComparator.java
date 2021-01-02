@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.main.config;
 import net.thevpc.nuts.NutsSdkLocation;
 import net.thevpc.nuts.NutsVersion;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.Comparator;
 

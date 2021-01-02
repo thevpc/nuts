@@ -35,8 +35,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.core.filters.NutsSearchIdById;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 
 public class DefaultNutsIndexStore extends AbstractNutsIndexStore {

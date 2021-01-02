@@ -4,7 +4,7 @@ import net.thevpc.nuts.NutsInput;
 import net.thevpc.nuts.NutsInputManager;
 import net.thevpc.nuts.NutsUnsupportedArgumentException;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.CoreInput;
 
 import java.io.ByteArrayInputStream;

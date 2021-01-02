@@ -87,6 +87,7 @@ public class NDerbyMain extends NutsApplication {
             }
         }
         options.cmd = Command.ping;
+        NutsTextNodeFactory factory = appContext.getWorkspace().formats().text().factory();
         if (cmdLine.isExecMode()) {
             DerbyService srv = new DerbyService(appContext);
             String q = null;
@@ -96,9 +97,9 @@ public class NDerbyMain extends NutsApplication {
                 //
             }
             if (q != null) {
-                appContext.getSession().out().println("derby is ##running##");
+                appContext.getSession().out().printf("derby is %s%n",factory.styled("running",NutsTextNodeStyle.primary(1)));
             } else {
-                appContext.getSession().out().println("derby is ```error stopped```");
+                appContext.getSession().out().printf("derby is %s%n",factory.styled("stopped",NutsTextNodeStyle.error()));
             }
         }
     }
@@ -149,6 +150,7 @@ public class NDerbyMain extends NutsApplication {
                 args.unexpectedArgument();
             }
         }
+        NutsTextNodeFactory factory = appContext.getWorkspace().formats().text().factory();
         if (args.isExecMode()) {
             NutsSession session = appContext.getSession();
             if (session.isPlainOut()) {
@@ -156,25 +158,26 @@ public class NDerbyMain extends NutsApplication {
                 for (RunningDerby jpsResult : DerbyUtils.getRunningInstances(appContext)) {
                     switch (format) {
                         case "short": {
-                            out.printf("##%s##\n",
-                                    jpsResult.getPid()
+                            out.printf("%s\n",
+                                    factory.styled(jpsResult.getPid(),NutsTextNodeStyle.primary(1))
                             );
                             break;
                         }
                         case "long": {
-                            out.printf("##%s## ==HOME:== %s ==CMD:== " +
-                                            appContext.getWorkspace().commandLine().formatter(
-                                                    appContext.getCommandLine().parseLine(jpsResult.getArgsLine())
-                                            ).format()
-                                            + "\n",
-                                    jpsResult.getPid(),
-                                    jpsResult.getHome()
+                            out.printf("%s %s %s %s %s%n",
+                                    factory.styled(jpsResult.getPid(),NutsTextNodeStyle.primary(1)),
+                                    factory.styled("HOME:"),
+                                    factory.styled(jpsResult.getHome(),NutsTextNodeStyle.path()),
+                                    factory.styled("CMD:"),
+                                    appContext.getWorkspace().commandLine().formatter(
+                                            appContext.getCommandLine().parseLine(jpsResult.getArgsLine())
+                                    ).format()
                             );
                             break;
                         }
                         default: {
-                            out.printf("##%s## %s\n",
-                                    jpsResult.getPid(),
+                            out.printf("%s %s\n",
+                                    factory.styled(jpsResult.getPid(),NutsTextNodeStyle.primary(1)),
                                     jpsResult.getHome()
                             );
                             break;

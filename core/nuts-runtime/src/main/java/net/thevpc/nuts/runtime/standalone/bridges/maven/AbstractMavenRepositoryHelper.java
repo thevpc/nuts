@@ -31,9 +31,9 @@ import java.io.*;
 import java.util.Map;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.CoreNutsConstants;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
 
 /**

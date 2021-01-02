@@ -41,4 +41,6 @@ public interface NutsImportManager {
     void set(String[] imports, NutsUpdateOptions options);
 
     Set<String> getAll();
+
+    boolean isImportedGroupId(String groupId);
 }

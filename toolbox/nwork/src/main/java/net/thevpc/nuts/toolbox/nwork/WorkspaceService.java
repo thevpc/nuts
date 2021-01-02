@@ -17,10 +17,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WorkspaceService {
     
-    public static final String SCAN = "net.thevpc.nuts.toolbox.worky.scan";
+    public static final String SCAN = "net.thevpc.nuts.toolbox.nwork.scan";
     private WorkspaceConfig config;
     private NutsApplicationContext appContext;
     private Path sharedConfigFolder;
@@ -151,7 +152,7 @@ public class WorkspaceService {
     public void list(NutsCommandLine cmd, NutsApplicationContext appContext) {
         NutsArgument a;
         List<String> filters = new ArrayList<>();
-        cmd.setCommandName("worky list");
+        cmd.setCommandName("nwork list");
         while (cmd.hasNext()) {
             if ((a = cmd.requireNonOption().next()) != null) {
                 filters.add(a.getString());
@@ -168,10 +169,12 @@ public class WorkspaceService {
                     result.add(config);
                 }
             }
-            result.sort((x, y) -> x.getId().compareTo(y.getId()));
+            result.sort(Comparator.comparing(ProjectConfig::getId));
             if (appContext.getSession().isPlainOut()) {
                 for (ProjectConfig p2 : result) {
-                    appContext.getSession().out().printf("#####%s##### ######%s######: ####%s####%n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                    appContext.getSession().out().println(
+                            formatProjectConfig(appContext, p2)
+                            );
                 }
             } else {
                 appContext.getWorkspace().formats().object()
@@ -180,7 +183,22 @@ public class WorkspaceService {
             }
         }
     }
-    
+
+    private NutsTextNodeBuilder formatProjectConfig(NutsApplicationContext appContext, ProjectConfig p2) {
+        NutsTextFormatManager text = appContext.getWorkspace().formats().text();
+        return text.builder()
+                .append(p2.getId(), NutsTextNodeStyle.primary(4))
+                .append(" ")
+                .appendJoined(
+                        text.factory().plain(", "),
+                        p2.getTechnologies().stream().map(
+                                x -> text.factory().styled(x, NutsTextNodeStyle.primary(5))
+                        ).collect(Collectors.toList())
+                )
+                .append(" : ")
+                .append(p2.getPath(), NutsTextNodeStyle.path());
+    }
+
     public void scan(NutsCommandLine cmdLine, NutsApplicationContext context) {
         boolean interactive = false;
         NutsArgument a;
@@ -239,7 +257,7 @@ public class WorkspaceService {
             } else if ((a = cmd.nextBoolean("-v", "--verbose")) != null) {
                 verbose = a.getBooleanValue();
             } else if (cmd.peek().isOption()) {
-                cmd.setCommandName("worky check").unexpectedArgument();
+                cmd.setCommandName("nwork check").unexpectedArgument();
             } else {
                 filters.add(cmd.next().getString());
             }
@@ -359,6 +377,7 @@ public class WorkspaceService {
 //            tf.addRow(d.id, d.local, d.remote, d.status);
         }
         if (!ddd.isEmpty() || !appContext.getSession().isPlainOut()) {
+            NutsTextNodeFactory tfactory = appContext.getWorkspace().formats().text().factory();
             if (appContext.getSession().isPlainOut()) {
                 for (DataRow p2 : ddd) {
                     String status = p2.status;
@@ -370,11 +389,20 @@ public class WorkspaceService {
                     }
                     switch (tf.filterText(p2.status)) {
                         case "new": {
-                            appContext.getSession().out().printf("[####new####] %s : ###%s###%n", p2.id, p2.local);
+                            appContext.getSession().out().printf("[%s] %s : %s%n",
+                                    tfactory.styled("new",NutsTextNodeStyle.primary(3)),
+                                    p2.id,
+                                    tfactory.styled(p2.local,NutsTextNodeStyle.primary(2))
+                            );
                             break;
                         }
                         case "commitable": {
-                            appContext.getSession().out().printf("[#####commitable#####] %s : ###%s### - %s%n", p2.id, p2.local, p2.remote);
+                            appContext.getSession().out().printf("[%s] %s : %s - %s%n",
+                                    tfactory.styled("commitable",NutsTextNodeStyle.primary(4)),
+                                    p2.id,
+                                    tfactory.styled(p2.local,NutsTextNodeStyle.primary(2)),
+                                    p2.remote
+                            );
                             break;
                         }
                         case "dirty": {
@@ -383,7 +411,9 @@ public class WorkspaceService {
                             break;
                         }
                         case "old": {
-                            appContext.getSession().out().printf("[###old###] %s : ```error %s``` - %s%n", p2.id, p2.local, p2.remote);
+                            appContext.getSession().out().printf("[%s] %s : ```error %s``` - %s%n",
+                                    tfactory.styled("old",NutsTextNodeStyle.primary(2)),
+                                    p2.id, p2.local, p2.remote);
                             break;
                         }
                         case "invalid": {
@@ -461,6 +491,8 @@ public class WorkspaceService {
             if (!isScanEnabled(folder)) {
                 return;
             }
+            NutsTextFormatManager text = appContext.getWorkspace().formats().text();
+            NutsTextNodeFactory tfactory = text.factory();
             ProjectConfig p2 = new ProjectService(appContext, config.getDefaultRepositoryAddress(), new ProjectConfig().setPath(folder.getPath())
             ).rebuildProjectMetadata();
             if (p2.getTechnologies().size() > 0) {
@@ -476,15 +508,20 @@ public class WorkspaceService {
                     if (p3.equals(p2)) {
                         //no updates!
                         if (appContext.getSession().isPlainOut()) {
-                            appContext.getSession().out().printf("Already registered Project Folder #####%s##### ######%s######: ####%s####%n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                            appContext.getSession().out().printf("already registered project folder %s%n", formatProjectConfig(appContext, p2));
                         }
                     } else if (!p2.getPath().equals(p3.getPath())) {
                         if (appContext.getSession().isPlainOut()) {
-                            appContext.getSession().out().printf("```error [CONFLICT]``` Multiple paths for the same id ###%s###. Please consider adding .nuts-info file with " + SCAN + "=false  :  ###%s### -- ###%s###%n", p2.getId(), p2.getPath(), p3.getPath());
+                            appContext.getSession().out().printf("```error [CONFLICT]``` multiple paths for the same id %s. " +
+                                            "please consider adding .nuts-info file with " + SCAN + "=false  :  %s -- %s%n",
+                                    tfactory.styled(p2.getId(),NutsTextNodeStyle.primary(2)),
+                                    tfactory.styled(p2.getPath(),NutsTextNodeStyle.path()),
+                                    tfactory.styled(p3.getPath(),NutsTextNodeStyle.path())
+                            );
                         }
                     } else {
                         if (appContext.getSession().isPlainOut()) {
-                            appContext.getSession().out().printf("Reloaded Project Folder #####%s##### ######%s######: ####%s####%n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                            appContext.getSession().out().printf("reloaded project folder %s%n", formatProjectConfig(appContext, p2));
                         }
 //                String repo = term.readLine("Enter Repository ####%s####: ", ((p2.getAddress() == null || p2.getAddress().getNutsRepository() == null )? "" : ("(" + p2.getAddress().getNutsRepository() + ")")));
 //                if (!StringUtils.isEmpty(repo)) {
@@ -500,10 +537,11 @@ public class WorkspaceService {
                 } else {
                     
                     if (appContext.getSession().isPlainOut()) {
-                        appContext.getSession().out().printf("Detected Project Folder #####%s##### ######%s######: ####%s####%n", p2.getId(), p2.getTechnologies(), p2.getPath());
+                        appContext.getSession().out().printf("detected Project Folder %s%n", formatProjectConfig(appContext, p2));
                     }
                     if (interactive) {
-                        String id = appContext.getSession().getTerminal().readLine("Enter Id ####%s####: ", (p2.getId() == null ? "" : ("(" + p2.getId() + ")")));
+                        String id = appContext.getSession().getTerminal().readLine("enter Id %s: ",
+                                (p2.getId() == null ? "" : ("(" + text.builder().append(p2.getId()) + ")")));
                         if (!StringUtils.isBlank(id)) {
                             p2.setId(id);
                         }
@@ -585,7 +623,7 @@ public class WorkspaceService {
                 conf.getDefaultRepositoryAddress().setNutsWorkspace(a.getStringValue());
                 setWorkspaceConfig(conf);
             } else {
-                cmd.setCommandName("worky set").unexpectedArgument();
+                cmd.setCommandName("nwork set").unexpectedArgument();
             }
         }
         return 0;

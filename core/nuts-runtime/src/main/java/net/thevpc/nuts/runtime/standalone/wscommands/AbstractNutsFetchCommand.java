@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsQueryBaseOptions;
+import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsQueryBaseOptions;
 
 import java.util.*;
 

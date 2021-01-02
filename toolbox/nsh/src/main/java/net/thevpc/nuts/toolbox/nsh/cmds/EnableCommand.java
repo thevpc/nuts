@@ -32,12 +32,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSingleton;
+
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.jshell.JShellBuiltin;
-import net.thevpc.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -141,8 +139,14 @@ public class EnableCommand extends SimpleNshBuiltin {
                 context.out().println(entry.getValue() + " " + entry.getKey());
             }
         } else if (context.getResult() instanceof List) {
+            NutsTextFormatManager text = session.getWorkspace().formats().text();
             for (String s : ((List<String>) context.getResult())) {
-                context.out().printf("```error enable: ```######%s###### ```error : not a shell builtin```%n", s);
+                context.out().printf("%s%n",
+                        text.builder().append("enable: ",NutsTextNodeStyle.error())
+                        .append(s,NutsTextNodeStyle.primary(5))
+                        .append(" ")
+                        .append("not a shell builtin",NutsTextNodeStyle.error())
+                        );
             }
         }
     }

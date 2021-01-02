@@ -39,13 +39,13 @@ public enum NutsTerminalMode {
     INHERITED,
 
     /**
-     * streams in formatted mode will process Nuts Stream Format (** and ## special characters...)
+     * streams in formatted mode will process Nuts Stream Format
      * and render in a <strong>colorful</strong> way the its content.
      */
     FORMATTED,
 
     /**
-     * streams in filtered mode will process Nuts Stream Format (** and ## special characters...)
+     * streams in filtered mode will process Nuts Stream Format
      * by filtering (removing) or format characters so that the content is rendered as a <strong>plain</strong> text.
      */
     FILTERED;

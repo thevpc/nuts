@@ -26,11 +26,12 @@
 package net.thevpc.nuts.runtime.standalone.main.wscommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.NutsRepositorySupportedAction;
-import net.thevpc.nuts.runtime.standalone.NutsPatternIdFilter;
+import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
+import net.thevpc.nuts.runtime.core.filters.NutsPatternIdFilter;
 import net.thevpc.nuts.runtime.core.filters.id.NutsIdFilterOr;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.*;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsSearchCommand;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsSearch;
 import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;

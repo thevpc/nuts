@@ -6,16 +6,17 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.NutsRepositorySupportedAction;
-import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
-import net.thevpc.nuts.runtime.standalone.format.NutsPrintIterator;
+import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
+import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
+import net.thevpc.nuts.runtime.core.format.NutsPrintIterator;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.main.DefaultNutsRepositoryManager;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.ProcessBuilder2;
 import net.thevpc.nuts.runtime.standalone.io.DefaultNutsExecutionEntry;
-import net.thevpc.nuts.runtime.standalone.format.plain.DefaultSearchFormatPlain;
+import net.thevpc.nuts.runtime.core.format.plain.DefaultSearchFormatPlain;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CorePlatformUtils;
 
 import java.io.*;
@@ -31,7 +32,7 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.util.common.TraceResult;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.InputStreamVisitor;
 import net.thevpc.nuts.runtime.standalone.util.io.ZipUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
@@ -239,35 +240,35 @@ public class NutsWorkspaceUtils {
         return set;
     }
 
-    public static NutsId parseRequiredNutsId0(String nutFormat) {
-        NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
-        if (id == null) {
-            throw new NutsParseException(null, "invalid Id format : " + nutFormat);
-        }
-        return id;
-    }
+//    public static NutsId parseRequiredNutsId0(String nutFormat) {
+//        NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
+//        if (id == null) {
+//            throw new NutsParseException(null, "invalid Id format : " + nutFormat);
+//        }
+//        return id;
+//    }
 
-    public NutsId parseRequiredNutsId(String nutFormat) {
-        NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
-        if (id == null) {
-            throw new NutsParseException(ws, "invalid Id format : " + nutFormat);
-        }
-        return id;
-    }
+//    public NutsId parseRequiredNutsId(String nutFormat) {
+//        NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
+//        if (id == null) {
+//            throw new NutsParseException(ws, "invalid Id format : " + nutFormat);
+//        }
+//        return id;
+//    }
 
-    public NutsId findNutsIdBySimpleNameInStrings(NutsId id, Collection<String> all) {
-        if (all != null) {
-            for (String nutsId : all) {
-                if (nutsId != null) {
-                    NutsId nutsId2 = parseRequiredNutsId(nutsId);
-                    if (nutsId2.equalsShortName(id)) {
-                        return nutsId2;
-                    }
-                }
-            }
-        }
-        return null;
-    }
+//    public NutsId findNutsIdBySimpleNameInStrings(NutsId id, Collection<String> all) {
+//        if (all != null) {
+//            for (String nutsId : all) {
+//                if (nutsId != null) {
+//                    NutsId nutsId2 = parseRequiredNutsId(nutsId);
+//                    if (nutsId2.equalsShortName(id)) {
+//                        return nutsId2;
+//                    }
+//                }
+//            }
+//        }
+//        return null;
+//    }
 
     public void checkSession(NutsSession session) {
         if (session == null) {
@@ -505,7 +506,7 @@ public class NutsWorkspaceUtils {
         }
         if (showCommand || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
             if (ws.io().term().isFormatted(prepareTerminal.out())) {
-                prepareTerminal.out().print("#####[exec]##### ");
+                prepareTerminal.out().printf("%s ",ws.formats().text().factory().styled("[exec]",NutsTextNodeStyle.primary(4)));
                 prepareTerminal.out().println(pb.getFormattedCommandString(ws));
             } else {
                 prepareTerminal.out().print("exec ");

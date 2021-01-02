@@ -125,7 +125,8 @@ public class NVersionMain extends NutsApplication {
 
             PrintStream out = context.getSession().out();
             PrintStream err = context.getSession().out();
-
+            NutsTextFormatManager text = context.getWorkspace().formats().text();
+            NutsTextNodeFactory tfactory = text.factory();
             if (table) {
                 NutsPropertiesFormat tt = context.getWorkspace().formats().props().setSort(sort);
                 Properties pp = new Properties();
@@ -145,11 +146,13 @@ public class NVersionMain extends NutsApplication {
                     for (String t : unsupportedFileTypes) {
                         File f = new File(context.getWorkspace().io().expandPath(t));
                         if (f.isFile()) {
-                            pp.setProperty(t, "<<ERROR>> Unsupported File type");
+                            pp.setProperty(t, text.builder().append("<<ERROR>>",NutsTextNodeStyle.error()).append(" unsupported file type").toString());
                         } else if (f.isDirectory()) {
-                            pp.setProperty(t, "<<ERROR>> Ignored Folder");
+                            pp.setProperty(t,text.builder().append("<<ERROR>>",NutsTextNodeStyle.error()).append(" ignored folder").toString()
+                                    );
                         } else {
-                            pp.setProperty(t, "<<ERROR>> File not found");
+                            pp.setProperty(t,text.builder().append("<<ERROR>>",NutsTextNodeStyle.error()).append(" file not found").toString()
+                                    );
                         }
                     }
                 }
@@ -159,24 +162,24 @@ public class NVersionMain extends NutsApplication {
                 for (String k : keys) {
                     if (results.size() > 1) {
                         if (longFormat || all) {
-                            out.printf("####%s####:%n", k);
+                            out.printf("%s:%n", tfactory.styled(k,NutsTextNodeStyle.primary(3)));
                         } else {
-                            out.printf("####%s####: ", k);
+                            out.printf("%s: ", tfactory.styled(k,NutsTextNodeStyle.primary(3)));
                         }
                     }
                     Set<VersionDescriptor> v = results.get(k);
                     for (VersionDescriptor descriptor : v) {
                         if (nameFormat) {
-                            out.printf("#####%s#####%n", descriptor.getId().getShortName());
+                            out.printf("%s%n", tfactory.styled(descriptor.getId().getShortName(),NutsTextNodeStyle.primary(4)));
                         } else if (idFormat) {
-                            out.printf("#####%s#####%n", descriptor.getId());
+                            out.printf("%s%n", tfactory.formatted(descriptor.getId()));
                         } else if (longFormat) {
-                            out.printf("#####%s#####%n", descriptor.getId());
+                            out.printf("%s%n", tfactory.formatted(descriptor.getId()));
                             NutsPropertiesFormat f = context.getWorkspace().formats().props()
                                     .setSort(true);
                             f.setValue(descriptor.getProperties()).print(out);
                         } else {
-                            out.printf("#####%s#####%n", descriptor.getId().getVersion());
+                            out.printf("%s%n", tfactory.formatted(descriptor.getId().getVersion()));
                         }
                         if (!all) {
                             break;
@@ -188,18 +191,18 @@ public class NVersionMain extends NutsApplication {
                         for (String t : unsupportedFileTypes) {
                             File f = new File(context.getWorkspace().io().expandPath(t));
                             if (f.isFile()) {
-                                err.printf("%s : Unsupported File type%n", t);
+                                err.printf("%s : unsupported file type%n", t);
                             } else if (f.isDirectory()) {
-                                err.printf("%s : Ignored Folder%n", t);
+                                err.printf("%s : ignored folder%n", t);
                             } else {
-                                err.printf("%s : File not found%n", t);
+                                err.printf("%s : file not found%n", t);
                             }
                         }
                     }
                 }
             }
             if (!unsupportedFileTypes.isEmpty()) {
-                throw new NutsExecutionException(context.getWorkspace(), "nversion: Unsupported File types " + unsupportedFileTypes, 3);
+                throw new NutsExecutionException(context.getWorkspace(), "nversion: unsupported file types " + unsupportedFileTypes, 3);
             }
         }
     }

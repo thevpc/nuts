@@ -182,41 +182,67 @@ public class WhoamiCommand extends SimpleNshBuiltin {
         Result result = context.getResult();
         context.out().printf("%s\n", result.login);
         if (options.nutsUser) {
+            NutsTextNodeFactory factory = session.getWorkspace().formats().text().factory();
             if (result.loginStack != null) {
-                context.out().print("===stack===      :");
+                context.out().printf("%s      :",
+                        factory.styled("stack",NutsTextNodeStyle.primary(5))
+                        );
                 for (String log : result.loginStack) {
-                    context.out().print(" [[" + log + "]]");
+                    context.out().printf(" %s",
+                            factory.styled(log,NutsTextNodeStyle.primary(3))
+                            );
                 }
                 context.out().println();
             }
             if (result.groups != null && result.groups.length > 0) {
-                context.out().printf("===identities=== : %s\n", Arrays.toString(result.groups));
+                context.out().printf("%s : %s\n",
+                        factory.styled("identities",NutsTextNodeStyle.primary(5)),
+                        Arrays.toString(result.groups));
             }
             if (result.rights != null && result.rights.length > 0) {
-                context.out().printf("===rights===     : %s\n", Arrays.toString(result.rights));
+                context.out().printf("%s     : %s\n",
+                        factory.styled("rights",NutsTextNodeStyle.primary(5)),
+                        Arrays.toString(result.rights));
             }
             if (result.inherited != null && result.inherited.length > 0) {
-                context.out().printf("===inherited===  : %s\n", Arrays.toString(result.inherited));
+                context.out().printf("%s  : %s\n",
+                        factory.styled("inherited",NutsTextNodeStyle.primary(5)),
+                        Arrays.toString(result.inherited));
             } else {
-                context.out().printf("===inherited===  : %s\n", "NONE");
+                context.out().printf("%s  : %s\n",
+                        factory.styled("inherited",NutsTextNodeStyle.primary(5)),
+                        "NONE");
             }
             if (result.remoteId != null) {
-                context.out().printf("===remote-id===  : %s\n", result.remoteId);
+                context.out().printf("%s  : %s\n",
+                        factory.styled("remote-id",NutsTextNodeStyle.primary(5)),
+                        result.remoteId);
             }
             if (result.repos != null) {
                 for (RepoResult repo : result.repos) {
-                    context.out().printf("[ #####%s##### ]: \n", repo.name);
+                    context.out().printf(
+                            "[ %s ]: \n",
+                            factory.styled(repo.name,NutsTextNodeStyle.primary(4))
+                    );
                     if (repo.identities.length > 0) {
-                        context.out().printf("    ===identities=== : %s\n", Arrays.toString(repo.identities));
+                        context.out().printf("    %s : %s\n",
+                                factory.styled("identities",NutsTextNodeStyle.primary(5)),
+                                Arrays.toString(repo.identities));
                     }
                     if (result.rights != null && repo.rights.length > 0) {
-                        context.out().printf("    ===rights===     : %s\n", Arrays.toString(repo.rights));
+                        context.out().printf("    %s     : %s\n",
+                                factory.styled("rights",NutsTextNodeStyle.primary(5)),
+                                Arrays.toString(repo.rights));
                     }
                     if (repo.inherited != null && repo.inherited.length > 0) {
-                        context.out().printf("    ===inherited===  : %s\n", Arrays.toString(repo.inherited));
+                        context.out().printf("    %s  : %s\n",
+                                factory.styled("inherited",NutsTextNodeStyle.primary(5)),
+                                Arrays.toString(repo.inherited));
                     }
                     if (repo.remoteId != null) {
-                        context.out().printf("    ===remote-id===  : %s\n", repo.remoteId);
+                        context.out().printf("    %s  : %s\n",
+                                factory.styled("remote-id",NutsTextNodeStyle.primary(5)),
+                                repo.remoteId);
                     }
                 }
             }

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.tomcat.remote;
 
-import net.thevpc.nuts.*;
 import net.thevpc.common.strings.StringUtils;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.tomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.tomcat.remote.config.RemoteTomcatConfig;
 import net.thevpc.nuts.toolbox.tomcat.util.TomcatUtils;
@@ -90,9 +90,9 @@ public class RemoteTomcat {
         while (args.hasNext()) {
             if ((a = args.nextString("--name")) != null) {
                 x.print(loadOrCreateTomcatConfig(a.getStringValue()));
-            } else if(args.peek().isNonOption()){
+            } else if (args.peek().isNonOption()) {
                 x.print(loadOrCreateTomcatConfig(args.requireNonOption().next().getStringValue()));
-            }else{
+            } else {
                 context.configureLast(args);
             }
         }
@@ -161,6 +161,7 @@ public class RemoteTomcat {
             c = loadOrCreateTomcatConfig(null);
         }
         boolean ok = false;
+        NutsTextFormatManager text = getContext().getWorkspace().formats().text();
         while (!ok) {
             try {
                 ok = true;
@@ -168,7 +169,10 @@ public class RemoteTomcat {
                     ok = false;
                     c.getConfig().setServer(
                             context.getSession().getTerminal()
-                                    .ask().forString("[instance=#####%s#####] Would you enter ####%s#### value ?", c.getName(), "--server")
+                                    .ask().forString("[instance=%s] would you enter %s value ?"
+                                    , text.factory().styled(c.getName(), NutsTextNodeStyle.primary(1))
+                                    , text.factory().styled("--server", NutsTextNodeStyle.option())
+                            )
                                     .defaultValue("ssh://login@myserver/instanceName").setSession(context.getSession())
                                     .getValue()
                     );
@@ -177,7 +181,10 @@ public class RemoteTomcat {
                     ok = false;
                     c.getConfig()
                             .setRemoteTempPath(context.getSession().getTerminal().ask()
-                                    .forString("[instance=#####%s#####] Would you enter ####%s#### value ?", c.getName(), "--remote-temp-path").setDefaultValue("/tmp")
+                                    .forString("[instance=%s] would you enter %s value ?"
+                                            , text.factory().styled(c.getName(), NutsTextNodeStyle.primary(1))
+                                            , text.factory().styled("--remote-temp-path", NutsTextNodeStyle.option())
+                                    ).setDefaultValue("/tmp")
                                     .setSession(context.getSession())
                                     .getValue()
                             );
@@ -186,7 +193,11 @@ public class RemoteTomcat {
                     if (TomcatUtils.isBlank(aa.getConfig().getPath())) {
                         ok = false;
                         aa.getConfig().setPath(context.getSession().getTerminal().ask()
-                                .forString("[instance=#####%s#####] [app=#####%s#####] Would you enter ####%s#### value ?", c.getName(), aa.getName(), "-app.path")
+                                .forString("[instance=%s] [app=%s] would you enter %s value ?"
+                                        , text.factory().styled(c.getName(), NutsTextNodeStyle.primary(1))
+                                        , text.factory().styled(aa.getName(), NutsTextNodeStyle.option())
+                                        , text.factory().styled("--app.path", NutsTextNodeStyle.option())
+                                )
                                 .setSession(context.getSession())
                                 .getValue());
                     }
@@ -259,11 +270,11 @@ public class RemoteTomcat {
         String name = null;
         NutsArgument a;
         while (args.hasNext()) {
-            if(args.peek().isNonOption()){
+            if (args.peek().isNonOption()) {
                 name = args.requireNonOption().next().getString();
                 RemoteTomcatConfigService c = loadTomcatConfig(name);
                 c.shutdown();
-            }else{
+            } else {
                 context.configureLast(args);
             }
         }
@@ -291,9 +302,9 @@ public class RemoteTomcat {
                 }
 //            } else if ((a = args.nextNonOption(DefaultNonOption.NAME)) != null) {
 //                instance = a.getString();
-            } else if(args.peek().isNonOption()){
+            } else if (args.peek().isNonOption()) {
                 instance = args.requireNonOption().next().getStringValue();
-            }else{
+            } else {
                 context.configureLast(args);
             }
         }
@@ -301,10 +312,10 @@ public class RemoteTomcat {
             for (String app : apps) {
                 install(getContext().getWorkspace().commandLine().create(
                         new String[]{
-                            "--name",
-                            instance,
-                            "--app",
-                            app
+                                "--name",
+                                instance,
+                                "--app",
+                                app
                         }
                 ));
             }
@@ -330,7 +341,7 @@ public class RemoteTomcat {
 
     public RemoteTomcatConfigService[] listConfig() {
         List<RemoteTomcatConfigService> all = new ArrayList<>();
-        if(Files.isDirectory(sharedConfigFolder)) {
+        if (Files.isDirectory(sharedConfigFolder)) {
             try (DirectoryStream<Path> pp = Files.newDirectoryStream(sharedConfigFolder,
                     (Path entry) -> entry.getFileName().toString().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT))) {
                 for (Path entry : pp) {
@@ -357,10 +368,10 @@ public class RemoteTomcat {
 
             public void show(RemoteTomcatServiceBase aa) {
                 if (json) {
-                    getContext().getSession().out().printf("#####%s##### :\n", aa.getName());
+                    getContext().getSession().out().printf("%s :\n", getContext().getWorkspace().formats().text().factory().styled(aa.getName(), NutsTextNodeStyle.primary(4)));
                     aa.println(getContext().getSession().out());
                 } else {
-                    getContext().getSession().out().printf("#####%s##### :\n", aa.getName());
+                    getContext().getSession().out().printf("%s :\n", getContext().getWorkspace().formats().text().factory().styled(aa.getName(), NutsTextNodeStyle.primary(4)));
                     aa.println(getContext().getSession().out());
                 }
             }
@@ -438,12 +449,12 @@ public class RemoteTomcat {
         return loadOrCreateTomcatConfig(strings[0]).getApp(strings[1]);
     }
 
-    public void setContext(NutsApplicationContext context) {
-        this.context = context;
-    }
-
     public NutsApplicationContext getContext() {
         return context;
+    }
+
+    public void setContext(NutsApplicationContext context) {
+        this.context = context;
     }
 
     public RemoteTomcatConfigService toRemoteTomcatConfigService(RemoteTomcatServiceBase s) {

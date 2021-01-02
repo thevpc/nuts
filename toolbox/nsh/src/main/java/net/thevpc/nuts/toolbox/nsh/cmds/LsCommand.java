@@ -199,23 +199,28 @@ public class LsCommand extends SimpleNshBuiltin {
                         out.printf("%s:\n", resultGroup.name);
                     }
                     for (ResultItem resultItem : resultGroup.children) {
-                        printPlain(resultItem, options, out);
+                        printPlain(resultItem, options, out,session);
                     }
                 } else {
-                    printPlain(resultGroup.file, options, out);
+                    printPlain(resultGroup.file, options, out,session);
                 }
             }
         } else if (context.getResult() instanceof ResultError) {
             ResultError s = context.getResult();
             for (Map.Entry<String, String> e : s.result.entrySet()) {
-                out.printf("######%s###### : ```error %s```%n", e.getKey(), e.getValue());
+                NutsTextFormatManager text = session.getWorkspace().formats().text();
+                out.printf("%s%n",
+                        text.builder().append(e.getKey(),NutsTextNodeStyle.primary(5))
+                        .append(" : ")
+                        .append(e.getValue(),NutsTextNodeStyle.error())
+                        );
             }
         } else {
             super.printPlainObject(context, session);
         }
     }
 
-    private void printPlain(ResultItem item, Options options, PrintStream out) {
+    private void printPlain(ResultItem item, Options options, PrintStream out, NutsSession session) {
         if (options.l) {
             out.print(item.type);
             out.print(item.uperms != null ? item.uperms : item.jperms);
@@ -236,18 +241,19 @@ public class LsCommand extends SimpleNshBuiltin {
             out.print(" ");
         }
         String name = new File(item.path).getName();
+        NutsTextFormatManager text = session.getWorkspace().formats().text();
         if (item.hidden) {
-            out.printf("<<%s>>\n", name);
+            out.println(text.builder().append(name,NutsTextNodeStyle.pale()));
         } else if (item.type == 'd') {
-            out.printf("####%s####\n", name);
+            out.println(text.builder().append(name,NutsTextNodeStyle.primary(3)));
         } else if (item.exec2 || item.jperms.charAt(2) == 'x') {
-            out.printf("#####%s#####\n", name);
+            out.println(text.builder().append(name,NutsTextNodeStyle.primary(4)));
         } else if (item.config) {
-            out.printf("######%s######\n", name);
+            out.println(text.builder().append(name,NutsTextNodeStyle.primary(5)));
         } else if (item.archive) {
-            out.printf("##%s##\n", name);
+            out.println(text.builder().append(name,NutsTextNodeStyle.primary(1)));
         } else {
-            out.printf("%s\n", name);
+            out.println(text.builder().append(name));
         }
     }
 

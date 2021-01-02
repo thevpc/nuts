@@ -26,9 +26,11 @@
 package net.thevpc.nuts.runtime.standalone.main.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.CoreNutsConstants;
+import net.thevpc.nuts.runtime.core.events.DefaultNutsWorkspaceEvent;
 import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenUtils;
-import net.thevpc.nuts.runtime.core.CoreNutsWorkspaceOptions;
+import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.main.DefaultNutsWorkspace;
@@ -37,11 +39,11 @@ import net.thevpc.nuts.runtime.standalone.main.config.compat.NutsVersionCompat;
 import net.thevpc.nuts.runtime.standalone.main.config.compat.v502.NutsVersionCompat502;
 import net.thevpc.nuts.runtime.standalone.main.config.compat.v506.NutsVersionCompat506;
 import net.thevpc.nuts.runtime.standalone.main.config.compat.v507.NutsVersionCompat507;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsIndexStoreFactory;
 import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
 import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
@@ -104,7 +106,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         this.bootClassWorldURLs = initOptions.getClassWorldURLs() == null ? null : Arrays.copyOf(initOptions.getClassWorldURLs(), initOptions.getClassWorldURLs().length);
         this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
         sdks = new DefaultNutsSdkManager(ws);
-        env = new DefaultWorkspaceEnvManager(ws);
+        env = new DefaultWorkspaceEnvManager(ws,options);
         imports = new DefaultImportManager(ws);
         aliases = new DefaultAliasManager(ws);
     }
@@ -332,6 +334,25 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
+    public boolean isExcludedExtension(String extensionId, NutsWorkspaceOptions options) {
+        if (extensionId != null && options!=null) {
+            NutsId pnid = ws.id().parser().parse(extensionId);
+            String shortName = pnid.getShortName();
+            String artifactId = pnid.getArtifactId();
+            for (String excludedExtensionList : options.getExcludedExtensions()) {
+                for (String s : excludedExtensionList.split("[;, ]")) {
+                    if (s.length() > 0) {
+                        if (s.equals(shortName) || s.equals(artifactId)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public NutsWorkspaceOptions getOptions() {
         return options.copy();
     }
@@ -515,7 +536,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public NutsId getApiId() {
         if (currentConfig == null) {
-            return CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion());
+            return ws.id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion());
         }
         return current().getApiId();
     }
@@ -1368,15 +1389,15 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         @Override
         public NutsId getApiId() {
             String v = getStoredConfigApi().getApiVersion();
-            return v == null ? null : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + v);
+            return v == null ? null : ws.id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + v);
         }
 
         @Override
         public NutsId getRuntimeId() {
             String v = getStoredConfigApi().getRuntimeId();
             return v == null ? null : v.contains("#")
-                    ? CoreNutsUtils.parseNutsId(v)
-                    : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + v);
+                    ? ws.id().parser().parse(v)
+                    : ws.id().parser().parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + v);
         }
 
         @Override

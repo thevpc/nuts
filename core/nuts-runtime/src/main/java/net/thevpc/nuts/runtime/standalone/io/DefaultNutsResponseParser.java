@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.app.DefaultNutsArgument;
+import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
 
 public class DefaultNutsResponseParser<T> implements NutsQuestionParser<T> {
 
@@ -70,15 +70,15 @@ public class DefaultNutsResponseParser<T> implements NutsQuestionParser<T> {
                     response = String.valueOf(response);
                 }
                 String sReponse = response.toString();
-                NutsArgument a = new DefaultNutsArgument(sReponse, '=');
+                NutsArgument a = new DefaultNutsArgument(sReponse);
                 if (!a.isBoolean()) {
-                    throw new NutsIllegalArgumentException(ws, "Invalid response " + sReponse);
+                    throw new NutsIllegalArgumentException(ws, "invalid response " + sReponse);
                 }
                 return (T) (Object) a.getBoolean();
             }
 
             default: {
-                throw new NutsUnsupportedArgumentException(ws, "Unsupported type " + type.getName());
+                throw new NutsUnsupportedArgumentException(ws, "unsupported type " + type.getName());
             }
         }
     }

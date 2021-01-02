@@ -65,7 +65,7 @@ public class JobService {
     public void addProject(NProject p) {
         String name = p.getName();
         if (name == null) {
-            throw new IllegalArgumentException("invalid project");
+            throw new NutsIllegalArgumentException(context.getWorkspace(),"invalid project");
         }
         p.setId(null);
         NProject p0 = getProject(name);
@@ -104,7 +104,7 @@ public class JobService {
     public void updateProject(NProject p) {
         String name = p.getName();
         if (name == null) {
-            throw new IllegalArgumentException("Invalid project");
+            throw new NutsIllegalArgumentException(context.getWorkspace(),"Invalid project");
         }
         String id = p.getId();
         if (id == null) {
@@ -586,7 +586,7 @@ public class JobService {
     public NProject getProjectOrError(String projectNameOrId) {
         NProject p = getProject(projectNameOrId);
         if (p == null) {
-            throw new IllegalArgumentException("project not found " + projectNameOrId);
+            throw new NutsIllegalArgumentException(context.getWorkspace(),"project not found " + projectNameOrId);
         }
         return p;
     }
@@ -603,9 +603,9 @@ public class JobService {
     public boolean removeJob(String jobId) {
         long count = findAllTasks().filter(x -> jobId.equals(x.getJobId())).count();
         if (count > 1) {
-            throw new IllegalArgumentException("Job is used in " + count + " tasks. It cannot be removed.");
+            throw new NutsIllegalArgumentException(context.getWorkspace(),"Job is used in " + count + " tasks. It cannot be removed.");
         } else if (count > 0) {
-            throw new IllegalArgumentException("Job is used in one task. It cannot be removed.");
+            throw new NutsIllegalArgumentException(context.getWorkspace(),"Job is used in one task. It cannot be removed.");
         }
         return dal.delete(NJob.class, jobId);
     }
@@ -613,9 +613,9 @@ public class JobService {
     public boolean removeTask(String taskId) {
         long count = findAllTasks().filter(x -> taskId.equals(x.getParentTaskId())).count();
         if (count > 1) {
-            throw new IllegalArgumentException("Task is used in " + count + " tasks. It cannot be removed.");
+            throw new NutsIllegalArgumentException(context.getWorkspace(),"Task is used in " + count + " tasks. It cannot be removed.");
         } else if (count > 0) {
-            throw new IllegalArgumentException("Task is used in one task. It cannot be removed.");
+            throw new NutsIllegalArgumentException(context.getWorkspace(),"Task is used in one task. It cannot be removed.");
         }
         return dal.delete(NTask.class, taskId);
     }
@@ -634,7 +634,7 @@ public class JobService {
                 }
                 sb.append(countTasks > 1 ? "one task" : (countTasks + " task"));
             }
-            throw new IllegalArgumentException("Project is used in " + sb + ". It cannot be removed.");
+            throw new NutsIllegalArgumentException(context.getWorkspace(),"Project is used in " + sb + ". It cannot be removed.");
         }
         return dal.delete(NProject.class, projectName);
     }

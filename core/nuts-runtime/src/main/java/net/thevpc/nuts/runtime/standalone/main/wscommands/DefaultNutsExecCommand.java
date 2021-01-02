@@ -1,16 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.main.wscommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.wscommands.NutsExecutableInformationExt;
+import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.main.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.main.commands.*;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsExecutionContext;
+import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsExecutionContext;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsArtifactCall;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.main.executors.CustomNutsExecutorComponent;
-import net.thevpc.nuts.runtime.standalone.terminals.DefaultNutsSessionTerminal;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsExecCommand;
 import net.thevpc.nuts.NutsExecutorComponent;
 
@@ -27,13 +24,6 @@ import java.util.stream.Collectors;
  * @author thevpc
  */
 public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
-
-    public static final NutsDescriptor TEMP_DESC = new DefaultNutsDescriptorBuilder()
-            .id(CoreNutsUtils.parseNutsId("temp:exe#1.0"))
-            .packaging("exe")
-            .executable(true)
-            .executor(new DefaultNutsArtifactCall(CoreNutsUtils.parseNutsId("exec")))
-            .build();
 
     public DefaultNutsExecCommand(DefaultNutsWorkspace ws) {
         super(ws);
@@ -309,7 +299,10 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 //now search online
                 // this helps recovering from "invalid default parseVersion" issue
                 if (traceSession.isPlainTrace()) {
-                    traceSession.out().printf("##%s## is ```error not installed```, will search for it online. Type ```error CTRL^C``` to stop...\n", commandName);
+                    traceSession.out().printf("%s is %s, will search for it online. Type ```error CTRL^C``` to stop...\n",
+                            ws.formats().text().factory().styled(commandName,NutsTextNodeStyle.primary(1)),
+                            ws.formats().text().factory().styled("not installed",NutsTextNodeStyle.error())
+                            );
                     traceSession.out().flush();
                 }
                 ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setFailFast(false).setOnline().setLatest(true)

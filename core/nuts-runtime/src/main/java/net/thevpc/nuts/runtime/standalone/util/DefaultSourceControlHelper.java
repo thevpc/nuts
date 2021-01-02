@@ -7,10 +7,10 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.CoreNutsConstants;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsDefinition;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.CoreNutsConstants;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.standalone.util.io.UnzipOptions;
 import net.thevpc.nuts.runtime.standalone.util.io.ZipUtils;
 

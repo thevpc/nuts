@@ -26,10 +26,9 @@
 package net.thevpc.nuts.runtime.standalone.main.executors;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsDefinition;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsExecutionContext;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
+import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsExecutionContext;
 import net.thevpc.nuts.NutsExecutorComponent;
 
 import javax.tools.JavaCompiler;
@@ -45,7 +44,8 @@ import java.nio.file.Paths;
 @NutsSingleton
 public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
 
-    public static final NutsId ID = CoreNutsUtils.parseNutsId("net.thevpc.nuts.exec:exec-java-src");
+    public static NutsId ID;
+    NutsWorkspace ws;
 
     @Override
     public NutsId getId() {
@@ -54,10 +54,12 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
-        if (nutsDefinition != null) {
-            if ("java".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())) {
-                return DEFAULT_SUPPORT + 1;
-            }
+        this.ws=nutsDefinition.getWorkspace();
+        if(ID==null){
+            ID = ws.id().parser().parse("net.thevpc.nuts.exec:exec-java-src");
+        }
+        if ("java".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())) {
+            return DEFAULT_SUPPORT + 1;
         }
         return NO_SUPPORT;
     }
@@ -70,8 +72,15 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         NutsWorkspace ws = executionContext.getWorkspace();
         String folder = "__temp_folder";
         PrintStream out = executionContext.getTraceSession().out();
-        out.println("#####compile#####");
-        out.printf("```sh embedded-javac -d <temp-folder> %s```%n",javaFile.toString());
+        out.println(executionContext.getWorkspace().formats().text().factory().styled("compile",NutsTextNodeStyle.primary(4)));
+        out.printf("%s%n",
+                executionContext.getWorkspace().commandLine().create(
+                        "embedded-javac",
+                        "-d",
+                        "<temp-folder>",
+                        javaFile.toString()
+                )
+        );
         JavaNutsExecutorComponent cc = new JavaNutsExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d);

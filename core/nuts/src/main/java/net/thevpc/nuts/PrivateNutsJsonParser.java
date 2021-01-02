@@ -64,11 +64,11 @@ final class PrivateNutsJsonParser {
             Object a = nextElement();
             int p = st.nextToken();
             if (p != StreamTokenizer.TT_EOF) {
-                throw new IllegalArgumentException("Json Syntax Error :  encountred " + st);
+                throw new NutsBootException("json syntax error :  encountered " + st);
             }
             return a;
         } catch (IOException ex) {
-            throw new IllegalArgumentException("Json Syntax Error :  " + ex.getMessage(), ex);
+            throw new NutsBootException("json syntax error :  " + ex.getMessage(), ex);
         }
     }
 
@@ -87,7 +87,7 @@ final class PrivateNutsJsonParser {
                     case "null":
                         return null;
                     default:
-                        throw new IllegalArgumentException("Json Syntax Error : " + st.sval);
+                        throw new NutsBootException("json syntax error : " + st.sval);
                 }
             }
             case '\"': {
@@ -102,7 +102,7 @@ final class PrivateNutsJsonParser {
                 return nextObject();
             }
             default: {
-                throw new IllegalArgumentException("Json Syntax Error : " + str(p));
+                throw new NutsBootException("json syntax error : " + str(p));
             }
         }
     }
@@ -112,7 +112,7 @@ final class PrivateNutsJsonParser {
         int p = -1;
         p = st.nextToken();
         if (p != '[') {
-            throw new IllegalArgumentException("Json Syntax Error : " + str(p));
+            throw new NutsBootException("json syntax error : " + str(p));
         }
         p = st.nextToken();
         if (p == ']') {
@@ -129,23 +129,23 @@ final class PrivateNutsJsonParser {
                     arr.add(nextElement());
                     break;
                 default:
-                    throw new IllegalArgumentException("Json Syntax Error : " + str(p));
+                    throw new NutsBootException("json syntax error : " + str(p));
             }
         }
-        throw new IllegalArgumentException("Json Syntax Error : Missing ]");
+        throw new NutsBootException("json syntax error : missing ]");
     }
 
     private void readChar(char expected) throws IOException {
-        int encountred = st.nextToken();
-        if (encountred != expected) {
-            throw new IllegalArgumentException("Json Syntax Error : expected " + str(expected) + " , encountred " + str(encountred));
+        int encountered = st.nextToken();
+        if (encountered != expected) {
+            throw new NutsBootException("json syntax error : expected " + str(expected) + " , encountered " + str(encountered));
         }
     }
 
     private Object[] nextKeyValue() throws IOException {
         Object t = nextElement();
         if (!(t instanceof String)) {
-            throw new IllegalArgumentException("Json Syntax Error : expected entry name, , encountred " + t);
+            throw new NutsBootException("json syntax error : expected entry name, , encountered " + t);
         }
         readChar(':');
         Object v = nextElement();
@@ -157,7 +157,7 @@ final class PrivateNutsJsonParser {
         int p = -1;
         p = st.nextToken();
         if (p != '{') {
-            throw new IllegalArgumentException("Json Syntax Error : " + p);
+            throw new NutsBootException("json syntax error : " + p);
         }
         p = st.nextToken();
         if (p == '}') {
@@ -176,10 +176,10 @@ final class PrivateNutsJsonParser {
                     map.put((String) kv[0], kv[1]);
                     break;
                 default:
-                    throw new IllegalArgumentException("Json Syntax Error : " + p);
+                    throw new NutsBootException("json syntax error : " + p);
             }
         }
-        throw new IllegalArgumentException("Json Syntax Error : Missing }");
+        throw new NutsBootException("json syntax error : Missing }");
     }
 
     private String str(int a) {

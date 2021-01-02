@@ -179,9 +179,9 @@ public abstract class NutsApplication {
             if(c instanceof Error){
                 throw (Error)c;
             }
-            throw new IllegalArgumentException("Unable to instantiate "+appType.getName(),ex);
+            throw new NutsBootException("Unable to instantiate "+appType.getName(),ex);
         } catch (IllegalAccessException ex) {
-            throw new IllegalArgumentException("Illegal access to default constructor for "+appType.getName(),ex);
+            throw new NutsBootException("Illegal access to default constructor for "+appType.getName(),ex);
         }
         newInstance.runAndExit(args);
     }

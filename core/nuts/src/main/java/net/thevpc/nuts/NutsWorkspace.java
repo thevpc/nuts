@@ -50,6 +50,7 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
      *
      * @return uuid
      */
+    @Deprecated //TODO REMOVE ME
     String name();
 
     //COMMANDS

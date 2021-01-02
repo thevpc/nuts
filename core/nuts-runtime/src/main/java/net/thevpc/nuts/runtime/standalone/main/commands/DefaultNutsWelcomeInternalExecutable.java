@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.main.commands;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,7 +34,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             welcome.put("message", "Welcome to nuts. Yeah, it is working...");
             welcome.put("name", "nuts");
             welcome.put("long-name", "Network Updatable Things Services");
-            welcome.put("description", "The Freen and Open Source Package Manager for Java (TM) and other Things ...");
+            welcome.put("description", "The Free and Open Source Package Manager for Java (TM) and other Things ...");
             welcome.put("url", "http://github.com/thevpc/nuts");
             welcome.put("author", "thevpc");
             welcome.put("api-id", getSession().getWorkspace().getApiId().builder().setVersion("").build().toString());

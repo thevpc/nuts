@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.core.filters.dependency;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
-import net.thevpc.nuts.runtime.standalone.util.common.Simplifiable;
+import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 public final class NutsDependencyFilterTrue extends AbstractNutsFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
 

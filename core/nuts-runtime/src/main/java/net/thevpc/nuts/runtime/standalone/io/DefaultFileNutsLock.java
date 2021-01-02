@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.TimePeriod;
+import net.thevpc.nuts.runtime.core.common.TimePeriod;
 
 import java.io.IOException;
 import java.nio.file.Files;

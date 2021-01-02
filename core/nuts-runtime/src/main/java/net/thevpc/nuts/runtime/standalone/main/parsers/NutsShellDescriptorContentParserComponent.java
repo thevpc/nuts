@@ -27,10 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.main.parsers;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsArtifactCall;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsDescriptorBuilder;
-import net.thevpc.nuts.runtime.standalone.format.json.JsonStringBuffer;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsArtifactCall;
+import net.thevpc.nuts.runtime.core.format.json.JsonStringBuffer;
 import net.thevpc.nuts.spi.NutsDescriptorContentParserComponent;
 import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
 
@@ -48,9 +46,9 @@ import java.util.Set;
 @NutsSingleton
 public class NutsShellDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
-    public static final NutsId NSH = CoreNutsUtils.parseNutsId("nsh");
+    public static NutsId NSH;
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("nsh", "nuts"));
-
+    private NutsWorkspace ws;
     @Override
     public NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) {
         if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
@@ -65,6 +63,9 @@ public class NutsShellDescriptorContentParserComponent implements NutsDescriptor
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
+        if(NSH==null){
+            NSH=criteria.getWorkspace().id().parser().parse("nsh");
+        }
         return DEFAULT_SUPPORT;
     }
 
@@ -124,8 +125,8 @@ public class NutsShellDescriptorContentParserComponent implements NutsDescriptor
                 }
             }
             if (comment.toString().trim().isEmpty()) {
-                return new DefaultNutsDescriptorBuilder()
-                        .setId(CoreNutsUtils.parseNutsId("temp:nsh#1.0"))
+                return ws.descriptor().descriptorBuilder()
+                        .setId(ws.id().parser().parse("temp:nsh#1.0"))
                         .setPackaging("nsh")
                         .setExecutor(new DefaultNutsArtifactCall(NSH))
                         .build();

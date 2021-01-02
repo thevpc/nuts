@@ -1,18 +1,32 @@
 package net.thevpc.nuts.runtime.standalone.main.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class DefaultWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     private NutsWorkspace ws;
+    private Map<String,String> optionsParsed=new LinkedHashMap<>();
 
-    public DefaultWorkspaceEnvManager(NutsWorkspace ws) {
+    public DefaultWorkspaceEnvManager(NutsWorkspace ws,NutsWorkspaceOptions options) {
         this.ws = ws;
+        String[] properties = options.getProperties();
+        if(properties!=null){
+            for (String property : properties) {
+                if(property!=null){
+                    DefaultNutsArgument a=new DefaultNutsArgument(property);
+                    String key = a.getStringKey();
+                    String value = a.getStringValue();
+                    optionsParsed.put(key,value);
+                }
+            }
+        }
     }
 
     NutsWorkspaceConfigMain getStoreModelMain(){
@@ -24,6 +38,7 @@ public class DefaultWorkspaceEnvManager implements NutsWorkspaceEnvManager {
         if (getStoreModelMain().getEnv() != null) {
             p.putAll(getStoreModelMain().getEnv());
         }
+        p.putAll(optionsParsed);
         return p;
     }
 
@@ -34,6 +49,9 @@ public class DefaultWorkspaceEnvManager implements NutsWorkspaceEnvManager {
 
     @Override
     public String get(String property, String defaultValue) {
+        if(optionsParsed.containsKey(property)) {
+            return optionsParsed.get(property);
+        }
         Map<String, String> env = getStoreModelMain().getEnv();
         if (env == null) {
             return defaultValue;

@@ -25,7 +25,7 @@ package net.thevpc.nuts.core.test.whitebox.utilities;
 //import java.util.function.Predicate;
 //import NutsExecutionEntry;
 //import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
-//import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+//import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 //import net.thevpc.nuts.runtime.standalone.util.bundledlibs.io.InputStreamVisitor;
 //import net.thevpc.nuts.runtime.standalone.util.bundledlibs.io.ZipUtils;
 //import org.junit.Test;

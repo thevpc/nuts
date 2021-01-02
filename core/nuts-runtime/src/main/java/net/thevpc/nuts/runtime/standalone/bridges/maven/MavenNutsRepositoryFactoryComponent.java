@@ -28,9 +28,9 @@ package net.thevpc.nuts.runtime.standalone.bridges.maven;
 import java.util.Arrays;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
 
 /**

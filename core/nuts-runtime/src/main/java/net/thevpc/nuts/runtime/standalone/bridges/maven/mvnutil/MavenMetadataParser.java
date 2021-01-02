@@ -18,7 +18,6 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 import java.util.logging.Level;
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,9 +26,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import net.thevpc.nuts.NutsLogger;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.format.xml.NutsXmlUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

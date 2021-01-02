@@ -1,11 +1,11 @@
 #!include</net/thevpc/nuts/includes/standard-header.ntf>
 
-```sh nft``` aka ##nuts text format## is markdown like text format enabling colored styles.
+```sh nft``` aka ##nuts text format## is a markdown like text format enabling colored text styles.
 ```sh nft``` is the standard format used in the standard output and standard error. It is as
  well the standard format used in help manuals.
 
 
-##) NTF special characters
+##) NTF special characters:
 all special characters are ### \# \@ \~ \ø \\ \' ###
 ###\#### defines primary styles
 ###\@### defines secondary styles
@@ -16,7 +16,7 @@ all special characters are ### \# \@ \~ \ø \\ \' ###
 ###\\### You can escape special characters using ###\\### character
 
 
-##) NTF COLORS
+##) NTF COLORS:
 nuts text format is based on the following constructs:
 
 ##Format##                               | ##Display##                           | ##Recommended##
@@ -31,24 +31,16 @@ Text                                 | Text                              | plain
 ```#######Text#######```                   | #######Text#######                              | foreground 6, primary6 , title 6
 ```########Text########```                 | ########Text########                              | foreground 7, primary7 , title 7
 ```#########Text#########```               | #########Text#########                              | foreground 8, primary8 , title 8
-```##########Text##########```             | ##########Text##########                              | foreground 9, primary9 , title 7
-```@Text@```                               | @Text@                            | plain text
-```@@Text@@```                             | @@Text@@                              | background 1, secondary1
-```@@@Text@@@```                           | @@@Text@@@                              | background 2, secondary2
-```@@@@Text@@@@```                         | @@@@Text@@@@                              | background 3, secondary3
-```@@@@@Text@@@@@```                       | @@@@@Text@@@@@                              | background 4, secondary4
-```@@@@@@Text@@@@@@```                     | @@@@@@Text@@@@@@                              | background 5, secondary5
-```@@@@@@@Text@@@@@@@```                   | @@@@@@@Text@@@@@@@                              | background 6, secondary6
-```@@@@@@@@Text@@@@@@@@```                 | @@@@@@@@Text@@@@@@@@                              | background 7, secondary7
-```@@@@@@@@@Text@@@@@@@@@```               | @@@@@@@@@Text@@@@@@@@@                              | background 8, secondary8
-```@@@@@@@@@@Text@@@@@@@@@@```             | @@@@@@@@@@Text@@@@@@@@@@                              | background 9, secondary9
-```~Text~```                               | ~Text~                            | plain text
-```~~Text~~```                             | ~~Text~~                              | underlined
-```~~~Text~~~```                           | ~~~Text~~~                              | italic
-```~~~~Text~~~~```                         | ~~~~Text~~~~                              | striked
-```~~~~~Text~~~~~```                       | ~~~~~Text~~~~~                              | reversed
+```##########Text##########```             | ##########Text##########                              | foreground 9, primary9 , title 9
+```##&p2:Text##```                             | ##&p2:Text##                              | primary2
+```##&s2:Text##```                             | ##&p2:Text##                              | secondary2
+```##&/:Text##```                             | ##&/:Text##                              | italic
+```##&_:Text##```                             | ##&_:Text##                              | underlined
+```##&%:Text##```                             | ##&%:Text##                              | blink
+```##&!:Text##```                             | ##&!:Text##                              | reversed
+```##&+:Text##```                             | ##&+:Text##                              | bold
 \`\`\`Text\`\`\`                           | ```Text```                              | escaped text
-\\`\\#\\@                               | \`\#\@                               | escaped characters
+\\`\\#                               | \`\#                               | escaped characters
 \`\`\`xml <xml n='value'></xml>\`\`\`      | ```xml <xml n='value'></xml>```             | xml formatting
 \`\`\`json {k:'value',n:'value'}\`\`\`     | ```json {k:'value',n:'value'}```             | json formatting
 \`\`\`java public class A{ int a=12;}\`\`\`| ```java public class A{ int a=12;}```        | java formatting

@@ -11,15 +11,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import net.thevpc.nuts.NutsAddOptions;
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandAliasConfig;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsRemoveOptions;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsWorkspaceCommandAlias;
+
+import net.thevpc.nuts.*;
 
 /**
  *
@@ -119,7 +112,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                                                     NutsWorkspaceCommandAlias::getName,
                                                     x -> context.getWorkspace().commandLine().create(x.getCommand()).toString(),
                                                     (x, y) -> {
-                                                        throw new IllegalArgumentException("Duplicate " + x);
+                                                        throw new NutsIllegalArgumentException(context.getWorkspace(),"duplicate " + x);
                                                     },
                                                     //preserve order
                                                     LinkedHashMap::new

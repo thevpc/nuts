@@ -26,16 +26,14 @@
 package net.thevpc.nuts.runtime.standalone.bridges.maven;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsId;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsDescriptorBuilder;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.MapStringMapper;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsDependencyBuilder;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsVersion;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsDependencyBuilder;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
 
@@ -104,13 +102,7 @@ public class MavenUtils {
     }
 
     public NutsId toNutsId(PomId d) {
-        return new DefaultNutsId(
-                null,
-                d.getGroupId(),
-                d.getArtifactId(),
-                toNutsVersion(d.getVersion()),
-                ""
-        );
+        return ws.id().builder().setGroupId(d.getGroupId()).setArtifactId(d.getArtifactId()).setVersion(toNutsVersion(d.getVersion())).build();
     }
 
     public NutsDependency toNutsDependency(PomDependency d, NutsSession session) {
@@ -155,7 +147,7 @@ public class MavenUtils {
                 }
             }
         }
-        return new DefaultNutsDependencyBuilder()
+        return new DefaultNutsDependencyBuilder(ws)
                 .setGroupId(d.getGroupId())
                 .setArtifactId(d.getArtifactId())
                 .setClassifier(d.getClassifier())
@@ -232,7 +224,7 @@ public class MavenUtils {
                             ,urlDesc
                     );
 
-            return new DefaultNutsDescriptorBuilder()
+            return ws.descriptor().descriptorBuilder()
                     .setId(toNutsId(pom.getPomId()))
                     .setParents(pom.getParent() == null ? new NutsId[0] : new NutsId[]{toNutsId(pom.getParent())})
                     .setPackaging(pom.getPackaging())
@@ -558,7 +550,7 @@ public class MavenUtils {
      *
      * @param zId id
      * @param filter filter
-     * @param session
+     * @param session session
      * @return latest runtime version
      */
     public NutsId resolveLatestMavenId(NutsId zId, Predicate<String> filter, NutsSession session) {

@@ -1,7 +1,6 @@
 package net.thevpc.nuts.toolbox.tomcat.remote;
 
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.common.io.FileUtils;
 import net.thevpc.common.io.IOUtils;
 import net.thevpc.common.ssh.SshPath;
@@ -15,9 +14,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsExecCommand;
 
 public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
 
@@ -123,10 +119,16 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatAppConfig getConfig() {
         return config;
     }
+    public NutsString getBracketsPrefix(String str) {
+        return context.getWorkspace().formats().text().builder()
+                .append("[")
+                .append(str,NutsTextNodeStyle.primary(5))
+                .append("]");
+    }
 
     public RemoteTomcatAppConfigService remove() {
         client.getConfig().getApps().remove(name);
-        context.getSession().out().printf("######[%s]###### app removed.\n", name);
+        context.getSession().out().printf("%s app removed.\n", getBracketsPrefix(name));
         return this;
 
     }

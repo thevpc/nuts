@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.security;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import net.thevpc.nuts.NutsAuthenticationAgent;
@@ -10,7 +9,7 @@ import net.thevpc.nuts.NutsSecurityException;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 class WrapperNutsAuthenticationAgent {
 

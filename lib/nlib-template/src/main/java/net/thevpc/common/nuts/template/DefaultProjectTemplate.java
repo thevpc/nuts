@@ -17,15 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsConfirmationMode;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsQuestion;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSessionTerminal;
-import net.thevpc.nuts.NutsUserCancelException;
-import net.thevpc.nuts.NutsValidationException;
-import net.thevpc.nuts.NutsWorkspace;
+
+import net.thevpc.nuts.*;
 import net.thevpc.common.mvn.Pom;
 import net.thevpc.common.mvn.PomXmlParser;
 import net.thevpc.common.strings.MessageNameFormat;
@@ -35,7 +28,6 @@ import net.thevpc.common.strings.StringToObject;
 import net.thevpc.common.strings.StringUtils;
 import net.thevpc.common.strings.format.AbstractFunction;
 import org.w3c.dom.Document;
-import net.thevpc.nuts.NutsQuestionValidator;
 
 /**
  *
@@ -75,7 +67,13 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 if (session.getConfirm() == NutsConfirmationMode.YES) {
                     return defaultValue;
                 }
-                return term.ask().forString("#####%s##### (<<%s>>)\n ?", propertyTitle, propName)
+                return term.ask().forString(
+                        getWorkspace().formats().text().builder()
+                                .append(propertyTitle, NutsTextNodeStyle.primary(4))
+                                .append(" (")
+                                .append(propName,NutsTextNodeStyle.pale())
+                                .append(")\n ?")
+                        .toString())
                         .defaultValue(defaultValue)
                         .setValidator(new NutsQuestionValidator<String>() {
                             @Override
@@ -441,7 +439,8 @@ public class DefaultProjectTemplate implements ProjectTemplate {
         if (p == null) {
             p = resolveFirstPomFile(getProjectRootFolder());
             if (p != null) {
-                if (!getSession().getTerminal().ask().forBoolean("Accept project location ####%s####?", p.getPath())
+                if (!getSession().getTerminal().ask().forBoolean("accept project location %s?",
+                        applicationContext.getWorkspace().formats().text().factory().styled(p.getPath(),NutsTextNodeStyle.path()))
                         .defaultValue(false)
                         .getBooleanValue()) {
                     throw new NutsUserCancelException(getWorkspace());

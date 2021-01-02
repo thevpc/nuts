@@ -87,13 +87,18 @@ public class Nsh extends NutsApplication {
             });
         }
         if (session.isPlainTrace()) {
+            NutsTextNodeFactory factory = session.getWorkspace().formats().text().factory();
             if (firstInstalled.size() > 0) {
-                session.out().printf("registered ####%s#### nsh commands : ####%s#### \n", firstInstalled.size(),
-                        String.join(", ", firstInstalled));
+                session.out().printf("registered %s nsh commands : %s \n",
+                        factory.styled(""+firstInstalled.size(),NutsTextNodeStyle.primary(3))
+                        ,factory.styled(String.join(", ", firstInstalled),NutsTextNodeStyle.primary(3))
+                );
             }
             if (reinstalled.size() > 0) {
-                session.out().printf("re-registered ####%s#### nsh commands : ####%s#### \n", reinstalled.size(),
-                        String.join(", ", reinstalled));
+                session.out().printf("re-registered %s nsh commands : %s \n",
+                        factory.styled(""+reinstalled.size(),NutsTextNodeStyle.primary(3))
+                        ,factory.styled(String.join(", ", reinstalled),NutsTextNodeStyle.primary(3))
+                );
             }
         }
         cfg.save(false, session);
@@ -122,7 +127,10 @@ public class Nsh extends NutsApplication {
                     ws.aliases().remove(command.getName(), new NutsRemoveOptions());
                 } catch (Exception ex) {
                     if (applicationContext.getSession().isPlainTrace()) {
-                        applicationContext.getSession().err().printf("unable to uninstall ####%s#### .\n", command.getName());
+                        NutsTextNodeFactory factory = ws.formats().text().factory();
+                        applicationContext.getSession().err().printf("unable to uninstall %s.\n",
+                                factory.styled(command.getName(),NutsTextNodeStyle.primary(3))
+                        );
                     }
                 }
             }

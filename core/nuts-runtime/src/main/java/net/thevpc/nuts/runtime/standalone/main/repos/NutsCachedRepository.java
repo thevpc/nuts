@@ -26,11 +26,11 @@
 package net.thevpc.nuts.runtime.standalone.main.repos;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.NutsRepositorySupportedAction;
+import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.core.SuccessFailResult;
+import net.thevpc.nuts.runtime.core.common.SuccessFailResult;
 import net.thevpc.nuts.runtime.standalone.repocommands.AbstractNutsUpdateRepositoryStatisticsCommand;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.CommonRootsHelper;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;

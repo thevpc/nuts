@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.main.config.NutsSdkLocationComparator;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsVersion;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.NutsLogVerb;
 
 import java.io.File;
@@ -154,7 +154,11 @@ public class NutsJavaSdkUtils {
                     if (r != null) {
                         all.add(r);
                         if (session != null && session.isPlainTrace()) {
-                            session.out().printf("detected java %s #####%s##### at ####%s####%n", r.getPackaging(), r.getVersion(), r.getPath());
+                            NutsTextNodeFactory factory = ws.formats().text().factory();
+                            session.out().printf("detected java %s %s at %s%n", r.getPackaging(),
+                                    factory.styled(r.getVersion(),NutsTextNodeStyle.version())
+                                    , factory.styled(r.getPath(),NutsTextNodeStyle.path())
+                            );
                         }
                     }
                 }
@@ -184,7 +188,11 @@ public class NutsJavaSdkUtils {
                                         if(r!=null) {
                                             if (session.isPlainTrace()) {
                                                 synchronized (session.getWorkspace()) {
-                                                    session.out().printf("detected java %s #####%s##### at ####%s####%n", r.getPackaging(), r.getVersion(), r.getPath());
+                                                    NutsTextNodeFactory factory = ws.formats().text().factory();
+                                                    session.out().printf("detected java %s %s at %s%n", r.getPackaging(),
+                                                            factory.styled(r.getVersion(),NutsTextNodeStyle.version())
+                                                            , factory.styled(r.getPath(),NutsTextNodeStyle.path())
+                                                    );
                                                 }
                                             }
                                         }

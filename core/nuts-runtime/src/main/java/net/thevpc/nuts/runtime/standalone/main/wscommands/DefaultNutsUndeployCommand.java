@@ -5,7 +5,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.main.repos.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsUndeployCommand;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {

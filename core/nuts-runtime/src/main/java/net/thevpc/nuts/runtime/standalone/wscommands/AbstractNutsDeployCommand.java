@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -202,7 +202,11 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         }
         result.add(nid);
         if (getValidWorkspaceSession().isPlainTrace()) {
-            getValidWorkspaceSession().getTerminal().out().printf("Nuts %s deployed successfully to ####%s####%n", NutsString.of(ws.id().formatter(nid).format()), toRepository == null ? "<default-repo>" : toRepository);
+            getValidWorkspaceSession().getTerminal().out().printf("Nuts %s deployed successfully to %s%n",
+                    NutsString.of(ws.id().formatter(nid).format()),
+                    ws.formats().text().factory().styled(toRepository == null ? "<default-repo>" : toRepository,NutsTextNodeStyle.primary(3))
+
+            );
         }
     }
 

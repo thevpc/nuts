@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.core.filters;
 import net.thevpc.nuts.NutsDescriptor;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.util.NutsIdGraph;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 public class NutsIdAndNutsDependencyFilterItem {
 

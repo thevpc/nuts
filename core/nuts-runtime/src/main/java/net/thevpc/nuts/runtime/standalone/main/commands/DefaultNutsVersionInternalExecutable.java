@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.main.commands;
 import java.io.PrintStream;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.main.wscommands.DefaultNutsExecCommand;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 /**
  *

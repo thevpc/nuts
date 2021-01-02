@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import java.util.Objects;
 import net.thevpc.nuts.NutsExecutionEntry;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
  *

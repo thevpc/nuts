@@ -5,16 +5,15 @@
  */
 package net.thevpc.nuts.runtime.standalone.main.commands;
 
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-
 /**
- *
  * @author thevpc
  */
 public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecutableCommand {
@@ -58,6 +57,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
         if (commands.isEmpty()) {
             throw new NutsIllegalArgumentException(ws, "which: missing commands");
         }
+        NutsTextNodeFactory factory = ws.formats().text().factory();
         for (String arg : this.args) {
             PrintStream out = getSession().out();
             try {
@@ -65,11 +65,17 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                 boolean showDesc = false;
                 switch (p.getType()) {
                     case SYSTEM: {
-                        out.printf("#####%s##### : ==system command== %s%n", arg, p.getDescription());
+                        out.printf("%s : %s %s%n",
+                                factory.styled(arg, NutsTextNodeStyle.primary(4)),
+                                factory.styled("system command", NutsTextNodeStyle.primary(6))
+                                , p.getDescription());
                         break;
                     }
                     case ALIAS: {
-                        out.printf("#####%s##### : ==nuts alias== (owner %s ) : %s%n", arg, p.getId() == null ? null : NutsString.of(ws.id().formatter(p.getId()).format()),
+                        out.printf("%s : %s (owner %s ) : %s%n",
+                                factory.styled(arg, NutsTextNodeStyle.primary(4)),
+                                factory.styled("nuts alias", NutsTextNodeStyle.primary(6)),
+                                p.getId() == null ? null : NutsString.of(ws.id().formatter(p.getId()).format()),
                                 NutsString.of(ws.commandLine().create(ws.aliases().find(p.getName(), getSession()).getCommand()).toString())
                         );
                         break;
@@ -78,11 +84,17 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         if (p.getId() == null) {
                             throw new NutsNotFoundException(ws, arg);
                         }
-                        out.printf("#####%s##### : ==nuts component== %s%n", arg, NutsString.of(ws.id().formatter(p.getId()).format())/*, p.getDescription()*/);
+                        out.printf("%s : %s %s%n",
+                                factory.styled(arg, NutsTextNodeStyle.primary(4)),
+                                factory.styled("nuts component", NutsTextNodeStyle.primary(6)),
+                                NutsString.of(ws.id().formatter(p.getId()).format())/*, p.getDescription()*/);
                         break;
                     }
                     case INTERNAL: {
-                        out.printf("#####%s##### : ==internal command== %n", arg);
+                        out.printf("%s : %s %n",
+                                factory.styled("internal command", NutsTextNodeStyle.primary(6)),
+                                factory.styled(arg, NutsTextNodeStyle.primary(4))
+                        );
                         break;
                     }
                 }
@@ -90,7 +102,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                     out.printf("\t %s%n", arg/*, p.getDescription()*/);
                 }
             } catch (NutsNotFoundException ex) {
-                out.printf("#####%s##### : ```error not found```%n", arg);
+                out.printf("%s : %s%n", factory.styled(arg,NutsTextNodeStyle.primary(4)),factory.styled("not found",NutsTextNodeStyle.error()));
             }
         }
     }

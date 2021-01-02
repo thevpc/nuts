@@ -26,10 +26,8 @@
 package net.thevpc.nuts.runtime.standalone.main.parsers;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsArtifactCall;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsDescriptorBuilder;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsArtifactCall;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.Ref;
 
 import java.io.IOException;
@@ -56,9 +54,10 @@ import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
 public class JarNutsDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Collections.singletonList("jar"));//, "war", "ear"
-
+    private NutsWorkspace ws;
     @Override
     public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
+        this.ws=criteria.getWorkspace();
         return DEFAULT_SUPPORT;
     }
 
@@ -67,7 +66,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
         if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
             return null;
         }
-        final NutsId JAVA = CoreNutsUtils.parseNutsId("java");
+        final NutsId JAVA = ws.id().parser().parse("java");
         final Ref<NutsDescriptor> nutsjson = new Ref<>();
         final Ref<NutsDescriptor> metainf = new Ref<>();
         final Ref<NutsDescriptor> maven = new Ref<>();
@@ -98,8 +97,8 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                                     mainClass.set(attrs.getValue(attrName));
                                 }
                             }
-                            NutsDescriptor d = new DefaultNutsDescriptorBuilder()
-                                    .setId(CoreNutsUtils.parseNutsId("temp:jar#1.0"))
+                            NutsDescriptor d = parserContext.getWorkspace().descriptor().descriptorBuilder()
+                                    .setId(ws.id().parser().parse("temp:jar#1.0"))
                                     .setExecutable(mainClass.isSet())
                                     .setPackaging("jar")
                                     .setExecutor(new DefaultNutsArtifactCall(JAVA, new String[]{"-jar"}))
@@ -144,8 +143,8 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
             baseNutsDescriptor = metainf.get();
         }
         if (baseNutsDescriptor == null) {
-            baseNutsDescriptor = new DefaultNutsDescriptorBuilder()
-                    .setId(CoreNutsUtils.parseNutsId("temp:jar#1.0"))
+            baseNutsDescriptor = parserContext.getWorkspace().descriptor().descriptorBuilder()
+                    .setId(ws.id().parser().parse("temp:jar#1.0"))
                     .executable()
                     .setPackaging("jar")
                     .build();

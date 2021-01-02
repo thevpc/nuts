@@ -3,8 +3,8 @@
 //import net.thevpc.nuts.*;
 //import net.thevpc.nuts.runtime.core.filters.descriptor.JsNutsDescriptorFilter;
 //import net.thevpc.nuts.runtime.core.filters.version.JsNutsVersionFilter;
-//import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-//import net.thevpc.nuts.runtime.standalone.util.common.Simplifiable;
+//import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+//import net.thevpc.nuts.runtime.core.util.Simplifiable;
 //
 //import java.util.ArrayList;
 //import java.util.List;
@@ -12,7 +12,7 @@
 //import java.util.logging.Level;
 //import java.util.logging.Logger;
 //import net.thevpc.nuts.core.NutsWorkspaceExt;
-//import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+//import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 //import net.thevpc.nuts.runtime.core.filters.id.NutsScriptAwareIdFilter;
 //
 //public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {

@@ -29,10 +29,10 @@ package net.thevpc.nuts.runtime.core.filters.version;
 import java.io.IOException;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsVersion;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.Simplifiable;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 import java.io.Serializable;
 import java.io.StreamTokenizer;
@@ -40,9 +40,9 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsVersionInterval;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsVersionInterval;
 import net.thevpc.nuts.runtime.core.filters.id.NutsScriptAwareIdFilter;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 /**
  * Examples [2.6,], ]2.6,] . Created by vpc on 1/20/17.
@@ -202,8 +202,10 @@ public class DefaultNutsVersionFilter extends AbstractNutsFilter implements Nuts
         String v1 = null;
         String v2 = null;
         DefaultNutsVersionFilter dd;
+        NutsWorkspace ws;
 
         public ParseHelper(NutsWorkspace ws) {
+            this.ws=ws;
             dd = new DefaultNutsVersionFilter(ws);
         }
 
@@ -272,7 +274,7 @@ public class DefaultNutsVersionFilter extends AbstractNutsFilter implements Nuts
                                     break;
                                 }
                                 default: {
-                                    throw new IllegalArgumentException("Unexpected  " + ((char) t));
+                                    throw new NutsParseException(ws,"unexpected  " + ((char) t));
                                 }
                             }
                             break;
@@ -284,7 +286,7 @@ public class DefaultNutsVersionFilter extends AbstractNutsFilter implements Nuts
                                     break;
                                 }
                                 default: {
-                                    throw new IllegalArgumentException("Expected ',' found " + ((char) t));
+                                    throw new NutsParseException(ws,"expected ',' found " + ((char) t));
                                 }
                             }
                             break;
@@ -301,7 +303,7 @@ public class DefaultNutsVersionFilter extends AbstractNutsFilter implements Nuts
                                     break;
                                 }
                                 default: {
-                                    throw new IllegalArgumentException("Unexpected  " + ((char) t));
+                                    throw new NutsParseException(ws,"unexpected  " + ((char) t));
                                 }
                             }
                             break;
@@ -329,7 +331,7 @@ public class DefaultNutsVersionFilter extends AbstractNutsFilter implements Nuts
                                     break;
                                 }
                                 default: {
-                                    throw new IllegalArgumentException("Unexpected  " + ((char) t));
+                                    throw new NutsParseException(ws,"unexpected  " + ((char) t));
                                 }
                             }
                             break;
@@ -350,7 +352,7 @@ public class DefaultNutsVersionFilter extends AbstractNutsFilter implements Nuts
                                     break;
                                 }
                                 default: {
-                                    throw new IllegalArgumentException("Unexpected  " + ((char) t));
+                                    throw new NutsParseException(ws,"unexpected  " + ((char) t));
                                 }
                             }
                             break;
@@ -366,18 +368,18 @@ public class DefaultNutsVersionFilter extends AbstractNutsFilter implements Nuts
                                     break;
                                 }
                                 default: {
-                                    throw new IllegalArgumentException("Unexpected  " + ((char) t));
+                                    throw new NutsParseException(ws,"unexpected  " + ((char) t));
                                 }
                             }
                             break;
                         }
                         default: {
-                            throw new IllegalArgumentException("Unsupported state " + state);
+                            throw new NutsParseException(ws,"unsupported state " + state);
                         }
                     }
                 }
                 if (state != NEXT_COMMA && state != START) {
-                    throw new IllegalArgumentException("Invalid state" + state);
+                    throw new NutsParseException(ws,"invalid state" + state);
                 }
             } catch (IOException ex) {
                 throw new IllegalArgumentException(ex);

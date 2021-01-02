@@ -5,10 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.main.commands;
 
-import net.thevpc.nuts.NutsExecutableType;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 /**
  *
@@ -51,7 +49,15 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
             getSession().out().println("[dry] ==show-help==");
             return;
         }
-        getSession().out().printf("[dry] ==internal== ######%s###### %s%n",getName(),String.join(" ",args));
+        NutsTextFormatManager text = getSession().getWorkspace().formats().text();
+        getSession().out().printf("[dry] %s%n",
+                text.builder()
+                        .append("internal", NutsTextNodeStyle.pale())
+                        .append(" ")
+                        .append(getName(),NutsTextNodeStyle.primary(5))
+                        .append(" ")
+                        .append(getSession().getWorkspace().commandLine().create(args))
+                );
     }
 
 }

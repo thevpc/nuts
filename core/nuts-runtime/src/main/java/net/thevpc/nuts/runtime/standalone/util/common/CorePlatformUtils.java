@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.util.common;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.SimpleClassStream;
 
 import java.io.*;
@@ -101,7 +102,7 @@ public class CorePlatformUtils {
      * this is inspired from
      * http://stackoverflow.com/questions/15018474/getting-linux-distro-from-java
      * so thanks //PbxMan//
-     * @param ws
+     * @param ws ws
      * @return os distribution map including keys distId, distName, distVersion,osVersion
      */
     public static Map<String, String> getOsDistMapLinux(NutsWorkspace ws) {

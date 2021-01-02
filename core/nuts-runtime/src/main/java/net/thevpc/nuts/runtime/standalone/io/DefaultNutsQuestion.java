@@ -6,7 +6,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.ByteArrayPrintStream;
 
 public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
@@ -141,7 +141,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 } else {
                     out.print(", ");
                 }
-                out.printf("default is ##%s##", ff.format(this.getDefaultValue(),this));
+                out.printf("default is %s", ws.formats().text().factory().styled(ff.format(this.getDefaultValue(),this),NutsTextNodeStyle.primary(1)));
             }
             if(getHintMessage()!=null){
                 if(getHintMessage().length()>0) {
@@ -165,7 +165,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                         }
                         sb.append(ff.format(acceptedValue,this));
                     }
-                    out.printf("accepts #####%s#####", sb.toString());
+                    out.printf("accepts %s", ws.formats().text().factory().styled(sb.toString(),NutsTextNodeStyle.primary(4)));
                 }
                 if (!first) {
                     out.print("\\)");

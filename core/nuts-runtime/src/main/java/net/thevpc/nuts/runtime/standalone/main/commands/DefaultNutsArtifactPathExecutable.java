@@ -20,16 +20,16 @@ import java.util.logging.Level;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.main.wscommands.DefaultNutsExecCommand;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsDefinition;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsInstallInfo;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.URLBuilder;
 import net.thevpc.nuts.runtime.standalone.util.io.ZipOptions;
 import net.thevpc.nuts.runtime.standalone.util.io.ZipUtils;
 
-import static net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils.createInputSource;
+import static net.thevpc.nuts.runtime.core.util.CoreIOUtils.createInputSource;
 
 /**
  * @author thevpc

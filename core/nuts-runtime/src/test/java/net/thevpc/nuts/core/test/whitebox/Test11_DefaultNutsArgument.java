@@ -27,7 +27,7 @@ package net.thevpc.nuts.core.test.whitebox;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.standalone.app.DefaultNutsArgument;
+import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
 import org.junit.jupiter.api.*;
 
 /**

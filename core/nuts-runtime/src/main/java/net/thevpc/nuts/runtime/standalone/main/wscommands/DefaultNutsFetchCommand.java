@@ -1,21 +1,22 @@
 package net.thevpc.nuts.runtime.standalone.main.wscommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.NutsRepositorySupportedAction;
+import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsDefinition;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsDependencyTreeNode;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsInstallInfo;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsQueryBaseOptions;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsDependency;
+import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsQueryBaseOptions;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsDependency;
 import net.thevpc.nuts.runtime.standalone.main.repos.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.*;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.TraceResult;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsFetchCommand;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 

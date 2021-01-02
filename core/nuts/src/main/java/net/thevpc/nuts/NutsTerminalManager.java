@@ -35,6 +35,10 @@ import java.io.*;
  * @category Input Output
  */
 public interface NutsTerminalManager {
+    String CMD_LATER_RESET_LINE = "later-reset-line";
+    String CMD_MOVE_LINE_START = "move-line-start";
+    String CMD_MOVE_UP = "move-up";
+
 
     /**
      * return workspace system terminal.
@@ -139,4 +143,8 @@ public interface NutsTerminalManager {
      * @return true if formatted
      */
     boolean isFormatted(Writer out);
+
+    NutsTerminalManager sendCommand(PrintStream out, String command, String args);
+
+    NutsTerminalManager sendCommand(PrintStream out, String command);
 }

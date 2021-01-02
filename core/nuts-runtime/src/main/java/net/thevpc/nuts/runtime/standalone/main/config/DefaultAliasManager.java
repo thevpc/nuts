@@ -2,13 +2,13 @@ package net.thevpc.nuts.runtime.standalone.main.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.CommandNutsWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.wscommands.ConfigNutsWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsWorkspaceCommandAlias;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -135,9 +135,9 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
         if (session.isPlainTrace()) {
             PrintStream out = CoreIOUtils.resolveOut(session);
             if (forced) {
-                out.printf("[[re-install]] command alias ####%s####%n", command.getName());
+                out.printf("[%s] command alias %s%n","re-install", ws.formats().text().factory().styled(command.getName(),NutsTextNodeStyle.primary(3)));
             } else {
-                out.printf("[[install]] command alias ####%s####%n", command.getName());
+                out.printf("[%s] command alias %s%n","install", ws.formats().text().factory().styled(command.getName(),NutsTextNodeStyle.primary(3)));
             }
         }
         return forced;
@@ -157,7 +157,7 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
         defaultCommandFactory.uninstallCommand(name, options);
         if (session.isPlainTrace()) {
             PrintStream out = CoreIOUtils.resolveOut(session);
-            out.printf("[[uninstall]] command alias ####%s####%n", name);
+            out.printf("[%s] command alias %s%n","uninstall", ws.formats().text().factory().styled(name,NutsTextNodeStyle.primary(3)));
         }
         return true;
     }

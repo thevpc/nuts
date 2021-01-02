@@ -37,7 +37,8 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.filters.NutsSearchIdByDescriptor;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
 
 /**
@@ -92,7 +93,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (Files.isDirectory(file.path)) {
-                SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(file.path.toString()),session);
+                SearchTraceHelper.progressIndeterminate("search "+ CoreIOUtils.compressUrl(file.path.toString()),session);
                 visitedFoldersCount++;
                 boolean deep = file.depth < maxDepth;
                 if(Files.isDirectory(file.path)) {

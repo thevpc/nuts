@@ -9,6 +9,6 @@ commits (re-deploys) an already checked out folder
 ##) EXAMPLES:
 
 ==commit== /my/checkeout/folder
-   commits and @@DELETES@@ the checked out folder
+   commits and ##&danger:DELETES## the checked out folder
 
 

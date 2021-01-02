@@ -2,9 +2,9 @@ package net.thevpc.nuts.runtime.core.filters.id;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.Simplifiable;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.Simplifiable;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

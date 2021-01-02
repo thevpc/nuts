@@ -26,23 +26,22 @@
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.AbstractNutsResultList;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsQueryBaseOptions;
+import net.thevpc.nuts.runtime.core.commands.ws.AbstractNutsResultList;
+import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsQueryBaseOptions;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
-import net.thevpc.nuts.runtime.standalone.format.NutsDisplayProperty;
-import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
-import net.thevpc.nuts.runtime.standalone.format.NutsIdFormatHelper;
+import net.thevpc.nuts.runtime.core.format.NutsDisplayProperty;
+import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
+import net.thevpc.nuts.runtime.core.format.NutsIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.main.wscommands.DefaultNutsFetchCommand;
 import net.thevpc.nuts.runtime.standalone.util.NutsCollectionResult;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.NamedIterator;
 
 import java.io.File;
 import java.net.URL;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;

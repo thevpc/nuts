@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.main.repocommands;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.repocommands.AbstractNutsSearchRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;

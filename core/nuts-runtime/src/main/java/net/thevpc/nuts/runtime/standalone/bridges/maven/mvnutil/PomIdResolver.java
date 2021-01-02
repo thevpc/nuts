@@ -12,7 +12,7 @@ import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.NutsLogger;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 public class PomIdResolver {
     private final NutsLogger LOG;
@@ -85,6 +85,7 @@ public class PomIdResolver {
      * loaded <code>clazz</code>
      *
      * @param clazz class
+     * @param session session
      * @return artifacts array in the form groupId:artfcatId#version
      */
     public PomId[] resolvePomIds(Class clazz,NutsSession session) {

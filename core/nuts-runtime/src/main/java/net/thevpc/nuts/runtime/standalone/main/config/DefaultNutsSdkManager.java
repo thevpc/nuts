@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.main.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsVersion;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -70,11 +70,13 @@ public class DefaultNutsSdkManager implements NutsSdkManager {
             list.add(location);
             if(notify) {
                 if (options.getSession().isPlainTrace()) {
-                    options.getSession().out().printf("install %s %s (%s) #####%s##### at ####%s####%n",
+                    options.getSession().out().printf("install %s %s (%s) %s at %s%n",
                             location.getId().getShortName(),
                             location.getPackaging(),
                             location.getProduct(),
-                            location.getVersion(), location.getPath());
+                            ws.formats().text().builder().append(location.getVersion(),NutsTextNodeStyle.version()),
+                            ws.formats().text().builder().append(location.getPath(),NutsTextNodeStyle.path())
+                            );
                 }
                 NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("sdk", options.getSession(), ConfigEventType.MAIN);
             }

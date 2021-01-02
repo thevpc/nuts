@@ -155,7 +155,7 @@ public class NutsLogConfig implements Serializable,Cloneable{
         try {
             return (NutsLogConfig) clone();
         } catch (CloneNotSupportedException e) {
-            throw new IllegalArgumentException("Unsupported clone");
+            throw new NutsBootException("Unsupported clone");
         }
     }
 

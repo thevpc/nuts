@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.main.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,6 +82,11 @@ public class DefaultImportManager implements NutsImportManager {
         }
         getStoreModelMain().setImports(new ArrayList<>(simports));
         NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("import", options.getSession(), ConfigEventType.MAIN);
+    }
+
+    @Override
+    public boolean isImportedGroupId(String groupId) {
+        return getAll().contains(groupId);
     }
 
     @Override

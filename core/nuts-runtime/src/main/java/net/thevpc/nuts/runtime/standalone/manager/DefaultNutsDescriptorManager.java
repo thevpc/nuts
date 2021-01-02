@@ -2,11 +2,11 @@ package net.thevpc.nuts.runtime.standalone.manager;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsClassifierMappingBuilder;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsArtifactCallBuilder;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsDescriptorBuilder;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsArtifactCallBuilder;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsIdLocationBuilder;
-import net.thevpc.nuts.runtime.standalone.format.DefaultNutsDescriptorFormat;
-import net.thevpc.nuts.runtime.standalone.parser.DefaultNutsDescriptorParser;
+import net.thevpc.nuts.runtime.core.format.DefaultNutsDescriptorFormat;
+import net.thevpc.nuts.runtime.core.parser.DefaultNutsDescriptorParser;
 
 public class DefaultNutsDescriptorManager implements NutsDescriptorManager {
     private NutsWorkspace workspace;
@@ -26,7 +26,7 @@ public class DefaultNutsDescriptorManager implements NutsDescriptorManager {
 
     @Override
     public NutsDescriptorBuilder descriptorBuilder() {
-        return new DefaultNutsDescriptorBuilder();
+        return new DefaultNutsDescriptorBuilder(workspace);
     }
 
     @Override

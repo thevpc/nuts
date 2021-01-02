@@ -10,7 +10,7 @@ import net.thevpc.nuts.NutsUserConfig;
 
 import java.util.Arrays;
 
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
  *

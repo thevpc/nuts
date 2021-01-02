@@ -34,15 +34,15 @@ package net.thevpc.nuts;
  */
 public interface NutsTableCellFormat {
 
-    default String format(int row, int col, Object value) {
+    default String format(int row, int col, Object value, NutsSession session) {
         return String.valueOf(value);
     }
 
-    default NutsPositionType getHorizontalAlign(int row, int col, Object value) {
+    default NutsPositionType getHorizontalAlign(int row, int col, Object value, NutsSession session) {
         return NutsPositionType.FIRST;
     }
 
-    default NutsPositionType getVerticalAlign(int row, int col, Object value) {
+    default NutsPositionType getVerticalAlign(int row, int col, Object value, NutsSession session) {
         return NutsPositionType.FIRST;
     }
 

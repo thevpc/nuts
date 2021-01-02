@@ -2,12 +2,12 @@ package net.thevpc.nuts.runtime.standalone.main.wscommands;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.CoreNutsConstants;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.CoreNutsConstants;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.CorePlatformUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.ZipOptions;
 import net.thevpc.nuts.runtime.standalone.util.io.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsDeployCommand;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils.createInputSource;
+import static net.thevpc.nuts.runtime.core.util.CoreIOUtils.createInputSource;
 
 /**
  * local implementation

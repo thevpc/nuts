@@ -26,12 +26,11 @@
 package net.thevpc.nuts.runtime.standalone.main.repos;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.CoreNutsConstants;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsId;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.CoreNutsConstants;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.RemoteRepoApi;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.FilesFoldersApi;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 
@@ -145,14 +144,10 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                         if (idFilter != null && !idFilter.acceptId(nutsId, session)) {
                             continue;
                         }
-                        ret.add(
-                                new DefaultNutsId(
-                                        null,
-                                        groupId,
-                                        artifactId,
-                                        versionName,
-                                        ""
-                                )
+                        ret.add(getWorkspace().id().builder()
+                                .setGroupId(groupId)
+                                .setArtifactId(artifactId)
+                                .setVersion(versionName).build()
                         );
                     }
 

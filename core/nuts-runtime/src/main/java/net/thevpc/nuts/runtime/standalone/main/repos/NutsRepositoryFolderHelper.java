@@ -10,15 +10,15 @@ import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt0;
 import net.thevpc.nuts.runtime.standalone.main.repocommands.DefaultNutsFetchContentRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.util.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.DefaultWriteTypeProcessor;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.terminals.DefaultWriteTypeProcessor;
 import net.thevpc.nuts.runtime.standalone.main.commands.DefaultNutsArtifactPathExecutable;
 import net.thevpc.nuts.runtime.standalone.main.repocommands.DefaultNutsRepositoryUndeployCommand;
-import net.thevpc.nuts.runtime.standalone.CoreNutsConstants;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsContentEvent;
+import net.thevpc.nuts.runtime.core.CoreNutsConstants;
+import net.thevpc.nuts.runtime.core.events.DefaultNutsContentEvent;
 import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.FolderNutIdIterator;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
@@ -345,8 +345,8 @@ public class NutsRepositoryFolderHelper {
             NutsId finalId = id;
             if (!DefaultWriteTypeProcessor
                     .of(writeType, deployment.getSession())
-                    .ask("Override deployment for %s?", id)
-                    .withLog(LOG, "Nuts deployment Overridden {0}", id)
+                    .ask("override deployment for %s?", id)
+                    .withLog(LOG, "nuts deployment overridden {0}", id)
                     .onError(() -> new NutsAlreadyDeployedException(ws, finalId.toString()))
                     .process()) {
                 return descriptor;
@@ -370,7 +370,7 @@ public class NutsRepositoryFolderHelper {
 
     public Path deployDescriptor(NutsId id, NutsDescriptor desc, NutsConfirmationMode writeType, NutsSession session) {
         if (!isWriteEnabled()) {
-            throw new IllegalArgumentException("Read only Repository");
+            throw new IllegalArgumentException("read only Repository");
         }
         NutsWorkspaceUtils.of(getWorkspace()).checkNutsId(id);
         Path descFile = getLongNameIdLocalFile(id.builder().setFaceDescriptor().build());

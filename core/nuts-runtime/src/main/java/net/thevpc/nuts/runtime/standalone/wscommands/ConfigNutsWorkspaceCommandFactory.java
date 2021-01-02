@@ -14,7 +14,7 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.main.config.ConfigEventType;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 

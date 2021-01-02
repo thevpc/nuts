@@ -136,19 +136,19 @@ public class AnyNixNdi extends BaseSystemNdi {
         goodNdiRc.append("NUTS_VERSION='" + ws.getApiVersion() + "'\n");
         goodNdiRc.append("NUTS_WORKSPACE='" + ws.locations().getWorkspaceLocation().toString() + "'\n");
         for (NutsStoreLocation value : NutsStoreLocation.values()) {
-            goodNdiRc.append("NUTS_WORKSPACE_"+value+"='" + ws.config().stored().getStoreLocation(value) + "'\n");
+            goodNdiRc.append("NUTS_WORKSPACE_"+value+"='" + ws.locations().getStoreLocation(value) + "'\n");
         }
-        if(NUTS_JAR_PATH.startsWith(ws.config().stored().getStoreLocation(NutsStoreLocation.LIB))) {
+        if(NUTS_JAR_PATH.startsWith(ws.locations().getStoreLocation(NutsStoreLocation.LIB))) {
             goodNdiRc.append("NUTS_JAR=\"${NUTS_WORKSPACE_LIB}" + NUTS_JAR_PATH.toString().substring(
-                    ws.config().stored().getStoreLocation(NutsStoreLocation.LIB).length()
+                    ws.locations().getStoreLocation(NutsStoreLocation.LIB).length()
             ) + "\"\n");
         }else{
             goodNdiRc.append("NUTS_JAR='" + NUTS_JAR_PATH + "'\n");
         }
 
-        if(ndiAppsFolder.toString().startsWith(ws.config().stored().getStoreLocation(NutsStoreLocation.APPS))) {
+        if(ndiAppsFolder.toString().startsWith(ws.locations().getStoreLocation(NutsStoreLocation.APPS))) {
             goodNdiRc.append("PATH=\"${NUTS_WORKSPACE_APPS}" + ndiAppsFolder.toString().substring(
-                    ws.config().stored().getStoreLocation(NutsStoreLocation.APPS).length()
+                    ws.locations().getStoreLocation(NutsStoreLocation.APPS).length()
             ) + ":${PATH}\"\n");
         }else{
             goodNdiRc.append("PATH=\"" + ndiAppsFolder + ":${PATH}\"\n");
@@ -163,19 +163,21 @@ public class AnyNixNdi extends BaseSystemNdi {
         if (saveFile(ndiConfigFile, goodNdiRc.toString(), force)) {
             updatedNames.add(".nadmin-bashrc");
         }
+        NutsTextNodeFactory factory = context.getWorkspace().formats().text().factory();
 
         if (!updatedNames.isEmpty() && session.isTrace()) {
             if (!updatedNames.isEmpty()) {
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating ####%s#### to point to workspace ####%s####%n",
-                            String.join(", ", updatedNames)
-                            , ws.locations().getWorkspaceLocation());
+                    context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating %s to point to workspace %s%n",
+                            factory.styled(String.join(", ", updatedNames),NutsTextNodeStyle.primary(3)),
+                            factory.styled(ws.locations().getWorkspaceLocation(),NutsTextNodeStyle.path())
+                            );
                 }
                 context.getSession().getTerminal().ask()
                         .forBoolean(
-                                "```error ATTENTION``` You may need to re-run terminal or issue \\\"####%s####\\\" in your current terminal for new environment to take effect.%n"
+                                "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
                                         + "Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
-                                ". ~/" + getBashrcName()
+                                factory.styled(". ~/" + getBashrcName(),NutsTextNodeStyle.path())
                         )
                         .hintMessage("")
                         .setSession(context.getSession())
@@ -197,12 +199,12 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 }
                                 if ("why".equalsIgnoreCase(r)) {
                                     PrintStream out = context.getSession().out();
-                                    out.printf("\\\"####%s####\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", getBashrcName());
+                                    out.printf("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", factory.styled(getBashrcName(),NutsTextNodeStyle.path()));
                                     out.print("It helps configuring environment variables. ```sh nuts``` make usage of such facility to update your **PATH** env variable\n");
                                     out.print("to point to current ```sh nuts``` workspace, so that when you call a ```sh nuts``` command it will be resolved correctly...\n");
-                                    out.printf("However updating \\\"####%s####\\\" does not affect the running process/terminal. So you have basically two choices :%n", getBashrcName());
+                                    out.printf("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :%n", factory.styled(getBashrcName(),NutsTextNodeStyle.path()));
                                     out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
-                                    out.printf(" - Or to run by your self the \\\"####%s####\\\" script (don\\'t forget the leading dot)%n", ". ~/" + getBashrcName());
+                                    out.printf(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)%n", factory.styled(". ~/" + getBashrcName(),NutsTextNodeStyle.path()));
                                     throw new NutsValidationException(ws, "Try again...'");
                                 } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
                                     throw new NutsUserCancelException(ws);

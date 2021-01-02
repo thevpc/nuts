@@ -29,10 +29,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.common.DefaultObservableMap;
 import net.thevpc.nuts.runtime.core.common.ObservableMap;
 import net.thevpc.nuts.runtime.standalone.main.repos.DefaultNutsRepositoryEnvManager;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 

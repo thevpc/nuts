@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 
 public class NutsDependencyScopeFilter extends AbstractNutsFilter implements NutsDependencyFilter {
 

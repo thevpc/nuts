@@ -1,13 +1,12 @@
 package net.thevpc.nuts.runtime.core.filters;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.NutsPatternIdFilter;
 import net.thevpc.nuts.runtime.core.filters.dependency.*;
 import net.thevpc.nuts.runtime.core.filters.descriptor.*;
 import net.thevpc.nuts.runtime.core.filters.id.*;
 import net.thevpc.nuts.runtime.core.filters.repository.*;
 import net.thevpc.nuts.runtime.core.filters.version.*;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.NutsInstallStatusIdFilter;
 
 import java.util.*;

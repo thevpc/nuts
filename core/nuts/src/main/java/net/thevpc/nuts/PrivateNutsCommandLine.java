@@ -312,7 +312,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete) {
-        throw new UnsupportedOperationException(NOT_SUPPORTED);
+        throw new NutsBootException(NOT_SUPPORTED);
     }
 
     @Override
@@ -726,7 +726,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine parseLine(String commandLine) {
-        throw new NutsException(null, "unsupported parseLine");
+        throw new NutsBootException("unsupported parseLine");
     }
 
     public NutsCommandLine setArguments(List<String> arguments) {
@@ -748,12 +748,12 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
             m.append(commandName).append(" : ");
         }
         m.append(message);
-        throw new NutsIllegalArgumentException(null, m.toString());
+        throw new NutsBootException(m.toString());
     }
 
     @Override
     public void process(NutsCommandLineConfigurable defaultConfigurable, NutsCommandLineProcessor processor) {
-        throw new UnsupportedOperationException("not supported operation process(...)");
+        throw new NutsBootException("not supported operation process(...)");
     }
 
     private boolean isPrefixed(String[] nameSeqArray) {
@@ -831,7 +831,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
 //    @Override
 //    public NutsArgumentName createName(String type, String label) {
-//        throw new UnsupportedOperationException(NOT_SUPPORTED);
+//        throw new NutsBootException(NOT_SUPPORTED);
 //    }
 
     private boolean isExpandableOption(String v, boolean expandSimpleOptions) {
@@ -961,7 +961,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
 //    @Override
 //    public NutsArgumentCandidate createCandidate(String value, String label) {
-//        throw new UnsupportedOperationException(NOT_SUPPORTED);
+//        throw new NutsBootException(NOT_SUPPORTED);
 //        //AUTOCOMPLETE
 ////        return new CandidateImpl(value,label);
 //    }
@@ -1328,7 +1328,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public String getStringOptionPrefix() {
-            throw new NutsException(null, "unsupported operation getStringOptionPrefix");
+            throw new NutsBootException("unsupported operation getStringOptionPrefix");
         }
 
         @Override
@@ -1338,12 +1338,12 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public NutsArgument getArgumentOptionName() {
-            throw new NutsException(null, "unsupported operation getArgumentOptionName");
+            throw new NutsBootException("unsupported operation getArgumentOptionName");
         }
 
         @Override
         public String getStringOptionName() {
-            throw new NutsException(null, "unsupported operation getStringOptionName");
+            throw new NutsBootException("unsupported operation getStringOptionName");
         }
 
         @Override

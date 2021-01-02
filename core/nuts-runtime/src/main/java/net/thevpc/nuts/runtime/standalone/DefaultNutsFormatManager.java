@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.format.DefaultNutsIncrementalOutputFormat;
-import net.thevpc.nuts.runtime.standalone.format.DefaultNutsObjectFormat;
-import net.thevpc.nuts.runtime.standalone.format.DefaultNutsStringFormat;
-import net.thevpc.nuts.runtime.standalone.format.elem.DefaultNutsElementFormat;
-import net.thevpc.nuts.runtime.standalone.format.text.DefaultNutsTextFormatManager;
-import net.thevpc.nuts.runtime.standalone.format.tree.DefaultTreeFormat;
-import net.thevpc.nuts.runtime.standalone.format.props.DefaultPropertiesFormat;
-import net.thevpc.nuts.runtime.standalone.format.table.DefaultTableFormat;
+import net.thevpc.nuts.runtime.core.format.DefaultNutsIncrementalOutputFormat;
+import net.thevpc.nuts.runtime.core.format.DefaultNutsObjectFormat;
+import net.thevpc.nuts.runtime.core.format.DefaultNutsStringFormat;
+import net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElementFormat;
+import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextFormatManager;
+import net.thevpc.nuts.runtime.core.format.tree.DefaultTreeFormat;
+import net.thevpc.nuts.runtime.core.format.props.DefaultPropertiesFormat;
+import net.thevpc.nuts.runtime.core.format.table.DefaultTableFormat;
 
 public class DefaultNutsFormatManager implements NutsFormatManager {
     private NutsWorkspace ws;

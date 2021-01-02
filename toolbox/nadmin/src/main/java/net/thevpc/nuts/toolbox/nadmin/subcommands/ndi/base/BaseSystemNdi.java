@@ -118,7 +118,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             boolean gen = true;
             if (exists) {
                 if (!context.getSession().getTerminal().ask().setSession(context.getSession())
-                        .forBoolean("override existing script ####%s#### ?", NdiUtils.betterPath(ff.toString())).getBooleanValue()) {
+                        .forBoolean("override existing script %s ?",
+                                context.getWorkspace().formats().text().factory().styled(
+                                        NdiUtils.betterPath(ff.toString()),NutsTextNodeStyle.path()
+                                )
+                                ).getBooleanValue()
+                ) {
                     gen = false;
                 }
             }
@@ -148,8 +153,11 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public void removeNutsScript(String id, NutsSession session) {
         NutsId nid = context.getWorkspace().id().parser().parse(id);
         Path f = getScriptFile(nid.getArtifactId());
+        NutsTextNodeFactory factory = context.getWorkspace().formats().text().factory();
         if (Files.isRegularFile(f)) {
-            if (session.getTerminal().ask().forBoolean("Tool ####%s#### will be removed. Confirm?", NdiUtils.betterPath(f.toString()))
+            if (session.getTerminal().ask().forBoolean("tool %s will be removed. Confirm?",
+                    factory.styled(NdiUtils.betterPath(f.toString()),NutsTextNodeStyle.path())
+                    )
                     .defaultValue(true)
                     .getBooleanValue()) {
                 try {
@@ -158,7 +166,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     throw new UncheckedIOException(ex);
                 }
                 if (session.isPlainTrace()) {
-                    session.out().printf("Tool ####%s#### removed.%n", NdiUtils.betterPath(f.toString()));
+                    session.out().printf("tool %s removed.%n", factory.styled(NdiUtils.betterPath(f.toString()),NutsTextNodeStyle.path()));
                 }
             }
         }
@@ -342,12 +350,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 script = getScriptFile("nuts-" + apiVersion);
             }
         }
+        NutsTextNodeFactory factory = context.getWorkspace().formats().text().factory();
         script = script.toAbsolutePath();
         String scriptString = script.toString();
         List<NdiScriptnfo> all = new ArrayList<>();
         if (!force && Files.exists(script)) {
             if (trace && context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("script already exists ####%s####%n", NdiUtils.betterPath(script.toString()));
+                context.getSession().out().printf("script already exists %s%n", factory.styled(NdiUtils.betterPath(script.toString()),NutsTextNodeStyle.path()));
             }
         } else {
             all.add(
@@ -373,7 +382,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
             if (!force && Files.exists(ff2)) {
                 if (!context.getSession().getTerminal().ask().setSession(context.getSession())
-                        .forBoolean("override existing script ####%s#### ?", NdiUtils.betterPath(ff2.toString())).getBooleanValue()) {
+                        .forBoolean("override existing script %s ?",
+                                context.getWorkspace().formats().text().builder().append(NdiUtils.betterPath(ff2.toString()),NutsTextNodeStyle.path()))
+                        .getBooleanValue()
+                ) {
                     gen = false;
                 }
             }
@@ -381,7 +393,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
                 if (trace && context.getSession().isPlainTrace()) {
                     context.getSession().out().printf((Files.exists(ff2) ? "re-installing" : "installing") +
-                            " script ####%s#### %n", NdiUtils.betterPath(ff2.toString()));
+                            " script %s %n",
+                            context.getWorkspace().formats().text().builder().append(NdiUtils.betterPath(ff2.toString()),NutsTextNodeStyle.path())
+                    );
                 }
                 try {
                     try (BufferedWriter w = Files.newBufferedWriter(ff2)) {

@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.io.ProcessBuilder2;
-import net.thevpc.nuts.runtime.standalone.format.DefaultNutsExecCommandFormat;
+import net.thevpc.nuts.runtime.core.format.DefaultNutsExecCommandFormat;
 
 import java.io.InputStream;
 import java.io.PrintStream;

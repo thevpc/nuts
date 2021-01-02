@@ -191,33 +191,30 @@ public class LocalTomcat {
         }
         if (args.isExecMode()) {
             NutsSession session = context.getSession();
+            NutsTextNodeFactory factory = session.getWorkspace().formats().text().factory();
             if (session.isPlainOut()) {
                 PrintStream out = session.out();
                 for (RunningTomcat jpsResult : TomcatUtils.getRunningInstances(context)) {
                     switch (format) {
                         case "short": {
-                            out.printf("##%s##\n",
-                                    jpsResult.getPid()
+                            out.printf("%s\n",
+                                    factory.styled(jpsResult.getPid(),NutsTextNodeStyle.primary(1))
                             );
                             break;
                         }
                         case "long": {
-                            out.printf("##%s## ==v==%s ==HOME:== %s ==BASE:== %s ==CMD:== "
-                                    + context.getWorkspace().commandLine().formatter(
-                                            context.getCommandLine().parseLine(jpsResult.getArgsLine())
-                                    ).format()
-                                    + "\n",
-                                    jpsResult.getPid(),
+                            out.printf("%s v%s HOME: %s BASE: %s ==CMD:== %s\n",
+                                    factory.styled(jpsResult.getPid(),NutsTextNodeStyle.primary(1)),
                                     jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(Paths.get(jpsResult.getHome())),
                                     jpsResult.getHome(),
                                     jpsResult.getBase(),
-                                    jpsResult.getArgsLine()
+                                    context.getCommandLine().parseLine(jpsResult.getArgsLine())
                             );
                             break;
                         }
                         default: {
-                            out.printf("##%s## ==v==%s ==BASE:== %s\n",
-                                    jpsResult.getPid(),
+                            out.printf("%s ==v==%s ==BASE:== %s\n",
+                                    factory.styled(jpsResult.getPid(),NutsTextNodeStyle.primary(1)),
                                     jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(Paths.get(jpsResult.getHome())),
                                     jpsResult.getBase()
                             );
@@ -429,6 +426,13 @@ public class LocalTomcat {
             throw new NutsExecutionException(context.getWorkspace(), "Unable to stop", 1);
         }
     }
+    public NutsString getBracketsPrefix(String str) {
+        return context.getWorkspace().formats().text().builder()
+                .append("[")
+                .append(str,NutsTextNodeStyle.primary(5))
+                .append("]");
+    }
+
 
     public void status(NutsCommandLine args) {
         LocalTomcatConfigService c = null;
@@ -444,7 +448,9 @@ public class LocalTomcat {
             c.printStatus();
         } else {
             if (context.getSession().isPlainOut()) {
-                context.getSession().out().printf("######[%s]###### Tomcat ```error Not Found```.\n", name);
+                context.getSession().out().printf("%s Tomcat %s.\n", getBracketsPrefix(name),
+                        context.getWorkspace().formats().text().builder().append("not found",NutsTextNodeStyle.error())
+                        );
             } else {
                 HashMap<String, String> r = new HashMap<>();
                 r.put("name", name);

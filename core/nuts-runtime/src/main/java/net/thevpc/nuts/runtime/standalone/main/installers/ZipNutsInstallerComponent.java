@@ -32,9 +32,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.util.io.UnzipOptions;
 import net.thevpc.nuts.runtime.standalone.util.io.ZipUtils;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsDefinition;
-
-import java.nio.file.Path;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
 
 /**
  * Created by vpc on 1/7/17.

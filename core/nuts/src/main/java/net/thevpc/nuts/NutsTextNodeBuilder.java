@@ -1,5 +1,7 @@
 package net.thevpc.nuts;
 
+import java.util.List;
+
 /**
  * @category Format
  */
@@ -12,22 +14,25 @@ public interface NutsTextNodeBuilder extends NutsString {
 
     NutsTextNodeBuilder appendCode(String lang, String text);
 
-    NutsTextNodeBuilder appendPlain(String text);
+    NutsTextNodeBuilder append(String text, NutsTextNodeStyle... styles);
 
-    NutsTextNodeBuilder appendStyled(String text, NutsTextNodeStyle... decos);
+    NutsTextNodeBuilder appendHash(Object text);
 
-    NutsTextNodeBuilder appendHashedStyle(Object text);
+    NutsTextNodeBuilder appendHash(Object text, Object hash);
 
-    NutsTextNodeBuilder appendHashedStyle(Object text, Object hash);
-
-    NutsTextNodeBuilder appendStyled(NutsTextNode text, NutsTextNodeStyle... decos);
+    NutsTextNodeBuilder append(NutsTextNode text, NutsTextNodeStyle... styles);
 
     NutsTextNodeBuilder append(NutsTextNode node);
 
     NutsTextNodeBuilder append(NutsString str);
 
+    NutsTextNodeBuilder append(NutsFormattable str);
+
+    NutsTextNodeBuilder appendJoined(NutsTextNode separator, List<NutsTextNode> others);
+
     NutsTextNode build();
 
     String toString();
+    int size();
 
 }

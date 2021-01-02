@@ -27,10 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.main.parsers;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsArtifactCall;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsDescriptorBuilder;
-import net.thevpc.nuts.runtime.standalone.format.json.JsonStringBuffer;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsArtifactCall;
+import net.thevpc.nuts.runtime.core.format.json.JsonStringBuffer;
 import net.thevpc.nuts.spi.NutsDescriptorContentParserComponent;
 import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
 
@@ -46,9 +44,9 @@ import java.util.*;
 @NutsSingleton
 public class BashNutsDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
-    public static final NutsId BASH = CoreNutsUtils.parseNutsId("bash");
+    public static NutsId BASH;
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("sh", "bash"));//, "war", "ear"
-
+    private NutsWorkspace ws;
     @Override
     public NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) {
         if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
@@ -63,6 +61,10 @@ public class BashNutsDescriptorContentParserComponent implements NutsDescriptorC
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
+        this.ws=criteria.getWorkspace();
+        if(BASH==null){
+            BASH=ws.id().parser().parse("bash");
+        }
         return DEFAULT_SUPPORT;
     }
 
@@ -126,8 +128,8 @@ public class BashNutsDescriptorContentParserComponent implements NutsDescriptorC
                 }
             }
             if (comment.toString().trim().isEmpty()) {
-                return new DefaultNutsDescriptorBuilder()
-                        .id(CoreNutsUtils.parseNutsId("temp:sh#1.0"))
+                return ws.descriptor().descriptorBuilder()
+                        .id(ws.id().parser().parse("temp:sh#1.0"))
                         .executable()
                         //                        .setExt("sh")
                         .packaging("sh")

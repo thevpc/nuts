@@ -154,7 +154,7 @@ public class WindowsNdi extends BaseSystemNdi {
                 }
             }
 
-            throw new IllegalArgumentException("Unsupported");
+            throw new NutsIllegalArgumentException(ws,"unsupported");
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
@@ -168,8 +168,10 @@ public class WindowsNdi extends BaseSystemNdi {
             String menuGlobalShortcutPath = configurePathShortcut(Target.MENU, true, apiVersion, bootConfig, null,session);
             String menuSpecificVersionShortcutPath = configurePathShortcut(Target.MENU, false, apiVersion, bootConfig, null,session);
             PrintStream out = context.getSession().out();
+            NutsTextNodeFactory factory = context.getWorkspace().formats().text().factory();
             if (session.isTrace()) {
-                out.printf("```error ATTENTION``` To run any nuts command you should use the pre-configured shell at \\\"####%s####\\\".%n", desktopSpecificVersionShortcutPath);
+                out.printf("```error ATTENTION``` To run any nuts command you should use the pre-configured shell at \"%s\".%n",
+                        factory.styled(desktopSpecificVersionShortcutPath,NutsTextNodeStyle.path()));
             }
             return new UpdatedPaths(
                     new String[]{desktopGlobalShortcutPath, desktopSpecificVersionShortcutPath, menuGlobalShortcutPath, menuSpecificVersionShortcutPath},
@@ -233,9 +235,18 @@ public class WindowsNdi extends BaseSystemNdi {
         }
         if (!updatedNames.isEmpty()) {
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating ####%s#### to point to workspace ####%s####%n",
-                        String.join(", ", updatedNames)
-                        , ws.locations().getWorkspaceLocation());
+                NutsTextNodeBuilder formattedUpdatedNames = context.getWorkspace().formats().text().builder();
+                for (String updatedName : updatedNames) {
+                    if(formattedUpdatedNames.size()>0){
+                        formattedUpdatedNames.append(", ");
+                    }
+                    formattedUpdatedNames.append(updatedName,NutsTextNodeStyle.path());
+                }
+                context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating %s to point to workspace %s%n",
+                        formattedUpdatedNames,
+                        ws.formats().text().builder().append(ws.locations().getWorkspaceLocation(),NutsTextNodeStyle.path())
+
+                );
             }
             if (persistentConfig) {
                 persistConfig(null, null, null, session);

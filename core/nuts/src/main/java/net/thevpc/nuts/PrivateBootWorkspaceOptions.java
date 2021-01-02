@@ -45,6 +45,8 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
      * option-type : exported (inherited in child workspaces)
      */
     private final List<String> outputFormatOptions = new ArrayList<>();
+
+    private String[] properties;
     /**
      * nuts api version to boot option-type : exported (inherited in child
      * workspaces)
@@ -409,6 +411,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
         this.setTransientRepositories(other.getTransientRepositories() == null ? null : Arrays.copyOf(other.getTransientRepositories(), other.getTransientRepositories().length));
         this.setApplicationArguments(other.getApplicationArguments() == null ? null : Arrays.copyOf(other.getApplicationArguments(), other.getApplicationArguments().length));
+        this.setProperties(other.getProperties() == null ? null : Arrays.copyOf(other.getProperties(), other.getProperties().length));
         this.setExpireTime(other.getExpireTime());
         this.setErrors(other.getErrors());
         this.setSkipErrors(other.getSkipErrors());
@@ -1102,26 +1105,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return excludedExtensions;
     }
 
-    @Override
-    public boolean isExcludedExtension(String extensionId) {
-        if (extensionId != null) {
-            PrivateNutsId pnid = PrivateNutsId.parse(extensionId);
-            String shortName = pnid.getShortName();
-            String artifactId = pnid.getArtifactId();
-            if (excludedExtensions != null) {
-                for (String excludedExtensionList : excludedExtensions) {
-                    for (String s : excludedExtensionList.split("[;, ]")) {
-                        if (s.length() > 0) {
-                            if (s.equals(shortName) || s.equals(artifactId)) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
+
 
     @Override
     public String[] getExcludedRepositories() {
@@ -1461,5 +1445,16 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     @Override
     public String toString() {
         return format().getBootCommandLine();
+    }
+
+    @Override
+    public String[] getProperties() {
+        return properties;
+    }
+
+    @Override
+    public PrivateBootWorkspaceOptions setProperties(String[] properties) {
+        this.properties = properties;
+        return this;
     }
 }

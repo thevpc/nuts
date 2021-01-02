@@ -202,7 +202,8 @@ public class NdedMain  {
         NutsDescriptorBuilder b = this.context.getWorkspace().descriptor().descriptorBuilder();
         fillArgs(b);
         final PrintStream out = this.context.getSession().out();
-        out.print("####Creating new Nuts descriptor...####\n");
+        NutsTextNodeFactory factory = context.getWorkspace().formats().text().factory();
+        out.print(factory.styled("creating new nuts descriptor...\n",NutsTextNodeStyle.primary(3)));
         while (true) {
             fillInteractive(b, true);
             if (check(b)) {
@@ -224,13 +225,22 @@ public class NdedMain  {
         File file = new File(home, path);
         file.getParentFile().mkdirs();
         NutsDescriptor desc = b.build();
-        out.printf("writing to : ####%s####ø#####%s#####%n", getFilePath(new File(home)), ("/" + path).replace('/', File.separatorChar));
-        out.printf("id         : ####%s####%n", desc.getId());
-        out.printf("packaging  : ####%s####%n", desc.getPackaging() == null ? "" : desc.getPackaging());
+        NutsTextFormatManager text = context.getWorkspace().formats().text();
+        out.printf("writing to : %s%n",
+                text.builder().append(
+                        getFilePath(new File(home))+("/" + path).replace('/', File.separatorChar)
+                        ,NutsTextNodeStyle.path())
+                );
+        out.printf("id         : %s%n", desc.getId());
+        out.printf("packaging  : %s%n",
+                factory.styled(
+                desc.getPackaging() == null ? "" : desc.getPackaging(),NutsTextNodeStyle.primary(3)));
         if (desc.getLocations().length > 0) {
             out.println("locations  : ");
             for (NutsIdLocation s : b.getLocations()) {
-                out.printf("             ####%s#### %s%n", s.getClassifier(),s.getUrl());
+                out.printf("             %s %s%n",
+                        factory.styled(s.getClassifier(),NutsTextNodeStyle.primary(3)),
+                        text.builder().append(s.getUrl(),NutsTextNodeStyle.path()));
             }
         }
         if (!confirm("confirm ?")) {

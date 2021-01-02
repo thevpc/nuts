@@ -33,7 +33,8 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.util.*;
 import java.util.regex.Pattern;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsVersion;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
  *

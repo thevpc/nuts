@@ -27,11 +27,10 @@ package net.thevpc.nuts.runtime.standalone.main.executors;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.standalone.util.common.StringKeyValueList;
 import net.thevpc.nuts.runtime.standalone.util.io.IProcessExecHelper;
 import net.thevpc.nuts.NutsExecutorComponent;
@@ -55,8 +54,8 @@ import java.util.regex.Pattern;
 @NutsSingleton
 public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
-    public static final NutsId ID = CoreNutsUtils.parseNutsId("net.thevpc.nuts.exec:exec-java");
-
+    public static NutsId ID;
+    NutsWorkspace ws;
     @Override
     public NutsId getId() {
         return ID;
@@ -74,10 +73,12 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
-        if (nutsDefinition != null) {
-            if ("jar".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())) {
-                return DEFAULT_SUPPORT + 1;
-            }
+        this.ws=nutsDefinition.getWorkspace();
+        if(ID==null){
+            ID=ws.id().parser().parse("net.thevpc.nuts.exec:exec-java");
+        }
+        if ("jar".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())) {
+            return DEFAULT_SUPPORT + 1;
         }
         return NO_SUPPORT;
     }
@@ -211,7 +212,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 int currentDepth = CoreCommonUtils.convertToInteger(sysProperties.getProperty("nuts.export.watchdog.depth"), -1);
                 currentDepth++;
                 if (currentDepth > maxDepth) {
-                    System.err.println("############# Process Stack Overflow Error");
+                    System.err.println("[[Process Stack Overflow Error]]");
                     System.err.println("it is very likely that you executed an infinite process creation recursion in your program.");
                     System.err.println("at least " + currentDepth + " (>=" + maxDepth + ") processes were created.");
                     System.err.println("are ou aware of such misconception ?");
@@ -285,7 +286,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                     private CoreIOUtils.ProcessExecHelper preExec() {
                         if (joptions.isShowCommand() || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
                             PrintStream out = execSession.out();
-                            out.println("##[nuts-exec]## ");
+                            out.printf("%s %n",ws.formats().text().factory().styled("nuts-exec",NutsTextNodeStyle.primary(1)));
                             for (int i = 0; i < xargs.size(); i++) {
                                 String xarg = xargs.get(i);
                                 if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {
@@ -332,11 +333,19 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
         @Override
         public void dryExec() {
-            out.print("[dry] ==[exec]== ");
-            out.printf("[dry] ==embedded-java== ```option +cp``` %s ######%s###### %s%n"
-                    , String.join(":", joptions.getClassPath())
-                    , joptions.getMainClass()
-                    , String.join(":", joptions.getApp())
+            NutsTextFormatManager text = getSession().getWorkspace().formats().text();
+            List<String> cmdLine=new ArrayList<>();
+            cmdLine.add("embedded-java");
+            cmdLine.add("-cp");
+            cmdLine.add(String.join(":", joptions.getClassPath()));
+            cmdLine.add(joptions.getMainClass());
+            cmdLine.addAll(joptions.getApp());
+
+            getSession().out().printf("[dry] %s%n",
+                    text.builder()
+                            .append("exec", NutsTextNodeStyle.pale())
+                            .append(" ")
+                            .append(getSession().getWorkspace().commandLine().create(cmdLine))
             );
         }
 

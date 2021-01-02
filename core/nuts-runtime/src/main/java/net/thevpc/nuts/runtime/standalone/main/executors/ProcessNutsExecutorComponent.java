@@ -26,14 +26,12 @@
 package net.thevpc.nuts.runtime.standalone.main.executors;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.IProcessExecHelper;
 import net.thevpc.nuts.NutsExecutorComponent;
 
-import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -42,7 +40,8 @@ import java.util.*;
 @NutsSingleton
 public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
 
-    public static final NutsId ID = CoreNutsUtils.parseNutsId("net.thevpc.nuts.exec:exec-native");
+    public static NutsId ID;
+    NutsWorkspace ws;
 
     @Override
     public NutsId getId() {
@@ -51,6 +50,10 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
+        this.ws=nutsDefinition.getWorkspace();
+        if(ID==null){
+            ID=ws.id().parser().parse("net.thevpc.nuts.exec:exec-native");
+        }
         return DEFAULT_SUPPORT;
     }
 

@@ -5,7 +5,7 @@ import net.thevpc.nuts.NutsException;
 import net.thevpc.nuts.NutsLogger;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

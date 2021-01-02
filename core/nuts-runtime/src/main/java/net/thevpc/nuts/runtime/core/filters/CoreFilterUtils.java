@@ -32,9 +32,7 @@ import java.util.function.Predicate;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.id.*;
 import net.thevpc.nuts.runtime.standalone.util.InstalledVsNonInstalledSearch;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.NutsInstallStatusIdFilter;
 
 /**
@@ -212,8 +210,9 @@ public class CoreFilterUtils {
         if (CoreStringUtils.isBlank(desc.getPackaging())) {
             return true;
         }
-        NutsId _v = CoreNutsUtils.parseNutsId(packaging);
-        NutsId _v2 = CoreNutsUtils.parseNutsId(desc.getPackaging());
+        NutsIdParser parser = session.getWorkspace().id().parser();
+        NutsId _v = parser.parse(packaging);
+        NutsId _v2 = parser.parse(desc.getPackaging());
         if (_v == null || _v2 == null) {
             return _v == _v2;
         }
@@ -229,14 +228,15 @@ public class CoreFilterUtils {
         if (CoreStringUtils.isBlank(arch)) {
             return true;
         }
-        NutsId _v = CoreNutsUtils.parseNutsId(arch);
+        NutsIdParser parser = session.getWorkspace().id().parser();
+        NutsId _v = parser.parse(arch);
         String[] all = desc.getArch();
         if (all != null && all.length > 0) {
             for (String v : all) {
                 if (CoreStringUtils.isBlank(v)) {
                     return true;
                 }
-                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId0(v);
+                NutsId y = parser.setLenient(false).parse(v);
                 if (y.equalsShortName(_v)) {
                     if (y.getVersion().filter().acceptVersion(_v.getVersion(), session)) {
                         return true;
@@ -253,14 +253,15 @@ public class CoreFilterUtils {
         if (CoreStringUtils.isBlank(os)) {
             return true;
         }
-        NutsId _v = CoreNutsUtils.parseNutsId(os);
+        NutsIdParser parser = session.getWorkspace().id().parser();
+        NutsId _v = parser.parse(os);
         String[] all = desc.getOs();
         if (all != null && all.length > 0) {
             for (String v : all) {
                 if (CoreStringUtils.isBlank(v)) {
                     return true;
                 }
-                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId0(v);
+                NutsId y = parser.setLenient(false).parse(v);
                 if (y.equalsShortName(_v)) {
                     if (y.getVersion().filter().acceptVersion(_v.getVersion(), session)) {
                         return true;
@@ -277,14 +278,15 @@ public class CoreFilterUtils {
         if (CoreStringUtils.isBlank(osdist)) {
             return true;
         }
-        NutsId _v = CoreNutsUtils.parseNutsId(osdist);
+        NutsIdParser parser = session.getWorkspace().id().parser();
+        NutsId _v = parser.parse(osdist);
         String[] all = desc.getOsdist();
         if (all != null && all.length > 0) {
             for (String v : all) {
                 if (CoreStringUtils.isBlank(v)) {
                     return true;
                 }
-                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId0(v);
+                NutsId y = parser.setLenient(false).parse(v);
                 if (y.equalsShortName(_v)) {
                     if (y.getVersion().filter().acceptVersion(_v.getVersion(), session)) {
                         return true;
@@ -302,14 +304,15 @@ public class CoreFilterUtils {
         if (CoreStringUtils.isBlank(platform)) {
             return true;
         }
-        NutsId _v = CoreNutsUtils.parseNutsId(platform);
+        NutsIdParser parser = session.getWorkspace().id().parser();
+        NutsId _v = parser.parse(platform);
         String[] all = desc.getPlatform();
         if (all != null && all.length > 0) {
             for (String v : all) {
                 if (CoreStringUtils.isBlank(v)) {
                     return true;
                 }
-                NutsId y = NutsWorkspaceUtils.parseRequiredNutsId0(v);
+                NutsId y = parser.setLenient(false).parse(v);
                 if (y.getShortName().equals("java")) {
                     //should accept any platform !!!
                     return true;

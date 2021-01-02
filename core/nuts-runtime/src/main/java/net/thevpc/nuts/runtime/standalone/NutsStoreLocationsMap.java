@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone;
 import java.util.HashMap;
 import java.util.Map;
 import net.thevpc.nuts.NutsStoreLocation;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
  *

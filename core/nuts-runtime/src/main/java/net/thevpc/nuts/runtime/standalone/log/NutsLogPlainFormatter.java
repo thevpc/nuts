@@ -5,8 +5,8 @@ import net.thevpc.nuts.NutsFormatManager;
 import net.thevpc.nuts.NutsFormattable;
 import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.NutsTextFormatManager;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 
 import java.text.MessageFormat;
 import java.time.Instant;

@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.DefaultNutsExecutionEntryAction;
-import net.thevpc.nuts.runtime.standalone.app.DefaultNutsApplicationContext;
+import net.thevpc.nuts.runtime.core.app.DefaultNutsApplicationContext;
 
 public class DefaultNutsWorkspaceAppsManager implements NutsWorkspaceAppsManager {
     private NutsWorkspace ws;

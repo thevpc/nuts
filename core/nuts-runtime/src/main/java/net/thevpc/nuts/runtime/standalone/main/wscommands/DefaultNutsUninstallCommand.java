@@ -9,12 +9,12 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.main.config.ConfigEventType;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsInstallEvent;
+import net.thevpc.nuts.runtime.core.events.DefaultNutsInstallEvent;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsUninstallCommand;
 import net.thevpc.nuts.runtime.standalone.NutsExtensionListHelper;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 import java.io.PrintStream;
 import java.nio.file.Paths;
@@ -93,7 +93,9 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                 wcfg.fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
             }
             if (getValidWorkspaceSession().isPlainTrace()) {
-                out.println(ws.id().formatter(id).format() + " uninstalled ##successfully##");
+                out.println(ws.id().formatter(id).format() + " uninstalled "+ws.formats().text().factory().styled(
+                        "successfully",NutsTextNodeStyle.success()
+                ));
             }
             NutsWorkspaceUtils.of(ws).events().fireOnUninstall(new DefaultNutsInstallEvent(def, session,new NutsId[0], isErase()));
         }

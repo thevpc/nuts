@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.main.installers;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsInstallInfo;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsDefinition;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
 
 import java.util.EnumSet;
 

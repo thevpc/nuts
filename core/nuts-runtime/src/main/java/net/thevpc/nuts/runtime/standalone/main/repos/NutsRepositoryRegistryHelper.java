@@ -31,7 +31,7 @@ import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.NutsRepository;
 import net.thevpc.nuts.NutsRepositoryRef;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
  *

@@ -25,12 +25,9 @@
 */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.*;
 import net.thevpc.jshell.JShellResult;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -78,14 +75,25 @@ public class ShowerrCommand extends SimpleNshBuiltin {
     protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
         JShellResult r = context.getResult();
         if (r.getCode() == 0) {
-            context.out().println("##Last command ended successfully with no errors.##");
+            context.out().println(
+                    context.getWorkspace().formats().text().factory().styled(
+                            "last command ended successfully with no errors.", NutsTextNodeStyle.success()
+                    ));
         } else {
-            context.out().println("```error Last command ended abnormally with the following error :```");
+            context.out().println(
+                    context.getWorkspace().formats().text().factory()
+                            .styled("last command ended abnormally with the following error :",NutsTextNodeStyle.error())
+            );
             if (r.getMessage() != null) {
-                context.out().println(r.getMessage());
+                context.out().println(context.getWorkspace().formats().text().factory()
+                        .styled(r.getMessage(),NutsTextNodeStyle.error()
+                        ));
             }
             if (r.getStackTrace() != null) {
-                context.err().println(r.getStackTrace());
+                context.err().println(
+                        context.getWorkspace().formats().text().factory()
+                                .styled(r.getStackTrace(),NutsTextNodeStyle.error())
+                );
             }
         }
     }

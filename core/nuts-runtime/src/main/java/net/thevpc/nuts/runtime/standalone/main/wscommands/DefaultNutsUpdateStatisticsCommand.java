@@ -77,13 +77,14 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
                 }
             }
         }
+        NutsTextNodeFactory factory = getWorkspace().formats().text().factory();
         if (!processed) {
             if (session.isPlainTrace()) {
-                session.out().printf("#####%s##### Updating workspace stats%n", getWorkspace().locations().getWorkspaceLocation());
+                session.out().printf("%s updating workspace stats%n", factory.styled(getWorkspace().locations().getWorkspaceLocation(),NutsTextNodeStyle.path()));
             }
             for (NutsRepository repo : getWorkspace().repos().getRepositories(session)) {
                 if (session.isPlainTrace()) {
-                    session.out().printf("#####%s##### Updating stats %s%n", getWorkspace().locations().getWorkspaceLocation(), repo);
+                    session.out().printf("%s updating stats %s%n", factory.styled(getWorkspace().locations().getWorkspaceLocation(),NutsTextNodeStyle.path()), repo);
                 }
                 NutsWorkspaceUtils.of(ws).repoSPI(repo).updateStatistics()
                         .setSession(session)

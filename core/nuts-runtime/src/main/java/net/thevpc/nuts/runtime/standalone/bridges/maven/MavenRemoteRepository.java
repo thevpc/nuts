@@ -26,8 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.bridges.maven;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.CoreNutsConstants;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsId;
+import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.NutsLogVerb;
 
 import java.io.*;
@@ -42,11 +41,11 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.FilesFoldersApi;
 import net.thevpc.nuts.runtime.standalone.util.RemoteRepoApi;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.MavenMetadata;
 import net.thevpc.nuts.runtime.standalone.main.repos.NutsCachedRepository;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
@@ -181,6 +180,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             }
             List<Map<String, Object>> info = getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(new InputStreamReader(metadataStream), List.class);
             if (info != null) {
+                NutsIdManager idMan = workspace.id();
                 for (Map<String, Object> version : info) {
                     if ("dir".equals(version.get("type"))) {
                         String versionName = (String) version.get("name");
@@ -190,13 +190,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                             continue;
                         }
                         ret.add(
-                                new DefaultNutsId(
-                                        null,
-                                        groupId,
-                                        artifactId,
-                                        versionName,
-                                        ""
-                                )
+                                idMan.builder().setGroupId(groupId).setArtifactId(artifactId).setVersion(versionName).build()
                         );
                     }
 
@@ -235,6 +229,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             }
             MavenMetadata info = MavenUtils.of(session.getWorkspace()).parseMavenMetaData(metadataStream,session);
             if (info != null) {
+                NutsIdManager idMan = workspace.id();
                 for (String version : info.getVersions()) {
                     final NutsId nutsId = id.builder().setVersion(version).build();
 
@@ -242,13 +237,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                         continue;
                     }
                     ret.add(
-                            new DefaultNutsId(
-                                    null,
-                                    groupId,
-                                    artifactId,
-                                    version,
-                                    ""
-                            )
+                            idMan.builder().setGroupId(groupId).setArtifactId(artifactId).setVersion(version).build()
                     );
                 }
             }
@@ -312,6 +301,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 throw new NutsNotFoundException(getWorkspace(), id, ex);
             }
             if (foldersFileContent != null) {
+                NutsIdManager idMan = workspace.id();
                 for (String version : foldersFileContent) {
                     final NutsId nutsId = id.builder().setVersion(version).build();
 
@@ -319,13 +309,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                         continue;
                     }
                     ret.add(
-                            new DefaultNutsId(
-                                    null,
-                                    groupId,
-                                    artifactId,
-                                    version,
-                                    ""
-                            )
+                            idMan.builder().setGroupId(groupId).setArtifactId(artifactId).setVersion(version).build()
                     );
                 }
             }

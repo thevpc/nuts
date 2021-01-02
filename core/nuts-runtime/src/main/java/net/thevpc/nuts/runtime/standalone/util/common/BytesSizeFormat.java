@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.common;
 
 import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
  * Created by vpc on 3/20/17.

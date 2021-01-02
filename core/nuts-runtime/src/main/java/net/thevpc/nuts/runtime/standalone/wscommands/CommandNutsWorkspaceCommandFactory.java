@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,7 +98,7 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
             if (r == 0) {
                 return new NutsCommandAliasConfig()
                         .setFactoryId(getFactoryId())
-                        .setOwner(CoreNutsUtils.parseNutsId(ec[0]))
+                        .setOwner(ws.id().parser().parse(ec[0]))
                         .setName(name)
                         .setCommand(Arrays.copyOfRange(ec, 1, ec.length));
             }

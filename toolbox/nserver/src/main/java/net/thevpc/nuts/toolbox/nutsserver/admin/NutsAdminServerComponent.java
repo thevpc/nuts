@@ -25,11 +25,8 @@
 */
 package net.thevpc.nuts.toolbox.nutsserver.admin;
 
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nutsserver.*;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSupportLevelContext;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.common.strings.StringUtils;
 
 import java.io.PrintStream;
@@ -93,7 +90,8 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         }
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
         PrintStream out = session.out();
-        out.printf("Nuts Admin Service '%s' running ##telnet nsh## at %s\n", serverId, inetSocketAddress);
+        NutsTextNodeFactory factory = session.getWorkspace().formats().text().factory();
+        out.printf("Nuts Admin Service '%s' running %s at %s\n", serverId, factory.styled("telnet nsh",NutsTextNodeStyle.primary(1)), inetSocketAddress);
         out.printf("Serving workspace : %s\n", invokerWorkspace.locations().getWorkspaceLocation());
         AdminServerRunnable myNutsServer = new AdminServerRunnable(serverId, port, backlog, address, executor, invokerWorkspace, session);
 

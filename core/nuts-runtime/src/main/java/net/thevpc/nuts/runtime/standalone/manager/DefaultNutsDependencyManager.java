@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.manager;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsDependencyBuilder;
-import net.thevpc.nuts.runtime.standalone.format.DefaultNutsDependencyFormat;
-import net.thevpc.nuts.runtime.standalone.parser.DefaultNutsDependencyParser;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsDependencyBuilder;
+import net.thevpc.nuts.runtime.core.format.DefaultNutsDependencyFormat;
+import net.thevpc.nuts.runtime.core.parser.DefaultNutsDependencyParser;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 
 import java.util.Set;
@@ -26,7 +26,7 @@ public class DefaultNutsDependencyManager implements NutsDependencyManager {
 
     @Override
     public NutsDependencyBuilder builder() {
-        return new DefaultNutsDependencyBuilder();
+        return new DefaultNutsDependencyBuilder(getWorkspace());
     }
 
     @Override

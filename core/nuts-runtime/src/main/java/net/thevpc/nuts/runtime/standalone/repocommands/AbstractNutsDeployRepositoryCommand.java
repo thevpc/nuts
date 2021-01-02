@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.repocommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.common.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
 
 import java.io.File;

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

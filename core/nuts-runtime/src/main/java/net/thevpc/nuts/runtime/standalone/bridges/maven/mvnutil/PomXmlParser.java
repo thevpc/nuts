@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.thevpc.nuts.runtime.standalone.format.xml.NutsXmlUtils;
+import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
 
 public class PomXmlParser {
 
