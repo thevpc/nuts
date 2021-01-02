@@ -1,17 +1,17 @@
 display a line of text
 
 ##) SYNOPSIS:
-==echo== [-n|-p] <messages>
+```sh echo [-n|-p] <messages>```
 
 display a line of text
 
 options :
--n          : do not output the trailing newline
--p          : plain text, do no use "format" escape characters
+```sh -n ```sh       : do not output the trailing newline
+```sh -p ```         : plain text, do no use "format" escape characters
 
 ##) EXAMPLES:
 
-==echo== ==hello==
+```sh echo hello```
    displays hello with bold format
 
 

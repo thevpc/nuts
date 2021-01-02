@@ -49,17 +49,17 @@ public class RemoteNutsWorkspace extends AbstractNutsWorkspace {
 
     @Override
     public NutsFetchCommand fetch() {
-        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yer supported fetch");
+        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported fetch");
     }
 
     @Override
     public NutsDeployCommand deploy() {
-        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yer supported deploy");
+        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported deploy");
     }
 
     @Override
     public NutsUndeployCommand undeploy() {
-        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yer supported undeploy");
+        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported undeploy");
     }
 
     @Override
@@ -69,41 +69,41 @@ public class RemoteNutsWorkspace extends AbstractNutsWorkspace {
 
     @Override
     public NutsInstallCommand install() {
-        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yer supported install");
+        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported install");
     }
 
     @Override
     public NutsUninstallCommand uninstall() {
-        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yer supported uninstall");
+        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported uninstall");
     }
 
     @Override
     public NutsUpdateCommand update() {
-        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yer supported update");
+        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported update");
     }
 
     @Override
     public NutsPushCommand push() {
-        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yer supported push");
+        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported push");
     }
 
     @Override
     public Set<NutsId> companionIds() {
-        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yer supported companionIds");
+        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported companionIds");
     }
 
     @Override
     public NutsFilterManager filters() {
-        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yer supported filters");
+        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported filters");
     }
 
     @Override
     public NutsLogManager log() {
-        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yer supported log");
+        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported log");
     }
 
     public <T> T remoteCall(NutsElement call, Class<T> expectedType) {
-        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yer supported remoteCall");
+        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported remoteCall");
     }
 
 }

@@ -1,7 +1,7 @@
 run builtin nsh command
 
 ##) SYNOPSIS:
-==builtin== <command> {{args...}}
+```sh builtin <command> <args>...```
 run builtin nsh command
 
 ##) EXAMPLES:

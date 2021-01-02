@@ -1,15 +1,15 @@
 End the application
 
 ##) SYNOPSIS:
-==exit== [<code>] ...
+```sh exit [<code>] ...```
 
 End the application returning code
 
 ##) EXAMPLES:
 
-==exit==
+```sh exit```sh
     exit with code 0
-==exit== 1
+```sh exit 1 ```
     exit with code 1
 
 

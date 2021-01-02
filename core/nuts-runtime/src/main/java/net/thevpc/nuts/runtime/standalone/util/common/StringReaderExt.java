@@ -62,4 +62,8 @@ public class StringReaderExt {
         return peekChars(s.length()).equals(s);
     }
 
+    @Override
+    public String toString() {
+        return content.substring(pos);
+    }
 }

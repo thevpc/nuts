@@ -1,13 +1,13 @@
 change directory
 
 ##) SYNOPSIS:
-==cd== <directory>
+```sh cd  <directory>```
 
 changes the working directory
 
 ##) EXAMPLES:
 
-==cd== /another/path
+```sh cd /another/path```
    changes to another path
 
 

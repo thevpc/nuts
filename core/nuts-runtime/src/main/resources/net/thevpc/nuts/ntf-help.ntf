@@ -1,159 +1,166 @@
 #!include</net/thevpc/nuts/includes/standard-header.ntf>
 
+
 ```sh nft``` aka ##nuts text format## is a markdown like text format enabling colored text styles.
 ```sh nft``` is the standard format used in the standard output and standard error. It is as
  well the standard format used in help manuals.
 
+type (```sh nuts help --colors```) to display this help
 
 ##) NTF special characters:
-all special characters are ### \# \@ \~ \ø \\ \' ###
-###\#### defines primary styles
-###\@### defines secondary styles
-###\~### defines style modes (underlined, etc)
-###\ø### is a 'nop' character. it is used as a separator when required. It is not displayed.
-###\`\`\`Text\`\`\`### defines verbatim text
-###\`\`\`lang code-bloc\`\`\`### defines formatted code in the given language/format (such as sh, java, json, ...)
-###\\### You can escape special characters using ###\\### character
+#### \# \ø \\ \` #### are special characters
+#### : { and } #### are also special character when used inside \# styles
+####\##### defines primary styles
+####\ø#### is a 'nop' character. it is used as a separator when required. It is not displayed.
+####\`\`\`Text\`\`\`#### defines verbatim text
+####\`\`\`lang code-bloc\`\`\`#### defines formatted code in the given language/format (such as sh, java, json, ...)
+####\\#### You can escape special characters using ####\\#### character
 
 
 ##) NTF COLORS:
-nuts text format is based on the following constructs:
+nuts supports 4 types of colors :
+ */ primary (foreground) and secondary (background) colors are defined by themes and are customizable
+             syntax foreground   : ```[#]+Text[#]+``` or ```##&p<0-15>: Text##```
+             syntax background   : ```##&s<0-15>: Text##```
+ */ 4bit colors (0-15) define a predefined color palette of 16 colors as defined by ANSI terminal formats
+             syntax foreground   : ```##&f<0-15>: Text##```
+             syntax background   : ```##&b<0-15>: Text##```
+ */ 8bit colors (0-255) define a predefined color palette of 256 colors as defined by ANSI terminal formats
+             syntax foreground   : ```##&f<0-255>: Text##```
+             syntax background   : ```##&b<0-255>: Text##```
+ */ 24bit colors (r-g-b) define a predefined color palette of 16M colors as defined by ANSI terminal formats
+             syntax foreground   : ```##&fx<hexa-6-digits>: Text##```
+             syntax background   : ```##&bx<hexa-6-digits>: Text##```
 
-##Format##                               | ##Display##                           | ##Recommended##
+##Format##                                   | ##Display##                       | ##Description##
 ----------------------------------------------------------------------------------------------------
-Text                                 | Text                              | plain text
-```#Text#```                               | #Text#                            | plain text
-```##Text##```                             | ##Text##                              | foreground 1, primary1 , title 1
-```###Text###```                           | ###Text###                              | foreground 2, primary2 , title 2
-```####Text####```                         | ####Text####                              | foreground 3, primary3 , title 3
-```#####Text#####```                       | #####Text#####                              | foreground 4, primary4 , title 4
-```######Text######```                     | ######Text######                              | foreground 5, primary5 , title 5
-```#######Text#######```                   | #######Text#######                              | foreground 6, primary6 , title 6
-```########Text########```                 | ########Text########                              | foreground 7, primary7 , title 7
-```#########Text#########```               | #########Text#########                              | foreground 8, primary8 , title 8
-```##########Text##########```             | ##########Text##########                              | foreground 9, primary9 , title 9
-```##&p2:Text##```                             | ##&p2:Text##                              | primary2
-```##&s2:Text##```                             | ##&p2:Text##                              | secondary2
-```##&/:Text##```                             | ##&/:Text##                              | italic
-```##&_:Text##```                             | ##&_:Text##                              | underlined
-```##&%:Text##```                             | ##&%:Text##                              | blink
-```##&!:Text##```                             | ##&!:Text##                              | reversed
-```##&+:Text##```                             | ##&+:Text##                              | bold
-\`\`\`Text\`\`\`                           | ```Text```                              | escaped text
-\\`\\#                               | \`\#                               | escaped characters
-\`\`\`xml <xml n='value'></xml>\`\`\`      | ```xml <xml n='value'></xml>```             | xml formatting
-\`\`\`json {k:'value',n:'value'}\`\`\`     | ```json {k:'value',n:'value'}```             | json formatting
-\`\`\`java public class A{ int a=12;}\`\`\`| ```java public class A{ int a=12;}```        | java formatting
-\`\`\`sh cmd arg user -option=true\`\`\`   | ```sh cmd arg user -option=true```         | commandline formatting
-\`\`\`primary  message\`\`\`               | ```primary message```                           | primary
-\`\`\`primary1 message\`\`\`               | ```primary1 message```                           | primary1
-\`\`\`primary2 message\`\`\`               | ```primary2 message```                           | primary2
-\`\`\`primary3 message\`\`\`               | ```primary3 message```                           | primary3
-\`\`\`primary4 message\`\`\`               | ```primary4 message```                           | primary4
-\`\`\`primary5 message\`\`\`               | ```primary5 message```                           | primary5
-\`\`\`primary6 message\`\`\`               | ```primary6 message```                           | primary6
-\`\`\`primary7 message\`\`\`               | ```primary7 message```                           | primary7
-\`\`\`primary8 message\`\`\`               | ```primary8 message```                           | primary8
-\`\`\`primary9 message\`\`\`               | ```primary9 message```                           | primary9
-\`\`\`secondary  message\`\`\`             | ```secondary  message```                           | secondary
-\`\`\`secondary1 message\`\`\`             | ```secondary1 message```                           | secondary1
-\`\`\`secondary2 message\`\`\`             | ```secondary2 message```                           | secondary2
-\`\`\`secondary3 message\`\`\`             | ```secondary3 message```                           | secondary3
-\`\`\`secondary4 message\`\`\`             | ```secondary4 message```                           | secondary4
-\`\`\`secondary5 message\`\`\`             | ```secondary5 message```                           | secondary5
-\`\`\`secondary6 message\`\`\`             | ```secondary6 message```                           | secondary6
-\`\`\`secondary7 message\`\`\`             | ```secondary7 message```                           | secondary7
-\`\`\`secondary8 message\`\`\`             | ```secondary8 message```                           | secondary8
-\`\`\`secondary9 message\`\`\`             | ```secondary9 message```                           | secondary9
-\`\`\`underlined message\`\`\`             | ```underlined message```                           | underlined
-\`\`\`italic message\`\`\`                 | ```italic message```                           | italic
-\`\`\`striked message\`\`\`                | ```striked message```                           | striked
-\`\`\`reversed message\`\`\`               | ```reversed message```                           | reversed
-\`\`\`error  message\`\`\`                 | ```error  message```                           | error
-\`\`\`error1 message\`\`\`                 | ```error1 message```                           | error1
-\`\`\`error2 message\`\`\`                 | ```error2 message```                    | error2
-\`\`\`error3 message\`\`\`                 | ```error3 message```                    | error3
-\`\`\`error4 message\`\`\`                 | ```error4 message```                    | error4
-\`\`\`warn  message\`\`\`                  | ```warn  message```                           | warn
-\`\`\`warn1 message\`\`\`                  | ```warn1 message```                           | warn1
-\`\`\`warn2 message\`\`\`                  | ```warn2 message```                  | warn2
-\`\`\`warn3 message\`\`\`                  | ```warn3 message```                  | warn3
-\`\`\`warn4 message\`\`\`                  | ```warn4 message```                  | warn4
-\`\`\`info  message\`\`\`                  | ```info  message```                           | info
-\`\`\`info1 message\`\`\`                  | ```info1 message```                           | info1
-\`\`\`info2 message\`\`\`                  | ```info2 message```                     | info2
-\`\`\`info3 message\`\`\`                  | ```info3 message```                     | info3
-\`\`\`info4 message\`\`\`                  | ```info4 message```                     | info4
-\`\`\`config  message\`\`\`                | ```config  message```                           | config
-\`\`\`config1 message\`\`\`                | ```config1 message```                           | config1
-\`\`\`config2 message\`\`\`                | ```config2 message```                   | config2
-\`\`\`config3 message\`\``                | ```config3 message```                   | config3
-\`\`\`config4 message\`\`\`                | ```config4 message```                   | config4
-\`\`\`comments  message\`\`\`              | ```comments  message```                           | comments
-\`\`\`comments1 message\`\`\`              | ```comments1 message```                           | comments1
-\`\`\`comments2 message\`\`\`              | ```comments2 message```                           | comments2
-\`\`\`comments3 message\`\`\`              | ```comments3 message```                           | comments3
-\`\`\`comments4 message\`\`\`              | ```comments4 message```                           | comments4
-\`\`\`string  message\`\`\`                | ```string  message```                           | string
-\`\`\`string1 message\`\`\`                | ```string1 message```                           | string1
-\`\`\`string2 message\`\`\`                | ```string2 message```                           | string2
-\`\`\`string3 message\`\`\`                | ```string3 message```                           | string3
-\`\`\`string4 message\`\`\`                | ```string4 message```                           | string4
-\`\`\`number  message\`\`\`                | ```number  message```                           | number
-\`\`\`number1 message\`\`\`                | ```number1 message```                           | number1
-\`\`\`number2 message\`\`\`                | ```number2 message```                           | number2
-\`\`\`number3 message\`\`\`                | ```number3 message```                           | number3
-\`\`\`number4 message\`\`\`                | ```number4 message```                           | number4
-\`\`\`boolean  message\`\`\`               | ```boolean  message```                           | boolean
-\`\`\`boolean  message\`\`\`               | ```boolean  message```                           | boolean
-\`\`\`boolean1 message\`\`\`               | ```boolean1 message```                           | boolean1
-\`\`\`boolean2 message\`\`\`               | ```boolean2 message```                           | boolean2
-\`\`\`boolean3 message\`\`\`               | ```boolean3 message```                           | boolean3
-\`\`\`boolean4 message\`\`\`               | ```boolean4 message```                           | boolean4
-\`\`\`keyword  message\`\`\`               | ```keyword  message```                           | keyword
-\`\`\`keyword1 message\`\`\`               | ```keyword1 message```                           | keyword1
-\`\`\`keyword2 message\`\`\`               | ```keyword2 message```                           | keyword2
-\`\`\`keyword3 message\`\`\`               | ```keyword3 message```                           | keyword3
-\`\`\`keyword4 message\`\`\`               | ```keyword4 message```                           | keyword4
-\`\`\`option  message\`\`\`                | ```option  message```                           | option
-\`\`\`option1 message\`\`\`                | ```option1 message```                           | option1
-\`\`\`option2 message\`\`\`                | ```option2 message```                           | option2
-\`\`\`option3 message\`\`\`                | ```option3 message```                           | option3
-\`\`\`option4 message\`\`\`                | ```option4 message```                           | option4
-\`\`\`user_input  message\`\`\`            | ```user_input  message```                           | user_input
-\`\`\`user_input1 message\`\`\`            | ```user_input1 message```                           | user_input1
-\`\`\`user_input2 message\`\`\`            | ```user_input2 message```                           | user_input2
-\`\`\`user_input3 message\`\`\`            | ```user_input3 message```                           | user_input3
-\`\`\`user_input4 message\`\`\`            | ```user_input4 message```                           | user_input4
-\`\`\`separator  message\`\`\`             | ```separator  message```                           | separator
-\`\`\`separator1 message\`\`\`             | ```separator1 message```                           | separator1
-\`\`\`separator2 message\`\`\`             | ```separator2 message```                           | separator2
-\`\`\`separator3 message\`\`\`             | ```separator3 message```                           | separator3
-\`\`\`separator4 message\`\`\`             | ```separator4 message```                           | separator4
-\`\`\`operator  message\`\`\`              | ```operator  message```                           | operator
-\`\`\`operator1 message\`\`\`              | ```operator1 message```                           | operator1
-\`\`\`operator2 message\`\`\`              | ```operator2 message```                           | operator2
-\`\`\`operator3 message\`\`\`              | ```operator3 message```                           | operator3
-\`\`\`operator4 message\`\`\`              | ```operator4 message```                           | operator4
-\`\`\`success  message\`\`\`               | ```success  message```                           | success
-\`\`\`success1 message\`\`\`               | ```success1 message```                           | success1
-\`\`\`success2 message\`\`\`               | ```success2 message```                           | success2
-\`\`\`success3 message\`\`\`               | ```success3 message```                           | success3
-\`\`\`success4 message\`\`\`               | ```success4 message```                           | success4
-\`\`\`fail  message\`\`\`                  | ```fail  message```                           | fail
-\`\`\`fail1 message\`\`\`                  | ```fail1 message```                           | fail1
-\`\`\`fail2 message\`\`\`                  | ```fail2 message```                           | fail2
-\`\`\`fail3 message\`\`\`                  | ```fail3 message```                           | fail3
-\`\`\`fail4 message\`\`\`                  | ```fail4 message```                           | fail4
-\`\`\`var  message\`\`\`                   | ```var  message```                           | var
-\`\`\`var1 message\`\`\`                   | ```var1 message```                           | var1
-\`\`\`var2 message\`\`\`                   | ```var2 message```                           | var2
-\`\`\`var3 message\`\`\`                   | ```var3 message```                           | var3
-\`\`\`var4 message\`\`\`                   | ```var4 message```                           | var4
-\`\`\`pale  message\`\`\`                  | ```pale  message```                           | pale
-\`\`\`pale1 message\`\`\`                  | ```pale1 message```                           | pale1
-\`\`\`pale2 message\`\`\`                  | ```pale2 message```                           | pale2
-\`\`\`pale3 message\`\`\`                  | ```pale3 message```                           | pale3
-\`\`\`pale4 message\`\`\`                  | ```pale4 message```                           | pale4
+Text ```#Text#```                              | Text #Text#                   | plain text
+```##Text##```                                 | ##Text##                          | primary1 = title 1
+```###Text###```                               | ###Text###                          | primary2 = title 2
+```####Text####```                             | ####Text####                          | primary3 = title 3
+```#####Text#####```                           | #####Text#####                          | primary4 = title 4
+```######Text######```                         | ######Text######                          | primary5 = title 5
+```#######Text#######```                       | #######Text#######                          | primary6 = title 6
+```########Text########```                     | ########Text########                          | primary7 = title 7
+```#########Text#########```                   | #########Text#########                          | primary8 = title 8
+```##########Text##########```                 | ##########Text##########                          | primary9 = title 9
+```##:1:Text##```  ```##:p1:Text##```  ```##:s1:Text##```  | ##:1:Text##  ##:1:Text## ##:s1:Text##               | primary 1
+```##:2:Text##```  ```##:p2:Text##```  ```##:s2:Text##```  | ##:2:Text##  ##:2:Text## ##:s2:Text##               | primary 2
+```##:3:Text##```  ```##:p3:Text##```  ```##:s3:Text##```  | ##:3:Text##  ##:3:Text## ##:s3:Text##               | primary 3
+```##:4:Text##```  ```##:p4:Text##```  ```##:s4:Text##```  | ##:4:Text##  ##:4:Text## ##:s4:Text##               | primary 4
+```##:5:Text##```  ```##:p5:Text##```  ```##:s5:Text##```  | ##:5:Text##  ##:5:Text## ##:s5:Text##               | primary 5
+```##:6:Text##```  ```##:p6:Text##```  ```##:s6:Text##```  | ##:6:Text##  ##:6:Text## ##:s6:Text##               | primary 6
+```##:7:Text##```  ```##:p7:Text##```  ```##:s7:Text##```  | ##:7:Text##  ##:7:Text## ##:s7:Text##               | primary 7
+```##:8:Text##```  ```##:p8:Text##```  ```##:s8:Text##```  | ##:8:Text##  ##:8:Text## ##:s8:Text##               | primary 8
+```##:9:Text##```  ```##:p9:Text##```  ```##:s9:Text##```  | ##:9:Text##  ##:9:Text## ##:s9:Text##               | primary 9
+```##:10:Text##``` ```##:p10:Text##``` ```##:s10:Text##``` | ##:10:Text##  ##:10:Text## ##:s10:Text##               | primary 10
+```##:11:Text##``` ```##:p11:Text##``` ```##:s11:Text##``` | ##:11:Text##  ##:11:Text## ##:s11:Text##               | primary 11
+```##:12:Text##``` ```##:p12:Text##``` ```##:s12:Text##``` | ##:12:Text##  ##:12:Text## ##:s12:Text##               | primary 12
+```##:13:Text##``` ```##:p13:Text##``` ```##:s13:Text##``` | ##:13:Text##  ##:13:Text## ##:s13:Text##               | primary 13
+```##:14:Text##``` ```##:p14:Text##``` ```##:s14:Text##``` | ##:14:Text##  ##:14:Text## ##:s14:Text##               | primary 14
+```##:15:Text##``` ```##:p15:Text##``` ```##:s15:Text##``` | ##:15:Text##  ##:15:Text## ##:s15:Text##               | primary 15
+```##:/:Text##``` ```##:_:Text##``` ```##:%:Text##```      | ##:/:Text##  ##:_:Text## ##:%:Text##               | italic, underlined, blink
+```##:!:Text##``` ```##:+:Text##``` ```##:-:Text##```      | ##:!:Text##  ##:+:Text## ##:-:Text##               | reversed, bold, striked
+```##:primary3:Text##```                       | ##:primary3:Text##                          | primary3
+```##:secondary5:Text##```                     | ##:s4:Text##                          | secondary5
+```##{s12:AA##:12:BB##ø##:6:CC##DD}##```       | ##{s12:AA##:12:BB##ø##:6:CC##DD}##                      | composed colors, note the \ø separator
+```##:f158:AA## ##:f58:BB## ##:f201:CC##```    | ##:f158:AA## ##:f58:BB## ##:f201:CC##                      | foreground 8bits colors
+```##:foreground158:Text##```                  | ##:foreground158:Text##                          | foreground 158 (8bits)
+```##:fxd787af:Text##```                       | ##:fxd787af:Text##                          | foreground Pink (d787af in 24bits)
+```##:foregroundxd787af:Text##```              | ##:foregroundxd787af:Text##                          | foreground Pink (d787af in 24bits)
+```##:b158:Text##```                           | ##:b158:Text##                          | background 158 (8bits)
+```##:bxd787af:Text##```                       | ##:bxd787af:Text##                | background Pink (24bits)
 
+##) NTF SPECIAL CHARACTERS
+NTF uses special characters as escape format. characters have different meanings in different situations,
+but you will be able to escape any character using \\. You can also escape a whole text using \`\`\`
+
+##Format##                                   | ##Display##                       | ##Description##
+----------------------------------------------------------------------------------------------------
+\\`\\#\\ø                                    | \`\#\ø                           | escaped characters
+\`\`\` Text with # escaped\`\`\`               | ``` Text with # escaped```           | escaped text (note the starting space)
+
+##) NTF STYLES:
+Supported styles in NTF are defined in the following table:
+
+##Format##                                   | ##Display##                       | ##Description##
+----------------------------------------------------------------------------------------------------
+\`\`\`underlined underlined\`\`\`              | ```underlined underlined```                    | underlined
+\`\`\`italic italic\`\`\`                      | ```italic italic```                        | italic
+\`\`\`striked striked\`\`\`                    | ```striked striked```                       | striked
+\`\`\`reversed reversed\`\`\`                  | ```reversed reversed```                      | reversed
+\`\`\`error error\`\`\` \`\`\`warn warn\`\`\`  ...   | ```error error``` ```warn warn``` ```info info```  ```config config```       | several token types
+...                                      | ```comments comments``` ```string string``` ```number number``` ```boolean boolean```|
+                                         | ```keyword keyword``` ```option option``` ```user_input user_input```     |
+                                         | ```operator operator``` ```separator separator``` ```success success```    |
+                                         | ```danger danger``` ```fail fail``` ```var var``` ```pale pale```          |
+\#\#\:underlined underlined\#\#\               | ##:underlined underlined##                    | underlined
+\#\#\:italic italic\#\#\                       | ##:italic italic##                        | italic
+\#\#\:striked striked\#\#\                     | ##:striked striked##                       | striked
+\#\#\:reversed reversed\#\#\                   | ##:reversed reversed##                      | reversed
+\#\#\:error  error\#\#\  \#\#\warn  warn\#\#\  ...   | ##:error  error## ##:warn  warn## ##:info info##  ##:config config##     | several embeddable token types
+...                                      | ##:comments comments## ##:string string## ##:number number## ##:boolean boolean##|
+                                         | ##:keyword keyword## ##:option  option## ##:user_input user_input##    |
+                                         | ##:operator operator## ##:separator  separator## ##:success success##   |
+                                         | ##:danger danger## ##:fail  fail## ##:var var## ##:pale pale##         |
+
+##) NTF TITLES:
+Tables are special formatted lines and are usable simply by suffix # chars with a parentheses at the start of any new line.
+
+#) Title 1
+```#) Title 1```
+##) Title 2
+```##) Title 2```
+###) Title 3
+```###) Title 3```
+####) Title 4
+```####) Title 4```
+#####) Title 5
+```#####) Title 5```
+######) Title 6
+```######) Title 6```
+#######) Title 7
+```#######) Title 7```
+########) Title 8
+```########) Title 8```
+#########) Title 9
+```#########) Title 9```
+
+
+##) NTF SYNTAX COLORING:
+NTF supports as well a advanced features that allow you to syntax coloring popular formats.
+Especially Xml, Json, Bash and Java are supported.
+
+###) Xml format
+####) NTF syntax
+####) NTF syntax
+\`\`\`xml <xml n='value'></xml>\`\`\`
+####) Coloring Result
+```xml <xml n='value'></xml>```
+
+###) Json format
+####) NTF syntax
+\`\`\`json {k:'value',n:'value'}\`\`\`
+####) Coloring Result
+```json {k:'value',n:'value'}```
+
+###) Java format
+####) NTF syntax
+\`\`\`java
+public class A{
+    int a=12;
+}
+\`\`\`
+####) Coloring Result
+```java
+public class A{
+    int a=12;
+}
+```
+
+###) Shell commandline format
+####) NTF syntax
+\`\`\`sh cmd arg user -option=true\`\`\`
+####) Coloring Result
+```sh cmd arg user -option=true```
 

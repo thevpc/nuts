@@ -116,7 +116,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                         seq = ws.formats().text().createTitleNumberSequence();
                         ctx.setTitleNumberSequence(seq);
                     }
-                    NutsTitleNumberSequence a = seq.newLevel(s.getTextStyleCode().length());
+                    NutsTitleNumberSequence a = seq.newLevel(s.getLevel());
                     NutsTextNode sWithTitle = factory0.list(
                             ws.formats().text().factory().plain(a.toString() + " "),
                             s.getChild()

@@ -11,10 +11,7 @@ import net.thevpc.nuts.NutsTextNodeWriteConfiguration;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.AbstractNutsTextNodeParser;
 import net.thevpc.nuts.runtime.core.format.text.NutsTextNodeWriterStringer;
-import net.thevpc.nuts.runtime.core.format.text.parser.steps.AntiQuote3ParserStep;
-import net.thevpc.nuts.runtime.core.format.text.parser.steps.ParserStep;
-import net.thevpc.nuts.runtime.core.format.text.parser.steps.PlainParserStep;
-import net.thevpc.nuts.runtime.core.format.text.parser.steps.RootParserStep;
+import net.thevpc.nuts.runtime.core.format.text.parser.steps.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
@@ -322,6 +319,9 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         public boolean isLineStart() {
             return lineStart;
         }
+        public boolean isSpreadLine() {
+            return !lineStart;
+        }
 
         public State setLineStart(boolean wasNewLine) {
             this.lineStart = wasNewLine;
@@ -363,6 +363,12 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             return parent;
         }
 
+        public void applyAppendSibling(ParserStep r) {
+            int len = statusStack.size();
+            ParserStep parent = statusStack.elementAt(len - 2);
+            parent.appendChild(r);
+        }
+
         public void applyPopReplace(ParserStep r) {
             applyPop();
             statusStack.push(r);
@@ -374,14 +380,30 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             statusStack.push(r);
         }
 
+        public void applyNextChar(char c) {
+            onNewChar(c);
+        }
+
         public void applyPopReject(char rejected) {
             applyPop().consume(rejected, this);
         }
 
+        public void applyStart(String c, boolean spreadLines, boolean lineStart) {
+            if(c.length()>0) {
+                applyStart(c.charAt(0), spreadLines, lineStart);
+                for (int i = 1; i < c.length(); i++) {
+                    onNewChar(c.charAt(i));
+                }
+            }
+        }
         public void applyStart(char c, boolean spreadLines, boolean lineStart) {
             switch (c) {
                 case '`': {
                     this.applyPush(new AntiQuote3ParserStep(c, spreadLines, ws));
+                    break;
+                }
+                case '#': {
+                    this.applyPush(new StyledParserStep(c, spreadLines, lineStart,ws));
                     break;
                 }
                 case 'ø': {
@@ -390,8 +412,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
                 }
                 case '\n':
                 case '\r': {
-                    this.applyPush(new PlainParserStep(c, spreadLines, lineStart, ws, state()));
-                    applyPop();
+                    this.applyPush(new NewLineParserStep(c, ws));
                     if (lineMode) {
                         forceEnding();
                     }
@@ -400,12 +421,15 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
                 default: {
                     State state = state();
 //                    state.setLineStart(lineStart);
-                    this.applyPush(new PlainParserStep(c, spreadLines, lineStart, ws, state));
+                    this.applyPush(new PlainParserStep(c, spreadLines, lineStart, ws, state,null));
                 }
             }
         }
 
         public boolean isIncomplete() {
+            if(root().isEmpty()){
+                return false;
+            }
             ParserStep s = root().peek();
             if (s == null) {
                 for (ParserStep parserStep : statusStack) {

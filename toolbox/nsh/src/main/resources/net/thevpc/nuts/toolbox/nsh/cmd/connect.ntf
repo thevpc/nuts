@@ -1,14 +1,14 @@
 connect to a ```sh nuts``` server
 
-==SYNOPSIS:==
-==connect== [user@]server[:port]
+##) SYNOPSIS:
+```sh connect [user@]server[:port]```
 
 connects to a ```sh nuts``` server as user
 
 
-==EXAMPLES==:
+##) EXAMPLES:
 
-==connect== toto@192.36.6.8
+```sh connect toto@192.36.6.8```
    connects to 192.36.6.8 on the default port (8898)
 
 

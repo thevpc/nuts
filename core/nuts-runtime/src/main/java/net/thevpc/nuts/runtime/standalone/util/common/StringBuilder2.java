@@ -35,8 +35,14 @@ public class StringBuilder2 {
 
     private StringBuilder sb = new StringBuilder();
 
+    public String readAll() {
+        String s=sb.toString();
+        sb.setLength(0);
+        return s;
+    }
+
     public StringBuilder2 clear() {
-        sb.delete(0, sb.length());
+        sb.setLength(0);
         return this;
     }
 
@@ -125,6 +131,19 @@ public class StringBuilder2 {
     public StringBuilder2 appendCodePoint(int codePoint) {
         sb.appendCodePoint(codePoint);
         return this;
+    }
+
+    public char readFirst() {
+        char c=sb.charAt(0);
+        sb.delete(0,1);
+        return c;
+    }
+
+    public char readLast() {
+        int len = sb.length();
+        char c=sb.charAt(len -1);
+        sb.delete(len -1, len);
+        return c;
     }
 
     public StringBuilder2 delete(int start, int end) {
@@ -225,6 +244,10 @@ public class StringBuilder2 {
 
     public String toString() {
         return sb.toString();
+    }
+
+    public boolean isEmpty() {
+        return sb.length()==0;
     }
 
     public int length() {

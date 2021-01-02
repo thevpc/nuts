@@ -1,53 +1,53 @@
 display or modifies workspace configuration.
 
 ##) SYNOPSIS:
-==config== {{workspace action verb}} {{arguments}} ...
+```sh config workspace action verb <arguments> ...```
 
 displays or modifies workspace configuration.
 
 VARIATIONS:
 
-==config== ( create workspace | cw ) [ -i | --ignore ] {{workspace}}
+```sh config ( create workspace | cw ) [ -i | --ignore ] {{workspace}}```
   creates a new workspace at location <workspace> or throws error if the location
   already can be resolved to an existing workspace, unless "-i" is armed
 
-==config== (set workspace| sw) [-i|--ignore]  <workspace>
+```sh config (set workspace| sw) [-i|--ignore]  <workspace>```
   sets the current workspace to the one defined by the given location. An error
   will be thrown if the location does not define a valid workspace "-c" is defined.
   In that condition, the workspace will be created
 
-==config== (create repo| cr) <repoId> [<repoLocation> [<repoType>]]
+```sh config  (create repo| cr) <repoId> [<repoLocation> [<repoType>]]```
   creates a new repository at location <repository> (relatively to the workspace)
   identified as <repoId>  and typed <repoType>. if <repoLocation> is not typed
   the id will be resolved as the folder's name. If the <repoType> is not type
   the default repository type will be used.
 
-==config== (add repo| ar) <repositoryName> <repoLocation> [<repoType>]
+```sh config (add repo| ar) <repositoryName> <repoLocation> [<repoType>]```
 
 
-==config== (remove repo| rr) <repoLocationOrId>
+```sh config== (remove repo| rr) <repoLocationOrId> ```
 
-==config== (list repos| rr)
+```sh config== (list repos| rr) ```
 
-==config== (edit repo| er) <repositoryName> <workspace action verb and arguments>
+```sh config== (edit repo| er) <repositoryName> workspace action verb and arguments ```
 
-==config== (edit repo| er) <repositoryName> (add repo| ar) <repoLocation> [<repoType>]
+```sh config== (edit repo| er) <repositoryName> (add repo| ar) <repoLocation> [<repoType>] ```
 
-==config== (edit repo| er) <repositoryName> (remove repo| rr) <repoLocationOrId>
+```sh config== (edit repo| er) <repositoryName> (remove repo| rr) <repoLocationOrId> ```
 
-==config== (edit repo| er) <repositoryName> (list repos| lr) <repoLocationOrId>
+```sh config== (edit repo| er) <repositoryName> (list repos| lr) <repoLocationOrId> ```
 
-==config== (add extension| ax) [<extensionId>]...
+```sh config== (add extension| ax) [<extensionId>]... ```
 
-==config== (list extensions| lx)
+```sh config (list extensions| lx) ```
 
-==config== (find extensions| fx)
+```sh config (find extensions| fx) ```
 
 ##) EXAMPLES:
 
-==config== create -i workspace ~~/example
+```sh config create -i workspace ~~/example```
    create a workspace at the following location ${HOME}/.nuts/example
 
-==config== er myrepo lr
-==config== edit repo myrepo list repos
+```sh config er myrepo lr```
+```sh config edit repo myrepo list repos```
    list all sub repos of the repo "myrepo"

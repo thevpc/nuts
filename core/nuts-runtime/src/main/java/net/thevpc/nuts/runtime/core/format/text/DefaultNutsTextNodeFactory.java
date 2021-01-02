@@ -134,7 +134,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
 
     public NutsTextNode fg(NutsTextNode t, int level) {
         NutsTextNodeStyle textStyle=NutsTextNodeStyle.primary(level);
-        return createStyled("##&p"+level+";", "##", t, textStyle, true);
+        return createStyled("##:p"+level+":", "##", t, textStyle, true);
     }
 
     public NutsTextNode bg(String t, int level) {
@@ -143,7 +143,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
 
     public NutsTextNode bg(NutsTextNode t, int level) {
         NutsTextNodeStyle textStyle=NutsTextNodeStyle.primary(level);
-        return createStyled("##&s"+level+";", "##", t, textStyle, true);
+        return createStyled("##:s"+level+":", "##", t, textStyle, true);
     }
 
     public NutsTextNode comments(String image) {
@@ -209,51 +209,51 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
         }
         switch (textNodeStyle.getType()) {
             case FORE_COLOR:{
-                return createStyled("##&f"+ textNodeStyle.getVariant()+":", "##", other, textNodeStyle, true);
+                return createStyled("##:f"+ textNodeStyle.getVariant()+":", "##", other, textNodeStyle, true);
             }
             case BACK_COLOR:{
-                return createStyled("##&b"+ textNodeStyle.getVariant()+":", "##", other, textNodeStyle, true);
+                return createStyled("##:b"+ textNodeStyle.getVariant()+":", "##", other, textNodeStyle, true);
             }
             case FORE_TRUE_COLOR:{
                 String s = Integer.toString(0, textNodeStyle.getVariant());
                 while(s.length()<8){
                     s="0"+s;
                 }
-                return createStyled("##&fx"+ s +":", "##", other, textNodeStyle, true);
+                return createStyled("##:fx"+ s +":", "##", other, textNodeStyle, true);
             }
             case BACK_TRUE_COLOR:{
                 String s = Integer.toString(0, textNodeStyle.getVariant());
                 while(s.length()<8){
                     s="0"+s;
                 }
-                return createStyled("##&bx"+ textNodeStyle.getVariant()+":", "##", other, textNodeStyle, true);
+                return createStyled("##:bx"+ textNodeStyle.getVariant()+":", "##", other, textNodeStyle, true);
             }
             case UNDERLINED: {
-                return createStyled("##&_:", "##", other, textNodeStyle, true);
+                return createStyled("##:_:", "##", other, textNodeStyle, true);
             }
             case ITALIC: {
-                return createStyled("##&/:", "##", other, textNodeStyle, true);
+                return createStyled("##:/:", "##", other, textNodeStyle, true);
             }
             case STRIKED: {
-                return createStyled("##&-:", "##", other, textNodeStyle, true);
+                return createStyled("##:-:", "##", other, textNodeStyle, true);
             }
             case REVERSED: {
-                return createStyled("##&!:", "##", other, textNodeStyle, true);
+                return createStyled("##:!:", "##", other, textNodeStyle, true);
             }
             case BOLD: {
-                return createStyled("##&+:", "##", other, textNodeStyle, true);
+                return createStyled("##:+:", "##", other, textNodeStyle, true);
             }
             case BLINK: {
-                return createStyled("##&%:", "##", other, textNodeStyle, true);
+                return createStyled("##:%:", "##", other, textNodeStyle, true);
             }
             case PRIMARY:{
-                return createStyled("##&p:", "##", other, textNodeStyle, true);
+                return createStyled("##:p:", "##", other, textNodeStyle, true);
             }
             case SECONDARY:{
-                return createStyled("##&s:", "##", other, textNodeStyle, true);
+                return createStyled("##:s:", "##", other, textNodeStyle, true);
             }
             default:{
-                return createStyled("##&"+
+                return createStyled("##:"+
                         textNodeStyle.getType().toString().toUpperCase()
                         +":", "##", other, textNodeStyle, true);
             }
@@ -323,34 +323,34 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
         String svar = textStyle.getVariant() == 0 ? "" : (""+textStyle.getVariant());
         switch (textStyle.getType()){
             case PRIMARY:{
-                return createStyled("##&p"+ svar +":","##",child,textStyle,completed);
+                return createStyled("##:p"+ svar +":","##",child,textStyle,completed);
             }
             case SECONDARY:{
-                return createStyled("##&s"+ svar +":","##",child,textStyle,completed);
+                return createStyled("##:s"+ svar +":","##",child,textStyle,completed);
             }
             case UNDERLINED:{
-                return createStyled("##&_:","##",child,textStyle,completed);
+                return createStyled("##:_:","##",child,textStyle,completed);
             }
             case BLINK:{
-                return createStyled("##&%:","##",child,textStyle,completed);
+                return createStyled("##:%:","##",child,textStyle,completed);
             }
             case ITALIC:{
-                return createStyled("##&/:","##",child,textStyle,completed);
+                return createStyled("##:/:","##",child,textStyle,completed);
             }
             case BOLD:{
-                return createStyled("##&+:","##",child,textStyle,completed);
+                return createStyled("##:+:","##",child,textStyle,completed);
             }
             case REVERSED:{
-                return createStyled("##&!:","##",child,textStyle,completed);
+                return createStyled("##:!:","##",child,textStyle,completed);
             }
             case FORE_COLOR:{
-                return createStyled("##&f"+svar+":","##",child,textStyle,completed);
+                return createStyled("##:f"+svar+":","##",child,textStyle,completed);
             }
             case BACK_COLOR:{
-                return createStyled("##&b"+svar+":","##",child,textStyle,completed);
+                return createStyled("##:b"+svar+":","##",child,textStyle,completed);
             }
             default:{
-                return createStyled("##&"+textStyle.getType().toString().toUpperCase()+":","##",child,textStyle,completed);
+                return createStyled("##:"+textStyle.getType().toString().toUpperCase()+":","##",child,textStyle,completed);
             }
         }
     }

@@ -1,17 +1,17 @@
 change file mode bits
 
 ##) SYNOPSIS:
-==chmod== [OPTION]... [MODE]... <FILE>...
+```sh chmod [OPTION]... [MODE]... <FILE>...```
 
 change file mode bits
 
 ##) OPTIONS:
-    -R, --recursive
+    ```sh -R, --recursive```
         change files and directories recursively
 
 ##) EXAMPLES:
 
-==chmod== -R a+x /another/path
+```sh chmod -R a+x /another/path```
    changes folder mode recursively to 'executable'
 
 

@@ -76,7 +76,7 @@ public class DefaultNutsTitleNumberSequence implements NutsTitleNumberSequence {
     }
 
     public NutsTitleNumberSequence newLevel(int level) {
-        level = level - 1;
+//        level = level - 1;
         if (level <= 0) {
             throw new IllegalArgumentException("Invalid level. must be >= 1");
         }

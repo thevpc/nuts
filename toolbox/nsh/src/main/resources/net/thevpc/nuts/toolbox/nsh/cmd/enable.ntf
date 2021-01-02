@@ -1,15 +1,15 @@
 Enable and disable builtin shell commands
 
 ##) SYNOPSIS:
-==enable== <command-name> ...
+```sh enable <command-name> ...```
 Enable and disable builtin shell commands
-    -n : disable commands
-    -a : display all builtins
+    ```sh -n ```: disable commands
+    ```sh -a ```: display all builtins
 
 ##) EXAMPLES:
 
-==enable== ls
+```sh enable ls```
     enable ls builtin
 
-==enable== -n ls
+```sh enable -n ls```
     disable ls builtin

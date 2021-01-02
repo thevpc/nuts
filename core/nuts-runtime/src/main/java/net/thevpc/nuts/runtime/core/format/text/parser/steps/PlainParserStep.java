@@ -3,6 +3,10 @@ package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.NutsTextNode;
+import net.thevpc.nuts.runtime.standalone.util.common.StringBuilder2;
+
+import java.util.function.IntPredicate;
+import java.util.function.Predicate;
 
 public class PlainParserStep extends ParserStep {
 
@@ -10,12 +14,14 @@ public class PlainParserStep extends ParserStep {
     private boolean wasEscape;
     private boolean spreadLines;
     private boolean lineStart;
-    private StringBuilder value = new StringBuilder();
+    private StringBuilder2 value = new StringBuilder2();
     private NutsWorkspace ws;
     private DefaultNutsTextNodeParser.State state;
+    private IntPredicate exitCondition;
 
-    public PlainParserStep(char c, boolean spreadLines, boolean lineStart, NutsWorkspace ws, DefaultNutsTextNodeParser.State state) {
+    public PlainParserStep(char c, boolean spreadLines, boolean lineStart, NutsWorkspace ws, DefaultNutsTextNodeParser.State state,IntPredicate exitCondition) {
         this.state = state;
+        this.exitCondition = exitCondition;
         this.spreadLines = spreadLines;
         this.ws = ws;
         this.lineStart = state.isLineStart() ;
@@ -28,8 +34,9 @@ public class PlainParserStep extends ParserStep {
         state.setLineStart(c=='\n');
     }
 
-    public PlainParserStep(String s, boolean spreadLines, boolean lineStart,NutsWorkspace ws, DefaultNutsTextNodeParser.State state) {
+    public PlainParserStep(String s, boolean spreadLines, boolean lineStart, NutsWorkspace ws, DefaultNutsTextNodeParser.State state, IntPredicate exitCondition) {
         this.state = state;
+        this.exitCondition = exitCondition;
         state.setLineStart(s.charAt(s.length()-1)=='\n');
         this.ws = ws;
         this.spreadLines = spreadLines;
@@ -71,18 +78,23 @@ public class PlainParserStep extends ParserStep {
                     //p.applyContinue();
                     return;
                 } else {
-                    if (oldLast == c) {
-                        value.deleteCharAt(value.length() - 1);
-                        if (value.length() == 0) {
-                            p.applyDropReplace(new StyledParserStep(c + "" + c, spreadLines, lineStart,ws));
-                            return;
-                        } else {
-                            p.applyPopReplace(new StyledParserStep(c + "" + c, spreadLines, lineStart,ws));
-                            return;
+                    if(exitCondition!=null && exitCondition.test(c)){
+                        p.applyPopReject(c);
+                        return;
+                    }else {
+                        if (oldLast == c) {
+                            value.readLast();
+                            if (value.length() == 0) {
+                                p.applyDropReplace(new StyledParserStep(c + "" + c, spreadLines, lineStart, ws));
+                                return;
+                            } else {
+                                p.applyPopReplace(new StyledParserStep(c + "" + c, spreadLines, lineStart, ws));
+                                return;
+                            }
                         }
+                        p.applyPopReject(c);
+                        return;
                     }
-                    p.applyPopReject(c);
-                    return;
                 }
             }
             case 'ø': {
@@ -93,8 +105,13 @@ public class PlainParserStep extends ParserStep {
                     //p.applyContinue();
                     return;
                 } else {
-                    p.applyPop();
-                    return;
+                    if(exitCondition!=null && exitCondition.test(c)){
+                        p.applyPopReject(c);
+                        return;
+                    }else {
+                        p.applyPop();
+                        return;
+                    }
                 }
             }
             case '`':
@@ -115,8 +132,13 @@ public class PlainParserStep extends ParserStep {
 //                        p.applyContinue();
                     return;
                 } else {
-                    p.applyPopReject(c);
-                    return;
+                    if(exitCondition!=null && exitCondition.test(c)){
+                        p.applyPopReject(c);
+                        return;
+                    }else {
+                        p.applyPopReject(c);
+                        return;
+                    }
                 }
             }
             case '\n':
@@ -158,9 +180,13 @@ public class PlainParserStep extends ParserStep {
                 if (wasEscape) {
                     wasEscape = false;
                 }
-                value.append(c);
-//                    p.appContinue();
+                if(exitCondition!=null && exitCondition.test(c)){
+                    p.applyPopReject(c);
+                }else {
+                    value.append(c);
+                }
                 return;
+//                    p.appContinue();
             }
         }
     }

@@ -6,11 +6,11 @@ strip last component from file name
 
 ##) EXAMPLES:
 
-==dirname== /usr/bin/
+```sh dirname /usr/bin/```
     "/usr"
 
-==dirname== dir1/str dir2/str
+```sh dirname dir1/str dir2/str```
     "dir1" followed by "dir2"
 
-==dirname== stdio.h
+```sh dirname stdio.h```
     "."
