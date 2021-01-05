@@ -1,4 +1,15 @@
-njob jobs manipulate jobs
+###) njob jobs:
+manage jobs
+
+####) SYNOPSIS:
+
+####) add project:
+
+```sh
+njob ( add | remove | update | show | list ) job  <options>...
+```
+
+####) add project:
 
 ```sh
 njob jobs|j add|a [options] <job-name>
@@ -10,10 +21,26 @@ njob jobs|j add|a [options] <job-name>
 
     add new job
 
+####) update project:
+
+```sh
+njob jobs|j update|a [options] <job-name>
+```
+    ```sh on <start-date> ```
+    ```sh at <start-time> ```
+    ```sh for <project> ```
+    ```sh obs <observations> ```
+
+    add new job
+
+####) remove job:
+
 ```sh
 njob jobs|j remove|rm <job-id> ...
 ```
     remove jobs
+
+####) show job:
 
 ```sh
 njob jobs|j show|s <job-id> ...
@@ -21,12 +48,14 @@ njob jobs|j show|s <job-id> ...
     show job details
 
 
+####) list jobs:
+
 ```sh
 njob jobs|j list|l [<-options>]
 ```
     list jobs.
 
-##) OPTIONS:
+####) OPTIONS:
 
     ```sh -w=<n>  ``` last <n> weeks
     ```sh -m=<n>  ``` last <n> months

@@ -124,7 +124,9 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         Path javaFile = nutMainFile.getPath();
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         NutsWorkspace ws = executionContext.getWorkspace();
-        Path folder = Paths.get(ws.io().tmp().createTempFolder("jj", executionContext.getTraceSession()));
+        Path folder = Paths.get(ws.io().tmp()
+                .setSession(executionContext.getTraceSession())
+                .createTempFolder("jj"));
         int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
         if (res != 0) {
             throw new NutsExecutionException(ws, "compilation failed", res);

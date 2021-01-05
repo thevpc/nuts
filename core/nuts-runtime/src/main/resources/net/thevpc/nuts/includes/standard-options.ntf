@@ -33,7 +33,7 @@ Nuts commands share a set of options that are automatically supported and handle
        ```sh --plain[=<format-options>]```      : trace operation as plain text. equivalent to ```sh --output-format=plain```
        ```sh --json[=<format-options>]```       : trace operation as json. equivalent to ```sh --output-format=json```
        ```sh --xml[=<format-options>]```        : trace operation xml. equivalent to ```sh --output-format=xml```
-       ```sh --props[=<format-options>]```      : trace operation as (##&_:Java™##) properties, key value list. equivalent to ```sh --output-format=props```
+       ```sh --props[=<format-options>]```      : trace operation as (##:_:Java™##) properties, key value list. equivalent to ```sh --output-format=props```
        ```sh --table[=<format-options>]```      : trace operation as table. equivalent to ```sh --output-format=table```
        ```sh --tree[=<format-options>]```       : trace operation as tree. equivalent to ```sh --output-format=tree```
        ```sh --output-format-option=<format-options>```

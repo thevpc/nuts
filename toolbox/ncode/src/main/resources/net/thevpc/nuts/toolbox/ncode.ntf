@@ -1,27 +1,8 @@
-update
-check-updates
-create workspace ...
-set workspace ...
-create repo ...
-add repo ...
-remove repo ...
-list repos ...
-add extension ...
-list extensions ...
-edit repo <repoId> ...
-list imports
-clear imports
-list archetypes
-import
-list imports
-clear imports
-unimport
-list users
-add user
-edit user
-passwd
-secure
-unsecure
-set loglevel verbose|fine|finer|finest|error|severe|config|all|none
+##) ncode:
+generate code documentation (incubating)
 
-
+###) SYNOPSIS:
+```sh
+ncode <path> ...
+ ```
+generate code documentation

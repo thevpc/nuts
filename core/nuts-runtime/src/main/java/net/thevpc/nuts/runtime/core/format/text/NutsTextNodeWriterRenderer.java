@@ -278,12 +278,12 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
     }
 
     public final void writeLater(byte[] later){
-        ws.log().of(NutsTextNodeWriterRenderer.class)
-                .with()
-                .session(ws.createSession())
-                .level(Level.FINEST)
-                .verb(NutsLogVerb.DEBUG)
-                .log("store Later on "+System.identityHashCode(this));
+//        ws.log().of(NutsTextNodeWriterRenderer.class)
+//                .with()
+//                .session(ws.createSession())
+//                .level(Level.FINEST)
+//                .verb(NutsLogVerb.DEBUG)
+//                .log("store Later on "+System.identityHashCode(this));
         this.later = later;
         try {
             rawOutput.flush();
@@ -296,12 +296,12 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
         try {
             byte[] b = later;
             if (b != null) {
-                ws.log().of(NutsTextNodeWriterRenderer.class)
-                        .with()
-                        .session(ws.createSession())
-                        .level(Level.FINEST)
-                        .verb(NutsLogVerb.DEBUG)
-                        .log("process Later on "+System.identityHashCode(this));
+//                ws.log().of(NutsTextNodeWriterRenderer.class)
+//                        .with()
+//                        .session(ws.createSession())
+//                        .level(Level.FINEST)
+//                        .verb(NutsLogVerb.DEBUG)
+//                        .log("process Later on "+System.identityHashCode(this));
                 later = null;
                 if (enableBuffering) {
                     if (b.length + bufferSize < buffer.length) {

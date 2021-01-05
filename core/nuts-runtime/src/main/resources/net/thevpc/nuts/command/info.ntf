@@ -10,7 +10,7 @@ show workspace information and exit
 ```sh -c | --cmd```
     show command arguments
 ```sh -e | --env```
-    show environment info (##&_Java™## version, os version, ...)
+    show environment info (##:_:Java™## version, os version, ...)
 ```sh -p | --path```
     show workspace locations
 ```sh -f | --fancy```

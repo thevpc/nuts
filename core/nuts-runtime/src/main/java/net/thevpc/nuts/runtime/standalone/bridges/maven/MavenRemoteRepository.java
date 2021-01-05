@@ -422,7 +422,10 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 if (localPath == null) {
                     return new NutsDefaultContent(content.toString(), true, false);
                 } else {
-                    String tempFile = getWorkspace().io().tmp().createTempFile(content.getFileName().toString(), this, session);
+                    String tempFile = getWorkspace().io().tmp()
+                            .setSession(session)
+                            .setRepositoryId(getUuid())
+                            .createTempFile(content.getFileName().toString());
                     getWorkspace().io().copy()
                             .setSession(session)
                             .from(content).to(tempFile).safe().run();
@@ -432,7 +435,10 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         }
         if (localPath == null) {
             String p = helper.getIdPath(id);
-            String tempFile = getWorkspace().io().tmp().createTempFile(new File(p).getName(), this, session);
+            String tempFile = getWorkspace().io().tmp()
+                    .setSession(session)
+                    .setRepositoryId(getUuid())
+                    .createTempFile(new File(p).getName());
             try {
                 getWorkspace().io().copy()
                         .setSession(session)

@@ -1,48 +1,52 @@
-==ndocusaurus== is a docusaurus project toolbox. It helps templating docusaurus folder and generating pdf file
+##) ndocusaurus:
+a docusaurus project toolbox
 
 ##) SYNOPSIS:
 
-==ndocusaurus== **<options>** {{command}}
+```sh ndocusaurus <--options> <command>```
     run ndocusaurus command
-
-Only docusaurus v2 is supported. "docusaurus.config.js" needs to include 'customFields'
-as show in the following example.
-
-
-customFields: {
-    docusaurus:{
-        generateSidebarMenu:false
-    },
-    asciidoctor: {
-        path: 'pdf',
-        pdf: {
-            output:'pdf/',
-            headers: [
-                ':doctype: book',
-            ],
-            command: {
-                bin: 'asciidoctor-pdf.ruby2.7',
-                args: [
-                    '-a',
-                    'pdf-themesdir=${asciidoctor.baseDir}/resources/themes',
-                    '-a',
-                    'pdf-theme=custom',
-                    '-a',
-                    'pdf-fontsdir=${asciidoctor.baseDir}/resources/fonts/;GEM_FONTS_DIR',
-                ]
+    only docusaurus v2 is supported. "docusaurus.config.js" needs to include 'customFields'
+    as show in the following example.
+    ```json
+    customFields: {
+        docusaurus:{
+            generateSidebarMenu:false
+        },
+        asciidoctor: {
+            path: 'pdf',
+            pdf: {
+                output:'pdf/',
+                headers: [
+                    ':doctype: book',
+                ],
+                command: {
+                    bin: 'asciidoctor-pdf.ruby2.7',
+                    args: [
+                        '-a',
+                        'pdf-themesdir=${asciidoctor.baseDir}/resources/themes',
+                        '-a',
+                        'pdf-theme=custom',
+                        '-a',
+                        'pdf-fontsdir=${asciidoctor.baseDir}/resources/fonts/;GEM_FONTS_DIR',
+                    ]
+                }
             }
         }
     }
-}
+    ```
 
 ##) OPTIONS:
- **-d**
- **--dir**   : docusaurus working directory. defaults to '.'
+ ```sh -d ```
+ ```sh --dir```   :
+    docusaurus working directory. defaults to '.'
 
 ##) COMMANDS:
- {{pdf}}     : runs pdf converter using asciidoctor configuration in "docusaurus.config.js"
- {{build}}   : builds website (runs npm run-script build)
- {{start}}   : runs website locally (runs npm start)
+ ```sh ndocusaurus pdf```     :
+        runs pdf converter using asciidoctor configuration in "docusaurus.config.js"
+ ```sh ndocusaurus build```   :
+        builds website (runs npm run-script build)
+ ```sh ndocusaurus start```   :
+        runs website locally (runs npm start)
 
 ##) EXAMPLES:
 ```sh ndocusaurus pdf```

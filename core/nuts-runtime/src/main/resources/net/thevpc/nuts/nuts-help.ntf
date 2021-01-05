@@ -1,32 +1,32 @@
 #!include</net/thevpc/nuts/includes/standard-header.ntf>
 
-```sh nuts``` stands for ##Network Updatable Things Services## tool. It is a ##&_:Package Manager## for (mainly) ##&_:Java™##
-and non ##&_:Java™## world. It helps discovering, downloading, assembling and executing  remote artifacts
+```sh nuts``` stands for ##Network Updatable Things Services## tool. It is a ##:_:Package Manager## for (mainly) ##:_:Java™##
+and non ##:_:Java™## world. It helps discovering, downloading, assembling and executing  remote artifacts
 (packages) in a very handy way.
 Each managed artifact  is also called a ```sh nuts``` which  is a ##Network Updatable Thing Service##.
-```sh nuts``` artifacts are  stored  into repositories. A  ##&_:repository##  may be local for  storing local ```sh nuts```
+```sh nuts``` artifacts are  stored  into repositories. A  ##:_:repository##  may be local for  storing local ```sh nuts```
 or remote for accessing  remote artifacts (good examples  are  remote maven  repositories). It may
-also be a proxy ##&_:repository## so that remote artifacts are fetched and cached locally to save network
+also be a proxy ##:_:repository## so that remote artifacts are fetched and cached locally to save network
 resources.
-One manages a set of repositories called a  ##&_:workspace##. Managed ```sh nuts```  (artifacts)  have descriptors
+One manages a set of repositories called a  ##:_:workspace##. Managed ```sh nuts```  (artifacts)  have descriptors
 that depict dependencies between them. This dependency is seamlessly handled by  ```sh nuts```  (tool) to
 resolve and download on-need dependencies over the wire.
 
-```sh nuts``` is a swiss army knife tool as it acts like (and supports) maven ##&_:build tool## to have an abstract
-view of the the  artifacts ##&_:dependency## and like  zypper/apt-get/pip/npm  ##&_:package manager tools##
-to ##&_:install## and ##&_:uninstall## artifacts allowing multiple versions of the very same artifact to  be installed.
+```sh nuts``` is a swiss army knife tool as it acts like (and supports) maven ##:_:build tool## to have an abstract
+view of the the  artifacts ##:_:dependency## and like  zypper/apt-get/pip/npm  ##:_:package manager tools##
+to ##:_:install## and ##:_:uninstall## artifacts allowing multiple versions of the very same artifact to  be installed.
 
-Although ```sh nuts``` focuses on ##&_:Java™## artifacts, it still supports, by design, native and all non ##&_:Java™## artifacts.
+Although ```sh nuts``` focuses on ##:_:Java™## artifacts, it still supports, by design, native and all non ##:_:Java™## artifacts.
 Dependencies are fetched according to the current operating system type, distribution and hardware
 architectures.
 
-```sh nuts``` works either as ##&_:standalone application## or as ##&_:Java™ library## to enable dynamic and dependency
+```sh nuts``` works either as ##:_:standalone application## or as ##:_:Java™ library## to enable dynamic and dependency
 aware class loading and brings a rich toolset to provide a versatile portable command line tools such
 as ###nsh### (a bash like shell), ###tomcat###, ###derby### ... wrapper tools to make it easier providing
-##&_:development## , ##&_:test## and ##&_:deployment## reproducible environments.
+##:_:development## , ##:_:test## and ##:_:deployment## reproducible environments.
 
-With container concepts in mind, ```sh nuts``` is the perfect ##&_:Java™## application tool for Docker, CoreOs
-and other ##&_:container engines##.
+With container concepts in mind, ```sh nuts``` is the perfect ##:_:Java™## application tool for Docker, CoreOs
+and other ##:_:container engines##.
 
 ##) COMMON VERBS:
 install,uninstall,update : install/uninstall/update an artifact (using its fetched/deployed installer)
@@ -43,25 +43,25 @@ nuts [<-options>]... <command> <args> ...
 ##) VERSIONS:
 Boot API     Version: ###${nuts.workspace-boot.version}###
 Boot Runtime Version: ###${nuts.workspace-runtime.version}###
-##&_:Java™##        Version: ###${java.version} (${java.vm.name})###
+##:_:Java™##        Version: ###${java.version} (${java.vm.name})###
 
 ##) NUTS OPTIONS:
  There are four (4) types of options : 
- * ##&_:create options##
- * ##&_:create exported options##
- * ##&_:open options##
- * ##&_:open exported options##
+ * ##:_:create options##
+ * ##:_:create exported options##
+ * ##:_:open options##
+ * ##:_:open exported options##
 
- ##&_:create exported options## are considered both when creating a new workspace and when running it. If they are specified in creation
+ ##:_:create exported options## are considered both when creating a new workspace and when running it. If they are specified in creation
                     they will be persisted. If they are specified later they will override persisted values without persisting the changes
 
- ##&_:create options## are considered solely when creating a new workspace. They will be persisted then (to the configuration file)
+ ##:_:create options## are considered solely when creating a new workspace. They will be persisted then (to the configuration file)
                     but they will be ignored elsewhere if the workspace already exists : configured parameters will be in use.
 
- ##&_:open exported options## are open (so transient, non persistent) options that will override any configured value (if any)
-                      having the ability to be exported to any ##&_:Java™## child process (as system property ```sh -D```...)
+ ##:_:open exported options## are open (so transient, non persistent) options that will override any configured value (if any)
+                      having the ability to be exported to any ##:_:Java™## child process (as system property ```sh -D```...)
 
- ##&_:open options## are transient (non persistent) options that will override any configured value (if any) and will be
+ ##:_:open options## are transient (non persistent) options that will override any configured value (if any) and will be
                      in use in the current process (and ignored elsewhere). Such options will be considered in creating workspaces
                      as well but still they are not persistent.
 
@@ -101,17 +101,17 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --java      <java-command> ```
  ```sh --boot-java <java-command> ```
  ```sh -j <java-command> ```
-      ##&_:Java™## command to run new instance of ```sh nuts```
+      ##:_:Java™## command to run new instance of ```sh nuts```
 
  ```sh --java-home      <java-home> ```
  ```sh --boot-java-home <java-home> ```
  ```sh -J <java-home> ```
-      ##&_:Java™## home to run new instance of ```sh nuts```. When ##&_:Java™## command is present, this will be ignored.
+      ##:_:Java™## home to run new instance of ```sh nuts```. When ##:_:Java™## command is present, this will be ignored.
 
  ```sh --java-options      <java-options> ```
  ```sh --boot-java-options  <java-options> ```
  ```sh -J <java-options> ```
-      ##&_:Java™## options to run new instance of nuts
+      ##:_:Java™## options to run new instance of nuts
 
 ###) NUTS CREATE OPTIONS:
 
@@ -131,7 +131,7 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
                         You should use it in conjunction with ```sh --boot-repos``` options to enable a valid location from
                         which nuts would be downloaded as well.
           ```kw server```  : will create an almost empty workspace with a single ```sh nuts``` local repository
-                        and a couple of users ##&_:guest## (read support) and ##&_:contributor## (write support).
+                        and a couple of users ##:_:guest## (read support) and ##:_:contributor## (write support).
                         You should use it in conjunction with ```sh --boot-repos``` options to enable a valid location from
                                                 which nuts would be downloaded as well.
 

@@ -20,17 +20,17 @@ type (```sh nuts help --colors```) to display this help
 ##) NTF COLORS:
 nuts supports 4 types of colors :
  */ primary (foreground) and secondary (background) colors are defined by themes and are customizable
-             syntax foreground   : ```[#]+Text[#]+``` or ```##&p<0-15>: Text##```
-             syntax background   : ```##&s<0-15>: Text##```
+             syntax foreground   : ```[#]+Text[#]+``` or ```##:p<0-15>: Text##```
+             syntax background   : ```##:s<0-15>: Text##```
  */ 4bit colors (0-15) define a predefined color palette of 16 colors as defined by ANSI terminal formats
-             syntax foreground   : ```##&f<0-15>: Text##```
-             syntax background   : ```##&b<0-15>: Text##```
+             syntax foreground   : ```##:f<0-15>: Text##```
+             syntax background   : ```##:b<0-15>: Text##```
  */ 8bit colors (0-255) define a predefined color palette of 256 colors as defined by ANSI terminal formats
-             syntax foreground   : ```##&f<0-255>: Text##```
-             syntax background   : ```##&b<0-255>: Text##```
+             syntax foreground   : ```##:f<0-255>: Text##```
+             syntax background   : ```##:b<0-255>: Text##```
  */ 24bit colors (r-g-b) define a predefined color palette of 16M colors as defined by ANSI terminal formats
-             syntax foreground   : ```##&fx<hexa-6-digits>: Text##```
-             syntax background   : ```##&bx<hexa-6-digits>: Text##```
+             syntax foreground   : ```##:fx<hexa-6-digits>: Text##```
+             syntax background   : ```##:bx<hexa-6-digits>: Text##```
 
 ##Format##                                   | ##Display##                       | ##Description##
 ----------------------------------------------------------------------------------------------------

@@ -60,28 +60,33 @@
         </repository>
     </distributionManagement>
     <dependencies>
-        <dependency>
-            <groupId>io.github.swagger2markup</groupId>
-            <artifactId>swagger2markup</artifactId>
-            <version>1.3.3</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.github.swagger2markup</groupId>-->
+<!--            <artifactId>swagger2markup</artifactId>-->
+<!--            <version>1.3.3</version>-->
+<!--        </dependency>-->
         <!--        <dependency>-->
         <!--            <groupId>org.slf4j</groupId>-->
         <!--            <artifactId>slf4j-api</artifactId>-->
         <!--            <version>1.7.30</version>-->
         <!--        </dependency>-->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.25</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/nl.jworks.markdown_to_asciidoc/markdown_to_asciidoc -->
-        <dependency>
-            <groupId>nl.jworks.markdown_to_asciidoc</groupId>
-            <artifactId>markdown_to_asciidoc</artifactId>
-            <version>1.1</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.slf4j</groupId>-->
+<!--            <artifactId>slf4j-jdk14</artifactId>-->
+<!--            <version>1.7.25</version>-->
+<!--        </dependency>-->
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/nl.jworks.markdown_to_asciidoc/markdown_to_asciidoc &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>nl.jworks.markdown_to_asciidoc</groupId>-->
+<!--            <artifactId>markdown_to_asciidoc</artifactId>-->
+<!--            <version>1.1</version>-->
+<!--        </dependency>-->
 
+        <dependency>
+            <artifactId>snakeyaml</artifactId>
+            <groupId>org.yaml</groupId>
+            <version>1.13</version>
+        </dependency>
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
@@ -91,11 +96,27 @@
             <groupId>net.thevpc.common</groupId>
             <artifactId>thevpc-common-md-asciidoctor</artifactId>
             <version>1.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>snakeyaml</artifactId>
+                    <groupId>org.yaml</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>net.thevpc.common</groupId>
             <artifactId>thevpc-common-strings</artifactId>
             <version>1.2.18</version>
+        </dependency>
+        <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj</artifactId>
+            <version>1.5.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj-pdf</artifactId>
+            <version>1.5.0-alpha.16</version>
         </dependency>
     </dependencies>
     <build>

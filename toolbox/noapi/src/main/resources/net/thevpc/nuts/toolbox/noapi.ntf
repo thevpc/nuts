@@ -1,9 +1,12 @@
-==noapi== is a Open API Documentation Generation Tool
+##) noapi:
+Open API Documentation Generation Tool
 
-##) SYNOPSIS:
+###) SYNOPSIS:
 
-==noapi== {{command}} <options>
+```sh noapi <command> <options>```
 
 
-==noapi== {{pdf}} \[{{--open-api}}\]  <path>
+###) open api pdf:
+
+```sh noapi pdf [--open-api] <path>```
     generate pdf from open api file (<path>)

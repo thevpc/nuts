@@ -10,7 +10,6 @@ import net.thevpc.common.strings.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 
 public class DeployFacadeCommand extends AbstractFacadeCommand {
     public DeployFacadeCommand() {
@@ -25,7 +24,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
     public void executeImpl(FacadeCommandContext context) throws IOException {
         String boundary = context.getRequestHeaderFirstValue("Content-type");
         if (StringUtils.isBlank(boundary)) {
-            context.sendError(400, "Invalid JShellCommandNode Arguments : " + getName() + " . Invalid format.");
+            context.sendError(400, "invalid JShellCommandNode arguments : " + getName() + " . invalid format.");
             return;
         }
         MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary);
@@ -51,11 +50,12 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                     }
                     break;
                 case "content":
-                    contentFile = context.getWorkspace().io().tmp().createTempFile(
+                    contentFile = context.getWorkspace().io().tmp()
+                            .setSession(context.getSession())
+                            .createTempFile(
                             context.getWorkspace().locations().getDefaultIdFilename(
                                     descriptor.getId().builder().setFaceDescriptor().build()
-                            ),
-                            context.getSession());
+                            ));
                     context.getWorkspace().io().copy()
                             .setSession(context.getSession())
                             .setSource(info.getContent())
@@ -65,7 +65,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
             }
         }
         if (contentFile == null) {
-            context.sendError(400, "invalid JShellCommandNode arguments : " + getName() + " : missing File");
+            context.sendError(400, "invalid JShellCommandNode arguments : " + getName() + " : missing file");
         }
         NutsId id = context.getWorkspace().deploy().setContent(contentFile)
                 .setSha1(receivedContentHash)

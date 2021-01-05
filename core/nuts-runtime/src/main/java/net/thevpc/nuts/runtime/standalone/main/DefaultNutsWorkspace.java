@@ -147,7 +147,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCRF.log("   java-library-path              : {0}", System.getProperty("java.library.path"));
             LOGCRF.log("   os-name                        : {0}", System.getProperty("os.name"));
             LOGCRF.log("   os-arch                        : {0}", System.getProperty("os.arch"));
-            LOGCRF.log("   os-version                     : {0}", System.getProperty("os.version"));
+            LOGCRF.log("   os-version                     : {0}", env().getOsDist().getVersion());
             LOGCRF.log("   user-name                      : {0}", System.getProperty("user.name"));
             LOGCRF.log("   user-dir                       : {0}", System.getProperty("user.dir"));
             LOGCRF.log("   user-home                      : {0}", System.getProperty("user.home"));

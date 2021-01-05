@@ -49,7 +49,12 @@ public class NMysqlMain extends NutsApplication {
                 }
                 case "list":{
                     commandLine.skip();
-                    runList(commandLine,service);
+                    runList(commandLine,service,false);
+                    return;
+                }
+                case "desc":{
+                    commandLine.skip();
+                    runList(commandLine,service,true);
                     return;
                 }
                 case "backup":{
@@ -77,7 +82,7 @@ public class NMysqlMain extends NutsApplication {
                 }
             }
         }
-        runList(commandLine,service);
+        runList(commandLine,service,false);
 //        String[] args = context.getArguments();
 //        if (args.length == 0) {
 //            throw new NutsExecutionException(context.getWorkspace(), "Expected --remote or --local", 2);
@@ -508,21 +513,21 @@ public class NMysqlMain extends NutsApplication {
                     if (someUpdates && service.getContext().getSession().isPlainTrace()) {
                         if (add) {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("adding config (with override) %s%n",
+                                service.getContext().getSession().out().printf("adding local config (with override) %s%n",
                                         factory.styled(
                                         StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3))
                                 );
                             } else {
-                                service.getContext().getSession().out().printf("adding config %s%n",
+                                service.getContext().getSession().out().printf("adding local config %s%n",
                                         factory.styled(
                                         StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
                             }
                         } else {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("updating config (with override) %s%n",
+                                service.getContext().getSession().out().printf("updating local config (with override) %s%n",
                                         factory.styled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
                             } else {
-                                service.getContext().getSession().out().printf("updating config %s%n",
+                                service.getContext().getSession().out().printf("updating local config %s%n",
                                         factory.styled(
                                         StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
                             }
@@ -569,19 +574,19 @@ public class NMysqlMain extends NutsApplication {
                     if (someUpdates && service.getContext().getSession().isPlainTrace()) {
                         if (add) {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("adding db (with override) %s%n",
+                                service.getContext().getSession().out().printf("adding local instance (with override) %s%n",
                                         factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3)));
                             } else {
-                                service.getContext().getSession().out().printf("adding db %s%n",
+                                service.getContext().getSession().out().printf("adding local instance %s%n",
                                         factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3)));
                             }
                         } else {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("updating db (with override) %s%n",
+                                service.getContext().getSession().out().printf("updating local instance (with override) %s%n",
                                         factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3))
                                 );
                             } else {
-                                service.getContext().getSession().out().printf("updating db %s%n",
+                                service.getContext().getSession().out().printf("updating local instance %s%n",
                                         factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3))
                                 );
                             }
@@ -602,7 +607,9 @@ public class NMysqlMain extends NutsApplication {
                 }else if(forRemote_remoteName==null){
                     forRemote_remoteName=forRemote_localName;
                 }
-                service.loadLocalMysqlConfig(forRemote_localName.toString(), NutsOpenMode.OPEN_OR_ERROR);
+                service.loadLocalMysqlConfig(forRemote_localName.getConfigName(), NutsOpenMode.OPEN_OR_ERROR)
+                .getDatabase(forRemote_localName.getDatabaseName(),NutsOpenMode.OPEN_OR_ERROR)
+                ;
                 RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(name.getConfigName(), NutsOpenMode.OPEN_OR_CREATE);
                 boolean overrideExisting = false;
                 if (add) {
@@ -645,18 +652,18 @@ public class NMysqlMain extends NutsApplication {
                     if (someUpdates && service.getContext().getSession().isPlainTrace()) {
                         if (add) {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("adding config (with override) %s%n",
+                                service.getContext().getSession().out().printf("adding remote config (with override) %s%n",
                                         factory.styled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
                             } else {
-                                service.getContext().getSession().out().printf("adding config %s%n",
+                                service.getContext().getSession().out().printf("adding remote config %s%n",
                                         factory.styled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
                             }
                         } else {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("updating config (with override) %s%n",
+                                service.getContext().getSession().out().printf("updating remote config (with override) %s%n",
                                         factory.styled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
                             } else {
-                                service.getContext().getSession().out().printf("updating config %s%n",
+                                service.getContext().getSession().out().printf("updating remote config %s%n",
                                         factory.styled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
                             }
                         }
@@ -678,19 +685,19 @@ public class NMysqlMain extends NutsApplication {
                     if (someUpdates && service.getContext().getSession().isPlainTrace()) {
                         if (add) {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("adding db (with override) %s%n",
+                                service.getContext().getSession().out().printf("adding remote instance (with override) %s%n",
                                         factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3)));
                             } else {
-                                service.getContext().getSession().out().printf("adding db %s%n",
+                                service.getContext().getSession().out().printf("adding remote instance %s%n",
                                         factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3)));
                             }
                         } else {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("updating db (with override) %s%n",
+                                service.getContext().getSession().out().printf("updating remote instance (with override) %s%n",
                                         factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3))
                                 );
                             } else {
-                                service.getContext().getSession().out().printf("updating db %s%n",
+                                service.getContext().getSession().out().printf("updating remote instance %s%n",
                                         factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3)));
                             }
                         }
@@ -781,7 +788,57 @@ public class NMysqlMain extends NutsApplication {
         }
     }
 
-    public void runList(NutsCommandLine commandLine,NMySqlService service) {
+    public Object toObject(String dbName, String confName, LocalMysqlDatabaseConfig config,boolean describe,boolean plain,NutsApplicationContext context) {
+        NutsTextFormatManager text = context.getSession().getWorkspace().formats().text();
+        if(!describe){
+            if(plain){
+                return text.builder()
+                        .append(" [local ] ",NutsTextNodeStyle.primary(4))
+                        .append(dbName).append("@").append(confName,NutsTextNodeStyle.primary(4))
+                        ;
+            }else {
+                return new Object[]{"local",dbName, confName};
+            }
+        }else{
+            if(plain){
+                return text.builder()
+                        .append(" [local ] ",NutsTextNodeStyle.primary(4))
+                        .append(dbName).append("@").append(confName,NutsTextNodeStyle.primary(4))
+                        .append(" db=").append(config.getDatabaseName())
+                        .append(" user=").append(config.getUser());
+            }else {
+                return new Object[]{"local",dbName, confName,config.getUser()};
+            }
+        }
+    }
+
+    public Object toObject(String dbName, String confName, RemoteMysqlDatabaseConfig config,boolean describe,boolean plain,NutsApplicationContext context) {
+        NutsTextFormatManager text = context.getSession().getWorkspace().formats().text();
+        if(!describe){
+            if(plain){
+                return text.builder()
+                        .append(" [remote] ",NutsTextNodeStyle.primary(4))
+                        .append(dbName).append("@").append(confName,NutsTextNodeStyle.primary(4))
+                        ;
+            }else {
+                return new Object[]{"remote",dbName, confName};
+            }
+        }else{
+            if(plain){
+                return text.builder()
+                        .append(" [remote] ",NutsTextNodeStyle.primary(4))
+                        .append(dbName).append("@").append(confName,NutsTextNodeStyle.primary(4))
+                        .append(" local=").append(config.getLocalName())
+                        .append(" remote=").append(config.getRemoteName())
+                        .append(" on=").append(config.getServer())
+                        ;
+            }else {
+                return new Object[]{"remote",dbName, confName,config.getLocalName(),config.getRemoteName(),config.getServer()};
+            }
+        }
+    }
+
+    public void runList(NutsCommandLine commandLine,NMySqlService service,boolean describe) {
         commandLine.setCommandName("mysql list");
         List<AtName> localNames = new ArrayList<>();
         List<AtName> remoteNames = new ArrayList<>();
@@ -844,11 +901,11 @@ public class NMysqlMain extends NutsApplication {
                 for (LocaleOrRemote cnf : result) {
                     if(cnf.local!=null) {
                         for (Map.Entry<String, LocalMysqlDatabaseConfig> db : cnf.local.getDatabases().entrySet()) {
-                            session.getIterableOutput().next(new Object[]{db.getKey(), cnf.name});
+                            session.getIterableOutput().next(toObject(db.getKey(),cnf.name,db.getValue(),describe,false, service.getContext()));
                         }
                     }else{
                         for (Map.Entry<String, RemoteMysqlDatabaseConfig> db : cnf.remote.getDatabases().entrySet()) {
-                            session.getIterableOutput().next(new Object[]{db.getKey(), cnf.name});
+                            session.getIterableOutput().next(toObject(db.getKey(),cnf.name,db.getValue(),describe,false, service.getContext()));
                         }
                     }
                 }
@@ -862,11 +919,15 @@ public class NMysqlMain extends NutsApplication {
                     for (LocaleOrRemote cnf : result) {
                         if(cnf.local!=null) {
                             for (Map.Entry<String, LocalMysqlDatabaseConfig> db : cnf.local.getDatabases().entrySet()) {
-                                service.getContext().getSession().out().println(text.builder().append(db.getKey()).append("@").append(cnf.name,NutsTextNodeStyle.primary(4)));
+                                service.getContext().getSession().out().printf("%s%n",
+                                        toObject(db.getKey(),cnf.name,db.getValue(),describe,true, service.getContext())
+                                );
                             }
                         }else{
                             for (Map.Entry<String, RemoteMysqlDatabaseConfig> db : cnf.remote.getDatabases().entrySet()) {
-                                service.getContext().getSession().out().println(text.builder().append(db.getKey()).append("@").append(cnf.name,NutsTextNodeStyle.primary(4)));
+                                service.getContext().getSession().out().printf("%s%n",
+                                        toObject(db.getKey(),cnf.name,db.getValue(),describe,true, service.getContext())
+                                );
                             }
                         }
                     }

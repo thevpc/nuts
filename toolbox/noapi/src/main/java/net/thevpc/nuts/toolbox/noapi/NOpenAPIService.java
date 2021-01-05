@@ -3,6 +3,9 @@ package net.thevpc.nuts.toolbox.noapi;
 import net.thevpc.commons.md.*;
 import net.thevpc.commons.md.asciidoctor.AsciiDoctorWriter;
 import net.thevpc.nuts.*;
+import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.OptionsBuilder;
+import org.asciidoctor.SafeMode;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
@@ -38,53 +41,51 @@ public class NOpenAPIService {
         }
         MdDocument md = toMarkdown(source);
         if (targetType.equals("adoc")) {
-            writeAdoc(md, target);
+            writeAdoc(md, target,appContext.getSession().isPlainTrace());
         } else if (targetType.equals("pdf")) {
             String temp = null;
             if (keep) {
                 temp = addExtension(source, "adoc").toString();
             } else {
-                try {
-                    temp = File.createTempFile("temp", ".adoc").getPath();
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
+                temp = appContext.getWorkspace().io().tmp()
+                        .setSession(appContext.getSession())
+                        .createTempFile("temp.adoc");
             }
-            writeAdoc(md, temp);
-            ProcessBuilder sb = new ProcessBuilder(
-                    "asciidoctor-pdf.ruby2.7",
-                    "-o",
-                    target,
-                    temp
-            );
-            try {
-                sb.inheritIO()
-                        .start().waitFor();
-            } catch (InterruptedException e) {
-                throw new IllegalArgumentException(e);
-            } catch (IOException e) {
-                throw new IllegalArgumentException(e);
+            writeAdoc(md, temp,keep && appContext.getSession().isPlainTrace());
+            if (new File(target).getParentFile() != null) {
+                new File(target).getParentFile().mkdirs();
             }
+            Asciidoctor asciidoctor = Asciidoctor.Factory.create();
+            String outfile = asciidoctor.convertFile(new File(temp),
+                    OptionsBuilder.options()
+//                            .inPlace(true)
+                            .backend("pdf")
+                            .safe(SafeMode.UNSAFE)
+                            .toFile(new File(target))
+                    );
             if (appContext.getSession().isPlainTrace()) {
-                appContext.getSession().out().printf("generated %s\n",
-                        appContext.getWorkspace().formats().text().builder().append(
-                                target, NutsTextNodeStyle.primary(4)
-                        )
-                );
+                    appContext.getSession().out().printf("generated pdf %s\n",
+                            appContext.getWorkspace().formats().text().builder().append(
+                                    target, NutsTextNodeStyle.primary(4)
+                            )
+                    );
+            }
+            if(!keep){
+                new File(temp).delete();
             }
         } else {
-            throw new NutsIllegalArgumentException(appContext.getWorkspace(),"unsupported");
+            throw new NutsIllegalArgumentException(appContext.getWorkspace(), "unsupported");
         }
     }
 
-    private void writeAdoc(MdDocument md, String target) {
+    private void writeAdoc(MdDocument md, String target,boolean trace) {
         try (MdWriter mw = new AsciiDoctorWriter(new FileWriter(target))) {
             mw.write(md);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        if (appContext.getSession().isPlainTrace()) {
-            appContext.getSession().out().printf("generated %s\n",
+        if (trace) {
+            appContext.getSession().out().printf("generated src %s\n",
                     appContext.getWorkspace().formats().text().builder().append(
                             target, NutsTextNodeStyle.primary(4)
                     )
@@ -133,7 +134,7 @@ public class NOpenAPIService {
     private MdDocument toMarkdown(InputStream inputStream, boolean json) {
         MdDocumentBuilder doc = new MdDocumentBuilder();
         doc.setProperty("headers", new String[]{
-                ":source-highlighter: pygments",
+                ":source-highlighter: coderay",
                 ":icons: font",
                 ":icon-set: pf",
                 ":doctype: book",
@@ -285,7 +286,7 @@ public class NOpenAPIService {
                         break;
                     }
                     case "openIdConnect": {
-                        all.add(MdFactory.title(4, ee.getKey() + " (OpenId Connect"));
+                        all.add(MdFactory.title(4, ee.getKey() + " (OpenId Connect)"));
                         all.add(MdFactory.text(ee.getValue().asObject().getString("description")));
                         all.add(MdFactory
                                 .table().addColumns(

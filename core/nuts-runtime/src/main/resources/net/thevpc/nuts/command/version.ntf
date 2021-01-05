@@ -10,7 +10,7 @@ nuts -v
 
 ##) OPTIONS:
 ```sh  -a | --all```
-      include all versions (api, runtime, ##&_:Java™## and operating system)
+      include all versions (api, runtime, ##:_:Java™## and operating system)
 
 ```sh --add <key>=<value> ```
       include key=value pair in the result

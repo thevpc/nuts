@@ -1,4 +1,7 @@
-##) SYNOPSIS:
+##) nmysql:
+manage mysql instances
+
+###) SYNOPSIS:
 ```sh nmysql <command> <global-options> <command-options>```
 manage local mysql database access configurations to help backup/restore data simply
 

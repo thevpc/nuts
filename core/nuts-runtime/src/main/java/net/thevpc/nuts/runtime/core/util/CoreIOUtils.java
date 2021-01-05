@@ -477,7 +477,9 @@ public class CoreIOUtils {
                 if (goodName.length() < 3) {
                     goodName = goodName + "-repo";
                 }
-                loc = ws.io().tmp().createTempFolder(goodName + "-", session).toString();
+                loc = ws.io().tmp()
+                        .setSession(session)
+                        .createTempFolder(goodName + "-");
             } else {
                 if (CoreStringUtils.isBlank(loc)) {
                     if (CoreStringUtils.isBlank(goodName)) {
@@ -881,6 +883,20 @@ public class CoreIOUtils {
         } else if (i > 0) {
             if (i < (s.length() - 1)) {
                 return s.substring(i + 1);
+            } else {
+                return "";
+            }
+        } else {
+            return "";
+        }
+    }
+    public static String getFileExtension(String s,boolean longest, boolean includeDot) {
+        int i = longest?s.indexOf('.'):s.lastIndexOf('.');
+        if (i == 0) {
+            return includeDot?s:s.substring(1);
+        } else if (i > 0) {
+            if (i < (s.length() - 1)) {
+                return s.substring(includeDot?i:(i + 1));
             } else {
                 return "";
             }
@@ -1681,7 +1697,10 @@ public class CoreIOUtils {
         } else if (is.getSource() instanceof File) {
             return ws.io().input().setMultiRead(true).of(((File) is.getSource()).toPath());
         } else {
-            Path temp = Paths.get(ws.io().tmp().createTempFile(is.getName(), session));
+            Path temp = Paths.get(ws.io().tmp()
+                    .setSession(session)
+                    .createTempFile(is.getName()
+                    ));
             ws.io().copy().safe(false).from(is).to(temp).setSession(session).run();
             tempPaths.add(temp);
             return ws.io().input().setMultiRead(true).of(temp);

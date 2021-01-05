@@ -58,12 +58,12 @@ public class AtName {
 
     public static AtName nextAppOption(NutsCommandLine cmd) {
         NutsArgument a = cmd.nextString();
-        return new AtName(a.getStringValue());
+        return a==null?null:new AtName(a.getStringValue());
     }
 
     public static AtName nextAppNonOption(NutsCommandLine cmd) {
         NutsArgument a = cmd.nextString();
-        return new AtName(a.getString());
+        return a==null?null:new AtName(a.getString());
     }
 
     public static AtName nextConfigNonOption(NutsCommandLine cmd) {

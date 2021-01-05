@@ -288,6 +288,9 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             if (!isPrefixed(nameSeqArray)) {
                 continue;
             }
+            if(nameSeqArray.length==0){
+                continue;
+            }
             String name = nameSeqArray[nameSeqArray.length - 1];
             NutsArgument p = get(nameSeqArray.length - 1);
             if (p != null) {

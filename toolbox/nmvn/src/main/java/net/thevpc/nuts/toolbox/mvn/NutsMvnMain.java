@@ -151,7 +151,9 @@ public class NutsMvnMain extends NutsApplication {
 
     private static Path createTempPom(NutsSession session) {
         NutsWorkspace ws=session.getWorkspace();
-        Path d = Paths.get(ws.io().tmp().createTempFolder(null, session));
+        Path d = Paths.get(ws.io().tmp()
+                .setSession(session)
+                .createTempFolder(null));
         try (Writer out = Files.newBufferedWriter(d.resolve("pom.xml"))) {
             out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                     + "<project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"

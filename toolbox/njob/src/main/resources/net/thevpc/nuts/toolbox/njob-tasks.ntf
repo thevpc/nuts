@@ -1,5 +1,14 @@
-```sh njob tasks``` manipulate tasks
+###) njob tasks:
+manage tasks
 
+
+####) SYNOPSIS:
+
+```sh
+njob ( add | remove | update | show | list ) task  <options>...
+```
+
+####) add task:
 ```sh
 njob tasks|t add|a [<-options>] <job-name>
 ```
@@ -10,17 +19,20 @@ njob tasks|t add|a [<-options>] <job-name>
 
     add new job
 
+####) remove task:
 ```sh
 njob tasks|t remove|rm <job-id> ...
 ```
     remove tasks
 
+####) show task:
 ```sh
 njob tasks|j show|s <job-id> ...
 ```
     show job details
 
 
+####) list tasks:
 ```sh
 njob tasks|j list|l [<-options>]
 ```

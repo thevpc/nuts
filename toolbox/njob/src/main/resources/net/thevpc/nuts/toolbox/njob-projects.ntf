@@ -1,6 +1,13 @@
-njob is a developer companion
+###) njob projects:
+manage projects
 
-##) SYNOPSIS:
+####) SYNOPSIS:
+
+```sh
+njob ( add | remove | update | show | list ) project  <options>...
+```
+
+####) add project:
 
 ```sh
 njob add project|ap  [options] <project-name>
@@ -14,6 +21,8 @@ njob add project|ap  [options] <project-name>
 
     add new project
 
+####) update project:
+
 ```sh
 njob update|up <project-name> [options]
 ```
@@ -26,15 +35,21 @@ njob update|up <project-name> [options]
 
     update project
 
+####) remove project:
+
 ```sh
 njob remove project|rmp <project-name> ...
 ```
     remove projects
 
+####) show project:
+
 ```sh
 njob show project|dp <project-name> ...
 ```
     show project details
+
+####) list projects:
 
 ```sh
 njob list projects|lp [options]

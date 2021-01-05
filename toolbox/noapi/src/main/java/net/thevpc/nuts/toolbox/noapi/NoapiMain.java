@@ -2,14 +2,12 @@ package net.thevpc.nuts.toolbox.noapi;
 
 import net.thevpc.nuts.*;
 
-import java.nio.file.Paths;
-
-public class NOpenAPIMain extends NutsApplication {
+public class NoapiMain extends NutsApplication {
 
     private NOpenAPIService service;
 
     public static void main(String[] args) {
-        new NOpenAPIMain().runAndExit(args);
+        new NoapiMain().runAndExit(args);
     }
 
     @Override
@@ -43,7 +41,7 @@ public class NOpenAPIMain extends NutsApplication {
                         openAPIFormat = "json";
                         return true;
                     }
-                    case "--openAPI": {
+                    case "--open-api": {
                         commandline.nextBoolean();
                         openAPI = true;
                         return true;

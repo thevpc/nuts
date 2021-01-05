@@ -35,6 +35,13 @@ public class StringBuilder2 {
 
     private StringBuilder sb = new StringBuilder();
 
+    public StringBuilder2() {
+    }
+
+    public StringBuilder2(String s) {
+        sb.append(s);
+    }
+
     public String readAll() {
         String s=sb.toString();
         sb.setLength(0);
@@ -196,6 +203,11 @@ public class StringBuilder2 {
         return this;
     }
 
+    public StringBuilder2 prepend(char c) {
+        sb.insert(0, c);
+        return this;
+    }
+
     public StringBuilder2 insert(int offset, char c) {
         sb.insert(offset, c);
         return this;
@@ -323,4 +335,10 @@ public class StringBuilder2 {
         return sb.hashCode();
     }
 
+    public boolean endsWith(char c) {
+        return sb.length()>0 && sb.charAt(sb.length()-1)==c;
+    }
+    public boolean endsWith(String s) {
+        return sb.length()>0 && sb.substring(sb.length()-s.length()).equals(s);
+    }
 }

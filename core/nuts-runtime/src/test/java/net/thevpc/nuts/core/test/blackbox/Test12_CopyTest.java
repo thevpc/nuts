@@ -40,8 +40,12 @@ public class Test12_CopyTest {
                 "--log-info",
                 "--skip-companions");
         NutsSession session = ws.createSession();
-        Path from = Paths.get(ws.io().tmp().createTempFolder("source", session));
-        Path to = Paths.get(ws.io().tmp().createTempFolder("target", session));
+        Path from = Paths.get(ws.io().tmp()
+                .setSession(session)
+                .createTempFolder("source"));
+        Path to = Paths.get(ws.io().tmp()
+                .setSession(session)
+                .createTempFolder("target"));
         TestUtils.println("from="+from);
         TestUtils.println("to="+to);
         long collect = Files.list(from).collect(Collectors.counting());

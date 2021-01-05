@@ -556,7 +556,10 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     CoreIOUtils.mkdirs(to.getParent());
                     temp = to.resolveSibling(to.getFileName() + "~");
                 } else {
-                    temp = Paths.get(iom.tmp().createTempFile("temp~", session));
+                    temp = Paths.get(iom.tmp()
+                            .setSession(session)
+                            .createTempFile("temp~")
+                    );
                 }
                 try {
                     if (_source.isPath()) {

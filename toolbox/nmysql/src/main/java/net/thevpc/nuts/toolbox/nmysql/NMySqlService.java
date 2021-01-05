@@ -5,9 +5,11 @@ import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.NutsOpenMode;
 import net.thevpc.nuts.NutsStoreLocation;
 import net.thevpc.nuts.toolbox.nmysql.local.LocalMysqlConfigService;
+import net.thevpc.nuts.toolbox.nmysql.local.LocalMysqlDatabaseConfigService;
 import net.thevpc.nuts.toolbox.nmysql.local.config.LocalMysqlConfig;
 import net.thevpc.nuts.toolbox.nmysql.remote.RemoteMysqlConfigService;
 import net.thevpc.nuts.toolbox.nmysql.remote.config.RemoteMysqlConfig;
+import net.thevpc.nuts.toolbox.nmysql.util.MysqlUtils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -50,8 +52,6 @@ public class NMySqlService {
         }
         return all.toArray(new LocalMysqlConfigService[0]);
     }
-
-
 
     public LocalMysqlConfigService loadLocalMysqlConfig(String name, NutsOpenMode action) {
         LocalMysqlConfigService t = new LocalMysqlConfigService(name, context);

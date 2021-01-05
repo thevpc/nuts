@@ -97,13 +97,15 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             _appId = workspace.id().resolveId(appClass, session);
         }
         if (_appId == null) {
-            throw new NutsExecutionException(workspace, "Invalid Nuts Application (" + appClass.getName() + "). Id cannot be resolved", 203);
+            throw new NutsExecutionException(workspace, "invalid Nuts Application (" + appClass.getName() + "). Id cannot be resolved", 203);
         }
         this.workspace = (workspace);
         this.args = (args);
         this.appId = (_appId);
         this.appClass = appClass;
-        this.session = NutsWorkspaceUtils.of(workspace).validateSession(session);
+        //always copy the session to bind to appId
+        this.session = session==null? workspace.createSession():NutsWorkspaceUtils.of(workspace).validateSession(session.copy());
+        this.session.setAppId(appId);
         NutsWorkspaceConfigManager cfg = workspace.config();
         for (NutsStoreLocation folder : NutsStoreLocation.values()) {
             setFolder(folder, workspace.locations().getStoreLocation(this.appId, folder));

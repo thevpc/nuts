@@ -1,12 +1,13 @@
+##) nadmin:
 manage nuts workspace
 
-##) SYNOPSIS:
+###) SYNOPSIS:
 ```sh
 nadmin <command> ...
  ```
 manage nuts workspace
 
-##) ALIAS COMMANDS:
+###) ALIAS COMMANDS:
 ```sh
 nadmin list aliases ...
 ```
@@ -85,7 +86,7 @@ nadmin update stats <repo-folder-path> ...
 ```
         update local repo statistics
 
-##) SECURITY COMMANDS:
+###) SECURITY COMMANDS:
 ```sh
 nadmin list users
 ```
@@ -121,7 +122,7 @@ nadmin unsecure
 ```
         switch to un-secure mode
 
-##) DESKTOP INTEGRATION COMMANDS:
+###) DESKTOP INTEGRATION COMMANDS:
 
 desktop integration is a portable desktop integration sub command that helps creation of scripts and shortcut on
 the host operating system to facilitate usage of nuts command line tool.
@@ -150,7 +151,7 @@ nadmin add link <options> ...
     create a new script to link to an existing nuts workspace and/or version.
     the link created will run 'nuts' against the selected workspace and/or version.
 
-###) OPTIONS:
+####) OPTIONS:
 ```sh
 nadmin add script <options> <command> ...
 ```
@@ -208,7 +209,7 @@ nadmin switch <options> [<workspace>] [<api>]
 ```sh nadmin add script nuts#current ```
     creates a nuts shortcut named  nuts#0.8.1 (assuming the current version is 0.8.1
 
-##) GENERAL COMMANDS:
+###) GENERAL COMMANDS:
 ```sh
 nadmin list extension points|lxp
 ```

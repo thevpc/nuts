@@ -73,6 +73,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private String errLinePrefix;
     private String outLinePrefix;
     private Instant expireTime;
+    private NutsId appId;
 
     public DefaultNutsSession(NutsWorkspace ws) {
         this.ws = ws;
@@ -149,6 +150,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         this.logTermFilter = other.getLogTermFilter();
         this.logFileLevel = other.getLogFileLevel();
         this.logFileFilter = other.getLogFileFilter();
+        this.appId = other.getAppId();
         return this;
     }
 
@@ -170,6 +172,16 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         }
     }
 
+    @Override
+    public NutsId getAppId() {
+        return appId;
+    }
+
+    @Override
+    public NutsSession setAppId(NutsId appId) {
+        this.appId = appId;
+        return this;
+    }
 
     @Override
     public NutsSession setFetchStrategy(NutsFetchStrategy mode) {

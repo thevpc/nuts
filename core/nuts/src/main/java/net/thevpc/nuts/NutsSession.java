@@ -329,6 +329,10 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      */
     NutsSession copyFrom(NutsWorkspaceOptions options);
 
+    NutsId getAppId();
+
+    NutsSession setAppId(NutsId appId);
+
     /**
      * change fetch strategy
      *

@@ -4,7 +4,7 @@
  Is a new Open Source Package Manager to help install packages
  and libraries for runtime execution. Nuts is the ultimate companion for
  maven (and other build managers) as it helps installing all package
- dependencies at runtime. Nuts is not tied to ##&_:Java™## and is a good choice
+ dependencies at runtime. Nuts is not tied to ##:_:Java™## and is a good choice
  to share shell scripts and other 'Things' . It is based on an extensible
  architecture to help supporting a large range of sub managers / repositories.
  

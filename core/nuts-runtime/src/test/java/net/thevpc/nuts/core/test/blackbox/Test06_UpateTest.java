@@ -203,7 +203,9 @@ public class Test06_UpateTest {
     private Path replaceAPIJar(Path p, FromTo api, NutsSession session) {
         NutsWorkspace ws=session.getWorkspace();
         try {
-            Path zipFilePath = Paths.get(ws.io().tmp().createTempFile(".zip", session));
+            Path zipFilePath = Paths.get(ws.io().tmp()
+                    .setSession(session)
+                    .createTempFile(".zip"));
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
 
@@ -242,7 +244,9 @@ public class Test06_UpateTest {
     private Path replaceRuntimeJar(Path p, FromTo api, FromTo impl, NutsSession session) {
         NutsWorkspace ws=session.getWorkspace();
         try {
-            Path zipFilePath = Paths.get(ws.io().tmp().createTempFile(".zip", session));
+            Path zipFilePath = Paths.get(ws.io().tmp()
+                    .setSession(session)
+                    .createTempFile(".zip"));
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
 

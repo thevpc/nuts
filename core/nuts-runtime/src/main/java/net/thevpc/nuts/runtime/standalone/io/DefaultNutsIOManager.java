@@ -19,7 +19,6 @@ public class DefaultNutsIOManager implements NutsIOManager {
     private NutsWorkspace ws;
     private final Function<String, String> pathExpansionConverter;
     private NutsTerminalManager term;
-    private DefaultTempManager tmp;
     private InputStream bootStdin = null;
     private PrintStream bootStdout = null;
     private PrintStream bootStderr = null;
@@ -33,7 +32,6 @@ public class DefaultNutsIOManager implements NutsIOManager {
         pathExpansionConverter=new NutsWorkspaceVarExpansionFunction(ws);
 //        LOG = ws.log().of(DefaultNutsIOManager.class);
         term = new DefaultNutsTerminalManager(ws);
-        tmp = new DefaultTempManager(ws);
     }
 
     @Override
@@ -125,8 +123,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public NutsTempManager tmp() {
-        return tmp;
+    public NutsTempAction tmp() {
+        return new DefaultTempAction(ws);
     }
 
     @Override

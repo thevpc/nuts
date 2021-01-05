@@ -12,8 +12,10 @@ import net.thevpc.nuts.toolbox.nmysql.NMySqlService;
 import net.thevpc.nuts.toolbox.nmysql.remote.config.RemoteMysqlDatabaseConfig;
 import net.thevpc.nuts.toolbox.nmysql.local.LocalMysqlDatabaseConfigService;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
@@ -59,25 +61,36 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public String pull(String localPath, boolean restore, boolean deleteRemote) {
+        CachedMapFile lastRun=new CachedMapFile(context,"pull-" + getName());
+        if(lastRun.exists()){
+            if(!context.getSession().getTerminal().ask()
+                    .forBoolean("a previous pull has failed. would you like to resume (yes) or ignore and re-run the pull (no).")
+                    .getBooleanValue()
+            ){
+                lastRun.reset();
+            }
+        }
         NMySqlService ms = new NMySqlService(context);
         AtName locName = new AtName(getConfig().getLocalName());
         LocalMysqlDatabaseConfigService loc = ms.loadLocalMysqlConfig(locName.getConfigName(), NutsOpenMode.OPEN_OR_ERROR)
                 .getDatabase(locName.getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR);
         RemoteMysqlDatabaseConfig cconfig = getConfig();
-        if (StringUtils.isBlank(localPath)) {
-            localPath = Paths.get(context.getVarFolder()).resolve(client.getName() + "-" + getName() + "-" + MysqlUtils.newDateString()).toString();
-        }
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("%s remote restore%n", getBracketsPrefix(name));
         }
-
-        String remoteTempPath = execRemoteNuts(
-                "net.thevpc.nuts.toolbox:nmysql",
-                "backup",
-                "--name",
-                config.getRemoteName(),
-                ""
-        );
+        String remoteTempPath=null;
+        if(lastRun.get("remoteTempPath")!=null){
+            remoteTempPath= lastRun.get("remoteTempPath");
+        }else {
+            remoteTempPath = execRemoteNuts(
+                    "net.thevpc.nuts.toolbox:nmysql",
+                    "backup",
+                    "--name",
+                    config.getRemoteName(),
+                    ""
+            );
+            lastRun.put("remoteTempPath", remoteTempPath);
+        }
         //TODO: workaround, must fix me later
         int t = remoteTempPath.indexOf('{');
         if(t>0){
@@ -86,11 +99,12 @@ public class RemoteMysqlDatabaseConfigService {
         Map<String,Object> resMap=context.getWorkspace().formats().element().parse(remoteTempPath.getBytes(),Map.class);
         String ppath=(String)resMap.get("path");
 
-//        String ppath="/home/vpc/enisoinfodb-202012271551.sql.zip";
-//        localPath="/home/vpc/.config/nuts/eniso-info/var/id/net/thevpc/nuts/toolbox/nmysql/0.8.1.0/default-enisoinfodb-2020-12-27-161457-685";
         if (StringUtils.isBlank(localPath)) {
-//            localPath = context.getVarFolder().resolve(client.getName() + "-" + getName() + "-" + MysqlUtils.newDateString()).toString();
-            localPath = Paths.get(context.getVarFolder()).resolve(Paths.get(ppath).getFileName().toString()).toString();
+            localPath = Paths.get(context.getVarFolder())
+                    .resolve("pull-backups")
+                    .resolve(client.getName() + "-" + getName())
+                    .resolve(/*MysqlUtils.newDateString()+"-"+*/Paths.get(ppath).getFileName().toString())
+                    .toString();
         }
         SshPath remoteFullFilePath = new SshAddress(prepareSshServer(cconfig.getServer())).getPath(ppath);
         NutsTextFormatManager text = context.getWorkspace().formats().text();
@@ -100,31 +114,55 @@ public class RemoteMysqlDatabaseConfigService {
                     text.builder().append(localPath,NutsTextNodeStyle.path())
             );
         }
-        context.getWorkspace().exec().embedded()
-                .setSession(context.getSession().copy().setTrace(false))
-                .addCommand("nsh",
-                        "--bot",
-                        "-c",
-                        "cp",
-                        remoteFullFilePath.toString(), localPath).setSession(context.getSession())
-                .setRedirectErrorStream(true)
-                .grabOutputString()
-                .setFailFast(true)
-                .run()
-                .getOutputString();
-        loc.restore(localPath);
+        if(lastRun.get("localPath")!=null){
+            String s=lastRun.get("localPath");
+            context.getWorkspace().io().copy().from(s).to(localPath).run();
+        }else {
+            if(Paths.get(localPath).getParent()!=null) {
+                try {
+                    Files.createDirectories(Paths.get(localPath).getParent());
+                } catch (IOException e) {
+                    throw new NutsIOException(context.getWorkspace(),e);
+                }
+            }
+            context.getWorkspace().exec().embedded()
+                    .setSession(context.getSession().copy().setTrace(false))
+                    .addCommand("nsh",
+                            "--bot",
+                            "-c",
+                            "cp",
+                            remoteFullFilePath.toString(), localPath).setSession(context.getSession())
+                    .setRedirectErrorStream(true)
+                    .grabOutputString()
+                    .setFailFast(true)
+                    .run()
+                    .getOutputString();
+
+            lastRun.put("localPath", localPath);
+        }
+        if(lastRun.get("restored")!=null) {
+            String s = lastRun.get("restored");
+        }else{
+            loc.restore(localPath);
+            lastRun.put("restored", "true");
+        }
+
         if (deleteRemote) {
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("%s delete %s%n", getBracketsPrefix(name),
                         text.builder().append(remoteFullFilePath.toString(),NutsTextNodeStyle.path()));
             }
-            execRemoteNuts(
-                    "nsh",
-                    "-c",
-                    "rm",
-                    remoteFullFilePath.getPath()
-            );
+            if(!lastRun.is("deleted")) {
+                execRemoteNuts(
+                        "nsh",
+                        "-c",
+                        "rm",
+                        remoteFullFilePath.getPath()
+                );
+                lastRun.put("deleted","true");
+            }
         }
+        lastRun.dispose();
         return localPath;
     }
 

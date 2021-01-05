@@ -26,48 +26,29 @@
  */
 package net.thevpc.nuts;
 
-import java.nio.file.Path;
-
 /**
  * @category Input Output
  */
-public interface NutsTempManager {
+public interface NutsTempAction {
+
+    String getRepositoryId();
+
+    NutsTempAction setRepositoryId(String repositoryId);
+
+    NutsSession getSession();
+
+    NutsTempAction setSession(NutsSession session);
 
     /**
-     * create temp file in the workspace's temp folder
-     *
+     * create temp file in the repositoryId's temp folder
      * @param name file name
-     * @param session session
-     * @return new file path
+     * @return nely created file path
      */
-    String createTempFile(String name, NutsSession session);
-
-    /**
-     * create temp file in the repository's temp folder
-     *
-     * @param name       file name
-     * @param repository repository
-     * @param session session
-     * @return new file path
-     */
-    String createTempFile(String name, NutsRepository repository, NutsSession session);
+    String createTempFile(String name);
 
     /**
      * create temp folder in the workspace's temp folder
-     *
      * @param name folder name
-     * @param session session
-     * @return new folder path
      */
-    String createTempFolder(String name, NutsSession session);
-
-    /**
-     * create temp folder in the repository's temp folder
-     *
-     * @param name       folder name
-     * @param repository repository
-     * @param session
-     * @return new folder path
-     */
-    String createTempFolder(String name, NutsRepository repository, NutsSession session);
+    String createTempFolder(String name);
 }

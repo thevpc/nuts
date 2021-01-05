@@ -84,7 +84,7 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
      */
     PrintStream createPrintStream(OutputStream out, NutsTerminalMode mode, NutsSession session);
 
-    NutsTempManager tmp();
+    NutsTempAction tmp();
 
 
     NutsTerminalManager term();
