@@ -42,13 +42,14 @@ public interface NutsTempAction {
     /**
      * create temp file in the repositoryId's temp folder
      * @param name file name
-     * @return nely created file path
+     * @return newly created file path
      */
     String createTempFile(String name);
 
     /**
      * create temp folder in the workspace's temp folder
      * @param name folder name
+     * @return newly created temp folder
      */
     String createTempFolder(String name);
 }

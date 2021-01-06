@@ -217,7 +217,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         }
         switch (sourceKind0) {
             case "string": {
-                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0) {
+                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0,ws) {
                     @Override
                     public InputStream open() {
                         return monitorInputStream((String) source, sourceOrigin, sourceName, session);
@@ -234,7 +234,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
                 };
             }
             case "path": {
-                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0) {
+                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0,ws) {
                     @Override
                     public InputStream open() {
                         return monitorInputStream(((Path) source).toString(), sourceOrigin, sourceName, session);
@@ -251,7 +251,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
                 };
             }
             case "file": {
-                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0) {
+                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0,ws) {
                     @Override
                     public InputStream open() {
                         return monitorInputStream(((File) source).getPath(), sourceOrigin, sourceName, session);
@@ -268,7 +268,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
                 };
             }
             case "stream": {
-                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0) {
+                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0,ws) {
                     @Override
                     public InputStream open() {
                         return monitorInputStream((InputStream) source,sourceOrigin, length, sourceName, session);

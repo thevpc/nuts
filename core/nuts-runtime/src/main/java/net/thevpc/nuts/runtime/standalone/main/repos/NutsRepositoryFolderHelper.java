@@ -52,7 +52,7 @@ public class NutsRepositoryFolderHelper {
         this.repo = repo;
         this.ws = ws != null ? ws : repo == null ? null : repo.getWorkspace();
         if (ws == null && repo == null) {
-            throw new NutsIllegalArgumentException(null, "both workspace and repository are null");
+            throw new IllegalArgumentException("both workspace and repository are null");
         }
         this.rootPath = rootPath;
         this.cacheFolder = cacheFolder;
@@ -76,7 +76,7 @@ public class NutsRepositoryFolderHelper {
     }
 
     public Path getLongNameIdLocalFolder(NutsId id) {
-        CoreNutsUtils.checkId_GNV(id);
+        CoreNutsUtils.checkId_GNV(id,getWorkspace());
         if (repo == null) {
             return getStoreLocation().resolve(getWorkspace().locations().getDefaultIdBasedir(id));
         }
@@ -91,7 +91,7 @@ public class NutsRepositoryFolderHelper {
     }
 
     public Path getShortNameIdLocalFolder(NutsId id) {
-        CoreNutsUtils.checkId_GN(id);
+        CoreNutsUtils.checkId_GN(id,getWorkspace());
         if (repo == null) {
             return getStoreLocation().resolve(getWorkspace().locations().getDefaultIdBasedir(id.builder().setVersion("").build()));
         }

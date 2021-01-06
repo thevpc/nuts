@@ -26,9 +26,9 @@
 package net.thevpc.nuts.runtime.core.app;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 
 import java.time.Instant;
 import java.util.*;
@@ -55,8 +55,9 @@ public final class CoreNutsArgumentsParser {
      * Fill a {@link NutsWorkspaceOptions} instance from string array of valid
      * nuts options
      *
+     * @param ws workspace
      * @param bootArguments input arguments to parse
-     * @param options options instance to fill
+     * @param options       options instance to fill
      */
     public static void parseNutsArguments(NutsWorkspace ws, String[] bootArguments, NutsWorkspaceOptionsBuilder options) {
         List<String> showError = new ArrayList<>();
@@ -208,7 +209,7 @@ public final class CoreNutsArgumentsParser {
                         a = cmdLine.nextString();
                         String v = a.getStringValue("");
                         if (enabled) {
-                            options.setStoreLocationStrategy(parseNutsStoreLocationStrategy(v,ws));
+                            options.setStoreLocationStrategy(parseNutsStoreLocationStrategy(v, ws));
                         }
                         break;
                     }
@@ -249,7 +250,7 @@ public final class CoreNutsArgumentsParser {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
-                            options.setRepositoryStoreLocationStrategy(parseNutsStoreLocationStrategy(v,ws));
+                            options.setRepositoryStoreLocationStrategy(parseNutsStoreLocationStrategy(v, ws));
                         }
                         break;
                     }
@@ -271,7 +272,7 @@ public final class CoreNutsArgumentsParser {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
-                            options.setStoreLocationLayout(parseNutsStoreLocationLayout(v,ws));
+                            options.setStoreLocationLayout(parseNutsStoreLocationLayout(v, ws));
                         }
                         break;
                     }
@@ -617,7 +618,7 @@ public final class CoreNutsArgumentsParser {
                                 logConfig = new NutsLogConfig();
                             }
                         }
-                        parseLogLevel(logConfig, cmdLine, enabled,ws);
+                        parseLogLevel(logConfig, cmdLine, enabled, ws);
                         break;
                     }
                     case "-X":
@@ -878,7 +879,7 @@ public final class CoreNutsArgumentsParser {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
-                            options.setOpenMode(parseNutsWorkspaceOpenMode(v,ws));
+                            options.setOpenMode(parseNutsWorkspaceOpenMode(v, ws));
                         }
                         break;
                     }
@@ -906,7 +907,7 @@ public final class CoreNutsArgumentsParser {
                         cmdLine.skip();
                         if (enabled) {
                             if (!a.getArgumentValue().isNull()) {
-                                throw new NutsIllegalArgumentException(null, "invalid argument for workspace: " + a.getString());
+                                throw new NutsIllegalArgumentException(ws, "invalid argument for workspace: " + a.getString());
                             }
                             applicationArguments.add(NutsConstants.Ids.NUTS_SHELL);
                             if (!cmdLine.isEmpty()) {
@@ -1031,6 +1032,14 @@ public final class CoreNutsArgumentsParser {
                         }
                         break;
                     }
+                    case "-L":
+                    case "--locale": {
+                        a = cmdLine.nextString();
+                        if (enabled) {
+                            options.setLocale(a.getStringValue());
+                        }
+                        break;
+                    }
 
                     //ERRORS
                     case "-I":
@@ -1039,7 +1048,6 @@ public final class CoreNutsArgumentsParser {
                     case "-G":
                     case "-H":
                     case "-M":
-                    case "-L":
                     case "-W":
                     case "-B":
                     case "-i":
@@ -1049,9 +1057,9 @@ public final class CoreNutsArgumentsParser {
                     case "-l":
                     case "-m":
                     default: {
-                        if(k.startsWith("---") && k.length()>3 && k.charAt(3)!='-'){
+                        if (k.startsWith("---") && k.length() > 3 && k.charAt(3) != '-') {
                             tempProps.add(k.substring(3));
-                        }else {
+                        } else {
                             cmdLine.skip();
                             showError.add("nuts: invalid option " + a.getString());
                         }
@@ -1084,7 +1092,7 @@ public final class CoreNutsArgumentsParser {
                 }
                 errorMessage.append("Try 'nuts --help' for more information.");
                 if (!options.isSkipErrors()) {
-                    throw new NutsIllegalArgumentException(null, errorMessage.toString());
+                    throw new NutsIllegalArgumentException(ws, errorMessage.toString());
                 } else {
                     ws.createSession().err().println(errorMessage.toString());
                 }
@@ -1092,7 +1100,7 @@ public final class CoreNutsArgumentsParser {
         }
     }
 
-    private static void parseLogLevel(NutsLogConfig logConfig, NutsCommandLine cmdLine, boolean enabled,NutsWorkspace ws) {
+    private static void parseLogLevel(NutsLogConfig logConfig, NutsCommandLine cmdLine, boolean enabled, NutsWorkspace ws) {
         NutsArgument a = cmdLine.peek();
         switch (a.getStringKey()) {
             case "--log-file-size": {
@@ -1150,7 +1158,7 @@ public final class CoreNutsArgumentsParser {
                 cmdLine.skip();
                 if (enabled) {
                     String id = a.getStringKey();
-                    logConfig.setLogFileLevel(parseLevel(id.substring("--log-file-".length()),ws));
+                    logConfig.setLogFileLevel(parseLevel(id.substring("--log-file-".length()), ws));
                 }
                 break;
             }
@@ -1168,7 +1176,7 @@ public final class CoreNutsArgumentsParser {
                 cmdLine.skip();
                 if (enabled) {
                     String id = a.getStringKey();
-                    logConfig.setLogTermLevel(parseLevel(id.substring("--log-term-".length()),ws));
+                    logConfig.setLogTermLevel(parseLevel(id.substring("--log-term-".length()), ws));
                 }
                 break;
             }
@@ -1194,7 +1202,7 @@ public final class CoreNutsArgumentsParser {
                 cmdLine.skip();
                 if (enabled) {
                     String id = a.getStringKey();
-                    Level lvl = parseLevel(id.substring("--log-".length()),ws);
+                    Level lvl = parseLevel(id.substring("--log-".length()), ws);
                     logConfig.setLogTermLevel(lvl);
                     logConfig.setLogFileLevel(lvl);
                 }
@@ -1203,7 +1211,7 @@ public final class CoreNutsArgumentsParser {
         }
     }
 
-    private static NutsStoreLocationStrategy parseNutsStoreLocationStrategy(String s,NutsWorkspace ws) {
+    private static NutsStoreLocationStrategy parseNutsStoreLocationStrategy(String s, NutsWorkspace ws) {
         String s0 = s;
         if (s == null || s.isEmpty()) {
             return null;
@@ -1217,10 +1225,10 @@ public final class CoreNutsArgumentsParser {
             case "EXPLODED":
                 return NutsStoreLocationStrategy.EXPLODED;
         }
-        throw new NutsIllegalArgumentException(ws,"unable to parse value for NutsStoreLocationStrategy : " + s0);
+        throw new NutsIllegalArgumentException(ws, "unable to parse value for NutsStoreLocationStrategy : " + s0);
     }
 
-    private static NutsOsFamily parseNutsStoreLocationLayout(String s,NutsWorkspace ws) {
+    private static NutsOsFamily parseNutsStoreLocationLayout(String s, NutsWorkspace ws) {
         String s0 = s;
         if (s == null || s.isEmpty()) {
             return null;
@@ -1246,10 +1254,10 @@ public final class CoreNutsArgumentsParser {
             case "SYSTEM":
                 return null;
         }
-        throw new NutsIllegalArgumentException(ws,"unable to parse value for NutsStoreLocationLayout : " + s0);
+        throw new NutsIllegalArgumentException(ws, "unable to parse value for NutsStoreLocationLayout : " + s0);
     }
 
-    private static NutsTerminalMode parseNutsTerminalMode(String s,NutsWorkspace ws) {
+    private static NutsTerminalMode parseNutsTerminalMode(String s, NutsWorkspace ws) {
         String s0 = s;
         if (s == null || s.isEmpty()) {
             return null;
@@ -1266,10 +1274,10 @@ public final class CoreNutsArgumentsParser {
             case "INHERITED":
                 return NutsTerminalMode.INHERITED;
         }
-        throw new NutsIllegalArgumentException(ws,"unable to parse value for NutsTerminalMode : " + s0);
+        throw new NutsIllegalArgumentException(ws, "unable to parse value for NutsTerminalMode : " + s0);
     }
 
-    private static NutsOpenMode parseNutsWorkspaceOpenMode(String s,NutsWorkspace ws) {
+    private static NutsOpenMode parseNutsWorkspaceOpenMode(String s, NutsWorkspace ws) {
         String s0 = s;
         if (s == null || s.isEmpty()) {
             return null;
@@ -1283,7 +1291,7 @@ public final class CoreNutsArgumentsParser {
             case "O_E":
             case "OPEN":
             case "OPEN_ERROR":
-            case "OPEN_OR_ERROR":{
+            case "OPEN_OR_ERROR": {
                 return NutsOpenMode.OPEN_OR_ERROR;
             }
             case "W":
@@ -1293,7 +1301,7 @@ public final class CoreNutsArgumentsParser {
             case "C_E":
             case "CREATE":
             case "CREATE_ERROR":
-            case"CREATE_OR_ERROR": {
+            case "CREATE_OR_ERROR": {
                 return NutsOpenMode.CREATE_OR_ERROR;
             }
             case "RW":
@@ -1302,7 +1310,7 @@ public final class CoreNutsArgumentsParser {
             case "OC":
             case "O_C":
             case "OPEN_CREATE":
-            case "OPEN_OR_CREATE":{
+            case "OPEN_OR_CREATE": {
                 return NutsOpenMode.OPEN_OR_CREATE;
             }
             case "ON":
@@ -1312,10 +1320,10 @@ public final class CoreNutsArgumentsParser {
                 return NutsOpenMode.OPEN_OR_NULL;
             }
         }
-        throw new NutsIllegalArgumentException(ws,"unable to parse value for NutsOpenMode : " + s0);
+        throw new NutsIllegalArgumentException(ws, "unable to parse value for NutsOpenMode : " + s0);
     }
 
-    private static Level parseLevel(String s,NutsWorkspace ws) {
+    private static Level parseLevel(String s, NutsWorkspace ws) {
         switch (s.trim().toLowerCase()) {
             case "off": {
                 return Level.OFF;

@@ -368,7 +368,7 @@ final class PrivateNutsPlatformUtils {
                 }
             }
         }
-        throw new NutsIllegalArgumentException(null, "unsupported " + platformOsFamily + "/" + location + " for " + workspaceName);
+        throw new NutsBootException("unsupported " + platformOsFamily + "/" + location + " for " + workspaceName);
     }
 
 }

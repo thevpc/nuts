@@ -256,7 +256,7 @@ public final class NutsBootConfig implements Cloneable, Serializable {
 
             return p;
         } catch (CloneNotSupportedException e) {
-            throw new NutsUnexpectedException(null);
+            throw new IllegalStateException(e);
         }
     }
 

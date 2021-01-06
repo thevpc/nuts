@@ -344,6 +344,12 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     private Instant expireTime = null;
     private String[] errors = new String[0];
     private Boolean skipErrors;
+
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
+    private String locale;
+
     private NutsWorkspace ws = null;
 
     public CoreNutsWorkspaceOptions(NutsWorkspace ws) {
@@ -424,6 +430,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         this.setErrors(other.getErrors());
         this.setSkipErrors(other.getSkipErrors());
         this.setSwitchWorkspace(other.getSwitchWorkspace());
+        this.setLocale(other.getLocale());
         return this;
     }
 
@@ -1059,7 +1066,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
             t.setApplicationArguments(t.getApplicationArguments() == null ? null : Arrays.copyOf(t.getApplicationArguments(), t.getApplicationArguments().length));
             return t;
         } catch (CloneNotSupportedException e) {
-            throw new NutsUnsupportedOperationException(null, "Should never Happen", e);
+            throw new IllegalStateException("should never Happen", e);
         }
     }
 
@@ -1112,7 +1119,6 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     public String[] getExcludedExtensions() {
         return excludedExtensions;
     }
-
 
     @Override
     public String[] getExcludedRepositories() {
@@ -1325,7 +1331,8 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         return outLinePrefix;
     }
 
-    public CoreNutsWorkspaceOptions setOutLinePrefix(String outLinePrefix) {
+    @Override
+    public NutsWorkspaceOptionsBuilder setOutLinePrefix(String outLinePrefix) {
         this.outLinePrefix = outLinePrefix;
         return this;
     }
@@ -1443,7 +1450,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public CoreNutsWorkspaceOptions setErrLinePrefix(String errLinePrefix) {
+    public NutsWorkspaceOptionsBuilder setErrLinePrefix(String errLinePrefix) {
         this.errLinePrefix = errLinePrefix;
         return this;
     }
@@ -1461,6 +1468,17 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     @Override
     public NutsWorkspaceOptionsBuilder setProperties(String[] properties) {
         this.properties = properties;
+        return this;
+    }
+
+    @Override
+    public String getLocale() {
+        return locale;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setLocale(String locale) {
+        this.locale = locale;
         return this;
     }
 }

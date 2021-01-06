@@ -339,6 +339,12 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     private Instant expireTime = null;
     private String[] errors = new String[0];
     private Boolean skipErrors;
+
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
+    private String locale;
+
     public PrivateBootWorkspaceOptions() {
     }
 
@@ -416,6 +422,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         this.setErrors(other.getErrors());
         this.setSkipErrors(other.getSkipErrors());
         this.setSwitchWorkspace(other.getSwitchWorkspace());
+        this.setLocale(other.getLocale());
         return this;
     }
 
@@ -1051,7 +1058,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
             t.setApplicationArguments(t.getApplicationArguments() == null ? null : Arrays.copyOf(t.getApplicationArguments(), t.getApplicationArguments().length));
             return t;
         } catch (CloneNotSupportedException e) {
-            throw new NutsUnsupportedOperationException(null, "Should never Happen", e);
+            throw new IllegalStateException("should never Happen", e);
         }
     }
 
@@ -1104,8 +1111,6 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     public String[] getExcludedExtensions() {
         return excludedExtensions;
     }
-
-
 
     @Override
     public String[] getExcludedRepositories() {
@@ -1319,7 +1324,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
-    public PrivateBootWorkspaceOptions setOutLinePrefix(String outLinePrefix) {
+    public NutsWorkspaceOptionsBuilder setOutLinePrefix(String outLinePrefix) {
         this.outLinePrefix = outLinePrefix;
         return this;
     }
@@ -1437,7 +1442,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
-    public PrivateBootWorkspaceOptions setErrLinePrefix(String errLinePrefix) {
+    public NutsWorkspaceOptionsBuilder setErrLinePrefix(String errLinePrefix) {
         this.errLinePrefix = errLinePrefix;
         return this;
     }
@@ -1453,8 +1458,19 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
-    public PrivateBootWorkspaceOptions setProperties(String[] properties) {
+    public NutsWorkspaceOptionsBuilder setProperties(String[] properties) {
         this.properties = properties;
+        return this;
+    }
+
+    @Override
+    public String getLocale() {
+        return locale;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setLocale(String locale) {
+        this.locale = locale;
         return this;
     }
 }

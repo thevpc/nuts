@@ -574,4 +574,9 @@ public interface NutsWorkspaceOptions extends Serializable {
 
     String[] getProperties();
 
+    /**
+     * @since 0.8.1
+     * @return session locale
+     */
+    String getLocale();
 }

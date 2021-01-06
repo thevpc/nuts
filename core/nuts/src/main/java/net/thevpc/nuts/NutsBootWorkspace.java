@@ -718,13 +718,13 @@ public final class NutsBootWorkspace {
     public NutsWorkspace openWorkspace() {
         prepareWorkspace();
         if (hasUnsatisfiedRequirements()) {
-            throw new NutsUnsatisfiedRequirementsException(null, "unable to open a distinct version : " + getRequirementsHelpString(true) + " from nuts#" + Nuts.getVersion());
+            throw new NutsUnsatisfiedRequirementsException("unable to open a distinct version : " + getRequirementsHelpString(true) + " from nuts#" + Nuts.getVersion());
         }
         //if recover or reset mode with -K option (SkipWelcome)
-        //as long as there are no applications to run, wil exit before creating workspace
+        //as long as there are no applications to run, will exit before creating workspace
         if (options.getApplicationArguments().length == 0 && options.isSkipBoot()
                 && (options.isRecover() || options.isReset())) {
-            throw new NutsExecutionException(null, 0);
+            throw new NutsBootException(null, 0);
         }
         URL[] bootClassWorldURLs = null;
         ClassLoader workspaceClassLoader;
@@ -733,11 +733,11 @@ public final class NutsBootWorkspace {
             if (options.getOpenMode() == NutsOpenMode.OPEN_OR_ERROR) {
                 //add fail fast test!!
                 if (!new File(workspaceInformation.getWorkspaceLocation(), NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME).isFile()) {
-                    throw new NutsWorkspaceNotFoundException(null, workspaceInformation.getWorkspaceLocation());
+                    throw new NutsWorkspaceNotFoundException(workspaceInformation.getWorkspaceLocation());
                 }
             }else if (options.getOpenMode() == NutsOpenMode.CREATE_OR_ERROR) {
                 if (new File(workspaceInformation.getWorkspaceLocation(), NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME).exists()) {
-                    throw new NutsWorkspaceAlreadyExistsException(null, workspaceInformation.getWorkspaceLocation());
+                    throw new NutsWorkspaceAlreadyExistsException(workspaceInformation.getWorkspaceLocation());
                 }
             }
             if (PrivateNutsUtils.isBlank(workspaceInformation.getApiId())
@@ -823,7 +823,7 @@ public final class NutsBootWorkspace {
                     exception.printStackTrace(System.err);
                 }
                 LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load Workspace Component from ClassPath : {0}", new Object[]{Arrays.asList(bootClassWorldURLs)});
-                throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(),
+                throw new NutsInvalidWorkspaceException(this.workspaceInformation.getWorkspaceLocation(),
                         "unable to load Workspace Component from ClassPath : " + Arrays.asList(bootClassWorldURLs)
                 );
             }
@@ -833,7 +833,7 @@ public final class NutsBootWorkspace {
                         .level(Level.FINE).verb(NutsLogVerb.SUCCESS).log( "end initialize workspace");
             }
             return nutsWorkspace;
-        } catch (NutsReadOnlyException | NutsUserCancelException ex) {
+        } catch (NutsReadOnlyException | NutsUserCancelException | PrivateNutsBootCancelException ex) {
             throw ex;
         } catch (Throwable ex) {
             showError(workspaceInformation,
@@ -904,7 +904,7 @@ public final class NutsBootWorkspace {
         PrivateNutsId vid = PrivateNutsId.parse(id);
         File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire);
         if (f == null) {
-            throw new NutsInvalidWorkspaceException(null, this.workspaceInformation.getWorkspaceLocation(), "unable to load " + name + " " + vid + " from repositories " + Arrays.asList(repositories));
+            throw new NutsInvalidWorkspaceException(this.workspaceInformation.getWorkspaceLocation(), "unable to load " + name + " " + vid + " from repositories " + Arrays.asList(repositories));
         }
         return f;
     }
@@ -1111,7 +1111,7 @@ public final class NutsBootWorkspace {
         NutsWorkspaceOptions o = this.getOptions();
         if (workspace == null) {
             fallbackInstallActionUnavailable(message);
-            throw new NutsExecutionException(null, "workspace not available to run : " + new PrivateNutsCommandLine(o.getApplicationArguments()).toString(), 1);
+            throw new NutsBootException("workspace not available to run : " + new PrivateNutsCommandLine(o.getApplicationArguments()).toString());
         }
 
         NutsSession session = workspace.createSession();
@@ -1185,7 +1185,7 @@ public final class NutsBootWorkspace {
         if (confirm == NutsConfirmationMode.ASK
                 && this.getOptions().getOutputFormat() != null
                 && this.getOptions().getOutputFormat() != NutsContentType.PLAIN) {
-            throw new NutsExecutionException(null, "unable to switch to interactive mode for non plain text output format. "
+            throw new NutsBootException("unable to switch to interactive mode for non plain text output format. "
                     + "You need to provide default response (-y|-n) for resetting/recovering workspace. " +
                       "You was asked to confirm deleting folders as part as recover/reset option.", 243);
         }
@@ -1202,7 +1202,7 @@ public final class NutsBootWorkspace {
             case NO:
             case ERROR: {
                 System.err.println("reset cancelled (applied '--no' argument)");
-                throw new NutsUserCancelException(null);
+                throw new PrivateNutsBootCancelException("cancel delete locations");
             }
         }
         NutsWorkspaceConfigManager conf = null;

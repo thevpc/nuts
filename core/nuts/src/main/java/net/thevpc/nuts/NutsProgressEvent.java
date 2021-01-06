@@ -40,6 +40,12 @@ public interface NutsProgressEvent {
     NutsSession getSession();
 
     /**
+     * Nuts Workspace
+     * @return Nuts Workspace
+     */
+    NutsWorkspace getWorkspace();
+
+    /**
      * error or null
      * @return error or null
      */

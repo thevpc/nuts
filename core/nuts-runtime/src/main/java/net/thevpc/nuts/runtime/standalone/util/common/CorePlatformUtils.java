@@ -507,14 +507,14 @@ public class CorePlatformUtils {
         return new NutsException(null, ex);
     }
 
-    public static NutsException toNutsException(Throwable ex) {
+    public static NutsException toNutsException(Throwable ex, NutsWorkspace ws) {
         if (ex instanceof NutsException) {
             return (NutsException) ex;
         }
-        return new NutsException(null, ex);
+        return new NutsException(ws, ex);
     }
 
-    public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader) {
+    public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader, NutsWorkspace ws) {
         Ref<T> ref = new Ref<>();
         Thread thread = new Thread(() -> {
             try {
@@ -522,7 +522,7 @@ public class CorePlatformUtils {
             } catch (RuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NutsException(null, ex);
+                throw new NutsException(ws, ex);
             }
         }, "RunWithinLoader");
         thread.setContextClassLoader(loader);
@@ -530,7 +530,7 @@ public class CorePlatformUtils {
         try {
             thread.join();
         } catch (InterruptedException ex) {
-            throw new NutsException(null, ex);
+            throw new NutsException(ws, ex);
         }
         return ref.get();
     }

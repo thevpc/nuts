@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSessionAware;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.format.text.util.FormattedPrintStreamUtils;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
 
 import java.io.*;
@@ -89,14 +86,28 @@ public class PrintStreamExt extends PrintStream implements ExtendedFormatAware, 
     }
 
     @Override
-    public PrintStreamExt format(Locale l, String format, Object... args) {
-        print(FormattedPrintStreamUtils.formatCStyle(session,l, format, args));
-        return this;
+    public PrintStreamExt format(String format, Object... args) {
+        return format(null,format,args);
     }
 
     @Override
-    public PrintStream format(String format, Object... args) {
-        print(FormattedPrintStreamUtils.formatCStyle(session,Locale.getDefault(), format, args));
+    public PrintStreamExt format(Locale l, String format, Object... args) {
+        if(l==null){
+            print(session.getWorkspace().formats().text().toString(
+                    NutsMessage.cstyle(
+                            NutsString.of(format), args
+                    ), session
+            ));
+        }else{
+            NutsSession s2 = this.session.copy().setLocale(l.toString());
+            print(
+                    s2.getWorkspace().formats().text().toString(
+                            NutsMessage.cstyle(
+                                    NutsString.of(format), args
+                            ), s2
+                    )
+            );
+        }
         return this;
     }
 

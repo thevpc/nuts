@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.util.io;
 import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsOutput;
 import net.thevpc.nuts.NutsUnsupportedOperationException;
+import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.OutputStream;
 import java.net.URL;
@@ -15,8 +16,9 @@ public abstract class AbstractNutsOutput implements NutsOutput {
     private boolean url;
     private String name;
     private String typeName;
+    private NutsWorkspace ws;
 
-    public AbstractNutsOutput(Object value, boolean path, boolean url, String name, String typeName) {
+    public AbstractNutsOutput(Object value, boolean path, boolean url, String name, String typeName,NutsWorkspace ws) {
         this.value = value;
         this.path = path;
         this.url = url;
@@ -25,6 +27,7 @@ public abstract class AbstractNutsOutput implements NutsOutput {
             name=String.valueOf(value);
         }
         this.name = name;
+        this.ws = ws;
 
     }
 
@@ -33,7 +36,7 @@ public abstract class AbstractNutsOutput implements NutsOutput {
         if (n == null) {
             n = getName();
         }
-        return new NutsIOException(null, "unable to open " + n + " from " + toString(), ex);
+        return new NutsIOException(ws, "unable to open " + n + " from " + toString(), ex);
     }
 
     @Override
@@ -61,11 +64,11 @@ public abstract class AbstractNutsOutput implements NutsOutput {
 
     @Override
     public URL getURL() {
-        throw new NutsUnsupportedOperationException(null);
+        throw new NutsUnsupportedOperationException(ws);
     }
 
     public Path getPath() {
-        throw new NutsUnsupportedOperationException(null);
+        throw new NutsUnsupportedOperationException(ws);
     }
 
     public abstract OutputStream open();

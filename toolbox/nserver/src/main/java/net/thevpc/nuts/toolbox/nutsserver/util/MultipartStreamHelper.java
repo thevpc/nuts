@@ -29,6 +29,7 @@ package net.thevpc.nuts.toolbox.nutsserver.util;
 import net.thevpc.nuts.NutsException;
 import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.NutsUnsupportedOperationException;
+import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -43,16 +44,18 @@ import java.util.Iterator;
 public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
 
     private MultipartStream2 stream;
+    private NutsWorkspace ws;
 
     public MultipartStreamHelper(InputStream input,
-            String contentType) {
+            String contentType,NutsWorkspace ws) {
+        this.ws=ws;
         stream = new MultipartStream2(
-                input, resolveBoundaryFromContentType(contentType), MultipartStream2.DEFAULT_BUFSIZE,
-                null
+                input, resolveBoundaryFromContentType(contentType,ws), MultipartStream2.DEFAULT_BUFSIZE,
+                null,ws
         );
     }
 
-    private static byte[] resolveBoundaryFromContentType(String contentType) {
+    private static byte[] resolveBoundaryFromContentType(String contentType,NutsWorkspace ws) {
         //multipart/form-data; boundary=1597f5e92b6
         for (String s : contentType.split(";")) {
             s = s.trim();
@@ -60,7 +63,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                 return s.substring("boundary=".length()).getBytes();
             }
         }
-        throw new NutsIllegalArgumentException(null, "invalid boundary");
+        throw new NutsIllegalArgumentException(ws, "invalid boundary");
     }
 
     public Iterator<ItemStreamInfo> iterator() {
@@ -98,7 +101,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                                 }
                                 return itemInputStream.read();
                             }
-                        }
+                        },ws
                         );
                     }
                 }
@@ -124,7 +127,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
             } catch (RuntimeException e) {
                 throw e;
             } catch (Exception e) {
-                throw new NutsException(null, e);
+                throw new NutsException(ws, e);
             }
         }
 
@@ -139,7 +142,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
 
         @Override
         public void remove() {
-            throw new NutsUnsupportedOperationException(null, "remove not supported");
+            throw new UnsupportedOperationException("remove not supported");
         }
     }
 }

@@ -78,7 +78,7 @@ public interface NutsLoggerOp {
     NutsLoggerOp level(Level level);
 
     /**
-     * set message style (cstyle or positional)
+     * set message style (cstyle or jstyle)
      * @param style message format style
      * @return {@code this} instance
      */

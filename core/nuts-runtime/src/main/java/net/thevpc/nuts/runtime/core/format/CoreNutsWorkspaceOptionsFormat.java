@@ -267,16 +267,19 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
             fillOption("--reset", "-Z", options.isReset(), false, arguments, false);
             fillOption("--debug", "-z", options.isRecover(), false, arguments, false);
             fillOption("--dry", "-D", options.isDry(), false, arguments, false);
+            if(apiVersionObj ==null || apiVersionObj.compareTo("0.8.1")>=0) {
+                if(options.getProperties()!=null) {
+                    for (String property : options.getProperties()) {
+                        arguments.add("---" + property);
+                    }
+                }
+                fillOption("--locale", "-L", options.getLocale(),arguments, false);
+            }
             if (!omitDefaults || options.getExecutorOptions().length > 0) {
                 arguments.add(selectOptionName("--exec", "-e"));
             }
             arguments.addAll(Arrays.asList(options.getExecutorOptions()));
             arguments.addAll(Arrays.asList(options.getApplicationArguments()));
-        }
-        if(apiVersionObj ==null || apiVersionObj.compareTo("0.8.1")>=0) {
-            for (String property : options.getProperties()) {
-                arguments.add("---"+property);
-            }
         }
         return arguments.toArray(new String[0]);
     }

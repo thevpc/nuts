@@ -301,7 +301,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 try {
                     defaultDocument = NutsXmlUtils.createDocument(getSession());
                 } catch (ParserConfigurationException ex) {
-                    throw new NutsException(null, "Unable to create Document", ex);
+                    throw new NutsException(getWorkspace(), "Unable to create Document", ex);
                 }
             }
             doc = defaultDocument;
@@ -486,7 +486,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 return null;
             }
         }
-        throw new NutsException(null, "Unsupported " + o.type());
+        throw new NutsException(getWorkspace(), "unsupported " + o.type());
     }
 
     protected NutsElement nutsElementToXmlElement(org.w3c.dom.Element element) {

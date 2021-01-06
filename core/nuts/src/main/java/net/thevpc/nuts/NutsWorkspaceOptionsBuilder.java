@@ -213,4 +213,6 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
     NutsWorkspaceOptionsBuilder setErrLinePrefix(String value);
 
     NutsWorkspaceOptionsBuilder setProperties(String[] properties);
+
+    NutsWorkspaceOptionsBuilder setLocale(String locale);
 }

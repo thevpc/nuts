@@ -35,7 +35,7 @@ public class PomIdResolver {
 
     public PomId[] resolvePomId(URL baseUrl, String referenceResourcePath, NutsSession session) {
         List<PomId> all = new ArrayList<PomId>();
-        final URLParts aa = new URLParts(baseUrl);
+        final URLParts aa = new URLParts(session.getWorkspace(),baseUrl);
         String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - referenceResourcePath.length());
         if (!basePath.endsWith("/")) {
             basePath += "/";
@@ -45,7 +45,7 @@ public class PomIdResolver {
         int beforeSize = all.size();
         URL[] children = new URL[0];
         try {
-            children = p.getChildren(false, true, new MyURLFilter());
+            children = p.getChildren(false, true, new MyURLFilter(ws));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -190,10 +190,15 @@ public class PomIdResolver {
     }
 
     private static class MyURLFilter implements URLFilter {
+        private NutsWorkspace ws;
+
+        public MyURLFilter(NutsWorkspace ws) {
+            this.ws = ws;
+        }
 
         @Override
         public boolean accept(URL path) {
-            return new URLParts(path).getName().equals("pom.properties");
+            return new URLParts(ws,path).getName().equals("pom.properties");
         }
     }
 
@@ -226,7 +231,7 @@ public class PomIdResolver {
             return null;
         }
         if (v.length >= 2) {
-            throw new NutsIllegalArgumentException(null, "too many Ids");
+            throw new NutsIllegalArgumentException(ws, "too many Ids");
         }
         return v[0];
     }

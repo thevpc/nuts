@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.core.format.text.renderer.ansi;
 
 import net.thevpc.nuts.runtime.core.format.text.RenderedRawStream;
 import net.thevpc.nuts.runtime.core.format.text.renderer.StyleRenderer;
-import net.thevpc.nuts.runtime.core.format.text.util.FormattedPrintStreamUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -66,8 +66,8 @@ public class AnsiStyle implements StyleRenderer {
 
     public boolean isPlain() {
         if (!bold && !blink && !underlined && !italic && !striked && !reversed
-                && FormattedPrintStreamUtils.isEmpty(foreground)
-                && FormattedPrintStreamUtils.isEmpty(background)
+                && CoreStringUtils.isBlank(foreground)
+                && CoreStringUtils.isBlank(background)
         ) {
             return true;
         }
@@ -94,7 +94,7 @@ public class AnsiStyle implements StyleRenderer {
 
             sb.append(foreground);
         }
-        if (!FormattedPrintStreamUtils.isEmpty(background)) {
+        if (!CoreStringUtils.isBlank(background)) {
             if (first) {
                 first = false;
             } else {

@@ -34,63 +34,21 @@ import java.io.IOException;
  * @since 0.5.4
  * @category Exceptions
  */
-public class NutsUnsatisfiedRequirementsException extends NutsException {
+public class NutsUnsatisfiedRequirementsException extends NutsBootException {
 
     /**
      * Constructs a new NutsUnsatisfiedRequirementsException exception
-     * @param workspace workspace
      */
-    public NutsUnsatisfiedRequirementsException(NutsWorkspace workspace) {
-        super(workspace);
+    public NutsUnsatisfiedRequirementsException() {
+        super("unsatisfiedR workspace requirements");
     }
 
     /**
      * Constructs a new NutsUnsatisfiedRequirementsException exception
-     * @param workspace workspace
      * @param message message
      */
-    public NutsUnsatisfiedRequirementsException(NutsWorkspace workspace, String message) {
-        super(workspace, message);
-    }
-
-    /**
-     * Constructs a new NutsUnsatisfiedRequirementsException exception
-     * @param workspace workspace
-     * @param message message
-     * @param cause cause
-     */
-    public NutsUnsatisfiedRequirementsException(NutsWorkspace workspace, String message, Throwable cause) {
-        super(workspace, message, cause);
-    }
-
-    /**
-     * Constructs a new NutsUnsatisfiedRequirementsException exception
-     * @param workspace workspace
-     * @param cause cause
-     */
-    public NutsUnsatisfiedRequirementsException(NutsWorkspace workspace, Throwable cause) {
-        super(workspace, cause);
-    }
-
-    /**
-     * Constructs a new NutsUnsatisfiedRequirementsException exception
-     * @param workspace workspace
-     * @param cause cause
-     */
-    public NutsUnsatisfiedRequirementsException(NutsWorkspace workspace, IOException cause) {
-        super(workspace, cause);
-    }
-
-    /**
-     * Constructs a new NutsUnsatisfiedRequirementsException exception
-     * @param workspace workspace
-     * @param message message
-     * @param cause cause
-     * @param enableSuppression whether or not suppression is enabled or disabled
-     * @param writableStackTrace whether or not the stack trace should be writable
-     */
-    public NutsUnsatisfiedRequirementsException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace, message, cause, enableSuppression, writableStackTrace);
+    public NutsUnsatisfiedRequirementsException(String message) {
+        super(message);
     }
 
 }

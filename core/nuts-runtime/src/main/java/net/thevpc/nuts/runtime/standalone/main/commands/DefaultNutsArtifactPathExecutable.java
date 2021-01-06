@@ -106,7 +106,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     c.descriptor,
                     new NutsDefaultContent(c.getContentLocation(), false, c.temps.size() > 0),
                     DefaultNutsInstallInfo.notInstalled(_id),
-                    idType, null
+                    idType, null,ws
             );
             try {
                 execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(), true, traceSession,execSession, executionType, dry);

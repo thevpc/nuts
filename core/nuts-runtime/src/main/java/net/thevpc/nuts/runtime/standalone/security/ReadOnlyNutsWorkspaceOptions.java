@@ -438,4 +438,9 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     public String[] getProperties() {
         return options.getProperties();
     }
+
+    @Override
+    public String getLocale() {
+        return options.getLocale();
+    }
 }

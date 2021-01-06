@@ -79,7 +79,7 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
      *
      * @param out  stream to wrap
      * @param mode mode to support
-     * @param session
+     * @param session session
      * @return {@code mode} supporting PrintStream
      */
     PrintStream createPrintStream(OutputStream out, NutsTerminalMode mode, NutsSession session);

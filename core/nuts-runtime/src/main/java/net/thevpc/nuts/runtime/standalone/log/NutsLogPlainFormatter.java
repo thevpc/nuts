@@ -1,10 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 
-import net.thevpc.nuts.NutsFormatManager;
-import net.thevpc.nuts.NutsFormattable;
-import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.NutsTextFormatManager;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 
@@ -55,12 +52,13 @@ public class NutsLogPlainFormatter extends Formatter {
             NutsFormatManager formats = wRecord.getWorkspace().formats();
             NutsTextFormatManager text = formats.text();
             if (wRecord.isFormatted()) {
-                msgStr = text.formatText(
-                        wRecord.getSession(),
-                        wRecord.getFormatStyle(), wRecord.getMessage(),
-                        parameters2
-                );
-                msgStr = text.filterText(msgStr);
+                msgStr = text.filterText(text.toString(
+                        new NutsMessage(
+                                wRecord.getFormatStyle(),
+                                NutsString.of(wRecord.getMessage()),
+                                parameters2
+                        ), wRecord.getSession()
+                ).toString());
             } else {
                 parameters2 = Arrays.copyOf(parameters2, parameters2.length);
                 for (int i = 0; i < parameters2.length; i++) {
@@ -73,7 +71,7 @@ public class NutsLogPlainFormatter extends Formatter {
                     }
                 }
                 switch (wRecord.getFormatStyle()) {
-                    case POSITIONAL: {
+                    case JSTYLE: {
                         msgStr = MessageFormat.format(wRecord.getMessage(), parameters2);
                         break;
                     }

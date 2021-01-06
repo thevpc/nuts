@@ -100,10 +100,10 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                                  NutsIdLocation[] locations, Map<String, String> properties, NutsClassifierMapping[] classifierMappings,NutsWorkspace ws) {
         super(ws);
         if (id == null) {
-            throw new NutsIllegalArgumentException(null, "missing id");
+            throw new NutsIllegalArgumentException(ws, "missing id");
         }
         if (!id.getProperties().isEmpty()) {
-            throw new NutsIllegalArgumentException(null, "id should not have query defined in descriptors");
+            throw new NutsIllegalArgumentException(ws, "id should not have query defined in descriptors");
         }
         this.id = id;
 //        this.alternative = CoreStringUtils.trimToNull(alternative);

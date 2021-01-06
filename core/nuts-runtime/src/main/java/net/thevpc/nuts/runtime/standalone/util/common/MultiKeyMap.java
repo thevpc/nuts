@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.common;
 
+import java.rmi.UnexpectedException;
 import java.util.*;
 import net.thevpc.nuts.NutsUnexpectedException;
 
@@ -83,7 +84,7 @@ public class MultiKeyMap<K, V> {
             s2.add(k1);
         } else {
             if (s1 != s2) {
-                throw new NutsUnexpectedException(null);
+                throw new UnsupportedOperationException("unexpected");
             }
         }
     }

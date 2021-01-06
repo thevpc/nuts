@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.io;
 import net.thevpc.nuts.NutsProgressEvent;
 import net.thevpc.nuts.NutsProgressMonitor;
 import net.thevpc.nuts.NutsTextFormatManager;
+import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.common.BytesSizeFormat;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
@@ -20,19 +21,25 @@ import java.text.DecimalFormat;
  */
 public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, NutsOutputStreamTransparentAdapter*/ {
 
-    private static DecimalFormat df = new DecimalFormat("##0.00");
-    private static BytesSizeFormat mf = new BytesSizeFormat("BTD1F");
     private PrintStream out;
     private int minLength;
+    private NutsWorkspace ws;
 
     public DefaultNutsCountProgressMonitor() {
-//        this.session = session;
     }
 
 //    @Override
 //    public OutputStream baseOutputStream() {
 //        return out;
 //    }
+
+    public DecimalFormat df(NutsProgressEvent event) {
+        return new DecimalFormat("##0.00");
+    }
+
+    public BytesSizeFormat mf(NutsProgressEvent event) {
+        return new BytesSizeFormat("BTD1F",event.getWorkspace());
+    }
 
     @Override
     public void onStart(NutsProgressEvent event) {
@@ -81,6 +88,8 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
             }
             CoreStringUtils.fillString(' ', 20 - x, formattedLine);
             formattedLine.append("\\]");
+            BytesSizeFormat mf = mf(event);
+            DecimalFormat df = df(event);
             formattedLine.append(" ").append(terminalFormat.escapeText(String.format("%6s", df.format(percent)))).append("\\% ");
             formattedLine.append(" [[").append(terminalFormat.escapeText(mf.format(partialSpeed))).append("/s]]");
             if (event.getMaxValue() < 0) {

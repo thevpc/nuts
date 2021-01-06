@@ -631,7 +631,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     descriptor,
                     null,
                     null,
-                    idType, apiId
+                    idType, apiId,ws
             );
             if (withCache) {
                 try {

@@ -159,7 +159,7 @@ public class CoreCommonUtils {
         return found;
     }
 
-    public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader) {
+    public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader,NutsWorkspace ws) {
         String fullName = "META-INF/services/" + service.getName();
         Enumeration<URL> configs;
         LinkedHashSet<String> names = new LinkedHashSet<>();
@@ -181,10 +181,10 @@ public class CoreCommonUtils {
             try {
                 c = Class.forName(n, false, classLoader);
             } catch (ClassNotFoundException x) {
-                throw new NutsException(null, x);
+                throw new NutsException(ws, x);
             }
             if (!service.isAssignableFrom(c)) {
-                throw new NutsException(null, "Not a valid type " + c + " <> " + service);
+                throw new NutsException(ws, "Not a valid type " + c + " <> " + service);
             }
             classes.add(c);
         }

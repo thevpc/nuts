@@ -296,7 +296,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 }
                 _ws = configLoaded.getWorkspace();
                 if (i >= maxDepth - 1) {
-                    throw new NutsIllegalArgumentException(null, "cyclic workspace resolution");
+                    throw new NutsIllegalArgumentException(ws, "cyclic workspace resolution");
                 }
             }
             if(lastConfigLoaded==null){
@@ -1020,7 +1020,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 sb.append(File.pathSeparator);
             }
             if (CoreIOUtils.isPathFile(bootClassWorldURL.toString())) {
-                File f = CoreIOUtils.toPathFile(bootClassWorldURL.toString()).toFile();
+                File f = CoreIOUtils.toPathFile(bootClassWorldURL.toString(),ws).toFile();
                 sb.append(f.getPath());
             } else {
                 sb.append(bootClassWorldURL.toString().replace(":", "\\:"));

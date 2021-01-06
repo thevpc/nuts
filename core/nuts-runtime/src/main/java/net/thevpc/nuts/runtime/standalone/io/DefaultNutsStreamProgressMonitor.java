@@ -21,9 +21,8 @@ import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
  * @author thevpc
  */
 public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, NutsOutputStreamTransparentAdapter*/ {
-
     private static DecimalFormat df = new DecimalFormat("##0.00");
-    private static BytesSizeFormat mf = new BytesSizeFormat("BTD1F");
+
     private PrintStream out;
     private int minLength;
     private CProgressBar bar;
@@ -88,6 +87,8 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
                 return false;
             }
             formattedLine.append(p);
+            BytesSizeFormat mf = new BytesSizeFormat("BTD1F", event.getWorkspace());
+
             formattedLine.append(" ").append(terminalFormat.escapeText(String.format("%6s", df.format(percent)))).append("\\% ");
             formattedLine.append(" [[").append(terminalFormat.escapeText(mf.format(partialSpeed))).append("/s]]");
             if (event.getMaxValue() < 0) {

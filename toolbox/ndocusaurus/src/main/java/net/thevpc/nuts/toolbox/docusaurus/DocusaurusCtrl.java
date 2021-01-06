@@ -444,7 +444,7 @@ public class DocusaurusCtrl {
                     if(logOp==null) {
                         logOp = appContext.getWorkspace().log().of(DocusaurusCtrl.class)
                                 .with().session(appContext.getSession())
-                                .style(NutsTextFormatStyle.POSITIONAL)
+                                .style(NutsTextFormatStyle.JSTYLE)
                         ;
                     }
                     return logOp;

@@ -180,7 +180,7 @@ public class NTemplateMain extends NutsApplication {
                     if(logOp==null) {
                          logOp = appContext.getWorkspace().log().of(NTemplateMain.class)
                                  .with().session(appContext.getSession())
-                                 .style(NutsTextFormatStyle.POSITIONAL)
+                                 .style(NutsTextFormatStyle.JSTYLE)
                                 ;
                     }
                     return logOp;

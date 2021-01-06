@@ -96,7 +96,7 @@ public class NutsXmlUtils {
             document.appendChild(createElement(CoreStringUtils.isBlank(name) ? "root" : name, object, -1,document, session));
             return document;
         } catch (ParserConfigurationException ex) {
-            throw new NutsException(null, ex);
+            throw new NutsException(session.getWorkspace(), ex);
         }
     }
 

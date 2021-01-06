@@ -38,6 +38,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import net.thevpc.nuts.NutsUnsupportedArgumentException;
+import net.thevpc.nuts.NutsWorkspace;
 
 /**
  *
@@ -45,13 +46,15 @@ import net.thevpc.nuts.NutsUnsupportedArgumentException;
  */
 class URLParts {
 
+    NutsWorkspace ws;
     URLPart[] values;
 
-    public URLParts(URL r) {
-        this(r.toString());
+    public URLParts(NutsWorkspace ws ,URL r) {
+        this(ws,r.toString());
     }
 
-    public URLParts(String r) {
+    public URLParts(NutsWorkspace ws,String r) {
+        this.ws = ws;
         if (r.startsWith("file:")) {
             values = new URLPart[]{new URLPart("file", r)};
         } else if (r.startsWith("http:") || r.startsWith("https:") || r.startsWith("ftp:")) {
@@ -61,19 +64,20 @@ class URLParts {
             int x = r2.indexOf('!');
             List<URLPart> rr = new ArrayList<>();
             rr.add(new URLPart("jar", r2.substring(0, x)));
-            for (URLPart pathItem : new URLParts(r2.substring(x + 1)).values) {
+            for (URLPart pathItem : new URLParts(ws,r2.substring(x + 1)).values) {
                 rr.add(pathItem);
             }
             values = rr.toArray(new URLPart[0]);
         } else if (r.startsWith("/")) {
             values = new URLPart[]{new URLPart("/", r.substring(1))};
         } else {
-            throw new NutsUnsupportedArgumentException(null, "Unsupported protocol " + r);
+            throw new NutsUnsupportedArgumentException(ws, "Unsupported protocol " + r);
         }
     }
 
-    public URLParts(URLPart... values) {
+    public URLParts(NutsWorkspace ws,URLPart... values) {
         this.values = values;
+        this.ws = ws;
     }
 
     public String getName() {
@@ -90,30 +94,30 @@ class URLParts {
     public URLParts getParent() {
         URLPart[] values2 = new URLPart[values.length - 1];
         System.arraycopy(values, 0, values2, 0, values2.length);
-        return new URLParts(values2);
+        return new URLParts(ws,values2);
     }
 
     public URLParts append(URLParts a) {
         List<URLPart> all = new ArrayList<>(Arrays.asList(this.values));
         all.addAll(Arrays.asList(a.values));
-        return new URLParts(all.toArray(new URLPart[all.size()]));
+        return new URLParts(ws,all.toArray(new URLPart[0]));
     }
 
     public URLParts append(String path) {
-        return append(new URLParts(path));
+        return append(new URLParts(ws,path));
     }
 
     public URLParts append(URLPart a) {
         List<URLPart> all = new ArrayList<>(Arrays.asList(this.values));
         all.add(a);
-        return new URLParts(all.toArray(new URLPart[all.size()]));
+        return new URLParts(ws,all.toArray(new URLPart[0]));
     }
 
     public URLParts appendHead(URLPart a) {
         List<URLPart> all = new ArrayList<>();
         all.add(a);
         all.addAll(Arrays.asList(this.values));
-        return new URLParts(all.toArray(new URLPart[all.size()]));
+        return new URLParts(ws,all.toArray(new URLPart[0]));
     }
 
     public URL[] getChildren(boolean includeFolders, boolean deep, final URLFilter filter) throws IOException {
@@ -137,7 +141,7 @@ class URLParts {
                             }
                             return found;
                         } else {
-                            throw new NutsUnsupportedArgumentException(null, "Unsupported");
+                            throw new NutsUnsupportedArgumentException(ws, "Unsupported");
                         }
                     } else if (parent instanceof URL) {
                         final URL uu = (URL) parent;
@@ -174,11 +178,11 @@ class URLParts {
                             }
                         }
                         if (i == values.length - 1) {
-                            return ff.toArray(new URL[ff.size()]);
+                            return ff.toArray(new URL[0]);
                         }
                         parent = ff.get(0);
                     } else {
-                        throw new NutsUnsupportedArgumentException(null, "Unsupported");
+                        throw new NutsUnsupportedArgumentException(ws, "Unsupported");
                     }
                 }
                 case "file": {
@@ -204,10 +208,10 @@ class URLParts {
                             }
                             return found;
                         } else {
-                            throw new NutsUnsupportedArgumentException(null, "Unsupported");
+                            throw new NutsUnsupportedArgumentException(ws, "Unsupported");
                         }
                     } else {
-                        throw new NutsUnsupportedArgumentException(null, "Unsupported");
+                        throw new NutsUnsupportedArgumentException(ws, "Unsupported");
                     }
                 }
                 case "jar": {
@@ -219,7 +223,7 @@ class URLParts {
                 }
             }
         }
-        throw new NutsUnsupportedArgumentException(null, "Unsupported");
+        throw new NutsUnsupportedArgumentException(ws, "Unsupported");
     }
 
     public InputStream getInputStream() throws IOException {
@@ -230,21 +234,21 @@ class URLParts {
                     if (parent == null) {
                         parent = new File(value.getPath());
                     } else {
-                        throw new NutsUnsupportedArgumentException(null, "Unsupported");
+                        throw new NutsUnsupportedArgumentException(ws, "Unsupported");
                     }
                 }
                 case "file": {
                     if (parent == null) {
                         parent = new URL(value.getPath());
                     } else {
-                        throw new NutsUnsupportedArgumentException(null, "Unsupported");
+                        throw new NutsUnsupportedArgumentException(ws, "Unsupported");
                     }
                 }
                 case "jar": {
                     if (parent == null) {
                         parent = new URL(value.getPath()).openStream();
                     } else {
-                        throw new NutsUnsupportedArgumentException(null, "Unsupported");
+                        throw new NutsUnsupportedArgumentException(ws, "Unsupported");
                     }
                 }
             }
@@ -255,7 +259,7 @@ class URLParts {
         if (parent instanceof URL) {
             return ((URL) parent).openStream();
         }
-        throw new NutsUnsupportedArgumentException(null, "Unsupported");
+        throw new NutsUnsupportedArgumentException(ws, "Unsupported");
     }
 
 }

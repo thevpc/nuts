@@ -44,6 +44,7 @@ package net.thevpc.nuts.toolbox.nutsserver.util;
  */
 import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.common.io.IOUtils;
+import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.*;
 
@@ -300,12 +301,12 @@ public class MultipartStream2 {
      * @since 1.3.1
      */
     public MultipartStream2(InputStream input,
-            byte[] boundary,
-            int bufSize,
-            ProgressNotifier pNotifier) {
+                            byte[] boundary,
+                            int bufSize,
+                            ProgressNotifier pNotifier, NutsWorkspace ws) {
 
         if (boundary == null) {
-            throw new NutsIllegalArgumentException(null, "boundary may not be null");
+            throw new NutsIllegalArgumentException(ws, "boundary may not be null");
         }
         // We prepend CR/LF to the boundary to chop trailing CR/LF from
         // body-data tokens.
@@ -342,12 +343,12 @@ public class MultipartStream2 {
      * @param boundary The token used for dividing the stream into
      * <code>encapsulations</code>.
      * @param pNotifier An object for calling the progress listener, if any.
-     * @see #MultipartStream2(InputStream, byte[], int, ProgressNotifier)
+     * @see #MultipartStream2(InputStream, byte[], int, ProgressNotifier,NutsWorkspace)
      */
     MultipartStream2(InputStream input,
             byte[] boundary,
-            ProgressNotifier pNotifier) {
-        this(input, boundary, DEFAULT_BUFSIZE, pNotifier);
+            ProgressNotifier pNotifier,NutsWorkspace ws) {
+        this(input, boundary, DEFAULT_BUFSIZE, pNotifier,ws);
     }
 
     // --------------------------------------------------------- Public methods
@@ -568,7 +569,7 @@ public class MultipartStream2 {
      * Arbitrary large amounts of data can be processed by this method using a
      * constant size buffer. (see {@link
      * #MultipartStream2(InputStream, byte[], int,
-     * MultipartStream2.ProgressNotifier) constructor}).
+     * MultipartStream2.ProgressNotifier,NutsWorkspace) constructor}).
      *
      * @param output The <code>Stream</code> to write data into. May be null, in
      * which case this method is equivalent to {@link #discardBodyData()}.

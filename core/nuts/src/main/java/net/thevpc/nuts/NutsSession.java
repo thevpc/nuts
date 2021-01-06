@@ -710,4 +710,8 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     Boolean getDebug();
 
     NutsSession setDebug(Boolean debug);
+
+    String getLocale();
+
+    NutsSession setLocale(String locale);
 }

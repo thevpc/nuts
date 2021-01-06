@@ -2,8 +2,6 @@ package net.thevpc.nuts;
 
 import java.io.PrintStream;
 import java.io.Reader;
-import java.util.Formatter;
-import java.util.Locale;
 
 /**
  * @category Format
@@ -51,6 +49,23 @@ public interface NutsTextFormatManager {
      */
     String filterText(String value);
 
+    String filterText(NutsMessage value, NutsSession session);
+
+    /**
+     * converts any object to a NutsString instance.
+     * special processing is supporting the following types:
+     * <ul>
+     *     <li>null</li>
+     *     <li>NutsTextNode</li>
+     *     <li>NutsFormattable</li>
+     *     <li>NutsMessage</li>
+     * </ul>
+     * @param instance instance
+     * @param session session
+     * @return new instance of NutsString
+     */
+    NutsString toString(Object instance,NutsSession session);
+
     NutsTextNodeParser parser();
 
     /**
@@ -64,36 +79,6 @@ public interface NutsTextFormatManager {
      */
     String escapeText(String value);
     String escapeCodeText(String value);
-
-    /**
-     * format string. supports {@link Formatter#format(java.util.Locale, java.lang.String, java.lang.Object...)
-     * }
-     * pattern format and adds NutsImmutableString special format to print unfiltered strings.
-     *
-     *
-     * @param session session
-     * @param style style
-     * @param locale locale
-     * @param format format
-     * @param args arguments
-     * @return formatted string
-     */
-    String formatText(NutsSession session,NutsTextFormatStyle style, Locale locale, String format, Object... args);
-
-    /**
-     * format string. supports {@link Formatter#format(java.lang.String, java.lang.Object...)
-     * }
-     * pattern format and adds NutsImmutableString special format to print unfiltered strings.
-     *
-     *
-     * @param session session
-     * @param style format style
-     * @param format format
-     * @param args arguments
-     * @return formatted string
-     */
-    String formatText(NutsSession session,NutsTextFormatStyle style, String format, Object... args);
-
 
     NutsTitleNumberSequence createTitleNumberSequence();
 

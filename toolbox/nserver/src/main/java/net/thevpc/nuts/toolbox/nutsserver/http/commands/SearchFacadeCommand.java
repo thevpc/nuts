@@ -30,7 +30,7 @@ public class SearchFacadeCommand extends AbstractFacadeCommand {
             context.sendError(400, "Invalid JShellCommandNode Arguments : " + getName() + " . Invalid format.");
             return;
         }
-        MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary);
+        MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary,context.getWorkspace());
         boolean transitive = true;
         String root = null;
         String pattern = null;

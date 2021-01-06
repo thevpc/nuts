@@ -898,24 +898,24 @@ public class CoreNutsUtils {
         }
     }
 
-    public static void checkId_GN(NutsId id) {
+    public static void checkId_GN(NutsId id, NutsWorkspace ws) {
         if (id == null) {
-            throw new NutsElementNotFoundException(null, "missing id");
+            throw new NutsElementNotFoundException(ws, "missing id");
         }
         if (CoreStringUtils.isBlank(id.getGroupId())) {
-            throw new NutsElementNotFoundException(null, "missing group for " + id);
+            throw new NutsElementNotFoundException(ws, "missing group for " + id);
         }
     }
 
-    public static void checkId_GNV(NutsId id) {
+    public static void checkId_GNV(NutsId id, NutsWorkspace ws) {
         if (id == null) {
-            throw new NutsElementNotFoundException(null, "missing id");
+            throw new NutsElementNotFoundException(ws, "missing id");
         }
         if (CoreStringUtils.isBlank(id.getGroupId())) {
-            throw new NutsElementNotFoundException(null, "missing group for " + id);
+            throw new NutsElementNotFoundException(ws, "missing group for " + id);
         }
         if (CoreStringUtils.isBlank(id.getArtifactId())) {
-            throw new NutsElementNotFoundException(null, "missing name for " + id.toString());
+            throw new NutsElementNotFoundException(ws, "missing name for " + id.toString());
         }
     }
 
@@ -1270,7 +1270,7 @@ public class CoreNutsUtils {
         }
     }
 
-    public static String[] parseCommandLineArray(String commandLineString) {
+    public static String[] parseCommandLineArray(String commandLineString,NutsWorkspace ws) {
         if (commandLineString == null) {
             return new String[0];
         }
@@ -1324,10 +1324,10 @@ public class CoreNutsUtils {
                             break;
                         }
                         case '\'': {
-                            throw new NutsParseException(null, "illegal char " + c);
+                            throw new NutsParseException(ws, "illegal char " + c);
                         }
                         case '"': {
-                            throw new NutsParseException(null, "illegal char " + c);
+                            throw new NutsParseException(ws, "illegal char " + c);
                         }
                         case '\\': {
                             i++;
@@ -1396,7 +1396,7 @@ public class CoreNutsUtils {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new NutsParseException(null, "expected '");
+                throw new NutsParseException(ws, "expected '");
             }
         }
         return args.toArray(new String[0]);

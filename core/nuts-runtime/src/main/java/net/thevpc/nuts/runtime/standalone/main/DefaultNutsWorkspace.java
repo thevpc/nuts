@@ -182,13 +182,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             switch (openMode) {
                 case OPEN_OR_ERROR: {
                     if (!exists) {
-                        throw new NutsWorkspaceNotFoundException(this, workspaceLocation);
+                        throw new NutsWorkspaceNotFoundException(workspaceLocation);
                     }
                     break;
                 }
                 case CREATE_OR_ERROR: {
                     if (exists) {
-                        throw new NutsWorkspaceAlreadyExistsException(this, workspaceLocation);
+                        throw new NutsWorkspaceAlreadyExistsException(workspaceLocation);
                     }
                     break;
                 }

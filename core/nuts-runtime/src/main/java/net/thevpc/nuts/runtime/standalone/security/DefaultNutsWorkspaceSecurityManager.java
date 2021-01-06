@@ -352,7 +352,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
                 public LoginContext call() throws Exception {
                     return new LoginContext("nuts", handler);
                 }
-            }, NutsWorkspaceLoginModule.class.getClassLoader());
+            }, NutsWorkspaceLoginModule.class.getClassLoader(), ws);
             login.login();
         } catch (LoginException ex) {
             throw new NutsLoginException(ws, ex);

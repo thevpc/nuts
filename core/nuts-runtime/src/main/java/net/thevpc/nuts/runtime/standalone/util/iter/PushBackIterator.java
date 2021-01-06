@@ -77,7 +77,7 @@ public class PushBackIterator<T> implements Iterator<T> {
     @Override
     public void remove() {
         if (lastHasNext == null) {
-            throw new NutsUnsupportedOperationException(null, "Unsupported");
+            throw new UnsupportedOperationException("unsupported");
         }
         base.remove();
     }
@@ -86,7 +86,7 @@ public class PushBackIterator<T> implements Iterator<T> {
         if (lastHasNext == null || !lastValConsumed) {
             lastHasNext = true;
         } else {
-            throw new NutsUnsupportedOperationException(null, "Unsupported");
+            throw new UnsupportedOperationException("unsupported");
         }
     }
 }

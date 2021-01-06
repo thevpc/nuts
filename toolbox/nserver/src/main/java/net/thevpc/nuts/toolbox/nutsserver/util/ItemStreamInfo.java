@@ -27,6 +27,7 @@
 package net.thevpc.nuts.toolbox.nutsserver.util;
 
 import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,9 +45,11 @@ public class ItemStreamInfo {
 
     private Map<String, List<String>> headers = new HashMap<>();
     private InputStream content;
+    private NutsWorkspace ws;
 
-    public ItemStreamInfo(InputStream header, InputStream content) throws IOException {
+    public ItemStreamInfo(InputStream header, InputStream content,NutsWorkspace ws) throws IOException {
         this.content = content;
+        this.ws = ws;
         BufferedReader r = new BufferedReader(new InputStreamReader(header));
         String line = null;
         while ((line = r.readLine()) != null) {
@@ -92,7 +95,7 @@ public class ItemStreamInfo {
                 return substring;
             }
         }
-        throw new NutsIllegalArgumentException(null, "invalid boundary");
+        throw new NutsIllegalArgumentException(ws, "invalid boundary");
     }
 
 //    private static class ErrInputStream extends InputStream {

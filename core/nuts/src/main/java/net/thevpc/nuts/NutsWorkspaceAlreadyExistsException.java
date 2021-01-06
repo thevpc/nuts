@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * @since 0.5.4
  * @category Exceptions
  */
-public class NutsWorkspaceAlreadyExistsException extends NutsWorkspaceException {
+public class NutsWorkspaceAlreadyExistsException extends NutsBootException {
 
     /**
      * workspace location
@@ -41,22 +41,20 @@ public class NutsWorkspaceAlreadyExistsException extends NutsWorkspaceException 
 
     /**
      * Constructs a new NutsWorkspaceAlreadyExistsException exception
-     * @param workspace workspace
      * @param workspaceLocation location
      */
-    public NutsWorkspaceAlreadyExistsException(NutsWorkspace workspace, String workspaceLocation) {
-        super(workspace, "workspace already exists " + (workspaceLocation == null ? "<null>" : workspaceLocation),null);
+    public NutsWorkspaceAlreadyExistsException(String workspaceLocation) {
+        super("workspace already exists " + (workspaceLocation == null ? "<null>" : workspaceLocation),null);
         this.workspaceLocation = workspaceLocation;
     }
 
     /**
      * Constructs a new NutsWorkspaceAlreadyExistsException exception
-     * @param workspace workspace
      * @param workspaceLocation location
      * @param err exception
      */
-    public NutsWorkspaceAlreadyExistsException(NutsWorkspace workspace, String workspaceLocation, Throwable err) {
-        super(workspace, "workspace already exists " + (workspaceLocation == null ? "<null>" : workspaceLocation), err);
+    public NutsWorkspaceAlreadyExistsException(String workspaceLocation, Throwable err) {
+        super("workspace already exists " + (workspaceLocation == null ? "<null>" : workspaceLocation), err);
         this.workspaceLocation = workspaceLocation;
     }
 

@@ -24,17 +24,20 @@ public class NutsLogRichFormatter extends Formatter {
             NutsLogRecord wRecord = (NutsLogRecord) record;
             Object[] p = wRecord.getParameters();
             NutsWorkspace ws = wRecord.getWorkspace();
-            String msgStr = ws.formats().text().formatText(
-                    wRecord.getSession(),
-                    wRecord.getFormatStyle(), wRecord.getMessage(),
-                    p
-            );
             h = new NutsLogRecord(
                     ws,
                     wRecord.getSession(),
                     wRecord.getLevel(),
                     wRecord.getVerb(),
-                    msgStr,
+                    ws.formats().text().toString(
+                            new NutsMessage(
+                                wRecord.getFormatStyle(),
+                                    NutsString.of(wRecord.getMessage()),
+                                p
+                            ),
+                            wRecord.getSession()
+                    ).toString()
+                    ,
                     null,
                     wRecord.isFormatted(),
                     wRecord.getTime(),
@@ -201,16 +204,19 @@ public class NutsLogRichFormatter extends Formatter {
                     }
                 }
             }
-            String msgStr =wRecord.getWorkspace().formats().text().formatText(
-                    wRecord.getSession(),
-                    style, message,
-                    parameters2
+            NutsString msgStr =
+                    wRecord.getWorkspace().formats().text().toString(
+                    new NutsMessage(style,
+                            NutsString.of(message),
+                            parameters2
+                    )
+                    ,wRecord.getSession()
             );
 //                    formatMessage(wRecord);
             if(wRecord.isFormatted()) {
-                sb.append(NutsString.of(msgStr));
-            }else{
                 sb.append(msgStr);
+            }else{
+                sb.append(msgStr.toString());
             }
             if(wRecord.getTime()>0){
                 sb.append(" (");

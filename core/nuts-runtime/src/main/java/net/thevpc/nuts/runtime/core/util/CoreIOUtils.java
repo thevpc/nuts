@@ -340,7 +340,7 @@ public class CoreIOUtils {
         return false;
     }
 
-    public static Path toPathFile(String s) {
+    public static Path toPathFile(String s,NutsWorkspace ws) {
         if (CoreStringUtils.isBlank(s)) {
             return null;
         }
@@ -354,7 +354,7 @@ public class CoreIOUtils {
 
                 return Paths.get(uri);
             } catch (URISyntaxException ex) {
-                throw new NutsParseException(null, "Not a file Path : " + s);
+                throw new NutsParseException(ws, "not a file Path : " + s);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -365,10 +365,10 @@ public class CoreIOUtils {
                 || s.startsWith("jar:")
                 || s.startsWith("zip:")
                 || s.startsWith("ssh:")) {
-            throw new NutsParseException(null, "Not a file Path");
+            throw new NutsParseException(ws, "not a file Path");
         }
         if (isURL(s)) {
-            throw new NutsParseException(null, "Not a file Path");
+            throw new NutsParseException(ws, "not a file Path");
         }
         return Paths.get(s);
     }
@@ -962,64 +962,49 @@ public class CoreIOUtils {
 //        return new InputStream(name, source);
 //    }
 
-    public static CoreInput createInputSource(java.io.InputStream source, String name, String typeName) {
+    public static CoreInput createInputSource(java.io.InputStream source, String name, String typeName,NutsWorkspace ws) {
         if (source == null) {
             return null;
         }
         if (name == null) {
             name = String.valueOf(source);
         }
-        return new InputStream(name, source, typeName);
+        return new InputStream(name, source, typeName,ws);
     }
 
-    public static CoreInput createInputSource(Path source, String name, String typeName) {
+    public static CoreInput createInputSource(Path source, String name, String typeName, NutsWorkspace ws) {
         if (source == null) {
             return null;
         }
         if (name == null) {
             name = source.getFileName().toString();
         }
-        return new PathInput(name, source, typeName);
+        return new PathInput(name, source, typeName,ws);
     }
 
-    public static CoreInput createInputSource(File source, String name, String typeName) {
+    public static CoreInput createInputSource(File source, String name, String typeName, NutsWorkspace ws) {
         if (source == null) {
             return null;
         }
-        return createInputSource(source.toPath(), name, typeName);
+        return createInputSource(source.toPath(), name, typeName,ws);
     }
 
-    public static CoreInput createInputSource(byte[] source, String name, String typeName) {
+    public static CoreInput createInputSource(byte[] source, String name, String typeName, NutsWorkspace ws) {
         if (source == null) {
             return null;
         }
         if (name == null) {
             name = String.valueOf(source);
         }
-        return new ByteArrayInput(name, source, typeName);
+        return new ByteArrayInput(name, source, typeName,ws);
     }
 
-
-    public static CoreInput createInputSource(URL source, String name, String typeName) {
-        if (source == null) {
-            return null;
-        }
-        if (isPathFile(source.toString())) {
-            return createInputSource(toPathFile(source.toString()), name, typeName);
-        }
-        if (name == null) {
-            name = source.toString();
-        }
-        return new URLInput(name, source, typeName);
-    }
-
-
-    public static CoreInput createInputSource(String source, String name, String typeName) {
+    public static CoreInput createInputSource(String source, String name, String typeName,NutsWorkspace ws) {
         if (source == null) {
             return null;
         }
         if (isPathFile(source)) {
-            return createInputSource(toPathFile(source), name, typeName);
+            return createInputSource(toPathFile(source,ws), name, typeName,ws);
         }
         URL baseURL = null;
         try {
@@ -1031,10 +1016,10 @@ public class CoreIOUtils {
             if (name == null) {
                 name = source;
             }
-            return new URLInput(name, baseURL, typeName);
+            return new URLInput(name, baseURL, typeName,ws);
         }
 
-        throw new NutsUnsupportedArgumentException(null, "Unsupported source : " + source);
+        throw new NutsUnsupportedArgumentException(ws, "Unsupported source : " + source);
     }
 
     public static boolean isValidInputStreamSource(Class type) {
@@ -1069,165 +1054,6 @@ public class CoreIOUtils {
 //        }
 //    }
 
-    public static NutsOutput createOutputTarget(OutputStream target, String name, String typeName) {
-        if (target == null) {
-            return null;
-        }
-        return new AbstractNutsOutput(target, false, false, name, typeName) {
-            @Override
-            public OutputStream open() {
-                return (OutputStream) getSource();
-            }
-
-            @Override
-            public String toString() {
-                return "OutputStream(" + getSource() + ")";
-            }
-
-            @Override
-            public void close() {
-                try {
-                    ((OutputStream) getSource()).close();
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-        };
-    }
-
-    public static NutsOutput createOutputTarget(String target, String name, String typeName) {
-        if (target == null) {
-            return null;
-        }
-        Path basePath = null;
-        try {
-            basePath = Paths.get(target);
-        } catch (Exception ex) {
-            //
-        }
-        if (basePath != null) {
-            return createOutputTarget(basePath,name,typeName);
-        }
-
-        try {
-            basePath = Paths.get(new URL(target).toURI());
-        } catch (Exception ex) {
-            //
-        }
-        if (basePath != null) {
-            return createOutputTarget(target,name,typeName);
-        }
-
-        URL baseURL = null;
-        try {
-            baseURL = new URL(target);
-        } catch (Exception ex) {
-            //
-        }
-        if (baseURL != null) {
-            return createOutputTarget(baseURL,name,typeName);
-        }
-        throw new NutsUnsupportedArgumentException(null, "Unsupported source : " + target);
-    }
-
-    public static NutsOutput createOutputTarget(URL baseURL, String name, String typeName) {
-        if (baseURL == null) {
-            return null;
-        }
-
-        if(baseURL.getProtocol().equals("file")) {
-            try {
-                return createOutputTarget(Paths.get(baseURL.toURI()),name,typeName);
-            } catch (URISyntaxException ex) {
-                throw new UncheckedIOException(new IOException(ex));
-            }
-        }
-        throw new NutsUnsupportedArgumentException(null, "Unsupported source : " + baseURL);
-    }
-
-    public static AbstractNutsOutput createOutputTarget(Path target, String name, String typeName) {
-        if (target == null) {
-            return null;
-        }
-        return new AbstractNutsOutput(target, true, true, name==null?target.getFileName().toString():name, typeName) {
-            @Override
-            public Path getPath() {
-                return (Path) getSource();
-            }
-
-            @Override
-            public URL getURL() {
-                Path source = (Path) getSource();
-                try {
-                    return source.toUri().toURL();
-                } catch (MalformedURLException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-
-            @Override
-            public void close() {
-
-            }
-
-            @Override
-            public OutputStream open() {
-                try {
-                    return Files.newOutputStream(getPath());
-                } catch (IOException ex) {
-                    throw createOpenError(ex);
-                }
-            }
-
-            @Override
-            public String toString() {
-                return getPath().toString();
-            }
-        };
-    }
-
-    public static AbstractNutsOutput createOutputTarget(File target, String name, String typeName) {
-        if (target == null) {
-            return null;
-        }
-        return new AbstractNutsOutput(target, true,false,name==null?target.getName():name,typeName) {
-            @Override
-            public Path getPath() {
-                return ((File) getSource()).toPath();
-            }
-
-            @Override
-            public URL getURL() {
-                File source = (File) getSource();
-                try {
-                    return source.toURI().toURL();
-                } catch (MalformedURLException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-
-            @Override
-            public void close() {
-
-            }
-
-            @Override
-            public OutputStream open() {
-                try {
-                    return Files.newOutputStream(getPath());
-                } catch (IOException ex) {
-                    throw createOpenError(ex);
-                }
-            }
-
-            @Override
-            public String toString() {
-                return getPath().toString();
-            }
-        };
-    }
-
-
 
     public static NutsTransportConnection getHttpClientFacade(NutsSession session, String url) {
         //        System.out.println("getHttpClientFacade "+url);
@@ -1257,9 +1083,9 @@ public class CoreIOUtils {
         }
     }
 
-    public static URL resolveURLFromResource(Class cls, String urlPath) {
+    public static URL resolveURLFromResource(Class cls, String urlPath,NutsWorkspace ws) {
         if (!urlPath.startsWith("/")) {
-            throw new NutsIllegalArgumentException(null, "unable to resolve url from " + urlPath);
+            throw new NutsIllegalArgumentException(ws, "unable to resolve url from " + urlPath);
         }
         URL url = cls.getResource(urlPath);
         String urlFile = url.getFile();
@@ -1281,7 +1107,7 @@ public class CoreIOUtils {
                 }
             }
         } else {
-            String encoded = encodePath(urlPath);
+            String encoded = encodePath(urlPath,ws);
             String url_tostring = url.toString();
             if (url_tostring.endsWith(encoded)) {
                 try {
@@ -1290,11 +1116,11 @@ public class CoreIOUtils {
                     throw new UncheckedIOException(ex);
                 }
             }
-            throw new NutsIllegalArgumentException(null, "unable to resolve url from " + urlPath);
+            throw new NutsIllegalArgumentException(ws, "unable to resolve url from " + urlPath);
         }
     }
 
-    private static String encodePath(String path) {
+    private static String encodePath(String path,NutsWorkspace ws) {
         StringTokenizer st = new StringTokenizer(path, "/", true);
         StringBuilder encoded = new StringBuilder();
         while (st.hasMoreTokens()) {
@@ -1305,15 +1131,15 @@ public class CoreIOUtils {
                 try {
                     encoded.append(URLEncoder.encode(t, "UTF-8"));
                 } catch (UnsupportedEncodingException ex) {
-                    throw new NutsIllegalArgumentException(null, "Unable to encode " + t, ex);
+                    throw new NutsIllegalArgumentException(ws, "unable to encode " + t, ex);
                 }
             }
         }
         return encoded.toString();
     }
 
-    public static File resolveLocalFileFromResource(Class cls, String url) {
-        return resolveLocalFileFromURL(resolveURLFromResource(cls, url));
+    public static File resolveLocalFileFromResource(Class cls, String url,NutsWorkspace ws) {
+        return resolveLocalFileFromURL(resolveURLFromResource(cls, url,ws));
     }
 
     public static File resolveLocalFileFromURL(URL url) {
@@ -1589,7 +1415,7 @@ public class CoreIOUtils {
                     Paths.get(
                     ws.locations().getStoreLocation(
                     ws.getRuntimeId(),
-                    NutsStoreLocation.CACHE)).resolve("urls-db").toFile());
+                    NutsStoreLocation.CACHE)).resolve("urls-db").toFile(),ws);
             ws.userProperties().put(k, m);
         }
         return m;
@@ -2212,8 +2038,8 @@ public class CoreIOUtils {
             extends AbstractItem
             implements MultiInput {
 
-        public AbstractMultiReadItem(String name, Object value, boolean path, boolean url, String typeName) {
-            super(name, value, path, url, typeName);
+        public AbstractMultiReadItem(String name, Object value, boolean path, boolean url, String typeName,NutsWorkspace ws) {
+            super(name, value, path, url, typeName,ws);
         }
 
     }
@@ -2225,13 +2051,15 @@ public class CoreIOUtils {
         boolean url;
         String name;
         String typeName;
+        NutsWorkspace ws;
 
-        public AbstractItem(String name, Object value, boolean path, boolean url, String typeName) {
+        public AbstractItem(String name, Object value, boolean path, boolean url, String typeName,NutsWorkspace ws) {
             this.name = name;
             this.value = value;
             this.path = path;
             this.url = url;
             this.typeName = typeName;
+            this.ws = ws;
         }
 
         protected NutsIOException createOpenError(Exception ex) {
@@ -2241,9 +2069,9 @@ public class CoreIOUtils {
             }
             String s = toString();
             if(s.equals(n)){
-                return new NutsIOException(null, "unable to open " + n, ex);
+                return new NutsIOException(ws, "unable to open " + n, ex);
             }
-            return new NutsIOException(null, "unable to open " + n + " from " + s, ex);
+            return new NutsIOException(ws, "unable to open " + n + " from " + s, ex);
         }
 
         @Override
@@ -2274,7 +2102,7 @@ public class CoreIOUtils {
 
         @Override
         public Path getPath() {
-            throw new NutsUnsupportedOperationException(null);
+            throw new NutsUnsupportedOperationException(ws);
         }
 
         public boolean isURL() {
@@ -2283,7 +2111,7 @@ public class CoreIOUtils {
 
         @Override
         public URL getURL() {
-            throw new NutsUnsupportedOperationException(null);
+            throw new NutsUnsupportedOperationException(ws);
         }
 
         @Override
@@ -2307,8 +2135,8 @@ public class CoreIOUtils {
 
     private static class ByteArrayInput extends AbstractMultiReadItem {
 
-        public ByteArrayInput(String name, byte[] value, String typeName) {
-            super(name, value, false, false, typeName);
+        public ByteArrayInput(String name, byte[] value, String typeName,NutsWorkspace ws) {
+            super(name, value, false, false, typeName,ws);
         }
 
         @Override
@@ -2329,12 +2157,12 @@ public class CoreIOUtils {
         }
     }
 
-    private static class URLInput extends AbstractItem {
+    public static class URLInput extends AbstractItem {
 
         private NutsURLHeader cachedNutsURLHeader = null;
 
-        public URLInput(String name, URL value, String typeName) {
-            super(name, value, false, true, typeName);
+        public URLInput(String name, URL value, String typeName,NutsWorkspace ws) {
+            super(name, value, false, true, typeName,ws);
         }
 
         @Override
@@ -2402,8 +2230,8 @@ public class CoreIOUtils {
 
     private static class PathInput extends AbstractMultiReadItem {
 
-        public PathInput(String name, Path value, String typeName) {
-            super(name, value, true, true, typeName);
+        public PathInput(String name, Path value, String typeName,NutsWorkspace ws) {
+            super(name, value, true, true, typeName,ws);
         }
 
         @Override
@@ -2461,8 +2289,8 @@ public class CoreIOUtils {
 
     private static class InputStream extends AbstractItem {
 
-        public InputStream(String name, java.io.InputStream value, String typeName) {
-            super(name, value, false, false, typeName);
+        public InputStream(String name, java.io.InputStream value, String typeName,NutsWorkspace ws) {
+            super(name, value, false, false, typeName,ws);
         }
 
         @Override

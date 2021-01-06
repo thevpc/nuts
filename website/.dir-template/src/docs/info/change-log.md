@@ -11,10 +11,10 @@ Starred releases are most stable ones.
 ### nuts 0.8.1.0
 - ```2020/11/22 	nuts 0.8.1.0 (*)``` released [download nuts-0.8.1.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar)
 - WARNING: API has evolved with some incompatibilities with previous versions  
-- ADDED  : [ntalk-agent] new modules nlib-talk-agent (library) and ntalk-agent (application using the library) that enable client to client communication.
-  nlib-talk-agent is a broker that helps communication between nuts components with minimum overhead.
-  nlib-talk-agent enables one workspace to talk with any other workspace without having to create one server socket for each workspace.
-  It also enables singleton per location implementation 
+- FIXED  : [api] extension support (for JLine)
+- ADDED  : [api] added --locale option to support multi languages. The option is reflected to Session as well 
+- ADDED  : [api] added ---<key>=<value> options to support extra properties 
+- ADDED  : [api] added NutsFormattedMessage to support formatted messages in a uniform manner (C-style, {} positional) 
 - CHANGED: [runtime] revamped Nuts Text Format to support with simplified syntax but more verbose styles.
   Now supports #), ##), ###) and so on as Title Node.
   It supports as well the common markdown 'code' format with anti-quotes such as
@@ -24,12 +24,15 @@ Starred releases are most stable ones.
   ```error error message...```
   ```kw someKeyword```
 - CHANGED: [runtime] help files now have extensions ".ntf" (for nuts text format) instead of ".help"
-- FIXED  : [api] extension support (for JLine)
 - ADDED  : [njob] added --help sub-command
 - FIXED  : [nsh]  fixed multiple inconsistencies and implemented a brand new parser
 - REMOVED: [docusaurus-to-ascidoctor] tool fully removed as replaced by a more mature ndocusaurus
 - REMOVED: [ndi], removed project, merged into nadmin
 - REMOVED: [nded], removed project, temporarily code added to nadmin, needs to be refactored
+- ADDED  : [ntalk-agent] new modules nlib-talk-agent (library) and ntalk-agent (application using the library) that enable client to client communication.
+  nlib-talk-agent is a broker that helps communication between nuts components with minimum overhead.
+  nlib-talk-agent enables one workspace to talk with any other workspace without having to create one server socket for each workspace.
+  It also enables singleton per location implementation
 
 ### nuts 0.8.0.0
 - ```2020/11/8? 	nuts 0.8.0.0 (*)``` released [download nuts-0.8.0.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.0/nuts-0.8.0.jar)

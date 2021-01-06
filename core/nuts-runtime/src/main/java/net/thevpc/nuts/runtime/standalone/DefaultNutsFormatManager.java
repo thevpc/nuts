@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.DefaultNutsIncrementalOutputFormat;
 import net.thevpc.nuts.runtime.core.format.DefaultNutsObjectFormat;
-import net.thevpc.nuts.runtime.core.format.DefaultNutsStringFormat;
+//import net.thevpc.nuts.runtime.core.format.DefaultNutsStringFormat;
 import net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElementFormat;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextFormatManager;
 import net.thevpc.nuts.runtime.core.format.tree.DefaultTreeFormat;
@@ -32,11 +32,11 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
     public NutsElementFormat element() {
         return new DefaultNutsElementFormat(ws);
     }
-
-    @Override
-    public NutsStringFormat str() {
-        return new DefaultNutsStringFormat(ws);
-    }
+//
+//    @Override
+//    public NutsStringFormat str() {
+//        return new DefaultNutsStringFormat(ws);
+//    }
 
     @Override
     public NutsTreeFormat tree() {

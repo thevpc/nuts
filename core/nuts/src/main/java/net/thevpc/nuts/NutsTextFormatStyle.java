@@ -25,12 +25,22 @@
  * ====================================================================
  */
 package net.thevpc.nuts;
+
+import java.util.Locale;
+
 /**
  * 
  * @author thevpc
  * @category Format
  */
 public enum NutsTextFormatStyle {
+    /**
+     * @see java.util.Formatter
+     * @see String#format(Locale, String, Object...)
+     */
     CSTYLE,
-    POSITIONAL,
+    /**
+     * @see java.text.MessageFormat
+     */
+    JSTYLE,
 }

@@ -65,7 +65,7 @@ public final class Nuts {
                         version = "0.0.0";
                     }
                     if (version == null || version.trim().isEmpty() || version.equals("0.0.0")) {
-                        throw new NutsException(null, "Unable to detect nuts version. Most likely you are missing valid compilation of nuts. nuts.properties could not be resolved and hence, we are unable to resolve nuts version.");
+                        throw new NutsBootException("unable to detect nuts version. Most likely you are missing valid compilation of nuts. nuts.properties could not be resolved and hence, we are unable to resolve nuts version.");
                     }
                 }
             }

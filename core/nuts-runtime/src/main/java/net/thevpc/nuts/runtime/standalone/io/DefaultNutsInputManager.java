@@ -42,13 +42,13 @@ public class DefaultNutsInputManager implements NutsInputManager {
         } else if (source instanceof String) {
             return of((String) source);
         } else {
-            throw new NutsUnsupportedArgumentException(null, "Unsupported type " + source.getClass().getName());
+            throw new NutsUnsupportedArgumentException(ws, "Unsupported type " + source.getClass().getName());
         }
     }
 
     @Override
     public NutsInput of(String resource) {
-        NutsInput v = CoreIOUtils.createInputSource(resource, getName(), getTypeName());
+        NutsInput v = CoreIOUtils.createInputSource(resource, getName(), getTypeName(),ws);
         v = toMulti(v);
         return v;
     }
@@ -62,35 +62,44 @@ public class DefaultNutsInputManager implements NutsInputManager {
 
     @Override
     public NutsInput of(byte[] bytes) {
-        NutsInput v = CoreIOUtils.createInputSource(bytes, getName(), getTypeName());
+        NutsInput v = CoreIOUtils.createInputSource(bytes, getName(), getTypeName(),ws);
         v = toMulti(v);
         return v;
     }
 
     @Override
     public NutsInput of(InputStream stream) {
-        NutsInput v = CoreIOUtils.createInputSource(stream, getName(), getTypeName());
+        NutsInput v = CoreIOUtils.createInputSource(stream, getName(), getTypeName(),ws);
         v = toMulti(v);
         return v;
     }
 
     @Override
-    public NutsInput of(URL stream) {
-        NutsInput v = CoreIOUtils.createInputSource(stream, getName(), getTypeName());
-        v = toMulti(v);
-        return v;
+    public NutsInput of(URL source) {
+        String name=getName();
+        String typeName=getTypeName();
+        if (source == null) {
+            return null;
+        }else if (CoreIOUtils.isPathFile(source.toString())) {
+            return toMulti(CoreIOUtils.createInputSource(CoreIOUtils.toPathFile(source.toString(),ws), name, typeName,ws));
+        }else {
+            if (name == null) {
+                name = source.toString();
+            }
+            return toMulti(new CoreIOUtils.URLInput(name, source, typeName,ws));
+        }
     }
 
     @Override
     public NutsInput of(File stream) {
-        NutsInput v = CoreIOUtils.createInputSource(stream, getName(), getTypeName());
+        NutsInput v = CoreIOUtils.createInputSource(stream, getName(), getTypeName(),ws);
         v = toMulti(v);
         return v;
     }
 
     @Override
     public NutsInput of(Path stream) {
-        NutsInput v = CoreIOUtils.createInputSource(stream, getName(), getTypeName());
+        NutsInput v = CoreIOUtils.createInputSource(stream, getName(), getTypeName(),ws);
         v = toMulti(v);
         return v;
     }

@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.util.io;
 
 import net.thevpc.nuts.NutsProgressEvent;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsWorkspace;
 
 /**
  * @author thevpc
@@ -65,6 +66,11 @@ public class DefaultNutsProgressEvent implements NutsProgressEvent {
 
     public NutsSession getSession() {
         return session;
+    }
+
+    @Override
+    public NutsWorkspace getWorkspace() {
+        return session.getWorkspace();
     }
 
     public Throwable getError() {

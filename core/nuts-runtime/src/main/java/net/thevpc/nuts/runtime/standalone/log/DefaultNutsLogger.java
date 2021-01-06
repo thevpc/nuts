@@ -12,7 +12,7 @@ public class DefaultNutsLogger implements NutsLogger {
     private NutsSession session;
     private boolean defaultFormatted;
     private long defaultTime;
-    private NutsTextFormatStyle defaultStyle= NutsTextFormatStyle.POSITIONAL;
+    private NutsTextFormatStyle defaultStyle= NutsTextFormatStyle.JSTYLE;
     private Logger log;
     private static final int offValue = Level.OFF.intValue();
     private LinkedList<LogRecord> suspendedTerminalRecords = new LinkedList<>();

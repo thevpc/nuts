@@ -13,7 +13,7 @@ public class NutsLogRecord extends LogRecord {
     private String verb;
     private boolean formatted;
     private long time;
-    private NutsTextFormatStyle formatStyle = NutsTextFormatStyle.POSITIONAL;
+    private NutsTextFormatStyle formatStyle = NutsTextFormatStyle.JSTYLE;
 
     public NutsLogRecord(NutsWorkspace ws, NutsSession session, Level level, String verb, String msg, Object[] objects, boolean formatted, long time, NutsTextFormatStyle style) {
         super(level, msg);

@@ -160,10 +160,10 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                             break;
                         }
                         case '\'': {
-                            throw new NutsParseException(null, "illegal char " + c);
+                            throw new NutsBootException("illegal char " + c);
                         }
                         case '"': {
-                            throw new NutsParseException(null, "illegal char " + c);
+                            throw new NutsBootException("illegal char " + c);
                         }
                         case '\\': {
                             i++;
@@ -232,7 +232,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new NutsParseException(null, "expected '");
+                throw new NutsBootException("expected '");
             }
         }
         return args.toArray(new String[0]);

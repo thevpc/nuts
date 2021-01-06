@@ -556,7 +556,7 @@ final class PrivateNutsUtils {
                 if ("a".equalsIgnoreCase(line) || "all".equalsIgnoreCase(line)) {
                     refForceAll.setForce(true);
                 } else if ("c".equalsIgnoreCase(line)) {
-                    throw new NutsUserCancelException(null);
+                    throw new NutsUserCancelException(session.getWorkspace());
                 } else if (!PrivateNutsUtils.parseBoolean(line, false)) {
                     refForceAll.ignore(directory);
                     return false;
@@ -1014,25 +1014,25 @@ final class PrivateNutsUtils {
                                     }
                                 }
                                 if (isBlank(groupId)) {
-                                    throw new NutsIllegalArgumentException(null, "unexpected empty groupId");
+                                    throw new NutsBootException("unexpected empty groupId");
                                 } else if (groupId.contains("$")) {
-                                    throw new NutsIllegalArgumentException(null, "unexpected maven variable in groupId=" + groupId);
+                                    throw new NutsBootException("unexpected maven variable in groupId=" + groupId);
                                 }
                                 if (isBlank(artifactId)) {
-                                    throw new NutsIllegalArgumentException(null, "unexpected empty artifactId");
+                                    throw new NutsBootException("unexpected empty artifactId");
                                 } else if (artifactId.contains("$")) {
-                                    throw new NutsIllegalArgumentException(null, "unexpected maven variable in artifactId=" + artifactId);
+                                    throw new NutsBootException("unexpected maven variable in artifactId=" + artifactId);
                                 }
                                 if (isBlank(version)) {
-                                    throw new NutsIllegalArgumentException(null, "unexpected empty artifactId");
+                                    throw new NutsBootException("unexpected empty artifactId");
                                 } else if (version.contains("$")) {
-                                    throw new NutsIllegalArgumentException(null, "unexpected maven variable in artifactId=" + version);
+                                    throw new NutsBootException("unexpected maven variable in artifactId=" + version);
                                 }
                                 //this is maven dependency, using "compile"
                                 if (isBlank(scope) || scope.equals("compile")) {
                                     depsAndRepos.deps.add(groupId + ":" + artifactId + "#" + version);
                                 } else if (version.contains("$")) {
-                                    throw new NutsIllegalArgumentException(null, "unexpected maven variable in artifactId=" + version);
+                                    throw new NutsBootException("unexpected maven variable in artifactId=" + version);
                                 }
                             }
                         }

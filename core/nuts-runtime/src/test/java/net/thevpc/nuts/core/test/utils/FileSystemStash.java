@@ -74,7 +74,7 @@ public class FileSystemStash {
 
     private static void mkdirs(File sourceFile) {
         if (!sourceFile.mkdirs()) {
-            throw new NutsIllegalArgumentException(null, "unable to mkdir " + sourceFile);
+            throw new IllegalArgumentException("unable to mkdir " + sourceFile);
         }
     }
 

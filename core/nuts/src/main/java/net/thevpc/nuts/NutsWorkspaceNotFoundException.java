@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * @since 0.5.4
  * @category Exceptions
  */
-public class NutsWorkspaceNotFoundException extends NutsWorkspaceException {
+public class NutsWorkspaceNotFoundException extends NutsBootException {
 
     /**
      * workspace location
@@ -41,11 +41,10 @@ public class NutsWorkspaceNotFoundException extends NutsWorkspaceException {
 
     /**
      * Constructs a new NutsWorkspaceNotFoundException exception
-     * @param workspace workspace
      * @param workspaceLocation location
      */
-    public NutsWorkspaceNotFoundException(NutsWorkspace workspace, String workspaceLocation) {
-        super(workspace, "no such workspace " + (workspaceLocation == null ? "<null>" : workspaceLocation), null);
+    public NutsWorkspaceNotFoundException(String workspaceLocation) {
+        super("no such workspace " + (workspaceLocation == null ? "<null>" : workspaceLocation), null);
         this.workspaceLocation = workspaceLocation;
     }
 

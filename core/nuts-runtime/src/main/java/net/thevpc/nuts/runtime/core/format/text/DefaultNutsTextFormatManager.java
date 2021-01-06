@@ -4,15 +4,13 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
 import net.thevpc.nuts.runtime.standalone.io.NutsWorkspaceVarExpansionFunction;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.format.text.util.FormattedPrintStreamUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.StringTokenizer;
+import java.text.MessageFormat;
+import java.time.temporal.Temporal;
+import java.util.*;
 
 public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
     private NutsWorkspace ws;
@@ -180,7 +178,15 @@ public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
         if (text == null) {
             return "";
         }
-        return FormattedPrintStreamUtils.escapeText(text);
+        NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(text));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        NutsTextNodeWriter w = new NutsTextNodeWriterStringer(out, ws)
+                .setWriteConfiguration(
+                        new NutsTextNodeWriteConfiguration()
+                        .setFiltered(true)
+                );
+        w.writeNode(node);
+        return out.toString();
     }
 
     @Override
@@ -192,32 +198,6 @@ public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
         return text;
     }
 
-    /**
-     * @param session session
-     * @param style style
-     * @param locale locale
-     * @param format format
-     * @param args args
-     * @return formatted text
-     */
-    @Override
-    public String formatText(NutsSession session,NutsTextFormatStyle style, Locale locale, String format, Object... args) {
-        if (style == NutsTextFormatStyle.CSTYLE) {
-            return FormattedPrintStreamUtils.formatCStyle(session,locale, format, args);
-        } else {
-            return FormattedPrintStreamUtils.formatPositionalStyle(session,locale, format, args);
-        }
-    }
-
-    @Override
-    public String formatText(NutsSession session,NutsTextFormatStyle style, String format, Object... args) {
-        if (style == NutsTextFormatStyle.CSTYLE) {
-            return FormattedPrintStreamUtils.formatCStyle(session,Locale.getDefault(), format, args);
-        } else {
-            return FormattedPrintStreamUtils.formatPositionalStyle(session,Locale.getDefault(), format, args);
-        }
-    }
-
     @Override
     public NutsTitleNumberSequence createTitleNumberSequence() {
         return new DefaultNutsTitleNumberSequence("");
@@ -226,5 +206,84 @@ public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
     @Override
     public NutsTitleNumberSequence createTitleNumberSequence(String pattern) {
         return new DefaultNutsTitleNumberSequence((pattern==null || pattern.isEmpty())?"1.1.1.a.1":pattern);
+    }
+
+    @Override
+    public String filterText(NutsMessage value, NutsSession session) {
+        return filterText(toString(value,session).toString());
+    }
+
+    public NutsString toString(Object instance, NutsSession session) {
+        if(instance==null) {
+            return NutsString.of("");
+        }else if(instance instanceof Number || instance instanceof Date || instance instanceof Temporal) {
+            //do nothing
+            return NutsString.of(escapeText(String.valueOf(instance)));
+        }else if(instance instanceof Throwable) {
+            return NutsString.of(escapeText(CoreStringUtils.exceptionToString((Throwable) instance)));
+        }else if(instance instanceof NutsString){
+            return (NutsString) instance;
+        }else if(instance instanceof NutsTextNode){
+            return NutsString.of(
+                    builder().append((NutsTextNode) instance).toString()
+            );
+        }else if(instance instanceof NutsFormattable){
+            return _NutsFormattable_toString((NutsFormattable) instance, session);
+        }else if(instance instanceof NutsMessage){
+            return _NutsFormattedMessage_toString((NutsMessage) instance, session);
+        }else {
+            return NutsString.of(escapeText(String.valueOf(instance)));
+        }
+    }
+
+
+    private NutsString _NutsFormattable_toString(NutsFormattable a,NutsSession session) {
+        if(session==null){
+            return NutsString.of(escapeText(String.valueOf(a)));
+        }else{
+            try {
+                return  NutsString.of(ws.formats().of((NutsFormattable) a).setSession(session).format());
+            }catch (Exception ex){
+                return NutsString.of(escapeText(String.valueOf(a)));
+            }
+        }
+    }
+    private NutsString _NutsFormattedMessage_toString(NutsMessage m, NutsSession session) {
+        if(session==null){
+            throw new RuntimeException("missing session");
+        }
+        NutsTextFormatStyle style = m.getStyle();
+        if(style==null){
+            style=NutsTextFormatStyle.JSTYLE;
+        }
+        Object[] params = m.getParams();
+        if(params==null){
+            params=new Object[0];
+        }
+        NutsString msg = m.getMessage();
+        String sLocale = session.getLocale();
+        Locale locale=CoreStringUtils.isBlank(sLocale)?null:new Locale(sLocale);
+        Object[] args2=new Object[params.length];
+        NutsTextFormatManager text = session.getWorkspace().formats().text();
+        for (int i = 0; i < args2.length; i++) {
+            Object a=params[i];
+            if(a instanceof Number || a instanceof Date  || a instanceof Temporal) {
+                //do nothing, support format pattern
+                args2[i]=a;
+            }else {
+                args2[i]= text.toString(a,session).toString();
+            }
+        }
+        switch (style){
+            case CSTYLE:{
+                StringBuilder sb = new StringBuilder();
+                new Formatter(sb, locale).format(msg.toString(), args2);
+                return NutsString.of(sb.toString());
+            }
+            case JSTYLE:{
+                return NutsString.of(MessageFormat.format(msg.toString(), args2));
+            }
+        }
+        throw new NutsUnsupportedEnumException(session.getWorkspace(),style);
     }
 }

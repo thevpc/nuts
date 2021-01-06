@@ -43,16 +43,17 @@ import java.net.URL;
 public class DefaultHttpTransportComponent implements NutsTransportComponent {
 
     public static final NutsTransportComponent INSTANCE = new DefaultHttpTransportComponent();
-
+    private NutsWorkspace ws;
     @Override
     public int getSupportLevel(NutsSupportLevelContext<String> url) {
+        ws=url.getWorkspace();
         return DEFAULT_SUPPORT;
     }
 
     @Override
     public NutsTransportConnection open(String url) throws UncheckedIOException {
         try {
-            return new DefaultNutsTransportConnection(new URL(url));
+            return new DefaultNutsTransportConnection(new URL(url),ws);
         } catch (MalformedURLException e) {
             throw new UncheckedIOException(e);
         }
@@ -61,9 +62,11 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
     private static class DefaultNutsTransportConnection implements NutsTransportConnection {
 
         private final URL url;
+        private final NutsWorkspace ws;
 
-        public DefaultNutsTransportConnection(URL url) {
+        public DefaultNutsTransportConnection(URL url,NutsWorkspace ws) {
             this.url = url;
+            this.ws = ws;
         }
 
         @Override
@@ -81,7 +84,7 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
         }
 
         public InputStream upload(NutsTransportParamPart... parts) {
-            throw new NutsUnsupportedOperationException(null, "Upload unsupported");
+            throw new NutsUnsupportedOperationException(ws, "Upload unsupported");
         }
 
         @Override

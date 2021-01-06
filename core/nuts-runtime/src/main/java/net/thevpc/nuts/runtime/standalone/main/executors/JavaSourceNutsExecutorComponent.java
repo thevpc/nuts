@@ -83,7 +83,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         );
         JavaNutsExecutorComponent cc = new JavaNutsExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
-        d = new DefaultNutsDefinition(d);
+        d = new DefaultNutsDefinition(d,ws);
         ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
                 folder,
                 false,
@@ -133,7 +133,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         }
         JavaNutsExecutorComponent cc = new JavaNutsExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
-        d = new DefaultNutsDefinition(d);
+        d = new DefaultNutsDefinition(d,ws);
         ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
                 folder.toString(),
                 false,

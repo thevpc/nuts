@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * @since 0.5.4
  * @category Exceptions
  */
-public class NutsInvalidWorkspaceException extends NutsWorkspaceException {
+public class NutsInvalidWorkspaceException extends NutsBootException {
 
     /**
      * workspace location
@@ -41,12 +41,11 @@ public class NutsInvalidWorkspaceException extends NutsWorkspaceException {
 
     /**
      * Constructs a new NutsInvalidWorkspaceException exception
-     * @param workspace workspace
      * @param workspaceLocation workspaceLocation
      * @param errorMessage errorMessage
      */
-    public NutsInvalidWorkspaceException(NutsWorkspace workspace, String workspaceLocation, String errorMessage) {
-        super(workspace, "invalid workspace " + (workspaceLocation == null ? "<null>" : workspaceLocation) + " : " + errorMessage, null);
+    public NutsInvalidWorkspaceException(String workspaceLocation, String errorMessage) {
+        super("invalid workspace " + (workspaceLocation == null ? "<null>" : workspaceLocation) + " : " + errorMessage, null);
         this.workspaceLocation = workspaceLocation;
     }
 

@@ -18,7 +18,7 @@ public class DefaultNutsLoggerOp implements NutsLoggerOp {
     private boolean formatted;
     private Supplier<String> msgSupplier;
     private Throwable error;
-    private NutsTextFormatStyle style = NutsTextFormatStyle.POSITIONAL;
+    private NutsTextFormatStyle style = NutsTextFormatStyle.JSTYLE;
     private Object[] params = OBJECTS0;
 
     public DefaultNutsLoggerOp(DefaultNutsLogger logger) {
@@ -86,7 +86,7 @@ public class DefaultNutsLoggerOp implements NutsLoggerOp {
 
     @Override
     public NutsLoggerOp style(NutsTextFormatStyle style) {
-        this.style = style == null ? NutsTextFormatStyle.POSITIONAL : style;
+        this.style = style == null ? NutsTextFormatStyle.JSTYLE : style;
         return this;
     }
 

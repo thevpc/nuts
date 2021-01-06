@@ -640,7 +640,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                 return new URL(url);
             }
             if (CoreIOUtils.isPathFile(url)) {
-                return CoreIOUtils.toPathFile(url).toUri().toURL();
+                return CoreIOUtils.toPathFile(url,ws).toUri().toURL();
             }
             return new File(url).toURI().toURL();
         } catch (MalformedURLException ex) {

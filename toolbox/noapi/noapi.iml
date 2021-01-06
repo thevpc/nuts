@@ -12,6 +12,11 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.13" level="project" />
+    <orderEntry type="library" name="Maven: org.asciidoctor:asciidoctorj:1.5.5" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.jruby:jruby-complete:1.7.26" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.beust:jcommander:1.35" level="project" />
+    <orderEntry type="library" name="Maven: org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.16" level="project" />
+    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.13" level="project" />
     <orderEntry type="module" module-name="nuts" />
     <orderEntry type="module" module-name="thevpc-common-md-asciidoctor" />
     <orderEntry type="module" module-name="thevpc-common-md" />

@@ -60,7 +60,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
 //        NutsId id = executionContext.getDefinition().getId();
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
-            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition())
+            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition(),executionContext.getWorkspace())
                     .setInstallInformation(
                             new DefaultNutsInstallInfo(executionContext.getDefinition().getInstallInformation())
                                     .setInstallStatus(EnumSet.of(NutsInstallStatus.INSTALLED))
@@ -84,7 +84,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
 //        NutsId id = executionContext.getDefinition().getId();
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
-            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition())
+            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition(), executionContext.getWorkspace())
                     .setInstallInformation(
                             new DefaultNutsInstallInfo(executionContext.getDefinition().getInstallInformation())
                                     .setInstallStatus(EnumSet.of(NutsInstallStatus.INSTALLED))

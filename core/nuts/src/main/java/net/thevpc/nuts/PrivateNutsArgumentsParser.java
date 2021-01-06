@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.time.Instant;
@@ -66,7 +66,7 @@ final class PrivateNutsArgumentsParser {
                 .setCommandName("nuts")
                 .setExpandSimpleOptions(true)
                 .registerSpecialSimpleOption("-version");
-        boolean explicitConfirm=false;
+        boolean explicitConfirm = false;
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
 
@@ -505,14 +505,14 @@ final class PrivateNutsArgumentsParser {
                         if (enabled && a.getBooleanValue()) {
                             options.setTerminalMode(NutsTerminalMode.FILTERED);
                             options.setProgressOptions("none");
-                            if(!explicitConfirm) {
+                            if (!explicitConfirm) {
                                 options.setConfirm(NutsConfirmationMode.ERROR);
                             }
                             options.setTrace(false);
                             options.setDebug(false);
                             options.setGui(false);
                             NutsLogConfig lc = options.getLogConfig();
-                            if(lc!=null){
+                            if (lc != null) {
                                 lc.setLogTermLevel(Level.OFF);
                             }
                         }
@@ -657,10 +657,10 @@ final class PrivateNutsArgumentsParser {
                         if (enabled) {
                             String t = a.getStringValue("");
                             int i = PrivateNutsUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
-                            if(i>0){
-                                options.setOutputFormat(NutsContentType.valueOf(t.substring(0,i).toUpperCase()));
-                                options.addOutputFormatOptions(t.substring(i+1).toUpperCase());
-                            }else{
+                            if (i > 0) {
+                                options.setOutputFormat(NutsContentType.valueOf(t.substring(0, i).toUpperCase()));
+                                options.addOutputFormatOptions(t.substring(i + 1).toUpperCase());
+                            } else {
                                 options.setOutputFormat(NutsContentType.valueOf(t.toUpperCase()));
                                 options.addOutputFormatOptions("");
                             }
@@ -726,7 +726,7 @@ final class PrivateNutsArgumentsParser {
                     case "-y": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
-                            explicitConfirm=true;
+                            explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.YES);
                         }
                         break;
@@ -735,7 +735,7 @@ final class PrivateNutsArgumentsParser {
                     case "-n": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
-                            explicitConfirm=true;
+                            explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.NO);
                         }
                         break;
@@ -743,7 +743,7 @@ final class PrivateNutsArgumentsParser {
                     case "--error": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
-                            explicitConfirm=true;
+                            explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.ERROR);
                         }
                         break;
@@ -751,7 +751,7 @@ final class PrivateNutsArgumentsParser {
                     case "--ask": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
-                            explicitConfirm=true;
+                            explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.ASK);
                         }
                         break;
@@ -901,7 +901,7 @@ final class PrivateNutsArgumentsParser {
                         cmdLine.skip();
                         if (enabled) {
                             if (!a.getArgumentValue().isNull()) {
-                                throw new NutsIllegalArgumentException(null, "invalid argument for workspace: " + a.getString());
+                                throw new NutsBootException("invalid argument for workspace: " + a.getString());
                             }
                             applicationArguments.add(NutsConstants.Ids.NUTS_SHELL);
                             if (!cmdLine.isEmpty()) {
@@ -1026,6 +1026,14 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
+                    case "-L":
+                    case "--locale": {
+                        a = cmdLine.nextString();
+                        if (enabled) {
+                            options.setLocale(a.getStringValue());
+                        }
+                        break;
+                    }
 
                     //ERRORS
                     case "-I":
@@ -1034,7 +1042,6 @@ final class PrivateNutsArgumentsParser {
                     case "-G":
                     case "-H":
                     case "-M":
-                    case "-L":
                     case "-W":
                     case "-B":
                     case "-i":
@@ -1044,9 +1051,9 @@ final class PrivateNutsArgumentsParser {
                     case "-l":
                     case "-m":
                     default: {
-                        if(k.startsWith("---") && k.length()>3 && k.charAt(3)!='-'){
+                        if (k.startsWith("---") && k.length() > 3 && k.charAt(3) != '-') {
                             tempProps.add(k.substring(3));
-                        }else {
+                        } else {
                             cmdLine.skip();
                             showError.add("nuts: invalid option " + a.getString());
                         }
@@ -1079,7 +1086,7 @@ final class PrivateNutsArgumentsParser {
                 }
                 errorMessage.append("Try 'nuts --help' for more information.");
                 if (!options.isSkipErrors()) {
-                    throw new NutsIllegalArgumentException(null, errorMessage.toString());
+                    throw new NutsBootException(errorMessage.toString());
                 } else {
                     System.err.println(errorMessage.toString());
                 }
@@ -1278,7 +1285,7 @@ final class PrivateNutsArgumentsParser {
             case "O_E":
             case "OPEN":
             case "OPEN_ERROR":
-            case "OPEN_OR_ERROR":{
+            case "OPEN_OR_ERROR": {
                 return NutsOpenMode.OPEN_OR_ERROR;
             }
             case "W":
@@ -1288,7 +1295,7 @@ final class PrivateNutsArgumentsParser {
             case "C_E":
             case "CREATE":
             case "CREATE_ERROR":
-            case"CREATE_OR_ERROR": {
+            case "CREATE_OR_ERROR": {
                 return NutsOpenMode.CREATE_OR_ERROR;
             }
             case "RW":
@@ -1297,7 +1304,7 @@ final class PrivateNutsArgumentsParser {
             case "OC":
             case "O_C":
             case "OPEN_CREATE":
-            case "OPEN_OR_CREATE":{
+            case "OPEN_OR_CREATE": {
                 return NutsOpenMode.OPEN_OR_CREATE;
             }
             case "ON":

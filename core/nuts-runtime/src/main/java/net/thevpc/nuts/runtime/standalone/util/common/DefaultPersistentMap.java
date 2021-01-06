@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.common;
 
+import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 
@@ -40,12 +41,14 @@ public class DefaultPersistentMap<K, V> implements PersistentMap<K, V>, AutoClos
     private Class<V> valueType;
     private Serializer<K> keySer;
     private Serializer<V> valueSer;
+    private NutsWorkspace ws;
 
-    public DefaultPersistentMap(Class<K> keyType, Class<V> valueType, File root) {
-        this(keyType, valueType, root, 512);
+    public DefaultPersistentMap(Class<K> keyType, Class<V> valueType, File root,NutsWorkspace ws) {
+        this(keyType, valueType, root, 512,ws);
     }
 
-    public DefaultPersistentMap(Class<K> keyType, Class<V> valueType, File root, int maxCache) {
+    public DefaultPersistentMap(Class<K> keyType, Class<V> valueType, File root, int maxCache,NutsWorkspace ws) {
+        this.ws = ws;
         this.keyType = keyType;
         this.valueType = valueType;
         this.root = root;
@@ -334,7 +337,7 @@ public class DefaultPersistentMap<K, V> implements PersistentMap<K, V>, AutoClos
             case "java.lang.Integer":
                 return new IntegerSerializer();
         }
-        throw new NutsUnsupportedArgumentException(null);
+        throw new NutsUnsupportedArgumentException(ws);
     }
 
     private static class DefaultHashPath implements HashPath {

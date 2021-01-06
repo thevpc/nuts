@@ -74,6 +74,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private String outLinePrefix;
     private Instant expireTime;
     private NutsId appId;
+    private String locale;
 
     public DefaultNutsSession(NutsWorkspace ws) {
         this.ws = ws;
@@ -1238,6 +1239,20 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public NutsSession setDebug(Boolean debug) {
         this.debug = debug;
+        return this;
+    }
+
+    @Override
+    public String getLocale() {
+        if(locale==null){
+            return ws.config().options().getLocale();
+        }
+        return locale;
+    }
+
+    @Override
+    public NutsSession setLocale(String locale) {
+        this.locale = locale;
         return this;
     }
 }
