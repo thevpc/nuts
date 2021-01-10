@@ -29,11 +29,13 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.core.filters.NutsPatternIdFilter;
+import net.thevpc.nuts.runtime.core.filters.id.NutsIdFilterAnd;
 import net.thevpc.nuts.runtime.core.filters.id.NutsIdFilterOr;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsSearch;
 import net.thevpc.nuts.runtime.standalone.util.*;
+import net.thevpc.nuts.runtime.standalone.util.io.NutsInstallStatusIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.NamedIterator;
@@ -190,7 +192,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 
         if (getInstallStatus() != null && this.getRepositories().length > 0) {
             for (NutsInstallStatus x : NutsInstallStatuses.ALL_DEPLOYED) {
-                if (getInstallStatus().test(x)) {
+                if (getInstallStatus().acceptInstallStatus(x,getValidWorkspaceSession())) {
                     searchInInstalled = true;
                     break;
                 }
@@ -201,17 +203,30 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             searchInOtherRepositories = true;
         } else if (getInstallStatus() != null && this.getRepositories().length == 0) {
             for (NutsInstallStatus x : NutsInstallStatuses.ALL_DEPLOYED) {
-                if (getInstallStatus().test(x)) {
+                if (getInstallStatus().acceptInstallStatus(x,getValidWorkspaceSession())) {
                     searchInInstalled = true;
                     break;
                 }
             }
-            if (getInstallStatus().test(NutsInstallStatuses.ALL_UNDEPLOYED)) {
+            if (getInstallStatus().acceptInstallStatus(NutsInstallStatuses.ALL_UNDEPLOYED,getValidWorkspaceSession())) {
                 searchInOtherRepositories = true;
             }
         } else if (getInstallStatus() == null && this.getRepositories().length == 0) {
             searchInInstalled = true;
             searchInOtherRepositories = true;
+            if(_idFilter.getFilterOp()==NutsFilterOp.AND){
+                searchInOtherRepositories = true;
+                for (NutsFilter subFilter : _idFilter.getSubFilters()) {
+                    if(subFilter instanceof NutsInstallStatusIdFilter){
+                        NutsInstallStatusFilter f = ((NutsInstallStatusIdFilter) subFilter).getInstallStatus();
+                        if (!f.acceptInstallStatus(NutsInstallStatuses.ALL_UNDEPLOYED,getValidWorkspaceSession())) {
+                            searchInOtherRepositories = false;
+                        }
+                    }
+                }
+            }else{
+                searchInOtherRepositories = true;
+            }
         } else {
             searchInInstalled = true;
             searchInOtherRepositories = true;

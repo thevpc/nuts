@@ -30,7 +30,7 @@ public class FilesFoldersApi {
         List<Item> all = new ArrayList<>();
         NutsWorkspace ws = session.getWorkspace();
         String dotFilesUrl = baseUrl;
-        NutsVersion versionString = ws.version().parser().parse("0.5.5");
+//        NutsVersion versionString = ws.version().parser().parse("0.5.5");
         try {
             SearchTraceHelper.progressIndeterminate("search " + CoreIOUtils.compressUrl(baseUrl), session);
             List<String> splitted=null;

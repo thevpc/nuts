@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.main.wscommands;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutableInformationExt;
+import net.thevpc.nuts.runtime.core.filters.installstatus.NutsInstallStatusFilter2;
 import net.thevpc.nuts.runtime.standalone.main.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.main.commands.*;
 import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsExecutionContext;
@@ -279,13 +280,13 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         List<NutsId> ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setLatest(true).setFailFast(false)
                 .setDefaultVersions(true)
                 //                .configure(true,"--trace-monitor")
-                .setInstallStatus(NutsInstallStatusFilter.DEPLOYED)
+                .setInstallStatus(ws.filters().installStatus().byDeployed())
                 .getResultIds().list();
         if (ff.isEmpty()) {
             //retest without checking if the parseVersion is default or not
             // this help recovering from "invalid default parseVersion" issue
             ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setLatest(true).setFailFast(false)
-                    .setInstallStatus(NutsInstallStatusFilter.DEPLOYED)
+                    .setInstallStatus(ws.filters().installStatus().byDeployed())
                     .setSession(noProgressSession)
                     .getResultIds().list();
         }

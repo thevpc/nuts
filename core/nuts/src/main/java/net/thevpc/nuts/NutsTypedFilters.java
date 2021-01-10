@@ -50,5 +50,7 @@ public interface NutsTypedFilters<T extends NutsFilter> {
 
     T from(NutsFilter a);
 
-    T fromOrNull(NutsFilter a);
+    T as(NutsFilter a);
+
+    T parse(String expression);
 }

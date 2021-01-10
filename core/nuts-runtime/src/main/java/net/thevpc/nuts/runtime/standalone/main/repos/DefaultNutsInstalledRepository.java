@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.main.repos;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.filters.installstatus.NutsInstallStatusFilter2;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt0;
 import net.thevpc.nuts.runtime.core.util.NutsIdFilterToPredicate;
@@ -236,7 +237,9 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             String v = getDefaultVersion(id, session);
             if (v != null && v.equals(id.getVersion().getValue())) {
                 Iterator<NutsId> versions = searchVersions().setId(id)
-                        .setFilter(workspace.id().filter().byInstallStatus(NutsInstallStatusFilter.INSTALLED)) //search only in installed, ignore deployed!
+                        .setFilter(workspace.id().filter().byInstallStatus(
+                                workspace.filters().installStatus().byInstalled()
+                        )) //search only in installed, ignore deployed!
                         .setFetchMode(NutsFetchMode.LOCAL)
                         .setSession(session).getResult();
                 List<NutsId> nutsIds = CoreCommonUtils.toList(versions == null ? Collections.emptyIterator() : versions);

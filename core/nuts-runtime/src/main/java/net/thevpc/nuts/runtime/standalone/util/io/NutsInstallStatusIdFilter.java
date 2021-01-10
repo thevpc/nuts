@@ -13,9 +13,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class NutsInstallStatusIdFilter extends AbstractNutsFilter implements NutsIdFilter {
-    private Predicate<NutsInstallStatus> installStatus;
+    private NutsInstallStatusFilter installStatus;
 
-    public NutsInstallStatusIdFilter(NutsWorkspace ws, Predicate<NutsInstallStatus> installStatus) {
+    public NutsInstallStatusIdFilter(NutsWorkspace ws, NutsInstallStatusFilter installStatus) {
         super(ws, NutsFilterOp.CUSTOM);
         this.installStatus = installStatus;
     }
@@ -23,27 +23,24 @@ public class NutsInstallStatusIdFilter extends AbstractNutsFilter implements Nut
     @Override
     public boolean acceptId(NutsId id, NutsSession session) {
         NutsInstallStatus is = NutsWorkspaceExt.of(session.getWorkspace()).getInstalledRepository().getInstallStatus(id, session);
-        return accept(is);
+        if (installStatus == null) {
+            return true;
+        }
+        return installStatus.acceptInstallStatus(is,session);
     }
 
     @Override
     public boolean acceptSearchId(NutsSearchId sid, NutsSession session) {
         NutsInstallStatus is = NutsWorkspaceExt.of(session.getWorkspace()).getInstalledRepository().getInstallStatus(sid.getId(session), session);
-        return accept(is);
-    }
-
-    private boolean accept(NutsInstallStatus status) {
         if (installStatus == null) {
             return true;
         }
-        return installStatus.test(status);
+        return installStatus.acceptInstallStatus(is,session);
     }
 
-    public Predicate<NutsInstallStatus> getInstallStatus() {
+    public NutsInstallStatusFilter getInstallStatus() {
         return installStatus;
     }
-
-
 
     @Override
     public NutsFilter simplify() {

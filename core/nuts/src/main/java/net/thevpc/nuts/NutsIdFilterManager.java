@@ -37,7 +37,7 @@ public interface NutsIdFilterManager extends NutsTypedFilters<NutsIdFilter> {
 
     NutsIdFilter byDefaultVersion(Boolean defaultVersion);
 
-    NutsIdFilter byInstallStatus(Predicate<NutsInstallStatus> installStatus);
+    NutsIdFilter byInstallStatus(NutsInstallStatusFilter installStatus);
 
     NutsIdFilter byName(String... names);
 }

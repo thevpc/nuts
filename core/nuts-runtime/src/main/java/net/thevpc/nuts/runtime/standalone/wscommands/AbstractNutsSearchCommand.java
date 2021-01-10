@@ -28,7 +28,8 @@ package net.thevpc.nuts.runtime.standalone.wscommands;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.commands.ws.AbstractNutsResultList;
 import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsQueryBaseOptions;
-import net.thevpc.nuts.runtime.core.filters.NutsInstallStatusFilterParser;
+import net.thevpc.nuts.runtime.core.filters.installstatus.NutsInstallStatusFilterParser;
+import net.thevpc.nuts.runtime.core.filters.installstatus.NutsInstallStatusFilter2;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
 import net.thevpc.nuts.runtime.core.format.NutsDisplayProperty;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
@@ -72,7 +73,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     protected String execType = null;
     protected String targetApiVersion = null;
     protected boolean printResult = false;
-    protected Predicate<NutsInstallStatus> installStatus;
+    protected NutsInstallStatusFilter installStatus;
 
     public AbstractNutsSearchCommand(NutsWorkspace ws) {
         super(ws, "search");
@@ -650,17 +651,17 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public Predicate<NutsInstallStatus> getInstallStatus() {
+    public NutsInstallStatusFilter getInstallStatus() {
         return installStatus;
     }
 
     @Override
-    public NutsSearchCommand setInstallStatus(Predicate<NutsInstallStatus> installStatus) {
+    public NutsSearchCommand setInstallStatus(NutsInstallStatusFilter installStatus) {
         this.installStatus=installStatus;
         return this;
     }
 
-//    @Override
+    //    @Override
 //    public NutsSearchCommand printResult() {
 //        return printResult(true);
 //    }
@@ -833,18 +834,17 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 }
                 return true;
             }
-            case "--installed-or-required": {
+            case "--deployed": {
                 cmdLine.skip();
                 if (enabled) {
-                    this.setInstallStatus(NutsInstallStatusFilter.INSTALLED);
-                    this.setInstallStatus(NutsInstallStatusFilter.REQUIRED);
+                    this.setInstallStatus(ws.filters().installStatus().byDeployed());
                 }
                 return true;
             }
             case "--not-installed": {
                 cmdLine.skip();
                 if (enabled) {
-                    this.setInstallStatus(NutsInstallStatusFilter.NOT_INSTALLED);
+                    this.setInstallStatus(ws.filters().installStatus().byNotInstalled());
                 }
                 return true;
             }
@@ -852,7 +852,10 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--installed": {
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
-                    this.setInstallStatus(b.getBooleanValue()?NutsInstallStatusFilter.INSTALLED:NutsInstallStatusFilter.NOT_INSTALLED);
+                    this.setInstallStatus(b.getBooleanValue()?
+                            ws.filters().installStatus().byInstalled():
+                            ws.filters().installStatus().byNotInstalled()
+                    );
                 }
                 return true;
             }
@@ -860,9 +863,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
                     if(b.getBooleanValue()) {
-                        this.setInstallStatus(NutsInstallStatusFilter.REQUIRED);
+                        this.setInstallStatus(ws.filters().installStatus().byRequired());
                     }else{
-                        this.setInstallStatus(NutsInstallStatusFilter.NOT_REQUIRED);
+                        this.setInstallStatus(ws.filters().installStatus().byNotRequired());
                     }
                 }
                 return true;
@@ -871,9 +874,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
                     if(b.getBooleanValue()) {
-                        this.setInstallStatus(NutsInstallStatusFilter.OBSOLETE);
+                        this.setInstallStatus(ws.filters().installStatus().byObsolete());
                     }else{
-                        this.setInstallStatus(NutsInstallStatusFilter.NOT_OBSOLETE);
+                        this.setInstallStatus(ws.filters().installStatus().byNotObsolete());
                     }
                 }
                 return true;
@@ -881,7 +884,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--status": {
                 NutsArgument aa = cmdLine.nextString();
                 if (enabled) {
-                    this.setInstallStatus(NutsInstallStatusFilterParser.parse(aa.getStringValue()));
+                    this.setInstallStatus(ws.filters().installStatus().parse(aa.getStringValue()));
                 }
                 return true;
             }

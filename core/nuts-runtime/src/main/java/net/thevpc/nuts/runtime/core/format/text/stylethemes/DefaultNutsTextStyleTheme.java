@@ -120,11 +120,11 @@ public class DefaultNutsTextStyleTheme implements NutsTextStyleTheme {
             }
 
             case SEPARATOR:{
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(163), workspace);
+                return toBasicStyles(NutsTextNodeStyle.foregroundColor(208), workspace);
             }
 
             case OPERATOR: {
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(165), workspace);
+                return toBasicStyles(NutsTextNodeStyle.foregroundColor(208), workspace);
             }
 
             case USER_INPUT: {

@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.main.wscommands;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.core.filters.installstatus.NutsInstallStatusFilter2;
 import net.thevpc.nuts.runtime.standalone.main.config.ConfigEventType;
 import net.thevpc.nuts.runtime.core.events.DefaultNutsInstallEvent;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
@@ -42,7 +43,8 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
         NutsSession searchSession = CoreNutsUtils.silent(session);
         List<NutsDefinition> defs = new ArrayList<>();
         for (NutsId id : this.getIds()) {
-            List<NutsDefinition> resultDefinitions = ws.search().addId(id).setInstallStatus(NutsInstallStatusFilter.INSTALLED)
+            List<NutsDefinition> resultDefinitions = ws.search().addId(id)
+                    .setInstallStatus(ws.filters().installStatus().byInstalled())
                     .setSession(searchSession.copy())
                     .setTransitive(false).setOptional(false)
                     .getResultDefinitions().list();

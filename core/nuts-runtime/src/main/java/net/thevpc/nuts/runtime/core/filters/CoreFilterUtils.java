@@ -47,32 +47,32 @@ public class CoreFilterUtils {
         return new NutsDescriptorIdFilter(other);
     }
 
-    public static NutsIdFilter idFilterOf(NutsVersionFilter other) {
-        return new NutstVersionIdFilter(other);
-    }
+//    public static NutsIdFilter idFilterOf(NutsVersionFilter other) {
+//        return new NutstVersionIdFilter(other);
+//    }
+//
+//    private static boolean isNutsInstallStatusIdFilter(NutsFilter filter) {
+//        if (filter instanceof NutsInstallStatusIdFilter) {
+//            return true;
+//        }
+//        if (filter instanceof NutsIdFilterAnd) {
+//            return Arrays.stream(((NutsIdFilterAnd) filter).getChildren()).allMatch(CoreFilterUtils::isNutsInstallStatusIdFilter);
+//        }
+//        if (filter instanceof NutsIdFilterOr) {
+//            return Arrays.stream(((NutsIdFilterOr) filter).getChildren()).allMatch(CoreFilterUtils::isNutsInstallStatusIdFilter);
+//        }
+//        if (filter instanceof NutsIdFilterNone) {
+//            return Arrays.stream(((NutsIdFilterNone) filter).getChildren()).allMatch(CoreFilterUtils::isNutsInstallStatusIdFilter);
+//        }
+//        return false;
+//    }
 
-    private static boolean isNutsInstallStatusIdFilter(NutsFilter filter) {
-        if (filter instanceof NutsInstallStatusIdFilter) {
-            return true;
-        }
-        if (filter instanceof NutsIdFilterAnd) {
-            return Arrays.stream(((NutsIdFilterAnd) filter).getChildren()).allMatch(CoreFilterUtils::isNutsInstallStatusIdFilter);
-        }
-        if (filter instanceof NutsIdFilterOr) {
-            return Arrays.stream(((NutsIdFilterOr) filter).getChildren()).allMatch(CoreFilterUtils::isNutsInstallStatusIdFilter);
-        }
-        if (filter instanceof NutsIdFilterNone) {
-            return Arrays.stream(((NutsIdFilterNone) filter).getChildren()).allMatch(CoreFilterUtils::isNutsInstallStatusIdFilter);
-        }
-        return false;
-    }
-
-    private static NutsInstallStatusFilter toFilter(Predicate<NutsInstallStatus> a) {
-        if (a instanceof NutsInstallStatusFilter) {
-            return (NutsInstallStatusFilter) a;
-        }
-        return NutsInstallStatusFilter.ANY;
-    }
+//    private static NutsInstallStatusFilter2 toFilter(Predicate<NutsInstallStatus> a) {
+//        if (a instanceof NutsInstallStatusFilter2) {
+//            return (NutsInstallStatusFilter2) a;
+//        }
+//        return NutsInstallStatusFilter2.ANY;
+//    }
 
     private static int andInts(Boolean a, Boolean b) {
         if (a == null && b == null) {
@@ -102,162 +102,162 @@ public class CoreFilterUtils {
         }
     }
 
-    public static NutsInstallStatusFilter andOrNull(NutsInstallStatusFilter me, NutsInstallStatusFilter other) {
-        if (me == null && other == null) {
-            return NutsInstallStatusFilter.ANY;
-        }
-        if (me == null) {
-            return other;
-        }
-        if (other == null) {
-            return me;
-        }
-        int _installed = andInts(me.getInstalled(), other.getInstalled());
-        if (_installed == 2) {
-            return null;
-        }
-        int _required = andInts(me.getRequired(), other.getRequired());
-        if (_required == 2) {
-            return null;
-        }
-        int _obsolete = andInts(me.getObsolete(), other.getObsolete());
-        if (_obsolete == 2) {
-            return null;
-        }
-        int _defaultVersion = andInts(me.getDefaultVersion(), other.getDefaultVersion());
-        if (_defaultVersion == 2) {
-            return null;
-        }
-        return NutsInstallStatusFilter.of(
-                _installed == 1 ? Boolean.TRUE : _installed == -1 ? Boolean.FALSE : null,
-                _required == 1 ? Boolean.TRUE : _required == -1 ? Boolean.FALSE : null,
-                _obsolete == 1 ? Boolean.TRUE : _obsolete == -1 ? Boolean.FALSE : null,
-                _defaultVersion == 1 ? Boolean.TRUE : _defaultVersion == -1 ? Boolean.FALSE : null
-        );
-    }
+//    public static NutsInstallStatusFilter2 andOrNull(NutsInstallStatusFilter2 me, NutsInstallStatusFilter2 other) {
+//        if (me == null && other == null) {
+//            return NutsInstallStatusFilter2.ANY;
+//        }
+//        if (me == null) {
+//            return other;
+//        }
+//        if (other == null) {
+//            return me;
+//        }
+//        int _installed = andInts(me.getInstalled(), other.getInstalled());
+//        if (_installed == 2) {
+//            return null;
+//        }
+//        int _required = andInts(me.getRequired(), other.getRequired());
+//        if (_required == 2) {
+//            return null;
+//        }
+//        int _obsolete = andInts(me.getObsolete(), other.getObsolete());
+//        if (_obsolete == 2) {
+//            return null;
+//        }
+//        int _defaultVersion = andInts(me.getDefaultVersion(), other.getDefaultVersion());
+//        if (_defaultVersion == 2) {
+//            return null;
+//        }
+//        return NutsInstallStatusFilter2.of(
+//                _installed == 1 ? Boolean.TRUE : _installed == -1 ? Boolean.FALSE : null,
+//                _required == 1 ? Boolean.TRUE : _required == -1 ? Boolean.FALSE : null,
+//                _obsolete == 1 ? Boolean.TRUE : _obsolete == -1 ? Boolean.FALSE : null,
+//                _defaultVersion == 1 ? Boolean.TRUE : _defaultVersion == -1 ? Boolean.FALSE : null
+//        );
+//    }
 
-    public static NutsInstallStatusFilter orAll(Set<Predicate<NutsInstallStatus>> aa) {
-        NutsInstallStatusFilter x = null;
-        for (Predicate<NutsInstallStatus> a : aa) {
-            NutsInstallStatusFilter r = toFilter(a);
-            if (x == null) {
-                x = r;
-            } else {
-                x = or(x, r);
-            }
-        }
-        if (x == null) {
-            x = NutsInstallStatusFilter.ANY;
-        }
-        return x;
-    }
+//    public static NutsInstallStatusFilter2 orAll(Set<Predicate<NutsInstallStatus>> aa) {
+//        NutsInstallStatusFilter2 x = null;
+//        for (Predicate<NutsInstallStatus> a : aa) {
+//            NutsInstallStatusFilter2 r = toFilter(a);
+//            if (x == null) {
+//                x = r;
+//            } else {
+//                x = or(x, r);
+//            }
+//        }
+//        if (x == null) {
+//            x = NutsInstallStatusFilter2.ANY;
+//        }
+//        return x;
+//    }
 
-    public static NutsInstallStatusFilter andAll(Set<Predicate<NutsInstallStatus>> aa) {
-        NutsInstallStatusFilter x = null;
-        for (Predicate<NutsInstallStatus> a : aa) {
-            NutsInstallStatusFilter r = toFilter(a);
-            if (x == null) {
-                x = r;
-            } else {
-                x = or(x, r);
-            }
-        }
-        if (x == null) {
-            x = NutsInstallStatusFilter.ANY;
-        }
-        return x;
-    }
+//    public static NutsInstallStatusFilter2 andAll(Set<Predicate<NutsInstallStatus>> aa) {
+//        NutsInstallStatusFilter2 x = null;
+//        for (Predicate<NutsInstallStatus> a : aa) {
+//            NutsInstallStatusFilter2 r = toFilter(a);
+//            if (x == null) {
+//                x = r;
+//            } else {
+//                x = or(x, r);
+//            }
+//        }
+//        if (x == null) {
+//            x = NutsInstallStatusFilter2.ANY;
+//        }
+//        return x;
+//    }
 
-    public static NutsInstallStatusFilter or(NutsInstallStatusFilter me, NutsInstallStatusFilter other) {
-        if (me == null && other == null) {
-            return NutsInstallStatusFilter.ANY;
-        }
-        if (me == null) {
-            return other;
-        }
-        if (other == null) {
-            return me;
-        }
-        int _installed = andInts(me.getInstalled(), other.getInstalled());
-        if (_installed == 2) {
-            return null;
-        }
-        int _required = andInts(me.getRequired(), other.getRequired());
-        if (_required == 2) {
-            return null;
-        }
-        int _obsolete = andInts(me.getObsolete(), other.getObsolete());
-        if (_obsolete == 2) {
-            return null;
-        }
-        int _defaultVersion = andInts(me.getDefaultVersion(), other.getDefaultVersion());
-        if (_defaultVersion == 2) {
-            return null;
-        }
-        return NutsInstallStatusFilter.of(
-                _installed == 1 ? Boolean.TRUE : _installed == -1 ? Boolean.FALSE : null,
-                _required == 1 ? Boolean.TRUE : _required == -1 ? Boolean.FALSE : null,
-                _obsolete == 1 ? Boolean.TRUE : _obsolete == -1 ? Boolean.FALSE : null,
-                _defaultVersion == 1 ? Boolean.TRUE : _defaultVersion == -1 ? Boolean.FALSE : null
-        );
-    }
+//    public static NutsInstallStatusFilter2 or(NutsInstallStatusFilter2 me, NutsInstallStatusFilter2 other) {
+//        if (me == null && other == null) {
+//            return NutsInstallStatusFilter2.ANY;
+//        }
+//        if (me == null) {
+//            return other;
+//        }
+//        if (other == null) {
+//            return me;
+//        }
+//        int _installed = andInts(me.getInstalled(), other.getInstalled());
+//        if (_installed == 2) {
+//            return null;
+//        }
+//        int _required = andInts(me.getRequired(), other.getRequired());
+//        if (_required == 2) {
+//            return null;
+//        }
+//        int _obsolete = andInts(me.getObsolete(), other.getObsolete());
+//        if (_obsolete == 2) {
+//            return null;
+//        }
+//        int _defaultVersion = andInts(me.getDefaultVersion(), other.getDefaultVersion());
+//        if (_defaultVersion == 2) {
+//            return null;
+//        }
+//        return NutsInstallStatusFilter2.of(
+//                _installed == 1 ? Boolean.TRUE : _installed == -1 ? Boolean.FALSE : null,
+//                _required == 1 ? Boolean.TRUE : _required == -1 ? Boolean.FALSE : null,
+//                _obsolete == 1 ? Boolean.TRUE : _obsolete == -1 ? Boolean.FALSE : null,
+//                _defaultVersion == 1 ? Boolean.TRUE : _defaultVersion == -1 ? Boolean.FALSE : null
+//        );
+//    }
 
-    private static NutsInstallStatusFilter resolveNutsInstallStatusUsage(NutsFilter filter) {
-        if (filter instanceof NutsInstallStatusIdFilter) {
-            return toFilter(((NutsInstallStatusIdFilter) filter).getInstallStatus());
-        }
-        if (filter instanceof NutsIdFilterAnd) {
-            NutsInstallStatusFilter a = null;
-            for (NutsIdFilter child : ((NutsIdFilterAnd) filter).getChildren()) {
-                NutsInstallStatusFilter r = resolveNutsInstallStatusUsage(child);
-                a = a == null ? r : andOrNull(a, r);
-                if (a == null) {
-                    a = NutsInstallStatusFilter.ANY;
-                }
-            }
-            if (a == null) {
-                a = NutsInstallStatusFilter.ANY;
-            }
-        }
-        if (filter instanceof NutsIdFilterOr) {
-            NutsInstallStatusFilter a = null;
-            for (NutsIdFilter child : ((NutsIdFilterOr) filter).getChildren()) {
-                NutsInstallStatusFilter r = resolveNutsInstallStatusUsage(child);
-                a = a == null ? r : or(a, r);
-            }
-            if (a == null) {
-                a = NutsInstallStatusFilter.ANY;
-            }
-        }
+//    private static NutsInstallStatusFilter2 resolveNutsInstallStatusUsage(NutsFilter filter) {
+//        if (filter instanceof NutsInstallStatusIdFilter) {
+//            return toFilter(((NutsInstallStatusIdFilter) filter).getInstallStatus());
+//        }
+//        if (filter instanceof NutsIdFilterAnd) {
+//            NutsInstallStatusFilter2 a = null;
+//            for (NutsIdFilter child : ((NutsIdFilterAnd) filter).getChildren()) {
+//                NutsInstallStatusFilter2 r = resolveNutsInstallStatusUsage(child);
+//                a = a == null ? r : andOrNull(a, r);
+//                if (a == null) {
+//                    a = NutsInstallStatusFilter2.ANY;
+//                }
+//            }
+//            if (a == null) {
+//                a = NutsInstallStatusFilter2.ANY;
+//            }
+//        }
+//        if (filter instanceof NutsIdFilterOr) {
+//            NutsInstallStatusFilter2 a = null;
+//            for (NutsIdFilter child : ((NutsIdFilterOr) filter).getChildren()) {
+//                NutsInstallStatusFilter2 r = resolveNutsInstallStatusUsage(child);
+//                a = a == null ? r : or(a, r);
+//            }
+//            if (a == null) {
+//                a = NutsInstallStatusFilter2.ANY;
+//            }
+//        }
+//
+//        if (filter instanceof NutsIdFilterNone) {
+//            NutsInstallStatusFilter2 a = null;
+//            for (NutsIdFilter child : ((NutsIdFilterNone) filter).getChildren()) {
+//                NutsInstallStatusFilter2 r = resolveNutsInstallStatusUsage(child);
+//                r = NutsInstallStatusFilter2.of(
+//                        r.isInstalled() ? false : r.isNotInstalled() ? true : null,
+//                        r.isRequired() ? false : r.isNotRequired() ? true : null,
+//                        r.isObsolete() ? false : r.isNotObsolete() ? true : null,
+//                        r.isDefaultVersion() ? false : r.isNotDefaultVersion() ? true : null
+//                );
+//                a = a == null ? r : or(a, r);
+//            }
+//            if (a == null) {
+//                a = NutsInstallStatusFilter2.ANY;
+//            }
+//        }
+//        return NutsInstallStatusFilter2.ANY;
+//    }
 
-        if (filter instanceof NutsIdFilterNone) {
-            NutsInstallStatusFilter a = null;
-            for (NutsIdFilter child : ((NutsIdFilterNone) filter).getChildren()) {
-                NutsInstallStatusFilter r = resolveNutsInstallStatusUsage(child);
-                r = NutsInstallStatusFilter.of(
-                        r.isInstalled() ? false : r.isNotInstalled() ? true : null,
-                        r.isRequired() ? false : r.isNotRequired() ? true : null,
-                        r.isObsolete() ? false : r.isNotObsolete() ? true : null,
-                        r.isDefaultVersion() ? false : r.isNotDefaultVersion() ? true : null
-                );
-                a = a == null ? r : or(a, r);
-            }
-            if (a == null) {
-                a = NutsInstallStatusFilter.ANY;
-            }
-        }
-        return NutsInstallStatusFilter.ANY;
-    }
-
-    public static InstalledVsNonInstalledSearch getTopLevelInstallRepoInclusion(NutsIdFilter filter) {
-        NutsInstallStatusFilter s = resolveNutsInstallStatusUsage(filter);
-        boolean searchInInstalledRepos=!(s.isNotRequired() && s.isNotInstalled());
-        boolean searchInOtherRepos=!(s.isInstalled() || s.isRequired() || s.isDefaultVersion());
-        return new InstalledVsNonInstalledSearch(
-                searchInInstalledRepos,
-                searchInOtherRepos
-        );
-    }
+//    public static InstalledVsNonInstalledSearch getTopLevelInstallRepoInclusion(NutsIdFilter filter) {
+//        NutsInstallStatusFilter2 s = resolveNutsInstallStatusUsage(filter);
+//        boolean searchInInstalledRepos=!(s.isNotRequired() && s.isNotInstalled());
+//        boolean searchInOtherRepos=!(s.isInstalled() || s.isRequired() || s.isDefaultVersion());
+//        return new InstalledVsNonInstalledSearch(
+//                searchInInstalledRepos,
+//                searchInOtherRepos
+//        );
+//    }
 
     public static <T extends NutsFilter> T[]
     getTopLevelFilters(NutsFilter idFilter, Class<T> clazz, NutsWorkspace ws) {

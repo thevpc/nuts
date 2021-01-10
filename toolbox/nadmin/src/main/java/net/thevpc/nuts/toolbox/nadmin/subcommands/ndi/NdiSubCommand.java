@@ -80,7 +80,9 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 executorOptions.add(a.getStringValue());
             } else if ((a = commandLine.nextString("-i", "--installed")) != null) {
                 context.getSession().setConfirm(NutsConfirmationMode.YES);
-                for (NutsId resultId : ws.search().setInstallStatus(NutsInstallStatusFilter.INSTALLED).getResultIds()) {
+                for (NutsId resultId : ws.search().setInstallStatus(
+                        ws.filters().installStatus().byInstalled()
+                ).getResultIds()) {
                     idsToInstall.add(resultId.getLongName());
                     missingAnyArgument = false;
                 }

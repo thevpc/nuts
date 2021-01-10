@@ -33,6 +33,7 @@ import net.thevpc.nuts.runtime.core.events.DefaultNutsInstallEvent;
 import net.thevpc.nuts.runtime.core.events.DefaultNutsUpdateEvent;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.events.DefaultNutsWorkspaceEvent;
+import net.thevpc.nuts.runtime.core.filters.installstatus.NutsInstallStatusFilter2;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.runtime.standalone.main.config.*;
@@ -641,7 +642,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
                 default: {
                     oldDef = search().setSession(CoreNutsUtils.silent(session)).addId(def.getId().getShortNameId())
-                            .setInstallStatus(NutsInstallStatusFilter.DEPLOYED)
+                            .setInstallStatus(this.filters().installStatus().byDeployed())
                             .setFailFast(false).getResultDefinitions().first();
                     break;
                 }
@@ -1233,7 +1234,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         try {
             nutToInstall = search().addId(id).setSession(session).setTransitive(false)
                     .setInlineDependencies(checkDependencies)
-                    .setInstallStatus(NutsInstallStatusFilter.DEPLOYED)
+                    .setInstallStatus(this.filters().installStatus().byDeployed())
                     .setOptional(false)
                     .getResultDefinitions().first();
             if (nutToInstall == null) {

@@ -130,10 +130,10 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                     } catch (NutsException ex) {
                         throw ex;
                     } catch (RuntimeException ex) {
-                        throw new NutsParseException(getWorkspace(), "Unable to parse url " + url, ex);
+                        throw new NutsParseException(getWorkspace(), "unable to parse url " + url, ex);
                     }
                 } catch (IOException ex) {
-                    throw new NutsParseException(getWorkspace(), "Unable to parse url " + url, ex);
+                    throw new NutsParseException(getWorkspace(), "unable to parse url " + url, ex);
                 }
             }
         }
@@ -583,7 +583,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     public <T> T parseXml(Reader reader, Class<T> clazz) {
         Document doc = null;
         try {
-            doc = NutsXmlUtils.createDocumentBuilder(false,getSession()).parse(new InputSource(reader));
+            doc = NutsXmlUtils.createDocumentBuilder(false,getValidSession()).parse(new InputSource(reader));
         } catch (SAXException | ParserConfigurationException ex) {
             throw new NutsIOException(getWorkspace(),new IOException(ex));
         } catch (IOException ex) {

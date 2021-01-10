@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.main.wscommands;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
+import net.thevpc.nuts.runtime.core.filters.installstatus.NutsInstallStatusFilter2;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsCollectionResult;
@@ -190,7 +191,8 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 //        Map<NutsId, NutsDefinition> defsToIgnore = new LinkedHashMap<>();
 //        Map<NutsId, NutsDefinition> defsOk = new LinkedHashMap<>();
         if (isInstalled()) {
-            for (NutsId resultId : ws.search().setSession(searchSession).setInstallStatus(NutsInstallStatusFilter.INSTALLED).getResultIds()) {
+            for (NutsId resultId : ws.search().setSession(searchSession).setInstallStatus(
+                    ws.filters().installStatus().byInstalled()).getResultIds()) {
                 list.addForInstall(resultId, getInstalled(), true);
             }
             // This bloc is to handle packages that were installed but their jar/content was removed for any reason!

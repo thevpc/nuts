@@ -1208,7 +1208,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return {@code this} instance
      */
-    Predicate<NutsInstallStatus> getInstallStatus();
+    NutsInstallStatusFilter getInstallStatus();
 
     /**
      * search for non packages with the given {@code installStatus}
@@ -1216,6 +1216,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param installStatus new status
      * @return {@code this} instance
      */
-    NutsSearchCommand setInstallStatus(Predicate<NutsInstallStatus> installStatus);
+    NutsSearchCommand setInstallStatus(NutsInstallStatusFilter installStatus);
 
 }

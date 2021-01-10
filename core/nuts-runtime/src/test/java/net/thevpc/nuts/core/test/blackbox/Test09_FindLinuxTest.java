@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.thevpc.nuts.runtime.core.filters.installstatus.NutsInstallStatusFilter2;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
@@ -41,7 +42,7 @@ public class Test09_FindLinuxTest {
         List<NutsId> def = ws.search().addId("nuts").setOptional(false).setLatest(true).setFailFast(false)
 //                .repository("maven-local")
                 .setDefaultVersions(true)
-                .setInstallStatus(NutsInstallStatusFilter.DEPLOYED)
+                .setInstallStatus(ws.filters().installStatus().byDeployed())
                 .getResultIds().list();
                 
         TestUtils.println(def);

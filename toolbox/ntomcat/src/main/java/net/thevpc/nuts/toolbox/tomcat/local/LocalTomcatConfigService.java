@@ -429,8 +429,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             catalinaVersion = "";
         }
         catalinaVersion = catalinaVersion.trim();
+        NutsWorkspace ws = context.getWorkspace();
         if (catalinaVersion.isEmpty()) {
-            NutsVersion javaVersion = context.getWorkspace().env().getPlatform().getVersion();
+            NutsVersion javaVersion = ws.env().getPlatform().getVersion();
             //  http://tomcat.apache.org/whichversion.html
             if (javaVersion.compareTo("1.8") >= 0) {
                 catalinaVersion = "[9,[";
@@ -454,21 +455,21 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if (!cv.startsWith("[") && !cv.startsWith("]")) {
                 cv = "[" + catalinaVersion + "," + catalinaVersion + ".99999]";
             }
-            NutsSearchCommand searchLatestCommand = context.getWorkspace().search().addId("org.apache.catalina:apache-tomcat#" + cv)
+            NutsSearchCommand searchLatestCommand = ws.search().addId("org.apache.catalina:apache-tomcat#" + cv)
                     .setSession(context.getSession().copy().setTrace(false)).setLatest(true);
             NutsDefinition r = searchLatestCommand
-                    .setInstallStatus(NutsInstallStatusFilter.DEPLOYED)
+                    .setInstallStatus(ws.filters().installStatus().byDeployed())
                     .getResultDefinitions().first();
             if (r == null) {
-                r = searchLatestCommand.setInstallStatus(NutsInstallStatusFilter.NOT_INSTALLED).setOffline().getResultDefinitions().first();
+                r = searchLatestCommand.setInstallStatus(ws.filters().installStatus().byNotInstalled()).setOffline().getResultDefinitions().first();
             }
             if (r == null) {
-                r = searchLatestCommand.setInstallStatus(NutsInstallStatusFilter.NOT_INSTALLED).setOnline().getResultDefinitions().required();
+                r = searchLatestCommand.setInstallStatus(ws.filters().installStatus().byNotInstalled()).setOnline().getResultDefinitions().required();
             }
             if (r.getInstallInformation().isInstalledOrRequired()) {
                 return r;
             } else {
-                catalinaNutsDefinition = context.getWorkspace()
+                catalinaNutsDefinition = ws
                         .install()
                         .id(r.getId())
                         .setSession(context.getSession().copy().setTrace(true).addListener(new NutsInstallListener() {

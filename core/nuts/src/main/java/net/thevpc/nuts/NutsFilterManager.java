@@ -87,4 +87,5 @@ public interface NutsFilterManager {
     NutsVersionFilterManager version();
 
     NutsDescriptorFilterManager descriptor();
+    NutsInstallStatusFilterManager installStatus();
 }

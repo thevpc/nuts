@@ -35,10 +35,10 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
             } catch (NutsException ex) {
                 throw ex;
             } catch (RuntimeException ex) {
-                throw new NutsParseException(getWorkspace(), "Unable to parse url " + url, ex);
+                throw new NutsParseException(getWorkspace(), "unable to parse url " + url, ex);
             }
         } catch (IOException ex) {
-            throw new NutsParseException(getWorkspace(), "Unable to parse url " + url, ex);
+            throw new NutsParseException(getWorkspace(), "unable to parse url " + url, ex);
         }
     }
 

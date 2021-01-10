@@ -82,19 +82,19 @@ public class WebHtmlListParser {
                     }
                     case EXPECT_PRE:{
                         if(!line.isEmpty()){
-                            String lowLine = line.toLowerCase();
+                            String lowLine = line;
                             if(
-                                    lowLine
+                                    lowLine.toLowerCase()
                                     .startsWith("<pre>".toLowerCase())
-                                    || lowLine
+                                    || lowLine.toLowerCase()
                                     .startsWith("<pre ".toLowerCase())
                             ){
                                 //spring.io
-                                if(lowLine.startsWith("<pre>") && lowLine.matches("<pre>name[ ]+last modified[ ]+size</pre>(<hr/>)?")){
+                                if(lowLine.toLowerCase().startsWith("<pre>") && lowLine.toLowerCase().matches("<pre>name[ ]+last modified[ ]+size</pre>(<hr/>)?")){
                                     //just ignore
-                                }else if(lowLine.startsWith("<pre>") && lowLine.matches("<pre>[ ]*<a href=.*")){
+                                }else if(lowLine.toLowerCase().startsWith("<pre>") && lowLine.toLowerCase().matches("<pre>[ ]*<a href=.*")){
                                     lowLine=lowLine.substring("<pre>".length()).trim();
-                                    if(lowLine.startsWith("<a href=\"")){
+                                    if(lowLine.toLowerCase().startsWith("<a href=\"")){
                                         int i0 = "<a href=\"".length();
                                         int i1= lowLine.indexOf('\"', i0);
                                        if(i1>0){
@@ -104,12 +104,12 @@ public class WebHtmlListParser {
                                            return null;
                                        }
                                     }
-                                }else if(lowLine.startsWith("<pre ")){
+                                }else if(lowLine.toLowerCase().startsWith("<pre ")){
                                     s=State.EXPECT_HREF;
                                 }else {
                                     //ignore
                                 }
-                            }else if(lowLine.matches("<td .*<strong>last modified</strong>.*</td>")){
+                            }else if(lowLine.toLowerCase().matches("<td .*<strong>last modified</strong>.*</td>")){
                                 s=State.EXPECT_HREF;
                             }
                         }
@@ -117,14 +117,14 @@ public class WebHtmlListParser {
                     }
                     case EXPECT_HREF:{
                         if(!line.isEmpty()){
-                            String lowLine = line.toLowerCase();
-                            if(lowLine.startsWith("</pre>".toLowerCase())){
+                            String lowLine = line;
+                            if(lowLine.toLowerCase().startsWith("</pre>".toLowerCase())){
                                 return found;
                             }
-                            if(lowLine.startsWith("</html>".toLowerCase())){
+                            if(lowLine.toLowerCase().startsWith("</html>".toLowerCase())){
                                 return found;
                             }
-                            if(lowLine.startsWith("<a href=\"")){
+                            if(lowLine.toLowerCase().startsWith("<a href=\"")){
                                 int i0 = "<a href=\"".length();
                                 int i1= lowLine.indexOf('\"', i0);
                                 if(i1>0){

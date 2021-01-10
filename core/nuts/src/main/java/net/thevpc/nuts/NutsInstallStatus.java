@@ -26,6 +26,8 @@
 */
 package net.thevpc.nuts;
 
+import java.util.Objects;
+
 /**
  * Package installation status.
  * Possible combinations are :
@@ -122,5 +124,48 @@ public class NutsInstallStatus {
 
     public NutsInstallStatus withDefaultVersion(boolean defaultVersion) {
         return of(installed, required, obsolete, defaultVersion);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsInstallStatus that = (NutsInstallStatus) o;
+        return installed == that.installed && required == that.required && obsolete == that.obsolete && defaultVersion == that.defaultVersion;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(installed, required, obsolete, defaultVersion);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb=new StringBuilder();
+        if(installed){
+           sb.append("installed");
+        }
+        if(required){
+            if(sb.length()>0){
+                sb.append(",");
+            }
+           sb.append("required");
+        }
+        if(defaultVersion){
+            if(sb.length()>0){
+                sb.append(",");
+            }
+           sb.append("defaultVersion");
+        }
+        if(obsolete){
+            if(sb.length()>0){
+                sb.append(",");
+            }
+            sb.append("obsolete");
+        }
+        if(sb.length()==0){
+            sb.append("not-deployed");
+        }
+        return sb.toString();
     }
 }
