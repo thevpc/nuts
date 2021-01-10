@@ -92,14 +92,39 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         }
     };
 
-    public MavenRemoteRepository(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.MAVEN);
-        LOG=workspace.log().of(MavenRemoteRepository.class);
-    }
+//    public MavenRemoteRepository(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository,RemoteRepoApi api) {
+//        super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.MAVEN);
+//        LOG=workspace.log().of(MavenRemoteRepository.class);
+//    }
 
     protected MavenRemoteRepository(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository, String repoType) {
         super(options, workspace, parentRepository, SPEED_SLOW, false, repoType);
         LOG=workspace.log().of(MavenRemoteRepository.class);
+        switch (repoType){
+            case "maven":{
+                this.findApi=RemoteRepoApi.MAVEN;
+                this.versionApi=RemoteRepoApi.MAVEN;
+                break;
+            }
+            case "maven+dirtext":{
+                this.findApi=RemoteRepoApi.DIR_TEXT;
+                this.versionApi=RemoteRepoApi.DIR_TEXT;
+                break;
+            }
+            case "maven+dirlist":{
+                this.findApi=RemoteRepoApi.DIR_LIST;
+                this.versionApi=RemoteRepoApi.DIR_LIST;
+                break;
+            }
+            case "maven+github":{
+                this.findApi=RemoteRepoApi.GITHUB;
+                this.versionApi=RemoteRepoApi.GITHUB;
+                break;
+            }
+            default:{
+                throw new IllegalArgumentException("unsupported maven repo type: "+repoType);
+            }
+        }
     }
 
     @Override
@@ -142,8 +167,11 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             case GITHUB: {
                 return findVersionsImplGithub(id, filter2, fetchMode, session);
             }
-            case FILES_FOLDERS: {
-                return findVersionsImplFilesFolders(id, filter2, fetchMode, session);
+            case DIR_TEXT: {
+                return findVersionsImplFilesFolders(id, filter2, fetchMode, RemoteRepoApi.DIR_TEXT, session);
+            }
+            case DIR_LIST: {
+                return findVersionsImplFilesFolders(id, filter2, fetchMode, RemoteRepoApi.DIR_LIST, session);
             }
             case UNSUPPORTED: {
                 return null;
@@ -279,7 +307,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         }
     }
 
-    public Iterator<NutsId> findVersionsImplFilesFolders(final NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, final NutsSession session) {
+    public Iterator<NutsId> findVersionsImplFilesFolders(final NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, RemoteRepoApi versionApi,final NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
             return IteratorUtils.emptyIterator();
         }
@@ -288,38 +316,21 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         }
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
-        InputStream foldersFileStream = null;
         List<NutsId> ret = new ArrayList<>();
-        try {
-            String foldersFileUrl = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/.folders");
-            String[] foldersFileContent = null;
-            try {
-                SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(foldersFileUrl),session);
-                foldersFileStream = helper.openStream(id, foldersFileUrl, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session).open();
-                foldersFileContent = CoreIOUtils.loadString(foldersFileStream, true).split("(\n|\r)+");
-            } catch (UncheckedIOException|NutsIOException ex) {
-                throw new NutsNotFoundException(getWorkspace(), id, ex);
-            }
-            if (foldersFileContent != null) {
-                NutsIdManager idMan = workspace.id();
-                for (String version : foldersFileContent) {
-                    final NutsId nutsId = id.builder().setVersion(version).build();
+        String foldersFileUrl = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId);
+        FilesFoldersApi.Item[] all =FilesFoldersApi.getDirItems(true, false,versionApi, foldersFileUrl, session);
 
-                    if (idFilter != null && !idFilter.acceptId(nutsId, session)) {
-                        continue;
-                    }
-                    ret.add(
-                            idMan.builder().setGroupId(groupId).setArtifactId(artifactId).setVersion(version).build()
-                    );
+        if (all != null) {
+            NutsIdManager idMan = workspace.id();
+            for (FilesFoldersApi.Item version : all) {
+                final NutsId nutsId = id.builder().setVersion(version.getName()).build();
+
+                if (idFilter != null && !idFilter.acceptId(nutsId, session)) {
+                    continue;
                 }
-            }
-        } finally {
-            if (foldersFileStream != null) {
-                try {
-                    foldersFileStream.close();
-                } catch (IOException e) {
-                    throw new NutsIOException(getWorkspace(),e);
-                }
+                ret.add(
+                        idMan.builder().setGroupId(groupId).setArtifactId(artifactId).setVersion(version.getName()).build()
+                );
             }
         }
         return ret.iterator();
@@ -332,32 +343,48 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         }
         switch (findApi) {
             case DEFAULT:
-            case FILES_FOLDERS:
-            case GITHUB:
-            case MAVEN: {
+            case DIR_TEXT:
+            case GITHUB: {
                 List<Iterator<NutsId>> li = new ArrayList<>();
                 for (String root : roots) {
                     SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(root),session);
                     if(root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);
-                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), name, filter, session, Integer.MAX_VALUE, findModel));
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), name, filter, RemoteRepoApi.DIR_TEXT, session, Integer.MAX_VALUE, findModel));
                     }else{
-                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), root, filter, session, 2, findModel));
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), root, filter, RemoteRepoApi.DIR_TEXT, session, 2, findModel));
                     }
                 }
                 return IteratorUtils.concat(li);
             }
-//            case MAVEN: {
-//                // this will find only in archetype, not in full index....
-//                String url = CoreIOUtils.buildUrl(config().getLocation(true), "/archetype-catalog.xml");
-//                try {
-//                    CoreInput s = CoreIOUtils.getCachedUrlWithSHA1(getWorkspace(), url, session);
-//                    final InputStream is = getWorkspace().io().monitorInputStream(s.open(), session);
-//                    return MavenUtils.createArchetypeCatalogIterator(is, filter, true);
-//                } catch (UncheckedIOException ex) {
-//                    return IteratorUtils.emptyIterator();
-//                }
-//            }
+            case DIR_LIST: {
+                List<Iterator<NutsId>> li = new ArrayList<>();
+                for (String root : roots) {
+                    SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(root),session);
+                    if(root.endsWith("/*")) {
+                        String name = root.substring(0, root.length() - 2);
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), name, filter, RemoteRepoApi.DIR_LIST, session, Integer.MAX_VALUE, findModel));
+                    }else{
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), root, filter, RemoteRepoApi.DIR_LIST, session, 2, findModel));
+                    }
+                }
+                return IteratorUtils.concat(li);
+            }
+            case MAVEN: {
+                // this will find only in archetype, not in full index....
+                String url = CoreIOUtils.buildUrl(config().getLocation(true), "/archetype-catalog.xml");
+                try {
+                    NutsInput s = CoreIOUtils.getCachedUrlWithSHA1(getWorkspace(), url, "archetype-catalog.xml",
+                            true,
+                            session
+                            );
+                    final InputStream is = getWorkspace().io().monitor().setSource(s.open()).setSession(session).create();
+                    return MavenUtils.of(session.getWorkspace())
+                            .createArchetypeCatalogIterator(is, filter, true,session);
+                } catch (UncheckedIOException ex) {
+                    return IteratorUtils.emptyIterator();
+                }
+            }
             case UNSUPPORTED: {
                 return null;
             }

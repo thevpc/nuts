@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.core.format.text.renderer;
 
+import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.*;
+import net.thevpc.nuts.runtime.core.util.CachedValue;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.IOException;
@@ -9,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import net.thevpc.nuts.runtime.core.format.text.renderer.ansi.AnsiStyle;
 import net.thevpc.nuts.runtime.core.format.text.renderer.ansi.AnsiStyleStyleApplier;
@@ -19,6 +22,8 @@ public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
 
     public static final FormattedPrintStreamRenderer ANSI_RENDERER = new AnsiUnixTermPrintRenderer();
     private final Map<AnsiEscapeCommand, AnsiStyleStyleApplier> stylesAppliers = new HashMap<>();
+    private static CachedValue<Integer> tput_cols;
+
 
     {
 //        defineEscape(AnsiEscapeCommands.FG_BLACK, new ForegroundStyleApplier("30", 0));
@@ -52,19 +57,19 @@ public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
 //        defineEscape(AnsiEscapeCommands.REVERSED, "\u001b[7m", "\u001B[0m");
     }
 
-    public AnsiStyle createStyleRenderer(AnsiEscapeCommand format, NutsWorkspace ws) {
+    public AnsiStyle createStyleRenderer(AnsiEscapeCommand format, RenderedRawStream out, NutsWorkspace ws) {
         AnsiStyleStyleApplier applier = resolveStyleApplyer(format);
-        return applier.apply(AnsiStyle.PLAIN, ws);
+        return applier.apply(AnsiStyle.PLAIN, out, ws);
     }
 
     @Override
     public void startFormat(RenderedRawStream out, AnsiEscapeCommand format, NutsWorkspace ws)  throws IOException {
-        createStyleRenderer(format, ws).startFormat(out);
+        createStyleRenderer(format, out, ws).startFormat(out);
     }
 
     @Override
     public void endFormat(RenderedRawStream out, AnsiEscapeCommand format, NutsWorkspace ws) throws IOException {
-        createStyleRenderer(format, ws).endFormat(out);
+        createStyleRenderer(format, out, ws).endFormat(out);
     }
 
     private AnsiStyleStyleApplier createAnsiStyleStyleApplier(AnsiEscapeCommandList list) {
@@ -98,7 +103,7 @@ public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
 
     private static class MoveUpCommandAnsiStyleStyleApplier implements AnsiStyleStyleApplier {
         @Override
-        public AnsiStyle apply(AnsiStyle old, NutsWorkspace ws) {
+        public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsWorkspace ws) {
             return old.addCommand("\u001b[1A");
         }
     }
@@ -108,15 +113,43 @@ public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
         }
 
         @Override
-        public AnsiStyle apply(AnsiStyle old, NutsWorkspace ws) {
-            String sw = ws.env().get("nuts.term.width");
-            int w=80;
-            try{
-                if(sw!=null && sw.length()>0) {
-                    w = Integer.parseInt(sw);
+        public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsWorkspace ws) {
+            int tputCallTimeout = ws.env().getPropertyAsInt("nuts.term.tput.call.timeout",true,60);
+            Integer w = ws.env().getPropertyAsInt("nuts.term.width",true,null);
+            if(w==null){
+                if(tput_cols==null) {
+                    tput_cols=new CachedValue<>(
+                            new Supplier<Integer>() {
+                                boolean wasError=false;
+                                @Override
+                                public Integer get() {
+                                    switch (ws.env().getOsFamily()) {
+                                        case LINUX:
+                                        case UNIX:
+                                        case MACOS: {
+                                            try {
+                                                String d = ws.exec().userCmd().grabOutputString()
+                                                        .setSession(ws.createSession())
+                                                        .addCommand("tput", "cols")
+                                                        .getOutputString();
+                                                return Integer.parseInt(d.trim());
+                                            } catch (Exception ex) {
+                                                wasError=true;
+                                                return null;
+                                            }
+                                        }
+                                    }
+                                    return null;
+                                }
+                            },tputCallTimeout
+                    );
                 }
-            }catch (Exception ex){
-                //
+                if (out.baseOutput() == System.out) {
+                    w=tput_cols.getValue();
+                }
+            }
+            if(w==null){
+                w=120;
             }
             if(w>0) {
 //                return old.addLaterCommand("\u001b[1000D"
@@ -134,7 +167,7 @@ public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
 
     private static class MoveLineStartCommandAnsiStyleStyleApplier implements AnsiStyleStyleApplier {
         @Override
-        public AnsiStyle apply(AnsiStyle old, NutsWorkspace ws) {
+        public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsWorkspace ws) {
 //            return old.addCommand("\u001b[1000D");
             return old.addCommand("\r");
         }

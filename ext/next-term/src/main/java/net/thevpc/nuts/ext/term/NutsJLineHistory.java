@@ -62,7 +62,7 @@ class NutsJLineHistory implements History {
                 }
             }
         });
-        setShellHistory((JShellHistory) workspace.userProperties().get(JShellHistory.class.getName()));
+        setShellHistory((JShellHistory) workspace.env().getProperty(JShellHistory.class.getName()));
     }
 
     private void setShellHistory(JShellHistory shellHistory) {

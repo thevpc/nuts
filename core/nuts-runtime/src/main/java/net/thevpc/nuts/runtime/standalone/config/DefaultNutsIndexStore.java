@@ -31,13 +31,12 @@ import net.thevpc.nuts.*;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.runtime.core.filters.NutsSearchIdById;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
+import net.thevpc.nuts.spi.NutsTransportConnection;
 
 public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
 
@@ -91,12 +90,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                         Map[] array = getRepository().getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(new InputStreamReader(clientFacade.open()), Map[].class);
                         return Arrays.stream(array)
                                 .map(s -> getRepository().getWorkspace().id().parser().parse(s.get("stringId").toString()))
-                                .filter(filter != null ? new Predicate<NutsId>() {
-                                    @Override
-                                    public boolean test(NutsId t) {
-                                        return filter.acceptSearchId(new NutsSearchIdById(t), session);
-                                    }
-                                } : (Predicate<NutsId>) id -> true)
+                                .filter(filter != null ? new NutsIdFilterToNutsIdPredicate(filter, session) : NutsPredicates.always())
                                 .iterator();
                     } catch (UncheckedIOException|NutsIOException e) {
                         setInaccessible();
@@ -197,4 +191,5 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
             return false;
         }
     }
+
 }

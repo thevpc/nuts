@@ -7,10 +7,10 @@ package net.thevpc.nuts.runtime.standalone.util.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.RemoteRepoApi;
 import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.NutsLogVerb;
 
 import java.io.IOException;
@@ -25,15 +25,73 @@ import java.util.logging.Level;
  * @author thevpc
  */
 public class FilesFoldersApi {
-    public static Item[] getFilesAndFolders(boolean files, boolean folders, String baseUrl, NutsSession session) {
+    private static Item[] getDirList(boolean folders, boolean files, String baseUrl, NutsSession session) {
+        //
         List<Item> all = new ArrayList<>();
-
-        InputStream foldersFileStream = null;
-        String dotFilesUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FILES;
-        NutsVersion versionString = DefaultNutsVersion.valueOf("0.5.5");
+        NutsWorkspace ws = session.getWorkspace();
+        String dotFilesUrl = baseUrl;
+        NutsVersion versionString = ws.version().parser().parse("0.5.5");
         try {
             SearchTraceHelper.progressIndeterminate("search " + CoreIOUtils.compressUrl(baseUrl), session);
-            foldersFileStream = session.getWorkspace().io().monitor().source(dotFilesUrl).setSession(session).create();
+            List<String> splitted=null;
+            try(InputStream foldersFileStream=
+                        ws.io().monitor().source(dotFilesUrl).setSession(session).create()
+                    ){
+                splitted=new WebHtmlListParser().parse(foldersFileStream);
+            }catch (IOException ex){
+                //
+            }
+            if(splitted!=null) {
+                for (String s : splitted) {
+                    if (s.endsWith("/")) {
+                        s = s.substring(0, s.length() - 1);
+                        int y = s.lastIndexOf('/');
+                        if(y>0){
+                            s=s.substring(y+1);
+                        }
+                        if (s.length() > 0 && !s.equals("..")) {
+                            if (folders) {
+                                all.add(new Item(true, s));
+                            }
+                        }
+                    } else {
+                        if (files) {
+                            int y = s.lastIndexOf('/');
+                            if(y>0){
+                                s=s.substring(y+1);
+                            }
+                            all.add(new Item(false, s));
+                        }
+                    }
+                }
+            }
+        } catch (UncheckedIOException | NutsIOException ex) {
+            ws.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}", dotFilesUrl);
+        }
+        return all.toArray(new Item[0]);
+    }
+
+    public static Item[] getDirItems(boolean folders, boolean files, RemoteRepoApi strategy, String baseUrl, NutsSession session) {
+        switch (strategy){
+            case DIR_TEXT:{
+                return getDirText(folders, files, baseUrl,session);
+            }
+            case DIR_LIST:{
+                return getDirList(folders, files, baseUrl,session);
+            }
+        }
+        throw new NutsUnexpectedException(session.getWorkspace(),"unexpected strategy "+strategy);
+    }
+
+    private static Item[] getDirText(boolean folders, boolean files, String baseUrl, NutsSession session) {
+        List<Item> all = new ArrayList<>();
+        NutsWorkspace ws = session.getWorkspace();
+        InputStream foldersFileStream = null;
+        String dotFilesUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FILES;
+        NutsVersion versionString = ws.version().parser().parse("0.5.5");
+        try {
+            SearchTraceHelper.progressIndeterminate("search " + CoreIOUtils.compressUrl(baseUrl), session);
+            foldersFileStream = ws.io().monitor().source(dotFilesUrl).setSession(session).create();
             List<String> splitted = CoreStringUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r");
             for (String s : splitted) {
                 s = s.trim();
@@ -42,7 +100,7 @@ public class FilesFoldersApi {
                         if (all.isEmpty()) {
                             s = s.substring(1).trim();
                             if (s.startsWith("version=")) {
-                                versionString = DefaultNutsVersion.valueOf(s.substring("version=".length()).trim());
+                                versionString = ws.version().parser().parse(s.substring("version=".length()).trim());
                             }
                         }
                     } else {
@@ -57,13 +115,21 @@ public class FilesFoldersApi {
                             //version 0.5.7 or later
                             if (s.endsWith("/")) {
                                 s = s.substring(0, s.length() - 1);
-                                if (s.length() > 0) {
+                                int y = s.lastIndexOf('/');
+                                if(y>0){
+                                    s=s.substring(y+1);
+                                }
+                                if (s.length() > 0 && !s.equals("..")) {
                                     if (folders) {
                                         all.add(new Item(true, s));
                                     }
                                 }
                             } else {
                                 if (files) {
+                                    int y = s.lastIndexOf('/');
+                                    if(y>0){
+                                        s=s.substring(y+1);
+                                    }
                                     all.add(new Item(false, s));
                                 }
                             }
@@ -72,18 +138,18 @@ public class FilesFoldersApi {
                 }
             }
         } catch (UncheckedIOException | NutsIOException ex) {
-            session.getWorkspace().log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}", dotFilesUrl);
+            ws.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}", dotFilesUrl);
         }
         if (versionString.compareTo("0.5.7") < 0) {
             if (folders) {
                 String[] foldersFileContent = null;
                 String dotFolderUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FOLDERS;
-                try (InputStream stream = session.getWorkspace().io().monitor().source(dotFolderUrl)
+                try (InputStream stream = ws.io().monitor().source(dotFolderUrl)
                         .setSession(session).create()) {
                     foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(stream, true), "\n\r")
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NutsIOException ex) {
-                    session.getWorkspace().log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}", dotFolderUrl);
+                    ws.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}", dotFolderUrl);
                 }
                 if (foldersFileContent != null) {
                     for (String folder : foldersFileContent) {
@@ -96,9 +162,9 @@ public class FilesFoldersApi {
     }
 
     public static Iterator<NutsId> createIterator(
-            NutsWorkspace workspace, NutsRepository repository, String rootUrl, String basePath, NutsIdFilter filter, NutsSession session, int maxDepth, IteratorModel model
+            NutsWorkspace workspace, NutsRepository repository, String rootUrl, String basePath, NutsIdFilter filter, RemoteRepoApi strategy,NutsSession session, int maxDepth, IteratorModel model
     ) {
-        return new FilesFoldersApiIdIterator(workspace, repository, rootUrl, basePath, filter, session, model, maxDepth);
+        return new FilesFoldersApiIdIterator(workspace, repository, rootUrl, basePath, filter, strategy,session, model, maxDepth);
     }
 
 

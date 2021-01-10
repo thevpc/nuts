@@ -5,10 +5,7 @@
  */
 package net.thevpc.nuts.runtime.core.config;
 
-import net.thevpc.nuts.NutsRemoveOptions;
-import net.thevpc.nuts.NutsRepositoryConfigManager;
-import net.thevpc.nuts.NutsUpdateOptions;
-import net.thevpc.nuts.NutsUserConfig;
+import net.thevpc.nuts.*;
 
 /**
  *
@@ -28,4 +25,11 @@ public interface NutsRepositoryConfigManagerExt {
 
     NutsUserConfig[] getUsers();
 
+    ////    @Override
+    //    public NutsRepositoryRef[] getMirrorRefs() {
+    //        return configMirrorRefs.values().toArray(new NutsRepositoryRef[0]);
+    //    }
+    boolean save(boolean force, NutsSession session);
+
+    void save(NutsSession session);
 }

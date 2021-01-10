@@ -29,6 +29,8 @@ package net.thevpc.nuts.runtime.standalone.io;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsTransportComponent;
+import net.thevpc.nuts.spi.NutsTransportConnection;
+import net.thevpc.nuts.spi.NutsTransportParamPart;
 
 import java.io.IOException;
 import java.io.InputStream;

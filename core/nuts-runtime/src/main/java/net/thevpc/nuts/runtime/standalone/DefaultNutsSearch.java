@@ -12,15 +12,29 @@ public class DefaultNutsSearch {
     private final NutsDescriptorFilter descriptorFilter;
     private final String[] ids;
     private final NutsSession session;
+    private boolean searchInInstalled;
+    private boolean searchInOtherRepositories;
 
     public DefaultNutsSearch(String[] ids, NutsRepositoryFilter repositoryFilter, NutsIdFilter idFilter,
             NutsDescriptorFilter descriptorFilter,
+                             boolean searchInInstalled,
+                                     boolean searchInOtherRepositories,
                              NutsSession session) {
         this.ids = ids;
         this.session = session;
         this.repositoryFilter = repositoryFilter;
         this.idFilter = idFilter;
         this.descriptorFilter = descriptorFilter;
+        this.searchInInstalled = searchInInstalled;
+        this.searchInOtherRepositories = searchInOtherRepositories;
+    }
+
+    public boolean isSearchInInstalled() {
+        return searchInInstalled;
+    }
+
+    public boolean isSearchInOtherRepositories() {
+        return searchInOtherRepositories;
     }
 
     public NutsSession getSession() {

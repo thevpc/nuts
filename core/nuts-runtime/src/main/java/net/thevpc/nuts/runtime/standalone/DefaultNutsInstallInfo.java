@@ -41,7 +41,7 @@ import java.util.Set;
 public class DefaultNutsInstallInfo implements NutsInstallInformation {
 
     private NutsId id;
-    private EnumSet<NutsInstallStatus> installStatus;
+    private NutsInstallStatus installStatus;
     private boolean wasInstalled;
     private boolean wasRequired;
     private Instant lasModifiedDate;
@@ -52,9 +52,9 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
     private String sourceRepositoryUUID;
     private boolean justInstalled;
     private boolean justRequired;
-    public DefaultNutsInstallInfo(NutsId id, Set<NutsInstallStatus> installStatus, String installFolder, Instant createdDate, Instant lasModifiedDate, String installUser, String sourceRepositoryName, String sourceRepositoryUUID,boolean justInstalled,boolean justRequired) {
+    public DefaultNutsInstallInfo(NutsId id, NutsInstallStatus installStatus, String installFolder, Instant createdDate, Instant lasModifiedDate, String installUser, String sourceRepositoryName, String sourceRepositoryUUID,boolean justInstalled,boolean justRequired) {
         this.id = id;
-        this.installStatus = EnumSet.copyOf(installStatus);
+        this.installStatus = installStatus;
         this.installFolder = installFolder;
         this.createdDate = createdDate;
         this.lasModifiedDate = lasModifiedDate;
@@ -67,7 +67,7 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
 
     public DefaultNutsInstallInfo(NutsInstallInformation other) {
         this.id = other.getId();
-        this.installStatus = EnumSet.copyOf(other.getInstallStatus());
+        this.installStatus = other.getInstallStatus();
         this.installFolder = other.getInstallFolder();
         this.createdDate = other.getCreatedDate();
         this.lasModifiedDate = other.getLastModifiedDate();
@@ -80,7 +80,7 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
 
     public static DefaultNutsInstallInfo notInstalled(NutsId id) {
         return new DefaultNutsInstallInfo(null,
-                EnumSet.of(NutsInstallStatus.NOT_INSTALLED),
+                NutsInstallStatus.NONE,
                 null,
                 null,
                 null,
@@ -106,7 +106,7 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
 
     @Override
     public boolean isDefaultVersion() {
-        return getInstallStatus().contains(NutsInstallStatus.DEFAULT_VERSION);
+        return getInstallStatus().isDefaultVersion();
     }
 
     @Override
@@ -134,14 +134,14 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
         return installUser;
     }
 
-    public Set<NutsInstallStatus> getInstallStatus() {
+    public NutsInstallStatus getInstallStatus() {
         return installStatus;
     }
 
     @Override
     public boolean isInstalledOrRequired() {
-        return installStatus.contains(NutsInstallStatus.REQUIRED)
-                || installStatus.contains(NutsInstallStatus.INSTALLED);
+        return installStatus.isRequired()
+                || installStatus.isInstalled();
     }
 
     @Override
@@ -164,7 +164,7 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
         return this;
     }
 
-    public DefaultNutsInstallInfo setInstallStatus(EnumSet<NutsInstallStatus> installStatus) {
+    public DefaultNutsInstallInfo setInstallStatus(NutsInstallStatus installStatus) {
         this.installStatus = installStatus;
         return this;
     }

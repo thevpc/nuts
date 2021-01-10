@@ -77,7 +77,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
-        this.version = version == null ? DefaultNutsVersion.EMPTY : version;
+        this.version = version == null ? ws.version().parser().parse("") : version;
         this.propertiesQuery.setProperties(propertiesQuery);
     }
 
@@ -133,13 +133,13 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder setVersion(NutsVersion value) {
-        this.version = value == null ? DefaultNutsVersion.EMPTY : value;
+        this.version = value == null ? ws.version().parser().parse("") : value;
         return this;
     }
 
     @Override
     public NutsIdBuilder setVersion(String value) {
-        this.version = DefaultNutsVersion.valueOf(value);
+        this.version = ws.version().parser().parse(value);
         return this;
     }
 

@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.core.format.text.renderer.ansi;
 
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.core.format.text.RenderedRawStream;
 
 /**
  *
@@ -13,6 +14,6 @@ import net.thevpc.nuts.NutsWorkspace;
  */
 public interface AnsiStyleStyleApplier {
 
-    AnsiStyle apply(AnsiStyle old, NutsWorkspace ws);
+    AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsWorkspace ws);
 
 }

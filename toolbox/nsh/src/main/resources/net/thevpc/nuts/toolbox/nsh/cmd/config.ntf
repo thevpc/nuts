@@ -16,7 +16,7 @@ VARIATIONS:
   will be thrown if the location does not define a valid workspace "-c" is defined.
   In that condition, the workspace will be created
 
-```sh config  (create repo| cr) <repoId> [<repoLocation> [<repoType>]]```
+```sh config  (add repo| cr) <repoId> [<repoLocation> [<repoType>]]```
   creates a new repository at location <repository> (relatively to the workspace)
   identified as <repoId>  and typed <repoType>. if <repoLocation> is not typed
   the id will be resolved as the folder's name. If the <repoType> is not type

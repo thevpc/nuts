@@ -71,11 +71,10 @@ public class MavenUtils {
     private NutsWorkspace ws;
 
     public static MavenUtils of(NutsWorkspace ws) {
-        Map<String, Object> up = ws.userProperties();
-        MavenUtils wp = (MavenUtils) up.get(MavenUtils.class.getName());
+        MavenUtils wp = (MavenUtils) ws.env().getProperty(MavenUtils.class.getName());
         if (wp == null) {
             wp = new MavenUtils(ws);
-            up.put(MavenUtils.class.getName(), wp);
+            ws.env().setProperty(MavenUtils.class.getName(), wp,new NutsUpdateOptions(ws.createSession()));
         }
         return wp;
     }

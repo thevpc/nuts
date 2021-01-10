@@ -39,21 +39,29 @@ import java.util.Set;
 public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
     /**
-     * Workspace identifier, guaranteed to be unique cross machines
+     * Workspace identifier, most likely to be unique cross machines
      *
      * @return uuid
      */
-    String uuid();
+    String getUuid();
 
     /**
      * Workspace name
      *
-     * @return uuid
+     * @return name
      */
-    @Deprecated //TODO REMOVE ME
-    String name();
+    String getName();
+
+    String getApiVersion();
+
+    NutsId getApiId();
+
+    NutsId getRuntimeId();
+
+    Set<NutsId> getCompanionIds();
 
     //COMMANDS
+
     NutsSearchCommand search();
 
     NutsFetchCommand fetch();
@@ -74,12 +82,8 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
     NutsUpdateStatisticsCommand updateStatistics();
 
-    ///////////////////// Environment
-    Map<String, Object> userProperties();
 
     ///////////////////// sub system
-    Set<NutsId> companionIds();
-
     NutsWorkspaceAppsManager apps();
 
     NutsWorkspaceExtensionManager extensions();
@@ -95,9 +99,6 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
     NutsIOManager io();
 
     NutsLogManager log();
-
-    ///////////////////// factory
-    NutsSession createSession();
 
 
     NutsWorkspaceEventManager events();
@@ -148,12 +149,6 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
     NutsConcurrentManager concurrent();
 
-    String getApiVersion();
-
-    NutsId getApiId();
-
-    NutsId getRuntimeId();
-
     NutsSdkManager sdks();
 
     NutsImportManager imports();
@@ -163,5 +158,10 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
     NutsWorkspaceLocationManager locations();
 
     NutsWorkspaceEnvManager env();
+
+    ///////////////////// factory
+    NutsSession createSession();
+
+
 
 }

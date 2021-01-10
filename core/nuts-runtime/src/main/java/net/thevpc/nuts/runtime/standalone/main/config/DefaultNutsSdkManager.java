@@ -152,7 +152,7 @@ public class DefaultNutsSdkManager implements NutsSdkManager {
     @Override
     public NutsSdkLocation findByVersion(String type, NutsVersionFilter javaVersionFilter, final NutsSession session) {
         return findOne(type,
-                location -> javaVersionFilter == null || javaVersionFilter.acceptVersion(DefaultNutsVersion.valueOf(location.getVersion()), session)
+                location -> javaVersionFilter == null || javaVersionFilter.acceptVersion(ws.version().parser().parse(location.getVersion()), session)
                 , session);
     }
 

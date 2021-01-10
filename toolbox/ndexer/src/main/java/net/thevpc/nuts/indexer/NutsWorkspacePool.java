@@ -26,7 +26,7 @@ public class NutsWorkspacePool {
                         .setWorkspace(ws));
             }
             pool.put(ws, o);
-            pool.put(o.uuid(), o);
+            pool.put(o.getUuid(), o);
         }
         return o;
     }

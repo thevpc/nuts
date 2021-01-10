@@ -54,7 +54,6 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     protected NutsWorkspaceConfigManagerExt configManager;
     protected NutsRepositoryManager repositoryManager;
     protected DefaultNutsWorkspaceExtensionManager extensionManager;
-    protected ObservableMap<String, Object> userProperties;
     protected DefaultNutsWorkspaceEventManager events;
     private DefaultNutsIdManager defaultNutsIdManager;
     private DefaultNutsVersionManager defaultVersionManager;
@@ -68,7 +67,6 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     protected NutsSession bootSession;
 
     public AbstractNutsWorkspace(NutsWorkspaceInitInformation info) {
-        userProperties = new DefaultObservableMap<>();
         defaultNutsIdManager = new DefaultNutsIdManager(this);
         defaultVersionManager = new DefaultNutsVersionManager(this);
         defaultDescriptorManager = new DefaultNutsDescriptorManager(this);
@@ -91,23 +89,18 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public String uuid() {
+    public String getUuid() {
         return config().getUuid();
     }
 
     @Override
-    public String name() {
+    public String getName() {
         return config().getName();
     }
 
     @Override
     public NutsUpdateStatisticsCommand updateStatistics() {
         return new DefaultNutsUpdateStatisticsCommand(this);
-    }
-
-    @Override
-    public Map<String, Object> userProperties() {
-        return userProperties;
     }
 
     @Override

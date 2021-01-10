@@ -26,8 +26,6 @@
 */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsTransportConnection;
-
 import java.io.UncheckedIOException;
 
 /**

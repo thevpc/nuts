@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.NutsOutput;
-import net.thevpc.nuts.NutsOutputManager;
+import net.thevpc.nuts.NutsOutputAction;
 import net.thevpc.nuts.NutsUnsupportedArgumentException;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.io.AbstractNutsOutput;
@@ -14,12 +14,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DefaultNutsOutputManager implements NutsOutputManager {
+public class DefaultNutsOutputAction implements NutsOutputAction {
     private NutsWorkspace ws;
     private String name;
     private String typeName;
 
-    public DefaultNutsOutputManager(NutsWorkspace ws) {
+    public DefaultNutsOutputAction(NutsWorkspace ws) {
         this.ws = ws;
     }
 
@@ -253,13 +253,13 @@ public class DefaultNutsOutputManager implements NutsOutputManager {
     }
 
     @Override
-    public NutsOutputManager setName(String name) {
+    public NutsOutputAction setName(String name) {
         this.name = name;
         return this;
     }
 
     @Override
-    public NutsOutputManager setTypeName(String typeName) {
+    public NutsOutputAction setTypeName(String typeName) {
         this.typeName = typeName;
         return this;
     }

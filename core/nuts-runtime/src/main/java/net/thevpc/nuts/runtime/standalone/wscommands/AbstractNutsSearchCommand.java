@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.wscommands;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.commands.ws.AbstractNutsResultList;
 import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsQueryBaseOptions;
+import net.thevpc.nuts.runtime.core.filters.NutsInstallStatusFilterParser;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
 import net.thevpc.nuts.runtime.core.format.NutsDisplayProperty;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
@@ -44,6 +45,7 @@ import java.io.File;
 import java.net.URL;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -70,7 +72,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     protected String execType = null;
     protected String targetApiVersion = null;
     protected boolean printResult = false;
-    protected List<Set<NutsInstallStatus>> installStatus = new ArrayList<>();
+    protected Predicate<NutsInstallStatus> installStatus;
 
     public AbstractNutsSearchCommand(NutsWorkspace ws) {
         super(ws, "search");
@@ -416,7 +418,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             this.packaging.addAll(Arrays.asList(o.getPackaging()));
             this.repositoryFilter = o.getRepositoryFilter();
             this.printResult = o.isPrintResult();
-            this.installStatus = new ArrayList<Set<NutsInstallStatus>>(Arrays.asList(other.getInstallStatus()));
+            this.installStatus = other.getInstallStatus();
         }
         return this;
     }
@@ -648,23 +650,13 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public Set<NutsInstallStatus>[] getInstallStatus() {
-        return installStatus.toArray(new Set[0]);
+    public Predicate<NutsInstallStatus> getInstallStatus() {
+        return installStatus;
     }
 
     @Override
-    public NutsSearchCommand addInstallStatus(NutsInstallStatus... installStatus) {
-        if (installStatus != null && installStatus.length > 0) {
-            this.installStatus.add(EnumSet.copyOf(Arrays.asList(installStatus)));
-        }
-        return this;
-    }
-
-    @Override
-    public NutsSearchCommand removeInstallStatus(NutsInstallStatus... installStatus) {
-        if (installStatus != null && installStatus.length > 0) {
-            this.installStatus.remove(EnumSet.copyOf(Arrays.asList(installStatus)));
-        }
+    public NutsSearchCommand setInstallStatus(Predicate<NutsInstallStatus> installStatus) {
+        this.installStatus=installStatus;
         return this;
     }
 
@@ -844,56 +836,52 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--installed-or-required": {
                 cmdLine.skip();
                 if (enabled) {
-                    this.addInstallStatus(NutsInstallStatus.INSTALLED);
-                    this.addInstallStatus(NutsInstallStatus.REQUIRED);
+                    this.setInstallStatus(NutsInstallStatusFilter.INSTALLED);
+                    this.setInstallStatus(NutsInstallStatusFilter.REQUIRED);
                 }
                 return true;
             }
             case "--not-installed": {
                 cmdLine.skip();
                 if (enabled) {
-                    this.addInstallStatus(NutsInstallStatus.NOT_INSTALLED);
+                    this.setInstallStatus(NutsInstallStatusFilter.NOT_INSTALLED);
                 }
                 return true;
             }
             case "-i":
             case "--installed": {
-                cmdLine.skip();
+                NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
-                    this.addInstallStatus(NutsInstallStatus.INSTALLED);
+                    this.setInstallStatus(b.getBooleanValue()?NutsInstallStatusFilter.INSTALLED:NutsInstallStatusFilter.NOT_INSTALLED);
                 }
                 return true;
             }
             case "--required": {
-                cmdLine.skip();
+                NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
-                    this.addInstallStatus(NutsInstallStatus.REQUIRED);
+                    if(b.getBooleanValue()) {
+                        this.setInstallStatus(NutsInstallStatusFilter.REQUIRED);
+                    }else{
+                        this.setInstallStatus(NutsInstallStatusFilter.NOT_REQUIRED);
+                    }
                 }
                 return true;
             }
             case "--obsolete": {
-                cmdLine.skip();
+                NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
-                    this.addInstallStatus(NutsInstallStatus.OBSOLETE);
+                    if(b.getBooleanValue()) {
+                        this.setInstallStatus(NutsInstallStatusFilter.OBSOLETE);
+                    }else{
+                        this.setInstallStatus(NutsInstallStatusFilter.NOT_OBSOLETE);
+                    }
                 }
                 return true;
             }
             case "--status": {
                 NutsArgument aa = cmdLine.nextString();
                 if (enabled) {
-                    String sv = aa.getStringValue();
-                    if (sv == null || sv.isEmpty()) {
-                        throw new NutsIllegalArgumentException(getWorkspace(), "invalid status");
-                    }
-                    List<NutsInstallStatus> ss = new ArrayList<>();
-                    for (String s : sv.split("[&+]")) {
-                        s = s.trim();
-                        if (s.length() > 0) {
-                            s = s.toUpperCase();
-                            ss.add(NutsInstallStatus.valueOf(s));
-                        }
-                    }
-                    this.addInstallStatus(ss.toArray(new NutsInstallStatus[0]));
+                    this.setInstallStatus(NutsInstallStatusFilterParser.parse(aa.getStringValue()));
                 }
                 return true;
             }

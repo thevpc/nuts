@@ -1,7 +1,6 @@
 package net.thevpc.nuts.toolbox.nadmin;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.SystemNdi;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -75,7 +74,7 @@ public class NAdminMain extends NutsApplication {
         LinkedHashSet<String> companions = new LinkedHashSet<>();
         companions.add("net.thevpc.nuts:nuts");
         companions.add("net.thevpc.nuts.toolbox:nadmin");
-        companions.addAll(applicationContext.getWorkspace().companionIds().stream().map(NutsId::getShortName).collect(Collectors.toList()));
+        companions.addAll(applicationContext.getWorkspace().getCompanionIds().stream().map(NutsId::getShortName).collect(Collectors.toList()));
         args.addAll(companions);
         applicationContext.getSession().setConfirm(NutsConfirmationMode.YES);
 
@@ -109,7 +108,7 @@ public class NAdminMain extends NutsApplication {
         LinkedHashSet<String> companions = new LinkedHashSet<>();
         companions.add("net.thevpc.nuts:nuts");
         companions.add("net.thevpc.nuts.toolbox:nadmin");
-        companions.addAll(applicationContext.getWorkspace().companionIds().stream().map(NutsId::getShortName).collect(Collectors.toList()));
+        companions.addAll(applicationContext.getWorkspace().getCompanionIds().stream().map(NutsId::getShortName).collect(Collectors.toList()));
         args.addAll(companions);
         applicationContext.getSession().setConfirm(NutsConfirmationMode.YES);
         run(applicationContext.getSession(), args.toArray(new String[0]));

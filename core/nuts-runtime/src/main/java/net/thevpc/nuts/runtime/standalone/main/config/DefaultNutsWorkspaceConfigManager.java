@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.main.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
+import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.core.events.DefaultNutsWorkspaceEvent;
 import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenUtils;
@@ -40,6 +41,7 @@ import net.thevpc.nuts.runtime.standalone.main.config.compat.v502.NutsVersionCom
 import net.thevpc.nuts.runtime.standalone.main.config.compat.v506.NutsVersionCompat506;
 import net.thevpc.nuts.runtime.standalone.main.config.compat.v507.NutsVersionCompat507;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.main.repos.DefaultNutsRepoConfigManager;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
@@ -239,7 +241,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         NutsException error = null;
         for (NutsRepository repo : ws.repos().getRepositories(session)) {
             try {
-                ok |= repo.config().save(force, session);
+                if(repo.config() instanceof NutsRepositoryConfigManagerExt) {
+                    ok |= ((NutsRepositoryConfigManagerExt)(repo.config())).save(force, session);
+                }
             } catch (NutsException ex) {
                 error = ex;
             }
@@ -549,7 +553,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public DefaultNutsWorkspaceCurrentConfig current() {
         if (currentConfig == null) {
-            throw new IllegalStateException("Unable to use workspace.current(). Still in initialize status");
+            throw new IllegalStateException("unable to use workspace.current(). Still in initialize status");
         }
         return currentConfig;
     }

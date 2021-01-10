@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public interface FormattedPrintStreamRenderer {
 
-    StyleRenderer createStyleRenderer(AnsiEscapeCommand format, NutsWorkspace ws);
+    StyleRenderer createStyleRenderer(AnsiEscapeCommand format, RenderedRawStream out, NutsWorkspace ws);
 
     void startFormat(RenderedRawStream out, AnsiEscapeCommand format, NutsWorkspace ws) throws IOException;
 

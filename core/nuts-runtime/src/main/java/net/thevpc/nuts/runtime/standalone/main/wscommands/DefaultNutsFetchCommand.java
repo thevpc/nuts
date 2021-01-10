@@ -614,7 +614,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         }
                     }
                     if (idType == NutsIdType.REGULAR) {
-                        for (NutsId companionTool : ws.companionIds()) {
+                        for (NutsId companionTool : ws.getCompanionIds()) {
                             if (companionTool.getShortName().equals(getId().getShortName())) {
                                 idType = NutsIdType.COMPANION;
                                 apiId = apiId0;

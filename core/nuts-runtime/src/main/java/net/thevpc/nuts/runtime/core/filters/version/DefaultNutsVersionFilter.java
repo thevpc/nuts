@@ -222,7 +222,7 @@ public class DefaultNutsVersionFilter extends AbstractNutsFilter implements Nuts
                 if(min.equals("")){
                     dd.add(new DefaultNutsVersionInterval(false, false, min, null));
                 }else {
-                    String max = DefaultNutsVersion.valueOf(min).inc(-1).getValue();
+                    String max = ws.version().parser().parse(min).inc(-1).getValue();
                     dd.add(new DefaultNutsVersionInterval(true, false, min, max));
                 }
             } else {

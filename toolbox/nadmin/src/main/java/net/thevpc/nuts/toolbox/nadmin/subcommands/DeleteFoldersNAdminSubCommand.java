@@ -63,7 +63,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
             if (Files.exists(storeLocation)) {
                 context.getSession().out().printf("```error deleting``` %s for workspace %s folder %s ...%n",
                         factory.styled(folder.id(),NutsTextNodeStyle.primary(1)),
-                        factory.styled(context.getWorkspace().name(),NutsTextNodeStyle.primary(1)),
+                        factory.styled(context.getWorkspace().getName(),NutsTextNodeStyle.primary(1)),
                         factory.styled(storeLocation.toString(),NutsTextNodeStyle.path()));
                 if (force
                         || context.getSession().getTerminal().ask()

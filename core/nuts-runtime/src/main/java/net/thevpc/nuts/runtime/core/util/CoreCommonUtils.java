@@ -456,7 +456,7 @@ public class CoreCommonUtils {
             );
         }
         if (o instanceof NutsFormattable) {
-            return ws.formats().of((NutsFormattable) o).format();
+            return ((NutsFormattable) o).formatter().format();
         }
         if (o instanceof Collection) {
             Collection c = ((Collection) o);

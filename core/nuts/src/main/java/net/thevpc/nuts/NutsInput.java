@@ -29,6 +29,7 @@ package net.thevpc.nuts;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.time.Instant;
 
 /**
  * @category Input Output
@@ -54,4 +55,22 @@ public interface NutsInput extends AutoCloseable {
     boolean isURL();
 
     URL getURL();
+
+    /**
+     * url content type (file type)
+     * @return url content type (file type)
+     */
+    String getContentType();
+
+    /**
+     * url content encoding
+     * @return url content encoding
+     */
+    String getContentEncoding();
+
+    /**
+     * url content last modified
+     * @return url content last modified
+     */
+    Instant getLastModified();
 }

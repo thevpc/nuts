@@ -32,13 +32,79 @@ import java.util.Map;
  * @category Base
  */
 public interface NutsWorkspaceEnvManager {
-    Map<String, String> toMap();
+    Map<String, String> getEnvMap();
 
-    String get(String property, String defaultValue);
+    String getEnv(String property, String defaultValue);
 
-    String get(String property);
+    String getEnv(String property);
 
-    void set(String property, String value, NutsUpdateOptions options);
+    Integer getEnvAsInt(String property,Integer defaultValue);
+
+    /**
+     *
+     * @param property property
+     * @param value value
+     * @param options options
+     * @return {@code this} instance
+     */
+    NutsWorkspaceEnvManager setEnv(String property, String value, NutsUpdateOptions options);
+
+    /**
+     * @since  0.8.1
+     * @return properties
+     */
+    Map<String, Object> getProperties();
+
+    /**
+     * @since  0.8.1
+     * @param  property property
+     * @param  includeEnv includeEnv
+     * @param defaultValue defaultValue
+     * @return property value
+     */
+    Object getProperty(String property, boolean includeEnv, Object defaultValue);
+
+    /**
+     * @since  0.8.1
+     * @param  property property
+     * @param  includeEnv includeEnv
+     * @param defaultValue defaultValue
+     * @return property value
+     */
+    Integer getPropertyAsInt(String property, boolean includeEnv, Integer defaultValue);
+
+    /**
+     * @since  0.8.1
+     * @param  property property
+     * @param  includeEnv includeEnv
+     * @param defaultValue defaultValue
+     * @return property value
+     */
+    String getPropertyAsString(String property, boolean includeEnv, String defaultValue);
+
+    /**
+     * @since  0.8.1
+     * @param  property property
+     * @param  includeEnv includeEnv
+     * @param defaultValue defaultValue
+     * @return property value
+     */
+    Boolean getPropertyAsBoolean(String property, boolean includeEnv, Boolean defaultValue);
+
+    /**
+     * @since  0.8.1
+     * @return property value
+     */
+    Object getProperty(String property);
+
+    /**
+     * @since  0.8.1
+     * @param  property property
+     * @param  value value
+     * @param  options options
+     * @return {@code this} instance
+     */
+    NutsWorkspaceEnvManager setProperty(String property, Object value, NutsUpdateOptions options);
 
     NutsOsFamily getOsFamily();
 

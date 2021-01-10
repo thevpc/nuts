@@ -66,7 +66,7 @@ public class NutsLogPlainFormatter extends Formatter {
                         parameters2[i] = text.filterText(parameters2[i].toString());
                     } else if (parameters2[i] instanceof NutsFormattable) {
                         parameters2[i] = text.filterText(
-                                formats.of((NutsFormattable) parameters2[i]).format()
+                                ((NutsFormattable) parameters2[i]).formatter().setSession(wRecord.getSession()).format()
                         );
                     }
                 }

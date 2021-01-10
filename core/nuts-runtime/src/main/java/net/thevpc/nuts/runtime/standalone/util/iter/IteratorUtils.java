@@ -12,6 +12,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import net.thevpc.nuts.NutsPredicates;
 import net.thevpc.nuts.runtime.standalone.util.common.FileDepthFirstIterator;
 
 /**
@@ -19,8 +20,8 @@ import net.thevpc.nuts.runtime.standalone.util.common.FileDepthFirstIterator;
  */
 public class IteratorUtils {
 
-    public static final NonNullFilter NON_NULL = new NonNullFilter();
-    public static final NonBlankFilter NON_BLANK = new NonBlankFilter();
+    public static final Predicate NON_NULL = NutsPredicates.isNull().negate();
+    public static final Predicate NON_BLANK = NutsPredicates.blank().negate();
     private static final EmptyIterator EMPTY_ITERATOR = new EmptyIterator<>();
 
     public static FileDepthFirstIterator dsf(File file) {
@@ -195,23 +196,7 @@ public class IteratorUtils {
         if (isNullOrEmpty(it)) {
             return emptyIterator();
         }
-        Predicate<T> filter = new Predicate<T>() {
-            HashSet<T> visited = new HashSet<>();
-
-            @Override
-            public boolean test(T value) {
-                if (visited.contains(value)) {
-                    return false;
-                }
-                visited.add(value);
-                return true;
-            }
-
-            @Override
-            public String toString() {
-                return "DistinctFilter";
-            }
-        };
+        Predicate<T> filter = new DistinctPredicate<>();
         return new FilteredIterator<>(it, filter);
     }
 
@@ -219,24 +204,7 @@ public class IteratorUtils {
         if (isNullOrEmpty(it)) {
             return emptyIterator();
         }
-        Predicate<F> filter = new Predicate<F>() {
-            HashSet<T> visited = new HashSet<>();
-
-            @Override
-            public boolean test(F value) {
-                T t = converter.apply(value);
-                if (visited.contains(t)) {
-                    return false;
-                }
-                visited.add(t);
-                return true;
-            }
-
-            @Override
-            public String toString() {
-                return "DistinctConverter";
-            }
-        };
+        Predicate<F> filter = new DistinctWithConverterPredicate<>(converter);
         return new FilteredIterator<>(it, filter);
     }
 
@@ -268,37 +236,8 @@ public class IteratorUtils {
         }
     }
 
-    public static class NonNullFilter<T> implements Predicate<T> {
 
-        public NonNullFilter() {
-        }
 
-        @Override
-        public boolean test(T value) {
-            return value != null;
-        }
-
-        @Override
-        public String toString() {
-            return "NonNullFilter";
-        }
-    }
-
-    public static class NonBlankFilter implements Predicate<String> {
-
-        public NonBlankFilter() {
-        }
-
-        @Override
-        public boolean test(String value) {
-            return value != null && value.trim().length() > 0;
-        }
-
-        @Override
-        public String toString() {
-            return "NonBlankFilter";
-        }
-    }
 
     private static class OnFinishIterator<T> implements Iterator<T> {
         private final Iterator<T> from;
@@ -465,4 +404,5 @@ public class IteratorUtils {
             return "sort("+ it +")";
         }
     }
+
 }

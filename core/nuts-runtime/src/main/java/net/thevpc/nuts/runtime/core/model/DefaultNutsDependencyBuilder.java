@@ -105,13 +105,13 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setVersion(NutsVersion version) {
-        this.version = version == null ? DefaultNutsVersion.EMPTY : version;
+        this.version = version == null ? ws.version().parser().parse("") : version;
         return this;
     }
 
     @Override
     public NutsDependencyBuilder setVersion(String classifier) {
-        this.version = DefaultNutsVersion.valueOf(classifier);
+        this.version = ws.version().parser().parse(classifier);
         return this;
     }
 

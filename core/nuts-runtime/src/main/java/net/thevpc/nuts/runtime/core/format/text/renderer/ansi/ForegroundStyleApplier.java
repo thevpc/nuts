@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.core.format.text.renderer.ansi;
 
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.core.format.text.RenderedRawStream;
 
 /**
  *
@@ -22,7 +23,7 @@ public class ForegroundStyleApplier implements AnsiStyleStyleApplier {
     }
 
     @Override
-    public AnsiStyle apply(AnsiStyle old, NutsWorkspace ws) {
+    public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsWorkspace ws) {
         return old.setForeground(id).setIntensity(intensity);
     }
 

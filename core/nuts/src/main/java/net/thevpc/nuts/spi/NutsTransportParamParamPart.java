@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- * Nuts : Network Updatable Things Service
- * (universal package manager)
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -9,6 +9,7 @@
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
+ *
  * <br>
  *
  * Copyright [2020] [thevpc]
@@ -23,9 +24,8 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
 
-import java.nio.file.Path;
 import java.util.Objects;
 
 /**
@@ -34,28 +34,21 @@ import java.util.Objects;
  * @since 0.5.4
  * @category SPI Base
  */
-public class NutsTransportParamTextFilePart extends NutsTransportParamPart {
+public class NutsTransportParamParamPart extends NutsTransportParamPart {
 
     private final String name;
-    private final String fileName;
-    private final Path value;
+    private final String value;
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public NutsTransportParamTextFilePart(String name, String fileName, Path value) {
+    public NutsTransportParamParamPart(String name, String value) {
         this.name = name;
-        this.fileName = fileName;
         this.value = value;
-
     }
 
     public String getName() {
         return name;
     }
 
-    public Path getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -63,23 +56,21 @@ public class NutsTransportParamTextFilePart extends NutsTransportParamPart {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        NutsTransportParamTextFilePart that = (NutsTransportParamTextFilePart) o;
+        NutsTransportParamParamPart that = (NutsTransportParamParamPart) o;
         return Objects.equals(name, that.name) &&
-                Objects.equals(fileName, that.fileName) &&
                 Objects.equals(value, that.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, fileName, value);
+        return Objects.hash(name, value);
     }
 
     @Override
     public String toString() {
-        return "NutsTransportParamTextFilePart{" +
+        return "NutsTransportParamParamPart{" +
                 "name='" + name + '\'' +
-                ", fileName='" + fileName + '\'' +
-                ", value=" + value +
+                ", value='" + value + '\'' +
                 '}';
     }
 }

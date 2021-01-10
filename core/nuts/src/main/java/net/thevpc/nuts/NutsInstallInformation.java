@@ -84,7 +84,7 @@ public interface NutsInstallInformation {
      *
      * @return install status
      */
-    Set<NutsInstallStatus> getInstallStatus();
+    NutsInstallStatus getInstallStatus();
 
     /**
      * return true if installed primary or dependency

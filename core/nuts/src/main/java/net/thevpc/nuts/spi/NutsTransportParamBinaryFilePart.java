@@ -24,7 +24,7 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
 
 import java.nio.file.Path;
 import java.util.Objects;

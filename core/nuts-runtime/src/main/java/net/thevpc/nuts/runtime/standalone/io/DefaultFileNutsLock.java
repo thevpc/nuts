@@ -22,7 +22,7 @@ public class DefaultFileNutsLock implements NutsLock {
     }
 
     public TimePeriod getDefaultTimePeriod() {
-        TimePeriod tp = TimePeriod.parse(ws.env().get("DEFAULT_LOCK_PERIOD", null), true, TimeUnit.SECONDS);
+        TimePeriod tp = TimePeriod.parse(ws.env().getEnv("DEFAULT_LOCK_PERIOD", null), true, TimeUnit.SECONDS);
         if (tp == null) {
             return FIVE_MINUTES;
         }

@@ -88,7 +88,7 @@ public class AnsiEscapeCommandFromNodeStyle extends AnsiEscapeCommand implements
     }
 
     @Override
-    public AnsiStyle apply(AnsiStyle old, NutsWorkspace ws) {
+    public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsWorkspace ws) {
         switch (style.getType()){
             case PRIMARY:{
                 int variant = style.getVariant();

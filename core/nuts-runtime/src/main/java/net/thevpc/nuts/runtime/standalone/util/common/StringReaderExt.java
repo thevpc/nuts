@@ -38,6 +38,16 @@ public class StringReaderExt {
         return sb.toString();
     }
 
+    public boolean readString(String s) {
+        int max = s.length();
+        String n = peekChars(max);
+        if(n.equals(s)){
+            nextChars(max);
+            return true;
+        }
+        return false;
+    }
+
     public String nextChars(int max) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < max; i++) {

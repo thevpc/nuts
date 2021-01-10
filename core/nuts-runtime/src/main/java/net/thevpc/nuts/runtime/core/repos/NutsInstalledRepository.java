@@ -16,7 +16,7 @@ public interface NutsInstalledRepository extends NutsRepository {
 
     NutsInstallInformation getInstallInformation(NutsId id, NutsSession session);
 
-    Set<NutsInstallStatus> getInstallStatus(NutsId id, NutsSession session);
+    NutsInstallStatus getInstallStatus(NutsId id, NutsSession session);
 
     void install(NutsId id, NutsSession session, NutsId forId);
 

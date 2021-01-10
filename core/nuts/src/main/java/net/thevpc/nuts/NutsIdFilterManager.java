@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * @category Base
@@ -36,9 +37,7 @@ public interface NutsIdFilterManager extends NutsTypedFilters<NutsIdFilter> {
 
     NutsIdFilter byDefaultVersion(Boolean defaultVersion);
 
-    NutsIdFilter byInstallStatus(NutsInstallStatus... installStatus);
-
-    NutsIdFilter byInstallStatus(Set<NutsInstallStatus>... installStatus);
+    NutsIdFilter byInstallStatus(Predicate<NutsInstallStatus> installStatus);
 
     NutsIdFilter byName(String... names);
 }

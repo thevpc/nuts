@@ -1,12 +1,13 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.core.io.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
 
 import java.io.FilterOutputStream;
 import java.io.OutputStream;
 
-public class RawOutputStream extends FilterOutputStream implements ExtendedFormatAware {
+public class RawOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
     private NutsWorkspace ws;
     public RawOutputStream(OutputStream out,NutsWorkspace ws) {
         super(out);

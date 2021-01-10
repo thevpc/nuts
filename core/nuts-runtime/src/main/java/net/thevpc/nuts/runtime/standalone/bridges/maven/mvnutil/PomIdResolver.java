@@ -8,10 +8,7 @@ import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsLogger;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 public class PomIdResolver {
@@ -19,11 +16,10 @@ public class PomIdResolver {
     private NutsWorkspace ws;
 
     public static PomIdResolver of(NutsWorkspace ws) {
-        Map<String, Object> up = ws.userProperties();
-        PomIdResolver wp = (PomIdResolver) up.get(PomIdResolver.class.getName());
+        PomIdResolver wp = (PomIdResolver) ws.env().getProperty(PomIdResolver.class.getName());
         if (wp == null) {
             wp = new PomIdResolver(ws);
-            up.put(PomIdResolver.class.getName(), wp);
+            ws.env().setProperty(PomIdResolver.class.getName(), wp,new NutsUpdateOptions(ws.createSession()));
         }
         return wp;
     }

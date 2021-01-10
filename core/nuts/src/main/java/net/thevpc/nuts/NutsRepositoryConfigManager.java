@@ -78,10 +78,6 @@ public interface NutsRepositoryConfigManager {
 
     String getStoreLocation(NutsStoreLocation folderType);
 
-    boolean save(boolean force, NutsSession session);
-
-    void save(NutsSession session);
-
     NutsRepositoryConfigManager setIndexEnabled(boolean enabled, NutsUpdateOptions options);
 
     boolean isIndexEnabled();

@@ -449,7 +449,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         if (!config().options().isSkipCompanions()) {
             if (session.isPlainTrace()) {
                 PrintStream out = session.out();
-                Set<NutsId> companionIds = companionIds();
+                Set<NutsId> companionIds = getCompanionIds();
                 out.println("looking for recommended companion tools to install... detected : " + companionIds.stream()
                         .map(x -> id().formatter(x).format()).collect(Collectors.joining(", "))
                 );
@@ -605,16 +605,14 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             if (strategy0 == InstallStrategy0.UPDATE) {
                 session.out().println("updating " + id().formatter(def.getId().getLongNameId()).format() + " ...");
             } else if (strategy0 == InstallStrategy0.REQUIRE) {
-                reinstall = def.getInstallInformation().getInstallStatus()
-                        .contains(NutsInstallStatus.REQUIRED);
+                reinstall = def.getInstallInformation().getInstallStatus().isRequired();
                 if (reinstall) {
                     //session.out().println("re-requiring  " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
                 } else {
                     //session.out().println("requiring  " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
                 }
             } else {
-                reinstall = def.getInstallInformation().getInstallStatus()
-                        .contains(NutsInstallStatus.INSTALLED);
+                reinstall = def.getInstallInformation().getInstallStatus().isInstalled();
                 if (reinstall) {
                     session.out().println("re-installing " + id().formatter(def.getId().getLongNameId()).format() + " ...");
                 } else {
@@ -643,8 +641,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
                 default: {
                     oldDef = search().setSession(CoreNutsUtils.silent(session)).addId(def.getId().getShortNameId())
-                            .addInstallStatus(NutsInstallStatus.INSTALLED)
-                            .addInstallStatus(NutsInstallStatus.REQUIRED)
+                            .setInstallStatus(NutsInstallStatusFilter.DEPLOYED)
                             .setFailFast(false).getResultDefinitions().first();
                     break;
                 }
@@ -997,7 +994,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     @Override
-    public Set<NutsId> companionIds() {
+    public Set<NutsId> getCompanionIds() {
         return Collections.unmodifiableSet(
                 new HashSet<>(
                         Arrays.asList(
@@ -1113,7 +1110,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         } else if (shortName.equals(NutsConstants.Ids.NUTS_RUNTIME)) {
             idType = NutsIdType.RUNTIME;
         } else {
-            for (NutsId companionTool : companionIds()) {
+            for (NutsId companionTool : getCompanionIds()) {
                 if (companionTool.getShortName().equals(shortName)) {
                     idType = NutsIdType.COMPANION;
                 }
@@ -1230,24 +1227,23 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     @Override
-    public Set<NutsInstallStatus> getInstallStatus(NutsId id, boolean checkDependencies, NutsSession session) {
+    public NutsInstallStatus getInstallStatus(NutsId id, boolean checkDependencies, NutsSession session) {
         session = NutsWorkspaceUtils.of(this).validateSilentSession(session);
         NutsDefinition nutToInstall;
         try {
             nutToInstall = search().addId(id).setSession(session).setTransitive(false)
                     .setInlineDependencies(checkDependencies)
-                    .addInstallStatus(NutsInstallStatus.INSTALLED)
-                    .addInstallStatus(NutsInstallStatus.REQUIRED)
+                    .setInstallStatus(NutsInstallStatusFilter.DEPLOYED)
                     .setOptional(false)
                     .getResultDefinitions().first();
             if (nutToInstall == null) {
-                return EnumSet.of(NutsInstallStatus.NOT_INSTALLED);
+                return NutsInstallStatus.NONE;
             }
         } catch (NutsNotFoundException e) {
-            return EnumSet.of(NutsInstallStatus.NOT_INSTALLED);
+            return NutsInstallStatus.NONE;
         } catch (Exception ex) {
             LOG.with().session(session).level(Level.SEVERE).error(ex).log("error: "+CoreStringUtils.exceptionToString(ex));
-            return EnumSet.of(NutsInstallStatus.NOT_INSTALLED);
+            return NutsInstallStatus.NONE;
         }
         return getInstalledRepository().getInstallStatus(nutToInstall.getId(), session);
     }

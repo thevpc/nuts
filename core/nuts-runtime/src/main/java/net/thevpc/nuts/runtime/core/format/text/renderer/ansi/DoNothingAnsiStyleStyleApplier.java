@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.core.format.text.renderer.ansi;
 
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.core.format.text.RenderedRawStream;
 
 /**
  *
@@ -16,7 +17,7 @@ public class DoNothingAnsiStyleStyleApplier implements AnsiStyleStyleApplier {
     public static final DoNothingAnsiStyleStyleApplier INSTANCE = new DoNothingAnsiStyleStyleApplier();
 
     @Override
-    public AnsiStyle apply(AnsiStyle old, NutsWorkspace ws) {
+    public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsWorkspace ws) {
         return old;
     }
 

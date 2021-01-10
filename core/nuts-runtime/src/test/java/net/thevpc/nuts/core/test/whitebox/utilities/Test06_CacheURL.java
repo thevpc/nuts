@@ -41,11 +41,11 @@ public class Test06_CacheURL {
                 "--skip-companions");
         NutsSession session = ws.createSession();
         final String url = "https://repo.maven.apache.org/maven2/archetype-catalog.xml";
-        NutsInput j1 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, "archetype-catalog", null);
+        NutsInput j1 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, "archetype-catalog", true,null);
         //just to consume the stream
         ws.io().copy().setSession(session).from(j1).to(new ByteArrayOutputStream()).logProgress().run();
         TestUtils.println(j1);
-        NutsInput j2 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, "archetype-catalog", null);
+        NutsInput j2 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, "archetype-catalog", true,null);
         //just to consume the stream
         ws.io().copy().setSession(session).from(j2).to(new ByteArrayOutputStream()).logProgress().run();
         TestUtils.println(j2);

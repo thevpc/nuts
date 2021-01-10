@@ -67,26 +67,4 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
     public NutsIterableOutput iter() {
         return new DefaultNutsIncrementalOutputFormat(ws);
     }
-
-    @Override
-    public NutsFormat of(NutsFormattable any) {
-        if(any instanceof NutsId){
-            return ws.id().formatter((NutsId) any);
-        }
-        if(any instanceof NutsDependency){
-            return ws.dependency().formatter((NutsDependency) any);
-        }
-        if(any instanceof NutsVersion){
-            return ws.version().formatter((NutsVersion) any);
-        }
-        if(any instanceof NutsDescriptor){
-            return ws.descriptor().formatter((NutsDescriptor) any);
-        }
-        if(any instanceof NutsCommandLine){
-            return ws.commandLine().formatter((NutsCommandLine) any);
-        }
-        throw new NutsIllegalArgumentException(ws,"unsupported formattable "+((any==null)?"null":any.getClass().getName()));
-    }
-
-
 }

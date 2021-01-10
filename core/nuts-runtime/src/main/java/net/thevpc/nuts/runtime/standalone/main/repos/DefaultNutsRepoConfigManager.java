@@ -55,7 +55,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         }
         Path pfolder = Paths.get(storeLocation);
         if ((Files.exists(pfolder) && !Files.isDirectory(pfolder))) {
-            throw new NutsInvalidRepositoryException(repository.getWorkspace(), storeLocation, "Unable to resolve root as a valid folder " + storeLocation);
+            throw new NutsInvalidRepositoryException(repository.getWorkspace(), storeLocation, "unable to resolve root as a valid folder " + storeLocation);
         }
 
         this.repositoryRegistryHelper = new NutsRepositoryRegistryHelper(repository.getWorkspace());
@@ -91,7 +91,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
             return t;
         }
         if(inherit) {
-            t = repository.getWorkspace().env().get(key, null);
+            t = repository.getWorkspace().env().getEnv(key, null);
             if (!CoreStringUtils.isBlank(t)) {
                 return t;
             }
@@ -102,7 +102,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     public Map<String,String> getEnv(boolean inherit) {
         Map<String,String> p = new LinkedHashMap<>();
         if (inherit) {
-            p.putAll(repository.getWorkspace().env().toMap());
+            p.putAll(repository.getWorkspace().env().getEnvMap());
         }
         if (config.getEnv() != null) {
             p.putAll(config.getEnv());
@@ -388,7 +388,10 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         NutsException error = null;
         for (NutsRepository repo : getMirrors(session)) {
             try {
-                ok |= repo.config().save(force, session);
+                NutsRepositoryConfigManager config = repo.config();
+                if(config instanceof NutsRepositoryConfigManagerExt) {
+                    ok |= ((NutsRepositoryConfigManagerExt)config).save(force, session);
+                }
             } catch (NutsException ex) {
                 error = ex;
             }

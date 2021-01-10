@@ -58,7 +58,7 @@ public interface NutsWorkspaceExt {
 
     NutsInstalledRepository getInstalledRepository();
 
-    Set<NutsInstallStatus> getInstallStatus(NutsId id, boolean checkDependencies, NutsSession session);
+    NutsInstallStatus getInstallStatus(NutsId id, boolean checkDependencies, NutsSession session);
 
     NutsExecutionContextBuilder createExecutionContext();
 

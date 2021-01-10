@@ -46,8 +46,7 @@ import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 public class NutsIdFormatHelper {
     private NutsLogger LOG;
     NutsId id;
-    Set<NutsInstallStatus> installStatus=EnumSet.of(NutsInstallStatus.NOT_INSTALLED);
-    boolean defaultVersion;
+    NutsInstallStatus installStatus=NutsInstallStatus.NONE;
     Boolean executable = null;
     Boolean executableApp = null;
     boolean fetched = false;
@@ -143,23 +142,23 @@ public class NutsIdFormatHelper {
     }
 
     private static FormatHelper getFormatHelper(NutsSession session) {
-        FormatHelper h = (FormatHelper) session.getWorkspace().userProperties().get(FormatHelper.class.getName());
+        FormatHelper h = (FormatHelper) session.getWorkspace().env().getProperty(FormatHelper.class.getName());
         if (h != null) {
             return h;
         }
-        FormatHelperResetListener h2 = (FormatHelperResetListener) session.getWorkspace().userProperties().get(FormatHelperResetListener.class.getName());
+        FormatHelperResetListener h2 = (FormatHelperResetListener) session.getWorkspace().env().getProperty(FormatHelperResetListener.class.getName());
         if (h2 == null) {
             h2 = new FormatHelperResetListener();
             session.getWorkspace().events().addWorkspaceListener(h2);
         }
         h = new FormatHelper(session);
-        session.getWorkspace().userProperties().put(FormatHelper.class.getName(), h);
+        session.getWorkspace().env().setProperty(FormatHelper.class.getName(), h,new NutsUpdateOptions(session));
         return h;
     }
 
     public static class FormatHelperResetListener implements NutsWorkspaceListener, NutsRepositoryListener {
         private void _onReset(NutsWorkspace ws) {
-            ws.userProperties().remove(FormatHelper.class.getName());
+            ws.env().setProperty(FormatHelper.class.getName(),null,new NutsUpdateOptions(ws.createSession()));
         }
 
         @Override
@@ -498,7 +497,6 @@ public class NutsIdFormatHelper {
             NutsWorkspace ws = session.getWorkspace();
             NutsInstalledRepository rr = NutsWorkspaceExt.of(ws).getInstalledRepository();
             this.installStatus = rr.getInstallStatus(id, session);
-            this.defaultVersion = rr.isDefaultVersion(id, session);
             NutsInstallInformation iif = rr.getInstallInformation(id, session);
             this.dte = iif == null ? null : iif.getCreatedDate();
             this.usr = iif == null ? null : iif.getInstallUser();
@@ -511,7 +509,7 @@ public class NutsIdFormatHelper {
             this.defFetched = null;
 
             try {
-                if (this.installStatus.contains(NutsInstallStatus.NOT_INSTALLED) || def == null) {
+                if (this.installStatus.isNonDeployed() || def == null) {
                     this.defFetched = ws.fetch().setId(id).setSession(
                             session.setTrace(false)
                     ).setOffline()
@@ -537,11 +535,11 @@ public class NutsIdFormatHelper {
                 this.executable = desc.isExecutable();
                 this.executableApp = desc.isApplication();
             }
-            this.status_f = (this.installStatus.contains(NutsInstallStatus.INSTALLED)) && this.defaultVersion ? 'I'
-                    : (this.installStatus.contains(NutsInstallStatus.INSTALLED)) ? 'i'
-                    : (this.installStatus.contains(NutsInstallStatus.REQUIRED)) ? 'd'
+            this.status_f = (this.installStatus.isDefaultVersion()) ? 'I'
+                    : (this.installStatus.isInstalled()) ? 'i'
+                    : (this.installStatus.isRequired()) ? 'd'
                     : this.fetched ? 'f' : 'r';
-            this.status_obs=(this.installStatus.contains(NutsInstallStatus.INSTALLED)?'O':'U');
+            this.status_obs=(this.installStatus.isInstalled()?'O':'U');
             if (def != null) {
                 switch (def.getType()){
                     case API:{

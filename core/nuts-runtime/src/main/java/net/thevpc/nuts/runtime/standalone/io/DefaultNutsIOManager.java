@@ -194,13 +194,13 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
 
     @Override
-    public NutsInputManager input() {
-        return new DefaultNutsInputManager(ws);
+    public NutsInputAction input() {
+        return new DefaultNutsInputAction(ws);
     }
 
     @Override
-    public NutsOutputManager output() {
-        return new DefaultNutsOutputManager(ws);
+    public NutsOutputAction output() {
+        return new DefaultNutsOutputAction(ws);
     }
 
 

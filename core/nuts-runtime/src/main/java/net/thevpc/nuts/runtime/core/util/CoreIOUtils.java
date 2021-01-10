@@ -39,6 +39,7 @@ import net.thevpc.nuts.runtime.standalone.util.io.*;
 import net.thevpc.nuts.spi.NutsDescriptorContentParserComponent;
 import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
 import net.thevpc.nuts.spi.NutsTransportComponent;
+import net.thevpc.nuts.spi.NutsTransportConnection;
 
 import java.io.*;
 import java.net.*;
@@ -47,6 +48,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.MessageDigest;
@@ -1351,47 +1353,93 @@ public class CoreIOUtils {
         }
     }
 
-    public static NutsInput getCachedUrlWithSHA1(NutsWorkspace ws, String path, String sourceTypeName, NutsSession session) {
+    public static NutsInput getCachedUrlWithSHA1(NutsWorkspace ws, String path, String sourceTypeName, boolean ignoreSha1NotFound,NutsSession session) {
         final Path cacheBasePath = Paths.get(ws.locations().getStoreLocation(ws.getRuntimeId(), NutsStoreLocation.CACHE));
         final Path urlContent = cacheBasePath.resolve("urls-content");
-        ByteArrayOutputStream t = new ByteArrayOutputStream();
-        ws.io().copy()
-                .setSession(session)
-                .from(path + ".sha1").to(t).run();
-        String sha1 = new String(t.toByteArray()).trim();
-        final PersistentMap<String, String> cu = getCachedUrls(ws);
+        String sha1=null;
+        try {
+            ByteArrayOutputStream t = new ByteArrayOutputStream();
+            ws.io().copy()
+                    .setSession(session)
+                    .from(path + ".sha1").to(t).run();
+            sha1 = t.toString().trim();
+        }catch (NutsIOException ex){
+            if(!ignoreSha1NotFound){
+                throw ex;
+            }
+        }
+        final PersistentMap<String, String> cu=getCachedUrls(ws);
         String cachedSha1 = cu.get("sha1://" + path);
-        if (cachedSha1 != null && sha1.equalsIgnoreCase(cachedSha1)) {
-            String cachedID = cu.get("id://" + path);
-            if (cachedID != null) {
-                Path p = urlContent.resolve(cachedID);
-                if (Files.exists(p)) {
-                    return ws.io().input().of(p);
+        String oldLastModified =cu.get("lastModified://" + path);
+        String oldSize =cu.get("length://" + path);
+        if(sha1!=null) {
+            if (sha1.equalsIgnoreCase(cachedSha1)) {
+                String cachedID = cu.get("id://" + path);
+                if (cachedID != null) {
+                    Path p = urlContent.resolve(cachedID);
+                    if (Files.exists(p)) {
+                        return ws.io().input().of(p);
+                    }
                 }
             }
         }
         try {
-            final String s = UUID.randomUUID().toString();
-            final Path outPath = urlContent.resolve(s + "~");
-            Files.createDirectories(urlContent);
-            final OutputStream p = Files.newOutputStream(outPath);
             NutsURLHeader header = null;
             long size = -1;
+            String lastModified = null;
             NutsTransportConnection f = CoreIOUtils.getHttpClientFacade(session, path);
             try {
 
                 header = f.getURLHeader();
                 size = header.getContentLength();
+                Instant lastModifiedInstant = header.getLastModified();
+                if(lastModifiedInstant!=null){
+                    lastModified = String.valueOf(lastModifiedInstant.toEpochMilli());
+                }
             } catch (Exception ex) {
                 //ignore error
             }
 
+            //when sha1 was not resolved check size and last modification
+            if(sha1==null) {
+                if (oldLastModified != null && oldLastModified.equals(lastModified)) {
+                    if (oldSize != null && oldSize.equals(String.valueOf(size))) {
+                        String cachedID = cu.get("id://" + path);
+                        if (cachedID != null) {
+                            Path p = urlContent.resolve(cachedID);
+                            if (Files.exists(p)) {
+                                return ws.io().input().of(p);
+                            }
+                        }
+                    }
+                }
+            }
+
+            final String s = UUID.randomUUID().toString();
+            final Path outPath = urlContent.resolve(s + "~");
+            Files.createDirectories(urlContent);
+            final OutputStream p = Files.newOutputStream(outPath);
+
+            String finalLastModified = lastModified;
             InputStreamTee ist = new InputStreamTee(f.open(), p, () -> {
                 if (Files.exists(outPath)) {
                     cu.put("id://" + path, s);
                     cu.put("sha1://" + path, evalSHA1Hex(outPath));
+                    String newSize = null;
                     try {
-                        Files.move(outPath, urlContent.resolve(s), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                        newSize = String.valueOf(Files.size(outPath));
+                    }catch (Exception ex){
+                        //
+                    }
+                    if(newSize!=null) {
+                        cu.put("length://" + path, newSize);
+                    }
+                    if(finalLastModified!=null) {
+                        cu.put("lastModified://" + path, finalLastModified);
+                    }
+                    Path newLocalPath = urlContent.resolve(s);
+                    try {
+                        Files.move(outPath, newLocalPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
                     } catch (IOException ex) {
                         throw new UncheckedIOException(ex);
                     }
@@ -1409,14 +1457,14 @@ public class CoreIOUtils {
 
     public static PersistentMap<String, String> getCachedUrls(NutsWorkspace ws) {
         final String k = PersistentMap.class.getName() + ":getCachedUrls";
-        PersistentMap<String, String> m = (PersistentMap<String, String>) ws.userProperties().get(k);
+        PersistentMap<String, String> m = (PersistentMap<String, String>) ws.env().getProperty(k);
         if (m == null) {
             m = new DefaultPersistentMap<String, String>(String.class, String.class,
                     Paths.get(
                     ws.locations().getStoreLocation(
                     ws.getRuntimeId(),
                     NutsStoreLocation.CACHE)).resolve("urls-db").toFile(),ws);
-            ws.userProperties().put(k, m);
+            ws.env().setProperty(k, m,new NutsUpdateOptions(ws.createSession()));
         }
         return m;
     }
@@ -2032,6 +2080,20 @@ public class CoreIOUtils {
             return base.toString();
         }
 
+        @Override
+        public String getContentType() {
+            return base.getContentType();
+        }
+
+        @Override
+        public String getContentEncoding() {
+            return base.getContentEncoding();
+        }
+
+        @Override
+        public Instant getLastModified() {
+            return base.getLastModified();
+        }
     }
 
     public static abstract class AbstractMultiReadItem
@@ -2155,6 +2217,21 @@ public class CoreIOUtils {
         public String toString() {
             return "bytes(" + ((byte[]) this.getSource()).length + ")";
         }
+
+        @Override
+        public String getContentType() {
+            return null;
+        }
+
+        @Override
+        public String getContentEncoding() {
+            return null;
+        }
+
+        @Override
+        public Instant getLastModified() {
+            return null;
+        }
     }
 
     public static class URLInput extends AbstractItem {
@@ -2181,6 +2258,48 @@ public class CoreIOUtils {
             } catch (IOException ex) {
                 throw createOpenError(ex);
             }
+        }
+
+        @Override
+        public String getContentType() {
+            NutsURLHeader r=null;
+            try {
+                r = getURLHeader();
+            }catch (Exception ex){
+                //
+            }
+            if(r!=null){
+                return r.getContentType();
+            }
+            return null;
+        }
+
+        @Override
+        public String getContentEncoding() {
+            NutsURLHeader r=null;
+            try {
+                r = getURLHeader();
+            }catch (Exception ex){
+                //
+            }
+            if(r!=null){
+                return r.getContentEncoding();
+            }
+            return null;
+        }
+
+        @Override
+        public Instant getLastModified() {
+            NutsURLHeader r=null;
+            try {
+                r = getURLHeader();
+            }catch (Exception ex){
+                //
+            }
+            if(r!=null){
+                return r.getLastModified();
+            }
+            return null;
         }
 
         @Override
@@ -2243,6 +2362,30 @@ public class CoreIOUtils {
             } catch (IOException ex) {
                 throw createOpenError(ex);
             }
+        }
+
+        @Override
+        public String getContentType() {
+            return null;
+        }
+
+        @Override
+        public String getContentEncoding() {
+            return null;
+        }
+
+        @Override
+        public Instant getLastModified() {
+            FileTime r = null;
+            try {
+                r = Files.getLastModifiedTime(getPath());
+                if(r!=null){
+                    return r.toInstant();
+                }
+            } catch (IOException e) {
+                //
+            }
+            return null;
         }
 
         @Override
@@ -2315,6 +2458,21 @@ public class CoreIOUtils {
         @Override
         public String toString() {
             return "InputStream(" + getSource() + ")";
+        }
+
+        @Override
+        public String getContentType() {
+            return null;
+        }
+
+        @Override
+        public String getContentEncoding() {
+            return null;
+        }
+
+        @Override
+        public Instant getLastModified() {
+            return null;
         }
     }
 

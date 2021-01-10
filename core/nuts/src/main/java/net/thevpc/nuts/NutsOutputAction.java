@@ -23,38 +23,35 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
-import java.io.InputStream;
+import java.io.File;
+import java.io.OutputStream;
+import java.net.URL;
+import java.nio.file.Path;
 
 /**
- * Created by vpc on 1/8/17.
- *
- * @since 0.5.4
- * @category SPI Base
+ * @category Input Output
  */
-public class NutsTransportParamBinaryStreamPart extends NutsTransportParamPart {
+public interface NutsOutputAction {
+    NutsOutput of(Object any);
 
-    private final String name;
-    private final String fileName;
-    private final InputStream value;
+    NutsOutput of(String resource);
 
-    public NutsTransportParamBinaryStreamPart(String name, String fileName, InputStream value) {
-        this.name = name;
-        this.value = value;
-        this.fileName = fileName;
-    }
+    NutsOutput of(OutputStream stream);
 
-    public String getFileName() {
-        return fileName;
-    }
+    NutsOutput of(URL stream);
 
-    public String getName() {
-        return name;
-    }
+    NutsOutput of(File stream);
 
-    public InputStream getValue() {
-        return value;
-    }
+    NutsOutput of(Path stream);
+
+    String getName();
+
+    String getTypeName();
+
+    NutsOutputAction setName(String name);
+
+    NutsOutputAction setTypeName(String typeName);
 }

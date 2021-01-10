@@ -21,7 +21,7 @@ public class StripperFormattedPrintStreamRenderer implements FormattedPrintStrea
     }
 
     @Override
-    public StyleRenderer createStyleRenderer(AnsiEscapeCommand format, NutsWorkspace ws) {
+    public StyleRenderer createStyleRenderer(AnsiEscapeCommand format, RenderedRawStream out, NutsWorkspace ws) {
         return EMPTY_STYLE_RENDERER;
     }
 

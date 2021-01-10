@@ -1,11 +1,12 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
+import net.thevpc.nuts.NutsOutputStreamTransparentAdapter;
 import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class RenderedOutputStream extends OutputStream {
+public class RenderedOutputStream extends OutputStream implements NutsOutputStreamTransparentAdapter {
     FormatOutputStreamSupport h;
     OutputStream out;
     NutsWorkspace ws;
@@ -14,6 +15,11 @@ public class RenderedOutputStream extends OutputStream {
         this.out=out;
         this.ws=ws;
         h = new FormatOutputStreamSupport(out,renderer,ws);
+    }
+
+    @Override
+    public OutputStream baseOutputStream() {
+        return out;
     }
 
     @Override

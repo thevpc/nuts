@@ -122,7 +122,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     private Set<NutsId> getCompanionsToUpdate() {
         Set<NutsId> ext = new HashSet<>();
-        for (NutsId extension : ws.companionIds()) {
+        for (NutsId extension : ws.getCompanionIds()) {
             ext.add(extension.getShortNameId());
         }
         return ext;
@@ -137,13 +137,13 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         HashSet<NutsId> baseRegulars = new HashSet<>(ids);
         if (isInstalled()) {
             baseRegulars.addAll(ws.search().setSession(CoreNutsUtils.silent(getValidWorkspaceSession()))
-                    .addInstallStatus(NutsInstallStatus.INSTALLED)
+                    .setInstallStatus(NutsInstallStatusFilter.INSTALLED)
                     .getResultIds().stream().map(NutsId::getShortNameId).collect(Collectors.toList()));
             // This bloc is to handle packages that were installed by their jar/content was removed for any reason!
             NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
             NutsInstalledRepository ir = dws.getInstalledRepository();
             for (NutsInstallInformation y : IteratorUtils.toList(ir.searchInstallInformation(session))) {
-                if(y!=null && y.getInstallStatus().contains(NutsInstallStatus.INSTALLED) && y.getId()!=null) {
+                if(y!=null && y.getInstallStatus().isInstalled() && y.getId()!=null) {
                     baseRegulars.add(y.getId().builder().setVersion("").build());
                 }
             }
@@ -198,7 +198,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         resultFixes = IteratorUtils.toList(IteratorUtils.convertNonNull(ir.searchInstallInformation(session), new Function<NutsInstallInformation, FixAction>() {
             @Override
             public FixAction apply(NutsInstallInformation nutsInstallInformation) {
-                NutsId id = ws.search().addInstallStatus(NutsInstallStatus.INSTALLED).addId(nutsInstallInformation.getId()).getResultIds().first();
+                NutsId id = ws.search().setInstallStatus(NutsInstallStatusFilter.INSTALLED).addId(nutsInstallInformation.getId()).getResultIds().first();
                 if (id == null) {
                     return new FixAction(nutsInstallInformation.getId(), "MissingInstallation"){
                         @Override
@@ -373,15 +373,13 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         r.setId(id.getShortNameId());
         boolean shouldUpdateDefault = false;
         NutsId d0Id = ws.search().addId(id).setSession(searchSession)
-                .addInstallStatus(NutsInstallStatus.INSTALLED)
-                .addInstallStatus(NutsInstallStatus.REQUIRED)
+                .setInstallStatus(NutsInstallStatusFilter.DEPLOYED)
                 .setOptional(false).setFailFast(false).setDefaultVersions(true)
                 .getResultIds().first();
         if (d0Id == null) {
             // may be the id is not default!
             d0Id = ws.search().addId(id).setSession(searchSession)
-                    .addInstallStatus(NutsInstallStatus.INSTALLED)
-                    .addInstallStatus(NutsInstallStatus.REQUIRED)
+                    .setInstallStatus(NutsInstallStatusFilter.DEPLOYED)
                     .setOptional(false).setFailFast(false).setLatest(true)
                     .getResultIds().first();
             if (d0Id != null) {
@@ -636,8 +634,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             case "extension": {
                 try {
                     oldId = ws.search().addId(id).setEffective(true).setSession(session)
-                            .addInstallStatus(NutsInstallStatus.INSTALLED)
-                            .addInstallStatus(NutsInstallStatus.REQUIRED)
+                            .setInstallStatus(NutsInstallStatusFilter.DEPLOYED)
                             .sort(DEFAULT_THEN_LATEST_VERSION_FIRST).setFailFast(false).getResultIds().first();
                     if (oldId != null) {
                         oldFile = fetch0().setId(oldId).setSession(session).getResultDefinition();

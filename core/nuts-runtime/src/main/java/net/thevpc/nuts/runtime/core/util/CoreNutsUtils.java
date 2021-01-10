@@ -220,17 +220,17 @@ public class CoreNutsUtils {
         return m2;
     }
 
-    public static NutsVersion applyStringProperties(NutsVersion child, Function<String, String> properties) {
+    public static NutsVersion applyStringProperties(NutsVersion child, Function<String, String> properties,NutsWorkspace ws) {
         if (child == null) {
             return child;
         }
         String s = child.getValue();
         if (CoreStringUtils.isBlank(s)) {
-            return DefaultNutsVersion.EMPTY;
+            return ws.version().parser().parse("");
         }
         String s2 = applyStringProperties(s, properties);
         if (!CoreStringUtils.trim(s2).equals(s)) {
-            return DefaultNutsVersion.valueOf(s2);
+            return ws.version().parser().parse(s2);
         }
         return child;
     }
@@ -527,6 +527,15 @@ public class CoreNutsUtils {
                 .setTemporary(false);
     }
 
+    public static String extractUrlProtocol(String location) {
+        Matcher matcher = Pattern.compile("(?<p>[a-zA-Z+])://(?<r>.*>)").matcher(location);
+        if (matcher.find()) {
+            return matcher.group("p");
+
+        }
+        return null;
+    }
+
     public static String resolveRepositoryEffectiveUrlFromUrl(String location) {
         Matcher matcher = Pattern.compile("(?<p>[a-zA-Z+])://(?<r>.*>)").matcher(location);
         if (matcher.find()) {
@@ -595,57 +604,23 @@ public class CoreNutsUtils {
         if (matcher.find()) {
             String protocol = matcher.group("p");
             String rest = matcher.group("r");
-            boolean http = false;
-            boolean https = false;
-            boolean nuts = false;
-            boolean nutsrv = false;
-            boolean file = false;
-            boolean mvn = false;
-            for (String s : protocol.split("[+]")) {
-                switch (s) {
-                    case "http": {
-                        http = true;
-                        break;
-                    }
-                    case "https": {
-                        https = true;
-                        break;
-                    }
-                    case "nuts": {
-                        nuts = true;
-                        break;
-                    }
-                    case "nutsrv": {
-                        nutsrv = true;
-                        break;
-                    }
-                    case "file": {
-                        file = true;
-                        break;
-                    }
-                    case "mvn": {
-                        mvn = true;
-                        break;
-                    }
-                    default: {
-                        throw new IllegalArgumentException("Unsupported protocol " + s + " in " + location);
-                    }
+            for (String s : new String[]{
+                    "https","http","ssh","ftp"
+            }) {
+                if(protocol.endsWith("+"+s)){
+                    return protocol.substring(0,protocol.length()-s.length()-1);
                 }
             }
-            if (((nuts ? 1 : 0) + (mvn ? 1 : 0) > 0) || ((nutsrv ? 1 : 0) + (mvn ? 1 : 0) > 0)) {
-                throw new IllegalArgumentException("Unsupported protocol " + protocol + " in " + location);
+            for (String s : new String[]{
+                    "https","http","ssh","ftp"
+            }) {
+                if(protocol.equals(s)){
+                    return null;
+                }
             }
-            if (nutsrv) {
-                return NutsConstants.RepoTypes.NUTS_SERVER;
-            }
-            if (nuts) {
-                return NutsConstants.RepoTypes.NUTS;
-            }
-            if (mvn) {
-                return NutsConstants.RepoTypes.MAVEN;
-            }
+            return protocol;
         }
-        return NutsConstants.RepoTypes.MAVEN;
+        return null;
     }
 
     public static NutsAddRepositoryOptions defToOptions(NutsRepositoryDefinition def) {
@@ -718,8 +693,7 @@ public class CoreNutsUtils {
             if (def.getInstallInformation().getInstallFolder() != null) {
                 x.put("install-folder", def.getInstallInformation().getInstallFolder().toString());
             }
-            x.put("install-status", def.getInstallInformation().getInstallStatus().stream().map(NutsInstallStatus::id).collect(Collectors.joining(", "))
-            );
+            x.put("install-status", def.getInstallInformation().getInstallStatus().toString());
             x.put("was-installed", def.getInstallInformation().isWasInstalled());
             x.put("was-required", def.getInstallInformation().isWasRequired());
         }

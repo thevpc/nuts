@@ -44,7 +44,7 @@ import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.core.filters.id.NutsScriptAwareIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
-import net.thevpc.nuts.spi.NutsPushRepositoryCommand;
+import net.thevpc.nuts.spi.*;
 
 public class NutsHttpSrvRepository extends NutsCachedRepository {
 
@@ -52,12 +52,12 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     private NutsId remoteId;
 
     public NutsHttpSrvRepository(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
+        super(options, workspace, parentRepository, SPEED_SLOW, false, "nuts:api");
         LOG=workspace.log().of(NutsHttpSrvRepository.class);
         try {
             remoteId = workspace.id().parser().setLenient(false).parse((options.getLocation() + "/version"));
         } catch (Exception ex) {
-            LOG.with().session(options.getSession()).level(Level.WARNING).verb(NutsLogVerb.FAIL).log( "Unable to initialize Repository NutsId for repository {0}", options.getLocation());
+            LOG.with().session(options.getSession()).level(Level.WARNING).verb(NutsLogVerb.FAIL).log( "unable to initialize Repository NutsId for repository {0}", options.getLocation());
         }
     }
 
@@ -70,7 +70,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             try {
                 remoteId = workspace.id().parser().setLenient(false).parse( httpGetString(getUrl("/version"),session));
             } catch (Exception ex) {
-                LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.FAIL).log("Unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
+                LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.FAIL).log("unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
             }
         }
         return remoteId;

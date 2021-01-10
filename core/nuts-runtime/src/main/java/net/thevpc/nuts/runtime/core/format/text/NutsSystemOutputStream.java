@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
+import net.thevpc.nuts.NutsOutputStreamTransparentAdapter;
 import net.thevpc.nuts.NutsTerminalMode;
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.core.io.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
 import org.fusesource.jansi.AnsiOutputStream;
@@ -12,7 +14,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-public class NutsSystemOutputStream extends FilterOutputStream implements ExtendedFormatAware {
+public class NutsSystemOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
 
     private NutsTerminalMode type;
     private OutputStream base;
@@ -34,14 +36,7 @@ public class NutsSystemOutputStream extends FilterOutputStream implements Extend
                 this.ansi = CoreIOUtils.convertOutputStream(new AnsiOutputStream(base),NutsTerminalMode.FORMATTED,ws);
             }
         } else {
-            FilterOutputStream filterOutputStream = new FilterOutputStream(base) {
-                @Override
-                public void close() throws IOException {
-                    write(AnsiOutputStream.RESET_CODE);
-                    flush();
-                    super.close();
-                }
-            };
+            FilterOutputStream filterOutputStream = new ResetOnCloseOutputStream(base);
             ansi = CoreIOUtils.convertOutputStream(filterOutputStream,NutsTerminalMode.FORMATTED,ws);
         }
         setType(type);
@@ -124,5 +119,18 @@ public class NutsSystemOutputStream extends FilterOutputStream implements Extend
     @Override
     public String toString() {
         return "NutsSystemOutputStream(" +type +')';
+    }
+
+    private class ResetOnCloseOutputStream extends BaseTransparentFilterOutputStream {
+        public ResetOnCloseOutputStream(OutputStream base) {
+            super(base);
+        }
+
+        @Override
+        public void close() throws IOException {
+            write(AnsiOutputStream.RESET_CODE);
+            flush();
+            super.close();
+        }
     }
 }

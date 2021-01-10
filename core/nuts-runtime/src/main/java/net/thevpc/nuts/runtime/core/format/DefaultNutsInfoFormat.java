@@ -27,7 +27,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     private boolean showRepositories = false;
     private boolean fancy = false;
     private List<String> requests = new ArrayList<>();
-    private Predicate<String> filter = s -> true;
+    private Predicate<String> filter = NutsPredicates.always();
     private boolean lenient = false;
 
     public DefaultNutsInfoFormat(NutsWorkspace ws) {

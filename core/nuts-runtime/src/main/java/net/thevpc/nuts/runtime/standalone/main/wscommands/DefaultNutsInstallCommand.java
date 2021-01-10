@@ -171,7 +171,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             }
         }
         if (this.isCompanions()) {
-            for (NutsId sid : ws.companionIds()) {
+            for (NutsId sid : ws.getCompanionIds()) {
                 if (!list.isVisited(sid)) {
                     List<NutsId> allIds = ws.search().addId(sid).setSession(searchSession).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().list();
                     if (allIds.isEmpty()) {
@@ -190,13 +190,13 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 //        Map<NutsId, NutsDefinition> defsToIgnore = new LinkedHashMap<>();
 //        Map<NutsId, NutsDefinition> defsOk = new LinkedHashMap<>();
         if (isInstalled()) {
-            for (NutsId resultId : ws.search().setSession(searchSession).addInstallStatus(NutsInstallStatus.INSTALLED).getResultIds()) {
+            for (NutsId resultId : ws.search().setSession(searchSession).setInstallStatus(NutsInstallStatusFilter.INSTALLED).getResultIds()) {
                 list.addForInstall(resultId, getInstalled(), true);
             }
             // This bloc is to handle packages that were installed but their jar/content was removed for any reason!
             NutsInstalledRepository ir = dws.getInstalledRepository();
             for (NutsInstallInformation y : IteratorUtils.toList(ir.searchInstallInformation(session))) {
-                if (y != null && y.getInstallStatus().contains(NutsInstallStatus.INSTALLED) && y.getId() != null) {
+                if (y != null && y.getInstallStatus().isInstalled() && y.getId() != null) {
                     list.addForInstall(y.getId(), getInstalled(), true);
                 }
             }
@@ -222,7 +222,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             if (strategy == NutsInstallStrategy.DEFAULT) {
                 strategy = NutsInstallStrategy.INSTALL;
             }
-            if (info.isOldInstallStatus(NutsInstallStatus.NOT_INSTALLED)) {
+            if (!info.getOldInstallStatus().isInstalled()) {
                 switch (strategy) {
                     case REQUIRE: {
                         info.doRequire = true;
@@ -252,7 +252,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         throw new NutsUnexpectedException(ws, "unsupported strategy " + strategy);
                     }
                 }
-            } else if (info.isOldInstallStatus(NutsInstallStatus.OBSOLETE)) {
+            } else if (info.getOldInstallStatus().isObsolete()) {
                 switch (strategy) {
                     case REQUIRE: {
                         info.doRequire = true;
@@ -265,7 +265,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         break;
                     }
                     case REINSTALL: {
-                        info.doInstall = info.isOldInstallStatus(NutsInstallStatus.INSTALLED);
+                        info.doInstall = info.getOldInstallStatus().isInstalled();
                         info.doRequire = !info.doInstall;
                         info.doRequireDependencies = true;
                         break;
@@ -275,7 +275,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         break;
                     }
                     case SWITCH_VERSION: {
-                        if (info.isOldInstallStatus(NutsInstallStatus.INSTALLED)) {
+                        if (info.getOldInstallStatus().isInstalled()) {
                             info.doSwitchVersion = true;
                         } else {
                             info.doError = "cannot switch version for non installed artifact";
@@ -286,7 +286,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         throw new NutsUnexpectedException(ws, "unsupported strategy " + strategy);
                     }
                 }
-            } else if (info.isOldInstallStatus(NutsInstallStatus.INSTALLED)) {
+            } else if (info.getOldInstallStatus().isInstalled()) {
                 switch (strategy) {
                     case REQUIRE: {
                         info.doRequire = true;
@@ -314,7 +314,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         throw new NutsUnexpectedException(ws, "unsupported strategy " + strategy);
                     }
                 }
-            } else if (info.isOldInstallStatus(NutsInstallStatus.REQUIRED)) {
+            } else if (info.getOldInstallStatus().isRequired()) {
                 switch (strategy) {
                     case REQUIRE: {
                         info.doRequire = true;
@@ -478,33 +478,38 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         boolean doSwitchVersion;
         NutsInstallStrategy strategy;
         String doError;
-        Set<NutsInstallStatus> oldInstallStatus;
+        NutsInstallStatus oldInstallStatus;
         Set<NutsId> forIds = new HashSet<>();
         NutsDefinition definition;
 
-        public boolean isOldInstallStatus(NutsInstallStatus o0, NutsInstallStatus... o) {
-            if (!oldInstallStatus.contains(o0)) {
-                return false;
-            }
-            for (NutsInstallStatus s : o) {
-                if (!oldInstallStatus.contains(s)) {
-                    return false;
-                }
-            }
-            return true;
-        }
+//        public boolean isOldInstallStatus(NutsInstallStatus o0, NutsInstallStatus... o) {
+//            if (!oldInstallStatus.contains(o0)) {
+//                return false;
+//            }
+//            for (NutsInstallStatus s : o) {
+//                if (!oldInstallStatus.contains(s)) {
+//                    return false;
+//                }
+//            }
+//            return true;
+//        }
 
         public boolean isAlreadyRequired() {
-            return oldInstallStatus.contains(NutsInstallStatus.REQUIRED);
+            return oldInstallStatus.isRequired();
         }
 
         public boolean isAlreadyInstalled() {
-            return oldInstallStatus.contains(NutsInstallStatus.INSTALLED);
+            return oldInstallStatus.isInstalled();
         }
 
         public boolean isAlreadyExists() {
-            return oldInstallStatus.contains(NutsInstallStatus.INSTALLED)
-                    || oldInstallStatus.contains(NutsInstallStatus.REQUIRED);
+            return oldInstallStatus.isInstalled()
+                    || oldInstallStatus.isRequired()
+                    ;
+        }
+
+        public NutsInstallStatus getOldInstallStatus() {
+            return oldInstallStatus;
         }
     }
 

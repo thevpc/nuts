@@ -40,53 +40,87 @@ package net.thevpc.nuts;
  * </ul>
  * @category Base
  */
-public enum NutsInstallStatus {
+public class NutsInstallStatus {
 
-    /**
-     * package is not installed , neither included
-     */
-    NOT_INSTALLED,
-
-    /**
-     * package installed as primary
-     */
-    INSTALLED,
-
-    /**
-     * package installed as a dependency for a primary package
-     */
-    REQUIRED,
-
-    /**
-     * if obsolete the cache value requires refresh
-     * @since 0.8.0
-     */
-    OBSOLETE,
-
-    /**
-     * true if this is the default version
-     * @since 0.8.0
-     */
-    DEFAULT_VERSION,
-    ;
-
-    /**
-     * lower-cased identifier for the enum entry
-     */
-    private final String id;
-
-    /**
-     * default constructor
-     */
-    NutsInstallStatus() {
-        this.id = name().toLowerCase().replace('_', '-');
+    private final boolean installed;
+    private final  boolean required;
+    private final  boolean obsolete;
+    private final  boolean defaultVersion;
+    private static final NutsInstallStatus[] ALL=new NutsInstallStatus[16];
+    static {
+        for (int i = 0; i < 16; i++) {
+            ALL[i]=new NutsInstallStatus(
+                    (i&0x1)!=0,
+                    (i&0x2)!=0,
+                    (i&0x4)!=0,
+                    (i&0x8)!=0
+            );
+        }
     }
 
-    /**
-     * lower cased identifier.
-     * @return lower cased identifier
-     */
-    public String id() {
-        return id;
+    public static final NutsInstallStatus NONE=of(false, false, false, false);
+    public static final NutsInstallStatus INSTALLED=of(true, false, false, false);
+    public static final NutsInstallStatus REQUIRED=of(false, true, false, false);
+    public static final NutsInstallStatus OBSOLETE=of(false, false, true, false);
+    public static final NutsInstallStatus DEFAULT_VALUE=of(false, false, false, true);
+
+    public static NutsInstallStatus of(boolean installed, boolean required, boolean obsolete, boolean defaultVersion) {
+        return ALL[
+                (installed?1:0)*1
+                +(required?1:0)*2
+                +(obsolete?1:0)*4
+                +(defaultVersion?1:0)*8
+                ];
+    }
+
+    private NutsInstallStatus(boolean installed, boolean required, boolean obsolete, boolean defaultVersion) {
+        this.installed = installed;
+        this.required = required;
+        this.obsolete = obsolete;
+        this.defaultVersion = defaultVersion;
+    }
+
+    public boolean isDeployed() {
+        return isInstalled() || isRequired();
+    }
+
+    public boolean isNonDeployed() {
+        return !isInstalled() && !isRequired();
+    }
+
+    public boolean isInstalledOrRequired() {
+        return isInstalled() || isRequired();
+    }
+
+    public boolean isInstalled() {
+        return installed;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
+    public boolean isObsolete() {
+        return obsolete;
+    }
+
+    public boolean isDefaultVersion() {
+        return defaultVersion;
+    }
+
+    public NutsInstallStatus withInstalled(boolean installed) {
+        return of(installed, required, obsolete, defaultVersion);
+    }
+
+    public NutsInstallStatus withRequired(boolean required) {
+        return of(installed, required, obsolete, defaultVersion);
+    }
+
+    public NutsInstallStatus withObsolete(boolean obsolete) {
+        return of(installed, required, obsolete, defaultVersion);
+    }
+
+    public NutsInstallStatus withDefaultVersion(boolean defaultVersion) {
+        return of(installed, required, obsolete, defaultVersion);
     }
 }

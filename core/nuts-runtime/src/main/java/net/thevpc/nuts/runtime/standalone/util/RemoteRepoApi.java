@@ -14,7 +14,8 @@ public enum RemoteRepoApi {
     DEFAULT,
     MAVEN,
     GITHUB,
-    FILES_FOLDERS,
+    DIR_TEXT,
+    DIR_LIST,
     UNSUPPORTED,
 
 }

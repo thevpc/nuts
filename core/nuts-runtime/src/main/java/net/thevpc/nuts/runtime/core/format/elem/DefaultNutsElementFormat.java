@@ -741,7 +741,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
             if (s == null) {
                 return null;
             }
-            return DefaultNutsVersion.valueOf(s);
+            return ws.version().parser().parse(s);
         }
 
         @Override

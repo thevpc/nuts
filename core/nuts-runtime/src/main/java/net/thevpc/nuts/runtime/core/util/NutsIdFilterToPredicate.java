@@ -25,16 +25,18 @@
 */
 package net.thevpc.nuts.runtime.core.util;
 
+import java.util.Objects;
 import java.util.function.Predicate;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsIdFilter;
+import net.thevpc.nuts.NutsPredicates;
 import net.thevpc.nuts.NutsSession;
 
 /**
  *
  * @author thevpc
  */
-public class NutsIdFilterToPredicate implements Predicate<NutsId> {
+public class NutsIdFilterToPredicate extends NutsPredicates.BasePredicate<NutsId> {
     
     private final NutsIdFilter ff;
     private final NutsSession session;
@@ -48,5 +50,22 @@ public class NutsIdFilterToPredicate implements Predicate<NutsId> {
     public boolean test(NutsId x) {
         return ff.acceptId(x, session);
     }
-    
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsIdFilterToPredicate that = (NutsIdFilterToPredicate) o;
+        return Objects.equals(ff, that.ff) && Objects.equals(session, that.session);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ff, session);
+    }
+
+    @Override
+    public String toString() {
+        return ff.toString();
+    }
 }

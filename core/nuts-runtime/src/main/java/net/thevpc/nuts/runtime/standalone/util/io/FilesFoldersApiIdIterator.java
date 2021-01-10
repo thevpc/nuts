@@ -35,6 +35,7 @@ import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.filters.NutsSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.RemoteRepoApi;
 
 /**
  * Created by vpc on 2/21/17.
@@ -52,9 +53,16 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
     private long visitedFoldersCount;
     private long visitedFilesCount;
     private String rootUrl;
+    private RemoteRepoApi strategy;
 
-    public FilesFoldersApiIdIterator(NutsWorkspace workspace, NutsRepository repository, String rootUrl, String basePath, NutsIdFilter filter, NutsSession session, FilesFoldersApi.IteratorModel model, int maxDepth) {
+    public FilesFoldersApiIdIterator(NutsWorkspace workspace, NutsRepository repository, String rootUrl, String basePath, NutsIdFilter filter,
+                                     RemoteRepoApi strategy,
+                                     NutsSession session, FilesFoldersApi.IteratorModel model, int maxDepth) {
         this.repository = repository;
+        this.strategy = strategy;
+        if(strategy!=RemoteRepoApi.DIR_LIST && strategy!=RemoteRepoApi.DIR_TEXT){
+            throw new NutsUnexpectedException(workspace,"unexpected strategy "+strategy);
+        }
         this.session = session;
         this.filter = filter;
         this.workspace = workspace;
@@ -83,7 +91,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (file.folder) {
-                FilesFoldersApi.Item[] children = FilesFoldersApi.getFilesAndFolders(true,true,file.path, session);
+                FilesFoldersApi.Item[] children = FilesFoldersApi.getDirItems(true, true, strategy, file.path, session);
 //                String[] childrenFiles = FilesFoldersApi.getFiles(file.path, session);
                 visitedFoldersCount++;
                 boolean deep = file.depth < maxDepth;

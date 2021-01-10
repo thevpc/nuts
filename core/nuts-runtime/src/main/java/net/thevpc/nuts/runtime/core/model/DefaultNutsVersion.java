@@ -28,10 +28,7 @@ package net.thevpc.nuts.runtime.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thevpc.nuts.NutsConstants;
-import net.thevpc.nuts.NutsVersion;
-import net.thevpc.nuts.NutsVersionFilter;
-import net.thevpc.nuts.NutsVersionInterval;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.version.DefaultNutsVersionFilter;
 import net.thevpc.nuts.runtime.core.filters.DefaultNutsTokenFilter;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
@@ -43,18 +40,25 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVersion {
 
     private static final long serialVersionUID = 1L;
-    public static final NutsVersion EMPTY = new DefaultNutsVersion("");
+//    public static final NutsVersion EMPTY = new DefaultNutsVersion("");
     private VersionParts parts;
-    public static NutsVersion valueOf(String value) {
+    private transient NutsWorkspace ws;
+    public static NutsVersion valueOf(String value, NutsWorkspace ws) {
         value = CoreStringUtils.trim(value);
         if (value.isEmpty()) {
-            return EMPTY;
+            return new DefaultNutsVersion("",ws);
         }
-        return new DefaultNutsVersion(value);
+        return new DefaultNutsVersion(value,ws);
     }
 
-    private DefaultNutsVersion(String expression) {
+    private DefaultNutsVersion(String expression,NutsWorkspace ws) {
         super(CoreStringUtils.trim(expression));
+        this.ws=ws;
+    }
+
+    @Override
+    public NutsFormat formatter() {
+        return ws.version().formatter().setVersion(this);
     }
 
     @Override
@@ -159,7 +163,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
 
     @Override
     public NutsVersion inc(int position, int amount) {
-        return new DefaultNutsVersion(incVersion(getValue(), position, amount));
+        return new DefaultNutsVersion(incVersion(getValue(), position, amount),ws);
     }
 
     @Override

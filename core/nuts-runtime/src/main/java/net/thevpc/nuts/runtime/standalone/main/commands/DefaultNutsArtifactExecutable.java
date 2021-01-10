@@ -75,14 +75,14 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
     @Override
     public void execute() {
-        Set<NutsInstallStatus> installStatus = def.getInstallInformation().getInstallStatus();
-        if (autoInstall && !installStatus.contains(NutsInstallStatus.INSTALLED)) {
+        NutsInstallStatus installStatus = def.getInstallInformation().getInstallStatus();
+        if (autoInstall && !installStatus.isInstalled()) {
             traceSession.getWorkspace().install().setSession(traceSession).id(def.getId()).run();
-            Set<NutsInstallStatus> st = traceSession.getWorkspace().fetch().setSession(traceSession).setId(def.getId()).getResultDefinition().getInstallInformation().getInstallStatus();
-            if (!st.contains(NutsInstallStatus.INSTALLED)) {
+            NutsInstallStatus st = traceSession.getWorkspace().fetch().setSession(traceSession).setId(def.getId()).getResultDefinition().getInstallInformation().getInstallStatus();
+            if (!st.isInstalled()) {
                 return;
             }
-        } else if (installStatus.contains(NutsInstallStatus.INSTALLED) && installStatus.contains(NutsInstallStatus.OBSOLETE)) {
+        } else if (installStatus.isInstalled() && installStatus.isObsolete()) {
             traceSession.getWorkspace().install().id(def.getId()).run();
         }
         LinkedHashSet<NutsDependency> reinstall=new LinkedHashSet<>();
@@ -92,10 +92,10 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
                     &&scope!=NutsDependencyScope.TEST_PROVIDED
                     &&scope!=NutsDependencyScope.TEST_RUNTIME;
             if(acceptedScope) {
-                Set<NutsInstallStatus> st = traceSession.getWorkspace().fetch()
+                NutsInstallStatus st = traceSession.getWorkspace().fetch()
                         .setSession(traceSession)
                         .setOffline().setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
-                if (st.contains(NutsInstallStatus.OBSOLETE) || st.contains(NutsInstallStatus.NOT_INSTALLED)) {
+                if (st.isObsolete() || st.isNonDeployed()) {
                     reinstall.add(dependency);
                 }
             }
@@ -109,8 +109,8 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
             for (NutsDependency dependency : reinstall) {
                 boolean optional = execSession.getWorkspace().dependency().parser().parseOptional(dependency.getOptional());
 
-                Set<NutsInstallStatus> st = traceSession.getWorkspace().fetch().setOffline().setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
-                if (st.contains(NutsInstallStatus.OBSOLETE)||st.contains(NutsInstallStatus.NOT_INSTALLED) && !optional) {
+                NutsInstallStatus st = traceSession.getWorkspace().fetch().setOffline().setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
+                if ((st.isObsolete()|| st.isNonDeployed()) && !optional) {
                     throw new NutsUnexpectedException(execSession.getWorkspace(),"unresolved dependency "+dependency+" has status "+st);
                 }
             }
@@ -120,7 +120,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
     @Override
     public void dryExecute() {
-        if (autoInstall && !def.getInstallInformation().getInstallStatus().contains(NutsInstallStatus.INSTALLED)) {
+        if (autoInstall && !def.getInstallInformation().getInstallStatus().isInstalled()) {
             execSession.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName, execSession);
             PrintStream out = execSession.out();
             out.printf("[dry] ==install== %s%n", def.getId().getLongName());

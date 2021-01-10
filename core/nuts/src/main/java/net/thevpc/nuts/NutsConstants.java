@@ -78,11 +78,6 @@ public final class NutsConstants {
         public static final String NUTS = "nuts";
 
         /**
-         * nuts http server repository type.
-         */
-        public static final String NUTS_SERVER = "nuts-server";
-
-        /**
          * maven repository type.
          */
         public static final String MAVEN = "maven";

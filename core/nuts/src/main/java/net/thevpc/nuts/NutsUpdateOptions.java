@@ -43,6 +43,13 @@ public class NutsUpdateOptions implements Serializable {
      */
     private NutsSession session;
 
+    public NutsUpdateOptions() {
+    }
+
+    public NutsUpdateOptions(NutsSession session) {
+        this.session = session;
+    }
+
     /**
      * current session
      *

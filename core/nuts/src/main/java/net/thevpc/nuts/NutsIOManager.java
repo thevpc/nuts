@@ -140,7 +140,7 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
      */
     NutsIOHashAction hash();
 
-    NutsInputManager input();
+    NutsInputAction input();
 
-    NutsOutputManager output();
+    NutsOutputAction output();
 }

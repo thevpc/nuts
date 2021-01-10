@@ -16,12 +16,12 @@ public class NutsIndexerUtils {
     public static Path getCacheDir(NutsSession session, String entity) {
         String k = "NutsIndexerUtils.CACHE." + entity;
         NutsWorkspace ws = session.getWorkspace();
-        String m = (String) ws.userProperties().get(k);
+        String m = (String) ws.env().getProperty(k);
         if (m == null) {
             m = ws.locations()
                     .getStoreLocation(ws.id().resolveId(NutsIndexerUtils.class, session),
                             NutsStoreLocation.CACHE) + File.separator + entity;
-            ws.userProperties().put(k, m);
+            ws.env().setProperty(k, m,new NutsUpdateOptions(session));
         }
         return new File(m).toPath();
     }

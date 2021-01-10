@@ -88,7 +88,7 @@ public class RemoteNutsWorkspace extends AbstractNutsWorkspace {
     }
 
     @Override
-    public Set<NutsId> companionIds() {
+    public Set<NutsId> getCompanionIds() {
         throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported companionIds");
     }
 

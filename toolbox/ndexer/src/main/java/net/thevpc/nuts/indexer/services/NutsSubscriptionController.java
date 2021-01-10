@@ -43,7 +43,7 @@ public class NutsSubscriptionController {
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.subscribe(repositoryUuid,
-                        workspaceManager.getWorkspaceLocation(workspace.uuid()), this.subscriberManager.getDefaultWorkspace().createSession());
+                        workspaceManager.getWorkspaceLocation(workspace.getUuid()), this.subscriberManager.getDefaultWorkspace().createSession());
 
                 return ResponseEntity.ok().build();
             }
@@ -59,7 +59,7 @@ public class NutsSubscriptionController {
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.unsubscribe(repositoryUuid,
-                        workspaceManager.getWorkspaceLocation(workspace.uuid()), this.subscriberManager.getDefaultWorkspace().createSession());
+                        workspaceManager.getWorkspaceLocation(workspace.getUuid()), this.subscriberManager.getDefaultWorkspace().createSession());
 
                 return ResponseEntity.ok().build();
             }
@@ -76,7 +76,7 @@ public class NutsSubscriptionController {
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 boolean subscribed = this.subscriberManager.isSubscribed(repositoryUuid,
-                        workspaceManager.getWorkspaceLocation(workspace.uuid()));
+                        workspaceManager.getWorkspaceLocation(workspace.getUuid()));
 
                 return ResponseEntity.ok(subscribed);
             }

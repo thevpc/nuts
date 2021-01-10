@@ -81,7 +81,7 @@ public class NutsPatternIdFilter extends AbstractNutsFilter implements NutsIdFil
         return true;
     }
 
-    private static class PredicateStaticKey implements Predicate<Map<String, String>> {
+    private static class PredicateStaticKey extends NutsPredicates.BasePredicate<Map<String, String>> {
 
         private final String key;
         private final String val;
@@ -100,7 +100,7 @@ public class NutsPatternIdFilter extends AbstractNutsFilter implements NutsIdFil
         }
     }
 
-    private static class PredicateWildKey implements Predicate<Map<String, String>> {
+    private static class PredicateWildKey extends NutsPredicates.BasePredicate<Map<String, String>> {
 
         private Pattern keyPattern;
         private Pattern valPattern;

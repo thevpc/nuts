@@ -34,11 +34,11 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     private final Map<String, String> homeLocations = new HashMap<>();
     private boolean global;
     private final NutsWorkspace ws;
-    private NutsId platform;
-    private NutsId os;
-    private NutsOsFamily osFamily;
-    private NutsId arch;
-    private NutsId osdist;
+//    private NutsId platform;
+//    private NutsId os;
+//    private NutsOsFamily osFamily;
+//    private NutsId arch;
+//    private NutsId osdist;
 
     public DefaultNutsWorkspaceCurrentConfig(NutsWorkspace ws) {
         this.ws = ws;
@@ -158,7 +158,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
             apiId = ws.id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion());
         }
         if (storeLocationLayout == null) {
-            storeLocationLayout = getOsFamily();
+            storeLocationLayout = ws.env().getOsFamily();
         }
         return this;
     }
@@ -429,64 +429,64 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
 
-    public NutsId getArch() {
-        if (arch == null) {
-            arch = ws.id().parser().parse(CorePlatformUtils.getPlatformArch());
-        }
-        return arch;
-    }
+//    public NutsId getArch() {
+//        if (arch == null) {
+//            arch = ws.id().parser().parse(CorePlatformUtils.getPlatformArch());
+//        }
+//        return arch;
+//    }
 
 
-    private static NutsOsFamily getPlatformOsFamily0() {
-        String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
-        if (property.startsWith("linux")) {
-            return NutsOsFamily.LINUX;
-        }
-        if (property.startsWith("win")) {
-            return NutsOsFamily.WINDOWS;
-        }
-        if (property.startsWith("mac")) {
-            return NutsOsFamily.MACOS;
-        }
-        if (property.startsWith("sunos")) {
-            return NutsOsFamily.UNIX;
-        }
-        if (property.startsWith("freebsd")) {
-            return NutsOsFamily.UNIX;
-        }
-        return NutsOsFamily.UNKNOWN;
-    }
+//    private static NutsOsFamily getPlatformOsFamily0() {
+//        String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
+//        if (property.startsWith("linux")) {
+//            return NutsOsFamily.LINUX;
+//        }
+//        if (property.startsWith("win")) {
+//            return NutsOsFamily.WINDOWS;
+//        }
+//        if (property.startsWith("mac")) {
+//            return NutsOsFamily.MACOS;
+//        }
+//        if (property.startsWith("sunos")) {
+//            return NutsOsFamily.UNIX;
+//        }
+//        if (property.startsWith("freebsd")) {
+//            return NutsOsFamily.UNIX;
+//        }
+//        return NutsOsFamily.UNKNOWN;
+//    }
 
-    public NutsOsFamily getOsFamily() {
-        if (osFamily == null) {
-            osFamily = getPlatformOsFamily0();
-        }
-        return osFamily;
-    }
-
-
-    public NutsId getOs() {
-        if (os == null) {
-            os = ws.id().parser().parse(CorePlatformUtils.getPlatformOs(ws));
-        }
-        return os;
-    }
-
-    public NutsId getPlatform() {
-        if (platform == null) {
-            platform = NutsWorkspaceConfigManagerExt.of(ws.config())
-                    .createSdkId("java", System.getProperty("java.version"));
-        }
-        return platform;
-    }
-
-
-    public NutsId getOsDist() {
-        if (osdist == null) {
-            osdist = ws.id().parser().parse(CorePlatformUtils.getPlatformOsDist(ws));
-        }
-        return osdist;
-    }
+//    public NutsOsFamily getOsFamily() {
+//        if (osFamily == null) {
+//            osFamily = getPlatformOsFamily0();
+//        }
+//        return osFamily;
+//    }
+//
+//
+//    public NutsId getOs() {
+//        if (os == null) {
+//            os = ws.id().parser().parse(CorePlatformUtils.getPlatformOs(ws));
+//        }
+//        return os;
+//    }
+//
+//    public NutsId getPlatform() {
+//        if (platform == null) {
+//            platform = NutsWorkspaceConfigManagerExt.of(ws.config())
+//                    .createSdkId("java", System.getProperty("java.version"));
+//        }
+//        return platform;
+//    }
+//
+//
+//    public NutsId getOsDist() {
+//        if (osdist == null) {
+//            osdist = ws.id().parser().parse(CorePlatformUtils.getPlatformOsDist(ws));
+//        }
+//        return osdist;
+//    }
 
     //
     public String getStoreLocation(String id, NutsStoreLocation folderType, NutsSession session) {

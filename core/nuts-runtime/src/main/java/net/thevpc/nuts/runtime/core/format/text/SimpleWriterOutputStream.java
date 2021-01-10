@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
+import net.thevpc.nuts.NutsOutputStreamTransparentAdapter;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
@@ -17,7 +18,7 @@ import java.nio.charset.CodingErrorAction;
 /**
  * fully inspired by org.apache.commons.io.output.WriterOutputStream
  */
-public class SimpleWriterOutputStream extends OutputStream implements ExtendedFormatAware{
+public class SimpleWriterOutputStream extends OutputStream implements ExtendedFormatAware {
     private static final int DEFAULT_BUFFER_SIZE = 1024;
     private final Writer writer;
     private final CharsetDecoder decoder;
@@ -113,7 +114,7 @@ public class SimpleWriterOutputStream extends OutputStream implements ExtendedFo
             } else if (coderResult.isUnderflow()) {
                 break;
             } else {
-                throw new IOException("Unexpected coder result");
+                throw new IOException("unexpected coder result");
             }
         }
         decoderIn.compact();

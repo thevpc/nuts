@@ -35,17 +35,17 @@ public class DefaultNutsWorkspaceEventManager implements NutsWorkspaceEventManag
 
     @Override
     public void addUserPropertyListener(NutsMapListener<String, Object> listener) {
-        ((ObservableMap<String, Object>)ws.userProperties()).addListener(listener);
+        ((ObservableMap<String, Object>)ws.env().getProperties()).addListener(listener);
     }
 
     @Override
     public void removeUserPropertyListener(NutsMapListener<String, Object> listener) {
-        ((ObservableMap<String, Object>)ws.userProperties()).removeListener(listener);
+        ((ObservableMap<String, Object>)ws.env().getProperties()).removeListener(listener);
     }
 
     @Override
     public NutsMapListener<String, Object>[] getUserPropertyListeners() {
-        return ((ObservableMap<String, Object>)ws.userProperties()).getListeners();
+        return ((ObservableMap<String, Object>)ws.env().getProperties()).getListeners();
     }
 
     @Override

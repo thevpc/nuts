@@ -26,11 +26,10 @@ public class NutsJavaSdkUtils {
     private NutsWorkspace ws;
 
     public static NutsJavaSdkUtils of(NutsWorkspace ws) {
-        Map<String, Object> up = ws.userProperties();
-        NutsJavaSdkUtils wp = (NutsJavaSdkUtils) up.get(NutsJavaSdkUtils.class.getName());
+        NutsJavaSdkUtils wp = (NutsJavaSdkUtils) ws.env().getProperty(NutsJavaSdkUtils.class.getName());
         if (wp == null) {
             wp = new NutsJavaSdkUtils(ws);
-            up.put(NutsJavaSdkUtils.class.getName(), wp);
+            ws.env().setProperty(NutsJavaSdkUtils.class.getName(), wp,new NutsUpdateOptions(ws.createSession()));
         }
         return wp;
     }
@@ -62,7 +61,7 @@ public class NutsJavaSdkUtils {
                     0
             );
             NutsVersionFilter requestedJavaVersionFilter = ws.version().parser().parse(requestedJavaVersion).filter();
-            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.acceptVersion(DefaultNutsVersion.valueOf(current.getVersion()), ws.createSession())) {
+            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.acceptVersion(ws.version().parser().parse(current.getVersion()), ws.createSession())) {
                 bestJava = current;
             }
             if (bestJava == null) {

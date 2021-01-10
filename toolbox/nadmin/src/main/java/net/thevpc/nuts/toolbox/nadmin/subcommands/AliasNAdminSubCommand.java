@@ -131,7 +131,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                     context.getWorkspace().aliases().remove(cmdLine.next().toString(), new NutsRemoveOptions()
                             .setSession(context.getSession()));
                 }
-                trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
+                context.getWorkspace().config().save(context.getSession());
             }
             return true;
         } else if (cmdLine.next("add alias") != null) {
@@ -170,7 +170,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                                     .setExecutorOptions(context.getWorkspace().commandLine().parse(value.executionOptions).toStringArray()),
                              new NutsAddOptions().setSession(context.getSession()));
                 }
-                trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
+                context.getWorkspace().config().save(context.getSession());
             }
             return true;
         }

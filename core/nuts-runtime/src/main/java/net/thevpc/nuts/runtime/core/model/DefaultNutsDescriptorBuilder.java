@@ -765,7 +765,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 .setNamespace(CoreNutsUtils.applyStringProperties(child.getNamespace(), properties))
                 .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
                 .setArtifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))
-                .setVersion(CoreNutsUtils.applyStringProperties(child.getVersion(), properties))
+                .setVersion(CoreNutsUtils.applyStringProperties(child.getVersion(), properties,ws))
                 .setClassifier(CoreNutsUtils.applyStringProperties(child.getClassifier(), properties))
                 .setScope(CoreNutsUtils.applyStringProperties(child.getScope(), properties))
                 .setOptional(CoreNutsUtils.applyStringProperties(child.getOptional(), properties))

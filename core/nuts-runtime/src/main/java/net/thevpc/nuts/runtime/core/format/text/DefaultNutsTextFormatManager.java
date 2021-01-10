@@ -242,7 +242,7 @@ public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
             return NutsString.of(escapeText(String.valueOf(a)));
         }else{
             try {
-                return  NutsString.of(ws.formats().of((NutsFormattable) a).setSession(session).format());
+                return  NutsString.of(a.formatter().setSession(session).format());
             }catch (Exception ex){
                 return NutsString.of(escapeText(String.valueOf(a)));
             }

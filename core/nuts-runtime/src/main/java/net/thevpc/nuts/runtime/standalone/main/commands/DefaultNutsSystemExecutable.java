@@ -72,7 +72,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
                 case WINDOWS:{
                     String s = (String) session.getProperty("WINDOWS_ROOT_USER");
                     if(s==null) {
-                        s = session.getWorkspace().env().get("WINDOWS_ROOT_USER", null);
+                        s = session.getWorkspace().env().getEnv("WINDOWS_ROOT_USER", null);
                     }
                     if(CoreStringUtils.isBlank(s)){
                         s="Administrator";

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.NutsInput;
-import net.thevpc.nuts.NutsInputManager;
+import net.thevpc.nuts.NutsInputAction;
 import net.thevpc.nuts.NutsUnsupportedArgumentException;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
@@ -13,13 +13,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
 
-public class DefaultNutsInputManager implements NutsInputManager {
+public class DefaultNutsInputAction implements NutsInputAction {
     private NutsWorkspace ws;
     private String name;
     private String typeName;
     private boolean multiRead;
 
-    public DefaultNutsInputManager(NutsWorkspace ws) {
+    public DefaultNutsInputAction(NutsWorkspace ws) {
         this.ws = ws;
     }
 
@@ -120,13 +120,13 @@ public class DefaultNutsInputManager implements NutsInputManager {
     }
 
     @Override
-    public NutsInputManager setName(String name) {
+    public NutsInputAction setName(String name) {
         this.name = name;
         return this;
     }
 
     @Override
-    public NutsInputManager setTypeName(String typeName) {
+    public NutsInputAction setTypeName(String typeName) {
         this.typeName = typeName;
         return this;
     }
@@ -136,7 +136,7 @@ public class DefaultNutsInputManager implements NutsInputManager {
     }
 
     @Override
-    public NutsInputManager setMultiRead(boolean multiRead) {
+    public NutsInputAction setMultiRead(boolean multiRead) {
         this.multiRead = multiRead;
         return this;
     }

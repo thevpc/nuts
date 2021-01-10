@@ -38,9 +38,9 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
             this.config = new NutsWorkspaceListConfig()
                     .setUuid(UUID.randomUUID().toString())
                     .setName("default-config");
-            this.workspaces.put(ws.uuid(),
+            this.workspaces.put(ws.getUuid(),
                     new NutsWorkspaceLocation()
-                            .setUuid(ws.uuid())
+                            .setUuid(ws.getUuid())
                             .setName("default-workspace")
                             .setLocation(this.defaultWorkspace.locations().getWorkspaceLocation().toString())
             );
@@ -88,12 +88,12 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
     public NutsWorkspace addWorkspace(String path, NutsSession session) {
         NutsWorkspace workspace = this.createWorkspace(path);
         NutsWorkspaceLocation workspaceLocation = new NutsWorkspaceLocation()
-                .setUuid(workspace.uuid())
+                .setUuid(workspace.getUuid())
                 .setName(
                         Paths.get(workspace.locations().getWorkspaceLocation())
                         .getFileName().toString())
                 .setLocation(workspace.locations().getWorkspaceLocation().toString());
-        workspaces.put(workspace.uuid(), workspaceLocation);
+        workspaces.put(workspace.getUuid(), workspaceLocation);
         this.save(session);
         return workspace;
     }

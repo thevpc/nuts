@@ -27,10 +27,8 @@ package net.thevpc.nuts.runtime.standalone.main.repos;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsRepository;
-import net.thevpc.nuts.NutsRepositoryRef;
-import net.thevpc.nuts.NutsWorkspace;
+
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
@@ -48,12 +46,12 @@ public class NutsRepositoryRegistryHelper {
     }
 
     public NutsRepository[] getRepositories() {
-        return repositoriesByUuid.values().stream().map(x -> x.repo).filter(x -> x != null)
+        return repositoriesByUuid.values().stream().map(x -> x.repo).filter(NutsPredicates.nonNull())
                 .toArray(NutsRepository[]::new);
     }
 
     public NutsRepositoryRef[] getRepositoryRefs() {
-        return repositoriesByUuid.values().stream().map(x -> x.ref).filter(x -> x != null)
+        return repositoriesByUuid.values().stream().map(x -> x.ref).filter(NutsPredicates.nonNull())
                 .toArray(NutsRepositoryRef[]::new);
     }
 

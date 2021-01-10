@@ -20,7 +20,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
 
     @Override
     public NutsTextNode formatted(NutsFormattable t) {
-        return formatted(ws.formats().of(t).format());
+        return formatted(t.formatter().format());
     }
 
     @Override

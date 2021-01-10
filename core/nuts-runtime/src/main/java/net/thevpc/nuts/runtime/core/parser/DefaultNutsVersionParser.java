@@ -31,7 +31,7 @@ public class DefaultNutsVersionParser implements NutsVersionParser {
 
     @Override
     public NutsVersion parse(String version) {
-        NutsVersion v = DefaultNutsVersion.valueOf(version);
+        NutsVersion v = DefaultNutsVersion.valueOf(version,ws);
         if(v==null && !isLenient()){
             throw new NutsParseException(ws, "Invalid version format : " + version);
         }

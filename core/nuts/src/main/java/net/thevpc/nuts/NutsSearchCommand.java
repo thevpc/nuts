@@ -30,6 +30,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * Search command class helps searching multiple artifacts with all of their
@@ -1207,7 +1208,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return {@code this} instance
      */
-    Set<NutsInstallStatus>[] getInstallStatus();
+    Predicate<NutsInstallStatus> getInstallStatus();
 
     /**
      * search for non packages with the given {@code installStatus}
@@ -1215,8 +1216,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param installStatus new status
      * @return {@code this} instance
      */
-    NutsSearchCommand addInstallStatus(NutsInstallStatus... installStatus);
-
-    NutsSearchCommand removeInstallStatus(NutsInstallStatus... installStatus);
+    NutsSearchCommand setInstallStatus(Predicate<NutsInstallStatus> installStatus);
 
 }

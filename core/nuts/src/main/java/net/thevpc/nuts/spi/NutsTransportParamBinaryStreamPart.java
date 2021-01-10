@@ -23,43 +23,38 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
- */
-package net.thevpc.nuts;
+*/
+package net.thevpc.nuts.spi;
 
-import java.io.File;
 import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Path;
 
 /**
- * @category Input Output
+ * Created by vpc on 1/8/17.
+ *
+ * @since 0.5.4
+ * @category SPI Base
  */
-public interface NutsInputManager {
-    NutsInput of(Object any);
+public class NutsTransportParamBinaryStreamPart extends NutsTransportParamPart {
 
-    NutsInput of(String resource);
+    private final String name;
+    private final String fileName;
+    private final InputStream value;
 
-    NutsInput of(byte[] bytes);
+    public NutsTransportParamBinaryStreamPart(String name, String fileName, InputStream value) {
+        this.name = name;
+        this.value = value;
+        this.fileName = fileName;
+    }
 
-    NutsInput of(InputStream stream);
+    public String getFileName() {
+        return fileName;
+    }
 
-    NutsInput of(URL stream);
+    public String getName() {
+        return name;
+    }
 
-    NutsInput of(File stream);
-
-    NutsInput of(Path stream);
-
-    NutsInput of(NutsInput stream);
-
-    String getName();
-
-    String getTypeName();
-
-    NutsInputManager setName(String name);
-
-    NutsInputManager setTypeName(String typeName);
-
-    NutsInputManager setMultiRead(boolean value);
-
-    boolean isMultiRead();
+    public InputStream getValue() {
+        return value;
+    }
 }

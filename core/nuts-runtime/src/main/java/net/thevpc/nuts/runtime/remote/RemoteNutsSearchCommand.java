@@ -49,14 +49,8 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
         if (getDescriptorFilter() != null) {
             eb.set("descriptorFilter", ws.formats().element().toElement(getDescriptorFilter()));
         }
-        if (getInstallStatus() != null && getInstallStatus().length>0) {
-            eb.set("installStatus", e.forArray()
-                    .addAll(
-                            Arrays.stream(getInstallStatus())
-                                    .map(x->e.forArray().addAll(
-                                            x.stream().map(NutsInstallStatus::id).toArray(String[]::new)
-                                    ).build()).toArray(NutsArrayElement[]::new)
-                    ).build());
+        if (getInstallStatus() != null) {
+            eb.set("installStatus", e.forString(getInstallStatus().toString()));
         }
 
         return getWorkspace().remoteCall(

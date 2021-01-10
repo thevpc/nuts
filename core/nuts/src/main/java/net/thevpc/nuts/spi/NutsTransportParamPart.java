@@ -23,35 +23,14 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
- */
-package net.thevpc.nuts;
-
-import java.io.File;
-import java.io.OutputStream;
-import java.net.URL;
-import java.nio.file.Path;
+*/
+package net.thevpc.nuts.spi;
 
 /**
- * @category Input Output
+ * Created by vpc on 1/8/17.
+ *
+ * @since 0.5.4
+ * @category SPI Base
  */
-public interface NutsOutputManager {
-    NutsOutput of(Object any);
-
-    NutsOutput of(String resource);
-
-    NutsOutput of(OutputStream stream);
-
-    NutsOutput of(URL stream);
-
-    NutsOutput of(File stream);
-
-    NutsOutput of(Path stream);
-
-    String getName();
-
-    String getTypeName();
-
-    NutsOutputManager setName(String name);
-
-    NutsOutputManager setTypeName(String typeName);
+public class NutsTransportParamPart{
 }

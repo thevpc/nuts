@@ -58,11 +58,11 @@ public class BackupNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
                 if (file == null || file.isEmpty()) {
-                    file = context.getWorkspace().name() + ".zip";
+                    file = context.getWorkspace().getName() + ".zip";
                 } else if (file.endsWith("/") || file.endsWith("\\")) {
-                    file += context.getWorkspace().name() + ".zip";
+                    file += context.getWorkspace().getName() + ".zip";
                 } else if (Files.isDirectory(Paths.get(file))) {
-                    file += File.separator + context.getWorkspace().name() + ".zip";
+                    file += File.separator + context.getWorkspace().getName() + ".zip";
                 }
                 if (Paths.get(file).getFileName().toString().indexOf('.') < 0) {
                     file += ".zip";
@@ -87,11 +87,11 @@ public class BackupNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             if (file == null || file.isEmpty()) {
-                file = context.getWorkspace().name() + ".zip";
+                file = context.getWorkspace().getName() + ".zip";
             } else if (file.endsWith("/") || file.endsWith("\\")) {
-                file += context.getWorkspace().name() + ".zip";
+                file += context.getWorkspace().getName() + ".zip";
             } else if (Files.isDirectory(Paths.get(file))) {
-                file += File.separator + context.getWorkspace().name() + ".zip";
+                file += File.separator + context.getWorkspace().getName() + ".zip";
             }
             if (Paths.get(file).getFileName().toString().indexOf('.') < 0 && !Files.exists(Paths.get(file))) {
                 file += ".zip";

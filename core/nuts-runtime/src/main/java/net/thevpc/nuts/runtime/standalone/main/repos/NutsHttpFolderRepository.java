@@ -10,27 +10,27 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.standalone.main.repos;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.RemoteRepoApi;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.RemoteRepoApi;
 import net.thevpc.nuts.runtime.standalone.util.io.FilesFoldersApi;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 
@@ -131,7 +131,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 
             try {
                 metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session).open();
-            } catch (UncheckedIOException|NutsIOException ex) {
+            } catch (UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotFoundException(getWorkspace(), id, ex);
             }
             List<Map<String, Object>> info = getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(new InputStreamReader(metadataStream), List.class);
@@ -166,20 +166,20 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 
     }
 
-    public Iterator<NutsId> findVersionsImplFilesFolders(NutsId id, NutsIdFilter idFilter, NutsSession session) {
+    public Iterator<NutsId> findVersionsImplFilesFolders(NutsId id, NutsIdFilter idFilter, RemoteRepoApi versionApi, NutsSession session) {
 
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         try {
             String artifactUrl = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId);
-            FilesFoldersApi.Item[] all = FilesFoldersApi.getFilesAndFolders(false, true, artifactUrl, session);
+            FilesFoldersApi.Item[] all = FilesFoldersApi.getDirItems(true, false, versionApi, artifactUrl, session);
             List<NutsId> n = new ArrayList<>();
             for (FilesFoldersApi.Item s : all) {
                 if (s.isFolder() && s.getName().equals("LATEST")) {
                     continue;
                 }
                 String versionFilesUrl = artifactUrl + "/" + s.getName();
-                FilesFoldersApi.Item[] versionFiles = FilesFoldersApi.getFilesAndFolders(true, false, versionFilesUrl, session);
+                FilesFoldersApi.Item[] versionFiles = FilesFoldersApi.getDirItems(false, true, versionApi, versionFilesUrl, session);
                 boolean validVersion = false;
                 for (FilesFoldersApi.Item v : versionFiles) {
                     if ("nuts.properties".equals(v.getName())) {
@@ -230,8 +230,11 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             switch (versionApi) {
                 case DEFAULT:
                 case MAVEN:
-                case FILES_FOLDERS: {
-                    return findVersionsImplFilesFolders(id, filter2, session);
+                case DIR_TEXT: {
+                    return findVersionsImplFilesFolders(id, filter2, RemoteRepoApi.DIR_TEXT, session);
+                }
+                case DIR_LIST: {
+                    return findVersionsImplFilesFolders(id, filter2, RemoteRepoApi.DIR_LIST, session);
                 }
                 case GITHUB: {
                     return findVersionsImplGithub(id, filter2, session);
@@ -269,7 +272,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         }
         try (InputStream stream = getDescStream(id, session)) {
             return getWorkspace().descriptor().parser().parse(stream);
-        } catch (IOException|UncheckedIOException| NutsIOException ex) {
+        } catch (IOException | UncheckedIOException | NutsIOException ex) {
             throw new NutsNotFoundException(getWorkspace(), id, ex);
         }
     }
@@ -305,16 +308,28 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         }
         switch (findApi) {
             case DEFAULT:
-            case FILES_FOLDERS:
+            case DIR_TEXT:
             case GITHUB:
             case MAVEN: {
                 List<Iterator<NutsId>> li = new ArrayList<>();
                 for (String root : roots) {
                     if (root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);
-                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), name, filter, session, Integer.MAX_VALUE, findModel));
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), name, filter, RemoteRepoApi.DIR_TEXT, session, Integer.MAX_VALUE, findModel));
                     } else {
-                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), root, filter, session, 2, findModel));
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), root, filter, RemoteRepoApi.DIR_TEXT, session, 2, findModel));
+                    }
+                }
+                return IteratorUtils.concat(li);
+            }
+            case DIR_LIST: {
+                List<Iterator<NutsId>> li = new ArrayList<>();
+                for (String root : roots) {
+                    if (root.endsWith("/*")) {
+                        String name = root.substring(0, root.length() - 2);
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), name, filter, RemoteRepoApi.DIR_LIST, session, Integer.MAX_VALUE, findModel));
+                    } else {
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), root, filter, RemoteRepoApi.DIR_LIST, session, 2, findModel));
                     }
                 }
                 return IteratorUtils.concat(li);

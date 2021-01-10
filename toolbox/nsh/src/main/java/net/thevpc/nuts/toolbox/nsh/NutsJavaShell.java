@@ -95,7 +95,8 @@ public class NutsJavaShell extends JShell {
         NutsWorkspace ws = this.getWorkspace();
         JShellHistory hist = getHistory();
 
-        this.appContext.getWorkspace().userProperties().put(JShellFileContext.class.getName(), _rootContext);
+        this.appContext.getWorkspace().env().setProperty(JShellFileContext.class.getName(), _rootContext,
+                new NutsUpdateOptions().setSession(session));
         _nrootContext.setSession(session);
         //add default commands
         List<NshBuiltin> allCommand = new ArrayList<>();
@@ -123,7 +124,7 @@ public class NutsJavaShell extends JShell {
             //ignore
             LOG.log(Level.SEVERE, "error resolving history file", ex);
         }
-        ws.userProperties().put(JShellHistory.class.getName(), hist);
+        ws.env().setProperty(JShellHistory.class.getName(), hist,new NutsUpdateOptions(session));
     }
 
     private static String[] resolveArgs(NutsApplicationContext appContext, String[] args) {
@@ -144,7 +145,7 @@ public class NutsJavaShell extends JShell {
     }
 
     public NutsShellContext getNutsShellContext() {
-        JShellFileContext f = (JShellFileContext) workspace.userProperties().get(JShellFileContext.class.getName());
+        JShellFileContext f = (JShellFileContext) workspace.env().getProperty(JShellFileContext.class.getName());
         return (NutsShellContext) f.getShellContext();
 
     }
@@ -259,7 +260,7 @@ public class NutsJavaShell extends JShell {
         @Override
         public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex, NutsWorkspace workspace) {
             List<NutsArgumentCandidate> candidates = new ArrayList<>();
-            JShellFileContext fileContext = (JShellFileContext) workspace.userProperties().get(JShellFileContext.class.getName());
+            JShellFileContext fileContext = (JShellFileContext) workspace.env().getProperty(JShellFileContext.class.getName());
             NutsShellContext nutsConsoleContext = (NutsShellContext) fileContext.getShellContext();
 
             if (wordIndex == 0) {

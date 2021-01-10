@@ -316,14 +316,11 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
                     if (options.isFailSafe()) {
                         return null;
                     }
-                    throw new NutsInvalidRepositoryException(getWorkspace(), options.getLocation(), "Invalid location " + options.getLocation());
+                    throw new NutsInvalidRepositoryException(getWorkspace(), options.getLocation(), "invalid repository location " + options.getLocation());
                 }
                 options.setConfig(conf);
             } else {
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, options.getSession()));
-            }
-            if (CoreStringUtils.isBlank(conf.getType())) {
-                conf.setType(NutsConstants.RepoTypes.NUTS);
             }
             if (CoreStringUtils.isBlank(conf.getName())) {
                 conf.setName(options.getName());
@@ -335,7 +332,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
                     return r;
                 }
             }
-            throw new NutsInvalidRepositoryException(getWorkspace(), options.getName(), "Invalid type " + conf.getType());
+            throw new NutsInvalidRepositoryException(getWorkspace(), options.getName(), "invalid type " + conf.getType());
         } catch (RuntimeException ex) {
             if (options.isFailSafe()) {
                 return null;

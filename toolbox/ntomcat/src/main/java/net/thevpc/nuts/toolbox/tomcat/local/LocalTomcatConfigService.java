@@ -457,14 +457,13 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             NutsSearchCommand searchLatestCommand = context.getWorkspace().search().addId("org.apache.catalina:apache-tomcat#" + cv)
                     .setSession(context.getSession().copy().setTrace(false)).setLatest(true);
             NutsDefinition r = searchLatestCommand
-                    .addInstallStatus(NutsInstallStatus.INSTALLED)
-                    .addInstallStatus(NutsInstallStatus.REQUIRED)
+                    .setInstallStatus(NutsInstallStatusFilter.DEPLOYED)
                     .getResultDefinitions().first();
             if (r == null) {
-                r = searchLatestCommand.addInstallStatus(NutsInstallStatus.NOT_INSTALLED).setOffline().getResultDefinitions().first();
+                r = searchLatestCommand.setInstallStatus(NutsInstallStatusFilter.NOT_INSTALLED).setOffline().getResultDefinitions().first();
             }
             if (r == null) {
-                r = searchLatestCommand.addInstallStatus(NutsInstallStatus.NOT_INSTALLED).setOnline().getResultDefinitions().required();
+                r = searchLatestCommand.setInstallStatus(NutsInstallStatusFilter.NOT_INSTALLED).setOnline().getResultDefinitions().required();
             }
             if (r.getInstallInformation().isInstalledOrRequired()) {
                 return r;

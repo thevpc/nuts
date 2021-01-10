@@ -28,7 +28,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
             cmdLine.setCommandName("config clear imports").unexpectedArgument();
             if (cmdLine.isExecMode()) {
                 context.getWorkspace().imports().removeAll(new NutsRemoveOptions().setSession(context.getSession()));
-                trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
+                context.getWorkspace().config().save(context.getSession());
             }
             return true;
         } else if (cmdLine.next("import", "ia") != null) {
@@ -39,7 +39,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             } while (cmdLine.hasNext());
             if (cmdLine.isExecMode()) {
-                trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
+                context.getWorkspace().config().save(context.getSession());
             }
             return true;
         } else if (cmdLine.next("unimport", "ir") != null) {
@@ -50,7 +50,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
+                context.getWorkspace().config().save(context.getSession());
             }
             return true;
         }

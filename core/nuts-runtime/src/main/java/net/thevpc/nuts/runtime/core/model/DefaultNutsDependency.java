@@ -56,7 +56,7 @@ public class DefaultNutsDependency implements NutsDependency {
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
-        this.version = version == null ? DefaultNutsVersion.EMPTY : version;
+        this.version = version == null ? ws.version().parser().parse("") : version;
         this.classifier = CoreStringUtils.trimToNull(classifier);
         this.scope = NutsDependencyScopes.normalizeScope(scope);
         this.optional = CoreStringUtils.isBlank(optional) ? "false" : CoreStringUtils.trim(optional);
@@ -247,5 +247,10 @@ public class DefaultNutsDependency implements NutsDependency {
     @Override
     public Map<String, String> getProperties() {
         return QueryStringMap.parseMap(properties);
+    }
+
+    @Override
+    public NutsFormat formatter() {
+        return ws.dependency().formatter().setValue(this);
     }
 }

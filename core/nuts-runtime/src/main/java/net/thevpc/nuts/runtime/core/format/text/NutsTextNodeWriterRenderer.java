@@ -1,17 +1,20 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.format.text.parser.*;
+import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeCode;
+import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeCommand;
+import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeStyled;
+import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeTitle;
 import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiUnixTermPrintRenderer;
 import net.thevpc.nuts.runtime.core.format.text.renderer.StyleRenderer;
 
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 
 public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
     private byte[] buffer = new byte[1024];
@@ -20,7 +23,13 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
     private byte[] later = null;
     private FormattedPrintStreamRenderer renderer;
     private OutputStream rawOutput;
+    private OutputStream rawOutput0;
     private RenderedRawStream renderedRawStream = new RenderedRawStream() {
+
+        public OutputStream baseOutput() {
+            return rawOutput0;
+        }
+
         @Override
         public void writeRaw(byte[] buf, int off, int len) {
             NutsTextNodeWriterRenderer.this.writeRaw(new String(buf, off, len));
@@ -32,20 +41,29 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
         }
     };
     private NutsWorkspace ws;
+
     public NutsTextNodeWriterRenderer(OutputStream rawOutput, FormattedPrintStreamRenderer renderer, NutsWorkspace ws) {
         this.renderer = renderer == null ? AnsiUnixTermPrintRenderer.ANSI_RENDERER : renderer;
         this.rawOutput = rawOutput;
+        this.rawOutput0 = rawOutput;
         this.ws = ws;
+        int loopGard = 100;
+        while (loopGard > 0) {
+            if(rawOutput0 instanceof NutsOutputStreamTransparentAdapter){
+                rawOutput0 = ((NutsOutputStreamTransparentAdapter) rawOutput0).baseOutputStream();
+            }else{
+                break;
+            }
+            loopGard--;
+        }
+        if (rawOutput0 instanceof NutsOutputStreamTransparentAdapter) {
+            throw new NutsIllegalArgumentException(ws, "invalid rawOutput");
+        }
     }
 
     @Override
     public void writeNode(NutsTextNode node) {
-        writeNode(node,getWriteConfiguration());
-    }
-
-
-    public void writeNode(NutsTextNode node, NutsTextNodeWriteConfiguration ctx) {
-        writeNode(new AnsiEscapeCommand[0], node, ctx);
+        writeNode(node, getWriteConfiguration());
     }
 
     @Override
@@ -76,6 +94,9 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
         return false;
     }
 
+    public void writeNode(NutsTextNode node, NutsTextNodeWriteConfiguration ctx) {
+        writeNode(new AnsiEscapeCommand[0], node, ctx);
+    }
 
     private void writeNode(AnsiEscapeCommand[] formats, NutsTextNode node, NutsTextNodeWriteConfiguration ctx) {
         if (formats == null) {
@@ -101,7 +122,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                 DefaultNutsTextNodeStyled s = (DefaultNutsTextNodeStyled) node;
                 NutsTextNodeFactory factory0 = ws.formats().text().factory();
                 NutsTextNodeStyle style = s.getStyle();
-                NutsTextNodeStyle[] format=factory0.toBasicStyles(style);
+                NutsTextNodeStyle[] format = factory0.toBasicStyles(style);
                 AnsiEscapeCommand[] s2 = _appendFormats(formats, format);
                 writeNode(s2, s.getChild(), ctx);
                 break;
@@ -121,8 +142,8 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                             ws.formats().text().factory().plain(a.toString() + " "),
                             s.getChild()
                     );
-                    writeNode(s2,sWithTitle, ctx);
-                }else {
+                    writeNode(s2, sWithTitle, ctx);
+                } else {
                     writeNode(s2, s.getChild(), ctx);
                 }
 //        } else if (node instanceof TextNodeUnStyled) {
@@ -134,7 +155,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             }
             case COMMAND: {
                 DefaultNutsTextNodeCommand s = (DefaultNutsTextNodeCommand) node;
-                AnsiEscapeCommand yy = DefaultNutsTextNodeCommand.parseAnsiEscapeCommand(s.getKind(),ws);
+                AnsiEscapeCommand yy = DefaultNutsTextNodeCommand.parseAnsiEscapeCommand(s.getKind(), ws);
                 AnsiEscapeCommand[] s2 = _appendFormats(formats, yy);
                 writeRaw(AnsiEscapeCommands.list(s2), "", ctx.isFiltered());
                 break;
@@ -173,11 +194,10 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
     }
 
 
-
     protected void writeRaw(AnsiEscapeCommand format, String rawString, boolean filterFormat) {
         if (!filterFormat && format != null) {
             StyleRenderer f = null;
-            f = renderer.createStyleRenderer(simplifyFormat(format), ws);
+            f = renderer.createStyleRenderer(simplifyFormat(format), renderedRawStream, ws);
             try {
                 f.startFormat(renderedRawStream);
                 if (rawString.length() > 0) {
@@ -258,26 +278,27 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             list.addAll(Arrays.asList(old));
         }
         for (AnsiEscapeCommand ansiEscapeCommand : v) {
-            if(ansiEscapeCommand !=null) {
+            if (ansiEscapeCommand != null) {
                 list.add(ansiEscapeCommand);
             }
         }
         return list.toArray(new AnsiEscapeCommand[0]);
     }
-    private AnsiEscapeCommand[] _appendFormats(AnsiEscapeCommand[] old, NutsTextNodeStyle ... v) {
+
+    private AnsiEscapeCommand[] _appendFormats(AnsiEscapeCommand[] old, NutsTextNodeStyle... v) {
         List<AnsiEscapeCommand> list = new ArrayList<AnsiEscapeCommand>((old == null ? 0 : old.length) + 1);
         if (old != null) {
             list.addAll(Arrays.asList(old));
         }
         for (NutsTextNodeStyle textFormat : v) {
-            if(textFormat!=null) {
+            if (textFormat != null) {
                 list.add(AnsiEscapeCommandFromNodeStyle.of(textFormat));
             }
         }
         return list.toArray(new AnsiEscapeCommand[0]);
     }
 
-    public final void writeLater(byte[] later){
+    public final void writeLater(byte[] later) {
 //        ws.log().of(NutsTextNodeWriterRenderer.class)
 //                .with()
 //                .session(ws.createSession())

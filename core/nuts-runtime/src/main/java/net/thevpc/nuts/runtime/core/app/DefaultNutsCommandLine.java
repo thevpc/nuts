@@ -54,35 +54,35 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     protected boolean expandSimpleOptions = true;
     protected Set<String> specialSimpleOptions = new HashSet<>();
     protected String commandName;
-    protected NutsWorkspace workspace;
+    protected NutsWorkspace ws;
     private int wordIndex = 0;
     private NutsCommandAutoComplete autoComplete;
     private char eq = '=';
 
     //Constructors
     public DefaultNutsCommandLine(NutsWorkspace workspace) {
-        this.workspace = workspace;
+        this.ws = workspace;
     }
 
     public DefaultNutsCommandLine(NutsApplicationContext context) {
-        this.workspace = context.getWorkspace();
+        this.ws = context.getWorkspace();
         setArguments(context.getArguments());
         setAutoComplete(context.getAutoComplete());
     }
 
     public DefaultNutsCommandLine(NutsWorkspace workspace, String[] args, NutsCommandAutoComplete autoComplete) {
-        this.workspace = workspace;
+        this.ws = workspace;
         setArguments(args);
         setAutoComplete(autoComplete);
     }
 
     public DefaultNutsCommandLine(NutsWorkspace workspace, String[] args) {
-        this.workspace = workspace;
+        this.ws = workspace;
         setArguments(args);
     }
 
     public DefaultNutsCommandLine(NutsWorkspace workspace, List<String> args, NutsCommandAutoComplete autoComplete) {
-        this.workspace = workspace;
+        this.ws = workspace;
         setArguments(args);
         setAutoComplete(autoComplete);
     }
@@ -93,7 +93,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     public NutsWorkspace getWorkspace() {
-        return workspace;
+        return ws;
     }
 
     @Override
@@ -791,5 +791,10 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     @Override
     public Iterator<NutsArgument> iterator() {
         return Arrays.asList(toArgumentArray()).iterator();
+    }
+
+    @Override
+    public NutsFormat formatter() {
+        return ws.commandLine().formatter().setValue(this);
     }
 }

@@ -24,7 +24,7 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
 
 import java.io.Reader;
 import java.util.Objects;

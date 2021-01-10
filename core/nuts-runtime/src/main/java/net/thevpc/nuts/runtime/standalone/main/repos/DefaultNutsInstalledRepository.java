@@ -185,10 +185,10 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     @Override
-    public Set<NutsInstallStatus> getInstallStatus(NutsId id, NutsSession session) {
+    public NutsInstallStatus getInstallStatus(NutsId id, NutsSession session) {
         NutsInstallInformation ii = getInstallInformation(id, session);
         if (ii == null) {
-            return EnumSet.of(NutsInstallStatus.NOT_INSTALLED);
+            return NutsInstallStatus.NONE;
         }
         return ii.getInstallStatus();
     }
@@ -227,8 +227,8 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     public void uninstall(NutsId id, NutsSession session) {
         NutsWorkspaceUtils.of(workspace).checkReadOnly();
         session = NutsWorkspaceUtils.of(workspace).validateSession(session);
-        Set<NutsInstallStatus> installStatus = getInstallStatus(id, session);
-        if (!installStatus.contains(NutsInstallStatus.INSTALLED)) {
+        NutsInstallStatus installStatus = getInstallStatus(id, session);
+        if (!installStatus.isInstalled()) {
             throw new NutsNotInstalledException(workspace, id);
         }
         try {
@@ -236,7 +236,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             String v = getDefaultVersion(id, session);
             if (v != null && v.equals(id.getVersion().getValue())) {
                 Iterator<NutsId> versions = searchVersions().setId(id)
-                        .setFilter(workspace.id().filter().byInstallStatus(NutsInstallStatus.INSTALLED)) //search only in installed, ignore deployed!
+                        .setFilter(workspace.id().filter().byInstallStatus(NutsInstallStatusFilter.INSTALLED)) //search only in installed, ignore deployed!
                         .setFetchMode(NutsFetchMode.LOCAL)
                         .setSession(session).getResult();
                 List<NutsId> nutsIds = CoreCommonUtils.toList(versions == null ? Collections.emptyIterator() : versions);
@@ -468,28 +468,23 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public NutsInstallInformation getInstallInformation(InstallInfoConfig ii, NutsSession session) {
-        EnumSet<NutsInstallStatus> s = EnumSet.noneOf(NutsInstallStatus.class);
-        if(ii.isInstalled()){
-           s.add(NutsInstallStatus.INSTALLED);
-        }
-        if(ii.isRequired()){
-            s.add(NutsInstallStatus.REQUIRED);
-        }
-        if (session.getExpireTime() != null) {
-            Instant lastModifiedDate = ii.getLastModifiedDate();
-            if (lastModifiedDate == null) {
-                lastModifiedDate = ii.getCreatedDate();
+        boolean obsolete=false;
+        boolean defaultVersion=false;
+        if (session.getExpireTime() != null && (ii.isInstalled() || ii.isRequired())) {
+            if(ii.isInstalled() || ii.isRequired()) {
+                Instant lastModifiedDate = ii.getLastModifiedDate();
+                if (lastModifiedDate == null) {
+                    lastModifiedDate = ii.getCreatedDate();
+                }
+                if (lastModifiedDate == null || lastModifiedDate.isBefore(session.getExpireTime())) {
+                    obsolete = true;
+                }
             }
-            if (lastModifiedDate == null || lastModifiedDate.isBefore(session.getExpireTime())) {
-                s.add(NutsInstallStatus.OBSOLETE);
-            }
-        }
-        if (s.contains(NutsInstallStatus.INSTALLED)) {
-            if (isDefaultVersion(ii.id, session)) {
-                s.add(NutsInstallStatus.DEFAULT_VERSION);
+            if(ii.isInstalled()){
+                defaultVersion=isDefaultVersion(ii.id, session);
             }
         }
-
+        NutsInstallStatus s = NutsInstallStatus.of(ii.isInstalled(),ii.isRequired(),obsolete,defaultVersion);
         return new DefaultNutsInstallInfo(ii.getId(),
                 s,
                 workspace.locations().getStoreLocation(ii.getId(), NutsStoreLocation.APPS),
@@ -956,16 +951,6 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         @Override
         public String getStoreLocation(NutsStoreLocation folderType) {
             return null;
-        }
-
-        @Override
-        public boolean save(boolean force, NutsSession session) {
-            return false;
-        }
-
-        @Override
-        public void save(NutsSession session) {
-
         }
 
 //        @Override

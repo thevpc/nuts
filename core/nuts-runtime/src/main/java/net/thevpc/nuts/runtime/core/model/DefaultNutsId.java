@@ -47,7 +47,7 @@ public class DefaultNutsId implements NutsId {
     private transient NutsWorkspace ws;
 
     public DefaultNutsId(String namespace, String groupId, String artifactId, String version, Map<String, String> properties,NutsWorkspace ws) {
-        this(namespace, groupId, artifactId, DefaultNutsVersion.valueOf(version), properties,ws);
+        this(namespace, groupId, artifactId, ws.version().parser().parse(version), properties,ws);
     }
 
     protected DefaultNutsId(String namespace, String groupId, String artifactId, NutsVersion version, Map<String, String> properties,NutsWorkspace ws) {
@@ -55,7 +55,7 @@ public class DefaultNutsId implements NutsId {
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
-        this.version = version == null ? DefaultNutsVersion.EMPTY : version;
+        this.version = version == null ? ws.version().parser().parse("") : version;
         this.properties = QueryStringMap.formatSortedPropertiesQuery(properties);
     }
 
@@ -64,7 +64,7 @@ public class DefaultNutsId implements NutsId {
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
-        this.version = version == null ? DefaultNutsVersion.EMPTY : version;
+        this.version = version == null ? ws.version().parser().parse("") : version;
         this.properties = QueryStringMap.formatSortedPropertiesQuery(properties);
     }
 
@@ -77,8 +77,13 @@ public class DefaultNutsId implements NutsId {
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
-        this.version = DefaultNutsVersion.valueOf(version);
+        this.version = ws.version().parser().parse(version);
         this.properties = QueryStringMap.formatSortedPropertiesQuery(properties);
+    }
+
+    @Override
+    public NutsFormat formatter() {
+        return ws.id().formatter().setValue(this);
     }
 
     @Override

@@ -16,7 +16,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 
 /**
  * @author thevpc
@@ -231,6 +234,21 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
                     public long length() {
                         return base.length();
                     }
+
+                    @Override
+                    public String getContentType() {
+                        return null;
+                    }
+
+                    @Override
+                    public String getContentEncoding() {
+                        return null;
+                    }
+
+                    @Override
+                    public Instant getLastModified() {
+                        return null;
+                    }
                 };
             }
             case "path": {
@@ -247,6 +265,30 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
                     @Override
                     public long length() {
                         return base.length();
+                    }
+
+                    @Override
+                    public String getContentType() {
+                        return null;
+                    }
+
+                    @Override
+                    public String getContentEncoding() {
+                        return null;
+                    }
+
+                    @Override
+                    public Instant getLastModified() {
+                        FileTime r = null;
+                        try {
+                            r = Files.getLastModifiedTime(getPath());
+                            if(r!=null){
+                                return r.toInstant();
+                            }
+                        } catch (IOException e) {
+                            //
+                        }
+                        return null;
                     }
                 };
             }
@@ -265,6 +307,35 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
                     public long length() {
                         return base.length();
                     }
+
+                    @Override
+                    public String getContentType() {
+                        return null;
+                    }
+
+                    @Override
+                    public String getContentEncoding() {
+                        return null;
+                    }
+
+                    @Override
+                    public Path getPath() {
+                        return ((File) source).toPath();
+                    }
+
+                    @Override
+                    public Instant getLastModified() {
+                        FileTime r = null;
+                        try {
+                            r = Files.getLastModifiedTime(getPath());
+                            if(r!=null){
+                                return r.toInstant();
+                            }
+                        } catch (IOException e) {
+                            //
+                        }
+                        return null;
+                    }
                 };
             }
             case "stream": {
@@ -281,6 +352,21 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
                     @Override
                     public long length() {
                         return base.length();
+                    }
+
+                    @Override
+                    public String getContentType() {
+                        return null;
+                    }
+
+                    @Override
+                    public String getContentEncoding() {
+                        return null;
+                    }
+
+                    @Override
+                    public Instant getLastModified() {
+                        return null;
                     }
                 };
             }

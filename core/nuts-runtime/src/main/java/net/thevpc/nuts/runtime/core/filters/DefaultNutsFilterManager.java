@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.io.NutsInstallStatusIdFilter;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class DefaultNutsFilterManager implements NutsFilterManager {
     private NutsWorkspace ws;
@@ -778,12 +779,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
         }
 
         @Override
-        public NutsIdFilter byInstallStatus(NutsInstallStatus... installStatus) {
-            return new NutsInstallStatusIdFilter(ws, installStatus == null ? null : new Set[]{EnumSet.copyOf(Arrays.asList(installStatus))});
-        }
-
-        @Override
-        public NutsIdFilter byInstallStatus(Set<NutsInstallStatus>... installStatus) {
+        public NutsIdFilter byInstallStatus(Predicate<NutsInstallStatus> installStatus) {
             return new NutsInstallStatusIdFilter(ws, installStatus);
         }
 
@@ -912,7 +908,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
         public NutsDescriptorFilter byCompanion(String targetApiVersion) {
             return new NutsExecCompanionFilter(ws,
                     targetApiVersion == null ? null : ws.id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build(),
-                    ws.companionIds().stream().map(NutsId::getShortName).toArray(String[]::new)
+                    ws.getCompanionIds().stream().map(NutsId::getShortName).toArray(String[]::new)
             );
         }
 

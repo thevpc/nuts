@@ -24,7 +24,9 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
+
+import net.thevpc.nuts.NutsURLHeader;
 
 import java.io.InputStream;
 import java.io.UncheckedIOException;

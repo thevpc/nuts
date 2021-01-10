@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.core.format.text.renderer.ansi;
 
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.core.format.text.RenderedRawStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +24,9 @@ public class ListAnsiStyleStyleApplier implements AnsiStyleStyleApplier {
     }
 
     @Override
-    public AnsiStyle apply(AnsiStyle old, NutsWorkspace ws) {
+    public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsWorkspace ws) {
         for (AnsiStyleStyleApplier supplier : suppliers) {
-            old = supplier.apply(old, ws);
+            old = supplier.apply(old, out, ws);
         }
         return old;
     }

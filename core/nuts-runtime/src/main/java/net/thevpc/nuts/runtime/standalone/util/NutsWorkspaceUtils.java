@@ -47,11 +47,10 @@ public class NutsWorkspaceUtils {
     private NutsWorkspace ws;
 
     public static NutsWorkspaceUtils of(NutsWorkspace ws) {
-        Map<String, Object> up = ws.userProperties();
-        NutsWorkspaceUtils wp = (NutsWorkspaceUtils) up.get(NutsWorkspaceUtils.class.getName());
+        NutsWorkspaceUtils wp = (NutsWorkspaceUtils) ws.env().getProperty(NutsWorkspaceUtils.class.getName());
         if (wp == null) {
             wp = new NutsWorkspaceUtils(ws);
-            up.put(NutsWorkspaceUtils.class.getName(), wp);
+            ws.env().setProperty(NutsWorkspaceUtils.class.getName(), wp,new NutsUpdateOptions(ws.createSession()));
         }
         return wp;
     }
@@ -310,20 +309,20 @@ public class NutsWorkspaceUtils {
 
     public NutsIdFormat getIdFormat() {
         String k = DefaultSearchFormatPlain.class.getName() + "#NutsIdFormat";
-        NutsIdFormat f = (NutsIdFormat) ws.userProperties().get(k);
+        NutsIdFormat f = (NutsIdFormat) ws.env().getProperty(k);
         if (f == null) {
             f = ws.id().formatter();
-            ws.userProperties().put(k, f);
+            ws.env().setProperty(k, f,new NutsUpdateOptions(ws.createSession()));
         }
         return f;
     }
 
     public NutsDescriptorFormat getDescriptorFormat() {
         String k = DefaultSearchFormatPlain.class.getName() + "#NutsDescriptorFormat";
-        NutsDescriptorFormat f = (NutsDescriptorFormat) ws.userProperties().get(k);
+        NutsDescriptorFormat f = (NutsDescriptorFormat) ws.env().getProperty(k);
         if (f == null) {
             f = ws.descriptor().formatter();
-            ws.userProperties().put(k, f);
+            ws.env().setProperty(k, f,new NutsUpdateOptions(ws.createSession()));
         }
         return f;
     }

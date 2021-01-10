@@ -55,7 +55,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                trySave(context, workspace, repository, autoSave, null);
+                context.getWorkspace().config().save(context.getSession());
             }
             return true;
         } else {
@@ -132,7 +132,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     } else {
                         repository.security().updateUser(user, session).setCredentials(password).setOldCredentials(oldPassword).run();
                     }
-                    trySave(context, workspace, repository, autoSave, null);
+                    context.getWorkspace().config().save(context.getSession());
                 }
                 return true;
 
@@ -260,7 +260,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
                 if (cmdLine.isExecMode()) {
-                    trySave(context, workspace, repository, autoSave, null);
+                    context.getWorkspace().config().save(context.getSession());
                 }
                 return true;
 
@@ -288,7 +288,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                         Arrays.fill(credentials, '\0');
                     }
                 }
-                trySave(context, workspace, repository, autoSave, cmdLine);
+                context.getWorkspace().config().save(context.getSession());
                 return true;
             } else if (cmdLine.next("secure") != null) {
                 char[] credentials = null;
@@ -314,7 +314,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                 if (credentials != null) {
                     Arrays.fill(credentials, '\0');
                 }
-                trySave(context, workspace, repository, autoSave, cmdLine);
+                context.getWorkspace().config().save(context.getSession());
                 return true;
             }
         }

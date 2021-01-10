@@ -23,14 +23,43 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Path;
+
 /**
- * Created by vpc on 1/8/17.
- *
- * @since 0.5.4
- * @category SPI Base
+ * @category Input Output
  */
-public class NutsTransportParamPart{
+public interface NutsInputAction {
+    NutsInput of(Object any);
+
+    NutsInput of(String resource);
+
+    NutsInput of(byte[] bytes);
+
+    NutsInput of(InputStream stream);
+
+    NutsInput of(URL stream);
+
+    NutsInput of(File stream);
+
+    NutsInput of(Path stream);
+
+    NutsInput of(NutsInput stream);
+
+    String getName();
+
+    String getTypeName();
+
+    NutsInputAction setName(String name);
+
+    NutsInputAction setTypeName(String typeName);
+
+    NutsInputAction setMultiRead(boolean value);
+
+    boolean isMultiRead();
 }

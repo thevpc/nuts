@@ -25,7 +25,9 @@
 */
 package net.thevpc.nuts.core.test.whitebox;
 
+import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsVersionFilter;
+import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.core.filters.version.DefaultNutsVersionFilter;
@@ -58,6 +60,7 @@ public class Test09_VersionIntervals {
 
     @Test
     public void test2(){
-        TestUtils.println(DefaultNutsVersion.valueOf("").inc(-1).getValue());
+        NutsWorkspace ws = Nuts.openWorkspace();
+        TestUtils.println(ws.version().parser().parse("").inc(-1).getValue());
     }
 }

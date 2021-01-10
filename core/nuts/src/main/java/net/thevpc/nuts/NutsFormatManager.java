@@ -30,15 +30,6 @@ package net.thevpc.nuts;
  * @category Format
  */
 public interface NutsFormatManager {
-//
-//
-//    /**
-//     * create string format instance
-//     *
-//     * @return string format
-//     * @since 0.5.5
-//     */
-//    NutsStringFormat str();
 
     /**
      * create element format instance
@@ -89,7 +80,5 @@ public interface NutsFormatManager {
      * @since 0.5.6
      */
     NutsIterableOutput iter();
-
-    NutsFormat of(NutsFormattable any);
 
 }
