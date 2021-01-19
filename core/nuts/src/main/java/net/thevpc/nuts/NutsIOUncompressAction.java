@@ -217,19 +217,6 @@ public interface NutsIOUncompressAction {
      */
     NutsIOUncompressAction run();
 
-    /**
-     * switch log progress flag to {@code value}.
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsIOUncompressAction logProgress(boolean value);
-
-    /**
-     * switch log progress flag to to true.
-     * @return {@code this} instance
-     */
-    NutsIOUncompressAction logProgress();
-
     NutsIOUncompressAction setTarget(NutsOutput target);
 
     /**
@@ -244,23 +231,6 @@ public interface NutsIOUncompressAction {
      * @return {@code this} instance
      */
     NutsIOUncompressAction setLogProgress(boolean value);
-
-    /**
-     * set skip root flag to {@code value}
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsIOUncompressAction skipRoot(boolean value);
-
-    /**
-     * set skip root flag to {@code true}
-     *
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsIOUncompressAction skipRoot();
 
     /**
      * return true if skip root flag is armed.
@@ -297,15 +267,6 @@ public interface NutsIOUncompressAction {
     NutsIOUncompressAction setProgressMonitorFactory(NutsProgressFactory value);
 
     /**
-     * set progress factory responsible of creating progress monitor
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsIOUncompressAction progressMonitorFactory(NutsProgressFactory value);
-
-    /**
      * set progress monitor. Will create a singleton progress monitor factory
      *
      * @param value new value
@@ -335,17 +296,4 @@ public interface NutsIOUncompressAction {
      * @return {@code this} instance
      */
     NutsIOUncompressAction setSafe(boolean value);
-
-    /**
-     * arm safe flag
-     * @return {@code this} instance
-     */
-    NutsIOUncompressAction safe();
-
-    /**
-     * switch safe flag to {@code value}
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsIOUncompressAction safe(boolean value);
 }

@@ -43,12 +43,26 @@ import java.util.stream.Collectors;
 public class DerbyService {
 
     NutsApplicationContext appContext;
-    DerbyOptions options;
     NutsLogger LOG;
 
     public DerbyService(NutsApplicationContext appContext) {
         this.appContext = appContext;
         LOG = appContext.getWorkspace().log().of(getClass());
+    }
+
+    public boolean isRunning() {
+        DerbyOptions options=new DerbyOptions();
+        options.cmd=Command.ping;
+        NutsTextNodeFactory factory = appContext.getWorkspace().formats().text().factory();
+        try {
+            String s= command(options).setFailFast(true).grabOutputString().getOutputString();
+            if(s!=null){
+                return true;
+            }
+        } catch (NutsExecutionException ex) {
+            //
+        }
+        return false;
     }
 
     /**

@@ -228,20 +228,6 @@ public interface NutsIOCompressAction {
      */
     NutsIOCompressAction run();
 
-    /**
-     * switch log progress flag to {@code value}.
-     *
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsIOCompressAction logProgress(boolean value);
-
-    /**
-     * switch log progress flag to to true.
-     *
-     * @return {@code this} instance
-     */
-    NutsIOCompressAction logProgress();
 
     /**
      * switch log progress flag to {@code value}.
@@ -278,15 +264,6 @@ public interface NutsIOCompressAction {
     NutsIOCompressAction setProgressMonitorFactory(NutsProgressFactory value);
 
     /**
-     * set progress factory responsible of creating progress monitor
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsIOCompressAction progressMonitorFactory(NutsProgressFactory value);
-
-    /**
      * set progress monitor. Will create a singleton progress monitor factory
      *
      * @param value new value
@@ -294,15 +271,6 @@ public interface NutsIOCompressAction {
      * @since 0.5.8
      */
     NutsIOCompressAction setProgressMonitor(NutsProgressMonitor value);
-
-    /**
-     * set progress monitor. Will create a singleton progress monitor factory
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsIOCompressAction progressMonitor(NutsProgressMonitor value);
 
     /**
      * return true if safe copy flag is armed
@@ -318,38 +286,6 @@ public interface NutsIOCompressAction {
      * @return {@code this} instance
      */
     NutsIOCompressAction setSafe(boolean value);
-
-    /**
-     * arm safe copy flag
-     *
-     * @return {@code this} instance
-     */
-    NutsIOCompressAction safe();
-
-    /**
-     * switch safe copy flag to {@code value}
-     *
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsIOCompressAction safe(boolean value);
-
-    /**
-     * set skip root flag to {@code value}
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsIOCompressAction skipRoot(boolean value);
-
-    /**
-     * set skip root flag to {@code true}
-     *
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsIOCompressAction skipRoot();
 
     /**
      * return true if skip root flag is armed.

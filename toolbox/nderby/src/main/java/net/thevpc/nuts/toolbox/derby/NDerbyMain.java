@@ -72,6 +72,31 @@ public class NDerbyMain extends NutsApplication {
         }
         if (cmdLine.isExecMode()) {
             DerbyService srv = new DerbyService(appContext);
+            int effectivePort = options.port < 0 ? 1527 : options.port;
+            if(options.cmd==Command.start) {
+                NutsTextNodeFactory factory = appContext.getWorkspace().formats().text().factory();
+                if (cmdLine.isExecMode()) {
+                    if (new DerbyService(appContext).isRunning()) {
+                        appContext.getSession().out().printf("derby is %s on port %s%n",
+                                factory.styled("already running", NutsTextNodeStyle.warn()),
+                                factory.styled(""+ effectivePort, NutsTextNodeStyle.number())
+                        );
+                        throw new NutsExecutionException(appContext.getWorkspace(),"derby is already running on port "+ effectivePort,3);
+                    }
+                }
+            }else if(options.cmd==Command.shutdown){
+                NutsTextNodeFactory factory = appContext.getWorkspace().formats().text().factory();
+                if (cmdLine.isExecMode()) {
+                    if (new DerbyService(appContext).isRunning()) {
+                        appContext.getSession().out().printf("derby is %s on port %s%n",
+                                factory.styled("already stopped", NutsTextNodeStyle.warn()),
+                                factory.styled(""+ effectivePort, NutsTextNodeStyle.number())
+                        );
+                        appContext.getSession().out().printf("derby is %s%n", factory.styled("already stopped", NutsTextNodeStyle.warn()));
+                        throw new NutsExecutionException(appContext.getWorkspace(),"derby is already stopped"+ effectivePort,3);
+                    }
+                }
+            }
             srv.exec(options);
         }
     }
@@ -89,14 +114,7 @@ public class NDerbyMain extends NutsApplication {
         options.cmd = Command.ping;
         NutsTextNodeFactory factory = appContext.getWorkspace().formats().text().factory();
         if (cmdLine.isExecMode()) {
-            DerbyService srv = new DerbyService(appContext);
-            String q = null;
-            try {
-                q = srv.command(options).setFailFast(true).grabOutputString().getOutputString();
-            } catch (NutsExecutionException ex) {
-                //
-            }
-            if (q != null) {
+            if (new DerbyService(appContext).isRunning()) {
                 appContext.getSession().out().printf("derby is %s%n",factory.styled("running",NutsTextNodeStyle.primary(1)));
             } else {
                 appContext.getSession().out().printf("derby is %s%n",factory.styled("stopped",NutsTextNodeStyle.error()));

@@ -55,11 +55,6 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     }
 
     @Override
-    public NutsMonitorAction name(String name) {
-        return setName(name);
-    }
-
-    @Override
     public NutsMonitorAction setName(String name) {
         this.sourceName = name;
         return this;
@@ -68,11 +63,6 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     @Override
     public String getName() {
         return sourceName;
-    }
-
-    @Override
-    public NutsMonitorAction origin(Object origin) {
-        return setOrigin(origin);
     }
 
     @Override
@@ -87,11 +77,6 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     }
 
     @Override
-    public NutsMonitorAction length(long len) {
-        return setLength(len);
-    }
-
-    @Override
     public NutsMonitorAction setLength(long len) {
         this.length = len;
         return this;
@@ -100,26 +85,6 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     @Override
     public long getLength() {
         return length;
-    }
-
-    @Override
-    public NutsMonitorAction source(NutsInput source) {
-        return setSource(source);
-    }
-
-    @Override
-    public NutsMonitorAction source(String path) {
-        return setSource(path);
-    }
-
-    @Override
-    public NutsMonitorAction source(Path path) {
-        return setSource(path);
-    }
-
-    @Override
-    public NutsMonitorAction source(File path) {
-        return setSource(path);
     }
 
     @Override
@@ -148,11 +113,6 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         this.source = path;
         this.sourceKind = "file";
         return this;
-    }
-
-    @Override
-    public NutsMonitorAction source(InputStream inputStream) {
-        return setSource(inputStream);
     }
 
     @Override
@@ -531,29 +491,6 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     }
 
     /**
-     * when true, will include default factory (console) even if progressFactory is defined
-     *
-     * @param value value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsMonitorAction logProgress(boolean value) {
-        return setLogProgress(value);
-    }
-
-    /**
-     * always include default factory (console) even if progressFactory is defined
-     *
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsMonitorAction logProgress() {
-        return logProgress(true);
-    }
-
-    /**
      * return progress factory responsible of creating progress monitor
      *
      * @return progress factory responsible of creating progress monitor
@@ -578,18 +515,6 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     }
 
     /**
-     * set progress factory responsible of creating progress monitor
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsMonitorAction progressFactory(NutsProgressFactory value) {
-        return setProgressFactory(value);
-    }
-
-    /**
      * set progress monitor. Will create a singleton progress monitor factory
      *
      * @param value new value
@@ -600,18 +525,6 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     public NutsMonitorAction setProgressMonitor(NutsProgressMonitor value) {
         this.progressFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
         return this;
-    }
-
-    /**
-     * set progress monitor. Will create a singleton progress monitor factory
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsMonitorAction progressMonitor(NutsProgressMonitor value) {
-        return setProgressMonitor(value);
     }
 
 }

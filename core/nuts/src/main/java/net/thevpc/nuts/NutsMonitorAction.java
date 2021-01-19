@@ -58,14 +58,6 @@ public interface NutsMonitorAction {
      * @param name action name
      * @return {@code this} instance
      */
-    NutsMonitorAction name(String name);
-
-    /**
-     * update action name
-     *
-     * @param name action name
-     * @return {@code this} instance
-     */
     NutsMonitorAction setName(String name);
 
     /**
@@ -74,14 +66,6 @@ public interface NutsMonitorAction {
      * @return action name
      */
     String getName();
-
-    /**
-     * update action source origin
-     *
-     * @param origin source origin
-     * @return {@code this} instance
-     */
-    NutsMonitorAction origin(Object origin);
 
     /**
      * update action source origin
@@ -104,14 +88,6 @@ public interface NutsMonitorAction {
      * @param len operation length
      * @return {@code this} instance
      */
-    NutsMonitorAction length(long len);
-
-    /**
-     * update operation length
-     *
-     * @param len operation length
-     * @return {@code this} instance
-     */
     NutsMonitorAction setLength(long len);
 
     /**
@@ -120,40 +96,6 @@ public interface NutsMonitorAction {
      * @return {@code this} instance
      */
     long getLength();
-
-    /**
-     * update operation source
-     *
-     * @param source operation source
-     * @return {@code this} instance
-     */
-    NutsMonitorAction source(NutsInput source);
-
-    NutsMonitorAction source(String path);
-
-    /**
-     * update operation source
-     *
-     * @param path operation source
-     * @return {@code this} instance
-     */
-    NutsMonitorAction source(Path path);
-
-    /**
-     * update operation source
-     *
-     * @param path operation source
-     * @return {@code this} instance
-     */
-    NutsMonitorAction source(File path);
-
-    /**
-     * update operation source
-     * TODO: should this handle only streams?
-     * @param path operation source
-     * @return {@code this} instance
-     */
-    NutsMonitorAction source(InputStream path);
 
     /**
      * update operation source
@@ -222,22 +164,6 @@ public interface NutsMonitorAction {
      */
     NutsMonitorAction setLogProgress(boolean value);
 
-    /**
-     * when true, will include default factory (console) even if progressFactory is defined
-     *
-     * @param value value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsMonitorAction logProgress(boolean value);
-
-    /**
-     * will include default factory (console) even if progressFactory is defined
-     *
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsMonitorAction logProgress();
 
     /**
      * return progress factory responsible of creating progress monitor
@@ -257,15 +183,6 @@ public interface NutsMonitorAction {
     NutsMonitorAction setProgressFactory(NutsProgressFactory value);
 
     /**
-     * set progress factory responsible of creating progress monitor
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsMonitorAction progressFactory(NutsProgressFactory value);
-
-    /**
      * set progress monitor. Will create a singleton progress monitor factory
      *
      * @param value new value
@@ -273,13 +190,4 @@ public interface NutsMonitorAction {
      * @since 0.5.8
      */
     NutsMonitorAction setProgressMonitor(NutsProgressMonitor value);
-
-    /**
-     * set progress monitor. Will create a singleton progress monitor factory
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsMonitorAction progressMonitor(NutsProgressMonitor value);
 }

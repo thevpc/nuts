@@ -456,7 +456,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 cv = "[" + catalinaVersion + "," + catalinaVersion + ".99999]";
             }
             NutsSearchCommand searchLatestCommand = ws.search().addId("org.apache.catalina:apache-tomcat#" + cv)
-                    .setSession(context.getSession().copy().setTrace(false)).setLatest(true);
+                    .setSession(context.getSession()/*.copy().setTrace(false)*/).setLatest(true);
             NutsDefinition r = searchLatestCommand
                     .setInstallStatus(ws.filters().installStatus().byDeployed())
                     .getResultDefinitions().first();
@@ -472,7 +472,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 catalinaNutsDefinition = ws
                         .install()
                         .id(r.getId())
-                        .setSession(context.getSession().copy().setTrace(true).addListener(new NutsInstallListener() {
+                        .setSession(context.getSession().copy()/*.setTrace(true)*/.addListener(new NutsInstallListener() {
                             @Override
                             public void onInstall(NutsInstallEvent event) {
                                 if (context.getSession().isPlainOut()) {

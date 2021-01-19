@@ -67,8 +67,8 @@ public class Test12_CopyTest {
         TestUtils.println("start-----------");
 
         ws.io().copy().from(from).to(to)
-                .logProgress()
-                .progressMonitor(new NutsProgressMonitor() {
+                .setLogProgress(true)
+                .setProgressMonitor(new NutsProgressMonitor() {
             @Override
             public void onStart(NutsProgressEvent event) {
                 TestUtils.println(event.getPercent());

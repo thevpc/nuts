@@ -104,6 +104,6 @@ public class WgetCommand extends SimpleNshBuiltin {
                 .copy()
                 .setSession(context.getSession())
                 .from(path).to(file).setSession(context.getSession())
-                .logProgress().run();
+                .setLogProgress(true).run();
     }
 }

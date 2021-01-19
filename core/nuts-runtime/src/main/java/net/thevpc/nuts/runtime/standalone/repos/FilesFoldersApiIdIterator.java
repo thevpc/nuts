@@ -114,7 +114,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                 NutsDescriptor t = null;
                 try {
                     t = model.parseDescriptor(file.path, workspace.io()
-                            .monitor().source(file.path).setSession(session).create(),
+                            .monitor().setSource(file.path).setSession(session).create(),
                             NutsFetchMode.LOCAL, repository, session);
                 } catch (Exception ex) {
                     session.getWorkspace().log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log("error parsing url : {0} : {1}",file.path,toString());//e.printStackTrace();

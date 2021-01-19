@@ -217,30 +217,6 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
     }
 
     @Override
-    public NutsIOUncompressAction safe() {
-        setSafe(true);
-        return this;
-    }
-
-    @Override
-    public NutsIOUncompressAction safe(boolean value) {
-        setSafe(value);
-        return this;
-    }
-
-    @Override
-    public NutsIOUncompressAction logProgress() {
-        setLogProgress(true);
-        return this;
-    }
-
-    @Override
-    public NutsIOUncompressAction logProgress(boolean value) {
-        setLogProgress(value);
-        return this;
-    }
-
-    @Override
     public NutsSession getSession() {
         return session;
     }
@@ -265,9 +241,9 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
             throw new NutsIllegalArgumentException(iom.getWorkspace(),"missing target");
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
-            _source = iom.monitor().source(_source).setSession(session)
-                    .progressFactory(getProgressMonitorFactory())
-                    .logProgress(isLogProgress())
+            _source = iom.monitor().setSource(_source).setSession(session)
+                    .setProgressFactory(getProgressMonitorFactory())
+                    .setLogProgress(isLogProgress())
                     .createSource();
         }
         //boolean _source_isPath = _source.isPath();
@@ -438,18 +414,6 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
     }
 
     /**
-     * set progress factory responsible of creating progress monitor
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsIOUncompressAction progressMonitorFactory(NutsProgressFactory value) {
-        return setProgressMonitorFactory(value);
-    }
-
-    /**
      * set progress monitor. Will create a singeleton progress monitor factory
      *
      * @param value new value
@@ -472,16 +436,6 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
     @Override
     public NutsIOUncompressAction progressMonitor(NutsProgressMonitor value) {
         return setProgressMonitor(value);
-    }
-
-    @Override
-    public NutsIOUncompressAction skipRoot(boolean value) {
-        return setSkipRoot(value);
-    }
-
-    @Override
-    public NutsIOUncompressAction skipRoot() {
-        return skipRoot(true);
     }
 
     @Override

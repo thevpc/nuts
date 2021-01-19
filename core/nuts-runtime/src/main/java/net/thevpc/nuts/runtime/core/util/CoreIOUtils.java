@@ -1562,7 +1562,7 @@ public class CoreIOUtils {
                     .setSession(session)
                     .createTempFile(is.getName()
                     ));
-            ws.io().copy().safe(false).from(is).to(temp).setSession(session).run();
+            ws.io().copy().setSafe(false).from(is).to(temp).setSession(session).run();
             tempPaths.add(temp);
             return ws.io().input().setMultiRead(true).of(temp);
         }

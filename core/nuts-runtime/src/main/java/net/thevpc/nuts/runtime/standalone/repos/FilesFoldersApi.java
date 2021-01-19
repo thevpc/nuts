@@ -35,7 +35,7 @@ public class FilesFoldersApi {
             SearchTraceHelper.progressIndeterminate("search " + CoreIOUtils.compressUrl(baseUrl), session);
             List<String> splitted=null;
             try(InputStream foldersFileStream=
-                        ws.io().monitor().source(dotFilesUrl).setSession(session).create()
+                        ws.io().monitor().setSource(dotFilesUrl).setSession(session).create()
                     ){
                 splitted=new WebHtmlListParser().parse(foldersFileStream);
             }catch (IOException ex){
@@ -91,7 +91,7 @@ public class FilesFoldersApi {
         NutsVersion versionString = ws.version().parser().parse("0.5.5");
         try {
             SearchTraceHelper.progressIndeterminate("search " + CoreIOUtils.compressUrl(baseUrl), session);
-            foldersFileStream = ws.io().monitor().source(dotFilesUrl).setSession(session).create();
+            foldersFileStream = ws.io().monitor().setSource(dotFilesUrl).setSession(session).create();
             List<String> splitted = CoreStringUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r");
             for (String s : splitted) {
                 s = s.trim();
@@ -144,7 +144,7 @@ public class FilesFoldersApi {
             if (folders) {
                 String[] foldersFileContent = null;
                 String dotFolderUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FOLDERS;
-                try (InputStream stream = ws.io().monitor().source(dotFolderUrl)
+                try (InputStream stream = ws.io().monitor().setSource(dotFolderUrl)
                         .setSession(session).create()) {
                     foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(stream, true), "\n\r")
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);

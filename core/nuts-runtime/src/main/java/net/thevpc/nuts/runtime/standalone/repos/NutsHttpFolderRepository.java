@@ -108,11 +108,11 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     }
 
     protected InputStream openStream(String path, Object source, String sourceTypeName, NutsSession session) {
-        return getWorkspace().io().monitor().source(path).origin(source).setSourceTypeName(sourceTypeName).setSession(session).create();
+        return getWorkspace().io().monitor().setSource(path).setOrigin(source).setSourceTypeName(sourceTypeName).setSession(session).create();
     }
 
     protected NutsInput openStream(NutsId id, String path, Object source, String sourceTypeName, NutsSession session) {
-        return getWorkspace().io().monitor().source(path).origin(source).setSourceTypeName(sourceTypeName).setSession(session).createSource();
+        return getWorkspace().io().monitor().setSource(path).setOrigin(source).setSourceTypeName(sourceTypeName).setSession(session).createSource();
     }
 
     public Iterator<NutsId> findVersionsImplGithub(NutsId id, NutsIdFilter idFilter, NutsSession session) {
@@ -283,13 +283,13 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         }
         if (descriptor.getLocations().length == 0) {
             String path = getPath(id);
-            getWorkspace().io().copy().setSession(session).from(path).to(localFile).safe().logProgress().run();
+            getWorkspace().io().copy().setSession(session).from(path).to(localFile).setSafe(true).setLogProgress(true).run();
             return new NutsDefaultContent(localFile, false, false);
         } else {
             for (NutsIdLocation location : descriptor.getLocations()) {
                 if (CoreNutsUtils.acceptClassifier(location, id.getClassifier())) {
                     try {
-                        getWorkspace().io().copy().setSession(session).from(location.getUrl()).to(localFile).safe().logProgress().run();
+                        getWorkspace().io().copy().setSession(session).from(location.getUrl()).to(localFile).setSafe(true).setLogProgress(true).run();
                         return new NutsDefaultContent(localFile, false, false);
                     } catch (Exception ex) {
                         LOG.with().session(session).level(Level.SEVERE).error(ex).log("unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), CoreStringUtils.exceptionToString(ex));

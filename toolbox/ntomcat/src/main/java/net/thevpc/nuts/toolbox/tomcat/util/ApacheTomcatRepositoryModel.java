@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -153,7 +152,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
             if (localPath == null) {
                 localPath = getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session);
             }
-            ws.io().copy().from(r).to(localPath).safe(true).run();
+            ws.io().copy().from(r).to(localPath).setSafe(true).setSession(session).setLogProgress(true).run();
             return new NutsDefaultContent(localPath, false, false);
         }
         return null;
@@ -173,7 +172,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         try {
             //NutsWorkspace ws = session.getWorkspace();
             NutsWorkspace ws = session.getWorkspace();
-            byte[] bytes = ws.io().copy().from(url).logProgress().getByteArrayResult();
+            byte[] bytes = ws.io().copy().from(url).setLogProgress(true).getByteArrayResult();
             Document doc = null;
             try {
                 doc = Jsoup.parse(new ByteArrayInputStream(bytes), "UTF-8", url);

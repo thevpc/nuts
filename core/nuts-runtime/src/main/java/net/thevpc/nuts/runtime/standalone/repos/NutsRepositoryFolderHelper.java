@@ -390,7 +390,7 @@ public class NutsRepositoryFolderHelper {
                             getWorkspace().io().input().setName("sha1(" + desc.getId() + ")")
                                     .setTypeName("descriptor hash")
                                     .of(getWorkspace().io().hash().sha1().source(desc).setSession(session).computeString().getBytes())
-                    ).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safe().run();
+                    ).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).setSafe(true).run();
             return descFile;
         });
     }
@@ -424,12 +424,12 @@ public class NutsRepositoryFolderHelper {
             }
         }
         return ws.concurrent().lock().source(pckFile).call(() -> {
-            getWorkspace().io().copy().setSession(session).from(content).to(pckFile).safe().run();
+            getWorkspace().io().copy().setSession(session).from(content).to(pckFile).setSafe(true).run();
             getWorkspace().io().copy().setSession(session).from(new NamedByteArrayInputStream(
                             CoreIOUtils.evalSHA1Hex(pckFile).getBytes(),
                             "sha1(" + id + ")"
                     )
-            ).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).safe().run();
+            ).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).setSafe(true).run();
             return pckFile;
         });
     }

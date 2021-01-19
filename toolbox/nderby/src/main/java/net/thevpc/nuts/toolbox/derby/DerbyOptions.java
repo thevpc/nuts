@@ -29,7 +29,7 @@ package net.thevpc.nuts.toolbox.derby;
  *
  * @author thevpc
  */
-public class DerbyOptions {
+public class DerbyOptions implements Cloneable{
 
     public Command cmd = Command.start;
     public String derbyVersion = null;
@@ -40,4 +40,11 @@ public class DerbyOptions {
     public SSLMode sslmode = null;
     public String extraArg = null;
 
+    public DerbyOptions copy(){
+        try {
+            return (DerbyOptions) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new UnsupportedOperationException(e);
+        }
+    }
 }

@@ -69,7 +69,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         @Override
         protected NutsInput openStream(NutsId id, String path, Object source, String typeName, NutsSession session) {
             SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(path),session);
-            return getWorkspace().io().monitor().source(path).origin(source).setSession(session).setSourceTypeName(typeName).createSource();
+            return getWorkspace().io().monitor().setSource(path).setOrigin(source).setSession(session).setSourceTypeName(typeName).createSource();
         }
 
     };
@@ -455,7 +455,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                             .createTempFile(content.getFileName().toString());
                     getWorkspace().io().copy()
                             .setSession(session)
-                            .from(content).to(tempFile).safe().run();
+                            .from(content).to(tempFile).setSafe(true).run();
                     return new NutsDefaultContent(tempFile, true, false);
                 }
             }
@@ -469,7 +469,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             try {
                 getWorkspace().io().copy()
                         .setSession(session)
-                        .from(helper.getStream(id, "artifact content", session)).to(tempFile).validator(new NutsIOCopyValidator() {
+                        .from(helper.getStream(id, "artifact content", session)).to(tempFile).setValidator(new NutsIOCopyValidator() {
                     @Override
                     public void validate(InputStream in) throws IOException {
                         helper.checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, "artifact content", session);
@@ -483,7 +483,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             try {
                 getWorkspace().io().copy()
                         .setSession(session)
-                        .from(helper.getStream(id, "artifact content", session)).to(localPath).validator(new NutsIOCopyValidator() {
+                        .from(helper.getStream(id, "artifact content", session)).to(localPath).setValidator(new NutsIOCopyValidator() {
                     @Override
                     public void validate(InputStream in) throws IOException {
                         helper.checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, "artifact content", session);

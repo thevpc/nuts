@@ -87,7 +87,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 tempFile = Paths.get(ws.io().tmp()
                         .setSession(session)
                         .createTempFile(name));
-                ws.io().copy().setSession(validWorkspaceSession).from(contentSource.open()).to(tempFile).safe().run();
+                ws.io().copy().setSession(validWorkspaceSession).from(contentSource.open()).to(tempFile).setSafe(true).run();
                 contentFile2 = tempFile;
 
                 Path contentFile0 = contentFile2;

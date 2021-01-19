@@ -166,18 +166,6 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
     }
 
     @Override
-    public NutsIOCompressAction logProgress() {
-        setLogProgress(true);
-        return this;
-    }
-
-    @Override
-    public NutsIOCompressAction logProgress(boolean value) {
-        setLogProgress(value);
-        return this;
-    }
-
-    @Override
     public NutsSession getSession() {
         return session;
     }
@@ -300,18 +288,6 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
     }
 
     /**
-     * set progress factory responsible of creating progress monitor
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsIOCompressAction progressMonitorFactory(NutsProgressFactory value) {
-        return setProgressMonitorFactory(value);
-    }
-
-    /**
      * set progress monitor. Will create a singeleton progress monitor factory
      *
      * @param value new value
@@ -322,18 +298,6 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
     public NutsIOCompressAction setProgressMonitor(NutsProgressMonitor value) {
         this.progressMonitorFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
         return this;
-    }
-
-    /**
-     * set progress monitor. Will create a singleton progress monitor factory
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsIOCompressAction progressMonitor(NutsProgressMonitor value) {
-        return setProgressMonitor(value);
     }
 
 
@@ -357,19 +321,6 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         this.safe = value;
         return this;
     }
-
-    @Override
-    public NutsIOCompressAction safe() {
-        setSafe(true);
-        return this;
-    }
-
-    @Override
-    public NutsIOCompressAction safe(boolean value) {
-        setSafe(value);
-        return this;
-    }
-
 
     private void add(String path, Item srcFolder, ZipOutputStream zip) {
         if (srcFolder.isDirectory()) {
@@ -533,16 +484,6 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
             }
             return "";
         }
-    }
-
-    @Override
-    public NutsIOCompressAction skipRoot(boolean value) {
-        return setSkipRoot(value);
-    }
-
-    @Override
-    public NutsIOCompressAction skipRoot() {
-        return skipRoot(true);
     }
 
     @Override

@@ -83,7 +83,7 @@ public class NutsRepositoryMirroringHelper {
                     if (c != null) {
                         if (localPath != null) {
                             getWorkspace().io().copy().setSession(session)
-                                    .from(c.getPath()).to(localPath).safe().run();
+                                    .from(c.getPath()).to(localPath).setSafe(true).run();
                         } else {
                             return c;
                         }

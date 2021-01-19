@@ -249,13 +249,6 @@ public interface NutsIOCopyAction {
      * @param validator validator
      * @return {@code this} instance
      */
-    NutsIOCopyAction validator(NutsIOCopyValidator validator);
-
-    /**
-     * update validator
-     * @param validator validator
-     * @return {@code this} instance
-     */
     NutsIOCopyAction setValidator(NutsIOCopyValidator validator);
 
     /**
@@ -263,19 +256,6 @@ public interface NutsIOCopyAction {
      * @return true if safe copy flag is armed
      */
     boolean isSafe();
-
-    /**
-     * arm safe copy flag
-     * @return {@code this} instance
-     */
-    NutsIOCopyAction safe();
-
-    /**
-     * switch safe copy flag to {@code value}
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsIOCopyAction safe(boolean value);
 
     /**
      * switch safe copy flag to {@code value}
@@ -309,18 +289,6 @@ public interface NutsIOCopyAction {
      */
     NutsIOCopyAction run();
 
-    /**
-     * switch log progress to {@code value}
-     * @param value log progress
-     * @return {@code this} instance
-     */
-    NutsIOCopyAction logProgress(boolean value);
-
-    /**
-     * switch log progress flag to to true.
-     * @return {@code this} instance
-     */
-    NutsIOCopyAction logProgress();
 
     /**
      * true if log progress flag is armed
@@ -353,15 +321,6 @@ public interface NutsIOCopyAction {
     NutsIOCopyAction setProgressMonitorFactory(NutsProgressFactory value);
 
     /**
-     * set progress factory responsible of creating progress monitor
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsIOCopyAction progressMonitorFactory(NutsProgressFactory value);
-
-    /**
      * set progress monitor. Will create a singleton progress monitor factory
      *
      * @param value new value
@@ -369,32 +328,6 @@ public interface NutsIOCopyAction {
      * @since 0.5.8
      */
     NutsIOCopyAction setProgressMonitor(NutsProgressMonitor value);
-
-    /**
-     * set progress monitor. Will create a singleton progress monitor factory
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsIOCopyAction progressMonitor(NutsProgressMonitor value);
-
-    /**
-     * set skip root flag to {@code value}
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsIOCopyAction skipRoot(boolean value);
-
-    /**
-     * set skip root flag to {@code true}
-     *
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsIOCopyAction skipRoot();
 
     /**
      * set skip root flag to {@code value}

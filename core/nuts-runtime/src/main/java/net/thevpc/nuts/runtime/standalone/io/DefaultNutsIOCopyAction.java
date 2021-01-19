@@ -241,11 +241,6 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
     }
 
     @Override
-    public NutsIOCopyAction validator(NutsIOCopyValidator validationVerifier) {
-        return setValidator(validationVerifier);
-    }
-
-    @Override
     public boolean isSafe() {
         return safe;
     }
@@ -253,30 +248,6 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
     @Override
     public DefaultNutsIOCopyAction setSafe(boolean value) {
         this.safe = value;
-        return this;
-    }
-
-    @Override
-    public NutsIOCopyAction safe() {
-        setSafe(true);
-        return this;
-    }
-
-    @Override
-    public NutsIOCopyAction safe(boolean value) {
-        setSafe(value);
-        return this;
-    }
-
-    @Override
-    public NutsIOCopyAction logProgress() {
-        setLogProgress(true);
-        return this;
-    }
-
-    @Override
-    public NutsIOCopyAction logProgress(boolean value) {
-        setLogProgress(value);
         return this;
     }
 
@@ -295,7 +266,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
     public byte[] getByteArrayResult() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         to(b);
-        safe(false);
+        setSafe(false);
         run();
         return b.toByteArray();
     }
@@ -542,9 +513,9 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
             throw new NutsIllegalArgumentException(this.iom.getWorkspace(), "unsupported validation if neither safeCopy is armed nor path is defined");
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
-            _source = iom.monitor().source(_source).setSession(session)
-                    .progressFactory(getProgressMonitorFactory())
-                    .logProgress(isLogProgress())
+            _source = iom.monitor().setSource(_source).setSession(session)
+                    .setProgressFactory(getProgressMonitorFactory())
+                    .setLogProgress(isLogProgress())
                     .createSource();
         }
         LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log("copy {0} to {1}", _source, target);
@@ -680,18 +651,6 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
     }
 
     /**
-     * set progress factory responsible of creating progress monitor
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsIOCopyAction progressMonitorFactory(NutsProgressFactory value) {
-        return setProgressMonitorFactory(value);
-    }
-
-    /**
      * set progress monitor. Will create a singeleton progress monitor factory
      *
      * @param value new value
@@ -704,27 +663,6 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
         return this;
     }
 
-    /**
-     * set progress monitor. Will create a singleton progress monitor factory
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    @Override
-    public NutsIOCopyAction progressMonitor(NutsProgressMonitor value) {
-        return setProgressMonitor(value);
-    }
-
-    @Override
-    public NutsIOCopyAction skipRoot(boolean value) {
-        return setSkipRoot(value);
-    }
-
-    @Override
-    public NutsIOCopyAction skipRoot() {
-        return skipRoot(true);
-    }
 
     @Override
     public NutsIOCopyAction setSkipRoot(boolean skipRoot) {

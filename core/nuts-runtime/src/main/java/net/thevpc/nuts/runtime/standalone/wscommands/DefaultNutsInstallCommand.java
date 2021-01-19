@@ -144,7 +144,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             run();
         }
         return new NutsCollectionResult<NutsDefinition>(ws,
-                ids.isEmpty() ? null : ids.get(0).toString(),
+                ids.isEmpty() ? null : ids.keySet().toArray()[0].toString(),
                 Arrays.asList(result)
         );
     }

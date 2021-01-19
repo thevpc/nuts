@@ -121,4 +121,12 @@ public class NutsExecutionException extends NutsException {
         return exitCode;
     }
 
+    @Override
+    public String toString() {
+        String m = getMessage();
+        if(m==null){
+            return super.toString();
+        }
+        return m;
+    }
 }

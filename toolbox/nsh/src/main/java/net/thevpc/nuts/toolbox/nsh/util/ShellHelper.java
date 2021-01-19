@@ -67,27 +67,27 @@ public class ShellHelper {
         @Override
         public void onExec(String command) {
             if (isTrace()) {
-                out.printf("[[\\[SSH-EXEC\\]]] %s\n", command);
+                out.printf("##:primary4:[SSH-EXEC]## %s\n", command);
             }
         }
 
         @Override
         public void onGet(String from, String to, boolean mkdir) {
             if (isTrace()) {
-                out.printf("[[\\[SSH-GET \\]]] %s -> %s\n", from, to);
+                out.printf("##:primary4:[SSH-GET ]## %s -> %s\n", from, to);
             }
         }
 
         @Override
         public void onPut(String from, String to, boolean mkdir) {
             if (isTrace()) {
-                out.printf("[[\\[SSH-PUT \\]]] %s -> %s\n", from, to);
+                out.printf("##:primary4:[SSH-PUT ]## %s -> %s\n", from, to);
             }
         }
 
         @Override
         public InputStream monitorInputStream(InputStream stream, long length, String name) {
-            return session.getWorkspace().io().monitor().source(stream).length(length).name(name).setSession(session).create();
+            return session.getWorkspace().io().monitor().setSource(stream).setLength(length).setName(name).setSession(session).create();
         }
     }
 

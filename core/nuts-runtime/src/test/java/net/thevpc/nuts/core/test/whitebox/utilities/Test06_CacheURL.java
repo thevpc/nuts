@@ -43,11 +43,11 @@ public class Test06_CacheURL {
         final String url = "https://repo.maven.apache.org/maven2/archetype-catalog.xml";
         NutsInput j1 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, "archetype-catalog", true,null);
         //just to consume the stream
-        ws.io().copy().setSession(session).from(j1).to(new ByteArrayOutputStream()).logProgress().run();
+        ws.io().copy().setSession(session).from(j1).to(new ByteArrayOutputStream()).setLogProgress(true).run();
         TestUtils.println(j1);
         NutsInput j2 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, "archetype-catalog", true,null);
         //just to consume the stream
-        ws.io().copy().setSession(session).from(j2).to(new ByteArrayOutputStream()).logProgress().run();
+        ws.io().copy().setSession(session).from(j2).to(new ByteArrayOutputStream()).setLogProgress(true).run();
         TestUtils.println(j2);
     }
 
