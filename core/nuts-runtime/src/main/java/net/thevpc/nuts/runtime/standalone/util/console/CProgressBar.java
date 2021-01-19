@@ -251,7 +251,7 @@ public class CProgressBar {
             if (msg == null) {
                 msg = "";
             }
-            s2 = session == null ? msg.length() : session.getWorkspace().formats().text().textLength(msg);
+            s2 = session == null ? msg.length() : session.getWorkspace().formats().text().builder().append(msg).textLength();
             if (isPrefixMoveLineStart()) {
                 if (optionNewline) {
                     if(!isSuffixMoveLineStart()) {

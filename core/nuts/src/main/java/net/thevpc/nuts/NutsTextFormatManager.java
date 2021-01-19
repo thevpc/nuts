@@ -30,26 +30,7 @@ public interface NutsTextFormatManager {
 
     NutsTextNodeBuilder builder();
 
-    /**
-     * text length after filtering all special characters
-     * @param value value for length evaluation
-     * @return effective length after filtering the text
-     */
-
-    int textLength(String value);
-
-    /**
-     * this method removes all special "nuts print format" sequences support
-     * and returns the raw string to be printed on an
-     * ordinary {@link PrintStream}
-     *
-     * @param value input string
-     * @return string without any escape sequences so that the text printed
-     * correctly on any non formatted {@link PrintStream}
-     */
-    String filterText(String value);
-
-    String filterText(NutsMessage value, NutsSession session);
+    NutsTextNode parse(String t);
 
     /**
      * converts any object to a NutsString instance.
@@ -64,21 +45,11 @@ public interface NutsTextFormatManager {
      * @param session session
      * @return new instance of NutsString
      */
-    NutsString toString(Object instance,NutsSession session);
+    NutsString of(Object instance, NutsSession session);
+
+    NutsString of(Object instance);
 
     NutsTextNodeParser parser();
-
-    /**
-     * This method escapes all special characters that are interpreted by
-     * "nuts print format" o that this exact string is printed on
-     * such print streams When str is null, an empty string is return
-     *
-     * @param value input string
-     * @return string with escaped characters so that the text printed correctly
-     * on a "nuts print format" aware print stream
-     */
-    String escapeText(String value);
-    String escapeCodeText(String value);
 
     NutsTitleNumberSequence createTitleNumberSequence();
 

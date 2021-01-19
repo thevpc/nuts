@@ -88,7 +88,7 @@ public final class NutsApplications {
         }
         ws.log().of(NutsApplications.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.START).formatted()
                 .log("running application {0}: {1} {2}", inherited ? "(inherited)" : "",
-                lifeCycle, NutsString.of(ws.commandLine().formatter(ws.commandLine().create(args)).format())
+                lifeCycle, ws.commandLine().create(args)
         );
         NutsApplicationContext applicationContext = null;
         applicationContext = lifeCycle.createApplicationContext(ws, args, startTimeMillis);

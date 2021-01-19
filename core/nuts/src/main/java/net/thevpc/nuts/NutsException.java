@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,28 +11,29 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.io.IOException;
 
 /**
  * Base Nuts Exception. Parent of all Nuts defined Exceptions.
+ *
  * @author thevpc
- * @since 0.5.4
  * @category Exceptions
+ * @since 0.5.4
  */
 public class NutsException extends RuntimeException {
 
@@ -43,6 +44,7 @@ public class NutsException extends RuntimeException {
      * Constructs a new runtime exception with {@code null} as its
      * detail message.  The cause is not initialized, and may subsequently be
      * initialized by a call to {@link #initCause}.
+     *
      * @param workspace the workspace of this Nuts Exception
      */
     public NutsException(NutsWorkspace workspace) {
@@ -50,35 +52,35 @@ public class NutsException extends RuntimeException {
         this.formattedMessage = null;
     }
 
-    /** Constructs a new runtime exception with the specified detail message.
+    /**
+     * Constructs a new runtime exception with the specified detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      *
      * @param workspace the workspace of this Nuts Exception
-     * @param   message   the detail message. The detail message is saved for
-     *          later retrieval by the {@link #getMessage()} method.
+     * @param message   the detail message. The detail message is saved for
+     *                  later retrieval by the {@link #getMessage()} method.
      */
     public NutsException(NutsWorkspace workspace, NutsMessage message) {
-        super(message==null?null:workspace.formats().text().filterText(message, workspace.createSession()));
+        super(message == null ? null : workspace.formats().text().of(message, workspace.createSession()).filteredText());
         this.workspace = workspace;
         this.formattedMessage = message;
     }
 
-    /** Constructs a new runtime exception with the specified detail message.
+    /**
+     * Constructs a new runtime exception with the specified detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      *
      * @param workspace the workspace of this Nuts Exception
-     * @param   message   the detail message. The detail message is saved for
-     *          later retrieval by the {@link #getMessage()} method.
+     * @param message   the detail message. The detail message is saved for
+     *                  later retrieval by the {@link #getMessage()} method.
      */
     public NutsException(NutsWorkspace workspace, String message) {
         super(message);
         this.workspace = workspace;
-        this.formattedMessage =  NutsMessage.cstyle(
-                NutsString.of(workspace.formats().text().escapeText(
-                        message==null?"":message
-                ))
+        this.formattedMessage = NutsMessage.cstyle(
+                message == null ? "" : message
         );
     }
 
@@ -90,16 +92,16 @@ public class NutsException extends RuntimeException {
      * {@code cause} is <i>not</i> automatically incorporated in
      * this runtime exception's detail message.
      *
-     * @param  message the detail message (which is saved for later retrieval
-     *         by the {@link #getMessage()} method).
-     * @param  cause the cause (which is saved for later retrieval by the
-     *         {@link #getCause()} method).  (A <tt>null</tt> value is
-     *         permitted, and indicates that the cause is nonexistent or
-     *         unknown.)
+     * @param message   the detail message (which is saved for later retrieval
+     *                  by the {@link #getMessage()} method).
+     * @param cause     the cause (which is saved for later retrieval by the
+     *                  {@link #getCause()} method).  (A <tt>null</tt> value is
+     *                  permitted, and indicates that the cause is nonexistent or
+     *                  unknown.)
      * @param workspace the workspace of this Nuts Exception
      */
     public NutsException(NutsWorkspace workspace, NutsMessage message, Throwable cause) {
-        super(message==null?null:workspace.formats().text().filterText(message, workspace.createSession()), cause);
+        super(message == null ? null : workspace.formats().text().of(message, workspace.createSession()).filteredText(), cause);
         this.workspace = workspace;
         this.formattedMessage = message;
     }
@@ -112,19 +114,19 @@ public class NutsException extends RuntimeException {
      * {@code cause} is <i>not</i> automatically incorporated in
      * this runtime exception's detail message.
      *
-     * @param  message the detail message (which is saved for later retrieval
-     *         by the {@link #getMessage()} method).
-     * @param  cause the cause (which is saved for later retrieval by the
-     *         {@link #getCause()} method).  (A <tt>null</tt> value is
-     *         permitted, and indicates that the cause is nonexistent or
-     *         unknown.)
+     * @param message   the detail message (which is saved for later retrieval
+     *                  by the {@link #getMessage()} method).
+     * @param cause     the cause (which is saved for later retrieval by the
+     *                  {@link #getCause()} method).  (A <tt>null</tt> value is
+     *                  permitted, and indicates that the cause is nonexistent or
+     *                  unknown.)
      * @param workspace the workspace of this Nuts Exception
      */
     public NutsException(NutsWorkspace workspace, String message, Throwable cause) {
         super(message, cause);
         this.workspace = workspace;
         this.formattedMessage = NutsMessage.cstyle(
-                NutsString.of(workspace.formats().text().escapeText(message==null?"":message))
+                message == null ? "" : message
         );
     }
 
@@ -135,10 +137,10 @@ public class NutsException extends RuntimeException {
      * <tt>cause</tt>).  This constructor is useful for runtime exceptions
      * that are little more than wrappers for other throwables.
      *
-     * @param  cause the cause (which is saved for later retrieval by the
-     *         {@link #getCause()} method).  (A <tt>null</tt> value is
-     *         permitted, and indicates that the cause is nonexistent or
-     *         unknown.)
+     * @param cause     the cause (which is saved for later retrieval by the
+     *                  {@link #getCause()} method).  (A <tt>null</tt> value is
+     *                  permitted, and indicates that the cause is nonexistent or
+     *                  unknown.)
      * @param workspace the workspace of this Nuts Exception
      */
     public NutsException(NutsWorkspace workspace, Throwable cause) {
@@ -154,10 +156,10 @@ public class NutsException extends RuntimeException {
      * <tt>cause</tt>).  This constructor is useful for runtime exceptions
      * that are little more than wrappers for other throwables.
      *
-     * @param  cause the cause (which is saved for later retrieval by the
-     *         {@link #getCause()} method).  (A <tt>null</tt> value is
-     *         permitted, and indicates that the cause is nonexistent or
-     *         unknown.)
+     * @param cause     the cause (which is saved for later retrieval by the
+     *                  {@link #getCause()} method).  (A <tt>null</tt> value is
+     *                  permitted, and indicates that the cause is nonexistent or
+     *                  unknown.)
      * @param workspace the workspace of this Nuts Exception
      */
     public NutsException(NutsWorkspace workspace, IOException cause) {
@@ -171,17 +173,18 @@ public class NutsException extends RuntimeException {
      * message, cause, suppression enabled or disabled, and writable
      * stack trace enabled or disabled.
      *
-     * @param  message the detail message.
-     * @param cause the cause.  (A {@code null} value is permitted,
-     * and indicates that the cause is nonexistent or unknown.)
-     * @param enableSuppression whether or not suppression is enabled
-     *                          or disabled
+     * @param message            the detail message.
+     * @param cause              the cause.  (A {@code null} value is permitted,
+     *                           and indicates that the cause is nonexistent or unknown.)
+     * @param enableSuppression  whether or not suppression is enabled
+     *                           or disabled
      * @param writableStackTrace whether or not the stack trace should
      *                           be writable
-     * @param workspace the workspace of this Nuts Exception
+     * @param workspace          the workspace of this Nuts Exception
      */
     public NutsException(NutsWorkspace workspace, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message==null?null:workspace.formats().text().filterText(message, workspace.createSession()), cause, enableSuppression, writableStackTrace);
+        super(message == null ? null : workspace.formats().text().of(message, workspace.createSession()).filteredText()
+                , cause, enableSuppression, writableStackTrace);
         this.workspace = workspace;
         this.formattedMessage = message;
     }
@@ -191,35 +194,34 @@ public class NutsException extends RuntimeException {
      * message, cause, suppression enabled or disabled, and writable
      * stack trace enabled or disabled.
      *
-     * @param  message the detail message.
-     * @param cause the cause.  (A {@code null} value is permitted,
-     * and indicates that the cause is nonexistent or unknown.)
-     * @param enableSuppression whether or not suppression is enabled
-     *                          or disabled
+     * @param message            the detail message.
+     * @param cause              the cause.  (A {@code null} value is permitted,
+     *                           and indicates that the cause is nonexistent or unknown.)
+     * @param enableSuppression  whether or not suppression is enabled
+     *                           or disabled
      * @param writableStackTrace whether or not the stack trace should
      *                           be writable
-     * @param workspace the workspace of this Nuts Exception
+     * @param workspace          the workspace of this Nuts Exception
      */
     public NutsException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
         this.workspace = workspace;
         this.formattedMessage = NutsMessage.cstyle(
-                NutsString.of(workspace.formats().text().escapeText(message==null?"":message))
+                message == null ? "" : message
         );
     }
 
     /**
      * Returns the workspace of this Nuts Exception.
      *
-     * @return  the workspace of this {@code NutsException} instance
-     *          (which may be {@code null}).
+     * @return the workspace of this {@code NutsException} instance
+     * (which may be {@code null}).
      */
     public NutsWorkspace getWorkspace() {
         return workspace;
     }
 
     /**
-     *
      * @return formatted messgae
      */
     public NutsMessage getFormattedMessage() {

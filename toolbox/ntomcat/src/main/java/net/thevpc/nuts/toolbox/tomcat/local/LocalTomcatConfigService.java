@@ -197,23 +197,23 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     public NutsString getFormattedError(String str) {
-        return context.getWorkspace().formats().text().builder()
-                .append(str,NutsTextNodeStyle.error())
+        return context.getWorkspace().formats().text()
+                .factory().styled(str,NutsTextNodeStyle.error())
                 ;
     }
     public NutsString getFormattedSuccess(String str) {
-        return context.getWorkspace().formats().text().builder()
-                .append(str,NutsTextNodeStyle.success())
+        return context.getWorkspace().formats().text()
+                .factory().styled(str,NutsTextNodeStyle.success())
                 ;
     }
     public NutsString getFormattedPath(Path str) {
-        return context.getWorkspace().formats().text().builder()
-                .append(str==null?"":str.toString(),NutsTextNodeStyle.path())
+        return context.getWorkspace().formats().text().
+                factory().styled(str==null?"":str.toString(),NutsTextNodeStyle.path())
                 ;
     }
     public NutsString getFormattedPath(String str) {
-        return context.getWorkspace().formats().text().builder()
-                .append(str==null?"":str.toString(),NutsTextNodeStyle.path())
+        return context.getWorkspace().formats().text().
+                factory().styled(str==null?"":str.toString(),NutsTextNodeStyle.path())
                 ;
     }
     public NutsString getFormattedPrefix(String str) {

@@ -386,9 +386,11 @@ public class CoreCommonUtils {
         throw new NoSuchElementException(val + " of type " + e.getSimpleName());
     }
 
-    public static String stringValueFormatted(Object o, boolean escapeString, NutsSession session) {
+    public static NutsString stringValueFormatted(Object o, boolean escapeString, NutsSession session) {
+        NutsWorkspace ws = session.getWorkspace();
+        NutsTextFormatManager txt = ws.formats().text();
         if (o == null) {
-            return "";
+            return txt.factory().plain("");
         }
         if (o instanceof NutsPrimitiveElement) {
             o = ((NutsPrimitiveElement) o).getValue();
@@ -398,101 +400,133 @@ public class CoreCommonUtils {
             Collection<NutsNamedElement> c= ((NutsObjectElement) o).children();
             Object[] a = c.toArray();
             if (a.length == 0) {
-                return "";
+                return txt.factory().plain("");
             }
             if (a.length == 1) {
-                return stringValue(a[0]);
+                return txt.factory().plain(stringValue(a[0]));
             }
-            return "\\{" + String.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "\\}";
+            return txt.factory().formatted(
+                    "{" + String.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "}"
+            );
             
         } else if (o instanceof NutsNamedElement) {
             NutsNamedElement ne = (NutsNamedElement) o;
-            StringBuilder sb = new StringBuilder();
+            NutsTextNodeBuilder sb = ws.formats().text().builder();
             sb.append(stringValueFormatted(ne.getName(), escapeString, session));
             sb.append("=");
             if (ne.getValue().type() == NutsElementType.STRING) {
-                sb.append(CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session)));
+                sb.append(
+                        txt.factory().formatted(
+                        CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session).toString())
+                        ));
             } else {
                 sb.append(stringValueFormatted(ne.getValue(), escapeString, session));
             }
             o = sb.toString();
         } else if (o instanceof Map.Entry) {
             Map.Entry ne = (Map.Entry) o;
-            StringBuilder sb = new StringBuilder();
+            NutsTextNodeBuilder sb = ws.formats().text().builder();
             sb.append(stringValueFormatted(ne.getKey(), escapeString, session));
             sb.append("=");
             if (ne.getValue() instanceof String || (ne.getValue() instanceof NutsPrimitiveElement && ((NutsPrimitiveElement) ne.getValue()).type() == NutsElementType.STRING)) {
-                sb.append(CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session)));
+                sb.append(
+                        txt.factory().formatted(
+                        CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session).toString())
+                        )
+                );
             } else {
                 sb.append(stringValueFormatted(ne.getValue(), escapeString, session));
             }
-            o = sb.toString();
+            return sb.immutable();
         } else if (o instanceof Map) {
             o = ((Map) o).entrySet();
         }
         if (o == null) {
-            return "";
+            return txt.factory().formatted("");
         }
-        NutsWorkspace ws = session.getWorkspace();
         if (o instanceof Boolean) {
-            return ws.formats().text().escapeText(String.valueOf(o));
+            txt.factory().plain(String.valueOf(o));
         }
         if (o.getClass().isEnum()) {
-            return ws.formats().text().escapeText(getEnumString((Enum) o));
+            return txt.factory().plain(getEnumString((Enum) o));
         }
         if (o instanceof Instant) {
-            return ws.formats().text().escapeText(
+            return txt.factory().plain(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Instant) o))
             );
         }
         if (o instanceof Temporal) {
-            return ws.formats().text().escapeText(
+            return txt.factory().plain(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Temporal) o))
             );
         }
         if (o instanceof Date) {
-            return ws.formats().text().escapeText(
+            return txt.factory().plain(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Date) o).toInstant())
             );
         }
         if (o instanceof NutsFormattable) {
-            return ((NutsFormattable) o).formatter().format();
+            return txt.factory().formatted(o);
         }
         if (o instanceof Collection) {
             Collection c = ((Collection) o);
             Object[] a = c.toArray();
             if (a.length == 0) {
-                return "";
+                return txt.factory().plain("");
             }
             if (a.length == 1) {
-                return stringValue(a[0]);
+                return txt.factory().plain(stringValue(a[0]));
             }
-            return "\\[" + String.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "\\]";
+            List<NutsString> ll = ((Collection<Object>) c).stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList());
+            return txt.builder()
+                    .append("[")
+                    .appendJoined(
+                            txt.factory().plain(", "),
+                            ll
+                    )
+                    .append("]")
+                    ;
         }
         if (o instanceof Map) {
             Map c = ((Map) o);
             Map.Entry[] a = (Map.Entry[]) c.entrySet().toArray(new Map.Entry[0]);
             if (a.length == 0) {
-                return "";
+                return txt.factory().formatted("");
             }
             if (a.length == 1) {
-                return stringValue(a[0]);
+                return txt.factory().plain(stringValue(a[0]));
             }
-            return "\\{" + String.join(", ", Arrays.stream(a).map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "\\}";
+            List<NutsString> ll = Arrays.stream(a).map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList());
+            return txt.builder()
+                    .append("{")
+                    .appendJoined(
+                            txt.factory().plain(", "),
+                            ll
+                    )
+                    .append("}")
+                    ;
         }
         if (o.getClass().isArray()) {
             int len = Array.getLength(o);
             if (len == 0) {
-                return "";
+                return txt.factory().formatted("");
             }
             if (len == 1) {
                 return stringValueFormatted(Array.get(o, 0), escapeString, session);
             }
-            List<String> all = new ArrayList<>(len);
+            List<NutsString> all = new ArrayList<>(len);
             for (int i = 0; i < len; i++) {
                 all.add(stringValueFormatted(Array.get(o, i), escapeString, session));
             }
-            return "\\[" + String.join(", ", all) + "\\]";
+            return txt.builder()
+                    .append("[")
+                    .appendJoined(
+                            txt.factory().plain(", "),
+                            all
+                    )
+                    .append("]")
+                    ;
+
         }
 //        if (o instanceof Iterable) {
 //            Iterable x = (Iterable) o;
@@ -502,56 +536,52 @@ public class CoreCommonUtils {
             Iterator x = (Iterator) o;
             List<String> all = new ArrayList<>();
             while (x.hasNext()) {
-                all.add(stringValueFormatted(x.next(), escapeString, session));
+                all.add(stringValueFormatted(x.next(), escapeString, session).toString());
             }
             return stringValueFormatted(all, escapeString, session);
         }
-        String s = o.toString();
-        if (escapeString) {
-            s = session.getWorkspace().formats().text().escapeText(s);
-        }
-        return s;
+        return txt.factory().plain(o.toString());
     }
 
     public static String stringValue(Object o) {
         if (o == null) {
-            return "";
+            return ("");
         }
         if (o.getClass().isEnum()) {
-            return getEnumString((Enum) o);
+            return (getEnumString((Enum) o));
         }
         if (o instanceof Instant) {
-            return CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Instant) o));
+            return (CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Instant) o)));
         }
         if (o instanceof Date) {
-            return CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Date) o).toInstant());
+            return (CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Date) o).toInstant()));
         }
         if (o instanceof Collection) {
             Collection c = ((Collection) o);
             Object[] a = c.toArray();
             if (a.length == 0) {
-                return "";
+                return ("");
             }
             if (a.length == 1) {
                 return stringValue(a[0]);
             }
-            return "[" + String.join(", ", (List) c.stream().map(x -> stringValue(x)).collect(Collectors.toList())) + "]";
+            return ("[" + String.join(", ", (List) c.stream().map(x -> stringValue(x)).collect(Collectors.toList())) + "]");
         }
         if (o.getClass().isArray()) {
             int len = Array.getLength(o);
             if (len == 0) {
-                return "";
+                return ("");
             }
             if (len == 1) {
                 return stringValue(Array.get(o, 0));
             }
             List<String> all = new ArrayList<>(len);
             for (int i = 0; i < len; i++) {
-                all.add(stringValue(Array.get(o, i)));
+                all.add(stringValue(Array.get(o, i)).toString());
             }
-            return "[" + String.join(", ", all) + "]";
+            return ("[" + String.join(", ", all) + "]");
         }
-        return o.toString();
+        return (o.toString());
     }
 
 }

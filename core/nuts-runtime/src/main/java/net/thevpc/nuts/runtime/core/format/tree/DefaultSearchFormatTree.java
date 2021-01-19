@@ -64,16 +64,16 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
         tree.configure(false, options.toArray(new String[0]));
         tree.setNodeFormat(new NutsTreeNodeFormat() {
             @Override
-            public String format(Object o, int depth) {
+            public NutsString format(Object o, int depth) {
                 NutsIdFormatHelper fid = NutsIdFormatHelper.of(o, getSession());
                 if (fid != null) {
                     return format(fid);
                 } else {
-                    return String.valueOf(o);
+                    return getWorkspace().formats().text().builder().append(o).immutable();
                 }
             }
 
-            public String format(NutsIdFormatHelper id) {
+            public NutsString format(NutsIdFormatHelper id) {
                 return id.getSingleColumnRow(getDisplayOptions());
             }
         });

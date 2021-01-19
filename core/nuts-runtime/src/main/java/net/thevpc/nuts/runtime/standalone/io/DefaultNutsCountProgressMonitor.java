@@ -65,6 +65,10 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
         return true;
     }
 
+    private String escapeText(NutsTextFormatManager terminalFormat ,String str) {
+        return terminalFormat.builder().append(str).toString();
+    }
+
     public boolean onProgress0(NutsProgressEvent event, boolean end) {
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
@@ -90,23 +94,23 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
             formattedLine.append("]");
             BytesSizeFormat mf = mf(event);
             DecimalFormat df = df(event);
-            formattedLine.append(" ").append(terminalFormat.escapeText(String.format("%6s", df.format(percent)))).append("% ");
-            formattedLine.append(" ##:config:").append(terminalFormat.escapeText(mf.format(partialSpeed))).append("/s]]");
+            formattedLine.append(" ").append(escapeText(terminalFormat,String.format("%6s", df.format(percent)))).append("% ");
+            formattedLine.append(" ##:config:").append(escapeText(terminalFormat,mf.format(partialSpeed))).append("/s]]");
             if (event.getMaxValue() < 0) {
                 if (globalSpeed == 0) {
-                    formattedLine.append(terminalFormat.escapeText(" ( -- )"));
+                    formattedLine.append(escapeText(terminalFormat," ( -- )"));
                 } else {
-                    formattedLine.append(" (##:info:").append(terminalFormat.escapeText(mf.format(globalSpeed))).append("##)");
+                    formattedLine.append(" (##:info:").append(escapeText(terminalFormat,mf.format(globalSpeed))).append("##)");
                 }
             } else {
-                formattedLine.append(" (##:warn:").append(terminalFormat.escapeText(mf.format(event.getMaxValue()))).append("##)");
+                formattedLine.append(" (##:warn:").append(escapeText(terminalFormat,mf.format(event.getMaxValue()))).append("##)");
             }
             if (event.getError() != null) {
                 formattedLine.append(" ```error ERROR``` ");
             }
-            formattedLine.append(" ").append(terminalFormat.escapeText(event.getMessage())).append(" ");
+            formattedLine.append(" ").append(escapeText(terminalFormat,event.getMessage())).append(" ");
             String ff = formattedLine.toString();
-            int length = terminalFormat.filterText(ff).length();
+            int length = terminalFormat.builder().append(ff).textLength();
             if (length < minLength) {
                 CoreStringUtils.fillString(' ', minLength - length, formattedLine);
             } else {

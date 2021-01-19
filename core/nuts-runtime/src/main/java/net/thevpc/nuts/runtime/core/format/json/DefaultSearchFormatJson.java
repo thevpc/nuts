@@ -55,7 +55,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         if (index > 0) {
             getWriter().print(", ");
         }
-        getWriter().printf("%s%n", NutsString.of(getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(object).setCompact(isCompact()).format()));
+        getWriter().printf("%s%n", getWorkspace().formats().text().factory().formatted(getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(object).setCompact(isCompact()).format()));
         getWriter().flush();
     }
 

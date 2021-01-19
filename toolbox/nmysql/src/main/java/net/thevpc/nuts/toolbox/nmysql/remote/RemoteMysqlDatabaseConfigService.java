@@ -110,8 +110,8 @@ public class RemoteMysqlDatabaseConfigService {
         NutsTextFormatManager text = context.getWorkspace().formats().text();
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("%s copy '%s' to '%s'%n", getBracketsPrefix(name),
-                    text.builder().append(remoteFullFilePath.toString(),NutsTextNodeStyle.path()),
-                    text.builder().append(localPath,NutsTextNodeStyle.path())
+                    text.factory().styled(remoteFullFilePath.toString(),NutsTextNodeStyle.path()),
+                    text.factory().styled(localPath,NutsTextNodeStyle.path())
             );
         }
         if(lastRun.get("localPath")!=null){
@@ -150,7 +150,7 @@ public class RemoteMysqlDatabaseConfigService {
         if (deleteRemote) {
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("%s delete %s%n", getBracketsPrefix(name),
-                        text.builder().append(remoteFullFilePath.toString(),NutsTextNodeStyle.path()));
+                        text.factory().styled(remoteFullFilePath.toString(),NutsTextNodeStyle.path()));
             }
             if(!lastRun.is("deleted")) {
                 execRemoteNuts(
@@ -197,8 +197,8 @@ public class RemoteMysqlDatabaseConfigService {
 
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("%s copy %s to %s%n", getBracketsPrefix(name),
-                    text.builder().append(localPath,NutsTextNodeStyle.path()),
-                    text.builder().append(remoteFullFilePath,NutsTextNodeStyle.path())
+                    text.factory().styled(localPath,NutsTextNodeStyle.path()),
+                    text.factory().styled(remoteFullFilePath,NutsTextNodeStyle.path())
             );
         }
         context.getWorkspace().exec()
@@ -216,7 +216,7 @@ public class RemoteMysqlDatabaseConfigService {
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("%s remote restore %s%n",
                     getBracketsPrefix(name),
-                    text.builder().append(remoteFullFilePath,NutsTextNodeStyle.path())
+                    text.factory().styled(remoteFullFilePath,NutsTextNodeStyle.path())
             );
         }
         execRemoteNuts(

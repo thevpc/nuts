@@ -383,7 +383,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (!force && Files.exists(ff2)) {
                 if (!context.getSession().getTerminal().ask().setSession(context.getSession())
                         .forBoolean("override existing script %s ?",
-                                context.getWorkspace().formats().text().builder().append(NdiUtils.betterPath(ff2.toString()),NutsTextNodeStyle.path()))
+                                context.getWorkspace().formats().text().factory().styled(NdiUtils.betterPath(ff2.toString()),NutsTextNodeStyle.path()))
                         .getBooleanValue()
                 ) {
                     gen = false;
@@ -394,7 +394,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 if (trace && context.getSession().isPlainTrace()) {
                     context.getSession().out().printf((Files.exists(ff2) ? "re-installing" : "installing") +
                             " script %s %n",
-                            context.getWorkspace().formats().text().builder().append(NdiUtils.betterPath(ff2.toString()),NutsTextNodeStyle.path())
+                            context.getWorkspace().formats().text().factory().styled(NdiUtils.betterPath(ff2.toString()),NutsTextNodeStyle.path())
                     );
                 }
                 try {

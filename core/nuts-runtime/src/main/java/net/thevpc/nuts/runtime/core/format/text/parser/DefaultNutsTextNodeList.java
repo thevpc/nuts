@@ -29,6 +29,7 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsTextNodeList;
 import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.NutsWorkspace;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -41,7 +42,8 @@ public class DefaultNutsTextNodeList extends AbstractNutsTextNode implements Nut
 
     private List<NutsTextNode> children = new ArrayList<NutsTextNode>();
 
-    public DefaultNutsTextNodeList(NutsTextNode... children) {
+    public DefaultNutsTextNodeList(NutsWorkspace ws,NutsTextNode... children) {
+        super(ws);
         for (NutsTextNode c : children) {
             add(c);
         }
@@ -69,8 +71,4 @@ public class DefaultNutsTextNodeList extends AbstractNutsTextNode implements Nut
         return children.iterator();
     }
 
-    @Override
-    public String toString() {
-        return children.toString();
-    }
 }

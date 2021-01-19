@@ -54,7 +54,7 @@ public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
     }
 
     private void formatElement(NutsIdFormatHelper id, long index) {
-        getWriter().printf(id.getSingleColumnRow(getDisplayOptions()));
+        getWriter().printf("%s",id.getSingleColumnRow(getDisplayOptions()));
         getWriter().println();
         getWriter().flush();
     }

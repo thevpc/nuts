@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -24,20 +24,38 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.runtime.core.format.text;
 
-import java.util.Objects;
+import net.thevpc.nuts.NutsString;
+import net.thevpc.nuts.NutsTextNode;
+import net.thevpc.nuts.NutsWorkspace;
+
+import java.io.StringReader;
 
 /**
- * 
  * @author thevpc
- * @category Format
  */
 public class NutsImmutableString implements NutsString {
     private final String value;
+    private final NutsWorkspace ws;
 
-    public NutsImmutableString(String value) {
+    public NutsImmutableString(NutsWorkspace ws, String value) {
+        this.ws = ws;
         this.value = value == null ? "" : value;
+    }
+
+    public int textLength() {
+        return filteredText().length();
+    }
+
+    @Override
+    public String filteredText() {
+        return ws.formats().text().
+                parser().filterText(value);
+    }
+
+    public NutsTextNode toNode() {
+        return ws.formats().text().parser().parse(new StringReader(value));
     }
 
     public String getValue() {
@@ -45,8 +63,8 @@ public class NutsImmutableString implements NutsString {
     }
 
     @Override
-    public String toString() {
-        return value;
+    public int hashCode() {
+        return value.hashCode();
     }
 
     @Override
@@ -58,12 +76,17 @@ public class NutsImmutableString implements NutsString {
     }
 
     @Override
-    public int hashCode() {
-        return value.hashCode();
+    public String toString() {
+        return value;
     }
 
     @Override
     public NutsImmutableString immutable() {
         return this;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return textLength()==0;
     }
 }

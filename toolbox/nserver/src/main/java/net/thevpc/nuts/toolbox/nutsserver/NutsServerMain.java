@@ -62,12 +62,12 @@ public class NutsServerMain extends NutsApplication {
             for (NutsServer o : servers) {
                 if (o.isRunning()) {
                     out.printf("%s %s\n",
-                            text.builder().append("running",NutsTextNodeStyle.primary(4)),
+                            text.factory().styled("running",NutsTextNodeStyle.primary(4)),
                             o.getServerId()
                     );
                 } else {
                     out.printf("%s %s\n",
-                            text.builder().append("stopped",NutsTextNodeStyle.primary(4)),
+                            text.factory().styled("stopped",NutsTextNodeStyle.primary(4)),
                             o.getServerId());
                 }
             }
@@ -386,11 +386,11 @@ public class NutsServerMain extends NutsApplication {
                 for (StatusResult result : results) {
                     context.getSession().out().printf(
                             "%s server at %s is %s%n",
-                            text.builder().append(result.type,NutsTextNodeStyle.primary(4)),
+                            text.factory().styled(result.type,NutsTextNodeStyle.primary(4)),
                             result.host,
                             result.status.equals("stopped")?
-                            text.builder().append("stopped",NutsTextNodeStyle.error()):
-                            text.builder().append("alive",NutsTextNodeStyle.success())
+                            text.factory().styled("stopped",NutsTextNodeStyle.error()):
+                            text.factory().styled("alive",NutsTextNodeStyle.success())
                     );
                 }
             } else {

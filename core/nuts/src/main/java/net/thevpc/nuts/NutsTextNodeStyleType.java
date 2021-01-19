@@ -24,6 +24,7 @@ public enum NutsTextNodeStyleType {
     COMMENTS(false),
     STRING(false),
     NUMBER(false),
+    DATE(false),
     BOOLEAN(false),
     KEYWORD(false),
     OPTION(false),

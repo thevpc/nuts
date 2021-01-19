@@ -662,6 +662,10 @@ public class ProcessBuilder2 {
         return getFormattedCommandString(ws, null);
     }
 
+    private String escape(NutsWorkspace ws, String f) {
+        return ws.formats().text().factory().plain(f).toString();
+    }
+
     public String getFormattedCommandString(NutsWorkspace ws, CommandStringFormat f) {
         NutsTextFormatManager tf = ws.formats().text();
         StringBuilder sb = new StringBuilder();
@@ -733,7 +737,7 @@ public class ProcessBuilder2 {
             if (f == null || f.acceptRedirectOutput()) {
                 r = base.redirectOutput();
                 if (null == r.type()) {
-                    sb.append("##:separator:").append(tf.escapeText(" > ")).append("## ").append("##:pale:{?}##");
+                    sb.append("##:separator:").append(escape(ws," > ")).append("## ").append("##:pale:{?}##");
                 } else {
                     switch (r.type()) {
                         //sb.append(" > ").append("{inherited}");
@@ -742,25 +746,25 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case WRITE:
-                            sb.append("##:separator:").append(tf.escapeText(" >")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append("##:separator:").append(escape(ws," >")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         case APPEND:
-                            sb.append("##:separator:").append(tf.escapeText(" >>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append("##:separator:").append(escape(ws," >>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         default:
-                            sb.append("##:separator:").append(tf.escapeText(" >")).append("## ").append("##:pale:{?}##");
+                            sb.append("##:separator:").append(escape(ws," >")).append("## ").append("##:pale:{?}##");
                             break;
                     }
                 }
             }
             if (f == null || f.acceptRedirectError()) {
                 if (base.redirectErrorStream()) {
-                    sb.append("##:separator:").append(tf.escapeText(" 2>&1")).append("##");
+                    sb.append("##:separator:").append(escape(ws," 2>&1")).append("##");
                 } else {
                     if (f == null || f.acceptRedirectError()) {
                         r = base.redirectError();
                         if (null == r.type()) {
-                            sb.append("##:separator:").append(tf.escapeText(" 2>")).append("## ").append("##:pale:{?}##");
+                            sb.append("##:separator:").append(escape(ws," 2>")).append("## ").append("##:pale:{?}##");
                         } else {
                             switch (r.type()) {
                                 //sb.append(" 2> ").append("{inherited}");
@@ -769,13 +773,13 @@ public class ProcessBuilder2 {
                                 case PIPE:
                                     break;
                                 case WRITE:
-                                    sb.append("##:separator:").append(tf.escapeText(" 2>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                                    sb.append("##:separator:").append(escape(ws," 2>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                                     break;
                                 case APPEND:
-                                    sb.append("##:separator:").append(tf.escapeText(" 2>>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                                    sb.append("##:separator:").append(escape(ws," 2>>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                                     break;
                                 default:
-                                    sb.append("##:separator:").append(tf.escapeText(" 2>")).append("## ").append("##:pale:{?}##");
+                                    sb.append("##:separator:").append(escape(ws," 2>")).append("## ").append("##:pale:{?}##");
                                     break;
                             }
                         }
@@ -785,7 +789,7 @@ public class ProcessBuilder2 {
             if (f == null || f.acceptRedirectInput()) {
                 r = base.redirectInput();
                 if (null == r.type()) {
-                    sb.append("##:separator:").append(tf.escapeText(" <")).append("## ").append("##:pale:{?}##");
+                    sb.append("##:separator:").append(escape(ws," <")).append("## ").append("##:pale:{?}##");
                 } else {
                     switch (r.type()) {
                         //sb.append(" < ").append("{inherited}");
@@ -794,10 +798,10 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case READ:
-                            sb.append("##:separator:").append(tf.escapeText(" <")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append("##:separator:").append(escape(ws," <")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         default:
-                            sb.append("##:separator:").append(tf.escapeText(" <")).append("## ").append("##:pale:{?}##");
+                            sb.append("##:separator:").append(escape(ws," <")).append("## ").append("##:pale:{?}##");
                             break;
                     }
                 }
@@ -805,31 +809,31 @@ public class ProcessBuilder2 {
         } else if (base.redirectErrorStream()) {
             if (out != null) {
                 if (f == null || f.acceptRedirectOutput()) {
-                    sb.append("##:separator:").append(tf.escapeText(" > ")).append("## ").append("##:pale:{stream}##");
+                    sb.append("##:separator:").append(escape(ws," > ")).append("## ").append("##:pale:{stream}##");
                 }
                 if (f == null || f.acceptRedirectError()) {
-                    sb.append("##:separator:").append(tf.escapeText(" 2>&1")).append("##");
+                    sb.append("##:separator:").append(escape(ws," 2>&1")).append("##");
                 }
             }
             if (in != null) {
                 if (f == null || f.acceptRedirectInput()) {
-                    sb.append("##:separator:").append(tf.escapeText(" <")).append("## ").append("##:pale:{stream}##");
+                    sb.append("##:separator:").append(escape(ws," <")).append("## ").append("##:pale:{stream}##");
                 }
             }
         } else {
             if (out != null) {
                 if (f == null || f.acceptRedirectOutput()) {
-                    sb.append("##:separator:").append(tf.escapeText(" >")).append("## ").append("##:pale:{stream}##");
+                    sb.append("##:separator:").append(escape(ws," >")).append("## ").append("##:pale:{stream}##");
                 }
             }
             if (err != null) {
                 if (f == null || f.acceptRedirectError()) {
-                    sb.append("##:separator:").append(tf.escapeText(" 2>")).append("## ").append("##:pale:{stream}##");
+                    sb.append("##:separator:").append(escape(ws," 2>")).append("## ").append("##:pale:{stream}##");
                 }
             }
             if (in != null) {
                 if (f == null || f.acceptRedirectInput()) {
-                    sb.append("##:separator:").append(tf.escapeText(" <")).append("## ").append("##:pale:{stream}##");
+                    sb.append("##:separator:").append(escape(ws," <")).append("## ").append("##:pale:{stream}##");
                 }
             }
         }

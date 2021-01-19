@@ -205,7 +205,11 @@ public class NutsTextNodeStyle {
     }
 
     public static NutsTextNodeStyle number() {
-        return of(NutsTextNodeStyleType.VAR);
+        return of(NutsTextNodeStyleType.NUMBER);
+    }
+
+    public static NutsTextNodeStyle date() {
+        return of(NutsTextNodeStyleType.DATE);
     }
 
     public static NutsTextNodeStyle number(int variant) {

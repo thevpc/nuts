@@ -106,6 +106,7 @@ public class DefaultNutsTextStyleTheme implements NutsTextStyleTheme {
             case CONFIG:{
                 return new NutsTextNodeStyle[]{NutsTextNodeStyle.foregroundColor(DARK_VIOLET)};
             }
+            case DATE:
             case NUMBER:
             case BOOLEAN:{
                 return toBasicStyles(NutsTextNodeStyle.foregroundColor(DARK_VIOLET), workspace);

@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,11 +23,12 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
 import net.thevpc.nuts.NutsTextNodeLink;
 import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.NutsWorkspace;
 
 /**
  * Created by vpc on 5/23/17.
@@ -35,19 +36,14 @@ import net.thevpc.nuts.NutsTextNodeType;
 public class DefaultNutsTextNodeLink extends NutsTextNodeSpecialBase implements NutsTextNodeLink {
     private String value;
 
-    public DefaultNutsTextNodeLink(String start, String command, String separator, String end, String value) {
-        super(start, command, separator, end);
+    public DefaultNutsTextNodeLink(NutsWorkspace ws, String start, String command, String separator, String end, String value) {
+        super(ws, start, command, separator, end);
         this.value = value;
     }
 
     @Override
     public String getValue() {
         return value;
-    }
-
-    @Override
-    public String toString() {
-        return (getStart() + getKind() + getSeparator() + getValue() + getEnd());
     }
 
     @Override

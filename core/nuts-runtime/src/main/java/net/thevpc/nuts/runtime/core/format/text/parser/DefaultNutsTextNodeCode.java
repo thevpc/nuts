@@ -29,6 +29,7 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 
 import net.thevpc.nuts.NutsTextNodeCode;
 import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.NutsWorkspace;
 
 /**
  * Created by vpc on 5/23/17.
@@ -37,8 +38,8 @@ public class DefaultNutsTextNodeCode extends NutsTextNodeSpecialBase implements 
 
     private final String text;
 
-    public DefaultNutsTextNodeCode(String start, String kind, String separator, String end, String text) {
-        super(start, kind,
+    public DefaultNutsTextNodeCode(NutsWorkspace ws, String start, String kind, String separator, String end, String text) {
+        super(ws,start, kind,
                 (kind != null && kind.length() > 0
                         &&
                         text != null && text.length() > 0

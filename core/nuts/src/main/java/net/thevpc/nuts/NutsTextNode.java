@@ -32,6 +32,6 @@ import net.thevpc.nuts.NutsTextNodeType;
  * Created by vpc on 5/23/17.
  * @category Format
  */
-public interface NutsTextNode {
+public interface NutsTextNode extends NutsString{
     NutsTextNodeType getType();
 }

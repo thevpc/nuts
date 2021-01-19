@@ -243,17 +243,17 @@ public class LsCommand extends SimpleNshBuiltin {
         String name = new File(item.path).getName();
         NutsTextFormatManager text = session.getWorkspace().formats().text();
         if (item.hidden) {
-            out.println(text.builder().append(name,NutsTextNodeStyle.pale()));
+            out.println(text.factory().styled(name,NutsTextNodeStyle.pale()));
         } else if (item.type == 'd') {
-            out.println(text.builder().append(name,NutsTextNodeStyle.primary(3)));
+            out.println(text.factory().styled(name,NutsTextNodeStyle.primary(3)));
         } else if (item.exec2 || item.jperms.charAt(2) == 'x') {
-            out.println(text.builder().append(name,NutsTextNodeStyle.primary(4)));
+            out.println(text.factory().styled(name,NutsTextNodeStyle.primary(4)));
         } else if (item.config) {
-            out.println(text.builder().append(name,NutsTextNodeStyle.primary(5)));
+            out.println(text.factory().styled(name,NutsTextNodeStyle.primary(5)));
         } else if (item.archive) {
-            out.println(text.builder().append(name,NutsTextNodeStyle.primary(1)));
+            out.println(text.factory().styled(name,NutsTextNodeStyle.primary(1)));
         } else {
-            out.println(text.builder().append(name));
+            out.println(text.factory().styled(name));
         }
     }
 

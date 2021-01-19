@@ -15,13 +15,13 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
 
     public static final NutsTreeLinkFormat LINK_ASCII_FORMATTER = new AsciiTreeLinkFormat();
     public static final NutsTreeLinkFormat LINK_SPACE_FORMATTER = new SpaceTreeLinkFormat();
-    private String rootName = "";
+    private NutsString rootName;
     private Map<String, String> multilineProperties = new HashMap<>();
 
-    public static final NutsTreeNodeFormat TO_STRING_FORMATTER = new NutsTreeNodeFormat() {
+    public final NutsTreeNodeFormat TO_STRING_FORMATTER = new NutsTreeNodeFormat() {
         @Override
-        public String format(Object o, int depth) {
-            return String.valueOf(o);
+        public NutsString format(Object o, int depth) {
+            return getWorkspace().formats().text().builder().append(o).immutable();
         }
     };
     private NutsTreeNodeFormat formatter = TO_STRING_FORMATTER;
@@ -93,7 +93,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         NutsElement elem = getWorkspace().formats().element().convert(tree, NutsElement.class);
         return new NutsElementTreeModel(getWorkspace(), rootName, elem, getValidSession()) {
             @Override
-            protected String[] getMultilineArray(String key, NutsElement value) {
+            protected NutsString[] getMultilineArray(NutsString key, NutsElement value) {
                 return DefaultTreeFormat.this.getMultilineArray(key, value);
             }
         };
@@ -358,7 +358,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         multilineProperties.put(property, separator);
         return this;
     }
-    private String[] getMultilineArray(String key, Object value) {
+    private NutsString[] getMultilineArray(NutsString key, Object value) {
         String sep = getMultilineSeparator(key);
         if (sep == null) {
             return null;
@@ -367,11 +367,11 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         if (vv.length == 0 || vv.length == 1) {
             return null;
         }
-        return vv;
+        return Arrays.stream(vv).map(x->getWorkspace().formats().text().factory().formatted(x)).toArray(NutsString[]::new);
     }
 
-    private String getMultilineSeparator(String key) {
-        String sep = multilineProperties.get(key);
+    private String getMultilineSeparator(NutsString key) {
+        String sep = multilineProperties.get(key.toString());
         if (sep != null && sep.length() == 0) {
             sep = ":|;";
         }

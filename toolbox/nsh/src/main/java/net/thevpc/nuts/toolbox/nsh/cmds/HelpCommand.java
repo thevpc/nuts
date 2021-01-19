@@ -68,7 +68,7 @@ public class HelpCommand extends AbstractNshBuiltin {
         Function<String, String> ss = code ? new Function<String, String>() {
             @Override
             public String apply(String t) {
-                return text.escapeText(t);
+                return text.factory().plain(t).toString();
             }
         } : x -> x;
         if (commandLine.isExecMode()) {

@@ -26,10 +26,7 @@
 */
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
-import net.thevpc.nuts.NutsTextNode;
-import net.thevpc.nuts.NutsTextNodeStyle;
-import net.thevpc.nuts.NutsTextNodeStyled;
-import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.*;
 
 /**
  * Created by vpc on 5/23/17.
@@ -42,7 +39,8 @@ public class DefaultNutsTextNodeStyled extends AbstractNutsTextNode implements N
     private NutsTextNodeStyle textStyle;
     private boolean completed;
 
-    public DefaultNutsTextNodeStyled(String start, String end, NutsTextNode child, boolean completed, NutsTextNodeStyle textStyle) {
+    public DefaultNutsTextNodeStyled(NutsWorkspace ws,String start, String end, NutsTextNode child, boolean completed, NutsTextNodeStyle textStyle) {
+        super(ws);
         this.start = start;
         this.end = end;
         this.child = child;
@@ -75,8 +73,4 @@ public class DefaultNutsTextNodeStyled extends AbstractNutsTextNode implements N
         return child;
     }
 
-    @Override
-    public String toString() {
-        return textStyle + ":" + child;
-    }
 }

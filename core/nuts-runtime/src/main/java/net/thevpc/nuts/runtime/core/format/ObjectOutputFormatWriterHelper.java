@@ -35,23 +35,23 @@ public class ObjectOutputFormatWriterHelper {
         return false;
     }
 
-    public static Map<String, String> indentMap(Map m, String prefix) {
-        LinkedHashMap<String, String> res = new LinkedHashMap<>();
-        for (Object k : new HashSet(m.keySet())) {
-            String sk = CoreCommonUtils.stringValue(k);
-            Object v = m.get(k);
-            if (isMapStringObject(v)) {
-                res.put(prefix + sk, "");
-                Map<String, String> c = indentMap((Map) v, prefix + "  ");
-                for (Map.Entry<String, String> entry : c.entrySet()) {
-                    res.put(entry.getKey(), CoreCommonUtils.stringValue(entry.getValue()));
-                }
-            } else {
-                res.put(prefix + sk, CoreCommonUtils.stringValue(v));
-            }
-        }
-        return res;
-    }
+//    public static Map<String, String> indentMap(Map m, String prefix) {
+//        LinkedHashMap<String, String> res = new LinkedHashMap<>();
+//        for (Object k : new HashSet(m.keySet())) {
+//            String sk = CoreCommonUtils.stringValue(k);
+//            Object v = m.get(k);
+//            if (isMapStringObject(v)) {
+//                res.put(prefix + sk, "");
+//                Map<String, String> c = indentMap((Map) v, prefix + "  ");
+//                for (Map.Entry<String, String> entry : c.entrySet()) {
+//                    res.put(entry.getKey(), CoreCommonUtils.stringValue(entry.getValue()));
+//                }
+//            } else {
+//                res.put(prefix + sk, CoreCommonUtils.stringValue(v));
+//            }
+//        }
+//        return res;
+//    }
 
     public static Map<String, String> explodeMap(Map m) {
         LinkedHashMap<String, String> res = new LinkedHashMap<>();

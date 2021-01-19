@@ -65,12 +65,12 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if(value instanceof Map){
             return (Map) value;
         }
-        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
         fillMap(getWorkspace().formats().element().convert(value,NutsElement.class), map, rootName);
         return map;
     }
 
-    private void fillMap(NutsElement e, Map<String, String> map, String prefix) {
+    private void fillMap(NutsElement e, Map<String, Object> map, String prefix) {
         switch (e.type()) {
             case NULL: {
                 if (omitNull) {
@@ -187,7 +187,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (javaProps) {
             CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w, sort);
         } else {
-            printMap(out, "", mm);
+            printMap(out, getWorkspace().formats().text().factory().blank(), mm);
         }
     }
 
@@ -211,10 +211,10 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
 //        }
 //        return sb.toString();
 //    }
-    private void printMap(PrintStream out, String prefix, Map<Object, Object> props) {
+    private void printMap(PrintStream out, NutsString prefix, Map<Object, Object> props) {
         int len = 1;
         for (Object extraKey : props.keySet()) {
-            int x = getWorkspace().formats().text().textLength(stringValue(extraKey));
+            int x = stringValue(extraKey).textLength();
             if (x > len) {
                 len = x;
             }
@@ -231,29 +231,28 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         out.flush();
     }
 
-    private String getMultilineSeparator(String key) {
-        String sep = multilineProperties.get(key);
+    private String getMultilineSeparator(NutsString key) {
+        String sep = multilineProperties.get(key.filteredText());
         if (sep != null && sep.length() == 0) {
             sep = ":|;";
         }
         return sep;
     }
 
-    private void printKeyValue(PrintStream out, String prefix, int len, String key, String value) {
+    private void printKeyValue(PrintStream out, NutsString prefix, int len, NutsString key, NutsString value) {
         printKeyValue(out, prefix, len, getMultilineSeparator(key), key, value);
     }
 
-    private void printKeyValue(PrintStream out, String prefix, int len, String fancySep, String key, String value) {
+    private void printKeyValue(PrintStream out, NutsString prefix, int len, String fancySep, NutsString key, NutsString value) {
+        NutsTextFormatManager txt = getWorkspace().formats().text();
         if (prefix == null) {
-            prefix = "";
+            prefix = txt.factory().plain("");
         }
-        NutsTextFormatManager text = getWorkspace().formats().text();
-        String ekey = text.escapeText(key);
-        int delta = key.length() - ekey.length();
-        String formattedKey = compact ? key : CoreStringUtils.alignLeft(ekey, len - delta);
+        NutsString formattedKey = compact ? key :
+        txt.builder().append(key).append(CoreStringUtils.fillString(' ', len - key.textLength()));
         if (fancySep != null) {
-            String cc = compact ? key : CoreStringUtils.alignLeft("", len+3);
-            String[] split = value.split(fancySep);
+            NutsString cc = compact ? key : txt.factory().plain(CoreStringUtils.alignLeft("", len+3));
+            String[] split = value.toString().split(fancySep);
             if (split.length == 0) {
                 out.print(prefix);
                 out.print(formattedKey);
@@ -263,10 +262,10 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
                     String s = split[i];
                     if (i == 0) {
                         out.print(prefix);
-                        if(prefix.isEmpty() || prefix.endsWith("#")){
+                        if(prefix.isEmpty() || prefix.toString().endsWith("#")){
                             out.print("ø");
                         }
-                        out.printf("%s",text.factory().styled(formattedKey,NutsTextNodeStyle.primary(3)));
+                        out.printf("%s",formattedKey);
                         if(separator.isEmpty() || separator.startsWith("#")){
                             out.print("ø");
                         }
@@ -274,7 +273,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
                         out.print( s);
                     } else {
                         out.println();
-                        out.print(cc);
+                        out.printf("%s",cc);
                         out.print(s);
                     }
                     //                    }
@@ -282,10 +281,10 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             }
         } else {
             out.print(prefix);
-            if(prefix.isEmpty() || prefix.endsWith("#")){
+            if(prefix.isEmpty() || prefix.toString().endsWith("#")){
                 out.print("ø");
             }
-            out.printf("%s",text.factory().styled(formattedKey,NutsTextNodeStyle.primary(3)));
+            out.printf("%s",txt.factory().styled(formattedKey,NutsTextNodeStyle.primary(3)));
             if(separator.isEmpty() || separator.startsWith("#")){
                 out.print("ø");
             }
@@ -294,11 +293,11 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         }
     }
 
-    private String stringValue(Object o) {
+    private NutsString stringValue(Object o) {
         if (escapeText) {
             return CoreCommonUtils.stringValueFormatted(o, escapeText,getValidSession());
         } else {
-            return String.valueOf(o);
+            return getWorkspace().formats().text().factory().plain(String.valueOf(o));
         }
     }
 

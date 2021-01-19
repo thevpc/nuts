@@ -382,12 +382,12 @@ public class WorkspaceService {
                 for (DataRow p2 : ddd) {
                     String status = p2.status;
                     NutsTextFormatManager tf = appContext.getWorkspace().formats().text();
-                    int len = tf.textLength(status);
+                    int len = tf.parse(status).textLength();
                     while (len < 10) {
                         status += " ";
                         len++;
                     }
-                    switch (tf.filterText(p2.status)) {
+                    switch (tf.factory().styled(p2.status).filteredText()) {
                         case "new": {
                             appContext.getSession().out().printf("[%s] %s : %s%n",
                                     tfactory.styled("new",NutsTextNodeStyle.primary(3)),
@@ -541,7 +541,7 @@ public class WorkspaceService {
                     }
                     if (interactive) {
                         String id = appContext.getSession().getTerminal().readLine("enter Id %s: ",
-                                (p2.getId() == null ? "" : ("(" + text.builder().append(p2.getId()) + ")")));
+                                (p2.getId() == null ? "" : ("(" + text.of(p2.getId()) + ")")));
                         if (!StringUtils.isBlank(id)) {
                             p2.setId(id);
                         }

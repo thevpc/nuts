@@ -111,7 +111,7 @@ public class JobServiceCmd {
         service.addJob(t);
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("job %s (%s) added.\n",
-                    context.getWorkspace().formats().text().builder().append(t.getId(), NutsTextNodeStyle.primary(5)),
+                    context.getWorkspace().formats().text().factory().styled(t.getId(), NutsTextNodeStyle.primary(5)),
                     t.getName()
             );
         }
@@ -285,7 +285,7 @@ public class JobServiceCmd {
         service.addTask(t);
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("task %s (%s) added.\n",
-                    context.getWorkspace().formats().text().builder().append(t.getId(), NutsTextNodeStyle.primary(5)),
+                    context.getWorkspace().formats().text().factory().styled(t.getId(), NutsTextNodeStyle.primary(5)),
                     t.getName()
             );
         }
@@ -332,7 +332,7 @@ public class JobServiceCmd {
         service.addProject(t);
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("project %s (%s) added.\n",
-                    context.getWorkspace().formats().text().builder().append(t.getId(), NutsTextNodeStyle.primary(5)),
+                    context.getWorkspace().formats().text().factory().styled(t.getId(), NutsTextNodeStyle.primary(5)),
                     t.getName()
             );
         }
@@ -452,8 +452,8 @@ public class JobServiceCmd {
             service.updateProject(project);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("project %s (%s) updated.\n",
-                        text.builder().append(project.getId(), NutsTextNodeStyle.primary(5)),
-                        text.builder().append(project.getName(), NutsTextNodeStyle.primary(1))
+                        text.factory().styled(project.getId(), NutsTextNodeStyle.primary(5)),
+                        text.factory().styled(project.getName(), NutsTextNodeStyle.primary(1))
                 );
             }
         }
@@ -461,7 +461,8 @@ public class JobServiceCmd {
             service.mergeProjects(mergeTo, projects.stream().map(x -> x.getId()).toArray(String[]::new));
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("projects mer to %s.\n",
-                        context.getWorkspace().formats().text().builder().append(mergeTo,NutsTextNodeStyle.primary(5))
+                        context.getWorkspace().formats().text()
+                                .factory().styled(mergeTo,NutsTextNodeStyle.primary(5))
                 );
             }
         }
@@ -700,8 +701,8 @@ public class JobServiceCmd {
             service.updateTask(task);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("task %s (%s) updated.\n",
-                        text.builder().append(task.getId(), NutsTextNodeStyle.primary(5)),
-                        text.builder().append(task.getName(), NutsTextNodeStyle.primary(1))
+                        text.factory().styled(task.getId(), NutsTextNodeStyle.primary(5)),
+                        text.factory().styled(task.getName(), NutsTextNodeStyle.primary(1))
                 );
             }
         }
@@ -815,8 +816,8 @@ public class JobServiceCmd {
             service.updateJob(job);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("job %s (%s) updated.\n",
-                        text.builder().append(job.getId(), NutsTextNodeStyle.primary(5)),
-                        text.builder().append(job.getName(), NutsTextNodeStyle.primary(1))
+                        text.factory().styled(job.getId(), NutsTextNodeStyle.primary(5)),
+                        text.factory().styled(job.getName(), NutsTextNodeStyle.primary(1))
                 );
             }
         }
@@ -970,13 +971,13 @@ public class JobServiceCmd {
             if (service.removeJob(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("job %s removed.\n",
-                            text.builder().append(a.toString(), NutsTextNodeStyle.primary(5))
+                            text.factory().styled(a.toString(), NutsTextNodeStyle.primary(5))
                     );
                 }
             } else {
                 context.getSession().out().printf("job %s %s.\n",
-                        text.builder().append(a.toString(), NutsTextNodeStyle.primary(5)),
-                        text.builder().append("not found", NutsTextNodeStyle.error())
+                        text.factory().styled(a.toString(), NutsTextNodeStyle.primary(5)),
+                        text.factory().styled("not found", NutsTextNodeStyle.error())
                 );
             }
         }
@@ -991,13 +992,13 @@ public class JobServiceCmd {
             if (service.removeTask(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("task %s removed.\n",
-                            text.builder().append(a.toString(), NutsTextNodeStyle.primary(5))
+                            text.factory().styled(a.toString(), NutsTextNodeStyle.primary(5))
                     );
                 }
             } else {
                 context.getSession().out().printf("task %s %s.\n",
-                        text.builder().append(a.toString(), NutsTextNodeStyle.primary(5)),
-                        text.builder().append("not found", NutsTextNodeStyle.error())
+                        text.factory().styled(a.toString(), NutsTextNodeStyle.primary(5)),
+                        text.factory().styled("not found", NutsTextNodeStyle.error())
                 );
             }
         }
@@ -1012,13 +1013,13 @@ public class JobServiceCmd {
             if (service.removeProject(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("project %s removed.\n",
-                            text.builder().append(a.toString(), NutsTextNodeStyle.primary(5))
+                            text.factory().styled(a.toString(), NutsTextNodeStyle.primary(5))
                     );
                 }
             } else {
                 context.getSession().out().printf("project %s %s.\n",
-                        text.builder().append(a.toString(), NutsTextNodeStyle.primary(5)),
-                        text.builder().append("not found", NutsTextNodeStyle.error())
+                        text.factory().styled(a.toString(), NutsTextNodeStyle.primary(5)),
+                        text.factory().styled("not found", NutsTextNodeStyle.error())
                 );
             }
         }
@@ -1244,9 +1245,7 @@ public class JobServiceCmd {
             List<NJob> lastResults = new ArrayList<>();
             int[] index = new int[1];
             r.forEach(x -> {
-                NutsString durationString = ws.formats().text().builder()
-                        .append(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)), NutsTextNodeStyle.keyword())
-                        .immutable();
+                NutsString durationString = ws.formats().text().factory().styled(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)), NutsTextNodeStyle.keyword());
                 index[0]++;
                 lastResults.add(x);
                 m.newRow().addCells(
@@ -1260,7 +1259,7 @@ public class JobServiceCmd {
 
                                 } : new Object[]{
                                 createHashId(index[0], -1),
-                                ws.formats().text().builder().append(x.getId(), NutsTextNodeStyle.pale()).immutable(),
+                                ws.formats().text().factory().styled(x.getId(), NutsTextNodeStyle.pale()),
                                 getFormattedDate(x.getStartTime()),
                                 durationString,
                                 getFormattedProject(x.getProject() == null ? "*" : x.getProject()),
@@ -1500,68 +1499,68 @@ public class JobServiceCmd {
 
     private NutsString getCheckedString(Boolean x) {
         if (x == null) {
-            return NutsString.of("");
+            return context.getWorkspace().formats().text().factory().plain("");
         }
         if (x) {
-            return NutsString.of("\u2611");
+            return context.getWorkspace().formats().text().factory().plain("\u2611");
         } else {
-            return NutsString.of("\u25A1");
+            return context.getWorkspace().formats().text().factory().plain("\u25A1");
         }
     }
 
     private NutsString getPriorityString(NPriority x) {
         if (x == null) {
-            return NutsString.of("N");
+            return context.getWorkspace().formats().text().factory().plain("N");
         }
         switch (x) {
             case NONE:
-                return ws.formats().text().builder().append("0",NutsTextNodeStyle.pale());
+                return ws.formats().text().factory().styled("0",NutsTextNodeStyle.pale());
             case LOW:
-                return ws.formats().text().builder().append("L",NutsTextNodeStyle.pale());
+                return ws.formats().text().factory().styled("L",NutsTextNodeStyle.pale());
             case NORMAL:
-                return ws.formats().text().builder().append("N");
+                return ws.formats().text().factory().styled("N");
             case MEDIUM:
-                return ws.formats().text().builder().append("M",NutsTextNodeStyle.primary(1));
+                return ws.formats().text().factory().styled("M",NutsTextNodeStyle.primary(1));
             case URGENT:
-                return ws.formats().text().builder().append("U",NutsTextNodeStyle.primary(2));
+                return ws.formats().text().factory().styled("U",NutsTextNodeStyle.primary(2));
             case HIGH:
-                return ws.formats().text().builder().append("H",NutsTextNodeStyle.primary(3));
+                return ws.formats().text().factory().styled("H",NutsTextNodeStyle.primary(3));
             case CRITICAL:
-                return ws.formats().text().builder().append("C",NutsTextNodeStyle.fail());
+                return ws.formats().text().factory().styled("C",NutsTextNodeStyle.fail());
         }
-        return NutsString.of("?");
+        return context.getWorkspace().formats().text().factory().plain("?");
     }
 
     private NutsString getStatusString(NTaskStatus x) {
         NutsTextFormatManager text = ws.formats().text();
         if (x == null) {
-            return text.builder().append("*");
+            return text.factory().styled("*");
         }
         switch (x) {
             case TODO:
-                return text.builder().append("\u24c9");
+                return text.factory().styled("\u24c9");
             case DONE:
-                return text.builder().append("\u2611",NutsTextNodeStyle.success());
+                return text.factory().styled("\u2611",NutsTextNodeStyle.success());
             case WIP:
-                return text.builder().append("\u24CC",NutsTextNodeStyle.primary(1));
+                return text.factory().styled("\u24CC",NutsTextNodeStyle.primary(1));
             case CANCELLED:
-                return text.builder().append("\u2718",NutsTextNodeStyle.fail());
+                return text.factory().styled("\u2718",NutsTextNodeStyle.fail());
         }
-        return NutsString.of("?");
+        return context.getWorkspace().formats().text().factory().plain("?");
     }
 
     private NutsString getFlagString(String x, int index) {
         switch (index) {
             case 1:
-                return ws.formats().text().builder().append(x,NutsTextNodeStyle.primary(1));
+                return ws.formats().text().factory().styled(x,NutsTextNodeStyle.primary(1));
             case 2:
-                return ws.formats().text().builder().append(x,NutsTextNodeStyle.primary(2));
+                return ws.formats().text().factory().styled(x,NutsTextNodeStyle.primary(2));
             case 3:
-                return ws.formats().text().builder().append(x,NutsTextNodeStyle.primary(3));
+                return ws.formats().text().factory().styled(x,NutsTextNodeStyle.primary(3));
             case 4:
-                return ws.formats().text().builder().append(x,NutsTextNodeStyle.primary(4));
+                return ws.formats().text().factory().styled(x,NutsTextNodeStyle.primary(4));
             case 5:
-                return ws.formats().text().builder().append(x,NutsTextNodeStyle.primary(5));
+                return ws.formats().text().factory().styled(x,NutsTextNodeStyle.primary(5));
         }
         throw new NutsIllegalArgumentException(ws,"Invalid index " + index);
     }
@@ -1572,7 +1571,7 @@ public class JobServiceCmd {
         }
         switch (x) {
             case NONE:
-                return NutsString.of("\u2690");
+                return context.getWorkspace().formats().text().factory().plain("\u2690");
 
             case STAR1:
                 return getFlagString("\u2605", 1);
@@ -1629,7 +1628,7 @@ public class JobServiceCmd {
             case PHONE5:
                 return getFlagString("\u260E", 5);
         }
-        return NutsString.of("[" + x.toString().toLowerCase() + "]");
+        return context.getWorkspace().formats().text().factory().plain("[" + x.toString().toLowerCase() + "]");
     }
 
     private void runProjectList(NutsCommandLine cmd) {

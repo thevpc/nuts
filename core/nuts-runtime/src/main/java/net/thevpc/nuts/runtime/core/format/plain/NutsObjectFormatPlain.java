@@ -121,7 +121,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 break;
             }
             case DATE: {
-                out.print(getWorkspace().formats().text().escapeText(value.primitive().getDate().toString()));
+                out.print(getWorkspace().formats().text().factory().plain(value.primitive().getDate().toString()).toString());
                 out.flush();
                 break;
             }
@@ -146,7 +146,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
         }
     }
 
-    private String formatObject(Object any) {
-        return CoreCommonUtils.stringValueFormatted(any, false, getValidSession());
-    }
+//    private String formatObject(Object any) {
+//        return CoreCommonUtils.stringValueFormatted(any, false, getValidSession());
+//    }
 }

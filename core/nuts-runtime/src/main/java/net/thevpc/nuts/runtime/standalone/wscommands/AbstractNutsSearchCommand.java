@@ -1154,7 +1154,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return postProcessResult(IteratorBuilder.of(getResultDefinitionsBase(false, false, true, isEffective()).iterator())
                 .map(x
                         -> NutsIdFormatHelper.of(x, getSearchSession())
-                        .buildLong().getMultiColumnRow(oo)
+                        .buildLong().getMultiColumnRowStrings(oo)
                 ));
     }
 

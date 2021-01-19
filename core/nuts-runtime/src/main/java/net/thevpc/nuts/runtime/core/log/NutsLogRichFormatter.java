@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.core.log;
 
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 
@@ -29,10 +28,10 @@ public class NutsLogRichFormatter extends Formatter {
                     wRecord.getSession(),
                     wRecord.getLevel(),
                     wRecord.getVerb(),
-                    ws.formats().text().toString(
+                    ws.formats().text().of(
                             new NutsMessage(
                                 wRecord.getFormatStyle(),
-                                    NutsString.of(wRecord.getMessage()),
+                                    wRecord.getMessage(),
                                 p
                             ),
                             wRecord.getSession()
@@ -196,18 +195,18 @@ public class NutsLogRichFormatter extends Formatter {
                 parameters2= Arrays.copyOf(parameters2,parameters2.length);
                 for (int i = 0; i < parameters2.length; i++) {
                     if (parameters2[i] instanceof NutsString) {
-                        parameters2[i] = text.filterText(parameters2[i].toString());
+                        parameters2[i] = text.builder().append(parameters2[i].toString()).filteredText();
                     } else if (parameters2[i] instanceof NutsFormattable) {
-                        parameters2[i] = text.filterText(
+                        parameters2[i] = text.builder().append(
                                 ((NutsFormattable) parameters2[i]).formatter().setSession(wRecord.getSession()).format()
-                        );
+                        ).filteredText();
                     }
                 }
             }
             NutsString msgStr =
-                    wRecord.getWorkspace().formats().text().toString(
+                    wRecord.getWorkspace().formats().text().of(
                     new NutsMessage(style,
-                            NutsString.of(message),
+                            message,
                             parameters2
                     )
                     ,wRecord.getSession()

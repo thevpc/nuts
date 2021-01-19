@@ -75,7 +75,7 @@ public class Test07_ColorfulStream {
                 out.print(c);
             }
             out.println();
-            TestUtils.println(ws.formats().text().filterText(msg));
+            TestUtils.println(ws.formats().text().builder().append(msg).filteredText());
         }
     }
 

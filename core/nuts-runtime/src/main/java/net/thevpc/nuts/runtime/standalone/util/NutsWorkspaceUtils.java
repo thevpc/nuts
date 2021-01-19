@@ -523,7 +523,10 @@ public class NutsWorkspaceUtils {
         }
 
         if (LOG.isLoggable(Level.FINE)) {
-            LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] {0}", NutsString.of(pb.getFormattedCommandString(ws)));
+            LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] {0}",
+                    ws.formats().text().factory().code("sh",
+                            pb.getFormattedCommandString(ws)
+                    ));
         }
         if (showCommand || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
             if (ws.io().term().isFormatted(prepareTerminal.out())) {

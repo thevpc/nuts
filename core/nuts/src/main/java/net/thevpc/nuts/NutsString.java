@@ -26,16 +26,35 @@
  */
 package net.thevpc.nuts;
 
+import java.io.PrintStream;
+import java.io.StringReader;
+
 /**
  * @category Base
  */
 public interface NutsString {
-
-    static NutsString of(String str){
-        return new NutsImmutableString(str);
-    }
-
     NutsString immutable();
 
+    /**
+     * this method removes all special "nuts print format" sequences support
+     * and returns the raw string to be printed on an
+     * ordinary {@link PrintStream}
+     *
+     * @return string without any escape sequences so that the text printed
+     * correctly on any non formatted {@link PrintStream}
+     */
+    String filteredText();
+
     String toString();
+
+    /**
+     * text length after filtering all special characters
+     * @return effective length after filtering the text
+     */
+
+    int textLength() ;
+
+    NutsTextNode toNode();
+
+    boolean isEmpty();
 }

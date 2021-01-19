@@ -30,7 +30,6 @@ import net.thevpc.nuts.NutsTerminalManager;
 import net.thevpc.nuts.NutsTextNodeCommand;
 import net.thevpc.nuts.NutsTextNodeType;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
 import net.thevpc.nuts.runtime.core.format.text.AnsiEscapeCommand;
 import net.thevpc.nuts.runtime.core.format.text.AnsiEscapeCommands;
 
@@ -41,28 +40,14 @@ public class DefaultNutsTextNodeCommand extends NutsTextNodeSpecialBase implemen
 
     private final String text;
 
-    public DefaultNutsTextNodeCommand(String start, String command, String separator, String end, String text) {
-        super(start, command,
-                (text!=null && text.length()>0 && (separator==null || separator.isEmpty())) ?" ":separator
+    public DefaultNutsTextNodeCommand(NutsWorkspace ws, String start, String command, String separator, String end, String text) {
+        super(ws, start, command,
+                (text != null && text.length() > 0 && (separator == null || separator.isEmpty())) ? " " : separator
                 , end);
         this.text = text;
     }
-    @Override
-    public NutsTextNodeType getType() {
-        return NutsTextNodeType.COMMAND;
-    }
 
-    @Override
-    public String getText() {
-        return text;
-    }
-
-    @Override
-    public String toString() {
-        return (getStart() + getKind() + getSeparator() + getText() + getEnd());
-    }
-
-    public static AnsiEscapeCommand parseAnsiEscapeCommand(String v, NutsWorkspace ws){
+    public static AnsiEscapeCommand parseAnsiEscapeCommand(String v, NutsWorkspace ws) {
         //this might be a command !!
         v = v.trim();
         switch (v) {
@@ -79,5 +64,15 @@ public class DefaultNutsTextNodeCommand extends NutsTextNodeSpecialBase implemen
                 return null;
             }
         }
+    }
+
+    @Override
+    public NutsTextNodeType getType() {
+        return NutsTextNodeType.COMMAND;
+    }
+
+    @Override
+    public String getText() {
+        return text;
     }
 }

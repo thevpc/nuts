@@ -244,7 +244,7 @@ public class WindowsNdi extends BaseSystemNdi {
                 }
                 context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating %s to point to workspace %s%n",
                         formattedUpdatedNames,
-                        ws.formats().text().builder().append(ws.locations().getWorkspaceLocation(),NutsTextNodeStyle.path())
+                        ws.formats().text().factory().styled(ws.locations().getWorkspaceLocation(),NutsTextNodeStyle.path())
 
                 );
             }

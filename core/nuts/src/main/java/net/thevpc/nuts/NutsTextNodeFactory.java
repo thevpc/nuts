@@ -6,9 +6,10 @@ import java.util.Collection;
  * @category Format
  */
 public interface NutsTextNodeFactory {
-    NutsTextNode formatted(NutsFormattable t);
+    NutsTextNode blank();
+    NutsTextNode formatted(Object t);
 
-    NutsTextNode formatted(String t);
+    NutsTextNode formatted(NutsFormattable t);
 
     NutsTextNode plain(String t);
 
@@ -17,6 +18,9 @@ public interface NutsTextNodeFactory {
     NutsTextNode list(Collection<NutsTextNode> nodes);
 
     NutsTextNode styled(String other, NutsTextNodeStyle... decorations);
+
+    NutsTextNode styled(NutsString other, NutsTextNodeStyle... decorations);
+
     NutsTextNode styled(NutsTextNode other, NutsTextNodeStyle... decorations);
 
     NutsTextNode command(String command, String args);

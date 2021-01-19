@@ -309,10 +309,10 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                     context.getSession().out().printf("%s script %-" + namesSize + "s for " +
                                     ws.id().formatter(ndiScriptnfo.getId().getLongNameId()).format()
                                     + " at %s%n", ndiScriptnfo.isOverride() ?
-                                    ws.formats().text().builder().append("re-installing", NutsTextNodeStyle.success()) :
-                                    ws.formats().text().builder().append("installing", NutsTextNodeStyle.success()),
+                                    ws.formats().text().factory().styled("re-installing", NutsTextNodeStyle.success()) :
+                                    ws.formats().text().factory().styled("installing", NutsTextNodeStyle.success()),
                             ndiScriptnfo.getName(),
-                            ws.formats().text().builder().append(NdiUtils.betterPath(ndiScriptnfo.getPath().toString()), NutsTextNodeStyle.path())
+                            ws.formats().text().factory().styled(NdiUtils.betterPath(ndiScriptnfo.getPath().toString()), NutsTextNodeStyle.path())
 
                     );
                 }

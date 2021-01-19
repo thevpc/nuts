@@ -29,6 +29,7 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsTextNodeTitle;
 import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.NutsWorkspace;
 
 /**
  * Created by vpc on 5/23/17.
@@ -39,7 +40,8 @@ public class DefaultNutsTextNodeTitle extends AbstractNutsTextNode implements Nu
     private NutsTextNode child;
     private int level;
 
-    public DefaultNutsTextNodeTitle(String start, int level, NutsTextNode child) {
+    public DefaultNutsTextNodeTitle(NutsWorkspace ws,String start, int level, NutsTextNode child) {
+        super(ws);
         this.start = start;
         this.level = level;
         this.child = child;
@@ -68,8 +70,4 @@ public class DefaultNutsTextNodeTitle extends AbstractNutsTextNode implements Nu
         return child;
     }
 
-    @Override
-    public String toString() {
-        return  "L"+level+":" + child;
-    }
 }

@@ -375,7 +375,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     private String stringValue(Object s) {
-        return getWorkspace().formats().text().escapeText(CoreCommonUtils.stringValue(s));
+        return getWorkspace().formats().text().builder().append(CoreCommonUtils.stringValue(s)).toString();
     }
 
     public boolean isLenient() {

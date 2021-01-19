@@ -13,10 +13,10 @@ class NutsElementTreeModel implements NutsTreeModel {
     private final NutsWorkspace ws;
     private final NutsSession session;
 
-    public NutsElementTreeModel(NutsWorkspace ws, String rootName, NutsElement data, NutsSession session) {
+    public NutsElementTreeModel(NutsWorkspace ws, NutsString rootName, NutsElement data, NutsSession session) {
         this.ws = ws;
         this.session = session;
-        this.root = new XNode(null, data, data.type().isPrimitive() ? null : rootName);
+        this.root = new XNode(null, data, data.type().isPrimitive() ? null : rootName,session.getWorkspace());
     }
 
     @Override
@@ -29,56 +29,60 @@ class NutsElementTreeModel implements NutsTreeModel {
         return ((XNode) o).getChildren();
     }
 
-    protected String[] getMultilineArray(String key, NutsElement value) {
+    protected NutsString[] getMultilineArray(NutsString key, NutsElement value) {
         return null;
     }
 
-    public String stringValue(Object o) {
+    public NutsString stringValue(Object o) {
         return CoreCommonUtils.stringValueFormatted(o, false, session);
     }
 
     class XNode {
 
-        String key;
+        NutsString key;
         NutsElement value;
-        String title;
+        NutsString title;
+        NutsWorkspace ws;
 
-        public XNode(String key, NutsElement value, String title) {
+        public XNode(NutsString key, NutsElement value, NutsString title,NutsWorkspace ws) {
             this.key = key;
             this.value = value;
             this.title = title;
+            this.ws = ws;
         }
 
-        @Override
-        public String toString() {
-            String[] p = getMultilineArray(stringValue(key), value);
+        public NutsString toNutsString() {
+            NutsString[] p = getMultilineArray(stringValue(key), value);
             if (p != null) {
                 return stringValue(key);
             }
-            String _title = resolveTitle();
+            NutsString _title = resolveTitle();
             if (key == null) {
                 return stringValue(_title != null ? _title : value);
             } else {
                 if (value.type() == NutsElementType.ARRAY || value.type() == NutsElementType.OBJECT) {
-                    return ws.formats().text().builder().append(stringValue(key), NutsTextNodeStyle.primary(1)).toString();
+                    return ws.formats().text().builder().append(
+                            stringValue(key)
+                    );
                 } else {
                     return
-                            ws.formats().text().builder().append(stringValue(key), NutsTextNodeStyle.primary(1))
+                            ws.formats().text().builder().append(
+                                    stringValue(key)
+                            )
                                     .append("=")
                                     .append(stringValue(_title != null ? _title : value))
-                                    .toString()
                             ;
                 }
             }
         }
 
-        private String resolveTitle() {
+        private NutsString resolveTitle() {
             if (title != null) {
                 return title;
             }
             switch (this.value.type()) {
                 case ARRAY: {
-                    return "";
+                    return ws.formats().text().factory().blank();
                 }
                 case OBJECT: {
                     NutsElement bestElement = null;
@@ -122,20 +126,20 @@ class NutsElementTreeModel implements NutsTreeModel {
                 case ARRAY: {
                     List<XNode> all = new ArrayList<>();
                     for (NutsElement me : this.value.array().children()) {
-                        all.add(new XNode(null, me, null));
+                        all.add(new XNode(null, me, null,ws));
                     }
                     return all;
                 }
                 case OBJECT: {
                     List<XNode> all = new ArrayList<>();
                     for (NutsNamedElement me : this.value.object().children()) {
-                        String[] map = getMultilineArray(stringValue(me.getName()), me.getValue());
+                        NutsString[] map = getMultilineArray(stringValue(me.getName()), me.getValue());
                         if (map == null) {
-                            all.add(new XNode(stringValue(me.getName()), me.getValue(), null));
+                            all.add(new XNode(stringValue(me.getName()), me.getValue(), null,ws));
                         } else {
                             all.add(new XNode(stringValue(me.getName()),
                                     ws.formats().element().convert(Arrays.asList(map), NutsElement.class),
-                                    null));
+                                    null,ws));
                         }
                     }
                     return all;

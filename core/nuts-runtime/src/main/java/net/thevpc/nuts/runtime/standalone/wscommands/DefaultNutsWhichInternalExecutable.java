@@ -75,8 +75,8 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         out.printf("%s : %s (owner %s ) : %s%n",
                                 factory.styled(arg, NutsTextNodeStyle.primary(4)),
                                 factory.styled("nuts alias", NutsTextNodeStyle.primary(6)),
-                                p.getId() == null ? null : NutsString.of(ws.id().formatter(p.getId()).format()),
-                                NutsString.of(ws.commandLine().create(ws.aliases().find(p.getName(), getSession()).getCommand()).toString())
+                                p.getId(),
+                                ws.commandLine().create(ws.aliases().find(p.getName(), getSession()).getCommand())
                         );
                         break;
                     }
@@ -87,7 +87,8 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         out.printf("%s : %s %s%n",
                                 factory.styled(arg, NutsTextNodeStyle.primary(4)),
                                 factory.styled("nuts component", NutsTextNodeStyle.primary(6)),
-                                NutsString.of(ws.id().formatter(p.getId()).format())/*, p.getDescription()*/);
+                                p.getId()/*, p.getDescription()*/
+                        );
                         break;
                     }
                     case INTERNAL: {

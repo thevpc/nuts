@@ -227,7 +227,7 @@ public class NdedMain  {
         NutsDescriptor desc = b.build();
         NutsTextFormatManager text = context.getWorkspace().formats().text();
         out.printf("writing to : %s%n",
-                text.builder().append(
+                text.factory().styled(
                         getFilePath(new File(home))+("/" + path).replace('/', File.separatorChar)
                         ,NutsTextNodeStyle.path())
                 );
@@ -240,7 +240,7 @@ public class NdedMain  {
             for (NutsIdLocation s : b.getLocations()) {
                 out.printf("             %s %s%n",
                         factory.styled(s.getClassifier(),NutsTextNodeStyle.primary(3)),
-                        text.builder().append(s.getUrl(),NutsTextNodeStyle.path()));
+                        text.factory().styled(s.getUrl(),NutsTextNodeStyle.path()));
             }
         }
         if (!confirm("confirm ?")) {

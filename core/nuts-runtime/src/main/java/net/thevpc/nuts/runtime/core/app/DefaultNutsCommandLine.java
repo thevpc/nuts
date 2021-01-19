@@ -764,7 +764,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     private String highlightText(String text) {
-        return getWorkspace().formats().text().builder().append(text,NutsTextNodeStyle.primary(3)).toString();
+        return getWorkspace().formats().text().factory().styled(text,NutsTextNodeStyle.primary(3)).toString();
     }
 
     private boolean _configureLast(NutsCommandLine commandLine, NutsCommandLineConfigurable configurable) {

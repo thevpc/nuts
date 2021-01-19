@@ -449,7 +449,7 @@ public class LocalTomcat {
         } else {
             if (context.getSession().isPlainOut()) {
                 context.getSession().out().printf("%s Tomcat %s.\n", getBracketsPrefix(name),
-                        context.getWorkspace().formats().text().builder().append("not found",NutsTextNodeStyle.error())
+                        context.getWorkspace().formats().text().factory().styled("not found",NutsTextNodeStyle.error())
                         );
             } else {
                 HashMap<String, String> r = new HashMap<>();
