@@ -33,12 +33,6 @@ import java.util.Map;
  * @category Format
  */
 public interface NutsPropertiesFormat extends NutsObjectFormat {
-    /**
-     * set model to format
-     * @param map model to format
-     * @return {@code this} instance
-     */
-    NutsPropertiesFormat setValue(Map map);
 
     /**
      * return model to format

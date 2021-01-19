@@ -36,6 +36,9 @@ import java.util.Objects;
  * @category Config
  */
 public class NutsAddRepositoryOptions implements Serializable {
+    public static final int ORDER_USER_LOCAL = 1000;
+    public static final int ORDER_SYSTEM_LOCAL = 2000;
+    public static final int ORDER_USER_REMOTE = 10000;
     private static final long serialVersionUID = 1;
 
     /**
@@ -67,7 +70,7 @@ public class NutsAddRepositoryOptions implements Serializable {
     /**
      * create a proxy for the created repository
      */
-    private boolean proxy;
+//    private boolean proxy;
 
     /**
      * temporary repository
@@ -88,6 +91,7 @@ public class NutsAddRepositoryOptions implements Serializable {
      * repository config information
      */
     private NutsRepositoryConfig config;
+    private int order;
 
     /**
      * default constructor
@@ -107,10 +111,20 @@ public class NutsAddRepositoryOptions implements Serializable {
         this.failSafe = other.failSafe;
         this.create = other.create;
         this.config = other.config;
-        this.proxy = other.proxy;
+//        this.proxy = other.proxy;
         this.temporary = other.temporary;
         this.deployOrder = other.deployOrder;
         this.session = other.session;
+        this.order = other.order;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public NutsAddRepositoryOptions setOrder(int order) {
+        this.order = order;
+        return this;
     }
 
     /**
@@ -259,23 +273,23 @@ public class NutsAddRepositoryOptions implements Serializable {
         return this;
     }
 
-    /**
-     * is create a proxy for the created repository
-     * @return is create a proxy for the created repository
-     */
-    public boolean isProxy() {
-        return proxy;
-    }
-
-    /**
-     * create a proxy for the created repository
-     * @param value new value
-     * @return {@code this} instance
-     */
-    public NutsAddRepositoryOptions setProxy(boolean value) {
-        this.proxy = value;
-        return this;
-    }
+//    /**
+//     * is create a proxy for the created repository
+//     * @return is create a proxy for the created repository
+//     */
+//    public boolean isProxy() {
+//        return proxy;
+//    }
+//
+//    /**
+//     * create a proxy for the created repository
+//     * @param value new value
+//     * @return {@code this} instance
+//     */
+//    public NutsAddRepositoryOptions setProxy(boolean value) {
+//        this.proxy = value;
+//        return this;
+//    }
 
     /**
      * repository deploy order
@@ -311,7 +325,7 @@ public class NutsAddRepositoryOptions implements Serializable {
         return enabled == that.enabled &&
                 failSafe == that.failSafe &&
                 create == that.create &&
-                proxy == that.proxy &&
+//                proxy == that.proxy &&
                 temporary == that.temporary &&
                 deployOrder == that.deployOrder &&
                 Objects.equals(name, that.name) &&
@@ -322,7 +336,9 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, location, enabled, failSafe, create, proxy, temporary, deployOrder, session, config);
+        return Objects.hash(name, location, enabled, failSafe, create
+//                , proxy
+                , temporary, deployOrder, session, config);
     }
 
     @Override
@@ -333,7 +349,7 @@ public class NutsAddRepositoryOptions implements Serializable {
                 ", enabled=" + enabled +
                 ", failSafe=" + failSafe +
                 ", create=" + create +
-                ", proxy=" + proxy +
+//                ", proxy=" + proxy +
                 ", temporary=" + temporary +
                 ", deployOrder=" + deployOrder +
                 ", session=" + session +

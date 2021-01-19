@@ -11,10 +11,16 @@ Starred releases are most stable ones.
 ### nuts 0.8.1.0
 - ```2020/11/22 	nuts 0.8.1.0 (*)``` released [download nuts-0.8.1.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar)
 - WARNING: API has evolved with some incompatibilities with previous versions  
-- FIXED  : [api] extension support (for JLine)
-- ADDED  : [api] added --locale option to support multi languages. The option is reflected to Session as well 
-- ADDED  : [api] added ---<key>=<value> options to support extra properties 
-- ADDED  : [api] added NutsFormattedMessage to support formatted messages in a uniform manner (C-style, {} positional) 
+- ADDED  : [api][cmdline] added --locale option to support multi languages. The option is reflected to Session as well 
+- ADDED  : [api][cmdline] added ---<key>=<value> options to support extra properties 
+- ADDED  : [api][cmdline] added -S short option, equivalent to --standalone 
+- ADDED  : [api][cmdline] added NutsFormattedMessage to support formatted messages in a uniform manner (C-style, {} positional) 
+- CHANGED: [api][cmdline] both list and tree dependencies are now accessible as NutsDependencies  
+- ADDED  : [runtime] added support to community maven repositories : jcenter, jboss, spring, clojars, atlassian, atlassian-snapshot, google, oracle
+  to use the repository you can add it as a permanent repository or temporary. here are some examples:
+  - nuts nadmin add repository jcenter // add permanently the repository
+  - nuts -r jcenter my-command // use temporarily the repository top run my-command 
+- FIXED  : [runtime] extension support (for JLine)
 - CHANGED: [runtime] revamped Nuts Text Format to support with simplified syntax but more verbose styles.
   Now supports #), ##), ###) and so on as Title Node.
   It supports as well the common markdown 'code' format with anti-quotes such as

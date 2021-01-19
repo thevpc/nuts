@@ -45,8 +45,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
 
     private NutsContent content;
     private NutsInstallInformation installInformation;
-    private NutsDependencyTreeNode[] dependencyNodes;
-    private NutsDependency[] dependencies;
+    private NutsDependencies dependencies;
     private NutsDescriptor effectiveDescriptor;
     private NutsIdType type;
     private NutsId apiId = null;
@@ -78,7 +77,6 @@ public class DefaultNutsDefinition implements NutsDefinition {
             this.content = other.getContent();
             this.installInformation = other.getInstallInformation();
             this.effectiveDescriptor = !other.isSetEffectiveDescriptor() ? null : other.getEffectiveDescriptor();
-            this.dependencyNodes = !other.isSetDependencyNodes() ? null : other.getDependencyNodes();
             this.dependencies = !other.isSetDependencies() ? null : other.getDependencies();
             this.type=other.getType()==null?NutsIdType.REGULAR : other.getType();
             this.apiId=other.getApiId();
@@ -89,11 +87,6 @@ public class DefaultNutsDefinition implements NutsDefinition {
     @Override
     public NutsIdType getType() {
         return type;
-    }
-
-    @Override
-    public boolean isSetDependencyNodes() {
-        return dependencyNodes != null;
     }
 
     @Override
@@ -190,17 +183,9 @@ public class DefaultNutsDefinition implements NutsDefinition {
     }
 
     @Override
-    public NutsDependencyTreeNode[] getDependencyNodes() {
-        if (!isSetDependencyNodes()) {
-            throw new NutsElementNotFoundException(ws, "Unable to get dependencyNodes. You need to call search.setDependencyNodes(...) first.");
-        }
-        return dependencyNodes;
-    }
-
-    @Override
-    public NutsDependency[] getDependencies() {
+    public NutsDependencies getDependencies() {
         if (!isSetDependencies()) {
-            throw new NutsElementNotFoundException(ws, "Unable to get dependencies. You need to call search.dependencies(...) first.");
+            throw new NutsElementNotFoundException(ws, "unable to get dependencies. You need to call search.setDependencies(...) first.");
         }
         return this.dependencies;
     }
@@ -272,12 +257,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
         return this;
     }
 
-    public DefaultNutsDefinition setDependencyNodes(NutsDependencyTreeNode[] dependencyTreeNode) {
-        this.dependencyNodes = dependencyTreeNode;
-        return this;
-    }
-
-    public DefaultNutsDefinition setDependencies(NutsDependency[] dependencies) {
+    public DefaultNutsDefinition setDependencies(NutsDependencies dependencies) {
         this.dependencies = dependencies;
         return this;
     }

@@ -42,12 +42,12 @@ import java.util.logging.Level;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.FilesFoldersApi;
+import net.thevpc.nuts.runtime.standalone.repos.FilesFoldersApi;
 import net.thevpc.nuts.runtime.standalone.util.RemoteRepoApi;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.MavenMetadata;
-import net.thevpc.nuts.runtime.standalone.main.repos.NutsCachedRepository;
+import net.thevpc.nuts.runtime.bundles.mvn.MavenMetadata;
+import net.thevpc.nuts.runtime.standalone.repos.NutsCachedRepository;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 /**
@@ -500,6 +500,11 @@ public class MavenRemoteRepository extends NutsCachedRepository {
     @Override
     protected String getIdExtension(NutsId id) {
         return helper.getIdExtension(id);
+    }
+
+    @Override
+    public boolean isAcceptFetchMode(NutsFetchMode mode) {
+        return true;
     }
 
 }

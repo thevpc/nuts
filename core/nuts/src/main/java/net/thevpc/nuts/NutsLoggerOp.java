@@ -54,7 +54,7 @@ public interface NutsLoggerOp {
      * @param verb verb or category
      * @return {@code this} instance
      */
-    NutsLoggerOp verb(String verb);
+    NutsLoggerOp verb(NutsLogVerb verb);
 
     /**
      * set log error

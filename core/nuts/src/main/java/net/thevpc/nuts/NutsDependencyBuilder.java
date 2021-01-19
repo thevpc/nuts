@@ -92,6 +92,14 @@ public interface NutsDependencyBuilder {
      * @param scope new value
      * @return {@code this} instance
      */
+    NutsDependencyBuilder setScope(NutsDependencyScope scope);
+
+    /**
+     * set scope value
+     *
+     * @param scope new value
+     * @return {@code this} instance
+     */
     NutsDependencyBuilder setScope(String scope);
 
     /**

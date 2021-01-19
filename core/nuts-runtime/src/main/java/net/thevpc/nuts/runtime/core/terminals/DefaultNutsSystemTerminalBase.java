@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.core.terminals;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.main.DefaultNutsWorkspace;
+import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.core.format.text.FPrint;

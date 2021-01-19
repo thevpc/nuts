@@ -38,13 +38,13 @@ public interface NutsProgressMonitor {
      * called when the action starts
      * @param event event
      */
-    void onStart(NutsProgressEvent event);
+    default void onStart(NutsProgressEvent event){}
 
     /**
      * called when the action terminates
      * @param event event
      */
-    void onComplete(NutsProgressEvent event);
+    default void onComplete(NutsProgressEvent event){}
 
     /**
      * called when the action does a step forward and return
@@ -54,6 +54,6 @@ public interface NutsProgressMonitor {
      * @return true if the progress was handled. In that case, a
      * mark point is registered to compute partial time and speed.
      */
-    boolean onProgress(NutsProgressEvent event);
+    default boolean onProgress(NutsProgressEvent event){return true;}
 
 }

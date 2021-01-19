@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Objects;
 
 import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.runtime.standalone.main.config.NutsWorkspaceConfigBoot;
+import net.thevpc.nuts.runtime.standalone.config.NutsWorkspaceConfigBoot;
 
 /**
  *

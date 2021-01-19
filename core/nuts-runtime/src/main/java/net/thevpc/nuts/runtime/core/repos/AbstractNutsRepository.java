@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.core.repos;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.common.DefaultObservableMap;
 import net.thevpc.nuts.runtime.core.common.ObservableMap;
-import net.thevpc.nuts.runtime.standalone.main.repos.DefaultNutsRepositoryEnvManager;
+import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepositoryEnvManager;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 

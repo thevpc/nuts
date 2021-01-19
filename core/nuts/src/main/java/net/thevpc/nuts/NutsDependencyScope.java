@@ -59,7 +59,11 @@ public enum NutsDependencyScope {
     /**
      * equivalent to maven's test
      */
-    TEST_COMPILE,
+    TEST_API,
+    /**
+     * equivalent to maven's test
+     */
+    TEST_IMPLEMENTATION,
     /**
      * dependencies needed for test but are provided by container.
      */
@@ -69,20 +73,75 @@ public enum NutsDependencyScope {
      */
     TEST_RUNTIME,
     /**
+     * dependencies needed for test execution
+     */
+    TEST_SYSTEM,
+    /**
      * other
      */
-    OTHER;
+    OTHER,
+    /**
+     * dependencies needed for test execution
+     */
+    TEST_OTHER;
 
     /**
      * lower-cased identifier for the enum entry
      */
     private String id;
+    private boolean api;
+    private boolean implementation;
+    private boolean test;
+    private boolean system;
+    private boolean runtime;
+    private boolean provided;
+    private boolean other;
+
 
     /**
      * default constructor
      */
     NutsDependencyScope() {
         this.id = name().toLowerCase().replace('_', '-');
+        api=id.equals("api")||id.equals("test");
+        implementation =id.equals("implementation")||id.endsWith("-implementation");
+        provided=id.equals("provided")||id.endsWith("-provided");
+        runtime=id.equals("provided")||id.endsWith("-runtime");
+        system=id.equals("system")||id.endsWith("-system");
+        test=id.startsWith("test-");
+        other=id.equals("other")||id.startsWith("other-");
+    }
+
+    public boolean isCompile() {
+        return !test;
+    }
+
+    public boolean isApi() {
+        return api;
+    }
+
+    public boolean isImplementation() {
+        return implementation;
+    }
+
+    public boolean isTest() {
+        return test;
+    }
+
+    public boolean isSystem() {
+        return system;
+    }
+
+    public boolean isRuntime() {
+        return runtime;
+    }
+
+    public boolean isProvided() {
+        return provided;
+    }
+
+    public boolean isOther() {
+        return other;
     }
 
     /**

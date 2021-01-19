@@ -11,8 +11,8 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
-import net.thevpc.nuts.runtime.standalone.util.io.UnzipOptions;
-import net.thevpc.nuts.runtime.standalone.util.io.ZipUtils;
+import net.thevpc.nuts.runtime.bundles.io.UnzipOptions;
+import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

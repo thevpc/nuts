@@ -28,25 +28,21 @@ package net.thevpc.nuts.runtime.standalone.wscommands;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.commands.ws.AbstractNutsResultList;
 import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsQueryBaseOptions;
-import net.thevpc.nuts.runtime.core.filters.installstatus.NutsInstallStatusFilterParser;
-import net.thevpc.nuts.runtime.core.filters.installstatus.NutsInstallStatusFilter2;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
 import net.thevpc.nuts.runtime.core.format.NutsDisplayProperty;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.format.NutsIdFormatHelper;
-import net.thevpc.nuts.runtime.standalone.main.wscommands.DefaultNutsFetchCommand;
 import net.thevpc.nuts.runtime.standalone.util.NutsCollectionResult;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.util.iter.NamedIterator;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.bundles.iter.NamedIterator;
 
 import java.io.File;
 import java.net.URL;
 import java.time.Instant;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -912,7 +908,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 ", content=" + isContent() +
                 ", inlineDependencies=" + isInlineDependencies() +
                 ", dependencies=" + isDependencies() +
-                ", dependenciesTree=" + isDependenciesTree() +
                 ", effective=" + isEffective() +
                 ", location=" + getLocation() +
                 ", repos=" + Arrays.toString(getRepositories()) +

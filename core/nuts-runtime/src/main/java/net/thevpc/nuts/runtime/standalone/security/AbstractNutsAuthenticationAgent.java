@@ -6,7 +6,7 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import java.util.Arrays;
 import java.util.Map;
 
-import net.thevpc.nuts.runtime.standalone.util.io.CoreSecurityUtils;
+import net.thevpc.nuts.runtime.bundles.io.CoreSecurityUtils;
 
 public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsSessionAware {
 

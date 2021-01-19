@@ -2,9 +2,7 @@ package net.thevpc.nuts.runtime.core.config;
 
 import net.thevpc.nuts.*;
 
-import java.nio.file.Path;
-
-import net.thevpc.nuts.runtime.standalone.main.config.*;
+import net.thevpc.nuts.runtime.standalone.config.*;
 
 public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManager {
 
@@ -80,6 +78,7 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
     NutsWorkspace getWorkspace();
 
     String getRepositoriesRoot();
+    String getTempRepositoriesRoot();
 
     boolean isValidWorkspaceFolder();
 

@@ -2,11 +2,10 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.StringBuilder2;
+import net.thevpc.nuts.runtime.bundles.datastr.StringBuilder2;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Paths;
 
 public class DefaultTempAction implements NutsTempAction {
@@ -60,6 +59,9 @@ public class DefaultTempAction implements NutsTempAction {
             rootFolder = Paths.get(repositoryById.config().getStoreLocation(NutsStoreLocation.TEMP)).toFile();
         }
         NutsId appId = session.getAppId();
+        if(appId==null){
+            appId=session.getWorkspace().getRuntimeId();
+        }
         if(appId!=null){
             rootFolder=new File(
                     rootFolder,

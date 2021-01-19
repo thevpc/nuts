@@ -5,7 +5,7 @@ manage tasks
 ####) SYNOPSIS:
 
 ```sh
-njob ( add | remove | update | show | list ) task  <options>...
+njob ( add | remove | update | show | list ) task  <-options>...
 ```
 
 ####) add task:

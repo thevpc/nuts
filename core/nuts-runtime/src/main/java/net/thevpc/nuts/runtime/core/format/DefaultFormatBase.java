@@ -13,7 +13,7 @@ import net.thevpc.nuts.NutsFormat;
 import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsTerminal;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.util.io.ByteArrayPrintStream;
+import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 /**

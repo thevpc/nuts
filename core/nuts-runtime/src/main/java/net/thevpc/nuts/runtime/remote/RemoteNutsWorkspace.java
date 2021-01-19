@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.remote;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.ntalk.NTalkClient;
 import net.thevpc.nuts.runtime.core.AbstractNutsWorkspace;
+import net.thevpc.nuts.runtime.bundles.ntalk.NTalkClient;
 
 import java.util.Set;
 

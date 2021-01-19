@@ -68,7 +68,7 @@ public class NutsDescriptorFilterOs extends AbstractNutsFilter implements NutsDe
 
     @Override
     public String toJsNutsDescriptorFilterExpr() {
-        return "descriptor.matchesOs('" + CoreStringUtils.escapeCoteStrings(os) + "')";
+        return "descriptor.matchesOs('" + CoreStringUtils.escapeQuoteStrings(os) + "')";
     }
 
     @Override

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.core.parser;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -30,7 +31,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     @Override
     public NutsDescriptor parse(URL url) {
         try {
-            try (InputStream is = url.openStream()) {
+            try (InputStream is = NutsWorkspaceUtils.of(ws).openURL(url)) {
                 return parse(is, true);
             } catch (NutsException ex) {
                 throw ex;

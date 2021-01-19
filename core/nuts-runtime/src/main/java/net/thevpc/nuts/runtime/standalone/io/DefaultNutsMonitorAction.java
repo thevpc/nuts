@@ -9,8 +9,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.DefaultNutsProgressEvent;
-import net.thevpc.nuts.runtime.standalone.util.io.InputStreamMetadataAware;
+import net.thevpc.nuts.runtime.bundles.io.DefaultNutsProgressEvent;
+import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAware;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.core.format.text.bloc;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 import net.thevpc.nuts.runtime.core.format.text.parser.BlocTextFormatter;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodePlain;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeStyled;
-import net.thevpc.nuts.runtime.standalone.util.common.StringReaderExt;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,7 +20,6 @@ public class ShellBlocTextFormatter implements BlocTextFormatter {
     public ShellBlocTextFormatter(NutsWorkspace ws) {
         this.ws = ws;
     }
-
 
 
     private static NutsTextNode[] parseCommandLine_readSimpleQuotes(NutsWorkspace ws, StringReaderExt ar) {
@@ -281,16 +280,18 @@ public class ShellBlocTextFormatter implements BlocTextFormatter {
         NutsTextNodeFactory factory = ws.formats().text().factory();
         all.add(factory.styled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
         boolean inLoop = true;
+        boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
             char c = ar.peekChar();
             switch (c) {
                 case '`': {
+                    wasSpace = false;
                     all.add(factory.styled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
                     inLoop = false;
                     break;
                 }
                 default: {
-                    parseCommandLineStep(ws, ar, all, 1);
+                    wasSpace = parseCommandLineStep(ws, ar, all, 1, wasSpace);
                 }
             }
         }
@@ -302,6 +303,7 @@ public class ShellBlocTextFormatter implements BlocTextFormatter {
         NutsTextNodeFactory factory = ws.formats().text().factory();
         all.add(factory.styled(String.valueOf(ar.nextChar()) + ar.nextChar(), NutsTextNodeStyle.separator()));
         boolean inLoop = true;
+        boolean wasSpace = false;
         while (inLoop && ar.hasNext()) {
             char c = ar.peekChar();
             switch (c) {
@@ -311,7 +313,7 @@ public class ShellBlocTextFormatter implements BlocTextFormatter {
                     break;
                 }
                 default: {
-                    parseCommandLineStep(ws, ar, all, 2);
+                    wasSpace = parseCommandLineStep(ws, ar, all, 2, wasSpace);
                 }
             }
         }
@@ -323,6 +325,7 @@ public class ShellBlocTextFormatter implements BlocTextFormatter {
         NutsTextNodeFactory factory = ws.formats().text().factory();
         all.add(factory.styled(String.valueOf(ar.nextChar()) + ar.nextChar() + ar.nextChar(), NutsTextNodeStyle.separator()));
         boolean inLoop = true;
+        boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
             char c = ar.peekChar();
             switch (c) {
@@ -331,19 +334,22 @@ public class ShellBlocTextFormatter implements BlocTextFormatter {
                 case '*':
                 case '/':
                 case '%': {
+                    wasSpace = false;
                     all.add(factory.styled(String.valueOf(ar.nextChars(2)), NutsTextNodeStyle.operator()));
+                    break;
                 }
                 case ')': {
                     if (ar.peekChars(2).equals("))")) {
+                        wasSpace = false;
                         all.add(factory.styled(String.valueOf(ar.nextChars(2)), NutsTextNodeStyle.separator()));
                         inLoop = false;
                     } else {
-                        parseCommandLineStep(ws, ar, all, 2);
+                        wasSpace = parseCommandLineStep(ws, ar, all, 2, wasSpace);
                     }
                     break;
                 }
                 default: {
-                    parseCommandLineStep(ws, ar, all, 2);
+                    wasSpace = parseCommandLineStep(ws, ar, all, 2, wasSpace);
                 }
             }
         }
@@ -357,6 +363,7 @@ public class ShellBlocTextFormatter implements BlocTextFormatter {
         boolean inLoop = true;
         int startIndex = 0;
         boolean expectedName = true;
+        boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
             char c = ar.peekChar();
             switch (c) {
@@ -367,12 +374,13 @@ public class ShellBlocTextFormatter implements BlocTextFormatter {
                 }
                 default: {
                     startIndex = all.size();
-                    parseCommandLineStep(ws, ar, all, -1);
+                    wasSpace = parseCommandLineStep(ws, ar, all, -1, wasSpace);
                     if (expectedName) {
                         expectedName = false;
                         if (all.size() > startIndex) {
                             if (isWord(all.get(startIndex))) {
                                 all.set(startIndex, factory.styled(all.get(startIndex), NutsTextNodeStyle.keyword(4)));
+                                wasSpace = false;
                             }
                         }
                     }
@@ -387,6 +395,7 @@ public class ShellBlocTextFormatter implements BlocTextFormatter {
         NutsTextNodeFactory factory = ws.formats().text().factory();
         all.add(factory.styled(String.valueOf(ar.nextChar()) + ar.nextChar(), NutsTextNodeStyle.separator()));
         boolean inLoop = true;
+        boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
             char c = ar.peekChar();
             switch (c) {
@@ -395,21 +404,35 @@ public class ShellBlocTextFormatter implements BlocTextFormatter {
                         all.add(factory.styled(String.valueOf(ar.nextChars(2)), NutsTextNodeStyle.separator()));
                         inLoop = false;
                     } else {
-                        parseCommandLineStep(ws, ar, all, 2);
+                        wasSpace = parseCommandLineStep(ws, ar, all, 2, wasSpace);
                     }
                     break;
                 }
                 default: {
-                    parseCommandLineStep(ws, ar, all, 2);
+                    wasSpace = parseCommandLineStep(ws, ar, all, 2, wasSpace);
                 }
             }
         }
         return all.toArray(new NutsTextNode[0]);
     }
 
-    private static void parseCommandLineStep(NutsWorkspace ws, StringReaderExt ar, List<NutsTextNode> all, int startIndex) {
+    /**
+     * return is space
+     *
+     * @param ws         ws
+     * @param ar         ar
+     * @param all        all
+     * @param startIndex startIndex
+     * @param wasSpace   wasSpace
+     * @return is space
+     */
+    private static boolean parseCommandLineStep(NutsWorkspace ws, StringReaderExt ar, List<NutsTextNode> all, int startIndex, boolean wasSpace) {
         char c = ar.peekChar();
         NutsTextNodeFactory factory = ws.formats().text().factory();
+        if (c <= 32) {
+            all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(ws, ar)));
+            return true;
+        }
         switch (c) {
             case '\'': {
                 all.addAll(Arrays.asList(parseCommandLine_readSimpleQuotes(ws, ar)));
@@ -532,45 +555,48 @@ public class ShellBlocTextFormatter implements BlocTextFormatter {
                 break;
             }
             case '#': {
-                StringBuilder sb = new StringBuilder();
-                while (ar.hasNext()) {
-                    c = ar.peekChar();
-                    if (c == '\n') {
-                        break;
-                    } else if (c == '\r') {
-                        break;
-                    } else {
-                        sb.append(ar.nextChar());
+                if (wasSpace) {
+                    StringBuilder sb = new StringBuilder();
+                    while (ar.hasNext()) {
+                        c = ar.peekChar();
+                        if (c == '\n') {
+                            break;
+                        } else if (c == '\r') {
+                            break;
+                        } else {
+                            sb.append(ar.nextChar());
+                        }
                     }
+                    all.add(factory.styled(sb.toString(), NutsTextNodeStyle.comments()));
+                } else {
+                    all.add(factory.styled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
                 }
-                all.add(factory.styled(sb.toString(), NutsTextNodeStyle.comments()));
+                break;
             }
             default: {
-                if (c <= 32) {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(ws, ar)));
-                } else {
-                    if (startIndex >= 0) {
-                        boolean first = all.size() == startIndex;
-                        all.addAll(Arrays.asList(parseCommandLine_readWord(ws, ar)));
-                        if (first) {
-                            int i = indexOfFirstWord(all, startIndex);
-                            if (i >= 0) {
-                                all.set(i, factory.styled(all.get(i), NutsTextNodeStyle.keyword()));
-                            }
+                if (startIndex >= 0) {
+                    boolean first = all.size() == startIndex;
+                    all.addAll(Arrays.asList(parseCommandLine_readWord(ws, ar)));
+                    if (first) {
+                        int i = indexOfFirstWord(all, startIndex);
+                        if (i >= 0) {
+                            all.set(i, factory.styled(all.get(i), NutsTextNodeStyle.keyword()));
                         }
-                    } else {
-                        all.addAll(Arrays.asList(parseCommandLine_readWord(ws, ar)));
                     }
+                } else {
+                    all.addAll(Arrays.asList(parseCommandLine_readWord(ws, ar)));
                 }
             }
         }
+        return false;
     }
 
     private static NutsTextNode[] parseCommandLine(NutsWorkspace ws, String commandLineString) {
         StringReaderExt ar = new StringReaderExt(commandLineString);
         List<NutsTextNode> all = new ArrayList<>();
+        boolean wasSpace = true;
         while (ar.hasNext()) {
-            parseCommandLineStep(ws, ar, all, 0);
+            wasSpace = parseCommandLineStep(ws, ar, all, 0, wasSpace);
         }
         return all.toArray(new NutsTextNode[0]);
     }

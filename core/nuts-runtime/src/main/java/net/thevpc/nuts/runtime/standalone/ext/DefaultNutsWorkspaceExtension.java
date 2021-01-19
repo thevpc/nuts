@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.ext;
 
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsWorkspaceExtension;
-import net.thevpc.nuts.runtime.standalone.util.common.ListMap;
+import net.thevpc.nuts.runtime.bundles.datastr.ListMap;
 
 /**
  * Created by vpc on 1/15/17.

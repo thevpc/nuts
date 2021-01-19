@@ -58,7 +58,7 @@ public class NutsIdFilterVarBuilder {
         NutsIdFilter k = vars.get(n);
         if (k == null) {
             if (!CURR.equals(n)) {
-                throw new IllegalArgumentException("Not found " + n);
+                throw new IllegalArgumentException("not found " + n);
             }
         }
         return k;

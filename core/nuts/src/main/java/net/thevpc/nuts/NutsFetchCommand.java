@@ -247,8 +247,7 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand setAnyWhere();
 
     /**
-     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)
-     * } and {@link #setDependenciesTree(boolean)}
+     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -256,8 +255,7 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand addScope(NutsDependencyScopePattern scope);
 
     /**
-     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)
-     * } and {@link #setDependenciesTree(boolean)}
+     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -265,8 +263,7 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand addScope(NutsDependencyScope scope);
 
     /**
-     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)
-     * } and {@link #setDependenciesTree(boolean)}
+     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -275,7 +272,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
 
     /**
      * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
-     * and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -335,13 +331,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsFetchCommand setDependencies(boolean enable);
-
-    /**
-     * enable/disable dependencies tree retrieval
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setDependenciesTree(boolean enable);
 
     /**
      * enable/disable effective descriptor evaluation
@@ -413,11 +402,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      */
     boolean isDependencies();
 
-    /**
-     * if true dependencies tree is retrieved
-     * @return dependencies tree retrieval status
-     */
-    boolean isDependenciesTree();
 
     /**
      * transitive filter

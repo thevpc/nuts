@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsTextNodeStyle;
 import net.thevpc.nuts.NutsTextNodeStyleType;
-import net.thevpc.nuts.runtime.standalone.util.common.StringReaderExt;
+import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 
 import java.util.ArrayList;
 import java.util.List;

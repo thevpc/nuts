@@ -26,9 +26,9 @@
 package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
 import net.thevpc.nuts.runtime.core.filters.DefaultNutsTokenFilter;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.QueryStringMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public class DefaultNutsId implements NutsId {
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
         this.version = version == null ? ws.version().parser().parse("") : version;
-        this.properties = QueryStringMap.formatSortedPropertiesQuery(properties);
+        this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
     }
 
     protected DefaultNutsId(String namespace, String groupId, String artifactId, NutsVersion version, String properties,NutsWorkspace ws) {
@@ -65,7 +65,7 @@ public class DefaultNutsId implements NutsId {
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
         this.version = version == null ? ws.version().parser().parse("") : version;
-        this.properties = QueryStringMap.formatSortedPropertiesQuery(properties);
+        this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
     }
 
     public DefaultNutsId(String groupId, String artifactId, String version,NutsWorkspace ws) {
@@ -78,7 +78,7 @@ public class DefaultNutsId implements NutsId {
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
         this.version = ws.version().parser().parse(version);
-        this.properties = QueryStringMap.formatSortedPropertiesQuery(properties);
+        this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
     }
 
     @Override
@@ -250,7 +250,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public Map<String, String> getProperties() {
-        return QueryStringMap.parseMap(properties);
+        return QueryStringParser.parseMap(properties);
     }
 
     @Override

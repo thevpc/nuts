@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.core.format.text.bloc;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.text.parser.BlocTextFormatter;
-import net.thevpc.nuts.runtime.standalone.util.common.StringReaderExt;
+import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 
 import java.util.ArrayList;
 import java.util.Arrays;

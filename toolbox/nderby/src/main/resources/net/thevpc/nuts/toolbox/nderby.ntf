@@ -52,9 +52,9 @@ manage local derby database server configurations
             : send trace command to derby server. This changes where new trace files will be placed. For sessions with
               tracing already turned on, trace files remain in the previous location. Default is clousdcape.system.home
               Also accepts commands {{trace-directory
-```sh nderby status [-h <host>] [-p <portnumber>] ```
+```sh nderby status [-h <host>] [-p <port-number>] ```
             : status of derby
-```sh nderby ps [-h <host>] [-p <portnumber>] <--options>  ```
+```sh nderby ps [-h <host>] [-p <port-number>] <-options>  ```
             : list derby processes on the current machine
         ```sh --long ```
                  : display in long format

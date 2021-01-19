@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.core.app;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.NutsHomeLocationsMap;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.main.config.DefaultNutsWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.NutsStoreLocationsMap;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
@@ -199,6 +199,7 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
             case "ejb":
             case "java-source":
             case "javadoc":
+            case "eclipse-plugin":
                 return ".jar";
             case "dll":
             case "so":

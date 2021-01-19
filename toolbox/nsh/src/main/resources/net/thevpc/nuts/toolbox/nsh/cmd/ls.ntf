@@ -1,7 +1,7 @@
 list directory (or file)
 
 ##) SYNOPSIS:
-==ls== \[**<options>**\] <directory>
+==ls== \[<-options>\] <directory>
 
 -l : long format
 -d : list directory names

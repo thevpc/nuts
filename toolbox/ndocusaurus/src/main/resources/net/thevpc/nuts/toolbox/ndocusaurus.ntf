@@ -3,7 +3,7 @@ a docusaurus project toolbox
 
 ##) SYNOPSIS:
 
-```sh ndocusaurus <--options> <command>```
+```sh ndocusaurus <-options> <command>```
     run ndocusaurus command
     only docusaurus v2 is supported. "docusaurus.config.js" needs to include 'customFields'
     as show in the following example.

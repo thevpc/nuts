@@ -42,11 +42,6 @@ public class NTalkAgent implements Closeable{
         this.backlog = backlog <= 0 ? 50 : backlog;
     }
 
-    public static void main(String[] args) {
-        NTalkAgent agent = new NTalkAgent();
-        agent.runSync();
-    }
-
     public ExecutorService getThreadPool() {
         return threadPool;
     }

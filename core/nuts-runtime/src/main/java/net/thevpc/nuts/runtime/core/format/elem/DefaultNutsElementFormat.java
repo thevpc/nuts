@@ -28,6 +28,7 @@ import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -125,10 +126,12 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
             case JSON:
             case XML:{
                 try {
-                    try (InputStream is = url.openStream()) {
-                        return parseXml(new InputStreamReader(is), clazz);
+                    try (InputStream is = NutsWorkspaceUtils.of(getWorkspace()).openURL(url)) {
+                        return parse(new InputStreamReader(is), clazz);
                     } catch (NutsException ex) {
                         throw ex;
+                    } catch (UncheckedIOException ex) {
+                        throw new NutsIOException(getWorkspace(),ex);
                     } catch (RuntimeException ex) {
                         throw new NutsParseException(getWorkspace(), "unable to parse url " + url, ex);
                     }
@@ -145,7 +148,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         switch (contentType){
             case JSON:
             case XML:{
-                return parseXml(new InputStreamReader(inputStream), clazz);
+                return parse(new InputStreamReader(inputStream), clazz);
             }
         }
         throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
@@ -177,10 +180,18 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     public <T> T parse(Reader reader, Class<T> clazz) {
         switch (contentType){
             case JSON:{
-                return parseJson(reader,clazz);
+                return getGson(true).fromJson(reader, clazz);
             }
             case XML:{
-                return parseXml(reader, clazz);
+                Document doc = null;
+                try {
+                    doc = NutsXmlUtils.createDocumentBuilder(false,getValidSession()).parse(new InputSource(reader));
+                } catch (SAXException | ParserConfigurationException ex) {
+                    throw new NutsIOException(getWorkspace(),new IOException(ex));
+                } catch (IOException ex) {
+                    throw new NutsIOException(getWorkspace(),ex);
+                }
+                return convert(doc == null ? null : doc.getDocumentElement(), clazz);
             }
         }
         throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
@@ -580,21 +591,17 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     }
 
 
-    public <T> T parseXml(Reader reader, Class<T> clazz) {
-        Document doc = null;
-        try {
-            doc = NutsXmlUtils.createDocumentBuilder(false,getValidSession()).parse(new InputSource(reader));
-        } catch (SAXException | ParserConfigurationException ex) {
-            throw new NutsIOException(getWorkspace(),new IOException(ex));
-        } catch (IOException ex) {
-            throw new NutsIOException(getWorkspace(),ex);
-        }
-        return convert(doc == null ? null : doc.getDocumentElement(), clazz);
-    }
-
-    public <T> T parseJson(Reader reader, Class<T> clazz) {
-        return getGson(true).fromJson(reader, clazz);
-    }
+//    public <T> T parseXml(Reader reader, Class<T> clazz) {
+//        Document doc = null;
+//        try {
+//            doc = NutsXmlUtils.createDocumentBuilder(false,getValidSession()).parse(new InputSource(reader));
+//        } catch (SAXException | ParserConfigurationException ex) {
+//            throw new NutsIOException(getWorkspace(),new IOException(ex));
+//        } catch (IOException ex) {
+//            throw new NutsIOException(getWorkspace(),ex);
+//        }
+//        return convert(doc == null ? null : doc.getDocumentElement(), clazz);
+//    }
 
     @Override
     public <T> T convert(Object any, Class<T> to) {

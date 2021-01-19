@@ -60,6 +60,10 @@ public class NutsDependencyScopes {
         if (s1.isEmpty()) {
             s1 = NutsDependencyScope.API.id();
         }
+        switch (s1){
+            case "test":return NutsDependencyScope.TEST_API.id();
+            case "compile":return NutsDependencyScope.API.id();
+        }
         return s1;
     }
 
@@ -89,34 +93,57 @@ public class NutsDependencyScopes {
         if(scope==null){
             return true;
         }
-        scope=normalizeScope(scope);
-        switch (scope){
-            case "compile":
-            case "api":
-            case "implementation":
-                return true;
-        }
-        return false;
+        NutsDependencyScope r = parseScope(scope, true);
+        return r!=null && r.isCompile();
     }
 
     public static int getScopesPriority(String s1) {
-        switch (normalizeScope(s1)) {
-            case "implementation":
-                return 6;
-            case "api":
-            case "compile":
-                return 5;
-            case "runtime":
-                return 4;
-            case "provided":
-                return 3;
-            case "system":
-                return 2;
-            case "test":
-                return 1;
-            default:
-                return -1;
+        NutsDependencyScope r = parseScope(s1, true);
+        if(r==null){
+            return -1;
         }
+        switch (r){
+            case IMPLEMENTATION:{
+                return 26;
+            }
+            case API:{
+                return 25;
+            }
+            case RUNTIME:{
+                return 24;
+            }
+            case PROVIDED:{
+                return 23;
+            }
+            case SYSTEM:{
+                return 22;
+            }
+            case OTHER:{
+                return 21;
+            }
+            case TEST_IMPLEMENTATION:{
+                return 16;
+            }
+            case TEST_API:{
+                return 15;
+            }
+            case TEST_RUNTIME:{
+                return 14;
+            }
+            case TEST_PROVIDED:{
+                return 13;
+            }
+            case TEST_SYSTEM:{
+                return 12;
+            }
+            case TEST_OTHER:{
+                return 11;
+            }
+            case IMPORT: {
+                return 1;
+            }
+        }
+        return -1;
     }
 
 //    public static EnumSet<NutsDependencyScope> add(Collection<NutsDependencyScope> a, Collection<NutsDependencyScopePattern> b) {
@@ -195,7 +222,7 @@ public class NutsDependencyScopes {
             }
             case RUN_TEST: {
                 v.addAll(expand(NutsDependencyScopePattern.RUN));
-                v.add(NutsDependencyScope.TEST_COMPILE);
+                v.add(NutsDependencyScope.TEST_API);
                 v.add(NutsDependencyScope.TEST_RUNTIME);
                 break;
             }
@@ -208,7 +235,7 @@ public class NutsDependencyScopes {
                 break;
             }
             case TEST: {
-                v.add(NutsDependencyScope.TEST_COMPILE);
+                v.add(NutsDependencyScope.TEST_API);
                 v.add(NutsDependencyScope.TEST_RUNTIME);
                 v.add(NutsDependencyScope.TEST_PROVIDED);
                 break;
@@ -219,7 +246,7 @@ public class NutsDependencyScopes {
                 v.add(NutsDependencyScope.RUNTIME);
                 v.add(NutsDependencyScope.SYSTEM);
                 v.add(NutsDependencyScope.PROVIDED);
-                v.add(NutsDependencyScope.TEST_COMPILE);
+                v.add(NutsDependencyScope.TEST_API);
                 v.add(NutsDependencyScope.TEST_RUNTIME);
                 v.add(NutsDependencyScope.TEST_PROVIDED);
                 v.add(NutsDependencyScope.OTHER);
@@ -244,7 +271,7 @@ public class NutsDependencyScopes {
                 v.add(NutsDependencyScope.SYSTEM);
             }
             case TEST_COMPILE:{
-                v.add(NutsDependencyScope.TEST_COMPILE);
+                v.add(NutsDependencyScope.TEST_API);
             }
             case TEST_PROVIDED:{
                 v.add(NutsDependencyScope.TEST_PROVIDED);
@@ -280,9 +307,8 @@ public class NutsDependencyScopes {
             case "compile-only": //gradle
                 return NutsDependencyScope.PROVIDED;
             case "test": //maven
-                return NutsDependencyScope.TEST_COMPILE;
             case "testcompile": //gradle
-                return NutsDependencyScope.TEST_COMPILE;
+                return NutsDependencyScope.TEST_API;
             case "testruntime": //gradle
                 return NutsDependencyScope.TEST_RUNTIME;
             case "testcompileonly": //gradle
@@ -292,7 +318,7 @@ public class NutsDependencyScopes {
             String enumString = value.toUpperCase().replace('-', '_');
             return NutsDependencyScope.valueOf(enumString);
         }catch (Exception ex){
-            LOG.log(Level.FINE,"Unable to parse NutsDependencyScope : "+value,ex);
+            LOG.log(Level.FINE,"unable to parse NutsDependencyScope : "+value,ex);
         }
         return NutsDependencyScope.OTHER;
     }
@@ -327,7 +353,7 @@ public class NutsDependencyScopes {
             String enumString = value.toUpperCase().replace('-', '_');
             return NutsDependencyScopePattern.valueOf(enumString);
         }catch (Exception ex){
-            LOG.log(Level.FINE,"Unable to parse NutsDependencyScope : "+value,ex);
+            LOG.log(Level.FINE,"unable to parse NutsDependencyScope : "+value,ex);
         }
         return NutsDependencyScopePattern.OTHER;
     }

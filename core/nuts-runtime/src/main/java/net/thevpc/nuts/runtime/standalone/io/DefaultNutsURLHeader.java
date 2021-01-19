@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import java.time.Instant;
 import net.thevpc.nuts.NutsURLHeader;
+import net.thevpc.nuts.runtime.bundles.http.SimpleHttpClient;
 
 /**
  *
@@ -43,6 +44,14 @@ public class DefaultNutsURLHeader implements NutsURLHeader {
     private String contentEncoding;
     private Instant lastModified;
 
+    public DefaultNutsURLHeader(SimpleHttpClient url) {
+        this.url = url.getURL().toString();
+        this.contentLength=url.getContentLength();
+        this.contentType=url.getContentType();
+        this.contentEncoding=url.getContentEncoding();
+        this.lastModified=url.getLastModified();
+    }
+
     public DefaultNutsURLHeader(String url) {
         this.url = url;
     }
@@ -52,8 +61,9 @@ public class DefaultNutsURLHeader implements NutsURLHeader {
         return url;
     }
 
-    public void setUrl(String url) {
+    public DefaultNutsURLHeader setUrl(String url) {
         this.url = url;
+        return this;
     }
 
     @Override
@@ -61,8 +71,9 @@ public class DefaultNutsURLHeader implements NutsURLHeader {
         return contentLength;
     }
 
-    public void setContentLength(long contentLength) {
+    public DefaultNutsURLHeader setContentLength(long contentLength) {
         this.contentLength = contentLength;
+        return this;
     }
 
     @Override
@@ -70,8 +81,9 @@ public class DefaultNutsURLHeader implements NutsURLHeader {
         return contentType;
     }
 
-    public void setContentType(String contentType) {
+    public DefaultNutsURLHeader setContentType(String contentType) {
         this.contentType = contentType;
+        return this;
     }
 
     @Override
@@ -79,8 +91,9 @@ public class DefaultNutsURLHeader implements NutsURLHeader {
         return contentEncoding;
     }
 
-    public void setContentEncoding(String contentEncoding) {
+    public DefaultNutsURLHeader setContentEncoding(String contentEncoding) {
         this.contentEncoding = contentEncoding;
+        return this;
     }
 
     @Override
@@ -88,8 +101,9 @@ public class DefaultNutsURLHeader implements NutsURLHeader {
         return lastModified;
     }
 
-    public void setLastModified(Instant lastModified) {
+    public DefaultNutsURLHeader setLastModified(Instant lastModified) {
         this.lastModified = lastModified;
+        return this;
     }
 
 }

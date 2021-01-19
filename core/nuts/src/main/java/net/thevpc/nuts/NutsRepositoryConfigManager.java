@@ -127,14 +127,6 @@ public interface NutsRepositoryConfigManager {
     /**
      * add new repository
      *
-     * @param definition repository definition
-     * @return {@code this} instance
-     */
-    NutsRepository addMirror(NutsRepositoryDefinition definition);
-
-    /**
-     * add new repository
-     *
      * @param options repository definition
      * @return {@code this} instance
      */

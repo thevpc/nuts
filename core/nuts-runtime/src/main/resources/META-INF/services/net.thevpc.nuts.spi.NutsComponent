@@ -1,26 +1,26 @@
 net.thevpc.nuts.runtime.standalone.io.DefaultHttpTransportComponent
 
-net.thevpc.nuts.runtime.standalone.main.repos.DefaultNutsRepoFactoryComponent
+net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepoFactoryComponent
 
 
 net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal
 net.thevpc.nuts.runtime.core.terminals.DefaultNutsSystemTerminalBase
 
-net.thevpc.nuts.runtime.standalone.main.archetypes.ServerNutsWorkspaceArchetypeComponent
-net.thevpc.nuts.runtime.standalone.main.archetypes.MinimalNutsWorkspaceArchetypeComponent
-net.thevpc.nuts.runtime.standalone.main.archetypes.DefaultNutsWorkspaceArchetypeComponent
+net.thevpc.nuts.runtime.standalone.archetypes.ServerNutsWorkspaceArchetypeComponent
+net.thevpc.nuts.runtime.standalone.archetypes.MinimalNutsWorkspaceArchetypeComponent
+net.thevpc.nuts.runtime.standalone.archetypes.DefaultNutsWorkspaceArchetypeComponent
 
-net.thevpc.nuts.runtime.standalone.main.installers.ZipNutsInstallerComponent
+net.thevpc.nuts.runtime.standalone.installers.ZipNutsInstallerComponent
 
-net.thevpc.nuts.runtime.standalone.main.parsers.BashNutsDescriptorContentParserComponent
-net.thevpc.nuts.runtime.standalone.main.parsers.ZipNutsDescriptorContentParserComponent
-net.thevpc.nuts.runtime.standalone.main.parsers.JarNutsDescriptorContentParserComponent
-net.thevpc.nuts.runtime.standalone.main.parsers.NutsShellDescriptorContentParserComponent
+net.thevpc.nuts.runtime.standalone.parsers.BashNutsDescriptorContentParserComponent
+net.thevpc.nuts.runtime.standalone.parsers.ZipNutsDescriptorContentParserComponent
+net.thevpc.nuts.runtime.standalone.parsers.JarNutsDescriptorContentParserComponent
+net.thevpc.nuts.runtime.standalone.parsers.NutsShellDescriptorContentParserComponent
 
-net.thevpc.nuts.runtime.standalone.main.executors.JavaNutsExecutorComponent
-net.thevpc.nuts.runtime.standalone.main.executors.JavaSourceNutsExecutorComponent
-net.thevpc.nuts.runtime.standalone.main.executors.NutsShellNutsExecutorComponent
-net.thevpc.nuts.runtime.standalone.main.executors.ProcessNutsExecutorComponent
+net.thevpc.nuts.runtime.standalone.executors.JavaNutsExecutorComponent
+net.thevpc.nuts.runtime.standalone.executors.JavaSourceNutsExecutorComponent
+net.thevpc.nuts.runtime.standalone.executors.NutsShellNutsExecutorComponent
+net.thevpc.nuts.runtime.standalone.executors.ProcessNutsExecutorComponent
 
 net.thevpc.nuts.runtime.standalone.bridges.maven.MavenNutsRepositoryFactoryComponent
 net.thevpc.nuts.runtime.standalone.config.DefaultNutsIndexStoreFactory

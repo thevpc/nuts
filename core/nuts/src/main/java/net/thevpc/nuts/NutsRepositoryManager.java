@@ -42,8 +42,6 @@ public interface NutsRepositoryManager {
      */
     NutsRepository addRepository(NutsRepositoryModel repository, NutsAddOptions session);
 
-    NutsRepository addRepository(NutsRepositoryDefinition definition);
-
     NutsRepository addRepository(NutsAddRepositoryOptions options);
 
     NutsRepository addRepository(NutsRepositoryRef ref, NutsAddOptions options);

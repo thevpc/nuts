@@ -128,7 +128,6 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
                 ", content=" + isContent() +
                 ", inlineDependencies=" + isInlineDependencies() +
                 ", dependencies=" + isDependencies() +
-                ", dependenciesTree=" + isDependenciesTree() +
                 ", effective=" + isEffective() +
                 ", location=" + getLocation() +
                 ", repos=" + Arrays.toString(getRepositories()) +

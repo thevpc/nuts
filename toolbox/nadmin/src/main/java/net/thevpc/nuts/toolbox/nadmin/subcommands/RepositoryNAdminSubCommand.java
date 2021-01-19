@@ -64,7 +64,6 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
 //        } else {
             PrintStream out = context.getSession().out();
             if (cmdLine.next("add repo", "ar") != null) {
-                boolean proxy = false;
                 String location = null;
                 String repositoryName = null;
                 String repoType = null;
@@ -73,14 +72,6 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     NutsArgument a = cmdLine.peek();
                     boolean enabled = a.isEnabled();
                     switch (a.getStringKey()) {
-                        case "-p":
-                        case "--proxy": {
-                            boolean val = cmdLine.nextBoolean().getBooleanValue();
-                            if (enabled) {
-                                proxy = val;
-                            }
-                            break;
-                        }
                         case "-l":
                         case "--location": {
                             String val = cmdLine.nextString().getStringValue();
@@ -136,7 +127,6 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                             .setSession(context.getSession())
                             .setName(repositoryName)
                             .setLocation(repositoryName)
-                            .setProxy(proxy)
                             .setConfig(
                                     location==null?null:new NutsRepositoryConfig()
                                             .setName(repositoryName)
@@ -148,7 +138,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                         NutsRepository p = ws.repos().getRepository(parent, context.getSession());
                         repo = p.config().addMirror(o);
                     }
-                    out.printf("Repository added successfully%n");
+                    out.printf("repository added successfully%n");
                     context.getWorkspace().config().save(context.getSession());
 
                 }

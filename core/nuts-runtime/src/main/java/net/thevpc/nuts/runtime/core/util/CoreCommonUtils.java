@@ -27,9 +27,9 @@
 package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.io.InputStreamVisitor;
-import net.thevpc.nuts.runtime.standalone.util.io.ZipUtils;
-import net.thevpc.nuts.runtime.standalone.util.iter.PushBackIterator;
+import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
+import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
+import net.thevpc.nuts.runtime.bundles.iter.PushBackIterator;
 
 import java.io.BufferedReader;
 import java.io.IOException;

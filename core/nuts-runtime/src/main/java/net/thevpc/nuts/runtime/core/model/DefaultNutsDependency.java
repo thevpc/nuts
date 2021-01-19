@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.QueryStringMap;
+import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
 
 import java.util.*;
 
@@ -50,7 +50,7 @@ public class DefaultNutsDependency implements NutsDependency {
     private transient final NutsWorkspace ws;
 
     public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,Map<String,String> properties,NutsWorkspace ws) {
-        this(namespace, groupId, artifactId, classifier, version, scope, optional, exclusions,QueryStringMap.formatSortedPropertiesQuery(properties),ws);
+        this(namespace, groupId, artifactId, classifier, version, scope, optional, exclusions, QueryStringParser.formatSortedPropertiesQuery(properties),ws);
     }
     public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,String properties,NutsWorkspace ws) {
         this.namespace = CoreStringUtils.trimToNull(namespace);
@@ -61,8 +61,11 @@ public class DefaultNutsDependency implements NutsDependency {
         this.scope = NutsDependencyScopes.normalizeScope(scope);
         this.optional = CoreStringUtils.isBlank(optional) ? "false" : CoreStringUtils.trim(optional);
         this.exclusions = exclusions == null ? new NutsId[0] : Arrays.copyOf(exclusions, exclusions.length);
-        this.properties = QueryStringMap.formatSortedPropertiesQuery(properties);
+        this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
         this.ws = ws;
+//        if(artifactId.equals("junit") && scope.equals("api")){
+//            System.out.println("why");
+//        }
     }
 
     @Override
@@ -224,7 +227,7 @@ public class DefaultNutsDependency implements NutsDependency {
         }
         if (!p.isEmpty()) {
             sb.append("?");
-            sb.append(QueryStringMap.formatPropertiesQuery(p));
+            sb.append(QueryStringParser.formatPropertiesQuery(p));
         }
         return sb.toString();
     }
@@ -246,7 +249,7 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public Map<String, String> getProperties() {
-        return QueryStringMap.parseMap(properties);
+        return QueryStringParser.parseMap(properties);
     }
 
     @Override

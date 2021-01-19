@@ -4,7 +4,7 @@ manage projects
 ####) SYNOPSIS:
 
 ```sh
-njob ( add | remove | update | show | list ) project  <options>...
+njob ( add | remove | update | show | list ) project  <-options>...
 ```
 
 ####) add project:

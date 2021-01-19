@@ -15,10 +15,10 @@ import java.util.logging.Level;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.DefaultNutsProgressEvent;
+import net.thevpc.nuts.runtime.bundles.io.DefaultNutsProgressEvent;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.standalone.util.io.InterruptException;
-import net.thevpc.nuts.runtime.standalone.util.io.Interruptible;
+import net.thevpc.nuts.runtime.bundles.io.InterruptException;
+import net.thevpc.nuts.runtime.bundles.io.Interruptible;
 
 /**
  * @author thevpc

@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
-import net.thevpc.nuts.runtime.standalone.util.QueryStringMap;
+import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     private String classifier;
     private NutsId[] exclusions;
     private transient NutsWorkspace ws;
-    private QueryStringMap propertiesQuery = new QueryStringMap(true, (name, value) -> {
+    private QueryStringParser propertiesQuery = new QueryStringParser(true, (name, value) -> {
         if (name != null) {
             switch (name) {
                 case NutsConstants.IdProperties.SCOPE: {
@@ -133,6 +133,12 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     }
 
     @Override
+    public NutsDependencyBuilder setScope(NutsDependencyScope scope) {
+        this.scope = scope==null?"":scope.toString();
+        return this;
+    }
+
+    @Override
     public NutsDependencyBuilder setScope(String scope) {
         this.scope = NutsDependencyScopes.normalizeScope(scope);
         return this;
@@ -211,7 +217,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
         setGroupId(null);
         setArtifactId(null);
         setVersion((NutsVersion) null);
-        setScope(null);
+        setScope((String) null);
         setOptional(null);
         setExclusions((NutsId[]) null);
         setClassifier(null);

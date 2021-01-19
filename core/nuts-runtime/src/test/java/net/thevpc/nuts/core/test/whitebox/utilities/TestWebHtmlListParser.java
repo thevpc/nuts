@@ -1,6 +1,6 @@
 package net.thevpc.nuts.core.test.whitebox.utilities;
 
-import net.thevpc.nuts.runtime.standalone.util.io.WebHtmlListParser;
+import net.thevpc.nuts.runtime.standalone.repos.WebHtmlListParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -11,10 +11,10 @@ import java.util.List;
 public class TestWebHtmlListParser {
     static String spring_repo = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">\n" +
             "<html>\n" +
-            "<head><title>Index of release/</title>\n" +
+            "<head><title>NanoDBIndexDefinition of release/</title>\n" +
             "</head>\n" +
             "<body>\n" +
-            "<h1>Index of release/</h1>\n" +
+            "<h1>NanoDBIndexDefinition of release/</h1>\n" +
             "<pre>Name                       Last modified      Size</pre><hr/>\n" +
             "<pre><a href=\"com/\">com/</a>                        23-Jul-2013 15:07    -\n" +
             "<a href=\"io/\">io/</a>                         12-Jun-2014 16:26    -\n" +

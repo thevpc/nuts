@@ -7,6 +7,8 @@ package net.thevpc.nuts.runtime.core.config;
 
 import net.thevpc.nuts.*;
 
+import java.nio.file.Path;
+
 /**
  *
  * @author thevpc
@@ -32,4 +34,8 @@ public interface NutsRepositoryConfigManagerExt {
     boolean save(boolean force, NutsSession session);
 
     void save(NutsSession session);
+
+    Path getTempMirrorsRoot();
+
+    Path getMirrorsRoot();
 }

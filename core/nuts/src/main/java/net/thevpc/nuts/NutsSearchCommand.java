@@ -756,7 +756,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
-     * and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -765,7 +764,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
-     * and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -774,7 +772,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
-     * and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -783,7 +780,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
-     * and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -792,7 +788,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
-     * and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -801,7 +796,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     /**
      * remove dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
-     * and {@link #setDependenciesTree(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -950,21 +944,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsSearchCommand setDependencies(boolean enable);
-
-    /**
-     * true if dependencies as tree is activated
-     *
-     * @return true if dependencies as tree is activated
-     */
-    boolean isDependenciesTree();
-
-    /**
-     * enable/disable dependencies tree retrieval
-     *
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NutsSearchCommand setDependenciesTree(boolean enable);
 
     /**
      * true if transitive is enabled

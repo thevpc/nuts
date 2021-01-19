@@ -6,7 +6,7 @@ manage jobs
 ####) add project:
 
 ```sh
-njob ( add | remove | update | show | list ) job  <options>...
+njob ( add | remove | update | show | list ) job  <-options>...
 ```
 
 ####) add project:

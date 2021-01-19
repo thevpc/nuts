@@ -13,14 +13,14 @@ import net.thevpc.nuts.runtime.core.NutsURLClassLoader;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.main.config.NutsWorkspaceConfigBoot;
+import net.thevpc.nuts.runtime.standalone.config.NutsWorkspaceConfigBoot;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsServiceLoader;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspaceFactory;
 import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.ListMap;
+import net.thevpc.nuts.runtime.bundles.datastr.ListMap;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.NutsExecutorComponent;
 
@@ -128,7 +128,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             URL u = expandURL(url);
             if (u != null) {
                 NutsExtensionInformation[] s = new NutsExtensionInformation[0];
-                try (Reader rr = new InputStreamReader(u.openStream())) {
+                try (Reader rr = new InputStreamReader(NutsWorkspaceUtils.of(ws).openURL(u))) {
                     s = ws.formats().element().setContentType(NutsContentType.JSON).parse(rr, DefaultNutsExtensionInformation[].class);
                 } catch (IOException ex) {
                     LOG.with().session(session).level(Level.SEVERE).error(ex).log("failed to parse NutsExtensionInformation from {0} : {1}", u, CoreStringUtils.exceptionToString(ex));

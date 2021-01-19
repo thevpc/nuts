@@ -192,4 +192,11 @@ public interface NutsRepositorySPI {
      * @return {@code this} instance
      */
     NutsRepository setEnabled(boolean enabled);
+
+    /**
+     * true if fetch mode is accepted
+     * @param mode fetch mode
+     * @return true if fetch mode is accepted
+     */
+    boolean isAcceptFetchMode(NutsFetchMode mode);
 }

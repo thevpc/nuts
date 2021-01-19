@@ -80,7 +80,7 @@ public interface NutsWorkspaceConfigManager {
 
     boolean isSupportedRepositoryType(String repositoryType, NutsSession session);
 
-    NutsRepositoryDefinition[] getDefaultRepositories(NutsSession session);
+    NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session);
 
     Set<String> getAvailableArchetypes(NutsSession session);
 

@@ -129,31 +129,31 @@ the host operating system to facilitate usage of nuts command line tool.
 
 ###) SYNOPSIS
 ```sh
-nadmin add script <options> <command> ...
+nadmin add script <-options> <command> ...
 ```
     add scripts/shortcuts for the given command so that it can be called directly by it's name
 
 ```sh
-nadmin remove script <options> <command> ...
+nadmin remove script <-options> <command> ...
 ```
     remove scripts/shortcuts for the given
 
 ```sh
-nadmin switch <options> ...
+nadmin switch <-options> ...
 ```
     switch default nuts workspace and/or version.
     on linux platforms, for example, ```sh nadmin``` will update ~/.bashrc to point to the given workspace and/or version.
     a workspace can support multiple nuts-api versions and hence, ```sh nadmin switch``` can switch between those versions.
 
 ```sh
-nadmin add link <options> ...
+nadmin add link <-options> ...
 ```
     create a new script to link to an existing nuts workspace and/or version.
     the link created will run 'nuts' against the selected workspace and/or version.
 
 ####) OPTIONS:
 ```sh
-nadmin add script <options> <command> ...
+nadmin add script <-options> <command> ...
 ```
     install scripts/shortcuts for the given command so that it can be called directly by it's name
 ``` sh  --embedded | -b ```
@@ -177,7 +177,7 @@ nadmin add script <options> <command> ...
     target workspace
 
 ```sh
-nadmin remove script <options> <command> ...
+nadmin remove script <-options> <command> ...
 ```
     uninstall scripts/shortcuts for the given
 ```sh --embedded | -b ```
@@ -192,7 +192,7 @@ nadmin remove script <options> <command> ...
     exec options
 
 ```sh
-nadmin switch <options> [<workspace>] [<api>]
+nadmin switch <-options> [<workspace>] [<api>]
 ```
     switch default nuts workspace and/or version.
     on linux platforms, for example, ```sh nadmin``` will update ~/.bashrc to point to the given workspace and/or version.

@@ -33,7 +33,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsArrayElement;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 
 /**
  *

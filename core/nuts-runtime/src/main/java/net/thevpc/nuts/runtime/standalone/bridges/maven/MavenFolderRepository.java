@@ -29,7 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.FolderNutIdIterator;
+import net.thevpc.nuts.runtime.bundles.io.FolderNutIdIterator;
 
 import java.io.*;
 import java.nio.file.DirectoryStream;
@@ -42,8 +42,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.runtime.standalone.main.repos.NutsCachedRepository;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.standalone.repos.NutsCachedRepository;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 
 /**
  * Created by vpc on 1/5/17.
@@ -297,4 +297,8 @@ public class MavenFolderRepository extends NutsCachedRepository {
         return helper.getIdExtension(id);
     }
 
+    @Override
+    public boolean isAcceptFetchMode(NutsFetchMode mode) {
+        return mode==NutsFetchMode.LOCAL;
+    }
 }

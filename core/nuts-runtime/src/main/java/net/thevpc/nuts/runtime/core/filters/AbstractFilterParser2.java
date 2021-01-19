@@ -1,9 +1,8 @@
 package net.thevpc.nuts.runtime.core.filters;
 
-import net.thevpc.nuts.runtime.standalone.util.common.StringReaderExt;
+import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

@@ -47,13 +47,13 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
-import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.MavenMetadataParser;
+import net.thevpc.nuts.runtime.bundles.mvn.MavenMetadataParser;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.FolderNutIdIterator;
-import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.MavenMetadata;
+import net.thevpc.nuts.runtime.bundles.io.FolderNutIdIterator;
+import net.thevpc.nuts.runtime.bundles.mvn.MavenMetadata;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**

@@ -129,7 +129,7 @@ public class DefaultNutsVersionFilter extends AbstractNutsFilter implements Nuts
 
     @Override
     public String toJsNutsIdFilterExpr() {
-        return "id.version.matches('" + CoreStringUtils.escapeCoteStrings(toString()) + "')";
+        return "id.version.matches('" + CoreStringUtils.escapeQuoteStrings(toString()) + "')";
     }
 
     @Override

@@ -4,14 +4,10 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.DefaultNutsFilterManager;
 import net.thevpc.nuts.runtime.core.filters.InternalNutsTypedFilters;
 import net.thevpc.nuts.runtime.core.filters.NutsPatternIdFilter;
-import net.thevpc.nuts.runtime.core.filters.dependency.NutsDependencyFilterAnd;
-import net.thevpc.nuts.runtime.core.filters.id.*;
-import net.thevpc.nuts.runtime.core.filters.installstatus.NutsInstallStatusFilterParser;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.NutsInstallStatusIdFilter;
+import net.thevpc.nuts.runtime.bundles.io.NutsInstallStatusIdFilter;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 public class InternalNutsIdFilterManager extends InternalNutsTypedFilters<NutsIdFilter> implements NutsIdFilterManager {
     private final DefaultNutsFilterManager defaultNutsFilterManager;

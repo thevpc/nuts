@@ -33,7 +33,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     private boolean content = false;
     private boolean inlineDependencies = false;
     private boolean dependencies = false;
-    private boolean dependenciesTree = false;
     private boolean effective = false;
     private Path location = null;
     private final List<String> repos = new ArrayList<>();
@@ -64,7 +63,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             this.content = other.isContent();
             this.inlineDependencies = other.isInlineDependencies();
             this.dependencies = other.isDependencies();
-            this.dependenciesTree = other.isDependenciesTree();
             this.effective = other.isEffective();
             this.scope = EnumSet.copyOf(other.getScope());
             this.location = other.getLocation();
@@ -296,17 +294,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     }
 
 
-    public boolean isDependenciesTree() {
-        return dependenciesTree;
-    }
-
-
-    //@Override
-    public T setDependenciesTree(boolean include) {
-        dependenciesTree = include;
-        return (T) this;
-    }
-
     //@Override
     public Path getLocation() {
         return location;
@@ -414,13 +401,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 }
                 return true;
             }
-            case "--dependencies-tree": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if (enabled) {
-                    this.setDependenciesTree(val);
-                }
-                return true;
-            }
             case "--scope": {
                 NutsDependencyScope val = CoreCommonUtils.parseEnumString(cmdLine.nextString().getStringValue(), NutsDependencyScope.class, false);
                 if (enabled) {
@@ -523,7 +503,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 ", dependencyFilter=" + dependencyFilter +
                 ", inlineDependencies=" + inlineDependencies +
                 ", dependencies=" + dependencies +
-                ", dependenciesTree=" + dependenciesTree +
                 ", effective=" + effective +
                 ", location=" + location +
                 ", repos=" + repos +

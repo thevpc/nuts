@@ -68,8 +68,8 @@ public abstract class AbstractMavenRepositoryHelper {
                 break;
             }
             default: {
-                LOG.with().session(session).level(Level.SEVERE).error(new IllegalArgumentException("Unsupported Hash Type "+id.getFace())).log("[BUG] Unsupported Hash Type {0}", id.getFace());
-                throw new IOException("Unsupported hash type " + id.getFace());
+                LOG.with().session(session).level(Level.SEVERE).error(new IllegalArgumentException("unsupported Hash Type "+id.getFace())).log("[BUG] Unsupported Hash Type {0}", id.getFace());
+                throw new IOException("unsupported hash type " + id.getFace());
             }
         }
         try {
@@ -82,7 +82,7 @@ public abstract class AbstractMavenRepositoryHelper {
             }
             String lhash = CoreIOUtils.evalSHA1Hex(stream, true);
             if (!rhash.equalsIgnoreCase(lhash)) {
-                throw new IOException("Invalid file hash " + id);
+                throw new IOException("invalid file hash " + id);
             }
         } finally {
             stream.close();

@@ -44,11 +44,11 @@ public class NutsDependencyScopeFilter extends AbstractNutsFilter implements Nut
 
     @Override
     public String toString() {
-        return "scope in (" + scope.stream().map(CoreCommonUtils::getEnumString).collect(Collectors.joining(", ")) + ')';
+        return scope.isEmpty()?"true": "scope in (" + scope.stream().map(CoreCommonUtils::getEnumString).collect(Collectors.joining(", ")) + ')';
     }
 
     @Override
     public NutsFilter simplify() {
-        return this;
+        return scope.isEmpty()?getWorkspace().filters().dependency().always() : this;
     }
 }

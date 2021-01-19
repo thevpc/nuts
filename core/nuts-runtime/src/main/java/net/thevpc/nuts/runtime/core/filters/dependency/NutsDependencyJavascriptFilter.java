@@ -29,7 +29,7 @@ package net.thevpc.nuts.runtime.core.filters.dependency;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.JavascriptHelper;
+import net.thevpc.nuts.runtime.bundles.common.JavascriptHelper;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 import java.util.Objects;

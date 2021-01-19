@@ -26,8 +26,10 @@
 package net.thevpc.nuts.runtime.standalone.bridges.maven;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
+import net.thevpc.nuts.runtime.bundles.mvn.*;
+import net.thevpc.nuts.runtime.core.repos.RepoDefinitionResolver;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.MapStringMapper;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDependencyBuilder;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
@@ -35,6 +37,7 @@ import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
 
 import java.io.*;
@@ -45,15 +48,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.ArchetypeCatalogParser;
-import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.MavenMetadata;
-import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.MavenMetadataParser;
-import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.Pom;
-import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.PomDependency;
-import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.PomId;
-import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.PomIdFilter;
-import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.PomXmlParser;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -82,6 +77,15 @@ public class MavenUtils {
     private MavenUtils(NutsWorkspace ws) {
         this.ws = ws;
         LOG=ws.log().of(MavenUtils.class);
+    }
+
+    public static PomIdResolver createPomIdResolver(NutsSession session) {
+        PomIdResolver wp = (PomIdResolver) session.getWorkspace().env().getProperty(PomIdResolver.class.getName());
+        if (wp == null) {
+            wp = new PomIdResolver(new NutsPomUrlReader(session),new NutsPomLogger(session));
+            session.getWorkspace().env().setProperty(PomIdResolver.class.getName(), wp,new NutsUpdateOptions(session));
+        }
+        return wp;
     }
 
     public NutsId[] toNutsId(PomId[] ids) {
@@ -119,7 +123,7 @@ public class MavenUtils {
                 break;
             }
             case "test":{
-                nds=NutsDependencyScope.TEST_COMPILE;
+                nds=NutsDependencyScope.TEST_API;
                 break;
             }
             case "system":{
@@ -181,7 +185,7 @@ public class MavenUtils {
                 return null;
             }
             byte[] bytes = CoreIOUtils.loadByteArray(stream);
-            Pom pom = new PomXmlParser(session.getWorkspace()).parse(new NamedByteArrayInputStream(bytes,urlDesc), session);
+            Pom pom = new PomXmlParser(new NutsPomLogger(session)).parse(new NamedByteArrayInputStream(bytes,urlDesc), session);
             boolean executable = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             boolean application = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             if ("true".equals(pom.getProperties().get("nuts.executable"))) {
@@ -341,7 +345,7 @@ public class MavenUtils {
                         }
                         done.add(pid.getShortName());
                         if (CoreNutsUtils.containsVars(thisId)) {
-                            thisId.builder().apply(new MapStringMapper(d.getProperties())).build();
+                            thisId.builder().apply(new MapToFunction<>(d.getProperties())).build();
                         } else {
                             break;
                         }
@@ -421,7 +425,8 @@ public class MavenUtils {
 //        }
         if (depsAndRepos == null || depsAndRepos.deps.isEmpty()) {
             for (String baseUrl : bootRepositories) {
-                String location = CoreNutsUtils.repositoryStringToDefinition(baseUrl).getLocation();
+                NutsAddRepositoryOptions opt = RepoDefinitionResolver.createRepositoryOptions(baseUrl, false, ws);
+                String location = opt.getConfig()==null?opt.getLocation():opt.getConfig().getLocation();
                 depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(location + "/" + urlPath, session);
                 if (!depsAndRepos.deps.isEmpty()) {
                     break;
@@ -439,7 +444,7 @@ public class MavenUtils {
         InputStream xml = null;
         try {
             if (CoreIOUtils.isPathHttp(url)) {
-                xml = new URL(url).openStream();
+                xml = NutsWorkspaceUtils.of(ws).openURL(url);
             } else {
                 File file = new File(url);
                 if (file.isFile()) {
@@ -596,7 +601,7 @@ public class MavenUtils {
                 DocumentBuilderFactory factory
                         = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = factory.newDocumentBuilder();
-                Document doc = builder.parse(runtimeMetadata.openStream());
+                Document doc = builder.parse(NutsWorkspaceUtils.of(ws).openURL(runtimeMetadata));
                 Element c = doc.getDocumentElement();
                 for (int i = 0; i < c.getChildNodes().getLength(); i++) {
                     if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("versioning")) {
@@ -642,4 +647,42 @@ public class MavenUtils {
     }
 
 
+    private static class NutsPomLogger implements PomLogger {
+        private final NutsSession session;
+        NutsLogger LOG;
+
+        public NutsPomLogger(NutsSession session) {
+            this.session = session;
+            LOG = session.getWorkspace().log().of(PomIdResolver.class);
+        }
+
+        @Override
+        public void log(Level level, String msg, Object... params) {
+            LOG.with().session(session)
+                    .level(Level.FINE)
+                    .verb(NutsLogVerb.FAIL)
+                    .log(msg, params);
+        }
+
+        @Override
+        public void log(Level level, String msg, Throwable throwable) {
+            LOG.with().session(session)
+                    .level(Level.FINE)
+                    .verb(NutsLogVerb.FAIL)
+                    .log("%s",msg);
+        }
+    }
+
+    private static class NutsPomUrlReader implements PomUrlReader {
+        private final NutsSession session;
+
+        public NutsPomUrlReader(NutsSession session) {
+            this.session = session;
+        }
+
+        @Override
+        public InputStream openStream(URL url) {
+            return NutsWorkspaceUtils.of(session.getWorkspace()).openURL(url);
+        }
+    }
 }

@@ -132,10 +132,6 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         return setSort(sort);
     }
 
-    public NutsPropertiesFormat setValue(Map model) {
-        return setValue(model);
-    }
-
     public boolean isSort() {
         return sort;
     }
@@ -270,7 +266,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
                         if(prefix.isEmpty() || prefix.endsWith("#")){
                             out.print("ø");
                         }
-                        out.print(text.factory().styled(formattedKey,NutsTextNodeStyle.primary(3)));
+                        out.printf("%s",text.factory().styled(formattedKey,NutsTextNodeStyle.primary(3)));
                         if(separator.isEmpty() || separator.startsWith("#")){
                             out.print("ø");
                         }
@@ -289,7 +285,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             if(prefix.isEmpty() || prefix.endsWith("#")){
                 out.print("ø");
             }
-            out.print(text.factory().styled(formattedKey,NutsTextNodeStyle.primary(3)));
+            out.printf("%s",text.factory().styled(formattedKey,NutsTextNodeStyle.primary(3)));
             if(separator.isEmpty() || separator.startsWith("#")){
                 out.print("ø");
             }

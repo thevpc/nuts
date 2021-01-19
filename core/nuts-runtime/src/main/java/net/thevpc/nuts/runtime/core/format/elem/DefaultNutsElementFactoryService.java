@@ -36,9 +36,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import net.thevpc.nuts.runtime.standalone.util.common.ClassMap;
+import net.thevpc.nuts.runtime.bundles.datastr.ClassMap;
 
 /**
  *

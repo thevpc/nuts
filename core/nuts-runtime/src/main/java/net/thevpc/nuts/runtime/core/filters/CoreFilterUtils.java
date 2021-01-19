@@ -28,8 +28,6 @@ package net.thevpc.nuts.runtime.core.filters;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.id.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.InstalledVsNonInstalledSearch;
-import net.thevpc.nuts.runtime.standalone.util.io.NutsInstallStatusIdFilter;
 
 import java.lang.reflect.Array;
 import java.util.*;

@@ -1,9 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.main.config.NutsSdkLocationComparator;
+import net.thevpc.nuts.runtime.standalone.config.NutsSdkLocationComparator;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.NutsLogVerb;
 
 import java.io.File;
@@ -16,7 +15,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 

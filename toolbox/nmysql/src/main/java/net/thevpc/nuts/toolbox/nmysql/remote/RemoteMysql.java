@@ -206,18 +206,18 @@
 //                        if (!context.getSession().getTerminal().ask()
 //                                .forBoolean("Already exists ####%s####. override?", name)
 //                                .defaultValue(false).getBooleanValue()) {
-//                            throw new NutsExecutionException(context.getWorkspace(), "Already exists " + name, 2);
+//                            throw new NutsExecutionException(context.getWorkspace(), "already exists " + name, 2);
 //                        }
 //                    }
 //                }
 //            } else {
 //                if (name.getDatabaseName().isEmpty()) {
 //                    if (c.getDatabaseOrNull(name.getDatabaseName()) == null) {
-//                        throw new NutsExecutionException(context.getWorkspace(), "Not found " + name, 2);
+//                        throw new NutsExecutionException(context.getWorkspace(), "not found " + name, 2);
 //                    }
 //                } else {
 //                    if (c.getDatabaseOrNull(name.getDatabaseName()) == null) {
-//                        throw new NutsExecutionException(context.getWorkspace(), "Not found  " + name, 2);
+//                        throw new NutsExecutionException(context.getWorkspace(), "not found  " + name, 2);
 //                    }
 //                }
 //            }

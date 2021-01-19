@@ -121,17 +121,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      * result of the search command.
      * @throws NutsElementNotFoundException if the property is not requested
      */
-    NutsDependency[] getDependencies();
-
-    /**
-     * return all of some of the transitive dependencies of the current Nuts as Tree result of the search command
-     * this is an <strong>optional</strong> property.
-     * It must be requested (see {@link NutsSearchCommand#setDependenciesTree(boolean)} to be available.
-     *
-     * @return all of some of the transitive dependencies of the current Nuts as Tree result of the search command.
-     * @throws NutsElementNotFoundException if the property is not requested
-     */
-    NutsDependencyTreeNode[] getDependencyNodes();
+    NutsDependencies getDependencies();
 
     /**
      * return target api id (included in dependency) for the current id.
@@ -165,13 +155,6 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      */
     String getRepositoryName();
 
-
-    /**
-     * true if requested content
-     *
-     * @return true if requested content
-     */
-    boolean isSetDependencyNodes();
 
     /**
      * true if requested content

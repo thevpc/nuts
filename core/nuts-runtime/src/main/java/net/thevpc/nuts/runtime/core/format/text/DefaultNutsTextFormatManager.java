@@ -1,10 +1,12 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
 import net.thevpc.nuts.runtime.standalone.io.NutsWorkspaceVarExpansionFunction;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -76,11 +78,7 @@ public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
             }
             in=new StringReader(defaultValue);
         } else {
-            try {
-                in = new InputStreamReader(resource.openStream());
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+            in = new InputStreamReader(NutsWorkspaceUtils.of(ws).openURL(resource));
         }
         try (Reader is = in) {
             return loadHelp(is, classLoader, true, depth, vars,anchor);
@@ -117,7 +115,7 @@ public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
         }
         String help = sb.toString();
         if (vars) {
-            help = CoreStringUtils.replaceDollarPlaceHolders(help, pathExpansionConverter);
+            help = StringPlaceHolderParser.replaceDollarPlaceHolders(help, pathExpansionConverter);
         }
         NutsTextNodeParser p=new DefaultNutsTextNodeParser(ws);
         NutsTextNode node = p.parse(new StringReader(help));

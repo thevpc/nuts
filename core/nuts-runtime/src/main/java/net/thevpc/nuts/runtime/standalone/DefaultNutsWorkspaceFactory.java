@@ -27,12 +27,11 @@ package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceFactory;
-import net.thevpc.nuts.runtime.standalone.main.DefaultNutsWorkspace;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.standalone.util.common.ClassClassMap;
+import net.thevpc.nuts.runtime.bundles.datastr.ClassClassMap;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.ListMap;
+import net.thevpc.nuts.runtime.bundles.datastr.ListMap;
 import net.thevpc.nuts.spi.NutsComponent;
 
 import java.net.URL;

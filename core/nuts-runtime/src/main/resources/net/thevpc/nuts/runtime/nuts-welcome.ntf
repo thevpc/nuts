@@ -1,0 +1,10 @@
+#!include</net/thevpc/nuts/runtime/includes/standard-header.ntf>
+##:_:location##:##:path:${workspace}##
+
+##) SYNOPSIS:
+```sh
+nuts [<-options>]... <command> <args> ...
+```
+For Help, type ```sh nuts help```
+
+Welcome to ```sh nuts```. Yeah, it is ###working###...

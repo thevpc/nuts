@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
@@ -700,7 +701,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder applyProperties(Map<String, String> properties) {
-        Function<String, String> map = new CoreStringUtils.MapToFunction<>(properties);
+        Function<String, String> map = new MapToFunction<>(properties);
 
         NutsId n_id = getId().builder().apply(map).build();
 //        String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);

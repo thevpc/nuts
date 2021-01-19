@@ -26,10 +26,7 @@
 */
 package net.thevpc.nuts.runtime.core.app;
 
-import net.thevpc.nuts.NutsArgumentCandidate;
-import net.thevpc.nuts.NutsCommandAutoComplete;
-import net.thevpc.nuts.NutsCommandLineManager;
-import net.thevpc.nuts.NutsRepositoryDefinition;
+import net.thevpc.nuts.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +46,10 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         TreeSet<String> allValid = new TreeSet<>();
         allValid.add("nuts");
-        for (NutsRepositoryDefinition repo : context.getWorkspace().config().getDefaultRepositories(context.getSession())) {
-            allValid.add(repo.getType());
+        for (NutsAddRepositoryOptions repo : context.getWorkspace().config().getDefaultRepositories(context.getSession())) {
+            if(repo.getConfig()!=null && repo.getConfig().getType()!=null) {
+                allValid.add(repo.getConfig().getType());
+            }
         }
         List<NutsArgumentCandidate> all = new ArrayList<>();
         NutsCommandLineManager c = context.getWorkspace().commandLine();

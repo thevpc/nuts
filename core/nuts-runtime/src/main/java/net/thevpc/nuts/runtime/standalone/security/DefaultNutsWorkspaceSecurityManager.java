@@ -27,12 +27,12 @@ package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.main.config.ConfigEventType;
+import net.thevpc.nuts.runtime.standalone.config.ConfigEventType;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.main.config.NutsWorkspaceConfigSecurity;
+import net.thevpc.nuts.runtime.standalone.config.NutsWorkspaceConfigSecurity;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CorePlatformUtils;
+import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
@@ -44,10 +44,10 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.runtime.standalone.main.wscommands.DefaultNutsAddUserCommand;
-import net.thevpc.nuts.runtime.standalone.main.wscommands.DefaultNutsRemoveUserCommand;
-import net.thevpc.nuts.runtime.standalone.main.wscommands.DefaultNutsUpdateUserCommand;
-import net.thevpc.nuts.runtime.standalone.main.DefaultNutsWorkspace;
+import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsAddUserCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsRemoveUserCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsUpdateUserCommand;
+import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 /**

@@ -236,4 +236,11 @@ public class NutsTextNodeStyle {
         return variant;
     }
 
+    @Override
+    public String toString() {
+        return "NutsTextNodeStyle{" +
+                "type=" + type +
+                ", variant=" + variant +
+                '}';
+    }
 }

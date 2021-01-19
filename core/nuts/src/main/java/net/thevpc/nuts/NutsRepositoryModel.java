@@ -110,4 +110,8 @@ public interface NutsRepositoryModel {
     default boolean acceptDeploy(NutsId id, NutsFetchMode mode, NutsRepository repository, NutsSession session) {
         return true;
     }
+
+    default boolean isAcceptFetchMode(NutsFetchMode mode){
+        return true;
+    }
 }

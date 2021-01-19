@@ -3,7 +3,7 @@ Open API Documentation Generation Tool
 
 ###) SYNOPSIS:
 
-```sh noapi <command> <options>```
+```sh noapi <command> <-options>```
 
 
 ###) open api pdf:

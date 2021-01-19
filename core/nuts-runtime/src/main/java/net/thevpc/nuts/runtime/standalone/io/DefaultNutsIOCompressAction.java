@@ -191,12 +191,14 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
     @Override
     public NutsIOCompressAction run() {
         switch (getFormat()){
-            case "zip":{
+            case "zip":
+            case "gzip":
+            case "gz":{
                 runZip();
                 break;
             }
             default:{
-                throw new NutsUnsupportedArgumentException(iom.getWorkspace(),"Unsupported format "+getFormat());
+                throw new NutsUnsupportedArgumentException(iom.getWorkspace(),"unsupported compression format "+getFormat());
             }
         }
         return this;
@@ -574,10 +576,16 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         if (CoreStringUtils.isBlank(format)) {
             format = "zip";
         }
-        if ("zip".equals(format)) {
-            this.format = format;
-        } else {
-            throw new NutsUnsupportedArgumentException(iom.getWorkspace(), "Unsupported compression format " + format);
+        switch (format){
+            case "zip":
+            case "gzip":
+            case "gz":{
+                this.format = format;
+                break;
+            }
+            default:{
+                throw new NutsUnsupportedArgumentException(iom.getWorkspace(), "unsupported compression format " + format);
+            }
         }
         return this;
     }

@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,23 +22,22 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.standalone.bridges.maven;
+
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.repos.RepoDefinitionResolver;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.RemoteRepoApi;
+import net.thevpc.nuts.runtime.standalone.repos.FilesFoldersApi;
+import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
 
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Map;
-
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
-import net.thevpc.nuts.runtime.standalone.util.RemoteRepoApi;
-import net.thevpc.nuts.runtime.standalone.util.io.FilesFoldersApi;
-import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
 
 /**
  * Created by vpc on 1/15/17.
@@ -46,16 +45,28 @@ import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
 @NutsSingleton
 public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactoryComponent {
 
-    private static final NutsRepositoryDefinition[] DEFAULTS = {
-        new NutsRepositoryDefinition().setName("maven-local").setLocation(System.getProperty("maven-local", "~/.m2/repository")).setType(NutsConstants.RepoTypes.MAVEN).setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false)).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL),
-        new NutsRepositoryDefinition().setName("maven-central").setLocation(NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL).setType(NutsConstants.RepoTypes.MAVEN).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),
-//        new NutsRepositoryDefinition().setName("vpc-public-maven").setLocation(NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT).setType(NutsConstants.RepoTypes.MAVEN).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),
-//        new NutsRepositoryDefinition().setName("vpc-public-nuts").setLocation(NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT).setType(NutsConstants.RepoTypes.NUTS).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE)
-    };
+    @Override
+    public NutsAddRepositoryOptions[] getDefaultRepositories(NutsWorkspace workspace) {
+        return new NutsAddRepositoryOptions[]{
+                RepoDefinitionResolver.createRepositoryOptions("maven-local", true, workspace),
+                RepoDefinitionResolver.createRepositoryOptions("maven-central", true, workspace)
+        };
+    }
 
     @Override
-    public NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace) {
-        return Arrays.copyOf(DEFAULTS, DEFAULTS.length);
+    public NutsRepository create(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
+        final NutsRepositoryConfig config = options.getConfig();
+        String type = config.getType();
+        if (type == null) {
+            return null;
+        }
+        if (CoreIOUtils.isPathHttp(config.getLocation())) {
+            return (new MavenRemoteRepository(options, workspace, parentRepository, type));
+        }
+        if (CoreIOUtils.isPathFile(config.getLocation())) {
+            return new MavenFolderRepository(options, workspace, parentRepository);
+        }
+        return null;
     }
 
     @Override
@@ -65,69 +76,69 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
         }
         String repositoryType = criteria.getConstraints().getType();
         String location = criteria.getConstraints().getLocation();
-        if(CoreStringUtils.isBlank(repositoryType)){
+        if (CoreStringUtils.isBlank(repositoryType)) {
             if (!CoreStringUtils.isBlank(location)) {
                 String prot = CoreNutsUtils.extractUrlProtocol(location);
-                if(prot!=null){
-                    switch (prot){
-                        case "maven":{
+                if (prot != null) {
+                    switch (prot) {
+                        case "maven": {
                             criteria.getConstraints().setType("maven");
-                            criteria.getConstraints().setLocation("https"+location.substring(prot.length()));
+                            criteria.getConstraints().setLocation("https" + location.substring(prot.length()));
                             return DEFAULT_SUPPORT;
                         }
-                        case "maven+http":{
+                        case "maven+http": {
                             criteria.getConstraints().setType("maven");
-                            criteria.getConstraints().setLocation("http"+location.substring(prot.length()));
+                            criteria.getConstraints().setLocation("http" + location.substring(prot.length()));
                             return DEFAULT_SUPPORT;
                         }
-                        case "maven+https":{
+                        case "maven+https": {
                             criteria.getConstraints().setType("maven");
-                            criteria.getConstraints().setLocation("https"+location.substring(prot.length()));
+                            criteria.getConstraints().setLocation("https" + location.substring(prot.length()));
                             return DEFAULT_SUPPORT;
                         }
-                        case "maven+dirtext":{
+                        case "maven+dirtext": {
                             criteria.getConstraints().setType("maven+dirtext");
-                            criteria.getConstraints().setLocation("https"+location.substring(prot.length()));
+                            criteria.getConstraints().setLocation("https" + location.substring(prot.length()));
                             return DEFAULT_SUPPORT;
                         }
-                        case "maven+dirtext+http":{
+                        case "maven+dirtext+http": {
                             criteria.getConstraints().setType("maven+dirtext");
-                            criteria.getConstraints().setLocation("http"+location.substring(prot.length()));
+                            criteria.getConstraints().setLocation("http" + location.substring(prot.length()));
                             return DEFAULT_SUPPORT;
                         }
-                        case "maven+dirtext+https":{
+                        case "maven+dirtext+https": {
                             criteria.getConstraints().setType("maven+dirtext");
-                            criteria.getConstraints().setLocation("https"+location.substring(prot.length()));
+                            criteria.getConstraints().setLocation("https" + location.substring(prot.length()));
                             return DEFAULT_SUPPORT;
                         }
-                        case "maven+dirlist":{
+                        case "maven+dirlist": {
                             criteria.getConstraints().setType("maven+dirlist");
-                            criteria.getConstraints().setLocation("https"+location.substring(prot.length()));
+                            criteria.getConstraints().setLocation("https" + location.substring(prot.length()));
                             return DEFAULT_SUPPORT;
                         }
-                        case "maven+dirlist+http":{
+                        case "maven+dirlist+http": {
                             criteria.getConstraints().setType("maven+dirlist");
-                            criteria.getConstraints().setLocation("http"+location.substring(prot.length()));
+                            criteria.getConstraints().setLocation("http" + location.substring(prot.length()));
                             return DEFAULT_SUPPORT;
                         }
-                        case "maven+dirlist+https":{
+                        case "maven+dirlist+https": {
                             criteria.getConstraints().setType("maven+dirlist");
-                            criteria.getConstraints().setLocation("https"+location.substring(prot.length()));
+                            criteria.getConstraints().setLocation("https" + location.substring(prot.length()));
                             return DEFAULT_SUPPORT;
                         }
-                        case "maven+api":{
+                        case "maven+api": {
                             criteria.getConstraints().setType("maven+api");
-                            criteria.getConstraints().setLocation("https"+location.substring(prot.length()));
+                            criteria.getConstraints().setLocation("https" + location.substring(prot.length()));
                             return DEFAULT_SUPPORT;
                         }
-                        case "maven+api+http":{
+                        case "maven+api+http": {
                             criteria.getConstraints().setType("maven+api");
-                            criteria.getConstraints().setLocation("http"+location.substring(prot.length()));
+                            criteria.getConstraints().setLocation("http" + location.substring(prot.length()));
                             return DEFAULT_SUPPORT;
                         }
-                        case "maven+api+https":{
+                        case "maven+api+https": {
                             criteria.getConstraints().setType("maven+api");
-                            criteria.getConstraints().setLocation("https"+location.substring(prot.length()));
+                            criteria.getConstraints().setLocation("https" + location.substring(prot.length()));
                             return DEFAULT_SUPPORT;
                         }
                     }
@@ -137,11 +148,11 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
                             location + "/nuts-repository.json"
                     );
                     try (InputStream s = in.open()) {
-                        Map<String,Object> m=criteria.getWorkspace().formats().element().setContentType(NutsContentType.JSON)
-                                .parse(s,Map.class);
-                        if(m!=null){
+                        Map<String, Object> m = criteria.getWorkspace().formats().element().setContentType(NutsContentType.JSON)
+                                .parse(s, Map.class);
+                        if (m != null) {
                             String type = (String) m.get("type");
-                            if(type!=null) {
+                            if (type != null) {
                                 switch (type) {
                                     case "maven":
                                     case "maven+dirtext":
@@ -157,12 +168,12 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
                         //ignore
                     }
                     FilesFoldersApi.Item[] dirList = FilesFoldersApi.getDirItems(true, true, RemoteRepoApi.DIR_LIST, location, criteria.getWorkspace().createSession());
-                    if(dirList!=null){
+                    if (dirList != null) {
                         criteria.getConstraints().setType("maven+dirlist");
                         return DEFAULT_SUPPORT;
                     }
                     dirList = FilesFoldersApi.getDirItems(true, true, RemoteRepoApi.DIR_TEXT, location, criteria.getWorkspace().createSession());
-                    if(dirList!=null){
+                    if (dirList != null) {
                         criteria.getConstraints().setType("maven+dirtext");
                         return DEFAULT_SUPPORT;
                     }
@@ -188,30 +199,14 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
             }
             return NO_SUPPORT;
         }
-        switch (repositoryType){
+        switch (repositoryType) {
             case "maven":
             case "maven+dirlist":
             case "maven+dirtext":
-            case "maven+github":{
+            case "maven+github": {
                 return DEFAULT_SUPPORT;
             }
         }
         return NO_SUPPORT;
-    }
-
-    @Override
-    public NutsRepository create(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        final NutsRepositoryConfig config = options.getConfig();
-        String type = config.getType();
-        if(type==null){
-            return null;
-        }
-        if (CoreIOUtils.isPathHttp(config.getLocation())) {
-            return (new MavenRemoteRepository(options, workspace, parentRepository,type));
-        }
-        if (CoreIOUtils.isPathFile(config.getLocation())) {
-            return new MavenFolderRepository(options, workspace, parentRepository);
-        }
-        return null;
     }
 }

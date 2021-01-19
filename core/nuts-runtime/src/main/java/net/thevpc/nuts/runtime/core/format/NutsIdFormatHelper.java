@@ -595,7 +595,7 @@ public class NutsIdFormatHelper {
                             this.status_s = 'p';
                             break;
                         }
-                        case TEST_COMPILE: {
+                        case TEST_API: {
                             this.status_s = 't';
                             break;
                         }

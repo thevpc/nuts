@@ -13,7 +13,7 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.NutsProgressEvent;
 import net.thevpc.nuts.NutsProgressMonitor;
-import net.thevpc.nuts.runtime.standalone.util.common.BytesSizeFormat;
+import net.thevpc.nuts.runtime.bundles.common.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.util.console.CProgressBar;
 import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
 
@@ -89,16 +89,16 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
             formattedLine.append(p);
             BytesSizeFormat mf = new BytesSizeFormat("BTD1F", event.getWorkspace());
 
-            formattedLine.append(" ").append(terminalFormat.escapeText(String.format("%6s", df.format(percent)))).append("\\% ");
-            formattedLine.append(" [[").append(terminalFormat.escapeText(mf.format(partialSpeed))).append("/s]]");
+            formattedLine.append(" ").append(terminalFormat.escapeText(String.format("%6s", df.format(percent)))).append("% ");
+            formattedLine.append(" ##:config:").append(terminalFormat.escapeText(mf.format(partialSpeed))).append("/s##");
             if (event.getMaxValue() < 0) {
                 if (globalSpeed == 0) {
                     formattedLine.append(terminalFormat.escapeText(" ( -- )"));
                 } else {
-                    formattedLine.append(" ([[").append(terminalFormat.escapeText(mf.format(globalSpeed))).append("]])");
+                    formattedLine.append(" (##:info:").append(terminalFormat.escapeText(mf.format(globalSpeed))).append("##)");
                 }
             } else {
-                formattedLine.append(" ([[").append(terminalFormat.escapeText(mf.format(event.getMaxValue()))).append("]])");
+                formattedLine.append(" (##:warn:").append(terminalFormat.escapeText(mf.format(event.getMaxValue()))).append("##)");
             }
             if (event.getError() != null) {
                 formattedLine.append(" ```error ERROR``` ");

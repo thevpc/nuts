@@ -1,0 +1,187 @@
+search for artifacts
+    search for artifacts
+
+##) SYNOPSYS:
+```sh nuts search  [<-options>]... <ids> ...  <args> ...```
+       search for <ids>
+
+##) OPTIONS:
+```sh --lenient```
+    when an id is found but its descriptor and/or its file are not found, do not raise an error and continue. default ```kw no```
+```sh --all-versions```
+    return all versions of the same ids. if ```kw no``` will always return the ```kw latest``` one. default ```kw yes```
+```sh --duplicates```
+    return the same version from distinct repositories if found. default ```kw yes```
+```sh --distinct```
+    remove duplicates . default ```kw false```
+```sh -L | --latest | --latest-versions```
+    return latest version of each searched id. equivalent to ```sh --all-versions=no```
+```sh -S | --single | --single-versions```
+    return one instance of each version even if found in distinct repositories. equivalent to ```sh --duplicate=no```
+```sh -s | --sort```
+    sort result. default ```kw no```
+```sh --main```
+    include main result. This is meaningful when one needs to find only dependencies, and hence turns this flag to ```kw no```. default ```kw yes```
+```sh --dependencies```
+    include dependencies in result. default ```kw no```
+```sh --main-only```
+    include main result and no dependencies. equivalent to ```sh --main=yes --dependencies=no```
+```sh --dependencies-only```
+    include dependencies and no main. equivalent to ```sh --main=no --dependencies=no```
+```sh --main-and-dependencies```
+    include main result and no dependencies. equivalent to ```sh --main=yes --dependencies=yes```
+```sh -r | --repository <repo-name>```
+    include repository in the search process. if none defined, all repositories are searched.
+```sh --arch x86|amd64|ia64|ppc|sparc```
+    include architecture in the search process. if none defined, all architectures are searched.
+```sh --packaging jar|war|...```
+    include packaging in the search process. if none defined, all packagings are searched.
+```sh --cached```
+    include cached in the search process. default ```kw yes```
+```sh --indexed```
+    include search index in the search process. default ```kw yes```
+```sh --effective```
+    compute effective descriptor. default ```kw no```
+```sh --content```
+    include content. default ```kw no```
+```sh --install-info```
+    include install information. default ```kw false```
+```sh --location```
+    force found contents to be copied to location
+```sh -f | --fetch offline|online|anywhere|installed|remote```
+     include fetch mode in the search process. if none defined, all fetch modes are searched.
+```sh --offline | -F ```
+    equivalent to ```sh --fetch=offline```
+```sh --online | -O```
+    equivalent to ```sh --fetch=online```
+```sh --anywhere | -a```
+    equivalent to ```sh --fetch=anywhere```
+```sh --installed | -i ```
+    search for installed only packages
+```sh --included```
+    search for included packages in other installations
+```sh --installed-or-included```
+    search for installed and included packages
+```sh --remote | -R```
+    equivalent to ```sh --fetch=remote```
+```sh --optional```
+    relevant when ```sh --dependencies``` is armed.
+    ```sh --optional=```         : search for all dependencies, including optional (default)
+    ```sh --optional=yes```  : search for optional dependencies only
+    ```sh --optional=no```   : search for non optional dependencies only
+```sh --scope api|implementation|compile
+           | provided|import|runtime|system
+           | test-compile|test-provided|test-runtime|test|test
+           | run|run-test|other|all
+```
+     relevant when ```sh --dependencies``` is armed.
+       include scope in the search dependencies process. if none defined, only ```kw installed``` scope is searched.
+
+```sh --default | --default-versions```
+    find only default installed versions. This  is meaningful with ```sh --installed``` flag
+```sh --libs```
+    find libraries (non app) only
+```sh --apps```
+    find applications (non libraries) only
+```sh --nuts-apps```
+    find nuts applications only
+```sh --extensions```
+    find extensions only
+```sh --runtime```
+    find runtime only
+```sh --companions```
+    find companions only
+```sh --api-version```
+    find artifacts compatible with the given api-version
+
+```sh -l```
+```sh --long```
+```sh --display-long```
+    equivalent to ```sh --display=long```
+
+```sh --display=<comma-separated-columns>```
+    define columns to display (ordered list of columns, comma separated)
+    Accepted columns are :
+         ```kw status```            : show nuts status using condensed format using 3 characters
+               char \#1    : show installation status
+                              ```kw I``` : means 'installed' and is 'default'
+                              ```kw i``` : means 'installed' and is not default
+                              ```kw f``` : means 'fetched' locally but not installed
+                              ```kw r``` : means 'remote' (not fetched)
+               char \#2    : show package type
+                              ```kw a``` : nuts 'api' package
+                              ```kw r``` : nuts 'runtime' package
+                              ```kw e``` : nuts 'extension' package
+                              ```kw c``` : nuts 'companion' package
+                              ```kw -``` : other package
+               char \#3    : show application status
+                              ```kw X``` : means executable nuts application (implementing NutsApplication)
+                              ```kw x``` : means executable regular application
+                              ```kw -``` : means non executable or unknown
+               char \#4    : show scope status (when applicable)
+                              ```kw c``` : compile/api scope
+                              ```kw i``` : implementation scope
+                              ```kw r``` : runtime scope
+                              ```kw s``` : system scope
+                              ```kw p``` : provided scope
+                              ```kw t``` : test-compile scope
+                              ```kw P``` : test-provided scope
+                              ```kw R``` : test-runtime scope
+                              ```kw m``` : import scope
+                              ```kw O``` : other
+                              ```kw -``` : unknown
+
+         ```kw install-date```      : artifact install date
+         ```kw install-user```      : artifact install user
+         ```kw id```                : artifact id
+         ```kw name```              : simple name
+         ```kw packaging```         : artifact packaging
+         ```kw arch```              : artifact supported architectures
+         ```kw platform```          : artifact supported platforms
+         ```kw os```                : artifact supported operation systems
+         ```kw osdist```            : artifact supported OS distributions
+         ```kw exec-entry```        : Main class
+         ```kw file-name```         : artifact file name
+         ```kw file```              : artifact file path
+         ```kw var-location```      : artifact var folder
+         ```kw temp-location```     : artifact temp folder
+         ```kw config-location```   : artifact config folder
+         ```kw lib-location```      : artifact lib folder
+         ```kw log-location```      : artifact log folder
+         ```kw cache-location```    : artifact cache folder
+         ```kw programs-location``` : artifact programs folder
+         ```kw run-location```      : artifact run folder
+         ```kw long```              : equivalent to ```kw status, install-date, install-user, id```
+         ```kw all```               : equivalent to all of the above
+
+```sh --omit-env```
+    when formatting id, omit env
+```sh --omit-face```
+    when formatting id, omit face
+```sh --omit-group```
+    when formatting id, omit group
+```sh --omit-imported-group```
+    when formatting id, omit imported group
+```sh --omit-namespace```
+    when formatting id, omit namespace
+```sh --highlight-imported-group```
+    when formatting id, highlight imported group
+```sh --highlight-optional```
+    when formatting id, highlight optional
+```sh --highlight-scope```
+    when formatting id, highlight scope
+
+#!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
+
+##) EXAMPLES
+```sh nuts search --help```
+            shows this help and exit
+       
+```sh nuts search```
+            search installed nuts
+
+```sh nuts search --offline netbeans-*```
+            search all artifacts that start with "netbeans-" in all local repositories
+
+```sh nuts search --anywhere netbeans-*```
+            search all artifacts that start with "netbeans-" in all local and remote repositories

@@ -213,6 +213,7 @@ public final class CoreNutsArgumentsParser {
                         }
                         break;
                     }
+                    case "-S":
                     case "--standalone": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
@@ -1044,7 +1045,6 @@ public final class CoreNutsArgumentsParser {
                     //ERRORS
                     case "-I":
                     case "-U":
-                    case "-S":
                     case "-G":
                     case "-H":
                     case "-M":
@@ -1058,7 +1058,8 @@ public final class CoreNutsArgumentsParser {
                     case "-m":
                     default: {
                         if (k.startsWith("---") && k.length() > 3 && k.charAt(3) != '-') {
-                            tempProps.add(k.substring(3));
+                            a = cmdLine.next();
+                            tempProps.add(a.toString().substring(3));
                         } else {
                             cmdLine.skip();
                             showError.add("nuts: invalid option " + a.getString());

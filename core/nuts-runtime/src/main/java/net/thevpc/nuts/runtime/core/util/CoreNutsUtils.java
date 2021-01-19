@@ -26,14 +26,12 @@
 package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
-import net.thevpc.nuts.runtime.depracated.SimpleNutsDescriptorComparator;
-import net.thevpc.nuts.runtime.standalone.main.DefaultNutsWorkspace;
+import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.TraceResult;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,20 +47,11 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 5/16/17.
  */
 public class CoreNutsUtils {
-    public static final String REMOTE_MAVEN_GIT = "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master";
-
-    /**
-     * vpc-public-nuts git repository. contains mainly nuts author non java
-     * artifacts.
-     */
-    public static final String REMOTE_NUTS_GIT = "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master";
-
     /**
      * vpc-public-nuts local repository at ${home.config}/.vpc-public-nuts
      */
@@ -240,7 +229,7 @@ public class CoreNutsUtils {
             return null;
         }
 //        return applyStringProperties(child, properties == null ? null : new StringConverterAdapter(properties));
-        return CoreStringUtils.replaceDollarPlaceHolders(child, properties);
+        return StringPlaceHolderParser.replaceDollarPlaceHolders(child, properties);
     }
 
     //    public static String applyStringProperties(String child, Function<String,String> properties) {
@@ -528,7 +517,7 @@ public class CoreNutsUtils {
     }
 
     public static String extractUrlProtocol(String location) {
-        Matcher matcher = Pattern.compile("(?<p>[a-zA-Z+])://(?<r>.*>)").matcher(location);
+        Matcher matcher = Pattern.compile("(?<p>[a-zA-Z+]+)://(?<r>.*)").matcher(location);
         if (matcher.find()) {
             return matcher.group("p");
 
@@ -537,7 +526,7 @@ public class CoreNutsUtils {
     }
 
     public static String resolveRepositoryEffectiveUrlFromUrl(String location) {
-        Matcher matcher = Pattern.compile("(?<p>[a-zA-Z+])://(?<r>.*>)").matcher(location);
+        Matcher matcher = Pattern.compile("(?<p>[a-zA-Z+]+)://(?<r>.*)").matcher(location);
         if (matcher.find()) {
             String protocol = matcher.group("p");
             String rest = matcher.group("r");
@@ -599,62 +588,6 @@ public class CoreNutsUtils {
 //        }
     }
 
-    public static String resolveRepositoryTypeFromUrl(String location) {
-        Matcher matcher = Pattern.compile("(?<p>[a-zA-Z+])://(?<r>.*>)").matcher(location);
-        if (matcher.find()) {
-            String protocol = matcher.group("p");
-            String rest = matcher.group("r");
-            for (String s : new String[]{
-                    "https","http","ssh","ftp"
-            }) {
-                if(protocol.endsWith("+"+s)){
-                    return protocol.substring(0,protocol.length()-s.length()-1);
-                }
-            }
-            for (String s : new String[]{
-                    "https","http","ssh","ftp"
-            }) {
-                if(protocol.equals(s)){
-                    return null;
-                }
-            }
-            return protocol;
-        }
-        return null;
-    }
-
-    public static NutsAddRepositoryOptions defToOptions(NutsRepositoryDefinition def) {
-        NutsAddRepositoryOptions o = new NutsAddRepositoryOptions();
-        String type = def.getType();
-        String location = def.getLocation();
-        if (location != null) {
-            if (CoreStringUtils.isBlank(type)) {
-                type = resolveRepositoryTypeFromUrl(location);
-            }
-            location = resolveRepositoryEffectiveUrlFromUrl(location);
-        }
-        o.setName(def.getName());
-        o.setCreate(def.isCreate());
-        o.setFailSafe(def.isFailSafe());
-        o.setProxy(def.isProxy());
-        o.setTemporary(def.isTemporary());
-        o.setDeployOrder(def.getDeployOrder());
-        o.setEnabled(true); ///????
-        o.setSession(def.getSession()); ///????
-        if (def.isReference()) {
-            o.setLocation(location);
-        } else {
-            o.setLocation(def.getName());
-            o.setConfig(new NutsRepositoryConfig()
-                    .setName(def.getName())
-                    .setType(type)
-                    .setLocation(location)
-                    .setStoreLocationStrategy(def.getStoreLocationStrategy())
-            );
-        }
-        return o;
-    }
-
     public static NutsSession silent(NutsSession session) {
         return session.isTrace() ? session.copy().setTrace(false) : session;
     }
@@ -663,16 +596,6 @@ public class CoreNutsUtils {
         NutsIdFormat idFormat = ws.id().formatter();
         return idFormat.value(id.getId()).format();
     }
-
-//    public static void wconfigToBconfig(NutsWorkspaceConfig wconfig, NutsBootConfig bconfig) {
-//        bconfig.setStoreLocations(new NutsStoreLocationsMap(wconfig.getStoreLocations()).toMap());
-//        bconfig.setHomeLocations(new NutsHomeLocationsMap(wconfig.getHomeLocations()).toMap());
-//    }
-
-//    public static void optionsToWconfig(NutsWorkspaceOptions options, NutsWorkspaceConfig wconfig) {
-//        wconfig.setStoreLocations(new NutsStoreLocationsMap(wconfig.getStoreLocations()).toMapOrNull());
-//        wconfig.setHomeLocations(new NutsHomeLocationsMap(wconfig.getHomeLocations()).toMapOrNull());
-//    }
 
     public static Object tracePropsNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
         NutsIdFormat idFormat = ws.id().formatter();
@@ -734,7 +657,7 @@ public class CoreNutsUtils {
         return f;
     }
 
-    public static void traceMessage(NutsLogger log, Level lvl, String name, NutsSession session, NutsFetchMode fetchMode, NutsId id, TraceResult tracePhase, String title, long startTime, String extraMsg) {
+    public static void traceMessage(NutsLogger log, Level lvl, String name, NutsSession session, NutsFetchMode fetchMode, NutsId id, NutsLogVerb tracePhase, String title, long startTime, String extraMsg) {
         if (!log.isLoggable(lvl)) {
             return;
         }
@@ -745,7 +668,7 @@ public class CoreNutsUtils {
         }
         long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
         String modeString = CoreStringUtils.alignLeft(fetchMode.id(), 7);
-        log.with().session(session).level(lvl).verb(tracePhase.name()).time(time).formatted()
+        log.with().session(session).level(lvl).verb(tracePhase).time(time).formatted()
                 .log("[{0}] {1} {2} {3} {4}",
                         modeString,
                         CoreStringUtils.alignLeft(name, 20),
@@ -1145,70 +1068,6 @@ public class CoreNutsUtils {
             }
         }
         return result;
-    }
-
-    public static NutsRepositoryDefinition repositoryStringToDefinition(String s) {
-        switch (s) {
-            case NutsConstants.Names.DEFAULT_REPOSITORY_NAME: {
-                return new NutsRepositoryDefinition()
-                        .setName(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
-                        .setLocation(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
-                        .setDeployOrder(10)
-                        .setFailSafe(false)
-                        .setCreate(true)
-                        .setType(NutsConstants.RepoTypes.NUTS)
-                        .setReference(false);
-            }
-            case ".m2":
-            case "m2":
-            case "maven-local": {
-                return new NutsRepositoryDefinition().setName("maven-local")
-                        .setLocation(System.getProperty("user.home") + CoreIOUtils.syspath("/.m2/repository")).setType(NutsConstants.RepoTypes.MAVEN)
-                        .setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false))
-                        .setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL);
-            }
-            case "maven-central": {
-                return new NutsRepositoryDefinition().setName("maven-central")
-                        .setLocation(NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL).setType(NutsConstants.RepoTypes.MAVEN)
-                        .setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false))
-                        .setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL);
-            }
-            case "vpc-public-maven": {
-                return new NutsRepositoryDefinition().setName("vpc-public-maven")
-                        .setLocation(REMOTE_MAVEN_GIT).setType(NutsConstants.RepoTypes.MAVEN)
-                        .setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false))
-                        .setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL);
-            }
-            case "vpc-public-nuts": {
-                return new NutsRepositoryDefinition().setName("vpc-public-nuts")
-                        .setLocation(REMOTE_NUTS_GIT).setType(NutsConstants.RepoTypes.NUTS)
-                        .setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false))
-                        .setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL);
-            }
-//                case "nuts-git": {
-//                    repos.add(NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT);
-//                    break;
-//                }
-            default: {
-                String[] kv = extractKeyEqValue(s);
-                if (kv == null) {
-                    throw new IllegalArgumentException("Unsupported boot repository. Missing name: " + s);
-                }
-                return new NutsRepositoryDefinition().setName(kv[0])
-                        .setLocation(kv[1]).setType(resolveRepositoryTypeFromUrl(kv[1]))
-                        .setProxy(CoreCommonUtils.getSysBoolNutsProperty("cache.cache-local-files", false))
-                        .setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL);
-            }
-        }
-    }
-
-    private static String[] extractKeyEqValue(String s) {
-        Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.*)").matcher(s);
-        if (matcher.find()) {
-            return new String[]{matcher.group("key"), matcher.group("value")};
-        } else {
-            return null;
-        }
     }
 
     public String tracePlainNutsId(NutsWorkspace ws, NutsId id) {

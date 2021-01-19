@@ -432,7 +432,7 @@ public final class NutsBootWorkspace {
                         workspaceInformation.setJavaOptions((String) obj.get("javaOptions"));
                     }
                 } catch (UncheckedIOException | NutsIOException e) {
-                    LOG.log(Level.CONFIG, apiPath.toString(), "unable to read {0}");
+                    LOG.log(Level.CONFIG, NutsLogVerb.READ, "unable to read {0}",apiPath.toString());
                 }
             }
             if (!loadedApiConfig || PrivateNutsUtils.isBlank(workspaceInformation.getRuntimeId())

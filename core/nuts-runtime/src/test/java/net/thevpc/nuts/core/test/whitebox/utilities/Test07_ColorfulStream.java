@@ -210,7 +210,7 @@ public class Test07_ColorfulStream {
     public void test7() {
         NutsWorkspace ws = Nuts.openWorkspace();
         String t_colors = CoreIOUtils.loadString(getClass().getResourceAsStream(
-                "/net/thevpc/nuts/ntf-help.ntf"
+                "/net/thevpc/nuts/runtime/ntf-help.ntf"
         ), true);
         writeColors(t_colors);
     }
@@ -365,7 +365,7 @@ public class Test07_ColorfulStream {
                         " ```sh - <args>...```\n" +
                         "   run a nut's shell (nsh) command with the remaining arguments\n" +
                         "\n" +
-                        "#!include</net/thevpc/nuts/includes/standard-options-format.ntf>\n" +
+                        "#!include</net/thevpc/nuts/runtime/includes/standard-options-format.ntf>\n" +
                         "\n" +
                         "##EXAMPLES:##\n" +
                         "```sh\n" +
@@ -540,7 +540,7 @@ public class Test07_ColorfulStream {
 //        writeColors("##)Hello");
 //        writeColors("##)Hello");
 //        writeColors("\n##)Hello");
-        writeColors("#!include</net/thevpc/nuts/includes/standard-header.ntf>\n" +
+        writeColors("#!include</net/thevpc/nuts/runtime/includes/standard-header.ntf>\n" +
                 "\n" +
                 "```sh nft``` aka ##nuts text format## is a markdown like text format enabling colored text styles.\n" +
                 "```sh nft``` is the standard format used in the standard output and standard error. It is as\n" +

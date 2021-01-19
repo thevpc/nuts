@@ -103,7 +103,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
                 NutsDefinition d = (NutsDefinition) o;
                 NutsDependencyTreeNode[] z = null;
                 try {
-                    z = d.getDependencyNodes();
+                    z = d.getDependencies().nodes().toArray(new NutsDependencyTreeNode[0]);
                 } catch (NutsElementNotFoundException ex) {
                     //this exception will be raised if dependencyNodes(...) was not called.
                     //so we will ignore dependencies.
@@ -111,7 +111,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
                 if (z != null) {
                     return Arrays.asList(z);
                 }
-                NutsDependency[] dz = null;
+                NutsDependencies dz = null;
                 try {
                     dz = d.getDependencies();
                 } catch (NutsElementNotFoundException ex) {
@@ -119,7 +119,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
                     //so we will ignore dependencies.
                 }
                 if (dz != null) {
-                    return Arrays.asList(dz);
+                    return dz.all();
                 }
                 return null;
             } else if (o instanceof NutsDependencyTreeNode) {

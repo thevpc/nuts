@@ -6,20 +6,24 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.http.SimpleHttpClient;
+import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.format.NutsPrintIterator;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.main.DefaultNutsRepositoryManager;
+import net.thevpc.nuts.runtime.core.repos.DefaultNutsRepositoryManager;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.ProcessBuilder2;
+import net.thevpc.nuts.runtime.bundles.io.ProcessBuilder2;
 import net.thevpc.nuts.runtime.standalone.io.DefaultNutsExecutionEntry;
 import net.thevpc.nuts.runtime.core.format.plain.DefaultSearchFormatPlain;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
-import net.thevpc.nuts.runtime.standalone.util.common.CorePlatformUtils;
+import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,10 +35,10 @@ import java.util.jar.Manifest;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.util.common.TraceResult;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.InputStreamVisitor;
-import net.thevpc.nuts.runtime.standalone.util.io.ZipUtils;
+import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
+import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
+import net.thevpc.nuts.runtime.standalone.wscommands.NutsRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 /**
@@ -155,16 +159,34 @@ public class NutsWorkspaceUtils {
         ));
     }
 
-    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchMode mode, NutsSession session, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
+    public List<NutsRepositoryAndFetchMode> filterRepositoryAndFetchModes(
+            NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchStrategy fetchStrategy,
+            NutsSession session, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
+        List<NutsRepositoryAndFetchMode> ok=new ArrayList<>();
+        for (NutsFetchMode nutsFetchMode : fetchStrategy) {
+            for (NutsRepository nutsRepositoryAndFetchMode : filterRepositories(
+                    fmode, id, repositoryFilter, nutsFetchMode, session, installedVsNonInstalledSearch
+            )) {
+                    ok.add(new NutsRepositoryAndFetchMode(nutsRepositoryAndFetchMode,nutsFetchMode));
+            }
+        }
+        return ok;
+    }
+
+
+    private List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchMode mode, NutsSession session, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
         return filterRepositories(fmode, id, repositoryFilter, true, null, mode, session, installedVsNonInstalledSearch);
     }
 
-    public List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsSession session, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
+    private List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsSession session, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
         List<RepoAndLevel> repos2 = new ArrayList<>();
         //        List<Integer> reposLevels = new ArrayList<>();
         if (installedVsNonInstalledSearch.isSearchInOtherRepositories()) {
             for (NutsRepository repository : ws.repos().getRepositories(session)) {
-                if (repository.isEnabled() && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))) {
+                if (repository.isEnabled()
+                        && repoSPI(repository).isAcceptFetchMode(mode)
+                        && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))
+                ) {
                     int t = 0;
                     int d = 0;
                     if (fmode == NutsRepositorySupportedAction.DEPLOY) {
@@ -189,7 +211,7 @@ public class NutsWorkspaceUtils {
             }
         }
         List<NutsRepository> ret = new ArrayList<>();
-        if (fmode == NutsRepositorySupportedAction.SEARCH && installedVsNonInstalledSearch.isSearchInInstalled()) {
+        if (mode == NutsFetchMode.LOCAL && fmode == NutsRepositorySupportedAction.SEARCH && installedVsNonInstalledSearch.isSearchInInstalled()) {
             ret.add(NutsWorkspaceExt.of(ws).getInstalledRepository());
         }
         for (RepoAndLevel repoAndLevel : repos2) {
@@ -457,13 +479,13 @@ public class NutsWorkspaceUtils {
 
     }
 
-    public void traceMessage(NutsFetchStrategy fetchMode, NutsId id, TraceResult tracePhase, String message, long startTime, NutsSession session) {
+    public void traceMessage(NutsFetchStrategy fetchMode, NutsId id, NutsLogVerb tracePhase, String message, long startTime, NutsSession session) {
         if (LOG.isLoggable(Level.FINEST)) {
 
             long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
             String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
             LOG.with().session(session).level(Level.FINEST)
-                    .verb(tracePhase.toString()).formatted().time(time)
+                    .verb(tracePhase).formatted().time(time)
                     .log("{0}{1} {2}",
                             fetchString,
                             id,
@@ -600,7 +622,7 @@ public class NutsWorkspaceUtils {
         }
         List<String> args2 = new ArrayList<>();
         for (String arg : args) {
-            String s = CoreStringUtils.trim(CoreStringUtils.replaceDollarPlaceHolders(arg, mapper));
+            String s = CoreStringUtils.trim(StringPlaceHolderParser.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
                 Collections.addAll(args2, workspace.commandLine().parse(s).toStringArray());
             } else {
@@ -704,6 +726,13 @@ public class NutsWorkspaceUtils {
             return true;
         }
         return false;
+    }
+
+    public InputStream openURL(String o) {
+        return new SimpleHttpClient(o).openStream();
+    }
+    public InputStream openURL(URL o) {
+        return new SimpleHttpClient(o).openStream();
     }
 
     public static boolean unsetWorkspace(Object o) {

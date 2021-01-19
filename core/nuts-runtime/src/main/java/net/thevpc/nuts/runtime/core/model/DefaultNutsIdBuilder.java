@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.QueryStringMap;
+import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.Map;
@@ -43,7 +43,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     private String groupId;
     private String artifactId;
     private NutsVersion version;
-    private QueryStringMap propertiesQuery = new QueryStringMap(true, (name, value) -> {
+    private QueryStringParser propertiesQuery = new QueryStringParser(true, (name, value) -> {
         if (name != null) {
             switch (name) {
                 case NutsConstants.IdProperties.VERSION: {

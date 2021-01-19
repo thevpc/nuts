@@ -1,19 +1,19 @@
 ##ntomcat## toolbox to start, monitor and deploy both local and remote tomcat instances
 
 ##) SYNOPSIS:
-##ntomcat## [\<target\>] <command> **<what>** \<**options**\> <args>...
+```sh ntomcat [<target>] <command> <what> [<-options>] <args>...```
 
 tomcat toolbox to start, monitor and remote deploy applications
 
-[[<target>]]
-    --server | -s : local tomcat configuration
-    --client | -c : remote tomcat configuration
+<target>:
+    ```sh --server | -s ``` : local tomcat configuration
+    ```sh --client | -c ``` : remote tomcat configuration
     If no target is provided, local tomcat configuration is considered.
 
-[[<command>]]
+<command>:
     commands depend on target and are listed below.
 
-[[<what>]]
+<what>
     tomcat supports three configuration namespaces : instance,app and domain.
     global config is a set of apps and domains.
     domain config is a subset of apps.
@@ -21,94 +21,94 @@ tomcat toolbox to start, monitor and remote deploy applications
 
     all commands are bound to one of these namespaces as follows :
 
-    **--name** <config>
+    ```sh --name <config>```
         use tomcat instance configuration
-    **--name** <config>.<domainOrApp>
+    ```sh --name <config>.<domainOrApp>```
         use domain or application configuration
-    **--app** <config>.<app>
+    ```sh --app <config>.<app>```
         use application configuration
-    **--app** <config>.<domain>
+    ```sh --app <config>.<domain>```
         use domain configuration
 
-##Local/Server Tomcat commands## :
-    {{list}}            \[**<options>**\]
+###) Local/Server Tomcat commands:
+    ```sh ntomcat list            [<-options>]``` 
                     : list instance information
-        \[**--name**\] <name>
+    ```sh [--name] <name>```
                     : select instance name
-        \[**--apps**\]
+    ```sh [--apps]```
                     : list all apps
-        \[**--domains**\]
+    ```sh [--domains]```
                     : list all domains
-    {{describe}} **<what>**
-                    : show instance/app/domain information. valid aliases are : {{show}}
-        \[**--name**\] <name>
+    ```sh ntomcat describe <what>```
+                    : show instance/app/domain information. valid aliases are : {{show
+    ```sh [--name] <name>```
                     : select instance name
-        \[**--app**\]
+    ```sh [--app]```
                     : select app name in the form 'name' or 'instance.name'
-        \[**--domain**\]
+    ```sh [--domain]```
                     : select domain name in the form 'name' or 'instance.name'
-    {{add}}  **<options>**
+    ```sh ntomcat add  <-options>```
                     : add new instance, or app or domain
        options are
-               --name   <instance-name>
+               ```sh --name   <instance-name>```
                     : instance config name
-               --app   <app-name>
+               ```sh --app   <app-name>```
                     : add new application
-               --domain   <app-name>
+               ```sh --domain   <app-name>```
                     : add new domain
-                add   **<what>**
+               ```sh add   <what>```
                                 : set tomcat instance property
 
-    {{set}}   **<what>**
+    ```sh ntomcat set   <what>```
                     : set tomcat instance property (same as add be requires an existing instance config)
-    {{remove}}       **<what>**
+    ```sh ntomcat remove       <what>```
                     : remove tomcat instance
-    {{status}}       **<what>**
+    ```sh ntomcat status       <what>```
                     : write tomcat status
-    {{install}}      **<what>**
+    ```sh ntomcat install      <what>```
                     : install tomcat instance
-    {{reset}}        **<what>**
+    ```sh ntomcat reset        <what>```
                     : reset tomcat instance
-    {{deploy}}       **<what>**
+    ```sh ntomcat deploy       <what>```
                     : deploy configured projects
-    {{deploy-file}}  **<what>**
+    ```sh ntomcat deploy-file  <what>```
                     : deploy file
-    {{delete-log}}   **<what>**
+    ```sh ntomcat delete-log   <what>```
                     : delete log folder
-    {{delete-temp}}  **<what>**
+    ```sh ntomcat delete-temp  <what>```
                     : delete temp folder
-    {{delete-work}}  **<what>**
+    ```sh ntomcat delete-work  <what>```
                     : delete work folder
-    {{log}} **<what>** [**--path**] [<lines-count>]
+    ```sh ntomcat log <what> [--path] [<lines-count>]```
                     :
-    {{port}} | {{show-port}} **<what>** [**--http** | **--ajp** | **--shutdown**] [**--redirect**] [ **--set** <new-value> ]
+    ```sh ntomcat port | {{show-port <what> [--http | --ajp | --shutdown] [--redirect] [ --set <new-value> ]```
                     : set or get tomcat protocol port
-    {{catalina-base}} **<what>**
-    base **<what>**
+    ```sh ntomcat catalina-base <what>```
+    base <what>
                     : show catalina base for the given config
-    {{catalina-home}} **<what>**
-    home **<what>**
+    ```sh ntomcat catalina-home <what>```
+    home <what>
                     : show catalina home for the given config
-    {{version}} | {{catalina-version}} **<what>**
+    ```sh ntomcat version | catalina-version <what>``` 
                     : show catalina version for the given config
 
-##) EXAMPLES:
+###) EXAMPLES:
 
-##ntomcat## add my-application
+```sh ntomcat add my-application```
    will start tomcat instance with the latest available version
 
-##ntomcat## start
+```sh ntomcat start```
    will start tomcat instance with the latest available version
 
-##ntomcat## add
+```sh ntomcat add```
     download and install latest version of tomcat and configure a catalina base on default locations
 
-##ntomcat## add conf2
+```sh ntomcat add conf2```
     consider instance named conf2 where to download and install latest version of tomcat and configure a default catalina base
 
-##ntomcat## add conf2 --version 8.5 --catalina-base /home/me/here
+```sh ntomcat add conf2 --version 8.5 --catalina-base /home/me/here```
     consider instance named conf2 where to download and install latest version 8.5 of tomcat and configure a custom catalina base
 
-##ntomcat## add conf2 --catalina-home /home/me/tomcat-bin --catalina-base /home/me/here
+```sh ntomcat add conf2 --catalina-home /home/me/tomcat-bin --catalina-base /home/me/here```
     install an existing tomcat bin version and configure it with a custom catalina base
 

@@ -68,7 +68,7 @@ public class NutsDescriptorFilterArch extends AbstractNutsFilter implements Nuts
 
     @Override
     public String toJsNutsDescriptorFilterExpr() {
-        return "descriptor.matchesArch('" + CoreStringUtils.escapeCoteStrings(arch) + "')";
+        return "descriptor.matchesArch('" + CoreStringUtils.escapeQuoteStrings(arch) + "')";
     }
 
     @Override

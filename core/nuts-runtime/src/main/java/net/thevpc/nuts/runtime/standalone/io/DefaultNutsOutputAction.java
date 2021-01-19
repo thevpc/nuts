@@ -4,7 +4,7 @@ import net.thevpc.nuts.NutsOutput;
 import net.thevpc.nuts.NutsOutputAction;
 import net.thevpc.nuts.NutsUnsupportedArgumentException;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.util.io.AbstractNutsOutput;
+import net.thevpc.nuts.runtime.bundles.io.AbstractNutsOutput;
 
 import java.io.*;
 import java.net.MalformedURLException;

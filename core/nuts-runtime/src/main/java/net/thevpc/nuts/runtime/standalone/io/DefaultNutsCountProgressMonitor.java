@@ -9,7 +9,7 @@ import net.thevpc.nuts.NutsProgressEvent;
 import net.thevpc.nuts.NutsProgressMonitor;
 import net.thevpc.nuts.NutsTextFormatManager;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.util.common.BytesSizeFormat;
+import net.thevpc.nuts.runtime.bundles.common.BytesSizeFormat;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
 
@@ -80,26 +80,26 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
             int x = (int) (20.0 / 100.0 * percent);
 
             StringBuilder formattedLine = new StringBuilder();
-            formattedLine.append("\\[");
+            formattedLine.append("[");
             if (x > 0) {
                 formattedLine.append("##");
-                CoreStringUtils.fillString("\\*", x, formattedLine);
+                CoreStringUtils.fillString("*", x, formattedLine);
                 formattedLine.append("##");
             }
             CoreStringUtils.fillString(' ', 20 - x, formattedLine);
-            formattedLine.append("\\]");
+            formattedLine.append("]");
             BytesSizeFormat mf = mf(event);
             DecimalFormat df = df(event);
-            formattedLine.append(" ").append(terminalFormat.escapeText(String.format("%6s", df.format(percent)))).append("\\% ");
-            formattedLine.append(" [[").append(terminalFormat.escapeText(mf.format(partialSpeed))).append("/s]]");
+            formattedLine.append(" ").append(terminalFormat.escapeText(String.format("%6s", df.format(percent)))).append("% ");
+            formattedLine.append(" ##:config:").append(terminalFormat.escapeText(mf.format(partialSpeed))).append("/s]]");
             if (event.getMaxValue() < 0) {
                 if (globalSpeed == 0) {
                     formattedLine.append(terminalFormat.escapeText(" ( -- )"));
                 } else {
-                    formattedLine.append(" ([[").append(terminalFormat.escapeText(mf.format(globalSpeed))).append("]])");
+                    formattedLine.append(" (##:info:").append(terminalFormat.escapeText(mf.format(globalSpeed))).append("##)");
                 }
             } else {
-                formattedLine.append(" ([[").append(terminalFormat.escapeText(mf.format(event.getMaxValue()))).append("]])");
+                formattedLine.append(" (##:warn:").append(terminalFormat.escapeText(mf.format(event.getMaxValue()))).append("##)");
             }
             if (event.getError() != null) {
                 formattedLine.append(" ```error ERROR``` ");

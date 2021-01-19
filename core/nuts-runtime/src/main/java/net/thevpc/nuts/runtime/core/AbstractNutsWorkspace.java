@@ -26,21 +26,17 @@
 package net.thevpc.nuts.runtime.core;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.common.DefaultObservableMap;
-import net.thevpc.nuts.runtime.core.common.ObservableMap;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.runtime.standalone.manager.DefaultNutsDependencyManager;
 import net.thevpc.nuts.runtime.standalone.manager.DefaultNutsDescriptorManager;
 import net.thevpc.nuts.runtime.standalone.manager.DefaultNutsIdManager;
-import net.thevpc.nuts.runtime.standalone.main.wscommands.DefaultNutsUpdateStatisticsCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsUpdateStatisticsCommand;
 import net.thevpc.nuts.runtime.core.app.DefaultNutsCommandLineManager;
 import net.thevpc.nuts.runtime.core.app.DefaultNutsWorkspaceLocationManager;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
 import net.thevpc.nuts.runtime.core.format.DefaultNutsInfoFormat;
 import net.thevpc.nuts.runtime.standalone.manager.DefaultNutsVersionManager;
-
-import java.util.Map;
 
 /**
  * Created by vpc on 1/6/17.

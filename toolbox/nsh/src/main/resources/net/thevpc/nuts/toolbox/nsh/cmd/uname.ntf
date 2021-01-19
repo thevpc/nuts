@@ -1,7 +1,7 @@
 print system information
 
 ##) SYNOPSIS:
-==uname== \[**<options>**\]
+==uname== [<-options>]
 
 print system information
 

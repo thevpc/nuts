@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.ByteArrayPrintStream;
+import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
 
 public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 

@@ -26,16 +26,18 @@
 package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.http.SimpleHttpClient;
 import net.thevpc.nuts.runtime.core.io.NutsFormattedPrintStream;
 import net.thevpc.nuts.runtime.core.format.text.*;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
+import net.thevpc.nuts.runtime.standalone.index.CacheDB;
 import net.thevpc.nuts.runtime.standalone.io.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsDescriptorContentParserContext;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.standalone.util.common.DefaultPersistentMap;
-import net.thevpc.nuts.runtime.standalone.util.common.PersistentMap;
-import net.thevpc.nuts.runtime.standalone.util.io.*;
+import net.thevpc.nuts.runtime.bundles.nanodb.NanoDB;
+import net.thevpc.nuts.runtime.bundles.io.*;
+import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBTableFile;
 import net.thevpc.nuts.spi.NutsDescriptorContentParserComponent;
 import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
 import net.thevpc.nuts.spi.NutsTransportComponent;
@@ -174,37 +176,7 @@ public class CoreIOUtils {
     }
 
     public static NutsURLHeader getURLHeader(URL url) {
-        if (url.getProtocol().equals("file")) {
-            File f = toFile(url);
-            DefaultNutsURLHeader info = new DefaultNutsURLHeader(url.toString());
-            info.setContentLength(f.length());
-            info.setLastModified(Instant.ofEpochMilli(f.lastModified()));
-            return info;
-        }
-        URLConnection conn = null;
-        try {
-            try {
-                conn = url.openConnection();
-                if (conn instanceof HttpURLConnection) {
-                    ((HttpURLConnection) conn).setRequestMethod("HEAD");
-                }
-                conn.getInputStream();
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-            final DefaultNutsURLHeader info = new DefaultNutsURLHeader(url.toString());
-            info.setContentType(conn.getContentType());
-            info.setContentEncoding(conn.getContentEncoding());
-            info.setContentLength(conn.getContentLengthLong());
-            String hf = conn.getHeaderField("last-modified");
-            long m = (hf == null) ? 0 : conn.getLastModified();
-            info.setLastModified(m == 0 ? null : Instant.ofEpochMilli(m));
-            return info;
-        } finally {
-            if (conn instanceof HttpURLConnection) {
-                ((HttpURLConnection) conn).disconnect();
-            }
-        }
+        return new DefaultNutsURLHeader(new SimpleHttpClient(url));
     }
 
     public static String getPlatformOsFamily() {
@@ -776,11 +748,9 @@ public class CoreIOUtils {
     }
 
     public static java.io.InputStream monitor(URL from, NutsProgressMonitor monitor, NutsSession session) {
-        try {
-            return monitor(from.openStream(), from, getURLName(from), CoreIOUtils.getURLHeader(from).getContentLength(), monitor, session);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+            return monitor(
+                    NutsWorkspaceUtils.of(session.getWorkspace()).openURL(from),
+                    from, getURLName(from), CoreIOUtils.getURLHeader(from).getContentLength(), monitor, session);
     }
 
     public static java.io.InputStream monitor(java.io.InputStream from, Object source, String sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
@@ -1353,6 +1323,14 @@ public class CoreIOUtils {
         }
     }
 
+    public static class CachedURL{
+        String url;
+        String path;
+        String sha1;
+        long lastModified;
+        long size;
+    }
+
     public static NutsInput getCachedUrlWithSHA1(NutsWorkspace ws, String path, String sourceTypeName, boolean ignoreSha1NotFound,NutsSession session) {
         final Path cacheBasePath = Paths.get(ws.locations().getStoreLocation(ws.getRuntimeId(), NutsStoreLocation.CACHE));
         final Path urlContent = cacheBasePath.resolve("urls-content");
@@ -1368,13 +1346,21 @@ public class CoreIOUtils {
                 throw ex;
             }
         }
-        final PersistentMap<String, String> cu=getCachedUrls(ws);
-        String cachedSha1 = cu.get("sha1://" + path);
-        String oldLastModified =cu.get("lastModified://" + path);
-        String oldSize =cu.get("length://" + path);
+        NanoDB cachedDB = CacheDB.of(ws);
+        NanoDBTableFile<CachedURL> cacheTable = cachedDB.createTable(
+                cachedDB.createBeanDefinition(
+                        CachedURL.class,false, "url"
+                ),true
+        );
+
+//        final PersistentMap<String, String> cu=getCachedUrls(ws);
+        CachedURL old=cacheTable.findByIndex("path", path).findFirst().orElse(null);
+//        String cachedSha1 = cu.get("sha1://" + path);
+//        String oldLastModified =cu.get("lastModified://" + path);
+//        String oldSize =cu.get("length://" + path);
         if(sha1!=null) {
-            if (sha1.equalsIgnoreCase(cachedSha1)) {
-                String cachedID = cu.get("id://" + path);
+            if (old!=null && sha1.equalsIgnoreCase(old.sha1)) {
+                String cachedID =old.path;
                 if (cachedID != null) {
                     Path p = urlContent.resolve(cachedID);
                     if (Files.exists(p)) {
@@ -1386,7 +1372,7 @@ public class CoreIOUtils {
         try {
             NutsURLHeader header = null;
             long size = -1;
-            String lastModified = null;
+            long lastModified = -1;
             NutsTransportConnection f = CoreIOUtils.getHttpClientFacade(session, path);
             try {
 
@@ -1394,7 +1380,7 @@ public class CoreIOUtils {
                 size = header.getContentLength();
                 Instant lastModifiedInstant = header.getLastModified();
                 if(lastModifiedInstant!=null){
-                    lastModified = String.valueOf(lastModifiedInstant.toEpochMilli());
+                    lastModified = lastModifiedInstant.toEpochMilli();
                 }
             } catch (Exception ex) {
                 //ignore error
@@ -1402,9 +1388,9 @@ public class CoreIOUtils {
 
             //when sha1 was not resolved check size and last modification
             if(sha1==null) {
-                if (oldLastModified != null && oldLastModified.equals(lastModified)) {
-                    if (oldSize != null && oldSize.equals(String.valueOf(size))) {
-                        String cachedID = cu.get("id://" + path);
+                if (old!=null && old.lastModified!= -1 && old.lastModified ==lastModified) {
+                    if (old!=null && old.size==size) {
+                        String cachedID = old.path;
                         if (cachedID != null) {
                             Path p = urlContent.resolve(cachedID);
                             if (Files.exists(p)) {
@@ -1420,30 +1406,29 @@ public class CoreIOUtils {
             Files.createDirectories(urlContent);
             final OutputStream p = Files.newOutputStream(outPath);
 
-            String finalLastModified = lastModified;
+            long finalLastModified = lastModified;
             InputStreamTee ist = new InputStreamTee(f.open(), p, () -> {
                 if (Files.exists(outPath)) {
-                    cu.put("id://" + path, s);
-                    cu.put("sha1://" + path, evalSHA1Hex(outPath));
-                    String newSize = null;
+                    CachedURL ccu=new CachedURL();
+                    ccu.url=path;
+                    ccu.path=s;
+                    ccu.sha1=evalSHA1Hex(outPath);
+                    long newSize = -1;
                     try {
-                        newSize = String.valueOf(Files.size(outPath));
+                        newSize = Files.size(outPath);
                     }catch (Exception ex){
                         //
                     }
-                    if(newSize!=null) {
-                        cu.put("length://" + path, newSize);
-                    }
-                    if(finalLastModified!=null) {
-                        cu.put("lastModified://" + path, finalLastModified);
-                    }
+                    ccu.size= newSize;
+                    ccu.lastModified= finalLastModified;
                     Path newLocalPath = urlContent.resolve(s);
                     try {
                         Files.move(outPath, newLocalPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
                     } catch (IOException ex) {
                         throw new UncheckedIOException(ex);
                     }
-                    cu.flush();
+                    cacheTable.add(ccu);
+                    cacheTable.flush();
                 }
             });
             return ws.io().input()
@@ -1455,19 +1440,21 @@ public class CoreIOUtils {
         }
     }
 
-    public static PersistentMap<String, String> getCachedUrls(NutsWorkspace ws) {
-        final String k = PersistentMap.class.getName() + ":getCachedUrls";
-        PersistentMap<String, String> m = (PersistentMap<String, String>) ws.env().getProperty(k);
-        if (m == null) {
-            m = new DefaultPersistentMap<String, String>(String.class, String.class,
-                    Paths.get(
-                    ws.locations().getStoreLocation(
-                    ws.getRuntimeId(),
-                    NutsStoreLocation.CACHE)).resolve("urls-db").toFile(),ws);
-            ws.env().setProperty(k, m,new NutsUpdateOptions(ws.createSession()));
-        }
-        return m;
-    }
+
+
+//    public static PersistentMap<String, String> getCachedUrls(NutsWorkspace ws) {
+//        final String k = PersistentMap.class.getName() + ":getCachedUrls";
+//        PersistentMap<String, String> m = (PersistentMap<String, String>) ws.env().getProperty(k);
+//        if (m == null) {
+//            m = new DefaultPersistentMap<String, String>(String.class, String.class,
+//                    Paths.get(
+//                    ws.locations().getStoreLocation(
+//                    ws.getRuntimeId(),
+//                    NutsStoreLocation.CACHE)).resolve("urls-db").toFile(),ws);
+//            ws.env().setProperty(k, m,new NutsUpdateOptions(ws.createSession()));
+//        }
+//        return m;
+//    }
 
     public static void storeProperties(Map<String, String> props, OutputStream out, boolean sort) {
         storeProperties(props, new OutputStreamWriter(out), sort);
@@ -2131,9 +2118,9 @@ public class CoreIOUtils {
             }
             String s = toString();
             if(s.equals(n)){
-                return new NutsIOException(ws, "unable to open " + n, ex);
+                return new NutsIOException(ws, n+" not found", ex);
             }
-            return new NutsIOException(ws, "unable to open " + n + " from " + s, ex);
+            return new NutsIOException(ws, n+" not found : " +toString(), ex);
         }
 
         @Override
@@ -2249,13 +2236,15 @@ public class CoreIOUtils {
                 if (CoreIOUtils.isPathHttp(u.toString())) {
                     try {
                         NutsURLHeader uh = getURLHeader();
-                        return new InputStreamMetadataAwareImpl(u.openStream(), new FixedInputStreamMetadata(u.toString(), uh == null ? -1 : uh.getContentLength()));
+                        return new InputStreamMetadataAwareImpl(
+                                NutsWorkspaceUtils.of(ws).openURL(u),
+                                new FixedInputStreamMetadata(u.toString(), uh == null ? -1 : uh.getContentLength()));
                     } catch (Exception ex) {
                         //ignore
                     }
                 }
-                return u.openStream();
-            } catch (IOException ex) {
+                return NutsWorkspaceUtils.of(ws).openURL(u);
+            } catch (Exception ex) {
                 throw createOpenError(ex);
             }
         }

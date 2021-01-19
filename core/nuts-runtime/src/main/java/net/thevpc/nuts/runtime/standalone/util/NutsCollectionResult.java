@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;

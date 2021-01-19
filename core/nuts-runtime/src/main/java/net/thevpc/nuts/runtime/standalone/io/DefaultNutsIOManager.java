@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.NullInputStream;
-import net.thevpc.nuts.runtime.standalone.util.io.NullOutputStream;
+import net.thevpc.nuts.runtime.bundles.io.NullInputStream;
+import net.thevpc.nuts.runtime.bundles.io.NullOutputStream;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -47,7 +47,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public String expandPath(String path, String baseFolder) {
         if (path != null && path.length() > 0) {
-            path = CoreStringUtils.replaceDollarPlaceHolders(path, pathExpansionConverter);
+            path = StringPlaceHolderParser.replaceDollarPlaceHolders(path, pathExpansionConverter);
             if (CoreIOUtils.isURL(path)) {
                 return path;
             }

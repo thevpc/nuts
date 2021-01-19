@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.NutsSingleton;
-import net.thevpc.nuts.runtime.standalone.util.io.CoreSecurityUtils;
+import net.thevpc.nuts.runtime.bundles.io.CoreSecurityUtils;
 
 @NutsSingleton
 public class DefaultNutsAuthenticationAgent extends AbstractNutsAuthenticationAgent {

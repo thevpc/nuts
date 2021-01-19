@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.manager;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.PomIdResolver;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsIdBuilder;
-import net.thevpc.nuts.runtime.standalone.bridges.maven.mvnutil.PomId;
+import net.thevpc.nuts.runtime.bundles.mvn.PomId;
 import net.thevpc.nuts.runtime.core.format.DefaultNutsIdFormat;
 import net.thevpc.nuts.runtime.core.parser.DefaultNutsIdParser;
+import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenUtils;
 
 public class DefaultNutsIdManager implements NutsIdManager {
     private NutsWorkspace ws;
@@ -36,7 +36,7 @@ public class DefaultNutsIdManager implements NutsIdManager {
 
     @Override
     public NutsId resolveId(Class clazz, NutsSession session) {
-        PomId u = PomIdResolver.of(getWorkspace()).resolvePomId(clazz, null, session);
+        PomId u = MavenUtils.createPomIdResolver(session).resolvePomId(clazz, null, session);
         if (u == null) {
             return null;
         }
@@ -45,7 +45,7 @@ public class DefaultNutsIdManager implements NutsIdManager {
 
     @Override
     public NutsId[] resolveIds(Class clazz, NutsSession session) {
-        PomId[] u = PomIdResolver.of(getWorkspace()).resolvePomIds(clazz,session);
+        PomId[] u = MavenUtils.createPomIdResolver(session).resolvePomIds(clazz,session);
         NutsId[] all = new NutsId[u.length];
         NutsIdParser parser = parser();
         for (int i = 0; i < all.length; i++) {

@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.NutsNotFoundException;
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -35,7 +36,6 @@ import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.function.Function;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -44,9 +44,6 @@ import java.util.regex.Pattern;
 public class CoreStringUtils {
 
     private static final Pattern PATTERN_ALL = Pattern.compile(".*");
-    public static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([^}]+))[}]");
-
-    private static Pattern DOLLAR_PATTERN = Pattern.compile("\\$\\{(?<key>[^}]*)}");
 
     public static int getStartingInt(String v1) {
         StringBuilder sb = new StringBuilder();
@@ -127,39 +124,39 @@ public class CoreStringUtils {
         }
         return sb.toString();
     }
+//
+//    public static String replaceVars(String format, Function<String, String> map) {
+//        return replaceVars(format, map, new HashSet());
+//    }
 
-    public static String replaceVars(String format, Function<String, String> map) {
-        return replaceVars(format, map, new HashSet());
-    }
+//    private static String replaceVars(String format, Function<String, String> map, Set<String> visited) {
+//        if (format == null) {
+//            return null;
+//        }
+//        StringBuffer sb = new StringBuffer();
+//        Matcher m = DOLLAR_PATTERN.matcher(format);
+//        while (m.find()) {
+//            String key = m.group("key");
+//            if (visited.contains(key)) {
+//                m.appendReplacement(sb, key);
+//            } else {
+//                Set<String> visited2 = new HashSet<>(visited);
+//                visited2.add(key);
+//                String replacement = map.apply(key);
+//                if (replacement != null) {//replace if founded key exists in map
+//                    replacement = replaceVars(replacement, map, visited2);
+//                    m.appendReplacement(sb, escapeReplacementStrings(replacement));
+//                } else {//do not replace, or to be precise replace with same value
+//                    m.appendReplacement(sb, escapeReplacementStrings(m.group()));
+//                }
+//            }
+//        }
+//        m.appendTail(sb);
+//
+//        return sb.toString();
+//    }
 
-    private static String replaceVars(String format, Function<String, String> map, Set<String> visited) {
-        if (format == null) {
-            return null;
-        }
-        StringBuffer sb = new StringBuffer();
-        Matcher m = DOLLAR_PATTERN.matcher(format);
-        while (m.find()) {
-            String key = m.group("key");
-            if (visited.contains(key)) {
-                m.appendReplacement(sb, key);
-            } else {
-                Set<String> visited2 = new HashSet<>(visited);
-                visited2.add(key);
-                String replacement = map.apply(key);
-                if (replacement != null) {//replace if founded key exists in map
-                    replacement = replaceVars(replacement, map, visited2);
-                    m.appendReplacement(sb, escapeReplacementStrings(replacement));
-                } else {//do not replace, or to be precise replace with same value
-                    m.appendReplacement(sb, escapeReplacementStrings(m.group()));
-                }
-            }
-        }
-        m.appendTail(sb);
-
-        return sb.toString();
-    }
-
-    public static String escapeCoteStrings(String s) {
+    public static String escapeQuoteStrings(String s) {
         StringBuilder sb = new StringBuilder(s.length());
         for (char c : s.toCharArray()) {
             switch (c) {
@@ -416,38 +413,16 @@ public class CoreStringUtils {
         return true;
     }
 
-    /**
-     * copied from StringUtils (in order to remove dependency)
-     *
-     * @param s string
-     * @param converter converter
-     * @return replaced string
-     */
-    public static String replaceDollarPlaceHolders(String s, Map<String, String> converter) {
-        return replaceDollarPlaceHolders(s, new MapToFunction(converter));
-    }
-
-    /**
-     * copied from StringUtils (in order to remove dependency)
-     *
-     * @param s string
-     * @param converter converter
-     * @return replaced string
-     */
-    public static String replaceDollarPlaceHolders(String s, Function<String, String> converter) {
-        Matcher matcher = DOLLAR_PLACE_HOLDER_PATTERN.matcher(s);
-        StringBuffer sb = new StringBuffer();
-        while (matcher.find()) {
-            String name = matcher.group("name");
-            String x = converter == null ? null : converter.apply(name);
-            if (x == null) {
-                x = "${" + name + "}";
-            }
-            matcher.appendReplacement(sb, Matcher.quoteReplacement(x));
-        }
-        matcher.appendTail(sb);
-        return sb.toString();
-    }
+//    /**
+//     * copied from StringUtils (in order to remove dependency)
+//     *
+//     * @param s string
+//     * @param converter converter
+//     * @return replaced string
+//     */
+//    public static String replaceDollarPlaceHolders(String s, Map<String, String> converter) {
+//        return StringPlaceHolderParser.replaceDollarPlaceHolders(s, new MapToFunction(converter));
+//    }
 
     public static String enforceDoubleQuote(String s) {
         if (s.isEmpty() || s.contains(" ") || s.contains("\"")) {
@@ -462,23 +437,6 @@ public class CoreStringUtils {
             s = "\"" + s + "\"";
         }
         return s;
-    }
-
-    public static class MapToFunction<K, V> implements Function<K, V> {
-
-        private final Map<K, V> converter;
-
-        public MapToFunction(Map<K, V> converter) {
-            this.converter = converter;
-        }
-
-        @Override
-        public V apply(K t) {
-            if (converter == null) {
-                return null;
-            }
-            return converter.get(t);
-        }
     }
 
     /**

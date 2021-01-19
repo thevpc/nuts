@@ -93,6 +93,7 @@ public interface NutsWorkspaceEnvManager {
 
     /**
      * @since  0.8.1
+     * @param  property property name
      * @return property value
      */
     Object getProperty(String property);

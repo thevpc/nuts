@@ -49,15 +49,15 @@ public class PrivateNutsLog {
     private static final Pattern LOG_PARAM_PATTERN = Pattern.compile("\\{(?<v>[0-9]+)}");
     private NutsWorkspaceOptions options;
 
-    public void log(Level lvl, String logVerb, String message) {
+    public void log(Level lvl, NutsLogVerb logVerb, String message) {
         log(lvl, logVerb, message, new Object[0]);
     }
 
-    public void log(Level lvl, String logVerb, String message, Object object) {
+    public void log(Level lvl, NutsLogVerb logVerb, String message, Object object) {
         log(lvl, logVerb, message, new Object[]{object});
     }
 
-    public void log(Level lvl, String logVerb, String message, Object[] objects) {
+    public void log(Level lvl, NutsLogVerb logVerb, String message, Object[] objects) {
         if (isLoggable(lvl)) {
             Matcher m = LOG_PARAM_PATTERN.matcher(message);
             StringBuffer sb = new StringBuffer();
@@ -79,7 +79,7 @@ public class PrivateNutsLog {
         //LOG.log(lvl, s, err);
     }
 
-    private void doLog(Level lvl, String logVerb, String s) {
+    private void doLog(Level lvl, NutsLogVerb logVerb, String s) {
 //        System.err.printf("%s %-6s %-7s : [%-7s] %s%n", DEFAULT_DATE_TIME_FORMATTER.format(Instant.now()), lvl, "BOOT", logVerb, s);
         System.err.printf("%s %-6s %-7s : %s%n", DEFAULT_DATE_TIME_FORMATTER.format(Instant.now()), lvl, logVerb, s);
     }

@@ -2,7 +2,7 @@
 
 ##) SYNOPSIS:
 
-==nwork== {{command}} <options>
+==nwork== {{command}} <-options>
 
 
 ==nwork== {{scan}} \[{{-i}}|{{--interactive}}\]  <path>

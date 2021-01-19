@@ -4,7 +4,7 @@ import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsTextNodeFactory;
 import net.thevpc.nuts.NutsTextNodeStyle;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.util.common.StringReaderExt;
+import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 
 import java.util.ArrayList;
 import java.util.List;

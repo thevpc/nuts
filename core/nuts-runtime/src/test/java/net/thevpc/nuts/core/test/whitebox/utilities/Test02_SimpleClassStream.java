@@ -23,7 +23,7 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.io.SimpleClassStream;
+import net.thevpc.nuts.runtime.bundles.io.SimpleClassStream;
 import org.junit.jupiter.api.*;
 
 /**

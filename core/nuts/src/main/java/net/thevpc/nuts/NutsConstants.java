@@ -177,15 +177,17 @@ public final class NutsConstants {
          * <li>import</li>
          * <li>runtime</li>
          * <li>system</li>
-         * <li>test-compile</li>
+         * <li>test-api</li>
+         * <li>test-implementation</li>
          * <li>test-runtime</li>
          * <li>test-provided</li>
+         * <li>test-system</li>
          * <li>test</li>
          * <li>compile</li>
          * <li>run</li>
          * </ul>
          * <br>
-         * any other value, is interpreted as false.
+         * any other value, is interpreted as "api".
          */
         public static final String SCOPE = "scope";
 

@@ -1,0 +1,26 @@
+      show version
+
+##) SYNOPSIS:
+```sh
+nuts version [<-options>]
+nuts --version
+nuts -version
+nuts -v
+```
+
+##) OPTIONS:
+```sh  -a | --all```
+      include all versions (api, runtime, ##:_:Java™## and operating system)
+
+```sh --add <key>=<value> ```
+      include key=value pair in the result
+
+#!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
+
+##) EXAMPLES
+```sh  nuts version -a```
+            shows all versions
+       
+```sh nuts -v```
+            show version
+       
