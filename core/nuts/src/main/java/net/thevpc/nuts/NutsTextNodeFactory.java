@@ -7,9 +7,7 @@ import java.util.Collection;
  */
 public interface NutsTextNodeFactory {
     NutsTextNode blank();
-    NutsTextNode formatted(Object t);
-
-    NutsTextNode formatted(NutsFormattable t);
+    NutsTextNode nodeFor(Object t);
 
     NutsTextNode plain(String t);
 

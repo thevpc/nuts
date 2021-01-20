@@ -405,7 +405,7 @@ public class CoreCommonUtils {
             if (a.length == 1) {
                 return txt.factory().plain(stringValue(a[0]));
             }
-            return txt.factory().formatted(
+            return txt.factory().nodeFor(
                     "{" + String.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "}"
             );
             
@@ -416,7 +416,7 @@ public class CoreCommonUtils {
             sb.append("=");
             if (ne.getValue().type() == NutsElementType.STRING) {
                 sb.append(
-                        txt.factory().formatted(
+                        txt.factory().nodeFor(
                         CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session).toString())
                         ));
             } else {
@@ -430,7 +430,7 @@ public class CoreCommonUtils {
             sb.append("=");
             if (ne.getValue() instanceof String || (ne.getValue() instanceof NutsPrimitiveElement && ((NutsPrimitiveElement) ne.getValue()).type() == NutsElementType.STRING)) {
                 sb.append(
-                        txt.factory().formatted(
+                        txt.factory().nodeFor(
                         CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session).toString())
                         )
                 );
@@ -442,7 +442,7 @@ public class CoreCommonUtils {
             o = ((Map) o).entrySet();
         }
         if (o == null) {
-            return txt.factory().formatted("");
+            return txt.factory().nodeFor("");
         }
         if (o instanceof Boolean) {
             txt.factory().plain(String.valueOf(o));
@@ -466,7 +466,7 @@ public class CoreCommonUtils {
             );
         }
         if (o instanceof NutsFormattable) {
-            return txt.factory().formatted(o);
+            return txt.factory().nodeFor(o);
         }
         if (o instanceof Collection) {
             Collection c = ((Collection) o);
@@ -491,7 +491,7 @@ public class CoreCommonUtils {
             Map c = ((Map) o);
             Map.Entry[] a = (Map.Entry[]) c.entrySet().toArray(new Map.Entry[0]);
             if (a.length == 0) {
-                return txt.factory().formatted("");
+                return txt.factory().nodeFor("");
             }
             if (a.length == 1) {
                 return txt.factory().plain(stringValue(a[0]));
@@ -509,7 +509,7 @@ public class CoreCommonUtils {
         if (o.getClass().isArray()) {
             int len = Array.getLength(o);
             if (len == 0) {
-                return txt.factory().formatted("");
+                return txt.factory().nodeFor("");
             }
             if (len == 1) {
                 return stringValueFormatted(Array.get(o, 0), escapeString, session);

@@ -150,13 +150,13 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
     @Override
     public NutsTextNodeBuilder append(NutsFormattable str) {
         if (str != null) {
-            append(ws.formats().text().factory().formatted(str));
+            append(ws.formats().text().factory().nodeFor(str));
         }
         return this;
     }
 
     @Override
-    public NutsTextNodeBuilder appendJoined(NutsTextNode separator, List<NutsString> others) {
+    public NutsTextNodeBuilder appendJoined(NutsString separator, List<NutsString> others) {
         if (others != null) {
             boolean first = true;
             for (NutsString other : others) {

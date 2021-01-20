@@ -39,7 +39,7 @@ public interface NutsTextNodeBuilder extends NutsString {
 
     NutsTextNodeBuilder append(NutsFormattable str);
 
-    NutsTextNodeBuilder appendJoined(NutsTextNode separator, List<NutsString> others);
+    NutsTextNodeBuilder appendJoined(NutsString separator, List<NutsString> others);
 
     NutsTextNode build();
 

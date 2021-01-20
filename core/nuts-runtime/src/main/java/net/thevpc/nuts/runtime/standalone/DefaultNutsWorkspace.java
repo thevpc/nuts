@@ -119,7 +119,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     this.formats().text().builder().appendJoined(
                             this.formats().text().factory().styled(";",NutsTextNodeStyle.separator()),
                             Arrays.stream(info.getRuntimeBootDescriptor().getDependencies())
-                                    .map(x -> this.formats().text().factory().formatted(x))
+                                    .map(x -> this.formats().text().factory().nodeFor(x))
                                     .collect(Collectors.toList())
                     )
             );
@@ -127,7 +127,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     this.formats().text().builder().appendJoined(
                             this.formats().text().factory().styled(";",NutsTextNodeStyle.separator()),
                             Arrays.stream(info.getClassWorldURLs())
-                                    .map(x -> this.formats().text().factory().formatted(x))
+                                    .map(x -> this.formats().text().factory().nodeFor(x))
                                     .collect(Collectors.toList())
                     )
             );
@@ -135,7 +135,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     this.formats().text().builder().appendJoined(
                             this.formats().text().factory().styled(";",NutsTextNodeStyle.separator()),
                             toIds(info.getExtensionBootDescriptors()).stream()
-                                    .map(x -> this.formats().text().factory().formatted(x))
+                                    .map(x -> this.formats().text().factory().nodeFor(x))
                                     .collect(Collectors.toList())
                     )
 
@@ -162,12 +162,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCRF.log("   option-progress                : {0}", CoreNutsUtils.desc(info.getOptions().getProgressOptions()));
             LOGCRF.log("   inherited                      : {0}", info.getOptions().isInherited());
             LOGCRF.log("   inherited-nuts-boot-args       : {0}", System.getProperty("nuts.boot.args") == null ? "<EMPTY>" :
-                    formats().text().factory().formatted(
+                    formats().text().factory().nodeFor(
                             commandLine().parse(System.getProperty("nuts.boot.args"))
                     )
             );
             LOGCRF.log("   inherited-nuts-args            : {0}", System.getProperty("nuts.args") == null ? "<EMPTY>" :
-                            formats().text().factory().formatted(
+                            formats().text().factory().nodeFor(
                                     commandLine().parse(System.getProperty("nuts.args"))
                             )
             );
@@ -176,6 +176,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCRF.log("   java-classpath                 : {0}", System.getProperty("java.class.path"));
             LOGCRF.log("   java-library-path              : {0}", System.getProperty("java.library.path"));
             LOGCRF.log("   os-name                        : {0}", System.getProperty("os.name"));
+            LOGCRF.log("   os-dist                        : {0}", env().getOsDist().getArtifactId());
             LOGCRF.log("   os-arch                        : {0}", System.getProperty("os.arch"));
             LOGCRF.log("   os-version                     : {0}", env().getOsDist().getVersion());
             LOGCRF.log("   user-name                      : {0}", System.getProperty("user.name"));
@@ -482,8 +483,14 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             if (session.isPlainTrace()) {
                 PrintStream out = session.out();
                 Set<NutsId> companionIds = getCompanionIds();
-                out.println("looking for recommended companion tools to install... detected : " + companionIds.stream()
-                        .map(x -> id().formatter(x).format()).collect(Collectors.joining(", "))
+                out.printf("looking for recommended companion tools to install... detected : %s%n" ,
+                        formats().text().builder().appendJoined(
+                                formats().text().of(","),
+                                companionIds.stream()
+                                        .map(x ->
+                                                formats().text().parse(id().formatter(x).format())
+                                        ).collect(Collectors.toList())
+                        )
                 );
             }
             try {

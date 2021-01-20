@@ -172,14 +172,14 @@ public class NVersionMain extends NutsApplication {
                         if (nameFormat) {
                             out.printf("%s%n", tfactory.styled(descriptor.getId().getShortName(),NutsTextNodeStyle.primary(4)));
                         } else if (idFormat) {
-                            out.printf("%s%n", tfactory.formatted(descriptor.getId()));
+                            out.printf("%s%n", tfactory.nodeFor(descriptor.getId()));
                         } else if (longFormat) {
-                            out.printf("%s%n", tfactory.formatted(descriptor.getId()));
+                            out.printf("%s%n", tfactory.nodeFor(descriptor.getId()));
                             NutsPropertiesFormat f = context.getWorkspace().formats().props()
                                     .setSort(true);
                             f.setValue(descriptor.getProperties()).print(out);
                         } else {
-                            out.printf("%s%n", tfactory.formatted(descriptor.getId().getVersion()));
+                            out.printf("%s%n", tfactory.nodeFor(descriptor.getId().getVersion()));
                         }
                         if (!all) {
                             break;

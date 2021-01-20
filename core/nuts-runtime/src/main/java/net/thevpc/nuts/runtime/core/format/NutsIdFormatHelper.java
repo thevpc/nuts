@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
@@ -317,16 +316,16 @@ public class NutsIdFormatHelper {
                 }
             }
             int len = txt.builder().append(s).textLength();
-            sb.append(s);
-            if(len<z){
-                char[] c=new char[len-z];
-                Arrays.fill(c,' ');
-                sb.append(new String(c));
-            }
             if (j > 0) {
                 sb.append(' ');
             }
             sb.append(s);
+            if(len<z){
+                char[] c=new char[z-len];
+                Arrays.fill(c,' ');
+                sb.append(new String(c));
+            }
+           // sb.append(s);
         }
         return sb.immutable();
     }
@@ -343,65 +342,65 @@ public class NutsIdFormatHelper {
         }
         switch (dp) {
             case ID: {
-                return txt.factory().formatted(oo.getIdFormat().value(id).format());
+                return txt.parse(oo.getIdFormat().value(id).format());
             }
             case STATUS: {
                 return getFormattedStatusString();
             }
             case FILE: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
-                    return txt.factory().formatted(def.getContent().getPath());
+                    return txt.factory().nodeFor(def.getContent().getPath());
                 }
-                return txt.factory().formatted("```error missing-path```");
+                return txt.factory().styled("missing-path",NutsTextNodeStyle.error());
             }
             case FILE_NAME: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
                     return txt.factory().plain(def.getContent().getPath().getFileName().toString());
                 }
-                return txt.factory().formatted("```error missing-file-name```");
+                return txt.factory().styled("missing-file-name",NutsTextNodeStyle.error());
             }
             case ARCH: {
                 if (desc != null) {
                     return keywordArr1(desc.getArch());
                 }
-                return txt.factory().formatted("```error missing-arch```");
+                return txt.factory().styled("missing-arch",NutsTextNodeStyle.error());
             }
             case NAME: {
                 if (desc != null) {
                     return stringValue(desc.getName());
                 }
-                return txt.factory().formatted("```error missing-name```");
+                return txt.factory().styled("missing-name",NutsTextNodeStyle.error());
             }
             case OS: {
                 if (desc != null) {
                     return keywordArr2(desc.getOs());
                 }
-                return txt.factory().formatted("```error missing-os```");
+                return txt.factory().styled("missing-os",NutsTextNodeStyle.error());
             }
             case OSDIST: {
                 if (desc != null) {
                     return keywordArr2(desc.getOsdist());
                 }
-                return txt.factory().formatted("```error missing-osdir```");
+                return txt.factory().styled("missing-osdist",NutsTextNodeStyle.error());
             }
             case PACKAGING: {
                 if (desc != null) {
                     NutsTextFormatManager text = session.getWorkspace().formats().text();
                     return text.factory().styled(stringValue(desc.getPackaging()),NutsTextNodeStyle.primary(3));
                 }
-                return txt.factory().formatted("```error missing-packaging```");
+                return txt.factory().styled("missing-packaging",NutsTextNodeStyle.error());
             }
             case PLATFORM: {
                 if (desc != null) {
                     return keywordArr1(desc.getPlatform());
                 }
-                return txt.factory().formatted("```error missing-platform```");
+                return txt.factory().styled("missing-platform",NutsTextNodeStyle.error());
             }
             case INSTALL_DATE: {
                 if (def != null && def.getInstallInformation() != null) {
                     return stringValue(def.getInstallInformation().getCreatedDate());
                 }
-                return txt.factory().formatted("<null>");
+                return txt.factory().styled("<null>",NutsTextNodeStyle.pale());
             }
             case REPOSITORY: {
                 String rname = null;
@@ -697,7 +696,7 @@ public class NutsIdFormatHelper {
         NutsTextFormatManager txt = session
                 .getWorkspace().formats().text();
         if (any == null || any.length == 0) {
-            return txt.factory().formatted("");
+            return txt.factory().nodeFor("");
         }
         if (any.length == 1) {
             return txt.builder().append(txt.factory().styled(stringValue(any[0]),style))

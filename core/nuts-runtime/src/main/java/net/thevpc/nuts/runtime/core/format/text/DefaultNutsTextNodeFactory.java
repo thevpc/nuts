@@ -8,7 +8,6 @@ import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextStyleTheme;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.File;
-import java.io.StringReader;
 import java.net.URL;
 import java.nio.file.Path;
 import java.text.MessageFormat;
@@ -24,17 +23,12 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
     }
 
     @Override
-    public NutsTextNode formatted(NutsFormattable t) {
-        return ws.formats().text().parse(t.formatter().format());
-    }
-
-    @Override
     public NutsTextNode blank() {
         return plain("");
     }
 
     @Override
-    public NutsTextNode formatted(Object t) {
+    public NutsTextNode nodeFor(Object t) {
         if(t==null){
             return blank();
         }
@@ -42,7 +36,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
             return (NutsTextNode) t;
         }
         if(t instanceof NutsFormattable){
-            return formatted((NutsFormattable) t);
+            return ws.formats().text().parse(((NutsFormattable)t).formatter().format());
         }
         if(t instanceof NutsMessage){
             return _NutsFormattedMessage_toString((NutsMessage) t,null);
@@ -100,10 +94,10 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
             case CSTYLE:{
                 StringBuilder sb = new StringBuilder();
                 new Formatter(sb, locale).format(msg, args2);
-                return formatted(sb.toString());
+                return ws.formats().text().parse(sb.toString());
             }
             case JSTYLE:{
-                return formatted(MessageFormat.format(msg, args2));
+                return ws.formats().text().parse(MessageFormat.format(msg, args2));
             }
         }
         throw new NutsUnsupportedEnumException(ws,style);

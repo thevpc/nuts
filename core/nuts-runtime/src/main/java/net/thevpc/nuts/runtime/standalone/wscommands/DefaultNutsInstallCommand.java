@@ -457,7 +457,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                     .appendJoined(
                             ws.formats().text().factory().plain(", "),
                             all.stream().map(x ->
-                                    ws.formats().text().factory().formatted(
+                                    ws.formats().text().factory().nodeFor(
                                             x.builder().omitImportedGroupId().build()
                                     )
                             ).collect(Collectors.toList())

@@ -5,16 +5,13 @@
  */
 package net.thevpc.nuts.runtime.core.format;
 
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import net.thevpc.nuts.NutsFormat;
-import net.thevpc.nuts.NutsIOException;
-import net.thevpc.nuts.NutsTerminal;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 /**
  * @author thevpc
@@ -69,51 +66,6 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     }
 
     @Override
-    public void print(NutsTerminal terminal) {
-        print(terminal == null ? getValidSession().getTerminal().out() : terminal.out());
-    }
-
-    @Override
-    public void println(NutsTerminal terminal) {
-        println(terminal == null ? getValidSession().getTerminal().out() : terminal.out());
-    }
-
-    @Override
-    public void print(File file) {
-        print(file.toPath());
-    }
-
-    @Override
-    public void println(File file) {
-        println(file.toPath());
-    }
-
-    @Override
-    public void print(Path path) {
-        try {
-            if (path.getParent() != null) {
-                Files.createDirectories(path.getParent());
-            }
-        } catch (IOException ex) {
-            throw new NutsIOException(getWorkspace(),ex);
-        }
-        try (Writer w = Files.newBufferedWriter(path)) {
-            print(w);
-        } catch (IOException ex) {
-            throw new NutsIOException(getWorkspace(),ex);
-        }
-    }
-
-    @Override
-    public void println(Path path) {
-        try (Writer w = Files.newBufferedWriter(path)) {
-            println(w);
-        } catch (IOException ex) {
-            throw new NutsIOException(getWorkspace(),ex);
-        }
-    }
-
-    @Override
     public abstract void print(PrintStream out);
 
     //    @Override
@@ -148,11 +100,29 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     }
 
     @Override
-    public void println(PrintStream out) {
-        PrintStream p = getValidPrintStream(out);
-        print(out);
-        p.println();
-        p.flush();
+    public void print(Path path) {
+        try {
+            if (path.getParent() != null) {
+                Files.createDirectories(path.getParent());
+            }
+        } catch (IOException ex) {
+            throw new NutsIOException(getWorkspace(), ex);
+        }
+        try (Writer w = Files.newBufferedWriter(path)) {
+            print(w);
+        } catch (IOException ex) {
+            throw new NutsIOException(getWorkspace(), ex);
+        }
+    }
+
+    @Override
+    public void print(File file) {
+        print(file.toPath());
+    }
+
+    @Override
+    public void print(NutsTerminal terminal) {
+        print(terminal == null ? getValidSession().getTerminal().out() : terminal.out());
     }
 
     @Override
@@ -169,8 +139,35 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     }
 
     @Override
+    public void println(PrintStream out) {
+        PrintStream p = getValidPrintStream(out);
+        print(out);
+        p.println();
+        p.flush();
+    }
+
+    @Override
+    public void println(Path path) {
+        try (Writer w = Files.newBufferedWriter(path)) {
+            println(w);
+        } catch (IOException ex) {
+            throw new NutsIOException(getWorkspace(), ex);
+        }
+    }
+
+    @Override
+    public void println(NutsTerminal terminal) {
+        println(terminal == null ? getValidSession().getTerminal().out() : terminal.out());
+    }
+
+    @Override
+    public void println(File file) {
+        println(file.toPath());
+    }
+
+    @Override
     public String toString() {
-        return format();
+        return format().toString();
     }
 
 

@@ -190,7 +190,11 @@ public class DefaultWorkspaceEnvManager implements NutsWorkspaceEnvManager {
 
     public NutsId getOsDist() {
         if (osdist == null) {
-            osdist = ws.id().parser().parse(CorePlatformUtils.getPlatformOsDist(ws));
+            String platformOsDist = CorePlatformUtils.getPlatformOsDist(ws);
+            if(platformOsDist==null){
+                platformOsDist="default";
+            }
+            osdist = ws.id().parser().parse(platformOsDist);
         }
         return osdist;
     }

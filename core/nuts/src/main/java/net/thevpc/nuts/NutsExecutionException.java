@@ -125,6 +125,9 @@ public class NutsExecutionException extends NutsException {
     public String toString() {
         String m = getMessage();
         if(m==null){
+            if(getCause()!=null){
+                return "NutsExecutionException: "+getCause();
+            }
             return super.toString();
         }
         return m;

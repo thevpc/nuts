@@ -54,7 +54,7 @@ public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
         if (instance instanceof NutsString) {
             return (NutsString) instance;
         } else {
-            return factory().formatted(instance);
+            return factory().nodeFor(instance);
         }
     }
 
