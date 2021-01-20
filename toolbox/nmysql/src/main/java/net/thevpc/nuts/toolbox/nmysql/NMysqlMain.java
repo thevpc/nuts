@@ -451,7 +451,7 @@ public class NMysqlMain extends NutsApplication {
                                     .forBoolean("already exists %s. override?", factory.styled(name.toString(),
                                                     NutsTextNodeStyle.primary(3))
                                     )
-                                    .defaultValue(false).getBooleanValue()) {
+                                    .setDefaultValue(false).getBooleanValue()) {
                                 throw new NutsExecutionException(service.getContext().getWorkspace(), "already exists " + name, 2);
                             }
                         }
@@ -460,7 +460,7 @@ public class NMysqlMain extends NutsApplication {
                             overrideExisting = true;
                             if (!service.getContext().getSession().getTerminal().ask()
                                     .forBoolean("already exists %s. override?",factory.styled(name.toString(),NutsTextNodeStyle.primary(3)))
-                                    .defaultValue(false).getBooleanValue()) {
+                                    .setDefaultValue(false).getBooleanValue()) {
                                 throw new NutsExecutionException(service.getContext().getWorkspace(), "already exists " + name, 2);
                             }
                         }
@@ -618,7 +618,7 @@ public class NMysqlMain extends NutsApplication {
                             overrideExisting = true;
                             if (!service.getContext().getSession().getTerminal().ask()
                                     .forBoolean("already exists %s. override?", factory.styled(name.toString(),NutsTextNodeStyle.primary(3)))
-                                    .defaultValue(false).getBooleanValue()) {
+                                    .setDefaultValue(false).getBooleanValue()) {
                                 throw new NutsExecutionException(service.getContext().getWorkspace(), "already exists " + name, 2);
                             }
                         }
@@ -627,7 +627,7 @@ public class NMysqlMain extends NutsApplication {
                             overrideExisting = true;
                             if (!service.getContext().getSession().getTerminal().ask()
                                     .forBoolean("already exists %s. override?", factory.styled(name.toString(),NutsTextNodeStyle.primary(3)))
-                                    .defaultValue(false).getBooleanValue()) {
+                                    .setDefaultValue(false).getBooleanValue()) {
                                 throw new NutsExecutionException(service.getContext().getWorkspace(), "already exists " + name, 2);
                             }
                         }

@@ -179,7 +179,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.FIRST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().builder().append(s).textLength()));
+                    line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().parse(s).textLength()));
                 }
                 line.write(getSeparator(Separator.FIRST_ROW_END));
 
@@ -201,7 +201,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                             DefaultCell cell = cells.get(i);
                             String B = getSeparator(Separator.MIDDLE_ROW_LINE);
                             String s = cell.rendered.toString();
-                            line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().builder().append(s).textLength()));
+                            line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().parse(s).textLength()));
                         }
                         line.write(getSeparator(Separator.MIDDLE_ROW_END));
 
@@ -243,7 +243,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.LAST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().builder().append(s).textLength()));
+                    line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().parse(s).textLength()));
                 }
                 line.write(getSeparator(Separator.LAST_ROW_END));
             }
@@ -259,7 +259,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsTextFormatManager tf,NutsWorkspace ws) {
-        int length = tf.builder().append(sb.toString()).textLength();
+        int length = tf.parse(sb.toString()).textLength();
         switch (a) {
             case FIRST: {
 //                if (sb.length() > length) {
@@ -355,7 +355,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     }
                     StringBuilder last = strings.get(strings.size() - 1);
                     last.append(e);
-                    columns = Math.max(columns, metrics.builder().append(last.toString()).textLength());
+                    columns = Math.max(columns, len(last.toString()));
                 }
             }
             rows = strings.size();
@@ -367,7 +367,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         }
 
         public int len(String other) {
-            return metrics.builder().append(other).textLength();
+            return metrics.parse(other).textLength();
         }
 
         public RenderedCell appendHorizontally(RenderedCell other) {

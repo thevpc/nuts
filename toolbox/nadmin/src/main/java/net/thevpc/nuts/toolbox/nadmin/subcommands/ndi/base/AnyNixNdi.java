@@ -179,9 +179,9 @@ public class AnyNixNdi extends BaseSystemNdi {
                                         + "Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
                                 factory.styled(". ~/" + getBashrcName(),NutsTextNodeStyle.path())
                         )
-                        .hintMessage("")
+                        .setHintMessage("")
                         .setSession(context.getSession())
-                        .parser(new NutsQuestionParser<Boolean>() {
+                        .setParser(new NutsQuestionParser<Boolean>() {
                             @Override
                             public Boolean parse(Object response, Boolean defaultValue, NutsQuestion<Boolean> question) {
                                 if (response instanceof Boolean) {

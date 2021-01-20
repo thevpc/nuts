@@ -309,22 +309,12 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
 
     @Override
-    public NutsQuestion<T> message(String message, Object... messageParameters) {
-        return setMessage(message, messageParameters);
-    }
-
-    @Override
     public NutsQuestion<T> setMessage(String message, Object... messageParameters) {
         this.message = message;
         this.messageParameters = messageParameters;
         return this;
     }
 
-
-    @Override
-    public NutsQuestion<T> hintMessage(String message, Object... messageParameters) {
-        return setHintMessage(message, messageParameters);
-    }
 
     @Override
     public NutsQuestion<T> setHintMessage(String message, Object... messageParameters) {
@@ -340,11 +330,6 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     }
 
     @Override
-    public NutsQuestion<T> acceptedValues(Object[] acceptedValues) {
-        return setAcceptedValues(acceptedValues);
-    }
-
-    @Override
     public NutsQuestion<T> setAcceptedValues(Object[] acceptedValues) {
         this.acceptedValues = acceptedValues;
         return this;
@@ -353,11 +338,6 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     @Override
     public T getDefaultValue() {
         return defaultValue;
-    }
-
-    @Override
-    public NutsQuestion<T> defaultValue(T defautValue) {
-        return setDefaultValue(defautValue);
     }
 
     @Override
@@ -372,11 +352,6 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     }
 
     @Override
-    public NutsQuestion<T> valueType(Class<T> valueType) {
-        return setValueType(valueType);
-    }
-
-    @Override
     public NutsQuestion<T> setValueType(Class<T> valueType) {
         this.valueType = valueType;
         return this;
@@ -388,11 +363,6 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     }
 
     @Override
-    public NutsQuestion<T> format(NutsQuestionFormat<T> parser) {
-        return setFormat(parser);
-    }
-
-    @Override
     public NutsQuestion<T> setFormat(NutsQuestionFormat<T> parser) {
         this.format = parser;
         return this;
@@ -401,11 +371,6 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     @Override
     public NutsQuestionParser<T> getParser() {
         return parser;
-    }
-
-    @Override
-    public NutsQuestion<T> parser(NutsQuestionParser<T> parser) {
-        return setParser(parser);
     }
 
     @Override
@@ -456,11 +421,6 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             }
         }
         return false;
-    }
-
-    @Override
-    public NutsQuestion<T> validator(NutsQuestionValidator<T> validator) {
-        return setValidator(validator);
     }
 
     @Override

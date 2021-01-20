@@ -173,7 +173,7 @@ public class RemoteTomcat {
                                     , text.factory().styled(c.getName(), NutsTextNodeStyle.primary(1))
                                     , text.factory().styled("--server", NutsTextNodeStyle.option())
                             )
-                                    .defaultValue("ssh://login@myserver/instanceName").setSession(context.getSession())
+                                    .setDefaultValue("ssh://login@myserver/instanceName").setSession(context.getSession())
                                     .getValue()
                     );
                 }

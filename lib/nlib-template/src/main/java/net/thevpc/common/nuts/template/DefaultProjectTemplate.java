@@ -74,7 +74,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                                 .append(propName,NutsTextNodeStyle.pale())
                                 .append(")\n ?")
                         .toString())
-                        .defaultValue(defaultValue)
+                        .setDefaultValue(defaultValue)
                         .setValidator(new NutsQuestionValidator<String>() {
                             @Override
                             public String validate(String value, NutsQuestion<String> question) throws NutsValidationException {
@@ -441,7 +441,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             if (p != null) {
                 if (!getSession().getTerminal().ask().forBoolean("accept project location %s?",
                         applicationContext.getWorkspace().formats().text().factory().styled(p.getPath(),NutsTextNodeStyle.path()))
-                        .defaultValue(false)
+                        .setDefaultValue(false)
                         .getBooleanValue()) {
                     throw new NutsUserCancelException(getWorkspace());
                 }

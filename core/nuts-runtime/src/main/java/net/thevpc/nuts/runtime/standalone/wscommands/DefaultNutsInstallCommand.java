@@ -395,7 +395,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         }
         List<NutsId> nonIgnored = list.ids(x -> !x.ignored);
         if (!nonIgnored.isEmpty() && !ws.io().term().getTerminal().ask().forBoolean("should we proceed?")
-                .defaultValue(true)
+                .setDefaultValue(true)
                 .setSession(session)
                 .setCancelMessage("installation cancelled : %s ", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")))
                 .getBooleanValue()) {
@@ -423,7 +423,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
                             if (!ws.io().term().getTerminal().ask().forBoolean("```error failed to install``` " + ws.id().formatter(info.id).format() + " and its dependencies... Continue installation?")
-                                    .defaultValue(true)
+                                    .setDefaultValue(true)
                                     .setSession(session).getBooleanValue()) {
                                 session.out().printf(ws.id().formatter(info.id).omitNamespace().format() + " ```error installation cancelled with error:``` %s%n", CoreStringUtils.exceptionToString(ex));
                                 result = new NutsDefinition[0];

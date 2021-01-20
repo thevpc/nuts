@@ -117,7 +117,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             boolean exists = Files.exists(ff);
             boolean gen = true;
             if (exists) {
-                if (!context.getSession().getTerminal().ask().setSession(context.getSession())
+                if (!context.getSession().getTerminal().ask().setDefaultValue(false).setSession(context.getSession())
                         .forBoolean("override existing script %s ?",
                                 context.getWorkspace().formats().text().factory().styled(
                                         NdiUtils.betterPath(ff.toString()),NutsTextNodeStyle.path()
@@ -158,7 +158,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (session.getTerminal().ask().forBoolean("tool %s will be removed. Confirm?",
                     factory.styled(NdiUtils.betterPath(f.toString()),NutsTextNodeStyle.path())
                     )
-                    .defaultValue(true)
+                    .setDefaultValue(true)
                     .getBooleanValue()) {
                 try {
                     Files.delete(f);
@@ -338,7 +338,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 .setSession(context.getSession().copy().setTrace(false))
                 .addId(apiId).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
         Path script = null;
+        boolean standardPath=true;
         if (preferredName != null && preferredName.length() > 0) {
+            standardPath=false;
             if (preferredName.contains("%v")) {
                 preferredName = preferredName.replace("%v", apiId.getVersion().toString());
             }
@@ -350,15 +352,24 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 script = getScriptFile("nuts-" + apiVersion);
             }
         }
-        NutsTextNodeFactory factory = context.getWorkspace().formats().text().factory();
         script = script.toAbsolutePath();
         String scriptString = script.toString();
         List<NdiScriptnfo> all = new ArrayList<>();
+        boolean createPath=false;
         if (!force && Files.exists(script)) {
-            if (trace && context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("script already exists %s%n", factory.styled(NdiUtils.betterPath(script.toString()),NutsTextNodeStyle.path()));
+            if (context.getSession().getTerminal().ask().setDefaultValue(true).setSession(context.getSession())
+                    .forBoolean("override existing script %s ?",
+                            context.getWorkspace().formats().text().factory().styled(
+                                    NdiUtils.betterPath(script.toString()),NutsTextNodeStyle.path()
+                            )
+                    ).getBooleanValue()
+            ) {
+                createPath=true;
             }
         } else {
+            createPath=true;
+        }
+        if(createPath){
             all.add(
                     createScript("nuts", script.toString(), b, trace, f.getId().getLongName(),
                             x -> {
@@ -374,7 +385,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                             }
                     ));
         }
-        if (currId) {
+        if (currId && standardPath) {
             Path ff2 = Paths.get(context.getWorkspace().locations().getWorkspaceLocation())
                     .resolve("nuts");
             boolean overridden = Files.exists(ff2);
@@ -384,6 +395,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 if (!context.getSession().getTerminal().ask().setSession(context.getSession())
                         .forBoolean("override existing script %s ?",
                                 context.getWorkspace().formats().text().factory().styled(NdiUtils.betterPath(ff2.toString()),NutsTextNodeStyle.path()))
+                        .setDefaultValue(false)
                         .getBooleanValue()
                 ) {
                     gen = false;

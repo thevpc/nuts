@@ -56,6 +56,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
 
         String switchWorkspaceLocation = null;
         String linkName = null;
+        boolean env=false;
 
         while (commandLine.hasNext()) {
             if ((a = commandLine.nextBoolean("-t", "--fetch")) != null) {
@@ -68,6 +69,8 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 if (a.getBooleanValue()) {
                     execType = NutsExecutionType.EMBEDDED;
                 }
+            } else if ((a = commandLine.nextBoolean("-e", "--env")) != null) {
+                env = a.getBooleanValue();
             } else if ((a = commandLine.nextBoolean("--user-cmd")) != null) {
                 if (a.getBooleanValue()) {
                     execType = NutsExecutionType.USER_CMD;
@@ -150,7 +153,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                         if(nid==null){
                             throw new NutsExecutionException(ws, "unable to create script for " + id + " : invalid id",100);
                         }
-                        boolean includeEnv=false;
+                        boolean includeEnv=env;
                         if(nid.getShortName().equals("nuts") || nid.getShortName().equals("net.thevpc.nuts:nuts")){
                             if(!nid.getVersion().isBlank()){
                                 String verString = nid.getVersion().toString();

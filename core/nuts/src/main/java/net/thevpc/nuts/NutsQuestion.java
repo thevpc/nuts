@@ -64,45 +64,30 @@ public interface NutsQuestion<T> extends NutsCommandLineConfigurable {
 
     Object[] getCancelMessageParameters();
 
-    NutsQuestion<T> message(String message, Object... messageParameters);
-
     NutsQuestion<T> setMessage(String message, Object... messageParameters);
-
-    NutsQuestion<T> hintMessage(String message, Object... messageParameters);
 
     NutsQuestion<T> setHintMessage(String message, Object... messageParameters);
 
     Object[] getAcceptedValues();
 
-    NutsQuestion<T> acceptedValues(Object[] acceptedValues);
-
     NutsQuestion<T> setAcceptedValues(Object[] acceptedValues);
 
     T getDefaultValue();
 
-    NutsQuestion<T> defaultValue(T defautValue);
 
     NutsQuestion<T> setDefaultValue(T defaultValue);
 
     Class<T> getValueType();
 
-    NutsQuestion<T> valueType(Class<T> valueType);
-
     NutsQuestion<T> setValueType(Class<T> valueType);
 
     NutsQuestionFormat<T> getFormat();
-
-    NutsQuestion<T> format(NutsQuestionFormat<T> format);
 
     NutsQuestion<T> setFormat(NutsQuestionFormat<T> format);
 
     NutsQuestionParser<T> getParser();
 
-    NutsQuestion<T> parser(NutsQuestionParser<T> parser);
-
     NutsQuestion<T> setParser(NutsQuestionParser<T> parser);
-
-    NutsQuestion<T> validator(NutsQuestionValidator<T> validator);
 
     NutsQuestion<T> setValidator(NutsQuestionValidator<T> validator);
 

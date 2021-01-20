@@ -389,14 +389,14 @@ public class LocalTomcat {
             switch (a.getString()) {
                 case "instance": {
                     LocalTomcatConfigService s = nextLocalTomcatConfigService(args, NutsOpenMode.OPEN_OR_ERROR);
-                    if (context.getSession().getTerminal().ask().forBoolean("Confirm Deleting %s?", s.getName()).defaultValue(true).getBooleanValue()) {
+                    if (context.getSession().getTerminal().ask().forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                     }
                     return;
                 }
                 case "domain": {
                     LocalTomcatDomainConfigService s = nextLocalTomcatDomainConfigService(args, NutsOpenMode.OPEN_OR_ERROR);
-                    if (context.getSession().getTerminal().ask().forBoolean("Confirm Deleting %s?", s.getName()).defaultValue(true).getBooleanValue()) {
+                    if (context.getSession().getTerminal().ask().forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                         s.getTomcat().save();
                     }
@@ -404,7 +404,7 @@ public class LocalTomcat {
                 }
                 case "app": {
                     LocalTomcatAppConfigService s = nextLocalTomcatAppConfigService(args, NutsOpenMode.OPEN_OR_ERROR);
-                    if (context.getSession().getTerminal().ask().forBoolean("Confirm Deleting %s?", s.getName()).defaultValue(true).getBooleanValue()) {
+                    if (context.getSession().getTerminal().ask().forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                         s.getTomcat().save();
                     }

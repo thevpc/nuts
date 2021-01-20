@@ -60,8 +60,23 @@ public class NutsDependencyScopes {
         if (s1.isEmpty()) {
             s1 = NutsDependencyScope.API.id();
         }
+        s1=s1.replace('-','_');
         switch (s1){
-            case "test":return NutsDependencyScope.TEST_API.id();
+            case "test":
+            case "testcompile":
+            case "test_compile":
+                return NutsDependencyScope.TEST_API.id();
+            case "testruntime":
+            case "test_runtime":
+                return NutsDependencyScope.TEST_RUNTIME.id();
+            case "testsystem":
+            case "test_system":
+                return NutsDependencyScope.TEST_SYSTEM.id();
+            case "testprovided":
+            case "test_provided":
+            case "testcompileonly":
+            case "test_compile_only":
+                return NutsDependencyScope.TEST_PROVIDED.id();
             case "compile":return NutsDependencyScope.API.id();
         }
         return s1;
@@ -333,20 +348,24 @@ public class NutsDependencyScopes {
             value = "";
         }
         value = value.trim().toLowerCase();
+        value=value.replace('-', '_');
         switch (value) {
             case "":
             case "compile": //maven
                 return NutsDependencyScopePattern.API;
             case "compileonly": //gradle
-            case "compile-only": //gradle
+            case "compile_only": //gradle
                 return NutsDependencyScopePattern.PROVIDED;
             case "test": //maven
                 return NutsDependencyScopePattern.TEST_COMPILE;
             case "testcompile": //gradle
+            case "test_compile": //gradle
                 return NutsDependencyScopePattern.TEST_COMPILE;
             case "testruntime": //gradle
+            case "test_runtime": //gradle
                 return NutsDependencyScopePattern.TEST_RUNTIME;
             case "testcompileonly": //gradle
+            case "test_compile_only": //gradle
                 return NutsDependencyScopePattern.TEST_PROVIDED;
         }
         try {
