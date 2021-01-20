@@ -902,8 +902,11 @@ public class JobServiceCmd {
     }
 
     private void showCustomHelp(String name) {
-        context.getSession().out().println(context.getWorkspace().formats().text().loadFormattedString("/net/thevpc/nuts/toolbox/" + name + ".ntf",
-                getClass().getClassLoader(), null));
+        NutsTextFormatManager txt = context.getWorkspace().formats().text();
+        context.getSession().out().println(txt
+                .parser().parseResource("/net/thevpc/nuts/toolbox/" + name + ".ntf",
+                        txt.parser().createLoader(getClass().getClassLoader())
+                        ));
     }
 
     public boolean runProjectCommands(NutsCommandLine cmd) {

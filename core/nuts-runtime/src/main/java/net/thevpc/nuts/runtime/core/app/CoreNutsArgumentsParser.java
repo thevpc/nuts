@@ -1041,6 +1041,13 @@ public final class CoreNutsArgumentsParser {
                         }
                         break;
                     }
+                    case "--theme": {
+                        a = cmdLine.nextString();
+                        if (enabled) {
+                            options.setTheme(a.getStringValue());
+                        }
+                        break;
+                    }
 
                     //ERRORS
                     case "-I":

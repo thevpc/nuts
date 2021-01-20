@@ -93,7 +93,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
 
     @Override
     public void print(PrintStream out) {
-        NutsContentType outputFormat = getValidSession().getOutputFormat();
+        NutsContentType outputFormat = getSession()==null?NutsContentType.PLAIN:getSession().getOutputFormat();
         if(outputFormat==NutsContentType.PLAIN) {
             if (isWorkspaceVersion()) {
                 out.printf("%s/%s", getWorkspace().getApiVersion(), getWorkspace().getRuntimeId().getVersion());

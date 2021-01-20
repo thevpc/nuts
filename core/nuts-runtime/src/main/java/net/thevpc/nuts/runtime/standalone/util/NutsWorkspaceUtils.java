@@ -51,12 +51,13 @@ public class NutsWorkspaceUtils {
     private NutsWorkspace ws;
 
     public static NutsWorkspaceUtils of(NutsWorkspace ws) {
-        NutsWorkspaceUtils wp = (NutsWorkspaceUtils) ws.env().getProperty(NutsWorkspaceUtils.class.getName());
-        if (wp == null) {
-            wp = new NutsWorkspaceUtils(ws);
-            ws.env().setProperty(NutsWorkspaceUtils.class.getName(), wp,new NutsUpdateOptions(ws.createSession()));
-        }
-        return wp;
+        return new NutsWorkspaceUtils(ws);
+//        NutsWorkspaceUtils wp = (NutsWorkspaceUtils) ws.env().getProperty(NutsWorkspaceUtils.class.getName());
+//        if (wp == null) {
+//            wp = new NutsWorkspaceUtils(ws);
+//            ws.env().setProperty(NutsWorkspaceUtils.class.getName(), wp,new NutsUpdateOptions(ws.createSession()));
+//        }
+//        return wp;
     }
 
     private NutsWorkspaceUtils(NutsWorkspace ws) {

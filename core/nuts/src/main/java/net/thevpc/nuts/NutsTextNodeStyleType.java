@@ -28,7 +28,7 @@ public enum NutsTextNodeStyleType {
     BOOLEAN(false),
     KEYWORD(false),
     OPTION(false),
-    USER_INPUT(false),
+    INPUT(false),
     SEPARATOR(false),
     OPERATOR(false),
     SUCCESS(false),

@@ -68,10 +68,12 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
         }
 
         if(helpColors){
+            NutsTextFormatManager txt = getSession().getWorkspace().formats().text();
+            NutsTextNode n = txt.parser().parseResource("/net/thevpc/nuts/runtime/ntf-help.ntf",
+                    txt.parser().createLoader(getClass().getClassLoader())
+            );
             getSession().getTerminal().out().print(
-                getSession().getWorkspace().formats().text().loadFormattedString(
-                        "/net/thevpc/nuts/runtime/ntf-help.ntf",
-                    getClass().getClassLoader(), "no help found for " + name)
+                    n==null?("no help found for " + name):n.toString()
             );
         }
         switch (outputFormat) {

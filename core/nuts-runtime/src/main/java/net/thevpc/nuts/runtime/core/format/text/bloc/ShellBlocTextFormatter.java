@@ -515,13 +515,13 @@ public class ShellBlocTextFormatter implements BlocTextFormatter {
                         String s = ar.nextChars(sb.length());
                         String s0 = s.substring(1, s.length() - 1);
                         if (isSynopsysOption(s0)) {
-                            all.add(factory.styled("<", NutsTextNodeStyle.userInput()));
+                            all.add(factory.styled("<", NutsTextNodeStyle.input()));
                             all.add(factory.styled(s0, NutsTextNodeStyle.option()));
-                            all.add(factory.styled(">", NutsTextNodeStyle.userInput()));
+                            all.add(factory.styled(">", NutsTextNodeStyle.input()));
                         } else if (isSynopsysWord(s0)) {
-                            all.add(factory.styled("<", NutsTextNodeStyle.userInput()));
-                            all.add(factory.styled(s0, NutsTextNodeStyle.userInput()));
-                            all.add(factory.styled(">", NutsTextNodeStyle.userInput()));
+                            all.add(factory.styled("<", NutsTextNodeStyle.input()));
+                            all.add(factory.styled(s0, NutsTextNodeStyle.input()));
+                            all.add(factory.styled(">", NutsTextNodeStyle.input()));
                         } else {
                             all.add(factory.styled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
                         }
@@ -793,7 +793,7 @@ public class ShellBlocTextFormatter implements BlocTextFormatter {
                         if (ok) {
                             reader.nextChars(sb.length());
                             all.add(factory.styled(
-                                    sb.toString(), NutsTextNodeStyle.userInput()
+                                    sb.toString(), NutsTextNodeStyle.input()
                             ));
                             break;
                         } else {

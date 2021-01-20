@@ -92,6 +92,10 @@ public class NutsTextNodeStyle {
         return of(NutsTextNodeStyleType.REVERSED);
     }
 
+    public static NutsTextNodeStyle reversed(int variant) {
+        return of(NutsTextNodeStyleType.REVERSED,variant);
+    }
+
     public static NutsTextNodeStyle underlined() {
         return of(NutsTextNodeStyleType.UNDERLINED);
     }
@@ -100,8 +104,15 @@ public class NutsTextNodeStyle {
         return of(NutsTextNodeStyleType.STRIKED);
     }
 
+    public static NutsTextNodeStyle striked(int variant) {
+        return of(NutsTextNodeStyleType.STRIKED,variant);
+    }
+
     public static NutsTextNodeStyle italic() {
         return of(NutsTextNodeStyleType.ITALIC);
+    }
+    public static NutsTextNodeStyle italic(int variant) {
+        return of(NutsTextNodeStyleType.ITALIC,variant);
     }
 
     public static NutsTextNodeStyle bold() {
@@ -122,6 +133,9 @@ public class NutsTextNodeStyle {
 
     public static NutsTextNodeStyle pale() {
         return of(NutsTextNodeStyleType.PALE);
+    }
+    public static NutsTextNodeStyle pale(int variant) {
+        return of(NutsTextNodeStyleType.PALE,variant);
     }
 
     public static NutsTextNodeStyle success() {
@@ -180,12 +194,12 @@ public class NutsTextNodeStyle {
         return of(NutsTextNodeStyleType.OPERATOR, variant);
     }
 
-    public static NutsTextNodeStyle userInput() {
-        return of(NutsTextNodeStyleType.USER_INPUT);
+    public static NutsTextNodeStyle input() {
+        return of(NutsTextNodeStyleType.INPUT);
     }
 
-    public static NutsTextNodeStyle userInput(int variant) {
-        return of(NutsTextNodeStyleType.USER_INPUT, variant);
+    public static NutsTextNodeStyle input(int variant) {
+        return of(NutsTextNodeStyleType.INPUT, variant);
     }
 
     public static NutsTextNodeStyle comments() {
@@ -210,6 +224,10 @@ public class NutsTextNodeStyle {
 
     public static NutsTextNodeStyle date() {
         return of(NutsTextNodeStyleType.DATE);
+    }
+
+    public static NutsTextNodeStyle date(int variant) {
+        return of(NutsTextNodeStyleType.DATE,variant);
     }
 
     public static NutsTextNodeStyle number(int variant) {

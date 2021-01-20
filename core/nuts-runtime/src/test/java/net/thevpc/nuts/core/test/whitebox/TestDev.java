@@ -10,8 +10,8 @@ public class TestDev {
         NutsSession session = ws.createSession();
 
 
-        NutsString s=session.getWorkspace().formats().text().of(
-                NutsMessage.cstyle("%s", "Hello"), session
+        NutsString s=session.getWorkspace().formats().text().factory().setSession(session).nodeFor(
+                NutsMessage.cstyle("%s", "Hello")
         );
 
         session.out().printf("%s\n","Hello");

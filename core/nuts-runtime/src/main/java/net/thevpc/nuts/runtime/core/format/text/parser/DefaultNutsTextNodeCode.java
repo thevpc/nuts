@@ -27,9 +27,11 @@
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
 
+import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsTextNodeCode;
 import net.thevpc.nuts.NutsTextNodeType;
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextNodeFactory;
 
 /**
  * Created by vpc on 5/23/17.
@@ -46,6 +48,13 @@ public class DefaultNutsTextNodeCode extends NutsTextNodeSpecialBase implements 
                         && (separator == null || separator.isEmpty())) ? " " : separator
                 , end);
         this.text = text;
+    }
+
+    @Override
+    public NutsTextNode parse() {
+        BlocTextFormatter t = ((DefaultNutsTextNodeFactory) getWorkspace().formats().text().factory())
+                .resolveBlocTextFormatter(getKind());
+        return t.toNode(text);
     }
 
     @Override

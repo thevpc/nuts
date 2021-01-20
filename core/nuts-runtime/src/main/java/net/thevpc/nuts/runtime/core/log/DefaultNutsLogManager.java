@@ -7,7 +7,9 @@ import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -24,6 +26,7 @@ public class DefaultNutsLogManager implements NutsLogManager {
     private static Handler[] EMPTY = new Handler[0];
     private Path logFolder;
     private NutsSession defaultSession;
+    private Map<String,NutsLogger> loaded=new LinkedHashMap<>();
 
     public DefaultNutsLogManager(NutsWorkspace ws, NutsWorkspaceInitInformation options,NutsSession defaultSession) {
         this.ws = ws;
@@ -86,12 +89,22 @@ public class DefaultNutsLogManager implements NutsLogManager {
 
     @Override
     public NutsLogger of(String name) {
-        return new DefaultNutsLogger(ws, defaultSession,name);
+        NutsLogger y = loaded.get(name);
+        if(y==null) {
+            y= new DefaultNutsLogger(ws, defaultSession, name);
+            loaded.put(name,y);
+        }
+        return y;
     }
 
     @Override
     public NutsLogger of(Class clazz) {
-        return new DefaultNutsLogger(ws, defaultSession,clazz);
+        NutsLogger y = loaded.get(clazz.getName());
+        if(y==null) {
+            y= new DefaultNutsLogger(ws, defaultSession, clazz);
+            loaded.put(clazz.getName(),y);
+        }
+        return y;
     }
 
     @Override

@@ -575,8 +575,16 @@ public interface NutsWorkspaceOptions extends Serializable {
     String[] getProperties();
 
     /**
+     * locale
      * @since 0.8.1
      * @return session locale
      */
     String getLocale();
+
+    /**
+     * theme
+     * @since 0.8.1
+     * @return session locale
+     */
+    String getTheme();
 }

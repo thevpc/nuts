@@ -122,7 +122,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                 DefaultNutsTextNodeStyled s = (DefaultNutsTextNodeStyled) node;
                 NutsTextNodeFactory factory0 = ws.formats().text().factory();
                 NutsTextNodeStyle style = s.getStyle();
-                NutsTextNodeStyle[] format = factory0.toBasicStyles(style);
+                NutsTextNodeStyle[] format = ws.formats().text().getTheme().toBasicStyles(style);
                 AnsiEscapeCommand[] s2 = _appendFormats(formats, format);
                 writeNode(s2, s.getChild(), ctx);
                 break;
@@ -130,11 +130,11 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             case TITLE: {
                 DefaultNutsTextNodeTitle s = (DefaultNutsTextNodeTitle) node;
                 DefaultNutsTextNodeFactory factory0 = (DefaultNutsTextNodeFactory) ws.formats().text().factory();
-                AnsiEscapeCommand[] s2 = _appendFormats(formats, factory0.toBasicStyles(NutsTextNodeStyle.title(s.getLevel())));
+                AnsiEscapeCommand[] s2 = _appendFormats(formats, ws.formats().text().getTheme().toBasicStyles(NutsTextNodeStyle.title(s.getLevel())));
                 if (ctx.isTitleNumberEnabled()) {
                     NutsTitleNumberSequence seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
-                        seq = ws.formats().text().createTitleNumberSequence();
+                        seq = ws.formats().text().factory().createTitleNumberSequence();
                         ctx.setTitleNumberSequence(seq);
                     }
                     NutsTitleNumberSequence a = seq.newLevel(s.getLevel());
@@ -182,8 +182,8 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                 break;
             }
             case CODE: {
-                DefaultNutsTextNodeCode node1 = (DefaultNutsTextNodeCode) node;
-                NutsTextNode cn = ws.formats().text().factory().parseBloc(node1.getKind(), node1.getText());
+                NutsTextNodeCode node1 = (NutsTextNodeCode) node;
+                NutsTextNode cn = node1.parse();
                 writeNode(formats, cn, ctx);
                 break;
             }

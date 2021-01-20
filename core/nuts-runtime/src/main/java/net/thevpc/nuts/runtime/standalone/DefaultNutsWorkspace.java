@@ -427,7 +427,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
             StringBuilder version = new StringBuilder(nutsVersion);
             CoreStringUtils.fillString(' ', 25 - version.length(), version);
-            out.println(formats().text().loadFormattedString("/net/thevpc/nuts/runtime/includes/standard-header.ntf", getClass().getClassLoader(), "no help found"));
+            NutsTextFormatManager txt = formats().text();
+            NutsTextNode n = txt.parser().parseResource("/net/thevpc/nuts/runtime/includes/standard-header.ntf",
+                    txt.parser().createLoader(getClass().getClassLoader())
+            );
+            out.println(n==null?"no help found":n.toString());
             out.println(
                     formats().text().builder()
                             .append("/------------------------------------------------------------------------------\\\n",NutsTextNodeStyle.primary(2))
@@ -485,7 +489,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 Set<NutsId> companionIds = getCompanionIds();
                 out.printf("looking for recommended companion tools to install... detected : %s%n" ,
                         formats().text().builder().appendJoined(
-                                formats().text().of(","),
+                                formats().text().factory().plain(","),
                                 companionIds.stream()
                                         .map(x ->
                                                 formats().text().parse(id().formatter(x).format())
@@ -1069,17 +1073,29 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     @Override
     public String getWelcomeText(NutsSession session) {
-        return this.formats().text().loadFormattedString("/net/thevpc/nuts/runtime/nuts-welcome.ntf", getClass().getClassLoader(), "no welcome found");
+        NutsTextFormatManager txt = formats().text();
+        NutsTextNode n = txt.parser().parseResource("/net/thevpc/nuts/runtime/nuts-welcome.ntf",
+                txt.parser().createLoader(getClass().getClassLoader())
+        );
+        return (n==null?"no welcome found":n.toString());
     }
 
     @Override
     public String getHelpText(NutsSession session) {
-        return this.formats().text().loadFormattedString("/net/thevpc/nuts/runtime/nuts-help.ntf", getClass().getClassLoader(), "no help found");
+        NutsTextFormatManager txt = formats().text();
+        NutsTextNode n = txt.parser().parseResource("/net/thevpc/nuts/runtime/nuts-help.ntf",
+                txt.parser().createLoader(getClass().getClassLoader())
+        );
+        return (n==null?"no help found":n.toString());
     }
 
     @Override
     public String getLicenseText(NutsSession session) {
-        return this.formats().text().loadFormattedString("/net/thevpc/nuts/runtime/nuts-license.ntf", getClass().getClassLoader(), "no license found");
+        NutsTextFormatManager txt = formats().text();
+        NutsTextNode n = txt.parser().parseResource("/net/thevpc/nuts/runtime/nuts-license.ntf",
+                txt.parser().createLoader(getClass().getClassLoader())
+        );
+        return (n==null?"no license found":n.toString());
     }
 
     @Override
@@ -1087,7 +1103,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsId nutsId = id().resolveId(clazz, session);
         if (nutsId != null) {
             String urlPath = "/" + nutsId.getGroupId().replace('.', '/') + "/" + nutsId.getArtifactId() + ".ntf";
-            return formats().text().loadFormattedString(urlPath, clazz.getClassLoader(), "no help found");
+
+            NutsTextFormatManager txt = formats().text();
+            NutsTextNode n = txt.parser().parseResource(urlPath,
+                    txt.parser().createLoader(getClass().getClassLoader())
+            );
+            return (n==null?"no license found":n.toString());
         }
         return null;
     }

@@ -345,6 +345,11 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
      */
     private String locale;
 
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
+    private String theme;
+
     public PrivateBootWorkspaceOptions() {
     }
 
@@ -423,6 +428,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         this.setSkipErrors(other.getSkipErrors());
         this.setSwitchWorkspace(other.getSwitchWorkspace());
         this.setLocale(other.getLocale());
+        this.setTheme(other.getTheme());
         return this;
     }
 
@@ -1471,6 +1477,17 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     @Override
     public NutsWorkspaceOptionsBuilder setLocale(String locale) {
         this.locale = locale;
+        return this;
+    }
+
+    @Override
+    public String getTheme() {
+        return theme;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setTheme(String theme) {
+        this.theme = theme;
         return this;
     }
 }

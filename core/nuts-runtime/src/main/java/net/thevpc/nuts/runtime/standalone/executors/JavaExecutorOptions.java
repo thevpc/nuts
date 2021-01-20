@@ -39,7 +39,7 @@ public final class JavaExecutorOptions {
         if (tempId) {
             descriptor = def.getDescriptor();
             if (!CoreNutsUtils.isEffectiveId(id)) {
-                throw new NutsException(getWorkspace(), "Id should be effective : " + id);
+                throw new NutsException(getWorkspace(), "id should be effective : " + id);
             }
             id = descriptor.getId();
         } else {

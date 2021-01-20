@@ -28,13 +28,13 @@ public class NutsLogRichFormatter extends Formatter {
                     wRecord.getSession(),
                     wRecord.getLevel(),
                     wRecord.getVerb(),
-                    ws.formats().text().of(
+                    ws.formats().text().factory().setSession(wRecord.getSession()).nodeFor(
                             new NutsMessage(
                                 wRecord.getFormatStyle(),
                                     wRecord.getMessage(),
                                 p
-                            ),
-                            wRecord.getSession()
+                            )
+
                     ).toString()
                     ,
                     null,
@@ -204,12 +204,14 @@ public class NutsLogRichFormatter extends Formatter {
                 }
             }
             NutsString msgStr =
-                    wRecord.getWorkspace().formats().text().of(
+                    wRecord.getWorkspace().formats().text().factory()
+                            .setSession(wRecord.getSession())
+                            .nodeFor(
                     new NutsMessage(style,
                             message,
                             parameters2
                     )
-                    ,wRecord.getSession()
+
             );
 //                    formatMessage(wRecord);
             if(wRecord.isFormatted()) {

@@ -207,6 +207,9 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                     }
                 }
             }
+            if (PrivateNutsUtils.isBlank(apiVersion) || PrivateNutsUtils.compareRuntimeVersion(apiVersion, "0.8.1") >= 0) {
+                fillOption("--err-line-prefix", null, options.getTheme(),arguments, false);
+            }
         }
 
         if (createOptions || isImplicitAll()) {

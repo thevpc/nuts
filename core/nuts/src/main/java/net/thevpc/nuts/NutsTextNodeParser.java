@@ -1,5 +1,6 @@
 package net.thevpc.nuts;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 
@@ -37,6 +38,8 @@ public interface NutsTextNodeParser {
 
     boolean isIncomplete();
 
+    void reset();
+
     NutsTextNode parseIncremental(byte[] buf);
 
     NutsTextNode parseIncremental(char[] buf);
@@ -50,4 +53,14 @@ public interface NutsTextNodeParser {
     NutsTextNode parseIncremental(char[] buf, int off, int len);
 
     NutsTextNode parseRemaining();
+
+    NutsTextNode parseResource(String resourceName, NutsTextFormatLoader loader);
+
+    NutsTextNode parseResource(String resourceName, Reader reader, NutsTextFormatLoader loader);
+
+    NutsTextFormatLoader createLoader(ClassLoader loader);
+
+    NutsTextFormatLoader createLoader(File root);
+
+
 }

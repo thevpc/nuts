@@ -612,7 +612,7 @@ public class Test07_ColorfulStream {
                 "\\`\\`\\`reversed reversed\\`\\`\\`                  | ```reversed reversed```                      | reversed\n" +
                 "\\`\\`\\`error  error\\`\\`\\` \\`\\`\\`warn  warn\\`\\`\\`  ... | ```error  error``` ```warn  warn``` ```info  info```  ```config  config```       | several token types\n" +
                 "...                                      | ```comments  comments``` ```string  string``` ```number  number``` ```boolean  boolean```|\n" +
-                "                                         | ```keyword  keyword``` ```option  option``` ```user_input  user_input```     |\n" +
+                "                                         | ```keyword  keyword``` ```option  option``` ```input  input```     |\n" +
                 "                                         | ```operator  operator``` ```separator  separator``` ```success  success```    |\n" +
                 "                                         | ```danger  danger``` ```fail  fail``` ```var  var``` ```pale  pale```          |\n" +
                 "\n" +

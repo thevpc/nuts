@@ -86,7 +86,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 if (ctx.isTitleNumberEnabled()) {
                     NutsTitleNumberSequence seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
-                        seq = ws.formats().text().createTitleNumberSequence();
+                        seq = ws.formats().text().factory().createTitleNumberSequence();
                         ctx.setTitleNumberSequence(seq);
                     }
                     NutsTitleNumberSequence a = seq.newLevel(s.getTextStyleCode().length());

@@ -6,6 +6,10 @@ import java.util.Collection;
  * @category Format
  */
 public interface NutsTextNodeFactory {
+    NutsTextNodeFactory setSession(NutsSession session);
+
+    NutsSession getSession();
+
     NutsTextNode blank();
     NutsTextNode nodeFor(Object t);
 
@@ -24,7 +28,9 @@ public interface NutsTextNodeFactory {
     NutsTextNode command(String command, String args);
     NutsTextNode command(String command);
     NutsTextNode code(String lang, String text);
-    NutsTextNode parseBloc(String lang, String text);
 
-    NutsTextNodeStyle[] toBasicStyles(NutsTextNodeStyle style);
+    NutsTitleNumberSequence createTitleNumberSequence();
+
+    NutsTitleNumberSequence createTitleNumberSequence(String pattern);
+
 }

@@ -52,12 +52,12 @@ public class NutsLogPlainFormatter extends Formatter {
             NutsFormatManager formats = wRecord.getWorkspace().formats();
             NutsTextFormatManager text = formats.text();
             if (wRecord.isFormatted()) {
-                msgStr = (text.of(
+                msgStr = (text.factory().setSession(wRecord.getSession()).nodeFor(
                         new NutsMessage(
                                 wRecord.getFormatStyle(),
                                 wRecord.getMessage(),
                                 parameters2
-                        ), wRecord.getSession()
+                        )
                 ).filteredText());
             } else {
                 parameters2 = Arrays.copyOf(parameters2, parameters2.length);

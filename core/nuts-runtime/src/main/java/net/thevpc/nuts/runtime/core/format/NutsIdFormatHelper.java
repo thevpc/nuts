@@ -700,7 +700,7 @@ public class NutsIdFormatHelper {
         NutsTextFormatManager txt = session
                 .getWorkspace().formats().text();
         if (any == null || any.length == 0) {
-            return txt.factory().nodeFor("");
+            return txt.factory().blank();
         }
         if (any.length == 1) {
             return txt.builder().append(txt.factory().styled(stringValue(any[0]),style))

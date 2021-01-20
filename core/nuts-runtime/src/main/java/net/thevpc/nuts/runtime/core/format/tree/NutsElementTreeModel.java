@@ -51,6 +51,9 @@ class NutsElementTreeModel implements NutsTreeModel {
             this.ws = ws;
         }
 
+        public String toString() {
+            return toNutsString().toString();
+        }
         public NutsString toNutsString() {
             NutsString[] p = getMultilineArray(stringValue(key), value);
             if (p != null) {

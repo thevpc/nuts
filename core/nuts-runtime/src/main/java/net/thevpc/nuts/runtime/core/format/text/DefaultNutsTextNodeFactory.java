@@ -3,8 +3,7 @@ package net.thevpc.nuts.runtime.core.format.text;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
 import net.thevpc.nuts.runtime.core.format.text.bloc.*;
-import net.thevpc.nuts.runtime.core.format.text.stylethemes.DefaultNutsTextStyleTheme;
-import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextStyleTheme;
+import net.thevpc.nuts.NutsTextFormatTheme;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.File;
@@ -16,10 +15,23 @@ import java.util.*;
 
 public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
     private NutsWorkspace ws;
-    private NutsTextStyleTheme styleTheme= DefaultNutsTextStyleTheme.DEFAULT;
+    private NutsSession session;
+    private NutsTextFormatTheme styleTheme;
 
-    public DefaultNutsTextNodeFactory(NutsWorkspace ws) {
+    public DefaultNutsTextNodeFactory(NutsWorkspace ws,NutsTextFormatTheme styleTheme) {
         this.ws = ws;
+        this.styleTheme = styleTheme;
+    }
+
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public DefaultNutsTextNodeFactory setSession(NutsSession session) {
+        this.session = session;
+        return this;
     }
 
     @Override
@@ -39,7 +51,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
             return ws.formats().text().parse(((NutsFormattable)t).formatter().format());
         }
         if(t instanceof NutsMessage){
-            return _NutsFormattedMessage_toString((NutsMessage) t,null);
+            return _NutsFormattedMessage_toString((NutsMessage) t);
         }
         if(t instanceof NutsString){
             return ((NutsString) t).toNode();
@@ -67,7 +79,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
 
 
 
-    private NutsTextNode _NutsFormattedMessage_toString(NutsMessage m, NutsSession session) {
+    private NutsTextNode _NutsFormattedMessage_toString(NutsMessage m) {
         NutsTextFormatStyle style = m.getStyle();
         if(style==null){
             style=NutsTextFormatStyle.JSTYLE;
@@ -81,13 +93,14 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
         Locale locale= CoreStringUtils.isBlank(sLocale)?null:new Locale(sLocale);
         Object[] args2=new Object[params.length];
         NutsTextFormatManager txt = ws.formats().text();
+        NutsTextNodeFactory fct = txt.factory().setSession(session);
         for (int i = 0; i < args2.length; i++) {
             Object a=params[i];
             if(a instanceof Number || a instanceof Date || a instanceof Temporal) {
                 //do nothing, support format pattern
                 args2[i]=a;
             }else {
-                args2[i]= txt.of(a,session).toString();
+                args2[i]= fct.nodeFor(a).toString();
             }
         }
         switch (style){
@@ -191,12 +204,6 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
                     lang, "", "```", text
             );
         }
-    }
-
-    @Override
-    public NutsTextNode parseBloc(String lang, String text) {
-        BlocTextFormatter t = resolveBlocTextFormatter(lang);
-        return t.toNode(text);
     }
 
     public NutsTextNode title(NutsTextNode t, int level) {
@@ -340,7 +347,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
         }
     }
 
-    private BlocTextFormatter resolveBlocTextFormatter(String kind) {
+    public BlocTextFormatter resolveBlocTextFormatter(String kind) {
         if (kind == null) {
             kind = "";
         }
@@ -462,13 +469,12 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
     }
 
     @Override
-    public NutsTextNodeStyle[] toBasicStyles(NutsTextNodeStyle style) {
-        NutsTextNodeStyle[] styled = styleTheme.toBasicStyles(style, ws);
-        for (NutsTextNodeStyle nutsTextNodeStyle : styled) {
-            if(!nutsTextNodeStyle.getType().basic()){
-                throw new NutsIllegalArgumentException(ws,"invalid theme processing");
-            }
-        }
-        return styled;
+    public NutsTitleNumberSequence createTitleNumberSequence() {
+        return new DefaultNutsTitleNumberSequence("");
+    }
+
+    @Override
+    public NutsTitleNumberSequence createTitleNumberSequence(String pattern) {
+        return new DefaultNutsTitleNumberSequence((pattern == null || pattern.isEmpty()) ? "1.1.1.a.1" : pattern);
     }
 }

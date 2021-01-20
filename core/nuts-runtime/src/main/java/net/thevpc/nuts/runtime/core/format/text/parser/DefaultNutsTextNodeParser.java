@@ -32,6 +32,56 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         super(ws);
     }
 
+    /**
+     * transform plain text to formatted text so that the result is rendered as
+     * is
+     *
+     * @param str str
+     * @return escaped text
+     */
+    public static String escapeText0(String str) {
+        if (str == null) {
+            return str;
+        }
+        StringBuilder sb = new StringBuilder(str.length());
+        for (char c : str.toCharArray()) {
+            switch (c) {
+                case '\"':
+                case '\'':
+                case '`':
+                case '~':
+                case '@':
+                case '#':
+                case 'ø':
+//                case '$':
+//                case '£':
+//                case '§':
+//                case '_':
+//                case '¤':
+//                case '^':
+//                case '¨':
+//                case '=':
+//                case '*':
+//                case '+':
+//                case '(':
+//                case '[':
+//                case '{':
+//                case '<':
+//                case ')':
+//                case ']':
+//                case '}':
+//                case '>':
+                case '\\': {
+                    sb.append('\\').append(c);
+                    break;
+                }
+                default: {
+                    sb.append(c);
+                }
+            }
+        }
+        return sb.toString();
+    }
 //    public static NutsTextNode convert(FDocNode n) {
 //        if (n != null) {
 //            if (n instanceof FDocNode.Plain) {
@@ -182,58 +232,9 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
 //        return new NutsTextNodeList(children.toArray(new NutsTextNode[0]));
 //    }
 
-
-    /**
-     * transform plain text to formatted text so that the result is rendered as
-     * is
-     *
-     * @param str str
-     * @return escaped text
-     */
-    public static String escapeText0(String str) {
-        if (str == null) {
-            return str;
-        }
-        StringBuilder sb = new StringBuilder(str.length());
-        for (char c : str.toCharArray()) {
-            switch (c) {
-                case '\"':
-                case '\'':
-                case '`':
-                case '~':
-                case '@':
-                case '#':
-                case 'ø':
-//                case '$':
-//                case '£':
-//                case '§':
-//                case '_':
-//                case '¤':
-//                case '^':
-//                case '¨':
-//                case '=':
-//                case '*':
-//                case '+':
-//                case '(':
-//                case '[':
-//                case '{':
-//                case '<':
-//                case ')':
-//                case ']':
-//                case '}':
-//                case '>':
-                case '\\': {
-                    sb.append('\\').append(c);
-                    break;
-                }
-                default: {
-                    sb.append(c);
-                }
-            }
-        }
-        return sb.toString();
+    public void reset() {
+        state.reset();
     }
-
 
     public void write(char[] str) {
         write(str, 0, str.length);
@@ -262,7 +263,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
     public String filterText(String text) {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            NutsTextNodeWriterStringer s = new NutsTextNodeWriterStringer(out,ws);
+            NutsTextNodeWriterStringer s = new NutsTextNodeWriterStringer(out, ws);
             s.writeNode(this.parse(new StringReader(text)), new NutsTextNodeWriteConfiguration().setFiltered(true));
             s.flush();
             return out.toString();
@@ -319,13 +320,14 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         public boolean isLineStart() {
             return lineStart;
         }
-        public boolean isSpreadLine() {
-            return !lineStart;
-        }
 
         public State setLineStart(boolean wasNewLine) {
             this.lineStart = wasNewLine;
             return this;
+        }
+
+        public boolean isSpreadLine() {
+            return !lineStart;
         }
 
         public void applyPush(ParserStep r) {
@@ -389,13 +391,14 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         }
 
         public void applyStart(String c, boolean spreadLines, boolean lineStart) {
-            if(c.length()>0) {
+            if (c.length() > 0) {
                 applyStart(c.charAt(0), spreadLines, lineStart);
                 for (int i = 1; i < c.length(); i++) {
                     onNewChar(c.charAt(i));
                 }
             }
         }
+
         public void applyStart(char c, boolean spreadLines, boolean lineStart) {
             switch (c) {
                 case '`': {
@@ -403,7 +406,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
                     break;
                 }
                 case '#': {
-                    this.applyPush(new StyledParserStep(c, spreadLines, lineStart,ws));
+                    this.applyPush(new StyledParserStep(c, spreadLines, lineStart, ws));
                     break;
                 }
                 case 'ø': {
@@ -421,13 +424,13 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
                 default: {
                     State state = state();
 //                    state.setLineStart(lineStart);
-                    this.applyPush(new PlainParserStep(c, spreadLines, lineStart, ws, state,null));
+                    this.applyPush(new PlainParserStep(c, spreadLines, lineStart, ws, state, null));
                 }
             }
         }
 
         public boolean isIncomplete() {
-            if(root().isEmpty()){
+            if (root().isEmpty()) {
                 return false;
             }
             ParserStep s = root().peek();
@@ -521,6 +524,13 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
                     (lineMode ? ",lineMode" : "") +
                     "," + statusStack
                     + "}";
+        }
+
+        public void reset() {
+            statusStack.clear();
+            lineMode = false;
+            lineStart = true;
+            statusStack.push(new RootParserStep(true, ws));
         }
     }
 

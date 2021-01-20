@@ -405,9 +405,14 @@ public class CoreCommonUtils {
             if (a.length == 1) {
                 return txt.factory().plain(stringValue(a[0]));
             }
-            return txt.factory().nodeFor(
-                    "{" + String.join(", ", (List) c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())) + "}"
-            );
+            return txt.builder()
+                    .append("{")
+                    .appendJoined(
+                            txt.factory().plain(", "),
+                            c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())
+                    )
+                    .append("}")
+            ;
             
         } else if (o instanceof NutsNamedElement) {
             NutsNamedElement ne = (NutsNamedElement) o;
@@ -442,7 +447,7 @@ public class CoreCommonUtils {
             o = ((Map) o).entrySet();
         }
         if (o == null) {
-            return txt.factory().nodeFor("");
+            return txt.factory().blank();
         }
         if (o instanceof Boolean) {
             txt.factory().plain(String.valueOf(o));
@@ -491,7 +496,7 @@ public class CoreCommonUtils {
             Map c = ((Map) o);
             Map.Entry[] a = (Map.Entry[]) c.entrySet().toArray(new Map.Entry[0]);
             if (a.length == 0) {
-                return txt.factory().nodeFor("");
+                return txt.factory().blank();
             }
             if (a.length == 1) {
                 return txt.factory().plain(stringValue(a[0]));
@@ -509,7 +514,7 @@ public class CoreCommonUtils {
         if (o.getClass().isArray()) {
             int len = Array.getLength(o);
             if (len == 0) {
-                return txt.factory().nodeFor("");
+                return txt.factory().blank();
             }
             if (len == 1) {
                 return stringValueFormatted(Array.get(o, 0), escapeString, session);

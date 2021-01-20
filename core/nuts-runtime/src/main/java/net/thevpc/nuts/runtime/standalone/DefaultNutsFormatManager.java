@@ -12,6 +12,7 @@ import net.thevpc.nuts.runtime.core.format.table.DefaultTableFormat;
 
 public class DefaultNutsFormatManager implements NutsFormatManager {
     private NutsWorkspace ws;
+    private DefaultNutsTextFormatManager txt;
 
     public DefaultNutsFormatManager(NutsWorkspace ws) {
         this.ws = ws;
@@ -60,7 +61,10 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
 
     @Override
     public NutsTextFormatManager text() {
-        return new DefaultNutsTextFormatManager(ws);
+        if(txt==null){
+            txt=new DefaultNutsTextFormatManager(ws);
+        }
+        return txt;
     }
 
     @Override

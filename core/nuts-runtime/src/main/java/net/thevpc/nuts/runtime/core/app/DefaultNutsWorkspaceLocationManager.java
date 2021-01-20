@@ -16,9 +16,11 @@ import java.util.Map;
 public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocationManager {
     private NutsWorkspace ws;
     private String workspaceLocation;
+    private NutsWorkspaceInitInformation info;
 
     public DefaultNutsWorkspaceLocationManager(NutsWorkspace ws,NutsWorkspaceInitInformation info) {
         this.ws=ws;
+        this.info=info;
         this.workspaceLocation = Paths.get(info.getWorkspaceLocation()).toString();
     }
 
@@ -53,7 +55,11 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
 
     @Override
     public String getStoreLocation(NutsStoreLocation folderType) {
-        return cfg().current().getStoreLocation(folderType);
+        try {
+            return cfg().current().getStoreLocation(folderType);
+        }catch (IllegalStateException stillInitializing){
+            return info.getStoreLocation(folderType);
+        }
     }
 
     @Override

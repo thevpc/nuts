@@ -218,6 +218,9 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                     }
                 }
             }
+            if(apiVersionObj ==null || apiVersionObj.compareTo("0.8.1")>=0) {
+                fillOption("--theme", null,options.getTheme(), arguments, false);
+            }
         }
 
         if (createOptions || isImplicitAll()) {

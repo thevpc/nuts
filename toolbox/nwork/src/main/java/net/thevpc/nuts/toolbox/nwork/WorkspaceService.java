@@ -541,7 +541,7 @@ public class WorkspaceService {
                     }
                     if (interactive) {
                         String id = appContext.getSession().getTerminal().readLine("enter Id %s: ",
-                                (p2.getId() == null ? "" : ("(" + text.of(p2.getId()) + ")")));
+                                (p2.getId() == null ? "" : ("(" + text.factory().plain(p2.getId()) + ")")));
                         if (!StringUtils.isBlank(id)) {
                             p2.setId(id);
                         }

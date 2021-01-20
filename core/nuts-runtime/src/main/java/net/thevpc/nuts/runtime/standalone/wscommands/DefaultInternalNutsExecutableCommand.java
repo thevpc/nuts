@@ -38,9 +38,14 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
 
     @Override
     public String getHelpText() {
-        return getSession().getWorkspace().formats().text().loadFormattedString(
-                "/net/thevpc/nuts/runtime/command/" + name + ".ntf",
-                getClass().getClassLoader(), "no help found for " + name);
+        NutsTextFormatManager txt = getSession().getWorkspace().formats().text();
+        NutsTextNode n = txt.parser().parseResource("/net/thevpc/nuts/runtime/command/" + name + ".ntf",
+                txt.parser().createLoader(getClass().getClassLoader())
+        );
+        if(n==null){
+            return "no help found for " + name;
+        }
+        return n.toString();
     }
 
     @Override

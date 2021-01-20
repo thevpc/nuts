@@ -214,5 +214,21 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     NutsWorkspaceOptionsBuilder setProperties(String[] properties);
 
+    /**
+     * set locale
+     *
+     * @param locale value
+     * @return {@code this} instance
+     * @since 0.8.1
+     */
     NutsWorkspaceOptionsBuilder setLocale(String locale);
+
+    /**
+     * set theme
+     *
+     * @param theme value
+     * @return {@code this} instance
+     * @since 0.8.1
+     */
+    NutsWorkspaceOptionsBuilder setTheme(String theme);
 }

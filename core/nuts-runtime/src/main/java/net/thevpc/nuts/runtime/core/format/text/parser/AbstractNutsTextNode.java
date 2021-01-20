@@ -10,6 +10,10 @@ public abstract class AbstractNutsTextNode implements NutsTextNode {
         this.ws=ws;
     }
 
+    protected NutsWorkspace getWorkspace() {
+        return ws;
+    }
+
     @Override
     public String toString() {
         return immutable().toString();
