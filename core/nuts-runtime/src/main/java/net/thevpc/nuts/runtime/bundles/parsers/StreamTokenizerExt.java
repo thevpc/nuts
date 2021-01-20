@@ -329,6 +329,13 @@ public class StreamTokenizerExt {
         ctype['-'] |= CT_DIGIT;
     }
 
+    public void doNotParseNumbers() {
+        for (int i = '0'; i <= '9'; i++)
+            ctype[i] &= ~CT_DIGIT;
+        ctype['.'] &= ~CT_DIGIT;
+        ctype['-'] &= ~CT_DIGIT;
+    }
+
     /**
      * Determines whether or not ends of line are treated as tokens.
      * If the flag argument is true, this tokenizer treats end of lines
@@ -549,19 +556,34 @@ public class StreamTokenizerExt {
             long iv = 0;
             int decexp = 0;
             int seendot = 0;
-            while (true) {
-                if (c == '.' && seendot == 0) {
-                    seendot = 1;
-                    intType=false;
-                }else if ('0' <= c && c <= '9') {
-                    dv = dv * 10 + (c - '0');
-                    iv = iv * 10 + (c - '0');
-                    decexp += seendot;
-                } else {
-                    break;
-                }
+            boolean loop=true;
+            if (c == '.' && seendot == 0) {
+                seendot = 1;
+                intType=false;
+            }else if ('0' <= c && c <= '9') {
+                dv = dv * 10 + (c - '0');
+                iv = iv * 10 + (c - '0');
+                decexp += seendot;
+            } else {
+                loop=false;
+            }
+            if(loop) {
                 c = read();
-                image.append((char) c);
+                while (true) {
+                    if (c == '.' && seendot == 0) {
+                        seendot = 1;
+                        intType = false;
+                        image.append((char) c);
+                    } else if ('0' <= c && c <= '9') {
+                        dv = dv * 10 + (c - '0');
+                        iv = iv * 10 + (c - '0');
+                        decexp += seendot;
+                        image.append((char) c);
+                    } else {
+                        break;
+                    }
+                    c = read();
+                }
             }
             peekc = c;
             if (decexp != 0) {

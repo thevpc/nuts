@@ -106,6 +106,7 @@ search for artifacts
                char \#1    : show installation status
                               ```kw I``` : means 'installed' and is 'default'
                               ```kw i``` : means 'installed' and is not default
+                              ```kw d``` : means 'dependency'  (aka 'required') locally deployed
                               ```kw f``` : means 'fetched' locally but not installed
                               ```kw r``` : means 'remote' (not fetched)
                char \#2    : show package type
@@ -124,9 +125,7 @@ search for artifacts
                               ```kw r``` : runtime scope
                               ```kw s``` : system scope
                               ```kw p``` : provided scope
-                              ```kw t``` : test-compile scope
-                              ```kw P``` : test-provided scope
-                              ```kw R``` : test-runtime scope
+                              ```kw t``` : test (any) scope
                               ```kw m``` : import scope
                               ```kw O``` : other
                               ```kw -``` : unknown

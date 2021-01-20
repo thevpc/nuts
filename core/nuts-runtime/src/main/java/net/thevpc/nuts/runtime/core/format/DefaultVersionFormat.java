@@ -93,26 +93,20 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
 
     @Override
     public void print(PrintStream out) {
-        if (isWorkspaceVersion()) {
-            out.printf("%s/%s", getWorkspace().getApiVersion(), getWorkspace().getRuntimeId().getVersion());
-        } else {
-            out.printf("%s", getVersion());
+        NutsContentType outputFormat = getValidSession().getOutputFormat();
+        if(outputFormat==NutsContentType.PLAIN) {
+            if (isWorkspaceVersion()) {
+                out.printf("%s/%s", getWorkspace().getApiVersion(), getWorkspace().getRuntimeId().getVersion());
+            } else {
+                out.printf("%s", getVersion());
+            }
+        }else{
+            if (isWorkspaceVersion()) {
+                getValidSession().formatObject(buildProps()).print(out);
+            } else {
+                getValidSession().formatObject(getVersion()).print(out);
+            }
         }
-//        if (getValidSession().isPlainOut() && !all) {
-//            if (isWorkspaceVersion()) {
-//                PrintStream pout = getValidPrintStream(out);
-//                pout.printf("%s/%s", getWorkspace().getApiVersion(), getWorkspace().getRuntimeId().getVersion());
-//            } else {
-//                PrintStream pout = getValidPrintStream(out);
-//                pout.printf("%s", getVersion());
-//            }
-//        } else {
-//            if (isWorkspaceVersion()) {
-//                getValidSession().formatObject(buildProps()).print(out);
-//            } else {
-//                getValidSession().formatObject(getVersion()).print(out);
-//            }
-//        }
     }
 
     public Map<String, String> buildProps() {

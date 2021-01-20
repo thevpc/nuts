@@ -58,7 +58,7 @@ public class NutsIdFormatHelper {
     Instant dte;
     String usr;
     char status_f;
-    char status_obs;
+//    char status_obs;
     char status_e;
     char status_i;
     char status_s;
@@ -559,7 +559,7 @@ public class NutsIdFormatHelper {
                     : (this.installStatus.isInstalled()) ? 'i'
                     : (this.installStatus.isRequired()) ? 'd'
                     : this.fetched ? 'f' : 'r';
-            this.status_obs=(this.installStatus.isInstalled()?'O':'U');
+//            this.status_obs=(this.installStatus.isInstalled()?'O':'U');
             if (def != null) {
                 switch (def.getType()){
                     case API:{
@@ -615,20 +615,16 @@ public class NutsIdFormatHelper {
                             this.status_s = 'p';
                             break;
                         }
-                        case TEST_API: {
+                        case TEST_API:
+                        case TEST_IMPLEMENTATION:
+                        case TEST_PROVIDED:
+                        case TEST_RUNTIME:
+                        case TEST_OTHER:{
                             this.status_s = 't';
                             break;
                         }
                         case IMPORT: {
                             this.status_s = 'm';
-                            break;
-                        }
-                        case TEST_PROVIDED: {
-                            this.status_s = 'P';
-                            break;
-                        }
-                        case TEST_RUNTIME: {
-                            this.status_s = 'R';
                             break;
                         }
                         case OTHER: {
@@ -669,18 +665,26 @@ public class NutsIdFormatHelper {
     public NutsString getFormattedStatusString() {
         NutsTextFormatManager text = session.getWorkspace().formats().text();
         if (dep != null) {
-            return text.factory().styled(""+status_f + status_obs +status_e + status_i + status_s,NutsTextNodeStyle.primary(3))
+            return text.factory().styled(""+status_f
+//                    + status_obs
+                    +status_e + status_i + status_s,NutsTextNodeStyle.primary(3))
                     ;
         }
-        return text.factory().styled( ""+status_f + status_obs+ status_e + status_i ,NutsTextNodeStyle.primary(3))
+        return text.factory().styled( ""+status_f
+//                + status_obs
+                + status_e + status_i ,NutsTextNodeStyle.primary(3))
                 ;
     }
 
     public String getStatusString() {
         if (dep != null) {
-            return "" + status_f + status_obs+ status_e + status_i + status_s;
+            return "" + status_f
+//                    + status_obs
+                    + status_e + status_i + status_s;
         }
-        return "" + status_f + status_obs+ status_e + status_i;
+        return "" + status_f
+//                + status_obs
+                + status_e + status_i;
     }
 
     private NutsString keywordArr1(String[] any) {

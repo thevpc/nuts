@@ -13,6 +13,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsClassifierMappingBuilder;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.standalone.MutableNutsDependencyTreeNode;
@@ -662,16 +663,32 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     public void print(PrintStream out) {
         switch (getContentType()){
             case JSON:{
-                getGson(compact).toJson(value, out);
+                if(getWorkspace().io().term().isFormatted(out)){
+                    ByteArrayPrintStream bos=new ByteArrayPrintStream();
+                    getGson(compact).toJson(value, bos);
+                    out.print(getWorkspace().formats().text().factory().code("json",bos.toString()));
+                }else {
+                    getGson(compact).toJson(value, out);
+                }
                 out.flush();
                 break;
             }
             case XML:{
                 Document doc = convert(value,Document.class);
-                try {
-                    NutsXmlUtils.writeDocument(doc, new StreamResult(out), compact,true);
-                } catch (TransformerException ex) {
-                    throw new NutsException(getWorkspace(), CoreStringUtils.exceptionToString(ex), ex);
+                if(getWorkspace().io().term().isFormatted(out)) {
+                    ByteArrayPrintStream bos = new ByteArrayPrintStream();
+                    try {
+                        NutsXmlUtils.writeDocument(doc, new StreamResult(bos), compact, true);
+                    } catch (TransformerException ex) {
+                        throw new NutsException(getWorkspace(), CoreStringUtils.exceptionToString(ex), ex);
+                    }
+                    out.print(getWorkspace().formats().text().factory().code("xml", bos.toString()));
+                }else {
+                    try {
+                        NutsXmlUtils.writeDocument(doc, new StreamResult(out), compact, true);
+                    } catch (TransformerException ex) {
+                        throw new NutsException(getWorkspace(), CoreStringUtils.exceptionToString(ex), ex);
+                    }
                 }
                 break;
             }

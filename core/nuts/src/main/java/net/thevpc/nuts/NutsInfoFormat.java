@@ -105,9 +105,6 @@ public interface NutsInfoFormat extends NutsFormat {
      */
     NutsInfoFormat setFancy(boolean fancy);
 
-    //TODO
-    //NutsInfoFormat fancy(boolean fancy);
-
     /**
      * return true if fancy mode armed
      * @return true if fancy mode armed
