@@ -71,10 +71,33 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 if (ctx.isFiltered()) {
                     writeNode(s.getChild(), ctx);
                 } else {
-                    writeRaw(s.getStart());
-                    writeNode(s.getChild(), ctx);
-                    writeRaw(s.getEnd());
-                    writeRaw("ø");
+                    if(s.getChild().getType()==NutsTextNodeType.PLAIN) {
+                        writeRaw(s.getStart());
+                        writeNode(s.getChild(), ctx);
+                        writeRaw(s.getEnd());
+                        writeRaw("ø");
+                    }else{
+                        String s2 = s.getStart();
+                        String e2 = s.getEnd();
+                        if(s2.startsWith("##:")){
+                            s2="##{"+s2.substring(3);
+                        }else if(s2.startsWith("##{")){
+                            //ok
+                        }else{
+                            //error
+                        }
+                        if(e2.equals("##")){
+                            e2="}##";
+                        }else if(s2.startsWith("}##")){
+                            //ok
+                        }else{
+                            //error
+                        }
+                        writeRaw(s2);
+                        writeNode(s.getChild(), ctx);
+                        writeRaw(e2);
+                        writeRaw("ø");
+                    }
                 }
                 break;
             }

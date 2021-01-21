@@ -13,10 +13,10 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
 
     static {
         for (int i = 1; i <= 255; i++) {
-            allCombinations.add(new NutsTextNodeStyle[]{NutsTextNodeStyle.primary(i)});
+            allCombinations.add(new NutsTextNodeStyle[]{NutsTextNodeStyle.foregroundColor(i)});
         }
         for (int i = 1; i <= 255; i++) {
-            allCombinations.add(new NutsTextNodeStyle[]{NutsTextNodeStyle.secondary(i)});
+            allCombinations.add(new NutsTextNodeStyle[]{NutsTextNodeStyle.backgroundColor(i)});
         }
         NutsTextNodeStyle[] ss = {
                 NutsTextNodeStyle.underlined(),
@@ -32,7 +32,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
         for (int i = 1; i <= 255; i++) {
             for (int j = 0; j < ss.length; j++) {
                 allCombinations.add(new NutsTextNodeStyle[]{
-                        NutsTextNodeStyle.primary(i),
+                        NutsTextNodeStyle.foregroundColor(i),
                         ss[j]
                 });
             }
@@ -40,7 +40,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
         for (int i = 1; i <= 255; i++) {
             for (int j = 0; j < ss.length; j++) {
                 allCombinations.add(new NutsTextNodeStyle[]{
-                        NutsTextNodeStyle.secondary(i),
+                        NutsTextNodeStyle.backgroundColor(i),
                         ss[j]
                 });
             }
