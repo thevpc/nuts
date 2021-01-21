@@ -193,7 +193,7 @@ public class NProjectsSubCmd {
         if (mergeTo != null) {
             service.projects().mergeProjects(mergeTo, projects.stream().map(x -> x.getId()).toArray(String[]::new));
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("projects mer to %s.\n",
+                context.getSession().out().printf("projects merged to %s.\n",
                         context.getWorkspace().formats().text()
                                 .factory().styled(mergeTo,NutsTextNodeStyle.primary(5))
                 );

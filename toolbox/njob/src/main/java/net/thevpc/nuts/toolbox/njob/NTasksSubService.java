@@ -81,13 +81,6 @@ public class NTasksSubService {
             }
             task.setProject(p.getId());
         }
-//        task.setId(null);
-//        if (task.getProject() != null) {
-//            NProject r = dal.load(NProject.class, task.getId());
-//            if (r == null) {
-//                throw new IllegalArgumentException();
-//            }
-//        }
         dal.store(task);
     }
 
@@ -143,7 +136,7 @@ public class NTasksSubService {
 
         String project = task.getProject();
         if (project != null) {
-            NProject p = dal.load(NProject.class, project);
+            NProject p = service.projects().getProject(project);
             if (p == null) {
                 p = new NProject();
                 p.setName(project);
@@ -151,12 +144,6 @@ public class NTasksSubService {
             }
         }
         task.setId(null);
-//        if (task.getProject() != null) {
-//            NProject r = dal.load(NProject.class, task.getId());
-//            if (r == null) {
-//                throw new IllegalArgumentException();
-//            }
-//        }
         dal.store(task);
     }
 

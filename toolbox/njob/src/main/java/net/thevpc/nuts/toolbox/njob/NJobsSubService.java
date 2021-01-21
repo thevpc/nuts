@@ -79,7 +79,7 @@ public class NJobsSubService {
         return findAllJobs().filter(x -> {
             WeekDay d = WeekDay.MONDAY;
             if (x.getProject() != null) {
-                WeekDay d0 = dal.load(NProject.class, x.getProject()).getStartWeekDay();
+                WeekDay d0 = service.projects().getProject(x.getProject()).getStartWeekDay();
                 if (d0 != null) {
                     d = d0;
                 }

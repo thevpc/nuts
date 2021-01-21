@@ -55,7 +55,6 @@ public class NProjectsSubService {
         if (p.getStartWeekDay() == null) {
             p.setStartWeekDay(WeekDay.MONDAY);
         }
-//        dal.load(NProject.class,p.getId());
         dal.store(p);
     }
 
@@ -88,7 +87,6 @@ public class NProjectsSubService {
         if (p.getStartWeekDay() == null) {
             p.setStartWeekDay(WeekDay.MONDAY);
         }
-//        dal.load(NProject.class,p.getId());
         dal.store(p);
     }
 
