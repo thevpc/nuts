@@ -5,6 +5,7 @@ import net.thevpc.nuts.runtime.core.format.text.parser.*;
 import net.thevpc.nuts.runtime.core.format.text.bloc.*;
 import net.thevpc.nuts.NutsTextFormatTheme;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.DefaultNutsTextStyleGenerator;
 
 import java.io.File;
 import java.net.URL;

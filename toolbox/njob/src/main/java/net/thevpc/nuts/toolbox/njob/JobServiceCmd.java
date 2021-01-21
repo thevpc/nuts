@@ -109,7 +109,12 @@ public class JobServiceCmd {
 
 
     protected NutsString getFormattedProject(String projectName) {
-        return ws.formats().text().builder().appendHash(projectName).immutable();
+        NutsTextNodeBuilder builder = ws.formats().text().builder();
+        builder.getStyleGenerator()
+                .setIncludeForeground(true)
+                .setUsePaletteColors()
+        ;
+        return builder.appendHash(projectName).immutable();
     }
 
     protected String getFormattedDate(Instant x) {

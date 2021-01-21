@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.DefaultNutsTextStyleGenerator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
@@ -9,52 +10,29 @@ import java.util.Collection;
 import java.util.List;
 
 public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
-    private static List<NutsTextNodeStyle[]> allCombinations = new ArrayList<>();
-
-    static {
-        for (int i = 1; i <= 255; i++) {
-            allCombinations.add(new NutsTextNodeStyle[]{NutsTextNodeStyle.foregroundColor(i)});
-        }
-        for (int i = 1; i <= 255; i++) {
-            allCombinations.add(new NutsTextNodeStyle[]{NutsTextNodeStyle.backgroundColor(i)});
-        }
-        NutsTextNodeStyle[] ss = {
-                NutsTextNodeStyle.underlined(),
-                NutsTextNodeStyle.striked(),
-                NutsTextNodeStyle.reversed(),
-                NutsTextNodeStyle.bold(),
-                NutsTextNodeStyle.blink(),
-        };
-        for (NutsTextNodeStyle s : ss) {
-            allCombinations.add(new NutsTextNodeStyle[]{s});
-        }
-
-        for (int i = 1; i <= 255; i++) {
-            for (int j = 0; j < ss.length; j++) {
-                allCombinations.add(new NutsTextNodeStyle[]{
-                        NutsTextNodeStyle.foregroundColor(i),
-                        ss[j]
-                });
-            }
-        }
-        for (int i = 1; i <= 255; i++) {
-            for (int j = 0; j < ss.length; j++) {
-                allCombinations.add(new NutsTextNodeStyle[]{
-                        NutsTextNodeStyle.backgroundColor(i),
-                        ss[j]
-                });
-            }
-        }
-    }
-
     NutsTextFormatManager text1;
     private List<NutsTextNode> all = new ArrayList<>();
     private NutsWorkspace ws;
     private NutsTextNodeWriteConfiguration writeConfiguration;
+    private NutsTextStyleGenerator styleGenerator;
 
     public DefaultNutsTextNodeBuilder(NutsWorkspace ws) {
         text1 = ws.formats().text();
         this.ws = ws;
+    }
+
+    @Override
+    public NutsTextStyleGenerator getStyleGenerator() {
+        if(styleGenerator==null){
+            styleGenerator=new DefaultNutsTextStyleGenerator();
+        }
+        return styleGenerator;
+    }
+
+    @Override
+    public DefaultNutsTextNodeBuilder setStyleGenerator(NutsTextStyleGenerator styleGenerator) {
+        this.styleGenerator = styleGenerator;
+        return this;
     }
 
     @Override
@@ -99,8 +77,15 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
         if (hash == null) {
             hash = text;
         }
-        int a = Math.abs(hash.hashCode()) % allCombinations.size();
-        return append(text, allCombinations.get(a));
+        return append(text, getStyleGenerator().hash(hash));
+    }
+
+    @Override
+    public NutsTextNodeBuilder appendRandom(Object text) {
+        if (text == null) {
+            return this;
+        }
+        return append(text, getStyleGenerator().random());
     }
 
     @Override

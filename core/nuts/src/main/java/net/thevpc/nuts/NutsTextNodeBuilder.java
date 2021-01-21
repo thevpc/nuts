@@ -7,6 +7,10 @@ import java.util.List;
  * @category Format
  */
 public interface NutsTextNodeBuilder extends NutsString {
+    NutsTextStyleGenerator getStyleGenerator();
+
+    NutsTextNodeBuilder setStyleGenerator(NutsTextStyleGenerator styleGenerator);
+
     NutsTextNodeWriteConfiguration getConfiguration();
 
     NutsTextNodeBuilder setConfiguration(NutsTextNodeWriteConfiguration writeConfiguration);
@@ -27,6 +31,8 @@ public interface NutsTextNodeBuilder extends NutsString {
 //    NutsTextNodeBuilder append(String text, NutsTextNodeStyle... styles);
 
     NutsTextNodeBuilder appendHash(Object text);
+
+    NutsTextNodeBuilder appendRandom(Object text);
 
     NutsTextNodeBuilder appendHash(Object text, Object hash);
 
