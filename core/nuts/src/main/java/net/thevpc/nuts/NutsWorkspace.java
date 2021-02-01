@@ -27,7 +27,6 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NutsComponent;
 
-import java.util.Map;
 import java.util.Set;
 
 /**

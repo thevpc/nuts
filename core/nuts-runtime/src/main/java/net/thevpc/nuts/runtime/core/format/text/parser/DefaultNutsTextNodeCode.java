@@ -32,6 +32,7 @@ import net.thevpc.nuts.NutsTextNodeCode;
 import net.thevpc.nuts.NutsTextNodeType;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextNodeFactory;
+import net.thevpc.nuts.NutsCodeFormat;
 
 /**
  * Created by vpc on 5/23/17.
@@ -52,7 +53,7 @@ public class DefaultNutsTextNodeCode extends NutsTextNodeSpecialBase implements 
 
     @Override
     public NutsTextNode parse() {
-        BlocTextFormatter t = ((DefaultNutsTextNodeFactory) getWorkspace().formats().text().factory())
+        NutsCodeFormat t = ((DefaultNutsTextNodeFactory) getWorkspace().formats().text().factory())
                 .resolveBlocTextFormatter(getKind());
         return t.toNode(text);
     }

@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.core.format.text.bloc;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
-import net.thevpc.nuts.runtime.core.format.text.parser.BlocTextFormatter;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodePlain;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeStyled;
 
@@ -13,14 +12,22 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.NutsCodeFormat;
 
-public class ShellBlocTextFormatter implements BlocTextFormatter {
+public class ShellBlocTextFormatter implements NutsCodeFormat {
     private NutsWorkspace ws;
 
     public ShellBlocTextFormatter(NutsWorkspace ws) {
         this.ws = ws;
     }
 
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<String> criteria) {
+        String s = criteria.getConstraints();
+        return "sh".equals(s) ? NutsComponent.DEFAULT_SUPPORT : NutsComponent.NO_SUPPORT;
+    }
 
     private static NutsTextNode[] parseCommandLine_readSimpleQuotes(NutsWorkspace ws, StringReaderExt ar) {
         StringBuilder sb = new StringBuilder();

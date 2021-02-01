@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StringReaderExtUtils {
+
     public static NutsTextNode[] readSpaces(NutsWorkspace ws, StringReaderExt ar) {
         NutsTextNodeFactory factory = ws.formats().text().factory();
         StringBuilder sb = new StringBuilder();
@@ -17,63 +18,65 @@ public class StringReaderExtUtils {
             sb.append(ar.nextChar());
         }
         return new NutsTextNode[]{
-                factory.plain(sb.toString())
+            factory.plain(sb.toString())
         };
     }
+
     public static NutsTextNode[] readSlashSlashComments(NutsWorkspace ws, StringReaderExt ar) {
         NutsTextNodeFactory factory = ws.formats().text().factory();
-        StringBuilder sb=new StringBuilder();
-        if(!ar.peekChars("//")){
+        StringBuilder sb = new StringBuilder();
+        if (!ar.peekChars("//")) {
             return null;
         }
         sb.append(ar.nextChars(2));
-        boolean inLoop=true;
-        while(inLoop && ar.hasNext()){
-            switch (ar.peekChar()){
+        boolean inLoop = true;
+        while (inLoop && ar.hasNext()) {
+            switch (ar.peekChar()) {
                 case '\n':
-                case '\r':{
+                case '\r': {
                     sb.append(ar.nextChar());
-                    if(ar.hasNext() && ar.peekChar()=='\n'){
+                    if (ar.hasNext() && ar.peekChar() == '\n') {
                         sb.append(ar.nextChar());
                     }
-                    inLoop=false;
+                    inLoop = false;
                     break;
                 }
-                default:{
+                default: {
                     sb.append(ar.nextChar());
                 }
             }
         }
         return new NutsTextNode[]{
-                factory.styled(sb.toString(),NutsTextNodeStyle.comments())
+            factory.styled(sb.toString(), NutsTextNodeStyle.comments())
         };
     }
+
     public static NutsTextNode[] readSlashStarComments(NutsWorkspace ws, StringReaderExt ar) {
         NutsTextNodeFactory factory = ws.formats().text().factory();
-        StringBuilder sb=new StringBuilder();
-        if(!ar.peekChars("/*")){
+        StringBuilder sb = new StringBuilder();
+        if (!ar.peekChars("/*")) {
             return null;
         }
         sb.append(ar.nextChars(2));
-        boolean inLoop=true;
-        while(inLoop && ar.hasNext()){
-            switch (ar.peekChar()){
-                case '*':{
-                    if(ar.peekChars("*/")) {
+        boolean inLoop = true;
+        while (inLoop && ar.hasNext()) {
+            switch (ar.peekChar()) {
+                case '*': {
+                    if (ar.peekChars("*/")) {
                         sb.append(ar.nextChars(2));
                         inLoop = false;
-                    }else{
+                    } else {
                         sb.append(ar.nextChar());
                     }
                     break;
                 }
-                default:{
+                default: {
                     sb.append(ar.nextChar());
                 }
             }
         }
         return new NutsTextNode[]{
-                factory.styled(sb.toString(),NutsTextNodeStyle.comments(2))
+            factory.styled(sb.toString(), NutsTextNodeStyle.comments(2))
         };
     }
 
@@ -126,7 +129,6 @@ public class StringReaderExtUtils {
             return null;
         }
     }
-
 
     public static NutsTextNode[] readJSSimpleQuotes(NutsWorkspace ws, StringReaderExt ar) {
         NutsTextNodeFactory factory = ws.formats().text().factory();
@@ -198,7 +200,6 @@ public class StringReaderExtUtils {
 
     }
 
-
     public static NutsTextNode[] readNumber(NutsWorkspace ws, StringReaderExt ar) {
         NutsTextNodeFactory factory = ws.formats().text().factory();
         boolean nbrVisited = false;
@@ -259,7 +260,7 @@ public class StringReaderExtUtils {
         }
         if (lastOk >= 0) {
             return new NutsTextNode[]{
-                    factory.styled(ar.nextChars(lastOk+1), NutsTextNodeStyle.number())
+                factory.styled(ar.nextChars(lastOk + 1), NutsTextNodeStyle.number())
             };
         }
         return null;

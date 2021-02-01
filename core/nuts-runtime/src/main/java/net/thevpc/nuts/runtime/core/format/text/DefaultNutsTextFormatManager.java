@@ -9,24 +9,45 @@ import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextFormatThemeW
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
+
     private NutsWorkspace ws;
     private NutsTextFormatTheme styleTheme;
+    private List<NutsCodeFormat> codeFormats = new ArrayList<>();
 
     public DefaultNutsTextFormatManager(NutsWorkspace ws) {
         this.ws = ws;
         String y = ws.config().options().getTheme();
-        if(!CoreStringUtils.isBlank(y)){
-            if("default".equals(y)){
+        if (!CoreStringUtils.isBlank(y)) {
+            if ("default".equals(y)) {
                 //default always refers to the this implementation
-                styleTheme=new DefaultNutsTextFormatTheme(ws);
-            }else {
+                styleTheme = new DefaultNutsTextFormatTheme(ws);
+            } else {
                 styleTheme = new NutsTextFormatThemeWrapper(new NutsTextFormatPropertiesTheme(y, null, ws));
             }
-        }else{
-            styleTheme=new DefaultNutsTextFormatTheme(ws);
+        } else {
+            styleTheme = new DefaultNutsTextFormatTheme(ws);
         }
+    }
+
+    @Override
+    public NutsTextFormatManager addCodeFormat(NutsCodeFormat format) {
+        codeFormats.add(format);
+        return this;
+    }
+
+    @Override
+    public NutsTextFormatManager removeCodeFormat(NutsCodeFormat format) {
+        codeFormats.remove(format);
+        return this;
+    }
+
+    @Override
+    public NutsCodeFormat[] getCodeFormats() {
+        return codeFormats.toArray(new NutsCodeFormat[0]);
     }
 
     @Override
@@ -36,7 +57,7 @@ public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
 
     @Override
     public NutsTextNodeFactory factory() {
-        return new DefaultNutsTextNodeFactory(ws,styleTheme);
+        return new DefaultNutsTextNodeFactory(ws, styleTheme);
     }
 
     @Override
@@ -46,14 +67,13 @@ public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
 
     @Override
     public NutsTextNode parse(String t) {
-        return t==null?factory().blank():parser().parse(new StringReader(t));
+        return t == null ? factory().blank() : parser().parse(new StringReader(t));
     }
 
     @Override
     public NutsTextNodeParser parser() {
         return new DefaultNutsTextNodeParser(ws);
     }
-
 
 //    /**
 //     * transform plain text to formatted text so that the result is rendered as
@@ -76,7 +96,6 @@ public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
 //        w.writeNode(node);
 //        return out.toString();
 //    }
-
 //    @Override
 //    public String escapeCodeText(String text) {
 //        if (text == null) {
@@ -85,5 +104,4 @@ public class DefaultNutsTextFormatManager implements NutsTextFormatManager {
 //        //TODO...
 //        return text;
 //    }
-
 }

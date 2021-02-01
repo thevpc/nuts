@@ -6,17 +6,25 @@ import net.thevpc.nuts.NutsTextNodeStyle;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.bundles.datastr.EvictingQueue;
 import net.thevpc.nuts.runtime.bundles.parsers.StreamTokenizerExt;
-import net.thevpc.nuts.runtime.core.format.text.parser.BlocTextFormatter;
 
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import net.thevpc.nuts.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.NutsCodeFormat;
 
-public class XmlBlocTextFormatter implements BlocTextFormatter {
+public class XmlBlocTextFormatter implements NutsCodeFormat {
     private NutsWorkspace ws;
 
     public XmlBlocTextFormatter(NutsWorkspace ws) {
         this.ws = ws;
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<String> criteria) {
+        String s = criteria.getConstraints();
+        return "xml".equals(s) ? NutsComponent.DEFAULT_SUPPORT : NutsComponent.NO_SUPPORT;
     }
 
     @Override

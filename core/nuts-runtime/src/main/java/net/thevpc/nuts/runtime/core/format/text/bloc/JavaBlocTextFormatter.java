@@ -1,12 +1,14 @@
 package net.thevpc.nuts.runtime.core.format.text.bloc;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.format.text.parser.BlocTextFormatter;
 import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 
 import java.util.*;
+import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.NutsCodeFormat;
 
-public class JavaBlocTextFormatter implements BlocTextFormatter {
+public class JavaBlocTextFormatter implements NutsCodeFormat {
+
     private static Set<String> reservedWords = new LinkedHashSet<>(
             Arrays.asList(
                     "abstract", "assert", "boolean", "break", "byte", "case",
@@ -24,6 +26,12 @@ public class JavaBlocTextFormatter implements BlocTextFormatter {
 
     public JavaBlocTextFormatter(NutsWorkspace ws) {
         this.ws = ws;
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<String> criteria) {
+        String s = criteria.getConstraints();
+        return "java".equals(s) ? NutsComponent.DEFAULT_SUPPORT : NutsComponent.NO_SUPPORT;
     }
 
     @Override
@@ -49,8 +57,7 @@ public class JavaBlocTextFormatter implements BlocTextFormatter {
                 case '<':
                 case '>':
                 case '!':
-                case ';':
-                    {
+                case ';': {
                     all.add(factory.styled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
                     break;
                 }
@@ -76,34 +83,34 @@ public class JavaBlocTextFormatter implements BlocTextFormatter {
                     break;
                 }
                 case '.':
-                case '-':{
+                case '-': {
                     NutsTextNode[] d = StringReaderExtUtils.readNumber(ws, ar);
-                    if(d!=null) {
+                    if (d != null) {
                         all.addAll(Arrays.asList(d));
-                    }else{
+                    } else {
                         all.add(factory.styled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
                     }
                     break;
                 }
-                case '/':{
-                    if(ar.peekChars("//")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(ws,ar)));
-                    }else if(ar.peekChars("/*")){
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(ws,ar)));
-                    }else{
+                case '/': {
+                    if (ar.peekChars("//")) {
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(ws, ar)));
+                    } else if (ar.peekChars("/*")) {
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(ws, ar)));
+                    } else {
                         all.add(factory.styled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
                     }
                     break;
                 }
                 default: {
-                    if(Character.isWhitespace(ar.peekChar())){
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(ws,ar)));
-                    }else {
+                    if (Character.isWhitespace(ar.peekChar())) {
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(ws, ar)));
+                    } else {
                         NutsTextNode[] d = StringReaderExtUtils.readJSIdentifier(ws, ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].getType() == NutsTextNodeType.PLAIN) {
                                 String txt = ((NutsTextNodePlain) d[0]).getText();
-                                if(reservedWords.contains(txt)){
+                                if (reservedWords.contains(txt)) {
                                     d[0] = factory.styled(d[0], NutsTextNodeStyle.keyword());
                                 }
                             }

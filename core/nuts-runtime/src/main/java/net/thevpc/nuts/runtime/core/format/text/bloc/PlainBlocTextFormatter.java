@@ -1,10 +1,12 @@
 package net.thevpc.nuts.runtime.core.format.text.bloc;
 
+import net.thevpc.nuts.NutsSupportLevelContext;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.NutsTextNode;
-import net.thevpc.nuts.runtime.core.format.text.parser.BlocTextFormatter;
+import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.NutsCodeFormat;
 
-public class PlainBlocTextFormatter implements BlocTextFormatter {
+public class PlainBlocTextFormatter implements NutsCodeFormat {
     NutsWorkspace ws;
 
     public PlainBlocTextFormatter(NutsWorkspace ws) {
@@ -15,4 +17,11 @@ public class PlainBlocTextFormatter implements BlocTextFormatter {
     public NutsTextNode toNode(String text) {
         return ws.formats().text().factory().plain(text);
     }
+    
+        @Override
+    public int getSupportLevel(NutsSupportLevelContext<String> criteria) {
+        return NutsComponent.DEFAULT_SUPPORT;
+    }
+
+
 }
