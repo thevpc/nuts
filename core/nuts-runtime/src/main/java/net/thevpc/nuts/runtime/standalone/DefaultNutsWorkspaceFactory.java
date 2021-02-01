@@ -219,7 +219,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
-            .log("bind    {0} for __impl instance__ {1}", CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getClass().getName());
+            .log("bind    {0} for impl instance {1}", CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getClass().getName());
         }
         instances.add(extensionPoint, implementation);
     }
@@ -251,7 +251,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
-            .log("bind    {0} for __impl type__ {1}", CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getName());
+            .log("bind    {0} for impl type {1}", CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getName());
         }
         IdCache t = discoveredCacheById.get(source);
         if(t==null){
@@ -463,7 +463,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 obj = (T) resolveInstance(c, type, session);
             } catch (Exception e) {
                 LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.FAIL).formatted().error(e)
-                .log( "unable to instantiate {0} for {1} : {2}" ,c,type, CoreStringUtils.exceptionToString(e));
+                .log( "unable to instantiate {0} for {1} : {2}" ,c,type, e);
             }
             if (obj != null) {
                 all.add(obj);
@@ -480,7 +480,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 obj = (T) resolveInstance(c, type, argTypes, args, session);
             } catch (Exception e) {
                 LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.FAIL).formatted().error(e)
-                        .log("unable to instantiate {0} for {1} : {2}", c, type, CoreStringUtils.exceptionToString(e));
+                        .log("unable to instantiate {0} for {1} : {2}", c, type, e);
             }
             if (obj != null) {
                 all.add(obj);

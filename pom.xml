@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-builder</artifactId>
-    <name>net.thevpc.nuts.nuts-builder</name>
+    <name>net.thevpc.nuts</name>
     <version>0.8.1.0</version>
     <packaging>pom</packaging>
     <modules>

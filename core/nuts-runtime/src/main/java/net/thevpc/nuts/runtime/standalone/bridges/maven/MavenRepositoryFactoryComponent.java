@@ -43,7 +43,7 @@ import java.util.Map;
  * Created by vpc on 1/15/17.
  */
 @NutsSingleton
-public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactoryComponent {
+public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryComponent {
 
     @Override
     public NutsAddRepositoryOptions[] getDefaultRepositories(NutsWorkspace workspace) {

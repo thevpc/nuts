@@ -6,7 +6,7 @@
     <artifactId>nuts</artifactId>
     <version>0.8.1</version>
     <packaging>jar</packaging>
-    <name>net.thevpc.nuts</name>
+    <name>net.thevpc.nuts.nuts</name>
     <url>https://github.com/thevpc/nuts</url>
     <description>Network Updatable Things Services Bootstrap</description>
     <scm>

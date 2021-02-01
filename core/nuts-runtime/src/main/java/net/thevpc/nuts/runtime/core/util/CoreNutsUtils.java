@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.*;
@@ -47,11 +45,13 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 
 /**
  * Created by vpc on 5/16/17.
  */
 public class CoreNutsUtils {
+
     /**
      * vpc-public-nuts local repository at ${home.config}/.vpc-public-nuts
      */
@@ -61,7 +61,7 @@ public class CoreNutsUtils {
     public static final int DEFAULT_DATE_TIME_FORMATTER_LENGTH = 23;
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
-            .withZone(ZoneId.systemDefault());
+                    .withZone(ZoneId.systemDefault());
     public static final String[] COLOR_NAMES = new TreeSet<String>(Arrays.asList(
             "Maroon", "Brown", "Olive", "Teal", "Navy", "Black", "Red", "Orange", "Yellow", "Lime", "Green", "Cyan", "Blue", "Purple", "Magenta", "Grey", "Pink",
             "Apricot", "Beige", "Mint", "Lavender", "White", "Turquoise", "Aqua", "Aquamarine", "Gold", "Coral", "Tomato", "Firebrick",
@@ -209,7 +209,7 @@ public class CoreNutsUtils {
         return m2;
     }
 
-    public static NutsVersion applyStringProperties(NutsVersion child, Function<String, String> properties,NutsWorkspace ws) {
+    public static NutsVersion applyStringProperties(NutsVersion child, Function<String, String> properties, NutsWorkspace ws) {
         if (child == null) {
             return child;
         }
@@ -301,7 +301,7 @@ public class CoreNutsUtils {
         if (!updates) {
             return base;
         }
-        return (T) ws.filters().any(cls,all2.toArray((T[]) Array.newInstance(cls,0)));
+        return (T) ws.filters().any(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
     public static <T extends NutsFilter> T simplifyFilterAnd(NutsWorkspace ws, Class<T> cls, T base, NutsFilter... all) {
@@ -344,7 +344,7 @@ public class CoreNutsUtils {
         if (!updates) {
             return base;
         }
-        return (T) ws.filters().all(cls,all2.toArray((T[]) Array.newInstance(cls,0)));
+        return (T) ws.filters().all(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
     public static <T extends NutsFilter> T simplifyFilterNone(NutsWorkspace ws, Class<T> cls, T base, NutsFilter... all) {
@@ -381,9 +381,8 @@ public class CoreNutsUtils {
         if (!updates) {
             return base;
         }
-        return (T) ws.filters().none(cls,all2.toArray((T[]) Array.newInstance(cls,0)));
+        return (T) ws.filters().none(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
-
 
     public static <T> T[] simplifyAndShrink(Class<T> cls, T... any) {
         List<T> all = new ArrayList<>();
@@ -429,7 +428,7 @@ public class CoreNutsUtils {
         return all.toArray((T[]) Array.newInstance(cls, 0));
     }
 
-    public static NutsId applyNutsIdInheritance(NutsId child, NutsId parent,NutsWorkspace ws) {
+    public static NutsId applyNutsIdInheritance(NutsId child, NutsId parent, NutsWorkspace ws) {
         if (parent != null) {
             boolean modified = false;
             String namespace = child.getNamespace();
@@ -463,8 +462,7 @@ public class CoreNutsUtils {
                         .setGroupId(group)
                         .setArtifactId(name)
                         .setVersion(version)
-                        .setProperties(props).build()
-                ;
+                        .setProperties(props).build();
             }
         }
         return child;
@@ -479,7 +477,6 @@ public class CoreNutsUtils {
 //        s1 = CoreStringUtils.trim(s1);
 //        return s1.isEmpty() || s1.equals(NutsConstants.IdProperties.ALTERNATIVE_DEFAULT_VALUE);
 //    }
-
     public static boolean isValidIdentifier(String s) {
         if (s == null || s.length() == 0) {
             return false;
@@ -732,7 +729,6 @@ public class CoreNutsUtils {
 //        s = s.trim();
 //        return (s.isEmpty() || NutsConstants.IdProperties.ALTERNATIVE_DEFAULT_VALUE.equalsIgnoreCase(s)) ? null : s;
 //    }
-
     public static String[] nullArray_LocationsAndOses(String[] a) {
         return nullArray(a, NutsStoreLocation.values().length * NutsOsFamily.values().length);
     }
@@ -914,8 +910,8 @@ public class CoreNutsUtils {
     }
 
     public static String idToPath(NutsId id) {
-        return id.getGroupId().replace('.', '/') + "/" +
-                id.getArtifactId() + "/" + id.getVersion();
+        return id.getGroupId().replace('.', '/') + "/"
+                + id.getArtifactId() + "/" + id.getVersion();
     }
 
     public static Properties copyOfNonNull(Properties p) {
@@ -961,7 +957,7 @@ public class CoreNutsUtils {
         }
         String ss
                 = (s instanceof Enum) ? ((Enum) s).name().toLowerCase().replace('_', '-')
-                : s.toString().trim();
+                        : s.toString().trim();
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
 
@@ -1076,6 +1072,7 @@ public class CoreNutsUtils {
     }
 
     public static class NutsDefaultThreadFactory implements ThreadFactory {
+
         private static final AtomicInteger poolNumber = new AtomicInteger(1);
         private final ThreadGroup group;
         private final AtomicInteger threadNumber = new AtomicInteger(1);
@@ -1085,11 +1082,11 @@ public class CoreNutsUtils {
         NutsDefaultThreadFactory(String namePattern, boolean daemon) {
             this.daemon = daemon;
             SecurityManager s = System.getSecurityManager();
-            group = (s != null) ? s.getThreadGroup() :
-                    Thread.currentThread().getThreadGroup();
-            namePrefix = namePattern + "-" +
-                    CoreCommonUtils.indexToString(poolNumber.getAndIncrement()) +
-                    "-";
+            group = (s != null) ? s.getThreadGroup()
+                    : Thread.currentThread().getThreadGroup();
+            namePrefix = namePattern + "-"
+                    + CoreCommonUtils.indexToString(poolNumber.getAndIncrement())
+                    + "-";
         }
 
         public Thread newThread(Runnable r) {
@@ -1097,13 +1094,14 @@ public class CoreNutsUtils {
                     namePrefix + threadNumber.getAndIncrement(),
                     0);
             t.setDaemon(this.daemon);
-            if (t.getPriority() != Thread.NORM_PRIORITY)
+            if (t.getPriority() != Thread.NORM_PRIORITY) {
                 t.setPriority(Thread.NORM_PRIORITY);
+            }
             return t;
         }
     }
 
-    public static String[] parseCommandLineArray(String commandLineString,NutsWorkspace ws) {
+    public static String[] parseCommandLineArray(String commandLineString, NutsWorkspace ws) {
         if (commandLineString == null) {
             return new String[0];
         }
@@ -1234,6 +1232,7 @@ public class CoreNutsUtils {
         }
         return args.toArray(new String[0]);
     }
+
     public static int readEscapedArgument(char[] charArray, int i, StringBuilder sb) {
         char c = charArray[i];
         switch (c) {
@@ -1258,6 +1257,16 @@ public class CoreNutsUtils {
             }
         }
         return i;
+    }
+
+    public static Iterator<NutsDependency> itIdToDep(Iterator<NutsId> id) {
+        return IteratorUtils.convert(id, x -> x.toDependency(), "IdToDependency");
+    }
+
+    public static Iterator<NutsDependency> itIdToDep(Iterator<NutsId> id, NutsDependency copyFrom) {
+        String _optional = copyFrom.getOptional();
+        String _scope = copyFrom.getScope();
+        return IteratorUtils.convert(id, x -> x.toDependency().builder().setOptional(_optional).setScope(_scope).build(), "IdToDependency");
     }
 
 }

@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
+
     public RemoteNutsSearchCommand(NutsWorkspace ws) {
         super(ws);
     }
@@ -55,10 +56,48 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
 
         return getWorkspace().remoteCall(
                 getWorkspace().createCall(
-                        "workspace.search",
+                        "workspace.searchIds",
                         eb.build()
-                )
-                , List.class
+                ),
+                 List.class
         ).iterator();
     }
+    protected Iterator<NutsDependency> getResultIdsBaseIterator2(boolean sort) {
+        RemoteNutsWorkspace ws = getWorkspace();
+        NutsElementBuilder e = ws.formats().element().builder();
+        NutsObjectElementBuilder eb = e.forObject()
+                .set("execType", getExecType())
+                .set("defaultVersions", getDefaultVersions())
+                .set("targetApiVersion", getTargetApiVersion())
+                .set("optional", getOptional())
+                .set("arch", e.forArray().addAll(getArch()).build())
+                .set("packaging", e.forArray().addAll(getPackaging()).build())
+                .set("repositories", e.forArray().addAll(getRepositories()).build())
+                .set("ids", e.forArray().addAll(Arrays.stream(getIds())
+                        .map(Object::toString).toArray(String[]::new)).build());
+        if (getIdFilter() != null) {
+            eb.set("idFilter", ws.formats().element().toElement(getIdFilter()));
+        }
+        if (getDescriptorFilter() != null) {
+            eb.set("descriptorFilter", ws.formats().element().toElement(getDescriptorFilter()));
+        }
+        if (getInstallStatus() != null) {
+            eb.set("installStatus", e.forString(getInstallStatus().toString()));
+        }
+
+        return getWorkspace().remoteCall(
+                getWorkspace().createCall(
+                        "workspace.searchDependencies",
+                        eb.build()
+                ),
+                 List.class
+        ).iterator();
+    }
+
+    @Override
+    protected NutsCollectionResult<NutsDependency> getResultDependenciesBase(boolean print, boolean sort) {
+        return buildNutsCollectionSearchResult(getResultIdsBaseIterator2(sort), print);
+
+    }
+
 }

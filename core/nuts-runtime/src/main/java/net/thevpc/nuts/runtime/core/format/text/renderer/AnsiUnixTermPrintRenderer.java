@@ -131,7 +131,7 @@ public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
                                                 String d = ws.exec().userCmd().grabOutputString()
                                                         .setSession(ws.createSession())
                                                         .addCommand("tput", "cols")
-                                                        .getOutputString();
+                                                        .getOutputString();String s=d.trim();if(d.isEmpty()){return null;};
                                                 return Integer.parseInt(d.trim());
                                             } catch (Exception ex) {
                                                 wasError=true;

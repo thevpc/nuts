@@ -3,26 +3,24 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts;
 
 import java.nio.file.Path;
@@ -45,7 +43,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     ////////////////////////////////////////////////////////
     // Setters
     ////////////////////////////////////////////////////////
-
     /**
      * reset ids to search for
      *
@@ -248,7 +245,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand clearArchs();
 
     /**
-     * define locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * define locked ids to prevent them to be updated or the force other ids to
+     * use them (the installed version).
      *
      * @param values ids
      * @return {@code this} instance
@@ -256,7 +254,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand addLockedIds(String... values);
 
     /**
-     * define locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * define locked ids to prevent them to be updated or the force other ids to
+     * use them (the installed version).
      *
      * @param values ids
      * @return {@code this} instance
@@ -381,7 +380,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand removeRepository(String value);
 
     /**
-     * add locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * add locked ids to prevent them to be updated or the force other ids to
+     * use them (the installed version).
      *
      * @param id id to lock
      * @return {@code this} instance
@@ -389,7 +389,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand addLockedId(NutsId id);
 
     /**
-     * remove locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * remove locked ids to prevent them to be updated or the force other ids to
+     * use them (the installed version).
      *
      * @param id id to unlock
      * @return {@code this} instance
@@ -397,7 +398,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand removeLockedId(NutsId id);
 
     /**
-     * remove locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * remove locked ids to prevent them to be updated or the force other ids to
+     * use them (the installed version).
      *
      * @param id id to unlock
      * @return {@code this} instance
@@ -405,7 +407,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand removeLockedId(String id);
 
     /**
-     * add locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * add locked ids to prevent them to be updated or the force other ids to
+     * use them (the installed version).
      *
      * @param id id to lock
      * @return {@code this} instance
@@ -413,7 +416,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand addLockedId(String id);
 
     /**
-     * return locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     * return locked ids to prevent them to be updated or the force other ids to
+     * use them (the installed version).
      *
      * @return locked ids
      */
@@ -488,7 +492,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsDependencyFilter getDependencyFilter();
 
     /**
-     * define dependency filter. applicable when using {@link #setInlineDependencies(boolean)}
+     * define dependency filter. applicable when using
+     * {@link #setInlineDependencies(boolean)}
      *
      * @param filter dependency filter
      * @return {@code this} instance
@@ -496,7 +501,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setDependencyFilter(NutsDependencyFilter filter);
 
     /**
-     * define dependency filter. applicable when using {@link #setInlineDependencies(boolean)}
+     * define dependency filter. applicable when using
+     * {@link #setInlineDependencies(boolean)}
      *
      * @param filter dependency filter
      * @return {@code this} instance
@@ -551,7 +557,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     ////////////////////////////////////////////////////////
     // Getters
     ////////////////////////////////////////////////////////
-
     /**
      * define id filter.
      *
@@ -645,7 +650,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     /**
      * true if search must return only latest versions for each artifact id
      *
-     * @return true if search must return only latest versions for each artifact id
+     * @return true if search must return only latest versions for each artifact
+     * id
      */
     boolean isLatest();
 
@@ -667,13 +673,19 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     ////////////////////////////////////////////////////////
     // Result
     ////////////////////////////////////////////////////////
-
     /**
      * execute query and return result as ids
      *
      * @return result as ids
      */
     NutsResultList<NutsId> getResultIds();
+
+    /**
+     * execute query and return result as dependencies
+     *
+     * @return result as dependencies
+     */
+    NutsResultList<NutsDependency> getResultDependencies();
 
     /**
      * execute query and return result as definitions
@@ -717,7 +729,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     ////////////////////////////////////////////////////////
     // Setters
     ////////////////////////////////////////////////////////
-
     /**
      * remote only
      *
@@ -755,7 +766,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand clearScopes();
 
     /**
-     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
+     * add dependency scope filter. Only relevant with
+     * {@link #setDependencies(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -763,7 +775,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand addScope(NutsDependencyScope scope);
 
     /**
-     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
+     * add dependency scope filter. Only relevant with
+     * {@link #setDependencies(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -771,7 +784,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand addScopes(NutsDependencyScope... scope);
 
     /**
-     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
+     * add dependency scope filter. Only relevant with
+     * {@link #setDependencies(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -779,7 +793,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand removeScope(NutsDependencyScope scope);
 
     /**
-     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
+     * add dependency scope filter. Only relevant with
+     * {@link #setDependencies(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -787,7 +802,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand addScope(NutsDependencyScopePattern scope);
 
     /**
-     * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
+     * add dependency scope filter. Only relevant with
+     * {@link #setDependencies(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -795,7 +811,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand addScopes(NutsDependencyScopePattern... scope);
 
     /**
-     * remove dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
+     * remove dependency scope filter. Only relevant with
+     * {@link #setDependencies(boolean)}
      *
      * @param scope scope filter
      * @return {@code this} instance
@@ -858,15 +875,16 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsSearchCommand setIndexed(Boolean enable);
 
     /**
-     * scope filter filter. applicable with {@link #setInlineDependencies(boolean)}
+     * scope filter filter. applicable with
+     * {@link #setInlineDependencies(boolean)}
      *
      * @return optional filter
      */
     Set<NutsDependencyScope> getScope();
 
     /**
-     * optional filter. When non null will filter
-     * dependencies from {@link #setInlineDependencies(boolean)}
+     * optional filter. When non null will filter dependencies from
+     * {@link #setInlineDependencies(boolean)}
      *
      * @return optional filter
      */
@@ -906,7 +924,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     ////////////////////////////////////////////////////////
     // Getters
     ////////////////////////////////////////////////////////
-
     /**
      * enable/disable effective descriptor evaluation
      *
@@ -980,7 +997,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * <ul>
      * <li>return true of only default values are searched for</li>
      * <li>return false of only default values are searched for</li>
-     * <li>return null of both default values and non default ones are searched for</li>
+     * <li>return null of both default values and non default ones are searched
+     * for</li>
      * </ul>
      *
      * @return search for default versions status
@@ -1000,7 +1018,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     //
     // NutsWorkspaceCommand overridden methods
     //    
-
     /**
      * copy session
      *
@@ -1025,7 +1042,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args            argument to configure with
+     * @param args argument to configure with
      * @return {@code this} instance
      */
     @Override
@@ -1083,34 +1100,33 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsResultList<String> getResultStoreLocations(NutsStoreLocation location);
 
     /**
-     * execute query and return the selected columns.
-     * Supported columns are :
+     * execute query and return the selected columns. Supported columns are :
      * <ul>
-     *     <li>all</li>
-     *     <li>long</li>
-     *     <li>status</li>
-     *     <li>install-date</li>
-     *     <li>install-user</li>
-     *     <li>install-folder</li>
-     *     <li>repository</li>
-     *     <li>repository-id</li>
-     *     <li>id</li>
-     *     <li>name</li>
-     *     <li>arch</li>
-     *     <li>packaging</li>
-     *     <li>platform</li>
-     *     <li>os</li>
-     *     <li>osdist</li>
-     *     <li>exec-entry</li>
-     *     <li>file-name</li>
-     *     <li>file</li>
-     *     <li>var-location</li>
-     *     <li>temp-folder</li>
-     *     <li>config-folder</li>
-     *     <li>lib-folder</li>
-     *     <li>log-folder</li>
-     *     <li>cache-folder</li>
-     *     <li>apps-folder</li>
+     * <li>all</li>
+     * <li>long</li>
+     * <li>status</li>
+     * <li>install-date</li>
+     * <li>install-user</li>
+     * <li>install-folder</li>
+     * <li>repository</li>
+     * <li>repository-id</li>
+     * <li>id</li>
+     * <li>name</li>
+     * <li>arch</li>
+     * <li>packaging</li>
+     * <li>platform</li>
+     * <li>os</li>
+     * <li>osdist</li>
+     * <li>exec-entry</li>
+     * <li>file-name</li>
+     * <li>file</li>
+     * <li>var-location</li>
+     * <li>temp-folder</li>
+     * <li>config-folder</li>
+     * <li>lib-folder</li>
+     * <li>log-folder</li>
+     * <li>cache-folder</li>
+     * <li>apps-folder</li>
      * </ul>
      *
      * @param columns columns to return

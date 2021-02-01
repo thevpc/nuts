@@ -131,7 +131,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                 try (Reader rr = new InputStreamReader(NutsWorkspaceUtils.of(ws).openURL(u))) {
                     s = ws.formats().element().setContentType(NutsContentType.JSON).parse(rr, DefaultNutsExtensionInformation[].class);
                 } catch (IOException ex) {
-                    LOG.with().session(session).level(Level.SEVERE).error(ex).log("failed to parse NutsExtensionInformation from {0} : {1}", u, CoreStringUtils.exceptionToString(ex));
+                    LOG.with().session(session).level(Level.SEVERE).error(ex)
+                            .log("failed to parse NutsExtensionInformation from {0} : {1}", u, ex);
                 }
                 if (s != null) {
                     for (NutsExtensionInformation nutsExtensionInfo : s) {
@@ -463,7 +464,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             throw new NutsExtensionAlreadyRegisteredException(ws, id.toString(), wired.toString());
         }
 
-        LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.UPDATE).log("installing extension {0}", id);
+        LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.UPDATE).formatted().log("installing extension {0}", id);
         List<NutsDefinition> nutsDefinitions = ws.search()
                 .copyFrom(options)
                 .setSession(searchSession)
@@ -500,14 +501,14 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 //            }
 //        }
         extensions.put(id, workspaceExtension);
-        LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.UPDATE).log("Extension {0} installed successfully", id);
+        LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.UPDATE).formatted().log("extension {0} installed successfully", id);
         NutsTerminalSpec spec = new NutsDefaultTerminalSpec();
         if (session.getTerminal() != null) {
             spec.put("ignoreClass", session.getTerminal().getClass());
         }
         NutsSessionTerminal newTerminal = createTerminal(spec);
         if (newTerminal != null) {
-            LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.UPDATE).log("Extension {0} changed Terminal configuration. Reloading Session Terminal", id);
+            LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.UPDATE).formatted().log("extension {0} changed Terminal configuration. Reloading Session Terminal", id);
             session.setTerminal(newTerminal);
         }
         return workspaceExtension;
@@ -543,7 +544,9 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                         try {
                             zipFile.close();
                         } catch (IOException ex) {
-                            LOG.with().session(session).level(Level.SEVERE).error(ex).log("failed to close zip file {0} : {1}", file.getPath(), CoreStringUtils.exceptionToString(ex));
+                            LOG.with().session(session).level(Level.SEVERE)
+                                    .error(ex).log("failed to close zip file {0} : {1}", 
+                                            file.getPath(), ex);
                             //ignore return false;
                         }
                     }

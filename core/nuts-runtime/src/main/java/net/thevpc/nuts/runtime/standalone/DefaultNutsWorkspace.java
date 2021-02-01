@@ -345,8 +345,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     try {
                         install().installed().getResult();
                     } catch (Exception ex) {
-                        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("Reinstall artifacts failed : " + CoreStringUtils.exceptionToString(ex));
-                        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("Reinstall artifacts failed : " + CoreStringUtils.exceptionToString(ex), ex);
+                        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
+                                .log("reinstall artifacts failed : " + CoreStringUtils.exceptionToString(ex));
+                        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
+                                .log("reinstall artifacts failed : " + CoreStringUtils.exceptionToString(ex), ex);
                     }
                 }
             }
@@ -784,7 +786,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         throw ex;
                     } catch (Exception ex) {
                         if (session.isPlainTrace()) {
-                            out.printf(id().formatter().value(def.getId()).format() + " ```error failed``` to update : %s.%n", CoreStringUtils.exceptionToString(ex));
+                            out.printf("%s ```error failed``` to update : %s.%n", def.getId(),ex);
                         }
                         throw new NutsExecutionException(this, "unable to update " + def.getId().toString(), ex);
                     }
@@ -798,12 +800,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         throw ex;
                     } catch (Exception ex) {
                         if (session.isPlainTrace()) {
-                            out.printf("```error error: failed to install``` "+id().formatter().value(def.getId()).format()+": %s.%n", CoreStringUtils.exceptionToString(ex));
+                            out.printf("```error error: failed to install``` %s: %s.%n", def.getId(),ex);
                         }
                         try {
-                            installedRepository.uninstall(executionContext.getDefinition().getId(), session);
+                            installedRepository.uninstall(executionContext.getDefinition(), session);
                         } catch (Exception ex2) {
-                            LOG.with().session(session).level(Level.FINE).error(ex).log("failed to uninstall  {0}", executionContext.getDefinition().getId());
+                            LOG.with().session(session).level(Level.FINE).error(ex).formatted().log("failed to uninstall  {0}", executionContext.getDefinition().getId());
                             //ignore if we could not uninstall
                         }
                         throw new NutsExecutionException(this, "unable to install " + def.getId().toString(), ex);
@@ -1314,7 +1316,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         } catch (NutsNotFoundException e) {
             return NutsInstallStatus.NONE;
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.SEVERE).error(ex).log("error: "+CoreStringUtils.exceptionToString(ex));
+            LOG.with().session(session).level(Level.SEVERE).error(ex).log("error: %s",ex);
             return NutsInstallStatus.NONE;
         }
         return getInstalledRepository().getInstallStatus(nutToInstall.getId(), session);

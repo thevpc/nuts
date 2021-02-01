@@ -51,7 +51,7 @@ import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
  * Created by vpc on 1/15/17.
  */
 @NutsSingleton
-public class JarNutsDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
+public class JarDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Collections.singletonList("jar"));//, "war", "ear"
     private NutsWorkspace ws;
@@ -101,7 +101,10 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                                     .setId(ws.id().parser().parse("temp:jar#1.0"))
                                     .setExecutable(mainClass.isSet())
                                     .setPackaging("jar")
-                                    .setExecutor(new DefaultNutsArtifactCall(JAVA, new String[]{"-jar"}))
+                                    .setExecutor(new DefaultNutsArtifactCall(JAVA, 
+                                            //new String[]{"-jar"}
+                                            new String[0]
+                                    ))
                                     .build();
 
                             metainf.set(d);

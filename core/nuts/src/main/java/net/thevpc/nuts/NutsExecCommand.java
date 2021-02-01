@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts;
 
 import java.io.InputStream;
@@ -31,8 +29,8 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Execute command.
- * This class helps executing all types of executables : internal, external, alias and system
+ * Execute command. This class helps executing all types of executables :
+ * internal, external, alias and system
  *
  * @author thevpc
  * @since 0.5.4
@@ -47,14 +45,15 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * thrown.Particularly, if grabOutputString is used, error exception will
      * state the output message
      *
-     * @param failFast failFast if true an exception will be thrown if exit code is not zero
+     * @param failFast failFast if true an exception will be thrown if exit code
+     * is not zero
      * @return {@code this} instance
      */
     NutsExecCommand setFailFast(boolean failFast);
 
-
     /**
-     * if true, an exception is thrown whenever the command returns non zero value.
+     * if true, an exception is thrown whenever the command returns non zero
+     * value.
      *
      * @return true if failFast is armed
      */
@@ -66,7 +65,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * @return command to execute
      */
     String[] getCommand();
-
 
     /**
      * reset command arguments to the given array
@@ -109,8 +107,8 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecCommand clearCommand();
 
     /**
-     * set command artifact definition.
-     * The definition is expected to include content, dependencies, effective descriptor and install information.
+     * set command artifact definition. The definition is expected to include
+     * content, dependencies, effective descriptor and install information.
      *
      * @param definition definition for the executable
      * @return {@code this} instance
@@ -164,10 +162,9 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecCommand addEnv(Map<String, String> env);
 
     /**
-     * set or unset env property.
-     * the property is unset if the value is null.
+     * set or unset env property. the property is unset if the value is null.
      *
-     * @param key   env key
+     * @param key env key
      * @param value env value
      * @return {@code this} instance
      */
@@ -252,7 +249,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * @return grabbed error after command execution
      */
     String getErrorString();
-
 
     /**
      * set new command output stream (standard output destination)
@@ -412,11 +408,12 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...)
+     * }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args            argument to configure with
+     * @param args argument to configure with
      * @return {@code this} instance
      */
     @Override
@@ -432,6 +429,18 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
 
     int getSleepMillis();
 
-    NutsExecCommand setSleepMillis(int sleepMillis) ;
+    NutsExecCommand setSleepMillis(int sleepMillis);
+
+    boolean isInheritSystemIO();
+
+    NutsExecCommand setInheritSystemIO(boolean inheritSystemIO);
+
+    String getRedirectOuputFile();
+
+    NutsExecCommand setRedirectOuputFile(String redirectOuputFile);
+
+    String getRedirectInpuFile();
+
+    NutsExecCommand setRedirectInpuFile(String redirectInpuFile);
 
 }

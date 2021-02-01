@@ -31,6 +31,9 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     protected boolean redirectErrorStream;
     protected boolean failFast;
     protected boolean dry;
+    private boolean inheritSystemIO;
+    private String redirectOuputFile;
+    private String redirectInpuFile;
 
     public AbstractNutsExecCommand(NutsWorkspace ws) {
         super(ws, "exec");
@@ -71,16 +74,15 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public NutsExecCommand setCommand(String... command) {
-        this.command=null;
+        this.command = null;
         return addCommand(command);
     }
 
     @Override
     public NutsExecCommand setCommand(Collection<String> command) {
-        this.command=null;
+        this.command = null;
         return addCommand(command);
     }
-    
 
     @Override
     public NutsExecCommand addCommand(String... command) {
@@ -202,6 +204,17 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         return in;
     }
 
+    @Override
+    public boolean isInheritSystemIO() {
+        return inheritSystemIO;
+    }
+
+    @Override
+    public NutsExecCommand setInheritSystemIO(boolean inheritSystemIO) {
+        this.inheritSystemIO = inheritSystemIO;
+        return this;
+    }
+
 //    @Override
 //    public InputStream in() {
 //        return getIn();
@@ -211,7 +224,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 //    public NutsExecCommand in(InputStream in) {
 //        return setIn(in);
 //    }
-
     @Override
     public NutsExecCommand setIn(InputStream in) {
         this.in = in;
@@ -281,7 +293,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 //    public NutsExecCommand out(PrintStream out) {
 //        return setOut(out);
 //    }
-
     @Override
     public NutsExecCommand setOut(PrintStream out) {
         this.out = (out == null ? null : ws.io().createPrintStream(out, NutsTerminalMode.FORMATTED, session));
@@ -292,7 +303,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 //    public NutsExecCommand err(PrintStream err) {
 //        return setErr(err);
 //    }
-
     @Override
     public NutsExecCommand setErr(PrintStream err) {
         this.err = (err == null ? null : ws.io().createPrintStream(err, NutsTerminalMode.FORMATTED, session));
@@ -362,12 +372,12 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     public int getResult() {
         if (!executed) {
 //            try {
-                run();
+            run();
 //            } catch (Exception ex) {
 //                // ignore;
 //            }
         }
-        if (result != null && result.getExitCode()!=0 && failFast) {
+        if (result != null && result.getExitCode() != 0 && failFast) {
             throw result;
 //            checkFailFast(result.getExitCode());
         }
@@ -431,7 +441,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             command.add(a.getString());
             return true;
         }
-        boolean enabled=a.isEnabled();
+        boolean enabled = a.isEnabled();
         switch (a.getStringKey()) {
             case "--external":
             case "--spawn":
@@ -450,17 +460,24 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
                 }
                 return true;
             }
-            case "--user-cmd":{
+            case "--user-cmd": {
                 cmdLine.skip();
                 if (enabled) {
                     setExecutionType(NutsExecutionType.USER_CMD);
                 }
                 return true;
             }
-            case "--root-cmd":{
+            case "--root-cmd": {
                 cmdLine.skip();
                 if (enabled) {
                     setExecutionType(NutsExecutionType.ROOT_CMD);
+                }
+                return true;
+            }
+            case "--inherit-system-io": {
+                NutsArgument val = cmdLine.nextBoolean();
+                if (enabled) {
+                    setInheritSystemIO(val.getBooleanValue());
                 }
                 return true;
             }
@@ -692,5 +709,24 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         this.sleepMillis = sleepMillis;
         return this;
     }
+
+    public String getRedirectOuputFile() {
+        return redirectOuputFile;
+    }
+
+    public NutsExecCommand setRedirectOuputFile(String redirectOuputFile) {
+        this.redirectOuputFile = redirectOuputFile;
+        return this;
+    }
+
+    public String getRedirectInpuFile() {
+        return redirectInpuFile;
+    }
+
+    public NutsExecCommand setRedirectInpuFile(String redirectInpuFile) {
+        this.redirectInpuFile = redirectInpuFile;
+        return this;
+    }
+    
 
 }

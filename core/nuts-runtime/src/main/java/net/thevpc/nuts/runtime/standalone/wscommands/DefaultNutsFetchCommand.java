@@ -208,7 +208,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         foundDefinition.setDependencies(
                                 new NutsDependenciesResolver(CoreNutsUtils.silent(getValidWorkspaceSession()))
                                 .setDependencyFilter(buildActualDependencyFilter())
-                                .addRootDefinition(foundDefinition)
+                                .addRootDefinition(foundDefinition,false)
                                 .resolve()
                         );
                     }

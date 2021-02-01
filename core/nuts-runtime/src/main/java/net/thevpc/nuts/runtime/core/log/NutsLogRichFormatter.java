@@ -120,7 +120,7 @@ public class NutsLogRichFormatter extends Formatter {
             }
 
             sb.append(" ");
-            switch (wRecord.getVerb().name()) {
+            switch (wRecord.getVerb()==null?"":wRecord.getVerb().name()) {
                 case "FAIL":
                     {//Level.SEVERE
                     sb.append(NutsLogFormatHelper.logVerb(wRecord.getVerb().name()),NutsTextNodeStyle.error());
@@ -174,7 +174,7 @@ public class NutsLogRichFormatter extends Formatter {
 //                    break;
 //                }
                 default: {
-                    sb.append(NutsLogFormatHelper.logVerb(wRecord.getVerb().name()));
+                    sb.append(NutsLogFormatHelper.logVerb(wRecord.getVerb()==null?null:wRecord.getVerb().name()));
                     break;
                 }
             }
@@ -221,7 +221,7 @@ public class NutsLogRichFormatter extends Formatter {
             }
             if(wRecord.getTime()>0){
                 sb.append(" (");
-                sb.append(CoreCommonUtils.formatPeriodMilli(wRecord.getTime()),NutsTextNodeStyle.error());
+                sb.append(CoreCommonUtils.formatPeriodMilli(wRecord.getTime()),NutsTextNodeStyle.config());
                 sb.append(")");
             }
             sb.append(NutsLogFormatHelper.LINE_SEPARATOR);

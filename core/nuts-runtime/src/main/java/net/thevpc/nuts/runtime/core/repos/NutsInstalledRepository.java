@@ -21,7 +21,7 @@ public interface NutsInstalledRepository extends NutsRepository {
     void install(NutsId id, NutsSession session, NutsId forId);
 
     NutsInstallInformation install(NutsDefinition id, NutsSession session);
-    void uninstall(NutsId id, NutsSession session);
+    void uninstall(NutsDefinition id, NutsSession session);
 
     NutsInstallInformation require(NutsDefinition id, boolean deploy,NutsId[] forId, NutsDependencyScope scope, NutsSession session);
 

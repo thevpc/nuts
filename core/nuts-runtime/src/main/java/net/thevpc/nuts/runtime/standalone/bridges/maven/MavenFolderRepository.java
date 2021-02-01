@@ -151,7 +151,8 @@ public class MavenFolderRepository extends NutsCachedRepository {
                     try {
                         d = MavenUtils.of(session.getWorkspace()).parsePomXml(f, fetchMode, this, session);
                     } catch (Exception ex) {
-                        LOG.with().session(session).level(Level.SEVERE).error(ex).log("failed to parse pom file {0} : {1}", f, CoreStringUtils.exceptionToString(ex));
+                        LOG.with().session(session).level(Level.SEVERE).error(ex)
+                                .log("failed to parse pom file {0} : {1}", f, ex);
                         //
                     }
                     if (d != null) {

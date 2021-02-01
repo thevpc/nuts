@@ -534,7 +534,8 @@ public class MavenUtils {
             }
 
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.SEVERE).error(ex).log("failed to loadDependenciesAndRepositoriesFromPomUrl {0} : {1}", url,CoreStringUtils.exceptionToString(ex));
+            LOG.with().session(session).level(Level.SEVERE).error(ex)
+                    .log("failed to loadDependenciesAndRepositoriesFromPomUrl {0} : {1}", url, ex);
             //ignore
         } finally {
             if (xml != null) {
@@ -627,7 +628,8 @@ public class MavenUtils {
                     //NutsConstants.Ids.NUTS_RUNTIME.replaceAll("[.:]", "/")
                 }
             } catch (Exception ex) {
-                LOG.with().session(session).level(Level.SEVERE).error(ex).log("failed to load and parse {0} : {1}", mavenMetadataXml,CoreStringUtils.exceptionToString(ex));
+                LOG.with().session(session).level(Level.SEVERE).error(ex)
+                        .log("failed to load and parse {0} : {1}", mavenMetadataXml,ex);
                 // ignore any error
             }
             if (found) {

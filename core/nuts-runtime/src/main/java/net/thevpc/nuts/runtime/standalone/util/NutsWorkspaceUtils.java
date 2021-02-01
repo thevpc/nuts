@@ -163,17 +163,16 @@ public class NutsWorkspaceUtils {
     public List<NutsRepositoryAndFetchMode> filterRepositoryAndFetchModes(
             NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchStrategy fetchStrategy,
             NutsSession session, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
-        List<NutsRepositoryAndFetchMode> ok=new ArrayList<>();
+        List<NutsRepositoryAndFetchMode> ok = new ArrayList<>();
         for (NutsFetchMode nutsFetchMode : fetchStrategy) {
             for (NutsRepository nutsRepositoryAndFetchMode : filterRepositories(
                     fmode, id, repositoryFilter, nutsFetchMode, session, installedVsNonInstalledSearch
             )) {
-                    ok.add(new NutsRepositoryAndFetchMode(nutsRepositoryAndFetchMode,nutsFetchMode));
+                ok.add(new NutsRepositoryAndFetchMode(nutsRepositoryAndFetchMode, nutsFetchMode));
             }
         }
         return ok;
     }
-
 
     private List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchMode mode, NutsSession session, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
         return filterRepositories(fmode, id, repositoryFilter, true, null, mode, session, installedVsNonInstalledSearch);
@@ -186,8 +185,7 @@ public class NutsWorkspaceUtils {
             for (NutsRepository repository : ws.repos().getRepositories(session)) {
                 if (repository.isEnabled()
                         && repoSPI(repository).isAcceptFetchMode(mode)
-                        && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))
-                ) {
+                        && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))) {
                     int t = 0;
                     int d = 0;
                     if (fmode == NutsRepositorySupportedAction.DEPLOY) {
@@ -269,7 +267,6 @@ public class NutsWorkspaceUtils {
 //        }
 //        return id;
 //    }
-
 //    public NutsId parseRequiredNutsId(String nutFormat) {
 //        NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
 //        if (id == null) {
@@ -277,7 +274,6 @@ public class NutsWorkspaceUtils {
 //        }
 //        return id;
 //    }
-
 //    public NutsId findNutsIdBySimpleNameInStrings(NutsId id, Collection<String> all) {
 //        if (all != null) {
 //            for (String nutsId : all) {
@@ -291,7 +287,6 @@ public class NutsWorkspaceUtils {
 //        }
 //        return null;
 //    }
-
     public void checkSession(NutsSession session) {
         if (session == null) {
             throw new NutsIllegalArgumentException(ws, "missing Session");
@@ -335,7 +330,7 @@ public class NutsWorkspaceUtils {
         NutsIdFormat f = (NutsIdFormat) ws.env().getProperty(k);
         if (f == null) {
             f = ws.id().formatter();
-            ws.env().setProperty(k, f,new NutsUpdateOptions(ws.createSession()));
+            ws.env().setProperty(k, f, new NutsUpdateOptions(ws.createSession()));
         }
         return f;
     }
@@ -345,7 +340,7 @@ public class NutsWorkspaceUtils {
         NutsDescriptorFormat f = (NutsDescriptorFormat) ws.env().getProperty(k);
         if (f == null) {
             f = ws.descriptor().formatter();
-            ws.env().setProperty(k, f,new NutsUpdateOptions(ws.createSession()));
+            ws.env().setProperty(k, f, new NutsUpdateOptions(ws.createSession()));
         }
         return f;
     }
@@ -396,7 +391,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnInstall(NutsInstallEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).log("installed ##{0}##", event.getDefinition().getId());
+                u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("installed {0}", event.getDefinition().getId());
             }
             for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
                 listener.onInstall(event);
@@ -408,7 +403,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnRequire(NutsInstallEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).log("required ##{0}##", event.getDefinition().getId());
+                u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("required {0}", event.getDefinition().getId());
             }
             for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
                 listener.onRequire(event);
@@ -422,10 +417,10 @@ public class NutsWorkspaceUtils {
             if (u.LOG.isLoggable(Level.FINEST)) {
                 if (event.getOldValue() == null) {
                     u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
-                            .log("updated ##{0}##", event.getNewValue().getId());
+                            .log("updated {0}", event.getNewValue().getId());
                 } else {
                     u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
-                            .log("updated ##{0}## (old is ```error {1}```)",
+                            .log("updated {0} (old is {1})",
                                     event.getOldValue().getId().getLongNameId(),
                                     event.getNewValue().getId().getLongNameId());
                 }
@@ -441,7 +436,7 @@ public class NutsWorkspaceUtils {
         public void fireOnUninstall(NutsInstallEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
                 u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
-                        .log("uninstalled ##{0}##", event.getDefinition().getId());
+                        .log("uninstalled {0}", event.getDefinition().getId());
             }
             for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
                 listener.onUninstall(event);
@@ -454,7 +449,7 @@ public class NutsWorkspaceUtils {
         public void fireOnAddRepository(NutsWorkspaceEvent event) {
             if (u.LOG.isLoggable(Level.CONFIG)) {
                 u.LOG.with().session(event.getSession()).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted()
-                        .log("added Repo ##{0}##", event.getRepository().getName());
+                        .log("added repo ##{0}##", event.getRepository().getName());
             }
 
             for (NutsWorkspaceListener listener : u.ws.events().getWorkspaceListeners()) {
@@ -468,7 +463,7 @@ public class NutsWorkspaceUtils {
         public void fireOnRemoveRepository(NutsWorkspaceEvent event) {
             if (u.LOG.isLoggable(Level.FINEST)) {
                 u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
-                        .log("removed Repo ##{0}##", event.getRepository().getName());
+                        .log("removed repo ##{0}##", event.getRepository().getName());
             }
             for (NutsWorkspaceListener listener : u.ws.events().getWorkspaceListeners()) {
                 listener.onRemoveRepository(event);
@@ -496,31 +491,58 @@ public class NutsWorkspaceUtils {
     }
 
     public CoreIOUtils.ProcessExecHelper execAndWait(String[] args, Map<String, String> env, Path directory, NutsSessionTerminal prepareTerminal,
-                                                     NutsSessionTerminal execTerminal, boolean showCommand, boolean failFast, long sleep, NutsSession session) {
-        PrintStream out = execTerminal.out();
-        PrintStream err = execTerminal.err();
-        InputStream in = execTerminal.in();
-        if (ws.io().term().getSystemTerminal().isStandardOutputStream(out)) {
-            out = null;
-        }
-        if (ws.io().term().getSystemTerminal().isStandardErrorStream(err)) {
-            err = null;
-        }
-        if (ws.io().term().getSystemTerminal().isStandardInputStream(in)) {
-            in = null;
-        }
-        CoreIOUtils.clearMonitor(out, ws);
-        ProcessBuilder2 pb = new ProcessBuilder2(ws)
-                .setCommand(args)
+            NutsSessionTerminal execTerminal, boolean showCommand, boolean failFast, long sleep,
+            boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile,
+            NutsSession session) {
+        PrintStream out = null;
+        PrintStream err = null;
+        InputStream in = null;
+        ProcessBuilder2 pb = new ProcessBuilder2(ws);
+        pb.setCommand(args)
                 .setEnv(env)
-                .setIn(in)
-                .setOutput(out)
-                .setErr(err)
                 .setDirectory(directory == null ? null : directory.toFile())
                 .setSleepMillis(sleep)
                 .setFailFast(failFast);
-        if (out == null && err == null && in == null) {
+        if (!inheritSystemIO) {
+            if (inputFile == null) {
+                in = execTerminal.in();
+                if (ws.io().term().getSystemTerminal().isStandardInputStream(in)) {
+                    in = null;
+                }
+            }
+            if (outputFile == null) {
+                out = execTerminal.out();
+                if (ws.io().term().getSystemTerminal().isStandardOutputStream(out)) {
+                    out = null;
+                }
+            }
+            err = execTerminal.err();
+            if (ws.io().term().getSystemTerminal().isStandardErrorStream(err)) {
+                err = null;
+            }
+            CoreIOUtils.clearMonitor(out, ws);
+        }
+        if (out == null && err == null && in == null && inputFile == null && outputFile == null) {
             pb.inheritIO();
+            if (redirectErr) {
+                pb.setRedirectErrorStream();
+            }
+        } else {
+            if (inputFile == null) {
+                pb.setIn(in);
+            } else {
+                pb.setRedirectFileInput(inputFile);
+            }
+            if (outputFile == null) {
+                pb.setOutput(out);
+            } else {
+                pb.setRedirectFileOutput(outputFile);
+            }
+            if (redirectErr) {
+                pb.setRedirectErrorStream();
+            } else {
+                pb.setErr(err);
+            }
         }
 
         if (LOG.isLoggable(Level.FINE)) {
@@ -531,8 +553,8 @@ public class NutsWorkspaceUtils {
         }
         if (showCommand || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
             if (ws.io().term().isFormatted(prepareTerminal.out())) {
-                prepareTerminal.out().printf("%s ",ws.formats().text().factory().styled("[exec]",NutsTextNodeStyle.primary(4)));
-                prepareTerminal.out().println(ws.formats().text().factory().code("sh",pb.getCommandString()));
+                prepareTerminal.out().printf("%s ", ws.formats().text().factory().styled("[exec]", NutsTextNodeStyle.primary(4)));
+                prepareTerminal.out().println(ws.formats().text().factory().code("sh", pb.getCommandString()));
             } else {
                 prepareTerminal.out().print("exec ");
                 prepareTerminal.out().printf("%s%n", pb.getCommandString());
@@ -541,7 +563,14 @@ public class NutsWorkspaceUtils {
         return new CoreIOUtils.ProcessExecHelper(pb, ws, out == null ? execTerminal.out() : out);
     }
 
-    public CoreIOUtils.ProcessExecHelper execAndWait(NutsDefinition nutMainFile, NutsSession prepareSession, NutsSession execSession, Map<String, String> execProperties, String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast,long sleep) throws NutsExecutionException {
+    public CoreIOUtils.ProcessExecHelper execAndWait(NutsDefinition nutMainFile,
+            NutsSession prepareSession,
+            NutsSession execSession,
+            Map<String, String> execProperties, String[] args, Map<String, String> env,
+            String directory, boolean showCommand,
+            boolean failFast, long sleep,
+            boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile
+    ) throws NutsExecutionException {
         NutsWorkspace workspace = execSession.getWorkspace();
         NutsId id = nutMainFile.getId();
         Path installerFile = nutMainFile.getPath();
@@ -570,7 +599,7 @@ public class NutsWorkspaceUtils {
         if (map.containsKey("nuts.jar")) {
             map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
         }
-        map.put("nuts.workspace", workspace.locations().getWorkspaceLocation().toString());
+        map.put("nuts.workspace", workspace.locations().getWorkspaceLocation());
         map.put("nuts.version", id.getVersion().getValue());
         map.put("nuts.name", id.getArtifactId());
         map.put("nuts.group", id.getGroupId());
@@ -646,7 +675,9 @@ public class NutsWorkspaceUtils {
             pdirectory = Paths.get(workspace.locations().getWorkspaceLocation()).resolve(directory);
         }
         return execAndWait(args, envmap, pdirectory, prepareSession.getTerminal(), execSession.getTerminal(), showCommand, failFast,
-                sleep, prepareSession);
+                sleep,
+                inheritSystemIO, redirectErr, inputFile, outputFile,
+                prepareSession);
     }
 
     public NutsExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName, NutsSession session) {
@@ -724,7 +755,7 @@ public class NutsWorkspaceUtils {
         return entries.toArray(new NutsExecutionEntry[0]);
     }
 
-    public static boolean setSession(Object o,NutsSession session) {
+    public static boolean setSession(Object o, NutsSession session) {
         if (o instanceof NutsSessionAware) {
             ((NutsSessionAware) o).setSession(session);
             return true;
@@ -735,6 +766,7 @@ public class NutsWorkspaceUtils {
     public InputStream openURL(String o) {
         return new SimpleHttpClient(o).openStream();
     }
+
     public InputStream openURL(URL o) {
         return new SimpleHttpClient(o).openStream();
     }

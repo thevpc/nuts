@@ -44,13 +44,13 @@ import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
  * Created by vpc on 1/15/17.
  */
 @NutsSingleton
-public class ZipNutsDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
+public class ZipDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
     public static final Set<String> POSSIBLE_PATHS = new LinkedHashSet<>(Arrays.asList(
             NutsConstants.Files.DESCRIPTOR_FILE_NAME,
-            "/META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME,
-            "/WEB-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME,
-            "/APP-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME
+            "META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME,
+            "WEB-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME,
+            "APP-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME
     ));
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("zip", "gzip", "gz"));
 

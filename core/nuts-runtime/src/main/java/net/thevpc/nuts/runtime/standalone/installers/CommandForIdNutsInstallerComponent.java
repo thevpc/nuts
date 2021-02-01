@@ -3,26 +3,24 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.standalone.installers;
 
 import net.thevpc.nuts.*;
@@ -58,7 +56,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
 //        NutsId id = executionContext.getDefinition().getId();
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
-            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition(),executionContext.getWorkspace())
+            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition(), executionContext.getWorkspace())
                     .setInstallInformation(
                             new DefaultNutsInstallInfo(executionContext.getDefinition().getInstallInformation())
                                     .setInstallStatus(
@@ -93,8 +91,8 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
                     );
             executionContext.getWorkspace().exec()
                     .setCommand(def2)
-                    .addCommand("--nuts-exec-mode=update","--yes")
-//                    .addCommand(id.builder().setNamespace(null).build().toString(), "--nuts-exec-mode=update", "--force")
+                    .addCommand("--nuts-exec-mode=update", "--yes")
+                    //                    .addCommand(id.builder().setNamespace(null).build().toString(), "--nuts-exec-mode=update", "--force")
                     .addExecutorOptions().addCommand(executionContext.getArguments())
                     .setFailFast(true).run();
         }
@@ -112,7 +110,10 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
                 if (executionEntry.isApp()) {
                     //
                     int r = ws.exec().addCommand(id.getLongName(), "--nuts-exec-mode=uninstall", "--yes").addCommand(executionContext.getArguments()).getResult();
-                    session.out().printf("Installation Exited with code : " + r + " %n");
+                    if (r != 0) {
+                        session.out().printf("installation exited with code : " + r + " %n");
+                    }
+                    return;
                 }
             }
         }

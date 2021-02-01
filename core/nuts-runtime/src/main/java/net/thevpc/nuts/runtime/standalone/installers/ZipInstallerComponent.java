@@ -38,7 +38,7 @@ import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
  * Created by vpc on 1/7/17.
  */
 @NutsSingleton
-public class ZipNutsInstallerComponent implements NutsInstallerComponent {
+public class ZipInstallerComponent implements NutsInstallerComponent {
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {

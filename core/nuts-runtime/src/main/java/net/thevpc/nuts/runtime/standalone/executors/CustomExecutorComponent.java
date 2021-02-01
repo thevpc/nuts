@@ -37,11 +37,11 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NutsSingleton
-public class CustomNutsExecutorComponent implements NutsExecutorComponent {
+public class CustomExecutorComponent implements NutsExecutorComponent {
 
     public NutsId id;
 
-    public CustomNutsExecutorComponent(NutsId id) {
+    public CustomExecutorComponent(NutsId id) {
         this.id = id;
     }
 

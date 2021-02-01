@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.standalone.executors;
 
 import net.thevpc.nuts.*;
@@ -37,12 +35,13 @@ import java.io.File;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 
 /**
  * Created by vpc on 1/7/17.
  */
 @NutsSingleton
-public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
+public class JavaSourceExecutorComponent implements NutsExecutorComponent {
 
     public static NutsId ID;
     NutsWorkspace ws;
@@ -54,8 +53,8 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
-        this.ws=nutsDefinition.getWorkspace();
-        if(ID==null){
+        this.ws = nutsDefinition.getWorkspace();
+        if (ID == null) {
             ID = ws.id().parser().parse("net.thevpc.nuts.exec:exec-java-src");
         }
         if ("java".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())) {
@@ -72,7 +71,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         NutsWorkspace ws = executionContext.getWorkspace();
         String folder = "__temp_folder";
         PrintStream out = executionContext.getTraceSession().out();
-        out.println(executionContext.getWorkspace().formats().text().factory().styled("compile",NutsTextNodeStyle.primary(4)));
+        out.println(executionContext.getWorkspace().formats().text().factory().styled("compile", NutsTextNodeStyle.primary(4)));
         out.printf("%s%n",
                 executionContext.getWorkspace().commandLine().create(
                         "embedded-javac",
@@ -81,40 +80,31 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
                         javaFile.toString()
                 )
         );
-        JavaNutsExecutorComponent cc = new JavaNutsExecutorComponent();
+        JavaExecutorComponent cc = new JavaExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
-        d = new DefaultNutsDefinition(d,ws);
+        d = new DefaultNutsDefinition(d, ws);
         ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
                 folder,
                 false,
                 true
         ));
         String fileName = javaFile.getFileName().toString();
-        NutsExecutionContext executionContext2 = new DefaultNutsExecutionContext(
-                d,
-                executionContext.getArguments(),
-                CoreCommonUtils.concatArrays(
+        NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getWorkspace())
+                .createExecutionContext()
+                .setAll(executionContext)
+                .setDefinition(d)
+                .setExecutorArguments(CoreCommonUtils.concatArrays(
                         executionContext.getExecutorArguments(),
                         new String[]{
-                                "--main-class",
-                                new File(fileName.substring(fileName.length() - ".java".length())).getName(),
-                                "--class-path",
-                                folder.toString(),}
-                ),
-                executionContext.getEnv(),
-                executionContext.getExecutorProperties(),
-                executionContext.getCwd(),
-                executionContext.getTraceSession(),
-                executionContext.getExecSession(),
-                ws,
-                //failFast
-                true,
-                //temporary
-                true,
-                executionContext.getExecutionType(),
-                executionContext.getCommandName(),
-                executionContext.getSleepMillis()
-        );
+                            "--main-class",
+                            new File(fileName.substring(fileName.length() - ".java".length())).getName(),
+                            "--class-path",
+                            folder.toString()
+                        }
+                ))
+                .setFailFast(true)
+                .setTemporary(true)
+                .build();
         cc.dryExec(executionContext2);
     }
 
@@ -131,40 +121,30 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         if (res != 0) {
             throw new NutsExecutionException(ws, "compilation failed", res);
         }
-        JavaNutsExecutorComponent cc = new JavaNutsExecutorComponent();
+        JavaExecutorComponent cc = new JavaExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
-        d = new DefaultNutsDefinition(d,ws);
+        d = new DefaultNutsDefinition(d, ws);
         ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
                 folder.toString(),
                 false,
                 true
         ));
         String fileName = javaFile.getFileName().toString();
-        NutsExecutionContext executionContext2 = new DefaultNutsExecutionContext(
-                d,
-                executionContext.getArguments(),
-                CoreCommonUtils.concatArrays(
+        NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getWorkspace())
+                .createExecutionContext()
+                .setAll(executionContext)
+                .setDefinition(d)
+                .setExecutorArguments(CoreCommonUtils.concatArrays(
                         executionContext.getExecutorArguments(),
                         new String[]{
                             "--main-class",
                             new File(fileName.substring(fileName.length() - ".java".length())).getName(),
                             "--class-path",
                             folder.toString()}
-                ),
-                executionContext.getEnv(),
-                executionContext.getExecutorProperties(),
-                executionContext.getCwd(),
-                executionContext.getTraceSession(),
-                executionContext.getExecSession(),
-                ws,
-                //failFast
-                true,
-                //temporary
-                true,
-                executionContext.getExecutionType(),
-                executionContext.getCommandName(),
-                executionContext.getSleepMillis()
-        );
+                ))
+                .setFailFast(true)
+                .setTemporary(true)
+                .build();
         cc.exec(executionContext2);
     }
 

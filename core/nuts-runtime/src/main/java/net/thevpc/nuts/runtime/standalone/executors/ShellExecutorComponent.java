@@ -39,7 +39,7 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NutsSingleton
-public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
+public class ShellExecutorComponent implements NutsExecutorComponent {
 
     public static NutsId ID;
     NutsWorkspace ws;

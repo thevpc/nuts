@@ -97,7 +97,7 @@ public class NutsRepositoryFolderHelper {
     }
 
     public NutsContent fetchContentImpl(NutsId id, String localPath, NutsSession session) {
-        Path cacheContent = getLongNameIdLocalFile(id);
+        Path cacheContent = getLongNameIdLocalFile(id.builder().setFaceContent().build());
         if (cacheContent != null && pathExists(cacheContent, session)) {
             return new NutsDefaultContent(cacheContent.toString(), true, false);
         }
@@ -416,7 +416,7 @@ public class NutsRepositoryFolderHelper {
         if (Files.exists(pckFile)) {
             if (!DefaultWriteTypeProcessor
                     .of(writeType, session)
-                    .ask("Override content file for %s?", id)
+                    .ask("override content file for %s?", id)
                     .withLog(LOG, "nuts content file overridden {0}", id)
                     .onError(() -> new NutsAlreadyDeployedException(ws, id.toString()))
                     .process()) {
@@ -438,7 +438,7 @@ public class NutsRepositoryFolderHelper {
         if (!isWriteEnabled()) {
             return false;
         }
-        Path localFolder = getLongNameIdLocalFile(options.getId());
+        Path localFolder = getLongNameIdLocalFile(options.getId().builder().setFaceContent().build());
         if (localFolder != null && Files.exists(localFolder)) {
             if (ws.concurrent().lock().source(localFolder).call(() -> {
                 CoreIOUtils.delete(options.getSession(), localFolder);

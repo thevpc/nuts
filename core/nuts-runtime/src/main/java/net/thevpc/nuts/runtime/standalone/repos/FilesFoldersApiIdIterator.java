@@ -125,8 +125,9 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                         try {
                             nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, session);
                         } catch (Exception ex) {
-                            session.getWorkspace().log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log("error resolving effective descriptor for {0} in url {1} : {2}",t.getId(),file.path,
-                                    CoreStringUtils.exceptionToString(ex));//e.printStackTrace();
+                            session.getWorkspace().log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log(
+                                    "error resolving effective descriptor for {0} in url {1} : {2}",t.getId(),file.path,
+                                    ex);//e.printStackTrace();
                         }
                         t = nutsDescriptor;
                     }

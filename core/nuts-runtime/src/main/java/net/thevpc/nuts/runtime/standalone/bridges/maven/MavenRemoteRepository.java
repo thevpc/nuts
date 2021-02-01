@@ -490,7 +490,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     }
                 }).run();
             } catch (UncheckedIOException|NutsIOException ex) {
-                LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log( id.toString() + " : " + CoreStringUtils.exceptionToString(ex));
+                LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("{0} : {1}",id ,ex);
                 throw new NutsNotFoundException(getWorkspace(), id, null, ex);
             }
             return new NutsDefaultContent(localPath, false, false);

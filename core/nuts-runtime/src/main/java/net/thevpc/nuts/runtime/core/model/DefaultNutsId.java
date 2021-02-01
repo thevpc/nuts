@@ -380,6 +380,7 @@ public class DefaultNutsId implements NutsId {
         }
         return ws.dependency().builder()
                 .setNamespace(getNamespace())
+                .setArtifactId(getArtifactId())
                 .setGroupId(getGroupId())
                 .setClassifier(getClassifier())
                 .setVersion(getVersion())

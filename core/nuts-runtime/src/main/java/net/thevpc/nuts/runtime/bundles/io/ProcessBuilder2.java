@@ -44,7 +44,6 @@ public class ProcessBuilder2 {
     private int result;
     private boolean baseIO;
     private boolean failFast;
-    //    private List<PipeThread> pipes = new ArrayList<>();
     private Process proc;
     private long sleepMillis = 1000;
     private NutsWorkspace ws;
@@ -134,6 +133,16 @@ public class ProcessBuilder2 {
         return this;
     }
 
+    public ProcessBuilder2 setRedirectFileOutput(File file) {
+        base.redirectOutput(file);
+        return this;
+    }
+    
+    public ProcessBuilder2 setRedirectFileInput(File file) {
+        base.redirectInput(file);
+        return this;
+    }
+    
     public InputStream getIn() {
         return in;
     }
@@ -881,6 +890,11 @@ public class ProcessBuilder2 {
         PipeThread p = new PipeThread(name, in, out,ws);
         p.start();
         return p;
+    }
+
+    @Override
+    public String toString() {
+        return "ProcessBuilder2{" + "command=" + command + ", env=" + env + ", directory=" + directory + ", base=" + base + ", in=" + in + ", out=" + out + ", err=" + err + ", result=" + result + ", baseIO=" + baseIO + ", failFast=" + failFast + ", proc=" + proc + ", sleepMillis=" + sleepMillis + ", ws=" + ws + '}';
     }
 
 }

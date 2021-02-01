@@ -30,7 +30,7 @@ import net.thevpc.nuts.NutsSupportLevelContext;
 
 /**
  * Top Level extension Point in Nuts. 
- * Extension mechanism in nuts is based on a factory thats select the best 
+ * Extension mechanism in nuts is based on a factory that selects the best 
  * implementation for a given predefined interface (named Extension Point).
  * Such interfaces must extend this {@code NutsComponent} interface.
  * Implementations must implement these extension points by providing their 

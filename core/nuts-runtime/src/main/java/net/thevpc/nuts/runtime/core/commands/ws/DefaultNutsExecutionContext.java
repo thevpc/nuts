@@ -3,26 +3,24 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.core.commands.ws;
 
 import net.thevpc.nuts.*;
@@ -50,6 +48,9 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     private boolean temporary;
     private long sleepMillis;
     private NutsExecutionType executionType;
+    private boolean inheritSystemIO;
+    private String redirectOuputFile;
+    private String redirectInpuFile;
 
     //    public NutsExecutionContextImpl(NutsDefinition nutsDefinition, NutsSession session, NutsWorkspace workspace,String cwd) {
 //        this.nutsDefinition = nutsDefinition;
@@ -72,13 +73,16 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
 //        this.cwd = cwd;
 //    }
     public DefaultNutsExecutionContext(NutsDefinition definition,
-                                       String[] arguments, String[] executorArgs, Map<String, String> env, Map<String, String> executorProperties,
-                                       String cwd, NutsSession traceSession, NutsSession execSession, NutsWorkspace workspace, boolean failFast,
-                                       boolean temporary,
-                                       NutsExecutionType executionType,
-                                       String commandName,
-                                       long sleepMillis
-                                       ) {
+            String[] arguments, String[] executorArgs, Map<String, String> env, Map<String, String> executorProperties,
+            String cwd, NutsSession traceSession, NutsSession execSession, NutsWorkspace workspace, boolean failFast,
+            boolean temporary,
+            NutsExecutionType executionType,
+            String commandName,
+            long sleepMillis,
+            boolean inheritSystemIO,
+            String redirectOuputFile,
+            String redirectInpuFile
+    ) {
         if (arguments == null) {
             arguments = new String[0];
         }
@@ -106,6 +110,9 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
         this.temporary = temporary;
         this.executionType = executionType;
         this.executorDescriptor = definition.getDescriptor().getExecutor();
+        this.inheritSystemIO = inheritSystemIO;
+        this.redirectOuputFile = redirectOuputFile;
+        this.redirectInpuFile = redirectInpuFile;
     }
 
     public DefaultNutsExecutionContext(NutsExecutionContext other) {
@@ -124,7 +131,23 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
         this.executionType = other.getExecutionType();
         this.executorDescriptor = other.getExecutorDescriptor();
         this.sleepMillis = other.getSleepMillis();
+        this.inheritSystemIO = other.isInheritSystemIO();
+        this.redirectOuputFile = other.getRedirectOuputFile();
+        this.redirectInpuFile = other.getRedirectInpuFile();
     }
+
+    public boolean isInheritSystemIO() {
+        return inheritSystemIO;
+    }
+
+    public String getRedirectOuputFile() {
+        return redirectOuputFile;
+    }
+
+    public String getRedirectInpuFile() {
+        return redirectInpuFile;
+    }
+    
 
     public long getSleepMillis() {
         return sleepMillis;

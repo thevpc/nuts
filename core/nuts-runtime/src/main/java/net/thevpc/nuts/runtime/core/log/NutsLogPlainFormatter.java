@@ -40,7 +40,7 @@ public class NutsLogPlainFormatter extends Formatter {
                     .append(" ")
                     .append(NutsLogFormatHelper.logLevel(wRecord.getLevel()))
                     .append(" ")
-                    .append(NutsLogFormatHelper.logVerb(wRecord.getVerb().name()))
+                    .append(NutsLogFormatHelper.logVerb(wRecord.getVerb()==null?null:wRecord.getVerb().name()))
                     .append(" ")
                     .append(NutsLogFormatHelper.formatClassName(wRecord.getSourceClassName()))
                     .append(": ");

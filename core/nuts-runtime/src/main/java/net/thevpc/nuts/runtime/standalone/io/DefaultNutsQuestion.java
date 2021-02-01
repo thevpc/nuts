@@ -215,7 +215,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 } catch (NutsUserCancelException ex) {
                     throw ex;
                 } catch (Exception ex) {
-                    out.printf("```error ERROR``` : %s%n", CoreStringUtils.exceptionToString(ex));
+                    out.printf("```error ERROR``` : %s%n", ex);
                 }
             } else {
                 String v;
@@ -236,7 +236,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 } catch (NutsUserCancelException ex) {
                     throw ex;
                 } catch (Exception ex) {
-                    out.printf("```error ERROR``` : %s%n", CoreStringUtils.exceptionToString(ex));
+                    out.printf("```error ERROR``` : %s%n", ex);
                 }
             }
             extraInfo = true;

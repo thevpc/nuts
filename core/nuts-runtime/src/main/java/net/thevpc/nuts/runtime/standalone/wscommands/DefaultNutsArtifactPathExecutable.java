@@ -28,12 +28,11 @@ import net.thevpc.nuts.runtime.bundles.io.URLBuilder;
 import net.thevpc.nuts.runtime.bundles.io.ZipOptions;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
 
-import static net.thevpc.nuts.runtime.core.util.CoreIOUtils.createInputSource;
-
 /**
  * @author thevpc
  */
 public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCommand {
+
     private final NutsLogger LOG;
     String cmdName;
     String[] args;
@@ -43,7 +42,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
     NutsSession execSession;
     DefaultNutsExecCommand execCommand;
 
-    public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType,NutsSession traceSession, NutsSession execSession, DefaultNutsExecCommand execCommand) {
+    public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsSession traceSession, NutsSession execSession, DefaultNutsExecCommand execCommand, boolean inheritSystemIO) {
         super(cmdName,
                 execSession.getWorkspace().commandLine().create(args).toString(),
                 NutsExecutableType.ARTIFACT);
@@ -91,7 +90,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         NutsWorkspace ws = execSession.getWorkspace();
         try (final CharacterizedExecFile c = characterizeForExec(ws.io().input().of(cmdName), traceSession, executorOptions)) {
             if (c.descriptor == null) {
-                throw new NutsNotFoundException(ws, "", "Unable to resolve a valid descriptor for " + cmdName, null);
+                throw new NutsNotFoundException(ws, "", "unable to resolve a valid descriptor for " + cmdName, null);
             }
             String tempFolder = ws.io().tmp()
                     .setSession(traceSession)
@@ -105,15 +104,16 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     c.descriptor,
                     new NutsDefaultContent(c.getContentLocation(), false, c.temps.size() > 0),
                     DefaultNutsInstallInfo.notInstalled(_id),
-                    idType, null,ws
+                    idType, null, ws
             );
             try {
-                execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(), execCommand.getDirectory(), execCommand.isFailFast(), true, traceSession,execSession, executionType, dry);
+                execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(),
+                        execCommand.getDirectory(), execCommand.isFailFast(), true, traceSession, execSession, executionType, dry);
             } finally {
                 try {
                     CoreIOUtils.delete(traceSession, Paths.get(tempFolder));
-                } catch (UncheckedIOException|NutsIOException e) {
-                    LOG.with().session(traceSession).level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "Unable to delete temp folder created for execution : " + tempFolder);
+                } catch (UncheckedIOException | NutsIOException e) {
+                    LOG.with().session(traceSession).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("Unable to delete temp folder created for execution : " + tempFolder);
                 }
             }
         }
@@ -239,7 +239,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
         @Override
         public void close() {
-            for (Iterator<Path> it = temps.iterator(); it.hasNext(); ) {
+            for (Iterator<Path> it = temps.iterator(); it.hasNext();) {
                 Path temp = it.next();
                 try {
                     Files.delete(temp);

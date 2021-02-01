@@ -38,7 +38,7 @@ import java.util.*;
  * Created by vpc on 1/7/17.
  */
 @NutsSingleton
-public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
+public class ProcessExecutorComponent implements NutsExecutorComponent {
 
     public static NutsId ID;
     NutsWorkspace ws;
@@ -106,7 +106,8 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
                 executionContext.getExecutorProperties(),
                 app.toArray(new String[0]),
                 osEnv, directory, showCommand, true,
-                executionContext.getSleepMillis()
+                executionContext.getSleepMillis(),
+                false,false,null,null
         );
     }
 }

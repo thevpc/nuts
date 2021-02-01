@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.bundles.io;
 
 import net.thevpc.nuts.NutsSession;
@@ -46,8 +44,7 @@ import java.util.zip.ZipOutputStream;
 public class ZipUtils {
 
 //    private static final Logger LOG = Logger.getLogger(ZipUtils.class.getName());
-
-    public static void zip(NutsWorkspace ws,String target, ZipOptions options, String... source) throws IOException {
+    public static void zip(NutsWorkspace ws, String target, ZipOptions options, String... source) throws IOException {
         if (options == null) {
             options = new ZipOptions();
         }
@@ -205,7 +202,7 @@ public class ZipUtils {
         }
 
         //get the zip file content
-        try(ZipInputStream zis
+        try (ZipInputStream zis
                 = new ZipInputStream(new FileInputStream(new File(zipFile)))) {
             //get the zipped file list entry
             ZipEntry ze = zis.getNextEntry();
@@ -234,7 +231,7 @@ public class ZipUtils {
                     newFile.mkdirs();
                 } else {
                     File newFile = new File(outputFolder + File.separator + fileName);
-                    session.getWorkspace().log().of(ZipUtils.class).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("file unzip : {0}",newFile.getAbsoluteFile());
+                    session.getWorkspace().log().of(ZipUtils.class).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("file unzip : {0}", newFile.getAbsoluteFile());
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     newFile.getParentFile().mkdirs();
@@ -353,6 +350,9 @@ public class ZipUtils {
             while (ze != null) {
 
                 String fileName = ze.getName();
+                if (!fileName.equals("/") && fileName.startsWith("/")) {
+                    fileName = fileName.substring(1);
+                }
                 if (!fileName.endsWith("/")) {
                     if (possiblePaths.test(fileName)) {
                         if (!visitor.visit(fileName, entryInputStream)) {

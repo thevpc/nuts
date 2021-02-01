@@ -1042,7 +1042,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //    public Path getBootNutsJar() {
 //        try {
 //            NutsId baseId = ws.id().parseRequired(NutsConstants.Ids.NUTS_API);
-//            String urlPath = "/META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
+//            String urlPath = "META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
 //            URL resource = Nuts.class.getResource(urlPath);
 //            if (resource != null) {
 //                URL runtimeURL = CoreIOUtils.resolveURLFromResource(Nuts.class, urlPath);
@@ -1235,10 +1235,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         NutsWorkspaceConfigManager wconfig = this;
         Path file = Paths.get(ws.locations().getWorkspaceLocation()).resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         if (wconfig.isReadOnly()) {
-            throw new UncheckedIOException("Unable to load config file " + file.toString(), new IOException(ex));
+            throw new UncheckedIOException("unable to load config file " + file.toString(), new IOException(ex));
         }
         String fileName = "nuts-workspace-" + Instant.now().toString();
-        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("erroneous config file. Unable to load file {0} : {1}", new Object[]{file, CoreStringUtils.exceptionToString(ex)});
+        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
+                .log("erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex});
         Path logError = Paths.get(ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.LOG)).resolve("invalid-config");
         try {
             Files.createDirectories(logError);
@@ -1297,7 +1298,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
             return createNutsVersionCompat(version).parseConfig(bytes, session);
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("erroneous config file. Unable to load file {0} : {1}", new Object[]{file, CoreStringUtils.exceptionToString(ex)});
+            LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
+                    .log("erroneous config file. Unable to load file {0} : {1}"
+                            , new Object[]{file, ex});
             throw new UncheckedIOException("unable to load config file " + file.toString(), new IOException(ex));
         }
     }

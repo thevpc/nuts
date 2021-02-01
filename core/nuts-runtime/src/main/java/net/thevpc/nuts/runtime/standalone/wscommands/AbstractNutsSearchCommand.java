@@ -11,17 +11,15 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
@@ -464,7 +462,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 //        return this;
 //    }
 //
-
     @Override
     public NutsDescriptorFilter getDescriptorFilter() {
         return descriptorFilter;
@@ -539,7 +536,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 //        sb.append('}');
 //        return sb.toString();
 //    }
-
     @Override
     public boolean isDistinct() {
         return distinct;
@@ -593,8 +589,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         }
         return t;
     }
-
-
 
     @Override
     public ClassLoader getResultClassLoader() {
@@ -653,7 +647,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsSearchCommand setInstallStatus(NutsInstallStatusFilter installStatus) {
-        this.installStatus=installStatus;
+        this.installStatus = installStatus;
         return this;
     }
 
@@ -666,7 +660,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 //    public NutsSearchCommand printResult(boolean printResult) {
 //        return setPrintResult(printResult);
 //    }
-
     public String getExecType() {
         return execType;
     }
@@ -848,9 +841,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--installed": {
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
-                    this.setInstallStatus(b.getBooleanValue()?
-                            ws.filters().installStatus().byInstalled():
-                            ws.filters().installStatus().byNotInstalled()
+                    this.setInstallStatus(b.getBooleanValue()
+                            ? ws.filters().installStatus().byInstalled()
+                            : ws.filters().installStatus().byNotInstalled()
                     );
                 }
                 return true;
@@ -858,9 +851,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--required": {
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
-                    if(b.getBooleanValue()) {
+                    if (b.getBooleanValue()) {
                         this.setInstallStatus(ws.filters().installStatus().byRequired());
-                    }else{
+                    } else {
                         this.setInstallStatus(ws.filters().installStatus().byNotRequired());
                     }
                 }
@@ -869,9 +862,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--obsolete": {
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
-                    if(b.getBooleanValue()) {
+                    if (b.getBooleanValue()) {
                         this.setInstallStatus(ws.filters().installStatus().byObsolete());
-                    }else{
+                    } else {
                         this.setInstallStatus(ws.filters().installStatus().byNotObsolete());
                     }
                 }
@@ -901,35 +894,35 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{" +
-                "failFast=" + isFailFast() +
-                ", optional=" + getOptional() +
-                ", scope=" + getScope() +
-                ", content=" + isContent() +
-                ", inlineDependencies=" + isInlineDependencies() +
-                ", dependencies=" + isDependencies() +
-                ", effective=" + isEffective() +
-                ", location=" + getLocation() +
-                ", repos=" + Arrays.toString(getRepositories()) +
-                ", displayOptions=" + getDisplayOptions() +
-                ", comparator=" + getComparator() +
-                ", dependencyFilter=" + getDependencyFilter() +
-                ", descriptorFilter=" + getDescriptorFilter() +
-                ", idFilter=" + getIdFilter() +
-                ", repositoryFilter=" + getRepositoryFilter() +
-                ", latest=" + isLatest() +
-                ", distinct=" + isDistinct() +
-                ", includeMain=" + isBasePackage() +
-                ", sorted=" + isSorted() +
-                ", arch=" + Arrays.toString(getArch()) +
-                ", ids=" + Arrays.toString(getIds()) +
-                ", lockedIds=" + Arrays.toString(getLockedIds()) +
-                ", scripts=" + Arrays.toString(getScripts()) +
-                ", packaging=" + Arrays.toString(getPackaging()) +
-                ", defaultVersions=" + getDefaultVersions() +
-                ", execType='" + getExecType() + '\'' +
-                ", targetApiVersion='" + getTargetApiVersion() + '\'' +
-                '}';
+        return getClass().getSimpleName() + "{"
+                + "failFast=" + isFailFast()
+                + ", optional=" + getOptional()
+                + ", scope=" + getScope()
+                + ", content=" + isContent()
+                + ", inlineDependencies=" + isInlineDependencies()
+                + ", dependencies=" + isDependencies()
+                + ", effective=" + isEffective()
+                + ", location=" + getLocation()
+                + ", repos=" + Arrays.toString(getRepositories())
+                + ", displayOptions=" + getDisplayOptions()
+                + ", comparator=" + getComparator()
+                + ", dependencyFilter=" + getDependencyFilter()
+                + ", descriptorFilter=" + getDescriptorFilter()
+                + ", idFilter=" + getIdFilter()
+                + ", repositoryFilter=" + getRepositoryFilter()
+                + ", latest=" + isLatest()
+                + ", distinct=" + isDistinct()
+                + ", includeMain=" + isBasePackage()
+                + ", sorted=" + isSorted()
+                + ", arch=" + Arrays.toString(getArch())
+                + ", ids=" + Arrays.toString(getIds())
+                + ", lockedIds=" + Arrays.toString(getLockedIds())
+                + ", scripts=" + Arrays.toString(getScripts())
+                + ", packaging=" + Arrays.toString(getPackaging())
+                + ", defaultVersions=" + getDefaultVersions()
+                + ", execType='" + getExecType() + '\''
+                + ", targetApiVersion='" + getTargetApiVersion() + '\''
+                + '}';
     }
 
     @Override
@@ -1071,6 +1064,11 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
+    public NutsResultList<NutsDependency> getResultDependencies() {
+        return getResultDependenciesBase(isPrintResult(), isSorted());
+    }
+
+    @Override
     public NutsResultList<NutsDefinition> getResultDefinitions() {
         return getResultDefinitionsBase(isPrintResult(), isSorted(), isContent(), isEffective());
     }
@@ -1093,8 +1091,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         }
         return sb.toString();
     }
-
-
 
     @Override
     public NutsResultList<String> getResultPaths() {
@@ -1177,7 +1173,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return postProcessResult(IteratorBuilder.of(getResultDefinitionsBase(false, false, true, isEffective()).iterator())
                 .mapMulti(x
                         -> (x.getContent() == null || x.getContent().getPath() == null) ? Collections.emptyList()
-                        : Arrays.asList(ws.apps().execEntries().setSession(getValidWorkspaceSession()).parse(x.getContent().getPath()))));
+                : Arrays.asList(ws.apps().execEntries().setSession(getValidWorkspaceSession()).parse(x.getContent().getPath()))));
     }
 
     @Override
@@ -1240,8 +1236,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return new NutsDefinitionNutsResult(ws, resolveFindIdBase(), print, sort, content, effective);
     }
 
-
     protected abstract NutsCollectionResult<NutsId> getResultIdsBase(boolean print, boolean sort);
+
+    protected abstract NutsCollectionResult<NutsDependency> getResultDependenciesBase(boolean print, boolean sort);
 
     protected <T> NutsResultList<T> postProcessResult(IteratorBuilder<T> a) {
         if (isSorted()) {
@@ -1254,7 +1251,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return getValidWorkspaceSession();
     }
 
-
     protected class NutsDefinitionNutsResult extends AbstractNutsResultList<NutsDefinition> {
 
         private final boolean print;
@@ -1263,7 +1259,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         private final boolean effective;
 
         public NutsDefinitionNutsResult(NutsWorkspace ws, String nutsBase, boolean print,
-                                        boolean sort, boolean content, boolean effective
+                boolean sort, boolean content, boolean effective
         ) {
             super(ws, nutsBase);
             this.print = print;
@@ -1344,6 +1340,4 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return print ? NutsWorkspaceUtils.of(ws).decoratePrint(curr, getSearchSession(), getDisplayOptions()) : curr;
     }
 
-
 }
-

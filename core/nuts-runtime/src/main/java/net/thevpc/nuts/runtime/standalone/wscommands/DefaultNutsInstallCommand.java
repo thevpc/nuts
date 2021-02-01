@@ -419,17 +419,18 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                             resultList.add(info.definition);
                         }
                     } catch (RuntimeException ex) {
-                        LOG.with().error(ex).verb(NutsLogVerb.WARNING).level(Level.FINE).log("failed to install " + ws.id().formatter(info.id).format());
+                        LOG.with().error(ex).verb(NutsLogVerb.WARNING).level(Level.FINE).formatted().log("failed to install {0}", info.id);
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
-                            if (!ws.io().term().getTerminal().ask().forBoolean("```error failed to install``` " + ws.id().formatter(info.id).format() + " and its dependencies... Continue installation?")
+                            if (!ws.io().term().getTerminal().ask()
+                                    .forBoolean("```error failed to install``` %s and its dependencies... Continue installation?",info.id)
                                     .setDefaultValue(true)
                                     .setSession(session).getBooleanValue()) {
-                                session.out().printf(ws.id().formatter(info.id).omitNamespace().format() + " ```error installation cancelled with error:``` %s%n", CoreStringUtils.exceptionToString(ex));
+                                session.out().printf("%s ```error installation cancelled with error:``` %s%n", info.id,ex);
                                 result = new NutsDefinition[0];
                                 return this;
                             } else {
-                                session.out().printf(ws.id().formatter(info.id).omitNamespace().format() + " ```error installation cancelled with error:``` %s%n", CoreStringUtils.exceptionToString(ex));
+                                session.out().printf("%s ```error installation cancelled with error:``` %s%n", info.id,ex);
                             }
                         } else {
                             throw ex;

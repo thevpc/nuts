@@ -152,7 +152,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
             //ignore....
         } catch (Exception ex) {
             //ignore....
-            LOG.with().session(session).level(Level.SEVERE).error(ex).log("Search latest versions error : {0}",CoreStringUtils.exceptionToString(ex));
+            LOG.with().session(session).level(Level.SEVERE).error(ex).log("search latest versions error : {0}",ex);
         }
         if (p != null) {
             li.add(p);
@@ -282,7 +282,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         } catch (NutsNotFoundException ex) {
             //ignore error
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.SEVERE).error(ex).log("Search versions error : {0}",CoreStringUtils.exceptionToString(ex));
+            LOG.with().session(session).level(Level.SEVERE).error(ex).log("search versions error : {0}",ex);
             //ignore....
         }
         Iterator<NutsId> namedNutIdIterator = IteratorBuilder.ofList(all).distinct(NutsId::getLongName).build();
@@ -313,7 +313,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
             } catch (NutsNotFoundException | NutsFetchModeNotSupportedException ex) {
                 //ignore
             } catch (Exception ex) {
-                LOG.with().session(session).level(Level.SEVERE).error(ex).log("Search latest versions error : {0}",CoreStringUtils.exceptionToString(ex));
+                LOG.with().session(session).level(Level.SEVERE).error(ex).log("search latest versions error : {0}",ex);
                 //ignore....
             }
             return mirroring.searchLatestVersion(bestId, id, filter, fetchMode, session);

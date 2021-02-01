@@ -8,43 +8,59 @@ import net.thevpc.nuts.runtime.core.model.DefaultNutsDependencyTreeNode;
 import java.util.*;
 
 public class NutsDependenciesResolver {
-    List<NutsDefinition> defs = new ArrayList<>();
+
+    List<NutsDependencyTreeNodeBuild> defs = new ArrayList<>();
     NutsSession session;
     NutsDependencyFilter dependencyFilter;
+    private boolean shouldIncludeContent = false;//shouldIncludeContent(this);
     boolean failFast;
 
     public NutsDependenciesResolver(NutsSession session) {
         this.session = session;
     }
 
-    public List<NutsDefinition> getRootDefinitions() {
-        return defs;
-    }
-
-    public NutsDependenciesResolver setRootDefinitions(List<NutsDefinition> defs) {
-        this.defs = defs;
-        return this;
-    }
-
-    public NutsDependenciesResolver addRootId(NutsId id) {
+    public NutsDependenciesResolver addRootId(NutsId id, boolean include) {
         NutsDefinition idDef = session.getWorkspace().search()
                 .addId(id).setSession(session//.copy().setTrace(false)
-//                        .setProperty("monitor-allowed", false)
-                ).setEffective(true)
+        //                        .setProperty("monitor-allowed", false)
+        ).setEffective(true)
                 .setContent(false)
                 .setEffective(true)
                 .setLatest(true).getResultDefinitions().first();
         if (idDef != null) {
-            addRootDefinition(idDef);
+            addRootDefinition(idDef, include);
         }
         return this;
     }
 
-    public NutsDependenciesResolver addRootDefinition(NutsDefinition def) {
+    public NutsDependenciesResolver addRootDefinition(NutsDefinition def, boolean include) {
+        return addRootDefinition(def.getId().toDependency(), def, include);
+    }
+
+    public NutsDependenciesResolver addRootDefinition(NutsDependency dependency, boolean include) {
+        return addRootDefinition(dependency, null, include);
+    }
+
+    public NutsDependenciesResolver addRootDefinition(NutsDependency dependency, NutsDefinition def, boolean include) {
+        if (dependency == null) {
+            throw new NutsIllegalArgumentException(session.getWorkspace(), "missing dependency");
+        }
+        if (def == null) {
+            NutsWorkspace ws = session.getWorkspace();
+            def = ws.search()
+                    .addId(dependency.toId()).setSession(session//.copy().setTrace(false)
+            //                                .setProperty("monitor-allowed", false)
+            ).setEffective(true)
+                    .setContent(shouldIncludeContent)
+                    .setEffective(true)
+                    .setLatest(true).getResultDefinitions().required();
+        }
         if (!def.isSetEffectiveDescriptor()) {
             throw new NutsIllegalArgumentException(session.getWorkspace(), "expected an effective definition for " + def.getId());
         }
-        defs.add(def);
+        defs.add(new NutsDependencyTreeNodeBuild(null, def, dependency, dependency, 0,
+                include ? NutsDependencyTreeNodeBuildType.ROOT_INCLUDED : NutsDependencyTreeNodeBuildType.ROOT_DISCARDED
+        ));
         return this;
     }
 
@@ -71,55 +87,77 @@ public class NutsDependenciesResolver {
         List<NutsDependencyTreeNodeBuild> roots = new ArrayList<>();
         Queue<NutsDependencyTreeNodeBuild> queue = new ArrayDeque<>();
         List<NutsId> ids = new ArrayList<>();
-        List<NutsDependency> immediates = new ArrayList<>();
-        boolean shouldIncludeContent = false;//shouldIncludeContent(this);
-        for (NutsDefinition def : defs) {
-            NutsDescriptor descriptor = def.getEffectiveDescriptor();
-            if (descriptor == null) {
-                throw new NutsIllegalArgumentException(session.getWorkspace(), "expected an effective definition for " + def.getId());
-            }
-            NutsId id = descriptor.getId();
-            ids.add(id);
-            NutsDependency[] immediate = CoreFilterUtils.filterDependencies(id, descriptor.getDependencies(),
-                    dependencyFilter, session);
-            immediates.addAll(Arrays.asList(immediate));
-            for (NutsDependency dependency :
-                    immediate) {
-                NutsDefinition def2 = ws.search()
-                        .addId(dependency.toId()).setSession(session//.copy().setTrace(false)
-//                                .setProperty("monitor-allowed", false)
-                        ).setEffective(true)
-                        .setContent(shouldIncludeContent)
-                        .setEffective(true)
-                        .setLatest(true).getResultDefinitions().required();
-                NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(null, def2, dependency, dependency, 0);
-                queue.add(info);
-                roots.add(info);
-            }
-        }
-
+        LinkedHashSet<NutsDependency> immediates = new LinkedHashSet<>();
+        queue.addAll(defs);
         NutsDependencyInfoSet visitedSet = new NutsDependencyInfoSet();
         NutsDependencyTreeNodeBuild currentNode;
         while (!queue.isEmpty()) {
             currentNode = queue.remove();
+            NutsDescriptor descriptor = currentNode.def.getEffectiveDescriptor();
+            if (descriptor == null) {
+                throw new NutsIllegalArgumentException(session.getWorkspace(), "expected an effective definition for " + currentNode.def.getId());
+            }
+            switch (currentNode.buildType) {
+                case ROOT_INCLUDED: {
+                    ids.add(descriptor.getId());
+                    roots.add(currentNode);
+                    NutsDependency[] immediate = CoreFilterUtils.filterDependencies(descriptor.getId(), descriptor.getDependencies(),
+                            dependencyFilter, session);
+                    immediates.addAll(Arrays.asList(immediate));
+                    break;
+                }
+                case ROOT_DISCARDED: {
+                    ids.add(descriptor.getId());
+                    NutsDependency[] immediate = CoreFilterUtils.filterDependencies(descriptor.getId(), descriptor.getDependencies(),
+                            dependencyFilter, session);
+                    immediates.addAll(Arrays.asList(immediate));
+                    break;
+                }
+                case ROOT_CHILD: {
+                    ids.add(descriptor.getId());
+                    roots.add(currentNode);
+                    break;
+                }
+            }
+            if (currentNode.buildType == NutsDependencyTreeNodeBuildType.ROOT_INCLUDED || currentNode.buildType == NutsDependencyTreeNodeBuildType.ROOT_DISCARDED) {
+                ids.add(descriptor.getId());
+            }
+            if (currentNode.buildType == NutsDependencyTreeNodeBuildType.ROOT_INCLUDED || currentNode.buildType == NutsDependencyTreeNodeBuildType.ROOT_CHILD) {
+            }
             NutsDependencyInfo nextId = NutsDependencyInfo.of(currentNode);
             if (visitedSet.add(nextId)) {
                 for (NutsDependency dependency : currentNode.def.getEffectiveDescriptor().getDependencies()) {
                     NutsDependencyScope parentScope = ws.dependency().parser().parseScope(currentNode.effDependency.getScope());
                     NutsDependencyScope childScope = ws.dependency().parser().parseScope(dependency.getScope());
                     NutsDependencyScope newScope = combineScopes(parentScope, childScope);
-                    NutsDependency effDependency = newScope == childScope ? dependency :
-                            dependency.builder().setScope(newScope).build();
+                    NutsDependency effDependency = newScope == childScope ? dependency
+                            : dependency.builder().setScope(newScope).build();
                     if (dependencyFilter == null || dependencyFilter.acceptDependency(
                             currentNode.def.getId(), effDependency, session
                     )) {
                         NutsDefinition def2 = ws.search()
                                 .addId(dependency.toId()).setSession(session//.copy().setTrace(false)
-                                        //.setProperty("monitor-allowed", false)
-                                ).setEffective(true)
+                        //.setProperty("monitor-allowed", false)
+                        ).setEffective(true)
                                 .setContent(shouldIncludeContent)
                                 .setLatest(true).getResultDefinitions().required();
-                        NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1);
+                        NutsDependencyTreeNodeBuildType nextBuildType = NutsDependencyTreeNodeBuildType.CHILD;
+                        switch (currentNode.buildType) {
+                            case ROOT_INCLUDED: {
+                                nextBuildType = NutsDependencyTreeNodeBuildType.CHILD;
+                                break;
+                            }
+                            case ROOT_DISCARDED: {
+                                nextBuildType = NutsDependencyTreeNodeBuildType.ROOT_CHILD;
+                                break;
+                            }
+                            case CHILD:
+                            case ROOT_CHILD: {
+                                nextBuildType = NutsDependencyTreeNodeBuildType.CHILD;
+                                break;
+                            }
+                        }
+                        NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1, nextBuildType);
                         currentNode.children.add(info);
                         queue.add(info);
                     }
@@ -198,17 +236,18 @@ public class NutsDependenciesResolver {
     }
 
     private static class NutsDependencyInfoSet {
+
         Map<NutsId, NutsDependencyInfo> visitedSet = new LinkedHashMap<>();
 
         public boolean add(NutsDependencyInfo other) {
             NutsDependencyInfo old = visitedSet.get(other.normalized);
             if (old == null) {
-                visitedSet.put(other.normalized,other);
+                visitedSet.put(other.normalized, other);
                 return true;
             }
             if (old.depth == other.depth) {
-                if(other.real.getVersion().compareTo(old.real.getVersion())>0){
-                    visitedSet.put(other.normalized,other);
+                if (other.real.getVersion().compareTo(old.real.getVersion()) > 0) {
+                    visitedSet.put(other.normalized, other);
                     return true;
                 }
             }
@@ -218,6 +257,7 @@ public class NutsDependenciesResolver {
     }
 
     private static class NutsDependencyInfo {
+
         NutsId normalized;
         NutsId real;
         int depth;
@@ -231,7 +271,7 @@ public class NutsDependenciesResolver {
         }
 
         public static NutsDependencyInfo of(NutsDependencyTreeNodeBuild currentNode) {
-            return new NutsDependencyInfo(currentNode.def.getId().getShortNameId(),currentNode.def.getId(), currentNode.dependency, currentNode.depth);
+            return new NutsDependencyInfo(currentNode.def.getId().getShortNameId(), currentNode.def.getId(), currentNode.dependency, currentNode.depth);
         }
 
         public NutsDependency getDependency() {
@@ -239,7 +279,15 @@ public class NutsDependenciesResolver {
         }
     }
 
+    private enum NutsDependencyTreeNodeBuildType {
+        ROOT_DISCARDED,
+        ROOT_INCLUDED,
+        ROOT_CHILD,
+        CHILD,
+    }
+
     private static class NutsDependencyTreeNodeBuild {
+
         NutsDependencyTreeNodeBuild parent;
         NutsDefinition def;
         NutsDependency dependency;
@@ -247,13 +295,15 @@ public class NutsDependenciesResolver {
         List<NutsDependencyTreeNodeBuild> children = new ArrayList<>();
         boolean alreadyVisited;
         int depth;
+        NutsDependencyTreeNodeBuildType buildType;
 
-        public NutsDependencyTreeNodeBuild(NutsDependencyTreeNodeBuild parent, NutsDefinition def, NutsDependency dependency, NutsDependency effDependency, int depth) {
+        public NutsDependencyTreeNodeBuild(NutsDependencyTreeNodeBuild parent, NutsDefinition def, NutsDependency dependency, NutsDependency effDependency, int depth, NutsDependencyTreeNodeBuildType buildType) {
             this.parent = parent;
             this.def = def;
             this.dependency = dependency;
             this.effDependency = effDependency;
             this.depth = depth;
+            this.buildType = buildType;
         }
 
         private NutsDependencyTreeNode build() {

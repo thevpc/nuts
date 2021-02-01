@@ -36,18 +36,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by vpc on 1/15/17.
  */
 @NutsSingleton
-public class NutsShellDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
+public class BashDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
-    public static NutsId NSH;
-    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("nsh", "nuts"));
+    public static NutsId BASH;
+    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("sh", "bash"));//, "war", "ear"
     private NutsWorkspace ws;
     @Override
     public NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) {
@@ -63,8 +61,9 @@ public class NutsShellDescriptorContentParserComponent implements NutsDescriptor
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
-        if(NSH==null){
-            NSH=criteria.getWorkspace().id().parser().parse("nsh");
+        this.ws=criteria.getWorkspace();
+        if(BASH==null){
+            BASH=ws.id().parser().parse("bash");
         }
         return DEFAULT_SUPPORT;
     }
@@ -90,6 +89,10 @@ public class NutsShellDescriptorContentParserComponent implements NutsDescriptor
             r = new BufferedReader(new InputStreamReader(file));
             String line = null;
             boolean firstLine = true;
+            NutsId id = null;
+            String name = null;
+            List<NutsDependency> deps = new ArrayList<NutsDependency>();
+            List<NutsId> arch = new ArrayList<NutsId>();
             JsonStringBuffer comment = new JsonStringBuffer(ws);
             String sheban = "";
             boolean start = false;
@@ -126,9 +129,11 @@ public class NutsShellDescriptorContentParserComponent implements NutsDescriptor
             }
             if (comment.toString().trim().isEmpty()) {
                 return ws.descriptor().descriptorBuilder()
-                        .setId(ws.id().parser().parse("temp:nsh#1.0"))
-                        .setPackaging("nsh")
-                        .setExecutor(new DefaultNutsArtifactCall(NSH))
+                        .id(ws.id().parser().parse("temp:sh#1.0"))
+                        .executable()
+                        //                        .setExt("sh")
+                        .packaging("sh")
+                        .executor(new DefaultNutsArtifactCall(BASH))
                         .build();
             }
             return ws.descriptor().parser().parse(comment.getValidString());

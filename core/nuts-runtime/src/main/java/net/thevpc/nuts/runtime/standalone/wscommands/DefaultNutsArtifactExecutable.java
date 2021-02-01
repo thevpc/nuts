@@ -29,10 +29,10 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
     boolean autoInstall = true;
 
     public DefaultNutsArtifactExecutable(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions,
-                                         Map<String, String> env, String dir, boolean failFast,
-                                         NutsSession traceSession,
-                                         NutsSession execSession,
-                                         NutsExecutionType executionType, DefaultNutsExecCommand execCommand) {
+            Map<String, String> env, String dir, boolean failFast,
+            NutsSession traceSession,
+            NutsSession execSession,
+            NutsExecutionType executionType, DefaultNutsExecCommand execCommand) {
         super(commandName, def.getId().getLongName(), NutsExecutableType.ARTIFACT);
         this.def = def;
         //all these information areavailable, an exception would be thrown if not!
@@ -84,13 +84,13 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
         } else if (installStatus.isInstalled() && installStatus.isObsolete()) {
             traceSession.getWorkspace().install().id(def.getId()).run();
         }
-        LinkedHashSet<NutsDependency> reinstall=new LinkedHashSet<>();
+        LinkedHashSet<NutsDependency> reinstall = new LinkedHashSet<>();
         for (NutsDependency dependency : def.getDependencies()) {
             NutsDependencyScope scope = execSession.getWorkspace().dependency().parser().parseScope(dependency.getScope());
-            boolean acceptedScope=scope!=NutsDependencyScope.TEST_API
-                    &&scope!=NutsDependencyScope.TEST_PROVIDED
-                    &&scope!=NutsDependencyScope.TEST_RUNTIME;
-            if(acceptedScope) {
+            boolean acceptedScope = scope != NutsDependencyScope.TEST_API
+                    && scope != NutsDependencyScope.TEST_PROVIDED
+                    && scope != NutsDependencyScope.TEST_RUNTIME;
+            if (acceptedScope) {
                 NutsInstallStatus st = traceSession.getWorkspace().fetch()
                         .setSession(traceSession)
                         .setOffline().setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
@@ -99,7 +99,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
                 }
             }
         }
-        if(!reinstall.isEmpty()){
+        if (!reinstall.isEmpty()) {
             NutsInstallCommand iii = traceSession.getWorkspace().install().setStrategy(NutsInstallStrategy.REINSTALL);
             for (NutsDependency nutsId : reinstall) {
                 iii.id(nutsId.toId());
@@ -109,8 +109,8 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
                 boolean optional = execSession.getWorkspace().dependency().parser().parseOptional(dependency.getOptional());
 
                 NutsInstallStatus st = traceSession.getWorkspace().fetch().setOffline().setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
-                if ((st.isObsolete()|| st.isNonDeployed()) && !optional) {
-                    throw new NutsUnexpectedException(execSession.getWorkspace(),"unresolved dependency "+dependency+" has status "+st);
+                if ((st.isObsolete() || st.isNonDeployed()) && !optional) {
+                    throw new NutsUnexpectedException(execSession.getWorkspace(), "unresolved dependency " + dependency + " has status " + st);
                 }
             }
         }

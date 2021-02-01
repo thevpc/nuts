@@ -258,7 +258,9 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                 throw new NutsIllegalArgumentException(iom.getWorkspace(), "unsupported target " + target);
             }
         } catch (IOException ex) {
-            LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log( "error compressing {0} to {1} : {2}", sources, target.getSource(), CoreStringUtils.exceptionToString(ex));
+            LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
+                    .log( "error compressing {0} to {1} : {2}", 
+                            sources, target.getSource(), ex);
             throw new UncheckedIOException(ex);
         }
     }
