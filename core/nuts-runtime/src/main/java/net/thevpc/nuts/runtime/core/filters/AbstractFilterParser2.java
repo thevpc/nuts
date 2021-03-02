@@ -65,7 +65,7 @@ public abstract class AbstractFilterParser2<T> {
             }else{
                 String w = nextWord();
                 if(w!=null){
-                    a = worldToPredicate(w);
+                    a = wordToPredicate(w);
                     String op = peekBinOp();
                     if(op==null && implicitOperator!=null){
                         op=implicitOperator;
@@ -135,6 +135,6 @@ public abstract class AbstractFilterParser2<T> {
         return null;
     }
 
-    protected abstract T worldToPredicate(String word);
+    protected abstract T wordToPredicate(String word);
 
 }

@@ -368,15 +368,15 @@ public class NutsRepositoryFolderHelper {
 
     public Path deployDescriptor(NutsId id, NutsDescriptor desc, NutsConfirmationMode writeType, NutsSession session) {
         if (!isWriteEnabled()) {
-            throw new IllegalArgumentException("read only Repository");
+            throw new IllegalArgumentException("read only repository");
         }
         NutsWorkspaceUtils.of(getWorkspace()).checkNutsId(id);
         Path descFile = getLongNameIdLocalFile(id.builder().setFaceDescriptor().build());
         if (Files.exists(descFile)) {
             if (!DefaultWriteTypeProcessor
                     .of(writeType, session)
-                    .ask("Override descriptor file for %s?", id)
-                    .withLog(LOG, "Nuts descriptor file Overridden {0}", id)
+                    .ask("override descriptor file for %s?", id)
+                    .withLog(LOG, "nuts descriptor file overridden {0}", id)
                     .onError(() -> new NutsAlreadyDeployedException(ws, id.toString()))
                     .process()) {
                 return descFile;

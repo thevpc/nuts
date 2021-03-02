@@ -93,11 +93,6 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
       load runtime (nuts-runtime) version. either version may be expressed or full nuts implementation
       (other than nuts-runtime) should be defined
 
- ```sh --boot-repos <repos-list-comma-separated> ```
-      list (comma) separated of repository urls to boot from. When not specified, default boot repositories
-      will be used (mainly 'maven-central' and 'vpc-public-maven'). You can specify works like 'maven-central'
-      'vpc-public-maven' to include them in the list
-
  ```sh --java      <java-command> ```
  ```sh --boot-java <java-command> ```
  ```sh -j <java-command> ```
@@ -306,6 +301,15 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh -t```
       apply trace mode which allows a more verbose output
 
+ ```sh --transitive```
+      consider transitive repositories
+
+ ```sh --index```
+      search into indexes
+
+ ```sh --cached```
+      use cache whenever possible
+
  ```sh --progress[=<options>]```
  ```sh -P[=<options>]```
       configure progress monitor. valid values include ```kw no```|```kw false```|```kw n```|```kw newline```
@@ -380,7 +384,15 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
       exclude repositories from being loaded at runtime. list is separated with characters " ,;"
 
  ```sh --repository   <repository-path>```
-      register a temporary repository at the given path
+ ```sh --repositories <repository-path>```
+ ```sh --repos        <repository-path>```
+      register one or multiple (comma ',' separated) temporary repositories at the given path
+      repositories follow the following pattern
+      [+-=]?(<name>=)?<path>
+      the prefix operator (+,-,=) when specified whether the repository is 
+        to include (+), exclude (-) or replace (=) ie all existing repositories will be 
+        discarded and replaced with the given list of repositories.
+      This list will be used as well as a boot repository list.
 
  ```sh --yes | -y | --force```
       disables interactive mode and assumes ```kw yes``` for all questions

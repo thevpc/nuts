@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextNodeFactory;
+import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
@@ -127,7 +127,7 @@ public class AntiQuote3ParserStep extends ParserStep {
     public NutsTextNode toNode() {
         char[] dst = new char[value.length()];
         value.getChars(0,value.length(), dst,0 );
-        DefaultNutsTextNodeFactory factory0 = (DefaultNutsTextNodeFactory) ws.formats().text().factory();
+        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
         int i=0;
         int endOffset=-1;
         if(dst.length>0 && dst[i]=='!') {

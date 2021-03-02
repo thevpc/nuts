@@ -3,9 +3,9 @@ package net.thevpc.nuts.runtime.core.repos;
 import net.thevpc.nuts.*;
 
 import java.util.Iterator;
-import java.util.Set;
 
 public interface NutsInstalledRepository extends NutsRepository {
+
     boolean isDefaultVersion(NutsId id, NutsSession session);
 
     Iterator<NutsInstallInformation> searchInstallInformation(NutsSession session);
@@ -21,9 +21,10 @@ public interface NutsInstalledRepository extends NutsRepository {
     void install(NutsId id, NutsSession session, NutsId forId);
 
     NutsInstallInformation install(NutsDefinition id, NutsSession session);
+
     void uninstall(NutsDefinition id, NutsSession session);
 
-    NutsInstallInformation require(NutsDefinition id, boolean deploy,NutsId[] forId, NutsDependencyScope scope, NutsSession session);
+    NutsInstallInformation require(NutsDefinition id, boolean deploy, NutsId[] forId, NutsDependencyScope scope, NutsSession session);
 
     void unrequire(NutsId id, NutsId forId, NutsDependencyScope scope, NutsSession session);
 

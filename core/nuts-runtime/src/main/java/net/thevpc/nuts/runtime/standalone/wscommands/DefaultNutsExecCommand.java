@@ -271,13 +271,13 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         List<NutsId> ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setLatest(true).setFailFast(false)
                 .setDefaultVersions(true)
                 //                .configure(true,"--trace-monitor")
-                .setInstallStatus(ws.filters().installStatus().byDeployed())
+                .setInstallStatus(ws.filters().installStatus().byDeployed(true))
                 .getResultIds().list();
         if (ff.isEmpty()) {
             //retest without checking if the parseVersion is default or not
             // this help recovering from "invalid default parseVersion" issue
             ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setLatest(true).setFailFast(false)
-                    .setInstallStatus(ws.filters().installStatus().byDeployed())
+                    .setInstallStatus(ws.filters().installStatus().byDeployed(true))
                     .setSession(noProgressSession)
                     .getResultIds().list();
         }
@@ -290,8 +290,8 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 // this helps recovering from "invalid default parseVersion" issue
                 if (traceSession.isPlainTrace()) {
                     traceSession.out().printf("%s is %s, will search for it online. Type ```error CTRL^C``` to stop...\n",
-                            ws.formats().text().factory().styled(commandName,NutsTextNodeStyle.primary(1)),
-                            ws.formats().text().factory().styled("not installed",NutsTextNodeStyle.error())
+                            ws.formats().text().styled(commandName,NutsTextNodeStyle.primary(1)),
+                            ws.formats().text().styled("not installed",NutsTextNodeStyle.error())
                             );
                     traceSession.out().flush();
                 }

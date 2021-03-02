@@ -26,10 +26,10 @@ public class NutsTextNodeCollector implements NutsTextNodeVisitor {
         if (all.size() == 1) {
             return all.get(0);
         }
-        return ws.formats().text().factory().list(all);
+        return ws.formats().text().list(all);
     }
 
     public NutsTextNode getRootOrEmpty() {
-        return ws.formats().text().factory().list(all);
+        return ws.formats().text().list(all);
     }
 }

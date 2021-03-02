@@ -121,7 +121,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 break;
             }
             case DATE: {
-                out.print(getWorkspace().formats().text().factory().plain(value.primitive().getDate().toString()).toString());
+                out.print(getWorkspace().formats().text().plain(value.primitive().getDate().toString()).toString());
                 out.flush();
                 break;
             }

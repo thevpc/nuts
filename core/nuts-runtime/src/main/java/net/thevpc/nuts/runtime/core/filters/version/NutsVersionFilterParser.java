@@ -13,10 +13,10 @@ public class NutsVersionFilterParser extends NutsTypedFiltersParser<NutsVersionF
         return ws.filters().version();
     }
 
-    protected NutsVersionFilter worldToPredicate(String word){
+    protected NutsVersionFilter wordToPredicate(String word){
         switch (word.toLowerCase()){
             default:{
-                return super.worldToPredicate(word);
+                return super.wordToPredicate(word);
             }
         }
     }

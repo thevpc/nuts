@@ -1,18 +1,18 @@
 package net.thevpc.nuts.runtime.core.format.text.bloc;
 
 import net.thevpc.nuts.NutsTextNode;
-import net.thevpc.nuts.NutsTextNodeFactory;
 import net.thevpc.nuts.NutsTextNodeStyle;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.thevpc.nuts.NutsTextManager;
 
 public class StringReaderExtUtils {
 
     public static NutsTextNode[] readSpaces(NutsWorkspace ws, StringReaderExt ar) {
-        NutsTextNodeFactory factory = ws.formats().text().factory();
+        NutsTextManager factory = ws.formats().text();
         StringBuilder sb = new StringBuilder();
         while (ar.hasNext() && ar.peekChar() <= 32) {
             sb.append(ar.nextChar());
@@ -23,7 +23,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsTextNode[] readSlashSlashComments(NutsWorkspace ws, StringReaderExt ar) {
-        NutsTextNodeFactory factory = ws.formats().text().factory();
+        NutsTextManager factory = ws.formats().text();
         StringBuilder sb = new StringBuilder();
         if (!ar.peekChars("//")) {
             return null;
@@ -52,7 +52,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsTextNode[] readSlashStarComments(NutsWorkspace ws, StringReaderExt ar) {
-        NutsTextNodeFactory factory = ws.formats().text().factory();
+        NutsTextManager factory = ws.formats().text();
         StringBuilder sb = new StringBuilder();
         if (!ar.peekChars("/*")) {
             return null;
@@ -81,7 +81,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsTextNode[] readJSDoubleQuotesString(NutsWorkspace ws, StringReaderExt ar) {
-        NutsTextNodeFactory factory = ws.formats().text().factory();
+        NutsTextManager factory = ws.formats().text();
         List<NutsTextNode> all = new ArrayList<>();
         boolean inLoop = true;
         StringBuilder sb = new StringBuilder();
@@ -131,7 +131,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsTextNode[] readJSSimpleQuotes(NutsWorkspace ws, StringReaderExt ar) {
-        NutsTextNodeFactory factory = ws.formats().text().factory();
+        NutsTextManager factory = ws.formats().text();
         List<NutsTextNode> all = new ArrayList<>();
         boolean inLoop = true;
         StringBuilder sb = new StringBuilder();
@@ -181,7 +181,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsTextNode[] readJSIdentifier(NutsWorkspace ws, StringReaderExt ar) {
-        NutsTextNodeFactory factory = ws.formats().text().factory();
+        NutsTextManager factory = ws.formats().text();
         List<NutsTextNode> all = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         if (!ar.hasNext() || !Character.isJavaIdentifierStart(ar.peekChar())) {
@@ -201,7 +201,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsTextNode[] readNumber(NutsWorkspace ws, StringReaderExt ar) {
-        NutsTextNodeFactory factory = ws.formats().text().factory();
+        NutsTextManager factory = ws.formats().text();
         boolean nbrVisited = false;
         boolean minusVisited = false;
         boolean EminusVisited = false;

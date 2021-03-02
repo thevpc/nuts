@@ -1,15 +1,14 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.NutsTerminalMode;
-import net.thevpc.nuts.NutsTextFormatManager;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.io.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
 
-import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import net.thevpc.nuts.NutsFormatManager;
 
 public class UnescapeOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
     private NutsWorkspace ws;
@@ -32,9 +31,9 @@ public class UnescapeOutputStream extends BaseTransparentFilterOutputStream impl
     }
 
     private String filterThanEscape(String b) throws IOException {
-        NutsTextFormatManager txt = ws.formats().text();
-        String filtered = txt.builder().append(b).filteredText();
-        return txt.factory().plain(filtered).toString();
+        NutsFormatManager txt = ws.formats();
+        String filtered = txt.text().builder().append(b).filteredText();
+        return txt.text().plain(filtered).toString();
 //        return ws.formats().text().escapeText(
 //                ws.formats().text().filterText(b)
 //        );

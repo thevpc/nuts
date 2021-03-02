@@ -51,10 +51,6 @@ public interface NutsRepositoryModel {
         return null;
     }
 
-    default int getDeployOrder() {
-        return 100;
-    }
-
     default String getUuid() {
         return null;
     }

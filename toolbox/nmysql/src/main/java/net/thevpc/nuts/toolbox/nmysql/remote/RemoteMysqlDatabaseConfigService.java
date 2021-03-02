@@ -107,11 +107,11 @@ public class RemoteMysqlDatabaseConfigService {
                     .toString();
         }
         SshPath remoteFullFilePath = new SshAddress(prepareSshServer(cconfig.getServer())).getPath(ppath);
-        NutsTextFormatManager text = context.getWorkspace().formats().text();
+        NutsFormatManager text = context.getWorkspace().formats();
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("%s copy '%s' to '%s'%n", getBracketsPrefix(name),
-                    text.factory().styled(remoteFullFilePath.toString(),NutsTextNodeStyle.path()),
-                    text.factory().styled(localPath,NutsTextNodeStyle.path())
+                    text.text().styled(remoteFullFilePath.toString(),NutsTextNodeStyle.path()),
+                    text.text().styled(localPath,NutsTextNodeStyle.path())
             );
         }
         if(lastRun.get("localPath")!=null){
@@ -150,7 +150,7 @@ public class RemoteMysqlDatabaseConfigService {
         if (deleteRemote) {
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("%s delete %s%n", getBracketsPrefix(name),
-                        text.factory().styled(remoteFullFilePath.toString(),NutsTextNodeStyle.path()));
+                        text.text().styled(remoteFullFilePath.toString(),NutsTextNodeStyle.path()));
             }
             if(!lastRun.is("deleted")) {
                 execRemoteNuts(
@@ -193,12 +193,12 @@ public class RemoteMysqlDatabaseConfigService {
 
         String remoteFilePath = IOUtils.concatPath('/', remoteTempPath, "-" + MysqlUtils.newDateString() + "-" + FileUtils.getFileName(localPath));
         String remoteFullFilePath = sshAddress.getPath(remoteFilePath).getPath();
-        NutsTextFormatManager text = context.getWorkspace().formats().text();
+        NutsFormatManager text = context.getWorkspace().formats();
 
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("%s copy %s to %s%n", getBracketsPrefix(name),
-                    text.factory().styled(localPath,NutsTextNodeStyle.path()),
-                    text.factory().styled(remoteFullFilePath,NutsTextNodeStyle.path())
+                    text.text().styled(localPath,NutsTextNodeStyle.path()),
+                    text.text().styled(remoteFullFilePath,NutsTextNodeStyle.path())
             );
         }
         context.getWorkspace().exec()
@@ -216,7 +216,7 @@ public class RemoteMysqlDatabaseConfigService {
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("%s remote restore %s%n",
                     getBracketsPrefix(name),
-                    text.factory().styled(remoteFullFilePath,NutsTextNodeStyle.path())
+                    text.text().styled(remoteFullFilePath,NutsTextNodeStyle.path())
             );
         }
         execRemoteNuts(

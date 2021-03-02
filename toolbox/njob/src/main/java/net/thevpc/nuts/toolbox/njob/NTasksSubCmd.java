@@ -193,7 +193,7 @@ public class NTasksSubCmd {
         service.tasks().addTask(t);
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("task %s (%s) added.\n",
-                    context.getWorkspace().formats().text().factory().styled(t.getId(), NutsTextNodeStyle.primary(5)),
+                    context.getWorkspace().formats().text().styled(t.getId(), NutsTextNodeStyle.primary(5)),
                     t.getName()
             );
         }
@@ -426,13 +426,13 @@ public class NTasksSubCmd {
                 c.accept(task);
             }
         }
-        NutsTextFormatManager text = context.getWorkspace().formats().text();
+        NutsFormatManager text = context.getWorkspace().formats();
         for (NTask task : new LinkedHashSet<>(tasks)) {
             service.tasks().updateTask(task);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("task %s (%s) updated.\n",
-                        text.factory().styled(task.getId(), NutsTextNodeStyle.primary(5)),
-                        text.factory().styled(task.getName(), NutsTextNodeStyle.primary(1))
+                        text.text().styled(task.getId(), NutsTextNodeStyle.primary(5)),
+                        text.text().styled(task.getName(), NutsTextNodeStyle.primary(1))
                 );
             }
         }
@@ -655,20 +655,20 @@ public class NTasksSubCmd {
 
 
     private void runTaskRemove(NutsCommandLine cmd) {
-        NutsTextFormatManager text = context.getWorkspace().formats().text();
+        NutsFormatManager text = context.getWorkspace().formats();
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
             NTask t = findTask(a.toString(), cmd);
             if (service.tasks().removeTask(t.getId())) {
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("task %s removed.\n",
-                            text.factory().styled(a.toString(), NutsTextNodeStyle.primary(5))
+                            text.text().styled(a.toString(), NutsTextNodeStyle.primary(5))
                     );
                 }
             } else {
                 context.getSession().out().printf("task %s %s.\n",
-                        text.factory().styled(a.toString(), NutsTextNodeStyle.primary(5)),
-                        text.factory().styled("not found", NutsTextNodeStyle.error())
+                        text.text().styled(a.toString(), NutsTextNodeStyle.primary(5)),
+                        text.text().styled("not found", NutsTextNodeStyle.error())
                 );
             }
         }

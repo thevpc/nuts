@@ -16,7 +16,7 @@ install ```sh nuts``` package <nuts-artifact>
 
 ##) EXAMPLES:
 ```sh  nuts install --help```
-            shows this help and exit
+            show this help and exit
        
 ```sh nuts install netbeans-launcher```
             install netbeans-launcher

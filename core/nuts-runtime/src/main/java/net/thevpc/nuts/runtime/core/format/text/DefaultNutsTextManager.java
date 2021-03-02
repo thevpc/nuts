@@ -5,33 +5,40 @@ import net.thevpc.nuts.runtime.core.format.text.parser.*;
 import net.thevpc.nuts.runtime.core.format.text.bloc.*;
 import net.thevpc.nuts.NutsTextFormatTheme;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsTextStyleGenerator;
 
 import java.io.File;
+import java.io.StringReader;
 import java.net.URL;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.temporal.Temporal;
 import java.util.*;
 import net.thevpc.nuts.NutsCodeFormat;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsSupportLevelContext;
-import net.thevpc.nuts.spi.NutsComponent;
 
-public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
+public class DefaultNutsTextManager implements NutsTextManager {
 
     private NutsWorkspace ws;
     private NutsSession session;
     private NutsTextFormatTheme styleTheme;
-    private PlainBlocTextFormatter plainBlocTextFormatter;
-    JavaBlocTextFormatter javaBlocTextFormatter;
-    HadraBlocTextFormatter hadraBlocTextFormatter;
-    XmlBlocTextFormatter xmlBlocTextFormatter;
-    JsonBlocTextFormatter jsonBlocTextFormatter;
-    ShellBlocTextFormatter shellBlocTextFormatter;
 
-    public DefaultNutsTextNodeFactory(NutsWorkspace ws, NutsTextFormatTheme styleTheme) {
+    public DefaultNutsTextManager(NutsWorkspace ws, NutsTextFormatTheme styleTheme) {
         this.ws = ws;
         this.styleTheme = styleTheme;
+    }
+
+    @Override
+    public NutsTextNodeBuilder builder() {
+        return new DefaultNutsTextNodeBuilder(ws);
+    }
+
+    @Override
+    public NutsTextNode parse(String t) {
+        return t == null ? blank() : parser().parse(new StringReader(t));
+    }
+
+    @Override
+    public NutsTextNodeParser parser() {
+        return new DefaultNutsTextNodeParser(ws);
     }
 
     @Override
@@ -40,7 +47,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
     }
 
     @Override
-    public DefaultNutsTextNodeFactory setSession(NutsSession session) {
+    public DefaultNutsTextManager setSession(NutsSession session) {
         this.session = session;
         return this;
     }
@@ -59,7 +66,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
             return (NutsTextNode) t;
         }
         if (t instanceof NutsFormattable) {
-            return ws.formats().text().parse(((NutsFormattable) t).formatter().format());
+            return parse(((NutsFormattable) t).formatter().format());
         }
         if (t instanceof NutsMessage) {
             return _NutsFormattedMessage_toString((NutsMessage) t);
@@ -101,8 +108,8 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
         String sLocale = session == null ? null : session.getLocale();
         Locale locale = CoreStringUtils.isBlank(sLocale) ? null : new Locale(sLocale);
         Object[] args2 = new Object[params.length];
-        NutsTextFormatManager txt = ws.formats().text();
-        NutsTextNodeFactory fct = txt.factory().setSession(session);
+        NutsFormatManager txt = ws.formats();
+        NutsTextManager fct = txt.text().setSession(session);
         for (int i = 0; i < args2.length; i++) {
             Object a = params[i];
             if (a instanceof Number || a instanceof Date || a instanceof Temporal) {
@@ -177,6 +184,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
         return command(command, "");
     }
 
+    @Override
     public NutsTextNode command(String command, String args) {
         switch (command) {
             case "anchor": {
@@ -203,7 +211,7 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
         if (text == null) {
             text = "";
         }
-        DefaultNutsTextNodeFactory factory0 = (DefaultNutsTextNodeFactory) ws.formats().text().factory();
+        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
         if (text.indexOf('\n') >= 0) {
             return factory0.createCode("```",
                     lang, "\n", "```", text
@@ -306,53 +314,51 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
         }
         switch (textNodeStyle.getType()) {
             case FORE_COLOR: {
-                return createStyled("##:f" + textNodeStyle.getVariant() + ":", "##", other, textNodeStyle, true);
+                return createStyled("##", "##", other, textNodeStyle, true);
             }
             case BACK_COLOR: {
-                return createStyled("##:b" + textNodeStyle.getVariant() + ":", "##", other, textNodeStyle, true);
+                return createStyled("##", "##", other, textNodeStyle, true);
             }
             case FORE_TRUE_COLOR: {
                 String s = Integer.toString(0, textNodeStyle.getVariant());
                 while (s.length() < 8) {
                     s = "0" + s;
                 }
-                return createStyled("##:fx" + s + ":", "##", other, textNodeStyle, true);
+                return createStyled("##", "##", other, textNodeStyle, true);
             }
             case BACK_TRUE_COLOR: {
                 String s = Integer.toString(0, textNodeStyle.getVariant());
                 while (s.length() < 8) {
                     s = "0" + s;
                 }
-                return createStyled("##:bx" + textNodeStyle.getVariant() + ":", "##", other, textNodeStyle, true);
+                return createStyled("##", "##", other, textNodeStyle, true);
             }
             case UNDERLINED: {
-                return createStyled("##:_:", "##", other, textNodeStyle, true);
+                return createStyled("##", "##", other, textNodeStyle, true);
             }
             case ITALIC: {
-                return createStyled("##:/:", "##", other, textNodeStyle, true);
+                return createStyled("##", "##", other, textNodeStyle, true);
             }
             case STRIKED: {
-                return createStyled("##:-:", "##", other, textNodeStyle, true);
+                return createStyled("##", "##", other, textNodeStyle, true);
             }
             case REVERSED: {
-                return createStyled("##:!:", "##", other, textNodeStyle, true);
+                return createStyled("##", "##", other, textNodeStyle, true);
             }
             case BOLD: {
-                return createStyled("##:+:", "##", other, textNodeStyle, true);
+                return createStyled("##", "##", other, textNodeStyle, true);
             }
             case BLINK: {
-                return createStyled("##:%:", "##", other, textNodeStyle, true);
+                return createStyled("##", "##", other, textNodeStyle, true);
             }
             case PRIMARY: {
-                return createStyled("##:p:", "##", other, textNodeStyle, true);
+                return createStyled("##", "##", other, textNodeStyle, true);
             }
             case SECONDARY: {
-                return createStyled("##:s:", "##", other, textNodeStyle, true);
+                return createStyled("##", "##", other, textNodeStyle, true);
             }
             default: {
-                return createStyled("##:"
-                        + textNodeStyle.getType().toString().toUpperCase()
-                        + ":", "##", other, textNodeStyle, true);
+                return createStyled("##", "##", other, textNodeStyle, true);
             }
         }
     }
@@ -361,82 +367,31 @@ public class DefaultNutsTextNodeFactory implements NutsTextNodeFactory {
         if (kind == null) {
             kind = "";
         }
-        DefaultNutsSupportLevelContext<String> ctx = new DefaultNutsSupportLevelContext<String>(ws, kind);
-        int bestCode = NutsComponent.NO_SUPPORT;
-        NutsCodeFormat format = null;
-        for (NutsCodeFormat codeFormat : ws.formats().text().getCodeFormats()) {
-            int s = codeFormat.getSupportLevel(ctx);
-            if (s > bestCode) {
-                format = codeFormat;
-                bestCode = s;
-            }
-        }
+        NutsCodeFormat format = ws.formats().getCodeFormat(kind);
         if (format != null) {
             return format;
         }
         if (kind.length() > 0) {
-            switch (kind.toLowerCase()) {
-                case "sh": {
-                    if (shellBlocTextFormatter == null) {
-                        shellBlocTextFormatter = new ShellBlocTextFormatter(ws);
-                    }
-                    return shellBlocTextFormatter;
+            try {
+                String cc = kind.toUpperCase();
+                int x = cc.length();
+                while (Character.isDigit(cc.charAt(x - 1))) {
+                    x--;
                 }
-
-                case "json": {
-                    if (jsonBlocTextFormatter == null) {
-                        jsonBlocTextFormatter = new JsonBlocTextFormatter(ws);
-                    }
-                    return jsonBlocTextFormatter;
+                if (x < cc.length()) {
+                    NutsTextNodeStyle found = NutsTextNodeStyle.of(NutsTextNodeStyleType.valueOf(expandAlias(kind.toUpperCase().substring(0, x))),
+                            Integer.parseInt(kind.substring(x))
+                    );
+                    return new CustomStyleBlocTextFormatter(found, ws);
+                } else {
+                    NutsTextNodeStyle found = NutsTextNodeStyle.of(NutsTextNodeStyleType.valueOf(expandAlias(kind.toUpperCase())));
+                    return new CustomStyleBlocTextFormatter(found, ws);
                 }
-
-                case "xml": {
-                    if (xmlBlocTextFormatter == null) {
-                        xmlBlocTextFormatter = new XmlBlocTextFormatter(ws);
-                    }
-                    return xmlBlocTextFormatter;
-                }
-
-                case "java": {
-                    if (javaBlocTextFormatter == null) {
-                        javaBlocTextFormatter = new JavaBlocTextFormatter(ws);
-                    }
-                    return javaBlocTextFormatter;
-                }
-                case "hadra": {
-                    if (hadraBlocTextFormatter == null) {
-                        hadraBlocTextFormatter = new HadraBlocTextFormatter(ws);
-                    }
-                    return hadraBlocTextFormatter;
-                }
-
-                //Default styles...
-                default: {
-                    try {
-                        String cc = kind.toUpperCase();
-                        int x = cc.length();
-                        while (Character.isDigit(cc.charAt(x - 1))) {
-                            x--;
-                        }
-                        if (x < cc.length()) {
-                            NutsTextNodeStyle found = NutsTextNodeStyle.of(NutsTextNodeStyleType.valueOf(expandAlias(kind.toUpperCase().substring(0, x))),
-                                    Integer.parseInt(kind.substring(x))
-                            );
-                            return new CustomStyleBlocTextFormatter(found, ws);
-                        } else {
-                            NutsTextNodeStyle found = NutsTextNodeStyle.of(NutsTextNodeStyleType.valueOf(expandAlias(kind.toUpperCase())));
-                            return new CustomStyleBlocTextFormatter(found, ws);
-                        }
-                    } catch (Exception ex) {
-                        //ignore
-                    }
-                }
+            } catch (Exception ex) {
+                //ignore
             }
         }
-        if (plainBlocTextFormatter == null) {
-            plainBlocTextFormatter = new PlainBlocTextFormatter(ws);
-        }
-        return plainBlocTextFormatter;
+        return ws.formats().getCodeFormat("plain");
     }
 
     private String expandAlias(String ss) {

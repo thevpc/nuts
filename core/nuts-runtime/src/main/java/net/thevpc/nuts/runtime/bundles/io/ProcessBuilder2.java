@@ -672,11 +672,11 @@ public class ProcessBuilder2 {
     }
 
     private String escape(NutsWorkspace ws, String f) {
-        return ws.formats().text().factory().plain(f).toString();
+        return ws.formats().text().plain(f).toString();
     }
 
     public String getFormattedCommandString(NutsWorkspace ws, CommandStringFormat f) {
-        NutsTextFormatManager tf = ws.formats().text();
+//        NutsFormatManager tf = ws.formats();
         StringBuilder sb = new StringBuilder();
         File ff = getDirectory();
         if (ff == null) {
@@ -715,7 +715,7 @@ public class ProcessBuilder2 {
                     sb.append(" ");
                 }
                 sb.append(
-                        ws.formats().text().factory().styled(CoreStringUtils.enforceDoubleQuote(k, ws),NutsTextNodeStyle.primary(4))
+                        ws.formats().text().styled(CoreStringUtils.enforceDoubleQuote(k, ws),NutsTextNodeStyle.primary(4))
                 ).append("=").append(CoreStringUtils.enforceDoubleQuote(v, ws));
             }
         }
@@ -852,7 +852,7 @@ public class ProcessBuilder2 {
     private static String formatArg(String s, NutsWorkspace ws) {
         DefaultNutsArgument a = new DefaultNutsArgument(s);
         StringBuilder sb = new StringBuilder();
-        NutsTextNodeFactory factory = ws.formats().text().factory();
+        NutsTextManager factory = ws.formats().text();
         if (a.isKeyValue()) {
             if (a.isOption()) {
                 sb.append(factory.styled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), ws),NutsTextNodeStyle.option()));

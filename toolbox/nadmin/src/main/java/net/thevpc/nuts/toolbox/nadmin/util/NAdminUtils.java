@@ -2,10 +2,10 @@ package net.thevpc.nuts.toolbox.nadmin.util;
 
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsRepository;
-import net.thevpc.nuts.NutsTextNodeFactory;
 import net.thevpc.nuts.NutsTextNodeStyle;
 
 import java.io.PrintStream;
+import net.thevpc.nuts.NutsTextManager;
 
 public class NAdminUtils {
     public static void showRepo(NutsApplicationContext context, NutsRepository repository, String prefix) {
@@ -13,7 +13,7 @@ public class NAdminUtils {
         String disabledString = enabled ? "" : " <DISABLED>";
         PrintStream out = context.getSession().out();
         out.print(prefix);
-        NutsTextNodeFactory factory = context.getWorkspace().formats().text().factory();
+        NutsTextManager factory = context.getWorkspace().formats().text();
         if (enabled) {
             out.print(factory.styled(repository.getName() + disabledString, NutsTextNodeStyle.primary(2)));
         } else {

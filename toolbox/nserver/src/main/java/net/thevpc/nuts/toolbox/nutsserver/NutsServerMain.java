@@ -58,16 +58,16 @@ public class NutsServerMain extends NutsApplication {
             if (servers.isEmpty()) {
                 out.print("No Server is Running by current instance\n");
             }
-            NutsTextFormatManager text = context.getWorkspace().formats().text();
+            NutsFormatManager text = context.getWorkspace().formats();
             for (NutsServer o : servers) {
                 if (o.isRunning()) {
                     out.printf("%s %s\n",
-                            text.factory().styled("running",NutsTextNodeStyle.primary(4)),
+                            text.text().styled("running",NutsTextNodeStyle.primary(4)),
                             o.getServerId()
                     );
                 } else {
                     out.printf("%s %s\n",
-                            text.factory().styled("stopped",NutsTextNodeStyle.primary(4)),
+                            text.text().styled("stopped",NutsTextNodeStyle.primary(4)),
                             o.getServerId());
                 }
             }
@@ -382,15 +382,15 @@ public class NutsServerMain extends NutsApplication {
                 }
             }
             if (context.getSession().isPlainOut()) {
-                NutsTextFormatManager text = context.getWorkspace().formats().text();
+                NutsFormatManager text = context.getWorkspace().formats();
                 for (StatusResult result : results) {
                     context.getSession().out().printf(
                             "%s server at %s is %s%n",
-                            text.factory().styled(result.type,NutsTextNodeStyle.primary(4)),
+                            text.text().styled(result.type,NutsTextNodeStyle.primary(4)),
                             result.host,
                             result.status.equals("stopped")?
-                            text.factory().styled("stopped",NutsTextNodeStyle.error()):
-                            text.factory().styled("alive",NutsTextNodeStyle.success())
+                            text.text().styled("stopped",NutsTextNodeStyle.error()):
+                            text.text().styled("alive",NutsTextNodeStyle.success())
                     );
                 }
             } else {

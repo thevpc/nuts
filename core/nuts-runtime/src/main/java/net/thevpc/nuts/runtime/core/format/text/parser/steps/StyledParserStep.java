@@ -3,7 +3,8 @@ package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsTextNodeStyle;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextNodeFactory;
+import net.thevpc.nuts.runtime.bundles.datastr.EvictingCharQueue;
+import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.bundles.datastr.StringBuilder2;
 
@@ -15,7 +16,6 @@ import java.util.function.IntPredicate;
 public class StyledParserStep extends ParserStep {
 
     public static final IntPredicate EXIT_ON_CLOSE_ACCOLADES = ((cc) -> cc == '}' || cc == '#');
-    boolean spreadLines;
     boolean lineStart;
     boolean started = false;
     boolean complete = false;
@@ -26,35 +26,39 @@ public class StyledParserStep extends ParserStep {
     int maxSize = 10;
     private NutsWorkspace ws;
     private StyleMode styleMode = StyleMode.SIMPLE;
+    private boolean wasSharp = false;
     private boolean atPresentEnded = false;
     private List<NutsTextNodeStyle> atVals = new ArrayList<>();
     private NutsTextNode atInvalid;
     private boolean parsedAt = false;
     private StyledParserStepCommandParser parseHelper = new StyledParserStepCommandParser();
-
-    public StyledParserStep(char c, boolean spreadLines, boolean lineStart, NutsWorkspace ws) {
+    private EvictingCharQueue charQueue = new EvictingCharQueue(5);
+    private DefaultNutsTextNodeParser.State state;
+    public StyledParserStep(char c, boolean lineStart, NutsWorkspace ws, DefaultNutsTextNodeParser.State state) {
         start.append(c);
-        this.spreadLines = spreadLines;
+//        this.spreadLines = spreadLines;
         this.lineStart = lineStart;
         this.ws = ws;
+        this.state = state;
     }
 
-    public StyledParserStep(String c, boolean spreadLines, boolean lineStart, NutsWorkspace ws) {
+    public StyledParserStep(String c, boolean lineStart, NutsWorkspace ws, DefaultNutsTextNodeParser.State state) {
         start.append(c);
-        this.spreadLines = spreadLines;
+//        this.spreadLines = spreadLines;
         this.lineStart = lineStart;
         this.ws = ws;
+        this.state = state;
     }
 
     @Override
     public void consume(char c, DefaultNutsTextNodeParser.State state) {
+        charQueue.add(c);
         if (complete) {
             if (c == start.charAt(0)) {
-                ;
                 String e2 = end.append(c).readAll();
                 complete = false;
                 state.applyPush(new StyledParserStep(
-                        e2, spreadLines, false, ws
+                        e2, false, ws,state
                 ));
             } else if (c == 'ø') {
                 state.applyPop();
@@ -63,10 +67,10 @@ public class StyledParserStep extends ParserStep {
             }
             return;
         }
-        if (!spreadLines && (c == '\n' || c == '\r')) {
-            state.applyPopReject(c);
-            return;
-        }
+//        if (c == '\n' || c == '\r') {
+//            state.applyPopReject(c);
+//            return;
+//        }
         if (c == 'ø') {
             if (!started) {
                 started = true;
@@ -82,7 +86,7 @@ public class StyledParserStep extends ParserStep {
                     start.append(c);
                 } else {
                     started = true;
-                    state.applyStart(c, spreadLines, false);
+                    state.applyStart(c, /*spreadLines*/true, false);
                 }
             } else {
                 char startChar = start.charAt(0);
@@ -106,10 +110,10 @@ public class StyledParserStep extends ParserStep {
                     atStr.append(c);
                     //this is a title ##:
                 } else if (start.length() == 1 && c != startChar) {
-                    state.applyDropReplace(new PlainParserStep(startChar,spreadLines, lineStart, ws, state, null));
+                    state.applyDropReplace(new PlainParserStep(startChar,lineStart, ws, state, null));
                     state.applyNextChar(c);
                 } else {
-                    state.applyStart(c, spreadLines, false);
+                    state.applyStart(c, /*spreadLines*/true, false);
                 }
             }
         } else {
@@ -124,7 +128,7 @@ public class StyledParserStep extends ParserStep {
                     String s = atStr.toString() + c;
                     atStr.setLength(0);
                     styleMode = StyleMode.SIMPLE;
-                    state.applyPush(new PlainParserStep(s, spreadLines, false, ws, state, EXIT_ON_CLOSE_ACCOLADES));
+                    state.applyPush(new PlainParserStep(s, /*spreadLines*/true, false, ws, state, EXIT_ON_CLOSE_ACCOLADES));
                     atPresentEnded = false;
                 }
             } else if ((styleMode == StyleMode.SIMPLE || styleMode == StyleMode.COLON) && c == endOf(start.charAt(0))) {
@@ -148,22 +152,30 @@ public class StyledParserStep extends ParserStep {
             } else if (end.isEmpty()) {
                 if (styleMode == StyleMode.EMBEDDED && c == '}') {
                     end.append(c);
-                }else if (styleMode != StyleMode.EMBEDDED && c == '#') {
-                    end.append(c);
-                }else if (styleMode == StyleMode.EMBEDDED && c == '#') {
-                    state.applyPush(new StyledParserStep(c, spreadLines, false, ws));
+                }else if (c == '#') {
+                    if(styleMode == StyleMode.EMBEDDED){
+                        if(wasSharp){
+                            wasSharp=false;
+                            state.applyPush(new StyledParserStep("##",lineStart, ws, state));
+                        }else{
+                            wasSharp=true;
+                        }
+                    }else{
+                        end.append(c);
+                    }
+//                    state.applyPush(new StyledParserStep(c, spreadLines, false, ws));
                 } else {
-                    state.applyPush(new PlainParserStep(c,spreadLines, lineStart, ws, state, EXIT_ON_CLOSE_ACCOLADES));
+                    state.applyPush(new PlainParserStep(c,lineStart, ws, state, EXIT_ON_CLOSE_ACCOLADES));
                 }
             } else if (end.charAt(0) == '}' && styleMode == StyleMode.EMBEDDED) {
                 String y = end.readAll();
-                appendChild(new PlainParserStep(y, spreadLines, false, ws, state, null));
+                appendChild(new PlainParserStep(y, /*spreadLines*/true, false, ws, state, null));
             } else {
                 String y = end.readAll();
                 if (y.length() > 1) {
-                    state.applyPush(new StyledParserStep(y, spreadLines, lineStart, ws));
+                    state.applyPush(new StyledParserStep(y, lineStart, ws,state));
                 } else {
-                    state.applyPush(new PlainParserStep(y, spreadLines, lineStart, ws, state,
+                    state.applyPush(new PlainParserStep(y, /*spreadLines*/true, lineStart, ws, state,
                             styleMode == StyleMode.EMBEDDED ? EXIT_ON_CLOSE_ACCOLADES : null
                     ));
                 }
@@ -178,16 +190,20 @@ public class StyledParserStep extends ParserStep {
 
     @Override
     public NutsTextNode toNode() {
-        DefaultNutsTextNodeFactory factory0 = (DefaultNutsTextNodeFactory) ws.formats().text().factory();
+        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
         String start = this.start.toString();
         String end = this.end.toString();
         List<NutsTextNodeStyle> all = new ArrayList<>();
+        if(wasSharp){
+            wasSharp=false;
+            children.add(new PlainParserStep("#",false,false,ws,state,null));
+        }
         if (styleMode == StyleMode.COLON) {
             if (!parsedAt) {
                 parsedAt = true;
                 NutsTextNodeStyle[] parsedStyles = parseHelper.parse(atStr.toString());
                 if (parsedStyles == null) {
-                    atInvalid = ws.formats().text().factory().plain(atStr.toString());
+                    atInvalid = ws.formats().text().plain(atStr.toString());
                 } else {
                     atVals.addAll(Arrays.asList(parsedStyles));
                 }
@@ -212,10 +228,10 @@ public class StyledParserStep extends ParserStep {
             for (ParserStep a : children) {
                 allChildren.add(a.toNode());
             }
-            child = ws.formats().text().factory().list(allChildren.toArray(new NutsTextNode[0]));
+            child = ws.formats().text().list(allChildren.toArray(new NutsTextNode[0]));
         }
         if (atInvalid != null) {
-            child = ws.formats().text().factory().list(atInvalid, child);
+            child = ws.formats().text().list(atInvalid, child);
         }
         if (all.isEmpty()) {
             all.add(NutsTextNodeStyle.primary(1));

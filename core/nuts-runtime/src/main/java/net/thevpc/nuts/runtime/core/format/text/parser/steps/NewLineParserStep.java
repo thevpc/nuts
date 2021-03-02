@@ -4,7 +4,7 @@ import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsTextNodeStyle;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextNodeFactory;
+import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
@@ -26,9 +26,9 @@ public class NewLineParserStep extends ParserStep {
             start.append(c);
         }else if(c=='#'){
             state.applyAppendSibling(new PlainParserStep(start.toString(),state.isSpreadLine(),false,ws,state,null));
-            state.applyDropReplace(new StyledParserStep(c,state.isSpreadLine(),true,ws));
+            state.applyDropReplace(new StyledParserStep(c,true,ws,state));
         }else{
-            state.applyAppendSibling(new PlainParserStep('\n',state.isSpreadLine(),false,ws,state,null));
+            state.applyAppendSibling(new PlainParserStep('\n',false,ws,state,null));
             state.applyDrop();
             state.applyStart(c,state.isSpreadLine(),true);
         }
@@ -41,7 +41,7 @@ public class NewLineParserStep extends ParserStep {
 
     @Override
     public NutsTextNode toNode() {
-        DefaultNutsTextNodeFactory factory0 = (DefaultNutsTextNodeFactory) ws.formats().text().factory();
+        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
         return factory0.plain(start.toString());
     }
 

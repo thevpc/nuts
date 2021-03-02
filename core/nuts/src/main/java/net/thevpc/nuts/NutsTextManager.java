@@ -5,12 +5,16 @@ import java.util.Collection;
 /**
  * @category Format
  */
-public interface NutsTextNodeFactory {
-    NutsTextNodeFactory setSession(NutsSession session);
+public interface NutsTextManager {
+
+    NutsTextManager setSession(NutsSession session);
 
     NutsSession getSession();
 
     NutsTextNode blank();
+
+    NutsTextNodeBuilder builder();
+
     NutsTextNode nodeFor(Object t);
 
     NutsTextNode plain(String t);
@@ -26,11 +30,17 @@ public interface NutsTextNodeFactory {
     NutsTextNode styled(NutsTextNode other, NutsTextNodeStyle... decorations);
 
     NutsTextNode command(String command, String args);
+
     NutsTextNode command(String command);
+
     NutsTextNode code(String lang, String text);
 
     NutsTitleNumberSequence createTitleNumberSequence();
 
     NutsTitleNumberSequence createTitleNumberSequence(String pattern);
+
+    public NutsTextNode parse(String t);
+
+    public NutsTextNodeParser parser();
 
 }

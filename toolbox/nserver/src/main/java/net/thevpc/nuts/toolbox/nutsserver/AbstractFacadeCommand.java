@@ -31,7 +31,7 @@ import net.thevpc.common.strings.StringUtils;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 
-import net.thevpc.common.util.ListValueMap;
+import net.thevpc.common.collections.ListValueMap;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspaceSecurityManager;
 

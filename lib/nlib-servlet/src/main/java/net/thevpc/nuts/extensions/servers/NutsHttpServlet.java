@@ -25,8 +25,8 @@
 */
 package net.thevpc.nuts.extensions.servers;
 
-import net.thevpc.common.util.Collections2;
-import net.thevpc.common.util.ListValueMap;
+import net.thevpc.common.collections.Collections2;
+import net.thevpc.common.collections.ListValueMap;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.NutsOpenMode;

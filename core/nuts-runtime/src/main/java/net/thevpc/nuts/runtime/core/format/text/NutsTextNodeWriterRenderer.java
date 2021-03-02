@@ -1,14 +1,12 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeCode;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeCommand;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeStyled;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeTitle;
 import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiUnixTermPrintRenderer;
 import net.thevpc.nuts.runtime.core.format.text.renderer.StyleRenderer;
 
-import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
@@ -106,8 +104,8 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             case PLAIN: {
                 NutsTextNodePlain p = (NutsTextNodePlain) node;
                 writeRaw(AnsiEscapeCommands.list(formats), p.getText(), ctx.isFiltered());
-//        }else if (node instanceof TextNodeEscaped) {
-//            TextNodeEscaped p = (TextNodeEscaped) node;
+//        }else if (text instanceof TextNodeEscaped) {
+//            TextNodeEscaped p = (TextNodeEscaped) text;
 //            writeRaw(AnsiEscapeCommands.list(formats), p.getValue(), ctx.isFiltered());
                 break;
             }
@@ -120,34 +118,33 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             }
             case STYLED: {
                 DefaultNutsTextNodeStyled s = (DefaultNutsTextNodeStyled) node;
-                NutsTextNodeFactory factory0 = ws.formats().text().factory();
                 NutsTextNodeStyle style = s.getStyle();
-                NutsTextNodeStyle[] format = ws.formats().text().getTheme().toBasicStyles(style);
+                NutsTextNodeStyle[] format = ws.formats().getTheme().toBasicStyles(style);
                 AnsiEscapeCommand[] s2 = _appendFormats(formats, format);
                 writeNode(s2, s.getChild(), ctx);
                 break;
             }
             case TITLE: {
                 DefaultNutsTextNodeTitle s = (DefaultNutsTextNodeTitle) node;
-                DefaultNutsTextNodeFactory factory0 = (DefaultNutsTextNodeFactory) ws.formats().text().factory();
-                AnsiEscapeCommand[] s2 = _appendFormats(formats, ws.formats().text().getTheme().toBasicStyles(NutsTextNodeStyle.title(s.getLevel())));
+                DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
+                AnsiEscapeCommand[] s2 = _appendFormats(formats, ws.formats().getTheme().toBasicStyles(NutsTextNodeStyle.title(s.getLevel())));
                 if (ctx.isTitleNumberEnabled()) {
                     NutsTitleNumberSequence seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
-                        seq = ws.formats().text().factory().createTitleNumberSequence();
+                        seq = ws.formats().text().createTitleNumberSequence();
                         ctx.setTitleNumberSequence(seq);
                     }
                     NutsTitleNumberSequence a = seq.newLevel(s.getLevel());
                     NutsTextNode sWithTitle = factory0.list(
-                            ws.formats().text().factory().plain(a.toString() + " "),
+                            ws.formats().text().plain(a.toString() + " "),
                             s.getChild()
                     );
                     writeNode(s2, sWithTitle, ctx);
                 } else {
                     writeNode(s2, s.getChild(), ctx);
                 }
-//        } else if (node instanceof TextNodeUnStyled) {
-//            TextNodeUnStyled s = (TextNodeUnStyled) node;
+//        } else if (text instanceof TextNodeUnStyled) {
+//            TextNodeUnStyled s = (TextNodeUnStyled) text;
 //            writeNode(formats, new NutsTextNodePlain(s.getStart()), ctx);
 //            writeNode(formats, s.getChild(), ctx);
 //            writeNode(formats, new NutsTextNodePlain(s.getEnd()), ctx);
@@ -166,11 +163,11 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             }
             case LINK: {
                 //ignore!!
-                DefaultNutsTextNodeFactory factory0 = (DefaultNutsTextNodeFactory) ws.formats().text().factory();
+                DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
                 writeNode(
                         formats,
                         factory0.createStyled(
-                                ws.formats().text().factory().plain(
+                                ws.formats().text().plain(
                                         ((NutsTextNodeLink) node).getValue()
                                 ),
                                 NutsTextNodeStyle.underlined(),

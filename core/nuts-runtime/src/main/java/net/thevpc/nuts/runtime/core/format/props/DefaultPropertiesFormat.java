@@ -187,7 +187,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (javaProps) {
             CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w, sort);
         } else {
-            printMap(out, getWorkspace().formats().text().factory().blank(), mm);
+            printMap(out, getWorkspace().formats().text().blank(), mm);
         }
     }
 
@@ -244,14 +244,14 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     }
 
     private void printKeyValue(PrintStream out, NutsString prefix, int len, String fancySep, NutsString key, NutsString value) {
-        NutsTextFormatManager txt = getWorkspace().formats().text();
+        NutsFormatManager txt = getWorkspace().formats();
         if (prefix == null) {
-            prefix = txt.factory().plain("");
+            prefix = txt.text().plain("");
         }
         NutsString formattedKey = compact ? key :
-        txt.builder().append(key).append(CoreStringUtils.fillString(' ', len - key.textLength()));
+        txt.text().builder().append(key).append(CoreStringUtils.fillString(' ', len - key.textLength()));
         if (fancySep != null) {
-            NutsString cc = compact ? key : txt.factory().plain(CoreStringUtils.alignLeft("", len+3));
+            NutsString cc = compact ? key : txt.text().plain(CoreStringUtils.alignLeft("", len+3));
             String[] split = value.toString().split(fancySep);
             if (split.length == 0) {
                 out.print(prefix);
@@ -284,7 +284,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             if(prefix.isEmpty() || prefix.toString().endsWith("#")){
                 out.print("ø");
             }
-            out.printf("%s",txt.factory().styled(formattedKey,NutsTextNodeStyle.primary(3)));
+            out.printf("%s",txt.text().styled(formattedKey,NutsTextNodeStyle.primary(3)));
             if(separator.isEmpty() || separator.startsWith("#")){
                 out.print("ø");
             }
@@ -297,7 +297,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (escapeText) {
             return CoreCommonUtils.stringValueFormatted(o, escapeText,getValidSession());
         } else {
-            return getWorkspace().formats().text().factory().plain(String.valueOf(o));
+            return getWorkspace().formats().text().plain(String.valueOf(o));
         }
     }
 

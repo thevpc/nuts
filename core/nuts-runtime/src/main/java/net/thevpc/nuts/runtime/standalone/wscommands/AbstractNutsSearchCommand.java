@@ -725,6 +725,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 }
                 return true;
             }
+            case "--lib":
             case "--libs": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
@@ -732,6 +733,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 }
                 return true;
             }
+            case "--app":
             case "--apps": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
@@ -739,6 +741,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 }
                 return true;
             }
+            case "--companion":
             case "--companions": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
@@ -746,6 +749,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 }
                 return true;
             }
+            case "--extension":
             case "--extensions": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
@@ -767,6 +771,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 }
                 return true;
             }
+            case "--nuts-app":
             case "--nuts-apps": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
@@ -824,16 +829,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 return true;
             }
             case "--deployed": {
-                cmdLine.skip();
+                NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
-                    this.setInstallStatus(ws.filters().installStatus().byDeployed());
-                }
-                return true;
-            }
-            case "--not-installed": {
-                cmdLine.skip();
-                if (enabled) {
-                    this.setInstallStatus(ws.filters().installStatus().byNotInstalled());
+                    this.setInstallStatus(ws.filters().installStatus().byDeployed(b.getBooleanValue()));
                 }
                 return true;
             }
@@ -841,9 +839,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--installed": {
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
-                    this.setInstallStatus(b.getBooleanValue()
-                            ? ws.filters().installStatus().byInstalled()
-                            : ws.filters().installStatus().byNotInstalled()
+                    this.setInstallStatus(
+                            ws.filters().installStatus().byInstalled(b.getBooleanValue())
                     );
                 }
                 return true;
@@ -851,22 +848,14 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--required": {
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
-                    if (b.getBooleanValue()) {
-                        this.setInstallStatus(ws.filters().installStatus().byRequired());
-                    } else {
-                        this.setInstallStatus(ws.filters().installStatus().byNotRequired());
-                    }
+                    this.setInstallStatus(ws.filters().installStatus().byRequired(b.getBooleanValue()));
                 }
                 return true;
             }
             case "--obsolete": {
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
-                    if (b.getBooleanValue()) {
-                        this.setInstallStatus(ws.filters().installStatus().byObsolete());
-                    } else {
-                        this.setInstallStatus(ws.filters().installStatus().byNotObsolete());
-                    }
+                    this.setInstallStatus(ws.filters().installStatus().byObsolete(b.getBooleanValue()));
                 }
                 return true;
             }

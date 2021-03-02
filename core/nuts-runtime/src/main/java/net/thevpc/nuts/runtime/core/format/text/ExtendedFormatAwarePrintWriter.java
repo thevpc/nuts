@@ -88,7 +88,7 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
     @Override
     public ExtendedFormatAwarePrintWriter format(Locale l, String format, Object... args) {
         if(l==null){
-            print(session.getWorkspace().formats().text().factory().setSession(session).nodeFor(
+            print(session.getWorkspace().formats().text().setSession(session).nodeFor(
                     NutsMessage.cstyle(
                             format, args
                     )
@@ -96,7 +96,7 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
         }else{
             NutsSession s2 = this.session.copy().setLocale(l.toString());
             print(
-                    s2.getWorkspace().formats().text().factory().setSession(s2).nodeFor(
+                    s2.getWorkspace().formats().text().setSession(s2).nodeFor(
                             NutsMessage.cstyle(
                                     format, args
                             )

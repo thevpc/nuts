@@ -56,7 +56,7 @@ public class RootParserStep extends ParserStep {
             }
             all.add(a.toNode());
         }
-        return ws.formats().text().factory().list(all);
+        return ws.formats().text().list(all);
     }
 
     @Override

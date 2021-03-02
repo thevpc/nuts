@@ -163,7 +163,7 @@ public class AnyNixNdi extends BaseSystemNdi {
         if (saveFile(ndiConfigFile, goodNdiRc.toString(), force)) {
             updatedNames.add(".nadmin-bashrc");
         }
-        NutsTextNodeFactory factory = context.getWorkspace().formats().text().factory();
+        NutsTextManager factory = context.getWorkspace().formats().text();
 
         if (!updatedNames.isEmpty() && session.isTrace()) {
             if (!updatedNames.isEmpty()) {

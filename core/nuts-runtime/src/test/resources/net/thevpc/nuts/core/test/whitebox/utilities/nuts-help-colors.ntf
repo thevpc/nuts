@@ -1,8 +1,8 @@
 #!include</net/thevpc/nuts/runtime/includes/standard-header.ntf>
 
 
-```sh nft``` aka ##nuts text format## is a markdown like text format enabling colored text styles.
-```sh nft``` is the standard format used in the standard output and standard error. It is as
+```sh ntf``` aka ##nuts text format## is a markdown like text format enabling colored text styles.
+```sh ntf``` is the standard format used in the standard output and standard error. It is as
  well the standard format used in help manuals.
 
 type (```sh nuts help --colors```) to display this help

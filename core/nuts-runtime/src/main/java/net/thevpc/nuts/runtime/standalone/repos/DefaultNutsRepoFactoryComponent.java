@@ -34,6 +34,7 @@ import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
 
 import java.io.InputStream;
 import java.util.Map;
+import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
 
 /**
  * Created by vpc on 1/15/17.
@@ -109,10 +110,10 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
     }
 
     @Override
-    public NutsAddRepositoryOptions[] getDefaultRepositories(NutsWorkspace workspace) {
-        if (!workspace.config().isGlobal()) {
+    public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
+        if (!session.getWorkspace().config().isGlobal()) {
             return new NutsAddRepositoryOptions[]{
-                    RepoDefinitionResolver.createRepositoryOptions("system",true,workspace)
+                    RepoDefinitionResolver.createRepositoryOptions(NutsRepositorySelector.parseOne("system"),true,session)
             };
         }
         return new NutsAddRepositoryOptions[0];

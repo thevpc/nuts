@@ -367,7 +367,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         if (vv.length == 0 || vv.length == 1) {
             return null;
         }
-        return Arrays.stream(vv).map(x->getWorkspace().formats().text().factory().nodeFor(x)).toArray(NutsString[]::new);
+        return Arrays.stream(vv).map(x->getWorkspace().formats().text().nodeFor(x)).toArray(NutsString[]::new);
     }
 
     private String getMultilineSeparator(NutsString key) {

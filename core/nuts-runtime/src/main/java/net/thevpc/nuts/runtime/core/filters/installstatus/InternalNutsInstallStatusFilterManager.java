@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.core.filters.InternalNutsTypedFilters;
 import java.util.List;
 
 public class InternalNutsInstallStatusFilterManager extends InternalNutsTypedFilters<NutsInstallStatusFilter> implements NutsInstallStatusFilterManager {
+
     NutsInstallStatusFilter ANY;
     NutsInstallStatusFilter NEVER;
 
@@ -29,17 +30,24 @@ public class InternalNutsInstallStatusFilterManager extends InternalNutsTypedFil
 
     public InternalNutsInstallStatusFilterManager(DefaultNutsFilterManager defaultNutsFilterManager) {
         super(defaultNutsFilterManager, NutsInstallStatusFilter.class);
-        ANY = new NutsInstallStatusFilter2(ws,0, 0, 0, 0);
-        INSTALLED = new NutsInstallStatusFilter2(ws,1, 0, 0, 0);
-        NOT_INSTALLED = new NutsInstallStatusFilter2(ws,-1, 0, 0, 0);
-        REQUIRED = new NutsInstallStatusFilter2(ws,0, 1, 0, 0);
-        NOT_REQUIRED = new NutsInstallStatusFilter2(ws,0, -1, 0, 0);
-        OBSOLETE = new NutsInstallStatusFilter2(ws,0, 0, 1, 0);
-        NOT_OBSOLETE = new NutsInstallStatusFilter2(ws,0, 0, -1, 0);
-        DEFAULT_VALUE = new NutsInstallStatusFilter2(ws,0, 0, 0, 1);
-        NOT_DEFAULT_VALUE = new NutsInstallStatusFilter2(ws,0, 0, 0, -1);
+        ANY = new NutsInstallStatusFilter2(ws, 0, 0, 0, 0);
+        INSTALLED = new NutsInstallStatusFilter2(ws, 1, 0, 0, 0);
+        NOT_INSTALLED = new NutsInstallStatusFilter2(ws, -1, 0, 0, 0);
+        REQUIRED = new NutsInstallStatusFilter2(ws, 0, 1, 0, 0);
+        NOT_REQUIRED = new NutsInstallStatusFilter2(ws, 0, -1, 0, 0);
+        OBSOLETE = new NutsInstallStatusFilter2(ws, 0, 0, 1, 0);
+        NOT_OBSOLETE = new NutsInstallStatusFilter2(ws, 0, 0, -1, 0);
+        DEFAULT_VALUE = new NutsInstallStatusFilter2(ws, 0, 0, 0, 1);
+        NOT_DEFAULT_VALUE = new NutsInstallStatusFilter2(ws, 0, 0, 0, -1);
         NEVER = new NutsInstallStatusFilterFalse(ws);
     }
+
+    @Override
+    public NutsInstallStatusFilter not(NutsFilter other) {
+        NutsInstallStatusFilter r = other.to(NutsInstallStatusFilter.class);
+        return new NutsInstallStatusFilterNone(ws, r);
+    }
+    
 
     @Override
     public NutsInstallStatusFilter always() {
@@ -110,58 +118,34 @@ public class InternalNutsInstallStatusFilterManager extends InternalNutsTypedFil
     }
 
     @Override
-    public NutsInstallStatusFilter byInstalled() {
-        return INSTALLED;
+    public NutsInstallStatusFilter byInstalled(boolean value) {
+        return value ? INSTALLED : NOT_INSTALLED;
     }
 
     @Override
-    public NutsInstallStatusFilter byNotInstalled() {
-        return NOT_INSTALLED;
+    public NutsInstallStatusFilter byRequired(boolean value) {
+        return value ? REQUIRED : NOT_REQUIRED;
     }
 
     @Override
-    public NutsInstallStatusFilter byRequired() {
-        return REQUIRED;
+    public NutsInstallStatusFilter byDefaultValue(boolean value) {
+        return value ? DEFAULT_VALUE : NOT_DEFAULT_VALUE;
     }
 
     @Override
-    public NutsInstallStatusFilter byNotRequired() {
-        return NOT_REQUIRED;
+    public NutsInstallStatusFilter byObsolete(boolean value) {
+        return value ? OBSOLETE : NOT_OBSOLETE;
     }
 
     @Override
-    public NutsInstallStatusFilter byDefaultValue() {
-        return DEFAULT_VALUE;
-    }
-
-    @Override
-    public NutsInstallStatusFilter byNotDefaultValue() {
-        return NOT_DEFAULT_VALUE;
-    }
-
-    @Override
-    public NutsInstallStatusFilter byObsolete() {
-        return OBSOLETE;
-    }
-
-    @Override
-    public NutsInstallStatusFilter byNotObsolete() {
-        return NOT_OBSOLETE;
-    }
-
-    @Override
-    public NutsInstallStatusFilter byDeployed() {
+    public NutsInstallStatusFilter byDeployed(boolean value) {
         if (DEPLOYED == null) {
             DEPLOYED = INSTALLED.or(REQUIRED).to(NutsInstallStatusFilter.class);
         }
-        return DEPLOYED;
+        if (NOT_DEPLOYED == null) {
+            NOT_DEPLOYED = DEPLOYED.neg().to(NutsInstallStatusFilter.class);
+        }
+        return value ? DEPLOYED : NOT_DEPLOYED;
     }
 
-    @Override
-    public NutsInstallStatusFilter byNotDeployed() {
-        if (NOT_DEPLOYED == null) {
-            NOT_DEPLOYED = byDeployed().neg().to(NutsInstallStatusFilter.class);
-        }
-        return NOT_DEPLOYED;
-    }
 }

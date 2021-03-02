@@ -7,9 +7,9 @@ Nuts commands share a set of options that are automatically supported and handle
        ```sh --ask```        : all confirmations will be prompted (default)
 
        ```sh --yes | --y```
-      |```sh --force```      : all confirmations are resolved as ```kw yes```. No prompt.
+       ```sh | --force```    : all confirmations are resolved as ```kw yes```. No prompt.
 
-       ```sh --no | --n``` : all confirmations are resolved as ```kw no``` . No prompt.
+       ```sh --no | --n```   : all confirmations are resolved as ```kw no``` . No prompt.
 
        ```sh --error```      : all confirmations will throw error and program exist.
        

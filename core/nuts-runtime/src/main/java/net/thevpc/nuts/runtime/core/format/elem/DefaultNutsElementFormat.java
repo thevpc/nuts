@@ -666,7 +666,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 if(getWorkspace().io().term().isFormatted(out)){
                     ByteArrayPrintStream bos=new ByteArrayPrintStream();
                     getGson(compact).toJson(value, bos);
-                    out.print(getWorkspace().formats().text().factory().code("json",bos.toString()));
+                    out.print(getWorkspace().formats().text().code("json",bos.toString()));
                 }else {
                     getGson(compact).toJson(value, out);
                 }
@@ -682,7 +682,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                     } catch (TransformerException ex) {
                         throw new NutsException(getWorkspace(), CoreStringUtils.exceptionToString(ex), ex);
                     }
-                    out.print(getWorkspace().formats().text().factory().code("xml", bos.toString()));
+                    out.print(getWorkspace().formats().text().code("xml", bos.toString()));
                 }else {
                     try {
                         NutsXmlUtils.writeDocument(doc, new StreamResult(out), compact, true);

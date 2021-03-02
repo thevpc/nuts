@@ -3,11 +3,8 @@ package net.thevpc.nuts.runtime.core.filters.dependency;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.DefaultNutsFilterManager;
 import net.thevpc.nuts.runtime.core.filters.InternalNutsTypedFilters;
-import net.thevpc.nuts.runtime.core.filters.dependency.*;
-import net.thevpc.nuts.runtime.core.filters.installstatus.NutsInstallStatusFilterParser;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;

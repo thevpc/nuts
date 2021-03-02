@@ -437,8 +437,8 @@ public class NMysqlMain extends NutsApplication {
         if(expectedRemote && forRemote_server==null){
             commandLine.required("required --server option");
         }
-        NutsTextNodeFactory factory = service.getContext()
-                .getWorkspace().formats().text().factory();
+        NutsTextManager factory = service.getContext()
+                .getWorkspace().formats().text();
         if (commandLine.isExecMode()) {
             if(!expectedRemote) {
                 LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.getConfigName(), add?NutsOpenMode.OPEN_OR_CREATE:NutsOpenMode.OPEN_OR_ERROR);
@@ -789,10 +789,10 @@ public class NMysqlMain extends NutsApplication {
     }
 
     public Object toObject(String dbName, String confName, LocalMysqlDatabaseConfig config,boolean describe,boolean plain,NutsApplicationContext context) {
-        NutsTextFormatManager text = context.getSession().getWorkspace().formats().text();
+        NutsFormatManager text = context.getSession().getWorkspace().formats();
         if(!describe){
             if(plain){
-                return text.builder()
+                return text.text().builder()
                         .append(" [local ] ",NutsTextNodeStyle.primary(4))
                         .append(dbName).append("@").append(confName,NutsTextNodeStyle.primary(4))
                         ;
@@ -801,7 +801,7 @@ public class NMysqlMain extends NutsApplication {
             }
         }else{
             if(plain){
-                return text.builder()
+                return text.text().builder()
                         .append(" [local ] ",NutsTextNodeStyle.primary(4))
                         .append(dbName).append("@").append(confName,NutsTextNodeStyle.primary(4))
                         .append(" db=").append(config.getDatabaseName())
@@ -813,10 +813,10 @@ public class NMysqlMain extends NutsApplication {
     }
 
     public Object toObject(String dbName, String confName, RemoteMysqlDatabaseConfig config,boolean describe,boolean plain,NutsApplicationContext context) {
-        NutsTextFormatManager text = context.getSession().getWorkspace().formats().text();
+        NutsFormatManager text = context.getSession().getWorkspace().formats();
         if(!describe){
             if(plain){
-                return text.builder()
+                return text.text().builder()
                         .append(" [remote] ",NutsTextNodeStyle.primary(4))
                         .append(dbName).append("@").append(confName,NutsTextNodeStyle.primary(4))
                         ;
@@ -825,7 +825,7 @@ public class NMysqlMain extends NutsApplication {
             }
         }else{
             if(plain){
-                return text.builder()
+                return text.text().builder()
                         .append(" [remote] ",NutsTextNodeStyle.primary(4))
                         .append(dbName).append("@").append(confName,NutsTextNodeStyle.primary(4))
                         .append(" local=").append(config.getLocalName())
@@ -915,7 +915,6 @@ public class NMysqlMain extends NutsApplication {
         } else {
             switch (session.getOutputFormat()) {
                 case PLAIN: {
-                    NutsTextFormatManager text = session.getWorkspace().formats().text();
                     for (LocaleOrRemote cnf : result) {
                         if(cnf.local!=null) {
                             for (Map.Entry<String, LocalMysqlDatabaseConfig> db : cnf.local.getDatabases().entrySet()) {

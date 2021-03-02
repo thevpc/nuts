@@ -11,20 +11,19 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.standalone.archetypes;
 
+import java.util.HashMap;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.repos.RepoDefinitionResolver;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManager;
@@ -32,6 +31,8 @@ import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
+import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
 
 /**
  * Created by vpc on 1/23/17.
@@ -53,32 +54,39 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
     public void initialize(NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) ws.config();
-        ws.repos().addRepository(NutsConstants.Names.DEFAULT_REPOSITORY_NAME,session);
-        LinkedHashSet<String> br = new LinkedHashSet<>(rm.resolveBootRepositories());
         LinkedHashMap<String, NutsAddRepositoryOptions> def = new LinkedHashMap<>();
+        Map<String, String> defaults = new HashMap<>();
         for (NutsAddRepositoryOptions d : rm.getDefaultRepositories(session)) {
-            if(d.getConfig()!=null) {
+            if (d.getConfig() != null) {
                 def.put(ws.io().expandPath(d.getConfig().getLocation(), null), d.setSession(session));
-            }else {
+            } else {
                 def.put(ws.io().expandPath(d.getLocation(), null), d.setSession(session));
             }
+            defaults.put(d.getName(), null);
         }
-        for (String s : br) {
-            String sloc = ws.io().expandPath(RepoDefinitionResolver.createRepositoryOptions(s,true,ws)
-                    .getConfig().getLocation(),null);
+        defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
+        NutsRepositorySelector[] br = rm.resolveBootRepositoriesList().resolveSelectors(defaults);
+
+        for (NutsRepositorySelector s : br) {
+            NutsAddRepositoryOptions oo = RepoDefinitionResolver.createRepositoryOptions(s, false, session);
+            oo.setSession(session);
+            String sloc = ws.io().expandPath(oo
+                    .getConfig().getLocation(), null);
             if (def.containsKey(sloc)) {
                 ws.repos().addRepository(def.get(sloc));
                 def.remove(sloc);
             } else {
-                ws.repos().addRepository(s,session);
+                ws.repos().addRepository(oo.setTemporary(
+                        !defaults.containsKey(oo.getName())
+                ));
             }
         }
         for (NutsAddRepositoryOptions d : def.values()) {
             ws.repos().addRepository(d);
         }
         ws.imports().add(new String[]{
-                "net.thevpc.nuts.toolbox",
-                "net.thevpc"
+            "net.thevpc.nuts.toolbox",
+            "net.thevpc"
         }, new NutsAddOptions().setSession(session));
 
         ws.security().updateUser(NutsConstants.Users.ANONYMOUS, session)

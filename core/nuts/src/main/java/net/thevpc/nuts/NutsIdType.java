@@ -66,5 +66,21 @@ public enum NutsIdType {
     /**
      * the id is none of the previous types
      */
-    REGULAR
+    REGULAR;
+    /**
+     * lower-cased identifier for the enum entry
+     */
+    private final String id;
+
+    NutsIdType() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
+    }
 }

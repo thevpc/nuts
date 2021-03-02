@@ -26,7 +26,6 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.spi.NutsComponent;
 
 /**
  * Created by vpc on 1/23/17.

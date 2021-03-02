@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
-import net.thevpc.common.util.ListValueMap;
+import net.thevpc.common.collections.ListValueMap;
 import net.thevpc.nuts.NutsDescriptor;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;

@@ -44,7 +44,7 @@ public class SearchTraceHelper {
         if (!s.isPlainOut()) {
             return false;
         }
-        if (NutsWorkspaceUtils.parseProgressOptions(s).contains("false")) {
+        if (s.isBot() || NutsWorkspaceUtils.parseProgressOptions(s).contains("false")) {
             return false;
         }
         return true;

@@ -26,9 +26,6 @@
  */
 package net.thevpc.nuts;
 
-import java.util.Set;
-import java.util.function.Predicate;
-
 /**
  * @category Base
  */

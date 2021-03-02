@@ -51,7 +51,7 @@ public class Test03_CreateLayoutLinuxTest {
                         "info"
                 ));
 
-        NutsId ndiId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled()).addId("nadmin").getResultIds().singleton();
+        NutsId ndiId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled(true)).addId("nadmin").getResultIds().singleton();
         Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
 
         Assertions.assertEquals(
@@ -101,7 +101,7 @@ public class Test03_CreateLayoutLinuxTest {
                 //            "--verbose",
                 "--yes", "--trace",
                 "info"));
-        NutsId ndiId = ws2.search().setInstallStatus(ws2.filters().installStatus().byInstalled()).addId("nadmin").getResultIds().singleton();
+        NutsId ndiId = ws2.search().setInstallStatus(ws2.filters().installStatus().byInstalled(true)).addId("nadmin").getResultIds().singleton();
         Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
 
         Assertions.assertEquals(
@@ -140,9 +140,9 @@ public class Test03_CreateLayoutLinuxTest {
         NutsWorkspace ws = Nuts.openWorkspace("--reset", "-b", "--debug", "--workspace", base.getPath(), "--standalone", "--yes", "info");
         NutsId nadminId=null;
         try {
-            nadminId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled()).addId("nadmin").getResultIds().singleton();
+            nadminId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled(true)).addId("nadmin").getResultIds().singleton();
         }catch (Exception ex){
-            nadminId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled()).addId("nadmin").getResultIds().singleton();
+            nadminId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled(true)).addId("nadmin").getResultIds().singleton();
         }
         Assertions.assertTrue(nadminId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
         String c = ws.locations().getStoreLocation(NutsStoreLocation.CONFIG);

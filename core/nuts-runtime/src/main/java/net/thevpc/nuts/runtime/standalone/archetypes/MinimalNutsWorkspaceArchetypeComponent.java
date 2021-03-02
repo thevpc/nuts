@@ -25,11 +25,13 @@
 */
 package net.thevpc.nuts.runtime.standalone.archetypes;
 
+import java.util.HashMap;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
 
-import java.util.LinkedHashSet;
+import java.util.Map;
+import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
 
 /**
  * Created by vpc on 1/23/17.
@@ -53,15 +55,12 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 
 
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) ws.config();
-        LinkedHashSet<String> br = new LinkedHashSet<>(rm.resolveBootRepositories());
-        for (String s : br) {
-            ws.repos().addRepository(s,session);
+        Map<String,String> defaults=new HashMap<>();
+        defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
+        NutsRepositorySelector[] br = rm.resolveBootRepositoriesList().resolveSelectors(defaults);
+        for (NutsRepositorySelector s : br) {
+            ws.repos().addRepository(s.toString(),session);
         }
-        if (br.isEmpty()) {
-            ws.repos().addRepository(NutsConstants.Names.DEFAULT_REPOSITORY_NAME,session);
-        }
-
-
         //simple rights for minimal utilization
         NutsUpdateUserCommand uu = ws.security().updateUser(NutsConstants.Users.ANONYMOUS, session);
 //        for (String right : NutsConstants.Rights.RIGHTS) {

@@ -4,27 +4,28 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsTextStyleGenerator;
 
 import java.io.ByteArrayOutputStream;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 
 public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
-    NutsTextFormatManager text1;
+
+    NutsFormatManager text1;
     private List<NutsTextNode> all = new ArrayList<>();
     private NutsWorkspace ws;
     private NutsTextNodeWriteConfiguration writeConfiguration;
     private NutsTextStyleGenerator styleGenerator;
 
     public DefaultNutsTextNodeBuilder(NutsWorkspace ws) {
-        text1 = ws.formats().text();
+        text1 = ws.formats();
         this.ws = ws;
     }
 
     @Override
     public NutsTextStyleGenerator getStyleGenerator() {
-        if(styleGenerator==null){
-            styleGenerator=new DefaultNutsTextStyleGenerator();
+        if (styleGenerator == null) {
+            styleGenerator = new DefaultNutsTextStyleGenerator();
         }
         return styleGenerator;
     }
@@ -48,22 +49,21 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
 
     @Override
     public NutsTextNodeBuilder appendCommand(String command, String args) {
-        all.add(text1.factory().command(command, args));
+        all.add(text1.text().command(command, args));
         return this;
     }
 
     @Override
     public NutsTextNodeBuilder appendCode(String lang, String text) {
-        all.add(text1.factory().code(lang, text));
+        all.add(text1.text().code(lang, text));
         return this;
     }
 
 //
 //    @Override
 //    public NutsTextNodeBuilder append(String text, NutsTextNodeStyle... styles) {
-//        return append(text1.factory().plain(text), styles);
+//        return append(text1.text().plain(text), styles);
 //    }
-
     @Override
     public NutsTextNodeBuilder appendHash(Object text) {
         return appendHash(text, text);
@@ -90,11 +90,11 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
 
     @Override
     public NutsTextNodeBuilder append(Object text, NutsTextNodeStyle... styles) {
-        if(text!=null) {
+        if (text != null) {
             if (styles.length == 0) {
-                all.add(ws.formats().text().factory().nodeFor(text));
+                all.add(ws.formats().text().nodeFor(text));
             } else {
-                all.add(text1.factory().styled(ws.formats().text().factory().nodeFor(text), styles));
+                all.add(text1.text().styled(ws.formats().text().nodeFor(text), styles));
             }
         }
         return this;
@@ -103,7 +103,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
     @Override
     public NutsTextNodeBuilder append(Object node) {
         if (node != null) {
-            return append(ws.formats().text().factory().nodeFor(node));
+            return append(ws.formats().text().nodeFor(node));
         }
         return this;
     }
@@ -141,7 +141,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
 //    @Override
 //    public NutsTextNodeBuilder append(NutsFormattable str) {
 //        if (str != null) {
-//            append(ws.formats().text().factory().nodeFor(str));
+//            append(ws.formats().text().nodeFor(str));
 //        }
 //        return this;
 //    }
@@ -168,7 +168,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
 
     @Override
     public NutsTextNode build() {
-        return text1.factory().list(all);
+        return text1.text().list(all);
     }
 
     @Override
@@ -177,11 +177,16 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
     }
 
     @Override
+    public NutsTextNodeParser parser() {
+        return new DefaultNutsTextNodeParser(ws);
+    }
+
+    @Override
     public NutsString immutable() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         NutsTextNodeWriterStringer ss = new NutsTextNodeWriterStringer(out, ws);
         ss.writeNode(build(), getConfiguration());
-        return new NutsImmutableString(ws,out.toString());
+        return new NutsImmutableString(ws, out.toString());
     }
 
     @Override

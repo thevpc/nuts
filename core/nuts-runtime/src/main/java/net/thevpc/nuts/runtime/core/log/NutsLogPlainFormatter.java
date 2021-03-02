@@ -50,9 +50,8 @@ public class NutsLogPlainFormatter extends Formatter {
             }
             String msgStr = null;
             NutsFormatManager formats = wRecord.getWorkspace().formats();
-            NutsTextFormatManager text = formats.text();
             if (wRecord.isFormatted()) {
-                msgStr = (text.factory().setSession(wRecord.getSession()).nodeFor(
+                msgStr = (formats.text().setSession(wRecord.getSession()).nodeFor(
                         new NutsMessage(
                                 wRecord.getFormatStyle(),
                                 wRecord.getMessage(),
@@ -63,9 +62,9 @@ public class NutsLogPlainFormatter extends Formatter {
                 parameters2 = Arrays.copyOf(parameters2, parameters2.length);
                 for (int i = 0; i < parameters2.length; i++) {
                     if (parameters2[i] instanceof NutsString) {
-                        parameters2[i] = text.builder().append(parameters2[i].toString()).filteredText();
+                        parameters2[i] = formats.text().builder().append(parameters2[i].toString()).filteredText();
                     } else if (parameters2[i] instanceof NutsFormattable) {
-                        parameters2[i] = text.builder().append(
+                        parameters2[i] = formats.text().builder().append(
                                 ((NutsFormattable) parameters2[i]).formatter().setSession(wRecord.getSession()).format()
                         ).filteredText();
                     }

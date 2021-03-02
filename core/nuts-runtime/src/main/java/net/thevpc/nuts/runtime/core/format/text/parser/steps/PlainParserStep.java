@@ -11,17 +11,17 @@ public class PlainParserStep extends ParserStep {
 
     char last = '\0';
     private boolean wasEscape;
-    private boolean spreadLines;
+//    private boolean spreadLines;
     private boolean lineStart;
     private StringBuilder2 value = new StringBuilder2();
     private NutsWorkspace ws;
     private DefaultNutsTextNodeParser.State state;
     private IntPredicate exitCondition;
 
-    public PlainParserStep(char c, boolean spreadLines, boolean lineStart, NutsWorkspace ws, DefaultNutsTextNodeParser.State state,IntPredicate exitCondition) {
+    public PlainParserStep(char c, boolean lineStart, NutsWorkspace ws, DefaultNutsTextNodeParser.State state, IntPredicate exitCondition) {
         this.state = state;
         this.exitCondition = exitCondition;
-        this.spreadLines = spreadLines;
+//        this.spreadLines = spreadLines;
         this.ws = ws;
         this.lineStart = state.isLineStart() ;
         if (c == '\\') {
@@ -38,7 +38,7 @@ public class PlainParserStep extends ParserStep {
         this.exitCondition = exitCondition;
         state.setLineStart(s.charAt(s.length()-1)=='\n');
         this.ws = ws;
-        this.spreadLines = spreadLines;
+//        this.spreadLines = spreadLines;
         this.lineStart = lineStart;
         value.append(s, 0, s.length()-1);
         char c=s.charAt(s.length()-1);
@@ -84,10 +84,10 @@ public class PlainParserStep extends ParserStep {
                         if (oldLast == c) {
                             value.readLast();
                             if (value.length() == 0) {
-                                p.applyDropReplace(new StyledParserStep(c + "" + c, spreadLines, lineStart, ws));
+                                p.applyDropReplace(new StyledParserStep(c + "" + c,  lineStart, ws,state));
                                 return;
                             } else {
-                                p.applyPopReplace(new StyledParserStep(c + "" + c, spreadLines, lineStart, ws));
+                                p.applyPopReplace(new StyledParserStep(c + "" + c, lineStart, ws,state));
                                 return;
                             }
                         }
@@ -142,27 +142,27 @@ public class PlainParserStep extends ParserStep {
             }
             case '\n':
             case '\r': {
-                if (spreadLines) {
-                    if (wasEscape) {
-                        wasEscape = false;
-                    }
-                    value.append(c);
-                    p.applyPop();
-                    if (!spreadLines) {
-                        p.forceEnding();
-                    }
-                } else {
+//                if (spreadLines) {
+//                    if (wasEscape) {
+//                        wasEscape = false;
+//                    }
+//                    value.append(c);
+//                    p.applyPop();
+//                    if (!spreadLines) {
+//                        p.forceEnding();
+//                    }
+//                } else {
                     if (wasEscape) {
                         wasEscape = false;
                         value.append(c);
                         p.applyPop();
-                        if (!spreadLines) {
+//                        if (!spreadLines) {
                             p.forceEnding();
-                        }
+//                        }
                     } else {
                         p.applyPopReject(c);
                     }
-                }
+//                }
                 return;
             }
             case '\\': {
@@ -197,7 +197,7 @@ public class PlainParserStep extends ParserStep {
 
     @Override
     public NutsTextNode toNode() {
-        return ws.formats().text().factory().plain(value.toString());
+        return ws.formats().text().plain(value.toString());
     }
 
     @Override

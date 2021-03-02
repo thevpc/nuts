@@ -24,7 +24,7 @@ show workspace information and exit
 
 ##) EXAMPLES
 ```sh  nuts info --help```
-            shows this help and exit
+            show this help and exit
        
 ```sh  nuts info --json```
             show info in json format

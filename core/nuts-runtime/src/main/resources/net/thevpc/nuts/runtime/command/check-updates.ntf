@@ -22,7 +22,7 @@ check for updates
 
 ##) EXAMPLES
 ```sh  nuts check-updates --help```
-            shows this help and exit
+            show this help and exit
        
 ```sh  nuts check-updates```
             check updates for current workspace

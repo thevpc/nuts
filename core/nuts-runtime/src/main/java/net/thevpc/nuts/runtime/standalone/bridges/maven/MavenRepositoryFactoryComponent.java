@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
+import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
 
 /**
  * Created by vpc on 1/15/17.
@@ -46,10 +47,12 @@ import java.util.Map;
 public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryComponent {
 
     @Override
-    public NutsAddRepositoryOptions[] getDefaultRepositories(NutsWorkspace workspace) {
+    public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
         return new NutsAddRepositoryOptions[]{
-                RepoDefinitionResolver.createRepositoryOptions("maven-local", true, workspace),
-                RepoDefinitionResolver.createRepositoryOptions("maven-central", true, workspace)
+                RepoDefinitionResolver.createRepositoryOptions(NutsRepositorySelector.parseOne("maven-local")
+                        , true, session),
+                RepoDefinitionResolver.createRepositoryOptions(NutsRepositorySelector.parseOne("maven-central")
+                        , true, session)
         };
     }
 

@@ -53,4 +53,5 @@ public enum NutsDisplayProperty {
     LOG_FOLDER,
     CACHE_FOLDER,
     APPS_FOLDER,
+    LONG_STATUS,
 }

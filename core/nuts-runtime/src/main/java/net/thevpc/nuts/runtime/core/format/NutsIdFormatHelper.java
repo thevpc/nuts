@@ -3,26 +3,24 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.core.format;
 
 import java.time.Instant;
@@ -43,9 +41,10 @@ import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
  * @author thevpc
  */
 public class NutsIdFormatHelper {
+
     private NutsLogger LOG;
     NutsId id;
-    NutsInstallStatus installStatus=NutsInstallStatus.NONE;
+    NutsInstallStatus installStatus = NutsInstallStatus.NONE;
     Boolean executable = null;
     Boolean executableApp = null;
     boolean fetched = false;
@@ -109,7 +108,7 @@ public class NutsIdFormatHelper {
     }
 
     private NutsIdFormatHelper(NutsId id, NutsDescriptor desc, NutsDefinition def, NutsDependency dep, NutsSession session) {
-        LOG=session.getWorkspace().log().of(NutsIdFormatHelper.class);
+        LOG = session.getWorkspace().log().of(NutsIdFormatHelper.class);
         if (id == null) {
             if (def != null) {
                 id = def.getId();
@@ -135,7 +134,7 @@ public class NutsIdFormatHelper {
         Object[] oa = getMultiColumnRow(oo);
         String[] ss = new String[oa.length];
         for (int i = 0; i < oa.length; i++) {
-            ss[i]=String.valueOf(oa[i]);
+            ss[i] = String.valueOf(oa[i]);
         }
         return ss;
     }
@@ -160,13 +159,14 @@ public class NutsIdFormatHelper {
             session.getWorkspace().events().addWorkspaceListener(h2);
         }
         h = new FormatHelper(session);
-        session.getWorkspace().env().setProperty(FormatHelper.class.getName(), h,new NutsUpdateOptions(session));
+        session.getWorkspace().env().setProperty(FormatHelper.class.getName(), h, new NutsUpdateOptions(session));
         return h;
     }
 
     public static class FormatHelperResetListener implements NutsWorkspaceListener, NutsRepositoryListener {
+
         private void _onReset(NutsWorkspace ws) {
-            ws.env().setProperty(FormatHelper.class.getName(),null,new NutsUpdateOptions(ws.createSession()));
+            ws.env().setProperty(FormatHelper.class.getName(), null, new NutsUpdateOptions(ws.createSession()));
         }
 
         @Override
@@ -216,6 +216,7 @@ public class NutsIdFormatHelper {
     }
 
     public static class FormatHelper {
+
         NutsSession session;
 
         public FormatHelper(NutsSession session) {
@@ -292,8 +293,8 @@ public class NutsIdFormatHelper {
 
     public NutsString getSingleColumnRow(NutsFetchDisplayOptions oo) {
         NutsDisplayProperty[] a = oo.getDisplayProperties();
-        NutsTextFormatManager txt = session.getWorkspace().formats().text();
-        NutsTextNodeBuilder sb = txt.builder();
+        NutsFormatManager txt = session.getWorkspace().formats();
+        NutsTextNodeBuilder sb = txt.text().builder();
         for (int j = 0; j < a.length; j++) {
             NutsString s = buildMain(oo, a[j]);
             int z = 0;
@@ -315,25 +316,25 @@ public class NutsIdFormatHelper {
                     break;
                 }
             }
-            int len = txt.builder().append(s).textLength();
+            int len = txt.text().builder().append(s).textLength();
             if (j > 0) {
                 sb.append(' ');
             }
             sb.append(s);
-            if(len<z){
-                char[] c=new char[z-len];
-                Arrays.fill(c,' ');
+            if (len < z) {
+                char[] c = new char[z - len];
+                Arrays.fill(c, ' ');
                 sb.append(new String(c));
             }
-           // sb.append(s);
+            // sb.append(s);
         }
         return sb.immutable();
     }
 
     public NutsString buildMain(NutsFetchDisplayOptions oo, NutsDisplayProperty dp) {
         NutsWorkspace ws = session.getWorkspace();
-        NutsTextFormatManager txt = ws.formats().text();
-        NutsTextNodeFactory nodeFactory = txt.factory();
+        NutsFormatManager txt = ws.formats();
+        NutsTextManager nodeFactory = txt.text();
         if (oo.isRequireDefinition()) {
             buildLong();
         }
@@ -342,65 +343,65 @@ public class NutsIdFormatHelper {
         }
         switch (dp) {
             case ID: {
-                return txt.parse(oo.getIdFormat().value(id).format());
+                return txt.text().parse(oo.getIdFormat().value(id).format());
             }
             case STATUS: {
                 return getFormattedStatusString();
             }
             case FILE: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
-                    return txt.factory().nodeFor(def.getContent().getPath());
+                    return txt.text().nodeFor(def.getContent().getPath());
                 }
-                return txt.factory().styled("missing-path",NutsTextNodeStyle.error());
+                return txt.text().styled("missing-path", NutsTextNodeStyle.error());
             }
             case FILE_NAME: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
-                    return txt.factory().plain(def.getContent().getPath().getFileName().toString());
+                    return txt.text().plain(def.getContent().getPath().getFileName().toString());
                 }
-                return txt.factory().styled("missing-file-name",NutsTextNodeStyle.error());
+                return txt.text().styled("missing-file-name", NutsTextNodeStyle.error());
             }
             case ARCH: {
                 if (desc != null) {
                     return keywordArr1(desc.getArch());
                 }
-                return txt.factory().styled("missing-arch",NutsTextNodeStyle.error());
+                return txt.text().styled("missing-arch", NutsTextNodeStyle.error());
             }
             case NAME: {
                 if (desc != null) {
                     return stringValue(desc.getName());
                 }
-                return txt.factory().styled("missing-name",NutsTextNodeStyle.error());
+                return txt.text().styled("missing-name", NutsTextNodeStyle.error());
             }
             case OS: {
                 if (desc != null) {
                     return keywordArr2(desc.getOs());
                 }
-                return txt.factory().styled("missing-os",NutsTextNodeStyle.error());
+                return txt.text().styled("missing-os", NutsTextNodeStyle.error());
             }
             case OSDIST: {
                 if (desc != null) {
                     return keywordArr2(desc.getOsdist());
                 }
-                return txt.factory().styled("missing-osdist",NutsTextNodeStyle.error());
+                return txt.text().styled("missing-osdist", NutsTextNodeStyle.error());
             }
             case PACKAGING: {
                 if (desc != null) {
-                    NutsTextFormatManager text = session.getWorkspace().formats().text();
-                    return text.factory().styled(stringValue(desc.getPackaging()),NutsTextNodeStyle.primary(3));
+                    NutsFormatManager text = session.getWorkspace().formats();
+                    return text.text().styled(stringValue(desc.getPackaging()), NutsTextNodeStyle.primary(3));
                 }
-                return txt.factory().styled("missing-packaging",NutsTextNodeStyle.error());
+                return txt.text().styled("missing-packaging", NutsTextNodeStyle.error());
             }
             case PLATFORM: {
                 if (desc != null) {
                     return keywordArr1(desc.getPlatform());
                 }
-                return txt.factory().styled("missing-platform",NutsTextNodeStyle.error());
+                return txt.text().styled("missing-platform", NutsTextNodeStyle.error());
             }
             case INSTALL_DATE: {
                 if (def != null && def.getInstallInformation() != null) {
                     return stringValue(def.getInstallInformation().getCreatedDate());
                 }
-                return txt.factory().styled("<null>",NutsTextNodeStyle.pale());
+                return txt.text().styled("<null>", NutsTextNodeStyle.pale());
             }
             case REPOSITORY: {
                 String rname = null;
@@ -440,49 +441,49 @@ public class NutsIdFormatHelper {
                 if (def != null && def.getInstallInformation() != null) {
                     return stringValue(def.getInstallInformation().getInstallUser());
                 }
-                return nodeFactory.styled("nobody",NutsTextNodeStyle.error());
+                return nodeFactory.styled("nobody", NutsTextNodeStyle.error());
             }
             case CACHE_FOLDER: {
                 if (def != null) {
                     return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.CACHE));
                 }
-                return nodeFactory.styled("nobody",NutsTextNodeStyle.error());
+                return nodeFactory.styled("<null>", NutsTextNodeStyle.error());
             }
             case CONFIG_FOLDER: {
                 if (def != null) {
                     return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.CONFIG));
                 }
-                return nodeFactory.styled("nobody",NutsTextNodeStyle.error());
+                return nodeFactory.styled("<null>", NutsTextNodeStyle.error());
             }
             case LIB_FOLDER: {
                 if (def != null) {
                     return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.LIB));
                 }
-                return nodeFactory.styled("nobody",NutsTextNodeStyle.error());
+                return nodeFactory.styled("<null>", NutsTextNodeStyle.error());
             }
             case LOG_FOLDER: {
                 if (def != null) {
                     return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.LOG));
                 }
-                return nodeFactory.styled("nobody",NutsTextNodeStyle.error());
+                return nodeFactory.styled("<null>", NutsTextNodeStyle.error());
             }
             case TEMP_FOLDER: {
                 if (def != null) {
                     return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.TEMP));
                 }
-                return nodeFactory.styled("nobody",NutsTextNodeStyle.error());
+                return nodeFactory.styled("<null>", NutsTextNodeStyle.error());
             }
             case VAR_LOCATION: {
                 if (def != null) {
                     return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.VAR));
                 }
-                return nodeFactory.styled("nobody",NutsTextNodeStyle.error());
+                return nodeFactory.styled("<null>", NutsTextNodeStyle.error());
             }
             case APPS_FOLDER: {
                 if (def != null) {
                     return stringValue(ws.locations().getStoreLocation(def.getId(), NutsStoreLocation.APPS));
                 }
-                return nodeFactory.styled("nobody",NutsTextNodeStyle.error());
+                return nodeFactory.styled("<null>", NutsTextNodeStyle.error());
             }
             case EXEC_ENTRY: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
@@ -498,13 +499,55 @@ public class NutsIdFormatHelper {
                     if (results.size() == 1) {
                         return results.get(0);
                     }
-                    return txt.builder().appendJoined(
+                    return txt.text().builder().appendJoined(
                             nodeFactory.plain(","),
                             results
                     );
                 }
-                return nodeFactory.styled("missing-class",NutsTextNodeStyle.error());
+                return nodeFactory.styled("<missing-class>", NutsTextNodeStyle.error());
             }
+            case INSTALL_FOLDER: {
+                if (def != null && def.getInstallInformation() != null) {
+                    return stringValue(def.getInstallInformation().getInstallFolder());
+                }
+                return txt.text().styled("<null>", NutsTextNodeStyle.pale());
+            }
+            case LONG_STATUS: {
+                NutsTextManager text = ws.formats().text();
+                List<NutsString> all = new ArrayList<>();
+                if (def != null && def.getType() != null) {
+                    switch (def.getType()) {
+                        case REGULAR: {
+                            all.add(text.plain(def.getType().id()));
+                            break;
+                        }
+                        default: {
+                            all.add(text.styled(def.getType().id(), NutsTextNodeStyle.primary(1)));
+                            break;
+                        }
+                    }
+                }
+                if (executableApp) {
+                    all.add(text.styled("application", NutsTextNodeStyle.primary(5)));
+                } else if (executable) {
+                    all.add(text.styled("executable", NutsTextNodeStyle.primary(3)));
+                } else {
+                    all.add(text.styled("library", NutsTextNodeStyle.primary(4)));
+                }
+                if (dep != null) {
+                    NutsDependencyScope ss = CoreCommonUtils.parseEnumString(dep.getScope(), NutsDependencyScope.class, true);
+                    if (dep.isOptional()) {
+                        all.add(text.styled("optional", NutsTextNodeStyle.primary(5)));
+                    }
+                    if (ss != null) {
+                        all.add(text.styled(NutsDependencyScope.API.id(), NutsTextNodeStyle.primary(5)));
+                    }
+                }
+                return text.builder().appendJoined(text.styled(",", NutsTextNodeStyle.pale()),
+                        all).build();
+
+            }
+
             default: {
                 throw new NutsUnsupportedArgumentException(ws, String.valueOf(dp));
             }
@@ -542,7 +585,7 @@ public class NutsIdFormatHelper {
                     this.fetched = true;
                 }
             } catch (Exception ex) {
-                LOG.with().session(session).level(Level.FINE).error(ex).log( "failed to build id format for {0}",id);
+                LOG.with().session(session).level(Level.FINE).error(ex).log("failed to build id format for {0}", id);
             }
 
             if (def != null) {
@@ -561,28 +604,28 @@ public class NutsIdFormatHelper {
                     : this.fetched ? 'f' : 'r';
 //            this.status_obs=(this.installStatus.isInstalled()?'O':'U');
             if (def != null) {
-                switch (def.getType()){
-                    case API:{
+                switch (def.getType()) {
+                    case API: {
                         this.status_e = 'a';
                         break;
                     }
-                    case RUNTIME:{
+                    case RUNTIME: {
                         this.status_e = 'r';
                         break;
                     }
-                    case EXTENSION:{
+                    case EXTENSION: {
                         this.status_e = 'e';
                         break;
                     }
-                    case COMPANION:{
+                    case COMPANION: {
                         this.status_e = 'c';
                         break;
                     }
-                    case REGULAR:{
+                    case REGULAR: {
                         this.status_e = '-';
                         break;
                     }
-                    default:{
+                    default: {
                         this.status_e = '?';
                         break;
                     }
@@ -619,7 +662,7 @@ public class NutsIdFormatHelper {
                         case TEST_IMPLEMENTATION:
                         case TEST_PROVIDED:
                         case TEST_RUNTIME:
-                        case TEST_OTHER:{
+                        case TEST_OTHER: {
                             this.status_s = 't';
                             break;
                         }
@@ -663,27 +706,25 @@ public class NutsIdFormatHelper {
     }
 
     public NutsString getFormattedStatusString() {
-        NutsTextFormatManager text = session.getWorkspace().formats().text();
+        NutsFormatManager text = session.getWorkspace().formats();
         if (dep != null) {
-            return text.factory().styled(""+status_f
-//                    + status_obs
-                    +status_e + status_i + status_s,NutsTextNodeStyle.primary(3))
-                    ;
+            return text.text().styled("" + status_f
+                    //                    + status_obs
+                    + status_e + status_i + status_s, NutsTextNodeStyle.primary(3));
         }
-        return text.factory().styled( ""+status_f
-//                + status_obs
-                + status_e + status_i ,NutsTextNodeStyle.primary(3))
-                ;
+        return text.text().styled("" + status_f
+                //                + status_obs
+                + status_e + status_i, NutsTextNodeStyle.primary(3));
     }
 
     public String getStatusString() {
         if (dep != null) {
             return "" + status_f
-//                    + status_obs
+                    //                    + status_obs
                     + status_e + status_i + status_s;
         }
         return "" + status_f
-//                + status_obs
+                //                + status_obs
                 + status_e + status_i;
     }
 
@@ -695,25 +736,23 @@ public class NutsIdFormatHelper {
         return keywordArr0(any, NutsTextNodeStyle.primary(3));
     }
 
-
     private NutsString keywordArr0(String[] any, NutsTextNodeStyle style) {
-        NutsTextFormatManager txt = session
-                .getWorkspace().formats().text();
+        NutsFormatManager txt = session
+                .getWorkspace().formats();
         if (any == null || any.length == 0) {
-            return txt.factory().blank();
+            return txt.text().blank();
         }
         if (any.length == 1) {
-            return txt.builder().append(txt.factory().styled(stringValue(any[0]),style))
+            return txt.text().builder().append(txt.text().styled(stringValue(any[0]), style))
                     .immutable();
         }
-        return
-                txt.builder()
+        return txt.text().builder()
                 .append("[")
                 .appendJoined(
-                        txt.factory().plain(","),
-                        Arrays.stream(any).map(x->txt.factory().styled(stringValue(x),style)).collect(Collectors.toList())
-                        )
-                        .append("]").immutable();
+                        txt.text().plain(","),
+                        Arrays.stream(any).map(x -> txt.text().styled(stringValue(x), style)).collect(Collectors.toList())
+                )
+                .append("]").immutable();
     }
 
     private NutsString stringValue(Object any) {

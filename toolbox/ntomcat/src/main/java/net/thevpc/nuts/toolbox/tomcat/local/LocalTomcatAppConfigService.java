@@ -80,16 +80,16 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         return null;
     }
     public NutsString getFormattedPath(String str) {
-        return context.getWorkspace().formats().text()
-                .factory().styled(str,NutsTextNodeStyle.path());
+        return context.getWorkspace().formats()
+                .text().styled(str,NutsTextNodeStyle.path());
     }
     public NutsString getFormattedVersion(String str) {
-        return context.getWorkspace().formats().text()
-                .factory().styled(str,NutsTextNodeStyle.version());
+        return context.getWorkspace().formats()
+                .text().styled(str,NutsTextNodeStyle.version());
     }
     public NutsString getFormattedPrefix(String str) {
-        return context.getWorkspace().formats().text()
-                .builder()
+        return context.getWorkspace().formats()
+                .text().builder()
                 .append("[")
                 .append(str,NutsTextNodeStyle.primary(5))
                 .append("]");

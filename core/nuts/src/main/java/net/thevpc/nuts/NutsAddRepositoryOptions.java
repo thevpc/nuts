@@ -3,27 +3,25 @@
  *            Nuts : Network Updatable Things Service
  *                  (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  *
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts;
 
 import java.io.Serializable;
@@ -31,11 +29,13 @@ import java.util.Objects;
 
 /**
  * repository creation options
+ *
  * @author thevpc
  * @since 0.5.4
  * @category Config
  */
 public class NutsAddRepositoryOptions implements Serializable {
+
     public static final int ORDER_USER_LOCAL = 1000;
     public static final int ORDER_SYSTEM_LOCAL = 2000;
     public static final int ORDER_USER_REMOTE = 10000;
@@ -54,11 +54,11 @@ public class NutsAddRepositoryOptions implements Serializable {
     /**
      * enabled repository
      */
-    private boolean enabled;
+    private boolean enabled = true;
 
     /**
-     * fail safe repository. when fail safe, repository will be ignored
-     * if the location is not accessible
+     * fail safe repository. when fail safe, repository will be ignored if the
+     * location is not accessible
      */
     private boolean failSafe;
 
@@ -71,7 +71,6 @@ public class NutsAddRepositoryOptions implements Serializable {
      * create a proxy for the created repository
      */
 //    private boolean proxy;
-
     /**
      * temporary repository
      */
@@ -91,6 +90,7 @@ public class NutsAddRepositoryOptions implements Serializable {
      * repository config information
      */
     private NutsRepositoryConfig config;
+    private NutsRepositoryModel repositoryModel;
     private int order;
 
     /**
@@ -102,6 +102,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * copy constructor
+     *
      * @param other other
      */
     public NutsAddRepositoryOptions(NutsAddRepositoryOptions other) {
@@ -116,6 +117,16 @@ public class NutsAddRepositoryOptions implements Serializable {
         this.deployOrder = other.deployOrder;
         this.session = other.session;
         this.order = other.order;
+        this.repositoryModel = other.repositoryModel;
+    }
+
+    public NutsRepositoryModel getRepositoryModel() {
+        return repositoryModel;
+    }
+
+    public NutsAddRepositoryOptions setRepositoryModel(NutsRepositoryModel repositoryModel) {
+        this.repositoryModel = repositoryModel;
+        return this;
     }
 
     public int getOrder() {
@@ -129,6 +140,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * current session
+     *
      * @return current session
      */
     public NutsSession getSession() {
@@ -137,6 +149,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * current session
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -147,6 +160,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * temporary repository
+     *
      * @return temporary repository
      */
     public boolean isTemporary() {
@@ -155,6 +169,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * temporary repository
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -165,6 +180,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * repository name (should no include special space or characters)
+     *
      * @return repository name (should no include special space or characters)
      */
     public String getName() {
@@ -173,6 +189,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * repository name (should no include special space or characters)
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -183,6 +200,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * repository location
+     *
      * @return repository location
      */
     public String getLocation() {
@@ -191,6 +209,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * repository location
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -201,6 +220,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * enabled repository
+     *
      * @return enabled repository
      */
     public boolean isEnabled() {
@@ -209,6 +229,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * enabled repository
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -218,8 +239,9 @@ public class NutsAddRepositoryOptions implements Serializable {
     }
 
     /**
-     * fail safe repository. when fail safe, repository will be ignored
-     * if the location is not accessible
+     * fail safe repository. when fail safe, repository will be ignored if the
+     * location is not accessible
+     *
      * @return fail safe repository
      */
     public boolean isFailSafe() {
@@ -227,8 +249,9 @@ public class NutsAddRepositoryOptions implements Serializable {
     }
 
     /**
-     * fail safe repository. when fail safe, repository will be ignored
-     * if the location is not accessible
+     * fail safe repository. when fail safe, repository will be ignored if the
+     * location is not accessible
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -239,6 +262,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * always create.
+     *
      * @return always create
      */
     public boolean isCreate() {
@@ -247,6 +271,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * always create. Throw exception if found
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -257,6 +282,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * repository config information
+     *
      * @return repository config information
      */
     public NutsRepositoryConfig getConfig() {
@@ -265,6 +291,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * repository config information
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -290,9 +317,9 @@ public class NutsAddRepositoryOptions implements Serializable {
 //        this.proxy = value;
 //        return this;
 //    }
-
     /**
      * repository deploy order
+     *
      * @return repository deploy order
      */
     public int getDeployOrder() {
@@ -301,6 +328,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * repository deploy order
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -311,6 +339,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * create a copy of this instance
+     *
      * @return a copy of this instance
      */
     public NutsAddRepositoryOptions copy() {
@@ -319,41 +348,45 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         NutsAddRepositoryOptions that = (NutsAddRepositoryOptions) o;
-        return enabled == that.enabled &&
-                failSafe == that.failSafe &&
-                create == that.create &&
-//                proxy == that.proxy &&
-                temporary == that.temporary &&
-                deployOrder == that.deployOrder &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(location, that.location) &&
-                Objects.equals(session, that.session) &&
-                Objects.equals(config, that.config);
+        return enabled == that.enabled
+                && failSafe == that.failSafe
+                && create == that.create
+                && //                proxy == that.proxy &&
+                temporary == that.temporary
+                && deployOrder == that.deployOrder
+                && Objects.equals(name, that.name)
+                && Objects.equals(location, that.location)
+                && Objects.equals(session, that.session)
+                && Objects.equals(config, that.config);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, location, enabled, failSafe, create
-//                , proxy
-                , temporary, deployOrder, session, config);
+        return Objects.hash(name, location, enabled, failSafe, create //                , proxy
+                ,
+                 temporary, deployOrder, session, config);
     }
 
     @Override
     public String toString() {
-        return "NutsAddRepositoryOptions{" +
-                "name='" + name + '\'' +
-                ", location='" + location + '\'' +
-                ", enabled=" + enabled +
-                ", failSafe=" + failSafe +
-                ", create=" + create +
-//                ", proxy=" + proxy +
-                ", temporary=" + temporary +
-                ", deployOrder=" + deployOrder +
-                ", session=" + session +
-                ", config=" + config +
-                '}';
+        return "NutsAddRepositoryOptions{"
+                + "name='" + name + '\''
+                + ", location='" + location + '\''
+                + ", enabled=" + enabled
+                + ", failSafe=" + failSafe
+                + ", create=" + create
+                + //                ", proxy=" + proxy +
+                ", temporary=" + temporary
+                + ", deployOrder=" + deployOrder
+                + ", session=" + session
+                + ", config=" + config
+                + '}';
     }
 }

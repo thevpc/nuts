@@ -62,8 +62,7 @@ public final class CoreNutsArgumentsParser {
     public static void parseNutsArguments(NutsWorkspace ws, String[] bootArguments, NutsWorkspaceOptionsBuilder options) {
         List<String> showError = new ArrayList<>();
         HashSet<String> excludedExtensions = new HashSet<>();
-        HashSet<String> excludedRepositories = new HashSet<>();
-        HashSet<String> tempRepositories = new HashSet<>();
+        HashSet<String> repositories = new HashSet<>();
         Set<String> tempProps = new LinkedHashSet<>();
         List<String> executorOptions = new ArrayList<>();
         NutsLogConfig logConfig = null;
@@ -91,14 +90,14 @@ public final class CoreNutsArgumentsParser {
                     // they will be persisted. If they are specified later they 
                     // will override persisted values without persisting the changes
 
-                    case "--boot-repos": {
-                        a = cmdLine.nextString();
-                        String bootRepos = a.getStringValue("");
-                        if (enabled) {
-                            options.setBootRepositories(bootRepos);
-                        }
-                        break;
-                    }
+//                    case "--boot-repos": {
+//                        a = cmdLine.nextString();
+//                        String bootRepos = a.getStringValue("");
+//                        if (enabled) {
+//                            options.setBootRepositories(bootRepos);
+//                        }
+//                        break;
+//                    }
                     case "-w":
                     case "--workspace": {
                         a = cmdLine.nextString();
@@ -509,19 +508,20 @@ public final class CoreNutsArgumentsParser {
                     }
                     case "--bot": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getBooleanValue()) {
-                            options.setTerminalMode(NutsTerminalMode.FILTERED);
-                            options.setProgressOptions("none");
-                            if (!explicitConfirm) {
-                                options.setConfirm(NutsConfirmationMode.ERROR);
-                            }
-                            options.setTrace(false);
-                            options.setDebug(false);
-                            options.setGui(false);
-                            NutsLogConfig lc = options.getLogConfig();
-                            if (lc != null) {
-                                lc.setLogTermLevel(Level.OFF);
-                            }
+                        if (enabled) {
+                            options.setBot(a.getBooleanValue());
+//                            options.setTerminalMode(NutsTerminalMode.FILTERED);
+//                            options.setProgressOptions("none");
+//                            if (!explicitConfirm) {
+//                                options.setConfirm(NutsConfirmationMode.ERROR);
+//                            }
+//                            options.setTrace(false);
+//                            options.setDebug(false);
+//                            options.setGui(false);
+//                            NutsLogConfig lc = options.getLogConfig();
+//                            if (lc != null) {
+//                                lc.setLogTermLevel(Level.OFF);
+//                            }
                         }
                         break;
                     }
@@ -632,20 +632,14 @@ public final class CoreNutsArgumentsParser {
                         break;
                     }
 
-                    case "--exclude-repository": {
-                        a = cmdLine.nextString();
-                        String v = a.getStringValue();
-                        if (enabled) {
-                            excludedRepositories.add(v);
-                        }
-                        break;
-                    }
                     case "--repository":
+                    case "--repositories":
+                    case "--repos":
                     case "-r": {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
-                            tempRepositories.add(v);
+                            repositories.add(v);
                         }
                         break;
                     }
@@ -884,17 +878,37 @@ public final class CoreNutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--open": {
+                    case "--open-or-error": 
+                    case "--open": 
+                    {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.OPEN_OR_ERROR);
                         }
                         break;
                     }
-                    case "--create": {
+                    case "--create-or-error": 
+                    case "--create": 
+                    {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.CREATE_OR_ERROR);
+                        }
+                        break;
+                    }
+                    case "--open-or-create": 
+                    {
+                        a = cmdLine.nextBoolean();
+                        if (enabled && a.getBooleanValue()) {
+                            options.setOpenMode(NutsOpenMode.OPEN_OR_CREATE);
+                        }
+                        break;
+                    }
+                    case "--open-or-null": 
+                    {
+                        a = cmdLine.nextBoolean();
+                        if (enabled && a.getBooleanValue()) {
+                            options.setOpenMode(NutsOpenMode.OPEN_OR_NULL);
                         }
                         break;
                     }
@@ -1082,8 +1096,7 @@ public final class CoreNutsArgumentsParser {
         options.setProperties(tempProps.toArray(new String[0]));
         options.setLogConfig(logConfig);
         options.setExcludedExtensions(excludedExtensions.toArray(new String[0]));
-        options.setExcludedRepositories(excludedRepositories.toArray(new String[0]));
-        options.setTransientRepositories(tempRepositories.toArray(new String[0]));
+        options.setRepositories(repositories.toArray(new String[0]));
         options.setApplicationArguments(applicationArguments.toArray(new String[0]));
         options.setExecutorOptions(executorOptions.toArray(new String[0]));
         options.setErrors(showError.toArray(new String[0]));

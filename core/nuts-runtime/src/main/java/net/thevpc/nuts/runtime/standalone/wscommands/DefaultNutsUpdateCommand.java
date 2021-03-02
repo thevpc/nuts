@@ -137,7 +137,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         HashSet<NutsId> baseRegulars = new HashSet<>(ids);
         if (isInstalled()) {
             baseRegulars.addAll(ws.search().setSession(CoreNutsUtils.silent(getValidWorkspaceSession()))
-                    .setInstallStatus(ws.filters().installStatus().byInstalled())
+                    .setInstallStatus(ws.filters().installStatus().byInstalled(true))
                     .getResultIds().stream().map(NutsId::getShortNameId).collect(Collectors.toList()));
             // This bloc is to handle packages that were installed by their jar/content was removed for any reason!
             NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
@@ -202,7 +202,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             @Override
             public FixAction apply(NutsInstallInformation nutsInstallInformation) {
                 NutsId id = ws.search().setInstallStatus(
-                        ws.filters().installStatus().byInstalled()
+                        ws.filters().installStatus().byInstalled(true)
                 ).addId(nutsInstallInformation.getId()).getResultIds().first();
                 if (id == null) {
                     return new FixAction(nutsInstallInformation.getId(), "MissingInstallation") {
@@ -317,7 +317,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             if (updates.length == 0) {
                 out.printf("All components are [[up-to-date]]. You are running latest version%s.%n", result.getAllResults().length > 1 ? "s" : "");
             } else {
-                out.printf("Workspace has %s component%s to update.%n", ws.formats().text().factory().styled("" + updates.length, NutsTextNodeStyle.primary(1)),
+                out.printf("Workspace has %s component%s to update.%n", ws.formats().text().styled("" + updates.length, NutsTextNodeStyle.primary(1)),
                         (updates.length > 1 ? "s" : ""));
                 int widthCol1 = 2;
                 int widthCol2 = 2;
@@ -325,7 +325,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     widthCol1 = Math.max(widthCol1, update.getAvailable().getId().getShortName().length());
                     widthCol2 = Math.max(widthCol2, update.getLocal().getId().getVersion().toString().length());
                 }
-                NutsTextNodeFactory factory = getWorkspace().formats().text().factory();
+                NutsTextManager factory = getWorkspace().formats().text();
                 for (NutsUpdateResult update : updates) {
                     if (update.isUpdateVersionAvailable()) {
                         out.printf("%s  : %s => %s%n",
@@ -376,13 +376,13 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         r.setId(id.getShortNameId());
         boolean shouldUpdateDefault = false;
         NutsId d0Id = ws.search().addId(id).setSession(searchSession)
-                .setInstallStatus(ws.filters().installStatus().byDeployed())
+                .setInstallStatus(ws.filters().installStatus().byDeployed(true))
                 .setOptional(false).setFailFast(false).setDefaultVersions(true)
                 .getResultIds().first();
         if (d0Id == null) {
             // may be the id is not default!
             d0Id = ws.search().addId(id).setSession(searchSession)
-                    .setInstallStatus(ws.filters().installStatus().byDeployed())
+                    .setInstallStatus(ws.filters().installStatus().byDeployed(true))
                     .setOptional(false).setFailFast(false).setLatest(true)
                     .getResultIds().first();
             if (d0Id != null) {
@@ -536,7 +536,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsDefinition d1 = r.getAvailable();
         final String simpleName = d0 != null ? d0.getId().getShortName() : d1 != null ? d1.getId().getShortName() : id.getShortName();
         final PrintStream out = CoreIOUtils.resolveOut(getValidWorkspaceSession());
-        NutsTextNodeFactory factory = ws.formats().text().factory();
+        NutsTextManager factory = ws.formats().text();
         if (r.isUpdateApplied()) {
             if (r.isUpdateForced()) {
                 if (d0 == null) {
@@ -638,7 +638,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             case "extension": {
                 try {
                     oldId = ws.search().addId(id).setEffective(true).setSession(session)
-                            .setInstallStatus(ws.filters().installStatus().byDeployed())
+                            .setInstallStatus(ws.filters().installStatus().byDeployed(true))
                             .sort(DEFAULT_THEN_LATEST_VERSION_FIRST).setFailFast(false).getResultIds().first();
                     if (oldId != null) {
                         oldFile = fetch0().setId(oldId).setSession(session).getResultDefinition();

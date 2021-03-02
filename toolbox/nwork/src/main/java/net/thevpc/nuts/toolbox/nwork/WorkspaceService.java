@@ -185,14 +185,14 @@ public class WorkspaceService {
     }
 
     private NutsTextNodeBuilder formatProjectConfig(NutsApplicationContext appContext, ProjectConfig p2) {
-        NutsTextFormatManager text = appContext.getWorkspace().formats().text();
-        return text.builder()
+        NutsFormatManager text = appContext.getWorkspace().formats();
+        return text.text().builder()
                 .append(p2.getId(), NutsTextNodeStyle.primary(4))
                 .append(" ")
                 .appendJoined(
-                        text.factory().plain(", "),
+                        text.text().plain(", "),
                         p2.getTechnologies().stream().map(
-                                x -> text.factory().styled(x, NutsTextNodeStyle.primary(5))
+                                x -> text.text().styled(x, NutsTextNodeStyle.primary(5))
                         ).collect(Collectors.toList())
                 )
                 .append(" : ")
@@ -377,17 +377,17 @@ public class WorkspaceService {
 //            tf.addRow(d.id, d.local, d.remote, d.status);
         }
         if (!ddd.isEmpty() || !appContext.getSession().isPlainOut()) {
-            NutsTextNodeFactory tfactory = appContext.getWorkspace().formats().text().factory();
+            NutsTextManager tfactory = appContext.getWorkspace().formats().text();
             if (appContext.getSession().isPlainOut()) {
                 for (DataRow p2 : ddd) {
                     String status = p2.status;
-                    NutsTextFormatManager tf = appContext.getWorkspace().formats().text();
-                    int len = tf.parse(status).textLength();
+                    NutsFormatManager tf = appContext.getWorkspace().formats();
+                    int len = tf.text().parse(status).textLength();
                     while (len < 10) {
                         status += " ";
                         len++;
                     }
-                    switch (tf.factory().styled(p2.status).filteredText()) {
+                    switch (tf.text().styled(p2.status).filteredText()) {
                         case "new": {
                             appContext.getSession().out().printf("[%s] %s : %s%n",
                                     tfactory.styled("new",NutsTextNodeStyle.primary(3)),
@@ -491,8 +491,8 @@ public class WorkspaceService {
             if (!isScanEnabled(folder)) {
                 return;
             }
-            NutsTextFormatManager text = appContext.getWorkspace().formats().text();
-            NutsTextNodeFactory tfactory = text.factory();
+            NutsFormatManager text = appContext.getWorkspace().formats();
+            NutsTextManager tfactory = text.text();
             ProjectConfig p2 = new ProjectService(appContext, config.getDefaultRepositoryAddress(), new ProjectConfig().setPath(folder.getPath())
             ).rebuildProjectMetadata();
             if (p2.getTechnologies().size() > 0) {
@@ -541,7 +541,7 @@ public class WorkspaceService {
                     }
                     if (interactive) {
                         String id = appContext.getSession().getTerminal().readLine("enter Id %s: ",
-                                (p2.getId() == null ? "" : ("(" + text.factory().plain(p2.getId()) + ")")));
+                                (p2.getId() == null ? "" : ("(" + text.text().plain(p2.getId()) + ")")));
                         if (!StringUtils.isBlank(id)) {
                             p2.setId(id);
                         }

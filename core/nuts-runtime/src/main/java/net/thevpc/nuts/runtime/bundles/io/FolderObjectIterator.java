@@ -81,7 +81,10 @@ public class FolderObjectIterator<T> implements Iterator<T> {
         this.name = name;
         this.maxDepth = maxDepth;
         if (folder == null) {
-            throw new NullPointerException("Could not iterate over null folder");
+            throw new NullPointerException("could not iterate over null folder");
+        }
+        if (session == null) {
+            throw new NullPointerException("null session");
         }
         this.folder=folder;
         stack.push(new PathAndDepth(folder, 0));

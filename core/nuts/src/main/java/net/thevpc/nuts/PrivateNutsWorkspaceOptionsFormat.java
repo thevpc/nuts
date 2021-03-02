@@ -3,26 +3,24 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts;
 
 import java.util.*;
@@ -32,6 +30,7 @@ import java.util.*;
  * @category Internal
  */
 final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFormat {
+
     private static final long serialVersionUID = 1;
     private final NutsWorkspaceOptions options;
     private boolean exportedOptions;
@@ -170,8 +169,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 fillOption("--log-inherited", null, logConfig.isLogInherited(), false, arguments, false);
             }
             fillOption("--exclude-extension", "-X", options.getExcludedExtensions(), ";", arguments, false);
-            fillOption("--exclude-repository", null, options.getExcludedRepositories(), ";", arguments, false);
-            fillOption("--repository", "-r", options.getTransientRepositories(), ";", arguments, false);
+            fillOption("--repository", "-r", options.getRepositories(), ";", arguments, false);
             fillOption("--global", "-g", options.isGlobal(), false, arguments, false);
             fillOption("--gui", null, options.isGui(), false, arguments, false);
             fillOption("--read-only", "-R", options.isReadOnly(), false, arguments, false);
@@ -184,6 +182,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             fillOption("--cached", null, options.isCached(), true, arguments, false);
             fillOption("--indexed", null, options.isIndexed(), true, arguments, false);
             fillOption("--transitive", null, options.isTransitive(), true, arguments, false);
+            fillOption("--bot", "-B", options.isBot(), false, arguments, false);
             if (options.getFetchStrategy() != null && options.getFetchStrategy() != NutsFetchStrategy.ONLINE) {
                 fillOption("--fetch", "-f", options.getFetchStrategy(), NutsFetchStrategy.class, arguments, false);
             }
@@ -194,21 +193,21 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             }
             if (PrivateNutsUtils.isBlank(apiVersion) || PrivateNutsUtils.compareRuntimeVersion(apiVersion, "0.8.0") >= 0) {
                 fillOption("--expire", "-N",
-                        options.getExpireTime() == null ? null : options.getExpireTime().toString()
-                        , arguments, false);
-                if(options.getOutLinePrefix()!=null && Objects.equals(options.getOutLinePrefix(),options.getErrLinePrefix())){
-                    fillOption("--line-prefix", null, options.getOutLinePrefix(),arguments, false);
-                }else {
+                        options.getExpireTime() == null ? null : options.getExpireTime().toString(),
+                        arguments, false);
+                if (options.getOutLinePrefix() != null && Objects.equals(options.getOutLinePrefix(), options.getErrLinePrefix())) {
+                    fillOption("--line-prefix", null, options.getOutLinePrefix(), arguments, false);
+                } else {
                     if (options.getOutLinePrefix() != null) {
-                        fillOption("--out-line-prefix", null, options.getOutLinePrefix(),arguments, false);
+                        fillOption("--out-line-prefix", null, options.getOutLinePrefix(), arguments, false);
                     }
                     if (options.getErrLinePrefix() != null) {
-                        fillOption("--err-line-prefix", null, options.getOutLinePrefix(),arguments, false);
+                        fillOption("--err-line-prefix", null, options.getOutLinePrefix(), arguments, false);
                     }
                 }
             }
             if (PrivateNutsUtils.isBlank(apiVersion) || PrivateNutsUtils.compareRuntimeVersion(apiVersion, "0.8.1") >= 0) {
-                fillOption("--err-line-prefix", null, options.getTheme(),arguments, false);
+                fillOption("--err-line-prefix", null, options.getTheme(), arguments, false);
             }
         }
 
@@ -244,7 +243,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 }
             }
             if (PrivateNutsUtils.isBlank(apiVersion) || PrivateNutsUtils.compareRuntimeVersion(apiVersion, "0.8.0") >= 0) {
-                if(options.getSwitchWorkspace()!=null) {
+                if (options.getSwitchWorkspace() != null) {
                     fillOption("--switch", null, options.getSwitchWorkspace(), false, arguments, false);
                 }
             }
@@ -259,12 +258,12 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             fillOption("--debug", "-z", options.isRecover(), false, arguments, false);
             fillOption("--dry", "-D", options.isDry(), false, arguments, false);
             if (PrivateNutsUtils.isBlank(apiVersion) || PrivateNutsUtils.compareRuntimeVersion(apiVersion, "0.8.1") >= 0) {
-                if(options.getProperties()!=null) {
+                if (options.getProperties() != null) {
                     for (String property : options.getProperties()) {
                         arguments.add("---" + property);
                     }
                 }
-                fillOption("--locale", "-L", options.getLocale(),arguments, false);
+                fillOption("--locale", "-L", options.getLocale(), arguments, false);
             }
             if (!omitDefaults || options.getExecutorOptions().length > 0) {
                 arguments.add(selectOptionName("--exec", "-e"));
@@ -532,23 +531,26 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PrivateNutsWorkspaceOptionsFormat that = (PrivateNutsWorkspaceOptionsFormat) o;
-        return exportedOptions == that.exportedOptions &&
-                runtimeOptions == that.runtimeOptions &&
-                createOptions == that.createOptions &&
-                shortOptions == that.shortOptions &&
-                singleArgOptions == that.singleArgOptions &&
-                omitDefaults == that.omitDefaults &&
-                Objects.equals(apiVersion, that.apiVersion)&&
-                Objects.equals(options, that.options);
+        return exportedOptions == that.exportedOptions
+                && runtimeOptions == that.runtimeOptions
+                && createOptions == that.createOptions
+                && shortOptions == that.shortOptions
+                && singleArgOptions == that.singleArgOptions
+                && omitDefaults == that.omitDefaults
+                && Objects.equals(apiVersion, that.apiVersion)
+                && Objects.equals(options, that.options);
     }
 
     @Override
     public String toString() {
         return getBootCommandLine();
     }
-
 
 }

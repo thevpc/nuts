@@ -31,7 +31,6 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.logging.Filter;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 
 /**
  * session is context defining common command options and parameters.
@@ -115,6 +114,11 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @return {@code this} instance
      */
     NutsSession setTrace(Boolean trace);
+    
+    NutsSession setBot(Boolean bot);
+    
+    boolean isBot();
+    Boolean getBot();
 
 //    /**
 //     * equivalent to {@code setTrace(false)}

@@ -181,6 +181,7 @@ public class Test06_UpateTest {
 //        } catch (NutsUnsatisfiedRequirementsException e) {
 //            Assertions.assertTrue(true);
 //        }
+
         NutsBootWorkspace b = new NutsBootWorkspace(
                 "--workspace", workspacePath,
                 "--boot-version=" + newApiVersion,

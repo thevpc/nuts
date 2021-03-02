@@ -11,6 +11,7 @@ import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import net.thevpc.nuts.NutsContentType;
 
 /**
  * @author thevpc
@@ -27,7 +28,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             showDefaultHelp();
             return;
         }
-        if (getSession().isPlainOut()) {
+        if (!getSession().isBot() && getSession().isPlainOut()) {
             getSession().out().println(NutsWorkspaceExt.of(getSession().getWorkspace()).getWelcomeText(getSession()));
         } else {
             Map<String, String> welcome = new LinkedHashMap<>();
@@ -41,8 +42,12 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             welcome.put("api-version", getSession().getWorkspace().getApiVersion());
             welcome.put("runtime-id", getSession().getWorkspace().getRuntimeId().builder().setVersion("").build().toString());
             welcome.put("runtime-version", getSession().getWorkspace().getRuntimeId().builder().setVersion("").build().toString());
-            welcome.put("workspace", getSession().getWorkspace().locations().getWorkspaceLocation().toString());
-            getSession().formatObject(welcome).println();
+            welcome.put("workspace", getSession().getWorkspace().locations().getWorkspaceLocation());
+            NutsSession session = getSession();
+            if(session.isPlainOut()){
+               session=session.copy().setOutputFormat(NutsContentType.PROPS);
+            }
+            session.formatObject(welcome).println();
         }
     }
 

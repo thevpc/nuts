@@ -15,20 +15,20 @@ public class NutsInstallStatusFilterParser extends NutsTypedFiltersParser<NutsIn
         return ws.filters().installStatus();
     }
 
-    protected NutsInstallStatusFilter worldToPredicate(String word){
+    protected NutsInstallStatusFilter wordToPredicate(String word){
         switch (word.toLowerCase()){
-            case "installed":return getTManager().byInstalled();
+            case "installed":return getTManager().byInstalled(true);
             case "default":
             case "defaultvalue":
-                return getTManager().byDefaultValue();
+                return getTManager().byDefaultValue(true);
             case "required":
-                return getTManager().byRequired();
+                return getTManager().byRequired(true);
             case "obsolete":
-                return getTManager().byObsolete();
+                return getTManager().byObsolete(true);
             case "deployed":
-                return getTManager().byDeployed();
+                return getTManager().byDeployed(true);
             default:{
-                return super.worldToPredicate(word);
+                return super.wordToPredicate(word);
             }
         }
     }

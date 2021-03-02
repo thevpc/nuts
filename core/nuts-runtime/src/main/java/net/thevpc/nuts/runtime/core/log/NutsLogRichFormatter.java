@@ -28,7 +28,7 @@ public class NutsLogRichFormatter extends Formatter {
                     wRecord.getSession(),
                     wRecord.getLevel(),
                     wRecord.getVerb(),
-                    ws.formats().text().factory().setSession(wRecord.getSession()).nodeFor(
+                    ws.formats().text().setSession(wRecord.getSession()).nodeFor(
                             new NutsMessage(
                                 wRecord.getFormatStyle(),
                                     wRecord.getMessage(),
@@ -61,10 +61,10 @@ public class NutsLogRichFormatter extends Formatter {
         if (record instanceof NutsLogRecord) {
             NutsLogRecord wRecord = (NutsLogRecord) record;
             NutsTextFormatStyle style = wRecord.getFormatStyle();
-            NutsTextFormatManager tf = wRecord.getWorkspace().formats().text();
+            NutsFormatManager tf = wRecord.getWorkspace().formats();
 
-            NutsTextNodeBuilder sb = tf.builder();
-            NutsTextNodeFactory ff = tf.factory();
+            NutsTextNodeBuilder sb = tf.text().builder();
+            NutsTextManager ff = tf.text();
             String date = CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(wRecord.getMillis()));
 
             sb.append(ff.styled(date,NutsTextNodeStyle.pale()));
@@ -190,21 +190,21 @@ public class NutsLogRichFormatter extends Formatter {
             // \\{[0-9]+\\}
 //            message=message.replaceAll("\\\\\\{([0-9]+)\\\\}","{$1}");
             NutsFormatManager formats = wRecord.getWorkspace().formats();
-            NutsTextFormatManager text = formats.text();
+            NutsFormatManager text = formats;
             if(!wRecord.isFormatted()){
                 parameters2= Arrays.copyOf(parameters2,parameters2.length);
                 for (int i = 0; i < parameters2.length; i++) {
                     if (parameters2[i] instanceof NutsString) {
-                        parameters2[i] = text.builder().append(parameters2[i].toString()).filteredText();
+                        parameters2[i] = text.text().builder().append(parameters2[i].toString()).filteredText();
                     } else if (parameters2[i] instanceof NutsFormattable) {
-                        parameters2[i] = text.builder().append(
+                        parameters2[i] = text.text().builder().append(
                                 ((NutsFormattable) parameters2[i]).formatter().setSession(wRecord.getSession()).format()
                         ).filteredText();
                     }
                 }
             }
             NutsString msgStr =
-                    wRecord.getWorkspace().formats().text().factory()
+                    wRecord.getWorkspace().formats().text()
                             .setSession(wRecord.getSession())
                             .nodeFor(
                     new NutsMessage(style,

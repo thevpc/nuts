@@ -208,9 +208,9 @@ public class LsCommand extends SimpleNshBuiltin {
         } else if (context.getResult() instanceof ResultError) {
             ResultError s = context.getResult();
             for (Map.Entry<String, String> e : s.result.entrySet()) {
-                NutsTextFormatManager text = session.getWorkspace().formats().text();
+                NutsFormatManager text = session.getWorkspace().formats();
                 out.printf("%s%n",
-                        text.builder().append(e.getKey(),NutsTextNodeStyle.primary(5))
+                        text.text().builder().append(e.getKey(),NutsTextNodeStyle.primary(5))
                         .append(" : ")
                         .append(e.getValue(),NutsTextNodeStyle.error())
                         );
@@ -241,19 +241,19 @@ public class LsCommand extends SimpleNshBuiltin {
             out.print(" ");
         }
         String name = new File(item.path).getName();
-        NutsTextFormatManager text = session.getWorkspace().formats().text();
+        NutsFormatManager text = session.getWorkspace().formats();
         if (item.hidden) {
-            out.println(text.factory().styled(name,NutsTextNodeStyle.pale()));
+            out.println(text.text().styled(name,NutsTextNodeStyle.pale()));
         } else if (item.type == 'd') {
-            out.println(text.factory().styled(name,NutsTextNodeStyle.primary(3)));
+            out.println(text.text().styled(name,NutsTextNodeStyle.primary(3)));
         } else if (item.exec2 || item.jperms.charAt(2) == 'x') {
-            out.println(text.factory().styled(name,NutsTextNodeStyle.primary(4)));
+            out.println(text.text().styled(name,NutsTextNodeStyle.primary(4)));
         } else if (item.config) {
-            out.println(text.factory().styled(name,NutsTextNodeStyle.primary(5)));
+            out.println(text.text().styled(name,NutsTextNodeStyle.primary(5)));
         } else if (item.archive) {
-            out.println(text.factory().styled(name,NutsTextNodeStyle.primary(1)));
+            out.println(text.text().styled(name,NutsTextNodeStyle.primary(1)));
         } else {
-            out.println(text.factory().styled(name));
+            out.println(text.text().styled(name));
         }
     }
 

@@ -33,7 +33,7 @@ import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 import net.thevpc.nuts.toolbox.nutsserver.http.commands.*;
-import net.thevpc.common.util.ListValueMap;
+import net.thevpc.common.collections.ListValueMap;
 
 import java.io.*;
 import java.util.*;

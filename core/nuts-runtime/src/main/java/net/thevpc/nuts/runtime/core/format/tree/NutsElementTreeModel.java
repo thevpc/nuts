@@ -85,7 +85,7 @@ class NutsElementTreeModel implements NutsTreeModel {
             }
             switch (this.value.type()) {
                 case ARRAY: {
-                    return ws.formats().text().factory().blank();
+                    return ws.formats().text().blank();
                 }
                 case OBJECT: {
                     NutsElement bestElement = null;

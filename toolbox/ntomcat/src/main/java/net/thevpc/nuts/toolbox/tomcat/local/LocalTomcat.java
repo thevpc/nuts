@@ -191,7 +191,7 @@ public class LocalTomcat {
         }
         if (args.isExecMode()) {
             NutsSession session = context.getSession();
-            NutsTextNodeFactory factory = session.getWorkspace().formats().text().factory();
+            NutsTextManager factory = session.getWorkspace().formats().text();
             if (session.isPlainOut()) {
                 PrintStream out = session.out();
                 for (RunningTomcat jpsResult : TomcatUtils.getRunningInstances(context)) {
@@ -449,7 +449,7 @@ public class LocalTomcat {
         } else {
             if (context.getSession().isPlainOut()) {
                 context.getSession().out().printf("%s Tomcat %s.\n", getBracketsPrefix(name),
-                        context.getWorkspace().formats().text().factory().styled("not found",NutsTextNodeStyle.error())
+                        context.getWorkspace().formats().text().styled("not found",NutsTextNodeStyle.error())
                         );
             } else {
                 HashMap<String, String> r = new HashMap<>();

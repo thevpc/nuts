@@ -11,11 +11,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: net.vpc.app.nuts:nuts:0.7.2" level="project" />
+    <orderEntry type="module" module-name="jshell" />
     <orderEntry type="module" module-name="nuts" />
     <orderEntry type="module" module-name="thevpc-common-file-template" />
     <orderEntry type="module" module-name="nsh" />
-    <orderEntry type="module" module-name="jshell" />
+    <orderEntry type="library" name="Maven: net.thevpc:jshell:0.8.1" level="project" />
     <orderEntry type="module" module-name="thevpc-common-strings" />
     <orderEntry type="module" module-name="thevpc-common-utils" />
     <orderEntry type="module" module-name="thevpc-common-mvn" />

@@ -93,20 +93,20 @@ public class PrintStreamExt extends PrintStream implements ExtendedFormatAware, 
     @Override
     public PrintStreamExt format(Locale l, String format, Object... args) {
         if(l==null){
-            print(session.getWorkspace().formats().text().factory().setSession(session).nodeFor(
+            NutsTextNode s = session.getWorkspace().formats().text().setSession(session).nodeFor(
                     NutsMessage.cstyle(
                             format, args
                     )
-            ));
+            );
+            print(s);
         }else{
-            NutsSession s2 = this.session.copy().setLocale(l.toString());
-            print(
-                    s2.getWorkspace().formats().text().factory().setSession(s2).nodeFor(
-                            NutsMessage.cstyle(
-                                    format, args
-                            )
+            NutsSession sess = this.session.copy().setLocale(l.toString());
+            NutsTextNode s = sess.getWorkspace().formats().text().setSession(sess).nodeFor(
+                    NutsMessage.cstyle(
+                            format, args
                     )
             );
+            print(s);
         }
         return this;
     }

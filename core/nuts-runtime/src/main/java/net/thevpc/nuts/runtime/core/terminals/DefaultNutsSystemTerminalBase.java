@@ -48,7 +48,11 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
 //        LOG=workspace.log().of(DefaultNutsSystemTerminalBase.class);
             NutsTerminalMode terminalMode = options.getTerminalMode();
             if (terminalMode == null) {
-                terminalMode = NutsTerminalMode.FORMATTED;
+                if(options.isBot()){
+                    terminalMode = NutsTerminalMode.FILTERED;
+                }else{
+                    terminalMode = NutsTerminalMode.FORMATTED;
+                }
             }
             if(bootSession) {
                 this.outMode = terminalMode;
@@ -60,8 +64,8 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
                 setOutMode(terminalMode);
                 setErrMode(terminalMode);
                 NutsIOManager ioManager = workspace.io();
-                this.out = ioManager.createPrintStream(CoreIOUtils.out(workspace), NutsTerminalMode.FORMATTED, session);
-                this.err = ioManager.createPrintStream(CoreIOUtils.err(workspace), NutsTerminalMode.FORMATTED, session);//.setColor(NutsPrintStream.RED);
+                this.out = ioManager.createPrintStream(CoreIOUtils.out(workspace), terminalMode, session);
+                this.err = ioManager.createPrintStream(CoreIOUtils.err(workspace), terminalMode, session);//.setColor(NutsPrintStream.RED);
                 this.in = CoreIOUtils.in(workspace);
             }
             this.scanner = new Scanner(this.in);
@@ -82,7 +86,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
         }
         if(LOG!=null) {
             LOG.with().session(session).level(Level.CONFIG).verb( NutsLogVerb.UPDATE).formatted().log("change terminal Out mode : {0}",
-                    workspace.formats().text().factory().styled(mode.id(),NutsTextNodeStyle.primary(1))
+                    workspace.formats().text().styled(mode.id(),NutsTextNodeStyle.primary(1))
             );
         }
         FPrint.installStdOut(this.outMode = mode,this.workspace);
@@ -96,7 +100,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
         }
         if(LOG!=null) {
             LOG.with().session(session).level(Level.CONFIG).verb( NutsLogVerb.UPDATE).formatted().log("change terminal Err mode : {0}",
-                    workspace.formats().text().factory().styled(mode.id(),NutsTextNodeStyle.primary(1))
+                    workspace.formats().text().styled(mode.id(),NutsTextNodeStyle.primary(1))
             );
         }
         FPrint.installStdErr(this.errMode = mode,this.workspace);

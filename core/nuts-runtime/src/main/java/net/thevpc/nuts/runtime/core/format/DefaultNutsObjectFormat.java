@@ -67,7 +67,20 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
 
     public NutsContentType getOutputFormat() {
         NutsContentType t = getValidSession().getOutputFormat();
-        return t == null ? NutsContentType.PLAIN : t;
+        t=t == null ? NutsContentType.PLAIN : t;
+        if(getValidSession().isBot()){
+            switch(t){
+                case PLAIN:{
+                    return NutsContentType.PROPS;
+                }
+                case TREE:
+                case TABLE:
+                {
+                    return NutsContentType.JSON;
+                }
+            }
+        }
+        return t;
     }
 
     public NutsObjectFormat getBase() {

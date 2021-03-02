@@ -28,7 +28,7 @@ package net.thevpc.nuts.toolbox.nutsserver;
 import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServletFacadeContext;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.common.util.ListValueMap;
+import net.thevpc.common.collections.ListValueMap;
 
 import java.io.File;
 import java.io.IOException;

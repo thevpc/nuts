@@ -55,7 +55,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     NutsWorkspaceOptionsBuilder setExcludedExtensions(String[] excludedExtensions);
 
-    NutsWorkspaceOptionsBuilder setExcludedRepositories(String[] excludedRepositories);
+//    NutsWorkspaceOptionsBuilder setExcludedRepositories(String[] excludedRepositories);
 
     NutsWorkspaceOptionsBuilder setUsername(String username);
 
@@ -101,7 +101,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     NutsWorkspaceOptionsBuilder setDebug(Boolean debug);
 
-    NutsWorkspaceOptionsBuilder setTransientRepositories(String[] transientRepositories);
+    NutsWorkspaceOptionsBuilder setRepositories(String[] transientRepositories);
 
     NutsWorkspaceOptionsBuilder setLogConfig(NutsLogConfig logConfig);
 
@@ -151,6 +151,8 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
     NutsWorkspaceOptionsBuilder setIndexed(Boolean indexed);
 
     NutsWorkspaceOptionsBuilder setTransitive(Boolean transitive);
+    
+    NutsWorkspaceOptionsBuilder setBot(Boolean bot);
 
     NutsWorkspaceOptionsBuilder setStdin(InputStream stdin);
 
@@ -160,7 +162,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     NutsWorkspaceOptionsBuilder setExecutorService(ExecutorService executorService);
 
-    NutsWorkspaceOptionsBuilder setBootRepositories(String bootRepositories);
+//    NutsWorkspaceOptionsBuilder setBootRepositories(String bootRepositories);
 
     /**
      * set home locations.

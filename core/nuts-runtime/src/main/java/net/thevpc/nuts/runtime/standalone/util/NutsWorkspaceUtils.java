@@ -547,14 +547,14 @@ public class NutsWorkspaceUtils {
 
         if (LOG.isLoggable(Level.FINE)) {
             LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] {0}",
-                    ws.formats().text().factory().code("sh",
+                    ws.formats().text().code("sh",
                             pb.getCommandString()
                     ));
         }
         if (showCommand || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
             if (ws.io().term().isFormatted(prepareTerminal.out())) {
-                prepareTerminal.out().printf("%s ", ws.formats().text().factory().styled("[exec]", NutsTextNodeStyle.primary(4)));
-                prepareTerminal.out().println(ws.formats().text().factory().code("sh", pb.getCommandString()));
+                prepareTerminal.out().printf("%s ", ws.formats().text().styled("[exec]", NutsTextNodeStyle.primary(4)));
+                prepareTerminal.out().println(ws.formats().text().code("sh", pb.getCommandString()));
             } else {
                 prepareTerminal.out().print("exec ");
                 prepareTerminal.out().printf("%s%n", pb.getCommandString());

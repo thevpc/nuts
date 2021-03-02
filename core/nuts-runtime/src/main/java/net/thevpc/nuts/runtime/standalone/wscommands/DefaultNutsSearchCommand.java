@@ -40,6 +40,7 @@ import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 
 /**
  * @author thevpc
@@ -520,8 +521,22 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         if (nutsId.getArtifactId().equals("nuts")) {
                             nutsId2.add(nutsId.builder().setGroupId("net.thevpc.nuts").build());
                         } else {
-                            for (String aImport : ws.imports().getAll()) {
-                                nutsId2.add(nutsId.builder().setGroupId(aImport).build());
+                            //check if it is already installed
+                            List<NutsId> installedIds=Collections.emptyList();
+                            if (!nutsId.getArtifactId().contains("*")) {
+                                NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(ws)
+                                        .repoSPI(NutsWorkspaceExt.of(getWorkspace()).getInstalledRepository());
+                                Iterator<NutsId> it = repoSPI.search().setFetchMode(NutsFetchMode.LOCAL).setFilter(ws.filters().id().byName(
+                                        nutsId.builder().setGroupId("*").build().toString()
+                                )).setSession(getSession()).getResult();
+                                installedIds = IteratorUtils.toList(it);
+                            }
+                            if (!installedIds.isEmpty()) {
+                                nutsId2.addAll(installedIds);
+                            } else {
+                                for (String aImport : ws.imports().getAll()) {
+                                    nutsId2.add(nutsId.builder().setGroupId(aImport).build());
+                                }
                             }
                         }
                     } else {

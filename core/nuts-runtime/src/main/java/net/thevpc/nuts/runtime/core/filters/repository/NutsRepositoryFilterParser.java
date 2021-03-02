@@ -13,10 +13,10 @@ public class NutsRepositoryFilterParser extends NutsTypedFiltersParser<NutsRepos
         return ws.filters().repository();
     }
 
-    protected NutsRepositoryFilter worldToPredicate(String word){
+    protected NutsRepositoryFilter wordToPredicate(String word){
         switch (word.toLowerCase()){
             default:{
-                return super.worldToPredicate(word);
+                return super.wordToPredicate(word);
             }
         }
     }

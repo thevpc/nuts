@@ -135,7 +135,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                                     .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
                                     .setWorkspace(getWorkspaceLocation())
                                     .setArchetype(getWorkspaceArchetype())
-                                    .setExcludedRepositories(splitString(getWorkspaceExcludedRepositories(), ";"))
+//                                    .setExcludedRepositories(splitString(getWorkspaceExcludedRepositories(), ";"))
                                     .setExcludedExtensions(splitString(getWorkspaceExcludedExtensions(), " ;"))
                     );
         }

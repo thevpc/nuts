@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.core.filters;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractFilterParser2;
 
 public abstract class NutsTypedFiltersParser<T extends NutsFilter> extends AbstractFilterParser2<T> {
     protected NutsWorkspace ws;
@@ -45,7 +44,7 @@ public abstract class NutsTypedFiltersParser<T extends NutsFilter> extends Abstr
         throw new IllegalArgumentException("unexpected bin op "+op);
     }
 
-    protected T worldToPredicate(String word){
+    protected T wordToPredicate(String word){
         switch (word.toLowerCase()){
             case "any":
             case "always":

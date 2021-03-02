@@ -60,8 +60,8 @@ search for artifacts
     search for installed only packages
 ```sh --included```
     search for included packages in other installations
-```sh --installed-or-included```
-    search for installed and included packages
+```sh --deployed```
+    search for installed and required (as dependencies) packages
 ```sh --remote | -R```
     equivalent to ```sh --fetch=remote```
 ```sh --optional```
@@ -75,21 +75,21 @@ search for artifacts
            | run|run-test|other|all
 ```
      relevant when ```sh --dependencies``` is armed.
-       include scope in the search dependencies process. if none defined, only ```kw installed``` scope is searched.
+       include scope in the search dependencies process. if none defined, only ```kw run``` scope is searched.
 
 ```sh --default | --default-versions```
     find only default installed versions. This  is meaningful with ```sh --installed``` flag
-```sh --libs```
+```sh --libs | --lib```
     find libraries (non app) only
-```sh --apps```
+```sh --apps | --app```
     find applications (non libraries) only
-```sh --nuts-apps```
+```sh --nuts-apps |--nuts-app```
     find nuts applications only
-```sh --extensions```
+```sh --extensions | --extension```
     find extensions only
 ```sh --runtime```
-    find runtime only
-```sh --companions```
+    find nuts runtime only
+```sh --companions | --companion```
     find companions only
 ```sh --api-version```
     find artifacts compatible with the given api-version
@@ -174,7 +174,7 @@ search for artifacts
 
 ##) EXAMPLES
 ```sh nuts search --help```
-            shows this help and exit
+            show this help and exit
        
 ```sh nuts search```
             search installed nuts

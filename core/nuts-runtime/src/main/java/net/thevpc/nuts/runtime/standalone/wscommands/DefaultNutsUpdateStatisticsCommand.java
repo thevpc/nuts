@@ -76,7 +76,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
                 }
             }
         }
-        NutsTextNodeFactory factory = getWorkspace().formats().text().factory();
+        NutsTextManager factory = getWorkspace().formats().text();
         if (!processed) {
             if (session.isPlainTrace()) {
                 session.out().printf("%s updating workspace stats%n", factory.styled(getWorkspace().locations().getWorkspaceLocation(),NutsTextNodeStyle.path()));

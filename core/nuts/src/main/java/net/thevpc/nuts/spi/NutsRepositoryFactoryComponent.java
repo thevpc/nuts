@@ -36,7 +36,7 @@ import net.thevpc.nuts.*;
  */
 public interface NutsRepositoryFactoryComponent extends NutsComponent<NutsRepositoryConfig> {
 
-    NutsAddRepositoryOptions[] getDefaultRepositories(NutsWorkspace workspace);
+    NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session);
 
     NutsRepository create(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository);
 

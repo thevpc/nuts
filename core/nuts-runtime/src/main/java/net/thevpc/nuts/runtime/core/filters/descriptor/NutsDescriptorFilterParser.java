@@ -13,10 +13,10 @@ public class NutsDescriptorFilterParser extends NutsTypedFiltersParser<NutsDescr
         return ws.filters().descriptor();
     }
 
-    protected NutsDescriptorFilter worldToPredicate(String word){
+    protected NutsDescriptorFilter wordToPredicate(String word){
         switch (word.toLowerCase()){
             default:{
-                return super.worldToPredicate(word);
+                return super.wordToPredicate(word);
             }
         }
     }

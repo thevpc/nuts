@@ -10,7 +10,7 @@
 
 ##) EXAMPLES
 ```sh nuts uninstall --help```
-            shows this help and exit
+            show this help and exit
        
 ```sh nuts uninstall netbeans-launcher```
             uninstall netbeans-launcher

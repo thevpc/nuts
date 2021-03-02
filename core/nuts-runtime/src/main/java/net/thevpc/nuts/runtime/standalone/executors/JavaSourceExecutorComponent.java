@@ -71,7 +71,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         NutsWorkspace ws = executionContext.getWorkspace();
         String folder = "__temp_folder";
         PrintStream out = executionContext.getTraceSession().out();
-        out.println(executionContext.getWorkspace().formats().text().factory().styled("compile", NutsTextNodeStyle.primary(4)));
+        out.println(executionContext.getWorkspace().formats().text().styled("compile", NutsTextNodeStyle.primary(4)));
         out.printf("%s%n",
                 executionContext.getWorkspace().commandLine().create(
                         "embedded-javac",

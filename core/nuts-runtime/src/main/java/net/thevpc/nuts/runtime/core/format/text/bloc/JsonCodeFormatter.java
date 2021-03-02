@@ -9,11 +9,19 @@ import java.util.List;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsCodeFormat;
 
-public class JsonBlocTextFormatter implements NutsCodeFormat {
+public class JsonCodeFormatter implements NutsCodeFormat {
     private NutsWorkspace ws;
+    private NutsTextManager factory;
 
-    public JsonBlocTextFormatter(NutsWorkspace ws) {
+    public JsonCodeFormatter(NutsWorkspace ws) {
         this.ws = ws;
+        factory = ws.formats().text();
+    }
+
+
+    @Override
+    public NutsTextNode tokenToNode(String text, String nodeType) {
+        return factory.plain(text);
     }
 
     @Override
@@ -23,9 +31,8 @@ public class JsonBlocTextFormatter implements NutsCodeFormat {
     }
 
     @Override
-    public NutsTextNode toNode(String text) {
+    public NutsTextNode textToNode(String text) {
         List<NutsTextNode> all = new ArrayList<>();
-        NutsTextNodeFactory factory = ws.formats().text().factory();
         StringReaderExt ar = new StringReaderExt(text);
         while (ar.hasNext()) {
             switch (ar.peekChar()) {

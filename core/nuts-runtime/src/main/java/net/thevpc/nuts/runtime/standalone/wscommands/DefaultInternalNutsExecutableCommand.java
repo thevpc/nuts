@@ -38,9 +38,9 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
 
     @Override
     public String getHelpText() {
-        NutsTextFormatManager txt = getSession().getWorkspace().formats().text();
-        NutsTextNode n = txt.parser().parseResource("/net/thevpc/nuts/runtime/command/" + name + ".ntf",
-                txt.parser().createLoader(getClass().getClassLoader())
+        NutsFormatManager txt = getSession().getWorkspace().formats();
+        NutsTextNode n = txt.text().parser().parseResource("/net/thevpc/nuts/runtime/command/" + name + ".ntf",
+                txt.text().parser().createLoader(getClass().getClassLoader())
         );
         if(n==null){
             return "no help found for " + name;
@@ -54,9 +54,9 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
             getSession().out().println("[dry] ==show-help==");
             return;
         }
-        NutsTextFormatManager text = getSession().getWorkspace().formats().text();
+        NutsFormatManager text = getSession().getWorkspace().formats();
         getSession().out().printf("[dry] %s%n",
-                text.builder()
+                text.text().builder()
                         .append("internal", NutsTextNodeStyle.pale())
                         .append(" ")
                         .append(getName(),NutsTextNodeStyle.primary(5))

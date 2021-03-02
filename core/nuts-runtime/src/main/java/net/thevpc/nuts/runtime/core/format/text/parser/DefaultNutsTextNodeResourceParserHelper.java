@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
-import net.thevpc.nuts.runtime.core.format.text.NutsTextNodeWriterStringer;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.NutsWorkspaceVarExpansionFunction;
 
@@ -152,7 +151,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
                 }
             }
             if (start) {
-                node = ws.formats().text().factory().list(ok);
+                node = ws.formats().text().list(ok);
             }
             return node;
         }

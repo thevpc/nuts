@@ -62,7 +62,7 @@ public class NutsException extends RuntimeException {
      *                  later retrieval by the {@link #getMessage()} method.
      */
     public NutsException(NutsWorkspace workspace, NutsMessage message) {
-        super(message == null ? null : workspace.formats().text().factory().nodeFor(message).filteredText());
+        super(message == null ? null : workspace.formats().text().nodeFor(message).filteredText());
         this.workspace = workspace;
         this.formattedMessage = message;
     }
@@ -101,7 +101,7 @@ public class NutsException extends RuntimeException {
      * @param workspace the workspace of this Nuts Exception
      */
     public NutsException(NutsWorkspace workspace, NutsMessage message, Throwable cause) {
-        super(message == null ? null : workspace.formats().text().factory().nodeFor(message).filteredText(), cause);
+        super(message == null ? null : workspace.formats().text().nodeFor(message).filteredText(), cause);
         this.workspace = workspace;
         this.formattedMessage = message;
     }
@@ -183,7 +183,7 @@ public class NutsException extends RuntimeException {
      * @param workspace          the workspace of this Nuts Exception
      */
     public NutsException(NutsWorkspace workspace, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message == null ? null : workspace.formats().text().factory().nodeFor(message).filteredText()
+        super(message == null ? null : workspace.formats().text().nodeFor(message).filteredText()
                 , cause, enableSuppression, writableStackTrace);
         this.workspace = workspace;
         this.formattedMessage = message;

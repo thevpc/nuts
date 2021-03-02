@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class InternalNutsTypedFilters<T extends NutsFilter> implements NutsTypedFilters<T> {
+
     protected final DefaultNutsFilterManager defaultNutsFilterManager;
     protected final NutsWorkspace ws;
     private Class<T> type;
@@ -20,16 +21,16 @@ public abstract class InternalNutsTypedFilters<T extends NutsFilter> implements 
 
     @Override
     public T nonnull(NutsFilter filter) {
-        return defaultNutsFilterManager.nonnull(type, filter);
+        if (filter == null) {
+            return always();
+        }
+        return filter.to(type);
     }
 
-    @Override
-    public T not(NutsFilter other) {
-        return defaultNutsFilterManager.not(type, other);
-    }
-
-
-
+//    @Override
+//    public T not(NutsFilter other) {
+//        return defaultNutsFilterManager.not(type, other);
+//    }
     protected List<T> convertList(NutsFilter... others) {
         List<T> all = new ArrayList<>();
         for (NutsFilter other : others) {

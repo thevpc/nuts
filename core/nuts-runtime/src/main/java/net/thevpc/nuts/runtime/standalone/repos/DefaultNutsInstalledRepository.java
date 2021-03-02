@@ -240,7 +240,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             if (v != null && v.equals(def.getId().getVersion().getValue())) {
                 Iterator<NutsId> versions = searchVersions().setId(def.getId())
                         .setFilter(workspace.id().filter().byInstallStatus(
-                                workspace.filters().installStatus().byInstalled()
+                                workspace.filters().installStatus().byInstalled(true)
                         )) //search only in installed, ignore deployed!
                         .setFetchMode(NutsFetchMode.LOCAL)
                         .setSession(session).getResult();

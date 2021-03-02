@@ -25,7 +25,7 @@ execute a command
 
 ##) EXAMPLES
 ```sh nuts exec --help```
-            shows this help and exit
+            show this help and exit
        
 ```sh nuts exec --yes -e -Xmx1G netbeans-launcher```
             runs netbeans-launcher with JVM option  -Xmx1G. If the artifact is not installed

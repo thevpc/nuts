@@ -84,7 +84,7 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent, NutsSession session);
 
-    void setExcludedRepositories(String[] excludedRepositories, NutsUpdateOptions options);
+//    void setExcludedRepositories(String[] excludedRepositories, NutsUpdateOptions options);
 
     void setUsers(NutsUserConfig[] users, NutsUpdateOptions options);
 

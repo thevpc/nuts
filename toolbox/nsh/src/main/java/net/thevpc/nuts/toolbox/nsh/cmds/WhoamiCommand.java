@@ -182,7 +182,7 @@ public class WhoamiCommand extends SimpleNshBuiltin {
         Result result = context.getResult();
         context.out().printf("%s\n", result.login);
         if (options.nutsUser) {
-            NutsTextNodeFactory factory = session.getWorkspace().formats().text().factory();
+            NutsTextManager factory = session.getWorkspace().formats().text();
             if (result.loginStack != null) {
                 context.out().printf("%s      :",
                         factory.styled("stack",NutsTextNodeStyle.primary(5))

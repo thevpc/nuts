@@ -19,7 +19,7 @@ nuts -v
 
 ##) EXAMPLES
 ```sh  nuts version -a```
-            shows all versions
+            show all versions
        
 ```sh nuts -v```
             show version

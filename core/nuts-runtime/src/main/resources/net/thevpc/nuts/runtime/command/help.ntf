@@ -9,7 +9,7 @@ show help and exit
 
 ##) EXAMPLES
 ```sh nuts help --help```
-            shows this help and exit
+            show this help and exit
        
 ```sh nuts help update```
             show help for update internal command

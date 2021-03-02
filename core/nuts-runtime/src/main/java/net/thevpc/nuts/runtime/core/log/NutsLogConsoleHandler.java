@@ -67,6 +67,9 @@ public class NutsLogConsoleHandler extends StreamHandler {
         if (record instanceof NutsLogRecord) {
             NutsSession session = ((NutsLogRecord) record).getSession();
             if (session != null) {
+                if(session.isBot()){
+                    return false;
+                }
                 NutsLogConfig logConfig = session.getWorkspace().config().options().getLogConfig();
                 Level sessionLogLevel = session.getLogTermLevel();
                 if (sessionLogLevel == null) {

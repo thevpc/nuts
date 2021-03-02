@@ -87,7 +87,7 @@ public class Nsh extends NutsApplication {
             });
         }
         if (session.isPlainTrace()) {
-            NutsTextNodeFactory factory = session.getWorkspace().formats().text().factory();
+            NutsTextManager factory = session.getWorkspace().formats().text();
             if (firstInstalled.size() > 0) {
                 session.out().printf("registered %s nsh commands : %s \n",
                         factory.styled(""+firstInstalled.size(),NutsTextNodeStyle.primary(3))
@@ -127,7 +127,7 @@ public class Nsh extends NutsApplication {
                     ws.aliases().remove(command.getName(), new NutsRemoveOptions());
                 } catch (Exception ex) {
                     if (applicationContext.getSession().isPlainTrace()) {
-                        NutsTextNodeFactory factory = ws.formats().text().factory();
+                        NutsTextManager factory = ws.formats().text();
                         applicationContext.getSession().err().printf("unable to uninstall %s.\n",
                                 factory.styled(command.getName(),NutsTextNodeStyle.primary(3))
                         );

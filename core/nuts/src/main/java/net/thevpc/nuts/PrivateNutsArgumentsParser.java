@@ -56,8 +56,7 @@ final class PrivateNutsArgumentsParser {
     public static void parseNutsArguments(String[] bootArguments, NutsWorkspaceOptionsBuilder options) {
         List<String> showError = new ArrayList<>();
         HashSet<String> excludedExtensions = new HashSet<>();
-        HashSet<String> excludedRepositories = new HashSet<>();
-        HashSet<String> tempRepositories = new HashSet<>();
+        HashSet<String> repositories = new HashSet<>();
         Set<String> tempProps = new LinkedHashSet<>();
         List<String> executorOptions = new ArrayList<>();
         NutsLogConfig logConfig = null;
@@ -85,14 +84,14 @@ final class PrivateNutsArgumentsParser {
                     // they will be persisted. If they are specified later they 
                     // will override persisted values without persisting the changes
 
-                    case "--boot-repos": {
-                        a = cmdLine.nextString();
-                        String bootRepos = a.getStringValue("");
-                        if (enabled) {
-                            options.setBootRepositories(bootRepos);
-                        }
-                        break;
-                    }
+//                    case "--boot-repos": {
+//                        a = cmdLine.nextString();
+//                        String bootRepos = a.getStringValue("");
+//                        if (enabled) {
+//                            options.setBootRepositories(bootRepos);
+//                        }
+//                        break;
+//                    }
                     case "-w":
                     case "--workspace": {
                         a = cmdLine.nextString();
@@ -208,7 +207,9 @@ final class PrivateNutsArgumentsParser {
                         break;
                     }
                     case "-S":
-                    case "--standalone": {
+                    case "--standalone":
+                    case "--standalone-workspace":
+                    {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
@@ -217,26 +218,14 @@ final class PrivateNutsArgumentsParser {
                         break;
 
                     }
-                    case "--standalone-workspace": {
-                        a = cmdLine.nextBoolean();
-                        if (enabled && a.getBooleanValue()) {
-                            options.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
-                        }
-                        break;
-                    }
                     case "-E":
-                    case "--exploded": {
+                    case "--exploded": 
+                    case "--exploded-workspace": 
+                    {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
 //                            options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
-                        }
-                        break;
-                    }
-                    case "--exploded-workspace": {
-                        a = cmdLine.nextBoolean();
-                        if (enabled && a.getBooleanValue()) {
-                            options.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
                         }
                         break;
                     }
@@ -501,21 +490,24 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--bot": {
+                    case "-B":
+                    case "--bot":
+                    {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getBooleanValue()) {
-                            options.setTerminalMode(NutsTerminalMode.FILTERED);
-                            options.setProgressOptions("none");
-                            if (!explicitConfirm) {
-                                options.setConfirm(NutsConfirmationMode.ERROR);
-                            }
-                            options.setTrace(false);
-                            options.setDebug(false);
-                            options.setGui(false);
-                            NutsLogConfig lc = options.getLogConfig();
-                            if (lc != null) {
-                                lc.setLogTermLevel(Level.OFF);
-                            }
+                        if (enabled) {
+                            options.setBot(a.getBooleanValue());
+//                            options.setTerminalMode(NutsTerminalMode.FILTERED);
+//                            options.setProgressOptions("none");
+//                            if (!explicitConfirm) {
+//                                options.setConfirm(NutsConfirmationMode.ERROR);
+//                            }
+//                            options.setTrace(false);
+//                            options.setDebug(false);
+//                            options.setGui(false);
+//                            NutsLogConfig lc = options.getLogConfig();
+//                            if (lc != null) {
+//                                lc.setLogTermLevel(Level.OFF);
+//                            }
                         }
                         break;
                     }
@@ -626,20 +618,14 @@ final class PrivateNutsArgumentsParser {
                         break;
                     }
 
-                    case "--exclude-repository": {
-                        a = cmdLine.nextString();
-                        String v = a.getStringValue();
-                        if (enabled) {
-                            excludedRepositories.add(v);
-                        }
-                        break;
-                    }
                     case "--repository":
+                    case "--repositories":
+                    case "--repos":
                     case "-r": {
                         a = cmdLine.nextString();
                         String v = a.getStringValue();
                         if (enabled) {
-                            tempRepositories.add(v);
+                            repositories.add(v);
                         }
                         break;
                     }
@@ -878,17 +864,37 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--open": {
+                    case "--open-or-error": 
+                    case "--open": 
+                    {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.OPEN_OR_ERROR);
                         }
                         break;
                     }
-                    case "--create": {
+                    case "--create-or-error": 
+                    case "--create": 
+                    {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.CREATE_OR_ERROR);
+                        }
+                        break;
+                    }
+                    case "--open-or-create": 
+                    {
+                        a = cmdLine.nextBoolean();
+                        if (enabled && a.getBooleanValue()) {
+                            options.setOpenMode(NutsOpenMode.OPEN_OR_CREATE);
+                        }
+                        break;
+                    }
+                    case "--open-or-null": 
+                    {
+                        a = cmdLine.nextBoolean();
+                        if (enabled && a.getBooleanValue()) {
+                            options.setOpenMode(NutsOpenMode.OPEN_OR_NULL);
                         }
                         break;
                     }
@@ -1042,6 +1048,7 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
+
                     //ERRORS
                     case "-I":
                     case "-U":
@@ -1049,7 +1056,6 @@ final class PrivateNutsArgumentsParser {
                     case "-H":
                     case "-M":
                     case "-W":
-                    case "-B":
                     case "-i":
                     case "-q":
                     case "-s":
@@ -1075,8 +1081,7 @@ final class PrivateNutsArgumentsParser {
         options.setProperties(tempProps.toArray(new String[0]));
         options.setLogConfig(logConfig);
         options.setExcludedExtensions(excludedExtensions.toArray(new String[0]));
-        options.setExcludedRepositories(excludedRepositories.toArray(new String[0]));
-        options.setTransientRepositories(tempRepositories.toArray(new String[0]));
+        options.setRepositories(repositories.toArray(new String[0]));
         options.setApplicationArguments(applicationArguments.toArray(new String[0]));
         options.setExecutorOptions(executorOptions.toArray(new String[0]));
         options.setErrors(showError.toArray(new String[0]));
@@ -1255,7 +1260,7 @@ final class PrivateNutsArgumentsParser {
             case "SYSTEM":
                 return null;
         }
-        throw new NutsBootException("Unable to parse value for NutsStoreLocationLayout : " + s0);
+        throw new NutsBootException("unable to parse value for NutsStoreLocationLayout : " + s0);
     }
 
     private static NutsTerminalMode parseNutsTerminalMode(String s) {
@@ -1275,7 +1280,7 @@ final class PrivateNutsArgumentsParser {
             case "INHERITED":
                 return NutsTerminalMode.INHERITED;
         }
-        throw new NutsBootException("Unable to parse value for NutsTerminalMode : " + s0);
+        throw new NutsBootException("unable to parse value for NutsTerminalMode : " + s0);
     }
 
     private static NutsOpenMode parseNutsWorkspaceOpenMode(String s) {

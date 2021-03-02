@@ -197,23 +197,22 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     public NutsString getFormattedError(String str) {
-        return context.getWorkspace().formats().text()
-                .factory().styled(str,NutsTextNodeStyle.error())
+        return context.getWorkspace().formats()
+                .text().styled(str,NutsTextNodeStyle.error())
                 ;
     }
     public NutsString getFormattedSuccess(String str) {
-        return context.getWorkspace().formats().text()
-                .factory().styled(str,NutsTextNodeStyle.success())
+        return context.getWorkspace().formats()
+                .text().styled(str,NutsTextNodeStyle.success())
                 ;
     }
     public NutsString getFormattedPath(Path str) {
-        return context.getWorkspace().formats().text().
-                factory().styled(str==null?"":str.toString(),NutsTextNodeStyle.path())
+        return context.getWorkspace().formats()
+                .text().styled(str==null?"":str.toString(),NutsTextNodeStyle.path())
                 ;
     }
     public NutsString getFormattedPath(String str) {
-        return context.getWorkspace().formats().text().
-                factory().styled(str==null?"":str.toString(),NutsTextNodeStyle.path())
+        return context.getWorkspace().formats().text().styled(str==null?"":str.toString(),NutsTextNodeStyle.path())
                 ;
     }
     public NutsString getFormattedPrefix(String str) {
@@ -458,13 +457,13 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             NutsSearchCommand searchLatestCommand = ws.search().addId("org.apache.catalina:apache-tomcat#" + cv)
                     .setSession(context.getSession()/*.copy().setTrace(false)*/).setLatest(true);
             NutsDefinition r = searchLatestCommand
-                    .setInstallStatus(ws.filters().installStatus().byDeployed())
+                    .setInstallStatus(ws.filters().installStatus().byDeployed(true))
                     .getResultDefinitions().first();
             if (r == null) {
-                r = searchLatestCommand.setInstallStatus(ws.filters().installStatus().byNotInstalled()).setOffline().getResultDefinitions().first();
+                r = searchLatestCommand.setInstallStatus(ws.filters().installStatus().byInstalled(false)).setOffline().getResultDefinitions().first();
             }
             if (r == null) {
-                r = searchLatestCommand.setInstallStatus(ws.filters().installStatus().byNotInstalled()).setOnline().getResultDefinitions().required();
+                r = searchLatestCommand.setInstallStatus(ws.filters().installStatus().byInstalled(false)).setOnline().getResultDefinitions().required();
             }
             if (r.getInstallInformation().isInstalledOrRequired()) {
                 return r;

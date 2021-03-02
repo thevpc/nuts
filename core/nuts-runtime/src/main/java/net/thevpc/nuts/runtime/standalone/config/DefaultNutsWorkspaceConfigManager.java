@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.standalone.config;
 
 import net.thevpc.nuts.*;
@@ -92,9 +90,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     private long startCreateTime;
     private long endCreateTime;
     private NutsIndexStoreFactory indexStoreClientFactory;
-    private Set<String> excludedRepositoriesSet = new HashSet<>();
+//    private Set<String> excludedRepositoriesSet = new HashSet<>();
     private NutsStoreLocationsMap preUpdateConfigStoreLocations;
-    private Set<String> parsedBootRepositories;
+    private NutsRepositorySelector.SelectorList parsedBootRepositoriesList;
+//    private NutsRepositorySelector[] parsedBootRepositoriesArr;
     private NutsCommandAliasManager aliases;
     private NutsImportManager imports;
     private NutsWorkspaceEnvManager env;
@@ -106,9 +105,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         this.options = this.initOptions.getOptions();
         this.bootClassLoader = initOptions.getClassWorldLoader() == null ? Thread.currentThread().getContextClassLoader() : initOptions.getClassWorldLoader();
         this.bootClassWorldURLs = initOptions.getClassWorldURLs() == null ? null : Arrays.copyOf(initOptions.getClassWorldURLs(), initOptions.getClassWorldURLs().length);
-        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
+//        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
         sdks = new DefaultNutsSdkManager(ws);
-        env = new DefaultWorkspaceEnvManager(ws,options);
+        env = new DefaultWorkspaceEnvManager(ws, options);
         imports = new DefaultImportManager(ws);
         aliases = new DefaultAliasManager(ws);
     }
@@ -241,8 +240,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         NutsException error = null;
         for (NutsRepository repo : ws.repos().getRepositories(session)) {
             try {
-                if(repo.config() instanceof NutsRepositoryConfigManagerExt) {
-                    ok |= ((NutsRepositoryConfigManagerExt)(repo.config())).save(force, session);
+                if (repo.config() instanceof NutsRepositoryConfigManagerExt) {
+                    ok |= ((NutsRepositoryConfigManagerExt) (repo.config())).save(force, session);
                 }
             } catch (NutsException ex) {
                 error = ex;
@@ -284,10 +283,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 lastConfigPath
                         = CoreNutsUtils.isValidWorkspaceName(_ws)
                         ? Nuts.getPlatformHomeFolder(
-                        null, null, null,
-                        global,
-                        CoreNutsUtils.resolveValidWorkspaceName(_ws)
-                ) : CoreIOUtils.getAbsolutePath(_ws);
+                                null, null, null,
+                                global,
+                                CoreNutsUtils.resolveValidWorkspaceName(_ws)
+                        ) : CoreIOUtils.getAbsolutePath(_ws);
 
                 NutsWorkspaceConfigBoot configLoaded = parseBootConfig(lastConfigPath, session);
                 if (configLoaded == null) {
@@ -303,7 +302,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     throw new NutsIllegalArgumentException(ws, "cyclic workspace resolution");
                 }
             }
-            if(lastConfigLoaded==null){
+            if (lastConfigLoaded == null) {
                 return null;
             }
             effWorkspaceName = CoreNutsUtils.resolveValidWorkspaceName(_ws);
@@ -313,10 +312,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             lastConfigPath
                     = CoreNutsUtils.isValidWorkspaceName(_ws)
                     ? Nuts.getPlatformHomeFolder(
-                    null, null, null,
-                    global,
-                    CoreNutsUtils.resolveValidWorkspaceName(_ws)
-            ) : CoreIOUtils.getAbsolutePath(_ws);
+                            null, null, null,
+                            global,
+                            CoreNutsUtils.resolveValidWorkspaceName(_ws)
+                    ) : CoreIOUtils.getAbsolutePath(_ws);
 
             lastConfigLoaded = parseBootConfig(lastConfigPath, session);
             if (lastConfigLoaded == null) {
@@ -339,7 +338,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public boolean isExcludedExtension(String extensionId, NutsWorkspaceOptions options) {
-        if (extensionId != null && options!=null) {
+        if (extensionId != null && options != null) {
             NutsId pnid = ws.id().parser().parse(extensionId);
             String shortName = pnid.getShortName();
             String artifactId = pnid.getArtifactId();
@@ -372,7 +371,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsWorkspaceListManager createWorkspaceListManager(String name, NutsSession session) {
-        return new DefaultNutsWorkspaceListManager(ws,session, name);
+        return new DefaultNutsWorkspaceListManager(ws, session, name);
     }
 
     //    @Override
@@ -399,7 +398,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //        config.setBootRepositories(other.getBootRepositories());
 //        fireConfigurationChanged();
 //    }
-
     @Override
     public boolean isSupportedRepositoryType(String repositoryType, NutsSession session) {
         if (CoreStringUtils.isBlank(repositoryType)) {
@@ -412,10 +410,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
-        session=NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
+        session = NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
         List<NutsAddRepositoryOptions> all = new ArrayList<>();
         for (NutsRepositoryFactoryComponent provider : ws.extensions().createAll(NutsRepositoryFactoryComponent.class, session)) {
-            for (NutsAddRepositoryOptions d : provider.getDefaultRepositories(ws)) {
+            for (NutsAddRepositoryOptions d : provider.getDefaultRepositories(session)) {
                 all.add(d.setSession(session));
             }
         }
@@ -437,7 +435,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
         return set;
     }
-
 
     //    @Override
 //    public char[] decryptString(char[] input) {
@@ -472,13 +469,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //        String passphrase = getEnv(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE);
 //        return CoreSecurityUtils.httpEncrypt(input, passphrase);
 //    }
-
     @Override
     public String resolveRepositoryPath(String repositoryLocation, NutsSession session) {
         String root = this.getRepositoriesRoot();
         return Paths.get(ws.io().expandPath(repositoryLocation,
                 root != null ? root : Paths.get(ws.locations().getStoreLocation(NutsStoreLocation.CONFIG))
-                        .resolve(NutsConstants.Folders.REPOSITORIES).toString())).toString();
+                                .resolve(NutsConstants.Folders.REPOSITORIES).toString())).toString();
     }
 
     //    @Override
@@ -626,7 +622,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             m.put("javaOptions", javaOptions);
             ws.formats().element().setContentType(NutsContentType.JSON).setValue(m).print(apiConfigFile);
         }
-        downloadId(apiId, force, null, true,session);
+        downloadId(apiId, force, null, true, session);
     }
 
     @Override
@@ -763,7 +759,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsUserConfig getUser(String userId, NutsSession session) {
-        session=NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
+        session = NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
         NutsUserConfig _config = getSecurity(userId);
         if (_config == null) {
             if (NutsConstants.Users.ADMIN.equals(userId) || NutsConstants.Users.ANONYMOUS.equals(userId)) {
@@ -776,7 +772,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsUserConfig[] getUsers(NutsSession session) {
-        session=NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
+        session = NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
         return configUsers.values().toArray(new NutsUserConfig[0]);
     }
 
@@ -810,7 +806,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public void fireConfigurationChanged(String configName, NutsSession session, ConfigEventType t) {
-        session=NutsWorkspaceUtils.of(ws).validateSession(session);
+        session = NutsWorkspaceUtils.of(ws).validateSession(session);
         ((DefaultImportManager) imports()).invalidateCache();
         switch (t) {
             case API: {
@@ -886,7 +882,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent, NutsSession session) {
-        session=NutsWorkspaceUtils.of(ws).validateSession(session);
+        session = NutsWorkspaceUtils.of(ws).validateSession(session);
         authenticationAgent = CoreStringUtils.trim(authenticationAgent);
         NutsAuthenticationAgent supported = null;
         if (authenticationAgent.isEmpty()) {
@@ -902,14 +898,14 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (supported == null) {
             throw new NutsExtensionNotFoundException(ws, NutsAuthenticationAgent.class, "AuthenticationAgent");
         }
-        NutsWorkspaceUtils.setSession(supported,session);
+        NutsWorkspaceUtils.setSession(supported, session);
         return supported;
     }
 
-    @Override
-    public void setExcludedRepositories(String[] excludedRepositories, NutsUpdateOptions options) {
-        excludedRepositoriesSet = excludedRepositories == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(excludedRepositories), " ,;"));
-    }
+//    @Override
+//    public void setExcludedRepositories(String[] excludedRepositories, NutsUpdateOptions options) {
+//        excludedRepositoriesSet = excludedRepositories == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(excludedRepositories), " ,;"));
+//    }
 
     @Override
     public void setUsers(NutsUserConfig[] users, NutsUpdateOptions options) {
@@ -995,12 +991,13 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         this.storeModelMain = config == null ? new NutsWorkspaceConfigMain() : config;
         ((DefaultNutsSdkManager) sdks()).setSdks(this.storeModelMain.getSdk().toArray(new NutsSdkLocation[0]), options);
         NutsRemoveOptions o0 = CoreNutsUtils.toRemoveOptions(options);
-        o0.setSession(options.getSession());
         ws.repos().removeAllRepositories(o0);
         if (this.storeModelMain.getRepositories() != null) {
             NutsAddOptions addOption = CoreNutsUtils.toAddOptions(options);
             for (NutsRepositoryRef ref : this.storeModelMain.getRepositories()) {
-                ws.repos().addRepository(ref, addOption);
+                ws.repos().addRepository(
+                        CoreNutsUtils.refToOptions(ref).setSession(addOption.getSession())
+                );
             }
         }
 
@@ -1029,7 +1026,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 sb.append(File.pathSeparator);
             }
             if (CoreIOUtils.isPathFile(bootClassWorldURL.toString())) {
-                File f = CoreIOUtils.toPathFile(bootClassWorldURL.toString(),ws).toFile();
+                File f = CoreIOUtils.toPathFile(bootClassWorldURL.toString(), ws).toFile();
                 sb.append(f.getPath());
             } else {
                 sb.append(bootClassWorldURL.toString().replace(":", "\\:"));
@@ -1083,12 +1080,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     public void prepareBootRuntimeOrExtension(NutsId id, boolean force, boolean runtime, NutsSession session) {
-        session=NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
+        session = NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
         Path configFile = Paths.get(ws.locations().getStoreLocation(NutsStoreLocation.CACHE))
                 .resolve(NutsConstants.Folders.ID).resolve(ws.locations().getDefaultIdBasedir(id)).resolve(runtime
-                        ? NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME
-                        : NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME
-                );
+                ? NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME
+                : NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME
+        );
         Path jarFile = Paths.get(ws.locations().getStoreLocation(NutsStoreLocation.LIB))
                 .resolve(NutsConstants.Folders.ID).resolve(ws.locations().getDefaultIdBasedir(id))
                 .resolve(ws.locations().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build()));
@@ -1111,7 +1108,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     .verb(NutsLogVerb.WARNING).log("selected repositories ({0}) cannot reach runtime component. fallback to default.",
                     Arrays.stream(ws.repos().getRepositories(session)).map(NutsRepository::getName).collect(Collectors.joining(", "))
             );
-            MavenUtils.DepsAndRepos dd = MavenUtils.of(ws).loadDependenciesAndRepositoriesFromPomPath(id, resolveBootRepositories(), session);
+            HashMap<String, String> defaults = new HashMap<>();
+            MavenUtils.DepsAndRepos dd = MavenUtils.of(ws).loadDependenciesAndRepositoriesFromPomPath(id, 
+                    resolveBootRepositoriesList().resolveSelectors(defaults)
+                    , session);
             if (dd == null) {
                 throw new NutsNotFoundException(ws, id);
             }
@@ -1137,9 +1137,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (force || !Files.isRegularFile(configFile)) {
             ws.formats().element().setContentType(NutsContentType.JSON).setValue(m).print(configFile);
         }
-        downloadId(id, force, (def != null && def.getContent().getPath() != null) ? def.getContent().getPath() : null, false,session);
+        downloadId(id, force, (def != null && def.getContent().getPath() != null) ? def.getContent().getPath() : null, false, session);
         for (NutsId dep : deps) {
-            downloadId(dep, force, null, true,session);
+            downloadId(dep, force, null, true, session);
         }
     }
 
@@ -1152,8 +1152,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //    public String getExtensionDependencies() {
 //        return current().getExtensionDependencies();
 //    }
-    private void downloadId(NutsId id, boolean force, Path path, boolean fetch,NutsSession session) {
-        session=NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
+    private void downloadId(NutsId id, boolean force, Path path, boolean fetch, NutsSession session) {
+        session = NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
         String idFileName = ws.locations().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build());
         Path jarFile = Paths.get(ws.locations().getStoreLocation(NutsStoreLocation.LIB))
                 .resolve(NutsConstants.Folders.ID).resolve(ws.locations().getDefaultIdBasedir(id))
@@ -1170,14 +1170,14 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                             .setContent(true)
                             .setFailFast(false)
                             .getResultDefinition();
-                    if (def != null && def.getPath()!=null) {
+                    if (def != null && def.getPath() != null) {
                         ws.io().copy().from(def.getPath()).to(jarFile).setSession(session).run();
                         return;
                     }
                 }
-                for (String pp0 : resolveBootRepositories()) {
-                    NutsAddRepositoryOptions opt = RepoDefinitionResolver.createRepositoryOptions(pp0, false, ws);
-                    String pp = opt.getConfig()==null?opt.getLocation():opt.getConfig().getLocation();
+                for (NutsRepositorySelector pp0 : resolveBootRepositoriesList().resolveSelectors(null)) {
+                    NutsAddRepositoryOptions opt = RepoDefinitionResolver.createRepositoryOptions(pp0, false, session);
+                    String pp = opt.getConfig() == null ? opt.getLocation() : opt.getConfig().getLocation();
                     if (CoreIOUtils.isPathHttp(pp)) {
                         try {
                             if (!pp.endsWith("/")) {
@@ -1206,7 +1206,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     public void onPreUpdateConfig(String confName, NutsUpdateOptions options) {
-        options = CoreNutsUtils.validate(options, ws);
+//        options = CoreNutsUtils.validate(options, ws);
         preUpdateConfigStoreLocations = new NutsStoreLocationsMap(currentConfig.getStoreLocations());
     }
 
@@ -1237,7 +1237,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (wconfig.isReadOnly()) {
             throw new UncheckedIOException("unable to load config file " + file.toString(), new IOException(ex));
         }
-        String fileName = "nuts-workspace-" + Instant.now().toString();
+        String fileSuffix = Instant.now().toString();
+        fileSuffix = fileSuffix.replace(':', '-');
+        String fileName = "nuts-workspace-" + fileSuffix;
         LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
                 .log("erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex});
         Path logError = Paths.get(ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.LOG)).resolve("invalid-config");
@@ -1272,7 +1274,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
     }
 
-
     public NutsUserConfig getSecurity(String id) {
         return configUsers.get(id);
     }
@@ -1299,8 +1300,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             return createNutsVersionCompat(version).parseConfig(bytes, session);
         } catch (Exception ex) {
             LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
-                    .log("erroneous config file. Unable to load file {0} : {1}"
-                            , new Object[]{file, ex});
+                    .log("erroneous config file. Unable to load file {0} : {1}",
+                            new Object[]{file, ex});
             throw new UncheckedIOException("unable to load config file " + file.toString(), new IOException(ex));
         }
     }
@@ -1316,26 +1317,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
     }
 
-    public Collection<String> resolveBootRepositories() {
-        if (parsedBootRepositories != null) {
-            return parsedBootRepositories;
+    public NutsRepositorySelector.SelectorList resolveBootRepositoriesList() {
+        if (parsedBootRepositoriesList != null) {
+            return parsedBootRepositoriesList;
         }
-        String bootRepositories = options.getBootRepositories();
-        LinkedHashSet<String> repos = new LinkedHashSet<>();
-        for (String s : CoreStringUtils.split(bootRepositories, ",;", true)) {
-            if (s.trim().length() > 0) {
-                repos.add(s);
-            }
-        }
-        if (repos.isEmpty()) {
-            if (!NO_M2) {
-                repos.add("maven-local");
-            }
-//            repos.add("vpc-public-nuts");
-//            repos.add("vpc-public-maven");
-            repos.add("maven-central");
-        }
-        return parsedBootRepositories = repos;
+        parsedBootRepositoriesList = NutsRepositorySelector.parse(options.getRepositories());
+        return parsedBootRepositoriesList;
     }
 
     public NutsWorkspaceConfigBoot getStoreModelBoot() {

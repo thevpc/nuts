@@ -13,10 +13,10 @@ public class NutsIdFilterParser extends NutsTypedFiltersParser<NutsIdFilter> {
         return ws.filters().id();
     }
 
-    protected NutsIdFilter worldToPredicate(String word){
+    protected NutsIdFilter wordToPredicate(String word){
         switch (word.toLowerCase()){
             default:{
-                return super.worldToPredicate(word);
+                return super.wordToPredicate(word);
             }
         }
     }

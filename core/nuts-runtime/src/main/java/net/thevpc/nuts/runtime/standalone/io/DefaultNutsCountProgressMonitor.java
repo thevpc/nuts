@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.NutsProgressEvent;
 import net.thevpc.nuts.NutsProgressMonitor;
-import net.thevpc.nuts.NutsTextFormatManager;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.bundles.common.BytesSizeFormat;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
@@ -15,6 +14,7 @@ import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;
+import net.thevpc.nuts.NutsFormatManager;
 
 /**
  * @author thevpc
@@ -65,14 +65,14 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
         return true;
     }
 
-    private String escapeText(NutsTextFormatManager terminalFormat ,String str) {
-        return terminalFormat.builder().append(str).toString();
+    private String escapeText(NutsFormatManager formats ,String str) {
+        return formats.text().builder().append(str).toString();
     }
 
     public boolean onProgress0(NutsProgressEvent event, boolean end) {
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
-            NutsTextFormatManager terminalFormat = event.getSession().getWorkspace().formats().text();
+            NutsFormatManager terminalFormat = event.getSession().getWorkspace().formats();
             FPrintCommands.runMoveLineStart(out);
             double globalSeconds = event.getTimeMillis() / 1000.0;
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentValue() / globalSeconds);
@@ -110,7 +110,7 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
             }
             formattedLine.append(" ").append(escapeText(terminalFormat,event.getMessage())).append(" ");
             String ff = formattedLine.toString();
-            int length = terminalFormat.builder().append(ff).textLength();
+            int length = terminalFormat.text().builder().append(ff).textLength();
             if (length < minLength) {
                 CoreStringUtils.fillString(' ', minLength - length, formattedLine);
             } else {

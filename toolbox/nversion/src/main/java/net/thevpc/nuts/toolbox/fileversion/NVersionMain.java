@@ -26,25 +26,25 @@ public class NVersionMain extends NutsApplication {
 
     private Set<VersionDescriptor> detectVersions(String filePath, NutsApplicationContext context, NutsWorkspace ws) throws IOException {
         for (PathVersionResolver r : resolvers) {
-            Set<VersionDescriptor> x = r.resolve(filePath,context);
+            Set<VersionDescriptor> x = r.resolve(filePath, context);
             if (x != null) {
                 return x;
             }
         }
-        try{
+        try {
             Path p = Paths.get(filePath);
-            if(!Files.exists(p)){
+            if (!Files.exists(p)) {
                 throw new NutsExecutionException(context.getWorkspace(), "nversion: file does not exist: " + filePath, 2);
             }
-            if(!Files.isDirectory(p)){
+            if (!Files.isDirectory(p)) {
                 throw new NutsExecutionException(context.getWorkspace(), "nversion: unsupported directory: " + filePath, 2);
             }
-            if(!Files.isDirectory(p)){
+            if (!Files.isDirectory(p)) {
                 throw new NutsExecutionException(context.getWorkspace(), "nversion: unsupported file: " + filePath, 2);
             }
-        }catch (NutsExecutionException ex){
+        } catch (NutsExecutionException ex) {
             throw ex;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             //
         }
         throw new NutsExecutionException(context.getWorkspace(), "nversion: unsupported path: " + filePath, 2);
@@ -92,10 +92,10 @@ public class NVersionMain extends NutsApplication {
                 table = a.getBooleanValue();
             } else if ((a = commandLine.nextBoolean("--error")) != null) {
                 error = a.getBooleanValue();
-            } else if(commandLine.peek().isNonOption()){
+            } else if (commandLine.peek().isNonOption()) {
                 a = commandLine.next();
                 jarFiles.add(a.getString());
-            }else{
+            } else {
                 context.configureLast(commandLine);
             }
         }
@@ -125,8 +125,8 @@ public class NVersionMain extends NutsApplication {
 
             PrintStream out = context.getSession().out();
             PrintStream err = context.getSession().out();
-            NutsTextFormatManager text = context.getWorkspace().formats().text();
-            NutsTextNodeFactory tfactory = text.factory();
+            NutsFormatManager text = context.getWorkspace().formats();
+            NutsTextManager tfactory = text.text();
             if (table) {
                 NutsPropertiesFormat tt = context.getWorkspace().formats().props().setSort(sort);
                 Properties pp = new Properties();
@@ -146,13 +146,13 @@ public class NVersionMain extends NutsApplication {
                     for (String t : unsupportedFileTypes) {
                         File f = new File(context.getWorkspace().io().expandPath(t));
                         if (f.isFile()) {
-                            pp.setProperty(t, text.builder().append("<<ERROR>>",NutsTextNodeStyle.error()).append(" unsupported file type").toString());
+                            pp.setProperty(t, text.text().builder().append("<<ERROR>>", NutsTextNodeStyle.error()).append(" unsupported file type").toString());
                         } else if (f.isDirectory()) {
-                            pp.setProperty(t,text.builder().append("<<ERROR>>",NutsTextNodeStyle.error()).append(" ignored folder").toString()
-                                    );
+                            pp.setProperty(t, text.text().builder().append("<<ERROR>>", NutsTextNodeStyle.error()).append(" ignored folder").toString()
+                            );
                         } else {
-                            pp.setProperty(t,text.builder().append("<<ERROR>>",NutsTextNodeStyle.error()).append(" file not found").toString()
-                                    );
+                            pp.setProperty(t, text.text().builder().append("<<ERROR>>", NutsTextNodeStyle.error()).append(" file not found").toString()
+                            );
                         }
                     }
                 }
@@ -162,15 +162,15 @@ public class NVersionMain extends NutsApplication {
                 for (String k : keys) {
                     if (results.size() > 1) {
                         if (longFormat || all) {
-                            out.printf("%s:%n", tfactory.styled(k,NutsTextNodeStyle.primary(3)));
+                            out.printf("%s:%n", tfactory.styled(k, NutsTextNodeStyle.primary(3)));
                         } else {
-                            out.printf("%s: ", tfactory.styled(k,NutsTextNodeStyle.primary(3)));
+                            out.printf("%s: ", tfactory.styled(k, NutsTextNodeStyle.primary(3)));
                         }
                     }
                     Set<VersionDescriptor> v = results.get(k);
                     for (VersionDescriptor descriptor : v) {
                         if (nameFormat) {
-                            out.printf("%s%n", tfactory.styled(descriptor.getId().getShortName(),NutsTextNodeStyle.primary(4)));
+                            out.printf("%s%n", tfactory.styled(descriptor.getId().getShortName(), NutsTextNodeStyle.primary(4)));
                         } else if (idFormat) {
                             out.printf("%s%n", tfactory.nodeFor(descriptor.getId()));
                         } else if (longFormat) {

@@ -57,7 +57,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
         if (commands.isEmpty()) {
             throw new NutsIllegalArgumentException(ws, "which: missing commands");
         }
-        NutsTextNodeFactory factory = ws.formats().text().factory();
+        NutsTextManager factory = ws.formats().text();
         for (String arg : this.args) {
             PrintStream out = getSession().out();
             try {

@@ -43,7 +43,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
         List<NutsDefinition> defs = new ArrayList<>();
         for (NutsId id : this.getIds()) {
             List<NutsDefinition> resultDefinitions = ws.search().addId(id)
-                    .setInstallStatus(ws.filters().installStatus().byInstalled())
+                    .setInstallStatus(ws.filters().installStatus().byInstalled(true))
                     .setSession(searchSession.copy())
                     .setTransitive(false).setOptional(false).setEffective(true)
                     .getResultDefinitions().list();
@@ -95,7 +95,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                 wcfg.fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
             }
             if (getValidWorkspaceSession().isPlainTrace()) {
-                out.printf("%s uninstalled %s%n", id, ws.formats().text().factory().styled(
+                out.printf("%s uninstalled %s%n", id, ws.formats().text().styled(
                         "successfully", NutsTextNodeStyle.success()
                 ));
             }

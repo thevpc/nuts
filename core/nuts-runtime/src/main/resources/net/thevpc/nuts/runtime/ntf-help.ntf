@@ -1,15 +1,15 @@
 #!include</net/thevpc/nuts/runtime/includes/standard-header.ntf>
 
 
-```sh nft``` aka ##nuts text format## is a markdown like text format enabling colored text styles.
-```sh nft``` is the standard format used in the standard output and standard error. It is as
+```sh ntf``` aka ##nuts text format## is a markdown like text format enabling colored text styles.
+```sh ntf``` is the standard format used in the standard output and standard error. It is as
  well the standard format used in help manuals.
 
 type (```sh nuts help --colors```) to display this help
 
 ##) NTF special characters:
 #### \# \ø \\ \` #### are special characters
-#### : { and } #### are also special character when used inside \# styles
+#### : { and } #### are also special characters when used inside \# styles
 ####\##### defines primary styles
 ####\ø#### is a 'nop' character. it is used as a separator when required. It is not displayed.
 ####\`\`\`Text\`\`\`#### defines verbatim text
@@ -91,7 +91,7 @@ Supported styles in NTF are defined in the following table:
 \`\`\`reversed reversed\`\`\`                  | ```reversed reversed```                      | reversed
 \`\`\`error error\`\`\` \`\`\`warn warn\`\`\`  ...   | ```error error``` ```warn warn``` ```info info```  ```config config```       | several token types
 ...                                      | ```comments comments``` ```string string``` ```number number``` ```boolean boolean```|
-                                         | ```keyword keyword``` ```option option``` ```user_input user_input```     |
+                                         | ```keyword keyword``` ```option option``` ```input input```     |
                                          | ```operator operator``` ```separator separator``` ```success success```    |
                                          | ```danger danger``` ```fail fail``` ```var var``` ```pale pale```          |
 \#\#\:underlined underlined\#\#\               | ##:underlined underlined##                    | underlined
@@ -105,7 +105,7 @@ Supported styles in NTF are defined in the following table:
                                          | ##:danger danger## ##:fail  fail## ##:var var## ##:pale pale##         |
 
 ##) NTF TITLES:
-Tables are special formatted lines and are usable simply by suffix # chars with a parentheses at the start of any new line.
+Tables are special formatted lines and are usable simply by suffix # chars with parentheses at the start of any new line.
 
 #) Title 1
 ```#) Title 1```

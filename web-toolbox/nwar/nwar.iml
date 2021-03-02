@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="jshell" />
+    <orderEntry type="module" module-name="nuts" />
+    <orderEntry type="module" module-name="nlib-servlet" />
+    <orderEntry type="library" name="Maven: javax.servlet:javax.servlet-api:3.1.0" level="project" />
+    <orderEntry type="module" module-name="nserver" />
+    <orderEntry type="module" module-name="thevpc-common-utils" />
+    <orderEntry type="module" module-name="thevpc-common-collections" />
+    <orderEntry type="module" module-name="nsh" />
+    <orderEntry type="library" name="Maven: net.thevpc:jshell:0.8.1" level="project" />
+    <orderEntry type="module" module-name="thevpc-common-strings" />
+    <orderEntry type="module" module-name="thevpc-common-mvn" />
+    <orderEntry type="module" module-name="thevpc-common-xfile" />
+    <orderEntry type="module" module-name="thevpc-common-io-compress" />
+    <orderEntry type="module" module-name="thevpc-common-io" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.20" level="project" />
+    <orderEntry type="library" name="Maven: org.jline:jline:3.5.2" level="project" />
+    <orderEntry type="module" module-name="thevpc-common-ssh" />
+    <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.55" level="project" />
+  </component>
+</module>

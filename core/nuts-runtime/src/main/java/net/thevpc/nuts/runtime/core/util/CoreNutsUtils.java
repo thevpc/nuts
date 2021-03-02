@@ -983,7 +983,7 @@ public class CoreNutsUtils {
         if (!session.isPlainOut()) {
             return false;
         }
-        if (NutsWorkspaceUtils.parseProgressOptions(session).contains("false")) {
+        if (session.isBot() || NutsWorkspaceUtils.parseProgressOptions(session).contains("false")) {
             return false;
         }
         Object o = session.getProperty("monitor-allowed");

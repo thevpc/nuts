@@ -33,9 +33,11 @@ public class HadraBlocTextFormatter implements NutsCodeFormat {
             )
     );
     private NutsWorkspace ws;
+    NutsTextManager factory;
 
     public HadraBlocTextFormatter(NutsWorkspace ws) {
         this.ws = ws;
+        factory = ws.formats().text();
     }
 
     @Override
@@ -45,8 +47,22 @@ public class HadraBlocTextFormatter implements NutsCodeFormat {
     }
 
     @Override
-    public NutsTextNode toNode(String text) {
-        NutsTextNodeFactory factory = ws.formats().text().factory();
+    public NutsTextNode tokenToNode(String text, String nodeType) {
+        String str = String.valueOf(text);
+        switch (nodeType.toLowerCase()) {
+            case "separator": {
+                return factory.styled(str, NutsTextNodeStyle.separator());
+            }
+            case "keyword": {
+                return factory.styled(str, NutsTextNodeStyle.separator());
+            }
+        }
+        return factory.plain(str);
+    }
+
+    @Override
+    public NutsTextNode textToNode(String text) {
+        NutsTextManager factory = ws.formats().text();
         List<NutsTextNode> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
         while (ar.hasNext()) {

@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.core.format.table;
 
 import net.thevpc.nuts.*;
@@ -49,16 +47,22 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             "", "", "", "",
             "", "", "", ""
     );
+    public static NutsTableBordersFormat DEFAULT_BORDER = new DefaultTableFormatBorders(
+            "╭", "─", "┬", "╮",
+            "│",      "│", "│",
+            "├", "─", "┼", "┤",
+            "╰", "─", "┴", "╯"
+    );
     public static NutsTableBordersFormat SIMPLE_BORDER = new DefaultTableFormatBorders(
             ".", "-", "-", ".",
-            "|", "|", "|",
+            "|", " | ", "|",
             "|", "-", "+", "|",
             ".", "-", "-", "."
     );
     public static NutsTableBordersFormat FANCY_ROWS_BORDER = new DefaultTableFormatBorders(
             "", "", "", "",
             "", " ", "",
-            "", "-", "-", "",
+            "", "─", "─", "",
             "", "", "", ""
     );
     public static NutsTableBordersFormat SPACE_BORDER = new DefaultTableFormatBorders(
@@ -69,19 +73,61 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     );
     public static NutsTableBordersFormat FANCY_COLUMNS_BORDER = new DefaultTableFormatBorders(
             "", "", "", "",
-            "", "|", "",
+            "", " │ ", "",
             "", "", "", "",
             "", "", "", ""
     );
     private NutsTableCellFormat defaultCellFormatter = DefaultTableCellFormat.INSTANCE;
     private NutsTableCellFormat defaultHeaderFormatter = DefaultTableHeaderFormat.INSTANCE;
     /**
-     * ABBBBCBBBBD E F G HIIIIJIIIIK E F G LMMMMNMMMMO
+     * <pre>
+     * ABBBBCBBBBD
+     * E    F    G
+     * HIIIIJIIIIK
+     * E    F    G
+     * LMMMMNMMMMO
+     * </pre>
      */
-    private NutsTableBordersFormat border = SIMPLE_BORDER;
+    private NutsTableBordersFormat border = DEFAULT_BORDER;
     private Object model;
     private List<Boolean> visibleColumns = new ArrayList<>();
     private boolean visibleHeader = true;
+
+    public static Set<String> getAvailableTableBorders() {
+        return new HashSet<>(Arrays.asList(
+                "default",
+                "spaces",
+                "simple",
+                "columns",
+                "rows",
+                "none"
+        )
+        );
+    }
+
+    public static NutsTableBordersFormat parseTableBorders(String borderName) {
+        switch (borderName) {
+            case "spaces": {
+                return (SPACE_BORDER);
+            }
+            case "default": {
+                return (DEFAULT_BORDER);
+            }
+            case "simple": {
+                return (SIMPLE_BORDER);
+            }
+            case "rows": {
+                return (FANCY_ROWS_BORDER);
+            }
+            case "columns": {
+                return (FANCY_COLUMNS_BORDER);
+            }
+            case "none": {
+                return (NO_BORDER);
+            }
+        }
+        return null;
+    }
 
     public DefaultTableFormat(NutsWorkspace ws) {
         super(ws, "table-format");
@@ -111,31 +157,11 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
 
     @Override
     public NutsTableFormat setBorder(String borderName) {
-        switch (borderName) {
-            case "spaces": {
-                setBorder(SPACE_BORDER);
-                break;
-            }
-            case "simple": {
-                setBorder(SIMPLE_BORDER);
-                break;
-            }
-            case "fancy-rows": {
-                setBorder(FANCY_ROWS_BORDER);
-                break;
-            }
-            case "fancy-columns": {
-                setBorder(FANCY_COLUMNS_BORDER);
-                break;
-            }
-            case "none": {
-                setBorder(NO_BORDER);
-                break;
-            }
-            default: {
-                throw new NutsIllegalArgumentException(getWorkspace(),"unsupported border. use one of spaces,simple,fancy-rows,fancy-columns,none");
-            }
+        NutsTableBordersFormat n = parseTableBorders(borderName);
+        if (n == null) {
+            throw new NutsIllegalArgumentException(getWorkspace(), "unsupported border. use one of : " + getAvailableTableBorders());
         }
+        setBorder(n);
         return this;
     }
 
@@ -155,7 +181,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         try {
             w.flush();
         } catch (IOException ex) {
-            throw new NutsIOException(getWorkspace(),ex);
+            throw new NutsIOException(getWorkspace(), ex);
         }
         return new String(out.toByteArray());
     }
@@ -258,8 +284,8 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         List<DefaultCell> cells = new ArrayList<>();
     }
 
-    public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsTextFormatManager tf,NutsWorkspace ws) {
-        int length = tf.parse(sb.toString()).textLength();
+    public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsFormatManager tf, NutsWorkspace ws) {
+        int length = tf.text().parse(sb.toString()).textLength();
         switch (a) {
             case FIRST: {
 //                if (sb.length() > length) {
@@ -324,16 +350,16 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         int rows;
         int columns;
         NutsTableCellFormat formatter;
-        NutsTextFormatManager metrics;
+        NutsFormatManager metrics;
         NutsPositionType valign;
         NutsPositionType halign;
         NutsWorkspace ws;
 
         private RenderedCell(NutsWorkspace ws) {
-            this.ws=ws;
+            this.ws = ws;
         }
 
-        public RenderedCell(int c, int r, Object o, String str, NutsTableCellFormat formatter, NutsPositionType valign, NutsPositionType halign, NutsTextFormatManager metrics,NutsWorkspace ws) {
+        public RenderedCell(int c, int r, Object o, String str, NutsTableCellFormat formatter, NutsPositionType valign, NutsPositionType halign, NutsFormatManager metrics, NutsWorkspace ws) {
             this.ws = ws;
             this.formatter = formatter;
             this.metrics = metrics;
@@ -367,7 +393,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         }
 
         public int len(String other) {
-            return metrics.parse(other).textLength();
+            return metrics.text().parse(other).textLength();
         }
 
         public RenderedCell appendHorizontally(RenderedCell other) {
@@ -468,7 +494,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                                 int x = columns - min;
                                 StringBuilder s = new StringBuilder();
                                 s.append(chars);
-                                formatAndHorizontalAlign(s, halign, columns, metrics,ws);
+                                formatAndHorizontalAlign(s, halign, columns, metrics, ws);
                                 rendered0[i] = s.toString().toCharArray();
                             } else {
                                 rendered0[i] = rendered[i];
@@ -492,7 +518,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                                 int x = columns - min;
                                 StringBuilder s = new StringBuilder();
                                 s.append(chars);
-                                formatAndHorizontalAlign(s, halign, columns, metrics,ws);
+                                formatAndHorizontalAlign(s, halign, columns, metrics, ws);
                                 rendered0[i] = s.toString().toCharArray();
                             } else {
                                 rendered0[i] = rendered[i];
@@ -512,7 +538,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                                 int x = columns - min;
                                 StringBuilder s = new StringBuilder();
                                 s.append(chars);
-                                formatAndHorizontalAlign(s, halign, columns, metrics,ws);
+                                formatAndHorizontalAlign(s, halign, columns, metrics, ws);
                                 rendered0[i] = s.toString().toCharArray();
                             } else {
                                 rendered0[i] = rendered[i];
@@ -758,7 +784,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                         formatter,
                         formatter.getVerticalAlign(r0, c0, cvalue, session),
                         formatter.getHorizontalAlign(r0, c0, cvalue, session),
-                        getWorkspace().formats().text(),session.getWorkspace()
+                        getWorkspace().formats(), session.getWorkspace()
                 ));
                 cell.cw = cell.getRendered().columns;
                 cell.ch = cell.getRendered().rows;
@@ -868,15 +894,15 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return createTableModel(model);
     }
 
-    private NutsTableModel createTableModel(Object o){
-        if(o==null){
+    private NutsTableModel createTableModel(Object o) {
+        if (o == null) {
             return new DefaultNutsMutableTableModel();
         }
-        if(o instanceof NutsTableModel){
+        if (o instanceof NutsTableModel) {
             return (NutsTableModel) o;
         }
-        if(!(o instanceof NutsElement)){
-            return createTableModel(getWorkspace().formats().element().convert(o,NutsElement.class));
+        if (!(o instanceof NutsElement)) {
+            return createTableModel(getWorkspace().formats().element().convert(o, NutsElement.class));
         }
         NutsElement elem = (NutsElement) o;
         switch (elem.type()) {
@@ -885,13 +911,13 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             case STRING:
             case INTEGER:
             case FLOAT:
-            case NULL:{
+            case NULL: {
                 List<NutsElement> a = new ArrayList<>();
                 a.add(elem);
-                return createTableModel(getWorkspace().formats().element().convert(a,NutsElement.class));
+                return createTableModel(getWorkspace().formats().element().convert(a, NutsElement.class));
             }
             case OBJECT: {
-                return createTableModel(getWorkspace().formats().element().convert(elem.object().children(),NutsElement.class));
+                return createTableModel(getWorkspace().formats().element().convert(elem.object().children(), NutsElement.class));
             }
             case ARRAY: {
                 NutsMutableTableModel model = createModel();
@@ -970,7 +996,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
 
     @Override
     public NutsObjectFormat setValue(Object value) {
-        this.model=value;
+        this.model = value;
         return this;
     }
 
@@ -1094,7 +1120,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         Set<Pos> reserved = new HashSet<>();
 
         public void discardRow(int row) {
-            for (Iterator<Pos> iterator = reserved.iterator(); iterator.hasNext(); ) {
+            for (Iterator<Pos> iterator = reserved.iterator(); iterator.hasNext();) {
                 Pos pos = iterator.next();
                 if (pos.row == row) {
                     iterator.remove();
@@ -1245,7 +1271,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             }
             return true;
         } else if ((a = cmdLine.nextString("--border")) != null) {
-            if(a.isEnabled()) {
+            if (a.isEnabled()) {
                 setBorder(a.getArgumentValue().getStringKey());
             }
             return true;
@@ -1259,15 +1285,15 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     columns.put(v.toString().toLowerCase(), i);
                 }
             }
-            NutsArgument a2=null;
+            NutsArgument a2 = null;
             for (Map.Entry<String, Integer> e : columns.entrySet()) {
-                if ((a2=cmdLine.next("--" + e.getKey())) != null) {
-                    if(a2.isEnabled()) {
+                if ((a2 = cmdLine.next("--" + e.getKey())) != null) {
+                    if (a2.isEnabled()) {
                         setVisibleColumn(e.getValue(), true);
                     }
                     return true;
-                } else if ((a2=cmdLine.next("--no-" + e.getKey())) != null) {
-                    if(a2.isEnabled()) {
+                } else if ((a2 = cmdLine.next("--no-" + e.getKey())) != null) {
+                    if (a2.isEnabled()) {
                         setVisibleColumn(e.getValue(), false);
                     }
                     return true;

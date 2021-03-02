@@ -25,11 +25,13 @@
 */
 package net.thevpc.nuts.runtime.standalone.archetypes;
 
+import java.util.HashMap;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
 
-import java.util.LinkedHashSet;
+import java.util.Map;
+import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
 
 /**
  * Created by vpc on 1/23/17.
@@ -51,12 +53,13 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
     public void initialize(NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) ws.config();
-        LinkedHashSet<String> br = new LinkedHashSet<>(rm.resolveBootRepositories());
-        for (String s : br) {
-            ws.repos().addRepository(s,session);
-        }
-        if (br.isEmpty()) {
-            ws.repos().addRepository(NutsConstants.Names.DEFAULT_REPOSITORY_NAME,session);
+        Map<String,String> defaults=new HashMap<>();
+        defaults.put("maven-local", null);
+        defaults.put("maven-central", null);
+        defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
+        NutsRepositorySelector[] br = rm.resolveBootRepositoriesList().resolveSelectors(defaults);
+        for (NutsRepositorySelector s : br) {
+            ws.repos().addRepository(s.toString(),session);
         }
 
         //has read rights

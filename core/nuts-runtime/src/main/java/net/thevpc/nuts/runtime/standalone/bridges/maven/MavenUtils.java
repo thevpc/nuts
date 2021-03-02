@@ -56,6 +56,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
 
 /**
  * Created by vpc on 2/20/17.
@@ -410,12 +411,13 @@ public class MavenUtils {
     }
 
 
-    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid, Collection<String> bootRepositories, NutsSession session) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid, NutsRepositorySelector[] bootRepositories, NutsSession session) {
         String urlPath = CoreNutsUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
         return loadDependenciesAndRepositoriesFromPomPath(urlPath,bootRepositories, session);
     }
 
-    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath, Collection<String> bootRepositories, NutsSession session) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath, NutsRepositorySelector[] bootRepositories, NutsSession session) {
+        session=NutsWorkspaceUtils.of(ws).validateSession(session);
         DepsAndRepos depsAndRepos = null;
 //        if (!NO_M2) {
             File mavenNutsCorePom = new File(System.getProperty("user.home"), (".m2/repository/" + urlPath).replace("/", File.separator));
@@ -424,8 +426,8 @@ public class MavenUtils {
             }
 //        }
         if (depsAndRepos == null || depsAndRepos.deps.isEmpty()) {
-            for (String baseUrl : bootRepositories) {
-                NutsAddRepositoryOptions opt = RepoDefinitionResolver.createRepositoryOptions(baseUrl, false, ws);
+            for (NutsRepositorySelector baseUrl : bootRepositories) {
+                NutsAddRepositoryOptions opt = RepoDefinitionResolver.createRepositoryOptions(baseUrl, false, session);
                 String location = opt.getConfig()==null?opt.getLocation():opt.getConfig().getLocation();
                 depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(location + "/" + urlPath, session);
                 if (!depsAndRepos.deps.isEmpty()) {

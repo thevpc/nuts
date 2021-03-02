@@ -37,6 +37,13 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
             table = ws.formats().table();
             model = table.createModel();
             table.setModel(model);
+            if (getSession() != null && getSession().getOutputFormatOptions() != null) {
+                for (String outputFormatOption : getSession().getOutputFormatOptions()) {
+                    if (outputFormatOption != null) {
+                        table.configure(true, ws.commandLine().parse(outputFormatOption));
+                    }
+                }
+            }
         }
         return table;
     }

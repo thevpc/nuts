@@ -5,7 +5,7 @@
 
 ##) EXAMPLES:
 ```sh  nuts which --help```
-            shows this help and exit
+            show this help and exit
        
 ```sh nuts which netbeans-launcher exec```
             show netbeans-launcher and exec types. The first is a artifact the latter is an internal command

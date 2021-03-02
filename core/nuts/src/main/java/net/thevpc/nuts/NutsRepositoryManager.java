@@ -33,18 +33,7 @@ public interface NutsRepositoryManager {
     NutsRepositoryFilterManager filter();
 
 
-    /**
-     * add temporary repository
-     *
-     * @param repository temporary repository
-     * @param session    session
-     * @return repository
-     */
-    NutsRepository addRepository(NutsRepositoryModel repository, NutsAddOptions session);
-
     NutsRepository addRepository(NutsAddRepositoryOptions options);
-
-    NutsRepository addRepository(NutsRepositoryRef ref, NutsAddOptions options);
 
     /**
      * creates a new repository from the given {@code repositoryNamedUrl}.Accepted {@code repositoryNamedUrl} values are :

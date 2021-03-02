@@ -5,16 +5,19 @@
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="jshell" />
     <orderEntry type="library" name="Maven: javax.servlet:javax.servlet-api:3.1.0" level="project" />
     <orderEntry type="module" module-name="nuts" />
     <orderEntry type="module" module-name="nserver" />
     <orderEntry type="module" module-name="thevpc-common-utils" />
+    <orderEntry type="module" module-name="thevpc-common-collections" />
     <orderEntry type="module" module-name="nsh" />
-    <orderEntry type="module" module-name="jshell" />
+    <orderEntry type="library" name="Maven: net.thevpc:jshell:0.8.1" level="project" />
     <orderEntry type="module" module-name="thevpc-common-strings" />
     <orderEntry type="module" module-name="thevpc-common-mvn" />
     <orderEntry type="module" module-name="thevpc-common-xfile" />

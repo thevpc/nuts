@@ -45,8 +45,6 @@ import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -131,6 +129,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 options.setErrLinePrefix(execSession.getErrLinePrefix());
                 options.setDebug(execSession.isDebug());
                 options.setTrace(execSession.isTrace());
+                options.setBot(execSession.isBot());
                 options.setCached(execSession.isCached());
                 options.setIndexed(execSession.isIndexed());
                 options.setConfirm(execSession.getConfirm());
@@ -290,7 +289,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
         @Override
         public void dryExec() {
-            NutsTextFormatManager text = getSession().getWorkspace().formats().text();
+            NutsFormatManager text = getSession().getWorkspace().formats();
             List<String> cmdLine = new ArrayList<>();
             cmdLine.add("embedded-java");
             cmdLine.add("-cp");
@@ -299,7 +298,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             cmdLine.addAll(joptions.getApp());
 
             getSession().out().printf("[dry] %s%n",
-                    text.builder()
+                    text.text().builder()
                             .append("exec", NutsTextNodeStyle.pale())
                             .append(" ")
                             .append(getSession().getWorkspace().commandLine().create(cmdLine))
@@ -454,8 +453,8 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     osEnv, directory, joptions.isShowCommand(), true,
                     executionContext.getSleepMillis(),
                     executionContext.isInheritSystemIO(), false,
-                    CoreStringUtils.isBlank(executionContext.getRedirectOuputFile())?null:new File(executionContext.getRedirectOuputFile()),
-                    CoreStringUtils.isBlank(executionContext.getRedirectInpuFile())?null:new File(executionContext.getRedirectInpuFile())
+                    CoreStringUtils.isBlank(executionContext.getRedirectOuputFile()) ? null : new File(executionContext.getRedirectOuputFile()),
+                    CoreStringUtils.isBlank(executionContext.getRedirectInpuFile()) ? null : new File(executionContext.getRedirectInpuFile())
             ).dryExec();
         }
 
@@ -467,7 +466,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         private CoreIOUtils.ProcessExecHelper preExec() {
             if (joptions.isShowCommand() || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
                 PrintStream out = execSession.out();
-                out.printf("%s %n", ws.formats().text().factory().styled("nuts-exec", NutsTextNodeStyle.primary(1)));
+                out.printf("%s %n", ws.formats().text().styled("nuts-exec", NutsTextNodeStyle.primary(1)));
                 for (int i = 0; i < xargs.size(); i++) {
                     String xarg = xargs.get(i);
                     if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {
@@ -488,8 +487,8 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     osEnv, directory, joptions.isShowCommand(), true,
                     executionContext.getSleepMillis(),
                     executionContext.isInheritSystemIO(), false,
-                    CoreStringUtils.isBlank(executionContext.getRedirectOuputFile())?null:new File(executionContext.getRedirectOuputFile()),
-                    CoreStringUtils.isBlank(executionContext.getRedirectInpuFile())?null:new File(executionContext.getRedirectInpuFile())
+                    CoreStringUtils.isBlank(executionContext.getRedirectOuputFile()) ? null : new File(executionContext.getRedirectOuputFile()),
+                    CoreStringUtils.isBlank(executionContext.getRedirectInpuFile()) ? null : new File(executionContext.getRedirectInpuFile())
             );
         }
 

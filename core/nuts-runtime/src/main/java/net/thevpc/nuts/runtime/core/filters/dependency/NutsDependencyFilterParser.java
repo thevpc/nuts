@@ -13,10 +13,10 @@ public class NutsDependencyFilterParser extends NutsTypedFiltersParser<NutsDepen
         return ws.filters().dependency();
     }
 
-    protected NutsDependencyFilter worldToPredicate(String word){
+    protected NutsDependencyFilter wordToPredicate(String word){
         switch (word.toLowerCase()){
             default:{
-                return super.worldToPredicate(word);
+                return super.wordToPredicate(word);
             }
         }
     }

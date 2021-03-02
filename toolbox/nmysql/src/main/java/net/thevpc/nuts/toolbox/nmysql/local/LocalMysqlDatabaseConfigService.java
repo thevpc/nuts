@@ -100,8 +100,8 @@ public class LocalMysqlDatabaseConfigService {
             }
         } else {
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("%s create archive %s%n", getBracketsPrefix(getDatabaseName()), context.getWorkspace().formats().text()
-                        .factory().styled(path,NutsTextNodeStyle.path()));
+                context.getSession().out().printf("%s create archive %s%n", getBracketsPrefix(getDatabaseName()), context.getWorkspace().formats()
+                        .text().styled(path,NutsTextNodeStyle.path()));
             }
 //                ProcessBuilder2 p = new ProcessBuilder2().setCommand("sh", "-c",
 //                        "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""

@@ -23,10 +23,18 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
             )
     );
     private NutsWorkspace ws;
+    private NutsTextManager factory;
 
     public JavaBlocTextFormatter(NutsWorkspace ws) {
         this.ws = ws;
+        factory = ws.formats().text();
     }
+
+    @Override
+    public NutsTextNode tokenToNode(String text, String nodeType) {
+        return factory.plain(text);
+    }
+    
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<String> criteria) {
@@ -35,8 +43,8 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
     }
 
     @Override
-    public NutsTextNode toNode(String text) {
-        NutsTextNodeFactory factory = ws.formats().text().factory();
+    public NutsTextNode textToNode(String text) {
+        NutsTextManager factory = ws.formats().text();
         List<NutsTextNode> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
         while (ar.hasNext()) {

@@ -7,8 +7,8 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;
+import net.thevpc.nuts.NutsFormatManager;
 
-import net.thevpc.nuts.NutsTextFormatManager;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.NutsProgressEvent;
@@ -63,8 +63,8 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
         return true;
     }
 
-    private String escapeText(NutsTextFormatManager terminalFormat ,String str) {
-        return terminalFormat.builder().append(str).toString();
+    private String escapeText(NutsFormatManager terminalFormat ,String str) {
+        return terminalFormat.text().builder().append(str).toString();
     }
 
     public boolean onProgress0(NutsProgressEvent event, boolean end) {
@@ -74,7 +74,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
         }
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
-            NutsTextFormatManager terminalFormat = event.getSession().getWorkspace().formats().text();
+            NutsFormatManager terminalFormat = event.getSession().getWorkspace().formats();
             if(!optionNewline) {
                 FPrintCommands.runMoveLineStart(out);
             }else{
@@ -109,7 +109,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
             }
             formattedLine.append(" ").append(escapeText(terminalFormat,event.getMessage())).append(" ");
             String ff = formattedLine.toString();
-            int length = terminalFormat.builder().append(ff).textLength();
+            int length = terminalFormat.text().builder().append(ff).textLength();
             if (length < minLength) {
                 CoreStringUtils.fillString(' ', minLength - length, formattedLine);
             } else {

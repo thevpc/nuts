@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.standalone.repos;
 
 import net.thevpc.nuts.*;
@@ -39,6 +37,7 @@ import net.thevpc.nuts.spi.*;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
+import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
 
 /**
  * Created by vpc on 1/18/17.
@@ -51,9 +50,9 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     private final NutsLogger LOG;
 
     public AbstractNutsRepositoryBase(NutsAddRepositoryOptions options,
-                                      NutsWorkspace workspace, NutsRepository parentRepository,
-                                      int speed, boolean supportedMirroring, String repositoryType) {
-        LOG=workspace.log().of(AbstractNutsRepositoryBase.class);
+            NutsWorkspace workspace, NutsRepository parentRepository,
+            int speed, boolean supportedMirroring, String repositoryType) {
+        LOG = workspace.log().of(AbstractNutsRepositoryBase.class);
         init(options, workspace, parentRepository, speed, supportedMirroring, repositoryType);
     }
 
@@ -70,7 +69,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         this.workspace = workspace;
         this.parentRepository = parent;
         securityManager = new DefaultNutsRepositorySecurityManager(this);
-        if(options.getSession()==null){
+        if (options.getSession() == null) {
             options.setSession(workspace.createSession());
         }
         configManager = new DefaultNutsRepoConfigManager(
@@ -81,11 +80,10 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
                 options.getName(), repositoryType
         );
         this.nutsIndexStore = workspace.config().getIndexStoreClientFactory().createIndexStore(this);
-        setEnabled(
-                this.workspace.config().options().getExcludedRepositories()==null ||
-                Arrays.stream(this.workspace.config().options().getExcludedRepositories())
-                .noneMatch(
-                        n->optionsConfig.getName().equals(n)
+        setEnabled(this.workspace.config().options().getRepositories() == null
+                || NutsRepositorySelector.parse(this.workspace.config().options().getRepositories()).acceptExisting(
+                        optionsConfig.getName(),
+                        optionsConfig.getLocation()
                 )
         );
     }
@@ -127,7 +125,6 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     public void checkAllowedFetch(NutsId id, NutsSession session) {
     }
 
-
     @Override
     public NutsFetchDescriptorRepositoryCommand fetchDescriptor() {
         return new DefaultNutsFetchDescriptorRepositoryCommand(this);
@@ -149,7 +146,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     }
 
     protected void traceMessage(NutsSession session, NutsFetchMode fetchMode, Level lvl, NutsId id, NutsLogVerb tracePhase, String title, long startTime, String extraMessage) {
-        CoreNutsUtils.traceMessage(LOG, lvl,getName(), session, fetchMode, id, tracePhase, title, startTime,extraMessage);
+        CoreNutsUtils.traceMessage(LOG, lvl, getName(), session, fetchMode, id, tracePhase, title, startTime, extraMessage);
     }
 
     @Override
@@ -194,8 +191,6 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     public String getIdBasedir(NutsId id) {
         return getWorkspace().locations().getDefaultIdBasedir(id);
     }
-
-
 
     protected String getIdRemotePath(NutsId id) {
         return CoreIOUtils.buildUrl(config().getLocation(true), getIdRelativePath(id));

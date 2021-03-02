@@ -27,8 +27,8 @@
 package net.thevpc.nuts.toolbox.nutsserver.http;
 
 import com.sun.net.httpserver.*;
-import net.thevpc.common.util.Collections2;
-import net.thevpc.common.util.ListValueMap;
+import net.thevpc.common.collections.Collections2;
+import net.thevpc.common.collections.ListValueMap;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServer;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServerComponent;
@@ -159,11 +159,11 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                     throw new UncheckedIOException(e);
                 }
 
-                // setup the key manager factory
+                // setup the key manager text
                 KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
                 kmf.init(ks, password);
 
-                // setup the trust manager factory
+                // setup the trust manager text
                 TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
                 tmf.init(ks);
 
@@ -204,7 +204,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         });
         server.start();
         PrintStream out = session.out();
-        NutsTextNodeFactory factory = session.getWorkspace().formats().text().factory();
+        NutsTextManager factory = session.getWorkspace().formats().text();
         out.printf("Nuts Http Service '%s' running %s at %s\n", serverId,
                 factory.styled(
                         (httpConfig.isTls()?"https":"http"),NutsTextNodeStyle.primary(1)

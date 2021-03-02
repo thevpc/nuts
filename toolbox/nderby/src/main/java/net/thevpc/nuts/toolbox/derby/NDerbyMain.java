@@ -74,7 +74,7 @@ public class NDerbyMain extends NutsApplication {
             DerbyService srv = new DerbyService(appContext);
             int effectivePort = options.port < 0 ? 1527 : options.port;
             if(options.cmd==Command.start) {
-                NutsTextNodeFactory factory = appContext.getWorkspace().formats().text().factory();
+                NutsTextManager factory = appContext.getWorkspace().formats().text();
                 if (cmdLine.isExecMode()) {
                     if (new DerbyService(appContext).isRunning()) {
                         appContext.getSession().out().printf("derby is %s on port %s%n",
@@ -85,7 +85,7 @@ public class NDerbyMain extends NutsApplication {
                     }
                 }
             }else if(options.cmd==Command.shutdown){
-                NutsTextNodeFactory factory = appContext.getWorkspace().formats().text().factory();
+                NutsTextManager factory = appContext.getWorkspace().formats().text();
                 if (cmdLine.isExecMode()) {
                     if (new DerbyService(appContext).isRunning()) {
                         appContext.getSession().out().printf("derby is %s on port %s%n",
@@ -112,7 +112,7 @@ public class NDerbyMain extends NutsApplication {
             }
         }
         options.cmd = Command.ping;
-        NutsTextNodeFactory factory = appContext.getWorkspace().formats().text().factory();
+        NutsTextManager factory = appContext.getWorkspace().formats().text();
         if (cmdLine.isExecMode()) {
             if (new DerbyService(appContext).isRunning()) {
                 appContext.getSession().out().printf("derby is %s%n",factory.styled("running",NutsTextNodeStyle.primary(1)));
@@ -168,7 +168,7 @@ public class NDerbyMain extends NutsApplication {
                 args.unexpectedArgument();
             }
         }
-        NutsTextNodeFactory factory = appContext.getWorkspace().formats().text().factory();
+        NutsTextManager factory = appContext.getWorkspace().formats().text();
         if (args.isExecMode()) {
             NutsSession session = appContext.getSession();
             if (session.isPlainOut()) {

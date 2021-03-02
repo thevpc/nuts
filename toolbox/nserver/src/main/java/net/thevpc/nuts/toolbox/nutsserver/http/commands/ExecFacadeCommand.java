@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
-import net.thevpc.common.util.ListValueMap;
+import net.thevpc.common.collections.ListValueMap;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalMode;
 import net.thevpc.nuts.NutsWorkspace;

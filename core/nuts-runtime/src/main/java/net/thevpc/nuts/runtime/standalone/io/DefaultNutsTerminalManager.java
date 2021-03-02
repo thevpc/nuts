@@ -211,7 +211,7 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
 
     @Override
     public NutsTerminalManager sendCommand(PrintStream out, String command, String args) {
-        out.printf("%s",ws.formats().text().factory().command(command,args));
+        out.printf("%s",ws.formats().text().command(command,args));
         out.flush();
         return this;
     }

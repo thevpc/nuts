@@ -1,7 +1,6 @@
 package net.thevpc.nuts;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @category Format
@@ -51,6 +50,8 @@ public interface NutsTextNodeBuilder extends NutsString {
     NutsTextNodeBuilder appendAll(Collection<?> others);
 
     NutsTextNode build();
+
+    NutsTextNodeParser parser();
 
     String toString();
     int size();

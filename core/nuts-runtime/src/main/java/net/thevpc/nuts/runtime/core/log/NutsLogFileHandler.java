@@ -13,6 +13,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import net.thevpc.nuts.NutsConstants;
 
 public class NutsLogFileHandler extends FileHandler {
 
@@ -36,7 +37,7 @@ public class NutsLogFileHandler extends FileHandler {
             name = Instant.now().toString().replace(":", "") + "-nuts-%g.log";
         }
         if (folder == null || CoreStringUtils.isBlank(folder)) {
-            folder = logFolder + "/net/thevpc/nuts/nuts/" + ws.getApiVersion();
+            folder = logFolder + "/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + ws.getApiVersion();
         }
         String pattern = (folder + "/" + name).replace('/', File.separatorChar);
         if (maxSize <= 0) {

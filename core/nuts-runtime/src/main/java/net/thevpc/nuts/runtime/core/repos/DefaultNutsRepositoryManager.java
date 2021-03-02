@@ -27,8 +27,10 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
+import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
 
 public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
+
     private final NutsRepositoryRegistryHelper repositoryRegistryHelper;
     private NutsWorkspace workspace;
     public NutsLogger LOG;
@@ -123,7 +125,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
 
     @Override
     public NutsRepository getRepository(String repositoryIdOrName, NutsSession session) throws NutsRepositoryNotFoundException {
-        session=NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
+        session = NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
         if (DefaultNutsInstalledRepository.INSTALLED_REPO_UUID.equals(repositoryIdOrName)) {
             return NutsWorkspaceExt.of(getWorkspace()).getInstalledRepository();
         }
@@ -155,13 +157,13 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         }
     }
 
-    protected void addRepository(NutsRepositoryRef ref, NutsRepository repo, NutsAddOptions options,boolean temp) {
+    protected void addRepository(NutsRepositoryRef ref, NutsRepository repo, NutsAddOptions options, boolean temp) {
         options = CoreNutsUtils.validate(options, getWorkspace());
         repositoryRegistryHelper.addRepository(ref, repo);
         if (!temp) {
             NutsWorkspaceConfigManagerExt config = NutsWorkspaceConfigManagerExt.of(getWorkspace().config());
             config.fireConfigurationChanged("config-main", options.getSession(), ConfigEventType.MAIN);
-            if(repo!=null) {
+            if (repo != null) {
                 // repo would be null if the repo is not accessible
                 // like for system repo, if not already created
                 NutsWorkspaceUtils.of(getWorkspace()).events().fireOnAddRepository(
@@ -169,48 +171,6 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
                 );
             }
         }
-    }
-
-
-    @Override
-    public NutsRepository addRepository(NutsRepositoryModel repository, NutsAddOptions options) {
-        options = CoreNutsUtils.validate(options, getWorkspace());
-        NutsRepositoryConfig config = new NutsRepositoryConfig();
-        String name = repository.getName();
-        String uuid = repository.getUuid();
-        if (CoreStringUtils.isBlank(name)) {
-            name = "custom";
-        }
-        if (CoreStringUtils.isBlank(uuid)) {
-            uuid = UUID.randomUUID().toString();
-        }
-        config.setName(name);
-        config.setType("custom");
-        config.setUuid(uuid);
-        config.setStoreLocationStrategy(repository.getStoreLocationStrategy());
-        NutsAddRepositoryOptions options2 = new NutsAddRepositoryOptions();
-        String rootFolder = NutsWorkspaceConfigManagerExt.of(getWorkspace().config()).getRepositoriesRoot();
-        options2.setName(config.getName());
-        options2.setConfig(config);
-        options2.setDeployOrder(repository.getDeployOrder());
-        options2.setSession(options.getSession());
-        options2.setTemporary(true);
-        options2.setLocation(CoreIOUtils.resolveRepositoryPath(options2, Paths.get(rootFolder), options.getSession()));
-        NutsRepository r = new NutsSimpleRepositoryWrapper(options2, getWorkspace(), null, repository);
-        addRepository(null, r, options,false);
-        return r;
-    }
-
-    @Override
-    public NutsRepository addRepository(NutsRepositoryRef ref,NutsAddOptions options) {
-        NutsAddRepositoryOptions o1 = CoreNutsUtils.refToOptions(ref);
-        o1.setSession(options.getSession());
-        NutsWorkspace ws = getWorkspace();
-        NutsWorkspaceConfigManagerExt cc = NutsWorkspaceConfigManagerExt.of(ws.config());
-        boolean temporary=o1.isTemporary();
-        NutsRepository r = this.createRepository(o1,null);
-        addRepository(ref, r, options,false);
-        return r;
     }
 
     @Override
@@ -223,27 +183,53 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
             options.setSession(getWorkspace().createSession());
         }
         NutsRepositoryRef ref = CoreNutsUtils.optionsToRef(options);
-        NutsRepository r = this.createRepository(options,null);
-        addRepository(ref, r, new NutsAddOptions().setSession(options.getSession()),options.isTemporary());
+        NutsRepository r = this.createRepository(options, null);
+        addRepository(ref, r, new NutsAddOptions().setSession(options.getSession()), options.isTemporary());
         return r;
     }
 
     public NutsRepository createRepository(NutsAddRepositoryOptions options, NutsRepository parentRepository) {
-        return createRepository(options,null,parentRepository);
+        return createRepository(options, null, parentRepository);
     }
 
     public NutsRepository createRepository(NutsAddRepositoryOptions options, Path rootFolder, NutsRepository parentRepository) {
-        if(rootFolder==null){
-            if(parentRepository==null){
+        NutsRepositoryModel repoModel = options.getRepositoryModel();
+        if (rootFolder == null) {
+            if (parentRepository == null) {
                 NutsWorkspaceConfigManagerExt cc = NutsWorkspaceConfigManagerExt.of(getWorkspace().config());
-                rootFolder=options.isTemporary()?Paths.get(cc.getTempRepositoriesRoot())
-                        :Paths.get(cc.getRepositoriesRoot());
-            }else{
+                rootFolder = options.isTemporary() ? Paths.get(cc.getTempRepositoriesRoot())
+                        : Paths.get(cc.getRepositoriesRoot());
+            } else {
                 NutsRepositoryConfigManagerExt cc = NutsRepositoryConfigManagerExt.of(parentRepository.config());
-                rootFolder=options.isTemporary()?cc.getTempMirrorsRoot()
-                        :cc.getMirrorsRoot();
+                rootFolder = options.isTemporary() ? cc.getTempMirrorsRoot()
+                        : cc.getMirrorsRoot();
             }
         }
+        if (repoModel != null) {
+            NutsRepositoryConfig config = new NutsRepositoryConfig();
+            String name = repoModel.getName();
+            String uuid = repoModel.getUuid();
+            if (CoreStringUtils.isBlank(name)) {
+                name = "custom";
+            }
+            if (CoreStringUtils.isBlank(uuid)) {
+                uuid = UUID.randomUUID().toString();
+            }
+            config.setName(name);
+            config.setType("custom");
+            config.setUuid(uuid);
+            config.setStoreLocationStrategy(repoModel.getStoreLocationStrategy());
+            NutsSession session = options.getSession();
+            NutsAddRepositoryOptions options2 = new NutsAddRepositoryOptions();
+            options2.setName(config.getName());
+            options2.setConfig(config);
+            options2.setDeployOrder(options.getDeployOrder());
+            options2.setSession(session);
+            options2.setTemporary(true);
+            options2.setLocation(CoreIOUtils.resolveRepositoryPath(options2, rootFolder, session));
+            return new NutsSimpleRepositoryWrapper(options2, getWorkspace(), null, repoModel);
+        }
+
         options = options.copy();
         try {
             boolean temporary = options.isTemporary();
@@ -251,7 +237,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
             if (temporary) {
 //                options.setLocation(options.getName());
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, options.getSession()));
-            }else if (conf == null) {
+            } else if (conf == null) {
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, options.getSession()));
                 conf = loadRepository(Paths.get(options.getLocation(), NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName(), getWorkspace(), options.getSession());
                 if (conf == null) {
@@ -267,23 +253,23 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
             if (CoreStringUtils.isBlank(conf.getName())) {
                 conf.setName(options.getName());
             }
-            NutsRepositoryFactoryComponent factory_ = getWorkspace().extensions().createSupported(NutsRepositoryFactoryComponent.class,conf, options.getSession());
+            NutsRepositoryFactoryComponent factory_ = getWorkspace().extensions().createSupported(NutsRepositoryFactoryComponent.class, conf, options.getSession());
             if (factory_ != null) {
                 NutsRepository r = factory_.create(options, getWorkspace(), parentRepository);
                 if (r != null) {
                     return r;
                 }
             }
-            if(options.isTemporary()){
-                if(CoreStringUtils.isBlank(conf.getType())) {
+            if (options.isTemporary()) {
+                if (CoreStringUtils.isBlank(conf.getType())) {
                     throw new NutsInvalidRepositoryException(getWorkspace(), options.getName(), "unable to detect valid type for temporary repository");
-                }else{
+                } else {
                     throw new NutsInvalidRepositoryException(getWorkspace(), options.getName(), "invalid repository type " + conf.getType());
                 }
-            }else {
-                if(CoreStringUtils.isBlank(conf.getType())) {
+            } else {
+                if (CoreStringUtils.isBlank(conf.getType())) {
                     throw new NutsInvalidRepositoryException(getWorkspace(), options.getName(), "unable to detect valid type for repository");
-                }else{
+                } else {
                     throw new NutsInvalidRepositoryException(getWorkspace(), options.getName(), "invalid repository type " + conf.getType());
                 }
             }
@@ -295,11 +281,17 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         }
     }
 
-
     @Override
     public NutsRepository addRepository(String repositoryNamedUrl, NutsSession session) {
+        session = NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
+        NutsRepositorySelector r = null;
+        try {
+            r = NutsRepositorySelector.parseOne(repositoryNamedUrl);
+        } catch (Exception ex) {
+            throw new NutsInvalidRepositoryException(getWorkspace(), repositoryNamedUrl, "invalid repository definition");
+        }
         return addRepository(
-                RepoDefinitionResolver.createRepositoryOptions(repositoryNamedUrl,true,getWorkspace()).setSession(session)
+                RepoDefinitionResolver.createRepositoryOptions(r, true, session).setSession(session)
         );
     }
 
@@ -329,7 +321,6 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         }
         return conf;
     }
-
 
     public NutsRepositorySPI toRepositorySPI(NutsRepository repo) {
         return (NutsRepositorySPI) repo;
@@ -371,6 +362,5 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
             //ignore
         }
     }
-
 
 }

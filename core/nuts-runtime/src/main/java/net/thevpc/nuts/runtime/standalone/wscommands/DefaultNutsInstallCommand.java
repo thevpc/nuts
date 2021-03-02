@@ -30,7 +30,6 @@ import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsCollectionResult;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 
@@ -190,7 +189,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 //        Map<NutsId, NutsDefinition> defsOk = new LinkedHashMap<>();
         if (isInstalled()) {
             for (NutsId resultId : ws.search().setSession(searchSession).setInstallStatus(
-                    ws.filters().installStatus().byInstalled()).getResultIds()) {
+                    ws.filters().installStatus().byInstalled(true)).getResultIds()) {
                 list.addForInstall(resultId, getInstalled(), true);
             }
             // This bloc is to handle packages that were installed but their jar/content was removed for any reason!
@@ -362,35 +361,35 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             throw new NutsInstallException(getWorkspace(), "", sb.toString().trim(), null);
         }
 
-        NutsTextFormatManager text = ws.formats().text();
+        NutsFormatManager text = ws.formats();
         if (getValidWorkspaceSession().isPlainTrace() || (!list.emptyCommand && getValidWorkspaceSession().getConfirm() == NutsConfirmationMode.ASK)) {
-            printList(out, text.builder().append("new", NutsTextNodeStyle.primary(2)),
-                    text.builder().append("installed", NutsTextNodeStyle.primary(1)),
+            printList(out, text.text().builder().append("new", NutsTextNodeStyle.primary(2)),
+                    text.text().builder().append("installed", NutsTextNodeStyle.primary(1)),
                     list.ids(x -> x.doInstall && !x.isAlreadyExists()));
 
-            printList(out, text.builder().append("new", NutsTextNodeStyle.primary(2)),
-                    text.builder().append("required", NutsTextNodeStyle.primary(1)),
+            printList(out, text.text().builder().append("new", NutsTextNodeStyle.primary(2)),
+                    text.text().builder().append("required", NutsTextNodeStyle.primary(1)),
                     list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists()));
             printList(out,
-                    text.builder().append("required", NutsTextNodeStyle.primary(2)),
-                    text.builder().append("re-required", NutsTextNodeStyle.primary(1)),
+                    text.text().builder().append("required", NutsTextNodeStyle.primary(2)),
+                    text.text().builder().append("re-required", NutsTextNodeStyle.primary(1)),
                     list.ids(x -> (!x.doInstall && x.doRequire) && x.isAlreadyRequired()));
             printList(out,
-                    text.builder().append("required", NutsTextNodeStyle.primary(2)),
-                    text.builder().append("installed", NutsTextNodeStyle.primary(1)),
+                    text.text().builder().append("required", NutsTextNodeStyle.primary(2)),
+                    text.text().builder().append("installed", NutsTextNodeStyle.primary(1)),
                     list.ids(x -> x.doInstall && x.isAlreadyRequired() && !x.isAlreadyInstalled()));
 
             printList(out,
-                    text.builder().append("required", NutsTextNodeStyle.primary(2)),
-                    text.builder().append("re-reinstalled", NutsTextNodeStyle.primary(1)),
+                    text.text().builder().append("required", NutsTextNodeStyle.primary(2)),
+                    text.text().builder().append("re-reinstalled", NutsTextNodeStyle.primary(1)),
                     list.ids(x -> x.doInstall && x.isAlreadyInstalled()));
             printList(out,
-                    text.builder().append("installed", NutsTextNodeStyle.primary(2)),
-                    text.builder().append("set as default", NutsTextNodeStyle.primary(3)),
+                    text.text().builder().append("installed", NutsTextNodeStyle.primary(2)),
+                    text.text().builder().append("set as default", NutsTextNodeStyle.primary(3)),
                     list.ids(x -> x.doSwitchVersion && x.isAlreadyInstalled()));
             printList(out,
-                    text.builder().append("installed", NutsTextNodeStyle.primary(2)),
-                    text.builder().append("ignored", NutsTextNodeStyle.pale()),
+                    text.text().builder().append("installed", NutsTextNodeStyle.primary(2)),
+                    text.text().builder().append("ignored", NutsTextNodeStyle.pale()),
                     list.ids(x -> x.ignored));
         }
         List<NutsId> nonIgnored = list.ids(x -> !x.ignored);
@@ -456,9 +455,9 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                     .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
                     .append(" going to be ").append(action).append(" : ")
                     .appendJoined(
-                            ws.formats().text().factory().plain(", "),
+                            ws.formats().text().plain(", "),
                             all.stream().map(x ->
-                                    ws.formats().text().factory().nodeFor(
+                                    ws.formats().text().nodeFor(
                                             x.builder().omitImportedGroupId().build()
                                     )
                             ).collect(Collectors.toList())

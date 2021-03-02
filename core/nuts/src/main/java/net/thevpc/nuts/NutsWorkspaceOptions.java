@@ -123,13 +123,13 @@ public interface NutsWorkspaceOptions extends Serializable {
      */
     String[] getExcludedExtensions();
 
-    /**
-     * repository list to be excluded when opening the workspace.
-     * <br>
-     * <strong>option-type :</strong> exported (inherited in child workspaces)
-     * @return repository list to be excluded when opening the workspace.
-     */
-    String[] getExcludedRepositories();
+//    /**
+//     * repository list to be excluded when opening the workspace.
+//     * <br>
+//     * <strong>option-type :</strong> exported (inherited in child workspaces)
+//     * @return repository list to be excluded when opening the workspace.
+//     */
+//    String[] getExcludedRepositories();
 
     /**
      * execution type.
@@ -307,7 +307,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * <strong>option-type :</strong> exported (inherited in child workspaces)
      * @return repositories to register temporarily when running the workspace.
      */
-    String[] getTransientRepositories();
+    String[] getRepositories();
 
     /**
      * username to log into when running workspace.
@@ -495,6 +495,16 @@ public interface NutsWorkspaceOptions extends Serializable {
     Boolean getTransitive();
 
     /**
+     * when true, application is running in bot (robot) mode. No interaction or trace is allowed.
+     * <br>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     * @return application is running in bot (robot) mode. No interaction or trace is allowed.
+     */
+    boolean isBot();
+    
+    Boolean getBot();
+
+    /**
      * default fetch strategy
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
@@ -543,14 +553,14 @@ public interface NutsWorkspaceOptions extends Serializable {
      */
     ExecutorService getExecutorService();
 
-    /**
-     * boot repositories ';' separated
-     *
-     * <br>
-     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
-     * @return  boot repositories ';' separated
-     */
-    String getBootRepositories();
+//    /**
+//     * boot repositories ';' separated
+//     *
+//     * <br>
+//     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+//     * @return  boot repositories ';' separated
+//     */
+//    String getBootRepositories();
 
 
     /**

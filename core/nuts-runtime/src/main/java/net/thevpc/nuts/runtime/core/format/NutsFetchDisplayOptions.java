@@ -30,6 +30,13 @@ public class NutsFetchDisplayOptions {
         NutsDisplayProperty.REPOSITORY,
         NutsDisplayProperty.ID
     };
+    public static NutsDisplayProperty[] DISPLAY_LONG_LONG = new NutsDisplayProperty[]{
+        NutsDisplayProperty.LONG_STATUS,
+        NutsDisplayProperty.INSTALL_DATE,
+        NutsDisplayProperty.INSTALL_USER,
+        NutsDisplayProperty.REPOSITORY,
+        NutsDisplayProperty.ID
+    };
     public static NutsDisplayProperty[] DISPLAY_MIN = new NutsDisplayProperty[]{
         NutsDisplayProperty.ID
     };
@@ -207,6 +214,10 @@ public class NutsFetchDisplayOptions {
                     visited.addAll(Arrays.asList(DISPLAY_LONG));
                     break;
                 }
+                case "long-long": {
+                    visited.addAll(Arrays.asList(DISPLAY_LONG_LONG));
+                    break;
+                }
                 default: {
                     visited.add(CoreCommonUtils.parseEnumString(dispNames[i], NutsDisplayProperty.class, true));
                 }
@@ -225,6 +236,10 @@ public class NutsFetchDisplayOptions {
                 }
                 case "long": {
                     all2.addAll(Arrays.asList(DISPLAY_LONG));
+                    break;
+                }
+                case "long-long": {
+                    all2.addAll(Arrays.asList(DISPLAY_LONG_LONG));
                     break;
                 }
                 default: {

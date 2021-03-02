@@ -242,11 +242,11 @@ public final class JavaExecutorOptions {
                         if (!session.isPlainOut()) {
                             throw new NutsExecutionException(getWorkspace(), "multiple runnable classes detected : " + possibleClasses, 102);
                         }
-                        NutsTextFormatManager text = getWorkspace().formats().text();
-                        NutsTextNodeBuilder msgString = text.builder();
+                        NutsFormatManager text = getWorkspace().formats();
+                        NutsTextNodeBuilder msgString = text.text().builder();
 
 
-                        NutsTextNodeFactory tfactory = text.factory();
+                        NutsTextManager tfactory = text.text();
                         msgString.append("multiple runnable classes detected  - actually ")
                                 .append(tfactory.styled("" + possibleClasses.size(), NutsTextNodeStyle.primary(5)))
                                 .append(" . Select one :\n");

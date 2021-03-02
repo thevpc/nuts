@@ -109,12 +109,19 @@ public class DefaultNutsIOManager implements NutsIOManager {
     public PrintStream createPrintStream(OutputStream out, NutsTerminalMode expectedMode, NutsSession session) {
         if (out == null) {
             return null;
+        }NutsTerminalMode expectedMode0=ws.config().options().getTerminalMode();
+        if (expectedMode0 == null) {
+            if(ws.config().options().isBot()){
+                expectedMode0 = NutsTerminalMode.FILTERED;
+            }else{
+                expectedMode0 = NutsTerminalMode.FORMATTED;
+            }
         }
         if (expectedMode == null) {
-            expectedMode = ws.config().options().getTerminalMode();
+            expectedMode = expectedMode0;
         }
         if (expectedMode == NutsTerminalMode.FORMATTED) {
-            if (ws.config().options().getTerminalMode() == NutsTerminalMode.FILTERED) {
+            if (expectedMode0 == NutsTerminalMode.FILTERED) {
                 //if nuts started with --no-color modifier, will disable FORMATTED terminal mode each time
                 expectedMode = NutsTerminalMode.FILTERED;
             }
