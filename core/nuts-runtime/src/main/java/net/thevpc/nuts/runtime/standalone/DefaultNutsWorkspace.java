@@ -317,19 +317,49 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 if (LOG.isLoggable(Level.CONFIG)) {
                     LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log("nuts workspace v{0} created.", nutsVersion);
                 }
-
-                if (session.isPlainTrace()) {
+                //should install default
+                if (session.isPlainTrace() && !config().options().isSkipWelcome()) {
                     PrintStream out = session.out();
-                    out.println(
-                            formats().text().builder()
-                                    .appendCode("sh", "nuts")
-                                    .append(" workspace v")
-                                    .append(version().parser().parse(nutsVersion))
-                                    .append(" created.")
+
+                    StringBuilder version = new StringBuilder(nutsVersion);
+                    CoreStringUtils.fillString(' ', 25 - version.length(), version);
+                    NutsTextManager txt = formats().text();
+                    NutsTextNode n = txt.parser().parseResource("/net/thevpc/nuts/runtime/includes/standard-header.ntf",
+                            txt.parser().createLoader(getClass().getClassLoader())
                     );
+                    out.println(n == null ? "no help found" : n.toString().trim());
+                    out.println(
+                            txt.builder()
+                                    .append("location", NutsTextNodeStyle.underlined())
+                                    .append(":")
+                                    .append(locations().getWorkspaceLocation(), NutsTextNodeStyle.path())
+                    );
+                    out.println(
+                            txt.builder()
+                                    .append("╭────────────────────────────────────────────────────────────────────────╮\n", NutsTextNodeStyle.primary(2))
+                                    .append("│", NutsTextNodeStyle.primary(2)).append("  This is the very first time ")
+                                    .appendCode("sh", "nuts")
+                                    .append(" has been started for this workspace  ").append("│\n", NutsTextNodeStyle.primary(2))
+                                    .append("╰────────────────────────────────────────────────────────────────────────╯", NutsTextNodeStyle.primary(2))
+                    );
+                    out.println();
+                }
+                for (URL bootClassWorldURL : config().getBootClassWorldURLs()) {
+                    NutsInstalledRepository repo = getInstalledRepository();
+                    NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(this).repoSPI(repo);
+                    NutsDeployRepositoryCommand desc = repoSPI.deploy()
+                            .setContent(bootClassWorldURL)
+                            //.setFetchMode(NutsFetchMode.LOCAL)
+                            .setSession(session.copy().copy().setConfirm(NutsConfirmationMode.YES))
+                            .run();
+                    if (desc.getId().getLongNameId().equals(getApiId().getLongNameId())
+                            || desc.getId().getLongNameId().equals(getRuntimeId().getLongNameId())) {
+                        repo.install(desc.getId(), session, null);
+                    } else {
+                        repo.install(desc.getId(), session, getRuntimeId());
+                    }
                 }
 
-                reconfigurePostInstall(session);
             } else {
                 if (uoptions.isRecover()) {
                     NutsUpdateOptions updateOptions = new NutsUpdateOptions().setSession(session);
@@ -463,77 +493,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         )
                 );
             }
-        }
-    }
-
-    public void reconfigurePostInstall(NutsSession session) {
-        String nutsVersion = getRuntimeId().getVersion().toString();
-        session = NutsWorkspaceUtils.of(this).validateSession(session);
-        //should install default
-        if (session.isPlainTrace() && !config().options().isSkipWelcome()) {
-            PrintStream out = session.out();
-
-            StringBuilder version = new StringBuilder(nutsVersion);
-            CoreStringUtils.fillString(' ', 25 - version.length(), version);
-            NutsFormatManager txt = formats();
-            NutsTextNode n = txt.text().parser().parseResource("/net/thevpc/nuts/runtime/includes/standard-header.ntf",
-                    txt.text().parser().createLoader(getClass().getClassLoader())
-            );
-            out.println(n == null ? "no help found" : n.toString().trim());
-            out.println(
-                    formats().text().builder()
-                            .append("location", NutsTextNodeStyle.underlined())
-                            .append(":")
-                            .append(locations().getWorkspaceLocation(), NutsTextNodeStyle.path())
-            );
-            out.println(
-                    formats().text().builder()
-                            .append("╭────────────────────────────────────────────────────────────────────────╮\n", NutsTextNodeStyle.primary(2))
-                            .append("│", NutsTextNodeStyle.primary(2)).append("  This is the very first time ")
-                            .appendCode("sh", "nuts")
-                            .append(" has been started for this workspace  ").append("│\n", NutsTextNodeStyle.primary(2))
-                            .append("╰────────────────────────────────────────────────────────────────────────╯", NutsTextNodeStyle.primary(2))
-            );
-            out.println();
-        }
-//        NutsSession finalSession = session;
-//        MavenUtils mvn = MavenUtils.of(DefaultNutsWorkspace.this);
-        for (URL bootClassWorldURL : config().getBootClassWorldURLs()) {
-            NutsInstalledRepository repo = getInstalledRepository();
-            NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(this).repoSPI(repo);
-            NutsDeployRepositoryCommand desc = repoSPI.deploy()
-                    .setContent(bootClassWorldURL)
-                    //.setFetchMode(NutsFetchMode.LOCAL)
-                    .setSession(session.copy().copy().setConfirm(NutsConfirmationMode.YES))
-                    .run();
-            if (desc.getId().getLongNameId().equals(getApiId().getLongNameId())
-                    || desc.getId().getLongNameId().equals(getRuntimeId().getLongNameId())) {
-                repo.install(desc.getId(), session, null);
-            } else {
-                repo.install(desc.getId(), session, getRuntimeId());
-            }
-
-//            try (InputStream is=bootClassWorldURL.openStream()){
-//                ZipUtils.visitZipStream(is, new Predicate<String>() {
-//                    @Override
-//                    public boolean test(String path) {
-//                        return path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml");
-//                    }
-//                }, new InputStreamVisitor() {
-//                    @Override
-//                    public boolean visit(String path, InputStream inputStream) throws IOException {
-//                        NutsDescriptor desc = mvn.parsePomXml(inputStream, NutsWorkspaceHelper.createNoRepositorySession(finalSession, NutsFetchMode.REMOTE), path);
-//                        getInstalledRepository().deploy()
-//                                .setDescriptor(desc)
-//                                .setId(desc.getId())
-//                                .setContent().setSession(finalSession)
-//                                .run()
-//                        return false;
-//                    }
-//                });
-//            } catch (IOException ex) {
-//                throw new UncheckedIOException(ex);
-//            }
         }
     }
 
