@@ -264,9 +264,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //        }
         configManager.onExtensionsPrepared(session);
         initializing = true;
+        boolean justInstalled = false;
         try {
             if (!loadWorkspace(session, uoptions.getExcludedExtensions(), null)) {
                 //workspace wasn't loaded. Create new configuration...
+                justInstalled = true;
                 NutsWorkspaceUtils.of(this).checkReadOnly();
                 LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log("Creating NEW workspace at {0}", locations().getWorkspaceLocation());
                 NutsWorkspaceConfigBoot bconfig = new NutsWorkspaceConfigBoot();
@@ -328,10 +330,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
 
                 reconfigurePostInstall(session);
-                DefaultNutsWorkspaceEvent workspaceCreatedEvent = new DefaultNutsWorkspaceEvent(session, null, null, null, null);
-                for (NutsWorkspaceListener workspaceListener : events().getWorkspaceListeners()) {
-                    workspaceListener.onCreateWorkspace(workspaceCreatedEvent);
-                }
             } else {
                 if (uoptions.isRecover()) {
                     NutsUpdateOptions updateOptions = new NutsUpdateOptions().setSession(session);
@@ -348,33 +346,48 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                 .log("reinstall artifacts failed : " + CoreStringUtils.exceptionToString(ex), ex);
                     }
                 }
-            }
-            if (repos().getRepositories(session).length == 0) {
-                LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log("workspace has no repositories. Will re-create defaults");
-                initializeWorkspace(uoptions.getArchetype(), session);
-            }
-            List<String> transientRepositoriesSet = uoptions.getRepositories() == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(uoptions.getRepositories()));
-            NutsRepositorySelector.SelectorList expected = NutsRepositorySelector.parse(transientRepositoriesSet.toArray(new String[0]));
-            for (NutsRepositorySelector loc : expected.resolveSelectors(null)) {
-                NutsAddRepositoryOptions d = RepoDefinitionResolver.createRepositoryOptions(loc, false, session);
-                String n = d.getName();
-                String uuid = (CoreStringUtils.isBlank(n) ? "temporary" : n) + "_" + UUID.randomUUID().toString().replace("-", "");
-                d.setName(uuid);
-                d.setTemporary(true);
-                d.setEnabled(true);
-                d.setFailSafe(false);
-                if (d.getConfig() != null) {
-                    d.getConfig().setName(CoreStringUtils.isBlank(n) ? uuid : n);
-                    d.getConfig().setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
+                if (repos().getRepositories(session).length == 0) {
+                    LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log("workspace has no repositories. Will re-create defaults");
+                    initializeWorkspace(uoptions.getArchetype(), session);
                 }
-                repos().addRepository(d);
+                List<String> transientRepositoriesSet = uoptions.getRepositories() == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(uoptions.getRepositories()));
+                NutsRepositorySelector.SelectorList expected = NutsRepositorySelector.parse(transientRepositoriesSet.toArray(new String[0]));
+                for (NutsRepositorySelector loc : expected.resolveSelectors(null)) {
+                    NutsAddRepositoryOptions d = RepoDefinitionResolver.createRepositoryOptions(loc, false, session);
+                    String n = d.getName();
+                    String uuid = (CoreStringUtils.isBlank(n) ? "temporary" : n) + "_" + UUID.randomUUID().toString().replace("-", "");
+                    d.setName(uuid);
+                    d.setTemporary(true);
+                    d.setEnabled(true);
+                    d.setFailSafe(false);
+                    if (d.getConfig() != null) {
+                        d.getConfig().setName(CoreStringUtils.isBlank(n) ? uuid : n);
+                        d.getConfig().setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
+                    }
+                    repos().addRepository(d);
+                }
             }
+
             configManager.prepareBoot(false, session);
             if (!config().isReadOnly()) {
                 config().save(false, session);
             }
             configManager.setStartCreateTimeMillis(uoptions.getCreationTime());
             configManager.setEndCreateTimeMillis(System.currentTimeMillis());
+            if (justInstalled) {
+                if (!config().options().isSkipCompanions()) {
+                    installCompanions(session);
+                }
+                DefaultNutsWorkspaceEvent workspaceCreatedEvent = new DefaultNutsWorkspaceEvent(session, null, null, null, null);
+                for (NutsWorkspaceListener workspaceListener : events().getWorkspaceListeners()) {
+                    workspaceListener.onCreateWorkspace(workspaceCreatedEvent);
+                }
+            }
+//            if (session.isPlainTrace()) {
+//                PrintStream out = session.out();
+//                io().term().sendCommand(out, NutsTerminalManager.CMD_MOVE_LINE_START);
+//                out.printf("workspace is %s!%n", formats().text().builder().append("ready"));
+//            }
             if (uoptions.getUserName() != null && uoptions.getUserName().trim().length() > 0) {
                 char[] password = uoptions.getCredentials();
                 if (CoreStringUtils.isBlank(password)) {
@@ -413,6 +426,44 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         t.setSession(s);
         s.setTerminal(t);
         return s;
+    }
+
+    public void installCompanions(NutsSession session) {
+        if (session.isPlainTrace()) {
+            PrintStream out = session.out();
+            Set<NutsId> companionIds = getCompanionIds();
+            out.printf("looking for recommended companion tools to install... detected : %s%n",
+                    formats().text().builder().appendJoined(
+                            formats().text().plain(","),
+                            companionIds.stream()
+                                    .map(x
+                                            -> formats().text().parse(id().formatter(x).format())
+                                    ).collect(Collectors.toList())
+                    )
+            );
+        }
+        try {
+            install().companions().setSession(session.copy().setTrace(session.isTrace() && session.isPlainOut()))
+                    .addConditionalArgs(d -> d.getId().getShortName().equals("net.thevpc.nuts:nadmin")
+                    && config().options().getSwitchWorkspace() != null,
+                            "--switch=" + config().options().getSwitchWorkspace())
+                    .run();
+        } catch (Exception ex) {
+            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("unable to install companions : " + ex.toString());
+            if (session.isPlainTrace()) {
+                PrintStream out = session.out();
+                out.printf("```error unable to install companion tools``` :  %s \n"
+                        + "this happens when none of the following repositories are able to locate them : %s\n",
+                        ex,
+                        this.formats().text().builder().appendJoined(
+                                this.formats().text().plain(", "),
+                                Arrays.stream(repos().getRepositories(session)).map(x
+                                        -> formats().text().builder().append(x.getName(), NutsTextNodeStyle.primary(3))
+                                ).collect(Collectors.toList())
+                        )
+                );
+            }
+        }
     }
 
     public void reconfigurePostInstall(NutsSession session) {
@@ -483,48 +534,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //            } catch (IOException ex) {
 //                throw new UncheckedIOException(ex);
 //            }
-        }
-        if (!config().options().isSkipCompanions()) {
-            if (session.isPlainTrace()) {
-                PrintStream out = session.out();
-                Set<NutsId> companionIds = getCompanionIds();
-                out.printf("looking for recommended companion tools to install... detected : %s%n",
-                        formats().text().builder().appendJoined(
-                                formats().text().plain(","),
-                                companionIds.stream()
-                                        .map(x
-                                                -> formats().text().parse(id().formatter(x).format())
-                                        ).collect(Collectors.toList())
-                        )
-                );
-            }
-            try {
-                install().companions().setSession(session.copy().setTrace(session.isTrace() && session.isPlainOut()))
-                        .addConditionalArgs(d -> d.getId().getShortName().equals("net.thevpc.nuts:nadmin")
-                        && config().options().getSwitchWorkspace() != null,
-                                "--switch=" + config().options().getSwitchWorkspace())
-                        .run();
-            } catch (Exception ex) {
-                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("unable to install companions : " + ex.toString());
-                if (session.isPlainTrace()) {
-                    PrintStream out = session.out();
-                    out.printf("```error unable to install companion tools``` :  %s \n"
-                            + "this happens when none of the following repositories are able to locate them : %s\n",
-                            ex,
-                            this.formats().text().builder().appendJoined(
-                                    this.formats().text().plain(", "),
-                                    Arrays.stream(repos().getRepositories(session)).map(x
-                                            -> formats().text().builder().append(x.getName(), NutsTextNodeStyle.primary(3))
-                                    ).collect(Collectors.toList())
-                            )
-                    );
-                }
-            }
-            if (session.isPlainTrace()) {
-                PrintStream out = session.out();
-                io().term().sendCommand(out, NutsTerminalManager.CMD_MOVE_LINE_START);
-                out.printf("workspace is %s!%n", formats().text().builder().append("ready"));
-            }
         }
     }
 

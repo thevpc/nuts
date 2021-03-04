@@ -340,6 +340,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
         @Override
         public int exec() {
+            CoreIOUtils.clearMonitor(getSession().out(), getSession().getWorkspace());
             ClassLoader classLoader = null;
             Throwable th = null;
             try {

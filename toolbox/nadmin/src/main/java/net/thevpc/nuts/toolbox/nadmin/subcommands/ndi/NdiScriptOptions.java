@@ -15,6 +15,16 @@ public class NdiScriptOptions {
     private NutsSession session;
     private String preferredScriptName;
     private boolean includeEnv;
+    private boolean addNutsScript;
+
+    public boolean isAddNutsScript() {
+        return addNutsScript;
+    }
+
+    public NdiScriptOptions setAddNutsScript(boolean addNutsScript) {
+        this.addNutsScript = addNutsScript;
+        return this;
+    }
 
     public String getId() {
         return id;
