@@ -188,7 +188,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             List<NutsSdkLocation> plainSdks = new ArrayList<>();
             plainSdks.addAll(Arrays.asList(sdks().find(null, null, null)));
             storeModelMain.setSdk(plainSdks);
-            storeModelMain.setRepositories(new ArrayList<>(Arrays.asList(ws.repos().getRepositoryRefs(session))));
+            storeModelMain.setRepositories(new ArrayList<>(
+                    Arrays.stream(ws.repos().getRepositories(session)).filter(x->!x.config().isTemporary())
+                    .map(x->x.config().getRepositoryRef()).collect(Collectors.toList())
+            ));
 
             Path file = Paths.get(configVersionSpecificLocation).resolve(CoreNutsConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
             storeModelMain.setConfigVersion(current().getApiVersion());

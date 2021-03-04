@@ -64,7 +64,7 @@ public enum NutsContentType {
     PLAIN,
 
     /**
-     * Typed Simple Object Notation
+     * Type Safe Object Notation
      * @since 0.8.1
      */
     TSON,

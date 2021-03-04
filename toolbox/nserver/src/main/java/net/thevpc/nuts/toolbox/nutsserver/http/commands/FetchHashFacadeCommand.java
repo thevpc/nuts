@@ -7,6 +7,7 @@ import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 import java.io.IOException;
 
 public class FetchHashFacadeCommand extends AbstractFacadeCommand {
+
     public FetchHashFacadeCommand() {
         super("fetch-hash");
     }
@@ -18,8 +19,8 @@ public class FetchHashFacadeCommand extends AbstractFacadeCommand {
         boolean transitive = parameters.containsKey("transitive");
         String hash = null;
         try {
-            hash = context.getWorkspace().fetch().setId(id).setSession(context.getSession())
-                    .setTransitive(transitive).getResultContentHash();
+            hash = context.getWorkspace().fetch().setId(id).setSession(context.getSession().copy().setTransitive(transitive))
+                    .getResultContentHash();
         } catch (Exception exc) {
             //
         }

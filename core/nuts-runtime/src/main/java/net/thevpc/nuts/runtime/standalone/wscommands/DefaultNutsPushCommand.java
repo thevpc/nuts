@@ -69,7 +69,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
             if (CoreStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
                 throw new NutsIllegalArgumentException(ws, "invalid Version " + id.getVersion());
             }
-            NutsDefinition file = ws.fetch().setId(id).setSession(session).setContent(true).setTransitive(false).getResultDefinition();
+            NutsDefinition file = ws.fetch().setId(id).setSession(session.copy().setTransitive(false)).setContent(true).getResultDefinition();
             if (file == null) {
                 throw new NutsIllegalArgumentException(ws, "nothing to push");
             }

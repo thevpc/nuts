@@ -34,7 +34,7 @@ public class DefaultWorkspaceEnvManager implements NutsWorkspaceEnvManager {
                     DefaultNutsArgument a=new DefaultNutsArgument(property);
                     String key = a.getStringKey();
                     String value = a.getStringValue();
-                    optionsParsed.put(key,value);
+                    optionsParsed.put(key,value==null?"":value);
                 }
             }
         }

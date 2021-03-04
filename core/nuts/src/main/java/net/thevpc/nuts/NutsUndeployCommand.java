@@ -37,11 +37,6 @@ public interface NutsUndeployCommand extends NutsWorkspaceCommand {
 
     String getRepository();
 
-    boolean isTransitive();
-
-
-    NutsUndeployCommand setTransitive(boolean transitive);
-
     NutsId[] getIds();
 
     NutsUndeployCommand addId(NutsId id);

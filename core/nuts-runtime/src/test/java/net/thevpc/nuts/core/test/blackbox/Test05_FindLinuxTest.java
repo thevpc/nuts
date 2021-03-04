@@ -59,7 +59,9 @@ public class Test05_FindLinuxTest {
                 "--skip-companions" //            "--verbose"
         );
 
-        NutsResultList<NutsId> result = ws.search().setRemote().setLatest(true).addId(NutsConstants.Ids.NUTS_API).getResultIds();
+        NutsResultList<NutsId> result = ws.search()
+                .setSession(ws.createSession().setFetchStrategy(NutsFetchStrategy.REMOTE))
+                .setLatest(true).addId(NutsConstants.Ids.NUTS_API).getResultIds();
         //There is one result because nuts id is always installed
         Assertions.assertEquals(1, result.count());
     }
@@ -78,7 +80,9 @@ public class Test05_FindLinuxTest {
                 "--skip-companions");
 
         int count = 0;
-        NutsResultList<NutsId> result = ws.search().setRemote().setLatest(true).addId(NutsConstants.Ids.NUTS_API).getResultIds();
+        NutsResultList<NutsId> result = ws.search()
+                .setSession(ws.createSession().setFetchStrategy(NutsFetchStrategy.REMOTE))
+                .setLatest(true).addId(NutsConstants.Ids.NUTS_API).getResultIds();
         Assertions.assertTrue(result.count() > 0);
     }
 

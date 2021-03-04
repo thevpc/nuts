@@ -52,6 +52,8 @@ public interface NutsRepositoryConfigManager {
 
 
 
+    NutsRepositoryRef getRepositoryRef();
+    
     String getType();
 
     String getGroups();

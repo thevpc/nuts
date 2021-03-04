@@ -37,7 +37,6 @@ import net.thevpc.nuts.spi.*;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
-import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
 
 /**
  * Created by vpc on 1/18/17.
@@ -63,29 +62,16 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
 
     protected void init(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
         NutsRepositoryConfig optionsConfig = options.getConfig();
-        if (optionsConfig == null) {
-            throw new NutsIllegalArgumentException(workspace, "null config");
-        }
+
         this.workspace = workspace;
         this.parentRepository = parent;
         securityManager = new DefaultNutsRepositorySecurityManager(this);
         if (options.getSession() == null) {
             options.setSession(workspace.createSession());
         }
-        configManager = new DefaultNutsRepoConfigManager(
-                this, options.getSession(), options.getLocation(), optionsConfig,
-                Math.max(0, speed), options.getDeployOrder(),
-                options.isTemporary(), options.isEnabled(),
-                optionsConfig.getName(), supportedMirroring,
-                options.getName(), repositoryType
-        );
+        this.configManager = new DefaultNutsRepoConfigManager(this, options, speed, supportedMirroring, repositoryType);
         this.nutsIndexStore = workspace.config().getIndexStoreClientFactory().createIndexStore(this);
-        setEnabled(this.workspace.config().options().getRepositories() == null
-                || NutsRepositorySelector.parse(this.workspace.config().options().getRepositories()).acceptExisting(
-                        optionsConfig.getName(),
-                        optionsConfig.getLocation()
-                )
-        );
+        setEnabled(options.isEnabled());
     }
 
     @Override

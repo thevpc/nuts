@@ -76,7 +76,8 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             try {
                 NutsSession validWorkspaceSession = getValidWorkspaceSession();
                 if (descriptor == null) {
-                    NutsFetchCommand p = ws.fetch().setTransitive(true).setSession(validWorkspaceSession);
+                    NutsFetchCommand p = ws.fetch()
+                            .setSession(validWorkspaceSession.copy().setTransitive(true));
                     characterizedFile = characterizeForDeploy(ws, contentSource, p, getParseOptions(), validWorkspaceSession);
                     if (characterizedFile.descriptor == null) {
                         throw new NutsIllegalArgumentException(ws, "missing descriptor");

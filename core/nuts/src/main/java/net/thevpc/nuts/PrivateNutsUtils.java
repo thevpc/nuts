@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts;
 
 import org.w3c.dom.Document;
@@ -58,24 +56,25 @@ final class PrivateNutsUtils {
     private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
     public static final boolean NO_M2 = PrivateNutsUtils.getSysBoolNutsProperty("no-m2", false);
 
-    public static boolean isPreferConsole(String[] args){
+    public static boolean isPreferConsole(String[] args) {
         try {
             if (java.awt.GraphicsEnvironment.isHeadless()) {
                 // non gui mode
                 return true;
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             return true;
         }
-        if(System.console()!=null) {
+        if (System.console() != null) {
             return true;
         }
         Map<String, String> getenv = System.getenv();
-        if(getenv.get("XDG_SESSION_DESKTOP")!=null){
+        if (getenv.get("XDG_SESSION_DESKTOP") != null) {
             return false;
         }
         return false;
     }
+
     public static boolean isValidWorkspaceName(String workspace) {
         if (isBlank(workspace)) {
             return true;
@@ -121,8 +120,8 @@ final class PrivateNutsUtils {
     }
 
     public static String idToPath(PrivateNutsId id) {
-        return id.getGroupId().replace('.', '/') + "/" +
-                id.getArtifactId() + "/" + id.getVersion();
+        return id.getGroupId().replace('.', '/') + "/"
+                + id.getArtifactId() + "/" + id.getVersion();
     }
 
 //    public static String idToPath(String str) {
@@ -163,7 +162,6 @@ final class PrivateNutsUtils {
 //        }
 //        return new String(chars);
 //    }
-
     public static String trimToNull(String str) {
         if (str == null) {
             return null;
@@ -255,7 +253,6 @@ final class PrivateNutsUtils {
 //        }
 //        return p;
 //    }
-
     public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache, PrivateNutsLog LOG) {
         long startTime = System.currentTimeMillis();
         Properties props = new Properties();
@@ -336,8 +333,8 @@ final class PrivateNutsUtils {
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
             LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{
-                    String.valueOf(url),
-                    formatPeriodMilli(time)});
+                String.valueOf(url),
+                formatPeriodMilli(time)});
         }
         return props;
     }
@@ -373,7 +370,6 @@ final class PrivateNutsUtils {
         }
         return sb.toString();
     }
-
 
     public static String replaceDollarString(String path, Function<String, String> m) {
         Matcher matcher = DOLLAR_PLACE_HOLDER_PATTERN.matcher(path);
@@ -467,6 +463,7 @@ final class PrivateNutsUtils {
      * @category Internal
      */
     private static class SimpleConfirmDelete implements ConfirmDelete {
+
         private boolean force;
         private List<File> ignoreDeletion = new ArrayList<>();
 
@@ -500,6 +497,7 @@ final class PrivateNutsUtils {
      * @category Internal
      */
     private interface ConfirmDelete {
+
         boolean isForce();
 
         void setForce(boolean value);
@@ -509,12 +507,12 @@ final class PrivateNutsUtils {
         void ignore(File directory);
     }
 
-    public static int deleteAndConfirmAll(File[] folders, boolean force, String header, NutsTerminal term, NutsSession session, PrivateNutsLog LOG) {
+    public static long deleteAndConfirmAll(File[] folders, boolean force, String header, NutsTerminal term, NutsSession session, PrivateNutsLog LOG) {
         return deleteAndConfirmAll(folders, force, new SimpleConfirmDelete(), header, term, session, LOG);
     }
 
-    private static int deleteAndConfirmAll(File[] folders, boolean force, ConfirmDelete refForceAll, String header, NutsTerminal term, NutsSession session, PrivateNutsLog LOG) {
-        int count = 0;
+    private static long deleteAndConfirmAll(File[] folders, boolean force, ConfirmDelete refForceAll, String header, NutsTerminal term, NutsSession session, PrivateNutsLog LOG) {
+        long count = 0;
         boolean headerWritten = false;
         if (folders != null) {
             for (File child : folders) {
@@ -531,24 +529,22 @@ final class PrivateNutsUtils {
                             }
                         }
                     }
-                    if (PrivateNutsUtils.deleteAndConfirm(child, force, refForceAll, term, session, LOG)) {
-                        count++;
-                    }
+                    count += PrivateNutsUtils.deleteAndConfirm(child, force, refForceAll, term, session, LOG);
                 }
             }
         }
         return count;
     }
 
-    private static boolean deleteAndConfirm(File directory, boolean force, ConfirmDelete refForceAll, NutsTerminal term, NutsSession session, PrivateNutsLog LOG) {
+    private static long deleteAndConfirm(File directory, boolean force, ConfirmDelete refForceAll, NutsTerminal term, NutsSession session, PrivateNutsLog LOG) {
         if (directory.exists()) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line;
                 if (term != null) {
-                    line = term.ask().forString("Do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).setSession(session).getValue();
+                    line = term.ask().forString("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).setSession(session).getValue();
                 } else {
                     Scanner s = new Scanner(System.in);
-                    System.out.printf("Do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory);
+                    System.out.printf("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory);
                     System.out.print(" : ");
                     System.out.flush();
                     line = s.nextLine();
@@ -559,33 +555,37 @@ final class PrivateNutsUtils {
                     throw new NutsUserCancelException(session.getWorkspace());
                 } else if (!PrivateNutsUtils.parseBoolean(line, false)) {
                     refForceAll.ignore(directory);
-                    return false;
+                    return 0;
                 }
             }
             Path directoryPath = Paths.get(directory.getPath());
+            long[] count = new long[1];
             try {
                 Files.walkFileTree(directoryPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         Files.delete(file);
-                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "delete file   : {0}", file);
+                        count[0]++;
+//                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "delete file   : {0}", file);
                         return FileVisitResult.CONTINUE;
                     }
 
                     @Override
                     public FileVisitResult postVisitDirectory(Path dir, IOException exc)
                             throws IOException {
+                        count[0]++;
                         Files.delete(dir);
                         return FileVisitResult.CONTINUE;
                     }
                 });
-                LOG.log(Level.FINEST, NutsLogVerb.WARNING, "delete folder : {0}", directory);
+                count[0]++;
+                LOG.log(Level.FINEST, NutsLogVerb.WARNING, "delete folder : {0} ({1} files/folders deleted)", new Object[]{directory,count[0]});
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
-            return true;
+            return count[0];
         }
-        return false;
+        return 0;
     }
 
     public static boolean isActualJavaOptions(String options) {
@@ -630,7 +630,7 @@ final class PrivateNutsUtils {
         }
         String ss
                 = (s instanceof Enum) ? ((Enum) s).name().toLowerCase().replace('_', '-')
-                : s.toString().trim();
+                        : s.toString().trim();
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
 
@@ -844,7 +844,6 @@ final class PrivateNutsUtils {
 //            }
 //            throw new NutsNotFoundException(null, nutsId);
 //        }
-
         public static String resolveMavenFullPath(String repo, String nutsId, String ext) {
             String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, ext);
             String mvnUrl = repo;
@@ -866,9 +865,9 @@ final class PrivateNutsUtils {
             File cachedPomFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "pom"));
             if (cachedJarFile.isFile()) {
                 try {
-                    if(expire!=null && Files.getLastModifiedTime(cachedJarFile.toPath()).toInstant().compareTo(expire)<0){
+                    if (expire != null && Files.getLastModifiedTime(cachedJarFile.toPath()).toInstant().compareTo(expire) < 0) {
                         //ignore
-                    }else {
+                    } else {
                         return cachedJarFile;
                     }
                 } catch (IOException e) {
@@ -1211,9 +1210,9 @@ final class PrivateNutsUtils {
         }
     }
 
-    public static boolean isFileAccessible(Path path, Instant expireTime,PrivateNutsLog LOG){
-        boolean proceed=Files.isRegularFile(path);
-        if(proceed) {
+    public static boolean isFileAccessible(Path path, Instant expireTime, PrivateNutsLog LOG) {
+        boolean proceed = Files.isRegularFile(path);
+        if (proceed) {
             try {
                 if (expireTime != null) {
                     FileTime lastModifiedTime = Files.getLastModifiedTime(path);
@@ -1237,8 +1236,7 @@ final class PrivateNutsUtils {
         LinkedHashSet<String> repos = new LinkedHashSet<>();
     }
 
-
-    public static int firstIndexOf(String string,char[] chars) {
+    public static int firstIndexOf(String string, char[] chars) {
         char[] value = string.toCharArray();
         for (int i = 0; i < value.length; i++) {
             for (int j = 0; j < chars.length; j++) {

@@ -295,7 +295,9 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                             );
                     traceSession.out().flush();
                 }
-                ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setFailFast(false).setOnline().setLatest(true)
+                ff = ws.search().addId(nid).setSession(noProgressSession.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
+                        .setOptional(false).setFailFast(false)
+                        .setLatest(true)
                         //                        .configure(true,"--trace-monitor")
                         .getResultIds().list();
             }

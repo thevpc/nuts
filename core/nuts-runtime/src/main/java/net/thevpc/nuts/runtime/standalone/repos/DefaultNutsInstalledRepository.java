@@ -896,6 +896,11 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             return INSTALLED_REPO_UUID;
         }
 
+        @Override
+        public NutsRepositoryRef getRepositoryRef() {
+            return null;
+        }
+
 //        @Override
 //        public Map<String, String> getEnv() {
 //            return Collections.emptyMap();

@@ -379,12 +379,16 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                     NutsDefinition def = ws.search()
                             .setSession(session)
                             .addId(extension).setTargetApiVersion(ws.getApiVersion())
+                            .setContent(true)
                             .setDependencies(true)
                             .setDependencyFilter(ws.dependency().filter().byScope(NutsDependencyScopePattern.RUN).and(
                                     ws.dependency().filter().byOptional(false)
                             ))
                             .setLatest(true)
                             .getResultDefinitions().required();
+                    if (def==null || def.getContent()==null) {
+                        throw new NutsIllegalArgumentException(ws, "extension not found: " + extension);
+                    }
                     if (def.getType() != NutsIdType.EXTENSION) {
                         throw new NutsIllegalArgumentException(ws, "not an extension: " + extension);
                     }

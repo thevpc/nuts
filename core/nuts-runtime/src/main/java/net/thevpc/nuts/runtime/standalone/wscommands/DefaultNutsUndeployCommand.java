@@ -22,11 +22,12 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
         NutsSession searchSession = CoreNutsUtils.silent(getValidWorkspaceSession());
         for (NutsId id : ids) {
             NutsDefinition p = ws.search()
-                    .setSession(searchSession)
+                    .setSession(searchSession
+                            .copy()
+                            .setFetchStrategy(isOffline() ? NutsFetchStrategy.OFFLINE : NutsFetchStrategy.ONLINE)
+                    )
                     .addIds(id)
                     .addRepositories(getRepository())
-                    .setTransitive(isTransitive())
-                    .setFetchStrategy(isOffline() ? NutsFetchStrategy.OFFLINE : NutsFetchStrategy.ONLINE)
                     //skip 'installed' repository
                     .setRepositoryFilter(
                                     ws.repos().filter().byName(DefaultNutsInstalledRepository.INSTALLED_REPO_UUID).neg()

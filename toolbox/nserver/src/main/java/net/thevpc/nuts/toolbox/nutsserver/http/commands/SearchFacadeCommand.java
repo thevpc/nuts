@@ -6,7 +6,6 @@ import net.thevpc.nuts.toolbox.nutsserver.util.ItemStreamInfo;
 import net.thevpc.nuts.toolbox.nutsserver.util.MultipartStreamHelper;
 import net.thevpc.nuts.toolbox.nutsserver.util.NutsServerUtils;
 import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.toolbox.nutsserver.*;
 import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServletFacade;
 import net.thevpc.common.io.IOUtils;
 import net.thevpc.common.strings.StringUtils;
@@ -15,6 +14,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 public class SearchFacadeCommand extends AbstractFacadeCommand {
+
     private final NutsHttpServletFacade nutsHttpServletFacade;
 
     public SearchFacadeCommand(NutsHttpServletFacade nutsHttpServletFacade) {
@@ -30,7 +30,7 @@ public class SearchFacadeCommand extends AbstractFacadeCommand {
             context.sendError(400, "Invalid JShellCommandNode Arguments : " + getName() + " . Invalid format.");
             return;
         }
-        MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary,context.getWorkspace());
+        MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary, context.getWorkspace());
         boolean transitive = true;
         String root = null;
         String pattern = null;
@@ -53,8 +53,7 @@ public class SearchFacadeCommand extends AbstractFacadeCommand {
             }
         }
         Iterator<NutsId> it = context.getWorkspace().search()
-                .setSession(context.getSession())
-                .setTransitive(transitive)
+                .setSession(context.getSession().setTransitive(transitive))
                 .addScripts(js).addId(pattern).getResultIds().iterator();
 //                    Writer ps = new OutputStreamWriter(context.getResponseBody());
         context.sendResponseText(200, NutsServerUtils.iteratorNutsIdToString(it));

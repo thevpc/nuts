@@ -8,6 +8,7 @@ import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 import java.io.IOException;
 
 public class FetchDescriptorFacadeCommand extends AbstractFacadeCommand {
+
     public FetchDescriptorFacadeCommand() {
         super("fetch-descriptor");
     }
@@ -19,8 +20,10 @@ public class FetchDescriptorFacadeCommand extends AbstractFacadeCommand {
         boolean transitive = parameters.containsKey("transitive");
         NutsDescriptor fetch = null;
         try {
-            fetch = context.getWorkspace().fetch().setId(id).setSession(context.getSession())
-                    .setTransitive(transitive).getResultDescriptor();
+            fetch = context.getWorkspace().fetch().setId(id).setSession(
+                    context.getSession().copy().setTransitive(transitive)
+            )
+                    .getResultDescriptor();
         } catch (Exception exc) {
             //
         }

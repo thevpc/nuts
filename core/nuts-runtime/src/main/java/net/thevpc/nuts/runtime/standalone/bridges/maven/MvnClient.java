@@ -35,12 +35,11 @@ public class MvnClient {
                 try {
                     NutsDefinition ff = ws.search()
                             .addId(NET_VPC_APP_NUTS_MVN).setSession(searchSession)
-                            .setOnline()
+                            .setSession(searchSession.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
                             .setOptional(false)
                             .setInlineDependencies(true).setLatest(true).getResultDefinitions().required();
                     for (NutsId nutsId : ws.search().addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
-                        ws.fetch().setId(nutsId).setSession(searchSession)
-                                .setOnline()
+                        ws.fetch().setId(nutsId).setSession(searchSession.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
                                 .setOptional(false)
                                 .setDependencies(true).getResultDefinition();
                     }

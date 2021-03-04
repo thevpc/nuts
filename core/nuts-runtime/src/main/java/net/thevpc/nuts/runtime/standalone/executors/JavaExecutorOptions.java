@@ -155,7 +155,7 @@ public final class JavaExecutorOptions {
         if (se.getIds().length > 0) {
             nutsDefinitions.addAll(
                     se
-                            .setTransitive(true)
+                            .setSession(se.getSession().copy().setTransitive(true))
                             .addScope(NutsDependencyScopePattern.RUN)
                             .setOptional(false)
                             .setDistinct(true)

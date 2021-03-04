@@ -574,8 +574,8 @@ public class NutsIdFormatHelper {
             try {
                 if (this.installStatus.isNonDeployed() || def == null) {
                     this.defFetched = ws.fetch().setId(id).setSession(
-                            session.setTrace(false)
-                    ).setOffline()
+                            session.copy().setTrace(false).setFetchStrategy(NutsFetchStrategy.OFFLINE)
+                    )
                             .setContent(true)
                             .setOptional(false)
                             .setDependencies(this.checkDependencies)

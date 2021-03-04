@@ -19,7 +19,7 @@ public class FetchDescriptorHashFacadeCommand extends AbstractFacadeCommand {
         String hash = null;
         try {
             hash = context.getWorkspace().fetch().setId(id)
-                    .setSession(context.getSession()).setTransitive(transitive)
+                    .setSession(context.getSession().copy().setTransitive(transitive))
                     .getResultDescriptorHash();
         } catch (Exception exc) {
             //

@@ -1283,9 +1283,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         public Iterator<NutsDefinition> iterator() {
             Iterator<NutsId> base = getResultIdsBase(false, sort).iterator();
             NutsFetchCommand fetch = toFetch().setContent(content).setEffective(effective).setSession(getValidWorkspaceSession());
-            NutsFetchCommand ofetch = toFetch().setContent(content).setEffective(effective).copySession().setOffline().setSession(getValidWorkspaceSession());
+            NutsFetchCommand ofetch = toFetch().setContent(content).setEffective(effective).setSession(getValidWorkspaceSession().copy().setFetchStrategy(NutsFetchStrategy.OFFLINE));
             //fetch.getSession().setTrace(false);
-            final boolean hasRemote = fetch.getFetchStrategy() == null || Arrays.stream(fetch.getFetchStrategy().modes()).anyMatch(x -> x == NutsFetchMode.REMOTE);
+            final boolean hasRemote = getValidWorkspaceSession().getFetchStrategy() == null || Arrays.stream(getValidWorkspaceSession().getFetchStrategy().modes()).anyMatch(x -> x == NutsFetchMode.REMOTE);
             Iterator<NutsDefinition> ii = new NamedIterator<NutsDefinition>("Id->Definition") {
                 private NutsDefinition n = null;
 

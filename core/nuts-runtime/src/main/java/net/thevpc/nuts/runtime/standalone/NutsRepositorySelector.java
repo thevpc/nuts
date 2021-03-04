@@ -38,9 +38,12 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
  */
 public class NutsRepositorySelector {
 
-    private boolean include;
-    private boolean exclude;
-    private boolean exact;
+    public static enum Op {
+        INCLUDE,
+        EXCLUDE,
+        EXACT,
+    }
+    private Op op = Op.INCLUDE;
     private String name;
     private String url;
 
@@ -58,9 +61,9 @@ public class NutsRepositorySelector {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (exact) {
+        if (op == Op.EXACT) {
             sb.append("=");
-        } else if (exclude) {
+        } else if (op == Op.EXCLUDE) {
             sb.append("-");
         }
         if (name != null && name.length() > 0) {
@@ -86,68 +89,50 @@ public class NutsRepositorySelector {
         if (text == null) {
             return new SelectorList();
         }
-        boolean include = false;
-        boolean exclude = false;
-        boolean exact = false;
+        Op op = Op.INCLUDE;
         List<NutsRepositorySelector> all = new ArrayList<>();
-        for (String s : text.split(",; ")) {
-            String name = null;
-            String url = null;
-            if (s.startsWith("+")) {
-                include = true;
-                exclude = false;
-                exact = false;
-                s = s.substring(1);
-            } else if (s.startsWith("-")) {
-                include = false;
-                exclude = true;
-                exact = false;
-                s = s.substring(1);
-            } else if (s.startsWith("=")) {
-                include = false;
-                exclude = true;
-                exact = false;
-                s = s.substring(1);
-            } else {
-                include = true;
-                exclude = false;
-                exact = false;
-            }
-            Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.+)").matcher(s);
-            if (matcher.find()) {
-                name = matcher.group("name");
-                url = matcher.group("value");
-            } else {
-                url = s; 
-                if(s.matches("[a-zA-Z-_]+")){
-                    name=s;
+        for (String s : text.split("[,; ]")) {
+            if (s.length() > 0) {
+                String name = null;
+                String url = null;
+                if (s.startsWith("+")) {
+                    op = Op.INCLUDE;
+                    s = s.substring(1);
+                } else if (s.startsWith("-")) {
+                    op = Op.EXCLUDE;
+                    s = s.substring(1);
+                } else if (s.startsWith("=")) {
+                    op = Op.EXACT;
+                    s = s.substring(1);
+                } else {
+                    op = Op.INCLUDE;
                 }
-            }
-            if (url.length() > 0) {
-                all.add(new NutsRepositorySelector(include, exclude, exact, name, url));
+                Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.+)").matcher(s);
+                if (matcher.find()) {
+                    name = matcher.group("name");
+                    url = matcher.group("value");
+                } else {
+                    url = s;
+                    if (s.matches("[a-zA-Z-_]+")) {
+                        name = s;
+                    }
+                }
+                if (url.length() > 0) {
+                    all.add(new NutsRepositorySelector(op, name, url));
+                }
             }
         }
         return new SelectorList(all.toArray(new NutsRepositorySelector[0]));
     }
 
-    public NutsRepositorySelector(boolean include, boolean exclude, boolean exact, String name, String url) {
-        this.include = include;
-        this.exclude = exclude;
-        this.exact = exact;
+    public NutsRepositorySelector(Op op, String name, String url) {
+        this.op = op;
         this.name = name;
         this.url = url;
     }
 
-    public boolean isInclude() {
-        return include;
-    }
-
-    public boolean isExclude() {
-        return exclude;
-    }
-
-    public boolean isExact() {
-        return exact;
+    public Op getOp() {
+        return op;
     }
 
     public String getName() {
@@ -201,7 +186,7 @@ public class NutsRepositorySelector {
             HashSet<String> visitedNames = new HashSet<>();
             HashSet<String> visitedUrls = new HashSet<>();
             for (NutsRepositorySelector r : all) {
-                if (r.include || r.exact) {
+                if (r.op != Op.EXCLUDE) {
                     boolean accept = true;
                     if (r.name != null) {
                         String u2 = r.getUrl();
@@ -216,16 +201,16 @@ public class NutsRepositorySelector {
                                 u2 = ss;
                             }
                         }
-                        r = new NutsRepositorySelector(true, false, false, r.name, u2);
-                    } else if (r.exact) {
-                        r = new NutsRepositorySelector(true, false, false, r.name, r.getUrl());
+                        r = new NutsRepositorySelector(Op.INCLUDE, r.name, u2);
+                    } else if (r.op == Op.EXACT) {
+                        r = new NutsRepositorySelector(Op.INCLUDE, r.name, r.getUrl());
                     }
                     all2.add(r);
                 }
             }
             for (Map.Entry<String, String> e : existing2.entrySet()) {
                 if (acceptExisting(e.getKey(), e.getValue())) {
-                    all2.add(new NutsRepositorySelector(true, false, false, e.getKey(), e.getValue()));
+                    all2.add(new NutsRepositorySelector(Op.INCLUDE, e.getKey(), e.getValue()));
                 }
             }
             return all2.toArray(new NutsRepositorySelector[0]);
@@ -235,22 +220,26 @@ public class NutsRepositorySelector {
             boolean includeOthers = true;
             for (NutsRepositorySelector s : all) {
                 if (s.name != null && s.name.equals(n)) {
-                    if (s.include) {
-                        return true;
-                    }
-                    if (s.exclude) {
-                        return true;
+                    switch (s.op) {
+                        case EXACT:
+                            return true;
+                        case INCLUDE:
+                            return true;
+                        case EXCLUDE:
+                            return false;
                     }
                 }
                 if (s.url != null && s.url.equals(n)) {
-                    if (s.include) {
-                        return true;
-                    }
-                    if (s.exclude) {
-                        return true;
+                    switch (s.op) {
+                        case EXACT:
+                            return true;
+                        case INCLUDE:
+                            return true;
+                        case EXCLUDE:
+                            return false;
                     }
                 }
-                if (s.exact) {
+                if (s.op == Op.EXACT) {
                     includeOthers = false;
                 }
             }

@@ -349,8 +349,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     }
                 }
             }
-            if (repos().getRepositoryRefs(session).length == 0) {
-                LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log("Workspace has no repositories. Will re-create defaults");
+            if (repos().getRepositories(session).length == 0) {
+                LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log("workspace has no repositories. Will re-create defaults");
                 initializeWorkspace(uoptions.getArchetype(), session);
             }
             List<String> transientRepositoriesSet = uoptions.getRepositories() == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(uoptions.getRepositories()));
@@ -616,7 +616,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         }
         if (instance == null) {
             //get the default implementation
-            throw new NutsException(this, "Invalid archetype " + archetype + ". Valid values are : " + validValues);
+            throw new NutsException(this, "invalid archetype " + archetype + ". Valid values are : " + validValues);
         }
 
         //has all rights (by default)
@@ -677,11 +677,14 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         if (strategy0 == InstallStrategy0.UPDATE) {
             switch (def.getType()) {
                 case API: {
-                    oldDef = fetch().setSession(CoreNutsUtils.silent(session)).setId(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion()).setOnline().setFailFast(false).getResultDefinition();
+                    oldDef = fetch().setSession(
+                            CoreNutsUtils.silent(session).copy().setFetchStrategy(NutsFetchStrategy.ONLINE)
+                    ).setId(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion()).setFailFast(false).getResultDefinition();
                     break;
                 }
                 case RUNTIME: {
-                    oldDef = fetch().setSession(CoreNutsUtils.silent(session)).setId(getRuntimeId()).setOnline().setFailFast(false).getResultDefinition();
+                    oldDef = fetch().setSession(CoreNutsUtils.silent(session).copy().setFetchStrategy(NutsFetchStrategy.ONLINE)).setId(getRuntimeId())
+                            .setFailFast(false).getResultDefinition();
                     break;
                 }
                 default: {
@@ -713,8 +716,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsInstalledRepository installedRepository = getInstalledRepository();
         if (def.getPath() != null) {
             NutsExecutionContextBuilder cc = createExecutionContext()
-                    .setTraceSession(traceSession)
-                    .setExecSession(session)
+                    .setTraceSession(traceSession.copy())
+                    .setExecSession(session.copy())
                     .setDefinition(def).setArguments(args).setFailFast(true).setTemporary(false)
                     .setExecutionType(config().options().getExecutionType());
             NutsArtifactCall installer = def.getDescriptor().getInstaller();
@@ -969,9 +972,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
                 NutsSession sessionCopy = session.copy();
                 extensionManager.wireExtension(extensionId,
-                        fetch().setSession(sessionCopy)
+                        fetch().setSession(sessionCopy
+                                .copy()
                                 .setFetchStrategy(NutsFetchStrategy.ONLINE)
                                 .setTransitive(true)
+                        )
                 );
                 if (sessionCopy.getTerminal() != session.getTerminal()) {
                     session.setTerminal(sessionCopy.getTerminal());
@@ -1199,8 +1204,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             NutsDefinition runnerFile = nutToInstall;
             if (installerDescriptor != null && installerDescriptor.getId() != null) {
                 if (installerDescriptor.getId() != null) {
-                    runnerFile = fetch().setId(installerDescriptor.getId()).setSession(session)
-                            .setTransitive(false)
+                    runnerFile = fetch().setId(installerDescriptor.getId())
+                            .setSession(
+                                    session.copy().setTransitive(false)
+                            )
                             .setOptional(false)
                             .setContent(true)
                             .setDependencies(true)
@@ -1302,7 +1309,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         session = NutsWorkspaceUtils.of(this).validateSilentSession(session);
         NutsDefinition nutToInstall;
         try {
-            nutToInstall = search().addId(id).setSession(session).setTransitive(false)
+            nutToInstall = search().addId(id)
+                    .setSession(session.copy().setTransitive(false))
                     .setInlineDependencies(checkDependencies)
                     .setInstallStatus(this.filters().installStatus().byDeployed(true))
                     .setOptional(false)

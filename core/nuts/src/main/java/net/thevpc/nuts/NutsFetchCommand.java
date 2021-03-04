@@ -202,51 +202,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     ////////////////////////////////////////////////////////
 
     /**
-     * set fetch strategy.
-     *
-     * @param fetchStrategy fetch strategy
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setFetchStrategy(NutsFetchStrategy fetchStrategy);
-
-    /**
-     * set or unset transitive mode
-     *
-     * @param enable if true, transitive mode is armed
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setTransitive(boolean enable);
-
-    /**
-     * remote only
-     *
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setRemote();
-
-    /**
-     * local only (installed or not)
-     *
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setOffline();
-
-    /**
-     * local or remote. If local result found will not fetch remote.
-     *
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setOnline();
-
-    /**
-     * all artifacts (local and remote). If local result found will any way
-     * fetch remote.
-     *
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setAnyWhere();
-
-    /**
      * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
      *
      * @param scope scope filter
@@ -311,21 +266,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand setOptional(Boolean enable);
 
     /**
-     * set index filter.if null index is removed. if false do not consider index. 
-     * if true, consider index.
-     *
-     * @param enable index filter.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setIndexed(Boolean enable);
-
-    /**
-     * return  {@code getIndexed() == null || getIndexed()}
-     * @return  {@code getIndexed() == null || getIndexed()}
-     */
-    boolean isIndexed();
-
-    /**
      * enable/disable dependencies list retrieval
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
@@ -338,13 +278,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsFetchCommand setEffective(boolean enable);
-
-    /**
-     * enable/disable retrieval from cache
-     * @param enable if true cache is enabled.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setCached(boolean enable);
 
     /**
      * enable/disable retrieval of content info
@@ -365,11 +298,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      */
     Path getLocation();
 
-    /**
-     * return fetch strategy
-     * @return fetch strategy
-     */
-    NutsFetchStrategy getFetchStrategy();
 
     /**
      * dependencies scope filters
@@ -401,19 +329,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      * @return dependencies list retrieval status
      */
     boolean isDependencies();
-
-
-    /**
-     * transitive filter
-     * @return transitive filter
-     */
-    boolean isTransitive();
-
-    /**
-     * cache filter
-     * @return cache filter
-     */
-    boolean isCached();
 
     /**
      * add repository filter

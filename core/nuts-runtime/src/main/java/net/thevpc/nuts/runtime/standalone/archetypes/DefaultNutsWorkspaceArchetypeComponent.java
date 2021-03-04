@@ -30,7 +30,6 @@ import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManag
 import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
 

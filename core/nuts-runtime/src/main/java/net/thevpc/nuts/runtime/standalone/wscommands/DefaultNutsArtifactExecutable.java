@@ -92,8 +92,8 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
                     && scope != NutsDependencyScope.TEST_RUNTIME;
             if (acceptedScope) {
                 NutsInstallStatus st = traceSession.getWorkspace().fetch()
-                        .setSession(traceSession)
-                        .setOffline().setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
+                        .setSession(traceSession.copy().setFetchStrategy(NutsFetchStrategy.OFFLINE))
+                        .setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
                 if (st.isObsolete() || st.isNonDeployed()) {
                     reinstall.add(dependency);
                 }
@@ -108,7 +108,8 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
             for (NutsDependency dependency : reinstall) {
                 boolean optional = execSession.getWorkspace().dependency().parser().parseOptional(dependency.getOptional());
 
-                NutsInstallStatus st = traceSession.getWorkspace().fetch().setOffline().setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
+                NutsInstallStatus st = traceSession.getWorkspace().fetch().setSession(traceSession.copy().setFetchStrategy(NutsFetchStrategy.OFFLINE))
+                        .setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
                 if ((st.isObsolete() || st.isNonDeployed()) && !optional) {
                     throw new NutsUnexpectedException(execSession.getWorkspace(), "unresolved dependency " + dependency + " has status " + st);
                 }

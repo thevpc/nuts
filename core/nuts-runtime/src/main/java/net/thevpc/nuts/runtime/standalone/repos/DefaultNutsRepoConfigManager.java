@@ -37,9 +37,27 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     private final NutsRepositoryRegistryHelper repositoryRegistryHelper;
     private String repositoryName;
     private String repositoryType;
+    private NutsRepositoryRef repositoryRef;
 
-    public DefaultNutsRepoConfigManager(NutsRepository repository, NutsSession session, String storeLocation, NutsRepositoryConfig config, int speed, int deployPriority, boolean temporary, boolean enabled, String globalName, boolean supportedMirroring, String repositoryName, String repositoryType) {
-        LOG=repository.getWorkspace().log().of(DefaultNutsRepoConfigManager.class);
+    public DefaultNutsRepoConfigManager(NutsRepository repository, NutsAddRepositoryOptions options,
+            int speed,
+            boolean supportedMirroring, String repositoryType) {
+        LOG = repository.getWorkspace().log().of(DefaultNutsRepoConfigManager.class);
+        if (options == null) {
+            throw new NutsIllegalArgumentException(repository.getWorkspace(), "missing repository options");
+        }
+        if (options.getConfig() == null) {
+            throw new NutsIllegalArgumentException(repository.getWorkspace(), "missing repository options config");
+        }
+        this.repositoryRef = CoreNutsUtils.optionsToRef(options);
+        NutsSession session = options.getSession();
+        String storeLocation = options.getLocation();
+        NutsRepositoryConfig config = options.getConfig();
+        String globalName = options.getConfig().getName();
+        String repositoryName = options.getName();
+
+        speed = Math.max(0, speed);
+
         if (CoreStringUtils.isBlank(repositoryType)) {
             throw new NutsIllegalArgumentException(repository.getWorkspace(), "missing repository type");
         }
@@ -63,12 +81,16 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         this.globalName = globalName;
         this.storeLocation = storeLocation;
         this.speed = speed;
-        this.deployOrder = deployPriority;
-        this.temporary = temporary;
-        this.enabled = enabled;
+        this.deployOrder = options.getDeployOrder();
+        this.temporary = options.isTemporary();
+        this.enabled = options.isEnabled();
         this.supportedMirroring = supportedMirroring;
         this.repositoryType = repositoryType;
         setConfig(config, session, false, new NutsUpdateOptions().setSession(session));
+    }
+
+    public NutsRepositoryRef getRepositoryRef() {
+        return new NutsRepositoryRef(repositoryRef);
     }
 
     @Override
@@ -89,7 +111,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         if (!CoreStringUtils.isBlank(t)) {
             return t;
         }
-        if(inherit) {
+        if (inherit) {
             t = repository.getWorkspace().env().getEnv(key, null);
             if (!CoreStringUtils.isBlank(t)) {
                 return t;
@@ -98,8 +120,8 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         return defaultValue;
     }
 
-    public Map<String,String> getEnv(boolean inherit) {
-        Map<String,String> p = new LinkedHashMap<>();
+    public Map<String, String> getEnv(boolean inherit) {
+        Map<String, String> p = new LinkedHashMap<>();
         if (inherit) {
             p.putAll(repository.getWorkspace().env().getEnvMap());
         }
@@ -110,11 +132,11 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     public void setEnv(String property, String value, NutsUpdateOptions options) {
-        options=CoreNutsUtils.validate(options,repository.getWorkspace());
+        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         if (CoreStringUtils.isBlank(value)) {
             if (config.getEnv() != null) {
                 config.getEnv().remove(property);
-                fireConfigurationChanged("env",options.getSession());
+                fireConfigurationChanged("env", options.getSession());
             }
         } else {
             if (config.getEnv() == null) {
@@ -122,7 +144,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
             }
             if (!value.equals(config.getEnv().get(property))) {
                 config.getEnv().put(property, value);
-                fireConfigurationChanged("env",options.getSession());
+                fireConfigurationChanged("env", options.getSession());
             }
         }
     }
@@ -182,13 +204,13 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
 
 //        String n = CoreNutsUtils.getArrItem(config.getStoreLocations(), folderType.ordinal());
         String n = hlm.get(folderType);
-        if(temporary){
+        if (temporary) {
             if (CoreStringUtils.isBlank(n)) {
                 n = folderType.toString().toLowerCase();
                 n = n.trim();
             }
             return Paths.get(getStoreLocation()).resolve(n).toString();
-        }else {
+        } else {
             switch (getStoreLocationStrategy()) {
                 case STANDALONE: {
                     if (CoreStringUtils.isBlank(n)) {
@@ -219,7 +241,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         if (newConfig == null) {
             throw new NutsIllegalArgumentException(repository.getWorkspace(), "missing config");
         }
-        options=CoreNutsUtils.validate(options,repository.getWorkspace());
+        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         this.config = newConfig;
         if (this.config.getUuid() == null) {
             fireChange = true;
@@ -246,34 +268,32 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         removeAllMirrors(CoreNutsUtils.toRemoveOptions(options));
         if (config.getMirrors() != null) {
             for (NutsRepositoryRef ref : config.getMirrors()) {
-                NutsRepository r = ((DefaultNutsRepositoryManager)repository.getWorkspace().repos()).createRepository(
+                NutsRepository r = ((DefaultNutsRepositoryManager) repository.getWorkspace().repos()).createRepository(
                         CoreNutsUtils.refToOptions(ref),
                         repository
                 );
-                addMirror(ref, r, CoreNutsUtils.toAddOptions(options));
+                addMirror(r, CoreNutsUtils.toAddOptions(options));
             }
         }
         if (fireChange) {
-            fireConfigurationChanged("*",options.getSession());
+            fireConfigurationChanged("*", options.getSession());
         }
     }
 
-    protected void addMirror(NutsRepositoryRef ref, NutsRepository repo, NutsAddOptions options) {
-        options=CoreNutsUtils.validate(options,repository.getWorkspace());
-        repositoryRegistryHelper.addRepository(ref, repo);
-        if (repo != null) {
-            NutsRepositoryUtils.of(repository).events().fireOnAddRepository(
-                    new DefaultNutsRepositoryEvent(options.getSession(), repository, repo, "mirror", null, repo)
-            );
-        }
+    protected void addMirror(NutsRepository repo, NutsAddOptions options) {
+        options = CoreNutsUtils.validate(options, repository.getWorkspace());
+        repositoryRegistryHelper.addRepository(repo);
+        NutsRepositoryUtils.of(repository).events().fireOnAddRepository(
+                new DefaultNutsRepositoryEvent(options.getSession(), repository, repo, "mirror", null, repo)
+        );
     }
 
     @Override
     public NutsRepositoryConfigManager setIndexEnabled(boolean enabled, NutsUpdateOptions options) {
         if (enabled != config.isIndexEnabled()) {
-            options=CoreNutsUtils.validate(options,repository.getWorkspace());
+            options = CoreNutsUtils.validate(options, repository.getWorkspace());
             config.setIndexEnabled(enabled);
-            fireConfigurationChanged("index-enabled",options.getSession());
+            fireConfigurationChanged("index-enabled", options.getSession());
         }
         return this;
     }
@@ -285,18 +305,18 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
 
     @Override
     public NutsRepositoryConfigManager setUser(NutsUserConfig user, NutsUpdateOptions options) {
-        options=CoreNutsUtils.validate(options,repository.getWorkspace());
+        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         configUsers.put(user.getUser(), user);
-        fireConfigurationChanged("user",options.getSession());
+        fireConfigurationChanged("user", options.getSession());
         return this;
     }
 
     @Override
     public NutsRepositoryConfigManager removeUser(String userId, NutsRemoveOptions options) {
         if (configUsers.containsKey(userId)) {
-            options=CoreNutsUtils.validate(options,repository.getWorkspace());
+            options = CoreNutsUtils.validate(options, repository.getWorkspace());
             configUsers.remove(userId);
-            fireConfigurationChanged("user",options.getSession());
+            fireConfigurationChanged("user", options.getSession());
         }
         return this;
     }
@@ -308,7 +328,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
             if (NutsConstants.Users.ADMIN.equals(userId) || NutsConstants.Users.ANONYMOUS.equals(userId)) {
                 u = new NutsUserConfig(userId, null, null, null);
                 configUsers.put(userId, u);
-                fireConfigurationChanged("user",repository.getWorkspace().createSession());
+                fireConfigurationChanged("user", repository.getWorkspace().createSession());
             }
         }
         return u;
@@ -343,9 +363,9 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     public NutsRepositoryConfigManager setMirrorEnabled(String repoName, boolean enabled, NutsUpdateOptions options) {
         NutsRepositoryRef e = repositoryRegistryHelper.findRepositoryRef(repoName);
         if (e != null && e.isEnabled() != enabled) {
-            options=CoreNutsUtils.validate(options,repository.getWorkspace());
+            options = CoreNutsUtils.validate(options, repository.getWorkspace());
             e.setEnabled(enabled);
-            fireConfigurationChanged("mirror",options.getSession());
+            fireConfigurationChanged("mirror", options.getSession());
         }
         return this;
     }
@@ -356,7 +376,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
 //    }
     @Override
     public boolean save(boolean force, NutsSession session) {
-        session=NutsWorkspaceUtils.of(repository.getWorkspace()).validateSession(session);
+        session = NutsWorkspaceUtils.of(repository.getWorkspace()).validateSession(session);
         boolean ok = false;
         if (force || (!repository.getWorkspace().config().isReadOnly() && isConfigurationChanged())) {
             NutsWorkspaceUtils.of(repository.getWorkspace()).checkReadOnly();
@@ -380,9 +400,9 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
             configurationChanged = false;
             if (LOG.isLoggable(Level.CONFIG)) {
                 if (created) {
-                    LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log( CoreStringUtils.alignLeft(repository.getName(), 20) + " created repository " + repository.getName() + " at " + getStoreLocation());
+                    LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(CoreStringUtils.alignLeft(repository.getName(), 20) + " created repository " + repository.getName() + " at " + getStoreLocation());
                 } else {
-                    LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log( CoreStringUtils.alignLeft(repository.getName(), 20) + " updated repository " + repository.getName() + " at " + getStoreLocation());
+                    LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(CoreStringUtils.alignLeft(repository.getName(), 20) + " updated repository " + repository.getName() + " at " + getStoreLocation());
                 }
             }
             ok = true;
@@ -391,8 +411,8 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         for (NutsRepository repo : getMirrors(session)) {
             try {
                 NutsRepositoryConfigManager config = repo.config();
-                if(config instanceof NutsRepositoryConfigManagerExt) {
-                    ok |= ((NutsRepositoryConfigManagerExt)config).save(force, session);
+                if (config instanceof NutsRepositoryConfigManagerExt) {
+                    ok |= ((NutsRepositoryConfigManagerExt) config).save(force, session);
                 }
             } catch (NutsException ex) {
                 error = ex;
@@ -410,9 +430,9 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         save(true, session);
     }
 
-    public void fireConfigurationChanged(String configName,NutsSession session) {
+    public void fireConfigurationChanged(String configName, NutsSession session) {
         this.configurationChanged = true;
-        DefaultNutsRepositoryEvent evt = new DefaultNutsRepositoryEvent(session, null,repository, "config." + configName, null, true);
+        DefaultNutsRepositoryEvent evt = new DefaultNutsRepositoryEvent(session, null, repository, "config." + configName, null, true);
         for (NutsRepositoryListener workspaceListener : repository.getRepositoryListeners()) {
             workspaceListener.onConfigurationChanged(evt);
         }
@@ -457,7 +477,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     @Override
     public NutsRepositoryConfigManager subscribeIndex(NutsSession session) {
         NutsIndexStore s = getIndexStore();
-        if(s!=null) {
+        if (s != null) {
             s.subscribe(session);
         }
         return this;
@@ -466,7 +486,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     @Override
     public NutsRepositoryConfigManager unsubscribeIndex(NutsSession session) {
         NutsIndexStore s = getIndexStore();
-        if(s!=null) {
+        if (s != null) {
             s.unsubscribe(session);
         }
         return this;
@@ -487,7 +507,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         if (!isSupportedMirroring()) {
             throw new NutsUnsupportedOperationException(repository.getWorkspace());
         }
-        options=CoreNutsUtils.validate(options,repository.getWorkspace());
+        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         repository.security().checkAllowed(NutsConstants.Permissions.REMOVE_REPOSITORY, "remove-repository", options.getSession());
         final NutsRepository r = repositoryRegistryHelper.removeRepository(repositoryId);
         if (r != null) {
@@ -502,7 +522,6 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
 //    public NutsRepository getMirror(String repositoryIdOrName) {
 //        return getMirror(repositoryIdOrName, false);
 //    }
-
     @Override
     public NutsRepository getMirror(String repositoryIdPath, NutsSession session) {
         NutsRepository r = findMirror(repositoryIdPath, session);
@@ -594,12 +613,11 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         if (options.getSession() == null) {
             options.setSession(repository.getWorkspace().createSession());
         }
-        NutsRepositoryRef ref = CoreNutsUtils.optionsToRef(options);
-        NutsRepository repo = ((DefaultNutsRepositoryManager)repository.getWorkspace().repos()).createRepository(
+        NutsRepository repo = ((DefaultNutsRepositoryManager) repository.getWorkspace().repos()).createRepository(
                 options,
                 repository
         );
-        addMirror(ref, repo, new NutsAddOptions().setSession(options.getSession()));
+        addMirror(repo, new NutsAddOptions().setSession(options.getSession()));
         return repo;
     }
 
@@ -619,7 +637,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
 
 //    @Override
     public void removeAllMirrors(NutsRemoveOptions options) {
-        options=CoreNutsUtils.validate(options,repository.getWorkspace());
+        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         for (NutsRepository repo : repositoryRegistryHelper.getRepositories()) {
             removeMirror(repo.getUuid(), options);
         }

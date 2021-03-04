@@ -55,12 +55,13 @@ public class NutsRepositoryRegistryHelper {
                 .toArray(NutsRepositoryRef[]::new);
     }
 
-    public void addRepository(NutsRepositoryRef repositoryRef, NutsRepository repository) {
-        if (repositoryRef == null && repository == null) {
+    public void addRepository(NutsRepository repository) {
+        if (repository == null) {
             return;
         }
-        String uuid = repository != null ? repository.getUuid() : null;
-        String name = repository != null ? repository.getName() : repositoryRef != null ? repositoryRef.getName() : null;
+        NutsRepositoryRef repositoryRef=repository.config().getRepositoryRef();
+        String uuid = repository.getUuid();
+        String name = repository.getName();
         if (name == null) {
             return;
         }

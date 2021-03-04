@@ -75,93 +75,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     }
 
     //@Override
-    public boolean isCached() {
-        return getValidWorkspaceSession().isCached();
-    }
-
-    //@Override
-    public T cached() {
-        return cached(true);
-    }
-
-    //@Override
-    public T cached(boolean cached) {
-        return setCached(cached);
-    }
-
-    //@Override
-    public T setCached(boolean cached) {
-        getValidWorkspaceSession().setCached(cached);
-        return (T) this;
-    }
-
-    //@Override
-    public boolean isTransitive() {
-        return getValidWorkspaceSession().isTransitive();
-    }
-
-    //@Override
-    public T setTransitive(boolean transitive) {
-        getValidWorkspaceSession().setTransitive(transitive);
-        return (T) this;
-    }
-
-    //@Override
-    public T fetchStrategy(NutsFetchStrategy mode) {
-        return setFetchStrategy(mode);
-    }
-
-    //@Override
-    public T setFetchStrategy(NutsFetchStrategy mode) {
-        getValidWorkspaceSession().setFetchStrategy(mode);
-        return (T) this;
-    }
-
-    //@Override
-    public T setRemote() {
-        return setFetchStrategy(NutsFetchStrategy.REMOTE);
-    }
-
-    //@Override
-    public T setOffline() {
-        return setFetchStrategy(NutsFetchStrategy.OFFLINE);
-    }
-
-    //@Override
-    public T setOnline() {
-        return setFetchStrategy(NutsFetchStrategy.ONLINE);
-    }
-
-//    //@Override
-//    public T installed() {
-//        return setFetchStrategy(NutsFetchStrategy.INSTALLED);
-//    }
-
-    //@Override
-    public T setAnyWhere() {
-        return setFetchStrategy(NutsFetchStrategy.ANYWHERE);
-    }
-
-    //@Override
-    public NutsFetchStrategy getFetchStrategy() {
-        return getValidWorkspaceSession().getFetchStrategy();
-    }
-
-    //@Override
-    public boolean isIndexed() {
-        return getValidWorkspaceSession().isIndexed();
-    }
-
-    public T indexed(Boolean indexEnabled) {
-        return setIndexed(indexEnabled);
-    }
-
-    //@Override
-    public T setIndexed(Boolean indexEnabled) {
-        getValidWorkspaceSession().setIndexed(indexEnabled);
-        return (T) this;
-    }
-   //@Override
     public Boolean getOptional() {
         return optional;
     }
@@ -386,14 +299,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 }
                 return true;
             }
-            case "-f":
-            case "--fetch": {
-                String val = cmdLine.nextString().getStringValue();
-                if (enabled) {
-                    this.setFetchStrategy(NutsFetchStrategy.valueOf(val.toUpperCase().replace("-", "_")));
-                }
-                return true;
-            }
             case "--dependencies": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
@@ -408,14 +313,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 }
                 return true;
             }
-            case "-a":
-            case "--anywhere": {
-                cmdLine.skip();
-                if (enabled) {
-                    this.setFetchStrategy(NutsFetchStrategy.ANYWHERE);
-                }
-                return true;
-            }
 //            case "-i":
 //            case "--installed":
 //            {
@@ -423,30 +320,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 //                this.setFetchStrategy(NutsFetchStrategy.INSTALLED);
 //                return true;
 //            }
-            case "-F":
-            case "--offline": {
-                cmdLine.skip();
-                if (enabled) {
-                    this.setFetchStrategy(NutsFetchStrategy.OFFLINE);
-                }
-                return true;
-            }
-            case "-O":
-            case "--online": {
-                cmdLine.skip();
-                if (enabled) {
-                    this.setFetchStrategy(NutsFetchStrategy.ONLINE);
-                }
-                return true;
-            }
-            case "-R":
-            case "--remote": {
-                cmdLine.skip();
-                if (enabled) {
-                    this.setFetchStrategy(NutsFetchStrategy.REMOTE);
-                }
-                return true;
-            }
             case "--optional": {
                 NutsArgument v = cmdLine.nextString();
                 if (enabled) {
@@ -454,24 +327,10 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 }
                 return true;
             }
-            case "--cached": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if (enabled) {
-                    this.setCached(val);
-                }
-                return true;
-            }
             case "--effective": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setEffective(val);
-                }
-                return true;
-            }
-            case "--indexed": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if (enabled) {
-                    this.setIndexed(val);
                 }
                 return true;
             }

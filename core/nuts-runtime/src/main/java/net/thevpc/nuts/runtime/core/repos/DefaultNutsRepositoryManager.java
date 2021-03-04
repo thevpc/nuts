@@ -47,11 +47,6 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
     }
 
     @Override
-    public NutsRepositoryRef[] getRepositoryRefs(NutsSession session) {
-        return repositoryRegistryHelper.getRepositoryRefs();
-    }
-
-    @Override
     public NutsRepository[] getRepositories(NutsSession session) {
         return repositoryRegistryHelper.getRepositories();
     }
@@ -157,9 +152,9 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         }
     }
 
-    protected void addRepository(NutsRepositoryRef ref, NutsRepository repo, NutsAddOptions options, boolean temp) {
+    protected void addRepository(NutsRepository repo, NutsAddOptions options, boolean temp) {
         options = CoreNutsUtils.validate(options, getWorkspace());
-        repositoryRegistryHelper.addRepository(ref, repo);
+        repositoryRegistryHelper.addRepository(repo);
         if (!temp) {
             NutsWorkspaceConfigManagerExt config = NutsWorkspaceConfigManagerExt.of(getWorkspace().config());
             config.fireConfigurationChanged("config-main", options.getSession(), ConfigEventType.MAIN);
@@ -182,9 +177,8 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
         if (options.getSession() == null) {
             options.setSession(getWorkspace().createSession());
         }
-        NutsRepositoryRef ref = CoreNutsUtils.optionsToRef(options);
         NutsRepository r = this.createRepository(options, null);
-        addRepository(ref, r, new NutsAddOptions().setSession(options.getSession()), options.isTemporary());
+        addRepository(r, new NutsAddOptions().setSession(options.getSession()), options.isTemporary());
         return r;
     }
 
@@ -226,6 +220,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
             options2.setDeployOrder(options.getDeployOrder());
             options2.setSession(session);
             options2.setTemporary(true);
+            options2.setEnabled(options.isEnabled());
             options2.setLocation(CoreIOUtils.resolveRepositoryPath(options2, rootFolder, session));
             return new NutsSimpleRepositoryWrapper(options2, getWorkspace(), null, repoModel);
         }
@@ -237,6 +232,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
             if (temporary) {
 //                options.setLocation(options.getName());
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, options.getSession()));
+                options.setEnabled(true);
             } else if (conf == null) {
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, options.getSession()));
                 conf = loadRepository(Paths.get(options.getLocation(), NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName(), getWorkspace(), options.getSession());
@@ -247,7 +243,24 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
                     throw new NutsInvalidRepositoryException(getWorkspace(), options.getLocation(), "invalid repository location " + options.getLocation());
                 }
                 options.setConfig(conf);
+                if (options.isEnabled()) {
+                    options.setEnabled(
+                            this.workspace.config().options().getRepositories() == null
+                            || NutsRepositorySelector.parse(this.workspace.config().options().getRepositories()).acceptExisting(
+                                    options.getName(),
+                                    conf.getLocation()
+                            ));
+                }
             } else {
+                options.setConfig(conf);
+                if (options.isEnabled()) {
+                    options.setEnabled(
+                            this.workspace.config().options().getRepositories() == null
+                            || NutsRepositorySelector.parse(this.workspace.config().options().getRepositories()).acceptExisting(
+                                    options.getName(),
+                                    conf.getLocation()
+                            ));
+                }
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, options.getSession()));
             }
             if (CoreStringUtils.isBlank(conf.getName())) {

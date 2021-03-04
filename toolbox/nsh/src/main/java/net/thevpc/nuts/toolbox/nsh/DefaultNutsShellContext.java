@@ -235,13 +235,12 @@ public class DefaultNutsShellContext extends DefaultJShellContext implements Nut
                     .setLatest(true)
                     .addScope(NutsDependencyScopePattern.RUN)
                     .setOptional(false)
-                    .setOffline()
-                    .setSession(this.getSession().copy().setTrace(false))
+                    .setSession(this.getSession().copy().setTrace(false).setFetchStrategy(NutsFetchStrategy.OFFLINE))
                     .getResultIds().list();
             if (nutsIds.size() == 1) {
                 NutsId selectedId = nutsIds.get(0);
                 NutsDefinition def = ws.search().addId(selectedId).setEffective(true).setSession(this.getSession()
-                        .copy().setTrace(false)).setOffline().getResultDefinitions().required();
+                        .copy().setTrace(false).setFetchStrategy(NutsFetchStrategy.OFFLINE)).getResultDefinitions().required();
                 NutsDescriptor d = def.getDescriptor();
                 String nuts_autocomplete_support = StringUtils.trim(d.getProperties().get("nuts.autocomplete"));
                 if (d.isApplication()

@@ -12,7 +12,6 @@ import net.thevpc.nuts.runtime.standalone.config.ConfigEventType;
 import net.thevpc.nuts.runtime.core.events.DefaultNutsInstallEvent;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsUninstallCommand;
 import net.thevpc.nuts.runtime.standalone.NutsExtensionListHelper;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
@@ -44,8 +43,8 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
         for (NutsId id : this.getIds()) {
             List<NutsDefinition> resultDefinitions = ws.search().addId(id)
                     .setInstallStatus(ws.filters().installStatus().byInstalled(true))
-                    .setSession(searchSession.copy())
-                    .setTransitive(false).setOptional(false).setEffective(true)
+                    .setSession(searchSession.copy().setTransitive(false))
+                    .setOptional(false).setEffective(true)
                     .getResultDefinitions().list();
             for (Iterator<NutsDefinition> it = resultDefinitions.iterator(); it.hasNext();) {
                 NutsDefinition resultDefinition = it.next();

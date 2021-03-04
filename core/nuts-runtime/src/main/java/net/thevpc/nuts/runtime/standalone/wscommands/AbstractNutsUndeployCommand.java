@@ -12,7 +12,6 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
     protected final List<NutsId> ids = new ArrayList<>();
     protected String repository;
     protected boolean offline = true;
-    protected boolean transitive = true;
 
     public AbstractNutsUndeployCommand(NutsWorkspace ws) {
         super(ws, "undeploy");
@@ -75,18 +74,6 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
     @Override
     public NutsUndeployCommand setRepository(String repository) {
         this.repository = repository;
-        invalidateResult();
-        return this;
-    }
-
-    @Override
-    public boolean isTransitive() {
-        return transitive;
-    }
-
-    @Override
-    public NutsUndeployCommand setTransitive(boolean transitive) {
-        this.transitive = transitive;
         invalidateResult();
         return this;
     }

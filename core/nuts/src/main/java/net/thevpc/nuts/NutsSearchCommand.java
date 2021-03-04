@@ -729,34 +729,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     ////////////////////////////////////////////////////////
     // Setters
     ////////////////////////////////////////////////////////
-    /**
-     * remote only
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand setRemote();
-
-    /**
-     * local only (installed or not)
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand setOffline();
-
-    /**
-     * local or remote. If local result found will not fetch remote.
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand setOnline();
-
-    /**
-     * all artifacts (local and remote). If local result found will any way
-     * fetch remote.
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand setAnyWhere();
 
     /**
      * remove all dependency scope filters.
@@ -842,37 +814,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsSearchCommand setLocation(Path fileOrFolder);
-
-    /**
-     * fetch strategy
-     *
-     * @return fetch strategy
-     */
-    NutsFetchStrategy getFetchStrategy();
-
-    /**
-     * set fetch strategy.
-     *
-     * @param fetchStrategy fetch strategy
-     * @return {@code this} instance
-     */
-    NutsSearchCommand setFetchStrategy(NutsFetchStrategy fetchStrategy);
-
-    /**
-     * true if indexes are enabled
-     *
-     * @return true if indexes are enabled
-     */
-    boolean isIndexed();
-
-    /**
-     * set index filter.if null index is removed. if false do not consider
-     * index. if true, consider index.
-     *
-     * @param enable index filter.
-     * @return {@code this} instance
-     */
-    NutsSearchCommand setIndexed(Boolean enable);
 
     /**
      * scope filter filter. applicable with
@@ -961,36 +902,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsSearchCommand setDependencies(boolean enable);
-
-    /**
-     * true if transitive is enabled
-     *
-     * @return true if transitive is enabled
-     */
-    boolean isTransitive();
-
-    /**
-     * set or unset transitive mode
-     *
-     * @param enable if true, transitive mode is armed
-     * @return {@code this} instance
-     */
-    NutsSearchCommand setTransitive(boolean enable);
-
-    /**
-     * true if cache is enabled
-     *
-     * @return true if cache is enabled
-     */
-    boolean isCached();
-
-    /**
-     * enable/disable retrieval from cache
-     *
-     * @param enable if true cache is enabled.
-     * @return {@code this} instance
-     */
-    NutsSearchCommand setCached(boolean enable);
 
     /**
      * search for default versions status.

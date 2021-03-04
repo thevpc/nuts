@@ -251,6 +251,38 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 //                    xargs.add(Dnuts_boot_args);
 //                    args.add(Dnuts_boot_args);
 //                }
+                String jdb = (String) ws.env().getPropertyAsString("jdb", true, null);
+                if (jdb != null) {
+                    boolean suspend = true;
+                    int port = 5005;
+                    for (String arg : jdb.split("[ ,]")) {
+                        arg = arg.trim();
+                        if (arg.length() > 0) {
+                            if (arg.matches("[0-9]+")) {
+                                port = Integer.parseInt(arg);
+                            } else {
+                                switch (arg) {
+                                    case "suspend": {
+                                        suspend = true;
+                                        break;
+                                    }
+                                    case "no-suspend": {
+                                        suspend = false;
+                                        break;
+                                    }
+                                    case "!suspend": {
+                                        suspend = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    String ds = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=" + (suspend ? 'y' : 'n') + ",address=" + port;
+                    xargs.add(ds);
+                    args.add(ds);
+                }
+
                 if (joptions.isJar()) {
                     xargs.add("-jar");
                     xargs.add(ws.id().formatter(def.getId()).format());
@@ -271,6 +303,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 return new JavaProcessExecHelper(execSession, execSession, xargs, joptions, ws, executionContext, def, args, osEnv);
 
             }
+
         }
     }
 

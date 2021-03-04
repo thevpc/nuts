@@ -20,8 +20,8 @@ public class ResolveIdFacadeCommand extends AbstractFacadeCommand {
         NutsId fetch = null;
         try {
             fetch = context.getWorkspace().fetch().setId(id)
-                    .setSession(context.getSession().copy())
-                    .setTransitive(transitive).getResultId();
+                    .setSession(context.getSession().copy().setTransitive(transitive))
+                    .getResultId();
         } catch (Exception exc) {
             //
         }

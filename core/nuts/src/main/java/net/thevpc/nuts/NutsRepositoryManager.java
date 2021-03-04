@@ -93,8 +93,6 @@ public interface NutsRepositoryManager {
 
 ///////////////
 
-    NutsRepositoryRef[] getRepositoryRefs(NutsSession session);
-
     void removeAllRepositories(NutsRemoveOptions options);
 
 }

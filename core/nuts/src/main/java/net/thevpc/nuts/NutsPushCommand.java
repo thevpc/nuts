@@ -265,20 +265,6 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     /**
      * local only (installed or not)
-     *
-     * @return {@code this} instance
-     */
-    NutsPushCommand offline();
-
-    /**
-     * local only (installed or not)
-     * @param offline enable offline mode
-     * @return {@code this} instance
-     */
-    NutsPushCommand offline(boolean offline);
-
-    /**
-     * local only (installed or not)
      * @param offline enable offline mode
      * @return {@code this} instance
      */

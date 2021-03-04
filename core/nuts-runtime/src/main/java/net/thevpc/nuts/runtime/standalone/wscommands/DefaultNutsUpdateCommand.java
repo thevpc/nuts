@@ -360,7 +360,9 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         } else {
             se.addScopes(scopes.toArray(new NutsDependencyScope[0]));
         }
-        se.setOptional(isOptional() ? null : false).setOnline();
+        se.setOptional(isOptional() ? null : false)
+                .setSession(se.getSession().copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
+                ;
         return se;
     }
 
@@ -400,9 +402,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         }
         //search latest parse
         NutsId d1Id = ws.search().addId(d0Id.getShortNameId())
-                .setSession(searchSession)
+                .setSession(searchSession.copy().setFetchStrategy(NutsFetchStrategy.ANYWHERE))
                 .setFailFast(false)
-                .setAnyWhere()
                 .setLatest(true)
                 .getResultIds().first();
         //then fetch its definition!
@@ -586,12 +587,13 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     v = NutsConstants.Versions.LATEST;
                 }
                 try {
-                    oldFile = fetch0().setId(oldId).setSession(session).setOnline().getResultDefinition();
+                    oldFile = fetch0().setId(oldId).setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE)).getResultDefinition();
                 } catch (NutsNotFoundException ex) {
                     //ignore
                 }
                 try {
-                    newId = ws.search().setSession(session).addId(NutsConstants.Ids.NUTS_API + "#" + v).setAnyWhere().setLatest(true).getResultIds().first();
+                    newId = ws.search().setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ANYWHERE))
+                            .addId(NutsConstants.Ids.NUTS_API + "#" + v).setLatest(true).getResultIds().first();
                     newFile = newId == null ? null : latestOnlineDependencies(fetch0()).setFailFast(false).setSession(session).setId(newId).getResultDefinition();
                 } catch (NutsNotFoundException ex) {
                     LOG.with().session(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);
@@ -607,7 +609,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 }
                 if (oldId != null) {
                     try {
-                        oldFile = fetch0().setId(oldId).setSession(session).setOnline().getResultDefinition();
+                        oldFile = fetch0().setId(oldId).setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE)).getResultDefinition();
                     } catch (NutsNotFoundException ex) {
                         LOG.with().session(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);
                         //ignore
@@ -620,8 +622,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                             .setTargetApiVersion(bootApiVersion)
                             .addLockedIds(getLockedIds())
                             .setLatest(true)
-                            .setAnyWhere()
-                            .setSession(session)
+                            .setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ANYWHERE))
                             .sort(LATEST_VERSION_FIRST);
                     newId = se.getResultIds().first();
                     newFile = newId == null ? null : latestOnlineDependencies(fetch0().setId(newId))
@@ -648,10 +649,11 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     //ignore
                 }
                 try {
-                    NutsSearchCommand se = ws.search().setSession(session).addId(id)
+                    NutsSearchCommand se = ws.search()
+                            .setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ANYWHERE))
+                            .addId(id)
                             .setTargetApiVersion(bootApiVersion)
                             .addLockedIds(getLockedIds())
-                            .setAnyWhere()
                             .setFailFast(false)
                             .setLatest(true)
                             .sort(LATEST_VERSION_FIRST);
@@ -663,7 +665,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     newId = se.getResultIds().first();
 
                     newFile = newId == null ? null : latestOnlineDependencies(fetch0().setSession(session).setId(newId))
-                            .setOnline()
+                            .setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
                             .getResultDefinition();
                 } catch (Exception ex) {
                     LOG.with().session(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);

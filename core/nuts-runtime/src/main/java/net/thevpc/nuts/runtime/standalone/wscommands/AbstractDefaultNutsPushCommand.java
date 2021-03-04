@@ -295,16 +295,6 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     }
 
     @Override
-    public NutsPushCommand offline() {
-        return offline(true);
-    }
-
-    @Override
-    public NutsPushCommand offline(boolean enable) {
-        return setOffline(enable);
-    }
-
-    @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a == null) {

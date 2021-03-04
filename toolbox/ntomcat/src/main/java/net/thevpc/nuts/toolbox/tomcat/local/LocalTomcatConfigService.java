@@ -460,10 +460,14 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                     .setInstallStatus(ws.filters().installStatus().byDeployed(true))
                     .getResultDefinitions().first();
             if (r == null) {
-                r = searchLatestCommand.setInstallStatus(ws.filters().installStatus().byInstalled(false)).setOffline().getResultDefinitions().first();
+                r = searchLatestCommand.setInstallStatus(ws.filters().installStatus().byInstalled(false))
+                        .setSession(searchLatestCommand.getSession().copy().setFetchStrategy(NutsFetchStrategy.OFFLINE))
+                        .getResultDefinitions().first();
             }
             if (r == null) {
-                r = searchLatestCommand.setInstallStatus(ws.filters().installStatus().byInstalled(false)).setOnline().getResultDefinitions().required();
+                r = searchLatestCommand
+                        .setSession(searchLatestCommand.getSession().copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
+                        .setInstallStatus(ws.filters().installStatus().byInstalled(false)).getResultDefinitions().required();
             }
             if (r.getInstallInformation().isInstalledOrRequired()) {
                 return r;

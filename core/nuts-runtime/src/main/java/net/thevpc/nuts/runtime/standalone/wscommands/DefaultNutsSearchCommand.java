@@ -511,7 +511,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 search.isSearchInInstalled(),
                 search.isSearchInOtherRepositories()
         );
-
+        Set<NutsRepository> consideredRepos=new HashSet<>();
         if (regularIds.length > 0) {
             for (String id : regularIds) {
                 NutsId nutsId = ws.id().parser().parse(id);
@@ -555,6 +555,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                 NutsRepositorySupportedAction.SEARCH, nutsId1, sRepositoryFilter, fetchMode, session,
                                 installedVsNonInstalledSearch
                         )) {
+                            consideredRepos.add(repoAndMode.getRepository());
                             NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(ws).repoSPI(repoAndMode.getRepository());
                             idLookup.add(IteratorBuilder.ofLazyNamed("searchVersions("
                                     + repoAndMode.getRepository().getName() + ","
@@ -611,6 +612,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     fetchMode, session,
                     installedVsNonInstalledSearch
             )) {
+                consideredRepos.add(repoAndMode.getRepository());
                 NutsSession finalSession1 = session;
                 all.add(
                         IteratorBuilder.ofLazyNamed("search(" + repoAndMode.getRepository().getName() + ","

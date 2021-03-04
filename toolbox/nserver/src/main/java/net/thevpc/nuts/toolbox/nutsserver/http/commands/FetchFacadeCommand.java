@@ -20,7 +20,7 @@ public class FetchFacadeCommand extends AbstractFacadeCommand {
         boolean transitive = parameters.containsKey("transitive");
         NutsDefinition fetch = null;
         try {
-            fetch = context.getWorkspace().fetch().setId(id).setSession(context.getSession()).setTransitive(transitive)
+            fetch = context.getWorkspace().fetch().setId(id).setSession(context.getSession().copy().setTransitive(transitive))
                     .getResultDefinition();
         } catch (Exception exc) {
             //
