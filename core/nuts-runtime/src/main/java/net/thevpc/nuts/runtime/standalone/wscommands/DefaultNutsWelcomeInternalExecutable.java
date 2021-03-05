@@ -41,7 +41,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             welcome.put("api-id", getSession().getWorkspace().getApiId().builder().setVersion("").build().toString());
             welcome.put("api-version", getSession().getWorkspace().getApiVersion());
             welcome.put("runtime-id", getSession().getWorkspace().getRuntimeId().builder().setVersion("").build().toString());
-            welcome.put("runtime-version", getSession().getWorkspace().getRuntimeId().builder().setVersion("").build().toString());
+            welcome.put("runtime-version", getSession().getWorkspace().getRuntimeId().getVersion().toString());
             welcome.put("workspace", getSession().getWorkspace().locations().getWorkspaceLocation());
             NutsSession session = getSession();
             if(session.isPlainOut()){
