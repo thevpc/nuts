@@ -34,6 +34,7 @@ import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.filters.DefaultNutsTokenFilter;
 import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 /**
  * @author thevpc
@@ -458,7 +459,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public boolean getBoolean() {
-        boolean b = CoreCommonUtils.parseBoolean(expression, false);
+        boolean b = CoreBooleanUtils.parseBoolean(expression, false);
         if (isNegated()) {
             return !b;
         }
@@ -467,12 +468,12 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public boolean isBoolean() {
-        return CoreCommonUtils.parseBoolean(expression, null) != null;
+        return CoreBooleanUtils.parseBoolean(expression, null) != null;
     }
 
     @Override
     public Boolean getBoolean(Boolean defaultValue) {
-        return CoreCommonUtils.parseBoolean(expression, defaultValue);
+        return CoreBooleanUtils.parseBoolean(expression, defaultValue);
     }
 
     @Override

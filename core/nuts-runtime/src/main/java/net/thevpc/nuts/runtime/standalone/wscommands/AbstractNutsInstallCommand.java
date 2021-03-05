@@ -31,6 +31,7 @@ import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 
 import java.util.*;
 import java.util.function.Predicate;
+import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 
 /**
  *
@@ -338,7 +339,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
             case "--strategy": {
                 String val = cmdLine.nextString().getString();
                 if (enabled) {
-                    this.setStrategy(CoreCommonUtils.parseEnumString(val,NutsInstallStrategy.class,false));
+                    this.setStrategy(CoreEnumUtils.parseEnumString(val,NutsInstallStrategy.class,false));
                 }
                 return true;
             }

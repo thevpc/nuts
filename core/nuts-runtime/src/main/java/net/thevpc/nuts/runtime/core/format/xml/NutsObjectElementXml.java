@@ -40,6 +40,7 @@ import net.thevpc.nuts.runtime.core.format.elem.DefaultNutsNamedElement;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryContext;
 import net.thevpc.nuts.runtime.core.format.elem.NutsObjectElementBase;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 
 /**
  *
@@ -78,7 +79,7 @@ public class NutsObjectElementXml extends NutsObjectElementBase {
             String name = object.getNodeName();
             String value = object.getNodeValue();
             if (name.equals(xml.getTypeAttributeName())) {
-                type = CoreCommonUtils.parseEnumString(value, NutsElementType.class, true);
+                type = CoreEnumUtils.parseEnumString(value, NutsElementType.class, true);
             } else {
                 all.add(new DefaultNutsNamedElement(xml.getAttributePrefix() + name, context.toElement(value)));
             }
@@ -103,7 +104,7 @@ public class NutsObjectElementXml extends NutsObjectElementBase {
             String name = object.getNodeName();
             String value = object.getNodeValue();
             if (name.equals(xml.getTypeAttributeName())) {
-                type = CoreCommonUtils.parseEnumString(value, NutsElementType.class, true);
+                type = CoreEnumUtils.parseEnumString(value, NutsElementType.class, true);
             } else {
                 if ((xml.getAttributePrefix() + name).equals(name0)) {
                     return context.toElement(value);

@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
+import net.thevpc.nuts.runtime.core.util.CoreTimeUtils;
 
 public class NutsLogRichFormatter extends Formatter {
     private long lastMillis = -1;
@@ -221,7 +222,7 @@ public class NutsLogRichFormatter extends Formatter {
             }
             if(wRecord.getTime()>0){
                 sb.append(" (");
-                sb.append(CoreCommonUtils.formatPeriodMilli(wRecord.getTime()),NutsTextNodeStyle.config());
+                sb.append(CoreTimeUtils.formatPeriodMilli(wRecord.getTime()),NutsTextNodeStyle.config());
                 sb.append(")");
             }
             sb.append(NutsLogFormatHelper.LINE_SEPARATOR);

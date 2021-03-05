@@ -30,6 +30,7 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 
 import java.util.*;
+import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
 
 /**
  * Created by vpc on 1/5/17.
@@ -119,12 +120,12 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         this.executor = executor;
         this.installer = installer;
 //        this.ext = CoreStringUtils.trimToNull(ext);
-        this.arch = CoreCommonUtils.toArraySet(arch);
-        this.os = CoreCommonUtils.toArraySet(os);
-        this.osdist = CoreCommonUtils.toArraySet(osdist);
-        this.platform = CoreCommonUtils.toArraySet(platform);
-        this.locations = CoreCommonUtils.toArraySet(locations);
-        this.classifierMappings = CoreCommonUtils.toArraySet(classifierMappings);
+        this.arch = CoreArrayUtils.toArraySet(arch);
+        this.os = CoreArrayUtils.toArraySet(os);
+        this.osdist = CoreArrayUtils.toArraySet(osdist);
+        this.platform = CoreArrayUtils.toArraySet(platform);
+        this.locations = CoreArrayUtils.toArraySet(locations);
+        this.classifierMappings = CoreArrayUtils.toArraySet(classifierMappings);
         this.dependencies = dependencies == null ? new NutsDependency[0] : new NutsDependency[dependencies.length];
         for (int i = 0; i < this.dependencies.length; i++) {
             if (dependencies[i] == null) {

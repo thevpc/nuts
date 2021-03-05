@@ -43,6 +43,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
+import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
 
 /**
  * Created by vpc on 1/5/17.
@@ -365,7 +366,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         if (CoreStringUtils.isBlank(groups)) {
             return true;
         }
-        return id.getGroupId().matches(CoreStringUtils.simpexpToRegexp(groups));
+        return GlobUtils.ofExact(groups).matcher(id.getGroupId()).matches();
     }
 
     @Override

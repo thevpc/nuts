@@ -60,13 +60,14 @@ import java.time.Instant;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 /**
  * @author thevpc
  */
 public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt {
 
-    public static final boolean NO_M2 = CoreCommonUtils.getSysBoolNutsProperty("no-m2", false);
+    public static final boolean NO_M2 = CoreBooleanUtils.getSysBoolNutsProperty("no-m2", false);
     private final DefaultNutsWorkspace ws;
     private final Map<String, NutsUserConfig> configUsers = new LinkedHashMap<>();
     public NutsLogger LOG;

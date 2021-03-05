@@ -5,6 +5,7 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import java.util.*;
 
 public class QueryStringParser {
+    private static final StringMapParser QPARSER = new StringMapParser("=", "&");
     public interface Processor {
         boolean process(String name, String value);
     }
@@ -154,6 +155,6 @@ public class QueryStringParser {
     }
 
     public static Map<String, String> parseMap(String text) {
-        return CoreStringUtils.parseMap(text, "=", "&");
+        return QPARSER.parseMap(text);
     }
 }

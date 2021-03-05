@@ -33,6 +33,7 @@ import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import java.time.Instant;
 import java.util.*;
 import java.util.logging.Level;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 /**
  * Nuts Arguments parser. Creates a {@link NutsWorkspaceOptions} instance from
@@ -459,7 +460,7 @@ public final class CoreNutsArgumentsParser {
                             if (v.isEmpty()) {
                                 options.setTerminalMode(NutsTerminalMode.FORMATTED);
                             } else {
-                                Boolean b = CoreCommonUtils.parseBoolean(v, null);
+                                Boolean b = CoreBooleanUtils.parseBoolean(v, null);
                                 if (b != null) {
                                     if (b) {
                                         options.setTerminalMode(NutsTerminalMode.FORMATTED);

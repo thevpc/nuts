@@ -13,6 +13,7 @@ import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.format.NutsIdFormatHelper;
 import net.thevpc.nuts.runtime.core.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
+import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 
 /**
  *
@@ -65,7 +66,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
         getTableModel(getWorkspace())
                 .addHeaderCells(
                         Arrays.stream(getDisplayOptions().getDisplayProperties())
-                                .map(x -> CoreCommonUtils.getEnumString(x)).toArray()
+                                .map(x -> CoreEnumUtils.getEnumString(x)).toArray()
                 );
     }
 

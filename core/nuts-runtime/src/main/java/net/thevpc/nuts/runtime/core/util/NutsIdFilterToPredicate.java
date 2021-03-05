@@ -26,7 +26,6 @@
 package net.thevpc.nuts.runtime.core.util;
 
 import java.util.Objects;
-import java.util.function.Predicate;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsIdFilter;
 import net.thevpc.nuts.NutsPredicates;

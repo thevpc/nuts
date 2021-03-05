@@ -30,7 +30,7 @@ import net.thevpc.nuts.runtime.core.repos.RepoDefinitionResolver;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.RemoteRepoApi;
+import net.thevpc.nuts.runtime.standalone.repos.RemoteRepoApi;
 import net.thevpc.nuts.runtime.standalone.repos.FilesFoldersApi;
 import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
 

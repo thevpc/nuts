@@ -36,6 +36,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
 
 public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
@@ -228,22 +229,22 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     public NutsDescriptorBuilder setPlatform(String[] platform) {
-        this.platform = new ArrayList<>(Arrays.asList(CoreCommonUtils.toArraySet(platform)));
+        this.platform = new ArrayList<>(Arrays.asList(CoreArrayUtils.toArraySet(platform)));
         return this;
     }
 
     public NutsDescriptorBuilder setOs(String[] os) {
-        this.os = new ArrayList<>(Arrays.asList(CoreCommonUtils.toArraySet(os)));
+        this.os = new ArrayList<>(Arrays.asList(CoreArrayUtils.toArraySet(os)));
         return this;
     }
 
     public NutsDescriptorBuilder setOsdist(String[] osdist) {
-        this.osdist = new ArrayList<>(Arrays.asList(CoreCommonUtils.toArraySet(osdist)));
+        this.osdist = new ArrayList<>(Arrays.asList(CoreArrayUtils.toArraySet(osdist)));
         return this;
     }
 
     public NutsDescriptorBuilder setArch(String[] arch) {
-        this.arch = new ArrayList<>(Arrays.asList(CoreCommonUtils.toArraySet(arch)));
+        this.arch = new ArrayList<>(Arrays.asList(CoreArrayUtils.toArraySet(arch)));
         return this;
     }
 

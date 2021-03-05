@@ -208,6 +208,26 @@ public class IteratorUtils {
         return new FilteredIterator<>(it, filter);
     }
 
+    public static <T> Iterator<T> nullifyIfEmpty(Iterator<T> other) {
+        if (other == null) {
+            return null;
+        }
+        if (other instanceof PushBackIterator) {
+            PushBackIterator<T> b = (PushBackIterator<T>) other;
+            if (!b.isEmpty()) {
+                return b;
+            } else {
+                return null;
+            }
+        }
+        PushBackIterator<T> b = new PushBackIterator<>(other);
+        if (!b.isEmpty()) {
+            return b;
+        } else {
+            return null;
+        }
+    }
+
     private static class EmptyIterator<E> implements Iterator<E> {
 
         @Override

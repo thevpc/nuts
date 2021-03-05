@@ -33,7 +33,6 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.repos.AbstractNutsRepository;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.bundles.datastr.LRUMap;
 import net.thevpc.nuts.runtime.bundles.iter.LazyIterator;
 import net.thevpc.nuts.runtime.bundles.io.FolderObjectIterator;
@@ -52,6 +51,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
+import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCollectionUtils;
 
 /**
  * @author thevpc
@@ -244,7 +245,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                         )) //search only in installed, ignore deployed!
                         .setFetchMode(NutsFetchMode.LOCAL)
                         .setSession(session).getResult();
-                List<NutsId> nutsIds = CoreCommonUtils.toList(versions == null ? Collections.emptyIterator() : versions);
+                List<NutsId> nutsIds = CoreCollectionUtils.toList(versions == null ? Collections.emptyIterator() : versions);
                 nutsIds.sort(null);
                 if (nutsIds.size() > 0) {
                     setDefaultVersion(nutsIds.get(0), session);
@@ -276,7 +277,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     public NutsId pathToId(Path path) {
         Path rootFolder = Paths.get(workspace.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID);
         String p = path.toString().substring(rootFolder.toString().length());
-        List<String> split = CoreStringUtils.split(p, "/\\");
+        List<String> split = StringTokenizerUtils.split(p, "/\\");
         if (split.size() >= 4) {
             return workspace.id().builder().setArtifactId(split.get(split.size() - 3))
                     .setGroupId(String.join(".", split.subList(0, split.size() - 3)))

@@ -14,7 +14,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import net.thevpc.nuts.runtime.bundles.io.FileDepthFirstIterator;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCollectionUtils;
 
 /**
  *
@@ -159,7 +159,7 @@ public class IteratorBuilder<T> {
     }
 
     public List<T> list() {
-        return CoreCommonUtils.toList(it);
+        return CoreCollectionUtils.toList(it);
     }
 
     public Iterator<T> build() {

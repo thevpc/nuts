@@ -13,6 +13,7 @@ import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 public class DefaultWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     private NutsWorkspace ws;
@@ -254,7 +255,7 @@ public class DefaultWorkspaceEnvManager implements NutsWorkspaceEnvManager {
                 return ((Number) t).doubleValue()!=0;
             }
             if(t instanceof CharSequence) {
-                return CoreCommonUtils.parseBoolean(t.toString(), defaultValue);
+                return CoreBooleanUtils.parseBoolean(t.toString(), defaultValue);
             }
         }catch (Exception ex){
             //

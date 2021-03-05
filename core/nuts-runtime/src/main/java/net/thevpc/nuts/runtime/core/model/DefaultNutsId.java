@@ -33,6 +33,7 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
 
 /**
  * Created by vpc on 1/5/17.
@@ -204,7 +205,7 @@ public class DefaultNutsId implements NutsId {
         if (pattern == null) {
             return true;
         }
-        return toString().matches(CoreStringUtils.simpexpToRegexp(pattern));
+        return GlobUtils.ofExact(pattern).matcher(toString()).matches();
     }
 
     @Override

@@ -33,6 +33,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.util.*;
 import java.util.regex.Pattern;
+import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
@@ -71,7 +72,7 @@ public class JavascriptHelper {
                 if (pattern == null) {
                     pattern = "";
                 }
-                return value.toString().matches(CoreStringUtils.simpexpToRegexp(pattern, true));
+                return GlobUtils.ofContains(pattern).matcher(value.toString()).matches();
             }
             if (CoreStringUtils.isBlank(pattern)) {
                 return CoreStringUtils.isBlank(value.toString());
@@ -115,7 +116,7 @@ public class JavascriptHelper {
         } else {
             for (String s : blacklist) {
                 if (s.contains("*")) {
-                    blacklistClassNamePatterns.add(Pattern.compile(CoreStringUtils.simpexpToRegexp(s)));
+                    blacklistClassNamePatterns.add(GlobUtils.ofExact(s));
                 } else {
                     blacklistClassNames.add(s);
                 }

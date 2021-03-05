@@ -46,7 +46,7 @@ public class QueueIterator<T> implements Iterator<T> {
     }
 
     public void addNonEmpty(Iterator<T> child) {
-        child = CoreCommonUtils.nullifyIfEmpty(child);
+        child = IteratorUtils.nullifyIfEmpty(child);
         if (child != null) {
             add(child);
         }

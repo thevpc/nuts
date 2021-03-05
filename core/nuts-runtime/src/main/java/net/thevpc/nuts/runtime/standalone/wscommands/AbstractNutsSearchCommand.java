@@ -44,6 +44,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
+import net.thevpc.nuts.runtime.core.util.CoreCollectionUtils;
 
 /**
  * @author thevpc
@@ -796,7 +798,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--optional": {
                 NutsArgument val = cmdLine.nextString();
                 if (enabled) {
-                    this.setOptional(CoreCommonUtils.parseBoolean(val.getStringValue(), null));
+                    this.setOptional(CoreBooleanUtils.parseBoolean(val.getStringValue(), null));
                 }
                 return true;
             }
@@ -1260,7 +1262,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         @Override
         public List<NutsDefinition> list() {
             if (print) {
-                return CoreCommonUtils.toList(iterator());
+                return CoreCollectionUtils.toList(iterator());
             }
             List<NutsId> mi = getResultIdsBase(false, sort).list();
             List<NutsDefinition> li = new ArrayList<>(mi.size());

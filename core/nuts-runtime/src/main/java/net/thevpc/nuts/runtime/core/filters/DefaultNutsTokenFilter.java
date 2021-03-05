@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.core.filters;
 
 import net.thevpc.nuts.NutsTokenFilter;
+import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 public class DefaultNutsTokenFilter implements NutsTokenFilter {
@@ -23,7 +24,7 @@ public class DefaultNutsTokenFilter implements NutsTokenFilter {
 
     @Override
     public boolean like(String pattern) {
-        return matches(CoreStringUtils.simpexpToRegexp(pattern));
+        return GlobUtils.ofExact(pattern).matcher(expression == null ? "" : expression).matches();
     }
 
     @Override

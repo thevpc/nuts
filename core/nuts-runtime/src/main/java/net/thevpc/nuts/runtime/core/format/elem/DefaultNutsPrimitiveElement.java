@@ -31,6 +31,7 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import net.thevpc.nuts.NutsPrimitiveElement;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 
@@ -108,7 +109,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
         if (value instanceof Number) {
             return ((Number) value).doubleValue() != 0;
         }
-        return CoreCommonUtils.parseBoolean(String.valueOf(value), false);
+        return CoreBooleanUtils.parseBoolean(String.valueOf(value), false);
     }
 
     @Override

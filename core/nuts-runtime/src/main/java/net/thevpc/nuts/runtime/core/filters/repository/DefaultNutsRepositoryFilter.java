@@ -14,6 +14,7 @@ import net.thevpc.nuts.runtime.core.util.Simplifiable;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
+import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
 
 public class DefaultNutsRepositoryFilter extends AbstractNutsFilter implements NutsRepositoryFilter, Simplifiable<NutsRepositoryFilter> {
 
@@ -27,7 +28,7 @@ public class DefaultNutsRepositoryFilter extends AbstractNutsFilter implements N
         for (String repo : exactRepos) {
             if (!CoreStringUtils.isBlank(repo)) {
                 if(repo.indexOf('*')>0) {
-                    this.wildcardRepos.add(Pattern.compile(CoreStringUtils.simpexpToRegexp(repo)));
+                    this.wildcardRepos.add(GlobUtils.ofExact(repo));
                 }else if(repo.length()>2 && repo.startsWith("/") && repo.endsWith("/")){
                     this.wildcardRepos.add(Pattern.compile(repo.substring(1,repo.length()-1)));
                 }else {

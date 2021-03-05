@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.repos;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.RemoteRepoApi;
 import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 
 /**
  * @author thevpc
@@ -92,7 +92,7 @@ public class FilesFoldersApi {
         try {
             SearchTraceHelper.progressIndeterminate("search " + CoreIOUtils.compressUrl(baseUrl), session);
             foldersFileStream = ws.io().monitor().setSource(dotFilesUrl).setSession(session).create();
-            List<String> splitted = CoreStringUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r");
+            List<String> splitted = StringTokenizerUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r");
             for (String s : splitted) {
                 s = s.trim();
                 if (s.length() > 0) {
@@ -146,7 +146,7 @@ public class FilesFoldersApi {
                 String dotFolderUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FOLDERS;
                 try (InputStream stream = ws.io().monitor().setSource(dotFolderUrl)
                         .setSession(session).create()) {
-                    foldersFileContent = CoreStringUtils.split(CoreIOUtils.loadString(stream, true), "\n\r")
+                    foldersFileContent = StringTokenizerUtils.split(CoreIOUtils.loadString(stream, true), "\n\r")
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NutsIOException ex) {
                     ws.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}", dotFolderUrl);

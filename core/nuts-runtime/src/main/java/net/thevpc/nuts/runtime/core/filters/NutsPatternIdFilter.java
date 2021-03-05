@@ -13,6 +13,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
@@ -33,8 +34,8 @@ public class NutsPatternIdFilter extends AbstractNutsFilter implements NutsIdFil
         super(ws, NutsFilterOp.CUSTOM);
         this.id = id;
         this.wildcard = containsWildcad(id.toString());
-        g = CoreStringUtils.toPattern(id.getGroupId());
-        n = CoreStringUtils.toPattern(id.getArtifactId());
+        g = GlobUtils.ofExact(id.getGroupId());
+        n = GlobUtils.ofExact(id.getArtifactId());
         v = id.getVersion().filter();
         qm = id.getProperties();
         for (Map.Entry<String, String> entry : id.getProperties().entrySet()) {
@@ -90,7 +91,7 @@ public class NutsPatternIdFilter extends AbstractNutsFilter implements NutsIdFil
         public PredicateStaticKey(String key, String val) {
             this.key = key;
             this.val = val;
-            this.valPattern = CoreStringUtils.toPattern(val);
+            this.valPattern = GlobUtils.ofExact(val);
         }
 
         @Override
@@ -106,8 +107,8 @@ public class NutsPatternIdFilter extends AbstractNutsFilter implements NutsIdFil
         private Pattern valPattern;
 
         public PredicateWildKey(String key, String val) {
-            this.keyPattern = CoreStringUtils.toPattern(key);
-            this.valPattern = CoreStringUtils.toPattern(val);
+            this.keyPattern = GlobUtils.ofExact(key);
+            this.valPattern = GlobUtils.ofExact(val);
         }
 
         @Override

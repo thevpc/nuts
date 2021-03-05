@@ -70,6 +70,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
+import net.thevpc.nuts.runtime.core.util.CoreTimeUtils;
 
 /**
  * Created by vpc on 1/6/17.
@@ -427,13 +429,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
             LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.SUCCESS)
                     .formatted().log("```sh nuts``` workspace loaded in ```error {0}```",
-                            CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis())
+                            CoreTimeUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis())
                     );
 
-            if (CoreCommonUtils.getSysBoolNutsProperty("perf", false)) {
+            if (CoreBooleanUtils.getSysBoolNutsProperty("perf", false)) {
                 session.out().printf("```sh nuts``` workspace loaded in %s%n",
-                        configManager.getWorkspace().formats().text().styled(
-                                CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis()),
+                        configManager.getWorkspace().formats().text().styled(CoreTimeUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis()),
                                 NutsTextNodeStyle.error()
                         )
                 );

@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import net.thevpc.nuts.NutsUnsupportedArgumentException;
 import net.thevpc.nuts.runtime.core.commands.ws.AbstractNutsResultList;
+import net.thevpc.nuts.runtime.core.util.CoreCollectionUtils;
 
 /**
  *
@@ -77,7 +78,7 @@ public class NutsCollectionResult<T> extends AbstractNutsResultList<T> {
             case 'n':
                 return Collections.emptyList();
             case 'i':
-                return CoreCommonUtils.toList((Iterator<T>) o);
+                return CoreCollectionUtils.toList((Iterator<T>) o);
             case 'l':
                 return (List<T>) o;
             case 'c':

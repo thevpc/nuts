@@ -54,6 +54,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
 
 /**
@@ -523,7 +524,7 @@ public class MavenUtils {
                                 case "nuts-runtime-repositories": {
                                     String t = c3.getTextContent().trim();
                                     if (t.length() > 0) {
-                                        depsAndRepos.deps.addAll(CoreStringUtils.split(t, ";", true));
+                                        depsAndRepos.deps.addAll(StringTokenizerUtils.split(t, ";", true));
                                     }
                                     break;
                                 }

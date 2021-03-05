@@ -40,6 +40,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
+import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 
 public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementFormat> implements NutsElementFormat, NutsElementFactoryContext {
 
@@ -509,7 +510,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         String d = element.getAttribute(ta);
         NutsElementType elementType = null;
         if (d != null) {
-            elementType = CoreCommonUtils.parseEnumString(d, NutsElementType.class, true);
+            elementType = CoreEnumUtils.parseEnumString(d, NutsElementType.class, true);
         }
         if (elementType == null) {
             //will resolve

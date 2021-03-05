@@ -29,6 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.*;
+import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 
 /**
  * <pre>
@@ -277,7 +278,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             }
         }
         for (String nameSeq : names) {
-            String[] nameSeqArray = CoreStringUtils.split(nameSeq, " ").toArray(new String[0]);
+            String[] nameSeqArray = StringTokenizerUtils.split(nameSeq, " ").toArray(new String[0]);
             if (isAutoCompleteMode()) {
                 for (int i = 0; i < nameSeqArray.length; i++) {
                     if (getWordIndex() == autoComplete.getCurrentWordIndex() + i) {

@@ -16,6 +16,7 @@ import net.thevpc.nuts.NutsIdFormat;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 
 /**
  *
@@ -191,7 +192,7 @@ public class NutsFetchDisplayOptions {
                 displayOptionsArgs.add("--omit-namespace");
             }
 
-            displayOptionsArgs.add("--display=" + String.join(",", Arrays.asList(getDisplayProperties()).stream().map(x -> CoreCommonUtils.getEnumString(x)).collect(Collectors.toList())));
+            displayOptionsArgs.add("--display=" + String.join(",", Arrays.asList(getDisplayProperties()).stream().map(x -> CoreEnumUtils.getEnumString(x)).collect(Collectors.toList())));
         }
         return displayOptionsArgs.toArray(new String[0]);
     }
@@ -219,7 +220,7 @@ public class NutsFetchDisplayOptions {
                     break;
                 }
                 default: {
-                    visited.add(CoreCommonUtils.parseEnumString(dispNames[i], NutsDisplayProperty.class, true));
+                    visited.add(CoreEnumUtils.parseEnumString(dispNames[i], NutsDisplayProperty.class, true));
                 }
             }
         }
@@ -243,7 +244,7 @@ public class NutsFetchDisplayOptions {
                     break;
                 }
                 default: {
-                    all2.add(CoreCommonUtils.parseEnumString(dispNames[i], NutsDisplayProperty.class, false));
+                    all2.add(CoreEnumUtils.parseEnumString(dispNames[i], NutsDisplayProperty.class, false));
                 }
             }
         }

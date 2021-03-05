@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 public final class JavaExecutorOptions {
 
@@ -22,7 +24,7 @@ public final class JavaExecutorOptions {
     private boolean javaw = false;
     private boolean mainClassApp = false;
     private boolean excludeBase = false;
-    private boolean showCommand = CoreCommonUtils.getSysBoolNutsProperty("show-command", false);
+    private boolean showCommand = CoreBooleanUtils.getSysBoolNutsProperty("show-command", false);
     private boolean jar = false;
     private List<String> classPath = new ArrayList<>();
     private List<String> nutsPath = new ArrayList<>();
@@ -231,7 +233,7 @@ public final class JavaExecutorOptions {
                 nutsPath.add(cp);
             }
             if (this.mainClass.contains(":")) {
-                List<String> possibleClasses = CoreStringUtils.split(getMainClass(), ":");
+                List<String> possibleClasses = StringTokenizerUtils.split(getMainClass(), ":");
                 switch (possibleClasses.size()) {
                     case 0:
                         throw new NutsIllegalArgumentException(getWorkspace(), "missing Main-Class in Manifest for " + id);
@@ -326,7 +328,7 @@ public final class JavaExecutorOptions {
     }
 
     private void addToCp(List<String> classPath, String value) {
-        for (String n : CoreStringUtils.split(value, ":;, ")) {
+        for (String n : StringTokenizerUtils.split(value, ":;, ")) {
             if (!CoreStringUtils.isBlank(n)) {
                 classPath.add(n);
             }
@@ -337,7 +339,7 @@ public final class JavaExecutorOptions {
         NutsSession searchSession = CoreNutsUtils.silent(this.session);
         NutsSearchCommand ns = getWorkspace().search().setLatest(true)
                 .setSession(searchSession);
-        for (String n : CoreStringUtils.split(value, ";, ")) {
+        for (String n : StringTokenizerUtils.split(value, ";, ")) {
             if (!CoreStringUtils.isBlank(n)) {
                 ns.addId(n);
             }

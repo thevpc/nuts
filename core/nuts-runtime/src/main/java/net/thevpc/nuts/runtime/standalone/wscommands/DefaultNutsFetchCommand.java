@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
 
@@ -519,9 +520,9 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         idType = NutsIdType.RUNTIME;
                         apiId = apiId0;
                     } else {
-                        if (CoreCommonUtils.parseBoolean(descriptor.getProperties().get("nuts-runtime"), false)) {
+                        if (CoreBooleanUtils.parseBoolean(descriptor.getProperties().get("nuts-runtime"), false)) {
                             idType = NutsIdType.RUNTIME;
-                        } else if (CoreCommonUtils.parseBoolean(descriptor.getProperties().get("nuts-extension"), false)) {
+                        } else if (CoreBooleanUtils.parseBoolean(descriptor.getProperties().get("nuts-extension"), false)) {
                             idType = NutsIdType.EXTENSION;
                             apiId = apiId0;
                         }

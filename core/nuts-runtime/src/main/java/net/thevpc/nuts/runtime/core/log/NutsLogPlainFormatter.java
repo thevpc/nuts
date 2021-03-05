@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
+import net.thevpc.nuts.runtime.core.util.CoreTimeUtils;
 
 public class NutsLogPlainFormatter extends Formatter {
     public static final NutsLogPlainFormatter PLAIN = new NutsLogPlainFormatter();
@@ -84,7 +85,7 @@ public class NutsLogPlainFormatter extends Formatter {
             }
             sb.append(msgStr);
             if (wRecord.getTime() > 0) {
-                sb.append(" (").append(CoreCommonUtils.formatPeriodMilli(wRecord.getTime())).append(")");
+                sb.append(" (").append(CoreTimeUtils.formatPeriodMilli(wRecord.getTime())).append(")");
             }
             sb.append(NutsLogFormatHelper.LINE_SEPARATOR);
             lastMillis = wRecord.getMillis();

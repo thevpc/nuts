@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.core.filters.id;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
@@ -39,7 +40,7 @@ public class NutsExecRuntimeFilter extends AbstractNutsFilter implements NutsDes
             }
         }
         if(communityRuntime) {
-            if (!CoreCommonUtils.parseBoolean(other.getProperties().get("nuts-runtime"), false)) {
+            if (!CoreBooleanUtils.parseBoolean(other.getProperties().get("nuts-runtime"), false)) {
                 return false;
             }
             for (NutsDependency dependency : other.getDependencies()) {

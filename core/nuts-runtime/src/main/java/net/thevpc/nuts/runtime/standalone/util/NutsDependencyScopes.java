@@ -37,6 +37,7 @@ import net.thevpc.nuts.NutsDependencyScope;
 import net.thevpc.nuts.NutsDependencyScopePattern;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 
 /**
  *
@@ -97,7 +98,7 @@ public class NutsDependencyScopes {
 
     public static NutsDependencyScope parseScope(String scope, boolean lenient) {
         scope = normalizeScope(scope);
-        return CoreCommonUtils.parseEnumString(scope, NutsDependencyScope.class, lenient);
+        return CoreEnumUtils.parseEnumString(scope, NutsDependencyScope.class, lenient);
     }
 
     public static boolean isDefaultScope(String s1) {

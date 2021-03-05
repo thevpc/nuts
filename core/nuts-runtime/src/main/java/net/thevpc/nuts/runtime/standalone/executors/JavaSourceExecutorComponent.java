@@ -36,6 +36,7 @@ import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
+import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -93,7 +94,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
                 .createExecutionContext()
                 .setAll(executionContext)
                 .setDefinition(d)
-                .setExecutorArguments(CoreCommonUtils.concatArrays(
+                .setExecutorArguments(CoreArrayUtils.concatArrays(
                         executionContext.getExecutorArguments(),
                         new String[]{
                             "--main-class",
@@ -134,7 +135,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
                 .createExecutionContext()
                 .setAll(executionContext)
                 .setDefinition(d)
-                .setExecutorArguments(CoreCommonUtils.concatArrays(
+                .setExecutorArguments(CoreArrayUtils.concatArrays(
                         executionContext.getExecutorArguments(),
                         new String[]{
                             "--main-class",

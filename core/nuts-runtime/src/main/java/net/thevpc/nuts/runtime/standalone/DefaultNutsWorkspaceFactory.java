@@ -37,6 +37,7 @@ import net.thevpc.nuts.spi.NutsComponent;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
+import net.thevpc.nuts.runtime.core.util.CoreServiceUtils;
 
 /**
  * Created by vpc on 1/5/17.
@@ -85,7 +86,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 ClassClassMap cc=new ClassClassMap();
                 classes.put(extensionPoint,cc);
                 Class<NutsComponent> serviceClass = NutsComponent.class;
-                for (String n : CoreCommonUtils.loadServiceClassNames(url, serviceClass)) {
+                for (String n : CoreServiceUtils.loadZipServiceClassNames(url, serviceClass)) {
                     Class<?> c = null;
                     try {
                         c = Class.forName(n, false, bootClassLoader);
@@ -152,7 +153,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 //    public Set<Class> discoverTypes(ClassLoader bootClassLoader) {
 //        List<Class> types = discoveredCacheByLoader.get(bootClassLoader);
 //        if (types == null) {
-//            types = CoreCommonUtils.loadServiceClasses(NutsComponent.class, bootClassLoader);
+//            types = CoreCommonUtils.loadServiceClasseNames(NutsComponent.class, bootClassLoader);
 //            discoveredCacheByLoader.put(bootClassLoader, types);
 //            for (Iterator<Class> it = types.iterator(); it.hasNext();) {
 //                Class type = it.next();

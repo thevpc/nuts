@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
+import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 
 /**
  * @param <T> Type
@@ -307,7 +309,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 return true;
             }
             case "--scope": {
-                NutsDependencyScope val = CoreCommonUtils.parseEnumString(cmdLine.nextString().getStringValue(), NutsDependencyScope.class, false);
+                NutsDependencyScope val = CoreEnumUtils.parseEnumString(cmdLine.nextString().getStringValue(), NutsDependencyScope.class, false);
                 if (enabled) {
                     this.addScope(val);
                 }
@@ -323,7 +325,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             case "--optional": {
                 NutsArgument v = cmdLine.nextString();
                 if (enabled) {
-                    this.setOptional(CoreCommonUtils.parseBoolean(v.getString(), null));
+                    this.setOptional(CoreBooleanUtils.parseBoolean(v.getString(), null));
                 }
                 return true;
             }

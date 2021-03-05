@@ -15,6 +15,7 @@ import java.util.function.Supplier;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreTimeUtils;
 
 /**
  * type: Command Class
@@ -322,7 +323,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("inherited-nuts-args", ws.commandLine().formatter(ws.commandLine().parse(System.getProperty("nuts.args"))).format());
         props.put("creation-started", stringValue(Instant.ofEpochMilli(ws.config().getCreationStartTimeMillis())));
         props.put("creation-finished", stringValue(Instant.ofEpochMilli(ws.config().getCreationFinishTimeMillis())));
-        props.put("creation-within", CoreCommonUtils.formatPeriodMilli(ws.config().getCreationTimeMillis()).trim());
+        props.put("creation-within", CoreTimeUtils.formatPeriodMilli(ws.config().getCreationTimeMillis()).trim());
         props.put("repositories-count", (ws.repos().getRepositories(getValidSession()).length));
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));

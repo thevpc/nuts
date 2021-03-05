@@ -45,6 +45,7 @@ import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -498,7 +499,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         }
 
         private CoreIOUtils.ProcessExecHelper preExec() {
-            if (joptions.isShowCommand() || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
+            if (joptions.isShowCommand() || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
                 PrintStream out = execSession.out();
                 out.printf("%s %n", ws.formats().text().styled("nuts-exec", NutsTextNodeStyle.primary(1)));
                 for (int i = 0; i < xargs.size(); i++) {

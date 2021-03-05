@@ -34,6 +34,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -76,7 +77,7 @@ public class ShellExecutorComponent implements NutsExecutorComponent {
         String[] appArgs = executionContext.getArguments();
 
         String dir = null;
-        boolean showCommand = CoreCommonUtils.getSysBoolNutsProperty("show-command", false);
+        boolean showCommand = CoreBooleanUtils.getSysBoolNutsProperty("show-command", false);
         for (int i = 0; i < execArgs.length; i++) {
             String arg = execArgs[i];
             if (arg.equals("--show-command") || arg.equals("-show-command")) {

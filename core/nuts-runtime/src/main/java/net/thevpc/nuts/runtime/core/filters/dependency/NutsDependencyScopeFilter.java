@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 
 public class NutsDependencyScopeFilter extends AbstractNutsFilter implements NutsDependencyFilter {
 
@@ -44,7 +45,7 @@ public class NutsDependencyScopeFilter extends AbstractNutsFilter implements Nut
 
     @Override
     public String toString() {
-        return scope.isEmpty()?"true": "scope in (" + scope.stream().map(CoreCommonUtils::getEnumString).collect(Collectors.joining(", ")) + ')';
+        return scope.isEmpty()?"true": "scope in (" + scope.stream().map(CoreEnumUtils::getEnumString).collect(Collectors.joining(", ")) + ')';
     }
 
     @Override

@@ -14,6 +14,7 @@ import net.thevpc.nuts.NutsLogger;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.NutsWorkspaceCommandAlias;
+import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
 
 public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAlias {
     private final NutsLogger LOG;
@@ -102,7 +103,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
     @Override
     public void exec(String[] args, NutsCommandExecOptions options, NutsSession session) {
         String[] executorOptions = options.getExecutorOptions();
-        executorOptions = CoreCommonUtils.concatArrays(this.getExecutorOptions(), executorOptions);
+        executorOptions = CoreArrayUtils.concatArrays(this.getExecutorOptions(), executorOptions);
         List<String> r = new ArrayList<>(Arrays.asList(this.getCommand()));
         r.addAll(Arrays.asList(args));
         args = r.toArray(new String[0]);
@@ -125,7 +126,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
     @Override
     public void dryExec(String[] args, NutsCommandExecOptions options, NutsSession session) throws NutsExecutionException {
         String[] executorOptions = options.getExecutorOptions();
-        executorOptions = CoreCommonUtils.concatArrays(this.getExecutorOptions(), executorOptions);
+        executorOptions = CoreArrayUtils.concatArrays(this.getExecutorOptions(), executorOptions);
         List<String> r = new ArrayList<>(Arrays.asList(this.getCommand()));
         r.addAll(Arrays.asList(args));
         args = r.toArray(new String[0]);

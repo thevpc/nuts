@@ -11,37 +11,32 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.NutsNotFoundException;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.util.*;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
  * Created by vpc on 5/16/17.
  */
-public class CoreStringUtils {
+public final class CoreStringUtils {
 
     private static final Pattern PATTERN_ALL = Pattern.compile(".*");
 
@@ -59,103 +54,7 @@ public class CoreStringUtils {
         return -1;
     }
 
-    public static Pattern toPattern(String pattern) {
-        if (isBlank(pattern)) {
-            return PATTERN_ALL;
-        }
-        return Pattern.compile(simpexpToRegexp(pattern, false));
-    }
-
-    public static String simpexpToRegexp(String pattern) {
-        return simpexpToRegexp(pattern, false);
-    }
-
-    /**
-     * *
-     * **
-     *
-     * @param pattern pattern
-     * @param contains contains
-     * @return regexp
-     */
-    public static String simpexpToRegexp(String pattern, boolean contains) {
-        if (pattern == null) {
-            pattern = "*";
-        }
-        int i = 0;
-        char[] cc = pattern.toCharArray();
-        StringBuilder sb = new StringBuilder();
-        while (i < cc.length) {
-            char c = cc[i];
-            switch (c) {
-                case '.':
-                case '!':
-                case '$':
-                case '[':
-                case ']':
-                case '(':
-                case ')':
-                case '?':
-                case '^':
-                case '|':
-                case '\\': {
-                    sb.append('\\').append(c);
-                    break;
-                }
-                case '*': {
-//                    if (i + 1 < cc.length && cc[i + 1] == '*') {
-//                        i++;
-//                        sb.append("[a-zA-Z_0-9_$.-]*");
-//                    } else {
-//                        sb.append("[a-zA-Z_0-9_$-]*");
-//                    }
-                    sb.append(".*");
-                    break;
-                }
-                default: {
-                    sb.append(c);
-                }
-            }
-            i++;
-        }
-        if (!contains) {
-            sb.insert(0, '^');
-            sb.append('$');
-        }
-        return sb.toString();
-    }
-//
-//    public static String replaceVars(String format, Function<String, String> map) {
-//        return replaceVars(format, map, new HashSet());
-//    }
-
-//    private static String replaceVars(String format, Function<String, String> map, Set<String> visited) {
-//        if (format == null) {
-//            return null;
-//        }
-//        StringBuffer sb = new StringBuffer();
-//        Matcher m = DOLLAR_PATTERN.matcher(format);
-//        while (m.find()) {
-//            String key = m.group("key");
-//            if (visited.contains(key)) {
-//                m.appendReplacement(sb, key);
-//            } else {
-//                Set<String> visited2 = new HashSet<>(visited);
-//                visited2.add(key);
-//                String replacement = map.apply(key);
-//                if (replacement != null) {//replace if founded key exists in map
-//                    replacement = replaceVars(replacement, map, visited2);
-//                    m.appendReplacement(sb, escapeReplacementStrings(replacement));
-//                } else {//do not replace, or to be precise replace with same value
-//                    m.appendReplacement(sb, escapeReplacementStrings(m.group()));
-//                }
-//            }
-//        }
-//        m.appendTail(sb);
-//
-//        return sb.toString();
-//    }
-
+   
     public static String escapeQuoteStrings(String s) {
         StringBuilder sb = new StringBuilder(s.length());
         for (char c : s.toCharArray()) {
@@ -227,7 +126,7 @@ public class CoreStringUtils {
                     break;
                 }
                 default: {
-                    if (entrySeparators!=null && entrySeparators.indexOf(c) >= 0) {
+                    if (entrySeparators != null && entrySeparators.indexOf(c) >= 0) {
                         q = true;
                         sb.append("\\").append(c);
                     } else {
@@ -245,9 +144,9 @@ public class CoreStringUtils {
     }
 
     public static String dblQuote(String text) {
-        return dblQuote(text,false,null);
+        return dblQuote(text, false, null);
     }
-    
+
     /**
      * @param text text
      * @param compact if true, quotes will not be used unless necessary
@@ -280,7 +179,7 @@ public class CoreStringUtils {
                     break;
                 }
                 default: {
-                    if (entrySeparators!=null && entrySeparators.indexOf(c) >= 0) {
+                    if (entrySeparators != null && entrySeparators.indexOf(c) >= 0) {
                         q = true;
                         sb.append("\\").append(c);
                     } else {
@@ -295,30 +194,6 @@ public class CoreStringUtils {
             sb.append('\"');
         }
         return sb.toString();
-    }
-
-    public static List<String> split(Collection<String> stringCollection, String separators) {
-        List<String> splitted = new ArrayList<>();
-        for (String str : stringCollection) {
-            for (String s1 : split(str, separators)) {
-                if (!s1.isEmpty()) {
-                    splitted.add(s1);
-                }
-            }
-        }
-        return splitted;
-    }
-
-    public static List<String> split(String str, String separators) {
-        if (str == null) {
-            return Collections.EMPTY_LIST;
-        }
-        StringTokenizer st = new StringTokenizer(str, separators);
-        List<String> result = new ArrayList<>();
-        while (st.hasMoreElements()) {
-            result.add(st.nextToken());
-        }
-        return result;
     }
 
     public static boolean containsVars(String value) {
@@ -423,7 +298,6 @@ public class CoreStringUtils {
 //    public static String replaceDollarPlaceHolders(String s, Map<String, String> converter) {
 //        return StringPlaceHolderParser.replaceDollarPlaceHolders(s, new MapToFunction(converter));
 //    }
-
     public static String enforceDoubleQuote(String s) {
         if (s.isEmpty() || s.contains(" ") || s.contains("\"")) {
             s = "\"" + s.replace("\"", "\\\"") + "\"";
@@ -456,10 +330,10 @@ public class CoreStringUtils {
      * @return String from exception
      */
     public static String exceptionToString(Throwable ex) {
-        return exceptionToString(ex,false);
+        return exceptionToString(ex, false);
     }
 
-    public static int firstIndexOf(String string,char[] chars) {
+    public static int firstIndexOf(String string, char[] chars) {
         char[] value = string.toCharArray();
         for (int i = 0; i < value.length; i++) {
             for (int j = 0; j < chars.length; j++) {
@@ -471,7 +345,7 @@ public class CoreStringUtils {
         return -1;
     }
 
-    public static String exceptionToString(Throwable ex,boolean inner) {
+    public static String exceptionToString(Throwable ex, boolean inner) {
         String msg = null;
         if (ex instanceof NutsNotFoundException || ex instanceof UncheckedIOException) {
             if (ex.getCause() != null) {
@@ -479,28 +353,27 @@ public class CoreStringUtils {
                 if (ex2 instanceof UncheckedIOException) {
                     ex2 = ex.getCause();
                 }
-                msg = exceptionToString(ex2,true);
-            }else{
+                msg = exceptionToString(ex2, true);
+            } else {
                 msg = ex.getMessage();
             }
         } else {
             String msg2 = ex.toString();
-            if(msg2.startsWith(ex.getClass().getName()+":")){
-                if(inner) {
+            if (msg2.startsWith(ex.getClass().getName() + ":")) {
+                if (inner) {
                     //this is  default toString for the exception
                     msg = msg2.substring((ex.getClass().getName()).length() + 1).trim();
-                }else{
+                } else {
                     msg = ex.getClass().getSimpleName() + ": " + msg2.substring((ex.getClass().getName()).length() + 1).trim();
                 }
-            }else {
+            } else {
                 for (Class aClass : new Class[]{
-                        NullPointerException.class,
-                        ArrayIndexOutOfBoundsException.class,
-                        ClassCastException.class,
-                        UnsupportedOperationException.class,
-                        ReflectiveOperationException.class,
-                        Error.class,
-                }) {
+                    NullPointerException.class,
+                    ArrayIndexOutOfBoundsException.class,
+                    ClassCastException.class,
+                    UnsupportedOperationException.class,
+                    ReflectiveOperationException.class,
+                    Error.class,}) {
                     if (aClass.isInstance(ex)) {
                         return ex.toString();
                     }
@@ -513,6 +386,7 @@ public class CoreStringUtils {
         }
         return msg;
     }
+
     /**
      * copied from StringUtils (in order to remove dependency)
      *
@@ -536,7 +410,7 @@ public class CoreStringUtils {
      * @return string filled
      */
     public static String fillString(char x, int width) {
-        if(width<=0) {
+        if (width <= 0) {
             return "";
         }
         char[] cc = new char[width];
@@ -545,7 +419,7 @@ public class CoreStringUtils {
     }
 
     public static String fillString(String x, int width) {
-        if(width<=0) {
+        if (width <= 0) {
             return "";
         }
         StringBuilder sb = new StringBuilder();
@@ -604,138 +478,23 @@ public class CoreStringUtils {
         return sb.toString();
     }
 
-    /**
-     * copied from StringUtils (in order to remove dependency)
-     *
-     * @param text text
-     * @param entrySeparators entry separators
-     * @return parsed map
-     */
-    public static Map<String, String> parseMap(String text, String entrySeparators) {
-        return parseMap(text, "=", entrySeparators);
-    }
-
-    /**
-     * copied from StringUtils (in order to remove dependency)
-     *
-     * @param text text to parse
-     * @param eqSeparators equality separators
-     * @param entrySeparators entry separators
-     * @return parsed map
-     */
-    public static Map<String, String> parseMap(String text, String eqSeparators, String entrySeparators) {
-        Map<String, String> m = new LinkedHashMap<>();
-        StringReader reader = new StringReader(text == null ? "" : text);
-        while (true) {
-            StringBuilder key = new StringBuilder();
-            int r = 0;
-            try {
-                r = readToken(reader, eqSeparators + entrySeparators, key);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-            String t = key.toString();
-            if (r == -1) {
-                if (!t.isEmpty()) {
-                    m.put(t, null);
-                }
-                break;
+    public static String indexToString(int x) {
+        if (x < 0) {
+            return "-" + indexToString(-x);
+        }
+        StringBuilder sb = new StringBuilder();
+        while (x > 0) {
+            int y = x % 10;
+            if (y == 0) {
+                sb.insert(0, '0');
             } else {
-                char c = (char) r;
-                if (eqSeparators.indexOf(c) >= 0) {
-                    StringBuilder value = new StringBuilder();
-                    try {
-                        r = readToken(reader, entrySeparators, value);
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    }
-                    m.put(t, value.toString());
-                    if (r == -1) {
-                        break;
-                    }
-                } else {
-                    //
-                }
+                sb.insert(0, ((char) ('A' + (y - 1))));
             }
+            x = x / 10;
         }
-        return m;
-    }
-
-    /**
-     * copied from StringUtils (in order to remove dependency)
-     *
-     * @param reader reader
-     * @param stopTokens stopTokens
-     * @param result result
-     * @return next token
-     * @throws IOException IOException
-     */
-    public static int readToken(Reader reader, String stopTokens, StringBuilder result) throws IOException {
-        while (true) {
-            int r = reader.read();
-            if (r == -1) {
-                return -1;
-            }
-            if (r == '\"' || r == '\'') {
-                char s = (char) r;
-                while (true) {
-                    r = reader.read();
-                    if (r == -1) {
-                        throw new RuntimeException("Expected " + '\"');
-                    }
-                    if (r == s) {
-                        break;
-                    }
-                    if (r == '\\') {
-                        r = reader.read();
-                        if (r == -1) {
-                            throw new RuntimeException("Expected " + '\"');
-                        }
-                        switch ((char) r) {
-                            case 'n': {
-                                result.append('\n');
-                                break;
-                            }
-                            case 'r': {
-                                result.append('\r');
-                                break;
-                            }
-                            case 'f': {
-                                result.append('\f');
-                                break;
-                            }
-                            default: {
-                                result.append((char) r);
-                            }
-                        }
-                    } else {
-                        char cr = (char) r;
-                        result.append(cr);
-                    }
-                }
-            } else {
-                char cr = (char) r;
-                if (stopTokens != null && stopTokens.indexOf(cr) >= 0) {
-                    return cr;
-                }
-                result.append(cr);
-            }
+        if (sb.length() == 0) {
+            return "A";
         }
-    }
-
-    public static List<String> split(String str, String separators, boolean trim) {
-        if (str == null) {
-            return Collections.EMPTY_LIST;
-        }
-        StringTokenizer st = new StringTokenizer(str, separators);
-        List<String> result = new ArrayList<>();
-        while (st.hasMoreElements()) {
-            String s = st.nextToken();
-            if (trim) {
-                s = s.trim();
-            }
-            result.add(s);
-        }
-        return result;
+        return sb.toString();
     }
 }

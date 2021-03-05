@@ -35,6 +35,7 @@ import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 
 /**
  *
@@ -535,7 +536,7 @@ public class NutsIdFormatHelper {
                     all.add(text.styled("library", NutsTextNodeStyle.primary(4)));
                 }
                 if (dep != null) {
-                    NutsDependencyScope ss = CoreCommonUtils.parseEnumString(dep.getScope(), NutsDependencyScope.class, true);
+                    NutsDependencyScope ss = CoreEnumUtils.parseEnumString(dep.getScope(), NutsDependencyScope.class, true);
                     if (dep.isOptional()) {
                         all.add(text.styled("optional", NutsTextNodeStyle.primary(5)));
                     }
@@ -635,7 +636,7 @@ public class NutsIdFormatHelper {
             this.status_s = '-';
             this.status_o = '-';
             if (dep != null) {
-                NutsDependencyScope ss = CoreCommonUtils.parseEnumString(dep.getScope(), NutsDependencyScope.class, true);
+                NutsDependencyScope ss = CoreEnumUtils.parseEnumString(dep.getScope(), NutsDependencyScope.class, true);
                 if (ss != null) {
                     switch (ss) {
                         case API: {

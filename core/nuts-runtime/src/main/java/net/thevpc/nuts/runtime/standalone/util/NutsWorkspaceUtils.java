@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
+import net.thevpc.nuts.runtime.standalone.wscommands.InstalledVsNonInstalledSearch;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.http.SimpleHttpClient;
 import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
@@ -38,6 +39,8 @@ import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
+import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
@@ -249,8 +252,8 @@ public class NutsWorkspaceUtils {
 
     public static Set<String> parseProgressOptions(NutsSession session) {
         LinkedHashSet<String> set = new LinkedHashSet<>();
-        for (String s : CoreStringUtils.split(session.getProgressOptions(), ",; ")) {
-            Boolean n = CoreCommonUtils.parseBoolean(s, null);
+        for (String s : StringTokenizerUtils.split(session.getProgressOptions(), ",; ")) {
+            Boolean n = CoreBooleanUtils.parseBoolean(s, null);
             if (n == null) {
                 set.add(s);
             } else {
@@ -551,7 +554,7 @@ public class NutsWorkspaceUtils {
                             pb.getCommandString()
                     ));
         }
-        if (showCommand || CoreCommonUtils.getSysBoolNutsProperty("show-command", false)) {
+        if (showCommand || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
             if (ws.io().term().isFormatted(prepareTerminal.out())) {
                 prepareTerminal.out().printf("%s ", ws.formats().text().styled("[exec]", NutsTextNodeStyle.primary(4)));
                 prepareTerminal.out().println(ws.formats().text().code("sh", pb.getCommandString()));

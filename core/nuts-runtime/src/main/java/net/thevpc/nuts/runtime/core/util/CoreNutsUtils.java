@@ -679,7 +679,7 @@ public class CoreNutsUtils {
         switch (a.getStringKey()) {
             case "--output-format": {
                 a = cmdLine.nextString();
-                return CoreCommonUtils.parseEnumString(a.getStringValue(), NutsContentType.class, false);
+                return CoreEnumUtils.parseEnumString(a.getStringValue(), NutsContentType.class, false);
             }
             case "--json": {
                 a = cmdLine.nextString();
@@ -995,7 +995,7 @@ public class CoreNutsUtils {
         if (o instanceof Boolean) {
             monitorable = ((Boolean) o).booleanValue();
         }
-        if (!CoreCommonUtils.getSysBoolNutsProperty("monitor.enabled", true)) {
+        if (!CoreBooleanUtils.getSysBoolNutsProperty("monitor.enabled", true)) {
             monitorable = false;
         }
         if (ws instanceof DefaultNutsWorkspace) {
@@ -1085,7 +1085,7 @@ public class CoreNutsUtils {
             group = (s != null) ? s.getThreadGroup()
                     : Thread.currentThread().getThreadGroup();
             namePrefix = namePattern + "-"
-                    + CoreCommonUtils.indexToString(poolNumber.getAndIncrement())
+                    + CoreStringUtils.indexToString(poolNumber.getAndIncrement())
                     + "-";
         }
 

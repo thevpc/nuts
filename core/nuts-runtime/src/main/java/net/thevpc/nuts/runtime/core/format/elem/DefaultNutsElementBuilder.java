@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
 import java.util.Date;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 
@@ -167,7 +168,7 @@ public class DefaultNutsElementBuilder implements NutsElementBuilder {
 
     @Override
     public NutsPrimitiveElement forBoolean(String value) {
-        return CoreCommonUtils.parseBoolean(value, false) ? TRUE : FALSE;
+        return CoreBooleanUtils.parseBoolean(value, false) ? TRUE : FALSE;
     }
 
     @Override

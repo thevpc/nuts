@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 /**
  * @author thevpc
@@ -350,7 +351,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         }
         NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, path, source, session, isLogProgress(),getProgressFactory());
         boolean verboseMode
-                = CoreCommonUtils.getSysBoolNutsProperty("monitor.start", false);
+                = CoreBooleanUtils.getSysBoolNutsProperty("monitor.start", false);
         NutsInput stream = null;
         long size = -1;
         try {
@@ -400,7 +401,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         }
         NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, inputSource, source, session, isLogProgress(),getProgressFactory());
         boolean verboseMode
-                = CoreCommonUtils.getSysBoolNutsProperty("monitor.start", false);
+                = CoreBooleanUtils.getSysBoolNutsProperty("monitor.start", false);
         long size = -1;
         try {
             if (verboseMode && monitor != null) {

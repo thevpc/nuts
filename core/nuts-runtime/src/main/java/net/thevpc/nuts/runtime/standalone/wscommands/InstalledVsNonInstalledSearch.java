@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.util;
+package net.thevpc.nuts.runtime.standalone.wscommands;
 
 public class InstalledVsNonInstalledSearch {
     private boolean searchInInstalled;
