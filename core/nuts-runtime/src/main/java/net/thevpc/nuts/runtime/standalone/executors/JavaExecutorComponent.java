@@ -45,6 +45,7 @@ import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 /**
@@ -152,13 +153,18 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     }
                 }
                 NutsVersion nutsDependencyVersion = null;
-                for (String s : joptions.getClassPath()) {
-                    Pattern pp = Pattern.compile(".*[/\\\\]nuts-(?<v>[0-9.]+)[.]jar");
-                    Matcher mm = pp.matcher(s);
-                    if (mm.find()) {
-                        String v = mm.group("v");
+                for (String s : joptions.getClassPathNidStrings()) {
+                    if (s.startsWith("net.thevpc.nuts:nuts#")) {
+                        String v = s.substring("net.thevpc.nuts:nuts#".length());
                         nutsDependencyVersion = executionContext.getWorkspace().version().parser().parse(v);
-                        break;
+                    } else {
+                        Pattern pp = Pattern.compile(".*[/\\\\]nuts-(?<v>[0-9.]+)[.]jar");
+                        Matcher mm = pp.matcher(s);
+                        if (mm.find()) {
+                            String v = mm.group("v");
+                            nutsDependencyVersion = executionContext.getWorkspace().version().parser().parse(v);
+                            break;
+                        }
                     }
                 }
 //                List<String> validBootCommand = new ArrayList<>();
@@ -292,11 +298,11 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     args.add(contentFile.toString());
                 } else {
                     xargs.add("--nuts-path");
-                    xargs.add(String.join(";", joptions.getNutsPath()));
+                    xargs.add(String.join(";", joptions.getClassPathNidStrings()));
                     xargs.add(joptions.getMainClass());
 
                     args.add("-classpath");
-                    args.add(String.join(File.pathSeparator, joptions.getClassPath()));
+                    args.add(String.join(File.pathSeparator, joptions.getClassPathStrings()));
                     args.add(joptions.getMainClass());
                 }
                 xargs.addAll(joptions.getApp());
@@ -327,7 +333,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             List<String> cmdLine = new ArrayList<>();
             cmdLine.add("embedded-java");
             cmdLine.add("-cp");
-            cmdLine.add(String.join(":", joptions.getClassPath()));
+            cmdLine.add(String.join(":", joptions.getClassPathStrings()));
             cmdLine.add(joptions.getMainClass());
             cmdLine.addAll(joptions.getApp());
 
@@ -342,15 +348,16 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         @Override
         public int exec() {
             CoreIOUtils.clearMonitor(getSession().out(), getSession().getWorkspace());
-            ClassLoader classLoader = null;
+            DefaultNutsClassLoader classLoader = null;
             Throwable th = null;
             try {
                 classLoader = ((DefaultNutsWorkspaceExtensionManager) getSession().getWorkspace().extensions()).getNutsURLClassLoader(
                         def.getId().toString(),
-                        CoreIOUtils.toURL(joptions.getClassPath().toArray(new String[0])),
-                        joptions.getNutsPath().stream().map(x -> getSession().getWorkspace().id().parser().parse(x)).toArray(NutsId[]::new),
                         null//getSession().getWorkspace().config().getBootClassLoader()
                 );
+                for (NutsClassLoaderNode n : joptions.getClassPath()) {
+                    classLoader.add(n);
+                }
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
                 new ClassloaderAwareRunnableImpl2(def.getId(), classLoader, cls, getSession(), joptions).runAndWaitFor();
                 return 0;

@@ -146,7 +146,7 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
                 syst = new DefaultSystemTerminal(terminal);
                 NutsWorkspaceUtils.setSession(syst,session);
             } catch (Exception ex) {
-                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("unable to create system terminal : %s",ex.getMessage());
+                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("unable to create system terminal : {0}",ex.getMessage());
                 syst = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBase());
                 NutsWorkspaceUtils.setSession(syst,session);
             }

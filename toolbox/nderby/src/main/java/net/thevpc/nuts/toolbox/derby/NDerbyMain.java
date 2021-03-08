@@ -184,9 +184,9 @@ public class NDerbyMain extends NutsApplication {
                         case "long": {
                             out.printf("%s %s %s %s %s%n",
                                     factory.styled(jpsResult.getPid(),NutsTextNodeStyle.primary(1)),
-                                    factory.styled("HOME:"),
+                                    factory.plain("HOME:"),
                                     factory.styled(jpsResult.getHome(),NutsTextNodeStyle.path()),
-                                    factory.styled("CMD:"),
+                                    factory.plain("CMD:"),
                                     appContext.getWorkspace().commandLine().formatter(
                                             appContext.getCommandLine().parseLine(jpsResult.getArgsLine())
                                     ).format()

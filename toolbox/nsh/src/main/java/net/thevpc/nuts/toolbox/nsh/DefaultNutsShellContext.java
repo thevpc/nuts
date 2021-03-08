@@ -11,17 +11,15 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.toolbox.nsh;
 
@@ -48,9 +46,8 @@ public class DefaultNutsShellContext extends DefaultJShellContext implements Nut
 //        this.workspace = workspace;
 //        this.session = (workspace == null ? null : workspace.createSession());
 //    }
-
     public DefaultNutsShellContext(NutsJavaShell shell, JShellNode rootNode, JShellNode parentNode,
-                                   NutsShellContext parentContext, NutsWorkspace workspace, NutsSession session, JShellVariables vars) {
+            NutsShellContext parentContext, NutsWorkspace workspace, NutsSession session, JShellVariables vars) {
         super(shell);
         this.parentContext = parentContext;//.copy();
         if (parentContext != null) {
@@ -152,7 +149,6 @@ public class DefaultNutsShellContext extends DefaultJShellContext implements Nut
 //        c.copyFrom(this);
 //        return c;
 //    }
-
     //    @Override
 //    public NutsSessionTerminal getTerminal() {
 //        if (terminal != null) {
@@ -194,7 +190,7 @@ public class DefaultNutsShellContext extends DefaultJShellContext implements Nut
     }
 
     public JShellExecutionContext createCommandContext(JShellBuiltin command, JShellFileContext context) {
-        DefaultNshExecutionContext c = new DefaultNshExecutionContext(this, (NshBuiltin) command,context);
+        DefaultNshExecutionContext c = new DefaultNshExecutionContext(this, (NshBuiltin) command, context);
 //        c.setMode(getTerminalMode());
 //        c.setVerbose(isVerbose());
         return c;
@@ -203,31 +199,11 @@ public class DefaultNutsShellContext extends DefaultJShellContext implements Nut
     @Override
     public List<JShellAutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine, JShellFileContext ctx) {
         JShellBuiltin command = this.builtins().find(commandName);
-        NutsCommandAutoComplete autoComplete = new NutsCommandAutoCompleteBase() {
-            @Override
-            public NutsSession getSession() {
-                return session;
-            }
-
-            @Override
-            public String getLine() {
-                return autoCompleteLine;
-            }
-
-            @Override
-            public List<String> getWords() {
-                return autoCompleteWords;
-            }
-
-            @Override
-            public int getCurrentWordIndex() {
-                return wordIndex;
-            }
-
-        };
+        NutsCommandAutoComplete autoComplete = new NutsDefaultCommandAutoComplete()
+                .setSession(session).setLine(autoCompleteLine).setWords(autoCompleteWords).setCurrentWordIndex(wordIndex);
 
         if (command != null && command instanceof NshBuiltin) {
-            ((NshBuiltin) command).autoComplete(new DefaultNshExecutionContext(this, (NshBuiltin) command,ctx), autoComplete);
+            ((NshBuiltin) command).autoComplete(new DefaultNshExecutionContext(this, (NshBuiltin) command, ctx), autoComplete);
         } else {
             NutsWorkspace ws = this.getWorkspace();
             List<NutsId> nutsIds = ws.search()

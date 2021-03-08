@@ -154,27 +154,37 @@ public class DefaultNutsTextManager implements NutsTextManager {
     }
 
     @Override
-    public NutsTextNode styled(String other, NutsTextNodeStyle... decorations) {
+    public NutsTextNode styled(String other, NutsTextNodeStyle decorations) {
         return styled(plain(other), decorations);
     }
 
     @Override
-    public NutsTextNode styled(NutsString other, NutsTextNodeStyle... decorations) {
+    public NutsTextNode styled(NutsString other, NutsTextNodeStyle decorations) {
+        return styled(other.toString(), decorations);
+    }
+
+    @Override
+    public NutsTextNode styled(String other, NutsTextNodeStyles decorations) {
+        return styled(plain(other), decorations);
+    }
+
+    @Override
+    public NutsTextNode styled(NutsString other, NutsTextNodeStyles decorations) {
         return styled(ws.formats().text().parse(other.toString()), decorations);
     }
 
     @Override
-    public NutsTextNode styled(NutsTextNode other, NutsTextNodeStyle... decorations) {
-        switch (decorations.length) {
+    public NutsTextNode styled(NutsTextNode other, NutsTextNodeStyles decorations) {
+        switch (decorations.size()) {
             case 0:
                 return other;
             case 1:
-                return styled(other, decorations[0]);
+                return styled(other, decorations.get(0));
         }
 
         NutsTextNode n = other;
-        for (int i = decorations.length - 1; i >= 0; i--) {
-            n = styled(n, decorations[i]);
+        for (int i = decorations.size() - 1; i >= 0; i--) {
+            n = styled(n, decorations.get(i));
         }
         return n;
     }
@@ -196,7 +206,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
             case "link": {
                 return createLink(
                         "```!",
-                        command, "", "```", args
+                        command, "", "```", plain(args)
                 );
             }
         }
@@ -207,7 +217,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
     }
 
     @Override
-    public NutsTextNode code(String lang, String text) {
+    public NutsTextNodeCode code(String lang, String text) {
         if (text == null) {
             text = "";
         }
@@ -444,14 +454,28 @@ public class DefaultNutsTextManager implements NutsTextManager {
         }
     }
 
-    public NutsTextNode createStyled(String start, String end, NutsTextNode child, NutsTextNodeStyle textStyle, boolean completed) {
+    public NutsTextNode createStyled(String start, String end, NutsTextNode child, NutsTextNodeStyles textStyle, boolean completed) {
         if (textStyle == null) {
+            throw new NutsIllegalArgumentException(ws, "missing textStyle");
+        }
+        if(textStyle.isNone()){
             throw new NutsIllegalArgumentException(ws, "missing textStyle");
         }
         return new DefaultNutsTextNodeStyled(ws, start, end, child, completed, textStyle);
     }
 
-    public NutsTextNode createCode(String start, String kind, String separator, String end, String text) {
+    public NutsTextNode createStyled(String start, String end, NutsTextNode child, NutsTextNodeStyle textStyle, boolean completed) {
+        if (textStyle == null) {
+            throw new NutsIllegalArgumentException(ws, "missing textStyle");
+        }
+        NutsTextNodeStyles all = NutsTextNodeStyles.of(textStyle);
+        if(all.isNone()){
+            throw new NutsIllegalArgumentException(ws, "missing textStyle");
+        }
+        return new DefaultNutsTextNodeStyled(ws, start, end, child, completed, all);
+    }
+
+    public NutsTextNodeCode createCode(String start, String kind, String separator, String end, String text) {
         return new DefaultNutsTextNodeCode(ws, start, kind, separator, end, text);
     }
 
@@ -459,7 +483,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
         return new DefaultNutsTextNodeCommand(ws, start, command, separator, end, text);
     }
 
-    public NutsTextNode createLink(String start, String command, String separator, String end, String value) {
+    public NutsTextNode createLink(String start, String command, String separator, String end, NutsTextNode value) {
         return new DefaultNutsTextNodeLink(ws, start, command, separator, end, value);
     }
 

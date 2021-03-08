@@ -1,21 +1,10 @@
 package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.toolbox.njob.model.*;
-import net.thevpc.nuts.toolbox.njob.time.TimePeriod;
-import net.thevpc.nuts.toolbox.njob.time.TimePeriods;
-import net.thevpc.nuts.toolbox.njob.time.TimespanPattern;
 import net.thevpc.nuts.toolbox.njob.time.WeekDay;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class JobService {
     private NutsApplicationContext context;

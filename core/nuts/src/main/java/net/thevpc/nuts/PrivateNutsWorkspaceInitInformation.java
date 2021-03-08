@@ -52,9 +52,9 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
      */
     private String runtimeId;
     private NutsBootDescriptor runtimeBootDescriptor;
-    private NutsBootDependencyNode runtimeBootDependencyNode;
+    private NutsClassLoaderNode runtimeBootDependencyNode;
     private NutsBootDescriptor[] extensionBootDescriptors;
-    private NutsBootDependencyNode[] extensionBootDependencyNodes;
+    private NutsClassLoaderNode[] extensionBootDependencyNodes;
 
     private NutsBootWorkspaceFactory bootWorkspaceFactory;
 
@@ -404,21 +404,21 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
     }
 
     @Override
-    public NutsBootDependencyNode getRuntimeBootDependencyNode() {
+    public NutsClassLoaderNode getRuntimeBootDependencyNode() {
         return runtimeBootDependencyNode;
     }
 
-    public PrivateNutsWorkspaceInitInformation setRuntimeBootDependencyNode(NutsBootDependencyNode runtimeBootDependencyNode) {
+    public PrivateNutsWorkspaceInitInformation setRuntimeBootDependencyNode(NutsClassLoaderNode runtimeBootDependencyNode) {
         this.runtimeBootDependencyNode = runtimeBootDependencyNode;
         return this;
     }
 
     @Override
-    public NutsBootDependencyNode[] getExtensionBootDependencyNodes() {
+    public NutsClassLoaderNode[] getExtensionBootDependencyNodes() {
         return extensionBootDependencyNodes;
     }
 
-    public PrivateNutsWorkspaceInitInformation setExtensionBootDependencyNodes(NutsBootDependencyNode[] extensionBootDependencyNodes) {
+    public PrivateNutsWorkspaceInitInformation setExtensionBootDependencyNodes(NutsClassLoaderNode[] extensionBootDependencyNodes) {
         this.extensionBootDependencyNodes = extensionBootDependencyNodes;
         return this;
     }

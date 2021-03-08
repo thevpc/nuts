@@ -25,7 +25,6 @@
 */
 package net.thevpc.nuts.runtime.core.model;
 
-import net.thevpc.nuts.NutsDependencies;
 import net.thevpc.nuts.NutsDependency;
 import net.thevpc.nuts.NutsDependencyTreeNode;
 

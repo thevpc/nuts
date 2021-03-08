@@ -16,7 +16,7 @@ public class DefaultNutsLoggerOp implements NutsLoggerOp {
     private NutsLogVerb verb;
     private String msg;
     private long time;
-    private boolean formatted;
+    private boolean formatted=true;
     private Supplier<String> msgSupplier;
     private Throwable error;
     private NutsTextFormatStyle style = NutsTextFormatStyle.JSTYLE;

@@ -12,30 +12,46 @@ import net.thevpc.nuts.runtime.standalone.io.DefaultNutsQuestion;
 import net.thevpc.nuts.spi.NutsInputStreamTransparentAdapter;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
-public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal implements NutsSystemTerminal,NutsSessionAware {
+public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal implements NutsSystemTerminal, NutsSessionAware {
 
     private NutsWorkspace ws;
     private NutsSession session;
 
-
     @Override
     public void setSession(NutsSession session) {
-        setSession(session,false);
+        setSession(session, false);
     }
 
-    public void setSession(NutsSession session,boolean boot) {
-        if(session!=null && this.session!=null){
+    public void setSession(NutsSession session, boolean boot) {
+        if (session != null && this.session != null) {
             //ignore
-        }else {
+        } else {
             this.session = session;
-            this.ws = session==null?null:session.getWorkspace();
+            this.ws = session == null ? null : session.getWorkspace();
         }
-        if(!boot) {
+        if (!boot) {
             NutsSystemTerminalBase parent = getParent();
             NutsWorkspaceUtils.setSession(parent, session);
         }
     }
 
+    @Override
+    public NutsCommandAutoCompleteResolver getAutoCompleteResolver() {
+        NutsSystemTerminalBase p = getParent();
+        if (p != null) {
+            return p.getAutoCompleteResolver();
+        }
+        return null;
+    }
+
+    @Override
+    public NutsSystemTerminalBase setCommandAutoCompleteResolver(NutsCommandAutoCompleteResolver autoCompleteResolver) {
+        NutsSystemTerminalBase p = getParent();
+        if (p != null) {
+            p.setCommandAutoCompleteResolver(autoCompleteResolver);
+        }
+        return this;
+    }
 
     public abstract NutsSystemTerminalBase getParent();
 
@@ -177,7 +193,7 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         if (in == null) {
             return true;
         }
-        if (in == System.in || in==CoreIOUtils.in(ws)) {
+        if (in == System.in || in == CoreIOUtils.in(ws)) {
             return true;
         }
         if (in instanceof NutsInputStreamTransparentAdapter) {
@@ -196,9 +212,32 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         return getParent().readPassword(out, prompt, params);
     }
 
-    public boolean isAutoCompleteSupported(){
+    public boolean isAutoCompleteSupported() {
         return getParent().isAutoCompleteSupported();
     }
 
+    @Override
+    public NutsSystemTerminalBase setCommandHistory(NutsCommandHistory history) {
+        getParent().setCommandHistory(history);
+        return this;
+    }
+
+    @Override
+    public NutsCommandHistory getCommandHistory() {
+        return getParent().getCommandHistory();
+    }
+
+    @Override
+    public NutsCommandReadHighlighter getCommandReadHighlighter() {
+        return getParent().getCommandReadHighlighter();
+    }
+
+    @Override
+    public NutsSystemTerminalBase setCommandReadHighlighter(NutsCommandReadHighlighter commandReadHighlighter) {
+        getParent().setCommandReadHighlighter(commandReadHighlighter);
+        return this;
+    }
+    
+    
 
 }

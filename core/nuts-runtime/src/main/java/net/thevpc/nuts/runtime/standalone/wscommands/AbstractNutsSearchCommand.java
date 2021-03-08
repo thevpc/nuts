@@ -44,8 +44,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCollectionUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderNodeUtils;
 
 /**
  * @author thevpc
@@ -606,9 +608,11 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             allURLs[i] = nutsDefinitions.get(i).getURL();
             allIds[i] = nutsDefinitions.get(i).getId();
         }
-        return ((DefaultNutsWorkspaceExtensionManager) ws.extensions()).getNutsURLClassLoader(
-                "SEARCH-" + UUID.randomUUID().toString(),
-                allURLs, allIds, parent);
+        DefaultNutsClassLoader cl=((DefaultNutsWorkspaceExtensionManager) ws.extensions()).getNutsURLClassLoader("SEARCH-" + UUID.randomUUID().toString(), parent);
+        for (NutsDefinition def : nutsDefinitions) {
+            cl.add(NutsClassLoaderNodeUtils.definitionToClassLoaderNode(def, getValidWorkspaceSession()));
+        }
+        return cl;
     }
 
     /**
@@ -1293,7 +1297,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
                 @Override
                 public boolean hasNext() {
-                    while (base.hasNext()) {
+                     while (base.hasNext()) {
                         NutsId next = base.next();
                         NutsDefinition d = null;
                         if (content) {

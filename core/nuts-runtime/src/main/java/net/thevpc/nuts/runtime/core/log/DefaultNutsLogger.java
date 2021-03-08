@@ -10,7 +10,7 @@ import java.util.logging.*;
 public class DefaultNutsLogger implements NutsLogger {
     private NutsWorkspace workspace;
     private NutsSession session;
-    private boolean defaultFormatted;
+    private boolean defaultFormatted=true;
     private long defaultTime;
     private NutsTextFormatStyle defaultStyle= NutsTextFormatStyle.JSTYLE;
     private Logger log;

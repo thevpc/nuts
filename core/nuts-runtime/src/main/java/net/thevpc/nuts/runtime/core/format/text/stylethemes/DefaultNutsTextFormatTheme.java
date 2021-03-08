@@ -4,33 +4,36 @@ import net.thevpc.nuts.*;
 
 public class DefaultNutsTextFormatTheme implements NutsTextFormatTheme {
 
-    public static final int BLACK=1;
-    public static final int DARK_RED=1;
-    public static final int DARK_GREEN=2;
-    public static final int DARK_YELLOW=3;
-    public static final int DARK_BLUE=4;
-    public static final int DARK_VIOLET=5;
-    public static final int DARK_SKY=6;
-    public static final int LIGHT_GRAY=7;
-    public static final int DARK_GRAY=8;
-    public static final int BRIGHT_RED=9;
-    public static final int BRIGHT_GREEN=10;
-    public static final int BRIGHT_YELLOW=11;
-    public static final int BRIGHT_BLUE=12;
-    public static final int BRIGHT_VIOLET=13;
-    public static final int BRIGHT_SKY=14;
-    public static final int WHITE=15;
+    public static final int BLACK = 1;
+    public static final int DARK_RED = 1;
+    public static final int DARK_GREEN = 2;
+    public static final int DARK_YELLOW = 3;
+    public static final int DARK_BLUE = 4;
+    public static final int DARK_VIOLET = 5;
+    public static final int DARK_SKY = 6;
+    public static final int LIGHT_GRAY = 7;
+    public static final int DARK_GRAY = 8;
+    public static final int BRIGHT_RED = 9;
+    public static final int BRIGHT_GREEN = 10;
+    public static final int BRIGHT_YELLOW = 11;
+    public static final int BRIGHT_BLUE = 12;
+    public static final int BRIGHT_VIOLET = 13;
+    public static final int BRIGHT_SKY = 14;
+    public static final int WHITE = 15;
 
-    private static final int[] FG={BLACK,DARK_BLUE,BRIGHT_BLUE,DARK_SKY,BRIGHT_SKY,DARK_GREEN,BRIGHT_GREEN,DARK_VIOLET,BRIGHT_VIOLET,DARK_YELLOW,BRIGHT_YELLOW,DARK_RED,BRIGHT_RED,DARK_GRAY,LIGHT_GRAY,WHITE};
-    private static final int[] BG={BLACK,DARK_BLUE,BRIGHT_BLUE,DARK_SKY,BRIGHT_SKY,DARK_GREEN,BRIGHT_GREEN,DARK_VIOLET,BRIGHT_VIOLET,DARK_YELLOW,BRIGHT_YELLOW,DARK_RED,BRIGHT_RED,DARK_GRAY,LIGHT_GRAY,WHITE};
-    private static int mod16(int x){
-        return x>=0 ? x%16:-x%16;
+    private static final int[] FG = {BLACK, DARK_BLUE, BRIGHT_BLUE, DARK_SKY, BRIGHT_SKY, DARK_GREEN, BRIGHT_GREEN, DARK_VIOLET, BRIGHT_VIOLET, DARK_YELLOW, BRIGHT_YELLOW, DARK_RED, BRIGHT_RED, DARK_GRAY, LIGHT_GRAY, WHITE};
+    private static final int[] BG = {BLACK, DARK_BLUE, BRIGHT_BLUE, DARK_SKY, BRIGHT_SKY, DARK_GREEN, BRIGHT_GREEN, DARK_VIOLET, BRIGHT_VIOLET, DARK_YELLOW, BRIGHT_YELLOW, DARK_RED, BRIGHT_RED, DARK_GRAY, LIGHT_GRAY, WHITE};
+
+    private static int mod16(int x) {
+        return x >= 0 ? x % 16 : -x % 16;
     }
-    private static int mod4(int x){
-        return x>=0 ? x%4:-x%4;
+
+    private static int mod4(int x) {
+        return x >= 0 ? x % 4 : -x % 4;
     }
-    private static int mod2(int x){
-        return x>=0 ? x%2:-x%2;
+
+    private static int mod2(int x) {
+        return x >= 0 ? x % 2 : -x % 2;
     }
 
     @Override
@@ -43,15 +46,26 @@ public class DefaultNutsTextFormatTheme implements NutsTextFormatTheme {
         this.ws = ws;
     }
 
+    @Override
+    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyles styles) {
+        NutsTextNodeStyles ret = NutsTextNodeStyles.NONE;
+        if (styles != null) {
+            for (NutsTextNodeStyle style : styles) {
+                ret = ret.append(toBasicStyles(style));
+            }
+        }
+        return ret;
+    }
+
     /**
      * this is the default theme!
+     *
      * @param style textNodeStyle
      * @return NutsTextNode
      */
-    @Override
-    public NutsTextNodeStyle[] toBasicStyles(NutsTextNodeStyle style) {
+    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyle style) {
         if (style == null) {
-            return new NutsTextNodeStyle[0];
+            return NutsTextNodeStyles.NONE;
         }
         switch (style.getType()) {
             case FORE_COLOR: //will be called by recursion
@@ -63,62 +77,59 @@ public class DefaultNutsTextFormatTheme implements NutsTextFormatTheme {
             case STRIKED:
             case REVERSED:
             case BOLD:
-            case BLINK:{
-                return new NutsTextNodeStyle[]{style};
+            case BLINK: {
+                return NutsTextNodeStyles.of(style);
             }
-            case PRIMARY:{
+            case PRIMARY: {
 
                 return toBasicStyles(NutsTextNodeStyle.foregroundColor(mapColor(style.getVariant())));
             }
-            case SECONDARY:{
+            case SECONDARY: {
                 return toBasicStyles(NutsTextNodeStyle.backgroundColor(mapColor(style.getVariant())));
             }
-            case TITLE:
-            {
-                return new NutsTextNodeStyle[]{
-                        toBasicStyles(NutsTextNodeStyle.primary(style.getVariant()))[0],
-                        NutsTextNodeStyle.underlined()
-                };
+            case TITLE: {
+                return toBasicStyles(NutsTextNodeStyle.primary(style.getVariant()))
+                        .append(NutsTextNodeStyle.underlined());
             }
-            case KEYWORD:{
+            case KEYWORD: {
                 int x = mod4(style.getVariant());
                 return toBasicStyles(NutsTextNodeStyle.foregroundColor(
-                        x==0?DARK_BLUE
-                        :x==1?DARK_SKY
-                        :x==2?DARK_VIOLET
-                        :BRIGHT_VIOLET
-                        ));
-            }
-
-            case OPTION:{
-                int x = mod4(style.getVariant());
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(
-                        x==0?DARK_SKY
-                                :x==1?66
-                                :x==2?102
-                                :138
+                        x == 0 ? DARK_BLUE
+                                : x == 1 ? DARK_SKY
+                                        : x == 2 ? DARK_VIOLET
+                                                : BRIGHT_VIOLET
                 ));
             }
 
-            case ERROR:{
-                return new NutsTextNodeStyle[]{NutsTextNodeStyle.foregroundColor(DARK_RED)};
-            }
-            case SUCCESS:{
-                return new NutsTextNodeStyle[]{NutsTextNodeStyle.foregroundColor(DARK_GREEN)};
-            }
-            case WARN:{
-                return new NutsTextNodeStyle[]{NutsTextNodeStyle.foregroundColor(DARK_YELLOW)};
-            }
-            case INFO:{
-                return new NutsTextNodeStyle[]{NutsTextNodeStyle.foregroundColor(DARK_SKY)};
+            case OPTION: {
+                int x = mod4(style.getVariant());
+                return toBasicStyles(NutsTextNodeStyle.foregroundColor(
+                        x == 0 ? DARK_SKY
+                                : x == 1 ? 66
+                                        : x == 2 ? 102
+                                                : 138
+                ));
             }
 
-            case CONFIG:{
-                return new NutsTextNodeStyle[]{NutsTextNodeStyle.foregroundColor(DARK_VIOLET)};
+            case ERROR: {
+                return NutsTextNodeStyles.of(NutsTextNodeStyle.foregroundColor(DARK_RED));
+            }
+            case SUCCESS: {
+                return NutsTextNodeStyles.of(NutsTextNodeStyle.foregroundColor(DARK_GREEN));
+            }
+            case WARN: {
+                return NutsTextNodeStyles.of(NutsTextNodeStyle.foregroundColor(DARK_YELLOW));
+            }
+            case INFO: {
+                return NutsTextNodeStyles.of(NutsTextNodeStyle.foregroundColor(DARK_SKY));
+            }
+
+            case CONFIG: {
+                return NutsTextNodeStyles.of(NutsTextNodeStyle.foregroundColor(DARK_VIOLET));
             }
             case DATE:
             case NUMBER:
-            case BOOLEAN:{
+            case BOOLEAN: {
                 return toBasicStyles(NutsTextNodeStyle.foregroundColor(DARK_VIOLET));
             }
 
@@ -126,11 +137,11 @@ public class DefaultNutsTextFormatTheme implements NutsTextFormatTheme {
                 return toBasicStyles(NutsTextNodeStyle.foregroundColor(DARK_GREEN));
             }
 
-            case COMMENTS:{
+            case COMMENTS: {
                 return toBasicStyles(NutsTextNodeStyle.foregroundColor(DARK_GRAY));
             }
 
-            case SEPARATOR:{
+            case SEPARATOR: {
                 return toBasicStyles(NutsTextNodeStyle.foregroundColor(208));
             }
 
@@ -162,7 +173,7 @@ public class DefaultNutsTextFormatTheme implements NutsTextFormatTheme {
                 return toBasicStyles(NutsTextNodeStyle.foregroundColor(220));
             }
 
-            case PATH:{
+            case PATH: {
                 return toBasicStyles(NutsTextNodeStyle.foregroundColor(114));
             }
         }
@@ -170,13 +181,13 @@ public class DefaultNutsTextFormatTheme implements NutsTextFormatTheme {
     }
 
     private int mapColor(int v) {
-        if(v==0){
-            v=1; //ignore 0
+        if (v == 0) {
+            v = 1; //ignore 0
         }
-        if(v<0){
-            v=-v;
+        if (v < 0) {
+            v = -v;
         }
-        if(v<16){
+        if (v < 16) {
             return FG[v];
         }
 //        int z1=(v-16)/32;

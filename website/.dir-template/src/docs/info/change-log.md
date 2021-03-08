@@ -11,6 +11,8 @@ Starred releases are most stable ones.
 ### nuts 0.8.1.0
 - ```2020/11/22 	nuts 0.8.1.0 (*)``` released [download nuts-0.8.1.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar)
 - WARNING: API has evolved with some incompatibilities with previous versions  
+- ADDED  : [api][cmdline] added support for History and implemented in JLine extension
+- ADDED  : [api][cmdline] added support for readline syntax coloring (using jline)
 - ADDED  : [api][cmdline] added --locale option to support multi languages. The option is reflected to Session as well 
 - ADDED  : [api][cmdline] added ---<key>=<value> options to support extra properties 
 - ADDED  : [api][cmdline] added -S short option, equivalent to --standalone 

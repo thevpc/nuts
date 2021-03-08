@@ -85,7 +85,7 @@ public interface NutsCommandLineManager {
     NutsArgumentName createName(String type, String label);
 
     /**
-     * create argument candidate
+     * create argument candidate builder
      * @param value candidate value
      * @return argument candidate
      */
@@ -95,5 +95,7 @@ public interface NutsCommandLineManager {
 
 
     NutsArgumentCandidateBuilder createCandidate();
+    
+    NutsCommandHistoryBuilder createHistory();
 
 }

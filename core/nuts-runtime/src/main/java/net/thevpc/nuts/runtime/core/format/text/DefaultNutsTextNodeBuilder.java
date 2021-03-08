@@ -89,9 +89,14 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
     }
 
     @Override
-    public NutsTextNodeBuilder append(Object text, NutsTextNodeStyle... styles) {
+    public NutsTextNodeBuilder append(Object text, NutsTextNodeStyle style) {
+        return append(text,NutsTextNodeStyles.of(style));
+    }
+    
+    @Override
+    public NutsTextNodeBuilder append(Object text, NutsTextNodeStyles styles) {
         if (text != null) {
-            if (styles.length == 0) {
+            if (styles.size() == 0) {
                 all.add(ws.formats().text().nodeFor(text));
             } else {
                 all.add(text1.text().styled(ws.formats().text().nodeFor(text), styles));

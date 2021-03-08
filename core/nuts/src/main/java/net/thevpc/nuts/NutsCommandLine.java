@@ -209,6 +209,22 @@ public interface NutsCommandLine extends Iterable<NutsArgument>,NutsFormattable{
      * @param errorMessage message to throw
      * @return {@code this} instance
      */
+    public NutsCommandLine unexpectedArgument(NutsString errorMessage) ;
+
+    /**
+     * throw exception if command line is not empty
+     *
+     * @param errorMessage message to throw
+     * @return {@code this} instance
+     */
+    public NutsCommandLine unexpectedArgument(NutsMessage errorMessage) ;
+    
+    /**
+     * throw exception if command line is not empty
+     *
+     * @param errorMessage message to throw
+     * @return {@code this} instance
+     */
     NutsCommandLine unexpectedArgument(String errorMessage);
 
     /**
@@ -232,6 +248,24 @@ public interface NutsCommandLine extends Iterable<NutsArgument>,NutsFormattable{
      * @return {@code this} instance
      */
     NutsCommandLine required(String errorMessage);
+
+
+    /**
+     * throw exception if command line is empty
+     *
+     * @param errorMessage message to throw
+     * @return {@code this} instance
+     */
+    NutsCommandLine required(NutsString errorMessage);
+
+
+    /**
+     * throw exception if command line is empty
+     *
+     * @param errorMessage message to throw
+     * @return {@code this} instance
+     */
+    NutsCommandLine required(NutsMessage errorMessage);
 
     /**
      * push back argument so that it will be first to be retrieved (using next
@@ -471,6 +505,10 @@ public interface NutsCommandLine extends Iterable<NutsArgument>,NutsFormattable{
      */
     NutsCommandLine setArguments(String[] arguments);
 
+    /**
+     * throw a new command line error
+     * @param message message
+     */
     void throwError(String message);
 
     /**
@@ -479,5 +517,17 @@ public interface NutsCommandLine extends Iterable<NutsArgument>,NutsFormattable{
      * @param processor processor 
      */
     void process(NutsCommandLineConfigurable defaultConfigurable, NutsCommandLineProcessor processor);
+
+    /**
+     * throw a new command line error
+     * @param message message
+     */
+    void throwError(NutsString message);
+    
+    /**
+     * throw a new command line error
+     * @param message formatted message
+     */
+    void throwError(NutsMessage message);
 
 }

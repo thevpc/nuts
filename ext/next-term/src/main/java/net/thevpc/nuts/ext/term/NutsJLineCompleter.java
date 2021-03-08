@@ -1,46 +1,43 @@
 package net.thevpc.nuts.ext.term;
 
 import net.thevpc.nuts.NutsArgumentCandidate;
-import net.thevpc.nuts.NutsCommandAutoCompleteProcessor;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.jshell.JShellAutoCompleteCandidate;
-import net.thevpc.common.strings.StringUtils;
 import org.jline.reader.Candidate;
 import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
 import org.jline.reader.ParsedLine;
 
 import java.util.List;
+import net.thevpc.nuts.NutsCommandAutoCompleteResolver;
 
 class NutsJLineCompleter implements Completer {
 
     private final NutsWorkspace workspace;
     private final NutsJLineTerminal nutsJLineTerminal;
 
-    public NutsJLineCompleter(NutsWorkspace workspace,NutsJLineTerminal nutsJLineTerminal) {
+    public NutsJLineCompleter(NutsWorkspace workspace, NutsJLineTerminal nutsJLineTerminal) {
         this.workspace = workspace;
         this.nutsJLineTerminal = nutsJLineTerminal;
     }
 
     @Override
     public void complete(LineReader reader, final ParsedLine line, List<Candidate> candidates) {
-        NutsCommandAutoCompleteProcessor autoCompleteResolver = nutsJLineTerminal.getAutoCompleteResolver();
+        NutsCommandAutoCompleteResolver autoCompleteResolver = nutsJLineTerminal.getAutoCompleteResolver();
         if (autoCompleteResolver != null) {
 
             NutsCommandLine commandline = workspace.commandLine().create(line.words());
-            if(line.words().size()>0){
+            if (line.words().size() > 0) {
                 commandline.setCommandName(line.words().get(0));
             }
-            List<NutsArgumentCandidate> nutsArgumentCandidates = autoCompleteResolver.resolveCandidates(commandline, line.wordIndex(),workspace);
-            if(nutsArgumentCandidates!=null) {
-                for (Object cmdCandidate0 : nutsArgumentCandidates) {
-                    JShellAutoCompleteCandidate cmdCandidate = (JShellAutoCompleteCandidate) cmdCandidate0;
+            List<NutsArgumentCandidate> nutsArgumentCandidates = autoCompleteResolver.resolveCandidates(commandline, line.wordIndex(), workspace.createSession());
+            if (nutsArgumentCandidates != null) {
+                for (NutsArgumentCandidate cmdCandidate : nutsArgumentCandidates) {
                     if (cmdCandidate != null) {
                         String value = cmdCandidate.getValue();
-                        if (!StringUtils.isBlank(value)) {
+                        if (value != null && value.length() > 0) {
                             String display = cmdCandidate.getDisplay();
-                            if (StringUtils.isBlank(display)) {
+                            if (display == null || display.length() == 0) {
                                 display = value;
                             }
                             candidates.add(new Candidate(

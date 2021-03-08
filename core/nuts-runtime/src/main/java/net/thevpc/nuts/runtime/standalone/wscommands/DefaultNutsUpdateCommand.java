@@ -331,7 +331,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                         out.printf("%s  : %s => %s%n",
                                 factory.styled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextNodeStyle.primary(6)),
                                 CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
-                                factory.styled(update.getAvailable().getId().getVersion().toString()), NutsTextNodeStyle.primary(4));
+                                factory.plain(update.getAvailable().getId().getVersion().toString()), NutsTextNodeStyle.primary(4));
                     } else if (update.isUpdateStatusAvailable()) {
                         out.printf("%s  : %s => %s%n",
                                 factory.styled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextNodeStyle.primary(6)),

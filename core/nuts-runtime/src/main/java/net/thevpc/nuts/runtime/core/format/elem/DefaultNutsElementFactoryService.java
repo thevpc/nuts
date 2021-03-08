@@ -26,7 +26,6 @@
 package net.thevpc.nuts.runtime.core.format.elem;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.format.json.NutsElementFactoryJsonElement;
 import net.thevpc.nuts.runtime.core.format.xml.NutsElementFactoryXmlDocument;
 import net.thevpc.nuts.runtime.core.format.xml.NutsElementFactoryXmlElement;
 import com.google.gson.JsonElement;
@@ -60,7 +59,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static final NutsElementFactory F_XML_DOCUMENT = new NutsElementFactoryXmlDocument();
     private static final NutsElementFactory F_NUTS_DEF = new NutsElementFactoryNutsDefinition();
     private static final NutsElementFactory F_NUTS_ID = new NutsElementFactoryNutsId();
-    public static final NutsElementFactory F_JSONELEMENT = new NutsElementFactoryJsonElement();
+//    public static final NutsElementFactory F_JSONELEMENT = new NutsElementFactoryJsonElement();
 
     private final ClassMap<NutsElementFactory> factories = new ClassMap<>(null, NutsElementFactory.class);
     private final NutsWorkspace ws;
@@ -75,7 +74,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         addHierarchyFactory(java.time.Instant.class, F_INSTANT);
         addHierarchyFactory(Enum.class, F_ENUMS);
 
-        addHierarchyFactory(JsonElement.class, F_JSONELEMENT);
+//        addHierarchyFactory(JsonElement.class, F_JSONELEMENT);
         addHierarchyFactory(org.w3c.dom.Element.class, F_XML_ELEMENT);
         addHierarchyFactory(org.w3c.dom.Document.class, F_XML_DOCUMENT);
         addHierarchyFactory(NutsDefinition.class, F_NUTS_DEF);
@@ -116,7 +115,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             }
         }
         DefaultNutsElementFormat json = (DefaultNutsElementFormat) ws.formats().element().setContentType(NutsContentType.JSON);
-        return create(json.convert(o, JsonElement.class), context);
+//        return create(json.convert(o, JsonElement.class), context);
+        return json.convert(o, NutsElement.class);
         // new DefaultNutsPrimitiveElement(NutsElementType.UNKNWON, o)
     }
 

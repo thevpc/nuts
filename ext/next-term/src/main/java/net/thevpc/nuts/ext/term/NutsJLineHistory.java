@@ -1,94 +1,79 @@
 package net.thevpc.nuts.ext.term;
 
-import net.thevpc.nuts.NutsMapListener;
-import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.nuts.NutsWorkspace;
 import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.utils.Log;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
-import java.util.function.Consumer;
+import net.thevpc.nuts.NutsCommandHistory;
+import net.thevpc.nuts.NutsCommandHistoryEntry;
 
-import static org.jline.reader.LineReader.HISTORY_IGNORE;
-import static org.jline.reader.impl.ReaderUtils.*;
-import net.thevpc.jshell.JShellHistory;
-
+//import net.thevpc.jshell.JShellHistory;
 class NutsJLineHistory implements History {
 
     private NutsWorkspace ws;
-    private JShellHistory shellHistory;
+//    private JShellHistory shellHistory;
     public static final int DEFAULT_HISTORY_SIZE = 500;
     public static final int DEFAULT_HISTORY_FILE_SIZE = 10000;
 
-    private final LinkedList<Entry> items = new LinkedList<>();
-
+    private NutsJLineTerminal terminal;
+    private NutsJLineCommandHistory defaultHistory;
+    private int index = 0;
     private LineReader reader;
 
-    private int lastLoaded = 0;
-    private int nbEntriesInFile = 0;
-    private int offset = 0;
-    private int index = 0;
-
-    public NutsJLineHistory(LineReader reader, NutsWorkspace workspace) {
-        attach(reader);
+    public NutsJLineHistory(LineReader reader, NutsWorkspace workspace, NutsJLineTerminal terminal) {
         this.ws = workspace;
-        workspace.events().addUserPropertyListener(new NutsMapListener<String, Object>() {
-
-            @Override
-            public void entryAdded(String name, Object value) {
-                if (JShellHistory.class.getName().equals(name)) {
-                    setShellHistory((JShellHistory) value);
-                }
-            }
-
-            @Override
-            public void entryRemoved(String name, Object value) {
-                if (JShellHistory.class.getName().equals(name)) {
-                    setShellHistory(null);
-                }
-            }
-
-            @Override
-            public void entryUpdated(String key, Object newValue, Object oldValue) {
-                if (JShellHistory.class.getName().equals(newValue)) {
-                    setShellHistory((JShellHistory) newValue);
-                }
-            }
-        });
-        setShellHistory((JShellHistory) workspace.env().getProperty(JShellHistory.class.getName()));
+        this.terminal = terminal;
+        defaultHistory = new NutsJLineCommandHistory(workspace);
+        attach(reader);
+//        workspace.events().addUserPropertyListener(new NutsMapListener<String, Object>() {
+//
+//            @Override
+//            public void entryAdded(String name, Object value) {
+////                if (JShellHistory.class.getName().equals(name)) {
+////                    setShellHistory((JShellHistory) value);
+////                }
+//            }
+//
+//            @Override
+//            public void entryRemoved(String name, Object value) {
+////                if (JShellHistory.class.getName().equals(name)) {
+////                    setShellHistory(null);
+////                }
+//            }
+//
+//            @Override
+//            public void entryUpdated(String key, Object newValue, Object oldValue) {
+////                if (JShellHistory.class.getName().equals(newValue)) {
+////                    setShellHistory((JShellHistory) newValue);
+////                }
+//            }
+//        });
+//        setShellHistory((JShellHistory) workspace.env().getProperty(JShellHistory.class.getName()));
     }
 
-    private void setShellHistory(JShellHistory shellHistory) {
-        this.shellHistory = shellHistory;
-        offset = 0;
-        index = 0;
-        items.clear();
-    }
-
-    private Path getPath() {
-        Object obj = reader != null ? reader.getVariables().get(LineReader.HISTORY_FILE) : null;
-        if (obj instanceof Path) {
-            return (Path) obj;
-        } else if (obj instanceof File) {
-            return ((File) obj).toPath();
-        } else if (obj != null) {
-            return Paths.get(obj.toString());
-        } else {
-            return null;
+    @Override
+    public void add(Instant time, String line) {
+        NutsCommandHistory h = getNutsCommandHistory();
+        if (h.size() > 0) {
+            NutsCommandHistoryEntry last = h.getEntry(h.size() - 1);
+            if(last!=null && last.getLine().equals(line)){
+                //remove duplicates by default!
+                return;
+            }
         }
+        h.add(time, line);
     }
 
     @Override
     public void attach(LineReader reader) {
         if (this.reader != reader) {
             this.reader = reader;
+            defaultHistory.setReader(reader);
             try {
                 load();
             } catch (IOException e) {
@@ -97,319 +82,129 @@ class NutsJLineHistory implements History {
         }
     }
 
+    private NutsCommandHistory getNutsCommandHistory() {
+        if (terminal.getCommandHistory() != null) {
+            return terminal.getCommandHistory();
+        }
+        return defaultHistory;
+    }
+
     @Override
     public void load() throws IOException {
-        if (shellHistory != null) {
-            shellHistory.load();
-            maybeResize();
-        } else {
-            Path path = getPath();
-            if (path != null) {
-                try {
-                    if (Files.exists(path)) {
-                        Log.trace("Loading history from: ", path);
-                        try (BufferedReader reader = Files.newBufferedReader(path)) {
-                            internalClear();
-                            reader.lines().forEach(new Consumer<String>() {
-                                @Override
-                                public void accept(String l) {
-                                    int idx = l.indexOf(':');
-                                    if (idx < 0) {
-                                        throw new NutsExecutionException(ws, "Bad history file syntax! "
-                                                + "The history file `" + path + "` may be an older history: "
-                                                + "please remove it or use a different history file.", 2);
-                                    }
-                                    Instant time = Instant.ofEpochMilli(Long.parseLong(l.substring(0, idx)));
-                                    String line = unescape(l.substring(idx + 1));
-                                    NutsJLineHistory.this.internalAdd(time, line);
-                                }
-                            });
-                            lastLoaded = items.size();
-                            nbEntriesInFile = lastLoaded;
-                            maybeResize();
-                        }
-                    }
-                } catch (IOException e) {
-                    Log.debug("failed to load history; clearing", e);
-                    internalClear();
-                    throw e;
-                }
-            }
-        }
+        getNutsCommandHistory().load();
     }
 
     @Override
     public void purge() throws IOException {
-        if (shellHistory != null) {
-            shellHistory.clear();
-        } else {
-            internalClear();
-            Path path = getPath();
-            if (path != null) {
-                Log.trace("Purging history from: ", path);
-                Files.deleteIfExists(path);
-            }
-        }
+//        if (shellHistory != null) {
+//            shellHistory.clear();
+//        } else {
+        getNutsCommandHistory().purge();
+//        }
     }
 
     @Override
     public void save() throws IOException {
-        if (shellHistory != null) {
-            shellHistory.save();
-        } else {
-            Path path = getPath();
-            if (path != null) {
-                Log.trace("Saving history to: ", path);
-                Files.createDirectories(path.toAbsolutePath().getParent());
-                // Append new items to the history file
-                try (BufferedWriter writer = Files.newBufferedWriter(path.toAbsolutePath(),
-                        StandardOpenOption.WRITE, StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
-                    for (Entry entry : items.subList(lastLoaded, items.size())) {
-                        writer.append(format(entry));
-                    }
-                }
-                nbEntriesInFile += items.size() - lastLoaded;
-                // If we are over 25% max size, trim history file
-                int max = getInt(reader, LineReader.HISTORY_FILE_SIZE, DEFAULT_HISTORY_FILE_SIZE);
-                if (nbEntriesInFile > max + max / 4) {
-                    trimHistory(path, max);
-                }
-            }
-            lastLoaded = items.size();
-        }
-    }
-
-    protected void trimHistory(Path path, int max) throws IOException {
-        Log.trace("Trimming history path: ", path);
-        // Load all history entries
-        LinkedList<Entry> allItems = new LinkedList<>();
-        try (BufferedReader reader = Files.newBufferedReader(path)) {
-            reader.lines().forEach(l -> {
-                int idx = l.indexOf(':');
-                Instant time = Instant.ofEpochMilli(Long.parseLong(l.substring(0, idx)));
-                String line = unescape(l.substring(idx + 1));
-                allItems.add(new EntryImpl(allItems.size(), time, line));
-            });
-        }
-        // Remove duplicates
-        doTrimHistory(allItems, max);
-        // Write history
-        Path temp = Files.createTempFile(path.toAbsolutePath().getParent(), path.getFileName().toString(), ".tmp");
-        try (BufferedWriter writer = Files.newBufferedWriter(temp, StandardOpenOption.WRITE)) {
-            for (Entry entry : allItems) {
-                writer.append(format(entry));
-            }
-        }
-        Files.move(temp, path, StandardCopyOption.REPLACE_EXISTING);
-        // Keep items in memory
-        internalClear();
-        offset = allItems.get(0).index();
-        items.addAll(allItems);
-        lastLoaded = items.size();
-        nbEntriesInFile = items.size();
-        maybeResize();
-    }
-
-    private void internalClear() {
-        offset = 0;
-        index = 0;
-        lastLoaded = 0;
-        nbEntriesInFile = 0;
-        items.clear();
-    }
-
-    static void doTrimHistory(List<Entry> allItems, int max) {
-        int idx = 0;
-        while (idx < allItems.size()) {
-            int ridx = allItems.size() - idx - 1;
-            String line = allItems.get(ridx).line().trim();
-            ListIterator<Entry> iterator = allItems.listIterator(ridx);
-            while (iterator.hasPrevious()) {
-                String l = iterator.previous().line();
-                if (line.equals(l.trim())) {
-                    iterator.remove();
-                }
-            }
-            idx++;
-        }
-        while (allItems.size() > max) {
-            allItems.remove(0);
-        }
+        getNutsCommandHistory().save();
     }
 
     public int size() {
-        if (shellHistory != null) {
-            return shellHistory.size();
-        } else {
-            return items.size();
-        }
+        return getNutsCommandHistory().size();
     }
 
     public boolean isEmpty() {
-        if (shellHistory != null) {
-            return shellHistory.isEmpty();
-        } else {
-            return items.isEmpty();
-        }
+        return size() == 0;
     }
 
     public int index() {
-        return offset + index;
+        return index;
     }
 
     public int first() {
-        return offset;
+        return 0;
     }
 
     public int last() {
-        return offset + size() - 1;
-    }
-
-    private String format(Entry entry) {
-        return Long.toString(entry.time().toEpochMilli()) + ":" + escape(entry.line()) + "\n";
+        return size() - 1;
     }
 
     public String getLast() {
-        if (shellHistory != null) {
-            return shellHistory.getLast();
-        } else {
-            return items.getLast().line();
-        }
-    }
-
-    public String get(final int index) {
-        if (shellHistory != null) {
-            return shellHistory.get(index - offset);
-        } else {
-            return items.get(index - offset).line();
-        }
+        return get(last());
     }
 
     @Override
-    public void add(Instant time, String line) {
-        Objects.requireNonNull(time);
-        Objects.requireNonNull(line);
-
-        if (getBoolean(reader, LineReader.DISABLE_HISTORY, false)) {
-            return;
-        }
-        if (isSet(reader, LineReader.Option.HISTORY_IGNORE_SPACE) && line.startsWith(" ")) {
-            return;
-        }
-        if (isSet(reader, LineReader.Option.HISTORY_REDUCE_BLANKS)) {
-            line = line.trim();
-        }
-        if (isSet(reader, LineReader.Option.HISTORY_IGNORE_DUPS)) {
-            if (!isEmpty() && line.equals(getLast())) {
-                return;
-            }
-        }
-        if (matchPatterns(getString(reader, HISTORY_IGNORE, ""), line)) {
-            return;
-        }
-        internalAdd(time, line);
-        if (isSet(reader, LineReader.Option.HISTORY_INCREMENTAL)) {
-            try {
-                save();
-            } catch (IOException e) {
-                Log.warn("failed to save history", e);
-            }
-        }
-    }
-
-    protected boolean matchPatterns(String patterns, String line) {
-        if (patterns == null || patterns.isEmpty()) {
-            return false;
-        }
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < patterns.length(); i++) {
-            char ch = patterns.charAt(i);
-            if (ch == '\\') {
-                ch = patterns.charAt(++i);
-                sb.append(ch);
-            } else if (ch == ':') {
-                sb.append('|');
-            } else if (ch == '*') {
-                sb.append('.').append('*');
-            }
-        }
-        return line.matches(sb.toString());
-    }
-
-    protected void internalAdd(Instant time, String line) {
-        if (shellHistory != null) {
-            shellHistory.add(line);
-            maybeResize();
+    public String get(int index) {
+        NutsCommandHistory h = getNutsCommandHistory();
+        if (index < h.size()) {
+            return h.getEntry(index).getLine();
         } else {
-            Entry entry = new EntryImpl(offset + items.size(), time, line);
-            items.add(entry);
-            maybeResize();
-        }
-    }
-
-    private void maybeResize() {
-        if (shellHistory != null) {
-            while (size() > getInt(reader, LineReader.HISTORY_SIZE, DEFAULT_HISTORY_SIZE)) {
-                shellHistory.remove(0);
-                //lastLoaded--;
-                //offset++;
+            if (h.size() > 0) {
+                index = h.size() - 1;
+                return h.getEntry(index).getLine();
             }
-            index = size();
-        } else {
-            while (size() > getInt(reader, LineReader.HISTORY_SIZE, DEFAULT_HISTORY_SIZE)) {
-                items.removeFirst();
-                lastLoaded--;
-                offset++;
-            }
-            index = size();
+            return "";
         }
     }
 
     public ListIterator<Entry> iterator(int index) {
-        if (shellHistory != null) {
-            List<Entry> r = new ArrayList<>();
-            List<String> elements = shellHistory.getElements();
-            for (int i = 0; i < elements.size(); i++) {
-                r.add(new EntryImpl(
-                        i,
-                        Instant.now(),
-                        elements.get(i)
-                ));
+        ListIterator<NutsCommandHistoryEntry> li = getNutsCommandHistory().iterator(index);
+        return new ListIterator<Entry>() {
+            @Override
+            public boolean hasNext() {
+                return li.hasNext();
             }
-            return r.listIterator(index);
-        } else {
-            return items.listIterator(index - offset);
-        }
-    }
 
-    static class EntryImpl implements Entry {
+            private Entry mapTo(NutsCommandHistoryEntry h) {
+                if (h == null) {
+                    return null;
+                }
+                if (h instanceof Entry) {
+                    return (Entry) h;
+                } else {
+                    return new NutsJLineCommandHistoryEntry(h.getIndex(), h.getTime(), h.getLine());
+                }
+            }
 
-        private final int index;
-        private final Instant time;
-        private final String line;
+            @Override
+            public Entry next() {
+                return mapTo(li.next());
+            }
 
-        public EntryImpl(int index, Instant time, String line) {
-            this.index = index;
-            this.time = time;
-            this.line = line;
-        }
+            @Override
+            public boolean hasPrevious() {
+                return li.hasPrevious();
+            }
 
-        public int index() {
-            return index;
-        }
+            @Override
+            public Entry previous() {
+                return mapTo(li.previous());
+            }
 
-        public Instant time() {
-            return time;
-        }
+            @Override
+            public int nextIndex() {
+                return li.nextIndex();
+            }
 
-        public String line() {
-            return line;
-        }
+            @Override
+            public int previousIndex() {
+                return li.previousIndex();
+            }
 
-        @Override
-        public String toString() {
-            return String.format("%d: %s", index, line);
-        }
+            @Override
+            public void remove() {
+                li.remove();
+            }
+
+            @Override
+            public void set(Entry e) {
+                li.set(new NutsJLineCommandHistoryEntry(e.index(), e.time(), e.line()));
+            }
+
+            @Override
+            public void add(Entry e) {
+                li.add(new NutsJLineCommandHistoryEntry(e.index(), e.time(), e.line()));
+            }
+        };
     }
 
     //
@@ -422,6 +217,7 @@ class NutsJLineHistory implements History {
      * @return Returns false if there were no history iterator or the history
      * index was already at the last entry.
      */
+    @Override
     public boolean moveToLast() {
         int lastEntry = size() - 1;
         if (lastEntry >= 0 && lastEntry != index) {
@@ -436,7 +232,6 @@ class NutsJLineHistory implements History {
      * Move to the specified index in the history
      */
     public boolean moveTo(int index) {
-        index -= offset;
         if (index >= 0 && index < size()) {
             this.index = index;
             return true;
@@ -515,46 +310,26 @@ class NutsJLineHistory implements History {
         return sb.toString();
     }
 
-    private static String escape(String s) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < s.length(); i++) {
-            char ch = s.charAt(i);
-            switch (ch) {
-                case '\n':
-                    sb.append('\\');
-                    sb.append('n');
-                    break;
-                case '\\':
-                    sb.append('\\');
-                    sb.append('\\');
-                    break;
-                default:
-                    sb.append(ch);
-                    break;
-            }
-        }
-        return sb.toString();
+    @Override
+    public void write(Path path, boolean bln) throws IOException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    static String unescape(String s) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < s.length(); i++) {
-            char ch = s.charAt(i);
-            switch (ch) {
-                case '\\':
-                    ch = s.charAt(++i);
-                    if (ch == 'n') {
-                        sb.append('\n');
-                    } else {
-                        sb.append(ch);
-                    }
-                    break;
-                default:
-                    sb.append(ch);
-                    break;
-            }
-        }
-        return sb.toString();
+    @Override
+    public void append(Path path, boolean bln) throws IOException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void read(Path path, boolean bln) throws IOException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void resetIndex() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
 
 }

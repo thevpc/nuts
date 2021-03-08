@@ -49,7 +49,7 @@ public class Nsh extends NutsApplication {
 //                        .setPriority(1)
 //                        .setParameters(parameters)
 //        );
-        applicationContext.getWorkspace().io().term().enableRichTerm(session);
+//        applicationContext.getWorkspace().io().term().enableRichTerm(session);
 
         NutsJavaShell c = new NutsJavaShell(applicationContext,null);
         JShellBuiltin[] commands = c.getRootContext().builtins().getAll();
@@ -146,9 +146,9 @@ public class Nsh extends NutsApplication {
         NshOptionsParser options = new NshOptionsParser(applicationContext);
         JShellOptions o = options.parse(applicationContext.getCommandLine().toStringArray());
 
-        if (o.isEffectiveInteractive()) {
-            applicationContext.getWorkspace().io().term().enableRichTerm(applicationContext.getSession());
-        }
+//        if (o.isEffectiveInteractive()) {
+//            applicationContext.getWorkspace().io().term().enableRichTerm(applicationContext.getSession());
+//        }
         new NutsJavaShell(applicationContext,
                 null/*inherit args from applicationContext*/
         ).run();

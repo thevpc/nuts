@@ -6,6 +6,7 @@ import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.thevpc.nuts.NutsTextNodeStyles;
 
 public class StyledParserStepCommandParser {
 
@@ -24,7 +25,7 @@ public class StyledParserStepCommandParser {
                 ;
     }
 
-    public NutsTextNodeStyle[] parse(String atStr){
+    public NutsTextNodeStyles parse(String atStr){
         StringReaderExt r = new StringReaderExt(atStr.toString());
         List<NutsTextNodeStyle> parsedStyles=new ArrayList<>();
         if(r.hasNext() && r.peekChar()==':'){
@@ -44,7 +45,7 @@ public class StyledParserStepCommandParser {
         }else{
             return null;
         }
-        return parsedStyles.toArray(new NutsTextNodeStyle[0]);
+        return NutsTextNodeStyles.NONE.append(parsedStyles.toArray(new NutsTextNodeStyle[0]));
     }
 
     private boolean isHexaChar(char c) {

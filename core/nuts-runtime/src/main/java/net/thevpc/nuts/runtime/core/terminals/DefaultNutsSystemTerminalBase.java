@@ -30,37 +30,37 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
     public DefaultNutsSystemTerminalBase() {
 
     }
-    public DefaultNutsSystemTerminalBase(boolean bootSession) {
-        this.bootSession=bootSession;
-    }
 
+    public DefaultNutsSystemTerminalBase(boolean bootSession) {
+        this.bootSession = bootSession;
+    }
 
     @Override
     public void setSession(NutsSession session) {
-        setSession(session,bootSession,session.getWorkspace().config().options());
+        setSession(session, bootSession, session.getWorkspace().config().options());
     }
 
-    public void setSession(NutsSession session,boolean bootSession,NutsWorkspaceOptions options) {
-        this.session=session;
-        this.workspace=session==null?null:session.getWorkspace();
-        if(workspace!=null) {
+    public void setSession(NutsSession session, boolean bootSession, NutsWorkspaceOptions options) {
+        this.session = session;
+        this.workspace = session == null ? null : session.getWorkspace();
+        if (workspace != null) {
             LOG = ((DefaultNutsWorkspace) workspace).LOG;
 //        LOG=workspace.log().of(DefaultNutsSystemTerminalBase.class);
             NutsTerminalMode terminalMode = options.getTerminalMode();
             if (terminalMode == null) {
-                if(options.isBot()){
+                if (options.isBot()) {
                     terminalMode = NutsTerminalMode.FILTERED;
-                }else{
+                } else {
                     terminalMode = NutsTerminalMode.FORMATTED;
                 }
             }
-            if(bootSession) {
+            if (bootSession) {
                 this.outMode = terminalMode;
                 this.errMode = terminalMode;
-                this.out=CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(System.out, terminalMode, workspace), session);
-                this.err=CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(System.err, terminalMode, workspace), session);
+                this.out = CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(System.out, terminalMode, workspace), session);
+                this.err = CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(System.err, terminalMode, workspace), session);
                 this.in = System.in;
-            }else{
+            } else {
                 setOutMode(terminalMode);
                 setErrMode(terminalMode);
                 NutsIOManager ioManager = workspace.io();
@@ -69,7 +69,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
                 this.in = CoreIOUtils.in(workspace);
             }
             this.scanner = new Scanner(this.in);
-        }else{
+        } else {
             //on uninstall do nothing
         }
     }
@@ -84,12 +84,12 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
         if (mode == null) {
             mode = NutsTerminalMode.FORMATTED;
         }
-        if(LOG!=null) {
-            LOG.with().session(session).level(Level.CONFIG).verb( NutsLogVerb.UPDATE).formatted().log("change terminal Out mode : {0}",
-                    workspace.formats().text().styled(mode.id(),NutsTextNodeStyle.primary(1))
+        if (LOG != null) {
+            LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Out mode : {0}",
+                    workspace.formats().text().styled(mode.id(), NutsTextNodeStyle.primary(1))
             );
         }
-        FPrint.installStdOut(this.outMode = mode,this.workspace);
+        FPrint.installStdOut(this.outMode = mode, this.workspace);
         return this;
     }
 
@@ -98,12 +98,12 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
         if (mode == null) {
             mode = NutsTerminalMode.FORMATTED;
         }
-        if(LOG!=null) {
-            LOG.with().session(session).level(Level.CONFIG).verb( NutsLogVerb.UPDATE).formatted().log("change terminal Err mode : {0}",
-                    workspace.formats().text().styled(mode.id(),NutsTextNodeStyle.primary(1))
+        if (LOG != null) {
+            LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Err mode : {0}",
+                    workspace.formats().text().styled(mode.id(), NutsTextNodeStyle.primary(1))
             );
         }
-        FPrint.installStdErr(this.errMode = mode,this.workspace);
+        FPrint.installStdErr(this.errMode = mode, this.workspace);
         return this;
     }
 
@@ -171,5 +171,41 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
     public NutsTerminalBase getParent() {
         return null;
     }
+
+    @Override
+    public NutsCommandAutoCompleteResolver getAutoCompleteResolver() {
+        return null;
+    }
+
+    @Override
+    public boolean isAutoCompleteSupported() {
+        return false;
+    }
+
+    @Override
+    public NutsSystemTerminalBase setCommandAutoCompleteResolver(NutsCommandAutoCompleteResolver autoCompleteResolver) {
+        return this;
+    }
+
+    @Override
+    public NutsSystemTerminalBase setCommandHistory(NutsCommandHistory history) {
+        return this;
+    }
+
+    @Override
+    public NutsCommandHistory getCommandHistory() {
+        return null;
+    }
+
+    @Override
+    public NutsCommandReadHighlighter getCommandReadHighlighter() {
+        return null;
+    }
+
+    @Override
+    public NutsSystemTerminalBase setCommandReadHighlighter(NutsCommandReadHighlighter commandReadHighlighter) {
+        return this;
+    }
+    
 
 }

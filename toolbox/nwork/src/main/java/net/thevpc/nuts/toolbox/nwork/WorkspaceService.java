@@ -387,7 +387,7 @@ public class WorkspaceService {
                         status += " ";
                         len++;
                     }
-                    switch (tf.text().styled(p2.status).filteredText()) {
+                    switch (tf.text().plain(p2.status).filteredText()) {
                         case "new": {
                             appContext.getSession().out().printf("[%s] %s : %s%n",
                                     tfactory.styled("new",NutsTextNodeStyle.primary(3)),

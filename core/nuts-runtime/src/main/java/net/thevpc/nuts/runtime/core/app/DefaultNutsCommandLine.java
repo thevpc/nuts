@@ -11,17 +11,15 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.runtime.core.app;
 
@@ -88,7 +86,6 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         setAutoComplete(autoComplete);
     }
 
-
     public DefaultNutsCommandLine(List<String> args) {
         setArguments(args);
     }
@@ -104,7 +101,6 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     //End Constructors
-
     @Override
     public NutsCommandAutoComplete getAutoComplete() {
         return autoComplete;
@@ -183,39 +179,63 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
-    public NutsCommandLine unexpectedArgument(String errorMessage) {
+    public NutsCommandLine unexpectedArgument(NutsString errorMessage) {
         if (!isEmpty()) {
             if (autoComplete != null) {
                 skipAll();
                 return this;
             }
-            String m = "unexpected argument " + highlightText(String.valueOf(peek()));
-            if (errorMessage != null && errorMessage.trim().length() > 0) {
-                m += " , " + errorMessage;
+            NutsTextNodeBuilder m = ws.formats().text().builder();
+            m.append("unexpected argument ").append(highlightText(String.valueOf(peek())));
+            if (errorMessage != null && errorMessage.textLength() > 0) {
+                m.append(" , ").append(errorMessage);
             }
-            throwError(m);
+            throwError(m.build());
         }
         return this;
     }
 
     @Override
+    public NutsCommandLine unexpectedArgument(NutsMessage errorMessage) {
+        return unexpectedArgument(ws.formats().text().nodeFor(errorMessage));
+    }
+
+    @Override
+    public NutsCommandLine unexpectedArgument(String errorMessage) {
+        return unexpectedArgument(ws.formats().text().nodeFor(errorMessage));
+    }
+
+    @Override
     public NutsCommandLine unexpectedArgument() {
-        return unexpectedArgument(null);
+        return unexpectedArgument("");
     }
 
     @Override
     public NutsCommandLine required() {
-        return required(null);
+        return required("");
     }
 
     @Override
     public NutsCommandLine required(String errorMessage) {
+        return required(ws.formats().text().nodeFor(errorMessage));
+    }
+
+    @Override
+    public NutsCommandLine required(NutsMessage errorMessage) {
+        return required(ws.formats().text().nodeFor(errorMessage));
+    }
+
+    @Override
+    public NutsCommandLine required(NutsString errorMessage) {
         if (isEmpty()) {
             if (autoComplete != null) {
                 skipAll();
                 return this;
             }
-            throwError((errorMessage == null || errorMessage.trim().isEmpty()) ? "missing arguments" : errorMessage);
+            throwError((errorMessage == null || errorMessage.isEmpty())
+                    ? ws.formats().text().nodeFor("missing arguments")
+                    : errorMessage
+            );
         }
         return this;
     }
@@ -273,23 +293,24 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             if (hasNext()) {
                 NutsArgument peeked = peek();
                 names = new String[]{
-                        peeked.getStringKey()
+                    peeked.getStringKey()
                 };
             }
-        }
-        for (String nameSeq : names) {
-            String[] nameSeqArray = StringTokenizerUtils.split(nameSeq, " ").toArray(new String[0]);
+        } else {
             if (isAutoCompleteMode()) {
-                for (int i = 0; i < nameSeqArray.length; i++) {
-                    if (getWordIndex() == autoComplete.getCurrentWordIndex() + i) {
-                        autoComplete.addCandidate(createCandidate(nameSeqArray[i]));
-                    }
+                NutsArgumentCandidate[] candidates = resolveRecommendations(expectValue, names, autoComplete.getCurrentWordIndex());
+                for (NutsArgumentCandidate c : candidates) {
+                    autoComplete.addCandidate(c);
                 }
             }
-            if (!isPrefixed(nameSeqArray)) {
+        }
+
+        for (String nameSeq : names) {
+            String[] nameSeqArray = StringTokenizerUtils.split(nameSeq, " ").toArray(new String[0]);
+            if (nameSeqArray.length == 0) {
                 continue;
             }
-            if(nameSeqArray.length==0){
+            if (!isPrefixed(nameSeqArray)) {
                 continue;
             }
             String name = nameSeqArray[nameSeqArray.length - 1];
@@ -306,9 +327,6 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                             if (p.isKeyValue()) {
                                 return p;
                             } else {
-                                if (isAutoCompleteMode() && getWordIndex() + 1 == autoComplete.getCurrentWordIndex()) {
-                                    autoComplete.addCandidate(createCandidate("<StringValueFor" + p.getStringKey() + ">"));
-                                }
                                 NutsArgument r2 = peek();
                                 if (r2 != null && !r2.isOption()) {
                                     skip();
@@ -335,7 +353,11 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                             }
                         }
                         default: {
-                            throwError("unsupported " + highlightText(String.valueOf(expectValue)));
+                            throwError(
+                                    ws.formats().text().builder().append("unsupported ")
+                                            .append(highlightText(String.valueOf(expectValue)))
+                                            .build()
+                            );
                         }
                     }
                 }
@@ -343,6 +365,98 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
         }
         return null;
+    }
+
+    private NutsArgumentCandidate[] resolveRecommendations(NutsArgumentType expectValue, String[] names, int autoCompletecurrentWordIndex) {
+        //nameSeqArray
+        List<NutsArgumentCandidate> candidates = new ArrayList<>();
+        for (String nameSeq : names) {
+            String[] nameSeqArray = StringTokenizerUtils.split(nameSeq, " ").toArray(new String[0]);
+            if (nameSeqArray.length > 0) {
+                int i = autoCompletecurrentWordIndex < nameSeqArray.length ? autoCompletecurrentWordIndex : nameSeqArray.length - 1;
+//                String rec = null;
+                boolean skipToNext = false;
+                for (int j = 0; j < i; j++) {
+                    String a = nameSeqArray[j];
+                    NutsArgument x = get(j);
+                    if (x != null) {
+                        String xs = x.getString();
+                        if (xs.length() > 0 && !xs.equals(a)) {
+                            skipToNext = true;
+                            break;
+                        }
+                    }
+                }
+                if (skipToNext) {
+                    continue;
+                }
+                skipToNext = false;
+                if (i < nameSeqArray.length - 1) {
+                    String a = nameSeqArray[i];
+                    NutsArgument x = get(i);
+                    if (x != null) {
+                        String xs = x.getString();
+                        if (xs.length() > 0 && xs.equals(a)) {
+//                            switch (expectValue) {
+//                                case ANY: {
+//                                    candidates.add(createCandidate("<AnyValueFor" + p.getStringKey() + ">"));
+//                                    break;
+//                                }
+//                                case STRING: {
+//                                    candidates.add(createCandidate("<StringValueFor" + p.getStringKey() + ">"));
+//                                    break;
+//                                }
+//                                case BOOLEAN: {
+//                                    candidates.add(createCandidate("<BooleanValueFor" + p.getStringKey() + ">"));
+//                                    break;
+//                                }
+//                                default: {
+//                                    candidates.add(createCandidate("<OtherValueFor" + p.getStringKey() + ">"));
+//                                }
+//                            }
+                            skipToNext = true;
+                        } else if (xs.length() > 0 && a.startsWith(xs) && !xs.equals(a)) {
+                            candidates.add(createCandidate(a));
+                            skipToNext = true;
+                        } else {
+                            skipToNext = true;
+                        }
+                    }
+                }
+                if (skipToNext) {
+                    continue;
+                }
+                if (getWordIndex() + nameSeqArray.length - 1 == autoCompletecurrentWordIndex) {
+                    String name = nameSeqArray[nameSeqArray.length - 1];
+                    NutsArgument p = get(nameSeqArray.length - 1);
+                    if (p != null) {
+                        if (name.startsWith(p.getStringKey())) {
+                            candidates.add(createCandidate(name));
+//                            switch (expectValue) {
+//                                case ANY: {
+//                                    candidates.add(createCandidate("<AnyValueFor" + p.getStringKey() + ">"));
+//                                    break;
+//                                }
+//                                case STRING: {
+//                                    candidates.add(createCandidate("<StringValueFor" + p.getStringKey() + ">"));
+//                                    break;
+//                                }
+//                                case BOOLEAN: {
+//                                    candidates.add(createCandidate("<BooleanValueFor" + p.getStringKey() + ">"));
+//                                    break;
+//                                }
+//                                default: {
+//                                    candidates.add(createCandidate("<OtherValueFor" + p.getStringKey() + ">"));
+//                                }
+//                            }
+                        }
+                    } else {
+                        candidates.add(createCandidate(name));
+                    }
+                }
+            }
+        }
+        return candidates.toArray(new NutsArgumentCandidate[0]);
     }
 
     @Override
@@ -522,6 +636,21 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
+    public void throwError(NutsMessage message) {
+        throwError(ws.formats().text().nodeFor(message));
+    }
+
+    @Override
+    public void throwError(NutsString message) {
+        NutsTextNodeBuilder m = ws.formats().text().builder();
+        if (!CoreStringUtils.isBlank(commandName)) {
+            m.append(commandName).append(" : ");
+        }
+        m.append(message);
+        throw new NutsIllegalArgumentException(getWorkspace(), m.build().immutable());
+    }
+
+    @Override
     public void throwError(String message) {
         StringBuilder m = new StringBuilder();
         if (!CoreStringUtils.isBlank(commandName)) {
@@ -548,8 +677,8 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 if (next == a) {
                     //was not consumed!
                     throw new NutsIllegalArgumentException(getWorkspace(),
-                            (a.isOption()?"nextOption":"nextNonOption")+
-                                    " must consume the option: " + a);
+                            (a.isOption() ? "nextOption" : "nextNonOption")
+                            + " must consume the option: " + a);
                 }
             } else {
                 if (!_configureLast(this, defaultConfigurable)) {
@@ -580,7 +709,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     private NutsArgumentCandidate createCandidate(String s) {
-        return DefaultNutsCommandLineManager.Factory.createCandidate0(getWorkspace(), s, null);
+        return getWorkspace().commandLine().createCandidate(s).build();
     }
 
     public NutsArgument next(NutsArgumentName name, boolean forceNonOption, boolean error) {
@@ -616,9 +745,15 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 return null;//return new Argument("");
             }
             if (hasNext() && (!forceNonOption || !peek().isOption())) {
-                throwError("unexpected option " + highlightText(String.valueOf(peek())));
+                throwError(
+                        ws.formats().text().builder().append("unexpected option ").append(highlightText(String.valueOf(peek())))
+                                .build()
+                );
             }
-            throwError("missing argument " + highlightText((name == null ? "value" : name.getName())));
+            throwError(
+                    ws.formats().text().builder().append("missing argument ").append(highlightText((name == null ? "value" : name.getName())))
+                            .build()
+            );
         }
         //ignored
         return null;
@@ -764,8 +899,8 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         return c;
     }
 
-    private String highlightText(String text) {
-        return getWorkspace().formats().text().styled(text,NutsTextNodeStyle.primary(3)).toString();
+    private NutsString highlightText(String text) {
+        return getWorkspace().formats().text().styled(text, NutsTextNodeStyle.primary(3));
     }
 
     private boolean _configureLast(NutsCommandLine commandLine, NutsCommandLineConfigurable configurable) {
@@ -785,8 +920,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         int t = Character.getType(c);
         return t != Character.LOWERCASE_LETTER
                 && t != Character.UPPERCASE_LETTER
-                && t != Character.TITLECASE_LETTER
-                ;
+                && t != Character.TITLECASE_LETTER;
     }
 
     @Override

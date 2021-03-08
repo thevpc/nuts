@@ -478,7 +478,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             NutsArgumentCandidate c = super.addCandidatesImpl(value);
             String v = value.getValue();
             if (v == null) {
-                throw new NutsExecutionException(getWorkspace(), "Candidate cannot be null", 2);
+                throw new NutsExecutionException(getWorkspace(), "candidate cannot be null", 2);
             }
             String d = value.getDisplay();
             if (Objects.equals(v, d) || d == null) {

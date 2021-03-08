@@ -175,7 +175,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                             cmd0,
                             w.toString(),
                             end.toString(),
-                            value
+                            factory0.plain(value)
                     );
                 }
             }

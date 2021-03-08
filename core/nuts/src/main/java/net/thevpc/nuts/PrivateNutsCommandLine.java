@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts;
 
 import java.util.*;
@@ -47,8 +45,8 @@ import java.util.*;
  * <ul>
  * <li>--!enable : option 'enable' with 'false' value</li>
  * <li>--enable=yes : option 'enable' with 'yes' value</li>
- * <li>--!enable=yes : invalid option (no error will be thrown but the result
- * is undefined)</li>
+ * <li>--!enable=yes : invalid option (no error will be thrown but the result is
+ * undefined)</li>
  * </ul>
  * </li>
  * <li>
@@ -62,8 +60,8 @@ import java.util.*;
  * <li>-!enable (with expandSimpleOptions=false) : option 'enable' with 'false'
  * value</li>
  * <li>--enable=yes : option 'enable' with 'yes' value</li>
- * <li>--!enable=yes : invalid option (no error will be thrown but the result
- * is undefined)</li>
+ * <li>--!enable=yes : invalid option (no error will be thrown but the result is
+ * undefined)</li>
  * </ul>
  *
  * </li>
@@ -101,7 +99,6 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
     }
 
     //End Constructors
-
     static NutsArgument createArgument0(String argument, char eq) {
         return new ArgumentImpl(argument, eq);
     }
@@ -399,6 +396,16 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
+    public NutsCommandLine unexpectedArgument(NutsMessage errorMessage) {
+        return unexpectedArgument(errorMessage == null ? "" : errorMessage.toString());
+    }
+
+    @Override
+    public NutsCommandLine unexpectedArgument(NutsString errorMessage) {
+        return unexpectedArgument(errorMessage == null ? "" : errorMessage.toString());
+    }
+
+    @Override
     public NutsCommandLine unexpectedArgument(String errorMessage) {
         if (!isEmpty()) {
             //AUTOCOMPLETE
@@ -406,7 +413,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 //                skipAll();
 //                return this;
 //            }
-            String m = "Unexpected Argument " + highlightText(String.valueOf(peek()));
+            String m = "unexpected argument " + highlightText(String.valueOf(peek()));
             if (errorMessage != null && errorMessage.trim().length() > 0) {
                 m += " , " + errorMessage;
             }
@@ -416,13 +423,33 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
+    public void throwError(NutsMessage message) {
+        throwError(message == null ? "" : message.toString());
+    }
+
+    @Override
+    public void throwError(NutsString message) {
+        throwError(message == null ? "" : message.toString());
+    }
+
+    @Override
     public NutsCommandLine unexpectedArgument() {
-        return unexpectedArgument(null);
+        return unexpectedArgument("");
     }
 
     @Override
     public NutsCommandLine required() {
-        return required(null);
+        return required("");
+    }
+
+    @Override
+    public NutsCommandLine required(NutsString errorMessage) {
+        return required(errorMessage == null ? "" : errorMessage.toString());
+    }
+
+    @Override
+    public NutsCommandLine required(NutsMessage errorMessage) {
+        return required(errorMessage == null ? "" : errorMessage.toString());
     }
 
     @Override
@@ -491,7 +518,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
             if (hasNext()) {
                 NutsArgument peeked = peek();
                 names = new String[]{
-                        peeked.getStringKey()
+                    peeked.getStringKey()
                 };
             }
         }
@@ -717,7 +744,6 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 //    public NutsArgumentName createName(String type) {
 //        return createName(type, type);
 //    }
-
     @Override
     public boolean isNonOption(int index) {
         NutsArgument x = get(index);
@@ -833,7 +859,6 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 //    public NutsArgumentName createName(String type, String label) {
 //        throw new NutsBootException(NOT_SUPPORTED);
 //    }
-
     private boolean isExpandableOption(String v, boolean expandSimpleOptions) {
         if (!expandSimpleOptions || v.length() <= 2) {
             return false;
@@ -949,8 +974,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         int t = Character.getType(c);
         return t != Character.LOWERCASE_LETTER
                 && t != Character.UPPERCASE_LETTER
-                && t != Character.TITLECASE_LETTER
-                ;
+                && t != Character.TITLECASE_LETTER;
     }
 
     @Override
@@ -958,14 +982,12 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return Arrays.asList(toArgumentArray()).iterator();
     }
 
-
 //    @Override
 //    public NutsArgumentCandidate createCandidate(String value, String label) {
 //        throw new NutsBootException(NOT_SUPPORTED);
 //        //AUTOCOMPLETE
 ////        return new CandidateImpl(value,label);
 //    }
-
 //    /**
 //     * Default (simple) NutsArgumentCandidate implementation.
 //     * @author thevpc
@@ -991,7 +1013,6 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 //            return value;
 //        }
 //    }
-
     /**
      * This is a minimal implementation of NutsArgument and hence should not be
      * used. Instead an instance of NutsArgument can be retrieved using
@@ -1012,7 +1033,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
          * Constructor
          *
          * @param expression expression
-         * @param eq         equals
+         * @param eq equals
          */
         public ArgumentImpl(String expression, char eq) {
             super(expression);
@@ -1020,8 +1041,8 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         }
 
         /**
-         * true if the expression is a an option (starts with '-' or '+')
-         * but cannot not be evaluated.
+         * true if the expression is a an option (starts with '-' or '+') but
+         * cannot not be evaluated.
          *
          * @return true if option is not evaluable argument.
          */

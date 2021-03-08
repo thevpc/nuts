@@ -101,7 +101,7 @@ public class XmlCodeFormatter implements NutsCodeFormat {
                         if (st.image.equals("true") || st.image.equals("false")) {
                             nodes.add(formatNodeName(st.image));
                         } else {
-                            nodes.add(factory.styled(factory.plain(st.image)));
+                            nodes.add(factory.plain(st.image));
                         }
                     }
                     break;

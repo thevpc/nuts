@@ -1,33 +1,20 @@
 package net.thevpc.nuts.runtime.core.format.elem;
 
-import com.google.gson.*;
 import net.thevpc.nuts.*;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
 import java.util.regex.Pattern;
 
 import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsClassifierMappingBuilder;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
-import net.thevpc.nuts.runtime.standalone.MutableNutsDependencyTreeNode;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsArtifactCallBuilder;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsDescriptorBuilder;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsIdLocationBuilder;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
-import net.thevpc.nuts.runtime.core.format.json.NutsArrayElementJson;
-import net.thevpc.nuts.runtime.core.format.json.NutsObjectElementJson;
 import net.thevpc.nuts.runtime.core.format.xml.NutsArrayElementXml;
 import net.thevpc.nuts.runtime.core.format.xml.NutsObjectElementXml;
 import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import org.w3c.dom.Document;
@@ -40,6 +27,8 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
+import net.thevpc.nuts.runtime.core.format.json.AdapterHelpers;
+import net.thevpc.nuts.runtime.core.format.json.GsonItemSerializeManager;
 import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 
 public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementFormat> implements NutsElementFormat, NutsElementFactoryContext {
@@ -49,7 +38,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     private final Map<String, Object> properties = new HashMap<>();
     private Object value;
     private NutsElementBuilder builder;
-    private NutsContentType contentType= NutsContentType.JSON;
+    private NutsContentType contentType = NutsContentType.JSON;
     private boolean compact;
     private static final Pattern NUM_REGEXP = Pattern.compile("-?\\d+(\\.\\d+)?");
     private String defaultName = "value";
@@ -59,9 +48,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     private boolean autoResolveType = true;
     private org.w3c.dom.Document defaultDocument;
     private final NutsElementFactoryContext xmlContext;
-    private final NutsElementFactoryContext dummyContext;
-    private Gson GSON_COMPACT;
-    private Gson GSON_PRETTY;
+    private GsonItemSerializeManager jsonMan;
 
     public DefaultNutsElementFormat(NutsWorkspace ws) {
         super(ws, "element-format");
@@ -74,13 +61,20 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 return convert(o, NutsElement.class);
             }
         };
-        dummyContext = new DefaultNutsElementFactoryContext(ws) {
-            @Override
-            public NutsElement toElement(Object o) {
-                return fromJsonElement((JsonElement) o);
-            }
-
-        };
+        jsonMan = new GsonItemSerializeManager(ws, () -> getSession());
+        jsonMan.setAdapter(Instant.class, new AdapterHelpers.InstantJsonAdapter());
+        jsonMan.setAdapter(NutsId.class, new AdapterHelpers.NutsIdJsonAdapter());
+        jsonMan.setAdapter(NutsVersion.class, new AdapterHelpers.NutsVersionJsonAdapter());
+        jsonMan.setAdapter(NutsDescriptor.class, new AdapterHelpers.NutsDescriptorJsonAdapter());
+        jsonMan.setAdapter(NutsDependency.class, new AdapterHelpers.NutsDependencyJsonAdapter());
+        jsonMan.setAdapter(NutsIdLocation.class, new AdapterHelpers.NutsIdLocationJsonAdapter());
+        jsonMan.setAdapter(NutsClassifierMapping.class, new AdapterHelpers.NutsClassifierMappingJsonAdapter());
+        jsonMan.setAdapter(NutsArtifactCall.class, new AdapterHelpers.NutsArtifactCallElementAdapter());
+        jsonMan.setAdapter(Path.class, new AdapterHelpers.PathJsonAdapter());
+        jsonMan.setAdapter(File.class, new AdapterHelpers.FileJsonAdapter());
+        jsonMan.setAdapter(Date.class, new AdapterHelpers.DateJsonAdapter());
+        jsonMan.setAdapter(NutsElement.class, new AdapterHelpers.NutsElementElementAdapter());
+        jsonMan.setAdapter(org.w3c.dom.Document.class, new AdapterHelpers.XmlDocumentJsonAdapter());
     }
 
     @Override
@@ -90,17 +84,17 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 
     @Override
     public NutsElementFormat setContentType(NutsContentType contentType) {
-        if(contentType==null){
-            this.contentType= NutsContentType.JSON;
-        }else{
-            switch (contentType){
+        if (contentType == null) {
+            this.contentType = NutsContentType.JSON;
+        } else {
+            switch (contentType) {
                 case TREE:
                 case TABLE:
-                case PLAIN:{
-                    throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
+                case PLAIN: {
+                    throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
                 }
             }
-            this.contentType=contentType;
+            this.contentType = contentType;
         }
         return this;
     }
@@ -117,23 +111,23 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 
     @Override
     public NutsElementFormat setCompact(boolean compact) {
-        this.compact=compact;
+        this.compact = compact;
         return this;
     }
 
     @Override
     public <T> T parse(URL url, Class<T> clazz) {
 
-        switch (contentType){
+        switch (contentType) {
             case JSON:
-            case XML:{
+            case XML: {
                 try {
                     try (InputStream is = NutsWorkspaceUtils.of(getWorkspace()).openURL(url)) {
                         return parse(new InputStreamReader(is), clazz);
                     } catch (NutsException ex) {
                         throw ex;
                     } catch (UncheckedIOException ex) {
-                        throw new NutsIOException(getWorkspace(),ex);
+                        throw new NutsIOException(getWorkspace(), ex);
                     } catch (RuntimeException ex) {
                         throw new NutsParseException(getWorkspace(), "unable to parse url " + url, ex);
                     }
@@ -142,91 +136,91 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 }
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
     }
 
     @Override
     public <T> T parse(InputStream inputStream, Class<T> clazz) {
-        switch (contentType){
+        switch (contentType) {
             case JSON:
-            case XML:{
+            case XML: {
                 return parse(new InputStreamReader(inputStream), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
     }
 
     @Override
     public <T> T parse(String string, Class<T> clazz) {
-        switch (contentType){
+        switch (contentType) {
             case JSON:
-            case XML:{
+            case XML: {
                 return parse(new StringReader(string), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
     }
 
     @Override
     public <T> T parse(byte[] bytes, Class<T> clazz) {
-        switch (contentType){
+        switch (contentType) {
             case JSON:
-            case XML:{
+            case XML: {
                 return parse(new InputStreamReader(new ByteArrayInputStream(bytes)), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
     }
 
     @Override
     public <T> T parse(Reader reader, Class<T> clazz) {
-        switch (contentType){
-            case JSON:{
-                return getGson(true).fromJson(reader, clazz);
+        switch (contentType) {
+            case JSON: {
+                return jsonMan.fromJson(reader, clazz);
             }
-            case XML:{
+            case XML: {
                 Document doc = null;
                 try {
-                    doc = NutsXmlUtils.createDocumentBuilder(false,getValidSession()).parse(new InputSource(reader));
+                    doc = NutsXmlUtils.createDocumentBuilder(false, getValidSession()).parse(new InputSource(reader));
                 } catch (SAXException | ParserConfigurationException ex) {
-                    throw new NutsIOException(getWorkspace(),new IOException(ex));
+                    throw new NutsIOException(getWorkspace(), new IOException(ex));
                 } catch (IOException ex) {
-                    throw new NutsIOException(getWorkspace(),ex);
+                    throw new NutsIOException(getWorkspace(), ex);
                 }
                 return convert(doc == null ? null : doc.getDocumentElement(), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
     }
 
     @Override
     public <T> T parse(Path file, Class<T> clazz) {
-        switch (contentType){
+        switch (contentType) {
             case JSON:
-            case XML:{
+            case XML: {
                 try (Reader r = Files.newBufferedReader(file)) {
                     return parse(r, clazz);
                 } catch (IOException ex) {
-                    throw new NutsIOException(getWorkspace(),ex);
+                    throw new NutsIOException(getWorkspace(), ex);
                 }
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
     }
 
     @Override
     public <T> T parse(File file, Class<T> clazz) {
-        switch (contentType){
+        switch (contentType) {
             case JSON:
-            case XML:{
+            case XML: {
                 try (FileReader r = new FileReader(file)) {
                     return parse(r, clazz);
                 } catch (IOException ex) {
-                    throw new NutsIOException(getWorkspace(),ex);
+                    throw new NutsIOException(getWorkspace(), ex);
                 }
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(),"invalid content type "+contentType+". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
     }
 
     @Override
@@ -259,7 +253,6 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         this.value = value;
         return this;
     }
-
 
     @Override
     public NutsElementPath compilePath(String pathExpression) {
@@ -307,7 +300,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
             }
         }
 
-        NutsElement elem = getWorkspace().formats().element().convert(obj,NutsElement.class);
+        NutsElement elem = getWorkspace().formats().element().convert(obj, NutsElement.class);
 
         if (doc == null) {
             if (defaultDocument == null) {
@@ -444,7 +437,6 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 //        p.put(key, xml);
 //        return xml;
 //    }
-
     public String getDefaulTagName() {
         return defaultName;
     }
@@ -456,7 +448,6 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     public boolean isAutoResolveType() {
         return autoResolveType;
     }
-
 
     public String getAttributePrefix() {
         return attributePrefix;
@@ -480,6 +471,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         }
         return false;
     }
+
     public String toXmlAttributeValue(NutsPrimitiveElement o) {
         switch (o.type()) {
             case BOOLEAN: {
@@ -592,7 +584,6 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         return toXmlElement(o, getDefaulTagName(), null, false);
     }
 
-
 //    public <T> T parseXml(Reader reader, Class<T> clazz) {
 //        Document doc = null;
 //        try {
@@ -604,16 +595,15 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 //        }
 //        return convert(doc == null ? null : doc.getDocumentElement(), clazz);
 //    }
-
     @Override
     public <T> T convert(Object any, Class<T> to) {
-        if(any==null){
+        if (any == null) {
             return null;
         }
-        if(to.isAssignableFrom(NutsElement.class)){
+        if (to.isAssignableFrom(NutsElement.class)) {
             return (T) nvalueFactory.create(any, this);
         }
-        if(to.equals(Document.class)){
+        if (to.equals(Document.class)) {
             if (any instanceof Document) {
                 return (T) any;
             }
@@ -625,10 +615,10 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
             }
             Element e = toXmlElement(any, document);
             document.appendChild(e);
-            return (T)document;
+            return (T) document;
         }
-        if(NutsElement.class.isAssignableFrom(any.getClass())){
-            if(NutsElement.class.isAssignableFrom(to)) {
+        if (NutsElement.class.isAssignableFrom(any.getClass())) {
+            if (NutsElement.class.isAssignableFrom(to)) {
                 return (T) any;
             }
             if (org.w3c.dom.Node.class.isAssignableFrom(to)) {
@@ -641,13 +631,13 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                     }
                     Element e = toXmlElement(any, document);
                     document.appendChild(e);
-                    return (T)document;
+                    return (T) document;
                 }
                 if (org.w3c.dom.Element.class.isAssignableFrom(to)) {
                     return (T) toXmlElement(any, null);
                 }
             }
-        }else if(Element.class.isAssignableFrom(any.getClass())){
+        } else if (Element.class.isAssignableFrom(any.getClass())) {
             if (Element.class.isAssignableFrom(to)) {
                 return (T) any;
             }
@@ -655,28 +645,26 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 return (T) nutsElementToXmlElement((Element) any);
             }
         }
-        Gson gson = getGson(true);
-        JsonElement t = gson.toJsonTree(any);
-        return gson.fromJson(t, to);
+        return jsonMan.fromObject(any, to);
     }
 
     @Override
     public void print(PrintStream out) {
-        switch (getContentType()){
-            case JSON:{
-                if(getWorkspace().io().term().isFormatted(out)){
-                    ByteArrayPrintStream bos=new ByteArrayPrintStream();
-                    getGson(compact).toJson(value, bos);
-                    out.print(getWorkspace().formats().text().code("json",bos.toString()));
-                }else {
-                    getGson(compact).toJson(value, out);
+        switch (getContentType()) {
+            case JSON: {
+                if (getWorkspace().io().term().isFormatted(out)) {
+                    ByteArrayPrintStream bos = new ByteArrayPrintStream();
+                    jsonMan.print(value, bos, compact);
+                    out.print(getWorkspace().formats().text().code("json", bos.toString()));
+                } else {
+                    jsonMan.print(value, out, compact);
                 }
                 out.flush();
                 break;
             }
-            case XML:{
-                Document doc = convert(value,Document.class);
-                if(getWorkspace().io().term().isFormatted(out)) {
+            case XML: {
+                Document doc = convert(value, Document.class);
+                if (getWorkspace().io().term().isFormatted(out)) {
                     ByteArrayPrintStream bos = new ByteArrayPrintStream();
                     try {
                         NutsXmlUtils.writeDocument(doc, new StreamResult(bos), compact, true);
@@ -684,7 +672,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                         throw new NutsException(getWorkspace(), CoreStringUtils.exceptionToString(ex), ex);
                     }
                     out.print(getWorkspace().formats().text().code("xml", bos.toString()));
-                }else {
+                } else {
                     try {
                         NutsXmlUtils.writeDocument(doc, new StreamResult(out), compact, true);
                     } catch (TransformerException ex) {
@@ -696,434 +684,8 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         }
     }
 
-    public Gson getGson(boolean compact) {
-        if (compact) {
-            if (GSON_COMPACT == null) {
-                GSON_COMPACT = prepareBuilder().create();
-            }
-            return GSON_COMPACT;
-        } else {
-            if (GSON_PRETTY == null) {
-                GSON_PRETTY = prepareBuilder().setPrettyPrinting().create();
-            }
-            return GSON_PRETTY;
-        }
-    }
-
-    public GsonBuilder prepareBuilder() {
-        return new GsonBuilder()
-                .registerTypeHierarchyAdapter(NutsId.class, new NutsIdJsonAdapter(getWorkspace()))
-                .registerTypeHierarchyAdapter(NutsVersion.class, new NutsVersionJsonAdapter(getWorkspace()))
-                .registerTypeHierarchyAdapter(NutsDescriptor.class, new NutsDescriptorJsonAdapter(getWorkspace()))
-                .registerTypeHierarchyAdapter(NutsDependency.class, new NutsDependencyJsonAdapter(getWorkspace()))
-                .registerTypeHierarchyAdapter(NutsIdLocation.class, new NutsIdLocationJsonAdapter(getWorkspace()))
-                .registerTypeHierarchyAdapter(NutsClassifierMapping.class, new NutsClassifierMappingJsonAdapter(getWorkspace()))
-                .registerTypeHierarchyAdapter(NutsArtifactCall.class, new NutsExecutorDescriptorAdapter(getWorkspace()))
-                .registerTypeHierarchyAdapter(NutsDependencyTreeNode.class, new NutsDependencyTreeNodeJsonAdapter(getWorkspace()))
-                .registerTypeHierarchyAdapter(NutsElement.class, new NutsElementJsonAdapter(getWorkspace()))
-                .registerTypeHierarchyAdapter(org.w3c.dom.Element.class, new XmlElementJsonAdapter(getWorkspace()))
-                .registerTypeHierarchyAdapter(org.w3c.dom.Document.class, new XmlDocumentJsonAdapter(getWorkspace()))
-                .registerTypeHierarchyAdapter(Path.class, new PathJsonAdapter(getWorkspace()))
-                .registerTypeHierarchyAdapter(File.class, new FileJsonAdapter(getWorkspace()))
-                .registerTypeHierarchyAdapter(Date.class, new DateJsonAdapter(getWorkspace()))
-                .registerTypeHierarchyAdapter(Instant.class, new InstantJsonAdapter(getWorkspace()));
-    }
-
-    private static class NutsIdJsonAdapter implements
-            com.google.gson.JsonSerializer<NutsId>,
-            com.google.gson.JsonDeserializer<NutsId> {
-        private NutsWorkspace ws;
-        public NutsIdJsonAdapter(NutsWorkspace ws) {
-            this.ws=ws;
-        }
-
-        @Override
-        public NutsId deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            String s = context.deserialize(json, String.class);
-            if (s == null) {
-                return null;
-            }
-            return ws.id().parser().setLenient(true).parse(s);
-        }
-
-        @Override
-        public JsonElement serialize(NutsId src, Type typeOfSrc, JsonSerializationContext context) {
-            return context.serialize(src == null ? null : src.toString());
-        }
-    }
-
-    private static class NutsVersionJsonAdapter implements
-            com.google.gson.JsonSerializer<NutsVersion>,
-            com.google.gson.JsonDeserializer<NutsVersion> {
-        private NutsWorkspace ws;
-        public NutsVersionJsonAdapter(NutsWorkspace ws) {
-            this.ws=ws;
-        }
-
-        @Override
-        public NutsVersion deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            String s = context.deserialize(json, String.class);
-            if (s == null) {
-                return null;
-            }
-            return ws.version().parser().parse(s);
-        }
-
-        @Override
-        public JsonElement serialize(NutsVersion src, Type typeOfSrc, JsonSerializationContext context) {
-            return context.serialize(src == null ? null : src.toString());
-        }
-    }
-
-    private static class NutsDescriptorJsonAdapter implements
-            com.google.gson.JsonSerializer<NutsDescriptor>,
-            com.google.gson.JsonDeserializer<NutsDescriptor> {
-        private NutsWorkspace ws;
-        public NutsDescriptorJsonAdapter(NutsWorkspace ws) {
-            this.ws=ws;
-        }
-
-        @Override
-        public NutsDescriptor deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            DefaultNutsDescriptorBuilder b = context.deserialize(json, DefaultNutsDescriptorBuilder.class);
-            return ws.descriptor().descriptorBuilder().set(b).build();
-        }
-
-        @Override
-        public JsonElement serialize(NutsDescriptor src, Type typeOfSrc, JsonSerializationContext context) {
-            if (src != null) {
-                return context.serialize(ws.descriptor().descriptorBuilder().set(src));
-            }
-            return context.serialize(src);
-        }
-    }
-
-    private static class NutsDependencyTreeNodeJsonAdapter implements
-            com.google.gson.JsonSerializer<NutsDependencyTreeNode>,
-            com.google.gson.JsonDeserializer<NutsDependencyTreeNode> {
-        private NutsWorkspace ws;
-        public NutsDependencyTreeNodeJsonAdapter(NutsWorkspace ws) {
-            this.ws=ws;
-        }
-
-        @Override
-        public NutsDependencyTreeNode deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return context.deserialize(json, MutableNutsDependencyTreeNode.class);
-        }
-
-        @Override
-        public JsonElement serialize(NutsDependencyTreeNode src, Type typeOfSrc, JsonSerializationContext context) {
-            if (src != null) {
-                return context.serialize(new MutableNutsDependencyTreeNode(src));
-            }
-            return context.serialize(src);
-        }
-    }
-
-    private static class NutsDependencyJsonAdapter implements
-            com.google.gson.JsonSerializer<NutsDependency>,
-            com.google.gson.JsonDeserializer<NutsDependency> {
-        private NutsWorkspace ws;
-        public NutsDependencyJsonAdapter(NutsWorkspace ws) {
-            this.ws=ws;
-        }
-
-        @Override
-        public NutsDependency deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            String b = context.deserialize(json, String.class);
-            return ws.dependency().parser().parseDependency(b);
-        }
-
-        @Override
-        public JsonElement serialize(NutsDependency src, Type typeOfSrc, JsonSerializationContext context) {
-            if (src != null) {
-                return context.serialize(src.toString());
-            }
-            return context.serialize(src);
-        }
-    }
-
-    private static class NutsIdLocationJsonAdapter implements
-            com.google.gson.JsonSerializer<NutsIdLocation>,
-            com.google.gson.JsonDeserializer<NutsIdLocation> {
-        private NutsWorkspace ws;
-        public NutsIdLocationJsonAdapter(NutsWorkspace ws) {
-            this.ws=ws;
-        }
-
-        @Override
-        public NutsIdLocation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            NutsIdLocationBuilder b = context.deserialize(json, DefaultNutsIdLocationBuilder.class);
-            return b.build();
-        }
-
-        @Override
-        public JsonElement serialize(NutsIdLocation src, Type typeOfSrc, JsonSerializationContext context) {
-            if (src != null) {
-                return context.serialize(new DefaultNutsIdLocationBuilder(src));
-            }
-            return context.serialize(src);
-        }
-    }
-
-    private static class NutsClassifierMappingJsonAdapter implements
-            com.google.gson.JsonSerializer<NutsClassifierMapping>,
-            com.google.gson.JsonDeserializer<NutsClassifierMapping> {
-        private NutsWorkspace ws;
-        public NutsClassifierMappingJsonAdapter(NutsWorkspace ws) {
-            this.ws=ws;
-        }
-
-        @Override
-        public NutsClassifierMapping deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            NutsClassifierMappingBuilder b = context.deserialize(json, DefaultNutsClassifierMappingBuilder.class);
-            return b.build();
-        }
-
-        @Override
-        public JsonElement serialize(NutsClassifierMapping src, Type typeOfSrc, JsonSerializationContext context) {
-            if (src != null) {
-                return context.serialize(new DefaultNutsClassifierMappingBuilder().set(src));
-            }
-            return context.serialize(src);
-        }
-    }
-
-    private static class NutsExecutorDescriptorAdapter implements
-            com.google.gson.JsonSerializer<NutsArtifactCall>,
-            com.google.gson.JsonDeserializer<NutsArtifactCall> {
-        private NutsWorkspace ws;
-        public NutsExecutorDescriptorAdapter(NutsWorkspace ws) {
-            this.ws=ws;
-        }
-
-        @Override
-        public NutsArtifactCall deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            NutsArtifactCallBuilder b = context.deserialize(json, DefaultNutsArtifactCallBuilder.class);
-            return b.build();
-        }
-
-        @Override
-        public JsonElement serialize(NutsArtifactCall src, Type typeOfSrc, JsonSerializationContext context) {
-            if (src != null) {
-                return context.serialize(new DefaultNutsArtifactCallBuilder(src));
-            }
-            return context.serialize(src);
-        }
-    }
-
-    private class NutsElementJsonAdapter implements
-            com.google.gson.JsonSerializer<NutsElement>,
-            com.google.gson.JsonDeserializer<NutsElement> {
-        private NutsWorkspace ws;
-        public NutsElementJsonAdapter(NutsWorkspace ws) {
-            this.ws=ws;
-        }
-
-        @Override
-        public NutsElement deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return fromJsonElement(json);
-        }
-
-        @Override
-        public JsonElement serialize(NutsElement src, Type typeOfSrc, JsonSerializationContext context) {
-            return toJsonElement(src);
-        }
-    }
-
-    private class XmlElementJsonAdapter implements
-            com.google.gson.JsonSerializer<org.w3c.dom.Element>,
-            com.google.gson.JsonDeserializer<org.w3c.dom.Element> {
-        private NutsWorkspace ws;
-        public XmlElementJsonAdapter(NutsWorkspace ws) {
-            this.ws=ws;
-        }
-
-        @Override
-        public org.w3c.dom.Element deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return getWorkspace().formats().element().toXmlElement(fromJsonElement(json), null);
-        }
-
-        @Override
-        public JsonElement serialize(org.w3c.dom.Element src, Type typeOfSrc, JsonSerializationContext context) {
-            return toJsonElement(convert(src, NutsElement.class));
-        }
-    }
-
-    private class XmlDocumentJsonAdapter implements
-            com.google.gson.JsonSerializer<org.w3c.dom.Document>,
-            com.google.gson.JsonDeserializer<org.w3c.dom.Document> {
-        private NutsWorkspace ws;
-        public XmlDocumentJsonAdapter(NutsWorkspace ws) {
-            this.ws=ws;
-        }
-
-        @Override
-        public org.w3c.dom.Document deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            Document doc;
-            try {
-                doc = NutsXmlUtils.createDocument(getSession());
-            } catch (ParserConfigurationException ex) {
-                throw new JsonParseException(CoreStringUtils.exceptionToString(ex), ex);
-            }
-            Element ee = getWorkspace().formats().element().toXmlElement(fromJsonElement(json), doc);
-            ee = (Element) doc.importNode(ee, true);
-            doc.appendChild(ee);
-            return doc;
-        }
-
-        @Override
-        public JsonElement serialize(org.w3c.dom.Document src, Type typeOfSrc, JsonSerializationContext context) {
-            NutsElement element = convert(src.getDocumentElement(), NutsElement.class);
-            return toJsonElement(element);
-        }
-    }
-
-    private class PathJsonAdapter implements
-            com.google.gson.JsonSerializer<Path>,
-            com.google.gson.JsonDeserializer<Path> {
-        private NutsWorkspace ws;
-        public PathJsonAdapter(NutsWorkspace ws) {
-            this.ws=ws;
-        }
-
-        @Override
-        public Path deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return Paths.get(json.getAsString());
-        }
-
-        @Override
-        public JsonElement serialize(Path src, Type typeOfSrc, JsonSerializationContext context) {
-            return context.serialize(src.toString());
-        }
-    }
-
-    private class FileJsonAdapter implements
-            com.google.gson.JsonSerializer<File>,
-            com.google.gson.JsonDeserializer<File> {
-        private NutsWorkspace ws;
-        public FileJsonAdapter(NutsWorkspace ws) {
-            this.ws=ws;
-        }
-
-        @Override
-        public File deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return new File(json.getAsString());
-        }
-
-        @Override
-        public JsonElement serialize(File src, Type typeOfSrc, JsonSerializationContext context) {
-            return context.serialize(src.getPath());
-        }
-    }
-
-    private class DateJsonAdapter implements
-            com.google.gson.JsonSerializer<Date>,
-            com.google.gson.JsonDeserializer<Date> {
-        private NutsWorkspace ws;
-        public DateJsonAdapter(NutsWorkspace ws) {
-            this.ws=ws;
-        }
-
-        @Override
-        public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return new Date(dummyContext.builder().forDate(json.getAsString()).primitive().getDate().toEpochMilli());
-        }
-
-        @Override
-        public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
-            return context.serialize(src.toInstant().toString());
-        }
-    }
-
-    private class InstantJsonAdapter implements
-            com.google.gson.JsonSerializer<Instant>,
-            com.google.gson.JsonDeserializer<Instant> {
-        private NutsWorkspace ws;
-        public InstantJsonAdapter(NutsWorkspace ws) {
-            this.ws=ws;
-        }
-
-        @Override
-        public Instant deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return dummyContext.builder().forDate(json.getAsString()).primitive().getDate();
-        }
-
-        @Override
-        public JsonElement serialize(Instant src, Type typeOfSrc, JsonSerializationContext context) {
-            return context.serialize(src.toString());
-        }
-    }
-
-    public NutsElement fromJsonElement(JsonElement o) {
-        JsonElement je = (JsonElement) o;
-        if (je.isJsonNull()) {
-            return dummyContext.builder().forNull();
-        } else if (je.isJsonPrimitive()) {
-            JsonPrimitive jr = je.getAsJsonPrimitive();
-            if (jr.isString()) {
-                return dummyContext.builder().forString(jr.getAsString());
-            } else if (jr.isNumber()) {
-                return dummyContext.builder().forNumber(jr.getAsNumber());
-            } else if (jr.isBoolean()) {
-                return dummyContext.builder().forBoolean(jr.getAsBoolean());
-            } else {
-                throw new IllegalArgumentException("Unsupported");
-            }
-        } else if (je.isJsonArray()) {
-            return new NutsArrayElementJson(je.getAsJsonArray(), dummyContext);
-        } else if (je.isJsonObject()) {
-            return new NutsObjectElementJson((je.getAsJsonObject()), dummyContext);
-        }
-        throw new IllegalArgumentException("Unsupported");
-    }
-
-    public JsonElement toJsonElement(NutsElement o) {
-        switch (o.type()) {
-            case BOOLEAN: {
-                return new JsonPrimitive(((NutsPrimitiveElement) o).getBoolean());
-            }
-            case INTEGER:
-            case FLOAT: {
-                return new JsonPrimitive(((NutsPrimitiveElement) o).getNumber());
-            }
-            case STRING: {
-                return new JsonPrimitive(((NutsPrimitiveElement) o).getString());
-            }
-            case DATE: {
-                return new JsonPrimitive(((NutsPrimitiveElement) o).getString());
-            }
-            case NULL: {
-                return JsonNull.INSTANCE;
-            }
-            case ARRAY: {
-                JsonArray a = new JsonArray();
-                for (NutsElement attribute : o.array().children()) {
-                    a.add(toJsonElement(attribute));
-                }
-                return a;
-            }
-            case OBJECT: {
-                JsonObject a = new JsonObject();
-                Set<String> visited = new HashSet<String>();
-                for (NutsNamedElement attribute : o.object().children()) {
-                    String k = attribute.getName();
-                    if (visited.contains(k)) {
-                        throw new IllegalArgumentException("Unexpected");
-                    }
-                    visited.add(k);
-                    a.add(k, toJsonElement(attribute.getValue()));
-                }
-                return a;
-            }
-            default: {
-                throw new IllegalArgumentException("Unsupported " + o.type());
-            }
-        }
-    }
-
     @Override
     public NutsElement toElement(Object o) {
-        return convert(o,NutsElement.class);
+        return convert(o, NutsElement.class);
     }
 }

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.core.app;
 
+import net.thevpc.nuts.NutsDefaultArgumentCandidate;
 import net.thevpc.nuts.NutsArgumentCandidate;
 import net.thevpc.nuts.NutsArgumentCandidateBuilder;
 

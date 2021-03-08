@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
+import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsTextNodeLink;
 import net.thevpc.nuts.NutsTextNodeType;
 import net.thevpc.nuts.NutsWorkspace;
@@ -34,15 +35,15 @@ import net.thevpc.nuts.NutsWorkspace;
  * Created by vpc on 5/23/17.
  */
 public class DefaultNutsTextNodeLink extends NutsTextNodeSpecialBase implements NutsTextNodeLink {
-    private String value;
+    private NutsTextNode value;
 
-    public DefaultNutsTextNodeLink(NutsWorkspace ws, String start, String command, String separator, String end, String value) {
+    public DefaultNutsTextNodeLink(NutsWorkspace ws, String start, String command, String separator, String end, NutsTextNode value) {
         super(ws, start, command, separator, end);
         this.value = value;
     }
 
     @Override
-    public String getValue() {
+    public NutsTextNode getChild() {
         return value;
     }
 

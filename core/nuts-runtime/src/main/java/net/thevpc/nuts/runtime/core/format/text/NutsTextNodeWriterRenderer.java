@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
+
     private byte[] buffer = new byte[1024];
     private int bufferSize = 0;
     private boolean enableBuffering = false;
@@ -47,9 +48,9 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
         this.ws = ws;
         int loopGard = 100;
         while (loopGard > 0) {
-            if(rawOutput0 instanceof NutsOutputStreamTransparentAdapter){
+            if (rawOutput0 instanceof NutsOutputStreamTransparentAdapter) {
                 rawOutput0 = ((NutsOutputStreamTransparentAdapter) rawOutput0).baseOutputStream();
-            }else{
+            } else {
                 break;
             }
             loopGard--;
@@ -106,7 +107,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                 writeRaw(AnsiEscapeCommands.list(formats), p.getText(), ctx.isFiltered());
 //        }else if (text instanceof TextNodeEscaped) {
 //            TextNodeEscaped p = (TextNodeEscaped) text;
-//            writeRaw(AnsiEscapeCommands.list(formats), p.getValue(), ctx.isFiltered());
+//            writeRaw(AnsiEscapeCommands.list(formats), p.getChild(), ctx.isFiltered());
                 break;
             }
             case LIST: {
@@ -118,8 +119,8 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             }
             case STYLED: {
                 DefaultNutsTextNodeStyled s = (DefaultNutsTextNodeStyled) node;
-                NutsTextNodeStyle style = s.getStyle();
-                NutsTextNodeStyle[] format = ws.formats().getTheme().toBasicStyles(style);
+                NutsTextNodeStyles styles = s.getStyles();
+                NutsTextNodeStyles format = ws.formats().getTheme().toBasicStyles(styles);
                 AnsiEscapeCommand[] s2 = _appendFormats(formats, format);
                 writeNode(s2, s.getChild(), ctx);
                 break;
@@ -127,7 +128,9 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             case TITLE: {
                 DefaultNutsTextNodeTitle s = (DefaultNutsTextNodeTitle) node;
                 DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
-                AnsiEscapeCommand[] s2 = _appendFormats(formats, ws.formats().getTheme().toBasicStyles(NutsTextNodeStyle.title(s.getLevel())));
+                AnsiEscapeCommand[] s2 = _appendFormats(formats, ws.formats().getTheme().toBasicStyles(
+                        NutsTextNodeStyles.of(NutsTextNodeStyle.title(s.getLevel()))
+                ));
                 if (ctx.isTitleNumberEnabled()) {
                     NutsTitleNumberSequence seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
@@ -166,16 +169,13 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                 DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
                 writeNode(
                         formats,
-                        factory0.createStyled(
-                                ws.formats().text().plain(
-                                        ((NutsTextNodeLink) node).getValue()
-                                ),
+                        factory0.createStyled(((NutsTextNodeLink) node).getChild(),
                                 NutsTextNodeStyle.underlined(),
                                 true
                         ),
                         ctx
                 );
-                writeRaw(AnsiEscapeCommands.list(formats), "see: " + ((NutsTextNodeLink) node).getValue(), ctx.isFiltered());
+                writeRaw(AnsiEscapeCommands.list(formats), "see: " + ((NutsTextNodeLink) node).getChild(), ctx.isFiltered());
                 break;
             }
             case CODE: {
@@ -189,7 +189,6 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             }
         }
     }
-
 
     protected void writeRaw(AnsiEscapeCommand format, String rawString, boolean filterFormat) {
         if (!filterFormat && format != null) {
@@ -282,7 +281,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
         return list.toArray(new AnsiEscapeCommand[0]);
     }
 
-    private AnsiEscapeCommand[] _appendFormats(AnsiEscapeCommand[] old, NutsTextNodeStyle... v) {
+    private AnsiEscapeCommand[] _appendFormats(AnsiEscapeCommand[] old, NutsTextNodeStyles v) {
         List<AnsiEscapeCommand> list = new ArrayList<AnsiEscapeCommand>((old == null ? 0 : old.length) + 1);
         if (old != null) {
             list.addAll(Arrays.asList(old));

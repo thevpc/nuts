@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class NProjectsSubCmd {
+
     private JobService service;
     private NutsApplicationContext context;
     private NutsWorkspace ws;
@@ -62,18 +63,20 @@ public class NProjectsSubCmd {
                 cmd.unexpectedArgument();
             }
         }
-        service.projects().addProject(t);
-        if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("project %s (%s) added.\n",
-                    context.getWorkspace().formats().text().styled(t.getId(), NutsTextNodeStyle.primary(5)),
-                    t.getName()
-            );
-        }
-        if (show) {
-            runProjectShow(ws.commandLine().create(t.getId()));
-        }
-        if (list) {
-            runProjectList(ws.commandLine().create());
+        if (cmd.isExecMode()) {
+            service.projects().addProject(t);
+            if (context.getSession().isPlainTrace()) {
+                context.getSession().out().printf("project %s (%s) added.\n",
+                        context.getWorkspace().formats().text().styled(t.getId(), NutsTextNodeStyle.primary(5)),
+                        t.getName()
+                );
+            }
+            if (show) {
+                runProjectShow(ws.commandLine().create(t.getId()));
+            }
+            if (list) {
+                runProjectList(ws.commandLine().create());
+            }
         }
     }
 
@@ -177,38 +180,39 @@ public class NProjectsSubCmd {
         if (projects.isEmpty()) {
             cmd.throwError("project name expected");
         }
-        NutsFormatManager text = context.getWorkspace().formats();
-        for (NProject project : projects) {
-            for (Consumer<NProject> c : runLater) {
-                c.accept(project);
+        if (cmd.isExecMode()) {
+            NutsFormatManager text = context.getWorkspace().formats();
+            for (NProject project : projects) {
+                for (Consumer<NProject> c : runLater) {
+                    c.accept(project);
+                }
+                service.projects().updateProject(project);
+                if (context.getSession().isPlainTrace()) {
+                    context.getSession().out().printf("project %s (%s) updated.\n",
+                            text.text().styled(project.getId(), NutsTextNodeStyle.primary(5)),
+                            text.text().styled(project.getName(), NutsTextNodeStyle.primary(1))
+                    );
+                }
             }
-            service.projects().updateProject(project);
-            if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("project %s (%s) updated.\n",
-                        text.text().styled(project.getId(), NutsTextNodeStyle.primary(5)),
-                        text.text().styled(project.getName(), NutsTextNodeStyle.primary(1))
-                );
+            if (mergeTo != null) {
+                service.projects().mergeProjects(mergeTo, projects.stream().map(x -> x.getId()).toArray(String[]::new));
+                if (context.getSession().isPlainTrace()) {
+                    context.getSession().out().printf("projects merged to %s.\n",
+                            context.getWorkspace().formats()
+                                    .text().styled(mergeTo, NutsTextNodeStyle.primary(5))
+                    );
+                }
             }
-        }
-        if (mergeTo != null) {
-            service.projects().mergeProjects(mergeTo, projects.stream().map(x -> x.getId()).toArray(String[]::new));
-            if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("projects merged to %s.\n",
-                        context.getWorkspace().formats()
-                                .text().styled(mergeTo,NutsTextNodeStyle.primary(5))
-                );
+            if (show) {
+                for (NProject t : new LinkedHashSet<>(projects)) {
+                    runProjectShow(ws.commandLine().create(t.getId()));
+                }
             }
-        }
-        if (show) {
-            for (NProject t : new LinkedHashSet<>(projects)) {
-                runProjectShow(ws.commandLine().create(t.getId()));
+            if (list) {
+                runProjectList(ws.commandLine().create());
             }
-        }
-        if (list) {
-            runProjectList(ws.commandLine().create());
         }
     }
-
 
     private void runProjectList(NutsCommandLine cmd) {
         Predicate<NProject> whereFilter = null;
@@ -258,75 +262,76 @@ public class NProjectsSubCmd {
                 }
             }
         }
-        Stream<NProject> r =
-                service.projects().findProjects().filter(whereFilter == null ? x -> true : whereFilter)
-                        .sorted(
-                                (x, y) -> {
-                                    Instant s1 = x.getStartTime();
-                                    Instant s2 = y.getStartTime();
-                                    int v = s2.compareTo(s1);
-                                    if (v != 0) {
-                                        return v;
+        if (cmd.isExecMode()) {
+
+            Stream<NProject> r
+                    = service.projects().findProjects().filter(whereFilter == null ? x -> true : whereFilter)
+                            .sorted(
+                                    (x, y) -> {
+                                        Instant s1 = x.getStartTime();
+                                        Instant s2 = y.getStartTime();
+                                        int v = s2.compareTo(s1);
+                                        if (v != 0) {
+                                            return v;
+                                        }
+                                        return x.getName().compareTo(y.getName());
                                     }
-                                    return x.getName().compareTo(y.getName());
-                                }
-                        );
+                            );
 
-        if (context.getSession().isPlainTrace()) {
-            NutsMutableTableModel m = ws.formats().table().createModel();
-            List<NProject> lastResults = new ArrayList<>();
-            int[] index = new int[1];
-            r.forEach(x -> {
-                Instant st = x.getStartTime();
-                String sts = "";
-                if (st != null) {
-                    LocalDateTime d = LocalDateTime.ofInstant(st, ZoneId.systemDefault());
-                    sts = d.getYear() + " " + d.getMonth().toString().toLowerCase().substring(0, 3);
-                }
-                lastResults.add(x);
-                index[0]++;
-                m.newRow().addCells(
-                        parent.createHashId(index[0], -1),
-                        x.getId(),
-                        sts,
-                        x.getCompany(),
-                        x.getBeneficiary(),
-                        parent.getFormattedProject(x.getName() == null ? "*" : x.getName())
-                );
-            });
-            context.getSession().setProperty("LastResults", lastResults.toArray(new NProject[0]));
-            ws.formats().table()
-                    .setBorder("spaces")
-                    .setModel(m).println(context.getSession().out());
-        } else {
-            context.getSession().formatObject(r.collect(Collectors.toList())).print(context.getSession().out());
+            if (context.getSession().isPlainTrace()) {
+                NutsMutableTableModel m = ws.formats().table().createModel();
+                List<NProject> lastResults = new ArrayList<>();
+                int[] index = new int[1];
+                r.forEach(x -> {
+                    Instant st = x.getStartTime();
+                    String sts = "";
+                    if (st != null) {
+                        LocalDateTime d = LocalDateTime.ofInstant(st, ZoneId.systemDefault());
+                        sts = d.getYear() + " " + d.getMonth().toString().toLowerCase().substring(0, 3);
+                    }
+                    lastResults.add(x);
+                    index[0]++;
+                    m.newRow().addCells(
+                            parent.createHashId(index[0], -1),
+                            x.getId(),
+                            sts,
+                            x.getCompany(),
+                            x.getBeneficiary(),
+                            parent.getFormattedProject(x.getName() == null ? "*" : x.getName())
+                    );
+                });
+                context.getSession().setProperty("LastResults", lastResults.toArray(new NProject[0]));
+                ws.formats().table()
+                        .setBorder("spaces")
+                        .setModel(m).println(context.getSession().out());
+            } else {
+                context.getSession().formatObject(r.collect(Collectors.toList())).print(context.getSession().out());
+            }
         }
-
-
     }
-
 
     private void runProjectRemove(NutsCommandLine cmd) {
         NutsFormatManager text = context.getWorkspace().formats();
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
-            NProject t = findProject(a.toString(), cmd);
-            if (service.projects().removeProject(t.getId())) {
-                if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("project %s removed.\n",
-                            text.text().styled(a.toString(), NutsTextNodeStyle.primary(5))
+            if (cmd.isExecMode()) {
+                NProject t = findProject(a.toString(), cmd);
+                if (service.projects().removeProject(t.getId())) {
+                    if (context.getSession().isPlainTrace()) {
+                        context.getSession().out().printf("project %s removed.\n",
+                                text.text().styled(a.toString(), NutsTextNodeStyle.primary(5))
+                        );
+                    }
+                } else {
+                    context.getSession().out().printf("project %s %s.\n",
+                            text.text().styled(a.toString(), NutsTextNodeStyle.primary(5)),
+                            text.text().styled("not found", NutsTextNodeStyle.error())
                     );
                 }
-            } else {
-                context.getSession().out().printf("project %s %s.\n",
-                        text.text().styled(a.toString(), NutsTextNodeStyle.primary(5)),
-                        text.text().styled("not found", NutsTextNodeStyle.error())
-                );
             }
         }
 
     }
-
 
     private void runProjectShow(NutsCommandLine cmd) {
         while (cmd.hasNext()) {
@@ -367,11 +372,10 @@ public class NProjectsSubCmd {
             t = service.projects().getProject(pid);
         }
         if (t == null) {
-            cmd.throwError("project not found: " + pid);
+            cmd.throwError(NutsMessage.cstyle("project not found: %s", pid));
         }
         return t;
     }
-
 
     public boolean runProjectCommands(NutsCommandLine cmd) {
         if (cmd.next("ap", "a p", "pa", "p a", "add project", "projects add") != null) {
@@ -383,8 +387,7 @@ public class NProjectsSubCmd {
         } else if (cmd.next("lp", "pl", "l p", "p l", "list projects", "projects list") != null) {
             runProjectList(cmd);
             return true;
-        } else if (cmd.next("rp", "rmp", "pr", "prm", "r p", "rm p", "p r", "p rm", "remove project", "remove projects", "rm project", "rm projects", "projects remove") != null
-        ) {
+        } else if (cmd.next("rp", "rmp", "pr", "prm", "r p", "rm p", "p r", "p rm", "remove project", "remove projects", "rm project", "rm projects", "projects remove") != null) {
             runProjectRemove(cmd);
             return true;
         } else if (cmd.next("ps", "sp", "s p", "p s", "show project", "show projects", "projects show") != null) {
@@ -400,7 +403,5 @@ public class NProjectsSubCmd {
         }
         return false;
     }
-
-
 
 }

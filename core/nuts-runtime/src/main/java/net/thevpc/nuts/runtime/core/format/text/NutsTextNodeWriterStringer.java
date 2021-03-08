@@ -73,13 +73,28 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                     writeNode(s.getChild(), ctx);
                 } else {
                     if (s.getChild().getType() == NutsTextNodeType.PLAIN) {
-                        writeStyledStart(s.getStyle(), false);
-                        writeNode(s.getChild(), ctx);
+                        NutsTextNodeStyles styles = s.getStyles();
+                        writeStyledStart(s.getStyles().get(0), false);
+                        if (styles.size() <= 1) {
+                            writeNode(s.getChild(), ctx);
+                        } else {
+                            writeNode(
+                                    ws.formats().text().styled(s.getChild(), s.getStyles().removeFirst()),
+                                    ctx);
+                        }
                         writeRaw(s.getEnd());
                         writeRaw("ø");
                     } else {
-                        writeStyledStart(s.getStyle(), true);
-                        writeNode(s.getChild(), ctx);
+                        NutsTextNodeStyles styles = s.getStyles();
+                        writeStyledStart(s.getStyles().get(0), true);
+                        if (styles.size() <= 1) {
+                            writeNode(s.getChild(), ctx);
+                        } else {
+                            writeNode(
+                                    ws.formats().text().styled(s.getChild(), s.getStyles().removeFirst()),
+                                    ctx);
+                        }
+                        writeRaw(s.getEnd());
                         writeRaw("}##ø");
                     }
                 }
@@ -140,11 +155,11 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                     writeRaw(s.getStart());
                     writeRaw(s.getKind());
                     writeRaw(s.getSeparator());
-                    writeEscapedSpecial(s.getValue());
+                    writeNode(s.getChild());
                     writeRaw(s.getEnd());
                     writeRaw("ø");
                 } else {
-                    writeRaw(s.getValue());
+                    writeNode(s.getChild());
                 }
                 break;
             }

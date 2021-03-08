@@ -35,7 +35,9 @@ public interface NutsTextNodeBuilder extends NutsString {
 
     NutsTextNodeBuilder appendHash(Object text, Object hash);
 
-    NutsTextNodeBuilder append(Object text, NutsTextNodeStyle... styles);
+    NutsTextNodeBuilder append(Object text, NutsTextNodeStyle style);
+    
+    NutsTextNodeBuilder append(Object text, NutsTextNodeStyles styles);
 
     NutsTextNodeBuilder append(Object node);
 

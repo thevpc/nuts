@@ -85,7 +85,7 @@ public interface NutsWorkspaceInitInformation extends Serializable {
 
     String getStoreLocation(NutsStoreLocation location);
 
-    NutsBootDependencyNode getRuntimeBootDependencyNode();
+    NutsClassLoaderNode getRuntimeBootDependencyNode();
 
-    NutsBootDependencyNode[] getExtensionBootDependencyNodes();
+    NutsClassLoaderNode[] getExtensionBootDependencyNodes();
 }

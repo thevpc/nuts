@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class NTasksSubCmd {
+
     private JobService service;
     private NutsApplicationContext context;
     private NutsWorkspace ws;
@@ -29,66 +30,49 @@ public class NTasksSubCmd {
         this.ws = parent.ws;
     }
 
-
-
     public void runTaskAdd(NutsCommandLine cmd) {
         boolean list = false;
         boolean show = false;
-        NTask t = new NTask();
+        boolean nameVisited = false;
+        NutsArgument a;
+        List<Consumer<NTask>> runLater = new ArrayList<>();
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.peek();
-            switch (a.getStringKey()) {
-                case "--list":
-                case "-l": {
-                    list = cmd.nextBoolean().getBooleanValue();
-                    break;
-                }
-                case "--show":
-                case "-s": {
-                    show = cmd.nextBoolean().getBooleanValue();
-                    break;
-                }
-                case "--on":
-                case "--due":
-                case "-t": {
-                    t.setDueTime(new TimeParser().parseInstant(cmd.nextString().getStringValue(), false));
-                    break;
-                }
-                case "--at": {
-                    t.setDueTime(new TimeParser().setTimeOnly(true).parseInstant(cmd.nextString().getStringValue(), false));
-                    break;
-                }
-                case "--start": {
-                    t.setStartTime(new TimeParser().parseInstant(cmd.nextString().getStringValue(), false));
-                    break;
-                }
-                case "--end": {
-                    t.setEndTime(new TimeParser().parseInstant(cmd.nextString().getStringValue(), false));
-                    break;
-                }
-                case "--for": {
-                    String v = cmd.nextString().getStringValue();
-                    Instant u = new TimeParser().parseInstant(v, true);
+            if ((a = cmd.nextBoolean("--list", "-l")) != null) {
+                list = a.getBooleanValue();
+            } else if ((a = cmd.nextBoolean("--show", "-s")) != null) {
+                show = a.getBooleanValue();
+            } else if ((a = cmd.nextString("--on", "--due", "-t")) != null) {
+                String s = a.getStringValue();
+                runLater.add(t -> t.setDueTime(new TimeParser().parseInstant(s, false)));
+            } else if ((a = cmd.nextString("--at")) != null) {
+                String s = a.getStringValue();
+                runLater.add(t -> t.setDueTime(new TimeParser().setTimeOnly(true).parseInstant(s, false)));
+            } else if ((a = cmd.nextString("--start")) != null) {
+                String s = a.getStringValue();
+                runLater.add(t -> t.setStartTime(new TimeParser().parseInstant(s, false)));
+            } else if ((a = cmd.nextString("--end")) != null) {
+                String s = a.getStringValue();
+                runLater.add(t -> t.setEndTime(new TimeParser().parseInstant(s, false)));
+            } else if ((a = cmd.nextString("--for")) != null) {
+                String s = a.getStringValue();
+                runLater.add(t -> {
+                    Instant u = new TimeParser().parseInstant(s, true);
                     if (u != null) {
                         t.setDueTime(u);
                     } else {
-                        t.setProject(v);
+                        t.setProject(s);
                     }
-                    break;
-                }
-                case "--project":
-                case "-p": {
-                    t.setProject(cmd.nextString().getStringValue());
-                    break;
-                }
-                case "--name":
-                case "-n": {
-                    t.setName(cmd.nextString().getStringValue());
-                    break;
-                }
-                case "--flag":
-                case "-f": {
-                    String v = cmd.nextString().getStringValue();
+                });
+            } else if ((a = cmd.nextString("-p", "--project")) != null) {
+                String s = a.getStringValue();
+                runLater.add(t -> t.setProject(s));
+            } else if ((a = cmd.nextString("-n", "--name")) != null) {
+                String s = a.getStringValue();
+                runLater.add(t -> t.setName(s));
+            } else if ((a = cmd.nextString("-f", "--flag")) != null) {
+                String s = a.getStringValue();
+                runLater.add(t -> {
+                    String v = s;
                     NFlag f = null;
                     if ("random".equalsIgnoreCase(v)) {
                         f = NFlag.values()[(int) (Math.random() * NFlag.values().length)];
@@ -96,31 +80,31 @@ public class NTasksSubCmd {
                         f = NFlag.valueOf(v.toUpperCase());
                     }
                     t.setFlag(f);
-                    break;
-                }
-                case "--job":
-                case "-j": {
-                    String jobId = cmd.nextString().getStringValue();
+                });
+            } else if ((a = cmd.nextString("-j", "--job")) != null) {
+                String s = a.getStringValue();
+                runLater.add(t -> {
+                    String jobId = s;
                     NJob job = service.jobs().getJob(jobId);
                     if (job == null) {
-                        cmd.throwError("invalid job " + jobId);
+                        cmd.throwError(NutsMessage.cstyle("invalid job %s", jobId));
                     }
                     t.setJobId(job.getId());
-                    break;
-                }
-                case "--parent":
-                case "-T": {
-                    String taskId = cmd.nextString().getStringValue();
+                });
+            } else if ((a = cmd.nextString("-T", "--parent")) != null) {
+                String s = a.getStringValue();
+                runLater.add(t -> {
+                    String taskId = s;
                     NTask parentTask = service.tasks().getTask(taskId);
                     if (parentTask == null) {
-                        cmd.throwError("invalid parent task " + taskId);
+                        cmd.throwError(NutsMessage.cstyle("invalid parent task %s", taskId));
                     }
                     t.setParentTaskId(parentTask.getId());
-                    break;
-                }
-                case "--priority":
-                case "-P": {
-                    String v = cmd.nextString().getStringValue();
+                });
+            } else if ((a = cmd.nextString("-P", "--priority")) != null) {
+                String s = a.getStringValue();
+                runLater.add(t -> {
+                    String v = s;
                     NPriority p = NPriority.NORMAL;
                     if (v.equalsIgnoreCase("higher")) {
                         p = p.higher();
@@ -130,81 +114,62 @@ public class NTasksSubCmd {
                         p = NPriority.valueOf(v.toLowerCase());
                     }
                     t.setPriority(p);
-                    break;
-                }
-                case "--ob":
-                case "-o": {
-                    t.setObservations(cmd.nextString().getStringValue());
-                    break;
-                }
-                case "--duration":
-                case "-d": {
-                    t.setDuration(TimePeriod.parse(cmd.nextString().getStringValue(), true));
-                    break;
-                }
-                case "--wip": {
-                    cmd.skip();
+                });
+            } else if ((a = cmd.nextString("-o", "--obs")) != null) {
+                String s = a.getStringValue();
+                runLater.add(t -> {
+                    t.setObservations(s);
+                });
+            } else if ((a = cmd.nextString("-d", "--duration")) != null) {
+                String s = a.getStringValue();
+                runLater.add(t -> {
+                    t.setDuration(TimePeriod.parse(s, true));
+                });
+            } else if ((a = cmd.next("--wip")) != null) {
+                runLater.add(t -> {
                     t.setStatus(NTaskStatus.WIP);
-                    break;
-                }
-                case "--done": {
-                    cmd.skip();
-                    t.setStatus(NTaskStatus.DONE);
-                    break;
-                }
-                case "--cancel": {
-                    cmd.skip();
-                    t.setStatus(NTaskStatus.CANCELLED);
-                    break;
-                }
-                case "--todo": {
-                    cmd.skip();
-                    t.setStatus(NTaskStatus.TODO);
-                    break;
-                }
-                case "--high": {
-                    cmd.skip();
-                    t.setPriority(NPriority.HIGH);
-                    break;
-                }
-                case "--critical": {
-                    cmd.skip();
-                    t.setPriority(NPriority.CRITICAL);
-                    break;
-                }
-                case "--normal": {
-                    cmd.skip();
-                    t.setPriority(NPriority.NORMAL);
-                    break;
-                }
-                default: {
-                    if (a.isNonOption()) {
-                        if (t.getName() == null) {
-                            t.setName(cmd.next().toString());
-                        } else {
-                            cmd.unexpectedArgument();
-                        }
-                    } else {
-                        cmd.unexpectedArgument();
-                    }
+                });
+            } else if ((a = cmd.next("--done")) != null) {
+                runLater.add(t -> t.setStatus(NTaskStatus.DONE));
+            } else if ((a = cmd.next("--cancel")) != null) {
+                runLater.add(t -> t.setStatus(NTaskStatus.CANCELLED));
+            } else if ((a = cmd.next("--todo")) != null) {
+                runLater.add(t -> t.setStatus(NTaskStatus.TODO));
+            } else if ((a = cmd.next("--high")) != null) {
+                runLater.add(t -> t.setPriority(NPriority.HIGH));
+            } else if ((a = cmd.next("--critical")) != null) {
+                runLater.add(t -> t.setPriority(NPriority.CRITICAL));
+            } else if ((a = cmd.next("--normal")) != null) {
+                runLater.add(t -> t.setPriority(NPriority.NORMAL));
+            } else {
+                if (cmd.peek().isNonOption() && !nameVisited) {
+                    String n = cmd.next(ws.commandLine().createName("name")).getString();
+                    runLater.add(t -> t.setName(n));
+                } else {
+                    cmd.unexpectedArgument();
                 }
             }
         }
-        service.tasks().addTask(t);
-        if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("task %s (%s) added.\n",
-                    context.getWorkspace().formats().text().styled(t.getId(), NutsTextNodeStyle.primary(5)),
-                    t.getName()
-            );
-        }
-        if (show) {
-            runTaskShow(ws.commandLine().create(t.getId()));
-        }
-        if (list) {
-            runTaskList(ws.commandLine().create());
+        if (cmd.isExecMode()) {
+            NTask t = new NTask();
+            for (Consumer<NTask> c : runLater) {
+                c.accept(t);
+            }
+            service.tasks().addTask(t);
+            if (context.getSession().isPlainTrace()) {
+                context.getSession().out().printf("task %s (%s) added.\n",
+                        context.getWorkspace().formats().text().styled(t.getId(), NutsTextNodeStyle.primary(5)),
+                        t.getName()
+                );
+            }
+            if (show) {
+                runTaskShow(ws.commandLine().create(t.getId()));
+            }
+            if (list) {
+                runTaskList(ws.commandLine().create());
+            }
         }
     }
-
 
     public void runTaskUpdate(NutsCommandLine cmd) {
         List<NTask> tasks = new ArrayList<>();
@@ -333,7 +298,7 @@ public class NTasksSubCmd {
                     String jobId = cmd.nextString().getStringValue();
                     NJob job = service.jobs().getJob(jobId);
                     if (job == null) {
-                        cmd.throwError("invalid job " + jobId);
+                        cmd.throwError(NutsMessage.cstyle("invalid job %s", jobId));
                     }
                     runLater.add(t -> t.setJobId(job.getId()));
                     break;
@@ -343,7 +308,7 @@ public class NTasksSubCmd {
                     String taskId = cmd.nextString().getStringValue();
                     NTask parentTask = service.tasks().getTask(taskId);
                     if (parentTask == null) {
-                        cmd.throwError("invalid parent task " + taskId);
+                        cmd.throwError(NutsMessage.cstyle("invalid parent task %s", taskId));
                     }
                     runLater.add(t -> t.setParentTaskId(parentTask.getId()));
                     break;
@@ -421,31 +386,32 @@ public class NTasksSubCmd {
         if (tasks.isEmpty()) {
             cmd.throwError("task id expected");
         }
-        for (NTask task : tasks) {
-            for (Consumer<NTask> c : runLater) {
-                c.accept(task);
+        if (cmd.isExecMode()) {
+            for (NTask task : tasks) {
+                for (Consumer<NTask> c : runLater) {
+                    c.accept(task);
+                }
             }
-        }
-        NutsFormatManager text = context.getWorkspace().formats();
-        for (NTask task : new LinkedHashSet<>(tasks)) {
-            service.tasks().updateTask(task);
-            if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("task %s (%s) updated.\n",
-                        text.text().styled(task.getId(), NutsTextNodeStyle.primary(5)),
-                        text.text().styled(task.getName(), NutsTextNodeStyle.primary(1))
-                );
+            NutsFormatManager text = context.getWorkspace().formats();
+            for (NTask task : new LinkedHashSet<>(tasks)) {
+                service.tasks().updateTask(task);
+                if (context.getSession().isPlainTrace()) {
+                    context.getSession().out().printf("task %s (%s) updated.\n",
+                            text.text().styled(task.getId(), NutsTextNodeStyle.primary(5)),
+                            text.text().styled(task.getName(), NutsTextNodeStyle.primary(1))
+                    );
+                }
             }
-        }
-        if (show) {
-            for (NTask t : new LinkedHashSet<>(tasks)) {
-                runTaskList(ws.commandLine().create(t.getId()));
+            if (show) {
+                for (NTask t : new LinkedHashSet<>(tasks)) {
+                    runTaskList(ws.commandLine().create(t.getId()));
+                }
             }
-        }
-        if (list) {
-            runTaskList(ws.commandLine().create());
+            if (list) {
+                runTaskList(ws.commandLine().create());
+            }
         }
     }
-
 
     private void runTaskList(NutsCommandLine cmd) {
         TimespanPattern hoursPerDay = TimespanPattern.WORK;
@@ -605,25 +571,27 @@ public class NTasksSubCmd {
                 }
             }
         }
-        Stream<NTask> r = service.tasks().findTasks(status, null, count, countType, whereFilter, groupBy, timeUnit, hoursPerDay);
+        if (cmd.isExecMode()) {
+            Stream<NTask> r = service.tasks().findTasks(status, null, count, countType, whereFilter, groupBy, timeUnit, hoursPerDay);
 
-        if (context.getSession().isPlainTrace()) {
-            NutsMutableTableModel m = ws.formats().table().createModel();
-            List<NTask> lastResults = new ArrayList<>();
-            int[] index = new int[1];
-            r.forEach(x -> {
-                index[0]++;
-                m.newRow().addCells(toTaskRowArray(x,
-                        parent.createHashId(index[0], -1)
-                ));
-                lastResults.add(x);
-            });
-            context.getSession().setProperty("LastResults", lastResults.toArray(new NTask[0]));
-            ws.formats().table()
-                    .setBorder("spaces")
-                    .setModel(m).setSession(context.getSession()).println();
-        } else {
-            context.getSession().formatObject(r.collect(Collectors.toList())).print(context.getSession().out());
+            if (context.getSession().isPlainTrace()) {
+                NutsMutableTableModel m = ws.formats().table().createModel();
+                List<NTask> lastResults = new ArrayList<>();
+                int[] index = new int[1];
+                r.forEach(x -> {
+                    index[0]++;
+                    m.newRow().addCells(toTaskRowArray(x,
+                            parent.createHashId(index[0], -1)
+                    ));
+                    lastResults.add(x);
+                });
+                context.getSession().setProperty("LastResults", lastResults.toArray(new NTask[0]));
+                ws.formats().table()
+                        .setBorder("spaces")
+                        .setModel(m).setSession(context.getSession()).println();
+            } else {
+                context.getSession().formatObject(r.collect(Collectors.toList())).print(context.getSession().out());
+            }
         }
     }
 
@@ -642,79 +610,79 @@ public class NTasksSubCmd {
         }
         String projectName = p != null ? p.getName() : project != null ? project : "*";
         return new Object[]{
-                index,
-                ws.formats().text().builder().append(x.getId(), NutsTextNodeStyle.pale()),
-                parent.getFlagString(x.getFlag()),
-                parent.getStatusString(x.getStatus()),
-                parent.getPriorityString(x.getPriority()),
-                dte.immutable(),
-                parent.getFormattedProject(projectName),
-                x.getName()
+            index,
+            ws.formats().text().builder().append(x.getId(), NutsTextNodeStyle.pale()),
+            parent.getFlagString(x.getFlag()),
+            parent.getStatusString(x.getStatus()),
+            parent.getPriorityString(x.getPriority()),
+            dte.immutable(),
+            parent.getFormattedProject(projectName),
+            x.getName()
         };
     }
-
 
     private void runTaskRemove(NutsCommandLine cmd) {
         NutsFormatManager text = context.getWorkspace().formats();
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
-            NTask t = findTask(a.toString(), cmd);
-            if (service.tasks().removeTask(t.getId())) {
-                if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("task %s removed.\n",
-                            text.text().styled(a.toString(), NutsTextNodeStyle.primary(5))
+            if (cmd.isExecMode()) {
+                NTask t = findTask(a.toString(), cmd);
+                if (service.tasks().removeTask(t.getId())) {
+                    if (context.getSession().isPlainTrace()) {
+                        context.getSession().out().printf("task %s removed.\n",
+                                text.text().styled(a.toString(), NutsTextNodeStyle.primary(5))
+                        );
+                    }
+                } else {
+                    context.getSession().out().printf("task %s %s.\n",
+                            text.text().styled(a.toString(), NutsTextNodeStyle.primary(5)),
+                            text.text().styled("not found", NutsTextNodeStyle.error())
                     );
                 }
-            } else {
-                context.getSession().out().printf("task %s %s.\n",
-                        text.text().styled(a.toString(), NutsTextNodeStyle.primary(5)),
-                        text.text().styled("not found", NutsTextNodeStyle.error())
-                );
             }
         }
 
     }
-
 
     private void runTaskShow(NutsCommandLine cmd) {
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
-            NTask task = findTask(a.toString(), cmd);
-            if (task == null) {
-                context.getSession().out().printf("```kw %s```: ```error not found```.\n",
-                        a.toString()
-                );
-            } else {
-                context.getSession().out().printf("```kw %s```:\n",
-                        task.getId()
-                );
-                String prefix = "\t                    ";
-                context.getSession().out().printf("\t```kw2 task name```     : %s\n", parent.formatWithPrefix(task.getName(), prefix));
-                context.getSession().out().printf("\t```kw2 status```        : %s\n", parent.formatWithPrefix(task.getStatus(), prefix));
-                context.getSession().out().printf("\t```kw2 priority```      : %s\n", parent.formatWithPrefix(task.getPriority(), prefix));
-                String project = task.getProject();
-                NProject p = service.projects().getProject(project);
-                if (project == null || project.length() == 0) {
-                    context.getSession().out().printf("\t```kw2 project```       : %s\n", "");
+            if (cmd.isExecMode()) {
+                NTask task = findTask(a.toString(), cmd);
+                if (task == null) {
+                    context.getSession().out().printf("```kw %s```: ```error not found```.\n",
+                            a.toString()
+                    );
                 } else {
-                    context.getSession().out().printf("\t```kw2 project```       : %s (%s)\n", project, parent.formatWithPrefix((p == null ? "?" : p.getName()), prefix));
+                    context.getSession().out().printf("```kw %s```:\n",
+                            task.getId()
+                    );
+                    String prefix = "\t                    ";
+                    context.getSession().out().printf("\t```kw2 task name```     : %s\n", parent.formatWithPrefix(task.getName(), prefix));
+                    context.getSession().out().printf("\t```kw2 status```        : %s\n", parent.formatWithPrefix(task.getStatus(), prefix));
+                    context.getSession().out().printf("\t```kw2 priority```      : %s\n", parent.formatWithPrefix(task.getPriority(), prefix));
+                    String project = task.getProject();
+                    NProject p = service.projects().getProject(project);
+                    if (project == null || project.length() == 0) {
+                        context.getSession().out().printf("\t```kw2 project```       : %s\n", "");
+                    } else {
+                        context.getSession().out().printf("\t```kw2 project```       : %s (%s)\n", project, parent.formatWithPrefix((p == null ? "?" : p.getName()), prefix));
+                    }
+                    context.getSession().out().printf("\t```kw2 flag```          : %s\n", parent.formatWithPrefix(task.getFlag(), prefix));
+                    context.getSession().out().printf("\t```kw2 parent id```     : %s\n", parent.formatWithPrefix(task.getParentTaskId(), prefix));
+                    context.getSession().out().printf("\t```kw2 job id```        : %s\n", parent.formatWithPrefix(task.getJobId(), prefix));
+                    context.getSession().out().printf("\t```kw2 due time```      : %s\n", parent.formatWithPrefix(task.getDueTime(), prefix));
+                    context.getSession().out().printf("\t```kw2 start time```    : %s\n", parent.formatWithPrefix(task.getStartTime(), prefix));
+                    context.getSession().out().printf("\t```kw2 end time```      : %s\n", parent.formatWithPrefix(task.getEndTime(), prefix));
+                    context.getSession().out().printf("\t```kw2 duration```      : %s\n", parent.formatWithPrefix(task.getDuration(), prefix));
+                    context.getSession().out().printf("\t```kw2 duration extra```: %s\n", parent.formatWithPrefix(task.getInternalDuration(), prefix));
+                    context.getSession().out().printf("\t```kw2 creation time``` : %s\n", parent.formatWithPrefix(task.getCreationTime(), prefix));
+                    context.getSession().out().printf("\t```kw2 modif. time```   : %s\n", parent.formatWithPrefix(task.getModificationTime(), prefix));
+                    context.getSession().out().printf("\t```kw2 observations```  : %s\n", parent.formatWithPrefix(task.getObservations(), prefix));
                 }
-                context.getSession().out().printf("\t```kw2 flag```          : %s\n", parent.formatWithPrefix(task.getFlag(), prefix));
-                context.getSession().out().printf("\t```kw2 parent id```     : %s\n", parent.formatWithPrefix(task.getParentTaskId(), prefix));
-                context.getSession().out().printf("\t```kw2 job id```        : %s\n", parent.formatWithPrefix(task.getJobId(), prefix));
-                context.getSession().out().printf("\t```kw2 due time```      : %s\n", parent.formatWithPrefix(task.getDueTime(), prefix));
-                context.getSession().out().printf("\t```kw2 start time```    : %s\n", parent.formatWithPrefix(task.getStartTime(), prefix));
-                context.getSession().out().printf("\t```kw2 end time```      : %s\n", parent.formatWithPrefix(task.getEndTime(), prefix));
-                context.getSession().out().printf("\t```kw2 duration```      : %s\n", parent.formatWithPrefix(task.getDuration(), prefix));
-                context.getSession().out().printf("\t```kw2 duration extra```: %s\n", parent.formatWithPrefix(task.getInternalDuration(), prefix));
-                context.getSession().out().printf("\t```kw2 creation time``` : %s\n", parent.formatWithPrefix(task.getCreationTime(), prefix));
-                context.getSession().out().printf("\t```kw2 modif. time```   : %s\n", parent.formatWithPrefix(task.getModificationTime(), prefix));
-                context.getSession().out().printf("\t```kw2 observations```  : %s\n", parent.formatWithPrefix(task.getObservations(), prefix));
             }
         }
     }
-
-
 
     public boolean runTaskCommands(NutsCommandLine cmd) {
         if (cmd.next("a t", "t a", "ta", "at", "add task", "tasks add") != null) {
@@ -726,9 +694,8 @@ public class NTasksSubCmd {
         } else if (cmd.next("l t", "t l", "lt", "tl", "list tasks", "tasks list") != null) {
             runTaskList(cmd);
             return true;
-        } else if (cmd.next("tr", "rt", "trm", "rmt", "t r", "r t", "t rm", "rm t", "remove task", "remove tasks", "rm task", "rm tasks"
-                , "tasks remove", "tasks rm") != null
-        ) {
+        } else if (cmd.next("tr", "rt", "trm", "rmt", "t r", "r t", "t rm", "rm t", "remove task", "remove tasks", "rm task", "rm tasks",
+                "tasks remove", "tasks rm") != null) {
             runTaskRemove(cmd);
             return true;
         } else if (cmd.next("st", "ts", "s t", "t s", "show task", "show tasks", "tasks show") != null) {
@@ -760,7 +727,7 @@ public class NTasksSubCmd {
             t = service.tasks().getTask(pid);
         }
         if (t == null) {
-            cmd.throwError("task not found: " + pid);
+            cmd.throwError(NutsMessage.cstyle("task not found: %s", pid));
         }
         return t;
     }

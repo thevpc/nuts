@@ -1,15 +1,22 @@
 package net.thevpc.nuts.runtime.core.app;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.time.Instant;
+import java.util.ArrayList;
+import net.thevpc.nuts.NutsDefaultArgumentCandidate;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.List;
+import java.util.ListIterator;
 
 public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
+
     private NutsWorkspace ws;
 
     public DefaultNutsCommandLineManager(NutsWorkspace ws) {
-        this.ws=ws;
+        this.ws = ws;
     }
 
     public NutsWorkspace getWorkspace() {
@@ -52,7 +59,6 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
         return Factory.createArgument0(getWorkspace(), argument, '=');
     }
 
-
     @Override
     public NutsArgumentName createName(String type, String label) {
         return Factory.createName0(ws.createSession(), type, label);
@@ -64,6 +70,7 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
     }
 
     public static class Factory {
+
         public static NutsArgument createArgument0(NutsWorkspace ws, String argument, char eq) {
             return new DefaultNutsArgument(argument, eq);
         }
@@ -93,16 +100,16 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
                     return new FileNonOption(type);
                 }
                 case "boolean": {
-                    return new ValueNonOption( type, "true", "false");
+                    return new ValueNonOption(type, "true", "false");
                 }
                 case "repository": {
-                    return new RepositoryNonOption( label);
+                    return new RepositoryNonOption(label);
                 }
                 case "repository-type": {
                     return new RepositoryTypeNonOption(label);
                 }
                 case "right": {
-                    return new PermissionNonOption(label,  null, false);
+                    return new PermissionNonOption(label, null, false);
                 }
                 case "user": {
                     return new UserNonOption(label);
@@ -116,4 +123,10 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
             }
         }
     }
+
+    @Override
+    public NutsCommandHistoryBuilder createHistory() {
+        return new NutsCommandHistoryBuilderImpl(ws);
+    }
+
 }

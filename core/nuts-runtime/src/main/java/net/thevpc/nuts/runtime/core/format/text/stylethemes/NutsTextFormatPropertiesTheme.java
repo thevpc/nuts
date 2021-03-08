@@ -168,32 +168,40 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
     }
 
     @Override
-    public NutsTextNodeStyle[] toBasicStyles(NutsTextNodeStyle style) {
+    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyles styles) {
+        NutsTextNodeStyles ret = NutsTextNodeStyles.NONE;
+        if (styles != null) {
+            for (NutsTextNodeStyle style : styles) {
+                ret = ret.append(toBasicStyles(style));
+            }
+        }
+        return ret;
+    }
+    
+    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyle style) {
         return toBasicStyles(style,20);
     }
 
-    public NutsTextNodeStyle[] toBasicStyles(NutsTextNodeStyle style,int maxLoop) {
+    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyle style,int maxLoop) {
         if(maxLoop<=0){
             throw new NutsIllegalArgumentException(ws,"invalid ntf theme for "+style.getType()+"("+style.getVariant()+"). infinite loop");
         }
         if(style.getType().basic()){
-            return new NutsTextNodeStyle[]{style};
+            return NutsTextNodeStyles.of(style);
         }
         String s = getProp(style.getType(),style.getVariant());
         if(s==null){
-            return new NutsTextNodeStyle[0];
+            return NutsTextNodeStyles.NONE;
         }
-        List<NutsTextNodeStyle> ret=new ArrayList<>();
+        NutsTextNodeStyles ret=NutsTextNodeStyles.NONE;
         for (String v : s.split(",")) {
-            NutsTextNodeStyle[] ss = toBasicStyles(v, style.getVariant(),maxLoop-1);
-            if(ss!=null){
-                ret.addAll(Arrays.asList(ss));
-            }
+            NutsTextNodeStyles ss = toBasicStyles(v, style.getVariant(),maxLoop-1);
+            ret=ret.append(ss);
         }
-        return ret.toArray(new NutsTextNodeStyle[0]);
+        return ret;
     }
 
-    public NutsTextNodeStyle[] toBasicStyles(String v, int defaultVariant,int maxLoop) {
+    public NutsTextNodeStyles toBasicStyles(String v, int defaultVariant,int maxLoop) {
         v=v.trim();
         int a=v.indexOf('(');
         if(a>0){
@@ -212,21 +220,21 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return new NutsTextNodeStyle[]{
+                        return NutsTextNodeStyles.of(
                                 NutsTextNodeStyle.foregroundColor(ii)
-                        };
+                        );
                     }
                     case "plain":{
-                        return new NutsTextNodeStyle[]{};
+                        return NutsTextNodeStyles.NONE;
                     }
                     case "foregroundtruecolor":{
                         Integer ii=CoreCommonUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return new NutsTextNodeStyle[]{
+                        return NutsTextNodeStyles.of(
                                 NutsTextNodeStyle.foregroundTrueColor(ii)
-                        };
+                        );
                     }
                     case "background":
                     case "backgroundcolor":{
@@ -234,18 +242,18 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return new NutsTextNodeStyle[]{
+                        return NutsTextNodeStyles.of(
                                 NutsTextNodeStyle.backgroundColor(ii)
-                        };
+                        );
                     }
                     case "backgroundtruecolor":{
                         Integer ii=CoreCommonUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return new NutsTextNodeStyle[]{
+                        return NutsTextNodeStyles.of(
                                 NutsTextNodeStyle.backgroundTrueColor(ii)
-                        };
+                        );
                     }
 
                     case "primary":{
@@ -461,6 +469,6 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                 }
             }
         }
-        return new NutsTextNodeStyle[0];
+        return NutsTextNodeStyles.NONE;
     }
 }

@@ -253,7 +253,7 @@ public class LsCommand extends SimpleNshBuiltin {
         } else if (item.archive) {
             out.println(text.text().styled(name,NutsTextNodeStyle.primary(1)));
         } else {
-            out.println(text.text().styled(name));
+            out.println(text.text().plain(name));
         }
     }
 

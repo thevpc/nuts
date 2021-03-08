@@ -11,17 +11,15 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.toolbox.nsh;
 
@@ -124,7 +122,7 @@ public class NutsJavaShell extends JShell {
             //ignore
             LOG.log(Level.SEVERE, "error resolving history file", ex);
         }
-        ws.env().setProperty(JShellHistory.class.getName(), hist,new NutsUpdateOptions(session));
+        ws.env().setProperty(JShellHistory.class.getName(), hist, new NutsUpdateOptions(session));
     }
 
     private static String[] resolveArgs(NutsApplicationContext appContext, String[] args) {
@@ -165,7 +163,6 @@ public class NutsJavaShell extends JShell {
     public void setWorkspace(NutsWorkspace workspace) {
         getRootNutsShellContext().setWorkspace(workspace);
     }
-
 
     public NutsShellContext createContext(NutsShellContext ctx, JShellNode root, JShellNode parent, JShellVariables env) {
         return new DefaultNutsShellContext(this, root, parent, ctx, getWorkspace(), appContext.getSession(), env);
@@ -217,7 +214,18 @@ public class NutsJavaShell extends JShell {
     protected void executeInteractive(JShellFileContext context) {
         appContext.getWorkspace().io().term().enableRichTerm(appContext.getSession());
         appContext.getWorkspace().io().term().getSystemTerminal()
-                .setAutoCompleteResolver(new NshAutoCompleter());
+                .setCommandAutoCompleteResolver(new NshAutoCompleter())
+                .setCommandHistory(
+                        appContext.getWorkspace().commandLine().createHistory()
+                                .setPath(Paths.get(appContext.getVarFolder()).resolve("nsh-history.hist"))
+                                .build()
+                )
+                .setCommandReadHighlighter(new NutsCommandReadHighlighter() {
+                    @Override
+                    public NutsTextNode highlight(String buffer, NutsWorkspace workspace) {
+                        return workspace.formats().text().code("sh", buffer).parse();
+                    }
+                });
         super.executeInteractive(context);
     }
 
@@ -256,9 +264,11 @@ public class NutsJavaShell extends JShell {
         return (NutsShellContext) super.getRootContext().getShellContext();
     }
 
-    private static class NshAutoCompleter implements NutsCommandAutoCompleteProcessor {
+    private static class NshAutoCompleter implements NutsCommandAutoCompleteResolver {
+
         @Override
-        public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex, NutsWorkspace workspace) {
+        public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex, NutsSession session) {
+            NutsWorkspace workspace = session.getWorkspace();
             List<NutsArgumentCandidate> candidates = new ArrayList<>();
             JShellFileContext fileContext = (JShellFileContext) workspace.env().getProperty(JShellFileContext.class.getName());
             NutsShellContext nutsConsoleContext = (NutsShellContext) fileContext.getShellContext();

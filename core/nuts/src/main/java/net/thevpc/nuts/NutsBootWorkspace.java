@@ -720,19 +720,19 @@ public final class NutsBootWorkspace {
             }
             boolean recover = options.isRecover() || options.isReset();
 
-//            LinkedHashMap<String, NutsBootClassLoader.NutsBootDependencyNode> allExtensionFiles = new LinkedHashMap<>();
-            List<NutsBootDependencyNode> deps = new ArrayList<>();
+//            LinkedHashMap<String, NutsBootClassLoader.NutsClassLoaderNode> allExtensionFiles = new LinkedHashMap<>();
+            List<NutsClassLoaderNode> deps = new ArrayList<>();
 
             String workspaceBootLibFolder = workspaceInformation.getLib();
 
             String[] repositories = PrivateNutsUtils.splitUrlStrings(workspaceInformation.getBootRepositories()).toArray(new String[0]);
 
-            NutsBootClassLoader.IdInfoBuilder rt = new NutsBootClassLoader.IdInfoBuilder();
+            NutsClassLoaderNodeBuilder rt = new NutsClassLoaderNodeBuilder();
             rt.setId(workspaceInformation.getRuntimeId())
                     .setUrl(getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "runtime", options.getExpireTime())
                             .toURI().toURL());
             for (String s : workspaceInformation.getRuntimeBootDescriptor().getDependencies()) {
-                NutsBootClassLoader.IdInfoBuilder x = new NutsBootClassLoader.IdInfoBuilder();
+                NutsClassLoaderNodeBuilder x = new NutsClassLoaderNodeBuilder();
                 x.setId(s)
                         .setUrl(getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "runtime dependency", options.getExpireTime())
                                 .toURI().toURL()
@@ -742,12 +742,12 @@ public final class NutsBootWorkspace {
             workspaceInformation.setRuntimeBootDependencyNode(rt.build());
 
             for (NutsBootDescriptor nutsBootDescriptor : workspaceInformation.getExtensionBootDescriptors()) {
-                NutsBootClassLoader.IdInfoBuilder rt2 = new NutsBootClassLoader.IdInfoBuilder();
+                NutsClassLoaderNodeBuilder rt2 = new NutsClassLoaderNodeBuilder();
                 rt2.setId(nutsBootDescriptor.getId())
                         .setUrl(getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "extension " + nutsBootDescriptor.getId(), options.getExpireTime())
                                 .toURI().toURL());
                 for (String s : nutsBootDescriptor.getDependencies()) {
-                    NutsBootClassLoader.IdInfoBuilder x = new NutsBootClassLoader.IdInfoBuilder();
+                    NutsClassLoaderNodeBuilder x = new NutsClassLoaderNodeBuilder();
                     x.setId(s)
                             .setUrl(getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "extension " + nutsBootDescriptor.getId() + " dependency", options.getExpireTime())
                                     .toURI().toURL()
@@ -756,11 +756,11 @@ public final class NutsBootWorkspace {
                 }
                 deps.add(rt2.build());
             }
-            workspaceInformation.setExtensionBootDependencyNodes(deps.toArray(new NutsBootDependencyNode[0]));
+            workspaceInformation.setExtensionBootDependencyNodes(deps.toArray(new NutsClassLoaderNode[0]));
             deps.add(0, workspaceInformation.getRuntimeBootDependencyNode());
 
-            bootClassWorldURLs = resolveClassWorldURLs(deps.toArray(new NutsBootDependencyNode[0]));
-            workspaceClassLoader = bootClassWorldURLs.length == 0 ? getContextClassLoader() : new NutsBootClassLoader(deps.toArray(new NutsBootDependencyNode[0]), getContextClassLoader());
+            bootClassWorldURLs = resolveClassWorldURLs(deps.toArray(new NutsClassLoaderNode[0]));
+            workspaceClassLoader = bootClassWorldURLs.length == 0 ? getContextClassLoader() : new NutsBootClassLoader(deps.toArray(new NutsClassLoaderNode[0]), getContextClassLoader());
             workspaceInformation.setWorkspaceClassLoader(workspaceClassLoader);
             workspaceInformation.setBootClassWorldURLs(bootClassWorldURLs);
             ServiceLoader<NutsBootWorkspaceFactory> serviceLoader = ServiceLoader.load(NutsBootWorkspaceFactory.class, workspaceClassLoader);
@@ -819,16 +819,16 @@ public final class NutsBootWorkspace {
         }
     }
 
-    private void fillBootDependencyNodes(NutsBootDependencyNode info, Set<URL> urls) {
+    private void fillBootDependencyNodes(NutsClassLoaderNode info, Set<URL> urls) {
         urls.add(info.getURL());
-        for (NutsBootDependencyNode dependency : info.getDependencies()) {
+        for (NutsClassLoaderNode dependency : info.getDependencies()) {
             fillBootDependencyNodes(dependency, urls);
         }
     }
 
-    private URL[] resolveClassWorldURLs(NutsBootDependencyNode[] infos) {
+    private URL[] resolveClassWorldURLs(NutsClassLoaderNode[] infos) {
         LinkedHashSet<URL> urls0 = new LinkedHashSet<>();
-        for (NutsBootDependencyNode info : infos) {
+        for (NutsClassLoaderNode info : infos) {
             fillBootDependencyNodes(info, urls0);
         }
         List<URL> urls = new ArrayList<>();

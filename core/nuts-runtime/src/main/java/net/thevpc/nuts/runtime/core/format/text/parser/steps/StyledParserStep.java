@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.IntPredicate;
+import net.thevpc.nuts.NutsTextNodeStyles;
 
 public class StyledParserStep extends ParserStep {
 
@@ -201,11 +202,13 @@ public class StyledParserStep extends ParserStep {
         if (styleMode == StyleMode.COLON) {
             if (!parsedAt) {
                 parsedAt = true;
-                NutsTextNodeStyle[] parsedStyles = parseHelper.parse(atStr.toString());
+                NutsTextNodeStyles parsedStyles = parseHelper.parse(atStr.toString());
                 if (parsedStyles == null) {
                     atInvalid = ws.formats().text().plain(atStr.toString());
                 } else {
-                    atVals.addAll(Arrays.asList(parsedStyles));
+                    for (NutsTextNodeStyle parsedStyle : parsedStyles) {
+                        atVals.add(parsedStyle);
+                    }
                 }
             }
         }

@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class NJobsSubCmd {
+
     private JobService service;
     private NutsApplicationContext context;
     private NutsWorkspace ws;
@@ -86,18 +87,20 @@ public class NJobsSubCmd {
                 }
             }
         }
-        service.jobs().addJob(t);
-        if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("job %s (%s) added.\n",
-                    context.getWorkspace().formats().text().styled(t.getId(), NutsTextNodeStyle.primary(5)),
-                    t.getName()
-            );
-        }
-        if (show) {
-            runJobShow(ws.commandLine().create(t.getId()));
-        }
-        if (list) {
-            runJobList(ws.commandLine().create());
+        if (cmd.isExecMode()) {
+            service.jobs().addJob(t);
+            if (context.getSession().isPlainTrace()) {
+                context.getSession().out().printf("job %s (%s) added.\n",
+                        context.getWorkspace().formats().text().styled(t.getId(), NutsTextNodeStyle.primary(5)),
+                        t.getName()
+                );
+            }
+            if (show) {
+                runJobShow(ws.commandLine().create(t.getId()));
+            }
+            if (list) {
+                runJobList(ws.commandLine().create());
+            }
         }
     }
 
@@ -191,28 +194,30 @@ public class NJobsSubCmd {
         if (jobs.isEmpty()) {
             cmd.throwError("job id expected");
         }
-        for (NJob job : jobs) {
-            for (Consumer<NJob> c : runLater) {
-                c.accept(job);
+        if (cmd.isExecMode()) {
+            for (NJob job : jobs) {
+                for (Consumer<NJob> c : runLater) {
+                    c.accept(job);
+                }
             }
-        }
-        NutsFormatManager text = context.getWorkspace().formats();
-        for (NJob job : new LinkedHashSet<>(jobs)) {
-            service.jobs().updateJob(job);
-            if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("job %s (%s) updated.\n",
-                        text.text().styled(job.getId(), NutsTextNodeStyle.primary(5)),
-                        text.text().styled(job.getName(), NutsTextNodeStyle.primary(1))
-                );
+            NutsFormatManager text = context.getWorkspace().formats();
+            for (NJob job : new LinkedHashSet<>(jobs)) {
+                service.jobs().updateJob(job);
+                if (context.getSession().isPlainTrace()) {
+                    context.getSession().out().printf("job %s (%s) updated.\n",
+                            text.text().styled(job.getId(), NutsTextNodeStyle.primary(5)),
+                            text.text().styled(job.getName(), NutsTextNodeStyle.primary(1))
+                    );
+                }
             }
-        }
-        if (show) {
-            for (NJob t : new LinkedHashSet<>(jobs)) {
-                runJobList(ws.commandLine().create(t.getId()));
+            if (show) {
+                for (NJob t : new LinkedHashSet<>(jobs)) {
+                    runJobList(ws.commandLine().create(t.getId()));
+                }
             }
-        }
-        if (list) {
-            runJobList(ws.commandLine().create());
+            if (list) {
+                runJobList(ws.commandLine().create());
+            }
         }
     }
 
@@ -249,48 +254,51 @@ public class NJobsSubCmd {
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
             NJob t = findJob(a.toString(), cmd);
-            if (service.jobs().removeJob(t.getId())) {
-                if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("job %s removed.\n",
-                            text.text().styled(a.toString(), NutsTextNodeStyle.primary(5))
+            if (cmd.isExecMode()) {
+                if (service.jobs().removeJob(t.getId())) {
+                    if (context.getSession().isPlainTrace()) {
+                        context.getSession().out().printf("job %s removed.\n",
+                                text.text().styled(a.toString(), NutsTextNodeStyle.primary(5))
+                        );
+                    }
+                } else {
+                    context.getSession().out().printf("job %s %s.\n",
+                            text.text().styled(a.toString(), NutsTextNodeStyle.primary(5)),
+                            text.text().styled("not found", NutsTextNodeStyle.error())
                     );
                 }
-            } else {
-                context.getSession().out().printf("job %s %s.\n",
-                        text.text().styled(a.toString(), NutsTextNodeStyle.primary(5)),
-                        text.text().styled("not found", NutsTextNodeStyle.error())
-                );
             }
         }
 
     }
 
-
     private void runJobShow(NutsCommandLine cmd) {
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
-            NJob job = findJob(a.toString(), cmd);
-            if (job == null) {
-                context.getSession().out().printf("```kw %s```: ```error not found```.\n",
-                        a.toString()
-                );
-            } else {
-                context.getSession().out().printf("```kw %s```:\n",
-                        job.getId()
-                );
-                String prefix = "\t                    ";
-                context.getSession().out().printf("\t```kw2 job name```      : %s:\n", parent.formatWithPrefix(job.getName(), prefix));
-                String project = job.getProject();
-                NProject p = service.projects().getProject(project);
-                if (project == null || project.length() == 0) {
-                    context.getSession().out().printf("\t```kw2 project```       : %s\n", "");
+            if (cmd.isExecMode()) {
+                NJob job = findJob(a.toString(), cmd);
+                if (job == null) {
+                    context.getSession().out().printf("```kw %s```: ```error not found```.\n",
+                            a.toString()
+                    );
                 } else {
-                    context.getSession().out().printf("\t```kw2 project```       : %s (%s)\n", project, parent.formatWithPrefix(p == null ? "?" : p.getName(), prefix));
+                    context.getSession().out().printf("```kw %s```:\n",
+                            job.getId()
+                    );
+                    String prefix = "\t                    ";
+                    context.getSession().out().printf("\t```kw2 job name```      : %s:\n", parent.formatWithPrefix(job.getName(), prefix));
+                    String project = job.getProject();
+                    NProject p = service.projects().getProject(project);
+                    if (project == null || project.length() == 0) {
+                        context.getSession().out().printf("\t```kw2 project```       : %s\n", "");
+                    } else {
+                        context.getSession().out().printf("\t```kw2 project```       : %s (%s)\n", project, parent.formatWithPrefix(p == null ? "?" : p.getName(), prefix));
+                    }
+                    context.getSession().out().printf("\t```kw2 duration```      : %s\n", parent.formatWithPrefix(job.getDuration(), prefix));
+                    context.getSession().out().printf("\t```kw2 start time```    : %s\n", parent.formatWithPrefix(job.getStartTime(), prefix));
+                    context.getSession().out().printf("\t```kw2 duration extra```: %s\n", parent.formatWithPrefix(job.getInternalDuration(), prefix));
+                    context.getSession().out().printf("\t```kw2 observations```  : %s\n", parent.formatWithPrefix(job.getObservations(), prefix));
                 }
-                context.getSession().out().printf("\t```kw2 duration```      : %s\n", parent.formatWithPrefix(job.getDuration(), prefix));
-                context.getSession().out().printf("\t```kw2 start time```    : %s\n", parent.formatWithPrefix(job.getStartTime(), prefix));
-                context.getSession().out().printf("\t```kw2 duration extra```: %s\n", parent.formatWithPrefix(job.getInternalDuration(), prefix));
-                context.getSession().out().printf("\t```kw2 observations```  : %s\n", parent.formatWithPrefix(job.getObservations(), prefix));
             }
         }
 
@@ -414,27 +422,28 @@ public class NJobsSubCmd {
                 }
             }
         }
-        Stream<NJob> r = service.jobs().findLastJobs(null, count, countType, whereFilter, groupBy, timeUnit, hoursPerDay);
-        ChronoUnit timeUnit0 = timeUnit;
-        if (context.getSession().isPlainTrace()) {
-            NutsMutableTableModel m = ws.formats().table().createModel();
-            NJobGroup finalGroupBy = groupBy;
-            List<NJob> lastResults = new ArrayList<>();
-            int[] index = new int[1];
-            r.forEach(x -> {
-                NutsString durationString = ws.formats().text().styled(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)), NutsTextNodeStyle.keyword());
-                index[0]++;
-                lastResults.add(x);
-                m.newRow().addCells(
-                        (finalGroupBy != null) ?
-                                new Object[]{
-                                        parent.createHashId(index[0], -1),
-                                        parent.getFormattedDate(x.getStartTime()),
-                                        durationString,
-                                        parent.getFormattedProject(x.getProject() == null ? "*" : x.getProject()),
-                                        x.getName()
+        if (cmd.isExecMode()) {
+            Stream<NJob> r = service.jobs().findLastJobs(null, count, countType, whereFilter, groupBy, timeUnit, hoursPerDay);
+            ChronoUnit timeUnit0 = timeUnit;
+            if (context.getSession().isPlainTrace()) {
+                NutsMutableTableModel m = ws.formats().table().createModel();
+                NJobGroup finalGroupBy = groupBy;
+                List<NJob> lastResults = new ArrayList<>();
+                int[] index = new int[1];
+                r.forEach(x -> {
+                    NutsString durationString = ws.formats().text().styled(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)), NutsTextNodeStyle.keyword());
+                    index[0]++;
+                    lastResults.add(x);
+                    m.newRow().addCells(
+                            (finalGroupBy != null)
+                                    ? new Object[]{
+                                parent.createHashId(index[0], -1),
+                                parent.getFormattedDate(x.getStartTime()),
+                                durationString,
+                                parent.getFormattedProject(x.getProject() == null ? "*" : x.getProject()),
+                                x.getName()
 
-                                } : new Object[]{
+                            } : new Object[]{
                                 parent.createHashId(index[0], -1),
                                 ws.formats().text().styled(x.getId(), NutsTextNodeStyle.pale()),
                                 parent.getFormattedDate(x.getStartTime()),
@@ -442,15 +451,16 @@ public class NJobsSubCmd {
                                 parent.getFormattedProject(x.getProject() == null ? "*" : x.getProject()),
                                 x.getName()
 
-                        }
-                );
-            });
-            context.getSession().setProperty("LastResults", lastResults.toArray(new NJob[0]));
-            ws.formats().table()
-                    .setBorder("spaces")
-                    .setModel(m).println(context.getSession().out());
-        } else {
-            context.getSession().formatObject(r.collect(Collectors.toList())).print(context.getSession().out());
+                            }
+                    );
+                });
+                context.getSession().setProperty("LastResults", lastResults.toArray(new NJob[0]));
+                ws.formats().table()
+                        .setBorder("spaces")
+                        .setModel(m).println(context.getSession().out());
+            } else {
+                context.getSession().formatObject(r.collect(Collectors.toList())).print(context.getSession().out());
+            }
         }
     }
 
@@ -469,7 +479,7 @@ public class NJobsSubCmd {
             t = service.jobs().getJob(pid);
         }
         if (t == null) {
-            cmd.throwError("job not found: " + pid);
+            cmd.throwError(NutsMessage.cstyle("job not found: %s",pid));
         }
         return t;
     }

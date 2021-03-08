@@ -12,7 +12,7 @@ njob ( add | remove | update | show | list ) job  <-options>...
 ####) add project:
 
 ```sh
-njob jobs|j add|a [options] <job-name>
+njob jobs|j add|a [<-options>] <job-name>
 ```
     ```sh on <start-date> ```
     ```sh at <start-time> ```
@@ -24,7 +24,7 @@ njob jobs|j add|a [options] <job-name>
 ####) update project:
 
 ```sh
-njob jobs|j update|a [options] <job-name>
+njob jobs|j update|a [<-options>] <job-name>
 ```
     ```sh on <start-date> ```
     ```sh at <start-time> ```

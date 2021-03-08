@@ -93,7 +93,7 @@ nadmin list users
         list available users
 
 ```sh
-nadmin add user [options] <username> <password>
+nadmin add user [<-options>] <username> <password>
 ```
         add new user to the workspace
 

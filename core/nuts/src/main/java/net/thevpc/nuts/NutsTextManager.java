@@ -23,17 +23,23 @@ public interface NutsTextManager {
 
     NutsTextNode list(Collection<NutsTextNode> nodes);
 
-    NutsTextNode styled(String other, NutsTextNodeStyle... decorations);
+    NutsTextNode styled(String other, NutsTextNodeStyles decorations);
 
-    NutsTextNode styled(NutsString other, NutsTextNodeStyle... decorations);
+    NutsTextNode styled(NutsString other, NutsTextNodeStyles decorations);
 
-    NutsTextNode styled(NutsTextNode other, NutsTextNodeStyle... decorations);
+    NutsTextNode styled(NutsTextNode other, NutsTextNodeStyles decorations);
+
+    NutsTextNode styled(String other, NutsTextNodeStyle decorations);
+
+    NutsTextNode styled(NutsString other, NutsTextNodeStyle decorations);
+
+    NutsTextNode styled(NutsTextNode other, NutsTextNodeStyle decorations);
 
     NutsTextNode command(String command, String args);
 
     NutsTextNode command(String command);
 
-    NutsTextNode code(String lang, String text);
+    NutsTextNodeCode code(String lang, String text);
 
     NutsTitleNumberSequence createTitleNumberSequence();
 

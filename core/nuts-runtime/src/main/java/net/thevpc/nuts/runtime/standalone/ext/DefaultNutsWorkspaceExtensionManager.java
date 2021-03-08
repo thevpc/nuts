@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceFactory;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.io.NutsFormattedPrintStream;
-import net.thevpc.nuts.runtime.core.NutsURLClassLoader;
+import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderNodeUtils;
 
 /**
  * @author thevpc
@@ -64,8 +65,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     private final NutsWorkspace ws;
     private final NutsBootWorkspaceFactory bootFactory;
     private final NutsWorkspaceFactory objectFactory;
-    private NutsURLClassLoader workspaceExtensionsClassLoader;
-    private Map<NutsURLClassLoaderKey, NutsURLClassLoader> cachedClassLoaders = new HashMap<>();
+    private DefaultNutsClassLoader workspaceExtensionsClassLoader;
+    private Map<NutsURLClassLoaderKey, DefaultNutsClassLoader> cachedClassLoaders = new HashMap<>();
     private Map<NutsId, NutsWorkspaceExtension> extensions = new HashMap<>();
     private Set<NutsId> loadedExtensionIds = new LinkedHashSet<>();
     private Set<URL> loadedExtensionURLs = new LinkedHashSet<>();
@@ -168,14 +169,14 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                 info.getRuntimeBootDependencyNode().getURL(),
                 bootClassLoader,
                 session);
-        for (NutsBootDependencyNode idurl : info.getExtensionBootDependencyNodes()) {
+        for (NutsClassLoaderNode idurl : info.getExtensionBootDependencyNodes()) {
             objectFactory.discoverTypes(
                     ws.id().parser().parse(idurl.getId()),
                     idurl.getURL(),
                     bootClassLoader,
                     session);
         }
-        this.workspaceExtensionsClassLoader = new NutsURLClassLoader("workspaceExtensionsClassLoader", ws, new URL[0], new NutsId[0], bootClassLoader);
+        this.workspaceExtensionsClassLoader = new DefaultNutsClassLoader("workspaceExtensionsClassLoader", ws, bootClassLoader);
     }
 
 //    public void registerType(RegInfo regInfo, NutsSession session) {
@@ -387,21 +388,14 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
                     if (def.getType() != NutsIdType.EXTENSION) {
                         throw new NutsIllegalArgumentException(ws, "not an extension: " + extension);
                     }
-                    ws.install().setSession(session).id(def.getId());
-                    workspaceExtensionsClassLoader.addId(def.getId().getLongNameId());
-                    workspaceExtensionsClassLoader.addPath(def.getContent().getPath());
-                    for (NutsDependency dependency : def.getDependencies()) {
-                        workspaceExtensionsClassLoader.addId(dependency.getId().getLongNameId());
-                        workspaceExtensionsClassLoader.addPath(ws.fetch().setId(dependency.getId())
-                                .setSession(session)
-                                .getResultContent().getPath());
-                    }
+//                    ws.install().setSession(session).id(def.getId());
+                    workspaceExtensionsClassLoader.add(NutsClassLoaderNodeUtils.definitionToClassLoaderNode(def, session));
                     objectFactory.discoverTypes(def.getId(), def.getContent().getURL(), workspaceExtensionsClassLoader, session);
                     //should check current classpath
                     //and the add to classpath
                     loadedExtensionIds.add(extension);
                     LOG.with().session(session).verb(NutsLogVerb.SUCCESS)
-                            .style(NutsTextFormatStyle.CSTYLE)
+                            .style(NutsTextFormatStyle.CSTYLE).formatted(true)
                             .log("extension %s loaded", def.getId()
                             );
                     someUpdates = true;
@@ -414,7 +408,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return this;
     }
 
-    private void updateLoadedExtensionURLs(NutsSession session) {
+     private void updateLoadedExtensionURLs(NutsSession session) {
         loadedExtensionURLs.clear();
         for (NutsDefinition def : ws.search().addIds(loadedExtensionIds.toArray(new NutsId[0])).setTargetApiVersion(ws.getApiVersion())
                 .setDependencies(true)
@@ -464,34 +458,21 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         }
 
         LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.UPDATE).formatted().log("installing extension {0}", id);
-        List<NutsDefinition> nutsDefinitions = ws.search()
+        NutsDefinition nutsDefinitions = ws.search()
                 .copyFrom(options)
                 .setSession(searchSession)
                 .addId(id).setSession(session)
                 .addScope(NutsDependencyScopePattern.RUN)
                 .setOptional(false)
-                .setInlineDependencies(true).getResultDefinitions().list();
-        NutsId toWire = null;
-        URL toWireURL = null;
-        for (NutsDefinition nutsDefinition : nutsDefinitions) {
-            if (nutsDefinition.getId().equalsShortName(id)) {
-                if (toWire == null || toWire.getVersion().compareTo(nutsDefinition.getId().getVersion()) < 0) {
-                    toWire = nutsDefinition.getId();
-                    toWireURL = nutsDefinition.getContent().getURL();
-                }
-            }
+                .setDependencies(true)
+                .setLatest(true)
+                .getResultDefinitions().required();
+        if (!isLoadedClassPath(nutsDefinitions, session)) {
+            this.workspaceExtensionsClassLoader.add(NutsClassLoaderNodeUtils.definitionToClassLoaderNode(nutsDefinitions, session));
         }
-        if (toWire == null) {
-            toWire = id;
-        }
-        for (NutsDefinition nutsDefinition : nutsDefinitions) {
-            if (!isLoadedClassPath(nutsDefinition, session)) {
-                this.workspaceExtensionsClassLoader.addPath(nutsDefinition.getPath());
-            }
-        }
-        DefaultNutsWorkspaceExtension workspaceExtension = new DefaultNutsWorkspaceExtension(id, toWire, this.workspaceExtensionsClassLoader);
+        DefaultNutsWorkspaceExtension workspaceExtension = new DefaultNutsWorkspaceExtension(id, nutsDefinitions.getId(), this.workspaceExtensionsClassLoader);
         //now will iterate over Extension classes to wire them ...
-        objectFactory.discoverTypes(toWire, toWireURL, workspaceExtension.getClassLoader(), session);
+        objectFactory.discoverTypes(nutsDefinitions.getId(), nutsDefinitions.getContent().getURL(), workspaceExtension.getClassLoader(), session);
 //        for (Class extensionImpl : getExtensionTypes(NutsComponent.class, session)) {
 //            for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
 //                if (registerType(extensionPointType, extensionImpl, session)) {
@@ -721,17 +702,18 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return configExt().getStoredConfigBoot();
     }
 
-    public synchronized NutsURLClassLoader getNutsURLClassLoader(String name, URL[] urls, NutsId[] ids, ClassLoader parent) {
+    public synchronized DefaultNutsClassLoader getNutsURLClassLoader(String name, ClassLoader parent) {
         if (parent == null) {
             parent = workspaceExtensionsClassLoader;
         }
-        NutsURLClassLoaderKey k = new NutsURLClassLoaderKey(urls, parent);
-        NutsURLClassLoader v = cachedClassLoaders.get(k);
-        if (v == null) {
-            v = new NutsURLClassLoader(name, ws, urls, ids, parent);
-            cachedClassLoaders.put(k, v);
-        }
-        return v;
+        return new DefaultNutsClassLoader(name, ws, parent);
+//        NutsURLClassLoaderKey k = new NutsURLClassLoaderKey(urls, parent);
+//        DefaultNutsClassLoader v = cachedClassLoaders.get(k);
+//        if (v == null) {
+//            v = new DefaultNutsClassLoader(name, ws, urls, ids, parent);
+//            cachedClassLoaders.put(k, v);
+//        }
+//        return v;
     }
 
     public static class RegInfo {

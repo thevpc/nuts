@@ -2,12 +2,13 @@ package net.thevpc.nuts.runtime.core.format.text.stylethemes;
 
 import net.thevpc.nuts.NutsTextFormatTheme;
 import net.thevpc.nuts.NutsTextNodeStyle;
-import net.thevpc.nuts.NutsWorkspace;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.thevpc.nuts.NutsTextNodeStyles;
 
 public class NutsTextFormatThemeWrapper implements NutsTextFormatTheme {
+
     private NutsTextFormatTheme other;
 
     public NutsTextFormatThemeWrapper(NutsTextFormatTheme other) {
@@ -19,16 +20,26 @@ public class NutsTextFormatThemeWrapper implements NutsTextFormatTheme {
     }
 
     @Override
-    public NutsTextNodeStyle[] toBasicStyles(NutsTextNodeStyle style) {
+    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyles styles) {
+        NutsTextNodeStyles ret = NutsTextNodeStyles.NONE;
+        if (styles != null) {
+            for (NutsTextNodeStyle style : styles) {
+                ret = ret.append(toBasicStyles(style));
+            }
+        }
+        return ret;
+    }
+
+    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyle style) {
         if (style == null) {
-            return new NutsTextNodeStyle[0];
+            return NutsTextNodeStyles.NONE;
         }
-        if(style.getType().basic()){
-            return new NutsTextNodeStyle[]{style};
+        if (style.getType().basic()) {
+            return NutsTextNodeStyles.of(style);
         }
-        NutsTextNodeStyle[] t = other.toBasicStyles(style);
+        NutsTextNodeStyles t = other.toBasicStyles(NutsTextNodeStyles.of(style));
         if (t == null) {
-            return new NutsTextNodeStyle[0];
+            return NutsTextNodeStyles.NONE;
         }
         List<NutsTextNodeStyle> rr = new ArrayList<>();
         for (NutsTextNodeStyle s : t) {
@@ -38,6 +49,6 @@ public class NutsTextFormatThemeWrapper implements NutsTextFormatTheme {
                 //ignore...
             }
         }
-        return rr.toArray(new NutsTextNodeStyle[0]);
+        return NutsTextNodeStyles.NONE.append(rr.toArray(new NutsTextNodeStyle[0]));
     }
 }

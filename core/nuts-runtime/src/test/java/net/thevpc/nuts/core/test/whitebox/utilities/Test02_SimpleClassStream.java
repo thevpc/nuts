@@ -21,9 +21,9 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.bundles.io.SimpleClassStream;
+import net.thevpc.nuts.runtime.core.util.CoreTimeUtils;
 import org.junit.jupiter.api.*;
 
 /**
@@ -74,7 +74,7 @@ public class Test02_SimpleClassStream {
         if (max < to - from) {
             max = to - from;
         }
-        TestUtils.println("### TIME [" + file + "] " + CoreCommonUtils.formatPeriodMilli(to - from) + " -- " + max);
+        TestUtils.println("### TIME [" + file + "] " + CoreTimeUtils.formatPeriodMilli(to - from) + " -- " + max);
     }
 
     private static void parseFolder(Path file, NutsSession ws) throws IOException {

@@ -2,13 +2,10 @@ package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.toolbox.njob.model.NJob;
 import net.thevpc.nuts.toolbox.njob.model.NProject;
-import net.thevpc.nuts.toolbox.njob.time.TimePeriod;
 import net.thevpc.nuts.toolbox.njob.time.WeekDay;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

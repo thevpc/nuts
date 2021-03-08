@@ -10,7 +10,7 @@ njob ( add | remove | update | show | list ) project  <-options>...
 ####) add project:
 
 ```sh
-njob add project|ap  [options] <project-name>
+njob add project|ap  [<-options>] <project-name>
 ```
     ```sh on <start-date> ```
     ```sh at <start-time> ```
@@ -24,7 +24,7 @@ njob add project|ap  [options] <project-name>
 ####) update project:
 
 ```sh
-njob update|up <project-name> [options]
+njob update|up <project-name> [<-options>]
 ```
     ```sh on <start-date> ```
     ```sh at <start-time> ```
@@ -52,7 +52,7 @@ njob show project|dp <project-name> ...
 ####) list projects:
 
 ```sh
-njob list projects|lp [options]
+njob list projects|lp [<-options>]
 ```
     ```sh -n=<s-expr> ```     filter by project name /../ is used for regexps, '*' is supported in non regexp.
 

@@ -1,11 +1,11 @@
 package net.thevpc.nuts;
 
 public interface NutsTextStyleGenerator {
-    NutsTextNodeStyle[] hash(Object i);
+    NutsTextNodeStyles hash(Object i);
 
-    NutsTextNodeStyle[] hash(int i);
+    NutsTextNodeStyles hash(int i);
 
-    NutsTextNodeStyle[] random();
+    NutsTextNodeStyles random();
 
     boolean isIncludePlain();
 

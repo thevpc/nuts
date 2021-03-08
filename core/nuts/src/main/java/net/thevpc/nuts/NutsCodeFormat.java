@@ -6,5 +6,5 @@ public interface NutsCodeFormat {
 
     NutsTextNode textToNode(String text);
 
-    NutsTextNode tokenToNode(String text, String nodeType);
+    NutsTextNode tokenToNode(String text, String tokenType);
 }

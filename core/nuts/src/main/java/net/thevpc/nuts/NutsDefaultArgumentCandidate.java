@@ -24,9 +24,7 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.core.app;
-
-import net.thevpc.nuts.NutsArgumentCandidate;
+package net.thevpc.nuts;
 
 /**
  * Default (simple) NutsArgumentCandidate implementation.
