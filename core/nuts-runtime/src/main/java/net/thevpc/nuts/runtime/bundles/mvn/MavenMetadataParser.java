@@ -121,7 +121,7 @@ public class MavenMetadataParser {
             lastUpdated.appendChild(document.createTextNode(new SimpleDateFormat("yyyyMMddHHmmss").format(m.getLastUpdated())));
             versioning.appendChild(lastUpdated);
         }
-        NutsXmlUtils.writeDocument(document, writer, false,true);
+        NutsXmlUtils.writeDocument(document, writer, false,true,session);
     }
 
     public MavenMetadata parseMavenMetaData(Path stream) {

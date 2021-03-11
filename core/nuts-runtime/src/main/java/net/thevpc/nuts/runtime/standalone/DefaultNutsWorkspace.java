@@ -255,7 +255,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         io().term().setTerminal(io().term().createTerminal(bootSession), bootSession);
         NutsSession session = createSession();
         if (session.isPlainOut()) {
-            ioManager.term().sendCommand(session.out(), NutsTerminalManager.CMD_LATER_RESET_LINE);
+            ioManager.term().sendTerminalCommand(session.out(), NutsTerminalCommand.LATER_RESET_LINE);
         }
         ((DefaultNutsLogger) LOG).resumeTerminal();
 
@@ -417,7 +417,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
 //            if (session.isPlainTrace()) {
 //                PrintStream out = session.out();
-//                io().term().sendCommand(out, NutsTerminalManager.CMD_MOVE_LINE_START);
+//                io().term().sendTerminalCommand(out, NutsTerminalManager.MOVE_LINE_START);
 //                out.printf("workspace is %s!%n", formats().text().builder().append("ready"));
 //            }
             if (uoptions.getUserName() != null && uoptions.getUserName().trim().length() > 0) {

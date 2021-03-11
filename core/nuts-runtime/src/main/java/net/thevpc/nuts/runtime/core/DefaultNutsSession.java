@@ -1052,6 +1052,12 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
+    public NutsSession sendTerminalCommand(NutsTerminalCommand command) {
+        getWorkspace().io().term().sendTerminalCommand(out(), command);
+        return this;
+    }
+
+    @Override
     public InputStream in() {
         return terminal.in();
     }

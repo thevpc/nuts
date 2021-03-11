@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
-import net.thevpc.nuts.NutsOutputStreamTransparentAdapter;
 import net.thevpc.nuts.NutsTerminalMode;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.io.BaseTransparentFilterOutputStream;

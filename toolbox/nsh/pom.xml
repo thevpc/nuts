@@ -76,7 +76,7 @@
         <dependency>
             <groupId>net.thevpc.common</groupId>
             <artifactId>thevpc-common-mvn</artifactId>
-            <version>1.1.1</version>
+            <version>1.1.2</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.common</groupId>
@@ -86,7 +86,7 @@
         <dependency>
             <groupId>net.thevpc.common</groupId>
             <artifactId>thevpc-common-io-compress</artifactId>
-            <version>1.3.12</version>
+            <version>1.3.13</version>
         </dependency>
         <dependency>
             <groupId>org.jline</groupId>

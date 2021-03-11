@@ -33,7 +33,6 @@ import java.util.Date;
 import net.thevpc.nuts.NutsPrimitiveElement;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 
 /**
  *
@@ -78,6 +77,9 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
         if (value instanceof Date) {
             return ((Date) value).getTime();
         }
+        if (value instanceof Instant) {
+            return ((Instant) value).toEpochMilli();
+        }
         String s = String.valueOf(value);
         if (s.indexOf('.') >= 0) {
             try {
@@ -110,6 +112,49 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
             return ((Number) value).doubleValue() != 0;
         }
         return CoreBooleanUtils.parseBoolean(String.valueOf(value), false);
+    }
+
+    @Override
+    public boolean isByte() {
+        if (value == null) {
+            return false;
+        } else if (value instanceof Number) {
+            switch (value.getClass().getName()) {
+                case "java.lang.Byte":{
+                    return true;
+                }
+            }
+        } else if (value instanceof String) {
+            try {
+                Byte.parseByte(value.toString());
+                return true;
+            } catch (Exception ex) {
+                //
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isShort() {
+        if (value == null) {
+            return false;
+        } else if (value instanceof Number) {
+            switch (value.getClass().getName()) {
+                case "java.lang.Byte":
+                case "java.lang.Short":{
+                    return true;
+                }
+            }
+        } else if (value instanceof String) {
+            try {
+                Short.parseShort(value.toString());
+                return true;
+            } catch (Exception ex) {
+                //
+            }
+        }
+        return false;
     }
 
     @Override
@@ -206,6 +251,74 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
             }
         }
         return false;
+    }
+
+    @Override
+    public byte getByte() {
+        if (value == null) {
+            return 0;
+        }
+        if (value instanceof Boolean) {
+            return (byte)(((Boolean) value) ? 1 : 0);
+        }
+        if (value instanceof Number) {
+            return ((Number) value).byteValue();
+        }
+        if (value instanceof Date) {
+            return (byte) ((Date) value).getTime();
+        }
+        String s = String.valueOf(value);
+        if (s.indexOf('.') >= 0) {
+            try {
+                return (byte) Double.parseDouble(s);
+            } catch (NumberFormatException ex) {
+                return 0;
+            }
+        } else {
+            try {
+                return Byte.parseByte(s);
+            } catch (NumberFormatException ex) {
+                try {
+                    return (byte) Long.parseLong(s);
+                } catch (NumberFormatException ex2) {
+                    return 0;
+                }
+            }
+        }
+    }
+
+    @Override
+    public short getShort() {
+        if (value == null) {
+            return 0;
+        }
+        if (value instanceof Boolean) {
+            return (short)(((Boolean) value) ? 1 : 0);
+        }
+        if (value instanceof Number) {
+            return ((Number) value).shortValue();
+        }
+        if (value instanceof Date) {
+            return (short) ((Date) value).getTime();
+        }
+        String s = String.valueOf(value);
+        if (s.indexOf('.') >= 0) {
+            try {
+                return (short) Double.parseDouble(s);
+            } catch (NumberFormatException ex) {
+                return 0;
+            }
+        } else {
+            try {
+                return Short.parseShort(s);
+            } catch (NumberFormatException ex) {
+                try {
+                    return (short) Long.parseLong(s);
+                } catch (NumberFormatException ex2) {
+                    return 0;
+                }
+            }
+        }
     }
 
     @Override

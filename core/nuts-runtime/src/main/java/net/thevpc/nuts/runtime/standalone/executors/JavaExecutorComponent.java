@@ -28,7 +28,6 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.bundles.common.StringKeyValueList;
 import net.thevpc.nuts.runtime.bundles.io.IProcessExecHelper;
 import net.thevpc.nuts.NutsExecutorComponent;
@@ -47,6 +46,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -229,11 +229,11 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     }
                 }
                 // fix infinite recursion
-                int maxDepth = Math.abs(CoreCommonUtils.convertToInteger(sysProperties.getProperty("nuts.export.watchdog.max-depth"), 24));
+                int maxDepth = Math.abs(CoreNumberUtils.convertToInteger(sysProperties.getProperty("nuts.export.watchdog.max-depth"), 24));
                 if (maxDepth > 64) {
                     maxDepth = 64;
                 }
-                int currentDepth = CoreCommonUtils.convertToInteger(sysProperties.getProperty("nuts.export.watchdog.depth"), -1);
+                int currentDepth = CoreNumberUtils.convertToInteger(sysProperties.getProperty("nuts.export.watchdog.depth"), -1);
                 currentDepth++;
                 if (currentDepth > maxDepth) {
                     System.err.println("[[Process Stack Overflow Error]]");

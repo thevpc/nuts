@@ -12,7 +12,6 @@ import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.format.NutsPrintIterator;
-import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.repos.DefaultNutsRepositoryManager;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
@@ -20,7 +19,6 @@ import net.thevpc.nuts.runtime.bundles.io.ProcessBuilder2;
 import net.thevpc.nuts.runtime.standalone.io.DefaultNutsExecutionEntry;
 import net.thevpc.nuts.runtime.core.format.plain.DefaultSearchFormatPlain;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 
 import java.io.*;
@@ -40,6 +38,10 @@ import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
+import net.thevpc.nuts.runtime.bundles.reflect.DefaultReflectRepository;
+import net.thevpc.nuts.runtime.bundles.reflect.ReflectConfiguration;
+import net.thevpc.nuts.runtime.bundles.reflect.ReflectPropertyStrategy;
+import net.thevpc.nuts.runtime.bundles.reflect.ReflectRepository;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
@@ -71,6 +73,20 @@ public class NutsWorkspaceUtils {
     public NutsRepositorySPI repoSPI(NutsRepository repo) {
         DefaultNutsRepositoryManager repos = (DefaultNutsRepositoryManager) ws.repos();
         return repos.toRepositorySPI(repo);
+    }
+
+    public ReflectRepository getReflectRepository() {
+        ReflectRepository r = (ReflectRepository) ws.env().getProperty(ReflectRepository.class.getName());
+        if (r == null) {
+            r = new DefaultReflectRepository(new ReflectConfiguration() {
+                @Override
+                public ReflectPropertyStrategy getReflectPropertyStrategy(Class clz) {
+                    return ReflectPropertyStrategy.FIELD;
+                }
+            });
+            ws.env().setProperty(ReflectRepository.class.getName(), r, new NutsUpdateOptions().setSession(ws.createSession()));
+        }
+        return r;
     }
 
     public NutsId createSdkId(String type, String version) {

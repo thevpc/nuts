@@ -9,7 +9,6 @@ import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser
 import net.thevpc.nuts.runtime.bundles.datastr.StringBuilder2;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.IntPredicate;
 import net.thevpc.nuts.NutsTextNodeStyles;
@@ -35,6 +34,7 @@ public class StyledParserStep extends ParserStep {
     private StyledParserStepCommandParser parseHelper = new StyledParserStepCommandParser();
     private EvictingCharQueue charQueue = new EvictingCharQueue(5);
     private DefaultNutsTextNodeParser.State state;
+
     public StyledParserStep(char c, boolean lineStart, NutsWorkspace ws, DefaultNutsTextNodeParser.State state) {
         start.append(c);
 //        this.spreadLines = spreadLines;
@@ -59,7 +59,7 @@ public class StyledParserStep extends ParserStep {
                 String e2 = end.append(c).readAll();
                 complete = false;
                 state.applyPush(new StyledParserStep(
-                        e2, false, ws,state
+                        e2, false, ws, state
                 ));
             } else if (c == 'ø') {
                 state.applyPop();
@@ -87,7 +87,7 @@ public class StyledParserStep extends ParserStep {
                     start.append(c);
                 } else {
                     started = true;
-                    state.applyStart(c, /*spreadLines*/true, false);
+                    state.applyStart(c, /*spreadLines*/ true, false);
                 }
             } else {
                 char startChar = start.charAt(0);
@@ -111,10 +111,10 @@ public class StyledParserStep extends ParserStep {
                     atStr.append(c);
                     //this is a title ##:
                 } else if (start.length() == 1 && c != startChar) {
-                    state.applyDropReplace(new PlainParserStep(startChar,lineStart, ws, state, null));
+                    state.applyDropReplace(new PlainParserStep(startChar, lineStart, ws, state, null));
                     state.applyNextChar(c);
                 } else {
-                    state.applyStart(c, /*spreadLines*/true, false);
+                    state.applyStart(c, /*spreadLines*/ true, false);
                 }
             }
         } else {
@@ -129,7 +129,7 @@ public class StyledParserStep extends ParserStep {
                     String s = atStr.toString() + c;
                     atStr.setLength(0);
                     styleMode = StyleMode.SIMPLE;
-                    state.applyPush(new PlainParserStep(s, /*spreadLines*/true, false, ws, state, EXIT_ON_CLOSE_ACCOLADES));
+                    state.applyPush(new PlainParserStep(s, /*spreadLines*/ true, false, ws, state, EXIT_ON_CLOSE_ACCOLADES));
                     atPresentEnded = false;
                 }
             } else if ((styleMode == StyleMode.SIMPLE || styleMode == StyleMode.COLON) && c == endOf(start.charAt(0))) {
@@ -153,30 +153,30 @@ public class StyledParserStep extends ParserStep {
             } else if (end.isEmpty()) {
                 if (styleMode == StyleMode.EMBEDDED && c == '}') {
                     end.append(c);
-                }else if (c == '#') {
-                    if(styleMode == StyleMode.EMBEDDED){
-                        if(wasSharp){
-                            wasSharp=false;
-                            state.applyPush(new StyledParserStep("##",lineStart, ws, state));
-                        }else{
-                            wasSharp=true;
+                } else if (c == '#') {
+                    if (styleMode == StyleMode.EMBEDDED) {
+                        if (wasSharp) {
+                            wasSharp = false;
+                            state.applyPush(new StyledParserStep("##", lineStart, ws, state));
+                        } else {
+                            wasSharp = true;
                         }
-                    }else{
+                    } else {
                         end.append(c);
                     }
 //                    state.applyPush(new StyledParserStep(c, spreadLines, false, ws));
                 } else {
-                    state.applyPush(new PlainParserStep(c,lineStart, ws, state, EXIT_ON_CLOSE_ACCOLADES));
+                    state.applyPush(new PlainParserStep(c, lineStart, ws, state, EXIT_ON_CLOSE_ACCOLADES));
                 }
             } else if (end.charAt(0) == '}' && styleMode == StyleMode.EMBEDDED) {
                 String y = end.readAll();
-                appendChild(new PlainParserStep(y, /*spreadLines*/true, false, ws, state, null));
+                appendChild(new PlainParserStep(y, /*spreadLines*/ true, false, ws, state, null));
             } else {
                 String y = end.readAll();
                 if (y.length() > 1) {
-                    state.applyPush(new StyledParserStep(y, lineStart, ws,state));
+                    state.applyPush(new StyledParserStep(y, lineStart, ws, state));
                 } else {
-                    state.applyPush(new PlainParserStep(y, /*spreadLines*/true, lineStart, ws, state,
+                    state.applyPush(new PlainParserStep(y, /*spreadLines*/ true, lineStart, ws, state,
                             styleMode == StyleMode.EMBEDDED ? EXIT_ON_CLOSE_ACCOLADES : null
                     ));
                 }
@@ -195,9 +195,9 @@ public class StyledParserStep extends ParserStep {
         String start = this.start.toString();
         String end = this.end.toString();
         List<NutsTextNodeStyle> all = new ArrayList<>();
-        if(wasSharp){
-            wasSharp=false;
-            children.add(new PlainParserStep("#",false,false,ws,state,null));
+        if (wasSharp) {
+            wasSharp = false;
+            children.add(new PlainParserStep("#", false, false, ws, state, null));
         }
         if (styleMode == StyleMode.COLON) {
             if (!parsedAt) {
@@ -239,11 +239,10 @@ public class StyledParserStep extends ParserStep {
         if (all.isEmpty()) {
             all.add(NutsTextNodeStyle.primary(1));
         }
-        for (NutsTextNodeStyle s : all) {
-            child = factory0.createStyled(
-                    child, s,
-                    isComplete());
-        }
+        NutsTextNodeStyles styles = NutsTextNodeStyles.of(all.toArray(new NutsTextNodeStyle[0]));
+        child = factory0.createStyled(
+                child, styles,
+                isComplete());
         return child;
     }
 
@@ -299,7 +298,7 @@ public class StyledParserStep extends ParserStep {
 
     enum StyleMode {
         SIMPLE, // ##anything##
-        COLON,     // ##:12:anything##
+        COLON, // ##:12:anything##
         EMBEDDED,     // ##:12:anything}##
         // ##:sh:anything##
     }

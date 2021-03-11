@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
@@ -14,12 +13,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderNodeUtils;
 
 public final class JavaExecutorOptions {
@@ -284,7 +282,7 @@ public final class JavaExecutorOptions {
                         mainClass = session.getTerminal()
                                 .ask().forString(msgString.toString())
                                 .setValidator((value, question) -> {
-                                    Integer anyInt = CoreCommonUtils.convertToInteger(value, null);
+                                    Integer anyInt = CoreNumberUtils.convertToInteger(value, null);
                                     if (anyInt != null) {
                                         int i = anyInt;
                                         if (i >= 1 && i <= possibleClasses.size()) {
@@ -309,7 +307,7 @@ public final class JavaExecutorOptions {
 
     private String resolveMainClass(String name, List<String> possibleClasses) {
         if (name != null) {
-            Integer v = CoreCommonUtils.convertToInteger(name, null);
+            Integer v = CoreNumberUtils.convertToInteger(name, null);
             if (v != null) {
                 if (v >= 1 && v <= possibleClasses.size()) {
                     return possibleClasses.get(v - 1);

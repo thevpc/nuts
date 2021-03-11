@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
 
 import java.io.*;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
 
@@ -131,7 +132,11 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 if (!ctx.isFiltered()) {
                     writeRaw(s.getStart());
                     writeRaw(s.getKind());
-                    writeEscapedSpecial(s.getText());
+                    writeEscapedSpecial(s.getCommand().getName());
+                    if (!CoreStringUtils.isBlank(s.getCommand().getArgs())) {
+                        writeEscapedSpecial(" ");
+                        writeEscapedSpecial(s.getCommand().getArgs());
+                    }
                     writeRaw(s.getEnd());
                     writeRaw("ø");
                 }

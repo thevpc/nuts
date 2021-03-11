@@ -1,20 +1,17 @@
 package net.thevpc.nuts.runtime.core.format.elem;
 
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementType;
 import net.thevpc.nuts.NutsNamedElement;
-import net.thevpc.nuts.NutsObjectElement;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class DefaultNutsObjectElement extends AbstractNutsElement implements NutsObjectElement {
+public class DefaultNutsObjectElement extends AbstractNutsObjectElement{
     private Map<String, NutsElement> values = new LinkedHashMap<>();
 
     public DefaultNutsObjectElement(Map<String, NutsElement> values) {
-        super(NutsElementType.OBJECT);
         if (values != null) {
             for (Map.Entry<String, NutsElement> e : values.entrySet()) {
                 if (e.getKey() != null && e.getValue() != null) {

@@ -59,7 +59,7 @@ class NutsObjectElementMap2 extends NutsObjectElementBase {
             Map<String, Object> m2 = new HashMap<>();
             m2.put("key", entry.getKey());
             m2.put("value", entry.getValue());
-            all.add(new DefaultNutsNamedElement("entry", context.toElement(m2)));
+            all.add(new DefaultNutsNamedElement("entry", context.objectToElement(m2, null)));
         }
         return all;
     }
@@ -71,7 +71,7 @@ class NutsObjectElementMap2 extends NutsObjectElementBase {
                 Map<String, Object> m2 = new HashMap<>();
                 m2.put("key", entry.getKey());
                 m2.put("value", entry.getValue());
-                return context.toElement(m2);
+                return context.objectToElement(m2, null);
             }
         }
         return null;

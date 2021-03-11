@@ -81,14 +81,14 @@ public class NutsObjectElementXml extends NutsObjectElementBase {
             if (name.equals(xml.getTypeAttributeName())) {
                 type = CoreEnumUtils.parseEnumString(value, NutsElementType.class, true);
             } else {
-                all.add(new DefaultNutsNamedElement(xml.getAttributePrefix() + name, context.toElement(value)));
+                all.add(new DefaultNutsNamedElement(xml.getAttributePrefix() + name, context.objectToElement(value, null)));
             }
         }
         NodeList cn = value.getChildNodes();
         for (int i = 0; i < cn.getLength(); i++) {
             Node object = cn.item(i);
             if (object instanceof Element) {
-                all.add(new DefaultNutsNamedElement(object.getNodeName(), context.toElement(object)));
+                all.add(new DefaultNutsNamedElement(object.getNodeName(), context.objectToElement(object, null)));
             }
         }
         return all;
@@ -107,7 +107,7 @@ public class NutsObjectElementXml extends NutsObjectElementBase {
                 type = CoreEnumUtils.parseEnumString(value, NutsElementType.class, true);
             } else {
                 if ((xml.getAttributePrefix() + name).equals(name0)) {
-                    return context.toElement(value);
+                    return context.objectToElement(value, null);
                 }
             }
         }
@@ -116,7 +116,7 @@ public class NutsObjectElementXml extends NutsObjectElementBase {
             Node object = cn.item(i);
             if (object instanceof Element) {
                 if (object.getNodeName().equals(name0)) {
-                    return context.toElement(object);
+                    return context.objectToElement(object, null);
                 }
             }
         }

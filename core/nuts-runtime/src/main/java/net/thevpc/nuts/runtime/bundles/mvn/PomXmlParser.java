@@ -648,20 +648,20 @@ public class PomXmlParser {
         return repository;
     }
 
-    public static void writeDocument(Document doc, File result) throws TransformerException {
-        writeDocument(doc, new StreamResult(result));
+    public static void writeDocument(Document doc, File result,NutsSession session) throws TransformerException {
+        writeDocument(doc, new StreamResult(result),session);
     }
 
-    public static void writeDocument(Document doc, Writer result) throws TransformerException {
-        writeDocument(doc, new StreamResult(result));
+    public static void writeDocument(Document doc, Writer result,NutsSession session) throws TransformerException {
+        writeDocument(doc, new StreamResult(result),session);
     }
 
-    public static void writeDocument(Document doc, OutputStream result) throws TransformerException {
-        writeDocument(doc, new StreamResult(result));
+    public static void writeDocument(Document doc, OutputStream result,NutsSession session) throws TransformerException {
+        writeDocument(doc, new StreamResult(result),session);
     }
 
-    public static void writeDocument(Document doc, StreamResult result) throws TransformerException {
-        NutsXmlUtils.writeDocument(doc, result, false,true);
+    public static void writeDocument(Document doc, StreamResult result,NutsSession session) throws TransformerException {
+        NutsXmlUtils.writeDocument(doc, result, false,true,session);
     }
 
     public static boolean appendOrReplaceDependency(PomDependency dependency, Element dependencyElement, Element dependenciesElement) {

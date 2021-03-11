@@ -25,53 +25,29 @@
 */
 package net.thevpc.nuts.runtime.core.format.elem;
 
-import net.thevpc.nuts.NutsElementType;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsArrayElement;
 
 /**
  *
  * @author thevpc
  */
-public class NutsArrayElementMapper extends AbstractNutsElement implements NutsArrayElement {
+public class NutsArrayElementFromCollection extends AbstractNutsArrayElement {
 
     private final NutsElementFactoryContext context;
     private final List<Object> values = new ArrayList<>();
 
-    public NutsArrayElementMapper(Object array, NutsElementFactoryContext context) {
-        super(NutsElementType.ARRAY);
+    public NutsArrayElementFromCollection(Collection array, NutsElementFactoryContext context) {
         this.context = context;
-        if (array.getClass().isArray()) {
-            int count = Array.getLength(array);
-            for (int i = 0; i < count; i++) {
-                values.add(Array.get(array, i));
-            }
-        } else if (array instanceof Collection) {
             values.addAll((Collection) array);
-        } else if (array instanceof Iterator) {
-            Iterator nl = (Iterator) array;
-            while (nl.hasNext()) {
-                values.add(nl.next());
-            }
-        } else {
-            throw new IllegalArgumentException("Unsupported");
-        }
     }
 
     @Override
     public Collection<NutsElement> children() {
-        return values.stream().map(context::toElement).collect(Collectors.toList());
-    }
-
-    @Override
-    public String toString() {
-        return "[" + children().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
+        return values.stream().map(x->context.objectToElement(x, null)).collect(Collectors.toList());
     }
 
     @Override
@@ -81,7 +57,7 @@ public class NutsArrayElementMapper extends AbstractNutsElement implements NutsA
 
     @Override
     public NutsElement get(int index) {
-        return context.toElement(values.get(index));
+        return context.objectToElement(values.get(index), null);
     }
 
 }

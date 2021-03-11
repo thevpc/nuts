@@ -26,17 +26,15 @@
 */
 package net.thevpc.nuts.runtime.core.format.text;
 
-import java.awt.*;
-
 /**
  *
  * @author thevpc
  */
 public class AnsiEscapeCommands {
 
-    public static final AnsiEscapeCommand MOVE_UP = new TextCursor("MOVE_UP");
-    public static final AnsiEscapeCommand MOVE_LINE_START = new TextCursor("MOVE_LINE_START");
-    public static final AnsiEscapeCommand LATER_RESET_LINE = new TextCursor("LATER_RESET_LINE");
+//    public static final AnsiEscapeCommand MOVE_UP = new DefaultAnsiEscapeCommand("MOVE_UP");
+//    public static final AnsiEscapeCommand MOVE_LINE_START = new DefaultAnsiEscapeCommand("MOVE_LINE_START");
+//    public static final AnsiEscapeCommand LATER_RESET_LINE = new DefaultAnsiEscapeCommand("LATER_RESET_LINE");
 
     public static final AnsiEscapeCommand list(AnsiEscapeCommand... all) {
         if (all == null) {

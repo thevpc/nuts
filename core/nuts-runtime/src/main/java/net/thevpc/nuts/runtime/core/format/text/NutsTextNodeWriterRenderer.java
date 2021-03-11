@@ -155,7 +155,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             }
             case COMMAND: {
                 DefaultNutsTextNodeCommand s = (DefaultNutsTextNodeCommand) node;
-                AnsiEscapeCommand yy = DefaultNutsTextNodeCommand.parseAnsiEscapeCommand(s.getKind(), ws);
+                AnsiEscapeCommand yy = DefaultNutsTextNodeCommand.parseAnsiEscapeCommand(s.getCommand(), ws);
                 AnsiEscapeCommand[] s2 = _appendFormats(formats, yy);
                 writeRaw(AnsiEscapeCommands.list(s2), "", ctx.isFiltered());
                 break;
@@ -170,7 +170,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                 writeNode(
                         formats,
                         factory0.createStyled(((NutsTextNodeLink) node).getChild(),
-                                NutsTextNodeStyle.underlined(),
+                                NutsTextNodeStyles.of(NutsTextNodeStyle.underlined()),
                                 true
                         ),
                         ctx

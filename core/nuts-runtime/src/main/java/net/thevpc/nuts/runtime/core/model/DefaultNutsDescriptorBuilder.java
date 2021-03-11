@@ -70,6 +70,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     private Map<String, String> properties;
     private transient NutsWorkspace ws;
 
+    public DefaultNutsDescriptorBuilder() {
+    }
+    
     public DefaultNutsDescriptorBuilder(NutsWorkspace ws) {
         this.ws=ws;
     }

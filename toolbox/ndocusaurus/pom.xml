@@ -71,7 +71,7 @@
         <dependency>
             <groupId>net.thevpc.common</groupId>
             <artifactId>thevpc-common-file-template</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.common</groupId>

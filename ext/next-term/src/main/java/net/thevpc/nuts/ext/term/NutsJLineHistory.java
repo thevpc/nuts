@@ -6,17 +6,19 @@ import org.jline.reader.LineReader;
 import org.jline.utils.Log;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 import java.util.*;
 import net.thevpc.nuts.NutsCommandHistory;
 import net.thevpc.nuts.NutsCommandHistoryEntry;
 
-//import net.thevpc.jshell.JShellHistory;
 class NutsJLineHistory implements History {
 
     private NutsWorkspace ws;
-//    private JShellHistory shellHistory;
     public static final int DEFAULT_HISTORY_SIZE = 500;
     public static final int DEFAULT_HISTORY_FILE_SIZE = 10000;
 
@@ -30,30 +32,6 @@ class NutsJLineHistory implements History {
         this.terminal = terminal;
         defaultHistory = new NutsJLineCommandHistory(workspace);
         attach(reader);
-//        workspace.events().addUserPropertyListener(new NutsMapListener<String, Object>() {
-//
-//            @Override
-//            public void entryAdded(String name, Object value) {
-////                if (JShellHistory.class.getName().equals(name)) {
-////                    setShellHistory((JShellHistory) value);
-////                }
-//            }
-//
-//            @Override
-//            public void entryRemoved(String name, Object value) {
-////                if (JShellHistory.class.getName().equals(name)) {
-////                    setShellHistory(null);
-////                }
-//            }
-//
-//            @Override
-//            public void entryUpdated(String key, Object newValue, Object oldValue) {
-////                if (JShellHistory.class.getName().equals(newValue)) {
-////                    setShellHistory((JShellHistory) newValue);
-////                }
-//            }
-//        });
-//        setShellHistory((JShellHistory) workspace.env().getProperty(JShellHistory.class.getName()));
     }
 
     @Override
@@ -312,22 +290,28 @@ class NutsJLineHistory implements History {
 
     @Override
     public void write(Path path, boolean bln) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try(OutputStream out=Files.newOutputStream(path)){
+            defaultHistory.save(out);
+        }
     }
 
     @Override
     public void append(Path path, boolean bln) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try(OutputStream out=Files.newOutputStream(path,StandardOpenOption.APPEND)){
+            defaultHistory.save(out);
+        }
     }
 
     @Override
     public void read(Path path, boolean bln) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try(InputStream in=Files.newInputStream(path,StandardOpenOption.APPEND)){
+            defaultHistory.load(in);
+        }
     }
 
     @Override
     public void resetIndex() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        index=0;
     }
     
     

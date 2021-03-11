@@ -196,7 +196,13 @@ public final class NutsApplications {
         }
         if (ws != null) {
             try {
-                showTrace = ws.config().getOptions().isDebug();
+                showTrace = ws.config().getOptions().isDebug() || 
+                        (
+                        ws.config().getOptions().getLogConfig()!=null 
+                        && ws.config().getOptions().getLogConfig()!=null
+                        && ws.config().getOptions().getLogConfig().getLogTermLevel()!=null
+                        && ws.config().getOptions().getLogConfig().getLogTermLevel().intValue()<=Level.FINE.intValue()
+                        );
             } catch (Exception ex2) {
                 ws.log().of(NutsApplications.class).with().session(ws.createSession()).level(Level.FINE).error(ex2).log("unable to check if option debug is enabled");
             }

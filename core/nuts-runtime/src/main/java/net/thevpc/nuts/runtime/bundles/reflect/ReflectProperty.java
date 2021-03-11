@@ -21,22 +21,25 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.core.format.json;
+package net.thevpc.nuts.runtime.bundles.reflect;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementBuilder;
-import net.thevpc.nuts.NutsWorkspace;
+import java.lang.reflect.Type;
 
 /**
  *
  * @author vpc
  */
-public interface NutsElementSerializationContext {
+public interface ReflectProperty {
 
-    NutsElementBuilder elements();
+    String getName();
     
-    NutsElement serialize(Object other);
+    Type getPropertyType();
+    
+    boolean isRead();
 
-    NutsWorkspace workspace();
-    
+    boolean isWrite();
+
+    Object read(Object instance);
+
+    void write(Object instance, Object value);
 }

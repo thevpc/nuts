@@ -25,20 +25,17 @@
 */
 package net.thevpc.nuts.runtime.core.format.elem;
 
-import net.thevpc.nuts.NutsElementType;
 import java.util.stream.Collectors;
-import net.thevpc.nuts.NutsObjectElement;
 
 /**
  *
  * @author thevpc
  */
-public abstract class NutsObjectElementBase extends AbstractNutsElement implements NutsObjectElement {
+public abstract class NutsObjectElementBase extends AbstractNutsObjectElement{
 
     protected NutsElementFactoryContext context;
 
     public NutsObjectElementBase(NutsElementFactoryContext context) {
-        super(NutsElementType.OBJECT);
         this.context = context;
     }
 

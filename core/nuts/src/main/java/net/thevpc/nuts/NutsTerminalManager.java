@@ -35,9 +35,6 @@ import java.io.*;
  * @category Input Output
  */
 public interface NutsTerminalManager {
-    String CMD_LATER_RESET_LINE = "later-reset-line";
-    String CMD_MOVE_LINE_START = "move-line-start";
-    String CMD_MOVE_UP = "move-up";
 
 
     /**
@@ -144,7 +141,11 @@ public interface NutsTerminalManager {
      */
     boolean isFormatted(Writer out);
 
-    NutsTerminalManager sendCommand(PrintStream out, String command, String args);
-
-    NutsTerminalManager sendCommand(PrintStream out, String command);
+    /**
+     *
+     * @param out out
+     * @param command command
+     * @return this instance
+     */
+    NutsTerminalManager sendTerminalCommand(OutputStream out, NutsTerminalCommand command);
 }

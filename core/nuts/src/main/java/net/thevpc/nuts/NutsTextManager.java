@@ -17,27 +17,25 @@ public interface NutsTextManager {
 
     NutsTextNode nodeFor(Object t);
 
-    NutsTextNode plain(String t);
+    NutsTextNodePlain plain(String t);
 
-    NutsTextNode list(NutsTextNode... nodes);
+    NutsTextNodeList list(NutsTextNode... nodes);
 
-    NutsTextNode list(Collection<NutsTextNode> nodes);
+    NutsTextNodeList list(Collection<NutsTextNode> nodes);
 
-    NutsTextNode styled(String other, NutsTextNodeStyles decorations);
+    NutsTextNodeStyled styled(String other, NutsTextNodeStyles decorations);
 
-    NutsTextNode styled(NutsString other, NutsTextNodeStyles decorations);
+    NutsTextNodeStyled styled(NutsString other, NutsTextNodeStyles decorations);
 
-    NutsTextNode styled(NutsTextNode other, NutsTextNodeStyles decorations);
+    NutsTextNodeStyled styled(NutsTextNode other, NutsTextNodeStyles decorations);
 
-    NutsTextNode styled(String other, NutsTextNodeStyle decorations);
+    NutsTextNodeStyled styled(String other, NutsTextNodeStyle decorations);
 
-    NutsTextNode styled(NutsString other, NutsTextNodeStyle decorations);
+    NutsTextNodeStyled styled(NutsString other, NutsTextNodeStyle decorations);
 
-    NutsTextNode styled(NutsTextNode other, NutsTextNodeStyle decorations);
+    NutsTextNodeStyled styled(NutsTextNode other, NutsTextNodeStyle decorations);
 
-    NutsTextNode command(String command, String args);
-
-    NutsTextNode command(String command);
+    NutsTextNodeCommand command(NutsTerminalCommand command);
 
     NutsTextNodeCode code(String lang, String text);
 
@@ -48,5 +46,9 @@ public interface NutsTextManager {
     public NutsTextNode parse(String t);
 
     public NutsTextNodeParser parser();
+
+    NutsTextNodeAnchor anchor(String anchorName);
+
+    NutsTextNodeLink link(NutsTextNode value);
 
 }

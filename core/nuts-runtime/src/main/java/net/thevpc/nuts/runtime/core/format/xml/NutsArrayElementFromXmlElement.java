@@ -25,29 +25,26 @@
 */
 package net.thevpc.nuts.runtime.core.format.xml;
 
-import net.thevpc.nuts.runtime.core.format.elem.AbstractNutsElement;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryContext;
-import net.thevpc.nuts.NutsElementType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.w3c.dom.NodeList;
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsArrayElement;
+import net.thevpc.nuts.runtime.core.format.elem.AbstractNutsArrayElement;
 import org.w3c.dom.Element;
 
 /**
  *
  * @author thevpc
  */
-public class NutsArrayElementXml extends AbstractNutsElement implements NutsArrayElement {
+public class NutsArrayElementFromXmlElement extends AbstractNutsArrayElement {
 
     private NutsElementFactoryContext context;
     private List<Object> values = new ArrayList<>();
 
-    public NutsArrayElementXml(Element array, NutsElementFactoryContext context) {
-        super(NutsElementType.ARRAY);
+    public NutsArrayElementFromXmlElement(Element array, NutsElementFactoryContext context) {
         this.context = context;
         NodeList nl = (NodeList) array;
         int count = nl.getLength();
@@ -58,7 +55,7 @@ public class NutsArrayElementXml extends AbstractNutsElement implements NutsArra
 
     @Override
     public Collection<NutsElement> children() {
-        return values.stream().map(x -> context.toElement(x)).collect(Collectors.toList());
+        return values.stream().map(x -> context.objectToElement(x, null)).collect(Collectors.toList());
     }
 
     @Override
@@ -68,7 +65,7 @@ public class NutsArrayElementXml extends AbstractNutsElement implements NutsArra
 
     @Override
     public NutsElement get(int index) {
-        return context.toElement(values.get(index));
+        return context.objectToElement(values.get(index), null);
     }
 
     @Override

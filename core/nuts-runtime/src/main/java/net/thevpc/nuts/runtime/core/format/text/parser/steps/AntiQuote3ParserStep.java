@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
+import net.thevpc.nuts.NutsTerminalCommand;
 import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
@@ -163,7 +164,6 @@ public class AntiQuote3ParserStep extends ParserStep {
                 case "!anchor":{
                     return factory0.createAnchor(
                             start2,
-                            cmd0,
                             w.toString(),
                             end.toString(),
                             value
@@ -172,20 +172,35 @@ public class AntiQuote3ParserStep extends ParserStep {
                 case "!link":{
                     return factory0.createLink(
                             start2,
-                            cmd0,
                             w.toString(),
                             end.toString(),
                             factory0.plain(value)
                     );
                 }
             }
-
+            NutsTerminalCommand ntc=null;
+            switch(cmd0){
+                case NutsTerminalCommand.Ids.LATER_RESET_LINE:{
+                    ntc=NutsTerminalCommand.LATER_RESET_LINE;
+                    break;
+                }
+                case NutsTerminalCommand.Ids.MOVE_LINE_START:{
+                    ntc=NutsTerminalCommand.MOVE_LINE_START;
+                    break;
+                }
+                case NutsTerminalCommand.Ids.MOVE_UP:{
+                    ntc=NutsTerminalCommand.MOVE_UP;
+                    break;
+                }
+                default:{
+                    ntc=new NutsTerminalCommand(cmd0,value);
+                }
+            }
             return factory0.createCommand(
                     start2,
-                    cmd.substring(1),
+                    ntc,
                     w.toString(),
-                    end.toString(),
-                    value
+                    end.toString()
             );
         }
         if(value.isEmpty()){

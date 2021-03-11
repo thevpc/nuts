@@ -32,6 +32,7 @@ import org.w3c.dom.Element;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Path;
 
@@ -104,10 +105,10 @@ public interface NutsElementFormat extends NutsObjectFormat {
     NutsElementPath compilePath(String pathExpression);
     
     /**
-     * element builder
-     * @return element builder
+     * element elements
+     * @return element elements
      */
-    NutsElementBuilder builder();
+    NutsElementBuilder elements();
 
     /**
      * configure the current command with the given arguments. This is an
@@ -130,7 +131,7 @@ public interface NutsElementFormat extends NutsObjectFormat {
 
     /**
      * enable compact json
-     * @param compact true to enable compat mode
+     * @param compact true to enable compact mode
      * @return {@code this} instance
      */
     NutsElementFormat setCompact(boolean compact);
@@ -198,17 +199,6 @@ public interface NutsElementFormat extends NutsObjectFormat {
      */
     <T> T parse(File file, Class<T> clazz);
 
-
-    /**
-     * convert {@code value} to a valid root element to add to the given {@code xmlDocument}.
-     * if the document is null, a new one will be created.
-     * @param value value to convert
-     * @param xmlDocument target document
-     * @return converted object
-     */
-    Element toXmlElement(Object value, Document xmlDocument);
-
-
     /**
      * convert element to the specified object if applicable or throw an
      * exception.
@@ -220,5 +210,5 @@ public interface NutsElementFormat extends NutsObjectFormat {
      */
     <T> T convert(Object any, Class<T> to);
 
-    NutsElement toElement(Object any);
+    NutsElement objectToElement(Object any, Type expectedType);
 }

@@ -89,6 +89,22 @@ public interface NutsPrimitiveElement extends NutsElement {
     int getInt();
 
     /**
+     * value as any java Integer. Best effort is applied to convert to this
+     * type.
+     *
+     * @return value as java integer
+     */
+    byte getByte();
+
+    /**
+     * value as any java Integer. Best effort is applied to convert to this
+     * type.
+     *
+     * @return value as java integer
+     */
+    short getShort();
+
+    /**
      * value as any java Long. Best effort is applied to convert to this type.
      *
      * @return value as java long
@@ -115,6 +131,20 @@ public interface NutsPrimitiveElement extends NutsElement {
      * @return true if the value is or can be converted to double
      */
     boolean isFloat();
+
+    /**
+     * true if the value is or can be converted to int.
+     *
+     * @return true if the value is or can be converted to int
+     */
+    boolean isByte();
+
+    /**
+     * true if the value is or can be converted to int.
+     *
+     * @return true if the value is or can be converted to int
+     */
+    boolean isShort();
 
     /**
      * true if the value is or can be converted to int.

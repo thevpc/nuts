@@ -24,8 +24,10 @@
 package net.thevpc.nuts.runtime.core.app;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -65,7 +67,19 @@ public class NutsCommandHistoryImpl implements NutsCommandHistory {
     public void load() {
         entries.clear();
         if (Files.exists(path)) {
-            try (BufferedReader out = Files.newBufferedReader(path)) {
+            try (InputStream in = Files.newInputStream(path)) {
+                load(in);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+    }
+
+    @Override
+    public void load(InputStream in) {
+        entries.clear();
+        if (in != null) {
+            try (BufferedReader out = new BufferedReader(new InputStreamReader(in))) {
                 String line = null;
                 Instant instant = null;
                 int index = 0;
@@ -87,6 +101,16 @@ public class NutsCommandHistoryImpl implements NutsCommandHistory {
     }
 
     @Override
+    public void save(OutputStream outs) {
+        try (PrintStream out = new PrintStream(outs)) {
+            for (NutsCommandHistoryEntry entry : entries) {
+                out.println("#at:" + entry.getTime().toString());
+                out.println(entry.getLine().replace("\n", "\\n").replace("\r", "\\r"));
+            }
+        }
+    }
+
+    @Override
     public void save() {
         Path p = path.getParent();
         if (p != null) {
@@ -98,11 +122,8 @@ public class NutsCommandHistoryImpl implements NutsCommandHistory {
                 }
             }
         }
-        try (PrintStream out = new PrintStream(Files.newOutputStream(path))) {
-            for (NutsCommandHistoryEntry entry : entries) {
-                out.println("#at:" + entry.getTime().toString());
-                out.println(entry.getLine().replace("\n", "\\n").replace("\r", "\\r"));
-            }
+        try (OutputStream out = Files.newOutputStream(path)) {
+            save(out);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }

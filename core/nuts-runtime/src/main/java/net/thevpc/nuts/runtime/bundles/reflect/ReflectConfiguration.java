@@ -21,17 +21,13 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.core.format.json;
-
-import java.io.Reader;
+package net.thevpc.nuts.runtime.bundles.reflect;
 
 /**
  *
  * @author vpc
  */
-public interface ItemSerializeManager {
-    public ItemSerializeManager setAdapter(Class cls,NutsElemenSerializationAdapter a);
-    public <T> T fromJson(Reader reader, Class<T> clazz);
-        public <T> T fromObject(Object any, Class<T> clazz) ;
+public interface ReflectConfiguration {
 
+    ReflectPropertyStrategy getReflectPropertyStrategy(Class clz);
 }

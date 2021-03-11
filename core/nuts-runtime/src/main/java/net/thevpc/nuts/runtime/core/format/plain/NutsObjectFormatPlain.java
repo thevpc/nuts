@@ -9,7 +9,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.NutsObjectFormatBase;
 import net.thevpc.nuts.runtime.core.format.props.DefaultPropertiesFormat;
 import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -82,22 +81,14 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
 //        } else if (value instanceof Map) {
 //            ws.props().setModel(((Map) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof org.w3c.dom.Document) {
-            try {
-                NutsXmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w), false, true);
-            } catch (TransformerException ex) {
-                throw new NutsIOException(getWorkspace(),new IOException(ex));
-            }
+            NutsXmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w), false, true, getValidSession());
         } else if (value instanceof org.w3c.dom.Element) {
-            try {
-                Element elem = (org.w3c.dom.Element) value;
-                Document doc = NutsXmlUtils.createDocument(getSession());
-                doc.appendChild(doc.importNode(elem, true));
-                NutsXmlUtils.writeDocument(doc, new StreamResult(w), false, false);
-            } catch (TransformerException | ParserConfigurationException ex) {
-                throw new NutsIOException(getWorkspace(),new IOException(ex));
-            }
+            Element elem = (org.w3c.dom.Element) value;
+            Document doc = NutsXmlUtils.createDocument(getSession());
+            doc.appendChild(doc.importNode(elem, true));
+            NutsXmlUtils.writeDocument(doc, new StreamResult(w), false, false, getValidSession());
         } else {
-            printElement(w, getWorkspace().formats().element().convert(value,NutsElement.class));
+            printElement(w, getWorkspace().formats().element().convert(value, NutsElement.class));
         }
     }
 

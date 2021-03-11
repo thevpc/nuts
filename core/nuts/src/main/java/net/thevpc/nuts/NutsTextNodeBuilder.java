@@ -14,7 +14,7 @@ public interface NutsTextNodeBuilder extends NutsString {
 
     NutsTextNodeBuilder setConfiguration(NutsTextNodeWriteConfiguration writeConfiguration);
 
-    NutsTextNodeBuilder appendCommand(String command, String args);
+    NutsTextNodeBuilder appendCommand(NutsTerminalCommand command);
 
     NutsTextNodeBuilder appendCode(String lang, String text);
 

@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts;
 
 import java.io.InputStream;
@@ -114,10 +112,11 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @return {@code this} instance
      */
     NutsSession setTrace(Boolean trace);
-    
+
     NutsSession setBot(Boolean bot);
-    
+
     boolean isBot();
+
     Boolean getBot();
 
 //    /**
@@ -126,7 +125,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 //     * @return {@code this} instance
 //     */
 //    NutsSession setSilent();
-
 //    /**
 //     * true if force flag is armed. some operations may require user
 //     * confirmation before performing critical operations such as overriding
@@ -136,7 +134,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 //     * @return true if force flag is armed.
 //     */
 //    boolean isForce();
-
 //    /**
 //     * change force flag value. some operations may require user confirmation
 //     * before performing critical operations such as overriding existing values,
@@ -154,7 +151,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 //     * @return {@code this} instance
 //     */
 //    NutsSession ask();
-
 //    /**
 //     * equivalent to {@code setConfirm(enable?ASK:null)}
 //     *
@@ -162,7 +158,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 //     * @return {@code this} instance
 //     */
 //    NutsSession setAsk(boolean enable);
-
 //    /**
 //     * change YES flag value. some operations may require user confirmation
 //     * before performing critical operations such as overriding existing values,
@@ -188,7 +183,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 //     * @return {@code this} instance
 //     */
 //    NutsSession yes(boolean enable);
-
     /**
      * true if YES is armed.
      *
@@ -207,7 +201,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 //     * @return {@code this} instance
 //     */
 //    NutsSession setNo(boolean enable);
-
 //    /**
 //     * equivalent to {@code setNo(true)}
 //     *
@@ -222,7 +215,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 //     * @return {@code this} instance
 //     */
 //    NutsSession no(boolean enable);
-
     /**
      * true if NO is armed.
      *
@@ -250,11 +242,9 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * return effective trace output format. The effective trace output format
      * is the value of {@code getIterableFormat().getOutputFormat()} whenever {@code getIterableFormat()!=null
      * } otherwise it returns simply the value defined by calling
-     * {@link #setOutputFormat(NutsContentType)}. If none of
-     * null null     {@link #setIterableFormat(NutsIterableFormat)
-     * } or {@link #setOutputFormat(NutsContentType)} has been
-     * called (or called with null values) {@link NutsContentType#PLAIN} should
-     * be returned.
+     * {@link #setOutputFormat(NutsContentType)}. If none of null null null     {@link #setIterableFormat(NutsIterableFormat)
+     * } or {@link #setOutputFormat(NutsContentType)} has been called (or called
+     * with null values) {@link NutsContentType#PLAIN} should be returned.
      *
      * @return effective trace output format
      */
@@ -351,38 +341,33 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 //     * @return {@code this} instance
 //     */
 //    NutsSession fetchRemote();
-
 //    /**
 //     * change fetch strategy to OFFLINE
 //     *
 //     * @return {@code this} instance
 //     */
 //    NutsSession fetchOffline();
-
 //    /**
 //     * change fetch strategy to ONLINE
 //     *
 //     * @return {@code this} instance
 //     */
 //    NutsSession fetchOnline();
-
 //    /**
 //     * change fetch strategy to INSTALLED
 //     * @return {@code this} instance
 //     */
 //    NutsSession fetchInstalled();
-
 //    /**
 //     * change fetch strategy to ANYWHERE
 //     *
 //     * @return {@code this} instance
 //     */
 //    NutsSession fetchAnyWhere();
-
     /**
-     * return current fetch strategy.
-     * When no strategy (or null strategy) was set, return workspace
-     * strategy default strategy. When none defines use ONLINE
+     * return current fetch strategy. When no strategy (or null strategy) was
+     * set, return workspace strategy default strategy. When none defines use
+     * ONLINE
      *
      * @return {@code this} instance
      */
@@ -425,7 +410,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * <li>{@link NutsRepositoryListener}</li>
      * </ul>
      *
-     * @param <T>  listener type
+     * @param <T> listener type
      * @param type listener type class
      * @return registered listeners
      */
@@ -449,7 +434,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     /**
      * set session property
      *
-     * @param key   property key
+     * @param key property key
      * @param value property value
      * @return {@code this} instance
      */
@@ -523,6 +508,17 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      */
     PrintStream out();
 
+    /**
+     * equivalent to
+     * <pre>
+     * workspace.io().term().sendTerminalCommand(thisSession.out(), command);
+     * </pre>
+     *
+     * @param command terminal command
+     * @return {@code this} instance
+     */
+    NutsSession sendTerminalCommand(NutsTerminalCommand command);
+
     InputStream in();
 
     /**
@@ -568,7 +564,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      */
     NutsWorkspace getWorkspace();
 
-
     /**
      * true when considering transitive repositories.
      *
@@ -599,7 +594,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      */
     NutsSession setCached(Boolean value);
 
-
     /**
      * true when using indexes
      *
@@ -615,10 +609,9 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      */
     NutsSession setIndexed(Boolean value);
 
-
     /**
-     * set expire instant. Expire time is used to expire any cached
-     * file that was downloaded before the given date/time.
+     * set expire instant. Expire time is used to expire any cached file that
+     * was downloaded before the given date/time.
      *
      * @param value value
      * @return {@code this} instance
@@ -627,8 +620,8 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     NutsSession setExpireTime(Instant value);
 
     /**
-     * return expired date/time or zero if not set.
-     * Expire time is used to expire any cached file that was downloaded before the given date/time
+     * return expired date/time or zero if not set. Expire time is used to
+     * expire any cached file that was downloaded before the given date/time
      *
      * @return expired date/time or zero
      * @since 0.8.0
@@ -656,7 +649,8 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      *
      * {@code thisSession.getWorkspace().object().setSession(thisSession).value(any)}
      * <br>
-     * Using this method is recommended to print objects to default format (json, xml,...)
+     * Using this method is recommended to print objects to default format
+     * (json, xml,...)
      *
      * @param any any object to print in the configured/default format
      * @return new instance of {@link NutsObjectFormat}
@@ -688,9 +682,9 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 
     NutsSession setLogFilter(Filter filter);
 
-
     /**
      * configure session based on Workspace options
+     *
      * @param options options to configure from
      * @return {@code this} instance
      * @since 0.8.1

@@ -27,7 +27,6 @@ package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 
 import java.util.*;
 import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;

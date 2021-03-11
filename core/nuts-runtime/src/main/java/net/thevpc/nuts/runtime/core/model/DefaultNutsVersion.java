@@ -31,7 +31,7 @@ import java.util.List;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.version.DefaultNutsVersionFilter;
 import net.thevpc.nuts.runtime.core.filters.DefaultNutsTokenFilter;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
@@ -422,8 +422,8 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
 
         if (v1.equals(v2)) {
             return 0;
-        } else if ((i1 = CoreCommonUtils.convertToInteger(v1, null)) != null
-                && (i2 = CoreCommonUtils.convertToInteger(v2, null)) != null) {
+        } else if ((i1 = CoreNumberUtils.convertToInteger(v1, null)) != null
+                && (i2 = CoreNumberUtils.convertToInteger(v2, null)) != null) {
             return i1 - i2;
         } else if ("SNAPSHOT".equalsIgnoreCase(v1)) {
             return -1;

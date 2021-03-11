@@ -37,8 +37,8 @@ import net.thevpc.nuts.NutsWorkspace;
 public class DefaultNutsTextNodeLink extends NutsTextNodeSpecialBase implements NutsTextNodeLink {
     private NutsTextNode value;
 
-    public DefaultNutsTextNodeLink(NutsWorkspace ws, String start, String command, String separator, String end, NutsTextNode value) {
-        super(ws, start, command, separator, end);
+    public DefaultNutsTextNodeLink(NutsWorkspace ws, String start, String separator, String end, NutsTextNode value) {
+        super(ws, start, "link", separator, end);
         this.value = value;
     }
 

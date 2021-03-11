@@ -171,7 +171,7 @@ public class NutsElementPathFilter {
 
         public ArrItemCollectorJsonPath(NutsSession session) {
             this.session = session;
-            builder = session.getWorkspace().formats().element().builder();
+            builder = session.getWorkspace().formats().element().elements();
         }
 
         @Override

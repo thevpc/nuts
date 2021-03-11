@@ -21,23 +21,22 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.core.format.json;
-
-import net.thevpc.nuts.NutsElementBuilder;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+package net.thevpc.nuts.runtime.core.util;
 
 /**
  *
  * @author vpc
  */
-public interface NutsElementDeserializationContext {
+public class CoreNumberUtils {
 
-    <T> T getAs(Object o, Class<T> c);
-
-    NutsElementBuilder elements();
-
-    NutsWorkspace workspace();
-    NutsSession session();
-    
+    public static Integer convertToInteger(String value, Integer defaultValue) {
+        if (CoreStringUtils.isBlank(value)) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(value);
+        } catch (Exception ex) {
+            return defaultValue;
+        }
+    }
 }

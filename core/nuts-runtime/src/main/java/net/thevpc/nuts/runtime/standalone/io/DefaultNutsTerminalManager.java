@@ -13,8 +13,10 @@ import net.thevpc.nuts.spi.NutsTerminalBase;
 
 import java.io.*;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DefaultNutsTerminalManager implements NutsTerminalManager {
+
     private NutsWorkspace ws;
     private NutsSessionTerminal terminal;
     private NutsSystemTerminal systemTerminal;
@@ -43,7 +45,7 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
             //that's ok
         } else {
             NutsId extId = ws.id().parser().parse("net.thevpc.nuts.ext:next-term#" + getWorkspace().getApiVersion());
-            if(!getWorkspace().config().isExcludedExtension(extId.toString(),getWorkspace().config().options())) {
+            if (!getWorkspace().config().isExcludedExtension(extId.toString(), getWorkspace().config().options())) {
                 NutsWorkspaceExtensionManager extensions = getWorkspace().extensions();
                 extensions.loadExtension(extId, session);
                 NutsSystemTerminal systemTerminal = createSystemTerminal(new NutsDefaultTerminalSpec()
@@ -51,12 +53,12 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
                         .setSession(session)
                 );
                 setSystemTerminal(systemTerminal, session);
-                if(getSystemTerminal().isAutoCompleteSupported()) {
+                if (getSystemTerminal().isAutoCompleteSupported()) {
                     LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.SUCCESS).log("enable rich terminal");
-                }else{
+                } else {
                     LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to enable rich terminal");
                 }
-            }else{
+            } else {
                 LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.WARNING).log("enableRichTerm discarded; next-term is excluded.");
             }
         }
@@ -88,13 +90,13 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
     @Override
     public NutsSessionTerminal createTerminal(InputStream in, PrintStream out, PrintStream err, NutsSession session) {
         NutsSessionTerminal t = createTerminal(session);
-        if(in!=null){
+        if (in != null) {
             t.setIn(in);
         }
-        if(out!=null){
+        if (out != null) {
             t.setOut(out);
         }
-        if(err!=null){
+        if (err != null) {
             t.setErr(err);
         }
         return t;
@@ -114,27 +116,28 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
         if (termb == null) {
             throw new NutsExtensionNotFoundException(ws, NutsSessionTerminal.class, "SessionTerminalBase");
         }
-        NutsWorkspaceUtils.setSession(termb,session);
+        NutsWorkspaceUtils.setSession(termb, session);
         try {
             NutsSessionTerminal term = null;
             if (termb instanceof NutsSessionTerminal) {
                 term = (NutsSessionTerminal) termb;
-                NutsWorkspaceUtils.setSession(term,session);
+                NutsWorkspaceUtils.setSession(term, session);
                 term.setParent(parent);
             } else {
                 term = new DefaultNutsSessionTerminal();
-                NutsWorkspaceUtils.setSession(term,session);
+                NutsWorkspaceUtils.setSession(term, session);
                 term.setParent(termb);
             }
             return term;
         } catch (Exception anyException) {
             final NutsSessionTerminal c = new DefaultNutsSessionTerminal();
-            NutsWorkspaceUtils.setSession(c,session);
+            NutsWorkspaceUtils.setSession(c, session);
             c.setParent(parent);
             return c;
         }
     }
-    private NutsSystemTerminal NutsSystemTerminal_of_NutsSystemTerminalBase(NutsSystemTerminalBase terminal, NutsSession session){
+
+    private NutsSystemTerminal NutsSystemTerminal_of_NutsSystemTerminalBase(NutsSystemTerminalBase terminal, NutsSession session) {
         if (terminal == null) {
             throw new NutsExtensionNotFoundException(getWorkspace(), NutsSystemTerminalBase.class, "SystemTerminalBase");
         }
@@ -144,11 +147,11 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
         } else {
             try {
                 syst = new DefaultSystemTerminal(terminal);
-                NutsWorkspaceUtils.setSession(syst,session);
+                NutsWorkspaceUtils.setSession(syst, session);
             } catch (Exception ex) {
-                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("unable to create system terminal : {0}",ex.getMessage());
+                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("unable to create system terminal : {0}", ex.getMessage());
                 syst = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBase());
-                NutsWorkspaceUtils.setSession(syst,session);
+                NutsWorkspaceUtils.setSession(syst, session);
             }
         }
         return syst;
@@ -158,7 +161,7 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
         if (terminal == null) {
             throw new NutsExtensionNotFoundException(getWorkspace(), NutsSystemTerminalBase.class, "SystemTerminalBase");
         }
-        NutsSystemTerminal syst=NutsSystemTerminal_of_NutsSystemTerminalBase(terminal, session);
+        NutsSystemTerminal syst = NutsSystemTerminal_of_NutsSystemTerminalBase(terminal, session);
         if (this.systemTerminal != null) {
             NutsWorkspaceUtils.unsetWorkspace(this.systemTerminal);
         }
@@ -181,21 +184,21 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
 
     @Override
     public PrintStream prepare(PrintStream out, NutsSession session) {
-        session=NutsWorkspaceUtils.of(ws).validateSession(session);
-        return CoreIOUtils.toPrintStream(out,session);
+        session = NutsWorkspaceUtils.of(ws).validateSession(session);
+        return CoreIOUtils.toPrintStream(out, session);
     }
 
     @Override
     public PrintWriter prepare(PrintWriter out, NutsSession session) {
-        session=NutsWorkspaceUtils.of(ws).validateSession(session);
-        return CoreIOUtils.toPrintWriter(out,session);
+        session = NutsWorkspaceUtils.of(ws).validateSession(session);
+        return CoreIOUtils.toPrintWriter(out, session);
     }
 
     @Override
     public boolean isFormatted(OutputStream out) {
         if (out instanceof ExtendedFormatAware) {
             NutsTerminalModeOp op = ((ExtendedFormatAware) out).getModeOp();
-            return op!=NutsTerminalModeOp.NOP;
+            return op != NutsTerminalModeOp.NOP;
         }
         return false;
     }
@@ -204,21 +207,31 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
     public boolean isFormatted(Writer out) {
         if (out instanceof ExtendedFormatAware) {
             NutsTerminalModeOp op = ((ExtendedFormatAware) out).getModeOp();
-            return op!=NutsTerminalModeOp.NOP;
+            return op != NutsTerminalModeOp.NOP;
         }
         return false;
     }
 
     @Override
-    public NutsTerminalManager sendCommand(PrintStream out, String command, String args) {
-        out.printf("%s",ws.formats().text().command(command,args));
-        out.flush();
+    public NutsTerminalManager sendTerminalCommand(OutputStream out, NutsTerminalCommand command) {
+        if (isFormatted(out)) {
+            if (out instanceof PrintStream) {
+                try {
+                    ((PrintStream) out).printf("%s", ws.formats().text().command(command));
+                    out.flush();
+                } catch (IOException ex) {
+                    throw new UncheckedIOException(ex);
+                }
+            } else {
+                try {
+                    ((PrintStream) out).write(ws.formats().text().command(command).toString().getBytes());
+                    out.flush();
+                } catch (IOException ex) {
+                    throw new UncheckedIOException(ex);
+                }
+            }
+        }
         return this;
-    }
-
-    @Override
-    public NutsTerminalManager sendCommand(PrintStream out, String command) {
-        return sendCommand(out,command,"");
     }
 
     public NutsWorkspace getWorkspace() {

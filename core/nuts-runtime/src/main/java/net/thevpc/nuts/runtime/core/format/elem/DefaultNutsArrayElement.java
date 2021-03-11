@@ -25,9 +25,7 @@
 */
 package net.thevpc.nuts.runtime.core.format.elem;
 
-import net.thevpc.nuts.NutsArrayElement;
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementType;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,17 +35,15 @@ import java.util.stream.Collectors;
  *
  * @author thevpc
  */
-public class DefaultNutsArrayElement extends AbstractNutsElement implements NutsArrayElement {
+public class DefaultNutsArrayElement extends AbstractNutsArrayElement{
 
     private final NutsElement[] values;
 
     public DefaultNutsArrayElement(Collection<NutsElement> values) {
-        super(NutsElementType.ARRAY);
         this.values= values.toArray(new NutsElement[0]);
     }
 
     public DefaultNutsArrayElement(NutsElement[] values) {
-        super(NutsElementType.ARRAY);
         this.values= Arrays.copyOf(values,values.length);
     }
 

@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.time.Instant;
 import java.util.ListIterator;
 
@@ -35,6 +37,10 @@ public interface NutsCommandHistory {
     void load();
 
     void save();
+
+    void load(InputStream in);
+
+    void save(OutputStream out);
 
     int size();
 

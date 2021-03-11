@@ -9,6 +9,10 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,6 +28,7 @@ import java.util.function.Consumer;
 import net.thevpc.nuts.NutsCommandHistory;
 import net.thevpc.nuts.NutsCommandHistoryEntry;
 import net.thevpc.nuts.NutsExecutionException;
+import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsWorkspace;
 import static net.thevpc.nuts.ext.term.NutsJLineHistory.DEFAULT_HISTORY_FILE_SIZE;
 import static net.thevpc.nuts.ext.term.NutsJLineHistory.DEFAULT_HISTORY_SIZE;
@@ -43,7 +48,6 @@ import org.jline.utils.Log;
  */
 public class NutsJLineCommandHistory implements NutsCommandHistory {
 
-    private NutsJLineHistory h;
     private LineReader reader;
     private final LinkedList<History.Entry> items = new LinkedList<>();
 
@@ -85,31 +89,42 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
     }
 
     @Override
+    public void load(InputStream in) {
+        if (in != null) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+                internalClear();
+                reader.lines().forEach(new Consumer<String>() {
+                    @Override
+                    public void accept(String l) {
+                        int idx = l.indexOf(':');
+                        if (idx < 0) {
+                            throw new NutsExecutionException(ws, "Bad history file syntax! "
+                                    + "The history file may be an older history: "
+                                    + "please remove it or use a different history file.", 2);
+                        }
+                        Instant time = Instant.ofEpochMilli(Long.parseLong(l.substring(0, idx)));
+                        String line = unescape(l.substring(idx + 1));
+                        internalAdd(time, line);
+                    }
+                });
+                lastLoaded = items.size();
+                nbEntriesInFile = lastLoaded;
+                maybeResize();
+            } catch (Exception ex) {
+                throw new NutsIOException(ws,ex);
+            }
+        }
+    }
+
+    @Override
     public void load() {
         Path path = getPath();
         if (path != null) {
             try {
                 if (Files.exists(path)) {
                     Log.trace("loading history from: ", path);
-                    try (BufferedReader reader = Files.newBufferedReader(path)) {
-                        internalClear();
-                        reader.lines().forEach(new Consumer<String>() {
-                            @Override
-                            public void accept(String l) {
-                                int idx = l.indexOf(':');
-                                if (idx < 0) {
-                                    throw new NutsExecutionException(ws, "Bad history file syntax! "
-                                            + "The history file `" + path + "` may be an older history: "
-                                            + "please remove it or use a different history file.", 2);
-                                }
-                                Instant time = Instant.ofEpochMilli(Long.parseLong(l.substring(0, idx)));
-                                String line = unescape(l.substring(idx + 1));
-                                internalAdd(time, line);
-                            }
-                        });
-                        lastLoaded = items.size();
-                        nbEntriesInFile = lastLoaded;
-                        maybeResize();
+                    try (InputStream in = Files.newInputStream(path)) {
+                        load(in);
                     }
                 }
             } catch (IOException e) {
@@ -121,18 +136,15 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
     }
 
     @Override
-    public void save() {
+    public void save(OutputStream out) {
 //        if (shellHistory != null) {
 //            shellHistory.save();
 //        } else {
         try {
             Path path = getPath();
             if (path != null) {
-                Log.trace("Saving history to: ", path);
-                Files.createDirectories(path.toAbsolutePath().getParent());
                 // Append new items to the history file
-                try (BufferedWriter writer = Files.newBufferedWriter(path.toAbsolutePath(),
-                        StandardOpenOption.WRITE, StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
+                try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out))) {
                     for (History.Entry entry : items.subList(lastLoaded, items.size())) {
                         writer.append(format(entry));
                     }
@@ -146,6 +158,24 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
             }
             lastLoaded = items.size();
 //        }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    @Override
+    public void save() {
+        try {
+            Path path = getPath();
+            if (path != null) {
+                Log.trace("Saving history to: ", path);
+                Files.createDirectories(path.toAbsolutePath().getParent());
+                // Append new items to the history file
+                try (OutputStream out = Files.newOutputStream(path.toAbsolutePath(),
+                        StandardOpenOption.WRITE, StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
+                    save(out);
+                }
+            }
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
@@ -257,7 +287,7 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
     }
 
     protected void internalAdd(Instant time, String line) {
-        int index=offset + items.size();
+        int index = offset + items.size();
         History.Entry entry = new NutsJLineCommandHistoryEntry(index, time, line);
         items.add(entry);
         maybeResize();

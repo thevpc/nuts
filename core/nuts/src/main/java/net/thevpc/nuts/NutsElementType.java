@@ -34,59 +34,84 @@ public enum NutsElementType {
     /**
      * null element
      */
-    NULL(true),
+    NULL(true,false),
 
     /**
      * integer/long (number) element
      */
-    INTEGER(true),
+    LONG(true,true),
+
+    /**
+     * integer/long (number) element
+     */
+    INTEGER(true,true),
+
+    /**
+     * integer/long (number) element
+     */
+    SHORT(true,true),
+
+    /**
+     * integer/long (number) element
+     */
+    BYTE(true,true),
 
     /**
      * float/double (number) element
      */
-    FLOAT(true),
+    FLOAT(true,true),
+
+    /**
+     * float/double (number) element
+     */
+    DOUBLE(true,true),
 
     /**
      * string element
      */
-    STRING(true),
+    STRING(true,false),
 
     /**
      * date element
      */
-    DATE(true),
+    DATE(true,false),
 
     /**
      * boolean element
      */
-    BOOLEAN(true),
+    BOOLEAN(true,false),
 
     /**
      * array element
      */
-    ARRAY(false),
+    ARRAY(false,false),
 
     /**
      * object (list of key/val) element
      */
-    OBJECT(false)
+    OBJECT(false,false)
     ;
 
     /**
      * true if private type
      */
     private final boolean primitive;
+    private final boolean nbr;
 
     /**
      * lower-cased identifier for the enum entry
      */
     private final String id;
 
-    NutsElementType(boolean primitive) {
+    NutsElementType(boolean primitive,boolean nbr) {
         this.id = name().toLowerCase().replace('_', '-');
         this.primitive = primitive;
+        this.nbr = nbr;
     }
 
+    public boolean isNumber(){
+        return nbr;
+    }
     /**
      * lower cased identifier.
      * @return lower cased identifier

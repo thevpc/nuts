@@ -26,44 +26,34 @@
  */
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
-import net.thevpc.nuts.NutsTerminalManager;
+import net.thevpc.nuts.NutsTerminalCommand;
 import net.thevpc.nuts.NutsTextNodeCommand;
 import net.thevpc.nuts.NutsTextNodeType;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.AnsiEscapeCommand;
 import net.thevpc.nuts.runtime.core.format.text.AnsiEscapeCommands;
+import net.thevpc.nuts.runtime.core.format.text.DefaultAnsiEscapeCommand;
 
 /**
  * Created by vpc on 5/23/17.
  */
 public class DefaultNutsTextNodeCommand extends NutsTextNodeSpecialBase implements NutsTextNodeCommand {
 
-    private final String text;
+    private final NutsTerminalCommand command;
 
-    public DefaultNutsTextNodeCommand(NutsWorkspace ws, String start, String command, String separator, String end, String text) {
-        super(ws, start, command,
-                (text != null && text.length() > 0 && (separator == null || separator.isEmpty())) ? " " : separator
+    public DefaultNutsTextNodeCommand(NutsWorkspace ws, String start, NutsTerminalCommand command, String separator, String end) {
+        super(ws, start, command.getName(),
+                (command.getArgs() != null && command.getArgs().length() > 0 && (separator == null || separator.isEmpty())) ? " " : separator
                 , end);
-        this.text = text;
+        this.command = command;
     }
 
-    public static AnsiEscapeCommand parseAnsiEscapeCommand(String v, NutsWorkspace ws) {
+    public static AnsiEscapeCommand parseAnsiEscapeCommand(NutsTerminalCommand v, NutsWorkspace ws) {
         //this might be a command !!
-        v = v.trim();
-        switch (v) {
-            case NutsTerminalManager.CMD_MOVE_LINE_START: {
-                return AnsiEscapeCommands.MOVE_LINE_START;
-            }
-            case NutsTerminalManager.CMD_LATER_RESET_LINE: {
-                return AnsiEscapeCommands.LATER_RESET_LINE;
-            }
-            case NutsTerminalManager.CMD_MOVE_UP: {
-                return AnsiEscapeCommands.MOVE_UP;
-            }
-            default: {
-                return null;
-            }
+        if(v==null){
+            return null;
         }
+        return new DefaultAnsiEscapeCommand(v);
     }
 
     @Override
@@ -72,7 +62,7 @@ public class DefaultNutsTextNodeCommand extends NutsTextNodeSpecialBase implemen
     }
 
     @Override
-    public String getText() {
-        return text;
+    public NutsTerminalCommand getCommand() {
+        return command;
     }
 }

@@ -37,8 +37,8 @@ import net.thevpc.nuts.NutsWorkspace;
 public class DefaultNutsTextNodeAnchor extends NutsTextNodeSpecialBase implements NutsTextNodeAnchor {
     private String value;
 
-    public DefaultNutsTextNodeAnchor(NutsWorkspace ws,String start, String command, String separator, String end, String value) {
-        super(ws,start, command, separator, end);
+    public DefaultNutsTextNodeAnchor(NutsWorkspace ws,String start, String separator, String end, String value) {
+        super(ws,start, "anchor", separator, end);
         this.value = value;
     }
 

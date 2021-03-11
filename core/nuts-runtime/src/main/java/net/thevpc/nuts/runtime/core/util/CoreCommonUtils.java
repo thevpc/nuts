@@ -45,16 +45,7 @@ public class CoreCommonUtils {
 
     
 
-    public static Integer convertToInteger(String value, Integer defaultValue) {
-        if (CoreStringUtils.isBlank(value)) {
-            return defaultValue;
-        }
-        try {
-            return Integer.parseInt(value);
-        } catch (Exception ex) {
-            return defaultValue;
-        }
-    }
+    
 
     public static NutsString stringValueFormatted(Object o, boolean escapeString, NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();

@@ -49,7 +49,7 @@ class NutsObjectElementMap1 extends NutsObjectElementBase {
     public Collection<NutsNamedElement> children() {
         List<NutsNamedElement> all = new ArrayList<>();
         for (Map.Entry<String, Object> entry : value.entrySet()) {
-            NutsElement val = context.toElement(entry.getValue());
+            NutsElement val = context.objectToElement(entry.getValue(), null);
             all.add(new DefaultNutsNamedElement(entry.getKey(), val));
         }
         return all;
@@ -58,7 +58,7 @@ class NutsObjectElementMap1 extends NutsObjectElementBase {
     @Override
     public NutsElement get(String name) {
         if (value.containsKey(name)) {
-            return context.toElement(value.get(name));
+            return context.objectToElement(value.get(name), null);
         }
         return null;
     }

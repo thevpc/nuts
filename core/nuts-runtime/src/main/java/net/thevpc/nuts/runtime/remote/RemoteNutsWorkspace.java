@@ -15,7 +15,7 @@ public class RemoteNutsWorkspace extends AbstractNutsWorkspace {
     public NutsElement createCall(String commandName, NutsElement body) {
         try (NTalkClient cli = new NTalkClient()) {
             NutsElementFormat e = formats().element().setContentType(NutsContentType.JSON);
-            NutsObjectElement q = e.builder().forObject()
+            NutsObjectElement q = e.elements().forObject()
                     .set("cmd", commandName)
                     .set("body", body).build();
             String json = e.setValue(q).format();
@@ -33,7 +33,7 @@ public class RemoteNutsWorkspace extends AbstractNutsWorkspace {
     }
 
     public NutsElement createCall(String commandName, String callId, NutsElement body) {
-        NutsElementBuilder e = formats().element().builder();
+        NutsElementBuilder e = formats().element().elements();
         return e.forObject()
                 .set(
                         "cmd",

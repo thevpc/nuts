@@ -12,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.logging.Level;
+import net.thevpc.common.mvn.PomErrorHandler;
 
 public class ProjectService {
 
@@ -31,6 +33,7 @@ public class ProjectService {
         this.config = config;
         this.context = context;
         this.defaultRepositoryAddress = defaultRepositoryAddress;
+        sharedConfigFolder = Paths.get(context.getVersionFolderFolder(NutsStoreLocation.CONFIG, NWorkConfigVersions.CURRENT));
     }
 
     public ProjectConfig getConfig() {
@@ -69,6 +72,20 @@ public class ProjectService {
         return false;
     }
 
+    public Pom getPom() {
+        File f = new File(config.getPath());
+        if (f.isDirectory()) {
+            if (new File(f, "pom.xml").isFile()) {
+                try {
+                    return new PomXmlParser().parse(new File(f, "pom.xml"));
+                } catch (Exception ex) {
+                    //
+                }
+            }
+        }
+        return null;
+    }
+
     public ProjectConfig rebuildProjectMetadata() {
         ProjectConfig p2 = new ProjectConfig();
         p2.setId(config.getId());
@@ -78,7 +95,18 @@ public class ProjectService {
         if (f.isDirectory()) {
             if (new File(f, "pom.xml").isFile()) {
                 try {
-                    Pom g = new PomXmlParser().parse(new File(f, "pom.xml"));
+                    Pom g = new PomXmlParser()
+                            .setErrorHandler(new PomErrorHandler() {
+                                @Override
+                                public void log(Level level, String message, Exception error) {
+                                    context.getWorkspace().log().of(ProjectService.class)
+                                            .with()
+                                            .level(Level.FINE)
+                                            .verb(NutsLogVerb.FAIL)
+                                            .error(error);
+                                }
+                            })
+                            .parse(new File(f, "pom.xml"));
                     if (g.getGroupId() != null
                             && g.getArtifactId() != null
                             && g.getVersion() != null
@@ -90,6 +118,11 @@ public class ProjectService {
                         //check if the s
                         int ok = 0;
                         if (s.contains("<artifactId>site-maven-plugin</artifactId>")) {
+                            p2.getTechnologies().add("github-deploy");
+                            ok++;
+                        }
+                        if (s.contains("<artifactId>nexus-staging-maven-plugin</artifactId>")) {
+                            p2.getTechnologies().add("nexus-deploy");
                             ok++;
                         }
                         if (s.contains("<phase>deploy</phase>")) {

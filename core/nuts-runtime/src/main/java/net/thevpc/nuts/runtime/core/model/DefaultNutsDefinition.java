@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.core.model;
 
 import java.io.UncheckedIOException;
@@ -51,23 +49,22 @@ public class DefaultNutsDefinition implements NutsDefinition {
     private NutsId apiId = null;
     private transient NutsWorkspace ws;
 
-//    public DefaultNutsDefinition() {
-//    }
+    public DefaultNutsDefinition() {
+    }
 
-    public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInformation install,
-                                 NutsIdType type, NutsId apiId,NutsWorkspace ws) {
+    public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInformation install, NutsIdType type, NutsId apiId, NutsWorkspace ws) {
         this.descriptor = descriptor;
         this.content = content;
         this.id = id;
         this.installInformation = install;
         this.repositoryUuid = repoUuid;
         this.repositoryName = repoName;
-        this.type = type==null?NutsIdType.REGULAR : type;
+        this.type = type == null ? NutsIdType.REGULAR : type;
         this.apiId = apiId;
         this.ws = ws;
     }
 
-    public DefaultNutsDefinition(NutsDefinition other,NutsWorkspace ws) {
+    public DefaultNutsDefinition(NutsDefinition other, NutsWorkspace ws) {
         if (other != null) {
             this.descriptor = other.getDescriptor();
             this.id = other.getId();
@@ -78,10 +75,10 @@ public class DefaultNutsDefinition implements NutsDefinition {
             this.installInformation = other.getInstallInformation();
             this.effectiveDescriptor = !other.isSetEffectiveDescriptor() ? null : other.getEffectiveDescriptor();
             this.dependencies = !other.isSetDependencies() ? null : other.getDependencies();
-            this.type=other.getType()==null?NutsIdType.REGULAR : other.getType();
-            this.apiId=other.getApiId();
+            this.type = other.getType() == null ? NutsIdType.REGULAR : other.getType();
+            this.apiId = other.getApiId();
         }
-        this.ws=ws;
+        this.ws = ws;
     }
 
     @Override
@@ -136,25 +133,25 @@ public class DefaultNutsDefinition implements NutsDefinition {
     }
 
     public DefaultNutsDefinition copy() {
-        return new DefaultNutsDefinition(this,ws);
+        return new DefaultNutsDefinition(this, ws);
     }
 
     @Override
     public Path getPath() {
         NutsContent c = getContent();
-        return c==null?null:c.getPath();
+        return c == null ? null : c.getPath();
     }
 
     @Override
     public String getLocation() {
         NutsContent c = getContent();
-        return c==null?null:c.getLocation();
+        return c == null ? null : c.getLocation();
     }
 
     @Override
     public URL getURL() {
         Path p = getPath();
-        if(p!=null){
+        if (p != null) {
             try {
                 return p.toUri().toURL();
             } catch (MalformedURLException e) {

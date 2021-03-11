@@ -23,53 +23,62 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.core.format.json;
+package net.thevpc.nuts.runtime.core.format.elem;
 
-import net.thevpc.nuts.runtime.core.format.elem.AbstractNutsElement;
-import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryContext;
-import net.thevpc.nuts.NutsElementType;
-import com.google.gson.JsonArray;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsArrayElement;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 
 /**
  *
  * @author thevpc
  */
-public class NutsArrayElementJson extends AbstractNutsElement implements NutsArrayElement {
+public class NutsArrayElementFromList2 extends AbstractNutsArrayElement {
 
     private final NutsElementFactoryContext context;
-    private final JsonArray array;
+    private final List<Object> values = new ArrayList<>();
 
-    public NutsArrayElementJson(JsonArray array, NutsElementFactoryContext context) {
-        super(NutsElementType.ARRAY);
+    public NutsArrayElementFromList2(Object array, NutsElementFactoryContext context) {
         this.context = context;
-        this.array = array;
+        if (array.getClass().isArray()) {
+            int count = Array.getLength(array);
+            for (int i = 0; i < count; i++) {
+                values.add(Array.get(array, i));
+            }
+        } else if (array instanceof Collection) {
+            values.addAll((Collection) array);
+        } else if (array instanceof Iterator) {
+            Iterator nl = (Iterator) array;
+            while (nl.hasNext()) {
+                values.add(nl.next());
+            }
+        } else {
+            throw new IllegalArgumentException("Unsupported");
+        }
     }
 
     @Override
     public Collection<NutsElement> children() {
-        return IteratorBuilder.of(array.iterator())
-                .map(x -> context.toElement(x))
-                .list();
+        return values.stream().map(x->context.objectToElement(x, null)).collect(Collectors.toList());
     }
 
     @Override
     public String toString() {
-        return "[" + children().stream().map(x -> x.toString()).collect(Collectors.joining(", ")) + "]";
+        return "[" + children().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
     }
 
     @Override
     public int size() {
-        return array.size();
+        return values.size();
     }
 
     @Override
     public NutsElement get(int index) {
-        return context.toElement(array.get(index));
+        return context.objectToElement(values.get(index), null);
     }
 
 }

@@ -48,8 +48,8 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
     }
 
     @Override
-    public NutsTextNodeBuilder appendCommand(String command, String args) {
-        all.add(text1.text().command(command, args));
+    public NutsTextNodeBuilder appendCommand(NutsTerminalCommand command) {
+        all.add(text1.text().command(command));
         return this;
     }
 
