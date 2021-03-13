@@ -28,7 +28,7 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
-import net.thevpc.nuts.runtime.bundles.common.StringKeyValueList;
+import net.thevpc.nuts.runtime.bundles.collections.StringKeyValueList;
 import net.thevpc.nuts.runtime.bundles.io.IProcessExecHelper;
 import net.thevpc.nuts.NutsExecutorComponent;
 
@@ -258,7 +258,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 //                    xargs.add(Dnuts_boot_args);
 //                    args.add(Dnuts_boot_args);
 //                }
-                String jdb = (String) ws.env().getPropertyAsString("jdb", true, null);
+                String jdb = (String) ws.env().getOption("jdb", null);
                 if (jdb != null) {
                     boolean suspend = true;
                     int port = 5005;

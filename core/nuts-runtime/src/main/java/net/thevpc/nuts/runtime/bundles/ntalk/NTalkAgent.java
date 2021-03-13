@@ -140,20 +140,16 @@ public class NTalkAgent implements Closeable{
                     }
                     synchronized (serverSession) {
                         if (serviceAlreadyRegistered) {
-//                            System.out.println("start outAgentToServer KO "+serverSession.sessionId);
                             serverSession.outAgentToServer.writeInt(NTalkConstants.KO);
                             serverSession.outAgentToServer.writeUTF(getAgentVersion());
                             serverSession.outAgentToServer.writeInt(NTalkConstants.ERR_SERVICE_ALREADY_REGISTERED);
-//                            NTalkUtils.writeArray(("service already registered "+serverSession.service).getBytes(),serverSession.outAgentToServer);
                         } else {
-//                            System.out.println("start outAgentToServer OK "+serverSession.sessionId);
                             //write challenge
                             serverSession.outAgentToServer.writeInt(NTalkConstants.OK);
                             serverSession.outAgentToServer.writeUTF(getAgentVersion());
                             serverSession.outAgentToServer.writeLong(serverSession.sessionId);
                             serverSession.outAgentToServer.writeUTF(serverSession.challenge = UUID.randomUUID().toString());
                         }
-//                        System.out.println("end   outAgentToServer "+serverSession.sessionId);
                     }
                     if (!serviceAlreadyRegistered) {
                         log("SERVICE: handshake OK " + serverSession.sessionId + " / " + serverSession.challenge);
@@ -243,12 +239,10 @@ public class NTalkAgent implements Closeable{
                             if (serverSession != null) {
                                 try {
                                     synchronized (serverSession) {
-//                                        System.out.println("start outAgentToServer CMD_NEW_JOB "+serverSession.sessionId+"/"+clientSession.sessionId);
                                         serverSession.outAgentToServer.writeInt(NTalkConstants.CMD_NEW_JOB);
                                         serverSession.outAgentToServer.writeLong(jobId);
                                         serverSession.outAgentToServer.writeLong(clientSession.sessionId);
                                         NTalkUtils.writeArray(clientRequestMessage, serverSession.outAgentToServer);
-//                                        System.out.println("end   outAgentToServer CMD_NEW_JOB "+serverSession.sessionId+"/"+clientSession.sessionId);
                                     }
                                 } catch (IOException e) {
                                     errorCode = NTalkConstants.ERR_SERVER_ERROR;
@@ -324,10 +318,8 @@ public class NTalkAgent implements Closeable{
                                 NTalkUtils.writeArray(msg, cliSession.outAgentToClient);
                             }
                             synchronized (serverSession) {
-//                                System.out.println("start outAgentToServer OK/KO "+serverSession.sessionId);
                                 serverSession.outAgentToServer.writeInt(cliSession != null ? NTalkConstants.OK_JOB : NTalkConstants.KO_JOB);
                                 serverSession.outAgentToServer.writeLong(jobId);
-//                                System.out.println("end   outAgentToServer OK/KO "+serverSession.sessionId);
                             }
                         } catch (IOException e) {
                             throw new UncheckedIOException(e);
@@ -361,7 +353,6 @@ public class NTalkAgent implements Closeable{
 
     public void close() {
         if (!closed) {
-            System.out.println("close agent");
             closed = true;
             for (Session value : sessionsById.values().toArray(new Session[0])) {
                 sessionsById.remove(value.sessionId);

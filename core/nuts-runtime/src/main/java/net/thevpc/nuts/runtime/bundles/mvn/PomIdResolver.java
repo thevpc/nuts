@@ -11,6 +11,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class PomIdResolver {
+
     //    private NutsWorkspace ws;
     private PomUrlReader pomUrlReader;
     private PomLogger logger;
@@ -66,7 +67,7 @@ public class PomIdResolver {
                 try {
                     all.add(new PomXmlParser(logger).parse(new URL(s2), session).getPomId());
                 } catch (Exception ex) {
-                    logger.log(Level.SEVERE,  "failed to parse pom file {0} : {1}", s2, ex);
+                    logger.log(Level.SEVERE, "failed to parse pom file {0} : {1}", s2, ex);
                 }
             }
         }
@@ -77,7 +78,7 @@ public class PomIdResolver {
      * resolve all Maven/Nuts artifact definitions in the classloader that has
      * loaded <code>clazz</code>
      *
-     * @param clazz   class
+     * @param clazz class
      * @param session session
      * @return artifacts array in the form groupId:artfcatId#version
      */
@@ -101,19 +102,11 @@ public class PomIdResolver {
 
     public PomId resolvePomId(Class clazz, PomId defaultValue, NutsSession session) {
         PomId[] pomIds = resolvePomIds(clazz, session);
-//        if(pomIds.length>1){
-//            System.out.println("==== Multiple ids found : "+Arrays.asList(pomIds));
-//        }else{
-//            System.out.println("==== Single id found : "+Arrays.asList(pomIds));
-//        }
-//        System.out.println(clazz.getClassLoader());
-//        if(clazz.getClassLoader() instanceof URLClassLoader){
-//            URLClassLoader u=(URLClassLoader)clazz.getClassLoader();
-//            for (URL url : u.getURLs()) {
-//                System.out.println("\t"+url);
-//            }
-//        }
-//        new Throwable().printStackTrace(System.out);
+        if (pomIds.length > 1) {
+            if (logger != null) {
+                logger.log(Level.INFO, "multiple ids found : "+Arrays.asList(pomIds)+" for class "+clazz+" and id "+defaultValue);
+            }
+        }
         for (PomId v : pomIds) {
             return v;
         }

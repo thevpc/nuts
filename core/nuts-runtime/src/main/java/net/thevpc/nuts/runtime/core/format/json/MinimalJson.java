@@ -163,58 +163,66 @@ public class MinimalJson implements NutsElementStreamFormat {
                 break;
             }
             case ARRAY: {
-                out.print('[');
-                boolean first = true;
-                String indent2 = indent + "  ";
-                for (NutsElement e : data.array().children()) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        out.print(',');
+                if (data.array().size() == 0) {
+                    out.print("[]");
+                } else {
+                    out.print('[');
+                    boolean first = true;
+                    String indent2 = indent + "  ";
+                    for (NutsElement e : data.array().children()) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            out.print(',');
+                        }
+                        if (indent != null) {
+                            out.print('\n');
+                            out.print(indent2);
+                            write(out, e, indent2);
+                        } else {
+                            write(out, e, null);
+                        }
                     }
                     if (indent != null) {
                         out.print('\n');
-                        out.print(indent2);
-                        write(out, e, indent2);
-                    } else {
-                        write(out, e, null);
+                        out.print(indent);
                     }
+                    out.print(']');
                 }
-                if (indent != null) {
-                    out.print('\n');
-                    out.print(indent);
-                }
-                out.print(']');
                 break;
             }
             case OBJECT: {
-                out.print('{');
-                boolean first = true;
-                String indent2 = indent + "  ";
-                for (NutsNamedElement e : data.object().children()) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        out.print(',');
+                if (data.object().size() == 0) {
+                    out.print("{}");
+                } else {
+                    out.print('{');
+                    boolean first = true;
+                    String indent2 = indent + "  ";
+                    for (NutsNamedElement e : data.object().children()) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            out.print(',');
+                        }
+                        if (indent != null) {
+                            out.print('\n');
+                            out.print(indent2);
+                            write(out, builder().forString(e.getName()), indent2);
+                            out.print(':');
+                            out.print(' ');
+                            write(out, e.getValue(), indent2);
+                        } else {
+                            write(out, builder().forString(e.getName()), null);
+                            out.print(':');
+                            write(out, e.getValue(), null);
+                        }
                     }
                     if (indent != null) {
                         out.print('\n');
-                        out.print(indent2);
-                        write(out, builder().forString(e.getName()), indent2);
-                        out.print(':');
-                        out.print(' ');
-                        write(out, e.getValue(), indent2);
-                    } else {
-                        write(out, builder().forString(e.getName()), null);
-                        out.print(':');
-                        write(out, e.getValue(), null);
+                        out.print(indent);
                     }
+                    out.print('}');
                 }
-                if (indent != null) {
-                    out.print('\n');
-                    out.print(indent);
-                }
-                out.print('}');
                 break;
             }
             default: {
@@ -301,7 +309,7 @@ public class MinimalJson implements NutsElementStreamFormat {
     }
 
     private NutsElement readArray() {
-        NutsArrayElementBuilder array = ebuilder.forArray();
+        NutsArrayElementBuilder array = builder().forArray();
         read();
         skipWhiteSpace();
         if (readChar(']')) {

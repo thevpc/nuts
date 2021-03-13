@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.bundles.datastr.StringBuilder2;
+import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 
 import java.io.File;
 import java.io.IOException;

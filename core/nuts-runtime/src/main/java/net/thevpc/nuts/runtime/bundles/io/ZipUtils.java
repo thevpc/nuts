@@ -151,13 +151,11 @@ public class ZipUtils {
         }
 
         if (flag) {
-//            System.out.println("[FOLDER ]" + pathPrefix + folder.getName());
             zip.putNextEntry(new ZipEntry(pathPrefix + folder.getName() + "/"));
         } else {
             if (folder.isDirectory()) {
                 addFolderToZip(pathPrefix, srcFile, zip);
             } else {
-//                System.out.println("[FILE  ]" + pathPrefix + folder.getName() + " - " + srcFile);
                 byte[] buf = new byte[1024];
                 int len;
                 FileInputStream in = new FileInputStream(srcFile);

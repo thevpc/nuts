@@ -135,7 +135,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     this.formats().text().builder().appendJoined(
                             this.formats().text().styled(";", NutsTextNodeStyle.separator()),
                             toIds(info.getExtensionBootDescriptors()).stream()
-                                    .map(x -> this.formats().text().nodeFor(x))
+                                    .map(x -> this.formats().text().nodeFor(
+                                            id().parser().parse(x.toString())
+                                    ))
                                     .collect(Collectors.toList())
                     )
             );
@@ -185,7 +187,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         securityManager = new DefaultNutsWorkspaceSecurityManager(this);
         String workspaceLocation = info.getWorkspaceLocation();
         String apiVersion = info.getApiVersion();
-        String runtimeId = info.getRuntimeId();
+        NutsBootId runtimeId = info.getRuntimeId();
         String repositories = info.getBootRepositories();
         NutsWorkspaceOptions uoptions = info.getOptions();
         NutsBootWorkspaceFactory bootFactory = info.getBootWorkspaceFactory();
@@ -202,7 +204,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsBootConfig cfg = new NutsBootConfig();
         cfg.setWorkspace(workspaceLocation);
         cfg.setApiVersion(apiVersion);
-        cfg.setRuntimeId(runtimeId);
+        cfg.setRuntimeId(runtimeId == null ? null : runtimeId.toString());
         cfg.setRuntimeBootDescriptor(info.getRuntimeBootDescriptor());
         cfg.setExtensionBootDescriptors(info.getExtensionBootDescriptors());
         extensionManager = new DefaultNutsWorkspaceExtensionManager(this, bootFactory, uoptions.getExcludedExtensions(), bootSession);
@@ -278,13 +280,17 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 bconfig.setUuid(UUID.randomUUID().toString());
                 NutsWorkspaceConfigApi aconfig = new NutsWorkspaceConfigApi();
                 aconfig.setApiVersion(apiVersion);
-                aconfig.setRuntimeId(runtimeId);
+                aconfig.setRuntimeId(runtimeId == null ? null : runtimeId.toString());
                 aconfig.setJavaCommand(uoptions.getJavaCommand());
                 aconfig.setJavaOptions(uoptions.getJavaOptions());
 
                 NutsWorkspaceConfigRuntime rconfig = new NutsWorkspaceConfigRuntime();
-                rconfig.setDependencies(String.join(";", info.getRuntimeBootDescriptor().getDependencies()));
-                rconfig.setId(runtimeId);
+                rconfig.setDependencies(
+                        Arrays.stream(info.getRuntimeBootDescriptor().getDependencies())
+                                .map(x -> x.toString())
+                                .collect(Collectors.joining(";"))
+                );
+                rconfig.setId(runtimeId == null ? null : runtimeId.toString());
 
                 bconfig.setBootRepositories(repositories);
                 bconfig.setStoreLocationStrategy(uoptions.getStoreLocationStrategy());
@@ -367,7 +373,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     NutsUpdateOptions updateOptions = new NutsUpdateOptions().setSession(session);
                     configManager.setBootApiVersion(cfg.getApiVersion(), updateOptions);
                     configManager.setBootRuntimeId(cfg.getRuntimeId(), updateOptions);
-                    configManager.setBootRuntimeDependencies(String.join(";", cfg.getRuntimeBootDescriptor().getDependencies()), updateOptions);
+                    configManager.setBootRuntimeDependencies(
+                            Arrays.stream(info.getRuntimeBootDescriptor().getDependencies())
+                                    .map(x -> x.toString())
+                                    .collect(Collectors.joining(";")),
+                             updateOptions);
                     configManager.setBootRepositories(cfg.getBootRepositories(), updateOptions);
                     try {
                         install().installed().getResult();
@@ -1458,8 +1468,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //            return false;
 //        }
 //    }
-    private static Set<String> toIds(NutsBootDescriptor[] all) {
-        Set<String> set = new LinkedHashSet<>();
+    private static Set<NutsBootId> toIds(NutsBootDescriptor[] all) {
+        Set<NutsBootId> set = new LinkedHashSet<>();
         for (NutsBootDescriptor i : all) {
             set.add(i.getId());
             Collections.addAll(set, i.getDependencies());

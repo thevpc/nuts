@@ -58,7 +58,7 @@ public class InternalNutsDependencyFilterManager extends InternalNutsTypedFilter
         if (scope == null) {
             return always();
         }
-        return new NutsDependencyScopeFilter(ws).addScopes(Arrays.asList(scope));
+        return new NutsDependencyScopeFilter(ws).add(Arrays.asList(scope));
     }
 
     @Override
@@ -66,7 +66,7 @@ public class InternalNutsDependencyFilterManager extends InternalNutsTypedFilter
         if (scope == null) {
             return always();
         }
-        return new NutsDependencyScopeFilter(ws).addScopes(Arrays.asList(scope));
+        return new NutsDependencyScopeFilter(ws).add(Arrays.asList(scope));
     }
 
     @Override
@@ -74,9 +74,76 @@ public class InternalNutsDependencyFilterManager extends InternalNutsTypedFilter
         if (scope == null) {
             return always();
         }
-        return new NutsDependencyScopeFilter(ws).addScopes(scope);
+        return new NutsDependencyScopeFilter(ws).add(scope);
     }
 
+    
+    
+    @Override
+    public NutsDependencyFilter byOs(String os) {
+        if (os == null) {
+            return always();
+        }
+        return new NutsDependencyOsFilter(ws,os);
+    }
+    
+    @Override
+    public NutsDependencyFilter byOs(NutsOsFamily os) {
+        if (os == null) {
+            return always();
+        }
+        return new NutsDependencyOsFilter(ws).add(Arrays.asList(os));
+    }
+
+    @Override
+    public NutsDependencyFilter byOs(NutsOsFamily... os) {
+        if (os == null) {
+            return always();
+        }
+        return new NutsDependencyOsFilter(ws).add(Arrays.asList(os));
+    }
+
+    @Override
+    public NutsDependencyFilter byOs(Collection<NutsOsFamily> os) {
+        if (os == null) {
+            return always();
+        }
+        return new NutsDependencyOsFilter(ws).add(os);
+    }
+    
+    @Override
+    public NutsDependencyFilter byArch(NutsArchFamily os) {
+        if (os == null) {
+            return always();
+        }
+        return new NutsDependencyArchFilter(ws).add(Arrays.asList(os));
+    }
+
+    @Override
+    public NutsDependencyFilter byArch(NutsArchFamily... arch) {
+        if (arch == null) {
+            return always();
+        }
+        return new NutsDependencyArchFilter(ws).add(Arrays.asList(arch));
+    }
+
+    @Override
+    public NutsDependencyFilter byArch(Collection<NutsArchFamily> arch) {
+        if (arch == null) {
+            return always();
+        }
+        return new NutsDependencyArchFilter(ws).add(arch);
+    }
+
+    @Override
+    public NutsDependencyFilter byArch(String arch) {
+        if (arch == null) {
+            return always();
+        }
+        return new NutsDependencyArchFilter(ws,arch);
+    }
+
+    
     @Override
     public NutsDependencyFilter byOptional(Boolean optional) {
         if (optional == null) {

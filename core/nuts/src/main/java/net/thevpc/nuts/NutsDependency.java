@@ -128,6 +128,10 @@ public interface NutsDependency extends Serializable, NutsFormattable{
      * @return return dependency version
      */
     NutsVersion getVersion();
+    
+    String getOs();
+    
+    String getArch();
 
 
     /**

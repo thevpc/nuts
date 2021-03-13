@@ -235,7 +235,6 @@ public class NTalkServer implements Closeable{
 
     public void stop() {
         if (!stopped) {
-            System.out.println("stop server");
             stopped = true;
             try {
                 socket.close();

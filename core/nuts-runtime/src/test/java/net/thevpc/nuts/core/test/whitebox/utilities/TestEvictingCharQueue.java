@@ -1,6 +1,6 @@
 package net.thevpc.nuts.core.test.whitebox.utilities;
 
-import net.thevpc.nuts.runtime.bundles.datastr.EvictingCharQueue;
+import net.thevpc.nuts.runtime.bundles.collections.EvictingCharQueue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

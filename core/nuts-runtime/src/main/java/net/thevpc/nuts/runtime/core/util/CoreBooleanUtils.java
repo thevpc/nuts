@@ -71,6 +71,20 @@ public final class CoreBooleanUtils {
         return defaultValue;
     }
 
+    public static Boolean parseBoolean(String value, Boolean emptyValue, Boolean incorrectValue) {
+        if (value == null || value.trim().isEmpty()) {
+            return emptyValue;
+        }
+        value = value.trim().toLowerCase();
+        if (value.matches("true|enable|enabled|yes|always|y|on|ok|t|o")) {
+            return true;
+        }
+        if (value.matches("false|disable|disabled|no|none|never|n|off|ko|f")) {
+            return false;
+        }
+        return incorrectValue;
+    }
+
     public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
         return getSystemBoolean("nuts." + property, defaultValue) || getSystemBoolean("nuts.export." + property, defaultValue);
     }

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.config;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -187,8 +188,10 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         }
         if (c.getDependencies() != null) {
             this.runtimeBootDescriptor = new NutsBootDescriptor(
-                    this.bootRuntime.toString(),
-                    c.getDependencies().split(";")
+                    NutsBootId.parse(this.bootRuntime.toString()),
+                    Arrays.stream(c.getDependencies().split(";"))
+                    .map(x->NutsBootId.parse(x)).toArray(NutsBootId[]::new)
+                    
             );
         }
         return this;

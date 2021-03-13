@@ -56,7 +56,7 @@ class NutsBootClassLoader extends URLClassLoader {
     }
 
     public NutsClassLoaderNode search(NutsClassLoaderNode node, boolean deep) {
-        PrivateNutsId ii = PrivateNutsId.parse(node.getId());
+        NutsBootId ii = NutsBootId.parse(node.getId());
         String sn = ii.getShortName();
         NutsClassLoaderNode o = nodes.get(sn);
         if (o != null) {
@@ -69,7 +69,7 @@ class NutsBootClassLoader extends URLClassLoader {
     }
 
     public boolean add(NutsClassLoaderNode node) {
-        PrivateNutsId ii = PrivateNutsId.parse(node.getId());
+        NutsBootId ii = NutsBootId.parse(node.getId());
         String sn = ii.getShortName();
         if (!nodes.containsKey(sn)) {
             nodes.put(sn, node);
@@ -80,7 +80,7 @@ class NutsBootClassLoader extends URLClassLoader {
 
     protected boolean add(NutsClassLoaderNode node, boolean deep) {
         String s = node.getId();
-        PrivateNutsId ii = PrivateNutsId.parse(s);
+        NutsBootId ii = NutsBootId.parse(s);
         String sn = ii.getShortName();
         if (!effective.containsKey(sn)) {
             effective.put(sn, node);

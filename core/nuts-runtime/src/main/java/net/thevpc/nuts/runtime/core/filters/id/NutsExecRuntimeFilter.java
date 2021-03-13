@@ -40,7 +40,7 @@ public class NutsExecRuntimeFilter extends AbstractNutsFilter implements NutsDes
             }
         }
         if(communityRuntime) {
-            if (!CoreBooleanUtils.parseBoolean(other.getProperties().get("nuts-runtime"), false)) {
+            if (!CoreBooleanUtils.parseBoolean(other.getProperties().get("nuts-runtime"), false,false)) {
                 return false;
             }
             for (NutsDependency dependency : other.getDependencies()) {

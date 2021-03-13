@@ -168,7 +168,7 @@ public class DefaultNutsElementBuilder implements NutsElementBuilder {
 
     @Override
     public NutsPrimitiveElement forBoolean(String value) {
-        return CoreBooleanUtils.parseBoolean(value, false) ? TRUE : FALSE;
+        return CoreBooleanUtils.parseBoolean(value, false, false) ? TRUE : FALSE;
     }
 
     @Override

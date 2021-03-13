@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.core.format.text.bloc;
 import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsTextNodeStyle;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.bundles.datastr.EvictingQueue;
+import net.thevpc.nuts.runtime.bundles.collections.EvictingQueue;
 import net.thevpc.nuts.runtime.bundles.parsers.StreamTokenizerExt;
 
 import java.io.StringReader;

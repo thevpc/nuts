@@ -20,7 +20,7 @@ import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.bundles.datastr.ListMap;
+import net.thevpc.nuts.runtime.bundles.collections.ListMap;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.NutsExecutorComponent;
 

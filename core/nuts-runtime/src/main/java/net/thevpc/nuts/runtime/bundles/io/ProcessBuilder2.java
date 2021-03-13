@@ -226,9 +226,6 @@ public class ProcessBuilder2 {
                 }
             }
         }
-//        System.out.println("command="+command);
-//        System.out.println("env="+env);
-//        System.out.println("directory="+directory);
         proc = base.start();
         return this;
     }

@@ -85,6 +85,8 @@ public class MethodReflectProperty1 implements ReflectProperty {
             throw new IllegalArgumentException("illegal-access", ex);
         } catch (InvocationTargetException ex) {
             throw new IllegalArgumentException("illegal-invocation", ex);
+        } catch (java.lang.IllegalArgumentException ex) {
+            throw ex;
         }
     }
 

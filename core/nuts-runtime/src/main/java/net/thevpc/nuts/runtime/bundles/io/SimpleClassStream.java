@@ -388,7 +388,6 @@ public class SimpleClassStream {
                 throw new UncheckedIOException(ex);
             }
 
-//            System.out.println("READ CONSTANT " + this);
         }
 
         public String asString() {

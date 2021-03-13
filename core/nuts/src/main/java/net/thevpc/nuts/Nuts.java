@@ -11,25 +11,23 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts;
 
 import java.util.Map;
 
 /**
- * Nuts Top Class. Nuts is a Package manager for Java Applications and this class is
- * it's main class for creating and opening nuts workspaces.
+ * Nuts Top Class. Nuts is a Package manager for Java Applications and this
+ * class is it's main class for creating and opening nuts workspaces.
  *
  * @since 0.1.0
  * @category Base
@@ -56,17 +54,11 @@ public final class Nuts {
         if (version == null) {
             synchronized (Nuts.class) {
                 if (version == null) {
-                    try {
-                        version = PrivateNutsUtils.loadURLProperties(
-                                Nuts.class.getResource("/META-INF/nuts/net.thevpc.nuts/nuts/nuts.properties"),
-                                null, false,new PrivateNutsLog()).getProperty("project.version", "0.0.0");
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        version = "0.0.0";
+                    String v = PrivateNutsUtils.resolveNutsVersionFromClassPath();
+                    if (v == null) {
+                        throw new NutsBootException("unable to detect nuts version. Most likely you are missing valid compilation of nuts. pom.properties could not be resolved and hence, we are unable to resolve nuts version.");
                     }
-                    if (version == null || version.trim().isEmpty() || version.equals("0.0.0")) {
-                        throw new NutsBootException("unable to detect nuts version. Most likely you are missing valid compilation of nuts. nuts.properties could not be resolved and hence, we are unable to resolve nuts version.");
-                    }
+                    version = v;
                 }
             }
         }
@@ -90,7 +82,7 @@ public final class Nuts {
         }
     }
 
-    public static void run(NutsSession session,String[] args) {
+    public static void run(NutsSession session, String[] args) {
         NutsWorkspace workspace = session.getWorkspace();
         NutsWorkspaceOptionsBuilder o = createOptions().parseArguments(args);
         String[] appArgs;
@@ -98,9 +90,9 @@ public final class Nuts {
             if (o.isSkipWelcome()) {
                 return;
             }
-            appArgs=new String[]{"welcome"};
+            appArgs = new String[]{"welcome"};
         } else {
-            appArgs=o.getApplicationArguments();
+            appArgs = o.getApplicationArguments();
         }
         session.configure(o);
         workspace.exec()
@@ -128,9 +120,9 @@ public final class Nuts {
         NutsBootWorkspace boot;
         String nutsWorkspaceOptions = PrivateNutsUtils.trim(
                 PrivateNutsUtils.trim(System.getProperty("nuts.boot.args"))
-                        + " " + PrivateNutsUtils.trim(System.getProperty("nuts.args"))
+                + " " + PrivateNutsUtils.trim(System.getProperty("nuts.args"))
         );
-        NutsWorkspaceOptionsBuilder options= createOptions();
+        NutsWorkspaceOptionsBuilder options = createOptions();
         if (!PrivateNutsUtils.isBlank(nutsWorkspaceOptions)) {
             options.parseCommandLine(nutsWorkspaceOptions);
         }
@@ -170,7 +162,7 @@ public final class Nuts {
         return new NutsBootWorkspace(options).openWorkspace();
     }
 
-    public static NutsWorkspaceOptionsBuilder createOptions(){
+    public static NutsWorkspaceOptionsBuilder createOptions() {
         return new PrivateBootWorkspaceOptions();
     }
 
@@ -187,7 +179,6 @@ public final class Nuts {
         new NutsBootWorkspace(args).runWorkspace();
     }
 
-
     /**
      * resolves nuts home folder.Home folder is the root for nuts folders.It
      * depends on folder type and store layout. For instance log folder depends
@@ -195,11 +186,11 @@ public final class Nuts {
      * Specifications: XDG Base Directory Specification
      * (https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
      *
-     * @param folderType          folder type to resolve home for
+     * @param folderType folder type to resolve home for
      * @param storeLocationLayout location layout to resolve home for
-     * @param homeLocations       workspace home locations
-     * @param global              global workspace
-     * @param workspaceName       workspace name or id (discriminator)
+     * @param homeLocations workspace home locations
+     * @param global global workspace
+     * @param workspaceName workspace name or id (discriminator)
      * @return home folder path
      */
     public static String getPlatformHomeFolder(
@@ -213,6 +204,7 @@ public final class Nuts {
 
     /**
      * default OS family, resolvable before booting nuts workspace
+     *
      * @return default OS family, resolvable before booting nuts workspace
      */
     public static NutsOsFamily getPlatformOsFamily() {

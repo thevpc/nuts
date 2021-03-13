@@ -119,6 +119,22 @@ public interface NutsDependencyBuilder {
     NutsDependencyBuilder setClassifier(String classifier);
 
     /**
+     * set os value
+     *
+     * @param os new value
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder setOs(String os);
+
+    /**
+     * set arch value
+     *
+     * @param arch new value
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder setArch(String arch);
+
+    /**
      * set exclusions value
      *
      * @param exclusions new value
@@ -202,6 +218,18 @@ public interface NutsDependencyBuilder {
      */
     String getNamespace();
 
+    /**
+     * return os
+     *
+     * @return os
+     */
+    String getOs();
+    /**
+     * return arch
+     *
+     * @return arch
+     */
+    String getArch();
     /**
      * return group
      *

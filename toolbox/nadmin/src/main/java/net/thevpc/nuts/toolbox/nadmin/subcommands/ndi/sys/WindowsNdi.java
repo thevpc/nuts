@@ -1,6 +1,5 @@
 package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys;
 
-import mslinks.ShellLink;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.NdiScriptOptions;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.BaseSystemNdi;
@@ -15,8 +14,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import net.thevpc.nuts.toolbox.nadmin.optional.oswindows.OptionalWindows;
+import net.thevpc.nuts.toolbox.nadmin.optional.oswindows.WinShellHelper;
 
 public class WindowsNdi extends BaseSystemNdi {
+
     private static String CRLF = "\r\n";
 
     public WindowsNdi(NutsApplicationContext appContext) {
@@ -69,92 +71,99 @@ public class WindowsNdi extends BaseSystemNdi {
             NutsId apiId = ws.getApiId().builder().setVersion(apiVersion).build();
             ws.fetch().setId(apiId).setFailFast(true).getResultDefinition();
 
-            Path apiConfigFolder =
-                    bootConfig != null ? Paths.get(bootConfig.getStoreLocation(apiId, NutsStoreLocation.APPS)) :
-                            Paths.get(ws.locations().getStoreLocation(apiId, NutsStoreLocation.APPS));
+            Path apiConfigFolder
+                    = bootConfig != null ? Paths.get(bootConfig.getStoreLocation(apiId, NutsStoreLocation.APPS))
+                            : Paths.get(ws.locations().getStoreLocation(apiId, NutsStoreLocation.APPS));
             Path startNutsFile = apiConfigFolder.resolve(getExecFileName("start-nuts"));
-            ShellLink sl = ShellLink.createLink(startNutsFile.toString())
-                    .setWorkingDir(System.getProperty("user.home"))
-                    .setIconLocation("%SystemRoot%\\system32\\SHELL32.dll");
+            if (!OptionalWindows.isAvailable()) {
+                return null;
+            }
+            WinShellHelper sl = OptionalWindows.linkBuilder()
+                    .setTarget(startNutsFile.toString())
+                    .setWorkingDir(System.getProperty("user.home"));
 
-            sl.getHeader().setIconIndex(148);
-            sl.getConsoleData()
-                    .setFont(mslinks.extra.ConsoleData.Font.Consolas)
-            //.setFontSize(16)
-            //.setTextColor(5)
-            ;
+            sl.setIconIndex(148);
             Path desktopFolder = Paths.get(System.getProperty("user.home")).resolve("Desktop");
             Path menuFolder = Paths.get(System.getProperty("user.home")).resolve("AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Nuts");
             Files.createDirectories(desktopFolder);
             Files.createDirectories(menuFolder);
-            if(preferredName!=null){
-                if(preferredName.isEmpty()){
-                    preferredName="nuts-cmd-%v";
+            if (preferredName != null) {
+                if (preferredName.isEmpty()) {
+                    preferredName = "nuts-cmd-%v";
                 }
-                preferredName=preferredName.replace("%v",apiVersion);
-                if(!preferredName.endsWith(".lnk")){
-                    preferredName=preferredName+ ".lnk";
+                preferredName = preferredName.replace("%v", apiVersion);
+                if (!preferredName.endsWith(".lnk")) {
+                    preferredName = preferredName + ".lnk";
                 }
-                if(preferredName.contains("/") || preferredName.contains("\\")){
-                    String path=preferredName;
-                    sl.saveTo(path);
+                if (preferredName.contains("/") || preferredName.contains("\\")) {
+                    String path = preferredName;
+                    sl.setPath(path);
+                    sl.build();
                     return path;
-                }else{
+                } else {
                     String path = null;
                     switch (target) {
                         case DESKTOP: {
                             if (!linkVersion) {
                                 path = desktopFolder + File.separator + "nuts-cmd-" + apiVersion + ".lnk";
-                                sl.saveTo(path);
+                                sl.setPath(path);
+                                sl.build();
                                 return path;
                             } else {
                                 path = desktopFolder + File.separator + "nuts-cmd.lnk";
-                                sl.saveTo(path);
+                                sl.setPath(path);
+                                sl.build();
                                 return path;
                             }
                         }
                         case MENU: {
                             if (!linkVersion) {
                                 path = menuFolder + File.separator + "nuts-cmd-" + apiVersion + ".lnk";
-                                sl.saveTo(path);
+                                sl.setPath(path);
+                                sl.build();
                                 return path;
                             } else {
                                 path = menuFolder + File.separator + "nuts-cmd.lnk";
-                                sl.saveTo(path);
+                                sl.setPath(path);
+                                sl.build();
                                 return path;
                             }
                         }
                     }
                 }
-            }else{
+            } else {
                 String path = null;
                 switch (target) {
                     case DESKTOP: {
                         if (!linkVersion) {
                             path = desktopFolder + File.separator + "nuts-cmd-" + apiVersion + ".lnk";
-                            sl.saveTo(path);
+                                sl.setPath(path);
+                                sl.build();
                             return path;
                         } else {
                             path = desktopFolder + File.separator + "nuts-cmd.lnk";
-                            sl.saveTo(path);
+                                sl.setPath(path);
+                                sl.build();
                             return path;
                         }
                     }
                     case MENU: {
                         if (!linkVersion) {
                             path = menuFolder + File.separator + "nuts-cmd-" + apiVersion + ".lnk";
-                            sl.saveTo(path);
+                                sl.setPath(path);
+                                sl.build();
                             return path;
                         } else {
                             path = menuFolder + File.separator + "nuts-cmd.lnk";
-                            sl.saveTo(path);
+                                sl.setPath(path);
+                                sl.build();
                             return path;
                         }
                     }
                 }
             }
 
-            throw new NutsIllegalArgumentException(ws,"unsupported");
+            throw new NutsIllegalArgumentException(ws, "unsupported");
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
@@ -162,23 +171,23 @@ public class WindowsNdi extends BaseSystemNdi {
 
     public UpdatedPaths persistConfig2(NutsWorkspaceBootConfig bootConfig, NutsId apiId, String rcPath, NutsSession session) {
         String apiVersion = apiId.getVersion().toString();
-        if(rcPath==null) {
-            String desktopGlobalShortcutPath = configurePathShortcut(Target.DESKTOP, true, apiVersion, bootConfig,null, session);
-            String desktopSpecificVersionShortcutPath = configurePathShortcut(Target.DESKTOP, false, apiVersion, bootConfig ,null,session);
-            String menuGlobalShortcutPath = configurePathShortcut(Target.MENU, true, apiVersion, bootConfig, null,session);
-            String menuSpecificVersionShortcutPath = configurePathShortcut(Target.MENU, false, apiVersion, bootConfig, null,session);
+        if (rcPath == null) {
+            String desktopGlobalShortcutPath = configurePathShortcut(Target.DESKTOP, true, apiVersion, bootConfig, null, session);
+            String desktopSpecificVersionShortcutPath = configurePathShortcut(Target.DESKTOP, false, apiVersion, bootConfig, null, session);
+            String menuGlobalShortcutPath = configurePathShortcut(Target.MENU, true, apiVersion, bootConfig, null, session);
+            String menuSpecificVersionShortcutPath = configurePathShortcut(Target.MENU, false, apiVersion, bootConfig, null, session);
             PrintStream out = context.getSession().out();
             NutsTextManager factory = context.getWorkspace().formats().text();
             if (session.isTrace()) {
                 out.printf("```error ATTENTION``` To run any nuts command you should use the pre-configured shell at \"%s\".%n",
-                        factory.styled(desktopSpecificVersionShortcutPath,NutsTextNodeStyle.path()));
+                        factory.styled(desktopSpecificVersionShortcutPath, NutsTextNodeStyle.path()));
             }
             return new UpdatedPaths(
                     new String[]{desktopGlobalShortcutPath, desktopSpecificVersionShortcutPath, menuGlobalShortcutPath, menuSpecificVersionShortcutPath},
                     new String[0]
             );
-        }else{
-            String menuSpecificVersionShortcutPath = configurePathShortcut(Target.MENU, false, apiVersion, bootConfig,rcPath, session);
+        } else {
+            String menuSpecificVersionShortcutPath = configurePathShortcut(Target.MENU, false, apiVersion, bootConfig, rcPath, session);
             return new UpdatedPaths(
                     new String[]{menuSpecificVersionShortcutPath},
                     new String[0]
@@ -206,46 +215,45 @@ public class WindowsNdi extends BaseSystemNdi {
             updatedNames.add(apiConfigFile.getFileName().toString());
         }
 
-        String goodNdiRc = toCommentLine("This File is generated by nuts nadmin companion tool." + CRLF) +
-                toCommentLine("Do not edit it manually. All changes will be lost when nadmin runs again" + CRLF) +
-                toCommentLine("This file aims to prepare bash environment against current nuts" + CRLF) +
-                toCommentLine("workspace installation." + CRLF) +
-                toCommentLine("" + CRLF) +
-                "@ECHO OFF" + CRLF +
-                "SET \"NUTS_VERSION=" + ws.getApiVersion() + "\"" + CRLF +
-                "SET \"NUTS_JAR=" + ws.search()
-                .setSession(context.getSession().copy().setTrace(false))
-                .addId(ws.getApiId()).getResultPaths().required() +
-                "\"" + CRLF +
-                "SET \"NUTS_WORKSPACE=" + ws.locations().getWorkspaceLocation().toString() + "\"" + CRLF +
-                "SET \"PATH=" + ndiAppsFolder + ";%PATH%\"" + CRLF;
+        String goodNdiRc = toCommentLine("This File is generated by nuts nadmin companion tool." + CRLF)
+                + toCommentLine("Do not edit it manually. All changes will be lost when nadmin runs again" + CRLF)
+                + toCommentLine("This file aims to prepare bash environment against current nuts" + CRLF)
+                + toCommentLine("workspace installation." + CRLF)
+                + toCommentLine("" + CRLF)
+                + "@ECHO OFF" + CRLF
+                + "SET \"NUTS_VERSION=" + ws.getApiVersion() + "\"" + CRLF
+                + "SET \"NUTS_JAR=" + ws.search()
+                        .setSession(context.getSession().copy().setTrace(false))
+                        .addId(ws.getApiId()).getResultPaths().required()
+                + "\"" + CRLF
+                + "SET \"NUTS_WORKSPACE=" + ws.locations().getWorkspaceLocation().toString() + "\"" + CRLF
+                + "SET \"PATH=" + ndiAppsFolder + ";%PATH%\"" + CRLF;
         if (saveFile(ndiConfigFile, goodNdiRc, session.isYes())) {
             updatedNames.add(ndiConfigFile.getFileName().toString());
         }
 
         if (saveFile(startNutsFile,
-                toCommentLine("This File is generated by nuts nadmin companion tool." + CRLF) +
-                        toCommentLine("Do not edit it manually. All changes will be lost when nadmin runs again" + CRLF) +
-                        toCommentLine("This file aims to run " + getExecFileName(".nuts-batrc") + " file." + CRLF) +
-                        toCommentLine("workspace installation." + CRLF) +
-                        toCommentLine("" + CRLF) +
-                        "@ECHO OFF" + CRLF
-                        + "cmd.exe /k \"" + apiConfigFile.toString() + "\"", session.isYes())) {
+                toCommentLine("This File is generated by nuts nadmin companion tool." + CRLF)
+                + toCommentLine("Do not edit it manually. All changes will be lost when nadmin runs again" + CRLF)
+                + toCommentLine("This file aims to run " + getExecFileName(".nuts-batrc") + " file." + CRLF)
+                + toCommentLine("workspace installation." + CRLF)
+                + toCommentLine("" + CRLF)
+                + "@ECHO OFF" + CRLF
+                + "cmd.exe /k \"" + apiConfigFile.toString() + "\"", session.isYes())) {
             updatedNames.add(startNutsFile.getFileName().toString());
         }
         if (!updatedNames.isEmpty()) {
             if (context.getSession().isPlainTrace()) {
                 NutsTextNodeBuilder formattedUpdatedNames = context.getWorkspace().formats().text().builder();
                 for (String updatedName : updatedNames) {
-                    if(formattedUpdatedNames.size()>0){
+                    if (formattedUpdatedNames.size() > 0) {
                         formattedUpdatedNames.append(", ");
                     }
-                    formattedUpdatedNames.append(updatedName,NutsTextNodeStyle.path());
+                    formattedUpdatedNames.append(updatedName, NutsTextNodeStyle.path());
                 }
                 context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating %s to point to workspace %s%n",
                         formattedUpdatedNames,
-                        ws.formats().text().styled(ws.locations().getWorkspaceLocation(),NutsTextNodeStyle.path())
-
+                        ws.formats().text().styled(ws.locations().getWorkspaceLocation(), NutsTextNodeStyle.path())
                 );
             }
             if (persistentConfig) {
@@ -253,7 +261,6 @@ public class WindowsNdi extends BaseSystemNdi {
             }
         }
     }
-
 
     public enum Target {
         MENU,

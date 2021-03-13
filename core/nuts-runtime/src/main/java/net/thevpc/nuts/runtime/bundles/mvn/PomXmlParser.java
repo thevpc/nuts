@@ -279,7 +279,7 @@ public class PomXmlParser {
                                         if (visitor != null) {
                                             visitor.visitStartDependencyManagement(dependency2);
                                         }
-                                        PomDependency dep = parseDependency(dependency2);
+                                        PomDependency dep = parseDependency(dependency2,props);
                                         if (visitor != null) {
                                             visitor.visitEndDependencyManagement(dependency2, dep);
                                         }
@@ -304,7 +304,7 @@ public class PomXmlParser {
                                 if (visitor != null) {
                                     visitor.visitStartDependency(dependency);
                                 }
-                                PomDependency dep = parseDependency(dependency);
+                                PomDependency dep = parseDependency(dependency,props);
                                 if (visitor != null) {
                                     visitor.visitEndDependency(dependency, dep);
                                 }
@@ -416,7 +416,7 @@ public class PomXmlParser {
         return props;
     }
 
-    public static PomDependency parseDependency(Element dependency) {
+    public static PomDependency parseDependency(Element dependency,Map<String, String> props) {
         NodeList dependencyChildList = dependency.getChildNodes();
         String d_groupId = "";
         String d_artifactId = "";
@@ -491,7 +491,10 @@ public class PomXmlParser {
             d_scope = "compile";
         }
         return new PomDependency(
-                d_groupId, d_artifactId, d_classifier, d_version, d_scope, d_optional, d_exclusions.toArray(new PomId[0])
+                d_groupId, d_artifactId, d_classifier, d_version, d_scope, d_optional, 
+                props==null?null:props.get("dependencies."+d_groupId+":"+d_artifactId+".os"),
+                props==null?null:props.get("dependencies."+d_groupId+":"+d_artifactId+".arch"),
+                d_exclusions.toArray(new PomId[0])
         );
     }
 
@@ -664,7 +667,7 @@ public class PomXmlParser {
         NutsXmlUtils.writeDocument(doc, result, false,true,session);
     }
 
-    public static boolean appendOrReplaceDependency(PomDependency dependency, Element dependencyElement, Element dependenciesElement) {
+    public static boolean appendOrReplaceDependency(PomDependency dependency, Element dependencyElement, Element dependenciesElement,Map<String,String> props) {
         if (dependencyElement != null && dependenciesElement == null) {
             dependenciesElement = (Element) dependencyElement.getParentNode();
         }
@@ -673,7 +676,7 @@ public class PomXmlParser {
             dependenciesElement.appendChild(createDependencyElement(doc, dependency));
             return true;
         } else {
-            PomDependency old = parseDependency(dependencyElement);
+            PomDependency old = parseDependency(dependencyElement,props);
             if (old == null || !old.equals(dependency)) {
                 dependenciesElement.replaceChild(createDependencyElement(doc, dependency), dependencyElement);
                 return true;

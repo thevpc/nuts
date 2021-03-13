@@ -149,13 +149,15 @@ public class MavenUtils {
                 }
             }
         }
-        return new DefaultNutsDependencyBuilder(ws)
+        return session.getWorkspace().dependency().builder()
                 .setGroupId(d.getGroupId())
                 .setArtifactId(d.getArtifactId())
                 .setClassifier(d.getClassifier())
                 .setVersion(toNutsVersion((d.getVersion())))
                 .setOptional(d.getOptional())
                 .setScope(nds.id())
+                .setOs(d.getOs())
+                .setArch(d.getArch())
                 .setExclusions(toNutsId(d.getExclusions()))
                 .build();
     }

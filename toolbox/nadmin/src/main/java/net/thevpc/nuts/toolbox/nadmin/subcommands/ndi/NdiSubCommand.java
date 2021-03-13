@@ -9,13 +9,11 @@ import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.WindowsNdi;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.NdiUtils;
 
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import net.thevpc.nuts.toolbox.nadmin.optional.oswindows.OptionalWindows;
 
 public class NdiSubCommand extends AbstractNAdminSubCommand {
 
@@ -35,7 +33,9 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 break;
             }
             case WINDOWS: {
-                ndi = new WindowsNdi(appContext);
+                if (OptionalWindows.isAvailable()) {
+                    ndi = new WindowsNdi(appContext);
+                }
                 break;
             }
         }

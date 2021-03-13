@@ -141,7 +141,7 @@ public class NutsWorkspaceUtils {
     public NutsId configureFetchEnv(NutsId id) {
         Map<String, String> qm = id.getProperties();
         if (qm.get(NutsConstants.IdProperties.FACE) == null && qm.get("arch") == null && qm.get("os") == null && qm.get("osdist") == null && qm.get("platform") == null) {
-            qm.put("arch", ws.env().getArch().toString());
+            qm.put("arch", ws.env().getArchFamily().id());
             qm.put("os", ws.env().getOs().toString());
             if (ws.env().getOsDist() != null) {
                 qm.put("osdist", ws.env().getOsDist().toString());
@@ -269,7 +269,7 @@ public class NutsWorkspaceUtils {
     public static Set<String> parseProgressOptions(NutsSession session) {
         LinkedHashSet<String> set = new LinkedHashSet<>();
         for (String s : StringTokenizerUtils.split(session.getProgressOptions(), ",; ")) {
-            Boolean n = CoreBooleanUtils.parseBoolean(s, null);
+            Boolean n = CoreBooleanUtils.parseBoolean(s, null, null);
             if (n == null) {
                 set.add(s);
             } else {

@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.NutsTextNode;
-import net.thevpc.nuts.runtime.bundles.datastr.StringBuilder2;
+import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 
 import java.util.function.IntPredicate;
 

@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 
 public class NutsDependencyScopeFilter extends AbstractNutsFilter implements NutsDependencyFilter {
@@ -24,7 +23,7 @@ public class NutsDependencyScopeFilter extends AbstractNutsFilter implements Nut
         this.scope = EnumSet.copyOf(scope);
     }
 
-    public NutsDependencyScopeFilter addScopes(Collection<NutsDependencyScope> scope) {
+    public NutsDependencyScopeFilter add(Collection<NutsDependencyScope> scope) {
         EnumSet<NutsDependencyScope> s2 = EnumSet.copyOf(this.scope);
         s2.addAll(scope);
         return new NutsDependencyScopeFilter(getWorkspace(),s2);

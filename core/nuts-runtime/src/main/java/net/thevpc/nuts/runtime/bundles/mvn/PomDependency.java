@@ -10,19 +10,26 @@ public class PomDependency {
     private String version;
     private String scope;
     private String classifier;
+    private String os;
+    private String arch;
     private String optional;
     private PomId[] exclusions;
 
     public PomDependency(String groupId, String artifactId, String version) {
-        this(groupId, artifactId, null, version, null, null, new PomId[0]);
+        this(groupId, artifactId, null, version, null, null, null, null, new PomId[0]);
     }
 
-    public PomDependency(String groupId, String artifactId, String classifier, String version, String scope, String optional, PomId[] exclusions) {
+    public PomDependency(String groupId, String artifactId, String classifier, String version, String scope, String optional,
+            String os,
+            String arch,
+            PomId[] exclusions) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
         this.optional = optional;
         this.scope = scope;
+        this.os = os;
+        this.arch = arch;
         this.classifier = classifier;
         this.exclusions = exclusions;
     }
@@ -90,6 +97,22 @@ public class PomDependency {
         return this;
     }
 
+    public String getOs() {
+        return os;
+    }
+
+    public void setOs(String os) {
+        this.os = os;
+    }
+
+    public String getArch() {
+        return arch;
+    }
+
+    public void setArch(String arch) {
+        this.arch = arch;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -102,6 +125,8 @@ public class PomDependency {
         return Objects.equals(toUniformGroupId(groupId), toUniformGroupId(that.groupId))
                 && Objects.equals(toUniformGroupId(artifactId), toUniformGroupId(that.artifactId))
                 && Objects.equals(toUniformGroupId(version), toUniformGroupId(that.version))
+                && Objects.equals(toUniformGroupId(os), toUniformGroupId(that.os))
+                && Objects.equals(toUniformGroupId(arch), toUniformGroupId(that.arch))
                 && Objects.equals(toUniformScope(scope), toUniformScope(that.scope))
                 && Objects.equals(toUniformOptional(optional), toUniformOptional(that.optional))
                 && Arrays.equals(exclusions, that.exclusions);
@@ -126,7 +151,7 @@ public class PomDependency {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(groupId, artifactId, version, scope, optional);
+        int result = Objects.hash(groupId, artifactId, version, scope, optional, os, arch);
         result = 31 * result + Arrays.hashCode(exclusions);
         return result;
     }
@@ -138,6 +163,8 @@ public class PomDependency {
                 + ", artifactId='" + artifactId + '\''
                 + ", version='" + version + '\''
                 + ", scope='" + scope + '\''
+                + ", os='" + os + '\''
+                + ", arch='" + arch + '\''
                 + ", optional='" + optional + '\''
                 + ", exclusions=" + Arrays.toString(exclusions)
                 + '}';

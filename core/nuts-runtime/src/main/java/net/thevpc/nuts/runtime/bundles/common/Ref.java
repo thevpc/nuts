@@ -9,7 +9,6 @@
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
  * <br>
  *
  * Copyright [2020] [thevpc]
@@ -26,23 +25,22 @@
 */
 package net.thevpc.nuts.runtime.bundles.common;
 
-abstract class AbstractPlatformBeanProperty implements PlatformBeanProperty {
+public class Ref<T> {
 
-    protected String name;
-    protected Class fieldType;
+    private T value;
 
-    AbstractPlatformBeanProperty(String name, Class fieldType) {
-        this.name = name;
-        this.fieldType = fieldType;
+    public Ref() {
     }
 
-    @Override
-    public String getName() {
-        return name;
+    public T get() {
+        return value;
     }
 
-    public Class getPlatformType() {
-        return fieldType;
+    public void set(T value) {
+        this.value = value;
     }
 
+    public boolean isSet() {
+        return value != null;
+    }
 }

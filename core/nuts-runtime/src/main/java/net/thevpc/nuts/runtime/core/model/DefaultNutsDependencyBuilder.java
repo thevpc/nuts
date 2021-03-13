@@ -46,10 +46,12 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     private NutsVersion version;
     private String scope;
     private String optional;
+    private String os;
+    private String arch;
     private String classifier;
     private NutsId[] exclusions;
     private transient NutsWorkspace ws;
-    private QueryStringParser propertiesQuery = new QueryStringParser(true, (name, value) -> {
+    private transient QueryStringParser propertiesQuery = new QueryStringParser(true, (name, value) -> {
         if (name != null) {
             switch (name) {
                 case NutsConstants.IdProperties.SCOPE: {
@@ -76,11 +78,22 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
                     setExclusions(value);
                     return true;
                 }
+                case NutsConstants.IdProperties.OS: {
+                    setOs(value);
+                    return true;
+                }
+                case NutsConstants.IdProperties.ARCH: {
+                    setArch(value);
+                    return true;
+                }
             }
         }
         return false;
     });
 
+    public DefaultNutsDependencyBuilder() {
+        //for serialization
+    }
     public DefaultNutsDependencyBuilder(NutsWorkspace ws) {
         this.ws=ws;
     }
@@ -157,6 +170,18 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     }
 
     @Override
+    public NutsDependencyBuilder setOs(String os) {
+        this.os = CoreStringUtils.trimToNull(os);
+        return this;
+    }
+
+    @Override
+    public NutsDependencyBuilder setArch(String arch) {
+        this.arch = CoreStringUtils.trimToNull(arch);
+        return this;
+    }
+
+    @Override
     public NutsDependencyBuilder setExclusions(NutsId[] exclusions) {
         if (exclusions != null) {
             exclusions = Arrays.copyOf(exclusions, exclusions.length);
@@ -170,6 +195,15 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
         return set(value);
     }
 
+    public String getOs() {
+        return os;
+    }
+
+    public String getArch() {
+        return arch;
+    }
+    
+
     @Override
     public NutsDependencyBuilder set(NutsDependencyBuilder value) {
         if (value != null) {
@@ -181,6 +215,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             setOptional(value.getOptional());
             setExclusions(value.getExclusions());
             setClassifier(value.getClassifier());
+            setOs(value.getOs());
+            setArch(value.getArch());
             setProperties(value.getProperties());
         } else {
             clear();
@@ -199,6 +235,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             setOptional(value.getOptional());
             setExclusions(value.getExclusions());
             setClassifier(value.getClassifier());
+            setOs(value.getOs());
+            setArch(value.getArch());
             setProperties(value.getProperties());
         } else {
             clear();
@@ -221,6 +259,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
         setOptional(null);
         setExclusions((NutsId[]) null);
         setClassifier(null);
+        setOs(null);
+        setArch(null);
         setProperties((Map<String, String>) null);
         return this;
     }
@@ -296,6 +336,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
                 getScope(),
                 getOptional(),
                 getExclusions(),
+                getOs(),
+                getArch(),
                 getPropertiesQuery(),ws
         );
     }

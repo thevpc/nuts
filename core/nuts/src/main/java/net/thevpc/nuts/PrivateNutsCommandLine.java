@@ -1022,7 +1022,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
      * @since 0.5.5
      * @category Format
      */
-    private final static class ArgumentImpl extends PrivateNutsTokenFilter implements NutsArgument {
+    final static class ArgumentImpl extends PrivateNutsTokenFilter implements NutsArgument {
 
         /**
          * equal character
@@ -1280,7 +1280,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public boolean getBoolean() {
-            Boolean b = PrivateNutsUtils.parseBoolean(expression, false);
+            Boolean b = PrivateNutsUtils.parseBoolean(expression, false, false);
             if (isNegated()) {
                 return !b;
             }
@@ -1289,12 +1289,12 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public boolean isBoolean() {
-            return PrivateNutsUtils.parseBoolean(expression, null) != null;
+            return PrivateNutsUtils.parseBoolean(expression, null,null) != null;
         }
 
         @Override
         public Boolean getBoolean(Boolean defaultValue) {
-            return PrivateNutsUtils.parseBoolean(expression, defaultValue);
+            return PrivateNutsUtils.parseBoolean(expression, defaultValue, defaultValue);
         }
 
         @Override

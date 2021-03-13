@@ -26,7 +26,6 @@
 package net.thevpc.nuts.runtime.bundles.common;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.datastr.Ref;
 import net.thevpc.nuts.runtime.bundles.io.SimpleClassStream;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
@@ -54,7 +53,6 @@ public class CorePlatformUtils {
     private static final Set<String> SUPPORTED_OS = new HashSet<>(Arrays.asList("linux", "windows", "macos", "sunos"
             , "freebsd", "openbsd", "netbsd", "aix", "hpux", "as400", "zos", "unknown"
     ));
-    private static final WeakHashMap<String, PlatformBeanProperty> cachedPlatformBeanProperties = new WeakHashMap<>();
     private static Map<String, String> LOADED_OS_DIST_MAP = null;
 
     static {
@@ -323,101 +321,6 @@ public class CorePlatformUtils {
         throw new NutsIllegalArgumentException(null, "unsupported Operating System " + os + " please do use one of " + SUPPORTED_OS);
     }
 
-    /**
-     * impl-note: list updated from https://github.com/trustin/os-maven-plugin
-     *
-     * @return uniform platform architecture
-     */
-    public static String getPlatformArch() {
-        String property = System.getProperty("os.arch").toLowerCase();
-        switch (property) {
-            case "x8632":
-            case "x86":
-            case "i386":
-            case "i486":
-            case "i586":
-            case "i686":
-            case "ia32":
-            case "x32": {
-                return "x86_32";
-            }
-            case "x8664":
-            case "amd64":
-            case "ia32e":
-            case "em64t":
-            case "x64": {
-                return "x86_64";
-            }
-            case "ia64n": {
-                return "itanium_32";
-            }
-            case "sparc":
-            case "sparc32": {
-                return "sparc_32";
-            }
-            case "sparcv9":
-            case "sparc64": {
-                return "sparc_64";
-            }
-            case "arm":
-            case "arm32": {
-                return "arm_32";
-            }
-            case "arm64": //merged with aarch64
-            case "aarch64": {
-                return "aarch_64";
-            }
-            case "mips":
-            case "mips32": {
-                return "mips_32";
-            }
-            case "mipsel":
-            case "mips32el": {
-                return "mipsel_32";
-            }
-            case "mips64": {
-                return "mips_64";
-            }
-            case "mips64el": {
-                return "mipsel_64";
-            }
-            case "ppc":
-            case "ppc32": {
-                return "ppc_32";
-            }
-            case "ppcle":
-            case "ppc32le": {
-                return "ppcle_32";
-            }
-            case "ppc64": {
-                return "ppc_64";
-            }
-            case "ppc64le": {
-                return "ppcle_64";
-            }
-            case "s390": {
-                return "s390_32";
-            }
-            case "s390x": {
-                return "s390_64";
-            }
-            case "ia64w":
-            case "itanium64": {
-                return "itanium_64";
-            }
-            default: {
-                if (property.startsWith("ia64w") && property.length() == 6) {
-                    return "itanium_64";
-                }
-                //on MacOsX arch=x86_64
-                if (SUPPORTED_OS.contains(property)) {
-                    return property;
-                }
-                return "unknown";
-            }
-        }
-    }
-
     public static Boolean getExecutableJar(File file) {
         if (file == null || !file.isFile()) {
             return null;
@@ -566,7 +469,6 @@ public class CorePlatformUtils {
         SimpleClassStream.Visitor cl = new SimpleClassStream.Visitor() {
             @Override
             public void visitClassDeclaration(int access, String name, String superName, String[] interfaces) {
-//                System.out.println("::: visit class "+name);
                 if (superName != null && superName.equals("net/thevpc/nuts/NutsApplication")) {
                     nutsApp.set(true);
 
@@ -579,7 +481,6 @@ public class CorePlatformUtils {
 
             @Override
             public void visitMethod(int access, String name, String desc) {
-//                System.out.println("\t::: visit method "+name);
                 if (name.equals("main") && desc.equals("([Ljava/lang/String;)V")
                         && Modifier.isPublic(access)
                         && Modifier.isStatic(access)) {

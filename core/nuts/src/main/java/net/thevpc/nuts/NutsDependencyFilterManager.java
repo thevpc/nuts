@@ -44,4 +44,20 @@ public interface NutsDependencyFilterManager extends NutsTypedFilters<NutsDepend
     NutsDependencyFilter byExpression(String expression);
 
     NutsDependencyFilter byExclude(NutsDependencyFilter filter, String[] exclusions);
+
+    NutsDependencyFilter byArch(Collection<NutsArchFamily> arch);
+
+    NutsDependencyFilter byArch(NutsArchFamily os);
+
+    NutsDependencyFilter byArch(NutsArchFamily... arch);
+
+    NutsDependencyFilter byArch(String arch);
+
+    NutsDependencyFilter byOs(Collection<NutsOsFamily> os);
+
+    NutsDependencyFilter byOs(NutsOsFamily os);
+
+    NutsDependencyFilter byOs(NutsOsFamily... os);
+
+    NutsDependencyFilter byOs(String os);
 }

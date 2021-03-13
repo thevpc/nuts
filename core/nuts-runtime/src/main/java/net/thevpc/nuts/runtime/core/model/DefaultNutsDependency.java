@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
@@ -37,6 +35,7 @@ import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
  * Created by vpc on 1/5/17.
  */
 public class DefaultNutsDependency implements NutsDependency {
+
     public static final long serialVersionUID = 1L;
     private final String namespace;
     private final String groupId;
@@ -45,14 +44,21 @@ public class DefaultNutsDependency implements NutsDependency {
     private final String scope;
     private final String classifier;
     private final String optional;
+    private final String os;
+    private final String arch;
     private final NutsId[] exclusions;
     private final String properties;
     private transient final NutsWorkspace ws;
 
-    public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,Map<String,String> properties,NutsWorkspace ws) {
-        this(namespace, groupId, artifactId, classifier, version, scope, optional, exclusions, QueryStringParser.formatSortedPropertiesQuery(properties),ws);
+    public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
+            String os, String arch,
+            Map<String, String> properties, NutsWorkspace ws) {
+        this(namespace, groupId, artifactId, classifier, version, scope, optional, exclusions, os, arch, QueryStringParser.formatSortedPropertiesQuery(properties), ws);
     }
-    public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,String properties,NutsWorkspace ws) {
+
+    public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
+            String os, String arch,
+            String properties, NutsWorkspace ws) {
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
@@ -61,11 +67,10 @@ public class DefaultNutsDependency implements NutsDependency {
         this.scope = NutsDependencyScopes.normalizeScope(scope);
         this.optional = CoreStringUtils.isBlank(optional) ? "false" : CoreStringUtils.trim(optional);
         this.exclusions = exclusions == null ? new NutsId[0] : Arrays.copyOf(exclusions, exclusions.length);
+        this.os = CoreStringUtils.trimToNull(os);
+        this.arch = CoreStringUtils.trimToNull(arch);
         this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
         this.ws = ws;
-//        if(artifactId.equals("junit") && scope.equals("api")){
-//            System.out.println("why");
-//        }
     }
 
     @Override
@@ -112,10 +117,8 @@ public class DefaultNutsDependency implements NutsDependency {
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
                 .setVersion(getVersion())
-                .setProperties(m).build()
-        ;
+                .setProperties(m).build();
     }
-
 
     @Override
     public NutsId toId() {
@@ -136,12 +139,24 @@ public class DefaultNutsDependency implements NutsDependency {
 //            }
 //            m.put(NutsConstants.IdProperties.EXCLUSIONS, CoreStringUtils.join(",", ex));
 //        }
-        return  ws.id().builder()
+        return ws.id().builder()
                 .setNamespace(getNamespace())
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
                 .setVersion(getVersion())
+                .setOs(getOs())
+                .setArch(getArch())
                 .setProperties(m).build();
+    }
+
+    @Override
+    public String getOs() {
+        return os;
+    }
+
+    @Override
+    public String getArch() {
+        return arch;
     }
 
     @Override
@@ -224,6 +239,12 @@ public class DefaultNutsDependency implements NutsDependency {
             if (!optional.equals("false")) {
                 p.put(NutsConstants.IdProperties.OPTIONAL, optional);
             }
+        }
+        if (!CoreStringUtils.isBlank(os)) {
+            p.put(NutsConstants.IdProperties.OS, os);
+        }
+        if (!CoreStringUtils.isBlank(arch)) {
+            p.put(NutsConstants.IdProperties.ARCH, arch);
         }
         if (!p.isEmpty()) {
             sb.append("?");

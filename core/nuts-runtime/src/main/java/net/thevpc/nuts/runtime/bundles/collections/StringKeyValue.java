@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.bundles.common;
+package net.thevpc.nuts.runtime.bundles.collections;
 
 public class StringKeyValue {
 

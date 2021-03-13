@@ -18,7 +18,7 @@ import java.io.StringReader;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.thevpc.nuts.runtime.bundles.datastr.EvictingCharQueue;
+import net.thevpc.nuts.runtime.bundles.collections.EvictingCharQueue;
 
 /**
  * @author thevpc
@@ -528,9 +528,4 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         }
     }
 
-//    private void debug() {
-//        for (ParserStep status : statusStack) {
-//            System.out.println(status);
-//        }
-//    }
 }

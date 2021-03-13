@@ -9,11 +9,12 @@ import java.util.*;
 
 public class NutsDependenciesResolver {
 
-    List<NutsDependencyTreeNodeBuild> defs = new ArrayList<>();
-    NutsSession session;
-    NutsDependencyFilter dependencyFilter;
+    private List<NutsDependencyTreeNodeBuild> defs = new ArrayList<>();
+    private NutsSession session;
+    private NutsDependencyFilter dependencyFilter;
+    private NutsDependencyFilter effDependencyFilter;
     private boolean shouldIncludeContent = false;//shouldIncludeContent(this);
-    boolean failFast;
+    private boolean failFast;
 
     public NutsDependenciesResolver(NutsSession session) {
         this.session = session;
@@ -79,6 +80,7 @@ public class NutsDependenciesResolver {
 
     public NutsDependenciesResolver setDependencyFilter(NutsDependencyFilter dependencyFilter) {
         this.dependencyFilter = dependencyFilter;
+        this.effDependencyFilter = null;
         return this;
     }
 
@@ -102,14 +104,14 @@ public class NutsDependenciesResolver {
                     ids.add(descriptor.getId());
                     roots.add(currentNode);
                     NutsDependency[] immediate = CoreFilterUtils.filterDependencies(descriptor.getId(), descriptor.getDependencies(),
-                            dependencyFilter, session);
+                            getEffDependencyFilter(), session);
                     immediates.addAll(Arrays.asList(immediate));
                     break;
                 }
                 case ROOT_DISCARDED: {
                     ids.add(descriptor.getId());
                     NutsDependency[] immediate = CoreFilterUtils.filterDependencies(descriptor.getId(), descriptor.getDependencies(),
-                            dependencyFilter, session);
+                            getEffDependencyFilter(), session);
                     immediates.addAll(Arrays.asList(immediate));
                     break;
                 }
@@ -132,7 +134,7 @@ public class NutsDependenciesResolver {
                     NutsDependencyScope newScope = combineScopes(parentScope, childScope);
                     NutsDependency effDependency = newScope == childScope ? dependency
                             : dependency.builder().setScope(newScope).build();
-                    if (dependencyFilter == null || dependencyFilter.acceptDependency(
+                    if (getEffDependencyFilter().acceptDependency(
                             currentNode.def.getId(), effDependency, session
                     )) {
                         NutsDefinition def2 = ws.search()
@@ -174,7 +176,7 @@ public class NutsDependenciesResolver {
         }
 
         return new DefaultNutsDependencies(
-                ids.toArray(new NutsId[0]), dependencyFilter, immediates.toArray(new NutsDependency[0]),
+                ids.toArray(new NutsId[0]), getEffDependencyFilter(), immediates.toArray(new NutsDependency[0]),
                 visitedSet.visitedSet.values().stream().map(NutsDependencyInfo::getDependency)
                         .toArray(NutsDependency[]::new),
                 ret.toArray(new NutsDependencyTreeNode[0])
@@ -316,4 +318,65 @@ public class NutsDependenciesResolver {
             );
         }
     }
+
+    private boolean isAcceptDependency(NutsDependency s) {
+        //by default ignore optionals
+        String os = s.getOs();
+        String arch = s.getArch();
+        if (os.isEmpty() && arch.isEmpty()) {
+            return false;
+        }
+        if (!os.isEmpty()) {
+            NutsOsFamily eos = session.getWorkspace().env().getOsFamily();
+            boolean osOk = false;
+            for (String e : os.split("[,; ]")) {
+                if (!e.isEmpty()) {
+                    if (e.equalsIgnoreCase(eos.id())) {
+                        osOk = true;
+                        break;
+                    }
+                }
+            }
+            if (!osOk) {
+                return false;
+            }
+        }
+        if (!arch.isEmpty()) {
+            NutsArchFamily earch = session.getWorkspace().env().getArchFamily();
+            if (earch != null) {
+                boolean archOk = false;
+                for (String e : arch.split("[,; ]")) {
+                    if (!e.isEmpty()) {
+                        NutsArchFamily eo = NutsArchFamily.parseLenient(e);
+                        if (eo != NutsArchFamily.UNKNOWN && eo == earch) {
+                            archOk = true;
+                            break;
+                        }
+                    }
+                }
+                if (!archOk) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public NutsDependencyFilter getEffDependencyFilter() {
+        if (effDependencyFilter == null) {
+            NutsWorkspace ws = session.getWorkspace();
+            if (dependencyFilter == null) {
+                effDependencyFilter = ws.dependency().filter().byOs(ws.env().getOsFamily())
+                        .and(ws.dependency().filter().byArch(ws.env().getArchFamily()));
+            } else {
+                effDependencyFilter
+                        = dependencyFilter
+                                .and(ws.dependency().filter().byOs(ws.env().getOsFamily()))
+                                .and(ws.dependency().filter().byArch(ws.env().getArchFamily()));
+            }
+
+        }
+        return effDependencyFilter;
+    }
+
 }

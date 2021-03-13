@@ -5,40 +5,57 @@ import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.io.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
-import org.fusesource.jansi.AnsiOutputStream;
-import org.fusesource.jansi.WindowsAnsiPrintStream;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
+import net.thevpc.nuts.NutsOsFamily;
+import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 
 public class NutsSystemOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
 
     private NutsTerminalMode type;
-    private OutputStream base;
-    private OutputStream baseStripped;
-    private OutputStream ansi;
-    private NutsWorkspace ws;
+    private final OutputStream base;
+    private final OutputStream baseStripped;
+    private final OutputStream formatted;
+    private final NutsWorkspace ws;
 
     public NutsSystemOutputStream(OutputStream base, NutsTerminalMode type, NutsWorkspace ws) {
         super(base);
         this.ws = ws;
         this.type = type;
         this.base = base;
-        this.baseStripped = CoreIOUtils.convertOutputStream(base,NutsTerminalMode.FILTERED, ws);
-        if (AnsiPrintStreamSupport.IS_WINDOWS && !AnsiPrintStreamSupport.IS_CYGWIN && !AnsiPrintStreamSupport.IS_MINGW_XTERM) {
-            // On windows we know the console does not interpret ANSI codes..
-            try {
-                this.ansi = CoreIOUtils.convertOutputStream(new WindowsAnsiPrintStream((base instanceof PrintStream)?((PrintStream) base):new PrintStream(base)),NutsTerminalMode.FORMATTED,ws);
-            } catch (Throwable ignore) {
-                this.ansi = CoreIOUtils.convertOutputStream(new AnsiOutputStream(base),NutsTerminalMode.FORMATTED,ws);
+        this.baseStripped = CoreIOUtils.convertOutputStream(base, NutsTerminalMode.FILTERED, ws);
+        if (ws.env().getOptionAsBoolean("enableJansi",false) && OptionalJansi.isAvailable()) {
+            OutputStream f = OptionalJansi.preparestream(base);
+            if(f!=null){
+                this.formatted = CoreIOUtils.convertOutputStream(base, NutsTerminalMode.FORMATTED, ws);
+                setType(type);
+            }else{
+                this.formatted = baseStripped;
+                setType(NutsTerminalMode.FILTERED);
             }
-        } else {
-            FilterOutputStream filterOutputStream = new ResetOnCloseOutputStream(base);
-            ansi = CoreIOUtils.convertOutputStream(filterOutputStream,NutsTerminalMode.FORMATTED,ws);
+        }else{
+            NutsOsFamily os = ws.env().getOsFamily();
+            boolean IS_WINDOWS = os == NutsOsFamily.WINDOWS;
+            boolean IS_CYGWIN = IS_WINDOWS
+                    && System.getenv("PWD") != null
+                    && System.getenv("PWD").startsWith("/")
+                    && !"cygwin".equals(System.getenv("TERM"));
+
+            boolean IS_MINGW_XTERM = IS_WINDOWS
+                    && System.getenv("MSYSTEM") != null
+                    && System.getenv("MSYSTEM").startsWith("MINGW")
+                    && "xterm".equals(System.getenv("TERM"));
+            if ((IS_WINDOWS && (IS_CYGWIN || IS_MINGW_XTERM)) || os == NutsOsFamily.LINUX || os == NutsOsFamily.UNIX || os == NutsOsFamily.MACOS) {
+                FilterOutputStream filterOutputStream = new AnsiResetOnCloseOutputStream(base);
+                this.formatted = CoreIOUtils.convertOutputStream(filterOutputStream, NutsTerminalMode.FORMATTED, ws);
+                setType(type);
+            } else {
+                this.formatted = baseStripped;
+                setType(NutsTerminalMode.FILTERED);
+            }
         }
-        setType(type);
     }
 
     @Override
@@ -62,7 +79,7 @@ public class NutsSystemOutputStream extends BaseTransparentFilterOutputStream im
 //                    if(ansi==null){
 //                        ansi= CoreIOUtils.convertOutputStream(base,NutsTerminalMode.FORMATTED,null);
 //                    }
-                super.out = ansi;
+                super.out = formatted;
                 break;
             }
             case FILTERED: {
@@ -95,21 +112,21 @@ public class NutsSystemOutputStream extends BaseTransparentFilterOutputStream im
         if (other == null || other == getModeOp()) {
             return this;
         }
-        switch (other){
-            case NOP:{
-                return new NutsSystemOutputStream(base, NutsTerminalMode.INHERITED,ws);
+        switch (other) {
+            case NOP: {
+                return new NutsSystemOutputStream(base, NutsTerminalMode.INHERITED, ws);
             }
-            case FORMAT:{
-                return new NutsSystemOutputStream(base, NutsTerminalMode.FORMATTED,ws);
+            case FORMAT: {
+                return new NutsSystemOutputStream(base, NutsTerminalMode.FORMATTED, ws);
             }
-            case FILTER:{
-                return new NutsSystemOutputStream(base, NutsTerminalMode.FILTERED,ws);
+            case FILTER: {
+                return new NutsSystemOutputStream(base, NutsTerminalMode.FILTERED, ws);
             }
-            case ESCAPE:{
-                return new EscapeOutputStream(new NutsSystemOutputStream(base, NutsTerminalMode.FORMATTED,ws),ws);
+            case ESCAPE: {
+                return new EscapeOutputStream(new NutsSystemOutputStream(base, NutsTerminalMode.FORMATTED, ws), ws);
             }
-            case UNESCAPE:{
-                return new UnescapeOutputStream(new NutsSystemOutputStream(base, NutsTerminalMode.FORMATTED,ws),ws);
+            case UNESCAPE: {
+                return new UnescapeOutputStream(new NutsSystemOutputStream(base, NutsTerminalMode.FORMATTED, ws), ws);
             }
         }
         throw new IllegalArgumentException("Unsupported");
@@ -117,17 +134,18 @@ public class NutsSystemOutputStream extends BaseTransparentFilterOutputStream im
 
     @Override
     public String toString() {
-        return "NutsSystemOutputStream(" +type +')';
+        return "NutsSystemOutputStream(" + type + ')';
     }
 
-    private class ResetOnCloseOutputStream extends BaseTransparentFilterOutputStream {
-        public ResetOnCloseOutputStream(OutputStream base) {
+    private class AnsiResetOnCloseOutputStream extends BaseTransparentFilterOutputStream {
+
+        public AnsiResetOnCloseOutputStream(OutputStream base) {
             super(base);
         }
 
         @Override
         public void close() throws IOException {
-            write(AnsiOutputStream.RESET_CODE);
+            write("\033[0m".getBytes());
             flush();
             super.close();
         }

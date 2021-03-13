@@ -44,6 +44,7 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 1/15/17.
@@ -119,7 +120,7 @@ final class PrivateNutsUtils {
         return str.trim();
     }
 
-    public static String idToPath(PrivateNutsId id) {
+    public static String idToPath(NutsBootId id) {
         return id.getGroupId().replace('.', '/') + "/"
                 + id.getArtifactId() + "/" + id.getVersion();
     }
@@ -553,7 +554,7 @@ final class PrivateNutsUtils {
                     refForceAll.setForce(true);
                 } else if ("c".equalsIgnoreCase(line)) {
                     throw new NutsUserCancelException(session.getWorkspace());
-                } else if (!PrivateNutsUtils.parseBoolean(line, false)) {
+                } else if (!PrivateNutsUtils.parseBoolean(line, false, false)) {
                     refForceAll.ignore(directory);
                     return 0;
                 }
@@ -579,7 +580,7 @@ final class PrivateNutsUtils {
                     }
                 });
                 count[0]++;
-                LOG.log(Level.FINEST, NutsLogVerb.WARNING, "delete folder : {0} ({1} files/folders deleted)", new Object[]{directory,count[0]});
+                LOG.log(Level.FINEST, NutsLogVerb.WARNING, "delete folder : {0} ({1} files/folders deleted)", new Object[]{directory, count[0]});
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -769,15 +770,12 @@ final class PrivateNutsUtils {
 
     public static Boolean getSystemBoolean(String property, Boolean defaultValue) {
         String o = System.getProperty(property);
-        if (o == null) {
-            return defaultValue;
-        }
-        return parseBoolean(o, defaultValue);
+        return parseBoolean(o, defaultValue, false);
     }
 
-    public static Boolean parseBoolean(String value, Boolean defaultValue) {
+    public static Boolean parseBoolean(String value, Boolean emptyValue, Boolean errorValue) {
         if (value == null || value.trim().isEmpty()) {
-            return defaultValue;
+            return emptyValue;
         }
         value = value.trim().toLowerCase();
         if (value.matches("true|enable|enabled|yes|always|y|on|ok|t|o")) {
@@ -786,7 +784,7 @@ final class PrivateNutsUtils {
         if (value.matches("false|disable|disabled|no|none|never|n|off|ko|f")) {
             return false;
         }
-        return defaultValue;
+        return errorValue;
     }
 
     /**
@@ -817,8 +815,133 @@ final class PrivateNutsUtils {
         return 0;
     }
 
-    public static Set<String> parseDependencies(String s) {
-        return new LinkedHashSet<>(PrivateNutsUtils.split(s, ";", false));
+    public static Set<NutsBootId> parseDependencies(String s) {
+        return PrivateNutsUtils.split(s, ";", false)
+                .stream().map(x -> NutsBootId.parse(x))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    public static class StringMapParser {
+
+        private String eqSeparators;
+        private String entrySeparators;
+
+        /**
+         *
+         * @param eqSeparators equality separators, example '='
+         * @param entrySeparators entry separators, example ','
+         */
+        public StringMapParser(String eqSeparators, String entrySeparators) {
+            this.eqSeparators = eqSeparators;
+            this.entrySeparators = entrySeparators;
+        }
+
+        /**
+         * copied from StringUtils (in order to remove dependency)
+         *
+         * @param text text to parse
+         * @return parsed map
+         */
+        public Map<String, String> parseMap(String text) {
+            Map<String, String> m = new LinkedHashMap<>();
+            StringReader reader = new StringReader(text == null ? "" : text);
+            while (true) {
+                StringBuilder key = new StringBuilder();
+                int r = 0;
+                try {
+                    r = readToken(reader, eqSeparators + entrySeparators, key);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+                String t = key.toString();
+                if (r == -1) {
+                    if (!t.isEmpty()) {
+                        m.put(t, null);
+                    }
+                    break;
+                } else {
+                    char c = (char) r;
+                    if (eqSeparators.indexOf(c) >= 0) {
+                        StringBuilder value = new StringBuilder();
+                        try {
+                            r = readToken(reader, entrySeparators, value);
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                        m.put(t, value.toString());
+                        if (r == -1) {
+                            break;
+                        }
+                    } else {
+                        //
+                    }
+                }
+            }
+            return m;
+        }
+
+        /**
+         * copied from StringUtils (in order to remove dependency)
+         *
+         * @param reader reader
+         * @param stopTokens stopTokens
+         * @param result result
+         * @return next token
+         * @throws IOException IOException
+         */
+        private static int readToken(Reader reader, String stopTokens, StringBuilder result) throws IOException {
+            while (true) {
+                int r = reader.read();
+                if (r == -1) {
+                    return -1;
+                }
+                if (r == '\"' || r == '\'') {
+                    char s = (char) r;
+                    while (true) {
+                        r = reader.read();
+                        if (r == -1) {
+                            throw new RuntimeException("Expected " + '\"');
+                        }
+                        if (r == s) {
+                            break;
+                        }
+                        if (r == '\\') {
+                            r = reader.read();
+                            if (r == -1) {
+                                throw new RuntimeException("Expected " + '\"');
+                            }
+                            switch ((char) r) {
+                                case 'n': {
+                                    result.append('\n');
+                                    break;
+                                }
+                                case 'r': {
+                                    result.append('\r');
+                                    break;
+                                }
+                                case 'f': {
+                                    result.append('\f');
+                                    break;
+                                }
+                                default: {
+                                    result.append((char) r);
+                                }
+                            }
+                        } else {
+                            char cr = (char) r;
+                            result.append(cr);
+                        }
+                    }
+                } else {
+                    char cr = (char) r;
+                    if (stopTokens != null && stopTokens.indexOf(cr) >= 0) {
+                        return cr;
+                    }
+                    result.append(cr);
+                }
+            }
+        }
+
     }
 
     /**
@@ -923,7 +1046,7 @@ final class PrivateNutsUtils {
             return null;
         }
 
-        static Deps loadDependencies(PrivateNutsId rid, PrivateNutsLog LOG, Collection<String> repos) {
+        static Deps loadDependencies(NutsBootId rid, PrivateNutsLog LOG, Collection<String> repos) {
             String urlPath = idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
             return loadDependencies(urlPath, LOG, repos);
         }
@@ -979,6 +1102,8 @@ final class PrivateNutsUtils {
                 DocumentBuilder builder = factory.newDocumentBuilder();
                 Document doc = builder.parse(xml);
                 Element c = doc.getDocumentElement();
+                Map<String, String> osMap = new HashMap<>();
+                Map<String, String> archMap = new HashMap<>();
                 for (int i = 0; i < c.getChildNodes().getLength(); i++) {
                     if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("dependencies")) {
                         Element c2 = (Element) c.getChildNodes().item(i);
@@ -989,6 +1114,7 @@ final class PrivateNutsUtils {
                                 String artifactId = null;
                                 String version = null;
                                 String scope = null;
+                                String optional = null;
                                 for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
                                     if (c3.getChildNodes().item(k) instanceof Element) {
                                         Element c4 = (Element) c3.getChildNodes().item(k);
@@ -1007,6 +1133,10 @@ final class PrivateNutsUtils {
                                             }
                                             case "scope": {
                                                 scope = c4.getTextContent().trim();
+                                                break;
+                                            }
+                                            case "optional": {
+                                                optional = c4.getTextContent().trim();
                                                 break;
                                             }
                                         }
@@ -1029,7 +1159,13 @@ final class PrivateNutsUtils {
                                 }
                                 //this is maven dependency, using "compile"
                                 if (isBlank(scope) || scope.equals("compile")) {
-                                    depsAndRepos.deps.add(groupId + ":" + artifactId + "#" + version);
+                                    depsAndRepos.deps.add(
+                                            new NutsBootId(
+                                                    groupId, artifactId, version, PrivateNutsUtils.parseBoolean(optional, false, false),
+                                                    osMap.get(groupId + ":" + artifactId),
+                                                    archMap.get(groupId + ":" + artifactId)
+                                            )
+                                    );
                                 } else if (version.contains("$")) {
                                     throw new NutsBootException("unexpected maven variable in artifactId=" + version);
                                 }
@@ -1040,19 +1176,58 @@ final class PrivateNutsUtils {
                         for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
                             if (c2.getChildNodes().item(j) instanceof Element) {
                                 Element c3 = (Element) c2.getChildNodes().item(j);
-                                switch (c3.getNodeName()) {
+                                String nodeName = c3.getNodeName();
+                                switch (nodeName) {
                                     case "nuts-runtime-repositories": {
                                         String t = c3.getTextContent().trim();
                                         if (t.length() > 0) {
-                                            depsAndRepos.deps.addAll(split(t, ";", true));
+                                            depsAndRepos.repos.addAll(
+                                                    split(t, ";", true)
+                                            );
                                         }
                                         break;
+                                    }
+                                    default: {
+                                        if (nodeName.startsWith("dependencies.")) {
+                                            String np = nodeName.substring("dependencies.".length());
+                                            if (np.endsWith(".os")) {
+                                                String iid = np.substring(0, np.length() - 3);
+                                                String os = c3.getTextContent().trim();
+                                                osMap.put(iid, os);
+                                            } else if (np.endsWith(".arch")) {
+                                                String iid = np.substring(0, np.length() - 5);
+                                                String arch = c3.getTextContent().trim();
+                                                archMap.put(iid, arch);
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
+                List<NutsBootId> ok = new ArrayList<>();
+                for (NutsBootId dep : depsAndRepos.deps) {
+                    String arch = archMap.get(dep.getShortName());
+                    String os = archMap.get(dep.getShortName());
+                    boolean replace = false;
+                    if (arch != null || os != null) {
+                        if ((dep.getOs().isEmpty() && os != null)
+                                || (dep.getArch().isEmpty() && arch != null)) {
+                            replace = true;
+                        }
+                    }
+                    if (replace) {
+                        ok.add(new NutsBootId(dep.getGroupId(), dep.getArtifactId(), dep.getVersion(), dep.isOptional(),
+                                os != null ? os : dep.getOs(),
+                                arch != null ? arch : dep.getArch()
+                        ));
+                    } else {
+                        ok.add(dep);
+                    }
+                }
+                depsAndRepos.deps.clear();
+                depsAndRepos.deps.addAll(ok);
 
             } catch (Exception ex) {
                 LOG.log(Level.FINE, "unable to loadDependenciesAndRepositoriesFromPomUrl " + url, ex);
@@ -1075,11 +1250,12 @@ final class PrivateNutsUtils {
          * @param filter filter
          * @return latest runtime version
          */
-        static String resolveLatestMavenId(PrivateNutsId zId, Predicate<String> filter, PrivateNutsLog LOG, Collection<String> bootRepositories) {
+        static NutsBootId resolveLatestMavenId(NutsBootId zId, Predicate<String> filter, PrivateNutsLog LOG, Collection<String> bootRepositories) {
             LOG.log(Level.FINEST, NutsLogVerb.START, "looking for {0}", zId);
             String path = zId.getGroupId().replace('.', '/') + '/' + zId.getArtifactId();
             String bestVersion = null;
             String bestPath = null;
+            boolean stopOnFirstValidRepo = false;
             for (String repoUrl : bootRepositories) {
                 boolean found = false;
                 if (!repoUrl.contains("://")) {
@@ -1098,6 +1274,7 @@ final class PrivateNutsUtils {
                                     if (goodChildren != null && goodChildren.length > 0) {
                                         String p = file.getName();
                                         if (filter == null || filter.test(p)) {
+                                            found = true;
                                             if (bestVersion == null || compareRuntimeVersion(bestVersion, p) < 0) {
                                                 bestVersion = p;
                                                 bestPath = "Local location : " + file.getPath();
@@ -1115,7 +1292,6 @@ final class PrivateNutsUtils {
                     String mavenMetadata = repoUrl + path + "/maven-metadata.xml";
                     try {
                         URL runtimeMetadata = new URL(mavenMetadata);
-                        found = true;
                         DocumentBuilderFactory factory
                                 = DocumentBuilderFactory.newInstance();
                         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -1141,6 +1317,7 @@ final class PrivateNutsUtils {
                                                     Element c4 = (Element) c3.getChildNodes().item(k);
                                                     String p = c4.getTextContent();
                                                     if (filter == null || filter.test(p)) {
+                                                        found = true;
                                                         if (bestVersion == null || compareRuntimeVersion(bestVersion, p) < 0) {
                                                             bestVersion = p;
                                                             bestPath = "remote file " + mavenMetadata;
@@ -1160,16 +1337,16 @@ final class PrivateNutsUtils {
                         // ignore any error
                     }
                 }
-                if (found) {
+                if (stopOnFirstValidRepo && found) {
                     break;
                 }
             }
             if (bestVersion == null) {
                 return null;
             }
-            String s = zId.getGroupId() + ":" + zId.getArtifactId() + "#" + bestVersion;
-            LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "resolved " + s + " from " + bestPath);
-            return s;
+            NutsBootId iid = new NutsBootId(zId.getGroupId(), zId.getArtifactId(), bestVersion, false,null, null);
+            LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "resolved " + iid + " from " + bestPath);
+            return iid;
         }
 
         static File createFile(String parent, String child) {
@@ -1232,7 +1409,7 @@ final class PrivateNutsUtils {
      */
     public static class Deps {
 
-        LinkedHashSet<String> deps = new LinkedHashSet<>();
+        LinkedHashSet<NutsBootId> deps = new LinkedHashSet<>();
         LinkedHashSet<String> repos = new LinkedHashSet<>();
     }
 
@@ -1246,5 +1423,52 @@ final class PrivateNutsUtils {
             }
         }
         return -1;
+    }
+
+    public static String resolveNutsVersionFromClassPath() {
+//        boolean devMode = false;
+        String version = null;
+        try {
+            version = PrivateNutsUtils.loadURLProperties(
+                    Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.properties"),
+                    null, false, new PrivateNutsLog()).getProperty("version");
+        } catch (Exception ex) {
+            //
+        }
+        if (version == null || version.trim().isEmpty() || version.equals("0.0.0")) {
+            //check if we are in dev mode
+            String cp = System.getProperty("java.class.path");
+            for (String p : cp.split(File.pathSeparator)) {
+                File f = new File(p);
+                if (f.isDirectory()) {
+                    Matcher m = Pattern.compile("(?<src>.*)[/\\\\]+target[/\\\\]+classes[/\\\\]*")
+                            .matcher(f.getPath().replace('/', File.separatorChar));
+                    if (m.find()) {
+                        String src = m.group("src");
+                        if (new File(src, "pom.xml").exists() && new File(src,
+                                "src/main/java/net/thevpc/nuts/Nuts.java".replace('/', File.separatorChar)
+                        ).exists()) {
+//                            devMode = true;
+                            String xml = null;
+                            try {
+                                byte[] bytes = Files.readAllBytes(new File(src, "pom.xml").toPath());
+                                xml = new String(bytes);
+                            } catch (IOException ex) {
+                                throw new NutsBootException("unable to detect nuts version in dev mode.");
+                            }
+                            m = Pattern.compile("<version>(?<v>([0-9. ]+))</version>").matcher(xml);
+                            if (m.find()) {
+                                version = m.group("v").trim();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (version == null || version.trim().isEmpty()) {
+            return null;
+        } else {
+            return version;
+        }
     }
 }

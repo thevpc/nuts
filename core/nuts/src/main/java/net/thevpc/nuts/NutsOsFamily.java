@@ -53,6 +53,20 @@ public enum NutsOsFamily {
      */
     UNKNOWN;
 
+    public static NutsOsFamily parseLenient(String e) {
+        if(e==null){
+            return UNKNOWN;
+        }
+        switch(e.toLowerCase()){
+            case "win":
+            case "windows":return WINDOWS;
+            case "linux":return LINUX;
+            case "macos":return MACOS;
+            case "unix":return UNIX;
+        }
+        return UNKNOWN;
+    }
+
     /**
      * lower-cased identifier for the enum entry
      */

@@ -9,16 +9,7 @@ public class FPrint {
 
     public static final FormattedPrintStreamRenderer RENDERER_ANSI = AnsiUnixTermPrintRenderer.ANSI_RENDERER;
     public static final FormattedPrintStreamRenderer RENDERER_ANSI_STRIPPER = StripperFormattedPrintStreamRenderer.STRIPPER;
-//    static PrintStream out = null;
-//    static PrintStream err = null;
 
-//    public static PrintStream out() {
-//        return out == null ? System.out : out;
-//    }
-//
-//    public static PrintStream err() {
-//        return err == null ? System.err : err;
-//    }
 
     public static void uninstall(NutsWorkspace ws) {
         AnsiPrintStreamSupport.uninstall(ws);

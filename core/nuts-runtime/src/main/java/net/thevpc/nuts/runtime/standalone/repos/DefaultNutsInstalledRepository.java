@@ -33,7 +33,7 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.repos.AbstractNutsRepository;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.bundles.datastr.LRUMap;
+import net.thevpc.nuts.runtime.bundles.collections.LRUMap;
 import net.thevpc.nuts.runtime.bundles.iter.LazyIterator;
 import net.thevpc.nuts.runtime.bundles.io.FolderObjectIterator;
 import net.thevpc.nuts.runtime.bundles.io.NutsInstallStatusIdFilter;

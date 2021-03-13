@@ -39,6 +39,7 @@ public interface NutsWorkspaceEnvManager {
     String getEnv(String property);
 
     Integer getEnvAsInt(String property,Integer defaultValue);
+    Boolean getEnvAsBoolean(String property,Boolean defaultValue);
 
     /**
      *
@@ -58,38 +59,26 @@ public interface NutsWorkspaceEnvManager {
     /**
      * @since  0.8.1
      * @param  property property
-     * @param  includeEnv includeEnv
      * @param defaultValue defaultValue
      * @return property value
      */
-    Object getProperty(String property, boolean includeEnv, Object defaultValue);
+    Integer getPropertyAsInt(String property, Integer defaultValue);
 
     /**
      * @since  0.8.1
      * @param  property property
-     * @param  includeEnv includeEnv
      * @param defaultValue defaultValue
      * @return property value
      */
-    Integer getPropertyAsInt(String property, boolean includeEnv, Integer defaultValue);
+    String getPropertyAsString(String property, String defaultValue);
 
     /**
      * @since  0.8.1
      * @param  property property
-     * @param  includeEnv includeEnv
      * @param defaultValue defaultValue
      * @return property value
      */
-    String getPropertyAsString(String property, boolean includeEnv, String defaultValue);
-
-    /**
-     * @since  0.8.1
-     * @param  property property
-     * @param  includeEnv includeEnv
-     * @param defaultValue defaultValue
-     * @return property value
-     */
-    Boolean getPropertyAsBoolean(String property, boolean includeEnv, Boolean defaultValue);
+    Boolean getPropertyAsBoolean(String property, Boolean defaultValue);
 
     /**
      * @since  0.8.1
@@ -97,6 +86,14 @@ public interface NutsWorkspaceEnvManager {
      * @return property value
      */
     Object getProperty(String property);
+
+    /**
+     * @since  0.8.1
+     * @param  property property name
+     * @param  defaultValue default value
+     * @return property value
+     */
+    Object getProperty(String property,Object defaultValue);
 
     /**
      * @since  0.8.1
@@ -116,5 +113,15 @@ public interface NutsWorkspaceEnvManager {
     NutsId getOsDist();
 
     NutsId getArch();
+    
+    NutsArchFamily getArchFamily();
+
+    String getOption(String property);
+
+    String getOption(String property, String defaultValue);
+
+    Boolean getOptionAsBoolean(String property, Boolean defaultValue);
+
+    Integer getOptionAsInt(String property, Integer defaultValue);
 
 }

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.bundles.mvn;
 
-import net.thevpc.nuts.runtime.bundles.datastr.EvictingQueue;
+import net.thevpc.nuts.runtime.bundles.collections.EvictingQueue;
 
 import java.io.*;
 import java.util.Iterator;
@@ -51,7 +51,6 @@ public class DirtyLuceneIndexParser implements Iterator<String>, Closeable {
                     break;
                 }
                 if (isVisibleChar((char) c)) {
-//                    System.out.println("Accept "+(char)c);
                     StringBuilder sb = new StringBuilder();
                     boolean withPipe = c == '|';
                     sb.append((char) c);
@@ -102,7 +101,6 @@ public class DirtyLuceneIndexParser implements Iterator<String>, Closeable {
                 } else {
                     whites.clear();
                     whites.add(c);
-//                    System.out.println("Ignore "+(int)c);
                     while (true) {
                         c = reader.read();
                         if (c < 0) {
@@ -113,7 +111,6 @@ public class DirtyLuceneIndexParser implements Iterator<String>, Closeable {
                             break;
                         } else {
                             whites.add(c);
-//                            System.out.println("\t### ignore "+((int) c));
                         }
                     }
                 }

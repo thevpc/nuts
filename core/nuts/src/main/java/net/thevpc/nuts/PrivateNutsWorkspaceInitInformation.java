@@ -3,26 +3,24 @@
  *            Nuts : Network Updatable Things Service
  *                  (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  *
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts;
 
@@ -36,7 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 
+ *
  * @author thevpc
  * @category Internal
  */
@@ -50,7 +48,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
     /**
      * workspace runtime id (group, name avec version)
      */
-    private String runtimeId;
+    private NutsBootId runtimeId;
     private NutsBootDescriptor runtimeBootDescriptor;
     private NutsClassLoaderNode runtimeBootDependencyNode;
     private NutsBootDescriptor[] extensionBootDescriptors;
@@ -61,7 +59,6 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
     private URL[] bootClassWorldURLs;
 
     private ClassLoader workspaceClassLoader;
-
 
     /**
      * workspace uuid
@@ -155,9 +152,8 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
             this.setStoreLocationLayout(options.getStoreLocationLayout());
             this.storeLocations = new LinkedHashMap<>(options.getStoreLocations());
             this.homeLocations = new LinkedHashMap<>(options.getHomeLocations());
-            this.setRuntimeId(options.getRuntimeId());
+            this.setRuntimeId(options.getRuntimeId()==null?null:NutsBootId.parse(options.getRuntimeId()));
             this.global = options.isGlobal();
-            this.runtimeId = options.getRuntimeId();
             this.javaCommand = options.getJavaCommand();
             this.javaOptions = options.getJavaOptions();
             this.apiVersion = PrivateNutsUtils.trimToNull(options.getApiVersion());
@@ -199,11 +195,11 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
     }
 
     @Override
-    public String getRuntimeId() {
+    public NutsBootId getRuntimeId() {
         return runtimeId;
     }
 
-    public PrivateNutsWorkspaceInitInformation setRuntimeId(String runtimeId) {
+    public PrivateNutsWorkspaceInitInformation setRuntimeId(NutsBootId runtimeId) {
         this.runtimeId = runtimeId;
         return this;
     }
@@ -217,7 +213,6 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
 //    public String getExtensionDependencies() {
 //        return String.join(";", getExtensionDependenciesSet());
 //    }
-
     @Override
     public String getBootRepositories() {
         return bootRepositories;
@@ -271,7 +266,6 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         this.uuid = uuid;
     }
 
-
     @Override
     public String getApiId() {
         return NutsConstants.Ids.NUTS_API + "#" + apiVersion;
@@ -286,7 +280,6 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
 //        this.runtimeDependenciesSet = runtimeDependenciesSet == null ? null : new LinkedHashSet<>(runtimeDependenciesSet);
 //        return this;
 //    }
-
 //    @Override
 //    public Set<String> getExtensionDependenciesSet() {
 //        return extensionDependenciesSet;
@@ -296,7 +289,6 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
 //        this.extensionDependenciesSet = extensionDependenciesSet == null ? null : new LinkedHashSet<>(extensionDependenciesSet);
 //        return this;
 //    }
-
     @Override
     public String getJavaCommand() {
         return javaCommand;
@@ -331,7 +323,6 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         this.storeLocationStrategy = storeLocationStrategy;
         return this;
     }
-
 
     public PrivateNutsWorkspaceInitInformation setWorkspaceLocation(String workspace) {
         this.workspace = workspace;
@@ -432,11 +423,11 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
             }
             sb.append("apiVersion='").append(apiVersion).append('\'');
         }
-        if (!PrivateNutsUtils.isBlank(runtimeId)) {
+        if (runtimeId!=null) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
-            sb.append("runtimeId='").append(runtimeId).append('\'');
+            sb.append("runtimeId='").append(runtimeId.toString()).append('\'');
         }
 //        if (!runtimeDependenciesSet.isEmpty()) {
 //            if (sb.length() > 0) {
@@ -509,6 +500,5 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
         sb.append('}');
         return sb.toString();
     }
-
 
 }

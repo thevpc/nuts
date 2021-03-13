@@ -111,7 +111,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
         if (value instanceof Number) {
             return ((Number) value).doubleValue() != 0;
         }
-        return CoreBooleanUtils.parseBoolean(String.valueOf(value), false);
+        return CoreBooleanUtils.parseBoolean(String.valueOf(value), false, false);
     }
 
     @Override

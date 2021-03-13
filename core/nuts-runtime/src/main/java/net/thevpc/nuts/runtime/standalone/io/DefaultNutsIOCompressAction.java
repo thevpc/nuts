@@ -375,13 +375,11 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         try {
 
             if (flag) {
-//            System.out.println("[FOLDER ]" + pathPrefix + folder.getName());
                 zip.putNextEntry(new ZipEntry(pathPrefix + srcFile.getName() + "/"));
             } else {
                 if (srcFile.isDirectory()) {
                     addFolderToZip(pathPrefix, srcFile, zip);
                 } else {
-//                System.out.println("[FILE  ]" + pathPrefix + folder.getName() + " - " + srcFile);
                     byte[] buf = new byte[1024];
                     int len;
                     InputStream in = srcFile.open();

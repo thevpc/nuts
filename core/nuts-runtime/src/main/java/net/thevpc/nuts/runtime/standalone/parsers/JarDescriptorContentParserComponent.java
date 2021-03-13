@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.parsers;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsArtifactCall;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenUtils;
-import net.thevpc.nuts.runtime.bundles.datastr.Ref;
+import net.thevpc.nuts.runtime.bundles.common.Ref;
 
 import java.io.IOException;
 import java.io.InputStream;

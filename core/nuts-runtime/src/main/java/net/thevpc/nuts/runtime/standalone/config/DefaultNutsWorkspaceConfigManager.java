@@ -671,7 +671,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 cconfig.setApiId(ws.id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + initOptions.getApiVersion()));
             }
             if (cconfig.getRuntimeId() == null) {
-                cconfig.setRuntimeId(initOptions.getRuntimeId());
+                cconfig.setRuntimeId(initOptions.getRuntimeId()==null?null:initOptions.getRuntimeId().toString());
             }
             if (cconfig.getRuntimeBootDescriptor() == null) {
                 cconfig.setRuntimeBootDescriptor(initOptions.getRuntimeBootDescriptor());
@@ -700,7 +700,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             if (options.isRecover() || options.isReset()) {
                 //always reload boot resolved versions!
                 cconfig.setApiId(ws.id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + initOptions.getApiVersion()));
-                cconfig.setRuntimeId(initOptions.getRuntimeId());
+                cconfig.setRuntimeId(initOptions.getRuntimeId()==null?null:initOptions.getRuntimeId().toString());
                 cconfig.setRuntimeBootDescriptor(initOptions.getRuntimeBootDescriptor());
                 cconfig.setExtensionBootDescriptors(initOptions.getExtensionBootDescriptors());
                 cconfig.setBootRepositories(initOptions.getBootRepositories());

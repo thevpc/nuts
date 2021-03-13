@@ -443,7 +443,7 @@ final class PrivateNutsArgumentsParser {
                             if (v.isEmpty()) {
                                 options.setTerminalMode(NutsTerminalMode.FORMATTED);
                             } else {
-                                Boolean b = PrivateNutsUtils.parseBoolean(v, null);
+                                Boolean b = PrivateNutsUtils.parseBoolean(v, null, null);
                                 if (b != null) {
                                     if (b) {
                                         options.setTerminalMode(NutsTerminalMode.FORMATTED);

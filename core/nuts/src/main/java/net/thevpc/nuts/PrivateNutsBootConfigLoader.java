@@ -159,7 +159,8 @@ final class PrivateNutsBootConfigLoader {
         config.setName((String) jsonObject.get("name"));
         config.setWorkspaceLocation((String) jsonObject.get("workspace"));
         config.setApiVersion((String) jsonObject.get("apiVersion"));
-        config.setRuntimeId((String) jsonObject.get("runtimeId"));
+        String runtimeId = (String) jsonObject.get("runtimeId");
+        config.setRuntimeId(runtimeId==null?null:NutsBootId.parse(runtimeId));
         config.setJavaCommand((String) jsonObject.get("javaCommand"));
         config.setJavaOptions((String) jsonObject.get("javaOptions"));
         config.setStoreLocations((Map<String, String>) jsonObject.get("storeLocations"));
@@ -191,7 +192,8 @@ final class PrivateNutsBootConfigLoader {
         config.setName((String) jsonObject.get("name"));
         config.setWorkspaceLocation((String) jsonObject.get("workspace"));
         config.setApiVersion((String) jsonObject.get("bootApiVersion"));
-        config.setRuntimeId((String) jsonObject.get("bootRuntime"));
+        String runtimeId = (String) jsonObject.get("bootRuntime");
+        config.setRuntimeId(runtimeId==null?null:NutsBootId.parse(runtimeId));
         config.setJavaCommand((String) jsonObject.get("bootJavaCommand"));
         config.setJavaOptions((String) jsonObject.get("bootJavaOptions"));
         Map<String, String> storeLocations = new LinkedHashMap<>();

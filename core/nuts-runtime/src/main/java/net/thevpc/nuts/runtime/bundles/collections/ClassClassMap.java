@@ -23,7 +23,7 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.bundles.datastr;
+package net.thevpc.nuts.runtime.bundles.collections;
 
 import java.util.ArrayList;
 import java.util.List;

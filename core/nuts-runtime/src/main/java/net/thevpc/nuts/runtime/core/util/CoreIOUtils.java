@@ -1022,7 +1022,6 @@ public class CoreIOUtils {
 //        }
 //    }
     public static NutsTransportConnection getHttpClientFacade(NutsSession session, String url) {
-        //        System.out.println("getHttpClientFacade "+url);
         NutsTransportComponent best = session.getWorkspace().extensions().createSupported(NutsTransportComponent.class, url, session);
         if (best == null) {
             best = DefaultHttpTransportComponent.INSTANCE;

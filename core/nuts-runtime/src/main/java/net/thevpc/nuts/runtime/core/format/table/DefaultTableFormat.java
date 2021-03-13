@@ -34,7 +34,7 @@ import java.util.*;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.bundles.datastr.StringBuilder2;
+import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 
 /**
  * Created by vpc on 2/17/17.

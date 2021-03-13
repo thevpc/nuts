@@ -312,7 +312,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         if (ws.env().getOsDist() != null) {
             props.put("os-dist", stringValue(ws.env().getOsDist().toString()));
         }
-        props.put("os-arch", stringValue(ws.env().getArch().toString()));
+        props.put("os-arch", stringValue(ws.env().getArchFamily().id()));
         props.put("user-name", stringValue(System.getProperty("user.name")));
         props.put("user-home", stringValue(System.getProperty("user.home")));
         props.put("user-dir", stringValue(System.getProperty("user.dir")));

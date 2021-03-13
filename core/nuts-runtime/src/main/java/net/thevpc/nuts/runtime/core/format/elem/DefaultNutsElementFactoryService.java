@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.runtime.bundles.datastr.ClassMap;
+import net.thevpc.nuts.runtime.bundles.collections.ClassMap;
 import net.thevpc.nuts.runtime.bundles.reflect.DefaultReflectRepository;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectConfiguration;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectProperty;
@@ -187,8 +187,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     @Override
     public Object createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
-        if (o.type()==NutsElementType.NULL) {
-            return F_NULL.createElement(null, to, context);
+        if (o.type() == NutsElementType.NULL) {
+            return F_NULL.createObject(o, to, context);
         }
         NutsElementFactory f = getElementFactory(to, false);
         return f.createObject(o, to, context);
@@ -196,7 +196,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     @Override
     public Object defaultCreateObject(NutsElement o, Type to, NutsElementFactoryContext context) {
-        if (o.primitive().isNull()) {
+        if (o.type() == NutsElementType.NULL) {
             return F_NULL.createElement(null, to, context);
         }
         NutsElementFactory f = getElementFactory(to, true);
@@ -274,20 +274,31 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
 
         public Map fillObject(NutsElement o, Map all, Type elemType1, Type elemType2, Type to, NutsElementFactoryContext context) {
-            for (NutsElement nutsElement : o.array().children()) {
-                NutsObjectElement kv = nutsElement.object();
-                NutsElement k = kv.get("key");
-                NutsElement v = kv.get("value");
-                all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
+            if (o.type() == NutsElementType.OBJECT) {
+                for (NutsNamedElement kv : o.object().children()) {
+                    NutsElement k = context.elements().forString(kv.getName());
+                    NutsElement v = kv.getValue();
+                    all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
+                }
+            }else if(o.type() == NutsElementType.ARRAY){
+                for (NutsElement ee : o.array().children()) {
+                    NutsObjectElement kv = ee.object();
+                    NutsElement k = kv.get("key");
+                    NutsElement v = kv.get("value");
+                    all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
+                }
+            }else{
+                throw new IllegalArgumentException("unsupported");
             }
+
             return all;
         }
 
         @Override
         public Map createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
             Class cls = Map.class;
-            Type elemType1 = Object.class;
-            Type elemType2 = Object.class;
+            Type elemType1 = null;//Object.class;
+            Type elemType2 = null;//Object.class;
             if (to instanceof ParameterizedType) {
                 ParameterizedType pt = (ParameterizedType) to;
                 Type rawType = pt.getRawType();
@@ -303,10 +314,10 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             switch (cls.getName()) {
                 case "java.util.Map":
                 case "java.util.LinkedHashMap": {
-                    return fillObject(o, new LinkedHashMap(o.array().size()), elemType1, elemType2, to, context);
+                    return fillObject(o, new LinkedHashMap(o.object().size()), elemType1, elemType2, to, context);
                 }
                 case "java.util.HashMap": {
-                    return fillObject(o, new HashMap(o.array().size()), elemType1, elemType2, to, context);
+                    return fillObject(o, new HashMap(o.object().size()), elemType1, elemType2, to, context);
                 }
             }
             throw new IllegalArgumentException("fix me");
@@ -616,7 +627,12 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsArtifactCall createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            return (NutsArtifactCall) context.defaultElementToObject(o, DefaultNutsArtifactCall.class);
+            NutsObjectElement object = o.object();
+            NutsId id=(NutsId)context.elementToObject(object.get("id"), NutsId.class);
+            String[] arguments=(String[])context.elementToObject(object.get("arguments"), String[].class);
+            Map<String, String> properties=(Map<String, String>)context.elementToObject(object.get("properties"), ReflectUtils.createParametrizedType(Map.class, String.class,String.class));
+            
+            return new DefaultNutsArtifactCall(id, arguments, properties);
         }
     }
 
@@ -700,7 +716,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsDependency createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            DefaultNutsDependencyBuilder builder = (DefaultNutsDependencyBuilder) context.defaultElementToObject(o, DefaultNutsDescriptorBuilder.class);
+            DefaultNutsDependencyBuilder builder = (DefaultNutsDependencyBuilder) 
+                    context.defaultElementToObject(o, DefaultNutsDependencyBuilder.class);
             return context.getWorkspace().dependency().builder().set(builder).build();
         }
 

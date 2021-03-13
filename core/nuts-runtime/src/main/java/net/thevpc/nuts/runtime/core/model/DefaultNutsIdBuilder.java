@@ -43,7 +43,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     private String groupId;
     private String artifactId;
     private NutsVersion version;
-    private QueryStringParser propertiesQuery = new QueryStringParser(true, (name, value) -> {
+    private transient QueryStringParser propertiesQuery = new QueryStringParser(true, (name, value) -> {
         if (name != null) {
             switch (name) {
                 case NutsConstants.IdProperties.VERSION: {

@@ -23,7 +23,7 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.bundles.datastr;
+package net.thevpc.nuts.runtime.bundles.string;
 
 import java.util.stream.IntStream;
 
