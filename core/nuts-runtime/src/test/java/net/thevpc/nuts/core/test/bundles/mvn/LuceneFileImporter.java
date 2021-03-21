@@ -1,4 +1,4 @@
-package net.thevpc.nuts.core.test.whitebox;
+package net.thevpc.nuts.core.test.bundles.mvn;
 
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsWorkspace;

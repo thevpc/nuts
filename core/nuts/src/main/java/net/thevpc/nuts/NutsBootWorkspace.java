@@ -1269,11 +1269,11 @@ public final class NutsBootWorkspace {
         System.err.printf("  user-home                        : %s%n", System.getProperty("user.home"));
         System.err.printf("  user-dir                         : %s%n", System.getProperty("user.dir"));
         System.err.printf("%n");
-        System.err.printf("If the problem persists you may want to get more debug info by adding '--debug --verbose' arguments.%n");
+        System.err.printf("If the problem persists you may want to get more debug info by adding '--verbose' arguments.%n");
         if (!options.isReset() && !options.isRecover()) {
             System.err.printf("You may also enable recover mode to ignore existing cache info with '--recover' argument.%n");
             System.err.printf("Here is the proper command : %n");
-            System.err.printf("  java -jar nuts.jar --debug  --verbose --recover [...]%n");
+            System.err.printf("  java -jar nuts.jar --verbose --recover [...]%n");
         } else if (!options.isReset() && options.isRecover()) {
             System.err.printf("You may also enable full reset mode to ignore existing configuration with '--reset' argument.%n");
             System.err.printf("ATTENTION: this will delete all your nuts configuration. Use it at your own risk.%n");

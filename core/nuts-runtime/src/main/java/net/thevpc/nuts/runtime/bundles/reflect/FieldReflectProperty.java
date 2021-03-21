@@ -25,32 +25,22 @@ package net.thevpc.nuts.runtime.bundles.reflect;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author vpc
  */
-public class FieldReflectProperty implements ReflectProperty {
+public class FieldReflectProperty extends AbstractReflectProperty {
 
     private Field field;
 
-    public FieldReflectProperty(Field field) {
+    public FieldReflectProperty(Field field, Object cleanInstance, ReflectType type,ReflectPropertyDefaultValueStrategy defaultValueStrategy) {
         this.field = field;
         field.setAccessible(true);
+        init(field.getName(),type, cleanInstance, field.getGenericType(),defaultValueStrategy);
     }
 
-    @Override
-    public String getName() {
-        return field.getName();
-    }
-    
 
-    @Override
-    public Class getPropertyType() {
-        return field.getType();
-    }
 
     @Override
     public boolean isRead() {
@@ -74,10 +64,10 @@ public class FieldReflectProperty implements ReflectProperty {
     @Override
     public void write(Object instance, Object value) {
         try {
-            field.set(instance,value);
+            field.set(instance, value);
         } catch (IllegalAccessException ex) {
             throw new IllegalArgumentException("illegal-access", ex);
         }
     }
-    
+
 }

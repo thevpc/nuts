@@ -1,4 +1,4 @@
-package net.thevpc.nuts.core.test.whitebox.utilities;
+package net.thevpc.nuts.core.test.bundles.parsers;
 
 import net.thevpc.nuts.runtime.bundles.parsers.StreamTokenizerExt;
 import org.junit.jupiter.api.Test;

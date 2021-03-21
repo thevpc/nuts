@@ -23,13 +23,34 @@
  */
 package net.thevpc.nuts.runtime.bundles.reflect;
 
-import java.lang.reflect.Type;
+import java.util.function.Function;
 
 /**
  *
  * @author vpc
  */
-public interface ReflectRepository {
-    ReflectType getType(Type clazz);
-    ReflectConfiguration getConfiguration();
+public interface ReflectConfigurationBuilder {
+
+    static ReflectConfigurationBuilder create() {
+        return new DefaultReflectConfigurationBuilder();
+    }
+
+    ReflectConfiguration build();
+
+    Function<Class, ReflectPropertyAccessStrategy> getPropertyAccessStrategy();
+
+    Function<Class, ReflectPropertyDefaultValueStrategy> getPropertyDefaultValueStrategy();
+
+    ReflectConfigurationBuilder setPropertyAccessStrategy(Function<Class, ReflectPropertyAccessStrategy> propertyAccessStrategy);
+
+    ReflectConfigurationBuilder setPropertyAccessStrategy(ReflectPropertyAccessStrategy propertyAccessStrategy);
+
+    ReflectConfigurationBuilder setPropertyDefaultValueStrategy(ReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy);
+    
+    ReflectConfigurationBuilder setPropertyDefaultValueStrategy(Function<Class, ReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy);
+
+    ReflectConfigurationBuilder unsetPropertyAccessStrategy();
+
+    ReflectConfigurationBuilder unsetPropertyDefaultValueStrategy();
+
 }

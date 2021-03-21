@@ -39,8 +39,9 @@ import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.bundles.reflect.DefaultReflectRepository;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectConfiguration;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectPropertyStrategy;
+import net.thevpc.nuts.runtime.bundles.reflect.ReflectConfigurationBuilder;
+import net.thevpc.nuts.runtime.bundles.reflect.ReflectPropertyAccessStrategy;
+import net.thevpc.nuts.runtime.bundles.reflect.ReflectPropertyDefaultValueStrategy;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectRepository;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsRepositoryAndFetchMode;
@@ -76,17 +77,14 @@ public class NutsWorkspaceUtils {
     }
 
     public ReflectRepository getReflectRepository() {
-        ReflectRepository r = (ReflectRepository) ws.env().getProperty(ReflectRepository.class.getName());
-        if (r == null) {
-            r = new DefaultReflectRepository(new ReflectConfiguration() {
-                @Override
-                public ReflectPropertyStrategy getReflectPropertyStrategy(Class clz) {
-                    return ReflectPropertyStrategy.FIELD;
-                }
-            });
-            ws.env().setProperty(ReflectRepository.class.getName(), r, new NutsUpdateOptions().setSession(ws.createSession()));
-        }
-        return r;
+        return ws.env().getOrCreateProperty(
+                ReflectRepository.class,
+                () -> new DefaultReflectRepository(ReflectConfigurationBuilder.create()
+                        .setPropertyAccessStrategy(ReflectPropertyAccessStrategy.FIELD)
+                        .setPropertyDefaultValueStrategy(ReflectPropertyDefaultValueStrategy.PROPERTY_DEFAULT)
+                        .build()),
+                new NutsUpdateOptions().setSession(ws.createSession())
+        );
     }
 
     public NutsId createSdkId(String type, String version) {

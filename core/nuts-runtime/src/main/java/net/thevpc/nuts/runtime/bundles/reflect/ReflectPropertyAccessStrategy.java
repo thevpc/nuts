@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.bundles.reflect;
  *
  * @author vpc
  */
-public enum ReflectPropertyStrategy {
+public enum ReflectPropertyAccessStrategy {
     FIELD,
     METHOD,
     BOTH,

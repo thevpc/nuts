@@ -21,15 +21,30 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.bundles.reflect;
+package net.thevpc.nuts.core.test.bundles.mvn;
 
-import java.lang.reflect.Type;
+import java.io.File;
+import net.thevpc.nuts.Nuts;
+import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.bundles.mvn.Pom;
+import net.thevpc.nuts.runtime.bundles.mvn.PomLogger;
+import net.thevpc.nuts.runtime.bundles.mvn.PomXmlParser;
 
 /**
  *
  * @author vpc
  */
-public interface ReflectRepository {
-    ReflectType getType(Type clazz);
-    ReflectConfiguration getConfiguration();
+public class TestPomXmlParser {
+    public static void main(String[] args) {
+        String path="/data/git/dbclient/modules/dbclient-plugins/tool/tool-neormf/pom.xml";
+        NutsWorkspace ws = Nuts.openWorkspace("-k","-y");
+        PomXmlParser p=new PomXmlParser(PomLogger.DEFAULT);
+        try {
+            Pom t = p.parse(new File(path), ws.createSession());
+            System.out.println(t);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
 }

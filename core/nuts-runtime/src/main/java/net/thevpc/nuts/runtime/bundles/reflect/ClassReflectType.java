@@ -23,7 +23,9 @@
  */
 package net.thevpc.nuts.runtime.bundles.reflect;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -35,6 +37,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,151 +57,198 @@ public class ClassReflectType implements ReflectType {
     private Map<String, ReflectProperty> all;
     private List<ReflectProperty> allList;
     private ReflectRepository repo;
-    private ReflectPropertyStrategy reflectPropertyStrategy;
+    private ReflectPropertyAccessStrategy propertyAccessStrategy;
+    private ReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy;
+    private Constructor noArgConstr;
 
-    public ClassReflectType(Type type, ReflectPropertyStrategy reflectPropertyStrategy, ReflectRepository repo) {
+    public ClassReflectType(Type type,
+            ReflectPropertyAccessStrategy propertyAccessStrategy,
+            ReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy,
+            ReflectRepository repo) {
         this.type = type;
         this.repo = repo;
-        this.reflectPropertyStrategy = reflectPropertyStrategy;
+        this.propertyAccessStrategy = propertyAccessStrategy;
+        this.propertyDefaultValueStrategy = propertyDefaultValueStrategy;
         clazz = ReflectUtils.getRawClass(type);
+    }
+
+    public ReflectPropertyDefaultValueStrategy getDefaultValueStrategy() {
+        return propertyDefaultValueStrategy;
+    }
+
+    public ReflectPropertyAccessStrategy getAccessStrategy() {
+        return propertyAccessStrategy;
+    }
+
+    @Override
+    public Object newInstance() {
+        try {
+            if (noArgConstr == null) {
+                noArgConstr = clazz.getConstructor();
+                noArgConstr.setAccessible(true);
+            }
+        } catch (NoSuchMethodException ex) {
+            throw new IllegalArgumentException("Unable to resolve default constructore for " + clazz, ex);
+        } catch (SecurityException ex) {
+            throw new IllegalArgumentException("Not allowed to access default constructore for " + clazz, ex);
+        }
+        try {
+            return noArgConstr.newInstance();
+        } catch (InstantiationException | InvocationTargetException ex) {
+            Throwable c = ex.getCause();
+            if (c instanceof RuntimeException) {
+                throw (RuntimeException) c;
+            }
+            throw new IllegalArgumentException(c);
+        } catch (IllegalAccessException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     private void build() {
         if (direct == null) {
+            final Object cleanInstance = newInstance();
             LinkedHashMap<String, ReflectProperty> declaredProperties = new LinkedHashMap<>();
             LinkedHashMap<String, ReflectProperty> fieldAllProperties = new LinkedHashMap<>();
             Set<String> ambiguousWrites = new HashSet<>();
-            if (reflectPropertyStrategy == ReflectPropertyStrategy.METHOD || reflectPropertyStrategy == ReflectPropertyStrategy.BOTH) {
-                LinkedHashMap<String, Method> methodGetters = new LinkedHashMap<>();
-                LinkedHashMap<String, List<Method>> methodSetters = new LinkedHashMap<>();
-                for (Method m : clazz.getDeclaredMethods()) {
-                    if (!m.isSynthetic() && !Modifier.isAbstract(m.getModifiers()) && !Modifier.isStatic(m.getModifiers())) {
-                        String name = m.getName();
-                        Matcher matcher = GETTER_SETTER.matcher(name);
-                        if (matcher.find()) {
-                            char[] n2c = matcher.group("suffix").toCharArray();
-                            n2c[0] = Character.toLowerCase(n2c[0]);
-                            String n2 = new String(n2c);
-                            switch (matcher.group("prefix")) {
-                                case "get": {
-                                    if (m.getParameterCount() == 0
-                                            && !m.getReturnType().equals(Void.TYPE)) {
-                                        if(!name.equals("getClass")){
-                                            methodGetters.put(n2, m);
-                                        }
-                                    }
-                                    break;
-                                }
-                                case "is": {
-                                    if (m.getParameterCount() == 0
-                                            && (m.getReturnType().equals(Boolean.TYPE)
-                                            || m.getReturnType().equals(Boolean.class))) {
-                                        methodGetters.put(n2, m);
-                                    }
-                                    break;
-                                }
-                                case "set": {
-                                    if (m.getParameterCount() == 1) {
-                                        List<Method> li = methodSetters.get(n2);
-                                        if (li == null) {
-                                            li = new ArrayList<>();
-                                            methodSetters.put(n2, li);
-                                        }
-                                        li.add(m);
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                for (Iterator<Map.Entry<String, Method>> it = methodGetters.entrySet().iterator(); it.hasNext();) {
-                    Map.Entry<String, Method> entry = it.next();
-                    String propName = entry.getKey();
-                    if (!declaredProperties.containsKey(propName)) {
-                        Method readMethod = entry.getValue();
-                        Method writeMethod = null;
-                        Field writeField = null;
-                        List<Method> possibleSetters = methodSetters.get(propName);
-                        if (possibleSetters != null) {
-                            for (Method posibleSetter : possibleSetters) {
-                                Class ps = posibleSetter.getParameterTypes()[0];
-                                if (ps.equals(readMethod.getReturnType())) {
-                                    writeMethod = posibleSetter;
-                                    methodSetters.remove(propName);
-                                    break;
-                                }
-                            }
-                        }
-                        if (writeMethod == null) {
-                            if (reflectPropertyStrategy == ReflectPropertyStrategy.BOTH) {
-                                for (Field f : clazz.getDeclaredFields()) {
-                                    if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isTransient(f.getModifiers())) {
-                                        if (!declaredProperties.containsKey(f.getName())) {
-                                            if (!Modifier.isStatic(f.getModifiers())
-                                                    && !Modifier.isFinal(f.getModifiers())
-                                                    && f.getType().equals(readMethod.getReturnType())) {
-                                                writeField = f;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if (writeMethod != null) {
-                            declaredProperties.put(propName, new MethodReflectProperty1(propName, readMethod, writeMethod));
-                        } else if (writeField != null) {
-                            declaredProperties.put(propName, new MethodReflectProperty2(propName, readMethod, writeField));
-                        } else {
-                            declaredProperties.put(propName, new MethodReflectProperty1(propName, readMethod, null));
-                        }
-                    }
-                }
-                for (Map.Entry<String, List<Method>> entry2 : methodSetters.entrySet()) {
-                    String propName = entry2.getKey();
-                    if (entry2.getValue().size() == 1) {
-                        Method writeMethod = entry2.getValue().get(0);
-                        if (!declaredProperties.containsKey(propName)) {
-                            Field readField = null;
-                            try {
-                                readField = clazz.getDeclaredField(propName);
-                            } catch (Exception ex) {
-                                //
-                            }
-                            if (readField != null && !Modifier.isStatic(readField.getModifiers()) && readField.getType().equals(writeMethod.getParameterTypes()[0])) {
-                                declaredProperties.put(propName, new MethodReflectProperty3(propName, readField, writeMethod));
-                            }
-                        }
-                    } else if (entry2.getValue().size() > 0) {
-                        ambiguousWrites.add(propName);
-                    }
-                }
-
-            }
-            if (reflectPropertyStrategy == ReflectPropertyStrategy.FIELD || reflectPropertyStrategy == ReflectPropertyStrategy.BOTH) {
-                for (Field f : clazz.getDeclaredFields()) {
-                    if (!declaredProperties.containsKey(f.getName())) {
-                        if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isTransient(f.getModifiers())) {
-                            FieldReflectProperty p = new FieldReflectProperty(f);
-                            declaredProperties.put(p.getName(), p);
-                        }
-                    }
-                }
-            }
+            fillFields(clazz, declaredProperties, cleanInstance, ambiguousWrites, propertyAccessStrategy, propertyDefaultValueStrategy);
             fieldAllProperties.putAll(declaredProperties);
-            if (clazz.getSuperclass() != null) {
-                ReflectType t = repo.get(clazz.getSuperclass());
-                for (ReflectProperty p2 : t.getProperties()) {
-                    if (!fieldAllProperties.containsKey(p2.getName())) {
-                        fieldAllProperties.put(p2.getName(), p2);
-                    }
-                }
+            Class parent = clazz.getSuperclass();
+            while (parent != null) {
+                //must reeavliuate for parent classes
+                ReflectPropertyAccessStrategy _propertyAccessStrategy = repo.getConfiguration().getAccessStrategy(parent);
+                ReflectPropertyDefaultValueStrategy _propertyDefaultValueStrategy = repo.getConfiguration().getDefaultValueStrategy(parent);
+                fillFields(clazz, fieldAllProperties, cleanInstance, ambiguousWrites, _propertyAccessStrategy, _propertyDefaultValueStrategy);
+                parent = parent.getSuperclass();
             }
             this.direct = declaredProperties;
             this.all = fieldAllProperties;
             this.directList = Collections.unmodifiableList(new ArrayList<>(direct.values()));
             this.allList = Collections.unmodifiableList(new ArrayList<>(all.values()));
 
+        }
+    }
+
+    private void fillFields(Class clazz, LinkedHashMap<String, ReflectProperty> declaredProperties, Object cleanInstance, Set<String> ambiguousWrites,
+            ReflectPropertyAccessStrategy propertyAccessStrategy,
+            ReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy
+    ) {
+        if (propertyAccessStrategy == ReflectPropertyAccessStrategy.METHOD || propertyAccessStrategy == ReflectPropertyAccessStrategy.BOTH) {
+            LinkedHashMap<String, Method> methodGetters = new LinkedHashMap<>();
+            LinkedHashMap<String, List<Method>> methodSetters = new LinkedHashMap<>();
+            for (Method m : clazz.getDeclaredMethods()) {
+                if (!m.isSynthetic() && !Modifier.isAbstract(m.getModifiers()) && !Modifier.isStatic(m.getModifiers())) {
+                    String name = m.getName();
+                    Matcher matcher = GETTER_SETTER.matcher(name);
+                    if (matcher.find()) {
+                        char[] n2c = matcher.group("suffix").toCharArray();
+                        n2c[0] = Character.toLowerCase(n2c[0]);
+                        String n2 = new String(n2c);
+                        switch (matcher.group("prefix")) {
+                            case "get": {
+                                if (m.getParameterCount() == 0
+                                        && !m.getReturnType().equals(Void.TYPE)) {
+                                    if (!name.equals("getClass")) {
+                                        methodGetters.put(n2, m);
+                                    }
+                                }
+                                break;
+                            }
+                            case "is": {
+                                if (m.getParameterCount() == 0
+                                        && (m.getReturnType().equals(Boolean.TYPE)
+                                        || m.getReturnType().equals(Boolean.class))) {
+                                    methodGetters.put(n2, m);
+                                }
+                                break;
+                            }
+                            case "set": {
+                                if (m.getParameterCount() == 1) {
+                                    List<Method> li = methodSetters.get(n2);
+                                    if (li == null) {
+                                        li = new ArrayList<>();
+                                        methodSetters.put(n2, li);
+                                    }
+                                    li.add(m);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            for (Iterator<Map.Entry<String, Method>> it = methodGetters.entrySet().iterator(); it.hasNext();) {
+                Map.Entry<String, Method> entry = it.next();
+                String propName = entry.getKey();
+                if (!declaredProperties.containsKey(propName)) {
+                    Method readMethod = entry.getValue();
+                    Method writeMethod = null;
+                    Field writeField = null;
+                    List<Method> possibleSetters = methodSetters.get(propName);
+                    if (possibleSetters != null) {
+                        for (Method posibleSetter : possibleSetters) {
+                            Class ps = posibleSetter.getParameterTypes()[0];
+                            if (ps.equals(readMethod.getReturnType())) {
+                                writeMethod = posibleSetter;
+                                methodSetters.remove(propName);
+                                break;
+                            }
+                        }
+                    }
+                    if (writeMethod == null) {
+                        if (propertyAccessStrategy == ReflectPropertyAccessStrategy.BOTH) {
+                            for (Field f : clazz.getDeclaredFields()) {
+                                if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isTransient(f.getModifiers())) {
+                                    if (!declaredProperties.containsKey(f.getName())) {
+                                        if (!Modifier.isStatic(f.getModifiers())
+                                                && !Modifier.isFinal(f.getModifiers())
+                                                && f.getType().equals(readMethod.getReturnType())) {
+                                            writeField = f;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (writeMethod != null) {
+                        declaredProperties.put(propName, new MethodReflectProperty1(propName, readMethod, writeMethod, cleanInstance,this,propertyDefaultValueStrategy));
+                    } else if (writeField != null) {
+                        declaredProperties.put(propName, new MethodReflectProperty2(propName, readMethod, writeField, cleanInstance,this,propertyDefaultValueStrategy));
+                    } else {
+                        declaredProperties.put(propName, new MethodReflectProperty1(propName, readMethod, null, cleanInstance,this,propertyDefaultValueStrategy));
+                    }
+                }
+            }
+            for (Map.Entry<String, List<Method>> entry2 : methodSetters.entrySet()) {
+                String propName = entry2.getKey();
+                if (entry2.getValue().size() == 1) {
+                    Method writeMethod = entry2.getValue().get(0);
+                    if (!declaredProperties.containsKey(propName)) {
+                        Field readField = null;
+                        try {
+                            readField = clazz.getDeclaredField(propName);
+                        } catch (Exception ex) {
+                            //
+                        }
+                        if (readField != null && !Modifier.isStatic(readField.getModifiers()) && readField.getType().equals(writeMethod.getParameterTypes()[0])) {
+                            declaredProperties.put(propName, new MethodReflectProperty3(propName, readField, writeMethod, cleanInstance,this,propertyDefaultValueStrategy));
+                        }
+                    }
+                } else if (entry2.getValue().size() > 0) {
+                    ambiguousWrites.add(propName);
+                }
+            }
+
+        }
+        if (propertyAccessStrategy == ReflectPropertyAccessStrategy.FIELD || propertyAccessStrategy == ReflectPropertyAccessStrategy.BOTH) {
+            for (Field f : clazz.getDeclaredFields()) {
+                if (!declaredProperties.containsKey(f.getName())) {
+                    if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isTransient(f.getModifiers())) {
+                        FieldReflectProperty p = new FieldReflectProperty(f, cleanInstance,this,propertyDefaultValueStrategy);
+                        declaredProperties.put(p.getName(), p);
+                    }
+                }
+            }
         }
     }
 

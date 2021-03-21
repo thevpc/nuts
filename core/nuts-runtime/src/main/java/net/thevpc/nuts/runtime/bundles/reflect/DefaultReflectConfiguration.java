@@ -23,58 +23,38 @@
  */
 package net.thevpc.nuts.runtime.bundles.reflect;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.function.Function;
 
 /**
  *
  * @author vpc
  */
-public class MethodReflectProperty3 extends AbstractReflectProperty {
+public class DefaultReflectConfiguration implements ReflectConfiguration {
 
-    private Field read;
-    private Method write;
+    private Function<Class, ReflectPropertyAccessStrategy> propertyAccessStrategy;
+    private Function<Class, ReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy;
 
-    public MethodReflectProperty3(String name,Field read, Method write, Object cleanInstance, ReflectType type,ReflectPropertyDefaultValueStrategy defaultValueStrategy) {
-        this.read = read;
-        this.read.setAccessible(true);
-        if (write != null) {
-            this.write = write;
-            this.write.setAccessible(true);
+    public DefaultReflectConfiguration(Function<Class, ReflectPropertyAccessStrategy> propertyAccessStrategy, Function<Class, ReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy) {
+        this.propertyAccessStrategy = propertyAccessStrategy;
+        this.propertyDefaultValueStrategy = propertyDefaultValueStrategy;
+    }
+
+    @Override
+    public ReflectPropertyAccessStrategy getAccessStrategy(Class clz) {
+        if (propertyAccessStrategy == null) {
+            return ReflectPropertyAccessStrategy.FIELD;
         }
-        init(name,type, cleanInstance, read.getGenericType(),defaultValueStrategy);
-    }
-
-
-    @Override
-    public boolean isRead() {
-        return true;
+        ReflectPropertyAccessStrategy v = propertyAccessStrategy.apply(clz);
+        return v != null ? v : ReflectPropertyAccessStrategy.FIELD;
     }
 
     @Override
-    public boolean isWrite() {
-        return write != null;
-    }
-
-    @Override
-    public Object read(Object instance) {
-        try {
-            return read.get(instance);
-        } catch (IllegalAccessException ex) {
-            throw new IllegalArgumentException("illegal-access", ex);
+    public ReflectPropertyDefaultValueStrategy getDefaultValueStrategy(Class clz) {
+        if (propertyAccessStrategy == null) {
+            return ReflectPropertyDefaultValueStrategy.TYPE_DEFAULT;
         }
-    }
-
-    @Override
-    public void write(Object instance, Object value) {
-        try {
-            write.invoke(instance, value);
-        } catch (IllegalAccessException ex) {
-            throw new IllegalArgumentException("illegal-access", ex);
-        } catch (InvocationTargetException ex) {
-            throw new IllegalArgumentException("illegal-invocation", ex);
-        }
+        ReflectPropertyDefaultValueStrategy v = propertyDefaultValueStrategy.apply(clz);
+        return v != null ? v : ReflectPropertyDefaultValueStrategy.PROPERTY_DEFAULT;
     }
 
 }

@@ -37,11 +37,16 @@ public class DefaultReflectRepository implements ReflectRepository {
     private final ReflectConfiguration configuration;
 
     public DefaultReflectRepository(ReflectConfiguration configurer) {
-        this.configuration = configurer;
+        this.configuration = configurer == null ? ReflectConfigurationBuilder.create().build() : configurer;
     }
 
     @Override
-    public ReflectType get(Type clz) {
+    public ReflectConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    @Override
+    public ReflectType getType(Type clz) {
         ReflectType v = beans.get(clz);
         if (v == null) {
             v = create(clz);
@@ -51,9 +56,9 @@ public class DefaultReflectRepository implements ReflectRepository {
     }
 
     private ReflectType create(Type clz) {
-        ReflectPropertyStrategy s = configuration == null ? ReflectPropertyStrategy.FIELD : configuration.getReflectPropertyStrategy(
-                ReflectUtils.getRawClass(clz)
-        );
-        return new ClassReflectType(clz, s, this);
+        Class raw = ReflectUtils.getRawClass(clz);
+        ReflectPropertyAccessStrategy a = configuration.getAccessStrategy(raw);
+        ReflectPropertyDefaultValueStrategy d = configuration.getDefaultValueStrategy(raw);
+        return new ClassReflectType(clz, a, d, this);
     }
 }

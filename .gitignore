@@ -3,6 +3,8 @@
 /core/nuts-runtime/nbproject/
 /core/nuts-runtime/nuts-runtime.iml
 /core/nuts-runtime/target/
+/core/nuts-runtime/.test-db
+/core/nuts-runtime/.test-db-pef
 /core/nuts/nbproject/
 /core/nuts/nuts.iml
 /core/nuts/target/

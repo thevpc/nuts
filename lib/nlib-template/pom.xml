@@ -6,7 +6,7 @@
     <artifactId>nlib-template</artifactId>
     <version>0.8.1.0</version>
     <packaging>jar</packaging>
-    <name>net.thevpc.nuts.nlib-template</name>
+    <name>net.thevpc.nuts.lib.nlib-template</name>
     <url>https://github.com/thevpc/nuts</url>
     <description>Nuts Project Templating Library</description>
     <scm>
@@ -61,7 +61,7 @@
         <dependency>
             <groupId>net.thevpc.common</groupId>
             <artifactId>thevpc-common-strings</artifactId>
-            <version>1.2.18</version>
+            <version>1.2.19</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.common</groupId>

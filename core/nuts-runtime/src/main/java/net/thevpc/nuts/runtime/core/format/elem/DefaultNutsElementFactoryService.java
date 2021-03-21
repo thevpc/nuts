@@ -29,7 +29,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.xml.NutsElementFactoryXmlDocument;
 import net.thevpc.nuts.runtime.core.format.xml.NutsElementFactoryXmlElement;
 import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -50,10 +49,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.bundles.collections.ClassMap;
-import net.thevpc.nuts.runtime.bundles.reflect.DefaultReflectRepository;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectConfiguration;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectProperty;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectPropertyStrategy;
+import net.thevpc.nuts.runtime.bundles.reflect.ReflectPropertyDefaultValueStrategy;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectRepository;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectType;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectUtils;
@@ -63,6 +60,7 @@ import net.thevpc.nuts.runtime.core.model.DefaultNutsDependencyBuilder;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsClassifierMapping;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsIdLocationBuilder;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  *
@@ -92,6 +90,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static final NutsElementFactory F_NUTS_VERSION = new NutsElementFactoryNutsVersion();
     private static final NutsElementFactory F_NUTS_DESCRIPTOR = new NutsElementFactoryNutsDescriptor();
     private static final NutsElementFactory F_NUTS_DEPENDENCY = new NutsElementFactoryNutsDependency();
+    private static final NutsElementFactory F_NUTS_SDK_LOCATION = new NutsElementFactoryNutsSdkLocation();
     private static final NutsElementFactory F_NUTS_ID_LOCATION = new NutsElementFactoryNutsIdLocation();
     private static final NutsElementFactory F_NUTS_CLASSIFIER_MAPPING = new NutsElementFactoryNutsClassifierMapping();
     private static final NutsElementFactory F_ARTIFACT_CALL = new NutsElementFactoryNutsArtifactCall();
@@ -99,16 +98,12 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     private final ClassMap<NutsElementFactory> defaultFactories = new ClassMap<>(null, NutsElementFactory.class);
     private final ClassMap<NutsElementFactory> factories = new ClassMap<>(null, NutsElementFactory.class);
-    private final ReflectRepository typesRepository = new DefaultReflectRepository(new ReflectConfiguration() {
-        @Override
-        public ReflectPropertyStrategy getReflectPropertyStrategy(Class clz) {
-            return ReflectPropertyStrategy.BOTH;
-        }
-    });
+    private ReflectRepository typesRepository;
     private final NutsWorkspace ws;
     private final NutsElementFactory F_OBJ = new NutsElemenSerializationAdapterObjReflect();
 
     public DefaultNutsElementFactoryService(NutsWorkspace ws) {
+        typesRepository = NutsWorkspaceUtils.of(ws).getReflectRepository();
         addDefaultFactory(Object.class, F_OBJ);
         addDefaultFactory(String.class, F_STRINGS);
         addDefaultFactory(Boolean.class, F_BOOLEANS);
@@ -151,7 +146,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         addCustomFactory(NutsIdLocation.class, F_NUTS_ID_LOCATION);
         addCustomFactory(NutsClassifierMapping.class, F_NUTS_CLASSIFIER_MAPPING);
         addCustomFactory(NutsArtifactCall.class, F_ARTIFACT_CALL);
-
+        addCustomFactory(NutsSdkLocation.class, F_NUTS_SDK_LOCATION);
         this.ws = ws;
     }
 
@@ -280,14 +275,14 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                     NutsElement v = kv.getValue();
                     all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
                 }
-            }else if(o.type() == NutsElementType.ARRAY){
+            } else if (o.type() == NutsElementType.ARRAY) {
                 for (NutsElement ee : o.array().children()) {
                     NutsObjectElement kv = ee.object();
                     NutsElement k = kv.get("key");
                     NutsElement v = kv.get("value");
                     all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
                 }
-            }else{
+            } else {
                 throw new IllegalArgumentException("unsupported");
             }
 
@@ -372,14 +367,10 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public Collection createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
-            Class cls = null;
+            Class cls = ReflectUtils.getRawClass(to);
             Type elemType = Object.class;
             if (to instanceof ParameterizedType) {
                 ParameterizedType pt = (ParameterizedType) to;
-                Type rawType = pt.getRawType();
-                if (rawType instanceof Class) {
-                    cls = (Class) rawType;
-                }
                 elemType = pt.getActualTypeArguments()[0];
             }
             if (cls == null) {
@@ -628,10 +619,10 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsArtifactCall createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             NutsObjectElement object = o.object();
-            NutsId id=(NutsId)context.elementToObject(object.get("id"), NutsId.class);
-            String[] arguments=(String[])context.elementToObject(object.get("arguments"), String[].class);
-            Map<String, String> properties=(Map<String, String>)context.elementToObject(object.get("properties"), ReflectUtils.createParametrizedType(Map.class, String.class,String.class));
-            
+            NutsId id = (NutsId) context.elementToObject(object.get("id"), NutsId.class);
+            String[] arguments = (String[]) context.elementToObject(object.get("arguments"), String[].class);
+            Map<String, String> properties = (Map<String, String>) context.elementToObject(object.get("properties"), ReflectUtils.createParametrizedType(Map.class, String.class, String.class));
+
             return new DefaultNutsArtifactCall(id, arguments, properties);
         }
     }
@@ -706,6 +697,28 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     }
 
+    private static class NutsElementFactoryNutsSdkLocation implements NutsElementFactory<NutsSdkLocation> {
+
+        @Override
+        public NutsElement createElement(NutsSdkLocation o, Type typeOfSrc, NutsElementFactoryContext context) {
+            return context.defaultObjectToElement(o, null);
+        }
+
+        @Override
+        public NutsSdkLocation createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
+            NutsObjectElement obj = o.object();
+            NutsId id = (NutsId) context.elementToObject(obj.get("id"), NutsId.class);
+            String product = (String) context.elementToObject(obj.get("product"), String.class);
+            String name = (String) context.elementToObject(obj.get("name"), String.class);
+            String path = (String) context.elementToObject(obj.get("path"), String.class);
+            String version = (String) context.elementToObject(obj.get("version"), String.class);
+            String packaging = (String) context.elementToObject(obj.get("packaging"), String.class);
+            Integer priority = (Integer) context.elementToObject(obj.get("priority"), int.class);
+            return new NutsSdkLocation(id, product, name, path, version, packaging, priority == null ? 0 : priority);
+        }
+
+    }
+
     private static class NutsElementFactoryNutsDependency implements NutsElementFactory<NutsDependency> {
 
         @Override
@@ -716,8 +729,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsDependency createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            DefaultNutsDependencyBuilder builder = (DefaultNutsDependencyBuilder) 
-                    context.defaultElementToObject(o, DefaultNutsDependencyBuilder.class);
+            DefaultNutsDependencyBuilder builder = (DefaultNutsDependencyBuilder) context.defaultElementToObject(o, DefaultNutsDependencyBuilder.class);
             return context.getWorkspace().dependency().builder().set(builder).build();
         }
 
@@ -743,10 +755,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement createElement(Object src, Type typeOfSrc, NutsElementFactoryContext context) {
-            ReflectType m = typesRepository.get(typeOfSrc);
+            ReflectType m = typesRepository.getType(typeOfSrc);
             NutsObjectElementBuilder obj = context.elements().forObject();
             for (ReflectProperty property : m.getProperties()) {
-                obj.set(property.getName(), context.objectToElement(property.read(src), null));
+                final Object v = property.read(src);
+                if (!property.isDefaultValue(v)) {
+                    obj.set(property.getName(), context.objectToElement(v, null));
+                }
             }
             return obj.build();
         }
@@ -758,20 +773,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             if (Modifier.isAbstract(mod)) {
                 throw new IllegalArgumentException("cannot instantate abstract class " + typeOfResult);
             }
-            Constructor cc = null;
-            try {
-                cc = c.getConstructor();
-                cc.setAccessible(true);
-            } catch (Exception ex) {
-                throw new IllegalArgumentException("no default constructor for " + typeOfResult);
-            }
-            Object instance = null;
-            try {
-                instance = cc.newInstance();
-            } catch (Exception ex) {
-                throw new IllegalArgumentException("cannot instantiate " + typeOfResult);
-            }
-            ReflectType m = typesRepository.get(typeOfResult);
+            ReflectType m = typesRepository.getType(typeOfResult);
+            Object instance = m.newInstance();
             NutsObjectElement eobj = o.object();
             for (ReflectProperty property : m.getProperties()) {
                 if (property.isWrite()) {

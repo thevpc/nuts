@@ -29,5 +29,7 @@ package net.thevpc.nuts.runtime.bundles.reflect;
  */
 public interface ReflectConfiguration {
 
-    ReflectPropertyStrategy getReflectPropertyStrategy(Class clz);
+    ReflectPropertyAccessStrategy getAccessStrategy(Class clz);
+
+    ReflectPropertyDefaultValueStrategy getDefaultValueStrategy(Class clz);
 }

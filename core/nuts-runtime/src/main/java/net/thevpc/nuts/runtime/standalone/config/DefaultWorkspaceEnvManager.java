@@ -13,6 +13,7 @@ import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Supplier;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 public class DefaultWorkspaceEnvManager implements NutsWorkspaceEnvManager {
@@ -316,6 +317,23 @@ public class DefaultWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     public Object getProperty(String property) {
         return getProperty(property, null);
     }
+
+    @Override
+    public <T> T getOrCreateProperty(Class<T> property, Supplier<T> supplier,NutsUpdateOptions options) {
+        return getOrCreateProperty(property.getName(), supplier, options);
+    }
+    
+    @Override
+    public <T> T getOrCreateProperty(String property, Supplier<T> supplier,NutsUpdateOptions options) {
+        T o = (T)getProperty(property);
+        if(o!=null){
+            return o;
+        }
+        o=supplier.get();
+        setProperty(property, o, options);
+        return o;
+    }
+    
 
     @Override
     public NutsWorkspaceEnvManager setProperty(String property, Object value, NutsUpdateOptions options) {

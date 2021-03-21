@@ -21,10 +21,8 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.core.test.whitebox.utilities;
+package net.thevpc.nuts.core.test.bundles.ntf;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.thevpc.nuts.runtime.standalone.util.console.CProgressBar;
 import org.junit.jupiter.api.Test;
 
@@ -61,12 +59,7 @@ public class TestCProgressBar {
             }
             for (int i = 0; i < 12; i++) {
                 int finalI = i;
-                rr.setIndeterminatePosition(new CProgressBar.IndeterminatePosition() {
-                    @Override
-                    public int evalIndeterminatePos(CProgressBar bar, int size) {
-                        return finalI % size;
-                    }
-                });
+                rr.setIndeterminatePosition((CProgressBar bar, int size) -> finalI % size);
                 System.out.printf("%2d ::" + rr.progress(-1) + "\n", i);
 //                try {
 //                    Thread.sleep(1000);

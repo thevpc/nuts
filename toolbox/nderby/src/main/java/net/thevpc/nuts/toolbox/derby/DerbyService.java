@@ -25,11 +25,11 @@
 */
 package net.thevpc.nuts.toolbox.derby;
 
-import net.thevpc.common.io.IOUtils;
 import net.thevpc.nuts.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -209,8 +209,8 @@ public class DerbyService {
         Path derbytools = download("org.apache.derby:derbytools#" + currentDerbyVersion, derbyLibHome, false);
         Path policy = derbyBinHome.resolve("derby.policy");
         if (!Files.exists(policy) || appContext.getSession().isYes()) {
-            try {
-                String permissions = IOUtils.loadString(NDerbyMain.class.getResourceAsStream("policy-file.policy"))
+            try (InputStream is=NDerbyMain.class.getResourceAsStream("policy-file.policy")){
+                String permissions = new String(DerbyUtils.loadByteArray(is))
                         .replace("${{DB_PATH}}", derbyDataHomeRoot.toString());
                 Files.write(policy, permissions.getBytes());
             } catch (IOException ex) {

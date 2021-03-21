@@ -1,4 +1,4 @@
-package net.thevpc.nuts.core.test.whitebox;
+package net.thevpc.nuts.core.test.bundles.nanodb;
 
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.bundles.nanodb.NanoDB;

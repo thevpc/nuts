@@ -31,30 +31,19 @@ import java.lang.reflect.Method;
  *
  * @author vpc
  */
-public class MethodReflectProperty2 implements ReflectProperty {
+public class MethodReflectProperty2 extends AbstractReflectProperty {
 
-    private String name;
     private Method read;
     private Field write;
 
-    public MethodReflectProperty2(String name,Method read, Field write) {
-        this.name = name;
+    public MethodReflectProperty2(String name,Method read, Field write,Object cleanInstance,ReflectType type,ReflectPropertyDefaultValueStrategy defaultValueStrategy) {
         this.read = read;
         this.read.setAccessible(true);
         if (write != null) {
             this.write = write;
             this.write.setAccessible(true);
         }
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Class getPropertyType() {
-        return read.getReturnType();
+        init(name,type, cleanInstance, read.getGenericReturnType(),defaultValueStrategy);
     }
 
     @Override

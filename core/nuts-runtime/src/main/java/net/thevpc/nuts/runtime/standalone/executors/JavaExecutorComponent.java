@@ -433,7 +433,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             if (isNutsApp) {
                 //NutsWorkspace
                 NutsApplications.getSharedMap().put("nuts.embedded.application.id", id);
-                mainMethod.invoke(nutsApp, new Object[]{getSession(), joptions.getApp().toArray(new String[0])});
+                mainMethod.invoke(nutsApp, new Object[]{getSession().copy(), joptions.getApp().toArray(new String[0])});
             } else {
                 //NutsWorkspace
                 System.setProperty("nuts.boot.args", getSession().getWorkspace().config().options()

@@ -1,4 +1,4 @@
-package net.thevpc.nuts.core.test.whitebox.utilities;
+package net.thevpc.nuts.core.test.bundles.parsers;
 
 import net.thevpc.nuts.runtime.standalone.repos.WebHtmlListParser;
 import org.junit.jupiter.api.Assertions;

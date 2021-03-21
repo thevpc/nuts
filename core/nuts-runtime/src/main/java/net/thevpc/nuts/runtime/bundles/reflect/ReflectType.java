@@ -31,10 +31,16 @@ import java.util.List;
  */
 public interface ReflectType {
 
+    ReflectPropertyAccessStrategy getAccessStrategy();
+    
+    ReflectPropertyDefaultValueStrategy getDefaultValueStrategy();
+    
     List<ReflectProperty> getDeclaredProperties();
 
     String getName();
 
     List<ReflectProperty> getProperties();
+
+    Object newInstance();
     
 }

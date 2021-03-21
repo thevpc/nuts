@@ -33,13 +33,41 @@ public interface ReflectProperty {
 
     String getName();
     
+    ReflectPropertyDefaultValueStrategy getDefaultValueStrategy();
+    
     Type getPropertyType();
     
     boolean isRead();
 
     boolean isWrite();
+    
+    /**
+     * equivalent to {@code isDefaultValue(value,null)}
+     * @param value to check
+     * @return true when the given value is the default value
+     */
+    boolean isDefaultValue(Object value);
+    
+    /**
+     * true when the given value is the default value according to the given strategy.
+     * When the strategy is null, the default property strategy is considered
+     * <ul>
+     * <li> null: consider {@code getDefaultValueStrategy()}</li>
+     * <li> NO_DEFAULT: always return false</li>
+     * <li>TYPE_DEFAULT: return true when the value is the default of the property's type (ex: 0 for int)</li>
+     * <li>PROPERTY_DEFAULT: return true when the value is the default of the instance (the value of 'read' on a clean object) (ex: {@code int x=3; // 3 is the default<code>})</li>
+     * </ul>
+     * 
+     * @param value to check
+     * @param strategy default strategy
+     * @return true when the given value is the default value for the property itself
+     */
+    boolean isDefaultValue(Object value,ReflectPropertyDefaultValueStrategy strategy);
 
     Object read(Object instance);
 
     void write(Object instance, Object value);
+
+    ReflectType getType();
+
 }

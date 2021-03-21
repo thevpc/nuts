@@ -58,8 +58,7 @@
         <dependency>
             <groupId>net.thevpc.common</groupId>
             <artifactId>thevpc-common-strings</artifactId>
-            <version>1.2.18</version>
-            <scope>compile</scope>
+            <version>1.2.19</version>
         </dependency>
     </dependencies>
 

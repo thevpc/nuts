@@ -29,7 +29,6 @@ package net.thevpc.nuts.runtime.core.model;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 import java.util.*;
@@ -44,7 +43,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     private NutsId id;
     //    private String alternative;
-    private NutsId[] parents;
+    private NutsId[] parents=new NutsId[0]; //defaults to empty;
     private String packaging;
     //    private String ext;
     private boolean executable;
@@ -59,15 +58,15 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
      * some longer (but not too long) description
      */
     private String description;
-    private List<String> arch;
-    private List<String> os;
-    private List<String> osdist;
-    private List<String> platform;
-    private List<NutsIdLocation> locations;
-    private List<NutsClassifierMapping> classifierMappings;
-    private List<NutsDependency> dependencies;
-    private List<NutsDependency> standardDependencies;
-    private Map<String, String> properties;
+    private List<String> arch=new ArrayList<>(); //defaults to empty
+    private List<String> os=new ArrayList<>(); //defaults to empty;
+    private List<String> osdist=new ArrayList<>(); //defaults to empty;
+    private List<String> platform=new ArrayList<>(); //defaults to empty;
+    private List<NutsIdLocation> locations=new ArrayList<>(); //defaults to empty;
+    private List<NutsClassifierMapping> classifierMappings=new ArrayList<>(); //defaults to empty;
+    private List<NutsDependency> dependencies=new ArrayList<>(); //defaults to empty;
+    private List<NutsDependency> standardDependencies=new ArrayList<>(); //defaults to empty;
+    private Map<String, String> properties=new HashMap<>(); //defaults to empty;
     private transient NutsWorkspace ws;
 
     public DefaultNutsDescriptorBuilder() {

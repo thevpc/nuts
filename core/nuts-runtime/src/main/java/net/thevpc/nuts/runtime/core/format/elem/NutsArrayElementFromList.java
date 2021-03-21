@@ -42,7 +42,6 @@ public class NutsArrayElementFromList extends AbstractNutsArrayElement {
     public NutsArrayElementFromList(List<Object> values, NutsElementFactoryContext context) {
         this.context = context;
         this.values = values;
-        
     }
 
     @Override

@@ -32,6 +32,78 @@ import java.lang.reflect.Type;
  */
 public class ReflectUtils {
 
+    public static boolean isDefaultValue(Type type, Object value) {
+        if (value == null) {
+            return true;
+        }
+        if (type instanceof Class) {
+            Class c = (Class) type;
+            if (c.isPrimitive()) {
+                switch (c.getName()) {
+                    case "booleans": {
+                        return value.equals(false);
+                    }
+                    case "byte": {
+                        return value.equals((byte)0);
+                    }
+                    case "char": {
+                        return value.equals((char)0);
+                    }
+                    case "short": {
+                        return value.equals((short)0);
+                    }
+                    case "int": {
+                        return value.equals(0);
+                    }
+                    case "long": {
+                        return value.equals(0L);
+                    }
+                    case "float": {
+                        return value.equals(0.0f);
+                    }
+                    case "double": {
+                        return value.equals(0.0);
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public static Object getDefaultValue(Type type) {
+        if (type instanceof Class) {
+            Class c = (Class) type;
+            if (c.isPrimitive()) {
+                switch (c.getName()) {
+                    case "booleans": {
+                        return (false);
+                    }
+                    case "byte": {
+                        return ((byte)0);
+                    }
+                    case "char": {
+                        return ((char)0);
+                    }
+                    case "short": {
+                        return ((short)0);
+                    }
+                    case "int": {
+                        return (0);
+                    }
+                    case "long": {
+                        return (0L);
+                    }
+                    case "float": {
+                        return (0.0f);
+                    }
+                    case "double": {
+                        return (0.0);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public static ParameterizedType createParametrizedType(Type rawType, Type... actualTypeArguments) {
         return new SimpleParametrizedType(rawType, actualTypeArguments);
     }
