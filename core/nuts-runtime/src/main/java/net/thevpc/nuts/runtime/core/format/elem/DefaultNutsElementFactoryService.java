@@ -50,7 +50,6 @@ import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.bundles.collections.ClassMap;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectProperty;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectPropertyDefaultValueStrategy;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectRepository;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectType;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectUtils;
@@ -71,6 +70,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static final NutsElementFactory F_NULL = new NutsElementFactoryNull();
     private static final NutsElementFactory F_NUTS_ARR = new NutsElemenSerializationAdapterArr();
     private static final NutsElementFactory F_STRINGS = new NutsElementFactoryString();
+    private static final NutsElementFactory F_CHAR = new NutsElementFactoryChar();
     private static final NutsElementFactory F_NUMBERS = new NutsElementFactoryNumber();
     private static final NutsElementFactory F_BOOLEANS = new NutsElementFactoryBoolean();
     private static final NutsElementFactory F_ENUMS = new NutsElementFactoryEnum();
@@ -104,13 +104,27 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     public DefaultNutsElementFactoryService(NutsWorkspace ws) {
         typesRepository = NutsWorkspaceUtils.of(ws).getReflectRepository();
+        addDefaultFactory(Boolean.class, F_BOOLEANS);
+        addDefaultFactory(boolean.class, F_BOOLEANS);
+        addDefaultFactory(byte.class, F_NUMBERS);
+        addDefaultFactory(short.class, F_NUMBERS);
+        addDefaultFactory(int.class, F_NUMBERS);
+        addDefaultFactory(long.class, F_NUMBERS);
+        addDefaultFactory(float.class, F_NUMBERS);
+        addDefaultFactory(double.class, F_NUMBERS);
+        addDefaultFactory(Number.class, F_NUMBERS);
+
+        addDefaultFactory(char.class, F_CHAR);
+        addDefaultFactory(Character.class, F_CHAR);
+
         addDefaultFactory(Object.class, F_OBJ);
         addDefaultFactory(String.class, F_STRINGS);
-        addDefaultFactory(Boolean.class, F_BOOLEANS);
-        addDefaultFactory(Boolean.TYPE, F_BOOLEANS);
+        
+        
         addDefaultFactory(StringBuilder.class, F_STRINGS);
         addDefaultFactory(StringBuffer.class, F_STRINGS);
-        addDefaultFactory(Number.class, F_NUMBERS);
+        
+        
         addDefaultFactory(Path.class, F_PATH);
         addDefaultFactory(File.class, F_FILE);
         addDefaultFactory(java.util.Date.class, F_DATE);
@@ -176,8 +190,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                 return f;
             }
         }
-        return defaultFactories.get(cls);
-
+        final NutsElementFactory r = defaultFactories.get(cls);
+        if(r!=null){
+            return r;
+        }
+        throw new IllegalArgumentException("Unable to find serialization factory for "+type);
     }
 
     @Override
@@ -529,6 +546,23 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
     }
 
+    private static class NutsElementFactoryChar implements NutsElementFactory<Character> {
+
+        @Override
+        public NutsElement createElement(Character o, Type typeOfSrc, NutsElementFactoryContext context) {
+            return context.elements().forString(String.valueOf(o));
+        }
+
+        @Override
+        public Character createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
+            final String s = o.primitive().getString();
+            return (s==null || s.isEmpty())?
+                    (((to instanceof Class) && ((Class)to).isPrimitive()) ? '\0':null)
+                    :s.charAt(0)
+                    ;
+        }
+    }
+
     private static class NutsElementFactoryString implements NutsElementFactory<String> {
 
         @Override
@@ -540,7 +574,6 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public String createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
             return o.primitive().getString();
         }
-
     }
 
     private static class NutsElementFactoryNull implements NutsElementFactory<Object> {

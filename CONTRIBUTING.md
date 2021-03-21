@@ -1,6 +1,7 @@
 # Contributing to Nuts
 
-Thanks for your interest in nuts. Our goal is to levrage le power of java and maven to build to build a rock solid package manager.
+Thanks for your interest in nuts. 
+Our goal is to leverage the power of Java, Maven and Gradle to build to build a rock solid package manager.
 
 ## Getting Started
 
@@ -20,6 +21,13 @@ Contributions to Nuts should be made in the form of GitHub pull requests. Each p
 be reviewed by a core contributor (someone with permission to land patches) and either landed in the
 main tree or given feedback for changes that would be required.
 
+## Compiling Nuts
+```bash
+git clone https://github.com/thevpc/nuts.git
+cd nuts
+mvn clean install
+```
+
 ## Pull Request Checklist
 
 - Branch from the master branch and, if needed, rebase to the current master
@@ -29,7 +37,7 @@ main tree or given feedback for changes that would be required.
 - Commits should be as small as possible, while ensuring that each commit is
   correct independently (i.e., each commit should compile and pass tests).
 
-- Don't put submodule updates in your pull request unless they are to landed
+- Don't put sub-module updates in your pull request unless they are to landed
   commits.
 
 - If your patch is not getting reviewed or you need a specific person to review

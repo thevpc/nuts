@@ -345,7 +345,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
             throw new UncheckedIOException("error loading repository " + file.toString(), new IOException(ex));
         }
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
-        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex});
+        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("erroneous repository config file. Unable to load file {0} : {1}", new Object[]{file, ex});
         Path logError = Paths.get(getWorkspace().locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG))
                 .resolve("invalid-config");
         try {

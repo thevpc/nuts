@@ -65,7 +65,7 @@ public abstract class AbstractReflectProperty implements ReflectProperty {
 
     @Override
     public ReflectPropertyDefaultValueStrategy getDefaultValueStrategy() {
-        return getType().getDefaultValueStrategy();
+        return defaultValueStrategy;
     }
 
     @Override

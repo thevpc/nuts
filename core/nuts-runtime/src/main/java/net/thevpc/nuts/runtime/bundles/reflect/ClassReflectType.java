@@ -82,15 +82,15 @@ public class ClassReflectType implements ReflectType {
 
     @Override
     public Object newInstance() {
-        try {
-            if (noArgConstr == null) {
+        if (noArgConstr == null) {
+            try {
                 noArgConstr = clazz.getConstructor();
                 noArgConstr.setAccessible(true);
+            } catch (NoSuchMethodException ex) {
+                throw new IllegalArgumentException("Unable to resolve default constructore fo " + clazz, ex);
+            } catch (SecurityException ex) {
+                throw new IllegalArgumentException("Not allowed to access default constructor for " + clazz, ex);
             }
-        } catch (NoSuchMethodException ex) {
-            throw new IllegalArgumentException("Unable to resolve default constructore for " + clazz, ex);
-        } catch (SecurityException ex) {
-            throw new IllegalArgumentException("Not allowed to access default constructore for " + clazz, ex);
         }
         try {
             return noArgConstr.newInstance();
@@ -107,7 +107,12 @@ public class ClassReflectType implements ReflectType {
 
     private void build() {
         if (direct == null) {
-            final Object cleanInstance = newInstance();
+            Object cleanInstance=null;
+            try{
+                cleanInstance = newInstance();
+            }catch(Exception ex){
+                //ignore any error...
+            }
             LinkedHashMap<String, ReflectProperty> declaredProperties = new LinkedHashMap<>();
             LinkedHashMap<String, ReflectProperty> fieldAllProperties = new LinkedHashMap<>();
             Set<String> ambiguousWrites = new HashSet<>();
@@ -211,11 +216,11 @@ public class ClassReflectType implements ReflectType {
                         }
                     }
                     if (writeMethod != null) {
-                        declaredProperties.put(propName, new MethodReflectProperty1(propName, readMethod, writeMethod, cleanInstance,this,propertyDefaultValueStrategy));
+                        declaredProperties.put(propName, new MethodReflectProperty1(propName, readMethod, writeMethod, cleanInstance, this, propertyDefaultValueStrategy));
                     } else if (writeField != null) {
-                        declaredProperties.put(propName, new MethodReflectProperty2(propName, readMethod, writeField, cleanInstance,this,propertyDefaultValueStrategy));
+                        declaredProperties.put(propName, new MethodReflectProperty2(propName, readMethod, writeField, cleanInstance, this, propertyDefaultValueStrategy));
                     } else {
-                        declaredProperties.put(propName, new MethodReflectProperty1(propName, readMethod, null, cleanInstance,this,propertyDefaultValueStrategy));
+                        declaredProperties.put(propName, new MethodReflectProperty1(propName, readMethod, null, cleanInstance, this, propertyDefaultValueStrategy));
                     }
                 }
             }
@@ -231,7 +236,7 @@ public class ClassReflectType implements ReflectType {
                             //
                         }
                         if (readField != null && !Modifier.isStatic(readField.getModifiers()) && readField.getType().equals(writeMethod.getParameterTypes()[0])) {
-                            declaredProperties.put(propName, new MethodReflectProperty3(propName, readField, writeMethod, cleanInstance,this,propertyDefaultValueStrategy));
+                            declaredProperties.put(propName, new MethodReflectProperty3(propName, readField, writeMethod, cleanInstance, this, propertyDefaultValueStrategy));
                         }
                     }
                 } else if (entry2.getValue().size() > 0) {
@@ -244,7 +249,7 @@ public class ClassReflectType implements ReflectType {
             for (Field f : clazz.getDeclaredFields()) {
                 if (!declaredProperties.containsKey(f.getName())) {
                     if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isTransient(f.getModifiers())) {
-                        FieldReflectProperty p = new FieldReflectProperty(f, cleanInstance,this,propertyDefaultValueStrategy);
+                        FieldReflectProperty p = new FieldReflectProperty(f, cleanInstance, this, propertyDefaultValueStrategy);
                         declaredProperties.put(p.getName(), p);
                     }
                 }

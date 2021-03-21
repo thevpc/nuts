@@ -627,7 +627,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         boolean reinstall = false;
         if (session.isPlainTrace()) {
             if (strategy0 == InstallStrategy0.UPDATE) {
-                session.out().println("updating " + id().formatter(def.getId().getLongNameId()).format() + " ...");
+                session.out().println("update " + id().formatter(def.getId().getLongNameId()).format() + " ...");
             } else if (strategy0 == InstallStrategy0.REQUIRE) {
                 reinstall = def.getInstallInformation().getInstallStatus().isRequired();
                 if (reinstall) {
@@ -638,9 +638,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             } else {
                 reinstall = def.getInstallInformation().getInstallStatus().isInstalled();
                 if (reinstall) {
-                    session.out().println("re-installing " + id().formatter(def.getId().getLongNameId()).format() + " ...");
+                    session.out().println("re-install " + id().formatter(def.getId().getLongNameId()).format() + " ...");
                 } else {
-                    session.out().println("installing " + id().formatter(def.getId().getLongNameId()).format() + " ...");
+                    session.out().println("install " + id().formatter(def.getId().getLongNameId()).format() + " ...");
                 }
             }
         }
@@ -835,13 +835,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 String installedString = null;
                 if (newNutsInstallInformation != null) {
                     if (newNutsInstallInformation.isJustReInstalled()) {
-                        installedString = "re-installed ";
+                        installedString = "re-install ";
                     } else if (newNutsInstallInformation.isJustInstalled()) {
-                        installedString = "installed ";
+                        installedString = "install ";
                     } else if (newNutsInstallInformation.isJustReRequired()) {
-                        installedString = "re-required  ";
+                        installedString = "re-require ";
                     } else if (newNutsInstallInformation.isJustRequired()) {
-                        installedString = "required  ";
+                        installedString = "require ";
                     }
                 }
                 if (installedString != null) {

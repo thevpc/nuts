@@ -1245,7 +1245,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         fileSuffix = fileSuffix.replace(':', '-');
         String fileName = "nuts-workspace-" + fileSuffix;
         LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
-                .log("erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex});
+                .log("erroneous workspace config file. Unable to load file {0} : {1}", new Object[]{file, ex});
         Path logError = Paths.get(ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.LOG)).resolve("invalid-config");
         try {
             Files.createDirectories(logError);
@@ -1253,7 +1253,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             throw new UncheckedIOException("unable to log workspace error while loading config file " + file.toString() + " : " + ex1.toString(), new IOException(ex));
         }
         Path newfile = logError.resolve(fileName + ".json");
-        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("erroneous config file will be replaced by a fresh one. Old config is copied to {0}", newfile.toString());
+        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("erroneous workspace config file will be replaced by a fresh one. Old config is copied to {0}", newfile.toString());
         try {
             Files.move(file, newfile);
         } catch (IOException e) {
@@ -1304,7 +1304,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             return createNutsVersionCompat(version).parseConfig(bytes, session);
         } catch (Exception ex) {
             LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
-                    .log("erroneous config file. Unable to load file {0} : {1}",
+                    .log("erroneous workspace config file. Unable to load file {0} : {1}",
                             new Object[]{file, ex});
             throw new UncheckedIOException("unable to load config file " + file.toString(), new IOException(ex));
         }

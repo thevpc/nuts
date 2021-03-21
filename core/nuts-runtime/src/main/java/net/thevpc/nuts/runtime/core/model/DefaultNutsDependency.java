@@ -65,7 +65,14 @@ public class DefaultNutsDependency implements NutsDependency {
         this.version = version == null ? ws.version().parser().parse("") : version;
         this.classifier = CoreStringUtils.trimToNull(classifier);
         this.scope = NutsDependencyScopes.normalizeScope(scope);
-        this.optional = CoreStringUtils.isBlank(optional) ? "false" : CoreStringUtils.trim(optional);
+        
+        String o = CoreStringUtils.trimToNull(optional);
+        if ("false".equals(o)) {
+            o = null;
+        } else if ("true".equalsIgnoreCase(o)) {
+            o = "true";//remove case and formatting
+        }
+        this.optional = o;
         this.exclusions = exclusions == null ? new NutsId[0] : Arrays.copyOf(exclusions, exclusions.length);
         this.os = CoreStringUtils.trimToNull(os);
         this.arch = CoreStringUtils.trimToNull(arch);
@@ -80,7 +87,8 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public boolean isOptional() {
-        return Boolean.parseBoolean(getOptional());
+        final String o = getOptional();
+        return o!=null && Boolean.parseBoolean(o);
     }
 
     @Override

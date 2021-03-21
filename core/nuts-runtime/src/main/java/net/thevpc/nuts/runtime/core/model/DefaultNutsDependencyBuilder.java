@@ -49,7 +49,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     private String os;
     private String arch;
     private String classifier;
-    private NutsId[] exclusions;
+    private NutsId[] exclusions=new NutsId[0];
     private transient NutsWorkspace ws;
     private transient QueryStringParser propertiesQuery = new QueryStringParser(true, (name, value) -> {
         if (name != null) {
@@ -159,7 +159,13 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setOptional(String optional) {
-        this.optional = CoreStringUtils.isBlank(optional) ? "false" : CoreStringUtils.trim(optional);
+        String o=CoreStringUtils.trimToNull(optional);
+        if("false".equals(o)){
+            o=null;
+        }else if("true".equalsIgnoreCase(o)){
+            o="true";//remove case and formatting
+        }
+        this.optional = o;
         return this;
     }
 
@@ -267,7 +273,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public boolean isOptional() {
-        return Boolean.parseBoolean(optional);
+        return optional!=null && Boolean.parseBoolean(optional);
     }
 
     @Override
