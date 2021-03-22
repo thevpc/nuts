@@ -297,7 +297,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             return buildNutsCollectionSearchResult(curr, print);
             //nothing
         } else if (!isLatest() && isDistinct()) {
-            return buildNutsCollectionSearchResult(IteratorBuilder.of(curr).distinct((NutsDependency nutsId) -> nutsId.getId().getLongNameId()
+            return buildNutsCollectionSearchResult(IteratorBuilder.of(curr).distinct((NutsDependency nutsId) -> nutsId.toId().getLongNameId()
                     //                            .setAlternative(nutsId.getAlternative())
                     .toString()).iterator(), print);
         } else if (isLatest() && isDistinct()) {
@@ -305,7 +305,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 Map<String, NutsDependency> visited = new LinkedHashMap<>();
                 while (curr.hasNext()) {
                     NutsDependency nutsId = curr.next();
-                    String k = nutsId.getId().getShortNameId()
+                    String k = nutsId.toId().getShortNameId()
                             //                        .setAlternative(nutsId.getAlternative())
                             .toString();
                     NutsDependency old = visited.get(k);
@@ -321,7 +321,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 Map<String, List<NutsDependency>> visited = new LinkedHashMap<>();
                 while (curr.hasNext()) {
                     NutsDependency nutsId = curr.next();
-                    String k = nutsId.getId().getShortNameId()
+                    String k = nutsId.toId().getShortNameId()
                             //                        .setAlternative(nutsId.getAlternative())
                             .toString();
                     List<NutsDependency> oldList = visited.get(k);
@@ -476,7 +476,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             nutsDependenciesResolver.addRootId(id, false);
         }
         return nutsDependenciesResolver.resolve()
-                .all().stream().map(NutsDependency::getId).toArray(NutsId[]::new);
+                .all().stream().map(NutsDependency::toId).toArray(NutsId[]::new);
     }
 
     private NutsDependency[] findDependencies2(List<NutsDependency> ids) {

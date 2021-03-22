@@ -102,7 +102,7 @@ public class DefaultNutsDependency implements NutsDependency {
     }
 
     @Override
-    public NutsId getId() {
+    public NutsId toId() {
         Map<String, String> m = new LinkedHashMap<>();
         if (!NutsDependencyScopes.isDefaultScope(scope)) {
             m.put(NutsConstants.IdProperties.SCOPE, scope);
@@ -120,33 +120,6 @@ public class DefaultNutsDependency implements NutsDependency {
             }
             m.put(NutsConstants.IdProperties.EXCLUSIONS, String.join(",", ex));
         }
-        return ws.id().builder()
-                .setNamespace(getNamespace())
-                .setGroupId(getGroupId())
-                .setArtifactId(getArtifactId())
-                .setVersion(getVersion())
-                .setProperties(m).build();
-    }
-
-    @Override
-    public NutsId toId() {
-        Map<String, String> m = new LinkedHashMap<>();
-//        if (!NutsDependencyScopes.isDefaultScope(scope)) {
-//            m.put(NutsConstants.IdProperties.SCOPE, scope);
-//        }
-//        if (!CoreStringUtils.isBlank(optional) && !"false".equals(optional)) {
-//            m.put(NutsConstants.IdProperties.OPTIONAL, optional);
-//        }
-//        if (!CoreStringUtils.isBlank(classifier)) {
-//            m.put(NutsConstants.IdProperties.CLASSIFIER, classifier);
-//        }
-//        if (exclusions.length > 0) {
-//            TreeSet<String> ex = new TreeSet<>();
-//            for (NutsId exclusion : exclusions) {
-//                ex.add(exclusion.getShortName());
-//            }
-//            m.put(NutsConstants.IdProperties.EXCLUSIONS, CoreStringUtils.join(",", ex));
-//        }
         return ws.id().builder()
                 .setNamespace(getNamespace())
                 .setGroupId(getGroupId())

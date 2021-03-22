@@ -68,13 +68,6 @@ public interface NutsDependency extends Serializable, NutsFormattable{
     String getClassifier();
 
     /**
-     * convert to NutsId without including scope, exclusion d other
-     * @return converted to NutsId
-     */
-    NutsId getId();
-
-
-    /**
      * convert to NutsId
      * @return converted to NutsId
      */

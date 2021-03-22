@@ -354,5 +354,13 @@ public interface NutsIdFormat extends NutsFormat {
      */
     @Override
     NutsIdFormat configure(boolean skipUnsupported, String... args);
+    
+    /**
+     * true when Nuts Text Format is used for formatting (default)
+     * @return true when Nuts Text Format is used for formatting (default)
+     */
+    boolean isNtf() ;
+
+    NutsIdFormat setNtf(boolean ntf);
 
 }

@@ -396,7 +396,7 @@ public class NOpenAPIService {
         return doc.build();
     }
 
-    private String toCode(ItemFactory.Item o, String indent) {
+    private String toCode(NutsElement o, String indent) {
         String descSep = " // ";
         if (o.isObject()) {
             if (o.asObject().get("schema").isObject()) {
@@ -408,7 +408,7 @@ public class NOpenAPIService {
                         sb.append("\n" + indent + "  " + p.getKey() + ": " + toCode(p.getValue(), indent + "  "));
                     }
                     sb.append("\n" + indent + "}");
-                    ItemFactory.Item desc = o.asObject().get("description");
+                    NutsElement desc = o.asObject().get("description");
                     if (!desc.asString().isEmpty()) {
                         return sb + descSep + desc.asString();
                     }
@@ -422,21 +422,21 @@ public class NOpenAPIService {
                         sb.append("\n" + indent + "  " + p.getKey() + ": " + toCode(p.getValue(), indent + "  "));
                     }
                     sb.append("\n" + indent + "}");
-                    ItemFactory.Item desc = o.asObject().get("description");
+                    NutsElement desc = o.asObject().get("description");
                     if (!desc.asString().isEmpty()) {
                         return sb + descSep + desc.asString();
                     }
                     return sb.toString();
                 } else if (t.equals("boolean")) {
-                    ItemFactory.Item ee = o.asObject().get("example");
+                    NutsElement ee = o.asObject().get("example");
                     if (!ee.isNull()) {
                         if (ee.isString()) {
                             return ee.asString();
                         }
                         return ee.asString();
                     }
-                    ItemFactory.Item desc = o.asObject().get("description");
-                    ItemFactory.Arr en = o.asObject().get("enum").asArray();
+                    NutsElement desc = o.asObject().get("description");
+                    NutsArrayElement en = o.asObject().get("enum").asArray();
                     if (en.isEmpty()) {
                         String r = "boolean ALLOWED:" + en.stream().map(x -> x.isNull() ? "null" : x.asString()).collect(Collectors.joining(", "));
                         if (!desc.asString().isEmpty()) {
@@ -450,15 +450,15 @@ public class NOpenAPIService {
                         return "boolean";
                     }
                 } else if (t.equals("string")) {
-                    ItemFactory.Item ee = o.asObject().get("example");
+                    NutsElement ee = o.asObject().get("example");
                     if (!ee.isNull()) {
                         if (ee.isString()) {
                             return "\'" + ee.asString() + "\'";
                         }
                         return "\'" + ee.asString() + "\'";
                     }
-                    ItemFactory.Item desc = o.asObject().get("description");
-                    ItemFactory.Arr en = o.asObject().get("enum").asArray();
+                    NutsElement desc = o.asObject().get("description");
+                    NutsArrayElement en = o.asObject().get("enum").asArray();
                     if (!en.isEmpty()) {
                         String r = "string ALLOWED:" + en.stream().map(x -> x.isNull() ? "null" : x.asString()).collect(Collectors.joining(", "));
                         if (!desc.asString().isEmpty()) {
@@ -472,8 +472,8 @@ public class NOpenAPIService {
                         return "string";
                     }
                 } else if (t.equals("integer")) {
-                    ItemFactory.Item desc = o.asObject().get("description");
-                    ItemFactory.Arr en = o.asObject().get("enum").asArray();
+                    NutsElement desc = o.asObject().get("description");
+                    NutsArrayElement en = o.asObject().get("enum").asArray();
                     if (!en.isEmpty()) {
                         String r = "integer ALLOWED:" + en.stream().map(x -> x.isNull() ? "null" : x.asString()).collect(Collectors.joining(", "));
                         if (!desc.asString().isEmpty()) {
@@ -488,7 +488,7 @@ public class NOpenAPIService {
                     }
                 }
             } else if (o.asObject().get("type").isNull()) {
-                ItemFactory.Item desc = o.asObject().get("description");
+                NutsElement desc = o.asObject().get("description");
                 if (!desc.asString().isEmpty()) {
                     return "null" + "\n" + desc.asString();
                 }

@@ -19,9 +19,19 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     private boolean highlightOptional;
     private NutsDependency value;
     private Set<String> queryPropertiesOmitted = new HashSet<>();
+    private boolean ntf=true;
 
     public DefaultNutsDependencyFormat(NutsWorkspace ws) {
         super(ws, "id-format");
+    }
+
+    public boolean isNtf() {
+        return ntf;
+    }
+
+    public NutsDependencyFormat setNtf(boolean ntf) {
+        this.ntf = ntf;
+        return this;
     }
 
     @Override
@@ -146,6 +156,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
                 .setOmitGroupId(isOmitGroupId())
                 .setOmitImportedGroupId(isOmitImportedGroupId())
                 .setOmitNamespace(isOmitNamespace())
+                .setNtf(isNtf())
                 .format();
     }
 

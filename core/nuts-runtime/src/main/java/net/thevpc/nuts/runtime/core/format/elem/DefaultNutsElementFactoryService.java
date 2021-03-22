@@ -760,7 +760,9 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public NutsElement createElement(NutsDependency o, Type typeOfSrc, NutsElementFactoryContext context) {
             if (o.getExclusions().length == 0) {
                 //use compact form
-                return context.defaultObjectToElement(context.getWorkspace().dependency().formatter(o).format(), null);
+                return context.defaultObjectToElement(context.getWorkspace().dependency().formatter(o)
+                        .setNtf(false)
+                        .format(), null);
             }
             return context.defaultObjectToElement(context.getWorkspace().dependency().builder().set(o), null);
         }
@@ -768,7 +770,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsDependency createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             if (o.type() == NutsElementType.STRING) {
-                return context.getWorkspace().dependency().parser().parseDependency(o.asPrimitive().getString());
+                return context.getWorkspace().dependency().parser().setLenient(false).parseDependency(o.asPrimitive().getString());
             }
             DefaultNutsDependencyBuilder builder = (DefaultNutsDependencyBuilder) context.defaultElementToObject(o, DefaultNutsDependencyBuilder.class);
             return context.getWorkspace().dependency().builder().set(builder).build();

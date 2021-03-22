@@ -8,10 +8,21 @@ import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import java.io.PrintStream;
 
 public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandLineFormat> implements NutsCommandLineFormat {
+
     private NutsCommandLine value;
+    private boolean ntf = true;
 
     public DefaultNutsCommandLineFormat(NutsWorkspace ws) {
         super(ws, "commandline");
+    }
+
+    public boolean isNtf() {
+        return ntf;
+    }
+
+    public NutsCommandLineFormat setNtf(boolean ntf) {
+        this.ntf = ntf;
+        return this;
     }
 
     @Override
@@ -43,8 +54,12 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
     @Override
     public void print(PrintStream out) {
         if (value != null) {
-            String cmd=NutsCommandLineUtils.escapeArguments(value.toStringArray());
-            out.print("```sh "+cmd+"```");
+            String cmd = NutsCommandLineUtils.escapeArguments(value.toStringArray());
+            if (isNtf()) {
+                out.print("```sh " + cmd + "```");
+            } else {
+                out.print(cmd);
+            }
         }
     }
 }

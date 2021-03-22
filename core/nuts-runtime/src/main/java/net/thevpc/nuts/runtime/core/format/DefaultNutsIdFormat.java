@@ -18,13 +18,22 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     private boolean highlightImportedGroup;
     private boolean highlightScope;
     private boolean highlightOptional;
-    private Set<String> omittedProperties =new HashSet<>();
+    private boolean ntf = true;
+    private Set<String> omittedProperties = new HashSet<>();
     private NutsId id;
 
     public DefaultNutsIdFormat(NutsWorkspace ws) {
         super(ws, "id-format");
     }
 
+    public boolean isNtf() {
+        return ntf;
+    }
+
+    public NutsIdFormat setNtf(boolean ntf) {
+        this.ntf = ntf;
+        return this;
+    }
 
     @Override
     public boolean isOmitNamespace() {
@@ -125,7 +134,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 
     @Override
     public NutsIdFormat setOmitClassifier(boolean value) {
-        return setOmitProperty(NutsConstants.IdProperties.CLASSIFIER,value);
+        return setOmitProperty(NutsConstants.IdProperties.CLASSIFIER, value);
     }
 
     @Override
@@ -157,7 +166,6 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 //    public NutsIdFormat omitAlternative() {
 //        return omitAlternative(true);
 //    }
-
     @Override
     public String[] getOmitProperties() {
         return omittedProperties.toArray(new String[0]);
@@ -170,9 +178,9 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 
     @Override
     public NutsIdFormat setOmitProperty(String name, boolean value) {
-        if(value){
+        if (value) {
             omittedProperties.add(name);
-        }else{
+        } else {
             omittedProperties.remove(name);
         }
         return this;
@@ -180,17 +188,17 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 
     @Override
     public NutsIdFormat omitProperty(String name, boolean value) {
-        return setOmitProperty(name,true);
+        return setOmitProperty(name, true);
     }
 
     @Override
     public NutsIdFormat omitProperty(String name) {
-        return omitProperty(name,true);
+        return omitProperty(name, true);
     }
 
     @Override
     public String format() {
-        if(id==null){
+        if (id == null) {
             return "<null>";
         }
         Map<String, String> queryMap = id.getProperties();
@@ -235,19 +243,6 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
         boolean firstQ = true;
 
-//        if (!CoreStringUtils.isBlank(alternative)) {
-//            if (firstQ) {
-//                sb.append("{{\\?}}");
-//                firstQ = false;
-//            } else {
-//                sb.append("{{\\&}}");
-//            }
-//            sb.append("{{alternative}}=**");
-//            sb.append("**");
-//            sb.append(tf.escapeText(alternative));
-//            sb.append("**");
-//        }
-
         if (!CoreStringUtils.isBlank(classifier)) {
             if (firstQ) {
                 sb.append("?", NutsTextNodeStyle.separator());
@@ -279,7 +274,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             } else {
                 sb.append("&", NutsTextNodeStyle.separator());
             }
-            sb.append("optional",NutsTextNodeStyle.keyword(2)).append("=",NutsTextNodeStyle.separator());
+            sb.append("optional", NutsTextNodeStyle.keyword(2)).append("=", NutsTextNodeStyle.separator());
             sb.append(optional);
         }
 //        }
@@ -290,27 +285,31 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             } else {
                 sb.append("&", NutsTextNodeStyle.separator());
             }
-            sb.append("exclusions",NutsTextNodeStyle.keyword(2)).append("=",NutsTextNodeStyle.separator());
-            sb.append(exclusions,NutsTextNodeStyle.error());
+            sb.append("exclusions", NutsTextNodeStyle.keyword(2)).append("=", NutsTextNodeStyle.separator());
+            sb.append(exclusions, NutsTextNodeStyle.error());
         }
         if (!CoreStringUtils.isBlank(id.getPropertiesQuery())) {
-            Set<String> otherKeys=new TreeSet<>(queryMap.keySet());
+            Set<String> otherKeys = new TreeSet<>(queryMap.keySet());
             for (String k : otherKeys) {
                 String v = queryMap.get(k);
-                if(v!=null) {
+                if (v != null) {
                     if (firstQ) {
                         sb.append("?", NutsTextNodeStyle.separator());
                         firstQ = false;
                     } else {
                         sb.append("&", NutsTextNodeStyle.separator());
                     }
-                    sb.append(v,NutsTextNodeStyle.pale());
-                    sb.append("=",NutsTextNodeStyle.separator());
+                    sb.append(v, NutsTextNodeStyle.pale());
+                    sb.append("=", NutsTextNodeStyle.separator());
                     sb.append(v);
                 }
             }
         }
-        return sb.toString();
+        if (isNtf()) {
+            return sb.toString();
+        } else {
+            return sb.filteredText();
+        }
     }
 
     @Override
@@ -331,9 +330,8 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 
     @Override
     public void print(PrintStream out) {
-            out.print(format());
+        out.print(format());
     }
-
 
     @Override
     public NutsIdFormat omitNamespace(boolean value) {
@@ -416,60 +414,60 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         if (a == null) {
             return false;
         }
-        boolean enabled=a.isEnabled();
+        boolean enabled = a.isEnabled();
         switch (a.getStringKey()) {
             case "--omit-env": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if(enabled) {
+                if (enabled) {
                     omitOtherProperties(val);
                 }
                 return true;
             }
             case "--omit-face": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if(enabled) {
+                if (enabled) {
                     omitFace(val);
                 }
                 return true;
             }
             case "--omit-group": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if(enabled) {
+                if (enabled) {
                     omitGroupId(val);
                 }
                 return true;
             }
             case "--omit-imported-group": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if(enabled) {
+                if (enabled) {
                     omitImportedGroupId(val);
                 }
                 return true;
             }
             case "--omit-namespace": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if(enabled) {
+                if (enabled) {
                     omitNamespace(val);
                 }
                 return true;
             }
             case "--highlight-imported-group": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if(enabled) {
+                if (enabled) {
                     highlightImportedGroupId(val);
                 }
                 return true;
             }
             case "--highlight-optional": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if(enabled) {
+                if (enabled) {
                     highlightOptional(val);
                 }
                 return true;
             }
             case "--highlight-scope": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if(enabled) {
+                if (enabled) {
                     highlightScope(val);
                 }
                 return true;
@@ -480,16 +478,16 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 
     @Override
     public String toString() {
-        return "NutsIdFormat{" +
-                "omitNamespace=" + omitNamespace +
-                ", omitGroup=" + omitGroup +
-                ", omitImportedGroup=" + omitImportedGroup +
-                ", omitProperties=" + omitProperties +
-                ", highlightImportedGroup=" + highlightImportedGroup +
-                ", highlightScope=" + highlightScope +
-                ", highlightOptional=" + highlightOptional +
-                ", omittedProperties=" + omittedProperties +
-                ", id=" + id +
-                '}';
+        return "NutsIdFormat{"
+                + "omitNamespace=" + omitNamespace
+                + ", omitGroup=" + omitGroup
+                + ", omitImportedGroup=" + omitImportedGroup
+                + ", omitProperties=" + omitProperties
+                + ", highlightImportedGroup=" + highlightImportedGroup
+                + ", highlightScope=" + highlightScope
+                + ", highlightOptional=" + highlightOptional
+                + ", omittedProperties=" + omittedProperties
+                + ", id=" + id
+                + '}';
     }
 }

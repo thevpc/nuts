@@ -66,28 +66,28 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
 
     @Override
     public NutsObjectElementBuilder set(String name, NutsElement value) {
-        values.put(elementBuilder.forBoolean(name), denull(value));
+        values.put(elementBuilder.forString(name), denull(value));
         return this;
     }
 
     @Override
     public NutsObjectElementBuilder set(String name, boolean value) {
-        return set(elementBuilder.forBoolean(name), elementBuilder.forBoolean(value));
+        return set(elementBuilder.forString(name), elementBuilder.forBoolean(value));
     }
 
     @Override
     public NutsObjectElementBuilder set(String name, int value) {
-        return set(elementBuilder.forBoolean(name), elementBuilder.forInt(value));
+        return set(elementBuilder.forString(name), elementBuilder.forInt(value));
     }
 
     @Override
     public NutsObjectElementBuilder set(String name, double value) {
-        return set(elementBuilder.forBoolean(name), elementBuilder.forDouble(value));
+        return set(elementBuilder.forString(name), elementBuilder.forDouble(value));
     }
 
     @Override
     public NutsObjectElementBuilder set(String name, String value) {
-        return set(elementBuilder.forBoolean(name), elementBuilder.forString(value));
+        return set(elementBuilder.forString(name), elementBuilder.forString(value));
     }
 
     @Override
@@ -175,11 +175,11 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
 
     @Override
     public String toString() {
-        return "[" + children().stream().map(x -> "{"
-                + x.getKey()
+        return "{" + children().stream().map(x -> 
+                x.getKey()
                 + ":"
                 + x.getValue().toString()
-                + "}").collect(Collectors.joining(", ")) + "]";
+                ).collect(Collectors.joining(", ")) + "}";
     }
 
     private NutsElement denull(NutsElement e) {

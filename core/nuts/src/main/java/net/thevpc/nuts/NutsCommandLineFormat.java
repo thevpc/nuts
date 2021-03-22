@@ -83,4 +83,7 @@ public interface NutsCommandLineFormat extends NutsFormat{
     @Override
     NutsCommandLineFormat configure(boolean skipUnsupported, String... args);
 
+    boolean isNtf();
+
+    NutsCommandLineFormat setNtf(boolean ntf);
 }

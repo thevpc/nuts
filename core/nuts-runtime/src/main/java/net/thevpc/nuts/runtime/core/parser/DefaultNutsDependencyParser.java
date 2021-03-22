@@ -15,7 +15,7 @@ import net.thevpc.nuts.runtime.bundles.parsers.StringMapParser;
 public class DefaultNutsDependencyParser implements NutsDependencyParser {
     private static final StringMapParser QPARSER = new StringMapParser("=","&");
     private NutsWorkspace ws;
-    private boolean lenient=true;
+    private boolean lenient=false;
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     private static Set<String> DEPENDENCY_SUPPORTED_PARAMS = new HashSet<>(Arrays.asList(NutsConstants.IdProperties.SCOPE, NutsConstants.IdProperties.OPTIONAL));
 
