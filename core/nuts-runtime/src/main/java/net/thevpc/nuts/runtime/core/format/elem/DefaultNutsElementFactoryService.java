@@ -41,13 +41,19 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.LinkedTransferQueue;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.bundles.collections.ClassMap;
@@ -80,9 +86,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static final NutsElementMapper F_DATE = new NutsElementFactoryUtilDate();
     private static final NutsElementMapper F_PATH = new NutsElementFactoryPath();
     private static final NutsElementMapper F_FILE = new NutsElementFactoryFile();
-    private static final NutsElementMapper F_COLLECTION = new NutsElementFactoryCollection();
     private static final NutsElementMapper F_ITERATOR = new NutsElementFactoryIterator();
-    private static final NutsElementMapper F_MAP = new NutsElementFactoryMap();
     private static final NutsElementMapper F_NAMED_ELEM = new NutsElementFactoryNamedElement();
     private static final NutsElementMapper F_MAPENTRY = new NutsElementFactoryMapEntry();
     private static final NutsElementMapper F_XML_ELEMENT = new NutsElementFactoryXmlElement();
@@ -104,6 +108,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private final NutsWorkspace ws;
     private final NutsElementMapper F_OBJ = new NutsElemenSerializationAdapterObjReflect();
 
+    private final NutsElementMapper F_COLLECTION = new NutsElementFactoryCollection();
+    private final NutsElementMapper F_MAP = new NutsElementFactoryMap();
     public DefaultNutsElementFactoryService(NutsWorkspace ws) {
         typesRepository = NutsWorkspaceUtils.of(ws).getReflectRepository();
         addDefaultFactory(Boolean.class, F_BOOLEANS);
@@ -267,7 +273,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     }
 
-    private static class NutsElementFactoryMap implements NutsElementMapper<Map> {
+    private class NutsElementFactoryMap implements NutsElementMapper<Map> {
 
         @Override
         public NutsElement createElement(Map o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -330,8 +336,14 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                 case "java.util.HashMap": {
                     return fillObject(o, new HashMap(o.asObject().size()), elemType1, elemType2, to, context);
                 }
+                case "java.util.SortedMap":
+                case "java.util.NavigableMap": {
+                    return fillObject(o, new TreeMap(), elemType1, elemType2, to, context);
+                }
+                default: {
+                    return fillObject(o, (Map) typesRepository.getType(to).newInstance(), elemType1, elemType2, to, context);
+                }
             }
-            throw new IllegalArgumentException("fix me");
         }
 
     }
@@ -364,7 +376,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     }
 
-    private static class NutsElementFactoryCollection implements NutsElementMapper {
+    private class NutsElementFactoryCollection implements NutsElementMapper {
 
         @Override
         public NutsElement createElement(Object o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -397,8 +409,35 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                 case "java.util.ArrayList": {
                     return fillObject(o, new ArrayList(o.asArray().size()), elemType, to, context);
                 }
+                case "java.util.Set":
+                case "java.util.LinkedHashset": {
+                    return fillObject(o, new LinkedHashSet(), elemType, to, context);
+                }
+                case "java.util.Hashset": {
+                    return fillObject(o, new HashSet(), elemType, to, context);
+                }
+                case "java.util.SortedSet":
+                case "java.util.NavigableSet":
+                case "java.util.TreeSet": {
+                    return fillObject(o, new TreeSet(), elemType, to, context);
+                }
+                case "java.util.Queue": {
+                    return fillObject(o, new LinkedList(), elemType, to, context);
+                }
+                case "java.util.BlockingQueue": {
+                    return fillObject(o, new LinkedBlockingQueue(), elemType, to, context);
+                }
+                case "java.util.TransferQueue": {
+                    return fillObject(o, new LinkedTransferQueue(), elemType, to, context);
+                }
+                case "java.util.Deque": {
+                    return fillObject(o, new ArrayList(), elemType, to, context);
+                }
+                default: {
+                    ReflectType m = typesRepository.getType(to);
+                    return fillObject(o, (Collection) m.newInstance(), elemType, to, context);
+                }
             }
-            throw new IllegalArgumentException("fix me");
         }
 
     }
