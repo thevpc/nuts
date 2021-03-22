@@ -29,8 +29,9 @@ import net.thevpc.nuts.NutsElement;
 /**
  *
  * @author thevpc
+ * @since 0.8.1
  */
-public interface NutsElementFactory<T> {
+public interface NutsElementMapper<T> {
 
     NutsElement createElement(T src, Type typeOfSrc, NutsElementFactoryContext context);
 

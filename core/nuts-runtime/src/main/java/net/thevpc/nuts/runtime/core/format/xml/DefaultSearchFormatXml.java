@@ -13,10 +13,12 @@ import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCodeFormat;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsContentType;
+import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextNodeBuilder;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.format.DefaultSearchFormatBase;
+import org.w3c.dom.Document;
 
 /**
  *
@@ -68,9 +70,12 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 //        NutsXmlUtils.print(String.valueOf(index), object, getWriter(), compact, false, getWorkspace());
         PrintWriter pw = new PrintWriter(bos);
-        NutsXmlUtils.print("item", object, index, pw, compact, false, getSession());
+        org.w3c.dom.Element xmlElement = getWorkspace().formats().element().convert(object, org.w3c.dom.Element.class);
+        Document doc = NutsXmlUtils.createDocument(getSession());
+        doc.adoptNode(xmlElement);
+        doc.appendChild(xmlElement);
+        NutsXmlUtils.writeDocument(doc, new javax.xml.transform.stream.StreamResult(pw), compact, false, getSession());
         pw.flush();
-
         getWriter().print(codeFormat.textToNode(bos.toString()));
     }
 

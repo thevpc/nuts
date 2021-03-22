@@ -23,43 +23,36 @@
  */
 package net.thevpc.nuts.runtime.core.format.elem;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
 import net.thevpc.nuts.NutsElement;
+import net.thevpc.nuts.NutsElementEntry;
 
 /**
  *
  * @author thevpc
  */
-public class NutsArrayElementFromIterator extends AbstractNutsArrayElement {
+public class DefaultNutsElementEntry implements NutsElementEntry {
 
-    private final NutsElementFactoryContext context;
-    private final List<Object> values = new ArrayList<>();
+    private final NutsElement key;
+    private final NutsElement value;
 
-    public NutsArrayElementFromIterator(Iterator array, NutsElementFactoryContext context) {
-        this.context = context;
-        Iterator nl = (Iterator) array;
-        while (nl.hasNext()) {
-            values.add(nl.next());
-        }
+    public DefaultNutsElementEntry(NutsElement key, NutsElement value) {
+        this.key = key;
+        this.value = value;
     }
 
     @Override
-    public Collection<NutsElement> children() {
-        return values.stream().map(x->context.objectToElement(x, null)).collect(Collectors.toList());
+    public NutsElement getKey() {
+        return key;
     }
 
     @Override
-    public int size() {
-        return values.size();
+    public NutsElement getValue() {
+        return value;
     }
 
     @Override
-    public NutsElement get(int index) {
-        return context.objectToElement(values.get(index), null);
+    public String toString() {
+        return "DefaultNutsNamedElement{" + key + " : " + value + '}';
     }
 
 }

@@ -1,19 +1,29 @@
 package net.thevpc.nuts.runtime.core.format.elem;
 
+import java.time.Instant;
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsNamedElement;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import net.thevpc.nuts.NutsArrayElement;
+import net.thevpc.nuts.NutsElementBuilder;
+import net.thevpc.nuts.NutsElementEntry;
+import net.thevpc.nuts.NutsObjectElement;
 
-public class DefaultNutsObjectElement extends AbstractNutsObjectElement{
-    private Map<String, NutsElement> values = new LinkedHashMap<>();
+public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
-    public DefaultNutsObjectElement(Map<String, NutsElement> values) {
+    private Map<NutsElement, NutsElement> values = new LinkedHashMap<>();
+    private NutsElementBuilder elementBuilder;
+
+    public DefaultNutsObjectElement(Map<NutsElement, NutsElement> values, NutsElementBuilder elementBuilder) {
+        this.elementBuilder = elementBuilder;
         if (values != null) {
-            for (Map.Entry<String, NutsElement> e : values.entrySet()) {
+            for (Map.Entry<NutsElement, NutsElement> e : values.entrySet()) {
                 if (e.getKey() != null && e.getValue() != null) {
                     this.values.put(e.getKey(), e.getValue());
                 }
@@ -22,12 +32,153 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement{
     }
 
     @Override
-    public Collection<NutsNamedElement> children() {
-        return values.entrySet().stream().map(x -> new DefaultNutsNamedElement(x.getKey(), x.getValue())).collect(Collectors.toList());
+    public NutsObjectElement getObject(String key) {
+        return get(key).asObject();
+    }
+
+    @Override
+    public NutsObjectElement getObject(NutsElement key) {
+        return get(key).asObject();
+    }
+
+    @Override
+    public NutsArrayElement getArray(String key) {
+        return get(key).asArray();
+    }
+
+    @Override
+    public NutsArrayElement getArray(NutsElement key) {
+        return get(key).asArray();
+    }
+
+    @Override
+    public String getString(String key) {
+        return get(key).asPrimitive().getString();
+    }
+
+    @Override
+    public String getString(NutsElement key) {
+        return get(key).asPrimitive().getString();
+    }
+
+    @Override
+    public boolean getBoolean(String key) {
+        return get(key).asPrimitive().getBoolean();
+    }
+
+    @Override
+    public boolean getBoolean(NutsElement key) {
+        return get(key).asPrimitive().getBoolean();
+    }
+
+    @Override
+    public Number getNumber(String key) {
+        return get(key).asPrimitive().getNumber();
+    }
+
+    @Override
+    public Number getNumber(NutsElement key) {
+        return get(key).asPrimitive().getNumber();
+    }
+
+    @Override
+    public byte getByte(String key) {
+        return get(key).asPrimitive().getByte();
+    }
+
+    @Override
+    public byte getByte(NutsElement key) {
+        return get(key).asPrimitive().getByte();
+    }
+
+    @Override
+    public short getShort(String key) {
+        return get(key).asPrimitive().getShort();
+    }
+
+    @Override
+    public short getShort(NutsElement key) {
+        return get(key).asPrimitive().getShort();
+    }
+
+    @Override
+    public long getLong(String key) {
+        return get(key).asPrimitive().getLong();
+    }
+
+    @Override
+    public long getLong(NutsElement key) {
+        return get(key).asPrimitive().getLong();
+    }
+
+
+    @Override
+    public float getFloat(String key) {
+        return get(key).asPrimitive().getFloat();
+    }
+
+    @Override
+    public float getFloat(NutsElement key) {
+        return get(key).asPrimitive().getFloat();
+    }
+
+
+    @Override
+    public double getDouble(String key) {
+        return get(key).asPrimitive().getDouble();
+    }
+
+    @Override
+    public double getDouble(NutsElement key) {
+        return get(key).asPrimitive().getDouble();
+    }
+
+
+    @Override
+    public Instant getInstant(String key) {
+        return get(key).asPrimitive().getInstant();
+    }
+
+    @Override
+    public Instant getInstant(NutsElement key) {
+        return get(key).asPrimitive().getInstant();
+    }
+
+    @Override
+    public int getInt(String key) {
+        return get(key).asPrimitive().getInt();
+    }
+
+    @Override
+    public int getInt(NutsElement key) {
+        return get(key).asPrimitive().getInt();
+    }
+
+    @Override
+    public Stream<NutsElementEntry> stream() {
+        return values.entrySet().stream()
+                .map(x -> new DefaultNutsElementEntry(x.getKey(), x.getValue()));
+    }
+
+    @Override
+    public Collection<NutsElementEntry> children() {
+        return values.entrySet().stream()
+                .map(x -> new DefaultNutsElementEntry(x.getKey(), x.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterator<NutsElementEntry> iterator() {
+        return children().iterator();
     }
 
     @Override
     public NutsElement get(String s) {
+        return values.get(this.elementBuilder.forString(s));
+    }
+
+    @Override
+    public NutsElement get(NutsElement s) {
         return values.get(s);
     }
 
@@ -37,11 +188,42 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement{
     }
 
     @Override
+    public boolean isEmpty() {
+        return values.isEmpty();
+    }
+
+    @Override
     public String toString() {
         return "[" + children().stream().map(x -> "{"
-                + x.getName()
+                + x.getKey()
                 + ":"
                 + x.getValue().toString()
                 + "}").collect(Collectors.joining(", ")) + "]";
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 61 * hash + Objects.hashCode(this.values);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultNutsObjectElement other = (DefaultNutsObjectElement) obj;
+        if (!Objects.equals(this.values, other.values)) {
+            return false;
+        }
+        return true;
+    }
+
 }

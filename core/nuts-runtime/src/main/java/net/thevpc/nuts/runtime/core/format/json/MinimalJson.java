@@ -31,11 +31,11 @@ import java.io.UncheckedIOException;
 import net.thevpc.nuts.NutsArrayElementBuilder;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElementBuilder;
-import net.thevpc.nuts.NutsNamedElement;
 import net.thevpc.nuts.NutsObjectElementBuilder;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
+import net.thevpc.nuts.NutsElementEntry;
 
 /**
  *
@@ -105,7 +105,7 @@ public class MinimalJson implements NutsElementStreamFormat {
                 break;
             }
             case BOOLEAN: {
-                out.print(data.primitive().getBoolean());
+                out.print(data.asPrimitive().getBoolean());
                 break;
             }
             case BYTE:
@@ -114,13 +114,13 @@ public class MinimalJson implements NutsElementStreamFormat {
             case LONG:
             case FLOAT:
             case DOUBLE: {
-                out.print(data.primitive().getNumber());
+                out.print(data.asPrimitive().getNumber());
                 break;
             }
-            case DATE:
+            case INSTANT:
             case STRING: {
                 StringBuilder sb = new StringBuilder("\"");
-                char[] chars = data.primitive().getString().toCharArray();
+                char[] chars = data.asPrimitive().getString().toCharArray();
                 for (int i = 0; i < chars.length; i++) {
                     char c = chars[i];
                     if (c < 32) {
@@ -163,13 +163,13 @@ public class MinimalJson implements NutsElementStreamFormat {
                 break;
             }
             case ARRAY: {
-                if (data.array().size() == 0) {
+                if (data.asArray().size() == 0) {
                     out.print("[]");
                 } else {
                     out.print('[');
                     boolean first = true;
                     String indent2 = indent + "  ";
-                    for (NutsElement e : data.array().children()) {
+                    for (NutsElement e : data.asArray().children()) {
                         if (first) {
                             first = false;
                         } else {
@@ -192,13 +192,13 @@ public class MinimalJson implements NutsElementStreamFormat {
                 break;
             }
             case OBJECT: {
-                if (data.object().size() == 0) {
+                if (data.asObject().size() == 0) {
                     out.print("{}");
                 } else {
                     out.print('{');
                     boolean first = true;
                     String indent2 = indent + "  ";
-                    for (NutsNamedElement e : data.object().children()) {
+                    for (NutsElementEntry e : data.asObject().children()) {
                         if (first) {
                             first = false;
                         } else {
@@ -207,12 +207,12 @@ public class MinimalJson implements NutsElementStreamFormat {
                         if (indent != null) {
                             out.print('\n');
                             out.print(indent2);
-                            write(out, builder().forString(e.getName()), indent2);
+                            write(out, e.getKey(), indent2);
                             out.print(':');
                             out.print(' ');
                             write(out, e.getValue(), indent2);
                         } else {
-                            write(out, builder().forString(e.getName()), null);
+                            write(out, e.getKey(), null);
                             out.print(':');
                             write(out, e.getValue(), null);
                         }

@@ -74,7 +74,7 @@ public enum NutsElementType {
     /**
      * date element
      */
-    DATE(true,false),
+    INSTANT(true,false),
 
     /**
      * boolean element

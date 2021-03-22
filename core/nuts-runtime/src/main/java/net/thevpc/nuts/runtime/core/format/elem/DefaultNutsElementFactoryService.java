@@ -39,7 +39,9 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -67,40 +69,40 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
  */
 public class DefaultNutsElementFactoryService implements NutsElementFactoryService {
 
-    private static final NutsElementFactory F_NULL = new NutsElementFactoryNull();
-    private static final NutsElementFactory F_NUTS_ARR = new NutsElemenSerializationAdapterArr();
-    private static final NutsElementFactory F_STRINGS = new NutsElementFactoryString();
-    private static final NutsElementFactory F_CHAR = new NutsElementFactoryChar();
-    private static final NutsElementFactory F_NUMBERS = new NutsElementFactoryNumber();
-    private static final NutsElementFactory F_BOOLEANS = new NutsElementFactoryBoolean();
-    private static final NutsElementFactory F_ENUMS = new NutsElementFactoryEnum();
-    private static final NutsElementFactory F_INSTANT = new NutsElementFactoryInstant();
-    private static final NutsElementFactory F_DATE = new NutsElementFactoryUtilDate();
-    private static final NutsElementFactory F_PATH = new NutsElementFactoryPath();
-    private static final NutsElementFactory F_FILE = new NutsElementFactoryFile();
-    private static final NutsElementFactory F_COLLECTION = new NutsElementFactoryCollection();
-    private static final NutsElementFactory F_ITERATOR = new NutsElementFactoryIterator();
-    private static final NutsElementFactory F_MAP = new NutsElementFactoryMap();
-    private static final NutsElementFactory F_NAMED_ELEM = new NutsElementFactoryNamedElement();
-    private static final NutsElementFactory F_MAPENTRY = new NutsElementFactoryMapEntry();
-    private static final NutsElementFactory F_XML_ELEMENT = new NutsElementFactoryXmlElement();
-    private static final NutsElementFactory F_XML_DOCUMENT = new NutsElementFactoryXmlDocument();
-    private static final NutsElementFactory F_NUTS_DEF = new NutsElementFactoryNutsDefinition();
-    private static final NutsElementFactory F_NUTS_ID = new NutsElementFactoryNutsId();
-    private static final NutsElementFactory F_NUTS_VERSION = new NutsElementFactoryNutsVersion();
-    private static final NutsElementFactory F_NUTS_DESCRIPTOR = new NutsElementFactoryNutsDescriptor();
-    private static final NutsElementFactory F_NUTS_DEPENDENCY = new NutsElementFactoryNutsDependency();
-    private static final NutsElementFactory F_NUTS_SDK_LOCATION = new NutsElementFactoryNutsSdkLocation();
-    private static final NutsElementFactory F_NUTS_ID_LOCATION = new NutsElementFactoryNutsIdLocation();
-    private static final NutsElementFactory F_NUTS_CLASSIFIER_MAPPING = new NutsElementFactoryNutsClassifierMapping();
-    private static final NutsElementFactory F_ARTIFACT_CALL = new NutsElementFactoryNutsArtifactCall();
+    private static final NutsElementMapper F_NULL = new NutsElementFactoryNull();
+    private static final NutsElementMapper F_NUTS_ARR = new NutsElemenSerializationAdapterArr();
+    private static final NutsElementMapper F_STRINGS = new NutsElementFactoryString();
+    private static final NutsElementMapper F_CHAR = new NutsElementFactoryChar();
+    private static final NutsElementMapper F_NUMBERS = new NutsElementFactoryNumber();
+    private static final NutsElementMapper F_BOOLEANS = new NutsElementFactoryBoolean();
+    private static final NutsElementMapper F_ENUMS = new NutsElementFactoryEnum();
+    private static final NutsElementMapper F_INSTANT = new NutsElementFactoryInstant();
+    private static final NutsElementMapper F_DATE = new NutsElementFactoryUtilDate();
+    private static final NutsElementMapper F_PATH = new NutsElementFactoryPath();
+    private static final NutsElementMapper F_FILE = new NutsElementFactoryFile();
+    private static final NutsElementMapper F_COLLECTION = new NutsElementFactoryCollection();
+    private static final NutsElementMapper F_ITERATOR = new NutsElementFactoryIterator();
+    private static final NutsElementMapper F_MAP = new NutsElementFactoryMap();
+    private static final NutsElementMapper F_NAMED_ELEM = new NutsElementFactoryNamedElement();
+    private static final NutsElementMapper F_MAPENTRY = new NutsElementFactoryMapEntry();
+    private static final NutsElementMapper F_XML_ELEMENT = new NutsElementFactoryXmlElement();
+    private static final NutsElementMapper F_XML_DOCUMENT = new NutsElementFactoryXmlDocument();
+    private static final NutsElementMapper F_NUTS_DEF = new NutsElementFactoryNutsDefinition();
+    private static final NutsElementMapper F_NUTS_ID = new NutsElementFactoryNutsId();
+    private static final NutsElementMapper F_NUTS_VERSION = new NutsElementFactoryNutsVersion();
+    private static final NutsElementMapper F_NUTS_DESCRIPTOR = new NutsElementFactoryNutsDescriptor();
+    private static final NutsElementMapper F_NUTS_DEPENDENCY = new NutsElementFactoryNutsDependency();
+    private static final NutsElementMapper F_NUTS_SDK_LOCATION = new NutsElementFactoryNutsSdkLocation();
+    private static final NutsElementMapper F_NUTS_ID_LOCATION = new NutsElementFactoryNutsIdLocation();
+    private static final NutsElementMapper F_NUTS_CLASSIFIER_MAPPING = new NutsElementFactoryNutsClassifierMapping();
+    private static final NutsElementMapper F_ARTIFACT_CALL = new NutsElementFactoryNutsArtifactCall();
 //    public static final NutsElementFactory F_JSONELEMENT = new NutsElementFactoryJsonElement();
 
-    private final ClassMap<NutsElementFactory> defaultFactories = new ClassMap<>(null, NutsElementFactory.class);
-    private final ClassMap<NutsElementFactory> factories = new ClassMap<>(null, NutsElementFactory.class);
+    private final ClassMap<NutsElementMapper> defaultFactories = new ClassMap<>(null, NutsElementMapper.class);
+    private final ClassMap<NutsElementMapper> factories = new ClassMap<>(null, NutsElementMapper.class);
     private ReflectRepository typesRepository;
     private final NutsWorkspace ws;
-    private final NutsElementFactory F_OBJ = new NutsElemenSerializationAdapterObjReflect();
+    private final NutsElementMapper F_OBJ = new NutsElemenSerializationAdapterObjReflect();
 
     public DefaultNutsElementFactoryService(NutsWorkspace ws) {
         typesRepository = NutsWorkspaceUtils.of(ws).getReflectRepository();
@@ -119,12 +121,10 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         addDefaultFactory(Object.class, F_OBJ);
         addDefaultFactory(String.class, F_STRINGS);
-        
-        
+
         addDefaultFactory(StringBuilder.class, F_STRINGS);
         addDefaultFactory(StringBuffer.class, F_STRINGS);
-        
-        
+
         addDefaultFactory(Path.class, F_PATH);
         addDefaultFactory(File.class, F_FILE);
         addDefaultFactory(java.util.Date.class, F_DATE);
@@ -149,7 +149,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         addDefaultFactory(NutsArrayElement.class, new NutsElementFactoryNutsArrayElement());
         addDefaultFactory(NutsObjectElement.class, new NutsElementFactoryNutsObjectElement());
         addDefaultFactory(NutsElement.class, new NutsElementFactoryNutsElement());
-        addDefaultFactory(NutsNamedElement.class, F_NAMED_ELEM);
+        addDefaultFactory(NutsElementEntry.class, F_NAMED_ELEM);
 
 //        addHierarchyFactory(JsonElement.class, F_JSONELEMENT);
         addCustomFactory(NutsDefinition.class, F_NUTS_DEF);
@@ -164,37 +164,37 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         this.ws = ws;
     }
 
-    public final void addDefaultFactory(Class cls, NutsElementFactory instance) {
+    public final void addDefaultFactory(Class cls, NutsElementMapper instance) {
         defaultFactories.put(cls, instance);
     }
 
-    public final void addCustomFactory(Class cls, NutsElementFactory instance) {
+    public final void addCustomFactory(Class cls, NutsElementMapper instance) {
         factories.put(cls, instance);
     }
 
-    public NutsElementFactory getElementFactory(Type type, boolean defaultOnly) {
+    public NutsElementMapper getElementFactory(Type type, boolean defaultOnly) {
         if (type == null) {
             return F_NULL;
         }
         Class cls = ReflectUtils.getRawClass(type);
         if (cls.isArray()) {
-            NutsElementFactory f = defaultFactories.getExact(cls);
+            NutsElementMapper f = defaultFactories.getExact(cls);
             if (f != null) {
                 return f;
             }
             return F_NUTS_ARR;
         }
         if (!defaultOnly) {
-            NutsElementFactory f = factories.get(cls);
+            NutsElementMapper f = factories.get(cls);
             if (f != null) {
                 return f;
             }
         }
-        final NutsElementFactory r = defaultFactories.get(cls);
-        if(r!=null){
+        final NutsElementMapper r = defaultFactories.get(cls);
+        if (r != null) {
             return r;
         }
-        throw new IllegalArgumentException("Unable to find serialization factory for "+type);
+        throw new IllegalArgumentException("Unable to find serialization factory for " + type);
     }
 
     @Override
@@ -202,7 +202,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         if (o.type() == NutsElementType.NULL) {
             return F_NULL.createObject(o, to, context);
         }
-        NutsElementFactory f = getElementFactory(to, false);
+        NutsElementMapper f = getElementFactory(to, false);
         return f.createObject(o, to, context);
     }
 
@@ -211,7 +211,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         if (o.type() == NutsElementType.NULL) {
             return F_NULL.createElement(null, to, context);
         }
-        NutsElementFactory f = getElementFactory(to, true);
+        NutsElementMapper f = getElementFactory(to, true);
         return f.createObject(o, to, context);
     }
 
@@ -223,7 +223,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         if (expectedType == null) {
             expectedType = o.getClass();
         }
-        NutsElementFactory ff = getElementFactory(expectedType, false);
+        NutsElementMapper ff = getElementFactory(expectedType, false);
         if (ff == null) {
             ff = getElementFactory(expectedType, false);
         }
@@ -241,60 +241,59 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         return getElementFactory(expectedType, true).createElement(o, o.getClass(), context);
     }
 
-    private static class NutsElementFactoryNamedElement implements NutsElementFactory<NutsNamedElement> {
+    private static class NutsElementFactoryNamedElement implements NutsElementMapper<NutsElementEntry> {
 
         @Override
-        public NutsElement createElement(NutsNamedElement o, Type typeOfSrc, NutsElementFactoryContext context) {
-            NutsNamedElement je = (NutsNamedElement) o;
+        public NutsElement createElement(NutsElementEntry o, Type typeOfSrc, NutsElementFactoryContext context) {
+            NutsElementEntry je = (NutsElementEntry) o;
             Map<String, Object> m = new HashMap<>();
-            m.put("name", je.getName());
+            m.put("key", je.getKey());
             m.put("value", je.getValue());
             return context.objectToElement(m, ReflectUtils.createParametrizedType(Map.class, String.class, Object.class));
         }
 
         @Override
-        public NutsNamedElement createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
+        public NutsElementEntry createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             Type[] args = (typeOfResult instanceof ParameterizedType)
                     ? (((ParameterizedType) typeOfResult).getActualTypeArguments())
                     : new Type[]{Object.class, Object.class};
             Type mapType = new SimpleParametrizedType(Map.class, args);
             Map map = (Map) context.elementToObject(o, mapType);
-            return new DefaultNutsNamedElement(
-                    (String) map.get("name"),
+            return new DefaultNutsElementEntry(
+                    (NutsElement) map.get("key"),
                     (NutsElement) map.get("value")
             );
         }
 
     }
 
-    private static class NutsElementFactoryMap implements NutsElementFactory<Map> {
+    private static class NutsElementFactoryMap implements NutsElementMapper<Map> {
 
         @Override
         public NutsElement createElement(Map o, Type typeOfSrc, NutsElementFactoryContext context) {
             Map je = (Map) o;
-            boolean type1 = true;
-            for (Object object : je.keySet()) {
-                if (!(object instanceof String)) {
-                    type1 = false;
-                    break;
+            Map<NutsElement, NutsElement> m = new LinkedHashMap<>();
+            if (je != null) {
+                for (Object e0 : je.entrySet()) {
+                    Map.Entry e = (Map.Entry) e0;
+                    NutsElement k = context.defaultObjectToElement(e.getKey(), null);
+                    NutsElement v = context.defaultObjectToElement(e.getValue(), null);
+                    m.put(k, v);
                 }
             }
-            if (type1) {
-                return new NutsObjectElementMap1(je, context);
-            }
-            return new NutsObjectElementMap2(je, context);
+            return new DefaultNutsObjectElement(m, context.elements());
         }
 
         public Map fillObject(NutsElement o, Map all, Type elemType1, Type elemType2, Type to, NutsElementFactoryContext context) {
             if (o.type() == NutsElementType.OBJECT) {
-                for (NutsNamedElement kv : o.object().children()) {
-                    NutsElement k = context.elements().forString(kv.getName());
+                for (NutsElementEntry kv : o.asObject().children()) {
+                    NutsElement k = kv.getKey();
                     NutsElement v = kv.getValue();
                     all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
                 }
             } else if (o.type() == NutsElementType.ARRAY) {
-                for (NutsElement ee : o.array().children()) {
-                    NutsObjectElement kv = ee.object();
+                for (NutsElement ee : o.asArray().children()) {
+                    NutsObjectElement kv = ee.asObject();
                     NutsElement k = kv.get("key");
                     NutsElement v = kv.get("value");
                     all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
@@ -326,10 +325,10 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             switch (cls.getName()) {
                 case "java.util.Map":
                 case "java.util.LinkedHashMap": {
-                    return fillObject(o, new LinkedHashMap(o.object().size()), elemType1, elemType2, to, context);
+                    return fillObject(o, new LinkedHashMap(o.asObject().size()), elemType1, elemType2, to, context);
                 }
                 case "java.util.HashMap": {
-                    return fillObject(o, new HashMap(o.object().size()), elemType1, elemType2, to, context);
+                    return fillObject(o, new HashMap(o.asObject().size()), elemType1, elemType2, to, context);
                 }
             }
             throw new IllegalArgumentException("fix me");
@@ -337,15 +336,15 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     }
 
-    private static class NutsElementFactoryMapEntry implements NutsElementFactory<Map.Entry> {
+    private static class NutsElementFactoryMapEntry implements NutsElementMapper<Map.Entry> {
 
         @Override
         public NutsElement createElement(Map.Entry o, Type typeOfSrc, NutsElementFactoryContext context) {
             Map.Entry je = (Map.Entry) o;
-            Map<String, Object> m = new HashMap<>();
-            m.put("key", je.getKey());
-            m.put("value", je.getValue());
-            return new NutsObjectElementMap1(m, context);
+            return context.elements().forObject()
+                    .set("key", context.objectToElement(je.getKey(), null))
+                    .set("value", context.objectToElement(je.getValue(), null))
+                    .build();
         }
 
         @Override
@@ -353,30 +352,29 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             if (to instanceof ParameterizedType) {
                 Type[] kvt = ((ParameterizedType) to).getActualTypeArguments();
                 return new AbstractMap.SimpleEntry(
-                        context.elementToObject(o.object().get("key"), kvt[0]),
-                        context.elementToObject(o.object().get("value"), kvt[0])
+                        context.elementToObject(o.asObject().get("key"), kvt[0]),
+                        context.elementToObject(o.asObject().get("value"), kvt[0])
                 );
             }
             return new AbstractMap.SimpleEntry(
-                    context.elementToObject(o.object().get("key"), Object.class),
-                    context.elementToObject(o.object().get("value"), Object.class)
+                    context.elementToObject(o.asObject().get("key"), Object.class),
+                    context.elementToObject(o.asObject().get("value"), Object.class)
             );
         }
 
     }
 
-    private static class NutsElementFactoryCollection implements NutsElementFactory {
+    private static class NutsElementFactoryCollection implements NutsElementMapper {
 
         @Override
         public NutsElement createElement(Object o, Type typeOfSrc, NutsElementFactoryContext context) {
-            if (o instanceof List) {
-                return new NutsArrayElementFromList((List) o, context);
-            }
-            return new NutsArrayElementFromCollection((Collection) o, context);
+            Collection<Object> coll = (Collection) o;
+            List<NutsElement> collect = coll.stream().map(x -> context.objectToElement(x, null)).collect(Collectors.toList());
+            return new DefaultNutsArrayElement(collect);
         }
 
         public Collection fillObject(NutsElement o, Collection coll, Type elemType, Type to, NutsElementFactoryContext context) {
-            for (NutsElement nutsElement : o.array().children()) {
+            for (NutsElement nutsElement : o.asArray().children()) {
                 coll.add(context.elementToObject(nutsElement, elemType));
             }
             return coll;
@@ -397,7 +395,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                 case "java.util.Collection":
                 case "java.util.List":
                 case "java.util.ArrayList": {
-                    return fillObject(o, new ArrayList(o.array().size()), elemType, to, context);
+                    return fillObject(o, new ArrayList(o.asArray().size()), elemType, to, context);
                 }
             }
             throw new IllegalArgumentException("fix me");
@@ -405,55 +403,60 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     }
 
-    private static class NutsElementFactoryIterator implements NutsElementFactory<Iterator> {
+    private static class NutsElementFactoryIterator implements NutsElementMapper<Iterator> {
 
         @Override
         public NutsElement createElement(Iterator o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return new NutsArrayElementFromIterator((Iterator) o, context);
+            Iterator nl = (Iterator) o;
+            List<NutsElement> values = new ArrayList<>();
+            while (nl.hasNext()) {
+                values.add(context.objectToElement(nl.next(), null));
+            }
+            return new DefaultNutsArrayElement(values);
         }
 
         @Override
         public Iterator createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
             Class elemType = Object.class;
-            return o.array().children().stream().map(x -> context.elementToObject(x, elemType)).collect(
+            return o.asArray().children().stream().map(x -> context.elementToObject(x, elemType)).collect(
                     Collectors.toList()
             ).iterator();
         }
 
     }
 
-    private static class NutsElementFactoryInstant implements NutsElementFactory<Instant> {
+    private static class NutsElementFactoryInstant implements NutsElementMapper<Instant> {
 
         @Override
         public NutsElement createElement(Instant o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.elements().forDate((Instant) o);
+            return context.elements().forInstant((Instant) o);
         }
 
         @Override
         public Instant createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
             switch (o.type()) {
-                case DATE: {
-                    return o.primitive().getDate();
+                case INSTANT: {
+                    return o.asPrimitive().getInstant();
                 }
                 case INTEGER: {
-                    return Instant.ofEpochMilli(o.primitive().getInt());
+                    return Instant.ofEpochMilli(o.asPrimitive().getInt());
                 }
                 case LONG: {
-                    return Instant.ofEpochMilli(o.primitive().getLong());
+                    return Instant.ofEpochMilli(o.asPrimitive().getLong());
                 }
                 case STRING: {
-                    return Instant.parse(o.primitive().getString());
+                    return Instant.parse(o.asPrimitive().getString());
                 }
             }
             throw new IllegalArgumentException("unable to parse instant " + o);
         }
     }
 
-    private static class NutsElementFactoryUtilDate implements NutsElementFactory<java.util.Date> {
+    private static class NutsElementFactoryUtilDate implements NutsElementMapper<java.util.Date> {
 
         @Override
         public NutsElement createElement(java.util.Date o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.elements().forDate(o.toInstant());
+            return context.elements().forInstant(o.toInstant());
         }
 
         @Override
@@ -463,7 +466,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
     }
 
-    private static class NutsElementFactoryNumber implements NutsElementFactory<Number> {
+    private static class NutsElementFactoryNumber implements NutsElementMapper<Number> {
 
         @Override
         public NutsElement createElement(Number o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -475,33 +478,33 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             switch (((Class) to).getName()) {
                 case "byte":
                 case "java.lang.Byte":
-                    return o.primitive().getByte();
+                    return o.asPrimitive().getByte();
                 case "short":
                 case "java.lang.Short":
-                    return o.primitive().getShort();
+                    return o.asPrimitive().getShort();
                 case "int":
                 case "java.lang.Integer":
-                    return o.primitive().getInt();
+                    return o.asPrimitive().getInt();
                 case "long":
                 case "java.lang.Long":
-                    return o.primitive().getShort();
+                    return o.asPrimitive().getShort();
                 case "float":
                 case "java.lang.Float":
-                    return o.primitive().getShort();
+                    return o.asPrimitive().getShort();
                 case "double":
                 case "java.lang.Double":
-                    return o.primitive().getShort();
+                    return o.asPrimitive().getShort();
                 case "java.lang.BigDecimal":
-                    return new BigDecimal(o.primitive().getString());
+                    return new BigDecimal(o.asPrimitive().getString());
                 case "java.lang.BigInteger":
-                    return new BigInteger(o.primitive().getString());
+                    return new BigInteger(o.asPrimitive().getString());
             }
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
     }
 
-    private static class NutsElementFactoryBoolean implements NutsElementFactory<Boolean> {
+    private static class NutsElementFactoryBoolean implements NutsElementMapper<Boolean> {
 
         @Override
         public NutsElement createElement(Boolean o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -513,14 +516,14 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             switch (((Class) to).getName()) {
                 case "boolean":
                 case "java.lang.Boolean":
-                    return o.primitive().getBoolean();
+                    return o.asPrimitive().getBoolean();
             }
             throw new UnsupportedOperationException("Not supported.");
         }
 
     }
 
-    private static class NutsElementFactoryEnum implements NutsElementFactory<Enum> {
+    private static class NutsElementFactoryEnum implements NutsElementMapper<Enum> {
 
         @Override
         public NutsElement createElement(Enum o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -534,11 +537,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                 case SHORT:
                 case INTEGER:
                 case LONG: {
-                    NutsPrimitiveElement p = o.primitive();
+                    NutsPrimitiveElement p = o.asPrimitive();
                     return (Enum) ((Class) to).getEnumConstants()[p.getInt()];
                 }
                 case STRING: {
-                    NutsPrimitiveElement p = o.primitive();
+                    NutsPrimitiveElement p = o.asPrimitive();
                     return Enum.valueOf(ReflectUtils.getRawClass(to), p.getString());
                 }
             }
@@ -546,7 +549,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
     }
 
-    private static class NutsElementFactoryChar implements NutsElementFactory<Character> {
+    private static class NutsElementFactoryChar implements NutsElementMapper<Character> {
 
         @Override
         public NutsElement createElement(Character o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -555,15 +558,14 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public Character createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
-            final String s = o.primitive().getString();
-            return (s==null || s.isEmpty())?
-                    (((to instanceof Class) && ((Class)to).isPrimitive()) ? '\0':null)
-                    :s.charAt(0)
-                    ;
+            final String s = o.asPrimitive().getString();
+            return (s == null || s.isEmpty())
+                    ? (((to instanceof Class) && ((Class) to).isPrimitive()) ? '\0' : null)
+                    : s.charAt(0);
         }
     }
 
-    private static class NutsElementFactoryString implements NutsElementFactory<String> {
+    private static class NutsElementFactoryString implements NutsElementMapper<String> {
 
         @Override
         public NutsElement createElement(String o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -572,11 +574,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public String createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
-            return o.primitive().getString();
+            return o.asPrimitive().getString();
         }
     }
 
-    private static class NutsElementFactoryNull implements NutsElementFactory<Object> {
+    private static class NutsElementFactoryNull implements NutsElementMapper<Object> {
 
         @Override
         public NutsElement createElement(Object o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -613,7 +615,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     }
 
-    private static class NutsElementFactoryNutsDefinition implements NutsElementFactory<NutsDefinition> {
+    private static class NutsElementFactoryNutsDefinition implements NutsElementMapper<NutsDefinition> {
 
         @Override
         public NutsElement createElement(NutsDefinition o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -627,7 +629,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
     }
 
-    private static class NutsElementFactoryNutsClassifierMapping implements NutsElementFactory<NutsClassifierMapping> {
+    private static class NutsElementFactoryNutsClassifierMapping implements NutsElementMapper<NutsClassifierMapping> {
 
         @Override
         public NutsElement createElement(NutsClassifierMapping o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -641,7 +643,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
     }
 
-    private static class NutsElementFactoryNutsArtifactCall implements NutsElementFactory<NutsArtifactCall> {
+    private static class NutsElementFactoryNutsArtifactCall implements NutsElementMapper<NutsArtifactCall> {
 
         @Override
         public NutsElement createElement(NutsArtifactCall o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -651,7 +653,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsArtifactCall createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            NutsObjectElement object = o.object();
+            NutsObjectElement object = o.asObject();
             NutsId id = (NutsId) context.elementToObject(object.get("id"), NutsId.class);
             String[] arguments = (String[]) context.elementToObject(object.get("arguments"), String[].class);
             Map<String, String> properties = (Map<String, String>) context.elementToObject(object.get("properties"), ReflectUtils.createParametrizedType(Map.class, String.class, String.class));
@@ -660,7 +662,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
     }
 
-    private static class NutsElementFactoryNutsId implements NutsElementFactory<NutsId> {
+    private static class NutsElementFactoryNutsId implements NutsElementMapper<NutsId> {
 
         @Override
         public NutsElement createElement(NutsId o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -669,12 +671,12 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsId createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            return context.getWorkspace().id().parser().parse(o.primitive().getString());
+            return context.getWorkspace().id().parser().parse(o.asPrimitive().getString());
         }
 
     }
 
-    private static class NutsElementFactoryNutsVersion implements NutsElementFactory<NutsVersion> {
+    private static class NutsElementFactoryNutsVersion implements NutsElementMapper<NutsVersion> {
 
         @Override
         public NutsElement createElement(NutsVersion o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -683,12 +685,12 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsVersion createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            return context.getWorkspace().version().parser().parse(o.primitive().getString());
+            return context.getWorkspace().version().parser().parse(o.asPrimitive().getString());
         }
 
     }
 
-    private static class NutsElementFactoryPath implements NutsElementFactory<Path> {
+    private static class NutsElementFactoryPath implements NutsElementMapper<Path> {
 
         @Override
         public NutsElement createElement(Path o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -697,11 +699,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public Path createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            return Paths.get(o.primitive().getString());
+            return Paths.get(o.asPrimitive().getString());
         }
     }
 
-    private static class NutsElementFactoryFile implements NutsElementFactory<File> {
+    private static class NutsElementFactoryFile implements NutsElementMapper<File> {
 
         @Override
         public NutsElement createElement(File o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -710,11 +712,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public File createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            return new File(o.primitive().getString());
+            return new File(o.asPrimitive().getString());
         }
     }
 
-    private static class NutsElementFactoryNutsDescriptor implements NutsElementFactory<NutsDescriptor> {
+    private static class NutsElementFactoryNutsDescriptor implements NutsElementMapper<NutsDescriptor> {
 
         @Override
         public NutsElement createElement(NutsDescriptor o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -730,7 +732,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     }
 
-    private static class NutsElementFactoryNutsSdkLocation implements NutsElementFactory<NutsSdkLocation> {
+    private static class NutsElementFactoryNutsSdkLocation implements NutsElementMapper<NutsSdkLocation> {
 
         @Override
         public NutsElement createElement(NutsSdkLocation o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -739,7 +741,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsSdkLocation createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            NutsObjectElement obj = o.object();
+            NutsObjectElement obj = o.asObject();
             NutsId id = (NutsId) context.elementToObject(obj.get("id"), NutsId.class);
             String product = (String) context.elementToObject(obj.get("product"), String.class);
             String name = (String) context.elementToObject(obj.get("name"), String.class);
@@ -752,23 +754,29 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     }
 
-    private static class NutsElementFactoryNutsDependency implements NutsElementFactory<NutsDependency> {
+    private static class NutsElementFactoryNutsDependency implements NutsElementMapper<NutsDependency> {
 
         @Override
         public NutsElement createElement(NutsDependency o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.defaultObjectToElement(context.getWorkspace().dependency().builder().set(o), null
-            );
+            if (o.getExclusions().length == 0) {
+                //use compact form
+                return context.defaultObjectToElement(context.getWorkspace().dependency().formatter(o).format(), null);
+            }
+            return context.defaultObjectToElement(context.getWorkspace().dependency().builder().set(o), null);
         }
 
         @Override
         public NutsDependency createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
+            if (o.type() == NutsElementType.STRING) {
+                return context.getWorkspace().dependency().parser().parseDependency(o.asPrimitive().getString());
+            }
             DefaultNutsDependencyBuilder builder = (DefaultNutsDependencyBuilder) context.defaultElementToObject(o, DefaultNutsDependencyBuilder.class);
             return context.getWorkspace().dependency().builder().set(builder).build();
         }
 
     }
 
-    private static class NutsElementFactoryNutsIdLocation implements NutsElementFactory<NutsIdLocation> {
+    private static class NutsElementFactoryNutsIdLocation implements NutsElementMapper<NutsIdLocation> {
 
         @Override
         public NutsElement createElement(NutsIdLocation o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -784,7 +792,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     }
 
-    private class NutsElemenSerializationAdapterObjReflect implements NutsElementFactory<Object> {
+    private class NutsElemenSerializationAdapterObjReflect implements NutsElementMapper<Object> {
 
         @Override
         public NutsElement createElement(Object src, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -808,7 +816,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             }
             ReflectType m = typesRepository.getType(typeOfResult);
             Object instance = m.newInstance();
-            NutsObjectElement eobj = o.object();
+            NutsObjectElement eobj = o.asObject();
             for (ReflectProperty property : m.getProperties()) {
                 if (property.isWrite()) {
                     NutsElement v = eobj.get(property.getName());
@@ -822,7 +830,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     }
 
-    private static class NutsElemenSerializationAdapterArr implements NutsElementFactory<Object> {
+    private static class NutsElemenSerializationAdapterArr implements NutsElementMapper<Object> {
 
         public NutsElemenSerializationAdapterArr() {
         }
@@ -836,49 +844,49 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                 case "boolean": {
                     boolean[] x = new boolean[e.size()];
                     for (int i = 0; i < e.size(); i++) {
-                        x[i] = e.get(i).primitive().getBoolean();
+                        x[i] = e.get(i).asPrimitive().getBoolean();
                     }
                     return x;
                 }
                 case "byte": {
                     byte[] x = new byte[e.size()];
                     for (int i = 0; i < e.size(); i++) {
-                        x[i] = e.get(i).primitive().getByte();
+                        x[i] = e.get(i).asPrimitive().getByte();
                     }
                     return x;
                 }
                 case "short": {
                     short[] x = new short[e.size()];
                     for (int i = 0; i < e.size(); i++) {
-                        x[i] = e.get(i).primitive().getShort();
+                        x[i] = e.get(i).asPrimitive().getShort();
                     }
                     return x;
                 }
                 case "int": {
                     int[] x = new int[e.size()];
                     for (int i = 0; i < e.size(); i++) {
-                        x[i] = e.get(i).primitive().getInt();
+                        x[i] = e.get(i).asPrimitive().getInt();
                     }
                     return x;
                 }
                 case "long": {
                     long[] x = new long[e.size()];
                     for (int i = 0; i < e.size(); i++) {
-                        x[i] = e.get(i).primitive().getLong();
+                        x[i] = e.get(i).asPrimitive().getLong();
                     }
                     return x;
                 }
                 case "float": {
                     float[] x = new float[e.size()];
                     for (int i = 0; i < e.size(); i++) {
-                        x[i] = e.get(i).primitive().getFloat();
+                        x[i] = e.get(i).asPrimitive().getFloat();
                     }
                     return x;
                 }
                 case "double": {
                     double[] x = new double[e.size()];
                     for (int i = 0; i < e.size(); i++) {
-                        x[i] = e.get(i).primitive().getDouble();
+                        x[i] = e.get(i).asPrimitive().getDouble();
                     }
                     return x;
                 }
@@ -894,24 +902,24 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
 
         public NutsElement createElement(Object src, Type typeOfSrc, NutsElementFactoryContext context) {
-            return new NutsArrayElementFromArray(src, context);
+            return _createArray1(src, context);
         }
 
     }
 
-    private static class NutsElementFactoryPrimitiveBooleanArray implements NutsElementFactory<boolean[]> {
+    private static class NutsElementFactoryPrimitiveBooleanArray implements NutsElementMapper<boolean[]> {
 
         public NutsElementFactoryPrimitiveBooleanArray() {
         }
 
         @Override
         public NutsElement createElement(boolean[] src, Type typeOfSrc, NutsElementFactoryContext context) {
-            return new NutsArrayElementFromArray(src, context);
+            return _createArray1(src, context);
         }
 
         @Override
         public boolean[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            NutsArrayElement earr = o.array();
+            NutsArrayElement earr = o.asArray();
             boolean[] arr = new boolean[earr.size()];
             for (int i = 0; i < arr.length; i++) {
                 arr[i] = (boolean) context.elementToObject(earr.get(i), boolean.class);
@@ -920,19 +928,19 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
     }
 
-    private static class NutsElementFactoryPrimitiveByteArray implements NutsElementFactory<byte[]> {
+    private static class NutsElementFactoryPrimitiveByteArray implements NutsElementMapper<byte[]> {
 
         public NutsElementFactoryPrimitiveByteArray() {
         }
 
         @Override
         public NutsElement createElement(byte[] src, Type typeOfSrc, NutsElementFactoryContext context) {
-            return new NutsArrayElementFromArray(src, context);
+            return _createArray1(src, context);
         }
 
         @Override
         public byte[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            NutsArrayElement earr = o.array();
+            NutsArrayElement earr = o.asArray();
             byte[] arr = new byte[earr.size()];
             for (int i = 0; i < arr.length; i++) {
                 arr[i] = (byte) context.elementToObject(earr.get(i), byte.class);
@@ -941,19 +949,19 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
     }
 
-    private static class NutsElementFactoryPrimitiveShortArray implements NutsElementFactory<short[]> {
+    private static class NutsElementFactoryPrimitiveShortArray implements NutsElementMapper<short[]> {
 
         public NutsElementFactoryPrimitiveShortArray() {
         }
 
         @Override
         public NutsElement createElement(short[] src, Type typeOfSrc, NutsElementFactoryContext context) {
-            return new NutsArrayElementFromArray(src, context);
+            return _createArray1(src, context);
         }
 
         @Override
         public short[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            NutsArrayElement earr = o.array();
+            NutsArrayElement earr = o.asArray();
             short[] arr = new short[earr.size()];
             for (int i = 0; i < arr.length; i++) {
                 arr[i] = (short) context.elementToObject(earr.get(i), short.class);
@@ -962,7 +970,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
     }
 
-    private static class NutsElementFactoryPrimitiveCharArray implements NutsElementFactory<char[]> {
+    private static class NutsElementFactoryPrimitiveCharArray implements NutsElementMapper<char[]> {
 
         public NutsElementFactoryPrimitiveCharArray() {
         }
@@ -974,25 +982,25 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public char[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            NutsArrayElement earr = o.array();
+            NutsArrayElement earr = o.asArray();
             String s = (String) context.elementToObject(o, String.class);
             return s.toCharArray();
         }
     }
 
-    private static class NutsElementFactoryPrimitiveIntArray implements NutsElementFactory<int[]> {
+    private static class NutsElementFactoryPrimitiveIntArray implements NutsElementMapper<int[]> {
 
         public NutsElementFactoryPrimitiveIntArray() {
         }
 
         @Override
         public NutsElement createElement(int[] src, Type typeOfSrc, NutsElementFactoryContext context) {
-            return new NutsArrayElementFromArray(src, context);
+            return _createArray1(src, context);
         }
 
         @Override
         public int[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            NutsArrayElement earr = o.array();
+            NutsArrayElement earr = o.asArray();
             int[] arr = new int[earr.size()];
             for (int i = 0; i < arr.length; i++) {
                 arr[i] = (int) context.elementToObject(earr.get(i), int.class);
@@ -1001,19 +1009,19 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
     }
 
-    private static class NutsElementFactoryPrimitiveLongArray implements NutsElementFactory<long[]> {
+    private static class NutsElementFactoryPrimitiveLongArray implements NutsElementMapper<long[]> {
 
         public NutsElementFactoryPrimitiveLongArray() {
         }
 
         @Override
         public NutsElement createElement(long[] src, Type typeOfSrc, NutsElementFactoryContext context) {
-            return new NutsArrayElementFromArray(src, context);
+            return _createArray1(src, context);
         }
 
         @Override
         public long[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            NutsArrayElement earr = o.array();
+            NutsArrayElement earr = o.asArray();
             long[] arr = new long[earr.size()];
             for (int i = 0; i < arr.length; i++) {
                 arr[i] = (long) context.elementToObject(earr.get(i), long.class);
@@ -1022,19 +1030,19 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
     }
 
-    private static class NutsElementFactoryFloatArray implements NutsElementFactory<float[]> {
+    private static class NutsElementFactoryFloatArray implements NutsElementMapper<float[]> {
 
         public NutsElementFactoryFloatArray() {
         }
 
         @Override
         public NutsElement createElement(float[] src, Type typeOfSrc, NutsElementFactoryContext context) {
-            return new NutsArrayElementFromArray(src, context);
+            return _createArray1(src, context);
         }
 
         @Override
         public float[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            NutsArrayElement earr = o.array();
+            NutsArrayElement earr = o.asArray();
             float[] arr = new float[earr.size()];
             for (int i = 0; i < arr.length; i++) {
                 arr[i] = (float) context.elementToObject(earr.get(i), float.class);
@@ -1043,19 +1051,19 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
     }
 
-    private static class NutsElementFactoryPrimitiveDoubleArray implements NutsElementFactory<double[]> {
+    private static class NutsElementFactoryPrimitiveDoubleArray implements NutsElementMapper<double[]> {
 
         public NutsElementFactoryPrimitiveDoubleArray() {
         }
 
         @Override
         public NutsElement createElement(double[] src, Type typeOfSrc, NutsElementFactoryContext context) {
-            return new NutsArrayElementFromArray(src, context);
+            return _createArray1(src, context);
         }
 
         @Override
         public double[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            NutsArrayElement earr = o.array();
+            NutsArrayElement earr = o.asArray();
             double[] arr = new double[earr.size()];
             for (int i = 0; i < arr.length; i++) {
                 arr[i] = (double) context.elementToObject(earr.get(i), double.class);
@@ -1064,19 +1072,19 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
     }
 
-    private static class NutsElementFactoryObjectArray implements NutsElementFactory<Object[]> {
+    private static class NutsElementFactoryObjectArray implements NutsElementMapper<Object[]> {
 
         public NutsElementFactoryObjectArray() {
         }
 
         @Override
         public NutsElement createElement(Object[] src, Type typeOfSrc, NutsElementFactoryContext context) {
-            return new NutsArrayElementFromArray(src, context);
+            return _createArray1(src, context);
         }
 
         @Override
         public Object[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            NutsArrayElement earr = o.array();
+            NutsArrayElement earr = o.asArray();
             Object[] arr = new Object[earr.size()];
             for (int i = 0; i < arr.length; i++) {
                 arr[i] = (Object) context.elementToObject(earr.get(i), Object.class);
@@ -1085,7 +1093,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
     }
 
-    private static class NutsElementFactoryNutsPrimitiveElement implements NutsElementFactory<NutsPrimitiveElement> {
+    private static class NutsElementFactoryNutsPrimitiveElement implements NutsElementMapper<NutsPrimitiveElement> {
 
         public NutsElementFactoryNutsPrimitiveElement() {
         }
@@ -1098,13 +1106,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsPrimitiveElement createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             if (o.type().isPrimitive()) {
-                return o.primitive();
+                return o.asPrimitive();
             }
             return context.elements().forString(o.toString());
         }
     }
 
-    private static class NutsElementFactoryNutsArrayElement implements NutsElementFactory<NutsArrayElement> {
+    private static class NutsElementFactoryNutsArrayElement implements NutsElementMapper<NutsArrayElement> {
 
         public NutsElementFactoryNutsArrayElement() {
         }
@@ -1117,13 +1125,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsArrayElement createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             if (o.type() == NutsElementType.ARRAY) {
-                return o.array();
+                return o.asArray();
             }
             return context.elements().forArray().add(o).build();
         }
     }
 
-    private static class NutsElementFactoryNutsObjectElement implements NutsElementFactory<NutsObjectElement> {
+    private static class NutsElementFactoryNutsObjectElement implements NutsElementMapper<NutsObjectElement> {
 
         public NutsElementFactoryNutsObjectElement() {
         }
@@ -1136,13 +1144,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsObjectElement createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             if (o.type() == NutsElementType.OBJECT) {
-                return o.object();
+                return o.asObject();
             }
             return context.elements().forObject().set("value", o).build();
         }
     }
 
-    private static class NutsElementFactoryNutsElement implements NutsElementFactory<NutsElement> {
+    private static class NutsElementFactoryNutsElement implements NutsElementMapper<NutsElement> {
 
         public NutsElementFactoryNutsElement() {
         }
@@ -1155,6 +1163,21 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsElement createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             return o;
+        }
+    }
+
+    private static NutsArrayElement _createArray1(Object array, NutsElementFactoryContext context) {
+        if (array.getClass().getComponentType().isPrimitive()) {
+            List<NutsElement> preloaded = new ArrayList<>();
+            int length = Array.getLength(array);
+            for (int i = 0; i < length; i++) {
+                preloaded.add(context.objectToElement(Array.get(array, i), null));
+            }
+            return new DefaultNutsArrayElement(preloaded);
+        } else {
+            return new DefaultNutsArrayElement(
+                    Arrays.stream((Object[]) array).map(x -> context.objectToElement(x, null)).collect(Collectors.toList())
+            );
         }
     }
 

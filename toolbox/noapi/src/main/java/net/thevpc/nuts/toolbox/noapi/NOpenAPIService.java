@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class NOpenAPIService {
@@ -131,6 +130,15 @@ public class NOpenAPIService {
         }
     }
 
+    private NutsElement loadElement(InputStream inputStream, boolean json) {
+        if(json){
+            return appContext.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(inputStream, NutsElement.class);
+        }else{
+            final Object o = new Yaml().load(inputStream);
+            return appContext.getWorkspace().formats().element().convert(o, NutsElement.class);
+        }
+    }
+    
     private MdDocument toMarkdown(InputStream inputStream, boolean json) {
         MdDocumentBuilder doc = new MdDocumentBuilder();
         doc.setProperty("headers", new String[]{
@@ -147,12 +155,9 @@ public class NOpenAPIService {
         doc.setDate(LocalDate.now());
         doc.setSubTitle("RESTRICTED - INTERNAL");
 
-        ItemFactory.Item obj = ItemFactory.itemOf(
-                json ? appContext.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(inputStream, NutsElement.class) :
-                        new Yaml().load(inputStream)
-        );
+        NutsElement obj = loadElement(inputStream, json);
         MdSequenceBuilder all = MdFactory.seq();
-        ItemFactory.Obj entries = obj.asObject();
+        NutsObjectElement entries = obj.asObject();
         String documentTitle = entries.getObject("info").getString("title");
         doc.setTitle(documentTitle);
         String documentVersion = entries.getObject("info").getString("version");
@@ -181,20 +186,20 @@ public class NOpenAPIService {
         );
 
         all.add(MdFactory.title(3, "SERVER LIST"));
-        for (ItemFactory.Item srv : entries.getArray("servers")) {
-            ItemFactory.Obj srvObj = (ItemFactory.Obj) srv;
+        for (NutsElement srv : entries.getArray("servers")) {
+            NutsObjectElement srvObj = (NutsObjectElement) srv.asObject();
             all.add(MdFactory.title(4, srvObj.getString("url")));
             all.add(MdFactory.text(srvObj.getString("description")));
-            if (srvObj.get("variables").asObject().length() > 0) {
+            if (srvObj.get("variables").asObject().size()> 0) {
                 MdTableBuilder mdTableBuilder = MdFactory.table().addColumns(
                         MdFactory.column().setName("NAME"),
                         MdFactory.column().setName("SPEC"),
                         MdFactory.column().setName("DESCRIPTION")
                 );
-                for (Map.Entry<String, ItemFactory.Item> variables : srvObj.get("variables").asObject()) {
+                for (NutsElementEntry variables : srvObj.get("variables").asObject()) {
                     mdTableBuilder.addRows(
                             MdFactory.row().addCells(
-                                    MdFactory.text(variables.getKey()),
+                                    MdFactory.text(variables.getKey().asString()),
 //                                MdFactory.text(variables.getValue().asObject().getString("enum")),
                                     MdFactory.text(variables.getValue().asObject().getString("default")),
                                     MdFactory.text(variables.getValue().asObject().getString("description"))
@@ -217,7 +222,7 @@ public class NOpenAPIService {
                     );
 
 
-            for (Map.Entry<String, ItemFactory.Item> ee : entries.getObject("components").getObject("headers")) {
+            for (NutsElementEntry ee : entries.getObject("components").getObject("headers")) {
                 table.addRows(
                         MdFactory.row().addCells(
                                 MdFactory.code("", ee.getKey() + (
@@ -234,7 +239,7 @@ public class NOpenAPIService {
         if (!entries.getObject("components").getObject("securitySchemes").isEmpty()) {
             all.add(MdFactory.title(3, "SECURITY AND AUTHENTICATION"));
             all.add(MdFactory.text("This section includes security configurations."));
-            for (Map.Entry<String, ItemFactory.Item> ee : entries.getObject("components").getObject("securitySchemes")) {
+            for (NutsElementEntry ee : entries.getObject("components").getObject("securitySchemes")) {
                 String type = ee.getValue().asObject().getString("type");
                 switch (type) {
                     case "apiKey": {
@@ -307,11 +312,11 @@ public class NOpenAPIService {
             }
         }
         all.add(MdFactory.title(2, "API"));
-        for (Map.Entry<String, ItemFactory.Item> path : entries.get("paths").asObject()) {
-            String url = path.getKey();
-            for (Map.Entry<String, ItemFactory.Item> ss : path.getValue().asObject()) {
-                String method = ss.getKey();
-                ItemFactory.Obj call = (ItemFactory.Obj) ss.getValue();
+        for (NutsElementEntry path : entries.get("paths").asObject()) {
+            String url = path.getKey().asString();
+            for (NutsElementEntry ss : path.getValue().asObject()) {
+                String method = ss.getKey().asString();
+                NutsObjectElement call = ss.getValue().asObject();
                 all.add(MdFactory.title(3, method.toUpperCase() + " " + url));
                 all.add(MdFactory.text(call.getString("summary")));
                 all.add(
@@ -319,8 +324,8 @@ public class NOpenAPIService {
                 );
                 all.add(MdFactory.text(call.getString("description")));
                 all.add(MdFactory.title(4, "REQUEST"));
-                List<ItemFactory.Item> headerParameters = call.getArray("parameters").stream().filter(x -> x.asObject().getString("in").equals("header")).collect(Collectors.toList());
-                List<ItemFactory.Item> queryParameters = call.getArray("parameters").stream().filter(x -> x.asObject().getString("in").equals("query")).collect(Collectors.toList());
+                List<NutsElement> headerParameters = call.getArray("parameters").stream().filter(x -> x.asObject().getString("in").equals("header")).collect(Collectors.toList());
+                List<NutsElement> queryParameters = call.getArray("parameters").stream().filter(x -> x.asObject().getString("in").equals("query")).collect(Collectors.toList());
                 if (!headerParameters.isEmpty()) {
                     all.add(MdFactory.title(5, "HEADER PARAMETERS"));
                     MdTable tab = new MdTable(
@@ -361,12 +366,12 @@ public class NOpenAPIService {
                     );
                     all.add(tab);
                 }
-                ItemFactory.Obj requestBody = call.getObject("requestBody");
+                NutsObjectElement requestBody = call.getObject("requestBody");
                 if (!requestBody.isEmpty()) {
                     boolean required = requestBody.getBoolean("required");
                     String desc = requestBody.getString("description");
-                    ItemFactory.Obj r = requestBody.getObject("content");
-                    for (Map.Entry<String, ItemFactory.Item> ii : r) {
+                    NutsObjectElement r = requestBody.getObject("content");
+                    for (NutsElementEntry ii : r) {
                         all.add(MdFactory.title(5, "REQUEST BODY - " + ii.getKey() + (required ? " [required]" : "")));
                         all.add(MdFactory.text(desc));
                         all.add(MdFactory.code("javascript", toCode(ii.getValue(), "")));
@@ -376,11 +381,11 @@ public class NOpenAPIService {
                 all.add(MdFactory.title(4, "RESPONSE"));
                 call.getObject("responses").stream()
                         .forEach(x -> {
-                            String s = x.getKey();
-                            ItemFactory.Item v = x.getValue();
+                            NutsElement s = x.getKey();
+                            NutsElement v = x.getValue();
                             all.add(MdFactory.title(5, "STATUS CODE - " + s));
                             all.add(MdFactory.text(v.asObject().getString("description")));
-                            for (Map.Entry<String, ItemFactory.Item> content : v.asObject().getObject("content")) {
+                            for (NutsElementEntry content : v.asObject().getObject("content")) {
                                 all.add(MdFactory.title(6, "RESPONSE MODEL - " + content.getKey()));
                                 all.add(MdFactory.code("javascript", toCode(content.getValue(), "")));
                             }
@@ -395,11 +400,11 @@ public class NOpenAPIService {
         String descSep = " // ";
         if (o.isObject()) {
             if (o.asObject().get("schema").isObject()) {
-                ItemFactory.Obj schema = o.asObject().getObject("schema");
+                NutsObjectElement schema = o.asObject().getObject("schema");
                 String t = schema.getString("type");
                 if (t.equals("object")) {
                     StringBuilder sb = new StringBuilder("{");
-                    for (Map.Entry<String, ItemFactory.Item> p : schema.getObject("properties")) {
+                    for (NutsElementEntry p : schema.getObject("properties")) {
                         sb.append("\n" + indent + "  " + p.getKey() + ": " + toCode(p.getValue(), indent + "  "));
                     }
                     sb.append("\n" + indent + "}");
@@ -413,7 +418,7 @@ public class NOpenAPIService {
                 String t = o.asObject().get("type").asString();
                 if (t.equals("object")) {
                     StringBuilder sb = new StringBuilder("{");
-                    for (Map.Entry<String, ItemFactory.Item> p : o.asObject().getObject("properties")) {
+                    for (NutsElementEntry p : o.asObject().getObject("properties")) {
                         sb.append("\n" + indent + "  " + p.getKey() + ": " + toCode(p.getValue(), indent + "  "));
                     }
                     sb.append("\n" + indent + "}");

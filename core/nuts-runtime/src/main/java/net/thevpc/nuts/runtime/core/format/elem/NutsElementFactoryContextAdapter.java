@@ -53,7 +53,7 @@ public class NutsElementFactoryContextAdapter implements NutsElementFactoryConte
     }
 
     @Override
-    public NutsElementFactory getFallback() {
+    public NutsElementMapper getFallback() {
         return base.getFallback();
     }
 
@@ -73,7 +73,7 @@ public class NutsElementFactoryContextAdapter implements NutsElementFactoryConte
     }
 
     @Override
-    public void setFallback(NutsElementFactory fallback) {
+    public void setFallback(NutsElementMapper fallback) {
         base.setFallback(fallback);
     }
 

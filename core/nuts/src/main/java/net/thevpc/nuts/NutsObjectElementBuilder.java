@@ -75,7 +75,7 @@ public interface NutsObjectElementBuilder {
      * object (key,value) attributes
      * @return object attributes
      */
-    Collection<NutsNamedElement> children();
+    Collection<NutsElementEntry> children();
 
     /**
      * element count
@@ -121,4 +121,18 @@ public interface NutsObjectElementBuilder {
      * @return new instance of {@link NutsObjectElement}
      */
     NutsObjectElement build();
+
+    NutsObjectElementBuilder remove(NutsElement name);
+
+    NutsObjectElementBuilder set(NutsElement name, NutsElement value);
+
+    NutsObjectElementBuilder set(NutsElement name, String value);
+
+    NutsObjectElementBuilder set(NutsElement name, boolean value);
+
+    NutsObjectElementBuilder set(NutsElement name, double value);
+
+    NutsObjectElementBuilder set(NutsElement name, int value);
+
+    NutsElement get(NutsElement s);
 }

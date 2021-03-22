@@ -23,41 +23,24 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.core.format.elem;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-import net.thevpc.nuts.NutsElement;
+package net.thevpc.nuts;
 
 /**
- *
+ * Named Element
  * @author thevpc
+ * @category Format
  */
-public class NutsArrayElementFromList extends AbstractNutsArrayElement {
+public interface NutsElementEntry {
 
-    private final NutsElementFactoryContext context;
-    private final List<Object> values;
+    /**
+     * element name
+     * @return element name
+     */
+    NutsElement getKey();
 
-    public NutsArrayElementFromList(List<Object> values, NutsElementFactoryContext context) {
-        this.context = context;
-        this.values = values;
-    }
-
-    @Override
-    public Collection<NutsElement> children() {
-        return values.stream().map(x->context.objectToElement(x, null)).collect(Collectors.toList());
-    }
-
-
-    @Override
-    public int size() {
-        return values.size();
-    }
-
-    @Override
-    public NutsElement get(int index) {
-        return context.objectToElement(values.get(index), null);
-    }
-
+    /**
+     * element value
+     * @return value
+     */
+    NutsElement getValue();
 }

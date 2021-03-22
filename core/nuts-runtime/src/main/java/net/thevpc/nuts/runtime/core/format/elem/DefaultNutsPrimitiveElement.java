@@ -3,26 +3,24 @@
  *            Nuts : Network Updatable Things Service
  *                  (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.core.format.elem;
 
 import net.thevpc.nuts.NutsElementType;
@@ -30,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Objects;
 import net.thevpc.nuts.NutsPrimitiveElement;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
@@ -120,7 +119,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
             return false;
         } else if (value instanceof Number) {
             switch (value.getClass().getName()) {
-                case "java.lang.Byte":{
+                case "java.lang.Byte": {
                     return true;
                 }
             }
@@ -142,7 +141,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
         } else if (value instanceof Number) {
             switch (value.getClass().getName()) {
                 case "java.lang.Byte":
-                case "java.lang.Short":{
+                case "java.lang.Short": {
                     return true;
                 }
             }
@@ -259,7 +258,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
             return 0;
         }
         if (value instanceof Boolean) {
-            return (byte)(((Boolean) value) ? 1 : 0);
+            return (byte) (((Boolean) value) ? 1 : 0);
         }
         if (value instanceof Number) {
             return ((Number) value).byteValue();
@@ -293,7 +292,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
             return 0;
         }
         if (value instanceof Boolean) {
-            return (short)(((Boolean) value) ? 1 : 0);
+            return (short) (((Boolean) value) ? 1 : 0);
         }
         if (value instanceof Number) {
             return ((Number) value).shortValue();
@@ -434,7 +433,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
     }
 
     @Override
-    public Instant getDate() {
+    public Instant getInstant() {
         if (value == null || value instanceof Boolean) {
             return Instant.MIN;
         }
@@ -503,10 +502,35 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
             case INTEGER:
             case FLOAT:
                 return String.valueOf(getNumber());
-            case DATE:
-                return CoreStringUtils.dblQuote(getDate().toString());
+            case INSTANT:
+                return CoreStringUtils.dblQuote(getInstant().toString());
         }
         return getString();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + Objects.hashCode(this.value);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultNutsPrimitiveElement other = (DefaultNutsPrimitiveElement) obj;
+        if (!Objects.equals(this.value, other.value)) {
+            return false;
+        }
+        return true;
     }
 
 }

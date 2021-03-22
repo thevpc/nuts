@@ -16,7 +16,7 @@ class NutsElementTreeModel implements NutsTreeModel {
     public NutsElementTreeModel(NutsWorkspace ws, NutsString rootName, NutsElement data, NutsSession session) {
         this.ws = ws;
         this.session = session;
-        this.root = new XNode(null, data, data.type().isPrimitive() ? null : rootName,session.getWorkspace());
+        this.root = new XNode(null, data, data.type().isPrimitive() ? null : rootName, session.getWorkspace());
     }
 
     @Override
@@ -44,7 +44,7 @@ class NutsElementTreeModel implements NutsTreeModel {
         NutsString title;
         NutsWorkspace ws;
 
-        public XNode(NutsString key, NutsElement value, NutsString title,NutsWorkspace ws) {
+        public XNode(NutsString key, NutsElement value, NutsString title, NutsWorkspace ws) {
             this.key = key;
             this.value = value;
             this.title = title;
@@ -54,6 +54,7 @@ class NutsElementTreeModel implements NutsTreeModel {
         public String toString() {
             return toNutsString().toString();
         }
+
         public NutsString toNutsString() {
             NutsString[] p = getMultilineArray(stringValue(key), value);
             if (p != null) {
@@ -68,13 +69,11 @@ class NutsElementTreeModel implements NutsTreeModel {
                             stringValue(key)
                     );
                 } else {
-                    return
-                            ws.formats().text().builder().append(
-                                    stringValue(key)
-                            )
-                                    .append("=")
-                                    .append(stringValue(_title != null ? _title : value))
-                            ;
+                    return ws.formats().text().builder().append(
+                            stringValue(key)
+                    )
+                            .append("=")
+                            .append(stringValue(_title != null ? _title : value));
                 }
             }
         }
@@ -90,24 +89,26 @@ class NutsElementTreeModel implements NutsTreeModel {
                 case OBJECT: {
                     NutsElement bestElement = null;
                     int bestKeyOrder = -1;
-                    for (NutsNamedElement me : this.value.object().children()) {
+                    for (NutsElementEntry me : this.value.asObject().children()) {
                         int keyOrder = -1;
-                        switch (me.getName()) {
-                            case "id": {
-                                keyOrder = 1;
-                                break;
-                            }
-                            case "name": {
-                                keyOrder = 10;
-                                break;
-                            }
-                            case "title": {
-                                keyOrder = 2;
-                                break;
-                            }
-                            case "label": {
-                                keyOrder = 3;
-                                break;
+                        if (me.getKey().isString()) {
+                            switch (me.getKey().asPrimitive().getString()) {
+                                case "id": {
+                                    keyOrder = 1;
+                                    break;
+                                }
+                                case "name": {
+                                    keyOrder = 10;
+                                    break;
+                                }
+                                case "title": {
+                                    keyOrder = 2;
+                                    break;
+                                }
+                                case "label": {
+                                    keyOrder = 3;
+                                    break;
+                                }
                             }
                         }
                         if (keyOrder > bestKeyOrder) {
@@ -128,21 +129,21 @@ class NutsElementTreeModel implements NutsTreeModel {
             switch (this.value.type()) {
                 case ARRAY: {
                     List<XNode> all = new ArrayList<>();
-                    for (NutsElement me : this.value.array().children()) {
-                        all.add(new XNode(null, me, null,ws));
+                    for (NutsElement me : this.value.asArray().children()) {
+                        all.add(new XNode(null, me, null, ws));
                     }
                     return all;
                 }
                 case OBJECT: {
                     List<XNode> all = new ArrayList<>();
-                    for (NutsNamedElement me : this.value.object().children()) {
-                        NutsString[] map = getMultilineArray(stringValue(me.getName()), me.getValue());
+                    for (NutsElementEntry me : this.value.asObject().children()) {
+                        NutsString[] map = getMultilineArray(stringValue(me.getKey()), me.getValue());
                         if (map == null) {
-                            all.add(new XNode(stringValue(me.getName()), me.getValue(), null,ws));
+                            all.add(new XNode(stringValue(me.getKey()), me.getValue(), null, ws));
                         } else {
-                            all.add(new XNode(stringValue(me.getName()),
+                            all.add(new XNode(stringValue(me.getKey()),
                                     ws.formats().element().convert(Arrays.asList(map), NutsElement.class),
-                                    null,ws));
+                                    null, ws));
                         }
                     }
                     return all;

@@ -54,21 +54,21 @@ public interface NutsElementBuilder {
      * @param value value
      * @return primitive date element
      */
-    NutsPrimitiveElement forDate(Date value);
+    NutsPrimitiveElement forInstant(Date value);
 
     /**
      * create primitive date element
      * @param value value
      * @return primitive date element
      */
-    NutsPrimitiveElement forDate(Instant value);
+    NutsPrimitiveElement forInstant(Instant value);
 
     /**
      * create primitive date element
      * @param value value
      * @return primitive date element
      */
-    NutsPrimitiveElement forDate(String value);
+    NutsPrimitiveElement forInstant(String value);
 
     /**
      * create primitive null element

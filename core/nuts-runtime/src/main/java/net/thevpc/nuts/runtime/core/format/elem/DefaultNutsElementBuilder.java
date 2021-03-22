@@ -172,26 +172,26 @@ public class DefaultNutsElementBuilder implements NutsElementBuilder {
     }
 
     @Override
-    public NutsPrimitiveElement forDate(Date value) {
+    public NutsPrimitiveElement forInstant(Date value) {
         if (value == null) {
             throw new NullPointerException();
         }
-        return new DefaultNutsPrimitiveElement(NutsElementType.DATE, value.toInstant());
+        return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, value.toInstant());
     }
 
     @Override
-    public NutsPrimitiveElement forDate(Instant value) {
+    public NutsPrimitiveElement forInstant(Instant value) {
         if (value == null) {
             throw new NullPointerException();
         }
-        return new DefaultNutsPrimitiveElement(NutsElementType.DATE, value);
+        return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, value);
     }
 
     @Override
-    public NutsPrimitiveElement forDate(String value) {
+    public NutsPrimitiveElement forInstant(String value) {
         if (value == null) {
             throw new NullPointerException();
         }
-        return new DefaultNutsPrimitiveElement(NutsElementType.DATE, DefaultNutsPrimitiveElement.parseDate(value));
+        return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, DefaultNutsPrimitiveElement.parseDate(value));
     }
 }

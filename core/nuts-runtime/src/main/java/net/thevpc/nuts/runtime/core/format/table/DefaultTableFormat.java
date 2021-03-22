@@ -49,7 +49,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     );
     public static NutsTableBordersFormat DEFAULT_BORDER = new DefaultTableFormatBorders(
             "╭", "─", "┬", "╮",
-            "│",      "│", "│",
+            "│", "│", "│",
             "├", "─", "┼", "┤",
             "╰", "─", "┴", "╯"
     );
@@ -907,7 +907,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         NutsElement elem = (NutsElement) o;
         switch (elem.type()) {
             case BOOLEAN:
-            case DATE:
+            case INSTANT:
             case STRING:
             case INTEGER:
             case FLOAT:
@@ -917,7 +917,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 return createTableModel(getWorkspace().formats().element().convert(a, NutsElement.class));
             }
             case OBJECT: {
-                return createTableModel(getWorkspace().formats().element().convert(elem.object().children(), NutsElement.class));
+                return createTableModel(getWorkspace().formats().element().convert(elem.asObject().children(), NutsElement.class));
             }
             case ARRAY: {
                 NutsMutableTableModel model = createModel();
@@ -926,13 +926,19 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 for (String column : columns) {
                     model.addHeaderCell(column);
                 }
-                for (NutsElement elem2 : elem.array().children()) {
+                for (NutsElement elem2 : elem.asArray().children()) {
                     model.newRow();
                     switch (elem2.type()) {
                         case OBJECT: {
                             Map<String, NutsElement> m = new HashMap<>();
-                            for (NutsNamedElement vv : elem2.object().children()) {
-                                m.put(vv.getName(), vv.getValue());
+                            for (NutsElementEntry vv : elem2.asObject().children()) {
+                                NutsElement k = vv.getKey();
+                                if (!k.isString()) {
+                                    k = getSession().getWorkspace().formats().element().elements().forString(
+                                            k.toString()
+                                    );
+                                }
+                                m.put(k.asPrimitive().getString(), vv.getValue());
                             }
                             for (String column : columns) {
                                 NutsElement vv = m.get(column);
@@ -966,13 +972,19 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     public void resolveColumns(NutsElement value, LinkedHashSet<String> columns) {
         switch (value.type()) {
             case OBJECT: {
-                for (NutsNamedElement nutsNamedValue : value.object().children()) {
-                    columns.add(nutsNamedValue.getName());
+                for (NutsElementEntry nutsNamedValue : value.asObject().children()) {
+                    NutsElement k = nutsNamedValue.getKey();
+                    if (!k.isString()) {
+                        k = getSession().getWorkspace().formats().element().elements().forString(
+                                k.toString()
+                        );
+                    }
+                    columns.add(k.asPrimitive().getString());
                 }
                 break;
             }
             case ARRAY: {
-                for (NutsElement value2 : value.array().children()) {
+                for (NutsElement value2 : value.asArray().children()) {
                     resolveColumns(value2, columns);
                 }
                 break;

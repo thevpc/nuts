@@ -30,7 +30,7 @@ import static net.thevpc.nuts.runtime.core.util.CoreCommonUtils.stringValue;
 
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsNamedElement;
+import net.thevpc.nuts.NutsElementEntry;
 
 /**
  *
@@ -41,13 +41,13 @@ public class NutsFormatUtils {
     public static void putAllInProps(String prefix, Map<String, String> dest, NutsElement value) {
         switch (value.type()) {
             case BOOLEAN:
-            case DATE:
+            case INSTANT:
             case INTEGER:
             case FLOAT:
             case STRING:
             case NULL:
             {
-                dest.put(prefix, stringValue(value.primitive().getValue()));
+                dest.put(prefix, stringValue(value.asPrimitive().getValue()));
                 break;
             }
             case OBJECT: {
@@ -56,8 +56,8 @@ public class NutsFormatUtils {
                 } else {
                     prefix = "";
                 }
-                for (NutsNamedElement e : value.object().children()) {
-                    putAllInProps(prefix + e.getName(), dest, e.getValue());
+                for (NutsElementEntry e : value.asObject().children()) {
+                    putAllInProps(prefix + e.getKey(), dest, e.getValue());
                 }
                 break;
             }
@@ -68,7 +68,7 @@ public class NutsFormatUtils {
                     prefix = "";
                 }
                 int i = 0;
-                for (NutsElement e : value.array().children()) {
+                for (NutsElement e : value.asArray().children()) {
                     putAllInProps(prefix + (i + 1), dest, e);
                     i++;
                 }

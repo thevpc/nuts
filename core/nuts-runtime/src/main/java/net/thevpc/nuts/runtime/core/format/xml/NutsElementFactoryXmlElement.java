@@ -27,21 +27,14 @@ import java.io.File;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Stack;
-import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import net.thevpc.nuts.NutsArrayElementBuilder;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElementBuilder;
-import net.thevpc.nuts.NutsNamedElement;
 import net.thevpc.nuts.NutsObjectElement;
 import net.thevpc.nuts.NutsObjectElementBuilder;
-import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactory;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryContext;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
@@ -51,12 +44,15 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import net.thevpc.nuts.runtime.core.format.elem.NutsElementMapper;
+import net.thevpc.nuts.NutsElementEntry;
+import net.thevpc.nuts.NutsElementType;
 
 /**
  *
  * @author thevpc
  */
-public class NutsElementFactoryXmlElement implements NutsElementFactory<Node> {
+public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
 
     public static <V> V runWithDoc(NutsElementFactoryContext context, Supplier<V> impl, Document doc) {
         Stack<Document> docs = (Stack<Document>) context.getProperties().get(Document.class.getName());
@@ -118,52 +114,56 @@ public class NutsElementFactoryXmlElement implements NutsElementFactory<Node> {
             }
             case STRING: {
                 Element e = doc.createElement("string");
-                e.setTextContent(elem.primitive().getString());
+                final String s = elem.asPrimitive().getString();
+                if (isComplexString(s)) {
+                    e.setTextContent(s);
+                } else {
+                    e.setAttribute("value", s);
+                }
                 return e;
             }
-
             case BOOLEAN: {
-                return doc.createElement(String.valueOf(elem.primitive().getBoolean()));
+                return doc.createElement(String.valueOf(elem.asPrimitive().getBoolean()));
             }
             case BYTE: {
                 Element e = doc.createElement("byte");
-                e.setTextContent(String.valueOf(elem.primitive().getByte()));
+                e.setAttribute("value", String.valueOf(elem.asPrimitive().getByte()));
                 return e;
             }
             case SHORT: {
                 Element e = doc.createElement("short");
-                e.setTextContent(String.valueOf(elem.primitive().getShort()));
+                e.setAttribute("value", String.valueOf(elem.asPrimitive().getShort()));
                 return e;
             }
             case INTEGER: {
                 Element e = doc.createElement("int");
-                e.setTextContent(String.valueOf(elem.primitive().getInt()));
+                e.setAttribute("value", String.valueOf(elem.asPrimitive().getInt()));
                 return e;
             }
             case LONG: {
                 Element e = doc.createElement("long");
-                e.setTextContent(String.valueOf(elem.primitive().getLong()));
+                e.setAttribute("value", String.valueOf(elem.asPrimitive().getLong()));
                 return e;
             }
             case FLOAT: {
                 Element e = doc.createElement("float");
-                e.setTextContent(String.valueOf(elem.primitive().getFloat()));
+                e.setAttribute("value", String.valueOf(elem.asPrimitive().getFloat()));
                 return e;
             }
             case DOUBLE: {
                 Element e = doc.createElement("double");
-                e.setTextContent(String.valueOf(elem.primitive().getDouble()));
+                e.setAttribute("value", String.valueOf(elem.asPrimitive().getDouble()));
                 return e;
             }
-            case DATE: {
+            case INSTANT: {
                 Element e = doc.createElement("instant");
-                e.setTextContent(elem.primitive().getDate().toString());
+                e.setAttribute("value", elem.asPrimitive().getInstant().toString());
                 return e;
             }
             case ARRAY: {
                 Element e = doc.createElement("array");
                 int count = 0;
-                for (NutsElement attribute : elem.array().children()) {
+                for (NutsElement attribute : elem.asArray().children()) {
                     Node c = createObject(attribute, Element.class, context);
                     if (c != null) {
                         e.appendChild(c);
@@ -173,13 +173,57 @@ public class NutsElementFactoryXmlElement implements NutsElementFactory<Node> {
                 return e;
             }
             case OBJECT: {
-                NutsObjectElement obj = normalizeObj(elem.object(), context);
-                Element e = doc.createElement("object");
-                for (NutsNamedElement ne : obj.children()) {
-                    Element elem2 = (Element) createObject(ne.getValue(), NutsElement.class, context);
-                    elem2.setAttribute("name", ne.getName());
+                Element obj = doc.createElement("object");
+                for (NutsElementEntry ne : elem.asObject().children()) {
+                    final NutsElementType kt = ne.getKey().type();
+                    boolean complexKey = kt == NutsElementType.ARRAY || kt == NutsElementType.OBJECT
+                            || kt == NutsElementType.STRING && isComplexString(ne.getKey().asPrimitive().getString());
+                    if (complexKey) {
+                        Element entry = doc.createElement("entry");
+                        Element ek = (Element) createObject(ne.getKey(), NutsElement.class, context);
+                        ek.setAttribute("entry-key", null);
+                        entry.appendChild(ek);
+                        Element ev = (Element) createObject(ne.getValue(), NutsElement.class, context);
+                        ev.setAttribute("entry-value", null);
+                        entry.appendChild(ev);
+                        obj.appendChild(entry);
+                    } else {
+                        String tagName
+                                = ne.getKey().type() == NutsElementType.BOOLEAN ? ne.getKey().asPrimitive().getString()
+                                : ne.getKey().type().id();
+                        Element entryElem = (Element) doc.createElement(tagName);
+                        if (ne.getKey().type() != NutsElementType.BOOLEAN && ne.getKey().type() != NutsElementType.NULL) {
+                            entryElem.setAttribute("key", ne.getKey().asPrimitive().getString());
+                        }
+                        switch (ne.getValue().type()) {
+                            case ARRAY:
+                            case OBJECT: {
+                                Element ev = (Element) createObject(ne.getValue(), NutsElement.class, context);
+                                ev.setAttribute("entry-value", null);
+                                entryElem.appendChild(ev);
+                                obj.appendChild(entryElem);
+                                break;
+                            }
+                            case NULL: {
+                                entryElem.setAttribute("value-type", ne.getValue().type().id());
+                                obj.appendChild(entryElem);
+                                break;
+                            }
+                            case STRING: {
+                                entryElem.setAttribute("value", ne.getValue().asPrimitive().getString());
+                                obj.appendChild(entryElem);
+                                break;
+                            }
+                            default: {
+                                entryElem.setAttribute("value", ne.getValue().asPrimitive().getString());
+                                entryElem.setAttribute("value-type", ne.getValue().type().id());
+                                obj.appendChild(entryElem);
+                                break;
+                            }
+                        }
+                    }
                 }
-                return e;
+                return obj;
             }
             default: {
                 throw new IllegalArgumentException("Unsupported");
@@ -246,34 +290,18 @@ public class NutsElementFactoryXmlElement implements NutsElementFactory<Node> {
         }
     }
 
-    private NutsObjectElement normalizeObj(NutsObjectElement object, NutsElementFactoryContext context) {
-        boolean someUpdates = false;
-        Map<String, Object> ok = new LinkedHashMap<>();
-        for (NutsNamedElement e : object.children()) {
-            Object o = ok.get(e.getName());
-            if (o == null) {
-                ok.put(e.getName(), e.getValue());
-            } else {
-                if (o instanceof NutsElement) {
-                    List<Object> li = new ArrayList<>();
-                    li.add(o);
-                    li.add(e.getValue());
-                    ok.put(e.getName(), li);
-                } else {
-                    List<Object> li = (List<Object>) o;
-                    li.add(e.getValue());
-                    someUpdates = true;
-                }
+    public boolean isSimpleObject(NutsObjectElement obj) {
+        for (NutsElementEntry attribute : obj.children()) {
+            final NutsElementType tt = attribute.getKey().type();
+            if (tt == NutsElementType.OBJECT || tt == NutsElementType.ARRAY) {
+                return false;
             }
         }
-        if (!someUpdates) {
-            return object;
-        }
-        NutsObjectElementBuilder o2 = context.getWorkspace().formats().element().elements().forObject();
-        for (Map.Entry<String, Object> entry : ok.entrySet()) {
-            o2.set(entry.getKey(), context.objectToElement(entry.getValue(), null));
-        }
-        return o2.build();
+        return true;
+    }
+
+    private boolean isComplexString(String string) {
+        return string.contains("\n") || string.length() > 120;
     }
 
     private static class NodeInfo {

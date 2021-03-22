@@ -22,7 +22,7 @@ public class RemoteNutsWorkspace extends AbstractNutsWorkspace {
             String wsURL = config().options().getWorkspace();
             byte[] result = cli.request("nuts/ws:"+wsURL, json.getBytes());
             NutsObjectElement resultObject = e.parse(result, NutsObjectElement.class);
-            boolean success = resultObject.get("success").primitive().getBoolean();
+            boolean success = resultObject.get("success").asPrimitive().getBoolean();
             if (success) {
                 return resultObject.get("body");
             } else {

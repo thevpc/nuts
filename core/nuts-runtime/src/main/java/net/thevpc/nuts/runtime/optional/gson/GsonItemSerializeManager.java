@@ -39,22 +39,23 @@ import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 import net.thevpc.nuts.NutsArrayElementBuilder;
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsNamedElement;
 import net.thevpc.nuts.NutsObjectElementBuilder;
 import net.thevpc.nuts.NutsPrimitiveElement;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryContext;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
+import net.thevpc.nuts.NutsElementEntry;
+import net.thevpc.nuts.NutsElementType;
+import net.thevpc.nuts.NutsObjectElement;
 
 /**
  *
  * @author vpc
  */
-public class GsonItemSerializeManager implements NutsElementStreamFormat{
+public class GsonItemSerializeManager implements NutsElementStreamFormat {
 
     private Gson GSON_COMPACT;
     private Gson GSON_PRETTY;
@@ -98,7 +99,7 @@ public class GsonItemSerializeManager implements NutsElementStreamFormat{
     }
 
 //    @Override
-    public NutsElement parseElement(Reader reader,NutsSession session) {
+    public NutsElement parseElement(Reader reader, NutsSession session) {
         return getGson(true).fromJson(reader, NutsElement.class);
     }
 
@@ -108,7 +109,6 @@ public class GsonItemSerializeManager implements NutsElementStreamFormat{
 //        JsonElement t = gson.toJsonTree(any);
 //        return gson.fromJson(t, clazz);
 //    }
-
     public Gson getGson(boolean compact) {
         if (compact) {
             if (GSON_COMPACT == null) {
@@ -123,7 +123,7 @@ public class GsonItemSerializeManager implements NutsElementStreamFormat{
         }
     }
 
-    public void printElement(NutsElement value, PrintStream out, boolean compact,NutsSession session) {
+    public void printElement(NutsElement value, PrintStream out, boolean compact, NutsSession session) {
         getGson(compact).toJson(value, out);
     }
 
@@ -132,14 +132,19 @@ public class GsonItemSerializeManager implements NutsElementStreamFormat{
             case BOOLEAN: {
                 return new JsonPrimitive(((NutsPrimitiveElement) o).getBoolean());
             }
+            case BYTE:
+            case SHORT:
             case INTEGER:
-            case FLOAT: {
+            case LONG:
+            case FLOAT: 
+            case DOUBLE: 
+            {
                 return new JsonPrimitive(((NutsPrimitiveElement) o).getNumber());
             }
             case STRING: {
                 return new JsonPrimitive(((NutsPrimitiveElement) o).getString());
             }
-            case DATE: {
+            case INSTANT: {
                 return new JsonPrimitive(((NutsPrimitiveElement) o).getString());
             }
             case NULL: {
@@ -147,28 +152,48 @@ public class GsonItemSerializeManager implements NutsElementStreamFormat{
             }
             case ARRAY: {
                 JsonArray a = new JsonArray();
-                for (NutsElement attribute : o.array().children()) {
+                for (NutsElement attribute : o.asArray().children()) {
                     a.add(elementToGson(attribute));
                 }
                 return a;
             }
             case OBJECT: {
-                JsonObject a = new JsonObject();
-                Set<String> visited = new HashSet<String>();
-                for (NutsNamedElement attribute : o.object().children()) {
-                    String k = attribute.getName();
-                    if (visited.contains(k)) {
-                        throw new IllegalArgumentException("Unexpected");
+                NutsObjectElement obj = o.asObject();
+                if (isSimpleObject(obj)) {
+                    JsonObject a = new JsonObject();
+                    for (NutsElementEntry attribute : obj.children()) {
+                        a.add(attribute.getKey().asPrimitive().getString(), elementToGson(attribute.getValue()));
                     }
-                    visited.add(k);
-                    a.add(k, elementToGson(attribute.getValue()));
+                    return a;
+                } else {
+                    JsonArray a = new JsonArray();
+                    for (NutsElementEntry attribute : obj.children()) {
+                        JsonObject oo = new JsonObject();
+                        oo.add("key", elementToGson(attribute.getKey()));
+                        oo.add("value", elementToGson(attribute.getValue()));
+                        a.add(oo);
+                    }
+                    return a;
                 }
-                return a;
             }
             default: {
                 throw new IllegalArgumentException("Unsupported " + o.type());
             }
         }
+    }
+
+    public boolean isSimpleObject(NutsObjectElement obj) {
+        Set<String> keys = new HashSet<>();
+        for (NutsElementEntry attribute : obj.children()) {
+            if (attribute.getKey().type() != NutsElementType.STRING) {
+                return false;
+            }
+            final String k = attribute.getKey().asPrimitive().getString();
+            if (!keys.contains(k)) {
+                keys.add(k);
+            }
+        }
+        return true;
     }
 
     public GsonBuilder prepareBuilder() {

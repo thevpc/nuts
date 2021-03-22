@@ -59,121 +59,121 @@ import org.xml.sax.SAXParseException;
  */
 public class NutsXmlUtils {
 
-    public static void print(String name, Object object, long elemIndex, Writer out, boolean compact, boolean headerDeclaration, NutsSession ws) {
-        print(name, object, elemIndex, (Object) out, compact, headerDeclaration, ws);
-    }
+//    public static void print(String name, Object object, long elemIndex, Writer out, boolean compact, boolean headerDeclaration, NutsSession ws) {
+//        print(name, object, elemIndex, (Object) out, compact, headerDeclaration, ws);
+//    }
+//
+//    public static void print(String name, Object object, long elemIndex, PrintStream out, boolean compact, boolean headerDeclaration, NutsSession session) {
+//        print(name, object, elemIndex, (Object) out, compact, headerDeclaration, session);
+//    }
+//
+//    private static void print(String name, Object object, long elemIndex, Object out, boolean compact, boolean headerDeclaration, NutsSession session) {
+//        try {
+//            Document document = NutsXmlUtils.createDocument(session);
+//            String rootName = name;
+//            document.appendChild(createElement(CoreStringUtils.isBlank(rootName) ? "root" : rootName, object, elemIndex,document, session));
+//            StreamResult streamResult = null;
+//            if (out instanceof PrintStream) {
+//                streamResult = new StreamResult((PrintStream) out);
+//            } else {
+//                streamResult = new StreamResult((Writer) out);
+//            }
+//            NutsXmlUtils.writeDocument(document, streamResult, compact,headerDeclaration,session);
+//            if (out instanceof PrintStream) {
+//                ((PrintStream) out).flush();
+//            } else {
+//                ((Writer) out).flush();
+//            }
+//
+//        } catch (IOException ex) {
+//            throw new NutsIOException(session.getWorkspace(),ex);
+//        }
+//    }
 
-    public static void print(String name, Object object, long elemIndex, PrintStream out, boolean compact, boolean headerDeclaration, NutsSession session) {
-        print(name, object, elemIndex, (Object) out, compact, headerDeclaration, session);
-    }
+//    public static Document createDocument(String name, Object object, NutsSession session) {
+//            Document document = createDocument(session);
+//            document.appendChild(createElement(CoreStringUtils.isBlank(name) ? "root" : name, object, -1,document, session));
+//            return document;
+//    }
 
-    private static void print(String name, Object object, long elemIndex, Object out, boolean compact, boolean headerDeclaration, NutsSession session) {
-        try {
-            Document document = NutsXmlUtils.createDocument(session);
-            String rootName = name;
-            document.appendChild(createElement(CoreStringUtils.isBlank(rootName) ? "root" : rootName, object, elemIndex,document, session));
-            StreamResult streamResult = null;
-            if (out instanceof PrintStream) {
-                streamResult = new StreamResult((PrintStream) out);
-            } else {
-                streamResult = new StreamResult((Writer) out);
-            }
-            NutsXmlUtils.writeDocument(document, streamResult, compact,headerDeclaration,session);
-            if (out instanceof PrintStream) {
-                ((PrintStream) out).flush();
-            } else {
-                ((Writer) out).flush();
-            }
-
-        } catch (IOException ex) {
-            throw new NutsIOException(session.getWorkspace(),ex);
-        }
-    }
-
-    public static Document createDocument(String name, Object object, NutsSession session) {
-            Document document = createDocument(session);
-            document.appendChild(createElement(CoreStringUtils.isBlank(name) ? "root" : name, object, -1,document, session));
-            return document;
-    }
-
-    public static Element createElement(String name, Object o, long elemIndex, Document document, NutsSession session) {
-        // root element
-        Element elem = document.createElement(createElementName(name));
-        if(elemIndex>=0){
-            elem.setAttribute("index",CoreCommonUtils.stringValue(elemIndex));
-        }
-        NutsElement elem2 = session.getWorkspace().formats().element().convert(o,NutsElement.class);
-        switch (elem2.type()){
-            case STRING:{
-                elem.setAttribute("type", "string");
-                elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getString()));
-                break;
-            }
-            case FLOAT:{
-                Number n = elem2.primitive().getNumber();
-                if(n instanceof Double){
-                    elem.setAttribute("type", "double");
-                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getDouble()));
-                }else if(n instanceof Float){
-                    elem.setAttribute("type", "float");
-                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getFloat()));
-                }else{
-                    elem.setAttribute("type", "double");
-                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getDouble()));
-                }
-                break;
-            }
-            case INTEGER:{
-                Number n = elem2.primitive().getNumber();
-                if(n instanceof Integer){
-                    elem.setAttribute("type", "int");
-                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getInt()));
-                }else if(n instanceof Long){
-                    elem.setAttribute("type", "long");
-                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getLong()));
-                }else{
-                    elem.setAttribute("type", "int");
-                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getInt()));
-                }
-                break;
-            }
-            case BOOLEAN:{
-                elem.setAttribute("type", "boolean");
-                elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getBoolean()));
-                break;
-            }
-            case DATE:{
-                elem.setAttribute("type", "date");
-                elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getDate()));
-                break;
-            }
-            case NULL:{
-                elem.setAttribute("type", "null");
-                break;
-            }
-            case OBJECT:{
-                elem.setAttribute("type", "object");
-                for (NutsNamedElement child : elem2.object().children()) {
-                    elem.appendChild(createElement(child.getName(), child.getValue(),-1, document, session));
-                }
-                break;
-            }
-            case ARRAY:{
-                elem.setAttribute("type", "array");
-                int index=0;
-                for (NutsElement child : elem2.array().children()) {
-                    Element item = createElement("item", child, (long)index,document, session);
-                    elem.appendChild(item);
-                    index++;
-                }
-                break;
-            }
-            default:{
-                throw new IllegalArgumentException("Unsupported type"+elem2.type());
-            }
-        }
-        return elem;
-    }
+//    public static Element createElement(String name, Object o, long elemIndex, Document document, NutsSession session) {
+//        // root element
+//        Element elem = document.createElement(createElementName(name));
+//        if(elemIndex>=0){
+//            elem.setAttribute("index",CoreCommonUtils.stringValue(elemIndex));
+//        }
+//        NutsElement elem2 = session.getWorkspace().formats().element().convert(o,NutsElement.class);
+//        switch (elem2.type()){
+//            case STRING:{
+//                elem.setAttribute("type", "string");
+//                elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getString()));
+//                break;
+//            }
+//            case FLOAT:{
+//                Number n = elem2.primitive().getNumber();
+//                if(n instanceof Double){
+//                    elem.setAttribute("type", "double");
+//                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getDouble()));
+//                }else if(n instanceof Float){
+//                    elem.setAttribute("type", "float");
+//                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getFloat()));
+//                }else{
+//                    elem.setAttribute("type", "double");
+//                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getDouble()));
+//                }
+//                break;
+//            }
+//            case INTEGER:{
+//                Number n = elem2.primitive().getNumber();
+//                if(n instanceof Integer){
+//                    elem.setAttribute("type", "int");
+//                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getInt()));
+//                }else if(n instanceof Long){
+//                    elem.setAttribute("type", "long");
+//                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getLong()));
+//                }else{
+//                    elem.setAttribute("type", "int");
+//                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getInt()));
+//                }
+//                break;
+//            }
+//            case BOOLEAN:{
+//                elem.setAttribute("type", "boolean");
+//                elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getBoolean()));
+//                break;
+//            }
+//            case DATE:{
+//                elem.setAttribute("type", "date");
+//                elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getDate()));
+//                break;
+//            }
+//            case NULL:{
+//                elem.setAttribute("type", "null");
+//                break;
+//            }
+//            case OBJECT:{
+//                elem.setAttribute("type", "object");
+//                for (NutsElementEntry child : elem2.object().children()) {
+//                    elem.appendChild(createElement(child.getKey(), child.getValue(),-1, document, session));
+//                }
+//                break;
+//            }
+//            case ARRAY:{
+//                elem.setAttribute("type", "array");
+//                int index=0;
+//                for (NutsElement child : elem2.array().children()) {
+//                    Element item = createElement("item", child, (long)index,document, session);
+//                    elem.appendChild(item);
+//                    index++;
+//                }
+//                break;
+//            }
+//            default:{
+//                throw new IllegalArgumentException("Unsupported type"+elem2.type());
+//            }
+//        }
+//        return elem;
+//    }
 
     public static String createElementName(String name) {
         if (name == null) {

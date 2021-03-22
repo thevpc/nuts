@@ -21,7 +21,7 @@ import net.thevpc.nuts.runtime.optional.gson.OptionalGson;
 public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementFormat> implements NutsElementFormat, NutsElementFactoryContext {
 
     private final NutsElementFactoryService nvalueFactory;
-    private NutsElementFactory fallback;
+    private NutsElementMapper fallback;
     private final Map<String, Object> properties = new HashMap<>();
     private Object value;
     private NutsElementBuilder builder;
@@ -187,7 +187,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     }
 
     @Override
-    public NutsElementFactory getFallback() {
+    public NutsElementMapper getFallback() {
         return fallback;
     }
 
@@ -197,7 +197,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     }
 
     @Override
-    public void setFallback(NutsElementFactory fallback) {
+    public void setFallback(NutsElementMapper fallback) {
         this.fallback = fallback;
     }
 

@@ -42,7 +42,7 @@ public interface NutsElementFactoryContext {
 
     NutsElementBuilder elements();
 
-    NutsElementFactory getFallback();
+    NutsElementMapper getFallback();
 
     Map<String, Object> getProperties();
 
@@ -54,5 +54,5 @@ public interface NutsElementFactoryContext {
 
     Object defaultElementToObject(NutsElement o, Type type);
 
-    void setFallback(NutsElementFactory fallback);
+    void setFallback(NutsElementMapper fallback);
 }

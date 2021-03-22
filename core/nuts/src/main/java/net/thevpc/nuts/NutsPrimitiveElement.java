@@ -49,7 +49,7 @@ public interface NutsPrimitiveElement extends NutsElement {
      *
      * @return value as java Date
      */
-    Instant getDate();
+    Instant getInstant();
 
     /**
      * value as any java Number. Best effort is applied to convert to this type.

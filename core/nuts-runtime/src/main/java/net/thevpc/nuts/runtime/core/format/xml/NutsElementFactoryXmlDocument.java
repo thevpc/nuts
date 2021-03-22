@@ -25,17 +25,17 @@ package net.thevpc.nuts.runtime.core.format.xml;
 
 import java.lang.reflect.Type;
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactory;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import net.thevpc.nuts.runtime.core.format.elem.NutsElementMapper;
 
 /**
  *
  * @author thevpc
  */
-public class NutsElementFactoryXmlDocument implements NutsElementFactory {
+public class NutsElementFactoryXmlDocument implements NutsElementMapper {
 
     @Override
     public NutsElement createElement(Object o, Type typeOfSrc, NutsElementFactoryContext context) {

@@ -209,7 +209,7 @@ public class NutsElementPathFilter {
         @Override
         public List<NutsElement> filter(NutsElement element) {
             if (element.type() == NutsElementType.ARRAY) {
-                List<NutsElement> arr = new ArrayList<>(element.array().children());
+                List<NutsElement> arr = new ArrayList<>(element.asArray().children());
                 List<NutsElement> result = new ArrayList<>();
                 int len = arr.size();
                 NutsElementIndexMatcher indexMatcher = matchesIndex(pattern);
@@ -223,13 +223,13 @@ public class NutsElementPathFilter {
                 return result;
             } else if (element.type() == NutsElementType.OBJECT) {
                 List<NutsElement> result = new ArrayList<>();
-                Collection<NutsNamedElement> aa0 = element.object().children();
+                Collection<NutsElementEntry> aa0 = element.asObject().children();
                 int len = aa0.size();
                 int index = 0;
                 Map<String, Object> matchContext = new HashMap<>();
                 NutsElementNameMatcher nameMatcher = matchesName(pattern);
-                for (NutsNamedElement se : aa0) {
-                    if (nameMatcher.matches(index, se.getName(), len, matchContext, session)) {
+                for (NutsElementEntry se : aa0) {
+                    if (nameMatcher.matches(index, se.getKey(), len, matchContext, session)) {
                         result.add(se.getValue());
                     }
                     index++;
@@ -405,7 +405,7 @@ public class NutsElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session) {
+        public boolean matches(int index, NutsElement name, int len, Map<String, Object> matchContext, NutsSession session) {
             for (NutsElementNameMatcher any : all) {
                 if (any.matches(index, name, len, matchContext, session)) {
                     return true;
@@ -443,7 +443,7 @@ public class NutsElementPathFilter {
 
     public interface NutsElementNameMatcher {
 
-        boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session);
+        boolean matches(int index, NutsElement name, int len, Map<String, Object> matchContext, NutsSession session);
     }
 
     public interface NutsElementIndexMatcher {
@@ -490,7 +490,7 @@ public class NutsElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, String s, int len, Map<String, Object> matchContext, NutsSession session) {
+        public boolean matches(int index, NutsElement s, int len, Map<String, Object> matchContext, NutsSession session) {
             return true;
         }
     }
@@ -504,7 +504,7 @@ public class NutsElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session) {
+        public boolean matches(int index, NutsElement name, int len, Map<String, Object> matchContext, NutsSession session) {
             if (a < 0) {
                 return index == len + a;
             }
@@ -518,7 +518,7 @@ public class NutsElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session) {
+        public boolean matches(int index, NutsElement name, int len, Map<String, Object> matchContext, NutsSession session) {
             return index % 2 == 1;
         }
     }
@@ -529,7 +529,7 @@ public class NutsElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session) {
+        public boolean matches(int index, NutsElement name, int len, Map<String, Object> matchContext, NutsSession session) {
             return index % 2 == 0;
         }
     }
@@ -545,7 +545,7 @@ public class NutsElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session) {
+        public boolean matches(int index, NutsElement name, int len, Map<String, Object> matchContext, NutsSession session) {
             return index >= a && index <= b;
         }
     }
@@ -556,7 +556,7 @@ public class NutsElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session) {
+        public boolean matches(int index, NutsElement name, int len, Map<String, Object> matchContext, NutsSession session) {
             return false;
         }
     }
@@ -572,10 +572,14 @@ public class NutsElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, String name, int len, Map<String, Object> matchContext, NutsSession session) {
-            return lower
-                    ? name.toLowerCase().matches(pat)
-                    : name.matches(pat);
+        public boolean matches(int index, NutsElement name, int len, Map<String, Object> matchContext, NutsSession session) {
+            if(name.type()==NutsElementType.STRING){
+                String sname=name.asPrimitive().getString();
+                return lower
+                        ? sname.toLowerCase().matches(pat)
+                        : sname.matches(pat);
+            }
+            return false;
         }
     }
 

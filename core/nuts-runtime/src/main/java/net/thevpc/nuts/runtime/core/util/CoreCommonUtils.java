@@ -58,7 +58,7 @@ public class CoreCommonUtils {
         } else if (o instanceof NutsArrayElement) {
             o = ((NutsArrayElement) o).children();
         } else if (o instanceof NutsObjectElement) {
-            Collection<NutsNamedElement> c= ((NutsObjectElement) o).children();
+            Collection<NutsElementEntry> c= ((NutsObjectElement) o).children();
             Object[] a = c.toArray();
             if (a.length == 0) {
                 return txt.text().plain("");
@@ -75,10 +75,10 @@ public class CoreCommonUtils {
                     .append("}")
             ;
             
-        } else if (o instanceof NutsNamedElement) {
-            NutsNamedElement ne = (NutsNamedElement) o;
+        } else if (o instanceof NutsElementEntry) {
+            NutsElementEntry ne = (NutsElementEntry) o;
             NutsTextNodeBuilder sb = ws.formats().text().builder();
-            sb.append(stringValueFormatted(ne.getName(), escapeString, session));
+            sb.append(stringValueFormatted(ne.getKey(), escapeString, session));
             sb.append("=");
             if (ne.getValue().type() == NutsElementType.STRING) {
                 sb.append(

@@ -96,23 +96,23 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
         PrintStream out = getValidPrintStream(w);
         switch (value.type()) {
             case STRING: {
-                out.print(value.primitive().getString());
+                out.print(value.asPrimitive().getString());
                 out.flush();
                 break;
             }
             case BOOLEAN: {
-                out.print(value.primitive().getBoolean());
+                out.print(value.asPrimitive().getBoolean());
                 out.flush();
                 break;
             }
             case INTEGER:
             case FLOAT: {
-                out.print(value.primitive().getNumber());
+                out.print(value.asPrimitive().getNumber());
                 out.flush();
                 break;
             }
-            case DATE: {
-                out.print(getWorkspace().formats().text().plain(value.primitive().getDate().toString()).toString());
+            case INSTANT: {
+                out.print(getWorkspace().formats().text().plain(value.asPrimitive().getInstant().toString()).toString());
                 out.flush();
                 break;
             }

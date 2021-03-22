@@ -835,13 +835,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 String installedString = null;
                 if (newNutsInstallInformation != null) {
                     if (newNutsInstallInformation.isJustReInstalled()) {
-                        installedString = "re-install ";
+                        installedString = "re-install";
                     } else if (newNutsInstallInformation.isJustInstalled()) {
-                        installedString = "install ";
+                        installedString = "install";
                     } else if (newNutsInstallInformation.isJustReRequired()) {
-                        installedString = "re-require ";
+                        installedString = "re-require";
                     } else if (newNutsInstallInformation.isJustRequired()) {
-                        installedString = "require ";
+                        installedString = "require";
                     }
                 }
                 if (installedString != null) {
