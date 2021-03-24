@@ -6,6 +6,7 @@ import net.thevpc.nuts.NutsRepository;
 import java.util.Objects;
 
 public class NutsRepositoryAndFetchMode {
+
     private NutsRepository repository;
     private NutsFetchMode fetchMode;
 
@@ -24,8 +25,12 @@ public class NutsRepositoryAndFetchMode {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         NutsRepositoryAndFetchMode that = (NutsRepositoryAndFetchMode) o;
         return Objects.equals(repository, that.repository) && fetchMode == that.fetchMode;
     }
@@ -33,6 +38,11 @@ public class NutsRepositoryAndFetchMode {
     @Override
     public int hashCode() {
         return Objects.hash(repository, fetchMode);
+    }
+
+    @Override
+    public String toString() {
+        return fetchMode.id() + "(" + repository + ')';
     }
 
 }

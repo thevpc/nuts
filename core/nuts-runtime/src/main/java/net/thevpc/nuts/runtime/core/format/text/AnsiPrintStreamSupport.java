@@ -6,6 +6,7 @@ import net.thevpc.nuts.runtime.standalone.io.DefaultNutsIOManager;
 
 import java.io.*;
 import java.util.Locale;
+import net.thevpc.nuts.NutsSession;
 
 public final class AnsiPrintStreamSupport {
 
@@ -29,18 +30,18 @@ public final class AnsiPrintStreamSupport {
         uninstallStdErr(ws);
     }
 
-    public static void install(NutsTerminalMode type, NutsWorkspace ws) {
-        installStdOut(type,ws);
-        installStdErr(type,ws);
+    public static void install(NutsTerminalMode type, NutsSession session) {
+        installStdOut(type,session);
+        installStdErr(type,session);
     }
 
-    public static void installStdOut(NutsTerminalMode type, NutsWorkspace ws) {
-        DefaultNutsIOManager io=(DefaultNutsIOManager) ws.io();
+    public static void installStdOut(NutsTerminalMode type, NutsSession session) {
+        DefaultNutsIOManager io=(DefaultNutsIOManager) session.getWorkspace().io();
         PrintStream out = io.getCurrentStdout();
         if (out instanceof PrintStreamExt && ((PrintStreamExt) out).getOut() instanceof NutsSystemOutputStream) {
             ((NutsSystemOutputStream) ((PrintStreamExt) out).getOut()).setType(type);
         } else {
-            io.setCurrentStdout(new PrintStreamExt(new NutsSystemOutputStream(io.getBootStdout(true), type,ws)));
+            io.setCurrentStdout(new PrintStreamExt(new NutsSystemOutputStream(io.getBootStdout(true), type,session)));
         }
     }
 
@@ -49,13 +50,13 @@ public final class AnsiPrintStreamSupport {
         io.setCurrentStdout(null);
     }
 
-    public static void installStdErr(NutsTerminalMode type, NutsWorkspace ws) {
-        DefaultNutsIOManager io=(DefaultNutsIOManager) ws.io();
+    public static void installStdErr(NutsTerminalMode type, NutsSession session) {
+        DefaultNutsIOManager io=(DefaultNutsIOManager) session.getWorkspace().io();
         PrintStream err = io.getCurrentStderr();
         if (err instanceof PrintStreamExt && ((PrintStreamExt) err).getOut() instanceof NutsSystemOutputStream) {
             ((NutsSystemOutputStream) ((PrintStreamExt) err).getOut()).setType(type);
         } else {
-            io.setCurrentStderr(new PrintStreamExt(new NutsSystemOutputStream(io.getBootStderr(true), type,ws)));
+            io.setCurrentStderr(new PrintStreamExt(new NutsSystemOutputStream(io.getBootStderr(true), type,session)));
         }
     }
 

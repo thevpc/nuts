@@ -432,9 +432,9 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 if (changeStatus && !workspace.config().isReadOnly()) {
                     workspace.concurrent().lock().source(path).setSession(session).call(
                             () -> {
-                                LOG.with().session(session).level(Level.CONFIG).log("Upgraded {0}", finalPath.toString());
+                                LOG.with().session(session).level(Level.CONFIG).log("upgraded {0}", finalPath.toString());
                                 c.setConfigVersion(workspace.getApiVersion());
-                                workspace.formats().element().setContentType(NutsContentType.JSON).setValue(c).print(finalPath);
+                                workspace.formats().element().setSession(session).setContentType(NutsContentType.JSON).setValue(c).print(finalPath);
                                 return null;
                             },
                             CoreNutsUtils.LOCK_TIME, CoreNutsUtils.LOCK_TIME_UNIT

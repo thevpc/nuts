@@ -83,7 +83,7 @@ public class NutsWorkspaceUtils {
                         .setPropertyAccessStrategy(ReflectPropertyAccessStrategy.FIELD)
                         .setPropertyDefaultValueStrategy(ReflectPropertyDefaultValueStrategy.PROPERTY_DEFAULT)
                         .build()),
-                new NutsUpdateOptions().setSession(ws.createSession())
+                () ->new NutsUpdateOptions().setSession(ws.createSession())
         );
     }
 

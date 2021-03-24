@@ -456,10 +456,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public Iterator createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
-            Class elemType = Object.class;
-            return o.asArray().children().stream().map(x -> context.elementToObject(x, elemType)).collect(
-                    Collectors.toList()
-            ).iterator();
+            return o.asArray().children().stream().map(x -> context.elementToObject(x, Object.class)).collect(
+                    Collectors.toList()).iterator();
         }
 
     }

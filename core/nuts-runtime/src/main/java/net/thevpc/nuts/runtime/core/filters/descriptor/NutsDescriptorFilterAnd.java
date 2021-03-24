@@ -103,7 +103,7 @@ public class NutsDescriptorFilterAnd extends AbstractNutsFilter implements NutsD
 
     @Override
     public String toString() {
-        return String.join(" And ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+        return String.join(" and ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
     public NutsFilter[] getSubFilters() {

@@ -319,21 +319,20 @@ public class DefaultWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     }
 
     @Override
-    public <T> T getOrCreateProperty(Class<T> property, Supplier<T> supplier,NutsUpdateOptions options) {
+    public <T> T getOrCreateProperty(Class<T> property, Supplier<T> supplier, Supplier<NutsUpdateOptions> options) {
         return getOrCreateProperty(property.getName(), supplier, options);
     }
-    
+
     @Override
-    public <T> T getOrCreateProperty(String property, Supplier<T> supplier,NutsUpdateOptions options) {
-        T o = (T)getProperty(property);
-        if(o!=null){
+    public <T> T getOrCreateProperty(String property, Supplier<T> supplier, Supplier<NutsUpdateOptions> options) {
+        T o = (T) getProperty(property);
+        if (o != null) {
             return o;
         }
-        o=supplier.get();
-        setProperty(property, o, options);
+        o = supplier.get();
+        setProperty(property, o, options == null ? null : options.get());
         return o;
     }
-    
 
     @Override
     public NutsWorkspaceEnvManager setProperty(String property, Object value, NutsUpdateOptions options) {

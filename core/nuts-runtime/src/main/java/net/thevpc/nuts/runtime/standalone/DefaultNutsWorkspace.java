@@ -380,7 +380,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                              updateOptions);
                     configManager.setBootRepositories(cfg.getBootRepositories(), updateOptions);
                     try {
-                        install().installed().getResult();
+                        install().installed().setSession(session).getResult();
                     } catch (Exception ex) {
                         LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
                                 .log("reinstall artifacts failed : " + CoreStringUtils.exceptionToString(ex));

@@ -126,12 +126,12 @@ public class CoreIOUtils {
         return s;
     }
 
-    public static OutputStream convertOutputStream(OutputStream out, NutsTerminalMode expected, NutsWorkspace ws) {
-        ExtendedFormatAware a = convertOutputStreamToExtendedFormatAware(out, expected, ws);
+    public static OutputStream convertOutputStream(OutputStream out, NutsTerminalMode expected, NutsSession session) {
+        ExtendedFormatAware a = convertOutputStreamToExtendedFormatAware(out, expected, session);
         return (OutputStream) a;
     }
 
-    public static ExtendedFormatAware convertOutputStreamToExtendedFormatAware(OutputStream out, NutsTerminalMode expected, NutsWorkspace ws) {
+    public static ExtendedFormatAware convertOutputStreamToExtendedFormatAware(OutputStream out, NutsTerminalMode expected, NutsSession session) {
         if (out == null) {
             return null;
         }
@@ -139,7 +139,7 @@ public class CoreIOUtils {
         if (out instanceof ExtendedFormatAware) {
             aw = (ExtendedFormatAware) out;
         } else {
-            aw = new RawOutputStream(out, ws);
+            aw = new RawOutputStream(out, session);
         }
         switch (expected) {
             case INHERITED: {

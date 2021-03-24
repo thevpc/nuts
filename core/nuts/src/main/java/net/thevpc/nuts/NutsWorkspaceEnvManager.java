@@ -88,9 +88,9 @@ public interface NutsWorkspaceEnvManager {
      */
     Object getProperty(String property);
 
-    <T> T getOrCreateProperty(String property, Supplier<T> supplier, NutsUpdateOptions options);
+    <T> T getOrCreateProperty(String property, Supplier<T> supplier, Supplier<NutsUpdateOptions> options);
 
-    <T> T getOrCreateProperty(Class<T> propertyType, Supplier<T> supplier, NutsUpdateOptions options);
+    <T> T getOrCreateProperty(Class<T> propertyType, Supplier<T> supplier, Supplier<NutsUpdateOptions> options);
 
     /**
      * @since 0.8.1

@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
 
 import java.io.OutputStream;
+import net.thevpc.nuts.NutsSession;
 
 public class FilterFormatOutputStream extends RenderedOutputStream implements ExtendedFormatAware {
-    public FilterFormatOutputStream(OutputStream out,NutsWorkspace ws) {
-        super(out,FPrint.RENDERER_ANSI_STRIPPER,ws);
+    public FilterFormatOutputStream(OutputStream out,NutsSession session) {
+        super(out,FPrint.RENDERER_ANSI_STRIPPER,session);
     }
 
 
@@ -27,19 +27,19 @@ public class FilterFormatOutputStream extends RenderedOutputStream implements Ex
                     NutsTerminalModeOp m = ((ExtendedFormatAware) out).getModeOp();
                     return (ExtendedFormatAware) out;
                 }
-                return new RawOutputStream(out,ws);
+                return new RawOutputStream(out,session);
             }
             case FORMAT: {
-                return new FormatOutputStream(out,ws);
+                return new FormatOutputStream(out,session);
             }
             case FILTER: {
                 return this;//new FilterFormatOutputStream(out);
             }
             case ESCAPE: {
-                return new EscapeOutputStream(this,ws);
+                return new EscapeOutputStream(this,session);
             }
             case UNESCAPE: {
-                return new UnescapeOutputStream(this,ws);
+                return new UnescapeOutputStream(this,session);
             }
         }
         throw new IllegalArgumentException("Unsupported");

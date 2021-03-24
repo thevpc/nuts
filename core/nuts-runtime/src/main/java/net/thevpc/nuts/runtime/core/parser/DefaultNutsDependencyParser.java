@@ -4,10 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.thevpc.nuts.runtime.bundles.parsers.StringMapParser;
@@ -17,7 +14,6 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
     private NutsWorkspace ws;
     private boolean lenient=false;
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
-    private static Set<String> DEPENDENCY_SUPPORTED_PARAMS = new HashSet<>(Arrays.asList(NutsConstants.IdProperties.SCOPE, NutsConstants.IdProperties.OPTIONAL));
 
     public DefaultNutsDependencyParser(NutsWorkspace ws) {
         this.ws = ws;
@@ -47,11 +43,6 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
             String version = m.group(7);
             String face = CoreStringUtils.trim(m.group(9));
             Map<String, String> queryMap = QPARSER.parseMap(face);
-            for (String s : queryMap.keySet()) {
-                if (!DEPENDENCY_SUPPORTED_PARAMS.contains(s)) {
-                    throw new NutsIllegalArgumentException(ws, "unsupported parameter " + CoreStringUtils.simpleQuote(s, false, "") + " in " + dependency);
-                }
-            }
             if (name == null) {
                 name = group;
                 group = null;

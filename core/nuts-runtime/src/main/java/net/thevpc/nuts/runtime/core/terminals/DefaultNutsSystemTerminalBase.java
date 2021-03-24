@@ -57,8 +57,8 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
             if (bootSession) {
                 this.outMode = terminalMode;
                 this.errMode = terminalMode;
-                this.out = CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(System.out, terminalMode, workspace), session);
-                this.err = CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(System.err, terminalMode, workspace), session);
+                this.out = CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(System.out, terminalMode, session), session);
+                this.err = CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(System.err, terminalMode, session), session);
                 this.in = System.in;
             } else {
                 setOutMode(terminalMode);
@@ -89,7 +89,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
                     workspace.formats().text().styled(mode.id(), NutsTextNodeStyle.primary(1))
             );
         }
-        FPrint.installStdOut(this.outMode = mode, this.workspace);
+        FPrint.installStdOut(this.outMode = mode, session);
         return this;
     }
 
@@ -103,7 +103,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
                     workspace.formats().text().styled(mode.id(), NutsTextNodeStyle.primary(1))
             );
         }
-        FPrint.installStdErr(this.errMode = mode, this.workspace);
+        FPrint.installStdErr(this.errMode = mode, session);
         return this;
     }
 

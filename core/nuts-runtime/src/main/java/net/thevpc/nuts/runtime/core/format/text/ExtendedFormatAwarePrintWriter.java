@@ -60,16 +60,16 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
                 return this;
             }
             case FORMAT: {
-                return new FormatOutputStream(new SimpleWriterOutputStream(this, session), ws);
+                return new FormatOutputStream(new SimpleWriterOutputStream(this, session), session);
             }
             case FILTER: {
-                return new FilterFormatOutputStream(new SimpleWriterOutputStream(this, session), ws);
+                return new FilterFormatOutputStream(new SimpleWriterOutputStream(this, session), session);
             }
             case ESCAPE: {
-                return new EscapeOutputStream(new SimpleWriterOutputStream(this, session), ws);
+                return new EscapeOutputStream(new SimpleWriterOutputStream(this, session), session);
             }
             case UNESCAPE: {
-                return new EscapeOutputStream(new SimpleWriterOutputStream(this, session), ws);
+                return new EscapeOutputStream(new SimpleWriterOutputStream(this, session), session);
             }
         }
         throw new IllegalArgumentException("Unsupported");

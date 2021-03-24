@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalMode;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiUnixTermPrintRenderer;
@@ -15,20 +16,20 @@ public class FPrint {
         AnsiPrintStreamSupport.uninstall(ws);
     }
 
-    public static void install(NutsTerminalMode type, NutsWorkspace ws) {
-        AnsiPrintStreamSupport.install(type,ws);
+    public static void install(NutsTerminalMode type, NutsSession session) {
+        AnsiPrintStreamSupport.install(type,session);
     }
 
-    public static void installStdOut(NutsTerminalMode type, NutsWorkspace ws) {
-        AnsiPrintStreamSupport.installStdOut(type,ws);
+    public static void installStdOut(NutsTerminalMode type, NutsSession session) {
+        AnsiPrintStreamSupport.installStdOut(type,session);
     }
 
     public static void uninstallStdOut(NutsWorkspace ws) {
         AnsiPrintStreamSupport.uninstallStdOut(ws);
     }
 
-    public static void installStdErr(NutsTerminalMode type, NutsWorkspace ws) {
-        AnsiPrintStreamSupport.installStdErr(type,ws);
+    public static void installStdErr(NutsTerminalMode type, NutsSession session) {
+        AnsiPrintStreamSupport.installStdErr(type,session);
     }
 
     public static void uninstallStdErr(NutsWorkspace ws) {

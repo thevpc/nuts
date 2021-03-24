@@ -82,7 +82,7 @@ public class NutsIdFilterAnd extends AbstractNutsFilter implements NutsIdFilter,
 
     @Override
     public String toString() {
-        return String.join(" And ", Arrays.asList(children).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+        return String.join(" and ", Arrays.asList(children).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
     @Override

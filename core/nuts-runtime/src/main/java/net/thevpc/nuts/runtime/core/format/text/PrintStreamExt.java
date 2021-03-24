@@ -76,7 +76,7 @@ public class PrintStreamExt extends PrintStream implements ExtendedFormatAware, 
         if(out instanceof ExtendedFormatAware){
             return ((ExtendedFormatAware) out).convert(other);
         }
-        return new RawOutputStream(out,ws).convert(other);
+        return new RawOutputStream(out,session).convert(other);
     }
 
     @Override

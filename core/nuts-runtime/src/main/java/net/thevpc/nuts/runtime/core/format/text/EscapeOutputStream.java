@@ -7,22 +7,26 @@ import net.thevpc.nuts.runtime.core.io.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
 
-import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import net.thevpc.nuts.NutsSession;
 
-public class EscapeOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware  {
+public class EscapeOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
+
     NutsWorkspace ws;
-    public EscapeOutputStream(OutputStream out,NutsWorkspace ws) {
+    NutsSession session;
+
+    public EscapeOutputStream(OutputStream out, NutsSession session) {
         super(out);
-        this.ws=ws;
+        this.session = session;
+        this.ws = session.getWorkspace();
         NutsTerminalModeOp t = CoreIOUtils.resolveNutsTerminalModeOp(out);
         if (t.in() != NutsTerminalMode.FORMATTED && t.in() != NutsTerminalMode.FILTERED) {
             throw new IllegalArgumentException("Illegal Formatted");
         }
     }
 
-    public OutputStream getOut(){
+    public OutputStream getOut() {
         return out;
     }
 
@@ -41,7 +45,7 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
         byte[] bytes = DefaultNutsTextNodeParser.escapeText0(new String(b, off, len)).getBytes();
-        out.write(bytes,0,bytes.length);
+        out.write(bytes, 0, bytes.length);
     }
 
     @Override
@@ -54,13 +58,13 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
                 if (out instanceof ExtendedFormatAware) {
                     return ((ExtendedFormatAware) out).convert(NutsTerminalModeOp.NOP);
                 }
-                return new RawOutputStream(out,ws);
+                return new RawOutputStream(out, session);
             }
             case FORMAT: {
                 if (out instanceof ExtendedFormatAware) {
                     return ((ExtendedFormatAware) out).convert(NutsTerminalModeOp.FORMAT);
                 }
-                return new FormatOutputStream(out,ws);
+                return new FormatOutputStream(out, session);
             }
             case FILTER: {
                 if (out instanceof ExtendedFormatAware) {

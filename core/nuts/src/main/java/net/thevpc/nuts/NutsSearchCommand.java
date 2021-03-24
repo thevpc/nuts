@@ -28,7 +28,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
-import java.util.function.Predicate;
 
 /**
  * Search command class helps searching multiple artifacts with all of their

@@ -126,7 +126,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 expectedMode = NutsTerminalMode.FILTERED;
             }
         }
-        return CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(out, expectedMode, ws), session);
+        return CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(out, expectedMode, session), session);
     }
 
     @Override
