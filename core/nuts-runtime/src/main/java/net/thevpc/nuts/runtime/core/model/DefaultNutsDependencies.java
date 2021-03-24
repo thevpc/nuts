@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.core.model;
 
+import java.util.ArrayList;
 import net.thevpc.nuts.*;
 
 import java.util.Arrays;
@@ -8,30 +9,39 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class DefaultNutsDependencies implements NutsDependencies {
-    private NutsId[] ids;
+    private NutsId[] sourceIds;
 
     private NutsDependencyFilter filter;
 
-    private NutsDependency[] immediate;
+    private NutsDependency[] immediateDependencies;
 
-    private NutsDependency[] all;
-    private NutsDependencyTreeNode[] nodes;
+    private NutsDependency[] nonMergedDependencies;
+    private NutsDependencyTreeNode[] nonMergedNodes;
+    
+    private NutsDependency[] mergedDependencies;
+    private NutsDependencyTreeNode[] mergedNodes;
 
-    public DefaultNutsDependencies(NutsId[] ids, NutsDependencyFilter filter, NutsDependency[] immediate, NutsDependency[] all, NutsDependencyTreeNode[] nodes) {
-        this.ids = ids;
+    public DefaultNutsDependencies(NutsId[] ids, NutsDependencyFilter filter, NutsDependency[] immediateDependencies, 
+            NutsDependency[] nonMergedDependencies, NutsDependencyTreeNode[] nonMergedNodes,
+            NutsDependency[] mergedDependencies, NutsDependencyTreeNode[] mergedNodes
+    ) {
+        this.sourceIds = ids;
         this.filter = filter;
-        this.immediate = immediate;
-        this.all = all;
-        this.nodes = nodes;
+        this.immediateDependencies = immediateDependencies;
+        this.nonMergedDependencies = nonMergedDependencies;
+        this.nonMergedNodes = nonMergedNodes;
+        this.mergedNodes = mergedNodes;
+        this.mergedDependencies = mergedDependencies;
     }
 
+    @Override
     public Stream<NutsDependency> stream(){
         return all().stream();
     }
 
     @Override
-    public List<NutsId> ids() {
-        return Arrays.asList(ids);
+    public List<NutsId> sourceIds() {
+        return Arrays.asList(sourceIds);
     }
 
     @Override
@@ -41,21 +51,32 @@ public class DefaultNutsDependencies implements NutsDependencies {
 
     @Override
     public List<NutsDependency> immediate() {
-        return Arrays.asList(immediate);
+        return Arrays.asList(immediateDependencies);
     }
 
     @Override
     public List<NutsDependency> all() {
-        return Arrays.asList(all);
+        return Arrays.asList(nonMergedDependencies);
     }
 
     @Override
     public List<NutsDependencyTreeNode> nodes() {
-        return Arrays.asList(nodes);
+        return Arrays.asList(nonMergedNodes);
     }
 
     @Override
+    public List<NutsDependency> mergedDependencies() {
+        return  Arrays.asList(mergedDependencies);
+    }
+
+    @Override
+    public List<NutsDependencyTreeNode> mergedNodes() {
+        return  Arrays.asList(mergedNodes);
+    }
+
+
+    @Override
     public Iterator<NutsDependency> iterator() {
-        return Arrays.asList(all).iterator();
+        return Arrays.asList(nonMergedDependencies).iterator();
     }
 }

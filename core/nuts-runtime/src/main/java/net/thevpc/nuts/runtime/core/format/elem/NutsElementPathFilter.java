@@ -167,11 +167,11 @@ public class NutsElementPathFilter {
     private static class ArrItemCollectorJsonPath implements NutsElementPath {
 
         private NutsSession session;
-        private NutsElementBuilder builder;
+        private NutsElementFormat builder;
 
         public ArrItemCollectorJsonPath(NutsSession session) {
             this.session = session;
-            builder = session.getWorkspace().formats().element().elements();
+            builder = session.getWorkspace().formats().element();
         }
 
         @Override

@@ -33,40 +33,29 @@ import java.time.Instant;
 import java.util.Date;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 
 /**
  *
  * @author thevpc
  */
-public class DefaultNutsElementBuilder implements NutsElementBuilder {
+public class DefaultNutsPrimitiveElementBuilder implements NutsPrimitiveElementBuilder {
 
     private static NutsPrimitiveElement NULL = new DefaultNutsPrimitiveElement(NutsElementType.NULL, null);
     private static NutsPrimitiveElement TRUE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, true);
     private static NutsPrimitiveElement FALSE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, false);
 
     private NutsWorkspace ws;
-    public DefaultNutsElementBuilder(NutsWorkspace ws) {
+    public DefaultNutsPrimitiveElementBuilder(NutsWorkspace ws) {
         this.ws=ws;
     }
 
     @Override
-    public NutsObjectElementBuilder forObject() {
-        return new DefaultNutsObjectElementBuilder(this);
-    }
-
-    @Override
-    public NutsArrayElementBuilder forArray() {
-        return new DefaultNutsArrayElementBuilder(this);
-    }
-
-    @Override
-    public NutsPrimitiveElement forNull() {
+    public NutsPrimitiveElement buildNull() {
         return NULL;
     }
 
     @Override
-    public NutsPrimitiveElement forString(String value) {
+    public NutsPrimitiveElement buildString(String value) {
         if (value == null) {
             throw new NullPointerException();
         }
@@ -74,7 +63,7 @@ public class DefaultNutsElementBuilder implements NutsElementBuilder {
     }
 
     @Override
-    public NutsPrimitiveElement forNumber(Number value) {
+    public NutsPrimitiveElement buildNumber(Number value) {
         if (value == null) {
             throw new NullPointerException();
         }
@@ -95,65 +84,65 @@ public class DefaultNutsElementBuilder implements NutsElementBuilder {
     }
 
     @Override
-    public NutsPrimitiveElement forInt(int value) {
+    public NutsPrimitiveElement buildInt(int value) {
         return new DefaultNutsPrimitiveElement(NutsElementType.INTEGER, value);
     }
 
     @Override
-    public NutsPrimitiveElement forLong(long value) {
+    public NutsPrimitiveElement buildLong(long value) {
         return new DefaultNutsPrimitiveElement(NutsElementType.INTEGER, value);
     }
 
     @Override
-    public NutsPrimitiveElement forByte(byte value) {
+    public NutsPrimitiveElement buildByte(byte value) {
         return new DefaultNutsPrimitiveElement(NutsElementType.INTEGER, value);
     }
 
     @Override
-    public NutsPrimitiveElement forDouble(double value) {
+    public NutsPrimitiveElement buildDouble(double value) {
         return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value);
     }
 
     @Override
-    public NutsPrimitiveElement forFloat(float value) {
+    public NutsPrimitiveElement buildFloat(float value) {
         return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value);
     }
 
     @Override
-    public NutsPrimitiveElement forChar(char value) {
+    public NutsPrimitiveElement buildChar(char value) {
         return new DefaultNutsPrimitiveElement(NutsElementType.STRING, String.valueOf(value));
     }
 
 
     @Override
-    public NutsPrimitiveElement forNumber(String value) {
+    public NutsPrimitiveElement buildNumber(String value) {
         if (value == null) {
             throw new NullPointerException();
         }
         if (value.indexOf('.') >= 0) {
             try {
-                return forNumber(Double.parseDouble(value));
+                return buildNumber(Double.parseDouble(value));
             } catch (Exception ex) {
 
             }
             try {
-                return forNumber(new BigDecimal(value));
+                return buildNumber(new BigDecimal(value));
             } catch (Exception ex) {
 
             }
         } else {
             try {
-                return forNumber(Integer.parseInt(value));
+                return buildNumber(Integer.parseInt(value));
             } catch (Exception ex) {
 
             }
             try {
-                return forNumber(Long.parseLong(value));
+                return buildNumber(Long.parseLong(value));
             } catch (Exception ex) {
 
             }
             try {
-                return forNumber(new BigInteger(value));
+                return buildNumber(new BigInteger(value));
             } catch (Exception ex) {
 
             }
@@ -162,17 +151,27 @@ public class DefaultNutsElementBuilder implements NutsElementBuilder {
     }
 
     @Override
-    public NutsPrimitiveElement forBoolean(boolean value) {
+    public NutsPrimitiveElement buildTrue() {
+        return TRUE;
+    }
+
+    @Override
+    public NutsPrimitiveElement buildFalse() {
+        return TRUE;
+    }
+
+    @Override
+    public NutsPrimitiveElement buildBoolean(boolean value) {
         return value ? TRUE : FALSE;
     }
 
     @Override
-    public NutsPrimitiveElement forBoolean(String value) {
+    public NutsPrimitiveElement buildBoolean(String value) {
         return CoreBooleanUtils.parseBoolean(value, false, false) ? TRUE : FALSE;
     }
 
     @Override
-    public NutsPrimitiveElement forInstant(Date value) {
+    public NutsPrimitiveElement buildInstant(Date value) {
         if (value == null) {
             throw new NullPointerException();
         }
@@ -180,7 +179,7 @@ public class DefaultNutsElementBuilder implements NutsElementBuilder {
     }
 
     @Override
-    public NutsPrimitiveElement forInstant(Instant value) {
+    public NutsPrimitiveElement buildInstant(Instant value) {
         if (value == null) {
             throw new NullPointerException();
         }
@@ -188,10 +187,13 @@ public class DefaultNutsElementBuilder implements NutsElementBuilder {
     }
 
     @Override
-    public NutsPrimitiveElement forInstant(String value) {
+    public NutsPrimitiveElement buildInstant(String value) {
         if (value == null) {
             throw new NullPointerException();
         }
         return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, DefaultNutsPrimitiveElement.parseDate(value));
     }
+
+   
+    
 }

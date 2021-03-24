@@ -37,10 +37,10 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
 
     private final Map<NutsElement, NutsElement> values = new LinkedHashMap<NutsElement, NutsElement>();
 
-    private NutsElementBuilder elementBuilder;
+    private NutsWorkspace ws;
 
-    public DefaultNutsObjectElementBuilder(NutsElementBuilder elementBuilder) {
-        this.elementBuilder = elementBuilder;
+    public DefaultNutsObjectElementBuilder(NutsWorkspace ws) {
+        this.ws = ws;
 
     }
 
@@ -56,7 +56,7 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
 
     @Override
     public NutsElement get(String s) {
-        return values.get(elementBuilder.forBoolean(s));
+        return values.get(ws.formats().element().forPrimitive().buildBoolean(s));
     }
 
     @Override
@@ -66,33 +66,34 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
 
     @Override
     public NutsObjectElementBuilder set(String name, NutsElement value) {
-        values.put(elementBuilder.forString(name), denull(value));
+        values.put(ws.formats().element().forPrimitive().buildString(name), denull(value));
         return this;
     }
 
     @Override
     public NutsObjectElementBuilder set(String name, boolean value) {
-        return set(elementBuilder.forString(name), elementBuilder.forBoolean(value));
+        return set(ws.formats().element().forPrimitive().buildString(name), ws.formats().element().forPrimitive().buildBoolean(value));
     }
 
     @Override
     public NutsObjectElementBuilder set(String name, int value) {
-        return set(elementBuilder.forString(name), elementBuilder.forInt(value));
+        return set(ws.formats().element().forPrimitive().buildString(name), ws.formats().element().forPrimitive().buildInt(value));
     }
 
     @Override
     public NutsObjectElementBuilder set(String name, double value) {
-        return set(elementBuilder.forString(name), elementBuilder.forDouble(value));
+        return set(ws.formats().element().forPrimitive().buildString(name), ws.formats().element().forPrimitive().buildDouble(value));
     }
 
     @Override
     public NutsObjectElementBuilder set(String name, String value) {
-        return set(elementBuilder.forString(name), elementBuilder.forString(value));
+        return set(ws.formats().element().forPrimitive().buildString(name), ws.formats().element().forPrimitive().buildString(value));
     }
 
     @Override
     public NutsObjectElementBuilder remove(String name) {
-        values.remove(name);
+        NutsElement v = name==null?ws.formats().element().forPrimitive().buildNull():ws.formats().element().forPrimitive().buildString(name);
+        values.remove(v);
         return this;
     }
 
@@ -104,22 +105,22 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
 
     @Override
     public NutsObjectElementBuilder set(NutsElement name, boolean value) {
-        return set(name, elementBuilder.forBoolean(value));
+        return set(name, ws.formats().element().forPrimitive().buildBoolean(value));
     }
 
     @Override
     public NutsObjectElementBuilder set(NutsElement name, int value) {
-        return set(name, elementBuilder.forInt(value));
+        return set(name, ws.formats().element().forPrimitive().buildInt(value));
     }
 
     @Override
     public NutsObjectElementBuilder set(NutsElement name, double value) {
-        return set(name, elementBuilder.forDouble(value));
+        return set(name, ws.formats().element().forPrimitive().buildDouble(value));
     }
 
     @Override
     public NutsObjectElementBuilder set(NutsElement name, String value) {
-        return set(name, elementBuilder.forString(value));
+        return set(name, ws.formats().element().forPrimitive().buildString(value));
     }
 
     @Override
@@ -169,22 +170,30 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
     }
 
     @Override
+    public NutsObjectElementBuilder add(NutsElementEntry entry) {
+        if (entry != null) {
+            set(entry.getKey(), entry.getValue());
+        }
+        return this;
+    }
+
+    @Override
     public NutsObjectElement build() {
-        return new DefaultNutsObjectElement(values,elementBuilder);
+        return new DefaultNutsObjectElement(values, ws);
     }
 
     @Override
     public String toString() {
-        return "{" + children().stream().map(x -> 
-                x.getKey()
+        return "{" + children().stream().map(x
+                -> x.getKey()
                 + ":"
                 + x.getValue().toString()
-                ).collect(Collectors.joining(", ")) + "}";
+        ).collect(Collectors.joining(", ")) + "}";
     }
 
     private NutsElement denull(NutsElement e) {
         if (e == null) {
-            return elementBuilder.forNull();
+            return ws.formats().element().forPrimitive().buildNull();
         }
         return e;
     }

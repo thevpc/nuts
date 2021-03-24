@@ -33,12 +33,11 @@ import java.util.List;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementBuilder;
-import net.thevpc.nuts.NutsElementFormat;
 import net.thevpc.nuts.NutsObjectFormat;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
+import net.thevpc.nuts.NutsElementFormat;
 
 /**
  *
@@ -51,45 +50,44 @@ public class Test10_ElementPath {
     public void test1() {
         NutsWorkspace ws = Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName());
         NutsElementFormat e = ws.formats().element();
-        NutsElementBuilder b = e.elements();
         NutsElement p
-                = b.forArray()
+                = e.forArray()
                         .add(
-                                b.forObject().set("first",
-                                        b.forObject()
-                                                .set("name", b.forString("first name"))
-                                                .set("valid", b.forBoolean(true))
+                                e.forObject().set("first",
+                                        e.forObject()
+                                                .set("name", e.forPrimitive().buildString("first name"))
+                                                .set("valid", e.forPrimitive().buildFalse())
                                                 .set("children",
-                                                        b.forArray().add(
-                                                                b.forObject()
-                                                                        .set("path", b.forString("path1"))
-                                                                        .set("color", b.forString("red"))
+                                                        e.forArray().add(
+                                                                e.forObject()
+                                                                        .set("path", e.forPrimitive().buildString("path1"))
+                                                                        .set("color", e.forPrimitive().buildString("red"))
                                                         .build())
                                                                 .add(
-                                                                        b.forObject()
-                                                                                .set("path", b.forString("path2"))
-                                                                                .set("color", b.forString("green"))
+                                                                        e.forObject()
+                                                                                .set("path", e.forPrimitive().buildString("path2"))
+                                                                                .set("color", e.forPrimitive().buildString("green"))
                                                                         .build()
                                                                 ).build()
                                                 )
                                 .build()
                                 )
                                 .build()
-                        ).add(b.forObject().set("second",
-                                b.forObject()
-                                        .set("name", b.forString("second name"))
-                                        .set("valid", b.forBoolean(true))
+                        ).add(e.forObject().set("second",
+                                e.forObject()
+                                        .set("name", e.forPrimitive().buildString("second name"))
+                                        .set("valid", e.forPrimitive().buildFalse())
                                         .set("children",
-                                                b.forArray().add(
-                                                        b.forObject()
-                                                                .set("path", b.forString("path3"))
-                                                                .set("color", b.forString("yellow"))
+                                                e.forArray().add(
+                                                        e.forObject()
+                                                                .set("path", e.forPrimitive().buildString("path3"))
+                                                                .set("color", e.forPrimitive().buildString("yellow"))
                                                         .build()
                                                 )
                                                         .add(
-                                                                b.forObject()
-                                                                        .set("path", b.forString("path4"))
-                                                                        .set("color", b.forString("magenta"))
+                                                                e.forObject()
+                                                                        .set("path", e.forPrimitive().buildString("path4"))
+                                                                        .set("color", e.forPrimitive().buildString("magenta"))
                                                                 .build()
                                                         ).build()
                                         )

@@ -473,7 +473,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 .setDependencyFilter(_dependencyFilter)
                 .setFailFast(isFailFast());
         for (NutsId id : ids) {
-            nutsDependenciesResolver.addRootId(id, false);
+            nutsDependenciesResolver.addRootId(id);
         }
         return nutsDependenciesResolver.resolve()
                 .all().stream().map(NutsDependency::toId).toArray(NutsId[]::new);
@@ -490,8 +490,8 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         NutsDependenciesResolver nutsDependenciesResolver = new NutsDependenciesResolver(CoreNutsUtils.silent(_session))
                 .setDependencyFilter(_dependencyFilter)
                 .setFailFast(isFailFast());
-        for (NutsDependency id : ids) {
-            nutsDependenciesResolver.addRootDefinition(id, false);
+        for (NutsDependency dep : ids) {
+            nutsDependenciesResolver.addRootDefinition(dep);
         }
         return nutsDependenciesResolver.resolve().all().toArray(new NutsDependency[0]);
     }

@@ -103,7 +103,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
                 for (NutsElementEntry datum : e.asObject().children()) {
                     NutsElement k = datum.getKey();
                     if (!k.isString()) {
-                        k = getSession().getWorkspace().formats().element().elements().forString(
+                        k = getSession().getWorkspace().formats().element().forPrimitive().buildString(
                                 k.toString()
                         );
                     }

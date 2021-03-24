@@ -21,19 +21,39 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.core.format.elem;
-
-import java.io.PrintStream;
-import java.io.Reader;
-import net.thevpc.nuts.NutsElement;
+package net.thevpc.nuts.runtime.core.format.json;
 
 /**
  *
  * @author vpc
  */
-public interface NutsElementStreamFormat {
+public class ReaderLocation {
+    
+    int offset;
+    int line;
+    int column;
 
-    public NutsElement parseElement(Reader reader,NutsElementFactoryContext context);
+    public ReaderLocation(int offset, int line, int column) {
+        this.offset = offset;
+        this.line = line;
+        this.column = column;
+    }
 
-    public void printElement(NutsElement value, PrintStream out, boolean compact,NutsElementFactoryContext context);
+    public int getOffset() {
+        return offset;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
+    @Override
+    public String toString() {
+        return "ReaderLocation{" + "offset=" + offset + ", line=" + line + ", column=" + column + '}';
+    }
+    
 }

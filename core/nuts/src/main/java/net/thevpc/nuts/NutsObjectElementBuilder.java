@@ -32,7 +32,7 @@ import java.util.Collection;
  * @author thevpc
  * @category Format
  */
-public interface NutsObjectElementBuilder {
+public interface NutsObjectElementBuilder extends NutsElementBuilder{
 
     /**
      * set value for property {@code name}
@@ -114,6 +114,13 @@ public interface NutsObjectElementBuilder {
      * @return this {@code this} instance
      */
     NutsObjectElementBuilder add(NutsObjectElementBuilder other);
+
+    /**
+     * set entry key value binding
+     * @param entry other entry
+     * @return this {@code this} instance
+     */
+    NutsObjectElementBuilder add(NutsElementEntry entry);
 
     /**
      * create a immutable instance of {@link NutsObjectElement} representing

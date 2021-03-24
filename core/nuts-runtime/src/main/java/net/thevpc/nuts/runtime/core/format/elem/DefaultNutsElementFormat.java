@@ -7,7 +7,6 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
 import java.util.regex.Pattern;
 
 import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
@@ -16,15 +15,13 @@ import net.thevpc.nuts.runtime.core.format.json.MinimalJson;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.optional.gson.GsonItemSerializeManager;
 import net.thevpc.nuts.runtime.core.format.xml.DefaultXmlNutsElementStreamFormat;
+import net.thevpc.nuts.runtime.core.format.yaml.MinimalYaml;
 import net.thevpc.nuts.runtime.optional.gson.OptionalGson;
 
-public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementFormat> implements NutsElementFormat, NutsElementFactoryContext {
+public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementFormat> implements NutsElementFormat {
 
-    private final NutsElementFactoryService nvalueFactory;
-    private NutsElementMapper fallback;
-    private final Map<String, Object> properties = new HashMap<>();
+    private final NutsElementFactoryService elementFactoryService;
     private Object value;
-    private NutsElementBuilder builder;
     private NutsContentType contentType = NutsContentType.JSON;
     private boolean compact;
     private static final Pattern NUM_REGEXP = Pattern.compile("-?\\d+(\\.\\d+)?");
@@ -34,18 +31,19 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     private boolean ignoreNullValue = true;
     private boolean autoResolveType = true;
     private NutsElementStreamFormat jsonMan;
+    private NutsElementStreamFormat yamlMan;
     private NutsElementStreamFormat xmlMan;
 
     public DefaultNutsElementFormat(NutsWorkspace ws) {
         super(ws, "element-format");
-        nvalueFactory = new DefaultNutsElementFactoryService(ws);
-        builder = new DefaultNutsElementBuilder(ws);
+        elementFactoryService = new DefaultNutsElementFactoryService(ws);
         if (false && OptionalGson.isAvailable()) {
-            jsonMan = new GsonItemSerializeManager(this);
+            jsonMan = new GsonItemSerializeManager();
         } else {
-            jsonMan=new MinimalJson(ws);
+            jsonMan = new MinimalJson(ws);
         }
-        xmlMan = new DefaultXmlNutsElementStreamFormat(this);
+        yamlMan = new MinimalYaml(ws);
+        xmlMan = new DefaultXmlNutsElementStreamFormat();
     }
 
     @Override
@@ -62,17 +60,12 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 case TREE:
                 case TABLE:
                 case PLAIN: {
-                    throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
+                    throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types are allowed.");
                 }
             }
             this.contentType = contentType;
         }
         return this;
-    }
-
-    @Override
-    public NutsElementBuilder elements() {
-        return builder;
     }
 
     @Override
@@ -91,7 +84,9 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 
         switch (contentType) {
             case JSON:
-            case XML: {
+            case YAML:
+            case XML:
+            case TSON: {
                 try {
                     try (InputStream is = NutsWorkspaceUtils.of(getWorkspace()).openURL(url)) {
                         return parse(new InputStreamReader(is), clazz);
@@ -107,98 +102,91 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 }
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types are allowed.");
     }
 
     @Override
     public <T> T parse(InputStream inputStream, Class<T> clazz) {
         switch (contentType) {
             case JSON:
-            case XML: {
+            case YAML:
+            case XML:
+            case TSON: {
                 return parse(new InputStreamReader(inputStream), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types are allowed.");
     }
 
     @Override
     public <T> T parse(String string, Class<T> clazz) {
         switch (contentType) {
             case JSON:
-            case XML: {
+            case YAML:
+            case XML:
+            case TSON: {
                 return parse(new StringReader(string), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types are allowed.");
     }
 
     @Override
     public <T> T parse(byte[] bytes, Class<T> clazz) {
         switch (contentType) {
             case JSON:
-            case XML: {
+            case YAML:
+            case XML:
+            case TSON: {
                 return parse(new InputStreamReader(new ByteArrayInputStream(bytes)), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
+        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types are allowed.");
+    }
+
+    private NutsElementStreamFormat resolveStucturedFormat() {
+        switch (contentType) {
+            case JSON: {
+                return jsonMan;
+            }
+            case YAML: {
+                return yamlMan;
+            }
+            case XML: {
+                return xmlMan;
+            }
+            case TSON: {
+                throw new IllegalArgumentException("tson not supported yet");
+            }
+        }
+        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types are allowed.");
     }
 
     @Override
     public <T> T parse(Reader reader, Class<T> clazz) {
-        switch (contentType) {
-            case JSON: {
-                return (T) elementToObject(jsonMan.parseElement(reader, getValidSession()), clazz);
-            }
-            case XML: {
-                return (T) elementToObject(xmlMan.parseElement(reader, getValidSession()), clazz);
-            }
-        }
-        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
+        return (T) elementToObject(resolveStucturedFormat().parseElement(reader, createFactoryContext()), clazz);
+    }
+
+    private DefaultNutsElementFactoryContext createFactoryContext() {
+        return new DefaultNutsElementFactoryContext(this);
     }
 
     @Override
     public <T> T parse(Path file, Class<T> clazz) {
-        switch (contentType) {
-            case JSON:
-            case XML: {
-                try (Reader r = Files.newBufferedReader(file)) {
-                    return parse(r, clazz);
-                } catch (IOException ex) {
-                    throw new NutsIOException(getWorkspace(), ex);
-                }
-            }
+        try (Reader r = Files.newBufferedReader(file)) {
+            return parse(r, clazz);
+        } catch (IOException ex) {
+            throw new NutsIOException(getWorkspace(), ex);
         }
-        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
     }
 
     @Override
     public <T> T parse(File file, Class<T> clazz) {
-        switch (contentType) {
-            case JSON:
-            case XML: {
-                try (FileReader r = new FileReader(file)) {
-                    return parse(r, clazz);
-                } catch (IOException ex) {
-                    throw new NutsIOException(getWorkspace(), ex);
-                }
-            }
+        try (FileReader r = new FileReader(file)) {
+            return parse(r, clazz);
+        } catch (IOException ex) {
+            throw new NutsIOException(getWorkspace(), ex);
         }
-        throw new NutsIllegalArgumentException(getWorkspace(), "invalid content type " + contentType + ". Only structured content types re allowed.");
-    }
-
-    @Override
-    public NutsElementMapper getFallback() {
-        return fallback;
-    }
-
-    @Override
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
-    @Override
-    public void setFallback(NutsElementMapper fallback) {
-        this.fallback = fallback;
     }
 
     @Override
@@ -251,34 +239,25 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         if (to == null || to.isInstance(any)) {
             return (T) any;
         }
-        NutsElement e = objectToElement(any, any.getClass());
+        NutsElement e = convertToElement(any);
         return (T) elementToObject(e, to);
     }
 
-    private void print(PrintStream out, NutsElementStreamFormat format, String contentType) {
-        NutsElement elem = objectToElement(value, null);
+    private void print(PrintStream out, NutsElementStreamFormat format) {
+        NutsElement elem = convertToElement(value);
         if (getWorkspace().io().term().isFormatted(out)) {
             ByteArrayPrintStream bos = new ByteArrayPrintStream();
-            format.printElement(elem, bos, compact, getValidSession());
-            out.print(getWorkspace().formats().text().code(contentType, bos.toString()));
+            format.printElement(elem, bos, compact, createFactoryContext());
+            out.print(getWorkspace().formats().text().code(getContentType().id(), bos.toString()));
         } else {
-            format.printElement(elem, out, compact, getValidSession());
+            format.printElement(elem, out, compact, createFactoryContext());
         }
         out.flush();
     }
 
     @Override
     public void print(PrintStream out) {
-        switch (getContentType()) {
-            case JSON: {
-                print(out, jsonMan, "json");
-                break;
-            }
-            case XML: {
-                print(out, xmlMan, "xml");
-                break;
-            }
-        }
+        print(out, resolveStucturedFormat());
     }
 
 //    @Override
@@ -286,23 +265,36 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 //        return convert(o, NutsElement.class);
 //    }
     @Override
-    public NutsElement objectToElement(Object o, Type expectedType) {
-        return nvalueFactory.createElement(o, expectedType, this);
+    public NutsElement convertToElement(Object o) {
+        return createFactoryContext().objectToElement(o, null);
     }
 
-    @Override
     public Object elementToObject(NutsElement o, Type type) {
-        return nvalueFactory.createObject(o, type, this);
+        return createFactoryContext().elementToObject(o, type);
     }
 
     @Override
-    public NutsElement defaultObjectToElement(Object o, Type expectedType) {
-        return nvalueFactory.defaultCreateElement(o, expectedType, this);
+    public NutsElementEntryBuilder forEntry() {
+        return new DefaultNutsElementEntryBuilder(getWorkspace());
     }
 
     @Override
-    public Object defaultElementToObject(NutsElement o, Type type) {
-        return nvalueFactory.defaultCreateObject(o, type, this);
+    public NutsPrimitiveElementBuilder forPrimitive() {
+        return new DefaultNutsPrimitiveElementBuilder(getWorkspace());
+    }
+
+    @Override
+    public NutsObjectElementBuilder forObject() {
+        return new DefaultNutsObjectElementBuilder(getWorkspace());
+    }
+
+    @Override
+    public NutsArrayElementBuilder forArray() {
+        return new DefaultNutsArrayElementBuilder(getWorkspace());
+    }
+
+    public NutsElementFactoryService getElementFactoryService() {
+        return elementFactoryService;
     }
 
 }

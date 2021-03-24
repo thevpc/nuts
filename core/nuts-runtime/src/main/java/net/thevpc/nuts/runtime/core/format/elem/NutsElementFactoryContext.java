@@ -24,9 +24,9 @@
 package net.thevpc.nuts.runtime.core.format.elem;
 
 import java.lang.reflect.Type;
-import net.thevpc.nuts.NutsElementBuilder;
 import java.util.Map;
 import net.thevpc.nuts.NutsElement;
+import net.thevpc.nuts.NutsElementFormat;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 
@@ -40,9 +40,7 @@ public interface NutsElementFactoryContext {
 
     NutsWorkspace getWorkspace();
 
-    NutsElementBuilder elements();
-
-    NutsElementMapper getFallback();
+    NutsElementFormat element();
 
     Map<String, Object> getProperties();
 
@@ -54,5 +52,4 @@ public interface NutsElementFactoryContext {
 
     Object defaultElementToObject(NutsElement o, Type type);
 
-    void setFallback(NutsElementMapper fallback);
 }

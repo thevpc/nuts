@@ -31,7 +31,7 @@ import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
-import net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElementFormat;
+import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryContext;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -43,14 +43,12 @@ import org.xml.sax.SAXException;
  */
 public class DefaultXmlNutsElementStreamFormat implements NutsElementStreamFormat {
 
-    private DefaultNutsElementFormat context;
-
-    public DefaultXmlNutsElementStreamFormat(DefaultNutsElementFormat context) {
-        this.context = context;
+    public DefaultXmlNutsElementStreamFormat() {
     }
 
     @Override
-    public NutsElement parseElement(Reader reader, NutsSession session) {
+    public NutsElement parseElement(Reader reader, NutsElementFactoryContext context) {
+        NutsSession session = context.getSession();
         Document doc = null;
         try {
             doc = NutsXmlUtils.createDocumentBuilder(false, session).parse(new InputSource(reader));
@@ -63,8 +61,9 @@ public class DefaultXmlNutsElementStreamFormat implements NutsElementStreamForma
     }
 
     @Override
-    public void printElement(NutsElement value, PrintStream out, boolean compact, NutsSession session) {
-        Document doc =(Document) context.elementToObject(value, Document.class);
+    public void printElement(NutsElement value, PrintStream out, boolean compact, NutsElementFactoryContext context) {
+        NutsSession session = context.getSession();
+        Document doc = (Document) context.elementToObject(value, Document.class);
         if (context.getWorkspace().io().term().isFormatted(out)) {
             ByteArrayPrintStream bos = new ByteArrayPrintStream();
             NutsXmlUtils.writeDocument(doc, new StreamResult(bos), compact, true, session);

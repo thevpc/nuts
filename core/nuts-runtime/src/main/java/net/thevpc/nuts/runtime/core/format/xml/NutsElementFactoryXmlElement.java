@@ -32,7 +32,6 @@ import java.util.Stack;
 import java.util.function.Supplier;
 import net.thevpc.nuts.NutsArrayElementBuilder;
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementBuilder;
 import net.thevpc.nuts.NutsObjectElement;
 import net.thevpc.nuts.NutsObjectElementBuilder;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryContext;
@@ -46,6 +45,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementMapper;
 import net.thevpc.nuts.NutsElementEntry;
+import net.thevpc.nuts.NutsElementFormat;
 import net.thevpc.nuts.NutsElementType;
 
 /**
@@ -234,7 +234,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
     public NutsElement createElement(String type, String value, NutsElementFactoryContext context) {
         switch (type) {
             case "null": {
-                return context.getWorkspace().formats().element().elements().forNull();
+                return context.getWorkspace().formats().element().forPrimitive().buildNull();
             }
             case "number": {
                 return context.objectToElement(value, Number.class);
@@ -243,10 +243,10 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
                 return context.objectToElement(value, Boolean.class);
             }
             case "true": {
-                return context.getWorkspace().formats().element().elements().forBoolean(true);
+                return context.getWorkspace().formats().element().forPrimitive().buildTrue();
             }
             case "false": {
-                return context.getWorkspace().formats().element().elements().forBoolean(true);
+                return context.getWorkspace().formats().element().forPrimitive().buildTrue();
             }
             case "byte": {
                 return context.objectToElement(value, Byte.class);
@@ -333,18 +333,18 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
 
     @Override
     public NutsElement createElement(Node node, Type typeOfSrc, NutsElementFactoryContext context) {
-        NutsElementBuilder elements = context.getWorkspace().formats().element().elements();
+        NutsElementFormat elements = context.getWorkspace().formats().element();
         if (node instanceof Attr) {
             Attr at = (Attr) node;
             return elements.forObject().set(at.getName(), context.objectToElement(at.getValue(), String.class)).build();
         }
         if (node instanceof CDATASection) {
             CDATASection d = (CDATASection) node;
-            return elements.forString(d.getWholeText());
+            return elements.forPrimitive().buildString(d.getWholeText());
         }
         if (node instanceof Text) {
             Text d = (Text) node;
-            return elements.forString(d.getWholeText());
+            return elements.forPrimitive().buildString(d.getWholeText());
         }
         Element element = (Element) node;
         NodeInfo ni = new NodeInfo(element);

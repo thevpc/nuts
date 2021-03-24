@@ -8,9 +8,19 @@ ${include($"${resources}/header.md")}
 View Official releases [here](https://github.com/thevpc/nuts/releases) :
 Starred releases are most stable ones.
 
+### nuts 0.8.2.0
+- ```2021/XX/XX 	nuts 0.8.2.0 (*)``` released [download nuts-0.8.2.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.2/nuts-0.8.2.jar)
+- WARNING: API has evolved with multiple incompatibilities with previous versions  
+- TODO  : [api]   add comments support in 'element' and and propagate support for xml,json and so on
+- TODO  : [impl]  better yaml parser
+- TODO  : [impl]  implement yaml formatter (both print as raw and as colorized)
+- TODO  : [impl]  bunlde tson parser
+
 ### nuts 0.8.1.0
 - ```2020/11/22 	nuts 0.8.1.0 (*)``` released [download nuts-0.8.1.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar)
-- WARNING: API has evolved with some incompatibilities with previous versions  
+- WARNING: API has evolved with multiple incompatibilities with previous versions  
+- ADDED  : [api]  added support for Yaml with minimal implementation
+- ADDED  : [api]  element now supports complex keys in Map Entries (Objects)
 - ADDED  : [api][cmdline] added support for History and implemented in JLine extension
 - ADDED  : [api][cmdline] added support for readline syntax coloring (using jline)
 - ADDED  : [api][cmdline] added --locale option to support multi languages. The option is reflected to Session as well 
@@ -23,8 +33,10 @@ Starred releases are most stable ones.
   - nuts nadmin add repository jcenter // add permanently the repository
   - nuts -r jcenter my-command // use temporarily the repository top run my-command 
 - FIXED  : [runtime] extension support (for JLine)
-- CHANGED: [runtime] revamped Nuts Text Format to support with simplified syntax but more verbose styles.
-  Now supports #), ##), ###) and so on as Title Node.
+- REMOVED: [runtime] added minimal implementation for YAM
+- REMOVED: [runtime] added fast implementation for JSON and removed gson dependency
+- CHANGED: [runtime] revamped Nuts Text Format to support simplified syntax but more verbose styles.
+  Now supports #), ##), ###) and so on as Title Nodes.
   It supports as well the common markdown 'code' format with anti-quotes such as
   ```java code goes here...```
   Other supported examples are:

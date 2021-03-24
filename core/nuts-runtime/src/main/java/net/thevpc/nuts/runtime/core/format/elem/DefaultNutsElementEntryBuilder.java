@@ -23,17 +23,49 @@
  */
 package net.thevpc.nuts.runtime.core.format.elem;
 
-import java.io.PrintStream;
-import java.io.Reader;
 import net.thevpc.nuts.NutsElement;
+import net.thevpc.nuts.NutsElementEntry;
+import net.thevpc.nuts.NutsElementEntryBuilder;
+import net.thevpc.nuts.NutsWorkspace;
 
 /**
  *
  * @author vpc
  */
-public interface NutsElementStreamFormat {
+public class DefaultNutsElementEntryBuilder extends AbstractNutsElementBaseBuilder implements NutsElementEntryBuilder {
 
-    public NutsElement parseElement(Reader reader,NutsElementFactoryContext context);
+    private NutsElement key;
+    private NutsElement value;
+    private NutsWorkspace ws;
 
-    public void printElement(NutsElement value, PrintStream out, boolean compact,NutsElementFactoryContext context);
+    public DefaultNutsElementEntryBuilder(NutsWorkspace ws) {
+        this.ws = ws;
+    }
+
+    public NutsElement getKey() {
+        return key;
+    }
+
+    public NutsElementEntryBuilder setKey(NutsElement key) {
+        this.key = key;
+        return this;
+    }
+
+    public NutsElement getValue() {
+        return value;
+    }
+
+    public NutsElementEntryBuilder setValue(NutsElement value) {
+        this.value = value;
+        return this;
+    }
+
+    @Override
+    public NutsElementEntry build() {
+        return new DefaultNutsElementEntry(
+                key == null ? ws.formats().element().forPrimitive().buildNull() : key,
+                value == null ? ws.formats().element().forPrimitive().buildNull() : value
+        );
+    }
+
 }

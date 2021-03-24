@@ -66,6 +66,7 @@ public interface NutsElementFormat extends NutsObjectFormat {
      * @return current value to format
      * @since 0.5.6
      */
+    @Override
     Object getValue();
 
     /**
@@ -75,6 +76,7 @@ public interface NutsElementFormat extends NutsObjectFormat {
      * @return {@code this} instance
      * @since 0.5.6
      */
+    @Override
     NutsElementFormat setValue(Object value);
 
     /**
@@ -101,12 +103,6 @@ public interface NutsElementFormat extends NutsObjectFormat {
      * @return Element Path filter
      */
     NutsElementPath compilePath(String pathExpression);
-    
-    /**
-     * element elements
-     * @return element elements
-     */
-    NutsElementBuilder elements();
 
     /**
      * configure the current command with the given arguments. This is an
@@ -208,5 +204,28 @@ public interface NutsElementFormat extends NutsObjectFormat {
      */
     <T> T convert(Object any, Class<T> to);
 
-    NutsElement objectToElement(Object any, Type expectedType);
+    NutsElement convertToElement(Object any);
+
+    NutsElementEntryBuilder forEntry();
+
+    /**
+     * create object element builder (mutable)
+     *
+     * @return primitive builder
+     */
+    NutsPrimitiveElementBuilder forPrimitive();
+
+    /**
+     * create object element builder (mutable)
+     *
+     * @return object element
+     */
+    NutsObjectElementBuilder forObject();
+
+    /**
+     * create array element builder (mutable)
+     *
+     * @return array element
+     */
+    NutsArrayElementBuilder forArray();
 }

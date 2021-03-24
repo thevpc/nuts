@@ -33,7 +33,7 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
 
     protected Iterator<NutsId> getResultIdsBaseIterator(boolean sort) {
         RemoteNutsWorkspace ws = getWorkspace();
-        NutsElementBuilder e = ws.formats().element().elements();
+        NutsElementFormat e = ws.formats().element();
         NutsObjectElementBuilder eb = e.forObject()
                 .set("execType", getExecType())
                 .set("defaultVersions", getDefaultVersions())
@@ -45,13 +45,13 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
                 .set("ids", e.forArray().addAll(Arrays.stream(getIds())
                         .map(Object::toString).toArray(String[]::new)).build());
         if (getIdFilter() != null) {
-            eb.set("idFilter", ws.formats().element().objectToElement(getIdFilter(),null));
+            eb.set("idFilter", ws.formats().element().convertToElement(getIdFilter()));
         }
         if (getDescriptorFilter() != null) {
-            eb.set("descriptorFilter", ws.formats().element().objectToElement(getDescriptorFilter(),null));
+            eb.set("descriptorFilter", ws.formats().element().convertToElement(getDescriptorFilter()));
         }
         if (getInstallStatus() != null) {
-            eb.set("installStatus", e.forString(getInstallStatus().toString()));
+            eb.set("installStatus", e.forPrimitive().buildString(getInstallStatus().toString()));
         }
 
         return getWorkspace().remoteCall(
@@ -64,7 +64,7 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
     }
     protected Iterator<NutsDependency> getResultIdsBaseIterator2(boolean sort) {
         RemoteNutsWorkspace ws = getWorkspace();
-        NutsElementBuilder e = ws.formats().element().elements();
+        NutsElementFormat e = ws.formats().element();
         NutsObjectElementBuilder eb = e.forObject()
                 .set("execType", getExecType())
                 .set("defaultVersions", getDefaultVersions())
@@ -76,13 +76,13 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
                 .set("ids", e.forArray().addAll(Arrays.stream(getIds())
                         .map(Object::toString).toArray(String[]::new)).build());
         if (getIdFilter() != null) {
-            eb.set("idFilter", ws.formats().element().objectToElement(getIdFilter(),null));
+            eb.set("idFilter", ws.formats().element().convertToElement(getIdFilter()));
         }
         if (getDescriptorFilter() != null) {
-            eb.set("descriptorFilter", ws.formats().element().objectToElement(getDescriptorFilter(),null));
+            eb.set("descriptorFilter", ws.formats().element().convertToElement(getDescriptorFilter()));
         }
         if (getInstallStatus() != null) {
-            eb.set("installStatus", e.forString(getInstallStatus().toString()));
+            eb.set("installStatus", e.forPrimitive().buildString(getInstallStatus().toString()));
         }
 
         return getWorkspace().remoteCall(

@@ -1144,7 +1144,7 @@ public class CoreIOUtils {
         return sb;
     }
 
-    private static char toHex(int nibble) {
+    public static char toHex(int nibble) {
         return HEX_ARR[nibble & 15];
     }
 

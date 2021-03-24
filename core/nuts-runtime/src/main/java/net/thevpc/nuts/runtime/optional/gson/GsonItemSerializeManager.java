@@ -59,39 +59,39 @@ public class GsonItemSerializeManager implements NutsElementStreamFormat {
 
     private Gson GSON_COMPACT;
     private Gson GSON_PRETTY;
+    private NutsElementFactoryContext lastContext;
 //    private NutsElementFactoryContext dummyContext;
-    protected NutsElementFactoryContext context;
+//    protected NutsElementFactoryContext context;
 
-    public GsonItemSerializeManager(NutsElementFactoryContext context) {
-        this.context = context;
+    public GsonItemSerializeManager() {
     }
 
-    public NutsElement gsonToElement(JsonElement o) {
+    public NutsElement gsonToElement(JsonElement o,NutsElementFactoryContext context) {
         JsonElement je = (JsonElement) o;
         NutsWorkspace ws = context.getWorkspace();
         if (je.isJsonNull()) {
-            return ws.formats().element().elements().forNull();
+            return ws.formats().element().forPrimitive().buildNull();
         } else if (je.isJsonPrimitive()) {
             JsonPrimitive jr = je.getAsJsonPrimitive();
             if (jr.isString()) {
-                return ws.formats().element().elements().forString(jr.getAsString());
+                return ws.formats().element().forPrimitive().buildString(jr.getAsString());
             } else if (jr.isNumber()) {
-                return ws.formats().element().elements().forNumber(jr.getAsNumber());
+                return ws.formats().element().forPrimitive().buildNumber(jr.getAsNumber());
             } else if (jr.isBoolean()) {
-                return ws.formats().element().elements().forBoolean(jr.getAsBoolean());
+                return ws.formats().element().forPrimitive().buildBoolean(jr.getAsBoolean());
             } else {
                 throw new IllegalArgumentException("unsupported");
             }
         } else if (je.isJsonArray()) {
-            NutsArrayElementBuilder arr = ws.formats().element().elements().forArray();
+            NutsArrayElementBuilder arr = ws.formats().element().forArray();
             for (JsonElement object : je.getAsJsonArray()) {
-                arr.add(gsonToElement(object));
+                arr.add(gsonToElement(object,context));
             }
             return arr.build();
         } else if (je.isJsonObject()) {
-            NutsObjectElementBuilder arr = ws.formats().element().elements().forObject();
+            NutsObjectElementBuilder arr = ws.formats().element().forObject();
             for (Map.Entry<String, JsonElement> e : je.getAsJsonObject().entrySet()) {
-                arr.set(e.getKey(), gsonToElement(e.getValue()));
+                arr.set(e.getKey(), gsonToElement(e.getValue(),context));
             }
             return arr.build();
         }
@@ -99,8 +99,8 @@ public class GsonItemSerializeManager implements NutsElementStreamFormat {
     }
 
 //    @Override
-    public NutsElement parseElement(Reader reader, NutsSession session) {
-        return getGson(true).fromJson(reader, NutsElement.class);
+    public NutsElement parseElement(Reader reader, NutsElementFactoryContext context) {
+        return getGson(true,context).fromJson(reader, NutsElement.class);
     }
 
 ////    @Override
@@ -109,22 +109,24 @@ public class GsonItemSerializeManager implements NutsElementStreamFormat {
 //        JsonElement t = gson.toJsonTree(any);
 //        return gson.fromJson(t, clazz);
 //    }
-    public Gson getGson(boolean compact) {
+    public Gson getGson(boolean compact,NutsElementFactoryContext context) {
         if (compact) {
             if (GSON_COMPACT == null) {
+                this.lastContext=context;
                 GSON_COMPACT = prepareBuilder().create();
             }
             return GSON_COMPACT;
         } else {
             if (GSON_PRETTY == null) {
+                this.lastContext=context;
                 GSON_PRETTY = prepareBuilder().setPrettyPrinting().create();
             }
             return GSON_PRETTY;
         }
     }
 
-    public void printElement(NutsElement value, PrintStream out, boolean compact, NutsSession session) {
-        getGson(compact).toJson(value, out);
+    public void printElement(NutsElement value, PrintStream out, boolean compact, NutsElementFactoryContext context) {
+        getGson(compact,context).toJson(value, out);
     }
 
     public JsonElement elementToGson(NutsElement o) {
@@ -211,7 +213,7 @@ public class GsonItemSerializeManager implements NutsElementStreamFormat {
 
         @Override
         public NutsElement deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return gsonToElement(json);
+            return gsonToElement(json,lastContext);
         }
 
         @Override

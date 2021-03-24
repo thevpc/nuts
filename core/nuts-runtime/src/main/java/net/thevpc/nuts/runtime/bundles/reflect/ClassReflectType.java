@@ -259,7 +259,7 @@ public class ClassReflectType implements ReflectType {
 
     /**
      *
-     * @return
+     * @return direct declared properties
      */
     @Override
     public List<ReflectProperty> getDeclaredProperties() {
@@ -269,7 +269,7 @@ public class ClassReflectType implements ReflectType {
 
     /**
      *
-     * @return
+     * @return all (including inherited) declared properties
      */
     @Override
     public List<ReflectProperty> getProperties() {

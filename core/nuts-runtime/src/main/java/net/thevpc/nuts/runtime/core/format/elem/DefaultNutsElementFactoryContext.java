@@ -24,9 +24,10 @@
 package net.thevpc.nuts.runtime.core.format.elem;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementBuilder;
+import net.thevpc.nuts.NutsElementFormat;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 
@@ -34,12 +35,18 @@ import net.thevpc.nuts.NutsWorkspace;
  *
  * @author vpc
  */
-public class NutsElementFactoryContextAdapter implements NutsElementFactoryContext {
+public class DefaultNutsElementFactoryContext implements NutsElementFactoryContext {
 
-    private NutsElementFactoryContext base;
+    private DefaultNutsElementFormat base;
+    private final Map<String, Object> properties = new HashMap<>();
 
-    public NutsElementFactoryContextAdapter(NutsElementFactoryContext base) {
+    public DefaultNutsElementFactoryContext(DefaultNutsElementFormat base) {
         this.base = base;
+    }
+
+    @Override
+    public NutsSession getSession() {
+        return base.getSession();
     }
 
     @Override
@@ -48,49 +55,33 @@ public class NutsElementFactoryContextAdapter implements NutsElementFactoryConte
     }
 
     @Override
-    public NutsElementBuilder elements() {
-        return base.elements();
-    }
-
-    @Override
-    public NutsElementMapper getFallback() {
-        return base.getFallback();
+    public NutsElementFormat element() {
+        return base;
     }
 
     @Override
     public Map<String, Object> getProperties() {
-        return base.getProperties();
+        return properties;
     }
 
     @Override
     public NutsElement objectToElement(Object o, Type expectedType) {
-        return base.objectToElement(o,expectedType);
+        return base.getElementFactoryService().createElement(o, expectedType, this);
     }
 
     @Override
     public Object elementToObject(NutsElement o, Type type) {
-        return base.elementToObject(o, type);
-    }
-
-    @Override
-    public void setFallback(NutsElementMapper fallback) {
-        base.setFallback(fallback);
+        return base.getElementFactoryService().createObject(o, type, this);
     }
 
     @Override
     public NutsElement defaultObjectToElement(Object o, Type expectedType) {
-        return base.defaultObjectToElement(o,expectedType);
+        return base.getElementFactoryService().defaultCreateElement(o, expectedType, this);
     }
 
     @Override
     public Object defaultElementToObject(NutsElement o, Type type) {
-        return base.defaultElementToObject(o, type);
+        return base.getElementFactoryService().defaultCreateObject(o, type, this);
     }
-
-    @Override
-    public NutsSession getSession() {
-        return base.getSession();
-    }
-    
 
 }

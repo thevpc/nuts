@@ -934,7 +934,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                             for (NutsElementEntry vv : elem2.asObject().children()) {
                                 NutsElement k = vv.getKey();
                                 if (!k.isString()) {
-                                    k = getSession().getWorkspace().formats().element().elements().forString(
+                                    k = getSession().getWorkspace().formats().element().forPrimitive().buildString(
                                             k.toString()
                                     );
                                 }
@@ -975,7 +975,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 for (NutsElementEntry nutsNamedValue : value.asObject().children()) {
                     NutsElement k = nutsNamedValue.getKey();
                     if (!k.isString()) {
-                        k = getSession().getWorkspace().formats().element().elements().forString(
+                        k = getSession().getWorkspace().formats().element().forPrimitive().buildString(
                                 k.toString()
                         );
                     }

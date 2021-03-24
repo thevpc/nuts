@@ -224,7 +224,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     @Override
     public NutsElement createElement(Object o, Type expectedType, NutsElementFactoryContext context) {
         if (o == null) {
-            return context.elements().forNull();
+            return context.element().forPrimitive().buildNull();
         }
         if (expectedType == null) {
             expectedType = o.getClass();
@@ -242,7 +242,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             expectedType = o.getClass();
         }
         if (o == null) {
-            return context.elements().forNull();
+            return context.element().forPrimitive().buildNull();
         }
         return getElementFactory(expectedType, true).createElement(o, o.getClass(), context);
     }
@@ -287,7 +287,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                     m.put(k, v);
                 }
             }
-            return new DefaultNutsObjectElement(m, context.elements());
+            return new DefaultNutsObjectElement(m, context.getWorkspace());
         }
 
         public Map fillObject(NutsElement o, Map all, Type elemType1, Type elemType2, Type to, NutsElementFactoryContext context) {
@@ -353,7 +353,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsElement createElement(Map.Entry o, Type typeOfSrc, NutsElementFactoryContext context) {
             Map.Entry je = (Map.Entry) o;
-            return context.elements().forObject()
+            return context.element().forObject()
                     .set("key", context.objectToElement(je.getKey(), null))
                     .set("value", context.objectToElement(je.getValue(), null))
                     .build();
@@ -400,9 +400,9 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                 ParameterizedType pt = (ParameterizedType) to;
                 elemType = pt.getActualTypeArguments()[0];
             }
-            if (cls == null) {
-                throw new IllegalArgumentException("invalid");
-            }
+//            if (cls == null) {
+//                throw new IllegalArgumentException("invalid");
+//            }
             switch (cls.getName()) {
                 case "java.util.Collection":
                 case "java.util.List":
@@ -468,7 +468,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement createElement(Instant o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.elements().forInstant((Instant) o);
+            return context.element().forPrimitive().buildInstant((Instant) o);
         }
 
         @Override
@@ -495,7 +495,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement createElement(java.util.Date o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.elements().forInstant(o.toInstant());
+            return context.element().forPrimitive().buildInstant(o.toInstant());
         }
 
         @Override
@@ -509,7 +509,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement createElement(Number o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.elements().forNumber((Number) o);
+            return context.element().forPrimitive().buildNumber((Number) o);
         }
 
         @Override
@@ -547,7 +547,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement createElement(Boolean o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.elements().forBoolean((Boolean) o);
+            return context.element().forPrimitive().buildBoolean((Boolean) o);
         }
 
         @Override
@@ -566,7 +566,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement createElement(Enum o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.elements().forString(String.valueOf(o));
+            return context.element().forPrimitive().buildString(String.valueOf(o));
         }
 
         @Override
@@ -592,7 +592,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement createElement(Character o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.elements().forString(String.valueOf(o));
+            return context.element().forPrimitive().buildString(String.valueOf(o));
         }
 
         @Override
@@ -608,7 +608,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement createElement(String o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.elements().forString(String.valueOf(o));
+            return context.element().forPrimitive().buildString(String.valueOf(o));
         }
 
         @Override
@@ -621,7 +621,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement createElement(Object o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.elements().forNull();
+            return context.element().forPrimitive().buildNull();
         }
 
         @Override
@@ -838,7 +838,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsElement createElement(Object src, Type typeOfSrc, NutsElementFactoryContext context) {
             ReflectType m = typesRepository.getType(typeOfSrc);
-            NutsObjectElementBuilder obj = context.elements().forObject();
+            NutsObjectElementBuilder obj = context.element().forObject();
             for (ReflectProperty property : m.getProperties()) {
                 final Object v = property.read(src);
                 if (!property.isDefaultValue(v)) {
@@ -1018,7 +1018,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement createElement(char[] src, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.elements().forString(new String(src));
+            return context.element().forPrimitive().buildString(new String(src));
         }
 
         @Override
@@ -1149,7 +1149,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             if (o.type().isPrimitive()) {
                 return o.asPrimitive();
             }
-            return context.elements().forString(o.toString());
+            return context.element().forPrimitive().buildString(o.toString());
         }
     }
 
@@ -1168,7 +1168,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             if (o.type() == NutsElementType.ARRAY) {
                 return o.asArray();
             }
-            return context.elements().forArray().add(o).build();
+            return context.element().forArray().add(o).build();
         }
     }
 
@@ -1187,7 +1187,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             if (o.type() == NutsElementType.OBJECT) {
                 return o.asObject();
             }
-            return context.elements().forObject().set("value", o).build();
+            return context.element().forObject().set("value", o).build();
         }
     }
 

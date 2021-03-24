@@ -42,7 +42,7 @@ public class OptionalGson {
 
     public static NutsElementStreamFormat createElementStreamFormat(NutsElementFactoryContext context) {
         if (isAvailable()) {
-            return new GsonItemSerializeManager(context);
+            return new GsonItemSerializeManager();
         }
         return null;
     }

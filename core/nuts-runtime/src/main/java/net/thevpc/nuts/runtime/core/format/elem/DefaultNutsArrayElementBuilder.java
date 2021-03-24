@@ -3,37 +3,37 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.runtime.core.format.elem;
 
 import net.thevpc.nuts.NutsArrayElement;
 import net.thevpc.nuts.NutsArrayElementBuilder;
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.thevpc.nuts.NutsElementFormat;
+import net.thevpc.nuts.NutsPrimitiveElementBuilder;
+import net.thevpc.nuts.NutsWorkspace;
 
 /**
  *
@@ -42,10 +42,10 @@ import java.util.stream.Collectors;
 public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
 
     private final List<NutsElement> values = new ArrayList<>();
-    private NutsElementBuilder elementBuilder;
+    private NutsWorkspace ws;
 
-    public DefaultNutsArrayElementBuilder(NutsElementBuilder elementBuilder) {
-        this.elementBuilder = elementBuilder;
+    public DefaultNutsArrayElementBuilder(NutsWorkspace ws) {
+        this.ws = ws;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
     @Override
     public NutsArrayElementBuilder addAll(NutsArrayElement value) {
         if (value == null) {
-            add(elementBuilder.forNull());
+            add(_primitive().buildNull());
         } else {
             for (NutsElement child : value.children()) {
                 add(child);
@@ -86,7 +86,7 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
     @Override
     public NutsArrayElementBuilder addAll(NutsArrayElementBuilder value) {
         if (value == null) {
-            add(elementBuilder.forNull());
+            add(_primitive().buildNull());
         } else {
             for (NutsElement child : value.children()) {
                 add(child);
@@ -208,47 +208,47 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
 
     @Override
     public NutsArrayElementBuilder add(int value) {
-        return add(elementBuilder.forInt(value));
+        return add(_primitive().buildInt(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(long value) {
-        return add(elementBuilder.forLong(value));
+        return add(_primitive().buildLong(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(double value) {
-        return add(elementBuilder.forDouble(value));
+        return add(_primitive().buildDouble(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(float value) {
-        return add(elementBuilder.forFloat(value));
+        return add(_primitive().buildFloat(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(byte value) {
-        return add(elementBuilder.forByte(value));
+        return add(_primitive().buildByte(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(boolean value) {
-        return add(elementBuilder.forBoolean(value));
+        return add(_primitive().buildBoolean(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(char value) {
-        return add(elementBuilder.forChar(value));
+        return add(_primitive().buildChar(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(Number value) {
-        return add(value==null?elementBuilder.forNull():elementBuilder.forNumber(value));
+        return add(value == null ? _primitive().buildNull() : _primitive().buildNumber(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(String value) {
-        return add(value==null?elementBuilder.forNull():elementBuilder.forString(value));
+        return add(value == null ? _primitive().buildNull() : _primitive().buildString(value));
     }
 
     @Override
@@ -263,8 +263,17 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
 
     private NutsElement denull(NutsElement e) {
         if (e == null) {
-            return elementBuilder.forNull();
+            return _primitive().buildNull();
         }
         return e;
     }
+
+    private NutsElementFormat _elements() {
+        return ws.formats().element();
+    }
+
+    private NutsPrimitiveElementBuilder _primitive() {
+        return _elements().forPrimitive();
+    }
+
 }

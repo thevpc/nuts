@@ -23,17 +23,10 @@
  */
 package net.thevpc.nuts.runtime.core.format.elem;
 
-import java.io.PrintStream;
-import java.io.Reader;
-import net.thevpc.nuts.NutsElement;
-
 /**
  *
  * @author vpc
  */
-public interface NutsElementStreamFormat {
-
-    public NutsElement parseElement(Reader reader,NutsElementFactoryContext context);
-
-    public void printElement(NutsElement value, PrintStream out, boolean compact,NutsElementFactoryContext context);
+public class AbstractNutsElementBaseBuilder {
+    
 }

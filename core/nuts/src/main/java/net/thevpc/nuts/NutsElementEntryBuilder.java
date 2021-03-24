@@ -2,13 +2,13 @@
  * ====================================================================
  *            Nuts : Network Updatable Things Service
  *                  (universal package manager)
- * <br>
- * is a new Open Source Package Manager to help install packages and libraries
- * for runtime execution. Nuts is the ultimate companion for maven (and other
- * build managers) as it helps installing all package dependencies at runtime.
- * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
- * large range of sub managers / repositories.
+ *
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
  * <br>
  *
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
@@ -21,19 +21,16 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.core.format.elem;
-
-import java.io.PrintStream;
-import java.io.Reader;
-import net.thevpc.nuts.NutsElement;
+package net.thevpc.nuts;
 
 /**
  *
  * @author vpc
  */
-public interface NutsElementStreamFormat {
-
-    public NutsElement parseElement(Reader reader,NutsElementFactoryContext context);
-
-    public void printElement(NutsElement value, PrintStream out, boolean compact,NutsElementFactoryContext context);
+public interface NutsElementEntryBuilder extends NutsElementBuilder{
+    NutsElement getKey();
+    NutsElement getValue();
+    NutsElementEntryBuilder setKey(NutsElement element);
+    NutsElementEntryBuilder setValue(NutsElement element);
+    NutsElementEntry build();
 }

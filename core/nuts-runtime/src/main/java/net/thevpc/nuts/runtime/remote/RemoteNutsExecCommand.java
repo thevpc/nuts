@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.remote;
 
-import net.thevpc.nuts.NutsElementBuilder;
+import net.thevpc.nuts.NutsElementFormat;
 import net.thevpc.nuts.NutsExecCommand;
 import net.thevpc.nuts.NutsExecutableInformation;
 import net.thevpc.nuts.NutsExecutionException;
@@ -19,7 +19,7 @@ public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
     @Override
     public NutsExecutableInformation which() {
         RemoteNutsWorkspace ws = getWorkspace();
-        NutsElementBuilder e = ws.formats().element().elements();
+        NutsElementFormat e = ws.formats().element();
         return getWorkspace().remoteCall(
                 getWorkspace().createCall("workspace.which",
                         e.forObject()
@@ -32,7 +32,7 @@ public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
     @Override
     public NutsExecCommand run() {
         RemoteNutsWorkspace ws = getWorkspace();
-        NutsElementBuilder e = ws.formats().element().elements();
+        NutsElementFormat e = ws.formats().element();
         try {
             int r = getWorkspace().remoteCall(
                     getWorkspace().createCall("workspace.exec",

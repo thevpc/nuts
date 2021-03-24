@@ -11,17 +11,17 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.thevpc.nuts.NutsArrayElement;
-import net.thevpc.nuts.NutsElementBuilder;
 import net.thevpc.nuts.NutsElementEntry;
 import net.thevpc.nuts.NutsObjectElement;
+import net.thevpc.nuts.NutsWorkspace;
 
 public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     private Map<NutsElement, NutsElement> values = new LinkedHashMap<>();
-    private NutsElementBuilder elementBuilder;
+    private NutsWorkspace ws;
 
-    public DefaultNutsObjectElement(Map<NutsElement, NutsElement> values, NutsElementBuilder elementBuilder) {
-        this.elementBuilder = elementBuilder;
+    public DefaultNutsObjectElement(Map<NutsElement, NutsElement> values, NutsWorkspace ws) {
+        this.ws = ws;
         if (values != null) {
             for (Map.Entry<NutsElement, NutsElement> e : values.entrySet()) {
                 if (e.getKey() != null && e.getValue() != null) {
@@ -174,7 +174,7 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     @Override
     public NutsElement get(String s) {
-        return values.get(this.elementBuilder.forString(s));
+        return values.get(this.ws.formats().element().forPrimitive().buildString(s));
     }
 
     @Override

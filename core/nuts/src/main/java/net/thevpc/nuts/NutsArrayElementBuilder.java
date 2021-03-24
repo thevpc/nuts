@@ -33,7 +33,7 @@ import java.util.List;
  * @author thevpc
  * @category Elements
  */
-public interface NutsArrayElementBuilder {
+public interface NutsArrayElementBuilder extends NutsElementBuilder{
 
     /**
      * array items
