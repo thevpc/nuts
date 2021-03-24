@@ -205,7 +205,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     @Override
     public Object createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
-        if (o.type() == NutsElementType.NULL) {
+        if (o==null || o.type() == NutsElementType.NULL) {
             return F_NULL.createObject(o, to, context);
         }
         NutsElementMapper f = getElementFactory(to, false);
@@ -214,7 +214,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     @Override
     public Object defaultCreateObject(NutsElement o, Type to, NutsElementFactoryContext context) {
-        if (o.type() == NutsElementType.NULL) {
+        if (o==null || o.type() == NutsElementType.NULL) {
             return F_NULL.createElement(null, to, context);
         }
         NutsElementMapper f = getElementFactory(to, true);
@@ -781,14 +781,14 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsSdkLocation createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             NutsObjectElement obj = o.asObject();
-            NutsId id = (NutsId) context.elementToObject(obj.get("id"), NutsId.class);
-            String product = (String) context.elementToObject(obj.get("product"), String.class);
-            String name = (String) context.elementToObject(obj.get("name"), String.class);
-            String path = (String) context.elementToObject(obj.get("path"), String.class);
-            String version = (String) context.elementToObject(obj.get("version"), String.class);
-            String packaging = (String) context.elementToObject(obj.get("packaging"), String.class);
-            Integer priority = (Integer) context.elementToObject(obj.get("priority"), int.class);
-            return new NutsSdkLocation(id, product, name, path, version, packaging, priority == null ? 0 : priority);
+            NutsId id = context.elementToObject(obj.get("id"), NutsId.class);
+            String product = context.elementToObject(obj.get("product"), String.class);
+            String name = context.elementToObject(obj.get("name"), String.class);
+            String path = context.elementToObject(obj.get("path"), String.class);
+            String version = context.elementToObject(obj.get("version"), String.class);
+            String packaging = context.elementToObject(obj.get("packaging"), String.class);
+            int priority = context.elementToObject(obj.get("priority"), int.class);
+            return new NutsSdkLocation(id, product, name, path, version, packaging, priority);
         }
 
     }

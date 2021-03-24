@@ -70,6 +70,17 @@ public class DefaultNutsElementFactoryContext implements NutsElementFactoryConte
     }
 
     @Override
+    public <T> T elementToObject(NutsElement o, Class<T> type) {
+        return (T)elementToObject(o, (Type)type);
+    }
+
+    @Override
+    public <T> T defaultElementToObject(NutsElement o, Class<T> type) {
+        return (T)defaultElementToObject(o, (Type)type);
+    }
+
+    
+    @Override
     public Object elementToObject(NutsElement o, Type type) {
         return base.getElementFactoryService().createObject(o, type, this);
     }

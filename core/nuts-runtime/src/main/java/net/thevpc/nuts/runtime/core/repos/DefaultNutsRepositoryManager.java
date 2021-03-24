@@ -328,8 +328,12 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
 
                 }
                 conf = ws.formats().element().setContentType(NutsContentType.JSON).parse(file, NutsRepositoryConfig.class);
-            } catch (Exception ex) {
-                onLoadRepositoryError(file, name, null, ex, session);
+            } catch (RuntimeException ex) {
+                if (session.getWorkspace().config().options().isRecover()) {
+                    onLoadRepositoryError(file, name, null, ex, session);
+                } else {
+                    throw ex;
+                }
             }
         }
         return conf;

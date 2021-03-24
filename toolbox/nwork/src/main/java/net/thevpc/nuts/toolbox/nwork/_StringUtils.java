@@ -21,39 +21,29 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.core.format.elem;
-
-import java.lang.reflect.Type;
-import java.util.Map;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementFormat;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+package net.thevpc.nuts.toolbox.nwork;
 
 /**
  *
- * @author thevpc
+ * @author vpc
  */
-public interface NutsElementFactoryContext {
+public class _StringUtils {
 
-    NutsSession getSession();
+    public static boolean isBlank(String string) {
+        return string == null || string.trim().isEmpty();
+    }
 
-    NutsWorkspace getWorkspace();
-
-    NutsElementFormat element();
-
-    Map<String, Object> getProperties();
-
-    NutsElement defaultObjectToElement(Object o, Type expectedType);
-
-    NutsElement objectToElement(Object o, Type expectedType);
-
-    <T> T elementToObject(NutsElement o, Class<T> type);
-
-    Object elementToObject(NutsElement o, Type type);
-
-    <T> T defaultElementToObject(NutsElement o, Class<T> type);
-
-    Object defaultElementToObject(NutsElement o, Type type);
-
+    public static String alignLeft(String s, int width) {
+        StringBuilder sb = new StringBuilder(width<=0?1:width);
+        if (s != null) {
+            sb.append(s);
+            int x = width - sb.length();
+            if (x > 0) {
+                for (int i = 0; i < x; i++) {
+                    sb.append(' ');
+                }
+            }
+        }
+        return sb.toString();
+    }
 }

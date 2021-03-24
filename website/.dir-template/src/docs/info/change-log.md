@@ -14,7 +14,8 @@ Starred releases are most stable ones.
 - TODO  : [api]   add comments support in 'element' and and propagate support for xml,json and so on
 - TODO  : [impl]  better yaml parser
 - TODO  : [impl]  implement yaml formatter (both print as raw and as colorized)
-- TODO  : [impl]  bunlde tson parser
+- TODO  : [impl]  bundle tson parser
+- TODO  : [impl]  add support to ssh and scp via extension mechanism so that whan an ssh:// like url is used, according library is loaded if not in the classpath
 
 ### nuts 0.8.1.0
 - ```2020/11/22 	nuts 0.8.1.0 (*)``` released [download nuts-0.8.1.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar)

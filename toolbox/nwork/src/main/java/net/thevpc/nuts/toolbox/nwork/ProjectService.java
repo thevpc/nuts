@@ -3,7 +3,6 @@ package net.thevpc.nuts.toolbox.nwork;
 import net.thevpc.nuts.*;
 import net.thevpc.common.mvn.Pom;
 import net.thevpc.common.mvn.PomXmlParser;
-import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.toolbox.nwork.config.ProjectConfig;
 import net.thevpc.nuts.toolbox.nwork.config.RepositoryAddress;
 
@@ -206,7 +205,7 @@ public class ProjectService {
                 a = new RepositoryAddress();
             }
             String nutsRepository = a.getNutsRepository();
-            if (StringUtils.isBlank(nutsRepository)) {
+            if (_StringUtils.isBlank(nutsRepository)) {
                 throw new NutsExecutionException(context.getWorkspace(), "missing repository. try 'nwork set -r vpc-public-maven' or something like that", 2);
             }
             try {
@@ -256,7 +255,7 @@ public class ProjectService {
                         a = new RepositoryAddress();
                     }
                     String nutsRepository = a.getNutsRepository();
-                    if (StringUtils.isBlank(nutsRepository)) {
+                    if (_StringUtils.isBlank(nutsRepository)) {
                         throw new NutsExecutionException(context.getWorkspace(), "missing repository. try 'nwork set -r vpc-public-maven' or something like that", 2);
                     }
                     try {

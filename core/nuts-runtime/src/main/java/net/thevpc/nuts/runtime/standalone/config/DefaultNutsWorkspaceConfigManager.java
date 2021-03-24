@@ -190,8 +190,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             plainSdks.addAll(Arrays.asList(sdks().find(null, null, null)));
             storeModelMain.setSdk(plainSdks);
             storeModelMain.setRepositories(new ArrayList<>(
-                    Arrays.stream(ws.repos().getRepositories(session)).filter(x->!x.config().isTemporary())
-                    .map(x->x.config().getRepositoryRef()).collect(Collectors.toList())
+                    Arrays.stream(ws.repos().getRepositories(session)).filter(x -> !x.config().isTemporary())
+                            .map(x -> x.config().getRepositoryRef()).collect(Collectors.toList())
             ));
 
             Path file = Paths.get(configVersionSpecificLocation).resolve(CoreNutsConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
@@ -671,7 +671,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 cconfig.setApiId(ws.id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + initOptions.getApiVersion()));
             }
             if (cconfig.getRuntimeId() == null) {
-                cconfig.setRuntimeId(initOptions.getRuntimeId()==null?null:initOptions.getRuntimeId().toString());
+                cconfig.setRuntimeId(initOptions.getRuntimeId() == null ? null : initOptions.getRuntimeId().toString());
             }
             if (cconfig.getRuntimeBootDescriptor() == null) {
                 cconfig.setRuntimeBootDescriptor(initOptions.getRuntimeBootDescriptor());
@@ -700,7 +700,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             if (options.isRecover() || options.isReset()) {
                 //always reload boot resolved versions!
                 cconfig.setApiId(ws.id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + initOptions.getApiVersion()));
-                cconfig.setRuntimeId(initOptions.getRuntimeId()==null?null:initOptions.getRuntimeId().toString());
+                cconfig.setRuntimeId(initOptions.getRuntimeId() == null ? null : initOptions.getRuntimeId().toString());
                 cconfig.setRuntimeBootDescriptor(initOptions.getRuntimeBootDescriptor());
                 cconfig.setExtensionBootDescriptors(initOptions.getExtensionBootDescriptors());
                 cconfig.setBootRepositories(initOptions.getBootRepositories());
@@ -719,8 +719,12 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             storeModelSecurityChanged = false;
             storeModelMainChanged = false;
             return true;
-        } catch (Exception ex) {
-            onLoadWorkspaceError(ex, session);
+        } catch (RuntimeException ex) {
+            if (session.getWorkspace().config().getOptions().isRecover()) {
+                onLoadWorkspaceError(ex, session);
+            } else {
+                throw ex;
+            }
         }
         return false;
     }
@@ -910,7 +914,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //    public void setExcludedRepositories(String[] excludedRepositories, NutsUpdateOptions options) {
 //        excludedRepositoriesSet = excludedRepositories == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(excludedRepositories), " ,;"));
 //    }
-
     @Override
     public void setUsers(NutsUserConfig[] users, NutsUpdateOptions options) {
         options = CoreNutsUtils.validate(options, ws);
@@ -1113,9 +1116,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     Arrays.stream(ws.repos().getRepositories(session)).map(NutsRepository::getName).collect(Collectors.joining(", "))
             );
             HashMap<String, String> defaults = new HashMap<>();
-            MavenUtils.DepsAndRepos dd = MavenUtils.of(ws).loadDependenciesAndRepositoriesFromPomPath(id, 
-                    resolveBootRepositoriesList().resolveSelectors(defaults)
-                    , session);
+            MavenUtils.DepsAndRepos dd = MavenUtils.of(ws).loadDependenciesAndRepositoriesFromPomPath(id,
+                    resolveBootRepositoriesList().resolveSelectors(defaults),
+                     session);
             if (dd == null) {
                 throw new NutsNotFoundException(ws, id);
             }
@@ -1244,23 +1247,24 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         String fileSuffix = Instant.now().toString();
         fileSuffix = fileSuffix.replace(':', '-');
         String fileName = "nuts-workspace-" + fileSuffix;
+        Path logError = Paths.get(ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.LOG)).resolve("invalid-config");
+        Path logFile = logError.resolve(fileName + ".error");
         LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
                 .log("erroneous workspace config file. Unable to load file {0} : {1}", new Object[]{file, ex});
-        Path logError = Paths.get(ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.LOG)).resolve("invalid-config");
         try {
             Files.createDirectories(logError);
         } catch (IOException ex1) {
             throw new UncheckedIOException("unable to log workspace error while loading config file " + file.toString() + " : " + ex1.toString(), new IOException(ex));
         }
         Path newfile = logError.resolve(fileName + ".json");
-        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("erroneous workspace config file will be replaced by a fresh one. Old config is copied to {0}", newfile.toString());
+        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("erroneous workspace config file will be replaced by a fresh one. Old config is copied to {0}\n error logged to  {1}", newfile.toString(),logFile);
         try {
             Files.move(file, newfile);
         } catch (IOException e) {
             throw new UncheckedIOException("unable to load and re-create config file " + file.toString() + " : " + e.toString(), new IOException(ex));
         }
 
-        try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").toFile())) {
+        try (PrintStream o = new PrintStream(logFile.toFile())) {
             o.println("workspace.path:");
             o.println(ws.locations().getWorkspaceLocation());
             o.println("workspace.options:");

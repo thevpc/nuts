@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.common.diff.jar.Diff;
 import net.thevpc.common.diff.jar.DiffItem;
 import net.thevpc.common.diff.jar.DiffResult;
-import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.toolbox.nwork.config.ProjectConfig;
 import net.thevpc.nuts.toolbox.nwork.config.RepositoryAddress;
 import net.thevpc.nuts.toolbox.nwork.config.WorkspaceConfig;
@@ -341,7 +340,7 @@ public class WorkspaceService {
             }
             if (progress && appContext.getSession().isPlainOut()) {
                 maxSize = Math.max(maxSize, projectService.getConfig().getId().length());
-                appContext.getSession().out().printf("(%s / %s) %s", (i + 1), all.size(), StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
+                appContext.getSession().out().printf("(%s / %s) %s", (i + 1), all.size(), _StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
                 appContext.getSession().sendTerminalCommand(NutsTerminalCommand.LATER_RESET_LINE);
             }
             d.local = projectService.detectLocalVersion();
@@ -670,7 +669,7 @@ public class WorkspaceService {
                             if (interactive) {
                                 String id = appContext.getSession().getTerminal().readLine("enter Id %s: ",
                                         (p2.getId() == null ? "" : ("(" + text.text().plain(p2.getId()) + ")")));
-                                if (!StringUtils.isBlank(id)) {
+                                if (!_StringUtils.isBlank(id)) {
                                     p2.setId(id);
                                 }
                             }
