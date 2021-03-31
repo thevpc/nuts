@@ -174,7 +174,8 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     @Override
     public NutsElement get(String s) {
-        return values.get(this.ws.formats().element().forPrimitive().buildString(s));
+        DefaultNutsElementFormat element = (DefaultNutsElementFormat)this.ws.formats().element();
+        return values.get(element.forString(s));//no need for session
     }
 
     @Override

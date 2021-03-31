@@ -1,0 +1,9 @@
+[<-nameLabel      ::]
+[<=-nameEditor      ::]
+[<-iconLabel      ][<=-iconEditor       :=-]
+[<-forgroundLabel      ][<=-|forgroundEditor       :=-]
+[<-backgroundLabel      ][<=-|backgroundEditor       :=-]
+[<=-readOnlyEditor      ::]
+[<=-modifiersEditor ::]
+;
+insets(2,5)

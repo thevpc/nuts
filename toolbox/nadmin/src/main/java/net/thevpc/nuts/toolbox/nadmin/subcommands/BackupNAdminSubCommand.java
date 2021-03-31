@@ -113,7 +113,8 @@ public class BackupNAdminSubCommand extends AbstractNAdminSubCommand {
                     commandLine.required("not a valid file : " + file);
                 }
                 if (ws == null || ws.isEmpty()) {
-                    ws = nutsWorkspaceConfigRef[0].get("name").asString();
+                    NutsPrimitiveElementBuilder prv = context.getWorkspace().formats().element().setSession(context.getSession()).forPrimitive();
+                    ws = nutsWorkspaceConfigRef[0].get(prv.buildString("name")).asString();
                 }
                 if (ws == null || ws.isEmpty()) {
                     commandLine.required("not a valid file : " + file);

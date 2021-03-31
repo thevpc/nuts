@@ -8,11 +8,13 @@ import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser
 
 import java.io.IOException;
 import java.io.OutputStream;
+import net.thevpc.nuts.NutsSession;
 
 public class FormatOutputStreamSupport {
     private NutsTextNodeWriter nodeWriter;
     private NutsTextNodeParser parser;
     private boolean formatEnabled = true;
+    private NutsSession session;
     private NutsWorkspace ws;
     private NutsTextNodeWriteConfiguration writeConfiguration=new NutsTextNodeWriteConfiguration();
     private NutsTextNodeVisitor nutsTextNodeVisitor = node -> {
@@ -23,10 +25,11 @@ public class FormatOutputStreamSupport {
 
     }
 
-    public FormatOutputStreamSupport(OutputStream rawOutput, FormattedPrintStreamRenderer renderer, NutsWorkspace ws) {
-        this.ws=ws;
+    public FormatOutputStreamSupport(OutputStream rawOutput, FormattedPrintStreamRenderer renderer, NutsSession session) {
+        this.session=session;
+        this.ws=session.getWorkspace();
         this.parser = new DefaultNutsTextNodeParser(ws);
-        this.nodeWriter = new NutsTextNodeWriterRenderer(rawOutput,renderer,ws)
+        this.nodeWriter = new NutsTextNodeWriterRenderer(rawOutput,renderer,session)
         .setWriteConfiguration(writeConfiguration.setFiltered(false));
     }
 

@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.core.format.text.renderer.ansi;
 
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.core.format.text.RenderedRawStream;
 import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiStyleStyleApplierResolver;
 
@@ -18,7 +18,7 @@ public class DoNothingAnsiStyleStyleApplier implements AnsiStyleStyleApplier {
     public static final DoNothingAnsiStyleStyleApplier INSTANCE = new DoNothingAnsiStyleStyleApplier();
 
     @Override
-    public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsWorkspace ws, AnsiStyleStyleApplierResolver applierResolver) {
+    public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsSession session, AnsiStyleStyleApplierResolver applierResolver) {
         return old;
     }
 

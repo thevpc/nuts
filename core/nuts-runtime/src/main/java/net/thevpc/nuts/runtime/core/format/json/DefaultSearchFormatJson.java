@@ -25,7 +25,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
     public DefaultSearchFormatJson(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsContentType.JSON, options);
         factory = getWorkspace().formats().text();
-        codeFormat = session.getWorkspace().formats().getCodeFormat("json");
+        codeFormat = session.getWorkspace().formats().text().setSession(session).getCodeFormat("json");
     }
 
     @Override
@@ -69,7 +69,9 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         }else{
             getWriter().print("  ");
         }
-        String json = getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(object).setCompact(isCompact()).format();
+        String json = getWorkspace().formats().element()
+                .setSession(getSession())
+                .setContentType(NutsContentType.JSON).setValue(object).setCompact(isCompact()).format();
         getWriter().printf("%s%n", codeFormat.textToNode(json));
         getWriter().flush();
     }

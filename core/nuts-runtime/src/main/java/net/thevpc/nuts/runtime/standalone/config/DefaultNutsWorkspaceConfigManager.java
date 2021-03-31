@@ -604,13 +604,13 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (force || !Files.isRegularFile(apiConfigFile)) {
             Map<String, Object> m = new LinkedHashMap<>();
             if (runtimeId == null) {
-                runtimeId = ws.search().addId(NutsConstants.Ids.NUTS_RUNTIME)
+                runtimeId = ws.search().setSession(session).addId(NutsConstants.Ids.NUTS_RUNTIME)
                         .setRuntime(true)
                         .setTargetApiVersion(apiId.getVersion().getValue())
                         .setFailFast(false).setLatest(true).getResultIds().first();
             }
             if (runtimeId == null) {
-                runtimeId = MavenUtils.of(ws).resolveLatestMavenId(ws.id().parser().parse(NutsConstants.Ids.NUTS_RUNTIME),
+                runtimeId = MavenUtils.of(session).resolveLatestMavenId(ws.id().parser().parse(NutsConstants.Ids.NUTS_RUNTIME),
                         (rtVersion) -> rtVersion.startsWith(apiId.getVersion().getValue() + "."),
                         session);
             }
@@ -624,7 +624,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             String javaOptions = getStoredConfigApi().getJavaOptions();
             m.put("javaCommand", javaCommand);
             m.put("javaOptions", javaOptions);
-            ws.formats().element().setContentType(NutsContentType.JSON).setValue(m).print(apiConfigFile);
+            ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).setValue(m).print(apiConfigFile);
         }
         downloadId(apiId, force, null, true, session);
     }
@@ -1116,7 +1116,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     Arrays.stream(ws.repos().getRepositories(session)).map(NutsRepository::getName).collect(Collectors.joining(", "))
             );
             HashMap<String, String> defaults = new HashMap<>();
-            MavenUtils.DepsAndRepos dd = MavenUtils.of(ws).loadDependenciesAndRepositoriesFromPomPath(id,
+            MavenUtils.DepsAndRepos dd = MavenUtils.of(session).loadDependenciesAndRepositoriesFromPomPath(id,
                     resolveBootRepositoriesList().resolveSelectors(defaults),
                      session);
             if (dd == null) {

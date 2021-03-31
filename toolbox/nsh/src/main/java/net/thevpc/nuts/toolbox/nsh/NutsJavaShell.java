@@ -93,12 +93,12 @@ public class NutsJavaShell extends JShell {
         NutsWorkspace ws = this.getWorkspace();
         JShellHistory hist = getHistory();
 
-        this.appContext.getWorkspace().env().setProperty(JShellFileContext.class.getName(), _rootContext,
-                new NutsUpdateOptions().setSession(session));
+        this.appContext.getWorkspace().env().setProperty(JShellFileContext.class.getName(), _rootContext
+        );
         _nrootContext.setSession(session);
         //add default commands
         List<NshBuiltin> allCommand = new ArrayList<>();
-        NutsSupportLevelContext<NutsJavaShell> constraints = new NutsDefaultSupportLevelContext<>(ws, this);
+        NutsSupportLevelContext<NutsJavaShell> constraints = new NutsDefaultSupportLevelContext<>(session, this);
 
         for (NshBuiltin command : this.appContext.getWorkspace().extensions().
                 createServiceLoader(NshBuiltin.class, NutsJavaShell.class, NshBuiltin.class.getClassLoader(), session)
@@ -122,7 +122,7 @@ public class NutsJavaShell extends JShell {
             //ignore
             LOG.log(Level.SEVERE, "error resolving history file", ex);
         }
-        ws.env().setProperty(JShellHistory.class.getName(), hist, new NutsUpdateOptions(session));
+        ws.env().setProperty(JShellHistory.class.getName(), hist);
     }
 
     private static String[] resolveArgs(NutsApplicationContext appContext, String[] args) {
@@ -222,8 +222,8 @@ public class NutsJavaShell extends JShell {
                 )
                 .setCommandReadHighlighter(new NutsCommandReadHighlighter() {
                     @Override
-                    public NutsTextNode highlight(String buffer, NutsWorkspace workspace) {
-                        return workspace.formats().text().code("sh", buffer).parse();
+                    public NutsTextNode highlight(String buffer, NutsSession session) {
+                        return session.getWorkspace().formats().text().code("sh", buffer).parse(session);
                     }
                 });
         super.executeInteractive(context);

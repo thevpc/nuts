@@ -47,6 +47,7 @@ import net.thevpc.nuts.runtime.core.format.elem.NutsElementMapper;
 import net.thevpc.nuts.NutsElementEntry;
 import net.thevpc.nuts.NutsElementFormat;
 import net.thevpc.nuts.NutsElementType;
+import net.thevpc.nuts.NutsPrimitiveElementBuilder;
 
 /**
  *
@@ -232,9 +233,12 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
     }
 
     public NutsElement createElement(String type, String value, NutsElementFactoryContext context) {
+        NutsPrimitiveElementBuilder forPrimitive = context.getWorkspace().formats().element()
+                .setSession(context.getSession())
+                .forPrimitive();
         switch (type) {
             case "null": {
-                return context.getWorkspace().formats().element().forPrimitive().buildNull();
+                return forPrimitive.buildNull();
             }
             case "number": {
                 return context.objectToElement(value, Number.class);
@@ -243,10 +247,10 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
                 return context.objectToElement(value, Boolean.class);
             }
             case "true": {
-                return context.getWorkspace().formats().element().forPrimitive().buildTrue();
+                return forPrimitive.buildTrue();
             }
             case "false": {
-                return context.getWorkspace().formats().element().forPrimitive().buildTrue();
+                return forPrimitive.buildTrue();
             }
             case "byte": {
                 return context.objectToElement(value, Byte.class);
@@ -333,7 +337,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
 
     @Override
     public NutsElement createElement(Node node, Type typeOfSrc, NutsElementFactoryContext context) {
-        NutsElementFormat elements = context.getWorkspace().formats().element();
+        NutsElementFormat elements = context.getWorkspace().formats().element().setSession(context.getSession());
         if (node instanceof Attr) {
             Attr at = (Attr) node;
             return elements.forObject().set(at.getName(), context.objectToElement(at.getValue(), String.class)).build();

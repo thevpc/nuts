@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.core.format.text;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiStyleStyleApplierResolver;
 import net.thevpc.nuts.runtime.core.format.text.renderer.ansi.AnsiStyle;
@@ -68,7 +69,7 @@ public class AnsiEscapeCommandList extends AnsiEscapeCommand implements Iterable
     }
 
     @Override
-    public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsWorkspace ws, AnsiStyleStyleApplierResolver applierResolver) {
+    public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsSession ws, AnsiStyleStyleApplierResolver applierResolver) {
         for (AnsiEscapeCommand cmd : children) {
             old = applierResolver.resolveStyleApplyer(cmd).apply(old, out, ws, applierResolver);
         }

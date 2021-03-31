@@ -28,10 +28,13 @@ package net.thevpc.nuts;
 /**
  *
  * @author thevpc
+ * @param <T> T
  * @category SPI Base
  */
 public interface NutsSupportLevelContext<T> {
 
+    NutsSession getSession();
+    
     NutsWorkspace getWorkspace();
 
     T getConstraints();

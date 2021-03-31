@@ -46,26 +46,11 @@ import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
  */
 public class MinimalJson implements NutsElementStreamFormat {
 
-    private BufferedReader reader;
-    private int fileOffset;
-    private int lineNumber;
-    private int lineOffset;
-    private int current;
-    private boolean skipLF;
     private NutsWorkspace ws;
-    private NutsElementFormat ebuilder;
 
     public MinimalJson(NutsWorkspace ws) {
         this.ws = ws;
     }
-
-    public NutsElementFormat builder() {
-        if (ebuilder == null) {
-            ebuilder = ws.formats().element();
-        }
-        return ebuilder;
-    }
-
 
     @Override
     public void printElement(NutsElement value, PrintStream out, boolean compact, NutsElementFactoryContext context) {
@@ -76,7 +61,7 @@ public class MinimalJson implements NutsElementStreamFormat {
         if (string == null) {
             throw new NullPointerException("string is null");
         }
-        return parseElement(new StringReader(string),context);
+        return parseElement(new StringReader(string), context);
     }
 
     public void write(PrintStream out, NutsElement data, boolean compact) {
@@ -240,189 +225,58 @@ public class MinimalJson implements NutsElementStreamFormat {
         }
     }
 
-
     @Override
     public NutsElement parseElement(Reader reader, NutsElementFactoryContext context) {
-        if (reader == null) {
-            throw new NullPointerException("reader is null");
-        }
-        this.reader = (reader instanceof BufferedReader) ? (BufferedReader) reader : new BufferedReader(reader);
-        fileOffset = 0;
-        lineNumber = 1;
-        lineOffset = 0;
-        current = 0;
-        readNext();
-        skipWhiteSpace();
-        NutsElement e = readValue();
-        skipWhiteSpace();
-        if (current != -1) {
-            throw error("unexpected character");
-        }
-        return e;
+        return new ElementParser(context).parseElement(reader);
     }
 
-    private NutsElement readValue() {
-        switch (current) {
-            case 'n': {
-                readTerminal("null");
-                return builder().forPrimitive().buildNull();
-            }
-            case 't': {
-                readTerminal("true");
-                return builder().forPrimitive().buildTrue();
-            }
-            case 'f': {
-                readTerminal("false");
-                return builder().forPrimitive().buildFalse();
-            }
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-            case '.':
-            case '-': {
-                return readNumber();
-            }
-            case '"': {
-                return readJsonString();
-            }
-            case '[': {
-                return readJsonArray();
-            }
-            case '{': {
-                return readJsonObject();
-            }
-            default:
-                throw expected("value");
-        }
-    }
+    private static class ElementParser {
 
-    private NutsElement readJsonArray() {
-        NutsArrayElementBuilder array = builder().forArray();
-        readNext();
-        skipWhiteSpace();
-        if (readChar(']')) {
-            return array.build();
+        private BufferedReader reader;
+        private NutsElementFactoryContext context;
+        private int fileOffset;
+        private int lineNumber;
+        private int lineOffset;
+        private int current;
+        private boolean skipLF;
+        private NutsElementFormat ebuilder;
+
+        public ElementParser(NutsElementFactoryContext context) {
+            this.context = context;
         }
-        do {
+
+        public NutsElement parseElement(Reader reader) {
+            if (reader == null) {
+                throw new NullPointerException("reader is null");
+            }
+            this.reader = (reader instanceof BufferedReader) ? (BufferedReader) reader : new BufferedReader(reader);
+            fileOffset = 0;
+            lineNumber = 1;
+            lineOffset = 0;
+            current = 0;
+            readNext();
             skipWhiteSpace();
-            array.add(readValue());
+            NutsElement e = readValue();
             skipWhiteSpace();
-        } while (readChar(','));
-        if (!readChar(']')) {
-            throw expected("',' or ']'");
-        }
-        return array.build();
-    }
-
-    private NutsElement readJsonObject() {
-        NutsObjectElementBuilder object = builder().forObject();
-        readNext();
-        skipWhiteSpace();
-        if (readChar('}')) {
-            return object.build();
-        }
-        do {
-            skipWhiteSpace();
-            if (current != '"') {
-                throw expected("name");
+            if (current != -1) {
+                throw error("unexpected character");
             }
-            String name = readStringLiteral();
-            skipWhiteSpace();
-            if (!readChar(':')) {
-                throw expected("':'");
-            }
-            skipWhiteSpace();
-            NutsElement v = readValue();
-            object.set(name, v);
-            skipWhiteSpace();
-        } while (readChar(','));
-        if (!readChar('}')) {
-            throw expected("',' or '}'");
+            return e;
         }
-        return object.build();
-    }
 
-    private void readTerminal(String s) {
-        final int len = s.length();
-        for (int i = 0; i < len; i++) {
-            char ch = s.charAt(i);
-            if (!readChar(ch)) {
-                throw expected("'" + ch + "'");
-            }
-        }
-    }
-
-    private NutsElement readJsonString() {
-        return builder().forPrimitive().buildString(readStringLiteral());
-    }
-
-    private String readStringLiteral() {
-        readNext();
-        StringBuilder sb = new StringBuilder();
-        while (current != '"') {
-            if (current == '\\') {
-                readNext();
-                switch (current) {
-                    case '"':
-                    case '/':
-                    case '\\':
-                        sb.append((char) current);
-                        break;
-                    case 'b':
-                        sb.append('\b');
-                        break;
-                    case 'f':
-                        sb.append('\f');
-                        break;
-                    case 'n':
-                        sb.append('\n');
-                        break;
-                    case 'r':
-                        sb.append('\r');
-                        break;
-                    case 't':
-                        sb.append('\t');
-                        break;
-                    case 'u':
-                        char[] hexChars = new char[4];
-                        for (int i = 0; i < 4; i++) {
-                            readNext();
-                            if (!isHexDigit()) {
-                                throw expected("hexadecimal digit");
-                            }
-                            hexChars[i] = (char) current;
-                        }
-                        sb.append((char) Integer.parseInt(new String(hexChars), 16));
-                        break;
-                    default:
-                        throw expected("valid escape sequence");
-                }
-                readNext();
-            } else if (current < 0x20) {
-                throw expected("valid string character");
-            } else {
-                sb.append((char) current);
-                readNext();
-            }
-        }
-        readNext();
-        return sb.toString();
-    }
-
-    private NutsElement readNumber() {
-        StringBuilder sb = new StringBuilder();
-        boolean inWhile = true;
-        while (inWhile) {
+        private NutsElement readValue() {
             switch (current) {
-                case -1: {
-                    throw expected("number");
+                case 'n': {
+                    readTerminal("null");
+                    return builder().forPrimitive().buildNull();
+                }
+                case 't': {
+                    readTerminal("true");
+                    return builder().forPrimitive().buildTrue();
+                }
+                case 'f': {
+                    readTerminal("false");
+                    return builder().forPrimitive().buildFalse();
                 }
                 case '0':
                 case '1':
@@ -434,90 +288,243 @@ public class MinimalJson implements NutsElementStreamFormat {
                 case '7':
                 case '8':
                 case '9':
-                case '+':
-                case '-':
-                case 'e':
-                case 'E':
-                case '.': {
+                case '.':
+                case '-': {
+                    return readNumber();
+                }
+                case '"': {
+                    return readJsonString();
+                }
+                case '[': {
+                    return readJsonArray();
+                }
+                case '{': {
+                    return readJsonObject();
+                }
+                default:
+                    throw expected("value");
+            }
+        }
+
+        private NutsElement readJsonArray() {
+            NutsArrayElementBuilder array = builder().forArray();
+            readNext();
+            skipWhiteSpace();
+            if (readChar(']')) {
+                return array.build();
+            }
+            do {
+                skipWhiteSpace();
+                array.add(readValue());
+                skipWhiteSpace();
+            } while (readChar(','));
+            if (!readChar(']')) {
+                throw expected("',' or ']'");
+            }
+            return array.build();
+        }
+
+        private NutsElement readJsonObject() {
+            NutsObjectElementBuilder object = builder().forObject();
+            readNext();
+            skipWhiteSpace();
+            if (readChar('}')) {
+                return object.build();
+            }
+            do {
+                skipWhiteSpace();
+                if (current != '"') {
+                    throw expected("name");
+                }
+                String name = readStringLiteral();
+                skipWhiteSpace();
+                if (!readChar(':')) {
+                    throw expected("':'");
+                }
+                skipWhiteSpace();
+                NutsElement v = readValue();
+                object.set(name, v);
+                skipWhiteSpace();
+            } while (readChar(','));
+            if (!readChar('}')) {
+                throw expected("',' or '}'");
+            }
+            return object.build();
+        }
+
+        private void readTerminal(String s) {
+            final int len = s.length();
+            for (int i = 0; i < len; i++) {
+                char ch = s.charAt(i);
+                if (!readChar(ch)) {
+                    throw expected("'" + ch + "'");
+                }
+            }
+        }
+
+        private NutsElement readJsonString() {
+            return builder().forPrimitive().buildString(readStringLiteral());
+        }
+
+        private String readStringLiteral() {
+            readNext();
+            StringBuilder sb = new StringBuilder();
+            while (current != '"') {
+                if (current == '\\') {
+                    readNext();
+                    switch (current) {
+                        case '"':
+                        case '/':
+                        case '\\':
+                            sb.append((char) current);
+                            break;
+                        case 'b':
+                            sb.append('\b');
+                            break;
+                        case 'f':
+                            sb.append('\f');
+                            break;
+                        case 'n':
+                            sb.append('\n');
+                            break;
+                        case 'r':
+                            sb.append('\r');
+                            break;
+                        case 't':
+                            sb.append('\t');
+                            break;
+                        case 'u':
+                            char[] hexChars = new char[4];
+                            for (int i = 0; i < 4; i++) {
+                                readNext();
+                                if (!isHexDigit()) {
+                                    throw expected("hexadecimal digit");
+                                }
+                                hexChars[i] = (char) current;
+                            }
+                            sb.append((char) Integer.parseInt(new String(hexChars), 16));
+                            break;
+                        default:
+                            throw expected("valid escape sequence");
+                    }
+                    readNext();
+                } else if (current < 0x20) {
+                    throw expected("valid string character");
+                } else {
                     sb.append((char) current);
                     readNext();
-                    break;
-                }
-                default: {
-                    inWhile = false;
                 }
             }
-        }
-        return builder().forPrimitive().buildNumber(sb.toString());
-    }
-
-    private boolean readChar(char ch) {
-        if (current != ch) {
-            return false;
-        }
-        readNext();
-        return true;
-    }
-
-    private void skipWhiteSpace() {
-        while (current == ' ' || current == '\t' || current == '\n' || current == '\r') {
             readNext();
+            return sb.toString();
         }
-    }
 
-    private void readNext() {
-        try {
-            current = reader.read();
-            if (current != -1) {
-                lineOffset++;
-                fileOffset++;
-                if (skipLF) {
-                    if (current == '\n') {
-                        current = reader.read();
-                    }
-                    skipLF = false;
-                }
+        private NutsElement readNumber() {
+            StringBuilder sb = new StringBuilder();
+            boolean inWhile = true;
+            while (inWhile) {
                 switch (current) {
-                    case '\r':{
-                        skipLF = true;
+                    case -1: {
+                        throw expected("number");
                     }
-                    case '\n':{
-                        // Fall through
-                        lineNumber++;
-                        lineOffset = 0;
-                        current = '\n';
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9':
+                    case '+':
+                    case '-':
+                    case 'e':
+                    case 'E':
+                    case '.': {
+                        sb.append((char) current);
+                        readNext();
+                        break;
+                    }
+                    default: {
+                        inWhile = false;
                     }
                 }
             }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            return builder().forPrimitive().buildNumber(sb.toString());
         }
-    }
 
-    
-
-    ReaderLocation getLocation() {
-        return new ReaderLocation(fileOffset, lineNumber, lineOffset);
-    }
-
-   
-    private RuntimeException expected(String expected) {
-        if (current == -1) {
-            return error("unexpected end of input");
+        private boolean readChar(char ch) {
+            if (current != ch) {
+                return false;
+            }
+            readNext();
+            return true;
         }
-        return error("expected " + expected);
+
+        private void skipWhiteSpace() {
+            while (current == ' ' || current == '\t' || current == '\n' || current == '\r') {
+                readNext();
+            }
+        }
+
+        private void readNext() {
+            try {
+                current = reader.read();
+                if (current != -1) {
+                    lineOffset++;
+                    fileOffset++;
+                    if (skipLF) {
+                        if (current == '\n') {
+                            current = reader.read();
+                        }
+                        skipLF = false;
+                    }
+                    switch (current) {
+                        case '\r': {
+                            skipLF = true;
+                        }
+                        case '\n': {
+                            // Fall through
+                            lineNumber++;
+                            lineOffset = 0;
+                            current = '\n';
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+
+        ReaderLocation getLocation() {
+            return new ReaderLocation(fileOffset, lineNumber, lineOffset);
+        }
+
+        private RuntimeException expected(String expected) {
+            if (current == -1) {
+                return error("unexpected end of input");
+            }
+            return error("expected " + expected);
+        }
+
+        private RuntimeException error(String message) {
+            return new RuntimeException(message + ":" + getLocation().toString());
+        }
+
+        private boolean isHexDigit() {
+            return current >= '0' && current <= '9'
+                    || current >= 'a' && current <= 'f'
+                    || current >= 'A' && current <= 'F';
+        }
+
+        public NutsElementFormat builder() {
+            if (ebuilder == null) {
+                ebuilder = context.getWorkspace().formats().element()
+                        .setSession(context.getSession());
+            }
+            return ebuilder;
+        }
+
     }
-
-    private RuntimeException error(String message) {
-        return new RuntimeException(message + ":" + getLocation().toString());
-    }
-
-    private boolean isHexDigit() {
-        return current >= '0' && current <= '9'
-                || current >= 'a' && current <= 'f'
-                || current >= 'A' && current <= 'F';
-    }
-
-
-
 }

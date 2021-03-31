@@ -809,11 +809,11 @@ public final class NutsBootWorkspace {
                         "unable to load Workspace Component from ClassPath : " + Arrays.asList(bootClassWorldURLs)
                 );
             }
-            LOG2 = nutsWorkspace.log().of(NutsBootWorkspace.class);
-            if (LOG2.isLoggable(Level.FINE)) {
-                LOG2.with().session(nutsWorkspace.createSession())
-                        .level(Level.FINE).verb(NutsLogVerb.SUCCESS).log("end initialize workspace");
-            }
+//            LOG2 = nutsWorkspace.log().of(NutsBootWorkspace.class);
+//            if (LOG2.isLoggable(Level.FINE)) {
+//                LOG2.with().session(nutsWorkspace.createSession())
+//                        .level(Level.FINE).verb(NutsLogVerb.SUCCESS).log("end initialize workspace");
+//            }
             return nutsWorkspace;
         } catch (NutsReadOnlyException | NutsUserCancelException | PrivateNutsBootCancelException ex) {
             throw ex;

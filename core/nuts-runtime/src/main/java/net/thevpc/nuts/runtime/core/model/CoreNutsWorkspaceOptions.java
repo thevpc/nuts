@@ -1490,7 +1490,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
 
     @Override
     public String[] getProperties() {
-        return properties;
+        return properties==null?new String[0]:properties;
     }
 
     @Override

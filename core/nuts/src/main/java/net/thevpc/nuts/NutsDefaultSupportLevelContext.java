@@ -35,19 +35,29 @@ import java.util.Objects;
  */
 public class NutsDefaultSupportLevelContext<T> implements NutsSupportLevelContext<T> {
 
+    private final NutsSession session;
     private final NutsWorkspace ws;
     private final T constraints;
 
     /**
      * default constructor
-     * @param ws workspace
+     * @param session session
      * @param constraints constraints
      */
-    public NutsDefaultSupportLevelContext(NutsWorkspace ws, T constraints) {
-        this.ws = ws;
+    public NutsDefaultSupportLevelContext(NutsSession session,T constraints) {
+        if(session==null){
+            throw new NullPointerException();
+        }
+        this.session = session;
+        this.ws = session.getWorkspace();
         this.constraints = constraints;
     }
 
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+    
     @Override
     public NutsWorkspace getWorkspace() {
         return ws;

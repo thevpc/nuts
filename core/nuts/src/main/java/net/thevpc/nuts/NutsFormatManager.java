@@ -77,18 +77,6 @@ public interface NutsFormatManager {
      */
     NutsIterableOutput iter();
 
-    NutsTextFormatTheme getTheme();
-
-    NutsFormatManager setTheme(NutsTextFormatTheme theme);
-
     NutsTextManager text();
-
-    NutsCodeFormat getCodeFormat(String kind);
-
-    NutsFormatManager addCodeFormat(NutsCodeFormat format);
-
-    NutsFormatManager removeCodeFormat(NutsCodeFormat format);
-
-    NutsCodeFormat[] getCodeFormats();
 
 }

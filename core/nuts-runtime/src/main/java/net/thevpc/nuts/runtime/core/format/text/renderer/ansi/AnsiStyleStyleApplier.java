@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.core.format.text.renderer.ansi;
 
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.core.format.text.RenderedRawStream;
 import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiStyleStyleApplierResolver;
 
@@ -15,6 +15,6 @@ import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiStyleStyleApplierRe
  */
 public interface AnsiStyleStyleApplier {
 
-    AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsWorkspace ws, AnsiStyleStyleApplierResolver applierResolver);
+    AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsSession ws, AnsiStyleStyleApplierResolver applierResolver);
 
 }

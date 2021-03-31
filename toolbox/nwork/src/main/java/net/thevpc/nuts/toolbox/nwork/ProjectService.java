@@ -17,20 +17,20 @@ import net.thevpc.common.mvn.PomErrorHandler;
 public class ProjectService {
 
     private ProjectConfig config;
-    private NutsApplicationContext context;
+    private NutsApplicationContext appContext;
     private RepositoryAddress defaultRepositoryAddress;
     private Path sharedConfigFolder;
 
     public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, Path file) throws IOException {
-        this.context = context;
+        this.appContext = context;
         this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
-        config = context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(file, ProjectConfig.class);
+        config = context.getWorkspace().formats().element().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).parse(file, ProjectConfig.class);
         sharedConfigFolder = Paths.get(context.getVersionFolderFolder(NutsStoreLocation.CONFIG, NWorkConfigVersions.CURRENT));
     }
 
     public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
         this.config = config;
-        this.context = context;
+        this.appContext = context;
         this.defaultRepositoryAddress = defaultRepositoryAddress;
         sharedConfigFolder = Paths.get(context.getVersionFolderFolder(NutsStoreLocation.CONFIG, NWorkConfigVersions.CURRENT));
     }
@@ -56,13 +56,13 @@ public class ProjectService {
     public void save() throws IOException {
         Path configFile = getConfigFile();
         Files.createDirectories(configFile.getParent());
-        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(config).print(configFile);
+        appContext.getWorkspace().formats().element().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).setValue(config).print(configFile);
     }
 
     public boolean load() {
         Path configFile = getConfigFile();
         if (Files.isRegularFile(configFile)) {
-            ProjectConfig u = context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(configFile, ProjectConfig.class);
+            ProjectConfig u = appContext.getWorkspace().formats().element().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).parse(configFile, ProjectConfig.class);
             if (u != null) {
                 config = u;
                 return true;
@@ -98,7 +98,7 @@ public class ProjectService {
                             .setErrorHandler(new PomErrorHandler() {
                                 @Override
                                 public void log(Level level, String message, Exception error) {
-                                    context.getWorkspace().log().of(ProjectService.class)
+                                    appContext.getWorkspace().log().of(ProjectService.class)
                                             .with()
                                             .level(Level.FINE)
                                             .verb(NutsLogVerb.FAIL)
@@ -156,7 +156,7 @@ public class ProjectService {
     }
 
     public File detectLocalVersionFile(String sid) {
-        NutsId id = context.getWorkspace().id().parser().parse(sid);
+        NutsId id = appContext.getWorkspace().id().parser().parse(sid);
         if (config.getTechnologies().contains("maven")) {
             File f = new File(System.getProperty("user.home"), ".m2/repository/"
                     + id.getGroupId().replace('.', File.separatorChar)
@@ -195,7 +195,7 @@ public class ProjectService {
     }
 
     public File detectRemoteVersionFile(String sid) {
-        NutsId id = context.getWorkspace().id().parser().parse(sid);
+        NutsId id = appContext.getWorkspace().id().parser().parse(sid);
         if (config.getTechnologies().contains("maven")) {
             RepositoryAddress a = config.getAddress();
             if (a == null) {
@@ -206,12 +206,12 @@ public class ProjectService {
             }
             String nutsRepository = a.getNutsRepository();
             if (_StringUtils.isBlank(nutsRepository)) {
-                throw new NutsExecutionException(context.getWorkspace(), "missing repository. try 'nwork set -r vpc-public-maven' or something like that", 2);
+                throw new NutsExecutionException(appContext.getWorkspace(), "missing repository. try 'nwork set -r vpc-public-maven' or something like that", 2);
             }
             try {
                 NutsWorkspace ws2 = null;
                 NutsSession s = null;
-                if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(context.getWorkspace().locations().getWorkspaceLocation().toString())) {
+                if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(appContext.getWorkspace().locations().getWorkspaceLocation().toString())) {
                     ws2 = Nuts.openWorkspace(
                             Nuts.createOptions()
                                     .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
@@ -219,10 +219,10 @@ public class ProjectService {
                                     .setWorkspace(a.getNutsWorkspace())
                     );
                     s = ws2.createSession().setTrace(false);
-                    s.copyFrom(context.getSession());
+                    s.copyFrom(appContext.getSession());
                 } else {
-                    ws2 = context.getWorkspace();
-                    s = context.getSession();
+                    ws2 = appContext.getWorkspace();
+                    s = appContext.getSession();
                 }
                 List<NutsDefinition> found = ws2.search()
                         .addId(sid)
@@ -256,24 +256,24 @@ public class ProjectService {
                     }
                     String nutsRepository = a.getNutsRepository();
                     if (_StringUtils.isBlank(nutsRepository)) {
-                        throw new NutsExecutionException(context.getWorkspace(), "missing repository. try 'nwork set -r vpc-public-maven' or something like that", 2);
+                        throw new NutsExecutionException(appContext.getWorkspace(), "missing repository. try 'nwork set -r vpc-public-maven' or something like that", 2);
                     }
                     try {
                         Pom g = new PomXmlParser().parse(new File(f, "pom.xml"));
                         NutsWorkspace ws2 = null;
                         NutsSession s = null;
-                        if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(context.getWorkspace().locations().getWorkspaceLocation().toString())) {
+                        if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(appContext.getWorkspace().locations().getWorkspaceLocation().toString())) {
                             ws2 = Nuts.openWorkspace(
-                                    context.getWorkspace().config().optionsBuilder()
+                                    appContext.getWorkspace().config().optionsBuilder()
                                             .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(true)
                                             .setWorkspace(a.getNutsWorkspace())
                             );
                             s = ws2.createSession().setTrace(false);
-                            s.copyFrom(context.getSession());
+                            s.copyFrom(appContext.getSession());
                         } else {
-                            ws2 = context.getWorkspace();
-                            s = context.getSession();
+                            ws2 = appContext.getWorkspace();
+                            s = appContext.getSession();
                         }
                         s.setTrace(false);
                         List<NutsId> found = ws2.search()

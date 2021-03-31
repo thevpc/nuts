@@ -1,0 +1,12 @@
+[<-nameLabel      ::]
+[<=-nameText      ::]
+[<-iconLabel      ][<=-iconList       :=-]
+[<-typeLabel      ][<=-typeList       :=-]
+[<=-valueLabel::]
+[<=-typePasswordValue::]
+[<=-typeFileValue::]
+[<=-typeURLValue::]
+[<=-typeShortStringValue::]
+[<+===$$$description::]
+;
+insets(2,5)

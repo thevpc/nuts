@@ -48,7 +48,9 @@ public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
     public void next(Object object, long index) {
         Map<String, String> p = new LinkedHashMap<>();
         NutsFormatUtils.putAllInProps(String.valueOf(index + 1), p,
-                getWorkspace().formats().element().convert(object, NutsElement.class)
+                getWorkspace().formats().element()
+                        .setSession(getSession())
+                        .convert(object, NutsElement.class)
         );
         CoreIOUtils.storeProperties(p, getWriter(), false);
         getWriter().flush();

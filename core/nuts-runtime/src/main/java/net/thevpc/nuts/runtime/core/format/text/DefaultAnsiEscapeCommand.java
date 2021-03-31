@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.core.format.text;
 
 import java.util.Objects;
 import java.util.function.Supplier;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalCommand;
 import net.thevpc.nuts.NutsUpdateOptions;
 import net.thevpc.nuts.NutsWorkspace;
@@ -65,7 +66,7 @@ public class DefaultAnsiEscapeCommand extends AnsiEscapeCommand implements AnsiS
     }
 
     @Override
-    public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsWorkspace ws, AnsiStyleStyleApplierResolver applierResolver) {
+    public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsSession session, AnsiStyleStyleApplierResolver applierResolver) {
         switch (command.getName()) {
             case NutsTerminalCommand.Ids.MOVE_LINE_START: {
                 return old.addCommand("\r");
@@ -132,13 +133,14 @@ public class DefaultAnsiEscapeCommand extends AnsiEscapeCommand implements AnsiS
                 return old.addCommand("\u001b[" + 1 + "K");
             }
             case NutsTerminalCommand.Ids.LATER_RESET_LINE: {
+                NutsWorkspace ws=session.getWorkspace();
                 int tputCallTimeout = ws.env().getOptionAsInt("nuts.term.tput.call.timeout", 60);
                 Integer w = ws.env().getOptionAsInt("nuts.term.width", null);
                 if (w == null) {
                     CachedValue<Integer> tput_cols = (CachedValue) ws.env().getProperty("nuts.term.tput.call.instance");
                     if (tput_cols == null) {
-                        tput_cols = new CachedValue<>(new TputEvaluator(ws), tputCallTimeout);
-                        ws.env().setProperty("nuts.term.tput.call.instance", tput_cols, new NutsUpdateOptions().setSession(ws.createSession()));
+                        tput_cols = new CachedValue<>(new TputEvaluator(session), tputCallTimeout);
+                        ws.env().setProperty("nuts.term.tput.call.instance", tput_cols);
                     }
                     if (out.baseOutput() == System.out) {
                         w = tput_cols.getValue();
@@ -183,22 +185,23 @@ public class DefaultAnsiEscapeCommand extends AnsiEscapeCommand implements AnsiS
 
     static class TputEvaluator implements Supplier<Integer> {
 
-        private final NutsWorkspace ws;
+        private final NutsSession session;
 
-        public TputEvaluator(NutsWorkspace ws) {
-            this.ws = ws;
+        public TputEvaluator(NutsSession session) {
+            this.session = session;
         }
         boolean wasError = false;
 
         @Override
         public Integer get() {
+            NutsWorkspace ws = session.getWorkspace();
             switch (ws.env().getOsFamily()) {
                 case LINUX:
                 case UNIX:
                 case MACOS: {
                     try {
                         String d = ws.exec().userCmd().grabOutputString()
-                                .setSession(ws.createSession())
+                                .setSession(session)
                                 .addCommand("tput", "cols")
                                 .getOutputString();
                         String s = d.trim();

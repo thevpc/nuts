@@ -26,17 +26,10 @@ public class JavaTypeSource extends SourceAdapter {
         versions.put("46.0", "1.2");
         versions.put("47.0", "1.3");
         versions.put("48.0", "1.4");
-        versions.put("49.0", "5.0");
-        versions.put("50.0", "6.0");
-        versions.put("51.0", "7.0");
-        versions.put("52.0", "8.0");
-        versions.put("53.0", "9.0");
-        versions.put("54.0", "10.0");
-        versions.put("55.0", "11.0");
-        versions.put("56.0", "12.0");
-        versions.put("57.0", "13.0");
-        versions.put("58.0", "14.0");
-        versions.put("59.0", "15.0");
+        //versions.put("49.0", "5.0");
+        for (int i = 5; i < 300; i++) {
+            versions.put((49-5+i)+".0", i+".0");
+        }
     }
 
     public JavaTypeSource(Source source) {

@@ -131,7 +131,7 @@ public class NCodeMain {
     }
 
     private static void version() {
-        System.out.println("feenoo 1.0 (c) Taha Ben Salah");
+        System.out.println("ncode 1.0 (c) Taha Ben Salah");
     }
 
     private static void help0() {

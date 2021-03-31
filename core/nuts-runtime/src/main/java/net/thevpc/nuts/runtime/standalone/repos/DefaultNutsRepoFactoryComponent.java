@@ -72,7 +72,7 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
                             location + "/nuts-repository.json"
                     );
                     try (InputStream s = in.open()) {
-                        Map<String,Object> m=criteria.getWorkspace().formats().element().setContentType(NutsContentType.JSON)
+                        Map<String,Object> m=criteria.getWorkspace().formats().element().setSession(criteria.getSession()).setContentType(NutsContentType.JSON)
                                 .parse(s,Map.class);
                         if(m!=null){
                             String type = (String) m.get("type");

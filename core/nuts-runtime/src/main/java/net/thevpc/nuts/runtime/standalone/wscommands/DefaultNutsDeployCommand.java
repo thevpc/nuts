@@ -102,7 +102,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                         Path descFile = contentFile.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                         NutsDescriptor descriptor2;
                         if (Files.exists(descFile)) {
-                            descriptor2 = ws.descriptor().parser().parse(descFile);
+                            descriptor2 = ws.descriptor().parser().setSession(session).parse(descFile);
                         } else {
                             descriptor2 = CoreIOUtils.resolveNutsDescriptorFromFileContent(
                                     ws.io().input().setMultiRead(true).of(contentFile),
@@ -235,7 +235,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 }
             }
             try (InputStream is = inputStreamSource.open()) {
-                return ws.descriptor().parser().parse(is);
+                return ws.descriptor().parser().setSession(session).parse(is);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -298,7 +298,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             }
             if (c.descriptor == null && c.baseFile.isURL()) {
                 try {
-                    c.descriptor = ws.descriptor().parser().parse(ws.io().input().of(c.baseFile.getURL().toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).open());
+                    c.descriptor = ws.descriptor().parser().setSession(session).parse(ws.io().input().of(c.baseFile.getURL().toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).open());
                 } catch (Exception ex) {
                     //ignore
                 }
@@ -307,7 +307,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 if (c.descriptor == null) {
                     Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                     if (Files.exists(ext)) {
-                        c.descriptor = ws.descriptor().parser().parse(ext);
+                        c.descriptor = ws.descriptor().parser().setSession(session).parse(ext);
                     } else {
                         c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.contentFile, parseOptions, session);
                     }
@@ -326,7 +326,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 if (c.descriptor == null) {
                     File ext = new File(ws.io().expandPath(fileSource.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME));
                     if (ext.exists()) {
-                        c.descriptor = ws.descriptor().parser().parse(ext);
+                        c.descriptor = ws.descriptor().parser().setSession(session).parse(ext);
                     } else {
                         c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.contentFile, parseOptions, session);
                     }

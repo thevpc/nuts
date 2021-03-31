@@ -64,18 +64,21 @@ public class MavenUtils {
 
     private final NutsLogger LOG;
     private NutsWorkspace ws;
+    private NutsSession session;
 
-    public static MavenUtils of(NutsWorkspace ws) {
+    public static MavenUtils of(NutsSession session) {
+        NutsWorkspace ws = session.getWorkspace();
         MavenUtils wp = (MavenUtils) ws.env().getProperty(MavenUtils.class.getName());
         if (wp == null) {
-            wp = new MavenUtils(ws);
-            ws.env().setProperty(MavenUtils.class.getName(), wp, new NutsUpdateOptions(ws.createSession()));
+            wp = new MavenUtils(ws,session);
+            ws.env().setProperty(MavenUtils.class.getName(), wp);
         }
         return wp;
     }
 
-    private MavenUtils(NutsWorkspace ws) {
+    private MavenUtils(NutsWorkspace ws,NutsSession session) {
         this.ws = ws;
+        this.session = session;
         LOG = ws.log().of(MavenUtils.class);
     }
 
@@ -83,7 +86,7 @@ public class MavenUtils {
         PomIdResolver wp = (PomIdResolver) session.getWorkspace().env().getProperty(PomIdResolver.class.getName());
         if (wp == null) {
             wp = new PomIdResolver(new NutsPomUrlReader(session), new NutsPomLogger(session));
-            session.getWorkspace().env().setProperty(PomIdResolver.class.getName(), wp, new NutsUpdateOptions(session));
+            session.getWorkspace().env().setProperty(PomIdResolver.class.getName(), wp);
         }
         return wp;
     }

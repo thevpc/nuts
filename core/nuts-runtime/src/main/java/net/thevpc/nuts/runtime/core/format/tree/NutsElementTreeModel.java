@@ -142,7 +142,9 @@ class NutsElementTreeModel implements NutsTreeModel {
                             all.add(new XNode(stringValue(me.getKey()), me.getValue(), null, ws));
                         } else {
                             all.add(new XNode(stringValue(me.getKey()),
-                                    ws.formats().element().convert(Arrays.asList(map), NutsElement.class),
+                                    ws.formats().element()
+                                            .setSession(session)
+                                            .convert(Arrays.asList(map), NutsElement.class),
                                     null, ws));
                         }
                     }

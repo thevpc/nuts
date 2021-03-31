@@ -160,14 +160,14 @@ public class NutsIdFormatHelper {
             session.getWorkspace().events().addWorkspaceListener(h2);
         }
         h = new FormatHelper(session);
-        session.getWorkspace().env().setProperty(FormatHelper.class.getName(), h, new NutsUpdateOptions(session));
+        session.getWorkspace().env().setProperty(FormatHelper.class.getName(), h);
         return h;
     }
 
     public static class FormatHelperResetListener implements NutsWorkspaceListener, NutsRepositoryListener {
 
         private void _onReset(NutsWorkspace ws) {
-            ws.env().setProperty(FormatHelper.class.getName(), null, new NutsUpdateOptions(ws.createSession()));
+            ws.env().setProperty(FormatHelper.class.getName(), null);
         }
 
         @Override

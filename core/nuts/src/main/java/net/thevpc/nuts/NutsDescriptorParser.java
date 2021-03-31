@@ -93,4 +93,9 @@ public interface NutsDescriptorParser {
     NutsDescriptorParser setLenient(boolean lenient);
 
     boolean isLenient();
+    
+    NutsSession getSession();
+
+    NutsDescriptorParser setSession(NutsSession session);
+    
 }

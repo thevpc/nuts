@@ -41,7 +41,7 @@ public class DefaultSourceControlHelper {
         }
 
         Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-        NutsDescriptor d = ws.descriptor().parser().parse(file);
+        NutsDescriptor d = ws.descriptor().parser().setSession(session).parse(file);
         String oldVersion = CoreStringUtils.trim(d.getId().getVersion().getValue());
         if (oldVersion.endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION.length());
@@ -86,7 +86,7 @@ public class DefaultSourceControlHelper {
             }
 
             Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-            NutsDescriptor d = ws.descriptor().parser().parse(file);
+            NutsDescriptor d = ws.descriptor().parser().setSession(session).parse(file);
             NutsVersion oldVersion = d.getId().getVersion();
             NutsId newId = d.getId().builder().setVersion(oldVersion + CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION).build();
             d = d.builder().setId(newId).build();

@@ -1482,7 +1482,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
 
     @Override
     public String[] getProperties() {
-        return properties;
+        return properties==null?new String[0]:properties;
     }
 
     @Override

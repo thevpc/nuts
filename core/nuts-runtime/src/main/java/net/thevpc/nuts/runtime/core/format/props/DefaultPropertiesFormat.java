@@ -66,7 +66,9 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             return (Map) value;
         }
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-        fillMap(getWorkspace().formats().element().convert(value, NutsElement.class), map, rootName);
+        fillMap(getWorkspace().formats().element()
+                .setSession(getSession())
+                .convert(value, NutsElement.class), map, rootName);
         return map;
     }
 
@@ -103,7 +105,9 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
                 for (NutsElementEntry datum : e.asObject().children()) {
                     NutsElement k = datum.getKey();
                     if (!k.isString()) {
-                        k = getSession().getWorkspace().formats().element().forPrimitive().buildString(
+                        k = getSession().getWorkspace().formats().element()
+                                .setSession(getSession())
+                                .forPrimitive().buildString(
                                 k.toString()
                         );
                     }

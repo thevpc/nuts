@@ -27,7 +27,7 @@ public class NutsJavaSdkUtils {
         NutsJavaSdkUtils wp = (NutsJavaSdkUtils) ws.env().getProperty(NutsJavaSdkUtils.class.getName());
         if (wp == null) {
             wp = new NutsJavaSdkUtils(ws);
-            ws.env().setProperty(NutsJavaSdkUtils.class.getName(), wp,new NutsUpdateOptions(ws.createSession()));
+            ws.env().setProperty(NutsJavaSdkUtils.class.getName(), wp);
         }
         return wp;
     }
@@ -59,7 +59,7 @@ public class NutsJavaSdkUtils {
                     0
             );
             NutsVersionFilter requestedJavaVersionFilter = ws.version().parser().parse(requestedJavaVersion).filter();
-            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.acceptVersion(ws.version().parser().parse(current.getVersion()), ws.createSession())) {
+            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.acceptVersion(ws.version().parser().parse(current.getVersion()), session)) {
                 bestJava = current;
             }
             if (bestJava == null) {

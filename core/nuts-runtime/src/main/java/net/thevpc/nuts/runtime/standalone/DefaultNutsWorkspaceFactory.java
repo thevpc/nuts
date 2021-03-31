@@ -498,7 +498,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters, NutsSession session) {
         List<T> list = createAll(type, constructorParameterTypes, constructorParameters, session);
         int bestSupportLevel = Integer.MIN_VALUE;
-        NutsSupportLevelContext<V> lc=new DefaultNutsSupportLevelContext<V>(workspace,supportCriteria);
+        NutsSupportLevelContext<V> lc=new NutsDefaultSupportLevelContext<V>(session,supportCriteria);
         T bestObj = null;
         for (T t : list) {
             int supportLevel = t.getSupportLevel(lc);
@@ -523,7 +523,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         List<T> list = createAll(type, session);
         int bestSupportLevel = Integer.MIN_VALUE;
         T bestObj = null;
-        DefaultNutsSupportLevelContext<V> context = new DefaultNutsSupportLevelContext<>(workspace, supportCriteria);
+        NutsSupportLevelContext<V> context = new NutsDefaultSupportLevelContext<>(session, supportCriteria);
         for (T t : list) {
             int supportLevel = t.getSupportLevel(context);
             if (supportLevel > 0) {
@@ -545,7 +545,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     @Override
     public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria, NutsSession session) {
         List<T> list = createAll(type, session);
-        DefaultNutsSupportLevelContext<V> context = new DefaultNutsSupportLevelContext<>(workspace, supportCriteria);
+        NutsDefaultSupportLevelContext<V> context = new NutsDefaultSupportLevelContext<>(session, supportCriteria);
         for (Iterator<T> iterator = list.iterator(); iterator.hasNext();) {
             T t = iterator.next();
             int supportLevel = t.getSupportLevel(context);

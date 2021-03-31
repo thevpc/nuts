@@ -32,6 +32,7 @@ import net.thevpc.nuts.runtime.core.format.text.renderer.ansi.AnsiStyle;
 import net.thevpc.nuts.runtime.core.format.text.renderer.ansi.AnsiStyleStyleApplier;
 
 import java.util.Objects;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiStyleStyleApplierResolver;
 
 /**
@@ -89,7 +90,7 @@ public class AnsiEscapeCommandFromNodeStyle extends AnsiEscapeCommand implements
     }
 
     @Override
-    public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsWorkspace ws, AnsiStyleStyleApplierResolver applierResolver) {
+    public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsSession ws, AnsiStyleStyleApplierResolver applierResolver) {
         switch (style.getType()){
             case PRIMARY:{
                 int variant = style.getVariant();

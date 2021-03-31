@@ -19,11 +19,11 @@ public class DefaultNutsTextManager implements NutsTextManager {
 
     private NutsWorkspace ws;
     private NutsSession session;
-    private NutsTextFormatTheme styleTheme;
+    private DefaultNutsTextManagerShared shared;
 
-    public DefaultNutsTextManager(NutsWorkspace ws, NutsTextFormatTheme styleTheme) {
+    public DefaultNutsTextManager(NutsWorkspace ws, DefaultNutsTextManagerShared shared) {
         this.ws = ws;
-        this.styleTheme = styleTheme;
+        this.shared = shared;
     }
 
     @Override
@@ -306,7 +306,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
         if (kind == null) {
             kind = "";
         }
-        NutsCodeFormat format = ws.formats().getCodeFormat(kind);
+        NutsCodeFormat format = getCodeFormat(kind);
         if (format != null) {
             return format;
         }
@@ -330,7 +330,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
                 //ignore
             }
         }
-        return ws.formats().getCodeFormat("plain");
+        return getCodeFormat("plain");
     }
 
     private String expandAlias(String ss) {
@@ -445,4 +445,38 @@ public class DefaultNutsTextManager implements NutsTextManager {
     public NutsTitleNumberSequence createTitleNumberSequence(String pattern) {
         return new DefaultNutsTitleNumberSequence((pattern == null || pattern.isEmpty()) ? "1.1.1.a.1" : pattern);
     }
+
+    @Override
+    public NutsTextFormatTheme getTheme() {
+        return shared.getTheme();
+    }
+
+    @Override
+    public NutsTextManager setTheme(NutsTextFormatTheme theme) {
+        shared.setTheme(theme);
+        return this;
+    }
+
+    @Override
+    public NutsCodeFormat getCodeFormat(String kind) {
+        return shared.getCodeFormat(kind,getSession());
+    }
+
+    @Override
+    public NutsTextManager addCodeFormat(NutsCodeFormat format) {
+        shared.addCodeFormat(format);
+        return this;
+    }
+
+    @Override
+    public NutsTextManager removeCodeFormat(NutsCodeFormat format) {
+        shared.removeCodeFormat(format);
+        return this;
+    }
+
+    @Override
+    public NutsCodeFormat[] getCodeFormats() {
+        return shared.getCodeFormats();
+    }
+    
 }

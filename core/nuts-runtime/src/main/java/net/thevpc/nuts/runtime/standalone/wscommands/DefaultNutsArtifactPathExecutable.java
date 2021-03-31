@@ -133,7 +133,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             if (Files.isDirectory(fileSource)) {
                 Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                 if (Files.exists(ext)) {
-                    c.descriptor = ws.descriptor().parser().parse(ext);
+                    c.descriptor = ws.descriptor().parser().setSession(session).parse(ext);
                 } else {
                     c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
                 }
@@ -150,7 +150,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             } else if (Files.isRegularFile(fileSource)) {
                 if (c.contentFile.getName().endsWith(NutsConstants.Files.DESCRIPTOR_FILE_NAME)) {
                     try (InputStream in = c.contentFile.open()) {
-                        c.descriptor = ws.descriptor().parser().parse(in);
+                        c.descriptor = ws.descriptor().parser().setSession(session).parse(in);
                     }
                     c.contentFile = null;
                     if (c.baseFile.isURL()) {

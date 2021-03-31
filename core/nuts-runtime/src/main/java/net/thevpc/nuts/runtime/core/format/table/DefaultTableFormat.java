@@ -902,7 +902,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             return (NutsTableModel) o;
         }
         if (!(o instanceof NutsElement)) {
-            return createTableModel(getWorkspace().formats().element().convert(o, NutsElement.class));
+            return createTableModel(_elems().convert(o, NutsElement.class));
         }
         NutsElement elem = (NutsElement) o;
         switch (elem.type()) {
@@ -914,10 +914,10 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             case NULL: {
                 List<NutsElement> a = new ArrayList<>();
                 a.add(elem);
-                return createTableModel(getWorkspace().formats().element().convert(a, NutsElement.class));
+                return createTableModel(_elems().convert(a, NutsElement.class));
             }
             case OBJECT: {
-                return createTableModel(getWorkspace().formats().element().convert(elem.asObject().children(), NutsElement.class));
+                return createTableModel(_elems().convert(elem.asObject().children(), NutsElement.class));
             }
             case ARRAY: {
                 NutsMutableTableModel model = createModel();
@@ -934,7 +934,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                             for (NutsElementEntry vv : elem2.asObject().children()) {
                                 NutsElement k = vv.getKey();
                                 if (!k.isString()) {
-                                    k = getSession().getWorkspace().formats().element().forPrimitive().buildString(
+                                    k = _elems().forPrimitive().buildString(
                                             k.toString()
                                     );
                                 }
@@ -975,7 +975,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 for (NutsElementEntry nutsNamedValue : value.asObject().children()) {
                     NutsElement k = nutsNamedValue.getKey();
                     if (!k.isString()) {
-                        k = getSession().getWorkspace().formats().element().forPrimitive().buildString(
+                        k = _elems().forPrimitive().buildString(
                                 k.toString()
                         );
                     }
@@ -993,6 +993,10 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 columns.add("value");
             }
         }
+    }
+
+    private NutsElementFormat _elems() {
+        return getSession().getWorkspace().formats().element().setSession(getSession());
     }
 
     @Override

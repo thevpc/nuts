@@ -100,7 +100,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
         switch (getOutputFormat()) {
             case XML:
             case JSON:{
-                return getWorkspace().formats().element().setContentType(getOutputFormat());
+                return getWorkspace().formats().element().setSession(getValidSession()).setContentType(getOutputFormat());
             }
             case PROPS: {
                 return getWorkspace().formats().props();

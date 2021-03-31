@@ -77,14 +77,11 @@ public class NutsWorkspaceUtils {
     }
 
     public ReflectRepository getReflectRepository() {
-        return ws.env().getOrCreateProperty(
-                ReflectRepository.class,
+        return ws.env().getOrCreateProperty(ReflectRepository.class,
                 () -> new DefaultReflectRepository(ReflectConfigurationBuilder.create()
                         .setPropertyAccessStrategy(ReflectPropertyAccessStrategy.FIELD)
                         .setPropertyDefaultValueStrategy(ReflectPropertyDefaultValueStrategy.PROPERTY_DEFAULT)
-                        .build()),
-                () ->new NutsUpdateOptions().setSession(ws.createSession())
-        );
+                        .build()));
     }
 
     public NutsId createSdkId(String type, String version) {
@@ -347,7 +344,7 @@ public class NutsWorkspaceUtils {
         NutsIdFormat f = (NutsIdFormat) ws.env().getProperty(k);
         if (f == null) {
             f = ws.id().formatter();
-            ws.env().setProperty(k, f, new NutsUpdateOptions(ws.createSession()));
+            ws.env().setProperty(k, f);
         }
         return f;
     }
@@ -357,7 +354,7 @@ public class NutsWorkspaceUtils {
         NutsDescriptorFormat f = (NutsDescriptorFormat) ws.env().getProperty(k);
         if (f == null) {
             f = ws.descriptor().formatter();
-            ws.env().setProperty(k, f, new NutsUpdateOptions(ws.createSession()));
+            ws.env().setProperty(k, f);
         }
         return f;
     }
@@ -642,13 +639,13 @@ public class NutsWorkspaceUtils {
                     if (CoreStringUtils.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    return NutsJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, false, prepareSession);
+                    return NutsJavaSdkUtils.of(ws).resolveJavaCommandByVersion(javaVer, false, prepareSession);
                 } else if (skey.equals("javaw") || skey.startsWith("javaw#")) {
                     String javaVer = skey.substring(4);
                     if (CoreStringUtils.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    return NutsJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, true, prepareSession);
+                    return NutsJavaSdkUtils.of(ws).resolveJavaCommandByVersion(javaVer, true, prepareSession);
                 } else if (skey.equals("nuts")) {
                     NutsDefinition nutsDefinition;
                     nutsDefinition = workspace.fetch().setId(NutsConstants.Ids.NUTS_API)

@@ -406,7 +406,8 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             Map<String, String> map = null;
             try {
                 if (Files.isRegularFile(cachePath)) {
-                    map = ws.formats().element().setContentType(NutsContentType.JSON).parse(cachePath, Map.class);
+                    map = ws.formats().element().setSession(session)
+                            .setContentType(NutsContentType.JSON).parse(cachePath, Map.class);
                 }
             } catch (Exception ex) {
                 //
@@ -457,7 +458,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         //this is invalid cache!
                         Files.delete(cachePath);
                     } else {
-                        DefaultNutsDefinition d = ws.formats().element().setContentType(NutsContentType.JSON).parse(cachePath, DefaultNutsDefinition.class);
+                        DefaultNutsDefinition d = ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).parse(cachePath, DefaultNutsDefinition.class);
                         if (d != null) {
                             NutsRepository repositoryById = ws.repos().findRepositoryById(d.getRepositoryUuid(), session.copy().setTransitive(true));
                             NutsRepository repositoryByName = ws.repos().findRepositoryByName(d.getRepositoryName(), session.copy().setTransitive(true));

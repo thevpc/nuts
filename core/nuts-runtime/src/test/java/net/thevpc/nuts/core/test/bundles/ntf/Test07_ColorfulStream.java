@@ -6,18 +6,12 @@
 package net.thevpc.nuts.core.test.bundles.ntf;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.core.format.text.FormatOutputStream;
 import net.thevpc.nuts.runtime.core.format.text.NutsTextNodeWriter;
 import net.thevpc.nuts.runtime.core.format.text.NutsTextNodeWriterRenderer;
-import net.thevpc.nuts.runtime.core.format.text.NutsTextNodeWriterStringer;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiUnixTermPrintRenderer;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.PrintStream;
 import java.io.StringReader;
 
 /**
@@ -49,8 +43,9 @@ public class Test07_ColorfulStream {
         System.out.println(s);
         NutsWorkspace ws = Nuts.openWorkspace();
         {
+            NutsSession session = ws.createSession();
             NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(s));
-            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
+            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, session)
                     .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
             w.writeNode(node);
         }

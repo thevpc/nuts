@@ -7,43 +7,21 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.regex.Pattern;
 
 import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
-import net.thevpc.nuts.runtime.core.format.json.MinimalJson;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.optional.gson.GsonItemSerializeManager;
-import net.thevpc.nuts.runtime.core.format.xml.DefaultXmlNutsElementStreamFormat;
-import net.thevpc.nuts.runtime.core.format.yaml.MinimalYaml;
-import net.thevpc.nuts.runtime.optional.gson.OptionalGson;
 
 public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementFormat> implements NutsElementFormat {
 
-    private final NutsElementFactoryService elementFactoryService;
     private Object value;
     private NutsContentType contentType = NutsContentType.JSON;
     private boolean compact;
-    private static final Pattern NUM_REGEXP = Pattern.compile("-?\\d+(\\.\\d+)?");
-    private String defaultName = "value";
-    private String attributePrefix = "@";
-    private String typeAttribute = "_";
-    private boolean ignoreNullValue = true;
-    private boolean autoResolveType = true;
-    private NutsElementStreamFormat jsonMan;
-    private NutsElementStreamFormat yamlMan;
-    private NutsElementStreamFormat xmlMan;
+    private final DefaultNutsElementFormatHelper helper;
 
-    public DefaultNutsElementFormat(NutsWorkspace ws) {
-        super(ws, "element-format");
-        elementFactoryService = new DefaultNutsElementFactoryService(ws);
-        if (false && OptionalGson.isAvailable()) {
-            jsonMan = new GsonItemSerializeManager();
-        } else {
-            jsonMan = new MinimalJson(ws);
-        }
-        yamlMan = new MinimalYaml(ws);
-        xmlMan = new DefaultXmlNutsElementStreamFormat();
+    public DefaultNutsElementFormat(DefaultNutsElementFormatHelper helper) {
+        super(helper.getWs(), "element-format");
+        this.helper = helper;
     }
 
     @Override
@@ -147,13 +125,13 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     private NutsElementStreamFormat resolveStucturedFormat() {
         switch (contentType) {
             case JSON: {
-                return jsonMan;
+                return helper.getJsonMan();
             }
             case YAML: {
-                return yamlMan;
+                return helper.getYamlMan();
             }
             case XML: {
-                return xmlMan;
+                return helper.getXmlMan();
             }
             case TSON: {
                 throw new IllegalArgumentException("tson not supported yet");
@@ -214,26 +192,25 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         return NutsElementPathFilter.compile(pathExpression, session);
     }
 
-    public String getDefaulTagName() {
-        return defaultName;
-    }
-
-    public boolean isIgnoreNullValue() {
-        return ignoreNullValue;
-    }
-
-    public boolean isAutoResolveType() {
-        return autoResolveType;
-    }
-
-    public String getAttributePrefix() {
-        return attributePrefix;
-    }
-
-    public String getTypeAttributeName() {
-        return typeAttribute;
-    }
-
+//    public String getDefaulTagName() {
+//        return defaultName;
+//    }
+//
+//    public boolean isIgnoreNullValue() {
+//        return ignoreNullValue;
+//    }
+//
+//    public boolean isAutoResolveType() {
+//        return autoResolveType;
+//    }
+//
+//    public String getAttributePrefix() {
+//        return attributePrefix;
+//    }
+//
+//    public String getTypeAttributeName() {
+//        return typeAttribute;
+//    }
     @Override
     public <T> T convert(Object any, Class<T> to) {
         if (to == null || to.isInstance(any)) {
@@ -275,26 +252,46 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 
     @Override
     public NutsElementEntryBuilder forEntry() {
-        return new DefaultNutsElementEntryBuilder(getWorkspace());
+        return new DefaultNutsElementEntryBuilder(getSession());
     }
 
     @Override
     public NutsPrimitiveElementBuilder forPrimitive() {
-        return new DefaultNutsPrimitiveElementBuilder(getWorkspace());
+        return new DefaultNutsPrimitiveElementBuilder(getSession());
     }
 
     @Override
     public NutsObjectElementBuilder forObject() {
-        return new DefaultNutsObjectElementBuilder(getWorkspace());
+        return new DefaultNutsObjectElementBuilder(getSession());
     }
 
     @Override
     public NutsArrayElementBuilder forArray() {
-        return new DefaultNutsArrayElementBuilder(getWorkspace());
+        return new DefaultNutsArrayElementBuilder(getSession());
     }
 
     public NutsElementFactoryService getElementFactoryService() {
-        return elementFactoryService;
+        return helper.getElementFactoryService();
+    }
+
+    public NutsPrimitiveElement forString(String str) {
+        return str == null ? DefaultNutsPrimitiveElementBuilder.NULL : new DefaultNutsPrimitiveElement(NutsElementType.STRING, str);
+    }
+
+//    @Override
+    public NutsPrimitiveElement forBoolean(boolean value) {
+        return value?DefaultNutsPrimitiveElementBuilder.TRUE:DefaultNutsPrimitiveElementBuilder.FALSE;
+    }
+
+
+//    @Override
+    public NutsPrimitiveElement forTrue() {
+        return DefaultNutsPrimitiveElementBuilder.TRUE;
+    }
+
+//    @Override
+    public NutsPrimitiveElement forFalse() {
+        return DefaultNutsPrimitiveElementBuilder.FALSE;
     }
 
 }

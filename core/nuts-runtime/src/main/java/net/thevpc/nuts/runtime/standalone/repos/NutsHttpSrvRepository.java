@@ -105,7 +105,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         boolean transitive = session.isTransitive();
         SearchTraceHelper.progressIndeterminate("Loading "+session.getWorkspace().id().formatter(id.getLongNameId()).format(),session);
         try (InputStream stream = CoreIOUtils.getHttpClientFacade(session, getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session))).open()) {
-            NutsDescriptor descriptor = getWorkspace().descriptor().parser().parse(stream);
+            NutsDescriptor descriptor = getWorkspace().descriptor().parser().setSession(session).parse(stream);
             if (descriptor != null) {
                 String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)),session);
                 if (hash.equals(descriptor.toString())) {

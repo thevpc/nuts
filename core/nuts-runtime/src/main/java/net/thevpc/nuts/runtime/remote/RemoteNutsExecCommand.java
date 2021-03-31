@@ -7,6 +7,7 @@ import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsExecCommand;
 
 public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
+
     public RemoteNutsExecCommand(RemoteNutsWorkspace ws) {
         super(ws);
     }
@@ -19,29 +20,30 @@ public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
     @Override
     public NutsExecutableInformation which() {
         RemoteNutsWorkspace ws = getWorkspace();
-        NutsElementFormat e = ws.formats().element();
+        NutsElementFormat e = ws.formats().element().setSession(getSession());
         return getWorkspace().remoteCall(
                 getWorkspace().createCall("workspace.which",
                         e.forObject()
-                        .build()
-                        )
-                ,NutsExecutableInformation.class
+                                .build(),getSession()
+                ),
+                 NutsExecutableInformation.class
         );
     }
 
     @Override
     public NutsExecCommand run() {
         RemoteNutsWorkspace ws = getWorkspace();
-        NutsElementFormat e = ws.formats().element();
+        NutsElementFormat e = ws.formats().element().setSession(getSession());
         try {
             int r = getWorkspace().remoteCall(
                     getWorkspace().createCall("workspace.exec",
                             e.forObject()
                                     .set("dry", dry)
                                     .set("failFast", failFast)
-                                    .build()
-                    )
-                    , Integer.class
+                                    .build(),
+                            getSession()
+                    ),
+                     Integer.class
             );
         } catch (NutsExecutionException ex) {
             result = ex;

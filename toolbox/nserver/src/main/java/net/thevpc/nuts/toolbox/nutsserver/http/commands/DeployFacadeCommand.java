@@ -37,7 +37,8 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
             switch (name) {
                 case "descriptor":
                     try {
-                        descriptor = context.getWorkspace().descriptor().parser().parse(info.getContent());
+                        descriptor = context.getWorkspace().descriptor().parser()
+                                .setSession(context.getSession()).parse(info.getContent());
                     } finally {
                         info.getContent().close();
                     }

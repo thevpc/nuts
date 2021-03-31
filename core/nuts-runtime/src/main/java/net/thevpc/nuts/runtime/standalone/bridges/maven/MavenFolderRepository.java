@@ -149,7 +149,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
                 if (f != null && Files.exists(f)) {
                     NutsDescriptor d = null;
                     try {
-                        d = MavenUtils.of(session.getWorkspace()).parsePomXml(f, fetchMode, this, session);
+                        d = MavenUtils.of(session).parsePomXml(f, fetchMode, this, session);
                     } catch (Exception ex) {
                         LOG.with().session(session).level(Level.SEVERE).error(ex)
                                 .log("failed to parse pom file {0} : {1}", f, ex);
@@ -223,7 +223,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
             @Override
             public NutsDescriptor parseDescriptor(Path pathname, NutsSession session) throws IOException {
-                return MavenUtils.of(session.getWorkspace()).parsePomXml(pathname, NutsFetchMode.LOCAL, MavenFolderRepository.this, session);
+                return MavenUtils.of(session).parsePomXml(pathname, NutsFetchMode.LOCAL, MavenFolderRepository.this, session);
             }
         }, maxDepth);
     }

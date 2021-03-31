@@ -111,14 +111,14 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                             break;
                         case ("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME):
                             try {
-                                nutsjson.set(parserContext.getWorkspace().descriptor().parser().parse(inputStream));
+                                nutsjson.set(parserContext.getWorkspace().descriptor().parser().setSession(parserContext.getSession()).parse(inputStream));
                             } finally {
                                 inputStream.close();
                             }
                             break;
                         default:
                             try {
-                                maven.set(MavenUtils.of(parserContext.getWorkspace()).parsePomXml(inputStream, NutsFetchMode.REMOTE, path, null,parserContext.getSession()));
+                                maven.set(MavenUtils.of(parserContext.getSession()).parsePomXml(inputStream, NutsFetchMode.REMOTE, path, null,parserContext.getSession()));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

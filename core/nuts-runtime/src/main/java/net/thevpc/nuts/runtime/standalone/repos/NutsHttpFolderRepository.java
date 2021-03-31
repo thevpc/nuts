@@ -63,7 +63,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         @Override
         public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) throws IOException {
             try {
-                return getWorkspace().descriptor().parser().parse(in);
+                return getWorkspace().descriptor().parser().setSession(session).parse(in);
             } finally {
                 in.close();
             }
@@ -269,7 +269,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             throw new NutsNotFoundException(getWorkspace(), id, new NutsFetchModeNotSupportedException(getWorkspace(), this, fetchMode, id.toString(), null));
         }
         try (InputStream stream = getDescStream(id, session)) {
-            return getWorkspace().descriptor().parser().parse(stream);
+            return getWorkspace().descriptor().parser().setSession(session).parse(stream);
         } catch (IOException | UncheckedIOException | NutsIOException ex) {
             throw new NutsNotFoundException(getWorkspace(), id, ex);
         }

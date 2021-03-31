@@ -243,7 +243,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     @Override
     public <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader, NutsSession session) {
-        return new DefaultNutsServiceLoader<T, B>(ws, serviceType, criteriaType, classLoader);
+        return new DefaultNutsServiceLoader<T, B>(session, serviceType, criteriaType, classLoader);
     }
 
     public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, NutsSession session) {

@@ -1251,7 +1251,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             eff = l.resolve(nn);
             if (Files.isRegularFile(eff)) {
                 try {
-                    NutsDescriptor d = descriptor().parser().parse(eff);
+                    NutsDescriptor d = descriptor().parser().setSession(session).parse(eff);
                     if (d != null) {
                         return d;
                     }

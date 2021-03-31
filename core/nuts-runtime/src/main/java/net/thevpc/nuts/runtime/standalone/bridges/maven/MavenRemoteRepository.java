@@ -88,7 +88,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         @Override
         public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) throws IOException {
             SearchTraceHelper.progressIndeterminate("parse "+CoreIOUtils.compressUrl(pathname),session);
-            return MavenUtils.of(session.getWorkspace()).parsePomXml(in, fetchMode, pathname, repository, session);
+            return MavenUtils.of(session).parsePomXml(in, fetchMode, pathname, repository, session);
         }
     };
 
@@ -255,7 +255,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             } catch (UncheckedIOException|NutsIOException ex) {
                 return null;
             }
-            MavenMetadata info = MavenUtils.of(session.getWorkspace()).parseMavenMetaData(metadataStream,session);
+            MavenMetadata info = MavenUtils.of(session).parseMavenMetaData(metadataStream,session);
             if (info != null) {
                 NutsIdManager idMan = workspace.id();
                 for (String version : info.getVersions()) {
@@ -379,7 +379,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                             session
                             );
                     final InputStream is = getWorkspace().io().monitor().setSource(s.open()).setSession(session).create();
-                    return MavenUtils.of(session.getWorkspace())
+                    return MavenUtils.of(session)
                             .createArchetypeCatalogIterator(is, filter, true,session);
                 } catch (UncheckedIOException ex) {
                     return IteratorUtils.emptyIterator();

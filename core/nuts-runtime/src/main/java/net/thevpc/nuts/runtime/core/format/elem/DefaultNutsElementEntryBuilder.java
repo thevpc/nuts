@@ -26,7 +26,8 @@ package net.thevpc.nuts.runtime.core.format.elem;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElementEntry;
 import net.thevpc.nuts.NutsElementEntryBuilder;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsPrimitiveElementBuilder;
+import net.thevpc.nuts.NutsSession;
 
 /**
  *
@@ -36,10 +37,10 @@ public class DefaultNutsElementEntryBuilder extends AbstractNutsElementBaseBuild
 
     private NutsElement key;
     private NutsElement value;
-    private NutsWorkspace ws;
+    private NutsSession session;
 
-    public DefaultNutsElementEntryBuilder(NutsWorkspace ws) {
-        this.ws = ws;
+    public DefaultNutsElementEntryBuilder(NutsSession session) {
+        this.session = session;
     }
 
     public NutsElement getKey() {
@@ -51,21 +52,35 @@ public class DefaultNutsElementEntryBuilder extends AbstractNutsElementBaseBuild
         return this;
     }
 
+    @Override
     public NutsElement getValue() {
         return value;
     }
 
+    @Override
     public NutsElementEntryBuilder setValue(NutsElement value) {
         this.value = value;
         return this;
     }
 
     @Override
+    public NutsElementEntryBuilder set(NutsElement key, NutsElement value) {
+        setKey(key);
+        setValue(value);
+        return this;
+    }
+    
+
+    @Override
     public NutsElementEntry build() {
         return new DefaultNutsElementEntry(
-                key == null ? ws.formats().element().forPrimitive().buildNull() : key,
-                value == null ? ws.formats().element().forPrimitive().buildNull() : value
+                key == null ? _primitive().buildNull() : key,
+                value == null ? _primitive().buildNull() : value
         );
+    }
+
+    private NutsPrimitiveElementBuilder _primitive() {
+        return session.getWorkspace().formats().element().setSession(session).forPrimitive();
     }
 
 }

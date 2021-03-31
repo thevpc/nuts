@@ -29,6 +29,6 @@ package net.thevpc.nuts;
  */
 public interface NutsCommandReadHighlighter {
 
-    NutsTextNode highlight(String buffer, NutsWorkspace workspace);
+    NutsTextNode highlight(String buffer, NutsSession session);
 
 }

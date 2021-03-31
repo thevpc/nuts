@@ -8,16 +8,17 @@ import java.io.OutputStream;
 import net.thevpc.nuts.NutsSession;
 
 public class RenderedOutputStream extends OutputStream implements NutsOutputStreamTransparentAdapter {
+
     FormatOutputStreamSupport h;
     OutputStream out;
     NutsSession session;
     NutsWorkspace ws;
 
-    public RenderedOutputStream(OutputStream out, FormattedPrintStreamRenderer renderer,NutsSession session) {
-        this.out=out;
-        this.session=session;
-        this.ws=session.getWorkspace();
-        h = new FormatOutputStreamSupport(out,renderer,ws);
+    public RenderedOutputStream(OutputStream out, FormattedPrintStreamRenderer renderer, NutsSession session) {
+        this.out = out;
+        this.session = session;
+        this.ws = session.getWorkspace();
+        h = new FormatOutputStreamSupport(out, renderer, session);
     }
 
     @Override
@@ -43,10 +44,10 @@ public class RenderedOutputStream extends OutputStream implements NutsOutputStre
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"{" +
-                "h=" + h +
-                "o=" + out +
-                '}';
+        return getClass().getSimpleName() + "{"
+                + "h=" + h
+                + "o=" + out
+                + '}';
     }
 
     public void close() throws IOException {

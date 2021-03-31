@@ -48,6 +48,7 @@ import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryContext;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
 import net.thevpc.nuts.NutsElementEntry;
+import net.thevpc.nuts.NutsElementFormat;
 import net.thevpc.nuts.NutsElementType;
 import net.thevpc.nuts.NutsObjectElement;
 
@@ -69,27 +70,28 @@ public class GsonItemSerializeManager implements NutsElementStreamFormat {
     public NutsElement gsonToElement(JsonElement o,NutsElementFactoryContext context) {
         JsonElement je = (JsonElement) o;
         NutsWorkspace ws = context.getWorkspace();
+        NutsElementFormat element = ws.formats().element().setSession(context.getSession());
         if (je.isJsonNull()) {
-            return ws.formats().element().forPrimitive().buildNull();
+            return element.forPrimitive().buildNull();
         } else if (je.isJsonPrimitive()) {
             JsonPrimitive jr = je.getAsJsonPrimitive();
             if (jr.isString()) {
-                return ws.formats().element().forPrimitive().buildString(jr.getAsString());
+                return element.forPrimitive().buildString(jr.getAsString());
             } else if (jr.isNumber()) {
-                return ws.formats().element().forPrimitive().buildNumber(jr.getAsNumber());
+                return element.forPrimitive().buildNumber(jr.getAsNumber());
             } else if (jr.isBoolean()) {
-                return ws.formats().element().forPrimitive().buildBoolean(jr.getAsBoolean());
+                return element.forPrimitive().buildBoolean(jr.getAsBoolean());
             } else {
                 throw new IllegalArgumentException("unsupported");
             }
         } else if (je.isJsonArray()) {
-            NutsArrayElementBuilder arr = ws.formats().element().forArray();
+            NutsArrayElementBuilder arr = element.forArray();
             for (JsonElement object : je.getAsJsonArray()) {
                 arr.add(gsonToElement(object,context));
             }
             return arr.build();
         } else if (je.isJsonObject()) {
-            NutsObjectElementBuilder arr = ws.formats().element().forObject();
+            NutsObjectElementBuilder arr = element.forObject();
             for (Map.Entry<String, JsonElement> e : je.getAsJsonObject().entrySet()) {
                 arr.set(e.getKey(), gsonToElement(e.getValue(),context));
             }

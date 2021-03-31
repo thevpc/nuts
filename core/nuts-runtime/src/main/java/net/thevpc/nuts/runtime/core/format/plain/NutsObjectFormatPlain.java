@@ -88,7 +88,9 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
             doc.appendChild(doc.importNode(elem, true));
             NutsXmlUtils.writeDocument(doc, new StreamResult(w), false, false, getValidSession());
         } else {
-            printElement(w, getWorkspace().formats().element().convert(value, NutsElement.class));
+            printElement(w, getWorkspace().formats().element()
+                    .setSession(getSession())
+                    .convert(value, NutsElement.class));
         }
     }
 

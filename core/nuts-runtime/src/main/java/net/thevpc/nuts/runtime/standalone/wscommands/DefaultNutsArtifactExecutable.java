@@ -82,7 +82,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
                 return;
             }
         } else if (installStatus.isInstalled() && installStatus.isObsolete()) {
-            traceSession.getWorkspace().install().id(def.getId()).run();
+            traceSession.getWorkspace().install().setSession(traceSession).id(def.getId()).run();
         }
         LinkedHashSet<NutsDependency> reinstall = new LinkedHashSet<>();
         for (NutsDependency dependency : def.getDependencies()) {
@@ -100,7 +100,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
             }
         }
         if (!reinstall.isEmpty()) {
-            NutsInstallCommand iii = traceSession.getWorkspace().install().setStrategy(NutsInstallStrategy.REINSTALL);
+            NutsInstallCommand iii = traceSession.getWorkspace().install().setSession(traceSession).setStrategy(NutsInstallStrategy.REINSTALL);
             for (NutsDependency nutsId : reinstall) {
                 iii.id(nutsId.toId());
             }

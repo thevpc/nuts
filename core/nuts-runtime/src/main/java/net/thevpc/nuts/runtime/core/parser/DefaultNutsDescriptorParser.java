@@ -10,16 +10,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
+
     private NutsWorkspace ws;
-    private boolean lenient=true;
+    private NutsSession session;
+    private boolean lenient = true;
 
     public DefaultNutsDescriptorParser(NutsWorkspace ws) {
         this.ws = ws;
     }
 
     @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsDescriptorParser setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+
+    @Override
     public NutsDescriptorParser setLenient(boolean lenient) {
-        this.lenient =lenient;
+        this.lenient = lenient;
         return this;
     }
 
@@ -77,7 +90,9 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
 
     private NutsDescriptor parse(InputStream in, boolean closeStream) {
         try (Reader rr = new InputStreamReader(in)) {
-            return getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(rr, NutsDescriptor.class);
+            return getWorkspace().formats().element()
+                    .setSession(session)
+                    .setContentType(NutsContentType.JSON).parse(rr, NutsDescriptor.class);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }

@@ -51,4 +51,15 @@ public interface NutsTextManager {
 
     NutsTextNodeLink link(NutsTextNode value);
 
+    NutsTextFormatTheme getTheme();
+
+    NutsTextManager setTheme(NutsTextFormatTheme theme);
+
+    NutsCodeFormat getCodeFormat(String kind);
+
+    NutsTextManager addCodeFormat(NutsCodeFormat format);
+
+    NutsTextManager removeCodeFormat(NutsCodeFormat format);
+
+    NutsCodeFormat[] getCodeFormats();
 }

@@ -110,6 +110,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     private final NutsElementMapper F_COLLECTION = new NutsElementFactoryCollection();
     private final NutsElementMapper F_MAP = new NutsElementFactoryMap();
+
     public DefaultNutsElementFactoryService(NutsWorkspace ws) {
         typesRepository = NutsWorkspaceUtils.of(ws).getReflectRepository();
         addDefaultFactory(Boolean.class, F_BOOLEANS);
@@ -205,7 +206,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     @Override
     public Object createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
-        if (o==null || o.type() == NutsElementType.NULL) {
+        if (o == null || o.type() == NutsElementType.NULL) {
             return F_NULL.createObject(o, to, context);
         }
         NutsElementMapper f = getElementFactory(to, false);
@@ -214,7 +215,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     @Override
     public Object defaultCreateObject(NutsElement o, Type to, NutsElementFactoryContext context) {
-        if (o==null || o.type() == NutsElementType.NULL) {
+        if (o == null || o.type() == NutsElementType.NULL) {
             return F_NULL.createElement(null, to, context);
         }
         NutsElementMapper f = getElementFactory(to, true);
@@ -300,8 +301,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             } else if (o.type() == NutsElementType.ARRAY) {
                 for (NutsElement ee : o.asArray().children()) {
                     NutsObjectElement kv = ee.asObject();
-                    NutsElement k = kv.get("key");
-                    NutsElement v = kv.get("value");
+                    NutsElement k = kv.get(context.element().forPrimitive().buildString("key"));
+                    NutsElement v = kv.get(context.element().forPrimitive().buildString("value"));
                     all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
                 }
             } else {
@@ -364,13 +365,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             if (to instanceof ParameterizedType) {
                 Type[] kvt = ((ParameterizedType) to).getActualTypeArguments();
                 return new AbstractMap.SimpleEntry(
-                        context.elementToObject(o.asObject().get("key"), kvt[0]),
-                        context.elementToObject(o.asObject().get("value"), kvt[0])
+                        context.elementToObject(o.asObject().get(context.element().forPrimitive().buildString("key")), kvt[0]),
+                        context.elementToObject(o.asObject().get(context.element().forPrimitive().buildString("value")), kvt[0])
                 );
             }
             return new AbstractMap.SimpleEntry(
-                    context.elementToObject(o.asObject().get("key"), Object.class),
-                    context.elementToObject(o.asObject().get("value"), Object.class)
+                    context.elementToObject(o.asObject().get(context.element().forPrimitive().buildString("key")), Object.class),
+                    context.elementToObject(o.asObject().get(context.element().forPrimitive().buildString("value")), Object.class)
             );
         }
 
@@ -691,9 +692,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsArtifactCall createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             NutsObjectElement object = o.asObject();
-            NutsId id = (NutsId) context.elementToObject(object.get("id"), NutsId.class);
-            String[] arguments = (String[]) context.elementToObject(object.get("arguments"), String[].class);
-            Map<String, String> properties = (Map<String, String>) context.elementToObject(object.get("properties"), ReflectUtils.createParametrizedType(Map.class, String.class, String.class));
+            NutsId id = (NutsId) context.elementToObject(object.get(context.element().forPrimitive().buildString("id")), NutsId.class);
+            String[] arguments = (String[]) context.elementToObject(object.get(context.element().forPrimitive().buildString("arguments")), String[].class);
+            Map<String, String> properties = (Map<String, String>) context
+                    .elementToObject(object.get(context.element().forPrimitive()
+                            .buildString("properties")), ReflectUtils.createParametrizedType(Map.class, String.class, String.class));
 
             return new DefaultNutsArtifactCall(id, arguments, properties);
         }
@@ -779,13 +782,14 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsSdkLocation createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             NutsObjectElement obj = o.asObject();
-            NutsId id = context.elementToObject(obj.get("id"), NutsId.class);
-            String product = context.elementToObject(obj.get("product"), String.class);
-            String name = context.elementToObject(obj.get("name"), String.class);
-            String path = context.elementToObject(obj.get("path"), String.class);
-            String version = context.elementToObject(obj.get("version"), String.class);
-            String packaging = context.elementToObject(obj.get("packaging"), String.class);
-            int priority = context.elementToObject(obj.get("priority"), int.class);
+            NutsPrimitiveElementBuilder _prm = context.element().forPrimitive();
+            NutsId id = context.elementToObject(obj.get(_prm.buildString("id")), NutsId.class);
+            String product = context.elementToObject(obj.get(_prm.buildString("product")), String.class);
+            String name = context.elementToObject(obj.get(_prm.buildString("name")), String.class);
+            String path = context.elementToObject(obj.get(_prm.buildString("path")), String.class);
+            String version = context.elementToObject(obj.get(_prm.buildString("version")), String.class);
+            String packaging = context.elementToObject(obj.get(_prm.buildString("packaging")), String.class);
+            int priority = context.elementToObject(obj.get(_prm.buildString("priority")), int.class);
             return new NutsSdkLocation(id, product, name, path, version, packaging, priority);
         }
 
@@ -856,9 +860,10 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             ReflectType m = typesRepository.getType(typeOfResult);
             Object instance = m.newInstance();
             NutsObjectElement eobj = o.asObject();
+            NutsPrimitiveElementBuilder prv = context.element().forPrimitive();
             for (ReflectProperty property : m.getProperties()) {
                 if (property.isWrite()) {
-                    NutsElement v = eobj.get(property.getName());
+                    NutsElement v = eobj.get(prv.buildString(property.getName()));
                     if (v != null) {
                         property.write(instance, context.elementToObject(v, property.getPropertyType()));
                     }

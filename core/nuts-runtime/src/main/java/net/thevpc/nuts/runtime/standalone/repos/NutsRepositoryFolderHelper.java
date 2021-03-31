@@ -130,7 +130,7 @@ public class NutsRepositoryFolderHelper {
         Path versionFolder = getLongNameIdLocalFolder(id);
         goodFile = versionFolder.resolve(idFilename);
         if (pathExists(goodFile, session)) {
-            return getWorkspace().descriptor().parser().parse(goodFile);
+            return getWorkspace().descriptor().parser().setSession(session).parse(goodFile);
         }
 //        String alt = id.getAlternative();
 //        String goodAlt = null;
@@ -192,7 +192,7 @@ public class NutsRepositoryFolderHelper {
 
     protected NutsDescriptor loadMatchingDescriptor(Path file, NutsId id, NutsSession session) {
         if (pathExists(file, session)) {
-            NutsDescriptor d = Files.isRegularFile(file) ? getWorkspace().descriptor().parser().parse(file) : null;
+            NutsDescriptor d = Files.isRegularFile(file) ? getWorkspace().descriptor().parser().setSession(session).parse(file) : null;
             if (d != null) {
                 Map<String, String> query = id.getProperties();
                 String os = query.get("os");
@@ -275,7 +275,7 @@ public class NutsRepositoryFolderHelper {
                     //this is invalid cache!
                     return null;
                 } else {
-                    return getWorkspace().descriptor().parser().parse(pathname);
+                    return getWorkspace().descriptor().parser().setSession(session).parse(pathname);
                 }
             }
         }, maxDepth);

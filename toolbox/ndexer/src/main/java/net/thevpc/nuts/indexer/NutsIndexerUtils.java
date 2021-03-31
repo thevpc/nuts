@@ -21,7 +21,7 @@ public class NutsIndexerUtils {
             m = ws.locations()
                     .getStoreLocation(ws.id().resolveId(NutsIndexerUtils.class, session),
                             NutsStoreLocation.CACHE) + File.separator + entity;
-            ws.env().setProperty(k, m,new NutsUpdateOptions(session));
+            ws.env().setProperty(k, m);
         }
         return new File(m).toPath();
     }

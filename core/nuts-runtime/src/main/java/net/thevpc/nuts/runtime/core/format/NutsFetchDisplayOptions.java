@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsIdFormat;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 

@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.core.util.CachedValue;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import net.thevpc.nuts.NutsSession;
 
 import net.thevpc.nuts.runtime.core.format.text.renderer.ansi.AnsiStyle;
 import net.thevpc.nuts.runtime.core.format.text.renderer.ansi.AnsiStyleStyleApplier;
@@ -66,18 +67,18 @@ public class AnsiUnixTermPrintRenderer implements FormattedPrintStreamRenderer {
 //        defineEscape(AnsiEscapeCommands.REVERSED, "\u001b[7m", "\u001B[0m");
     }
 
-    public AnsiStyle createStyleRenderer(AnsiEscapeCommand format, RenderedRawStream out, NutsWorkspace ws) {
+    public AnsiStyle createStyleRenderer(AnsiEscapeCommand format, RenderedRawStream out, NutsSession session) {
         AnsiStyleStyleApplier applier = applierResolver.resolveStyleApplyer(format);
-        return applier.apply(AnsiStyle.PLAIN, out, ws, applierResolver);
+        return applier.apply(AnsiStyle.PLAIN, out, session, applierResolver);
     }
 
     @Override
-    public void startFormat(RenderedRawStream out, AnsiEscapeCommand format, NutsWorkspace ws)  throws IOException {
-        createStyleRenderer(format, out, ws).startFormat(out);
+    public void startFormat(RenderedRawStream out, AnsiEscapeCommand format, NutsSession session)  throws IOException {
+        createStyleRenderer(format, out, session).startFormat(out);
     }
 
     @Override
-    public void endFormat(RenderedRawStream out, AnsiEscapeCommand format, NutsWorkspace ws) throws IOException {
-        createStyleRenderer(format, out, ws).endFormat(out);
+    public void endFormat(RenderedRawStream out, AnsiEscapeCommand format, NutsSession session) throws IOException {
+        createStyleRenderer(format, out, session).endFormat(out);
     }
 }

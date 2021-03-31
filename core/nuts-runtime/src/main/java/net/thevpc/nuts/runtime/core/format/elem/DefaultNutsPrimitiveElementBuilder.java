@@ -40,13 +40,16 @@ import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
  */
 public class DefaultNutsPrimitiveElementBuilder implements NutsPrimitiveElementBuilder {
 
-    private static NutsPrimitiveElement NULL = new DefaultNutsPrimitiveElement(NutsElementType.NULL, null);
-    private static NutsPrimitiveElement TRUE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, true);
-    private static NutsPrimitiveElement FALSE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, false);
+    public static final NutsPrimitiveElement NULL = new DefaultNutsPrimitiveElement(NutsElementType.NULL, null);
+    public static final NutsPrimitiveElement TRUE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, true);
+    public static final NutsPrimitiveElement FALSE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, false);
 
-    private NutsWorkspace ws;
-    public DefaultNutsPrimitiveElementBuilder(NutsWorkspace ws) {
-        this.ws=ws;
+    private NutsSession session;
+    public DefaultNutsPrimitiveElementBuilder(NutsSession session) {
+        this.session=session;
+        if(session==null){
+            throw new NullPointerException();
+        }
     }
 
     @Override
@@ -147,7 +150,7 @@ public class DefaultNutsPrimitiveElementBuilder implements NutsPrimitiveElementB
 
             }
         }
-        throw new NutsParseException(ws,"unable to parse number " + value);
+        throw new NutsParseException(session.getWorkspace(),"unable to parse number " + value);
     }
 
     @Override

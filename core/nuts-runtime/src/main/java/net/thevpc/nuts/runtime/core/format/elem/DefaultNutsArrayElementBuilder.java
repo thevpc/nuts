@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.thevpc.nuts.NutsElementFormat;
 import net.thevpc.nuts.NutsPrimitiveElementBuilder;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsSession;
 
 /**
  *
@@ -42,10 +42,13 @@ import net.thevpc.nuts.NutsWorkspace;
 public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
 
     private final List<NutsElement> values = new ArrayList<>();
-    private NutsWorkspace ws;
+    private NutsSession session;
 
-    public DefaultNutsArrayElementBuilder(NutsWorkspace ws) {
-        this.ws = ws;
+    public DefaultNutsArrayElementBuilder(NutsSession session) {
+        this.session = session;
+        if(session==null){
+            throw new NullPointerException();
+        }
     }
 
     @Override
@@ -269,7 +272,7 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
     }
 
     private NutsElementFormat _elements() {
-        return ws.formats().element();
+        return session.getWorkspace().formats().element().setSession(session);
     }
 
     private NutsPrimitiveElementBuilder _primitive() {

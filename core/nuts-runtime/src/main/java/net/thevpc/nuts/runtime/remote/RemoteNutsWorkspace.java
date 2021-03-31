@@ -12,7 +12,7 @@ public class RemoteNutsWorkspace extends AbstractNutsWorkspace {
         super(info);
     }
 
-    public NutsElement createCall(String commandName, NutsElement body) {
+    public NutsElement createCall(String commandName, NutsElement body,NutsSession session) {
         try (NTalkClient cli = new NTalkClient()) {
             NutsElementFormat e = formats().element().setContentType(NutsContentType.JSON);
             NutsObjectElement q = e.forObject()
@@ -22,9 +22,11 @@ public class RemoteNutsWorkspace extends AbstractNutsWorkspace {
             String wsURL = config().options().getWorkspace();
             byte[] result = cli.request("nuts/ws:"+wsURL, json.getBytes());
             NutsObjectElement resultObject = e.parse(result, NutsObjectElement.class);
-            boolean success = resultObject.get("success").asPrimitive().getBoolean();
+            NutsPrimitiveElementBuilder prv = formats().element().setSession(session).forPrimitive();
+            boolean success = resultObject.get(prv.buildString("success")
+                    ).asPrimitive().getBoolean();
             if (success) {
-                return resultObject.get("body");
+                return resultObject.get(prv.buildString("body"));
             } else {
                 //TODO mush deserialize exception
                 throw new NutsException(this, "unable to call " + commandName);

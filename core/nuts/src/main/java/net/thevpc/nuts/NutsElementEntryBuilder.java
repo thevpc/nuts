@@ -27,10 +27,17 @@ package net.thevpc.nuts;
  *
  * @author vpc
  */
-public interface NutsElementEntryBuilder extends NutsElementBuilder{
+public interface NutsElementEntryBuilder extends NutsElementBuilder {
+
     NutsElement getKey();
+
     NutsElement getValue();
+
     NutsElementEntryBuilder setKey(NutsElement element);
+
     NutsElementEntryBuilder setValue(NutsElement element);
+
+    NutsElementEntryBuilder set(NutsElement key, NutsElement value);
+
     NutsElementEntry build();
 }

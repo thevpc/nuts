@@ -30,7 +30,6 @@ package net.thevpc.nuts;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
-import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Path;
 
@@ -214,7 +213,7 @@ public interface NutsElementFormat extends NutsObjectFormat {
      * @return primitive builder
      */
     NutsPrimitiveElementBuilder forPrimitive();
-
+    
     /**
      * create object element builder (mutable)
      *
@@ -228,4 +227,5 @@ public interface NutsElementFormat extends NutsObjectFormat {
      * @return array element
      */
     NutsArrayElementBuilder forArray();
+
 }
