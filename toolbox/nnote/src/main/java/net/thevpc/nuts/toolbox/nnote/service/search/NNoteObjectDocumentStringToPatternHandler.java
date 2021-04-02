@@ -35,7 +35,7 @@ public class NNoteObjectDocumentStringToPatternHandler implements DocumentTextNa
         document
                 = source == null ? new NNoteObjectDocument()
                         : source instanceof NNoteObjectDocument ? (NNoteObjectDocument) source
-                                : service.parseDynamicDocument(String.valueOf(source));
+                                : service.parseObjectDocument(String.valueOf(source));
     }
 
     @Override

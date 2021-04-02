@@ -6,17 +6,41 @@
 package net.thevpc.nuts.toolbox.nnote.util;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.font.TextAttribute;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author vpc
  */
 public class OtherUtils {
+
+    public static Font deriveFont(Font _font, boolean bold, boolean italic, boolean underline, boolean strike) {
+        Font f = _font.deriveFont((bold ? Font.BOLD : 0) + (italic ? Font.ITALIC : 0));
+        Map attributes = null;
+        if (underline) {
+            if (attributes == null) {
+                attributes = f.getAttributes();
+            }
+            attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+        }
+        if (strike) {
+            if (attributes == null) {
+                attributes = f.getAttributes();
+            }
+            attributes.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
+        }
+        if (attributes != null) {
+            f = f.deriveFont(attributes);
+        }
+        return f;
+    }
 
     public static String trim(String in) {
         return in == null ? "" : in.trim();
@@ -191,7 +215,7 @@ public class OtherUtils {
     }
 
     public static String formatColor(Color s) {
-        if(s==null){
+        if (s == null) {
             return "";
         }
         return "#" + toHex(s.getRed(), 4) + toHex(s.getGreen(), 4) + toHex(s.getBlue(), 4);

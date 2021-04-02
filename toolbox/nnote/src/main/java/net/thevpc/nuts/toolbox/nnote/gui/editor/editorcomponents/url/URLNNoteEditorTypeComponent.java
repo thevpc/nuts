@@ -25,7 +25,7 @@ public class URLNNoteEditorTypeComponent extends JPanel implements NNoteEditorTy
     private URLComponent2 comp;
     private URLViewer urlViewer;
     private JLabel error;
-    private VNNote currentNode;
+    private VNNote currentNote;
 
     public URLNNoteEditorTypeComponent() {
         super(new BorderLayout());
@@ -37,7 +37,7 @@ public class URLNNoteEditorTypeComponent extends JPanel implements NNoteEditorTy
         comp.addListener(new URLComponent2.UrlChangedListener() {
             @Override
             public void onUrlChange(String newURL) {
-                  currentNode.setContent(comp.getContentString());
+                currentNote.setContent(comp.getContentString());
             }
         });
     }
@@ -52,9 +52,9 @@ public class URLNNoteEditorTypeComponent extends JPanel implements NNoteEditorTy
     }
 
     @Override
-    public void setNode(VNNote node, NNoteGuiApp sapp) {
-        this.currentNode=node;
-        String c = node.getContent();
+    public void setNote(VNNote note, NNoteGuiApp sapp) {
+        this.currentNote = note;
+        String c = note.getContent();
         if (c == null || c.isEmpty()) {
             urlViewer.resetContent();
         } else {
@@ -67,4 +67,16 @@ public class URLNNoteEditorTypeComponent extends JPanel implements NNoteEditorTy
         }
     }
 
+    @Override
+    public void setEditable(boolean b) {
+        if (currentNote != null && currentNote.isReadOnly()) {
+            b = false;
+        }
+        comp.setEditable(b);
+    }
+
+    @Override
+    public boolean isEditable() {
+        return comp.isEditable();
+    }
 }

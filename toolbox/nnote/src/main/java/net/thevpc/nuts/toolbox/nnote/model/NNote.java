@@ -22,8 +22,13 @@ import net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes;
  */
 public class NNote implements Cloneable {
 
+    public static NNote newDocument() {
+        return newDocument(null);
+    }
+    
     public static NNote newDocument(String path) {
         NNote n = new NNote();
+        n.setName("nnote-document");
         n.setContentType(NNoteTypes.NNOTE_DOCUMENT);
         n.setContent(path);
         return n;
@@ -36,6 +41,7 @@ public class NNote implements Cloneable {
     private boolean titleBold;
     private boolean titleItalic;
     private boolean titleUnderlined;
+    private boolean titleStriked;
     private String titleForeground;
     private String titleBackground;
     private String icon;
@@ -162,6 +168,7 @@ public class NNote implements Cloneable {
         hash = 17 * hash + (this.titleBold ? 1 : 0);
         hash = 17 * hash + (this.titleItalic ? 1 : 0);
         hash = 17 * hash + (this.titleUnderlined ? 1 : 0);
+        hash = 17 * hash + (this.titleStriked ? 1 : 0);
         hash = 17 * hash + Objects.hashCode(this.titleForeground);
         hash = 17 * hash + Objects.hashCode(this.titleBackground);
         hash = 17 * hash + Objects.hashCode(this.icon);
@@ -197,6 +204,9 @@ public class NNote implements Cloneable {
             return false;
         }
         if (this.titleUnderlined != other.titleUnderlined) {
+            return false;
+        }
+        if (this.titleStriked != other.titleStriked) {
             return false;
         }
         if (this.readOnly != other.readOnly) {
@@ -327,6 +337,15 @@ public class NNote implements Cloneable {
     public void setTitleUnderlined(boolean titleUnderlined) {
         this.titleUnderlined = titleUnderlined;
     }
+
+    public boolean isTitleStriked() {
+        return titleStriked;
+    }
+
+    public void setTitleStriked(boolean titleStriked) {
+        this.titleStriked = titleStriked;
+    }
+    
 
     public String getTitleForeground() {
         return titleForeground;

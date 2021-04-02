@@ -9,9 +9,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.swing.JPanel;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteField;
@@ -26,6 +28,7 @@ import net.thevpc.nuts.toolbox.nnote.model.NNoteObjectFieldType;
  */
 public class NNoteObjectComponent extends JPanel {
 
+    private boolean editable=true;
     private NNoteObjectExt currentValue;
     private List<NNoteFieldDescriptorPanel> components = new ArrayList<>();
     private NNoteObjectTracker objectTracker;
@@ -62,9 +65,11 @@ public class NNoteObjectComponent extends JPanel {
         List<NNoteFieldDescriptorPanel> newComponents = new ArrayList<>();
 
         List<NNoteFieldDescriptor> fields = descriptor.getFields();
-        if (fields != null) {
-            for (NNoteFieldDescriptor field : fields) {
-                if (field != null) {
+        fields = fields == null ? Collections.emptyList() : fields.stream().filter(x -> x != null).collect(Collectors.toList());
+        for (NNoteFieldDescriptor field : fields) {
+            if (field != null) {
+                List<NNoteField> f = this.currentValue.getObject().findFields(field.getName());
+                if (!f.stream().anyMatch(x -> x.isHidden())) {
                     int old = indexOfDescriptor(field);
                     if (old != -1) {
                         NNoteFieldDescriptorPanel r = components.remove(old);
@@ -79,22 +84,46 @@ public class NNoteObjectComponent extends JPanel {
                     } else {
                         newComponents.add(new NNoteFieldDescriptorPanel(sapp, field, dynamicObjectTrackerAdapter));
                     }
+                } else {
+
                 }
             }
         }
+
+        if (newComponents.isEmpty()) {
+            NNoteFieldDescriptor field = null;
+            if (fields.size() > 0) {
+                //if all are hidden then unhide the very first
+                field = fields.get(0);
+            } else {
+                //if there are no fields, add a new field descriptor and create the corresponding component
+                field = new NNoteFieldDescriptor();
+                field.setName(sapp.app().i18n().getString("Message.title"));
+                field.setType(NNoteObjectFieldType.TEXT);
+                this.currentValue.getDocument().addField(field);
+            }
+            int old = indexOfDescriptor(field);
+            if (old != -1) {
+                NNoteFieldDescriptorPanel r = components.remove(old);
+                if (r.getDescr().equals(field)) {
+                    newComponents.add(r);//no change!
+                } else if (r.supportsUpdateDescriptor(field)) {
+                    r.updateDescriptor(field);
+                    newComponents.add(r);
+                } else {
+                    newComponents.add(new NNoteFieldDescriptorPanel(sapp, field, dynamicObjectTrackerAdapter));
+                }
+            } else {
+                newComponents.add(new NNoteFieldDescriptorPanel(sapp, field, dynamicObjectTrackerAdapter));
+            }
+        }
+
         while (!components.isEmpty()) {
             NNoteFieldDescriptorPanel a = components.remove(0);
             a.uninstall();
         }
-        components.addAll(newComponents);
 
-        if (components.isEmpty()) {
-            NNoteFieldDescriptor v = new NNoteFieldDescriptor();
-            v.setName(sapp.app().i18n().getString("Message.title"));
-            v.setType(NNoteObjectFieldType.TEXT);
-            this.currentValue.getDocument().addField(v);
-            components.add(new NNoteFieldDescriptorPanel(sapp, v, dynamicObjectTrackerAdapter));
-        }
+        components.addAll(newComponents);
         relayoutObject();
     }
 
@@ -161,8 +190,19 @@ public class NNoteObjectComponent extends JPanel {
             if (v.getValue() == null) {
                 v.setValue("");
             }
-            component.setValue(v, currentValue.getDocument());
+            component.setValue(v, currentValue.getObject(), currentValue.getDocument());
+            component.setEditable(isEditable());
         }
+    }
+    
+    public void setEditable(boolean b){
+        this.editable=b;
+        for (NNoteFieldDescriptorPanel component : components) {
+            component.setEditable(b);
+        }
+    }
+    public boolean isEditable(){
+        return editable;
     }
 
     public int indexOfDescriptor(NNoteFieldDescriptor d) {

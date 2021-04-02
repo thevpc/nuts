@@ -29,8 +29,8 @@ public class SourceEditorPanePanelTextExtension extends AbstractSourceEditorPane
         }
     }
 
-    public void prepareEditor(JEditorPaneBuilder editorBuilder, Application app) {
-        JToolBar bar = new JToolBar();
+    public void prepareEditor(JEditorPaneBuilder editorBuilder, boolean compactMode, Application app) {
+        JToolBar bar = compactMode ? null : new JToolBar();
         JPopupMenu popup = editorBuilder.editor().getComponentPopupMenu();
         context = new AbstractSourceEditorPaneExtension.Context(app, editorBuilder.editor());
         addAction("copy", new StyledEditorKit.CopyAction(), bar, popup, context);
@@ -40,13 +40,17 @@ public class SourceEditorPanePanelTextExtension extends AbstractSourceEditorPane
         addContentTypeChangeListener(context, new ContentTypeChangeListener() {
             @Override
             public void onContentTypeChanged(String contentType, Context context) {
-                bar.setVisible(true);
+                if (bar != null) {
+                    bar.setVisible(true);
+                }
                 context.setAllActionsVisible(true);
                 context.setAllActionsEnabled(true);
             }
         });
-        editorBuilder.header().add(bar);
-        bar.setVisible(true);
+        if (bar != null) {
+            editorBuilder.header().add(bar);
+            bar.setVisible(true);
+        }
         context.setAllActionsVisible(true);
         context.setAllActionsEnabled(true);
     }

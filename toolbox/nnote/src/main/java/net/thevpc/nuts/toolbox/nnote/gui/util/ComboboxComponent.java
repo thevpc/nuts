@@ -22,6 +22,7 @@ public class ComboboxComponent extends JPanel implements FormComponent {
 
     private JComboBox cb = new JComboBox();
     private Runnable callback;
+    private boolean editable = true;
 
     public ComboboxComponent() {
         super(new BorderLayout());
@@ -67,4 +68,16 @@ public class ComboboxComponent extends JPanel implements FormComponent {
     public void setFormChangeListener(Runnable callback) {
         this.callback = callback;
     }
+
+    @Override
+    public void setEditable(boolean b) {
+        this.editable = b;
+        cb.setEnabled(b);
+    }
+
+    @Override
+    public boolean isEditable() {
+        return editable;
+    }
+
 }

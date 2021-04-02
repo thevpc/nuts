@@ -26,4 +26,9 @@ public interface FormComponent {
     String getContentString();
 
     void setContentString(String s);
+    
+    void setEditable(boolean b);
+    
+    boolean isEditable();
+
 }

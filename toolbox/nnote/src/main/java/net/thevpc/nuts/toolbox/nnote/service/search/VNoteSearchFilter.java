@@ -16,5 +16,5 @@ import net.thevpc.nuts.toolbox.nnote.service.search.strsearch.StringSearchResult
  */
 public interface VNoteSearchFilter {
 
-    Stream<StringSearchResult<VNNote>> search(VNNote node, NNoteService service);
+    Stream<StringSearchResult<VNNote>> search(VNNote note, NNoteService service);
 }

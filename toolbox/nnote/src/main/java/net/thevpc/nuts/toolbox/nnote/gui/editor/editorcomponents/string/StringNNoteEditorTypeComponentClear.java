@@ -19,14 +19,14 @@ import net.thevpc.nuts.toolbox.nnote.gui.editor.NNoteEditorTypeComponent;
  */
 public class StringNNoteEditorTypeComponentClear extends JTextField implements NNoteEditorTypeComponent {
 
-    private VNNote currentNode;
+    private VNNote currentNote;
 
     public StringNNoteEditorTypeComponentClear() {
         this.getDocument().addDocumentListener(new AnyDocumentListener() {
             @Override
             public void anyChange(DocumentEvent e) {
-                if (currentNode != null) {
-                    currentNode.setContent(StringNNoteEditorTypeComponentClear.this.getText());
+                if (currentNote != null) {
+                    currentNote.setContent(StringNNoteEditorTypeComponentClear.this.getText());
                 }
             }
         });
@@ -43,14 +43,13 @@ public class StringNNoteEditorTypeComponentClear extends JTextField implements N
     }
 
     @Override
-    public void setNode(VNNote node,NNoteGuiApp sapp) {
-        this.currentNode = node;
-        if (node == null) {
+    public void setNote(VNNote note,NNoteGuiApp sapp) {
+        this.currentNote = note;
+        if (note == null) {
             this.setText("");
         } else {
-            this.setText(node.getContent());
+            this.setText(note.getContent());
         }
-
     }
 
 }

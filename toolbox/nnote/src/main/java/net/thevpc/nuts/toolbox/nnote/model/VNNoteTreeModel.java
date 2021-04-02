@@ -35,8 +35,8 @@ public class VNNoteTreeModel extends AbstractTreeModel {
     }
 
     @Override
-    public boolean isLeaf(Object node) {
-        return ((VNNote) node).getChildren().size() == 0;
+    public boolean isLeaf(Object note) {
+        return ((VNNote) note).getChildren().size() == 0;
     }
 
     @Override
@@ -48,34 +48,34 @@ public class VNNoteTreeModel extends AbstractTreeModel {
         fireTreeStructureChanged(this, getPathToRoot((VNNote) getRoot()), null, null);
     }
 
-    public void nodeStructureChanged(VNNote node) {
-        if (node != null) {
-            fireTreeStructureChanged(this, getPathToRoot(node), null, null);
+    public void nodeStructureChanged(VNNote note) {
+        if (note != null) {
+            fireTreeStructureChanged(this, getPathToRoot(note), null, null);
         }
     }
 
-    public VNNote[] getPathToRoot(VNNote aNode) {
-        return getPathToRoot(aNode, 0);
+    public VNNote[] getPathToRoot(VNNote note) {
+        return getPathToRoot(note, 0);
     }
 
-    protected VNNote[] getPathToRoot(VNNote aNode, int depth) {
-        VNNote[] retNodes;
-        if (aNode == null) {
+    protected VNNote[] getPathToRoot(VNNote note, int depth) {
+        VNNote[] retNotes;
+        if (note == null) {
             if (depth == 0) {
                 return null;
             } else {
-                retNodes = new VNNote[depth];
+                retNotes = new VNNote[depth];
             }
         } else {
             depth++;
-            if (aNode == getRoot()) {
-                retNodes = new VNNote[depth];
+            if (note == getRoot()) {
+                retNotes = new VNNote[depth];
             } else {
-                retNodes = getPathToRoot(aNode.getParent(), depth);
+                retNotes = getPathToRoot(note.getParent(), depth);
             }
-            retNodes[retNodes.length - depth] = aNode;
+            retNotes[retNotes.length - depth] = note;
         }
-        return retNodes;
+        return retNotes;
     }
 
     public void setRoot(VNNote copyFrom) {
@@ -86,7 +86,11 @@ public class VNNoteTreeModel extends AbstractTreeModel {
 
     @Override
     protected void insertNodeIntoImpl(Object parent, Object newChild, int index) {
-        ((VNNote) parent).addChild(index, ((VNNote) newChild));
+        if (newChild instanceof VNNote) {
+            ((VNNote) parent).addChild(index, ((VNNote) newChild));
+        } else if (newChild instanceof String) {
+            ((VNNote) parent).addChild(index, VNNote.of(new NNote().setName((String)newChild)));
+        }
     }
 
     @Override
@@ -102,8 +106,8 @@ public class VNNoteTreeModel extends AbstractTreeModel {
     }
 
     @Override
-    public Object copyNode(Object node) {
-        return ((VNNote) node).copy();
+    public Object copyNode(Object note) {
+        return ((VNNote) note).copy();
     }
 
 }

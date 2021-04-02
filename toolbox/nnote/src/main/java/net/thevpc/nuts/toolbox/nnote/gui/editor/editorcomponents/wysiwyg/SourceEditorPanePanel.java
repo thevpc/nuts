@@ -26,47 +26,54 @@ import net.thevpc.nuts.toolbox.nnote.gui.editor.NNoteEditorTypeComponent;
  *
  * @author vpc
  */
-public class SourceEditorPanePanel extends JScrollPane implements NNoteEditorTypeComponent{
+public class SourceEditorPanePanel extends JScrollPane implements NNoteEditorTypeComponent {
 
     private JEditorPaneBuilder editorBuilder;
-    private VNNote node;
+    private VNNote currentNote;
     private boolean source;
+    private boolean compactMode;
+    private boolean editable = true;
     private Application app;
     private SourceEditorPaneExtension textExtension = new SourceEditorPanePanelTextExtension();
     private SourceEditorPaneExtension htmlExtension = new SourceEditorPanePanelHtmlExtension();
     DocumentListener documentListener = new AnyDocumentListener() {
         public void anyChange(DocumentEvent e) {
-            if (node != null) {
-//                System.out.println("update node:" + editorBuilder.editor().getText());
-                node.setContent(editorBuilder.editor().getText());
+            if (currentNote != null) {
+//                System.out.println("update note:" + editorBuilder.editor().getText());
+                currentNote.setContent(editorBuilder.editor().getText());
             }
         }
     };
 
-    public static SourceEditorPanePanel create(String title, boolean source, Application app) {
+    public SourceEditorPanePanel(boolean source, boolean compactMode, Application app) {
+        super();
+        this.compactMode = compactMode;
         boolean lineNumbers = source;
-        JEditorPaneBuilder editorBuilder = new JEditorPaneBuilder();
+        this.editorBuilder = new JEditorPaneBuilder().setNoScroll(true);
         if (lineNumbers) {
             editorBuilder.addLineNumbers();
         }
-        editorBuilder.footer()
-                //                .add(new JLabel("example..."))
-                //                .add(new JSyntaxPosLabel(e, completion))
-                .addGlue()
-                .addCaret()
-                .end() //                .setEditorKit(HadraLanguage.MIME_TYPE, new HLJSyntaxKit(jContext))
-                //                    .component()
-                .header();
+        if (!compactMode) {
+            editorBuilder.footer()
+                    //                .add(new JLabel("example..."))
+                    //                .add(new JSyntaxPosLabel(e, completion))
+                    .addGlue()
+                    .addCaret()
+                    .end();
+        }
+//        editorBuilder.footer()
+//                //                .add(new JLabel("example..."))
+//                //                .add(new JSyntaxPosLabel(e, completion))
+//                .addGlue()
+//                .addCaret()
+//                .end() //                .setEditorKit(HadraLanguage.MIME_TYPE, new HLJSyntaxKit(jContext))
+//                //                    .component()
+//                .header();
         //.header().add(new JLabel(title))
-        return new SourceEditorPanePanel(editorBuilder, source, app);
-    }
 
-    public SourceEditorPanePanel(JEditorPaneBuilder builder, boolean source, Application app) {
-        super(builder.component());
-        this.setWheelScrollingEnabled(true); 
+        this.setWheelScrollingEnabled(true);
         this.app = app;
         this.source = source;
-        this.editorBuilder = builder;
         this.editorBuilder.editor().getDocument().addDocumentListener(documentListener);
         this.editorBuilder.editor().addPropertyChangeListener("document", e -> {
             Document o = (Document) e.getOldValue();
@@ -83,10 +90,12 @@ public class SourceEditorPanePanel extends JScrollPane implements NNoteEditorTyp
             popup = new JPopupMenu();
             editorBuilder.editor().setComponentPopupMenu(popup);
         }
-        textExtension.prepareEditor(editorBuilder, app);
-        htmlExtension.prepareEditor(editorBuilder, app);
-        this.editorBuilder.header().addGlue();
-        if(source){
+        textExtension.prepareEditor(editorBuilder, compactMode, app);
+        htmlExtension.prepareEditor(editorBuilder, compactMode, app);
+        if (!compactMode) {
+            this.editorBuilder.header().addGlue();
+        }
+        if (source) {
             this.editorBuilder.editor().setFont(JSyntaxStyleManager.getDefaultFont());
         }
 //        editorBuilder.editor().addPropertyChangeListener("editorKit", new PropertyChangeListener() {
@@ -103,6 +112,7 @@ public class SourceEditorPanePanel extends JScrollPane implements NNoteEditorTyp
 //            }
 //        }
 //        );
+        setViewportView(editorBuilder.component());
     }
 
 //    public boolean isSupportedType(String contentType) {
@@ -113,11 +123,12 @@ public class SourceEditorPanePanel extends JScrollPane implements NNoteEditorTyp
         textExtension.uninstall(editorBuilder, app);
         htmlExtension.uninstall(editorBuilder, app);
     }
-    
-    public void setNode(VNNote node,NNoteGuiApp sapp) {
-        this.node = node;
-        String c = node.getContent();
-        String type = node.getContentType();
+
+    @Override
+    public void setNote(VNNote note, NNoteGuiApp sapp) {
+        this.currentNote = note;
+        String c = note.getContent();
+        String type = note.getContentType();
         if (type == null) {
             type = "";
         }
@@ -126,6 +137,7 @@ public class SourceEditorPanePanel extends JScrollPane implements NNoteEditorTyp
         }
         editorBuilder.editor().setContentType(type.isEmpty() ? "text/plain" : type);
         editorBuilder.editor().setText(c == null ? "" : c);
+        setEditable(!note.isReadOnly());
     }
 
     private Action prepareAction(AbstractAction a) {
@@ -134,9 +146,22 @@ public class SourceEditorPanePanel extends JScrollPane implements NNoteEditorTyp
         SwingApplicationsHelper.registerAction(a, null, s, app);
         return a;
     }
-    
-    public JComponent component(){
+
+    @Override
+    public JComponent component() {
         return this;
     }
 
+    @Override
+    public void setEditable(boolean b) {
+        if (currentNote != null && currentNote.isReadOnly()) {
+            b = false;
+        }
+        editorBuilder.editor().setEditable(b);
+    }
+
+    @Override
+    public boolean isEditable() {
+        return editorBuilder.editor().isEditable();
+    }
 }

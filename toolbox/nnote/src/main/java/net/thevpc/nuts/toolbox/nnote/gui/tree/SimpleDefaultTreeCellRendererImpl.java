@@ -8,10 +8,11 @@ package net.thevpc.nuts.toolbox.nnote.gui.tree;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.font.TextAttribute;
+import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JTree;
 import javax.swing.UIManager;
-import javax.swing.plaf.UIResource;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import net.thevpc.echo.Application;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes;
@@ -69,7 +70,7 @@ class SimpleDefaultTreeCellRendererImpl extends DefaultTreeCellRenderer {
         setOpaque(false);
         if (value instanceof VNNote) {
             VNNote n = (VNNote) value;
-            setFont(_font.deriveFont((n.isTitleBold() ? Font.BOLD : 0) + (n.isTitleItalic() ? Font.ITALIC : 0)));
+            setFont(OtherUtils.deriveFont(_font, n.isTitleBold(), n.isTitleItalic(), n.isTitleUnderlined(), n.isTitleStriked()));
             if (sel) {
             } else {
                 Color b = OtherUtils.parseColor(n.getTitleBackground());
@@ -101,7 +102,7 @@ class SimpleDefaultTreeCellRendererImpl extends DefaultTreeCellRenderer {
 
         if (value instanceof VNNote) {
             VNNote n = (VNNote) value;
-            String iconName = NNoteTypes.normalizeIcon(n.toNode(), n.getChildren().size() > 0, expanded);
+            String iconName = NNoteTypes.normalizeIcon(n.toNote(), n.getChildren().size() > 0, expanded);
             Icon icon = app.iconSet().icon(iconName).get();
             setIcon(icon);
         } else {

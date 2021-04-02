@@ -38,8 +38,8 @@ import net.thevpc.echo.Application;
 import net.thevpc.echo.swing.core.swing.SwingApplicationsHelper;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes;
-import net.thevpc.nuts.toolbox.nnote.gui.tree.dialogs.EditNodeDialog;
-import net.thevpc.nuts.toolbox.nnote.gui.tree.dialogs.NewNodeDialog;
+import net.thevpc.nuts.toolbox.nnote.gui.tree.dialogs.EditNoteDialog;
+import net.thevpc.nuts.toolbox.nnote.gui.tree.dialogs.NewNoteDialog;
 import net.thevpc.nuts.toolbox.nnote.gui.search.SearchDialog;
 import net.thevpc.nuts.toolbox.nnote.model.NNote;
 import net.thevpc.nuts.toolbox.nnote.model.ReturnType;
@@ -68,7 +68,7 @@ public class NNoteDocumentTree extends JPanel {
         super(new BorderLayout());
         this.sapp = sapp;
         this.app = sapp.app();
-        model = new VNNoteTreeModel(new VNNote().copyFrom(new NNote().setName("root")));
+        model = new VNNoteTreeModel(new VNNote().newDocument());
         tree = new JTree(model);
         tree.setRootVisible(false);
         tree.setDragEnabled(true);
@@ -79,9 +79,9 @@ public class NNoteDocumentTree extends JPanel {
             public void valueChanged(TreeSelectionEvent e) {
                 TreePath p = e.getNewLeadSelectionPath();
                 if (p == null) {
-                    fireOnSelectedNode(null);
+                    fireOnSelectedNote(null);
                 } else {
-                    fireOnSelectedNode((VNNote) p.getLastPathComponent());
+                    fireOnSelectedNote((VNNote) p.getLastPathComponent());
                 }
 
             }
@@ -96,7 +96,7 @@ public class NNoteDocumentTree extends JPanel {
                     TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
 //                    System.out.println("right click " + selRow + "  " + selPath);
                     if (selRow != -1) {
-                        VNNote selectedNode = ((VNNote) selPath.getLastPathComponent());
+                        VNNote selectedNote = ((VNNote) selPath.getLastPathComponent());
                         tree.setSelectionPath(selPath);
                     } else {
                         tree.clearSelection();
@@ -113,7 +113,7 @@ public class NNoteDocumentTree extends JPanel {
                     TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
 //                    System.out.println("left click " + selRow + "  " + selPath);
                     if (selRow != -1) {
-                        VNNote selectedNode = ((VNNote) selPath.getLastPathComponent());
+                        VNNote selectedNote = ((VNNote) selPath.getLastPathComponent());
                         tree.setSelectionPath(selPath);
                     } else {
                         tree.clearSelection();
@@ -148,73 +148,42 @@ public class NNoteDocumentTree extends JPanel {
         treePopupMenu = new JPopupMenu();
         tree.addPropertyChangeListener("UI", (p) -> SwingUtilities.updateComponentTreeUI(treePopupMenu));
 //        tree.setComponentPopupMenu(treePopupMenu);
-        treePopupMenu.add(new TreeAction("AddChildNode", this) {
+        treePopupMenu.add(new TreeAction("AddChildNote", this) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                NewNodeDialog a = new NewNodeDialog(sapp);
-                NNote n = a.showDialog(sapp::showError);
-                if (n != null) {
-                    VNNote current = getSelectedNode();
-                    if (current == null) {
-                        current = (VNNote) tree.getModel().getRoot();
-                    }
-                    VNNote cc = new VNNote().copyFrom(n);
-                    current.addChild(cc);
-                    updateTree();
-                    setSelectedNode(cc);
-                }
+                onAddChild();
                 //
             }
         });
-        treePopupMenu.add(new TreeAction("AddNodeBefore", this) {
+        treePopupMenu.add(new TreeAction("AddNoteBefore", this) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                NewNodeDialog a = new NewNodeDialog(sapp);
-                NNote n = a.showDialog(sapp::showError);
-                if (n != null) {
-                    VNNote current = getSelectedNode();
-                    if (current != null) {
-                        VNNote cc = new VNNote().copyFrom(n);
-                        current.addBeforeThis(cc);
-                        updateTree();
-                        setSelectedNode(cc);
-                    }
-                }
+                onAddChildBefore();
             }
 
             @Override
-            protected void onSelectedNode(VNNote node) {
-                requireSelectedNode(node);
+            protected void onSelectedNote(VNNote note) {
+                requireSelectedNote(note);
             }
         });
-        treePopupMenu.add(new TreeAction("AddNodeAfter", this) {
+        treePopupMenu.add(new TreeAction("AddNoteAfter", this) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                NewNodeDialog a = new NewNodeDialog(sapp);
-                NNote n = a.showDialog(sapp::showError);
-                if (n != null) {
-                    VNNote current = getSelectedNode();
-                    if (current != null) {
-                        VNNote cc = new VNNote().copyFrom(n);
-                        current.addAfterThis(cc);
-                        updateTree();
-                        setSelectedNode(cc);
-                    }
-                }
+                onAddChildAfter();
             }
 
             @Override
-            protected void onSelectedNode(VNNote node) {
-                requireSelectedNode(node);
+            protected void onSelectedNote(VNNote note) {
+                requireSelectedNote(note);
             }
         });
 //        JMenu addCustomMenu = new JMenu();
 //        SwingApplicationsHelper.registerButton(addCustomMenu, "Action.AddCustom", "$Action.AddCustom", app);
 //        treePopupMenu.add(addCustomMenu);
-//        addCustomMenu.add(new TreeAction("AddTodayNode") {
+//        addCustomMenu.add(new TreeAction("AddTodayNote") {
 //            @Override
 //            public void actionPerformed(ActionEvent e) {
-//                NewNodeDialog a = new NewNodeDialog(sapp);
+//                NewNoteDialog a = new NewNoteDialog(sapp);
 //                NNote n = a.showDialog(NNoteDocumentTree::showError);
 //                if (n != null) {
 //                    //
@@ -222,19 +191,19 @@ public class NNoteDocumentTree extends JPanel {
 //                //
 //            }
 //        });
-        treePopupMenu.add(new TreeAction("DuplicateNode", this) {
+        treePopupMenu.add(new TreeAction("DuplicateNote", this) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                VNNote current = getSelectedNode();
+                VNNote current = getSelectedNote();
                 if (current != null) {
-                    setSelectedNode(current.addDuplicate());
+                    setSelectedNote(current.addDuplicate());
                     updateTree();
                 }
             }
 
             @Override
-            protected void onSelectedNode(VNNote node) {
-                requireSelectedNode(node);
+            protected void onSelectedNote(VNNote note) {
+                requireSelectedNote(note);
             }
         });
         treePopupMenu.addSeparator();
@@ -244,7 +213,7 @@ public class NNoteDocumentTree extends JPanel {
         importCustomMenu.add(new TreeAction("ImportAny", this) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                VNNote current = getSelectedNode();
+                VNNote current = getSelectedNote();
                 if (current == null) {
                     current = (VNNote) tree.getModel().getRoot();
                 }
@@ -255,7 +224,7 @@ public class NNoteDocumentTree extends JPanel {
         importCustomMenu.add(new TreeAction("ImportNNote", this) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                VNNote current = getSelectedNode();
+                VNNote current = getSelectedNote();
                 if (current == null) {
                     current = (VNNote) tree.getModel().getRoot();
                 }
@@ -266,7 +235,7 @@ public class NNoteDocumentTree extends JPanel {
         importCustomMenu.add(new TreeAction("ImportCherryTree", this) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                VNNote current = getSelectedNode();
+                VNNote current = getSelectedNote();
                 if (current == null) {
                     current = (VNNote) tree.getModel().getRoot();
                 }
@@ -285,8 +254,8 @@ public class NNoteDocumentTree extends JPanel {
 //            }
 //
 //            @Override
-//            protected void onSelectedNode(VNNote node) {
-//                requireSelectedNode(node);
+//            protected void onSelectedNote(VNNote note) {
+//                requireSelectedNote(note);
 //            }
 //
 //        });
@@ -297,26 +266,26 @@ public class NNoteDocumentTree extends JPanel {
 //            }
 //
 //            @Override
-//            protected void onSelectedNode(VNNote node) {
-//                requireSelectedNode(node);
+//            protected void onSelectedNote(VNNote note) {
+//                requireSelectedNote(note);
 //            }
 //
 //        });
         treePopupMenu.addSeparator();
-        treePopupMenu.add(new TreeAction("DeleteNode", this) {
+        treePopupMenu.add(new TreeAction("DeleteNote", this) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                VNNote n = getSelectedNode();
+                VNNote n = getSelectedNote();
                 if (n != null) {
                     n.delete();
                     updateTree();
-                    setSelectedNode(null);
+                    setSelectedNote(null);
                 }
             }
 
             @Override
-            protected void onSelectedNode(VNNote node) {
-                requireSelectedNode(node);
+            protected void onSelectedNote(VNNote note) {
+                requireSelectedNote(note);
             }
 
         });
@@ -331,8 +300,8 @@ public class NNoteDocumentTree extends JPanel {
 //            }
 //
 //            @Override
-//            protected void onSelectedNode(VNNote node) {
-//                requireSelectedNode(node);
+//            protected void onSelectedNote(VNNote note) {
+//                requireSelectedNote(note);
 //            }
 //
 //        });
@@ -343,8 +312,8 @@ public class NNoteDocumentTree extends JPanel {
 //            }
 //
 //            @Override
-//            protected void onSelectedNode(VNNote node) {
-//                requireSelectedNode(node);
+//            protected void onSelectedNote(VNNote note) {
+//                requireSelectedNote(note);
 //            }
 //
 //        });
@@ -355,8 +324,8 @@ public class NNoteDocumentTree extends JPanel {
 //            }
 //
 //            @Override
-//            protected void onSelectedNode(VNNote node) {
-//                requireSelectedNode(node);
+//            protected void onSelectedNote(VNNote note) {
+//                requireSelectedNote(note);
 //            }
 //
 //        });
@@ -367,18 +336,18 @@ public class NNoteDocumentTree extends JPanel {
 //            }
 //
 //            @Override
-//            protected void onSelectedNode(VNNote node) {
-//                requireSelectedNode(node);
+//            protected void onSelectedNote(VNNote note) {
+//                requireSelectedNote(note);
 //            }
 //
 //        });
-//        moveMenu.add(new TreeAction("SortNodeAsc", this) {
+//        moveMenu.add(new TreeAction("SortNoteAsc", this) {
 //            @Override
 //            public void actionPerformed(ActionEvent e) {
 //                //
 //            }
 //        });
-//        moveMenu.add(new TreeAction("SortNodeDesc", this) {
+//        moveMenu.add(new TreeAction("SortNoteDesc", this) {
 //            @Override
 //            public void actionPerformed(ActionEvent e) {
 //                //
@@ -386,59 +355,45 @@ public class NNoteDocumentTree extends JPanel {
 //        });
 
         treePopupMenu.addSeparator();
-        treePopupMenu.add(new TreeAction("SearchNode", this) {
+        treePopupMenu.add(new TreeAction("SearchNote", this) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 onSearch();
             }
 
             @Override
-            protected void onSelectedNode(VNNote node) {
+            protected void onSelectedNote(VNNote note) {
 
             }
         });
-//        treePopupMenu.add(new TreeAction("SearchAndReplaceNode", this) {
+//        treePopupMenu.add(new TreeAction("SearchAndReplaceNote", this) {
 //            @Override
 //            public void actionPerformed(ActionEvent e) {
 //                //
 //            }
 //
 //            @Override
-//            protected void onSelectedNode(VNNote node) {
-//                requireSelectedNode(node);
+//            protected void onSelectedNote(VNNote note) {
+//                requireSelectedNote(note);
 //            }
 //        });
         treePopupMenu.addSeparator();
-        treePopupMenu.add(new TreeAction("NodeProperties", this) {
+        treePopupMenu.add(new TreeAction("NoteProperties", this) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                VNNote vn = getSelectedNode();
-                EditNodeDialog d = new EditNodeDialog(sapp, vn.toNode());
-                NNote n = d.showDialog(sapp::showError);
-                if (n != null) {
-                    vn.setName(n.getName());
-                    vn.setIcon(n.getIcon());
-                    vn.setReadOnly(n.isReadOnly());
-                    vn.setTitleForeground(n.getTitleForeground());
-                    vn.setTitleBackground(n.getTitleBackground());
-                    vn.setTitleBold(n.isTitleBold());
-                    vn.setTitleItalic(n.isTitleItalic());
-                    vn.setTitleUnderlined(n.isTitleUnderlined());
-                    tree.invalidate();
-                    tree.repaint();
-                }
+                onEditNote();
             }
 
             @Override
-            protected void onSelectedNode(VNNote node) {
-                requireSelectedNode(node);
+            protected void onSelectedNote(VNNote note) {
+                requireSelectedNote(note);
             }
 
         });
 
-        VNNote sn = getSelectedNode();
+        VNNote sn = getSelectedNote();
         for (TreeAction action : actions) {
-            action.onSelectedNode(sn);
+            action.onSelectedNote(sn);
         }
         add(new JScrollPane(tree));
     }
@@ -460,7 +415,7 @@ public class NNoteDocumentTree extends JPanel {
 
     public ReturnType openNewDocument(boolean closeCurrent) {
         if (!closeCurrent) {
-            openDocument(NNote.newDocument(null));
+            openDocument(NNote.newDocument());
             return ReturnType.SUCCESS;
         } else {
             ReturnType c = closeDocument();
@@ -472,22 +427,22 @@ public class NNoteDocumentTree extends JPanel {
         }
     }
 
-    public void openDocument(NNote node) {
-        if (!NNoteTypes.NNOTE_DOCUMENT.equals(node.getContentType())) {
-            throw new IllegalArgumentException("expected Document Node");
+    public void openDocument(NNote note) {
+        if (!NNoteTypes.NNOTE_DOCUMENT.equals(note.getContentType())) {
+            throw new IllegalArgumentException("expected Document Note");
         }
-        sapp.onChangePath(node.getContent());
+        sapp.onChangePath(note.getContent());
         SwingUtilities3.invokeLater(() -> {
-            model.setRoot(VNNote.of(node));
+            model.setRoot(VNNote.of(note));
             snapshotDocument();
         });
     }
 
-    public void setSelectedNode(VNNote node) {
+    public void setSelectedNote(VNNote note) {
         List<VNNote> elems = new ArrayList<>();
-        while (node != null) {
-            elems.add(0, node);
-            node = node.getParent();
+        while (note != null) {
+            elems.add(0, note);
+            note = note.getParent();
         }
         if (elems.isEmpty()) {
             elems.add(getDocument());
@@ -496,24 +451,28 @@ public class NNoteDocumentTree extends JPanel {
         tree.setSelectionPath(tPath);
     }
 
-    public NNoteDocumentTree addNodeSelectionListener(VNNoteSelectionListener listener) {
+    public NNoteDocumentTree addNoteSelectionListener(VNNoteSelectionListener listener) {
         if (listener != null) {
             listeners.add(listener);
         }
         return this;
     }
 
-    private void fireOnSelectedNode(VNNote node) {
+    public void fireNoteChanged(VNNote note) {
+        updateTree();
+    }
+
+    private void fireOnSelectedNote(VNNote note) {
         for (TreeAction action : actions) {
-            action.onSelectedNode(node);
+            action.onSelectedNote(note);
         }
         for (VNNoteSelectionListener listener : listeners) {
-            listener.onSelectionChanged(node);
+            listener.onSelectionChanged(note);
         }
     }
 
     public boolean isModifiedDocument() {
-        NNote newDoc = getDocument().toNode();
+        NNote newDoc = getDocument().toNote();
         boolean mod = lastSavedDocument != null && !lastSavedDocument.equals(newDoc);
         if (mod) {
 //            System.out.println("modified: " + newDoc + "\nexpected: " + lastSavedDocument);
@@ -522,7 +481,7 @@ public class NNoteDocumentTree extends JPanel {
     }
 
     public void snapshotDocument() {
-        lastSavedDocument = getDocument().toNode();
+        lastSavedDocument = getDocument().toNote();
 //        System.out.println("snapshotted:" + lastSavedDocument);
     }
 
@@ -675,7 +634,7 @@ public class NNoteDocumentTree extends JPanel {
                     canonicalPath = canonicalPath + ".nnote";
                 }
                 getDocument().setContent(canonicalPath);
-                sapp.service().saveDocument(getDocument().toNode(), sapp::askForPassword);
+                sapp.service().saveDocument(getDocument().toNote(), sapp::askForPassword);
                 sapp.onChangePath(canonicalPath);
                 snapshotDocument();
                 sapp.config().addRecentFile(canonicalPath);
@@ -699,7 +658,7 @@ public class NNoteDocumentTree extends JPanel {
         } else {
             try {
                 sapp.onChangePath(getDocument().getContent());
-                sapp.service().saveDocument(getDocument().toNode(), sapp::askForPassword);
+                sapp.service().saveDocument(getDocument().toNote(), sapp::askForPassword);
                 return ReturnType.SUCCESS;
             } catch (Exception ex) {
                 sapp.showError(ex);
@@ -714,6 +673,8 @@ public class NNoteDocumentTree extends JPanel {
 //        }
 //        return app.iconSet().icon(name).get();
 //    }
+    
+    
     public void updateTree() {
 //        model = new VNNoteTreeModel((VNNote) model.getRoot());
 //        tree = new JTree(model);
@@ -724,7 +685,7 @@ public class NNoteDocumentTree extends JPanel {
         tree.setSelectionPath(o);
     }
 
-    public VNNote getSelectedNodeOrDocument() {
+    public VNNote getSelectedNoteOrDocument() {
         TreePath p = tree.getSelectionPath();
         if (p != null) {
             VNNote c = (VNNote) p.getLastPathComponent();
@@ -735,7 +696,7 @@ public class NNoteDocumentTree extends JPanel {
         return (VNNote) tree.getModel().getRoot();
     }
 
-    public VNNote getSelectedNode() {
+    public VNNote getSelectedNote() {
         TreePath p = tree.getSelectionPath();
         if (p != null) {
             VNNote c = (VNNote) p.getLastPathComponent();
@@ -746,9 +707,61 @@ public class NNoteDocumentTree extends JPanel {
         return null;
     }
 
+    public void onAddChildAfter() {
+        NewNoteDialog a = new NewNoteDialog(sapp);
+        NNote n = a.showDialog(sapp::showError);
+        if (n != null) {
+            VNNote current = getSelectedNote();
+            if (current != null) {
+                VNNote cc = new VNNote().copyFrom(n);
+                sapp.service().prepareChildForInsertion(current, cc);
+                current.addAfterThis(cc);
+                updateTree();
+                setSelectedNote(cc);
+            }
+        }
+    }
+
+    public void onAddChildBefore() {
+        NewNoteDialog a = new NewNoteDialog(sapp);
+        NNote n = a.showDialog(sapp::showError);
+        if (n != null) {
+            VNNote current = getSelectedNote();
+            if (current != null) {
+                VNNote cc = new VNNote().copyFrom(n);
+                sapp.service().prepareChildForInsertion(current, cc);
+                current.addBeforeThis(cc);
+                updateTree();
+                setSelectedNote(cc);
+            }
+        }
+    }
+
+    public void onAddChild() {
+        NewNoteDialog a = new NewNoteDialog(sapp);
+        NNote n = a.showDialog(sapp::showError);
+        if (n != null) {
+            VNNote current = getSelectedNoteOrDocument();
+            VNNote cc = new VNNote().copyFrom(n);
+            sapp.service().prepareChildForInsertion(current, cc);
+            current.addChild(cc);
+            updateTree();
+            setSelectedNote(cc);
+        }
+    }
+
+    public void onEditNote() {
+        NNote n = new EditNoteDialog(sapp, getSelectedNote()).showDialog();
+        if (n != null) {
+            tree.invalidate();
+            tree.repaint();
+            fireOnSelectedNote(getSelectedNote());
+        }
+    }
+
     public void onSearch() {
         SearchDialog dialog = new SearchDialog(sapp);
-        dialog.showDialogAndSearch(sapp, getSelectedNodeOrDocument());
+        dialog.showDialogAndSearch(sapp, getSelectedNoteOrDocument());
     }
 
 //    public void expandTree(JTree tree) {
@@ -756,9 +769,9 @@ public class NNoteDocumentTree extends JPanel {
 //                = (VNNoteTreeModel) tree.getModel().getRoot();
 //        Enumeration e = root.breadthFirstEnumeration();
 //        while (e.hasMoreElements()) {
-//            Object node = e.nextElement();
-////            if(node.isLeaf()) continue;
-////            int row = tree.getRowForPath(new TreePath(node.getPath()));
+//            Object note = e.nextElement();
+////            if(note.isLeaf()) continue;
+////            int row = tree.getRowForPath(new TreePath(note.getPath()));
 ////            tree.expandRow(row);
 //        }
 //    }

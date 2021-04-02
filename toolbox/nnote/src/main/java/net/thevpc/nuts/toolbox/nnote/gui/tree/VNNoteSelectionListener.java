@@ -13,6 +13,6 @@ import net.thevpc.nuts.toolbox.nnote.model.VNNote;
  */
 public interface VNNoteSelectionListener {
 
-    void onSelectionChanged(VNNote node);
+    void onSelectionChanged(VNNote note);
     
 }

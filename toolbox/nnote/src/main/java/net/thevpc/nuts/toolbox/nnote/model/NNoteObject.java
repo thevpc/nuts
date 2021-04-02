@@ -18,6 +18,10 @@ public class NNoteObject {
 
     private List<NNoteField> fields;
 
+    public List<NNoteField> findFields(String name) {
+        return fields==null?null:fields.stream().filter(x->x!=null && Objects.equals(name, x.getName())).collect(Collectors.toList());
+    }
+    
     public List<NNoteField> getFields() {
         return fields;
     }

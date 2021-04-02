@@ -10,7 +10,6 @@ import java.awt.Dimension;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import net.thevpc.echo.Application;
 
@@ -61,5 +60,15 @@ public class TextAreaComponent extends JPanel implements FormComponent {
             };
             jtf.getDocument().addDocumentListener(listener);
         }
+    }
+
+    @Override
+    public void setEditable(boolean b) {
+        jtf.setEditable(b);
+    }
+
+    @Override
+    public boolean isEditable() {
+        return jtf.isEditable();
     }
 }

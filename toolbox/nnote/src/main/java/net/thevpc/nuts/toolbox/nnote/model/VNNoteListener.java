@@ -15,5 +15,5 @@ public interface VNNoteListener {
 
     void onRemoved(VNNote child,VNNote parent);
 
-    void onChanged(VNNote node,String prop, Object oval, Object nval);
+    void onChanged(VNNote note,String prop, Object oval, Object nval);
 }

@@ -8,6 +8,7 @@ package net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.objectlist;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -32,7 +33,7 @@ import net.thevpc.nuts.toolbox.nnote.gui.editor.NNoteEditorTypeComponent;
 public class NNoteObjectDocumentComponent extends JPanel implements NNoteEditorTypeComponent {
 
     private JComponentList<NNoteObjectExt> componentList;
-    private VNNote currentNode;
+    private VNNote currentNote;
     private NNoteObjectDocument dynamicDocument;
     private NNoteObjectTracker dynamicObjectTrackerAdapter = new NNoteObjectTracker() {
         @Override
@@ -48,7 +49,9 @@ public class NNoteObjectDocumentComponent extends JPanel implements NNoteEditorT
     };
     private JToolBar bar = new JToolBar();
     private NNoteGuiApp sapp;
-        private SwingApplicationsHelper.Tracker gtracker;
+    private SwingApplicationsHelper.Tracker gtracker;
+    private boolean editable = true;
+    private JButton addToObjectList;
 
     public NNoteObjectDocumentComponent(NNoteGuiApp sapp) {
         super(new BorderLayout());
@@ -75,17 +78,23 @@ public class NNoteObjectDocumentComponent extends JPanel implements NNoteEditorT
             public void uninstallComponent(JComponent comp) {
                 ((Item) comp).onUninstall();
             }
+
+            @Override
+            public void setEditable(JComponent component, boolean editable, int pos, int size) {
+                ((Item) component).setEditable(editable);
+            }
+            
         });
         JScrollPane scrollPane = new JScrollPane(componentList);
-        scrollPane.setWheelScrollingEnabled(true); 
+        scrollPane.setWheelScrollingEnabled(true);
         add(scrollPane, BorderLayout.CENTER);
 
         Box hb = Box.createHorizontalBox();
         hb.add(Box.createHorizontalGlue());
         hb.add(bar);
         bar.setFloatable(false);
-        bar.add(new JButton(
-                this.gtracker.registerStandardAction(()->onAddObject(),"addToObjectList")));
+        bar.add(addToObjectList=new JButton(
+                this.gtracker.registerStandardAction(() -> onAddObject(), "addToObjectList")));
         add(hb, BorderLayout.NORTH);
         refreshView();
 
@@ -110,10 +119,11 @@ public class NNoteObjectDocumentComponent extends JPanel implements NNoteEditorT
     }
 
     @Override
-    public void setNode(VNNote node, NNoteGuiApp sapp) {
-        this.currentNode = node;
-        this.dynamicDocument = sapp.service().parseDynamicDocument(node.getContent());
+    public void setNote(VNNote note, NNoteGuiApp sapp) {
+        this.currentNote = note;
+        this.dynamicDocument = sapp.service().parseObjectDocument(note.getContent());
         componentList.setAllObjects(createAllList());
+        setEditable(!note.isReadOnly());
         refreshView();
     }
 
@@ -130,7 +140,7 @@ public class NNoteObjectDocumentComponent extends JPanel implements NNoteEditorT
     }
 
     private void onAddObject() {
-        if (currentNode != null) {
+        if (currentNote != null) {
             dynamicDocument.addValue(dynamicDocument.getDescriptor().createObject());
             onComponentsListChanged();
         }
@@ -146,7 +156,7 @@ public class NNoteObjectDocumentComponent extends JPanel implements NNoteEditorT
     }
 
     public void onValueChangedImpl() {
-        currentNode.setContent(
+        currentNote.setContent(
                 sapp.service().stringifyDescriptor(this.dynamicDocument)
         );
     }
@@ -215,6 +225,22 @@ public class NNoteObjectDocumentComponent extends JPanel implements NNoteEditorT
         }
     }
 
+    @Override
+    public void setEditable(boolean b) {
+        if (currentNote != null && currentNote.isReadOnly()) {
+            b = false;
+        }
+        this.editable=b;
+        this.addToObjectList.setEnabled(b);
+        this.componentList.setEditable(b);
+    }
+
+    @Override
+    public boolean isEditable() {
+        return editable;
+    }
+    
+
     private class Item extends JPanel {
 
         private NNoteObjectComponent e;
@@ -231,24 +257,32 @@ public class NNoteObjectDocumentComponent extends JPanel implements NNoteEditorT
             hb.add(Box.createHorizontalGlue());
             hb.add(bar);
             bar.setFloatable(false);
-            global1 = prepareButton(new JButton(stracker.registerStandardAction(()->onRemoveAllObjects(),"clearObjectList")));
-            bar.add(prepareButton(new JButton(stracker.registerStandardAction(()->onAddObjectAt(pos),"addToObjectList"))));
-            bar.add(prepareButton(new JButton(stracker.registerStandardAction(()->onDuplicateObjectAt(pos),"duplicateInObjectList"))));
+            global1 = prepareButton(new JButton(stracker.registerStandardAction(() -> onRemoveAllObjects(), "clearObjectList")));
+            bar.add(prepareButton(new JButton(stracker.registerStandardAction(() -> onAddObjectAt(pos), "addToObjectList"))));
+            bar.add(prepareButton(new JButton(stracker.registerStandardAction(() -> onDuplicateObjectAt(pos), "duplicateInObjectList"))));
             bar.addSeparator();
-            bar.add(prepareButton(new JButton(stracker.registerStandardAction(()->onRemoveObjectAt(pos),"removeInObjectList"))));
+            bar.add(prepareButton(new JButton(stracker.registerStandardAction(() -> onRemoveObjectAt(pos), "removeInObjectList"))));
             bar.addSeparator();
-            bar.add(prepareButton(new JButton(stracker.registerStandardAction(()->onMoveUpAt(pos),"moveUpInObjectList"))));
-            bar.add(prepareButton(new JButton(stracker.registerStandardAction(()->onMoveDownAt(pos),"movedownInObjectList"))));
+            bar.add(prepareButton(new JButton(stracker.registerStandardAction(() -> onMoveUpAt(pos), "moveUpInObjectList"))));
+            bar.add(prepareButton(new JButton(stracker.registerStandardAction(() -> onMoveDownAt(pos), "moveDownInObjectList"))));
             bar.addSeparator();
             bar.add(global1);
             add(hb, BorderLayout.NORTH);
             add(e, BorderLayout.CENTER);
+        }
+        
+        public void setEditable(boolean b){
+            e.setEditable(b);
+            for (Action action : stracker.getActions()) {
+                action.setEnabled(b);
+            }
         }
 
         public JButton prepareButton(JButton b) {
             b.setHideActionText(true);
             return b;
         }
+
         public void setValue(NNoteObjectExt value, int pos, int size) {
             this.pos = pos;
             global1.setVisible(pos == 0);

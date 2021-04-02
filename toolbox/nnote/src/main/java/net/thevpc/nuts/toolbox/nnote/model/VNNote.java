@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
 
 /**
  *
@@ -38,8 +41,13 @@ public class VNNote {
     private boolean titleBold;
     private boolean titleItalic;
     private boolean titleUnderlined;
+    private boolean titleStriked;
     private String titleForeground;
     private String titleBackground;
+
+    public static VNNote newDocument() {
+        return of(NNote.newDocument());
+    }
 
     public static VNNote of(NNote n) {
         return new VNNote().copyFrom(n);
@@ -204,11 +212,11 @@ public class VNNote {
         }
     }
 
-    protected void fireChangeEvent(VNNote node, String prop, Object oval, Object nval) {
+    protected void fireChangeEvent(VNNote note, String prop, Object oval, Object nval) {
         if (listener != null) {
-            this.listener.onChanged(node, prop, oval, nval);
+            this.listener.onChanged(note, prop, oval, nval);
         } else if (this.parent != null) {
-            this.parent.fireChangeEvent(node, prop, oval, nval);
+            this.parent.fireChangeEvent(note, prop, oval, nval);
         }
     }
 
@@ -247,6 +255,7 @@ public class VNNote {
         setTitleBold(other.isTitleBold());
         setTitleItalic(other.isTitleItalic());
         setTitleUnderlined(other.isTitleUnderlined());
+        setTitleStriked(other.isTitleStriked());
 
         List<VNNote> newChildren = new ArrayList<>();
         for (NNote nn : other.getChildren()) {
@@ -256,7 +265,7 @@ public class VNNote {
         return this;
     }
 
-    public NNote toNode() {
+    public NNote toNote() {
         NNote n = new NNote();
         n.setName(this.getName());
         n.setIcon(this.getIcon());
@@ -275,10 +284,11 @@ public class VNNote {
         n.setTitleBold(isTitleBold());
         n.setTitleItalic(isTitleItalic());
         n.setTitleUnderlined(isTitleUnderlined());
+        n.setTitleStriked(isTitleStriked());
 
         List<NNote> newChildren = new ArrayList<>();
         for (VNNote nn : getChildren()) {
-            newChildren.add(nn.toNode());
+            newChildren.add(nn.toNote());
         }
         n.setChildren(newChildren);
         n.setProperties(getProperties() == null ? new LinkedHashMap<>() : new LinkedHashMap<>(getProperties()));
@@ -334,7 +344,7 @@ public class VNNote {
     }
 
     public VNNote duplicate() {
-        return new VNNote().copyFrom(toNode());
+        return new VNNote().copyFrom(toNote());
     }
 
     public boolean delete() {
@@ -405,6 +415,15 @@ public class VNNote {
         this.titleUnderlined = titleUnderlined;
     }
 
+    public boolean isTitleStriked() {
+        return titleStriked;
+    }
+
+    public void setTitleStriked(boolean titleStriked) {
+        this.titleStriked = titleStriked;
+    }
+    
+
     public String getTitleForeground() {
         return titleForeground;
     }
@@ -422,8 +441,29 @@ public class VNNote {
     }
 
     public VNNote copy() {
-        return VNNote.of(toNode());
+        return VNNote.of(toNote());
     }
-    
+
+    public void moveDown(int from) {
+        OtherUtils.switchListValues(children, from, from + 1);
+    }
+
+    public void moveUp(int from) {
+        OtherUtils.switchListValues(children, from, from - 1);
+    }
+
+    public void moveLast(int from) {
+        if (from >= 0 && from < children.size() - 1) {
+            VNNote a = children.remove(from);
+            children.add(a);
+        }
+    }
+
+    public void moveFirst(int from) {
+        if (from > 0 && from <= children.size() - 1) {
+            VNNote a = children.remove(from);
+            children.add(0, a);
+        }
+    }
 
 }

@@ -38,6 +38,7 @@ import net.thevpc.nuts.toolbox.nnote.gui.util.URLComponent;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteObjectDocument;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteField;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteFieldDescriptor;
+import net.thevpc.nuts.toolbox.nnote.model.NNoteObject;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteObjectFieldType;
 
 /**
@@ -46,17 +47,21 @@ import net.thevpc.nuts.toolbox.nnote.model.NNoteObjectFieldType;
  */
 class NNoteFieldDescriptorPanel {
 
+    private NNoteObjectDocument document;
+    private NNoteObject object;
+    private NNoteField field;
+
     private NNoteFieldDescriptor descr;
     private JLabel label;
     private JComponent component;
-    private NNoteObjectDocument document;
+
     private NNoteObjectTracker objectTracker;
     private NNoteGuiApp sapp;
-    private NNoteField field;
     private SwingApplicationsHelper.Tracker tracker;
     private List<AbstractButton> buttons = new ArrayList<>();
 
     private JMenu changeTypeMenu;
+    private boolean editable=true;
 
     //        ButtonGroup bg;
     public NNoteFieldDescriptorPanel(NNoteGuiApp sapp, NNoteFieldDescriptor descr, NNoteObjectTracker objectTracker) {
@@ -91,6 +96,10 @@ class NNoteFieldDescriptorPanel {
         jPopupMenu.addSeparator();
         jPopupMenu.add(createAction("moveUpField", () -> onMoveUpField()));
         jPopupMenu.add(createAction("moveDownField", () -> onMoveDownField()));
+        jPopupMenu.addSeparator();
+        jPopupMenu.add(createAction("hideField", () -> onHideField()));
+        jPopupMenu.add(createAction("unhideFields", () -> onUnhideFields()));
+        
         FormComponent comp = createFormComponent(descr.getType());
         comp.install(sapp.app());
         comp.setSelectValues(resolveValues(descr));
@@ -146,14 +155,16 @@ class NNoteFieldDescriptorPanel {
         ((FormComponent) component).setContentString(s);
     }
 
-    public void setValue(NNoteField field, NNoteObjectDocument document) {
+    public void setValue(NNoteField field, NNoteObject object, NNoteObjectDocument document) {
         this.field = field;
+        this.object = object;
         this.document = document;
         String s = field.getValue();
         if (s == null) {
             s = "";
         }
         setStringValue(s);
+        ((FormComponent) component).setEditable(isEditable());
     }
 
     public NNoteField getValue() {
@@ -231,6 +242,26 @@ class NNoteFieldDescriptorPanel {
     public void onDescriptorMoveUpField() {
         if (document != null) {
             document.moveFieldUp(descr.getName());
+            callOnStructureChanged();
+        }
+    }
+
+    public void onHideField() {
+        if (document != null) {
+            if(field!=null){
+                field.setHidden(true);
+            }
+            callOnStructureChanged();
+        }
+    }
+
+    public void onUnhideFields() {
+        if (document != null) {
+            if(object!=null){
+                for (NNoteField f : object.getFields()) {
+                    f.setHidden(false);
+                }
+            }
             callOnStructureChanged();
         }
     }
@@ -359,4 +390,19 @@ class NNoteFieldDescriptorPanel {
         tracker.registerStandardAction(a, id);
         return a;
     }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+        for (AbstractButton button : buttons) {
+            button.setEnabled(editable);
+        }
+        for (Action action : tracker.getActions()) {
+            action.setEnabled(editable);
+        }
+    }
+    
 }

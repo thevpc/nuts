@@ -90,13 +90,13 @@ public class NNoteGuiApp {
     public String getValidLastOpenPath() {
         String p = config.getLastOpenPath();
         if (!OtherUtils.isBlank(p)) {
-            File f=new File(p);
-            if(f.isDirectory()){
+            File f = new File(p);
+            if (f.isDirectory()) {
                 return f.getPath();
             }
-            if(f.isFile()){
+            if (f.isFile()) {
                 File parentFile = f.getParentFile();
-                if(parentFile!=null){
+                if (parentFile != null) {
                     return parentFile.getPath();
                 }
             }
@@ -197,18 +197,20 @@ public class NNoteGuiApp {
     public void run() {
 //        AppEditorThemes editorThemes = new AppEditorThemes();
         app = SwingApplications.Apps.Default();
+        AppTools tools = app.tools();
+        tools.config().configurableLargeIcon().set(false);
+        tools.config().configurableTooltip().set(false);
         NNoteSplashScreen.get().tic();
         app.builder().mainWindowBuilder().get().workspaceFactory().set(MyDoggyAppDockingWorkspace.factory());
         app.i18n().bundles().add("net.thevpc.nuts.toolbox.nnote.messages.locale-independent");
         app.i18n().bundles().add("net.thevpc.nuts.toolbox.nnote.messages.messages");
-        String[] supportedIconSetIds = new String[]{"feather-black", "feather-white", "icons8-color"};
-        for (String iconSetId : supportedIconSetIds) {
-            app.iconSets().add(new ResourcesIconSet(iconSetId + "-16", 16, 16, "/net/thevpc/nuts/toolbox/nnote/iconsets/" + iconSetId,
-                    "png", getClass().getClassLoader()));
-            app.iconSets().add(new ResourcesIconSet(iconSetId + "-24", 24, 24, "/net/thevpc/nuts/toolbox/nnote/iconsets/" + iconSetId,
-                    "png", getClass().getClassLoader()));
-            app.iconSets().add(new ResourcesIconSet(iconSetId + "-32", 32, 32, "/net/thevpc/nuts/toolbox/nnote/iconsets/" + iconSetId,
-                    "png", getClass().getClassLoader()));
+        for (String iconSetId : new String[]{"feather-black", "feather-white"}) {
+            for (int iconSize : new int[]{16, 24, 32}) {
+                app.iconSets().add(new ResourcesIconSet(
+                        iconSetId + "-" + iconSize, iconSize,
+                        "/net/thevpc/nuts/toolbox/nnote/iconsets/" + iconSetId,
+                        getClass().getClassLoader()));
+            }
         }
         NNoteSplashScreen.get().tic();
         service = new NNoteService(appContext, app.i18n());
@@ -241,8 +243,8 @@ public class NNoteGuiApp {
         tree = new NNoteDocumentTree(this);
         NNoteEditor content = new NNoteEditor(this, false);
         NNoteSplashScreen.get().tic();
-        tree.addNodeSelectionListener(n -> content.setNode(n));
-        content.addListener(n -> tree.setSelectedNode(n));
+        tree.addNoteSelectionListener(n -> content.setNote(n));
+        content.addListener(n -> tree.setSelectedNote(n));
         resultResults = new SearchResultPanel(this);
 
 //        NNoteDocumentTree favourites = new NNoteDocumentTree(this);
@@ -259,8 +261,7 @@ public class NNoteGuiApp {
         ws.addContent("Content", content);
 
         NNoteSplashScreen.get().tic();
-        AppTools tools = app.tools();
-
+        
         NNoteSplashScreen.get().tic();
         tools.addHorizontalGlue("/mainWindow/statusBar/Default/glue");
         NNoteSplashScreen.get().tic();
@@ -338,12 +339,13 @@ public class NNoteGuiApp {
                 "/mainWindow/menuBar/File/Exit");
 
         tools.addFolder("/mainWindow/menuBar/Edit");
-        AppToolAction a=tools.addAction(new NNoteAction("Search", this) {
+        AppToolAction a = tools.addAction(new NNoteAction("Search", this) {
             {
 //                putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control shift f"));
 //                putValue(Action.MNEMONIC_KEY, KeyStroke.getKeyStroke("control shift f"));
                 putValue(Action.MNEMONIC_KEY, KeyEvent.VK_F);
             }
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 tree.onSearch();
@@ -351,7 +353,7 @@ public class NNoteGuiApp {
         }, "/mainWindow/menuBar/Edit/Search"/*, "/mainWindow/toolBar/Default/SaveAs"*/);
         a.mnemonic().set(KeyEvent.VK_F);
         a.accelerator().set("control shift F");
-        
+
 //        tools.addSeparator("/mainWindow/toolBar/Default/Separator1");
 //        tools.addAction("/mainWindow/menuBar/Edit/Copy", "/mainWindow/toolBar/Default/Copy");
 //        tools.addAction("/mainWindow/menuBar/Edit/Cut", "/mainWindow/toolBar/Default/Cut");
@@ -384,7 +386,7 @@ public class NNoteGuiApp {
         bindConfig();
         NNoteSplashScreen.get().tic();
         tree.openNewDocument(false);
-//        folders.openDocument(service().createSampleDocumentNode());
+//        folders.openDocument(service().createSampleDocumentNote());
         NNoteSplashScreen.get().tic();
         NNoteSplashScreen.get().closeSplash();
         app.waitFor();

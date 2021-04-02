@@ -23,10 +23,12 @@ public class NNoteDocumentNNoteEditorTypeComponent extends JPanel implements NNo
 
     private JLabel file;
     private JLabel error;
+    private VNNote currentNote;
+    private boolean editable = true;
 
     public NNoteDocumentNNoteEditorTypeComponent() {
         super(new BorderLayout());
-        add(new JLabel("n-node-document"), BorderLayout.NORTH);
+        add(new JLabel("nnote-document"), BorderLayout.NORTH);
         add(file = new JLabel(""), BorderLayout.CENTER);
         add(error = new JLabel(""), BorderLayout.SOUTH);
     }
@@ -41,21 +43,33 @@ public class NNoteDocumentNNoteEditorTypeComponent extends JPanel implements NNo
     }
 
     @Override
-    public void setNode(VNNote node, NNoteGuiApp sapp) {
+    public void setNote(VNNote note, NNoteGuiApp sapp) {
         try {
-            if (node.getContent() == null || node.getContent().length() == 0) {
+            this.currentNote = note;
+            if (note.getContent() == null || note.getContent().length() == 0) {
                 error.setText("missing file");
             } else {
-                NNote o = sapp.service().loadDocument(new File(node.getContent()),sapp::askForPassword);
-                node.removeAllChildren();//TODO FIX ME
+                NNote o = sapp.service().loadDocument(new File(note.getContent()), sapp::askForPassword);
+                note.removeAllChildren();//TODO FIX ME
                 for (NNote c : o.getChildren()) {
-                    node.addChild(VNNote.of(c));
+                    note.addChild(VNNote.of(c));
                 }
                 error.setText(o.error == null ? "" : o.error.getEx().toString());
             }
         } catch (Exception ex) {
             error.setText(ex.toString());
         }
+    }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean b) {
+        if (currentNote != null && currentNote.isReadOnly()) {
+            b = false;
+        }
+        this.editable = b;
     }
 
 }

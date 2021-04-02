@@ -22,7 +22,7 @@ import net.thevpc.nuts.toolbox.nnote.gui.editor.NNoteEditorTypeComponent;
 public class StringNNoteEditorTypeComponentOld extends JPanel implements NNoteEditorTypeComponent {
 
     private JTextField text = new JTextField();
-    private VNNote currentNode;
+    private VNNote currentNote;
 
     public StringNNoteEditorTypeComponentOld() {
         GridBagLayoutSupport.of("[^$-==item]")
@@ -31,8 +31,8 @@ public class StringNNoteEditorTypeComponentOld extends JPanel implements NNoteEd
         text.getDocument().addDocumentListener(new AnyDocumentListener() {
             @Override
             public void anyChange(DocumentEvent e) {
-                if (currentNode != null) {
-                    currentNode.setContent(text.getText());
+                if (currentNote != null) {
+                    currentNote.setContent(text.getText());
                 }
             }
         });
@@ -49,14 +49,26 @@ public class StringNNoteEditorTypeComponentOld extends JPanel implements NNoteEd
     }
 
     @Override
-    public void setNode(VNNote node,NNoteGuiApp sapp) {
-        this.currentNode = node;
-        if (node == null) {
+    public void setNote(VNNote note,NNoteGuiApp sapp) {
+        this.currentNote = note;
+        if (note == null) {
             text.setText("");
         } else {
-            text.setText(node.getContent());
+            text.setText(note.getContent());
         }
 
     }
 
+      @Override
+    public void setEditable(boolean b) {
+        if (currentNote != null && currentNote.isReadOnly()) {
+            b = false;
+        }
+        text.setEditable(b);
+    }
+
+    @Override
+    public boolean isEditable() {
+        return text.isEditable();
+    }
 }

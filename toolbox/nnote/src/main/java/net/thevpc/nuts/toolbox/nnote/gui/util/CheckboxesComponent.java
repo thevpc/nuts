@@ -27,6 +27,7 @@ public class CheckboxesComponent extends JPanel implements FormComponent {
     private Runnable callback;
     private Box box;
     private ItemListener itemListener;
+    private boolean editable=true;
 
     public CheckboxesComponent() {
         super(new BorderLayout());
@@ -68,6 +69,7 @@ public class CheckboxesComponent extends JPanel implements FormComponent {
             }
             s=s.trim();
             JCheckBox cv = new JCheckBox(s);
+            cv.setEnabled(isEditable());
             cv.addItemListener(itemListener);
             checkBoxes.add(cv);
             box.add(cv);
@@ -114,4 +116,18 @@ public class CheckboxesComponent extends JPanel implements FormComponent {
     public void setFormChangeListener(Runnable callback) {
         this.callback = callback;
     }
+
+    @Override
+    public void setEditable(boolean b) {
+        for (JCheckBox checkBoxe : checkBoxes) {
+            checkBoxe.setEnabled(isEditable());
+        }
+    }
+
+    @Override
+    public boolean isEditable() {
+        return editable;
+    }
+    
+    
 }

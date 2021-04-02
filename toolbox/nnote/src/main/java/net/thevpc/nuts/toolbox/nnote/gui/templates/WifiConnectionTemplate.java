@@ -16,6 +16,7 @@ import net.thevpc.nuts.toolbox.nnote.model.NNoteFieldDescriptor;
 import net.thevpc.nuts.toolbox.nnote.model.NNote;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteObjectDescriptor;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteObjectFieldType;
+import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
 
 /**
  *
@@ -30,7 +31,7 @@ public class WifiConnectionTemplate implements NNoteTemplate {
 
     @Override
     public void prepare(NNote n, NNoteGuiApp sapp) {
-        String prefix = "NodeTypeFamily." + getId() + ".";
+        String prefix = "NNoteTypeFamily." + getId() + ".";
         I18n i18n = sapp.app().i18n();
         NNoteObjectDocument doc = new NNoteObjectDocument().setDescriptor(new NNoteObjectDescriptor()
                 .addField(new NNoteFieldDescriptor().setName(i18n.getString(prefix + "title")).setType(NNoteObjectFieldType.TEXT))
@@ -48,6 +49,9 @@ public class WifiConnectionTemplate implements NNoteTemplate {
                 .addField(new NNoteFieldDescriptor().setName(i18n.getString(prefix + "notes")).setType(NNoteObjectFieldType.TEXTAREA)));
         n.setContentType(NNoteTypes.OBJECT_LIST);
         n.setContent(sapp.service().stringifyDescriptor(doc.setValues(new ArrayList<>(Arrays.asList(doc.getDescriptor().createObject())))));
+        if(OtherUtils.isBlank(n.getIcon())){
+            n.setIcon("wifi");
+        }
     }
 
 }

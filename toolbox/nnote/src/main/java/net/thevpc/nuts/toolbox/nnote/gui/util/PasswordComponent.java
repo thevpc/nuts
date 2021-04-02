@@ -72,4 +72,12 @@ public class PasswordComponent extends JPanel implements FormComponent {
         }
     }
 
+    public void setEditable(boolean b){
+        pf.setEditable(b);
+    }
+    
+    public boolean isEditable(){
+        return pf.isEditable();
+    }
+    
 }

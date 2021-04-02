@@ -19,5 +19,9 @@ public interface NNoteEditorTypeComponent {
 
     void uninstall();
 
-    public void setNode(VNNote node, NNoteGuiApp sapp);
+    public void setNote(VNNote note, NNoteGuiApp sapp);
+
+    public void setEditable(boolean b);
+
+    public boolean isEditable();
 }

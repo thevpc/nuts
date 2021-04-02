@@ -45,6 +45,15 @@ public class FileComponent extends JPanel {
     public JTextField getTextField() {
         return textField;
     }
+    
+    public boolean  isEditable(){
+        return show.isEnabled() && textField.isEditable();
+    }
+    public void setEditable(boolean b){
+        show.setEnabled(b);
+        textField.setEditable(b);
+    }
+    
 
     private void onShowDialog() throws HeadlessException {
         JFileChooser c = new JFileChooser();

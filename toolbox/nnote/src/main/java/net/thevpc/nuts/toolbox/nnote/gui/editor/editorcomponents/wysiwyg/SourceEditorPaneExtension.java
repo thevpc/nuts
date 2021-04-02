@@ -16,6 +16,6 @@ public interface SourceEditorPaneExtension {
 
     public void uninstall(JEditorPaneBuilder editorBuilder, Application app);
     
-    public void prepareEditor(JEditorPaneBuilder editorBuilder, Application app);
+    public void prepareEditor(JEditorPaneBuilder editorBuilder, boolean compactMode, Application app);
 
 }

@@ -27,18 +27,18 @@ public abstract class TreeAction extends AbstractAction {
         //            onLocaleChanged();
     }
 
-    protected boolean isNonRootNode(VNNote node) {
-        return node != null && node != outer.tree.getModel().getRoot();
+    protected boolean isNonRootNote(VNNote note) {
+        return note != null && note != outer.tree.getModel().getRoot();
     }
 
-    protected void requireSelectedNode(VNNote node) {
-        boolean nonRootSelected = isNonRootNode(node);
-        //            System.out.println("requireSelectedNode " + node);
+    protected void requireSelectedNote(VNNote note) {
+        boolean nonRootSelected = isNonRootNote(note);
+        //            System.out.println("requireSelectedNote " + note);
         setEnabled(nonRootSelected);
         putValue("visible", nonRootSelected);
     }
 
-    protected void onSelectedNode(VNNote node) {
+    protected void onSelectedNote(VNNote note) {
     }
 
     protected void onLocaleChanged() {

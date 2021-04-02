@@ -76,4 +76,12 @@ public class URLComponent2 extends JPanel {
         void onUrlChange(String newURL);
     }
 
+    public void setEditable(boolean b) {
+        textField.setEditable(b);
+    }
+
+    public boolean isEditable() {
+        return textField.isEditable();
+    }
+
 }

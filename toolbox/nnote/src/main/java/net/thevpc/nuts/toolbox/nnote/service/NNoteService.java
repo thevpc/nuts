@@ -14,10 +14,14 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.xml.parsers.DocumentBuilder;
@@ -40,6 +44,7 @@ import net.thevpc.nuts.toolbox.nnote.model.NNote;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteObjectDescriptor;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteFieldDescriptor;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteObjectFieldType;
+import net.thevpc.nuts.toolbox.nnote.model.NNoteListModel;
 import net.thevpc.nuts.toolbox.nnote.model.VNNote;
 import net.thevpc.nuts.toolbox.nnote.service.search.DefaultVNoteSearchFilter;
 import net.thevpc.nuts.toolbox.nnote.service.search.VNNoteSearchResult;
@@ -58,7 +63,7 @@ import org.xml.sax.SAXParseException;
 
 public class NNoteService {
 
-    public static final String SECURE_ALGO=NNoteObfuscatorDefault.ID;
+    public static final String SECURE_ALGO = NNoteObfuscatorDefault.ID;
     private NutsApplicationContext context;
     private I18n i18n;
 
@@ -71,17 +76,17 @@ public class NNoteService {
         return context;
     }
 
-    public NNote shrinkNode(NNote n) {
+    public NNote shrinkNote(NNote n) {
         if (NNoteTypes.NNOTE_DOCUMENT.equals(n.getContentType())) {
             n.getChildren().clear();
         }
         for (NNote c : n.getChildren()) {
-            shrinkNode(c);
+            shrinkNote(c);
         }
         return n;
     }
 
-    public NNote expandNode(NNote n, PasswordHandler passwordHandler) {
+    public NNote expandNote(NNote n, PasswordHandler passwordHandler) {
         if (NNoteTypes.NNOTE_DOCUMENT.equals(n.getContentType())) {
             String c = n.getContent();
             c = c == null ? "" : c.trim();
@@ -96,7 +101,7 @@ public class NNoteService {
             }
         }
         for (NNote c : n.getChildren()) {
-            expandNode(c, passwordHandler);
+            expandNote(c, passwordHandler);
         }
         return n;
     }
@@ -105,13 +110,13 @@ public class NNoteService {
         return new File(getContext().getWorkspace().locations().getStoreLocation(NutsStoreLocation.VAR));
     }
 
-    public NNote createSampleDocumentNode() {
-        NNote n = createDocumentNode();
+    public NNote createSampleDocumentNote() {
+        NNote n = createDocumentNote();
         for (String contentType : NNoteTypes.ALL_CONTENT_TYPES) {
             NNote cc = new NNote().setName(
-                    i18n.getString("NodeTypeFamily." + contentType)
+                    i18n.getString("NNoteTypeFamily." + contentType)
             ).setContentType(contentType);
-            if (NNoteTypes.NODE_LIST.equals(contentType)) {
+            if (NNoteTypes.NOTE_LIST.equals(contentType)) {
                 for (int i = 0; i < 5; i++) {
                     NNote cc2 = new NNote().setName(NNoteTypes.STRING).setContentType(NNoteTypes.STRING);
                     cc.getChildren().add(cc2);
@@ -171,23 +176,39 @@ public class NNoteService {
         return n;
     }
 
-    public NNote createDocumentNode() {
+    public NNote createDocumentNote() {
         return new NNote().setContentType(NNoteTypes.NNOTE_DOCUMENT);
     }
 
-    public boolean isDocumentNode(NNote n) {
+    public boolean isDocumentNote(NNote n) {
         return NNoteTypes.NNOTE_DOCUMENT.equals(n.getContentType());
     }
 
-    public String stringifyDescriptor(NNoteObjectDocument od) {
-        return context.getWorkspace().formats().element().setValue(od)
+    public String stringifyNoteListInfo(NNoteListModel value) {
+        return stringifyAny(value);
+    }
+
+    public String stringifyDescriptor(NNoteObjectDocument value) {
+        return stringifyAny(value);
+    }
+
+    public String stringifyAny(Object value) {
+        return context.getWorkspace().formats().element().setValue(value)
                 .setContentType(NutsContentType.JSON)
                 .setSession(context.getSession())
                 .setCompact(true)
                 .format();
     }
 
-    public NNoteObjectDocument parseDynamicDocument(String s) {
+    public NNoteListModel parseNoteListModel(String s) {
+        return parseAny(s, NNoteListModel.class);
+    }
+
+    public NNoteObjectDocument parseObjectDocument(String s) {
+        return parseAny(s, NNoteObjectDocument.class);
+    }
+
+    public <T> T parseAny(String s, Class<T> cls) {
         if (s == null || s.trim().isEmpty()) {
             return null;
         }
@@ -195,7 +216,7 @@ public class NNoteService {
             return context.getWorkspace().formats().element()
                     .setSession(context.getSession())
                     .setContentType(NutsContentType.JSON)
-                    .parse(s, NNoteObjectDocument.class);
+                    .parse(s, cls);
         } catch (Exception ex) {
             return null;
         }
@@ -405,7 +426,7 @@ public class NNoteService {
             n.setChildren(new ArrayList<>());
         }
         for (NNote c : n.getChildren()) {
-            expandNode(c, passwordHandler);
+            expandNote(c, passwordHandler);
         }
         return n;
     }
@@ -478,13 +499,13 @@ public class NNoteService {
 
             Document doc = b.parse(file);
             NodeList childNodes = doc.getDocumentElement().getChildNodes();
-            NNote cherryNNoteDocument = NNote.newDocument("");
+            NNote cherryNNoteDocument = NNote.newDocument();
             for (int i = 0; i < childNodes.getLength(); i++) {
                 Node n = childNodes.item(i);
                 if (n instanceof Element) {
                     Element e = (Element) n;
 //                    if (e.getTagName().equals("node") || e.getTagName().equals("rich_text")) {
-                    NNote a = parseCherryTreeXmlNode(e);
+                    NNote a = parseCherryTreeXmlNote(e);
                     if (a != null) {
                         cherryNNoteDocument.getChildren().add(a);
                     }
@@ -541,7 +562,7 @@ public class NNoteService {
 
     }
 
-    public NNote parseCherryTreeXmlNode(org.w3c.dom.Element e) {
+    public NNote parseCherryTreeXmlNote(org.w3c.dom.Element e) {
         switch (e.getTagName()) {
             case "node": {
                 NNote nn = new NNote();
@@ -549,7 +570,7 @@ public class NNoteService {
                 //custom_icon_id="0" foreground="" is_bold="False" name="commandes et factures" prog_lang="custom-colors" readonly="False" tags="" ts_creation="0.0" ts_lastsave="0.0" unique_id="5"
                 //custom_icon_id="0" foreground="" is_bold="False" prog_lang="custom-colors" readonly="False" ts_creation="0.0" ts_lastsave="0.0" unique_id="5"
                 NamedNodeMap attrs = e.getAttributes();
-                Map<String, String> nodeContentStyle = new HashMap<>();
+                Map<String, String> noteContentStyle = new HashMap<>();
                 for (int i = 0; i < attrs.getLength(); i++) {
                     Node attr = attrs.item(i);
                     if (attr instanceof Attr) {
@@ -695,7 +716,7 @@ public class NNoteService {
                     if (c instanceof Element) {
                         Element e2 = (Element) c;
                         if (e2.getTagName().equals("node")) {
-                            nn.getChildren().add(parseCherryTreeXmlNode(e2));
+                            nn.getChildren().add(parseCherryTreeXmlNote(e2));
                         } else if (e2.getTagName().equals("rich_text")) {
                             String link = e.getAttribute("link");
                             if (!OtherUtils.isBlank(link)) {
@@ -724,7 +745,7 @@ public class NNoteService {
                 if (nn.getContentType().equals(NNoteTypes.HTML)) {
                     nn.setContent(
                             "<html><head>"
-                            + (nodeContentStyle.isEmpty() ? "" : ("<style>" + buildStyle(nodeContentStyle) + "</style>"))
+                            + (noteContentStyle.isEmpty() ? "" : ("<style>" + buildStyle(noteContentStyle) + "</style>"))
                             + "</head><body>"
                             + richTexts.stream().map(x -> {
                                 String t = x.getText();
@@ -797,4 +818,89 @@ public class NNoteService {
         }
         return new VNNoteSearchResult(n, curr);
     }
+
+    public void updateNoteProperties(VNNote toUpdate, NNote headerValues) {
+        String oldName = toUpdate.getName();
+        toUpdate.setName(headerValues.getName());
+        toUpdate.setIcon(headerValues.getIcon());
+        toUpdate.setReadOnly(headerValues.isReadOnly());
+        toUpdate.setTitleForeground(headerValues.getTitleForeground());
+        toUpdate.setTitleBackground(headerValues.getTitleBackground());
+        toUpdate.setTitleBold(headerValues.isTitleBold());
+        toUpdate.setTitleItalic(headerValues.isTitleItalic());
+        toUpdate.setTitleUnderlined(headerValues.isTitleUnderlined());
+        toUpdate.setTitleStriked(headerValues.isTitleStriked());
+        prepareChildForInsertion(toUpdate.getParent(), toUpdate);
+        String newName = toUpdate.getName();
+        if (NNoteTypes.NOTE_LIST.equals(toUpdate.getParent().getContentType())) {
+            NNoteListModel oldModel = parseNoteListModel(toUpdate.getParent().getContent());
+            if (oldModel == null) {
+                oldModel = new NNoteListModel();
+            }
+            if (oldModel.getSelectedNames().contains(oldName)) {
+                oldModel.getSelectedNames().remove(oldName);
+                oldModel.getSelectedNames().add(newName);
+                toUpdate.getParent().setContent(stringifyNoteListInfo(oldModel));
+            }
+        }
+    }
+
+    public String prepareChildForInsertion(VNNote parent, VNNote child) {
+        String name = child.getName();
+        String contentType = child.getContentType();
+        if (name == null) {
+            name = "";
+        }
+        Pattern p = Pattern.compile("^(?<base>.*) [0-9]$");
+        Matcher m = p.matcher(name);
+        String base = name;
+        if (m.find()) {
+            base = m.group("base");
+        }
+        contentType = NNoteTypes.normalizeContentType(contentType);
+        if (base.isEmpty()) {
+            base = i18n.getString("NNoteTypeFamily." + contentType);
+        }
+        Set<String> existingNames = parent.getChildren() == null ? new HashSet<>()
+                : parent.getChildren().stream()
+                        .filter(x -> x != child) // !!!
+                        .map(x -> x.getName() == null ? "" : x.getName())
+                        .collect(Collectors.toSet());
+        int i = 1;
+        while (true) {
+            String n = (i == 1) ? base : base + (" " + i);
+            if (!existingNames.contains(n)) {
+                return n;
+            }
+            i++;
+        }
+    }
+
+    public String generateNewChildName(NNote note, String name, String contentType) {
+        if (name == null) {
+            name = "";
+        }
+        Pattern p = Pattern.compile("^(?<base>.*) [0-9]$");
+        Matcher m = p.matcher(name);
+        String base = name;
+        if (m.find()) {
+            base = m.group("base");
+        }
+        contentType = NNoteTypes.normalizeContentType(contentType);
+        if (base.isEmpty()) {
+            base = i18n.getString("NNoteTypeFamily." + contentType);
+        }
+        Set<String> existingNames = note.getChildren() == null ? new HashSet<>()
+                : note.getChildren().stream().map(x -> x.getName() == null ? "" : x.getName())
+                        .collect(Collectors.toSet());
+        int i = 1;
+        while (true) {
+            String n = (i == 1) ? base : base + (" " + i);
+            if (!existingNames.contains(n)) {
+                return n;
+            }
+            i++;
+        }
+    }
+
 }

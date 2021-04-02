@@ -27,7 +27,18 @@ public class EmpyNNodtEditorTypeComponent extends JPanel implements NNoteEditorT
     }
 
     @Override
-    public void setNode(VNNote node,NNoteGuiApp sapp) {
+    public void setNote(VNNote note,NNoteGuiApp sapp) {
     }
+
+    @Override
+    public void setEditable(boolean b) {
+    
+    }
+
+    @Override
+    public boolean isEditable() {
+        return false;
+    }
+    
     
 }

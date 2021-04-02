@@ -28,7 +28,8 @@ public class FileNNoteEditorTypeComponent extends JPanel implements NNoteEditorT
     private JLabel error;
     private FileComponent comp;
     private URLViewer fileViewer;
-    private VNNote currentNode;
+    private VNNote currentNote;
+    private boolean editable=true;
 
     public FileNNoteEditorTypeComponent() {
         super(new BorderLayout());
@@ -37,8 +38,8 @@ public class FileNNoteEditorTypeComponent extends JPanel implements NNoteEditorT
         comp.getTextField().getDocument().addDocumentListener(new AnyDocumentListener() {
             @Override
             public void anyChange(DocumentEvent e) {
-                if (currentNode != null) {
-                    currentNode.setContent(comp.getTextField().getText());
+                if (currentNote != null) {
+                    currentNote.setContent(comp.getTextField().getText());
                 }
             }
         });
@@ -58,9 +59,9 @@ public class FileNNoteEditorTypeComponent extends JPanel implements NNoteEditorT
     }
 
     @Override
-    public void setNode(VNNote node, NNoteGuiApp sapp) {
-        this.currentNode = node;
-        String c = node.getContent();
+    public void setNote(VNNote note, NNoteGuiApp sapp) {
+        this.currentNote = note;
+        String c = note.getContent();
         if (c == null || c.isEmpty()) {
             fileViewer.resetContent();
             error.setText("");
@@ -72,6 +73,18 @@ public class FileNNoteEditorTypeComponent extends JPanel implements NNoteEditorT
                 error.setText(ex.toString());
             }
         }
+    }
+
+    public void setEditable(boolean b) {
+        if (currentNote != null && currentNote.isReadOnly()) {
+            b = false;
+        }
+        this.editable=b;
+        comp.setEditable(b);
+    }
+
+    public boolean isEditable() {
+        return editable && comp.isEditable();
     }
 
 }

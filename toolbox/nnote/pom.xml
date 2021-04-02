@@ -67,6 +67,11 @@
             <version>0.8.1</version>
         </dependency>
         <dependency>
+            <groupId>net.thevpc.more.iconsets</groupId>
+            <artifactId>iconset-feather</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>net.thevpc.echo</groupId>
             <artifactId>echo-swing</artifactId>
             <version>1.0.0</version>

@@ -24,8 +24,8 @@ public class DefaultVNoteSearchFilter implements VNoteSearchFilter {
     }
 
     @Override
-    public Stream<StringSearchResult<VNNote>> search(VNNote node, NNoteService service) {
-        return p.search(new VNNoteStringToPatternHandler(service, node));
+    public Stream<StringSearchResult<VNNote>> search(VNNote note, NNoteService service) {
+        return p.search(new VNNoteStringToPatternHandler(service, note));
     }
 
 }

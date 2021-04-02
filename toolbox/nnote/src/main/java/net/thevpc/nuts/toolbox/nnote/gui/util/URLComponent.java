@@ -61,4 +61,14 @@ public class URLComponent extends JPanel implements FormComponent {
             jtf.getDocument().addDocumentListener(listener);
         }
     }
+
+    @Override
+    public void setEditable(boolean b) {
+        jtf.setEditable(b);
+    }
+
+    @Override
+    public boolean isEditable() {
+        return jtf.isEditable();
+    }
 }

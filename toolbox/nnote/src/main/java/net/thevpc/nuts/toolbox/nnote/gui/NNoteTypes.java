@@ -18,7 +18,7 @@ import net.thevpc.nuts.toolbox.nnote.model.NNote;
 public class NNoteTypes {
 
     public static final String EDITOR_N_NOTE_DOCUMENT = "nnote-document";
-    public static final String EDITOR_NODE_LIST = "node-list";
+    public static final String EDITOR_NOTE_LIST = "note-list";
     public static final String EDITOR_OBJECT_LIST = "object-list";
     public static final String EDITOR_FILE = "file";
     public static final String EDITOR_URL = "url";
@@ -43,7 +43,7 @@ public class NNoteTypes {
     public static final String URL = "application/nnote-url";
     public static final String PASSWORD = "application/nnote-password";
     public static final String STRING = "application/nnote-string";
-    public static final String NODE_LIST = "application/nnote-node-list";
+    public static final String NOTE_LIST = "application/nnote-list";
     public static final String OBJECT_LIST = "application/nnote-object-list";
 
     public static final String RICH_HTML = "text/html:" + EDITOR_WYSIWYG;
@@ -67,7 +67,7 @@ public class NNoteTypes {
                     URL,
                     PASSWORD,
                     STRING,
-                    NODE_LIST,
+                    NOTE_LIST,
                     OBJECT_LIST
             )
     );
@@ -94,7 +94,10 @@ public class NNoteTypes {
                     "bell",
                     "book",
                     "disc",
-                    "database"
+                    "database",
+                    "wifi",
+                    "network",
+                    "phone"
             )
     );
 
@@ -105,28 +108,31 @@ public class NNoteTypes {
         return ALL_USER_ICONS.contains(icon);
     }
 
-    public static String normalizeIcon(NNote node, boolean folder, boolean expanded) {
+    public static String normalizeIcon(NNote note, boolean folder, boolean expanded) {
         String icon;
         if (folder) {
-            icon = node.getFolderIcon();
+            icon = note.getFolderIcon();
             icon = icon == null ? "" : icon.toLowerCase().trim();
             if (isValidIcon(icon)) {
                 return icon;
             }
-        }
-        icon = node.getIcon();
-        icon = icon == null ? "" : icon.toLowerCase().trim();
-        if (isValidIcon(icon)) {
-            return icon;
-        }
-        if (folder) {
+            icon = note.getIcon();
+            icon = icon == null ? "" : icon.toLowerCase().trim();
+            if (isValidIcon(icon)) {
+                return icon;
+            }
             if (expanded) {
                 return "folder-open";
             } else {
                 return "folder-closed";
             }
         }
-        String contentType = normalizeContentType(node.getContentType());
+        icon = note.getIcon();
+        icon = icon == null ? "" : icon.toLowerCase().trim();
+        if (isValidIcon(icon)) {
+            return icon;
+        }
+        String contentType = normalizeContentType(note.getContentType());
         switch (contentType) {
             case PLAIN:
                 return "file-text";
@@ -154,8 +160,8 @@ public class NNoteTypes {
                 return "password";
             case STRING:
                 return "string";
-            case NODE_LIST:
-                return "nnote-node-list";
+            case NOTE_LIST:
+                return "nnote-list";
             case OBJECT_LIST:
                 return "nnote-object-list";
         }
@@ -225,8 +231,8 @@ public class NNoteTypes {
             case JAVASCRIPT: {
                 return new String[]{EDITOR_SOURCE};
             }
-            case NODE_LIST: {
-                return new String[]{EDITOR_NODE_LIST};
+            case NOTE_LIST: {
+                return new String[]{EDITOR_NOTE_LIST};
             }
             case OBJECT_LIST: {
                 return new String[]{EDITOR_OBJECT_LIST};

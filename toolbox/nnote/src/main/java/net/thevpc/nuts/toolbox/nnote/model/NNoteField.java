@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.toolbox.nnote.model;
 
-import java.util.Objects;
 import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
 
 /**
@@ -16,6 +15,7 @@ public class NNoteField {
 
     private String name;
     private String value;
+    private boolean hidden;
 
     public NNoteField() {
     }
@@ -25,7 +25,6 @@ public class NNoteField {
         this.value = value;
     }
 
-    
     public String getName() {
         return name;
     }
@@ -45,42 +44,22 @@ public class NNoteField {
     }
 
     public NNoteField copy() {
-        return new NNoteField().setName(name).setValue(value);
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 41 * hash + Objects.hashCode(this.name);
-        hash = 41 * hash + Objects.hashCode(this.value);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NNoteField other = (NNoteField) obj;
-        if (!Objects.equals(this.name, other.name)) {
-            return false;
-        }
-        if (!Objects.equals(this.value, other.value)) {
-            return false;
-        }
-        return true;
+        return new NNoteField().setName(name).setValue(value).setHidden(hidden);
     }
 
     @Override
     public String toString() {
         return OtherUtils.toEscapedName(name)
                 + "=" + OtherUtils.toEscapedValue(value);
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public NNoteField setHidden(boolean hidden) {
+        this.hidden = hidden;
+        return this;
     }
 
 }
