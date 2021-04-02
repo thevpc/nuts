@@ -11,6 +11,7 @@ import javax.swing.JToolBar;
 import javax.swing.text.StyledEditorKit;
 import net.thevpc.echo.Application;
 import net.thevpc.jeep.editor.JEditorPaneBuilder;
+import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
 
 /**
  *
@@ -21,7 +22,7 @@ public class SourceEditorPanePanelTextExtension extends AbstractSourceEditorPane
     AbstractSourceEditorPaneExtension.Context context;
 
     @Override
-    public void uninstall(JEditorPaneBuilder editorBuilder, Application app) {
+    public void uninstall(JEditorPaneBuilder editorBuilder, NNoteGuiApp sapp) {
         if (context != null) {
             for (Action action : context.getActions()) {
                 uninstallAction(action, context);
@@ -29,10 +30,11 @@ public class SourceEditorPanePanelTextExtension extends AbstractSourceEditorPane
         }
     }
 
-    public void prepareEditor(JEditorPaneBuilder editorBuilder, boolean compactMode, Application app) {
+    public void prepareEditor(JEditorPaneBuilder editorBuilder, boolean compactMode, NNoteGuiApp sapp) {
         JToolBar bar = compactMode ? null : new JToolBar();
+        Application app=sapp.app();
         JPopupMenu popup = editorBuilder.editor().getComponentPopupMenu();
-        context = new AbstractSourceEditorPaneExtension.Context(app, editorBuilder.editor());
+        context = new AbstractSourceEditorPaneExtension.Context(sapp, editorBuilder.editor());
         addAction("copy", new StyledEditorKit.CopyAction(), bar, popup, context);
         addAction("paste", new StyledEditorKit.PasteAction(), bar, popup, context);
         addAction("cut", new StyledEditorKit.CutAction(), bar, popup, context);

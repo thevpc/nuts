@@ -86,8 +86,8 @@ public class NNoteDocumentTree extends JPanel {
 
             }
         });
-        UIPlafManager.getCurrentManager().addListener((p) -> tree.setCellRenderer(new SimpleDefaultTreeCellRendererImpl(app)));
-        tree.setCellRenderer(new SimpleDefaultTreeCellRendererImpl(app));
+        UIPlafManager.getCurrentManager().addListener((p) -> tree.setCellRenderer(new SimpleDefaultTreeCellRendererImpl(sapp)));
+        tree.setCellRenderer(new SimpleDefaultTreeCellRendererImpl(sapp));
         tree.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -761,7 +761,7 @@ public class NNoteDocumentTree extends JPanel {
 
     public void onSearch() {
         SearchDialog dialog = new SearchDialog(sapp);
-        dialog.showDialogAndSearch(sapp, getSelectedNoteOrDocument());
+        dialog.showDialogAndSearch(getSelectedNoteOrDocument());
     }
 
 //    public void expandTree(JTree tree) {

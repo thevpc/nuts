@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.toolbox.nnote.gui.tree.dialogs;
 
-import net.thevpc.nuts.toolbox.nnote.gui.templates.UrlCardNNoteTemplate;
+import net.thevpc.nuts.toolbox.nnote.service.templates.UrlCardNNoteTemplate;
 import net.thevpc.common.swing.NamedValue;
 import net.thevpc.nuts.toolbox.nnote.gui.util.ComboboxHelper;
 import java.awt.Dimension;
@@ -33,8 +33,8 @@ import net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteTemplate;
 import net.thevpc.nuts.toolbox.nnote.gui.util.OkCancelAppDialog;
-import net.thevpc.nuts.toolbox.nnote.gui.templates.EthernetConnectionTemplate;
-import net.thevpc.nuts.toolbox.nnote.gui.templates.WifiConnectionTemplate;
+import net.thevpc.nuts.toolbox.nnote.service.templates.EthernetConnectionTemplate;
+import net.thevpc.nuts.toolbox.nnote.service.templates.WifiConnectionTemplate;
 import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
 import net.thevpc.nuts.toolbox.nnote.gui.util.FileComponent;
 import net.thevpc.nuts.toolbox.nnote.gui.util.PasswordComponent;
@@ -62,7 +62,6 @@ public class NewNoteDialog extends OkCancelAppDialog {
 
     private JScrollPane typeDescriptionContent;
     private JEditorPane typeDescription;
-    private LinkedHashMap<String, NNoteTemplate> extra = new LinkedHashMap<>();
 
     private boolean ok = false;
 
@@ -80,9 +79,6 @@ public class NewNoteDialog extends OkCancelAppDialog {
         typeFileValue = new FileComponent();
         typeURLValue = new URLComponent();
 
-        register(new UrlCardNNoteTemplate());
-        register(new EthernetConnectionTemplate());
-        register(new WifiConnectionTemplate());
         typeList = createTypeListComponent(sapp);
 
         GridBagLayoutSupport gbs = GridBagLayoutSupport.load(NewNoteDialog.class.getResource(
@@ -118,10 +114,6 @@ public class NewNoteDialog extends OkCancelAppDialog {
         build(gbs.apply(new JPanel()), this::ok, this::cancel);
     }
 
-    private void register(NNoteTemplate a) {
-        extra.put(a.getId(), a);
-    }
-
     private JComboBox createIconListComponent(NNoteGuiApp sapp1) {
         List<NamedValue> list = new ArrayList<>();
         list.add(new NamedValue(false, "", sapp1.app().i18n().getString("Icon.none"), null));
@@ -141,26 +133,24 @@ public class NewNoteDialog extends OkCancelAppDialog {
         for (String s : new String[]{NNoteTypes.PLAIN, NNoteTypes.RICH_HTML}) {
             availableTypes.add(createNNoteTypeFamilyNameValue(s));
         }
-        if (extra.size() > 0) {
-//            availableTypes.add(createNNoteTypeFamilyNameGroup("custom"));
-            for (NNoteTemplate value : extra.values()) {
-                String s = value.getLabel(sapp);
-                if (s == null) {
-                    s = sapp.app().i18n().getString("NNoteTypeFamily." + value.getId());
-                }
-                NamedValue n = new NamedValue(false, value.getId(), s, null);
-                availableTypes.add(n);
+//        availableTypes.add(createNNoteTypeFamilyNameGroup("lists"));
+        availableTypes.add(createNNoteTypeFamilyNameValue(NNoteTypes.NOTE_LIST));
+        availableTypes.add(createNNoteTypeFamilyNameValue(NNoteTypes.OBJECT_LIST));
+
+        for (NNoteTemplate value : sapp.service().getTemplates()) {
+            String s = value.getLabel(sapp.service());
+            if (s == null) {
+                s = sapp.app().i18n().getString("NNoteTypeFamily." + value.getId());
             }
+            NamedValue n = new NamedValue(false, value.getId(), s, sapp.service().getContentTypeIcon(value.getId()));
+            availableTypes.add(n);
         }
-        
+
         availableTypes.add(createNNoteTypeFamilyNameGroup("external"));
         for (String s : new String[]{NNoteTypes.NNOTE_DOCUMENT, NNoteTypes.FILE, NNoteTypes.URL}) {
             availableTypes.add(createNNoteTypeFamilyNameValue(s));
         }
 
-        availableTypes.add(createNNoteTypeFamilyNameGroup("lists"));
-        availableTypes.add(createNNoteTypeFamilyNameValue(NNoteTypes.NOTE_LIST));
-        availableTypes.add(createNNoteTypeFamilyNameValue(NNoteTypes.OBJECT_LIST));
 
 //        if (extra.size() > 0) {
 //            availableTypes.add(createNNoteTypeFamilyNameGroup("custom"));
@@ -194,8 +184,8 @@ public class NewNoteDialog extends OkCancelAppDialog {
             List<NamedValue> recent = new ArrayList<>();
             for (String id : rct) {
                 recent.add(
-                        new NamedValue(false, "recent:" + id, sapp.app().i18n().getString("NNoteTypeFamily." + id), 
-                        sapp.app().i18n().getString("NNoteTypeFamily." + id+".icon")        
+                        new NamedValue(false, "recent:" + id, sapp.app().i18n().getString("NNoteTypeFamily." + id),
+                                sapp.service().getContentTypeIcon(id)
                         )
                 );
             }
@@ -209,9 +199,9 @@ public class NewNoteDialog extends OkCancelAppDialog {
     }
 
     protected NamedValue createNNoteTypeFamilyNameValue(String id) {
-        return new NamedValue(false, id, 
-                sapp.app().i18n().getString("NNoteTypeFamily." + id), 
-                sapp.app().i18n().getString("NNoteTypeFamily." + id+".icon")
+        return new NamedValue(false, id,
+                sapp.app().i18n().getString("NNoteTypeFamily." + id),
+                sapp.service().getContentTypeIcon(id)
         );
     }
 
@@ -281,9 +271,9 @@ public class NewNoteDialog extends OkCancelAppDialog {
                 break;
             }
             default: {
-                NNoteTemplate z = extra.get(selectedContentTypeId);
+                NNoteTemplate z = sapp.service().getTemplate(selectedContentTypeId);
                 if (z != null) {
-                    z.prepare(n, sapp);
+                    z.prepare(n, sapp.service());
                 } else {
                     n.setContentType(selectedContentTypeId = NNoteTypes.PLAIN);
                 }

@@ -12,6 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import net.thevpc.echo.Application;
+import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
 
 /**
  *
@@ -27,6 +28,7 @@ public class TextAreaComponent extends JPanel implements FormComponent {
         add(new JScrollPane(jtf));
         setPreferredSize(new Dimension(200, 100));
         setMinimumSize(new Dimension(100, 100));
+        OtherUtils.installUndoRedoManager(jtf);
     }
 
     @Override

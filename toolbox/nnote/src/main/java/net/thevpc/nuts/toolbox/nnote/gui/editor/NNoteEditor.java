@@ -112,13 +112,13 @@ public class NNoteEditor extends JPanel {
 
         components.put("empty", new EmpyNNodtEditorTypeComponent());
         components.put(NNoteTypes.EDITOR_UNSUPPORTED, new UnsupportedNNoteEditorTypeComponent());
-        components.put(NNoteTypes.EDITOR_WYSIWYG, new SourceEditorPanePanel(false, compactMode,app));//"HTML"
-        components.put(NNoteTypes.EDITOR_SOURCE, new SourceEditorPanePanel(true, compactMode,app));//"Source Code"
+        components.put(NNoteTypes.EDITOR_WYSIWYG, new SourceEditorPanePanel(false, compactMode,sapp));//"HTML"
+        components.put(NNoteTypes.EDITOR_SOURCE, new SourceEditorPanePanel(true, compactMode,sapp));//"Source Code"
         components.put(NNoteTypes.EDITOR_FILE, new FileNNoteEditorTypeComponent());
         components.put(NNoteTypes.EDITOR_URL, new URLNNoteEditorTypeComponent());
         components.put(NNoteTypes.EDITOR_PASSWORD, new PasswordNNoteEditorTypeComponent());
         components.put(NNoteTypes.EDITOR_STRING, new StringNNoteEditorTypeComponent());
-        components.put(NNoteTypes.EDITOR_N_NOTE_DOCUMENT, new NNoteDocumentNNoteEditorTypeComponent());
+        components.put(NNoteTypes.EDITOR_NNOTE_DOCUMENT, new NNoteDocumentNNoteEditorTypeComponent());
         components.put(NNoteTypes.EDITOR_OBJECT_LIST, new NNoteObjectDocumentComponent(sapp));
         components.put(NNoteTypes.EDITOR_NOTE_LIST, new NoteListNNoteEditorTypeComponent(sapp));
 
@@ -163,8 +163,8 @@ public class NNoteEditor extends JPanel {
     }
 
     public ObjectListModel createEditorTypeModel(String contentType) {
-        contentType = NNoteTypes.normalizeContentType(contentType);
-        String[] all = NNoteTypes.getEditorTypes(contentType);
+        contentType = sapp.service().normalizeContentType(contentType);
+        String[] all = sapp.service().getEditorTypes(contentType);
         return new DefaultObjectListModel(
                 Arrays.asList(all),
                 x -> app.i18n().getString(editorTypeI18nPrefix + "." + x)
@@ -186,9 +186,9 @@ public class NNoteEditor extends JPanel {
             if (breadCrumb != null) {
                 breadCrumb.setModel(createBreadCrumModel(note));
             }
-            String contentType = NNoteTypes.normalizeContentType(note.getContentType());
-            String editorType = NNoteTypes.normalizeEditorType(contentType, note.getEditorType());
-            String[] all = NNoteTypes.getEditorTypes(contentType);
+            String contentType = sapp.service().normalizeContentType(note.getContentType());
+            String editorType = sapp.service().normalizeEditorType(contentType, note.getEditorType());
+            String[] all = sapp.service().getEditorTypes(contentType);
             if (!compactMode) {
                 if (all.length == 0 || all.length == 1) {
                     noteEditorsSelector.setVisible(false);

@@ -56,6 +56,7 @@ public class NNoteDocumentNNoteEditorTypeComponent extends JPanel implements NNo
                 }
                 error.setText(o.error == null ? "" : o.error.getEx().toString());
             }
+            setEditable(!note.isReadOnly());
         } catch (Exception ex) {
             error.setText(ex.toString());
         }

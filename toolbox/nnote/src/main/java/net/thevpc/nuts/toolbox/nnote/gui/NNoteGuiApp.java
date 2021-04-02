@@ -11,7 +11,10 @@ import java.awt.event.KeyEvent;
 import net.thevpc.nuts.toolbox.nnote.gui.tree.NNoteDocumentTree;
 import net.thevpc.nuts.toolbox.nnote.gui.editor.NNoteEditor;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -59,7 +62,9 @@ public class NNoteGuiApp {
     private RecentFilesMenu recentFilesMenu;
     private NNoteDocumentTree tree;
     private JSplashScreen jSplashScreen;
-    private SearchResultPanel resultResults;
+    private SearchResultPanel searchResultsTool;
+    private AppToolWindow documentTool;
+    private List<String> recentSearchQueries = new ArrayList<>();
 
     public NNoteGuiApp(NutsApplicationContext appContext) {
         this.appContext = appContext;
@@ -69,8 +74,8 @@ public class NNoteGuiApp {
         return tree;
     }
 
-    public SearchResultPanel resultResults() {
-        return resultResults;
+    public SearchResultPanel searchResultsTool() {
+        return searchResultsTool;
     }
 
     public NNoteService service() {
@@ -214,7 +219,7 @@ public class NNoteGuiApp {
         }
         NNoteSplashScreen.get().tic();
         service = new NNoteService(appContext, app.i18n());
-//        System.out.println("loading config: " + service.getConfigFilePath());
+        System.out.println("loading config: " + service.getConfigFilePath());
 
         loadConfig();
         //initialize UI from config before loading the window...
@@ -245,23 +250,23 @@ public class NNoteGuiApp {
         NNoteSplashScreen.get().tic();
         tree.addNoteSelectionListener(n -> content.setNote(n));
         content.addListener(n -> tree.setSelectedNote(n));
-        resultResults = new SearchResultPanel(this);
+        searchResultsTool = new SearchResultPanel(this);
 
 //        NNoteDocumentTree favourites = new NNoteDocumentTree(this);
 //        NNoteDocumentTree openFiles = new NNoteDocumentTree(app);
         NNoteSplashScreen.get().tic();
-        ws.addTool("Tools.Document", tree, AppToolWindowAnchor.LEFT);
+        documentTool = ws.addTool("Tools.Document", tree, AppToolWindowAnchor.LEFT);
 //        ws.addTool("Tools.Favorites", favourites, AppToolWindowAnchor.LEFT);
 //        ws.addTool("Open Documents", "", null, favourites, AppToolWindowAnchor.LEFT);
 //        ws.addTool("Recent Documents", "", null, favourites, AppToolWindowAnchor.LEFT);
-        AppToolWindow resultPanelTool = ws.addTool("Tools.SearchResults", resultResults, AppToolWindowAnchor.BOTTOM);
-        resultResults.setResultPanelTool(resultPanelTool);
+        AppToolWindow resultPanelTool = ws.addTool("Tools.SearchResults", searchResultsTool, AppToolWindowAnchor.BOTTOM);
+        searchResultsTool.setResultPanelTool(resultPanelTool);
 
         NNoteSplashScreen.get().tic();
         ws.addContent("Content", content);
 
         NNoteSplashScreen.get().tic();
-        
+
         NNoteSplashScreen.get().tic();
         tools.addHorizontalGlue("/mainWindow/statusBar/Default/glue");
         NNoteSplashScreen.get().tic();
@@ -381,6 +386,7 @@ public class NNoteGuiApp {
         },
                 "/mainWindow/menuBar/Help/About");
         NNoteSplashScreen.get().tic();
+        documentTool.active().set(true);
         applyConfigToUI();
         NNoteSplashScreen.get().tic();
         bindConfig();
@@ -390,6 +396,10 @@ public class NNoteGuiApp {
         NNoteSplashScreen.get().tic();
         NNoteSplashScreen.get().closeSplash();
         app.waitFor();
+    }
+
+    public AppToolWindow documentTool() {
+        return documentTool;
     }
 
     public Application app() {
@@ -426,5 +436,16 @@ public class NNoteGuiApp {
 
     public NNoteConfig config() {
         return config;
+    }
+
+    public List<String> getRecentSearchQueries() {
+        return recentSearchQueries;
+    }
+
+    public void addRecentSearchQuery(String query) {
+        if (query != null && query.trim().length() > 0) {
+            recentSearchQueries.add(0, query.trim());
+            recentSearchQueries = new ArrayList<>(new LinkedHashSet<String>(recentSearchQueries));
+        }
     }
 }

@@ -5,19 +5,16 @@
  */
 package net.thevpc.nuts.toolbox.nnote.gui.search;
 
-import net.thevpc.nuts.toolbox.nnote.gui.util.OkCancelFooter;
-import net.thevpc.nuts.toolbox.nnote.gui.dialogs.*;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.util.function.Consumer;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import net.thevpc.common.swing.GridBagLayoutSupport;
-import net.thevpc.common.swing.JDialog2;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
 import net.thevpc.nuts.toolbox.nnote.gui.util.OkCancelAppDialog;
 import net.thevpc.nuts.toolbox.nnote.model.VNNote;
@@ -32,7 +29,7 @@ public class SearchDialog extends OkCancelAppDialog {
     private NNoteGuiApp sapp;
     private JLabel valueLabel;
 
-    private JTextField queryEditor;
+    private JComboBox queryEditor;
     private JCheckBox caseEditor;
 
     private boolean ok = false;
@@ -43,7 +40,8 @@ public class SearchDialog extends OkCancelAppDialog {
         this.sapp = sapp;
         this.valueLabel = new JLabel(sapp.app().i18n().getString("Message.search"));
         this.caseEditor = new JCheckBox(sapp.app().i18n().getString("Message.caseSensitive"));
-        queryEditor = new JTextField();
+        queryEditor = new JComboBox(new DefaultComboBoxModel(sapp.getRecentSearchQueries().toArray()));
+        queryEditor.setEditable(true);
         queryEditor.setMinimumSize(new Dimension(50, 30));
         GridBagLayoutSupport gbs = GridBagLayoutSupport.load(SearchDialog.class.getResource(
                 "/net/thevpc/nuts/toolbox/nnote/forms/SearchDialog.gbl-form"
@@ -74,25 +72,27 @@ public class SearchDialog extends OkCancelAppDialog {
         setVisible(false);
     }
 
-    public void showDialogAndSearch(NNoteGuiApp sapp, VNNote note) {
-        String s = showDialog(sapp::showError);
+    public void showDialogAndSearch(VNNote note) {
+        String s = showDialog();
         if (s != null && s.length() > 0) {
             new Thread(() -> {
-                SearchResultPanel.SearchResultPanelItem resultPanel = sapp.resultResults().createNewPanel();
-                sapp.resultResults().showResults();
+                SearchResultPanel.SearchResultPanelItem resultPanel = sapp.searchResultsTool().createNewPanel();
+                sapp.searchResultsTool().showResults();
                 resultPanel.resetResults();
                 resultPanel.setSearching(true);
+                sapp.addRecentSearchQuery(s);
                 VNNoteSearchResult e = sapp.service().search(note, s);
                 e.stream().forEach(x -> {
                     resultPanel.appendResult(x);
                 });
                 resultPanel.setSearching(false);
-                sapp.resultResults().showResults();
+                sapp.searchResultsTool().showResults();
             }).start();
         }
     }
 
-    public String showDialog(Consumer<Exception> exHandler) {
+    public String showDialog() {
+        Consumer<Exception> exHandler=sapp::showError;
         while (true) {
             install();
             this.ok = false;
@@ -109,7 +109,7 @@ public class SearchDialog extends OkCancelAppDialog {
 
     public String get() {
         if (ok) {
-            return queryEditor.getText();
+            return (String)queryEditor.getSelectedItem();
         }
         return null;
     }

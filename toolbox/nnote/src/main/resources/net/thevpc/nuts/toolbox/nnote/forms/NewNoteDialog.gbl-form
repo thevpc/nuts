@@ -1,7 +1,7 @@
 [<-nameLabel      ::]
 [<=-nameText      ::]
-[<-iconLabel      ][<=-iconList       :=-]
 [<-typeLabel      ][<=-typeList       :=-]
+[<-iconLabel      ][<=-iconList       :=-]
 [<=-valueLabel::]
 [<=-typePasswordValue::]
 [<=-typeFileValue::]

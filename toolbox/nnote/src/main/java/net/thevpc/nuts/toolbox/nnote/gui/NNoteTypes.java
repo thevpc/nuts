@@ -17,7 +17,7 @@ import net.thevpc.nuts.toolbox.nnote.model.NNote;
  */
 public class NNoteTypes {
 
-    public static final String EDITOR_N_NOTE_DOCUMENT = "nnote-document";
+    public static final String EDITOR_NNOTE_DOCUMENT = "nnote-document";
     public static final String EDITOR_NOTE_LIST = "note-list";
     public static final String EDITOR_OBJECT_LIST = "object-list";
     public static final String EDITOR_FILE = "file";
@@ -74,187 +74,60 @@ public class NNoteTypes {
 
     public static Set<String> ALL_USER_ICONS = new TreeSet<String>(
             Arrays.asList(
-                    "file-html",
-                    "file-markdown",
-                    "file-java",
-                    "file-javascript",
-                    "file-c",
-                    "file-cpp",
-                    "file-nnote",
-                    "file",
-                    "star",
-                    "circle",
-                    "gift",
-                    "heart",
-                    "sun",
-                    "moon",
-                    "smile",
-                    "coffee",
-                    "clock",
                     "bell",
                     "book",
-                    "disc",
+                    "circle",
+                    "clock",
+                    "coffee",
                     "database",
-                    "wifi",
+                    "disc",
+                    "file",
+                    "file",
+                    "file-c",
+                    "file-cpp",
+                    "file-html",
+                    "file-java",
+                    "file-javascript",
+                    "file-markdown",
+                    "file-nnote",
+                    "file-nuts-text-format",
+                    "file-text",
+                    "gift",
+                    "heart",
+                    "moon",
                     "network",
-                    "phone"
+                    "nnote-list",
+                    "nnote-object-list",
+                    "password",
+                    "phone",
+                    "smile",
+                    "star",
+                    "string",
+                    "sun",
+                    "url",
+                    "wifi",
+                    "datatype-audio",
+                    "datatype-calendar",
+                    "datatype-chart",
+                    "datatype-checkbox",
+                    "datatype-combobox",
+                    "datatype-email",
+                    "datatype-image",
+                    "datatype-link",
+                    "datatype-list",
+                    "datatype-map",
+                    "datatype-money",
+                    "datatype-number",
+                    "datatype-numbered-list",
+                    "datatype-password",
+                    "datatype-pen",
+                    "datatype-phone",
+                    "datatype-tags",
+                    "datatype-text",
+                    "datatype-textarea",
+                    "datatype-url",
+                    "datatype-video"
             )
     );
 
-    public static boolean isValidIcon(String icon) {
-        if (icon == null) {
-            return false;
-        }
-        return ALL_USER_ICONS.contains(icon);
-    }
-
-    public static String normalizeIcon(NNote note, boolean folder, boolean expanded) {
-        String icon;
-        if (folder) {
-            icon = note.getFolderIcon();
-            icon = icon == null ? "" : icon.toLowerCase().trim();
-            if (isValidIcon(icon)) {
-                return icon;
-            }
-            icon = note.getIcon();
-            icon = icon == null ? "" : icon.toLowerCase().trim();
-            if (isValidIcon(icon)) {
-                return icon;
-            }
-            if (expanded) {
-                return "folder-open";
-            } else {
-                return "folder-closed";
-            }
-        }
-        icon = note.getIcon();
-        icon = icon == null ? "" : icon.toLowerCase().trim();
-        if (isValidIcon(icon)) {
-            return icon;
-        }
-        String contentType = normalizeContentType(note.getContentType());
-        switch (contentType) {
-            case PLAIN:
-                return "file-text";
-            case HTML:
-                return "file-html";
-            case MARKDOWN:
-                return "file-markdown";
-            case NUTS_TEXT_FORMAT:
-                return "file-nuts-text-format";
-            case JAVA:
-                return "file-java";
-            case JAVASCRIPT:
-                return "file-javascript";
-            case C:
-                return "file-c";
-            case CPP:
-                return "file-cpp";
-            case NNOTE_DOCUMENT:
-                return "file-nnote";
-            case FILE:
-                return "file";
-            case URL:
-                return "url";
-            case PASSWORD:
-                return "password";
-            case STRING:
-                return "string";
-            case NOTE_LIST:
-                return "nnote-list";
-            case OBJECT_LIST:
-                return "nnote-object-list";
-        }
-        return "unknown";
-    }
-
-    public static String normalizeContentType(String ct) {
-        if (ct == null) {
-            ct = "";
-        }
-        ct = ct.trim().toLowerCase();
-        if (ct.isEmpty()) {
-            ct = PLAIN;
-        }
-        if (ALL_CONTENT_TYPES.contains(ct)) {
-            return ct;
-        }
-        if (ct.contains(":")) {
-            ct = ct.substring(0, ct.indexOf(':'));
-        }
-        if (!ct.contains("/")) {
-            for (String t : ALL_CONTENT_TYPES) {
-                if (t.endsWith("/" + ct)) {
-                    return t;
-                }
-            }
-        }
-        return UNSUPPORTED;
-    }
-
-    public static String[] getEditorTypes(String contentType) {
-        return normalizeEditorTypes(contentType, null);
-    }
-
-    public static String normalizeEditorType(String contentType, String editorType) {
-        return normalizeEditorTypes(contentType, editorType)[0];
-    }
-
-    public static String[] normalizeEditorTypes(String contentType, String editorType) {
-        if (editorType == null) {
-            editorType = "";
-        }
-        editorType = editorType.trim().toLowerCase();
-        switch (normalizeContentType(contentType)) {
-            case HTML:
-            case NUTS_TEXT_FORMAT:
-            case MARKDOWN: {
-                if (editorType.isEmpty()) {
-                    return new String[]{EDITOR_WYSIWYG, EDITOR_SOURCE};
-                }
-                switch (editorType) {
-                    case EDITOR_WYSIWYG: {
-                        return new String[]{EDITOR_WYSIWYG};
-                    }
-                    case EDITOR_SOURCE: {
-                        return new String[]{EDITOR_SOURCE};
-                    }
-                    default: {
-                        return new String[]{EDITOR_WYSIWYG};
-                    }
-                }
-            }
-            case PLAIN:
-            case JAVA:
-            case C:
-            case CPP:
-            case JAVASCRIPT: {
-                return new String[]{EDITOR_SOURCE};
-            }
-            case NOTE_LIST: {
-                return new String[]{EDITOR_NOTE_LIST};
-            }
-            case OBJECT_LIST: {
-                return new String[]{EDITOR_OBJECT_LIST};
-            }
-            case STRING: {
-                return new String[]{EDITOR_STRING};
-            }
-            case PASSWORD: {
-                return new String[]{EDITOR_PASSWORD};
-            }
-            case FILE: {
-                return new String[]{EDITOR_FILE};
-            }
-            case URL: {
-                return new String[]{EDITOR_URL};
-            }
-            case NNOTE_DOCUMENT: {
-                return new String[]{EDITOR_N_NOTE_DOCUMENT};
-            }
-            default: {
-                return new String[]{EDITOR_UNSUPPORTED};
-            }
-        }
-    }
 }

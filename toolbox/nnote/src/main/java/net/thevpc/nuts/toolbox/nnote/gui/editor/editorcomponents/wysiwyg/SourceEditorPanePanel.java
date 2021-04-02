@@ -5,6 +5,8 @@
  */
 package net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.wysiwyg;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -13,7 +15,6 @@ import javax.swing.JScrollPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
-import net.thevpc.echo.Application;
 import net.thevpc.echo.swing.core.swing.SwingApplicationsHelper;
 import net.thevpc.jeep.editor.JEditorPaneBuilder;
 import net.thevpc.jeep.editor.JSyntaxStyleManager;
@@ -21,6 +22,7 @@ import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
 import net.thevpc.nuts.toolbox.nnote.gui.util.AnyDocumentListener;
 import net.thevpc.nuts.toolbox.nnote.model.VNNote;
 import net.thevpc.nuts.toolbox.nnote.gui.editor.NNoteEditorTypeComponent;
+import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
 
 /**
  *
@@ -33,7 +35,7 @@ public class SourceEditorPanePanel extends JScrollPane implements NNoteEditorTyp
     private boolean source;
     private boolean compactMode;
     private boolean editable = true;
-    private Application app;
+    private NNoteGuiApp sapp;
     private SourceEditorPaneExtension textExtension = new SourceEditorPanePanelTextExtension();
     private SourceEditorPaneExtension htmlExtension = new SourceEditorPanePanelHtmlExtension();
     DocumentListener documentListener = new AnyDocumentListener() {
@@ -45,7 +47,7 @@ public class SourceEditorPanePanel extends JScrollPane implements NNoteEditorTyp
         }
     };
 
-    public SourceEditorPanePanel(boolean source, boolean compactMode, Application app) {
+    public SourceEditorPanePanel(boolean source, boolean compactMode, NNoteGuiApp sapp) {
         super();
         this.compactMode = compactMode;
         boolean lineNumbers = source;
@@ -72,7 +74,7 @@ public class SourceEditorPanePanel extends JScrollPane implements NNoteEditorTyp
         //.header().add(new JLabel(title))
 
         this.setWheelScrollingEnabled(true);
-        this.app = app;
+        this.sapp = sapp;
         this.source = source;
         this.editorBuilder.editor().getDocument().addDocumentListener(documentListener);
         this.editorBuilder.editor().addPropertyChangeListener("document", e -> {
@@ -90,14 +92,21 @@ public class SourceEditorPanePanel extends JScrollPane implements NNoteEditorTyp
             popup = new JPopupMenu();
             editorBuilder.editor().setComponentPopupMenu(popup);
         }
-        textExtension.prepareEditor(editorBuilder, compactMode, app);
-        htmlExtension.prepareEditor(editorBuilder, compactMode, app);
+        textExtension.prepareEditor(editorBuilder, compactMode, sapp);
+        htmlExtension.prepareEditor(editorBuilder, compactMode, sapp);
         if (!compactMode) {
             this.editorBuilder.header().addGlue();
         }
         if (source) {
             this.editorBuilder.editor().setFont(JSyntaxStyleManager.getDefaultFont());
         }
+        this.editorBuilder.editor().addPropertyChangeListener("document", new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                OtherUtils.installUndoRedoManager(editorBuilder.editor());
+            }
+        });
+        OtherUtils.installUndoRedoManager(editorBuilder.editor());
 //        editorBuilder.editor().addPropertyChangeListener("editorKit", new PropertyChangeListener() {
 //            @Override
 //            public void propertyChange(PropertyChangeEvent evt) {
@@ -120,8 +129,8 @@ public class SourceEditorPanePanel extends JScrollPane implements NNoteEditorTyp
 //    }
     @Override
     public void uninstall() {
-        textExtension.uninstall(editorBuilder, app);
-        htmlExtension.uninstall(editorBuilder, app);
+        textExtension.uninstall(editorBuilder, sapp);
+        htmlExtension.uninstall(editorBuilder, sapp);
     }
 
     @Override
@@ -143,7 +152,7 @@ public class SourceEditorPanePanel extends JScrollPane implements NNoteEditorTyp
     private Action prepareAction(AbstractAction a) {
         //align-justify.png
         String s = (String) a.getValue(AbstractAction.NAME);
-        SwingApplicationsHelper.registerAction(a, null, s, app);
+        SwingApplicationsHelper.registerAction(a, null, s, sapp.app());
         return a;
     }
 

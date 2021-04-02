@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.wysiwyg;
 
-import net.thevpc.echo.Application;
 import net.thevpc.jeep.editor.JEditorPaneBuilder;
+import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
 
 /**
  *
@@ -14,8 +14,8 @@ import net.thevpc.jeep.editor.JEditorPaneBuilder;
  */
 public interface SourceEditorPaneExtension {
 
-    public void uninstall(JEditorPaneBuilder editorBuilder, Application app);
+    public void uninstall(JEditorPaneBuilder editorBuilder, NNoteGuiApp sapp);
     
-    public void prepareEditor(JEditorPaneBuilder editorBuilder, boolean compactMode, Application app);
+    public void prepareEditor(JEditorPaneBuilder editorBuilder, boolean compactMode, NNoteGuiApp sapp);
 
 }

@@ -7,6 +7,8 @@ package net.thevpc.nuts.toolbox.nnote.gui.search;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -31,7 +33,7 @@ public class SearchResultPanel extends JPanel {
     public SearchResultPanel(NNoteGuiApp sapp) {
         super(new BorderLayout());
         this.sapp = sapp;
-        item = new SearchResultPanelItemImpl();
+        item = new SearchResultPanelItemImpl(sapp);
         add((JComponent) item);
     }
 
@@ -66,22 +68,44 @@ public class SearchResultPanel extends JPanel {
     public static class SearchResultPanelItemImpl extends JPanel implements SearchResultPanelItem {
 
         private boolean searching;
+        private NNoteGuiApp sapp;
         private JTable table = new JTable();
-        private DefaultTableModel model = new DefaultTableModel(){
+        private DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
 
-        public SearchResultPanelItemImpl() {
+        public SearchResultPanelItemImpl(NNoteGuiApp sapp) {
             super(new BorderLayout());
+            this.sapp = sapp;
             model.setColumnIdentifiers(new Object[]{
-                "Position",
-                "Name",
-                "Line"
+                sapp.app().i18n().getString("Message.search.position"),
+                sapp.app().i18n().getString("Message.search.note"),
+                sapp.app().i18n().getString("Message.search.matchingText"),});
+            sapp.app().i18n().locale().listeners().add((x) -> {
+                model.setColumnIdentifiers(new Object[]{
+                    sapp.app().i18n().getString("Message.search.position"),
+                    sapp.app().i18n().getString("Message.search.note"),
+                    sapp.app().i18n().getString("Message.search.matchingText"),});
             });
             table.setModel(model);
+            table.addMouseListener(new MouseAdapter() {
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        int r = table.rowAtPoint(e.getPoint());
+                        if (r >= 0) {
+                            StringSearchResult<VNNote> a = (StringSearchResult<VNNote>) table.getModel().getValueAt(r, 2);
+                            sapp.tree().setSelectedNote(a.getObject());
+                        }
+                    } else {
+                    }
+
+                }
+            });
             JScrollPane scroll = new JScrollPane(table);
             scroll.setPreferredSize(new Dimension(50, 50));
             add(scroll);

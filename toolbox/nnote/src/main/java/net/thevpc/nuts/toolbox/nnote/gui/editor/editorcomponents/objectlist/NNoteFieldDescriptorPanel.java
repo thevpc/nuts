@@ -148,11 +148,11 @@ class NNoteFieldDescriptorPanel {
     }
 
     public String getStringValue() {
-        return ((FormComponent) component).getContentString();
+        return formComponent().getContentString();
     }
 
     public void setStringValue(String s) {
-        ((FormComponent) component).setContentString(s);
+        formComponent().setContentString(s);
     }
 
     public void setValue(NNoteField field, NNoteObject object, NNoteObjectDocument document) {
@@ -164,7 +164,7 @@ class NNoteFieldDescriptorPanel {
             s = "";
         }
         setStringValue(s);
-        ((FormComponent) component).setEditable(isEditable());
+        formComponent().setEditable(isEditable());
     }
 
     public NNoteField getValue() {
@@ -200,7 +200,7 @@ class NNoteFieldDescriptorPanel {
     public void uninstall() {
         this.sapp = null;
         this.objectTracker = null;
-        ((FormComponent)component).uninstall();
+        formComponent().uninstall();
         tracker.unregisterAll();
     }
 
@@ -229,7 +229,7 @@ class NNoteFieldDescriptorPanel {
         }
         this.descr = field;
         label.setText(this.descr.getName());
-        ((FormComponent) component).setSelectValues(resolveValues(descr));
+        formComponent().setSelectValues(resolveValues(descr));
     }
 
     public void onDescriptorMoveDownField() {
@@ -397,12 +397,17 @@ class NNoteFieldDescriptorPanel {
 
     public void setEditable(boolean editable) {
         this.editable = editable;
+        formComponent().setEditable(editable);
         for (AbstractButton button : buttons) {
             button.setEnabled(editable);
         }
         for (Action action : tracker.getActions()) {
             action.setEnabled(editable);
         }
+    }
+
+    private FormComponent formComponent() {
+        return (FormComponent) component;
     }
     
 }

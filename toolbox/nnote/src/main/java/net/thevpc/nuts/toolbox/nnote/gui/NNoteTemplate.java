@@ -6,6 +6,7 @@
 package net.thevpc.nuts.toolbox.nnote.gui;
 
 import net.thevpc.nuts.toolbox.nnote.model.NNote;
+import net.thevpc.nuts.toolbox.nnote.service.NNoteService;
 
 /**
  *
@@ -14,10 +15,11 @@ import net.thevpc.nuts.toolbox.nnote.model.NNote;
 public interface NNoteTemplate {
 
     String getId();
+    String getIcon();
 
-    void prepare(NNote n, NNoteGuiApp sapp);
+    void prepare(NNote n, NNoteService sapp);
 
-    public default String getLabel(NNoteGuiApp sapp) {
+    public default String getLabel(NNoteService sapp) {
         return null;
     }
     

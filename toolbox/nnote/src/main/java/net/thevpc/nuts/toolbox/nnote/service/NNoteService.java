@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,8 +35,27 @@ import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.NutsStoreLocation;
+import net.thevpc.nuts.toolbox.nnote.gui.NNoteTemplate;
 import net.thevpc.nuts.toolbox.nnote.gui.util.NNoteError;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes;
+import static net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes.C;
+import static net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes.CPP;
+import static net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes.FILE;
+import static net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes.HTML;
+import static net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes.JAVA;
+import static net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes.JAVASCRIPT;
+import static net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes.MARKDOWN;
+import static net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes.NNOTE_DOCUMENT;
+import static net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes.NOTE_LIST;
+import static net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes.NUTS_TEXT_FORMAT;
+import static net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes.OBJECT_LIST;
+import static net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes.PASSWORD;
+import static net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes.PLAIN;
+import static net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes.STRING;
+import static net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes.URL;
+import net.thevpc.nuts.toolbox.nnote.service.templates.EthernetConnectionTemplate;
+import net.thevpc.nuts.toolbox.nnote.service.templates.UrlCardNNoteTemplate;
+import net.thevpc.nuts.toolbox.nnote.service.templates.WifiConnectionTemplate;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteObjectDocument;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteField;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteObject;
@@ -50,6 +70,9 @@ import net.thevpc.nuts.toolbox.nnote.service.search.DefaultVNoteSearchFilter;
 import net.thevpc.nuts.toolbox.nnote.service.search.VNNoteSearchResult;
 import net.thevpc.nuts.toolbox.nnote.service.search.VNoteSearchFilter;
 import net.thevpc.nuts.toolbox.nnote.service.search.strsearch.StringSearchResult;
+import net.thevpc.nuts.toolbox.nnote.service.templates.BankAccountTemplate;
+import net.thevpc.nuts.toolbox.nnote.service.templates.CreditCardAccountTemplate;
+import net.thevpc.nuts.toolbox.nnote.service.templates.UrlBookmarkNNoteTemplate;
 import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -66,10 +89,29 @@ public class NNoteService {
     public static final String SECURE_ALGO = NNoteObfuscatorDefault.ID;
     private NutsApplicationContext context;
     private I18n i18n;
+    private LinkedHashMap<String, NNoteTemplate> extra = new LinkedHashMap<>();
 
     public NNoteService(NutsApplicationContext context, I18n i18n) {
         this.context = context;
         this.i18n = i18n;
+        register(new UrlCardNNoteTemplate());
+        register(new EthernetConnectionTemplate());
+        register(new WifiConnectionTemplate());
+        register(new UrlBookmarkNNoteTemplate());
+        register(new BankAccountTemplate());
+        register(new CreditCardAccountTemplate());
+    }
+
+    public I18n i18n() {
+        return i18n;
+    }
+
+    private void register(NNoteTemplate a) {
+        extra.put(a.getId(), a);
+    }
+
+    public List<NNoteTemplate> getTemplates() {
+        return new ArrayList<>(extra.values());
     }
 
     public NutsApplicationContext getContext() {
@@ -220,6 +262,10 @@ public class NNoteService {
         } catch (Exception ex) {
             return null;
         }
+    }
+
+    public NNoteTemplate getTemplate(String contentType) {
+        return extra.get(contentType);
     }
 
     public static class SaveError {
@@ -857,7 +903,7 @@ public class NNoteService {
         if (m.find()) {
             base = m.group("base");
         }
-        contentType = NNoteTypes.normalizeContentType(contentType);
+        contentType = normalizeContentType(contentType);
         if (base.isEmpty()) {
             base = i18n.getString("NNoteTypeFamily." + contentType);
         }
@@ -886,7 +932,7 @@ public class NNoteService {
         if (m.find()) {
             base = m.group("base");
         }
-        contentType = NNoteTypes.normalizeContentType(contentType);
+        contentType = normalizeContentType(contentType);
         if (base.isEmpty()) {
             base = i18n.getString("NNoteTypeFamily." + contentType);
         }
@@ -903,4 +949,188 @@ public class NNoteService {
         }
     }
 
+    public String getNoteIcon(NNote note, boolean folder, boolean expanded) {
+        return getContentTypeIcon(note.getContentType(), note.getIcon(), note.getFolderIcon(), folder, expanded);
+    }
+
+    public String getContentTypeIcon(String contentType) {
+        return getContentTypeIcon(contentType, null, null, false, false);
+    }
+
+    public String getContentTypeIcon(String contentType, String preferredNormalIcon, String preferredFolderIcon, boolean folder, boolean expanded) {
+        String icon;
+        if (folder) {
+            icon = preferredFolderIcon;
+            icon = icon == null ? "" : icon.toLowerCase().trim();
+            if (isValidIcon(icon)) {
+                return icon;
+            }
+            icon = preferredNormalIcon;
+            icon = icon == null ? "" : icon.toLowerCase().trim();
+            if (isValidIcon(icon)) {
+                return icon;
+            }
+            if (expanded) {
+                return "folder-open";
+            } else {
+                return "folder-closed";
+            }
+        }
+        icon = preferredNormalIcon;
+        icon = icon == null ? "" : icon.toLowerCase().trim();
+        if (isValidIcon(icon)) {
+            return icon;
+        }
+        contentType = normalizeContentType(contentType);
+        switch (contentType) {
+            case PLAIN:
+                return "file-text";
+            case HTML:
+                return "file-html";
+            case MARKDOWN:
+                return "file-markdown";
+            case NUTS_TEXT_FORMAT:
+                return "file-nuts-text-format";
+            case JAVA:
+                return "file-java";
+            case JAVASCRIPT:
+                return "file-javascript";
+            case C:
+                return "file-c";
+            case CPP:
+                return "file-cpp";
+            case NNOTE_DOCUMENT:
+                return "file-nnote";
+            case FILE:
+                return "file";
+            case URL:
+                return "url";
+            case PASSWORD:
+                return "password";
+            case STRING:
+                return "string";
+            case NOTE_LIST:
+                return "nnote-list";
+            case OBJECT_LIST:
+                return "nnote-object-list";
+        }
+        NNoteTemplate ct = extra.get(contentType);
+        if (ct != null) {
+            String s = ct.getIcon();
+            if (isValidIcon(s)) {
+                return s;
+            }
+        }
+        return "unknown";
+    }
+
+    public String normalizeContentType(String ct) {
+        if (ct == null) {
+            ct = "";
+        }
+        ct = ct.trim().toLowerCase();
+        if (ct.isEmpty()) {
+            ct = PLAIN;
+        }
+        if (NNoteTypes.ALL_CONTENT_TYPES.contains(ct)) {
+            return ct;
+        }
+        for (NNoteTemplate value : extra.values()) {
+            if (value.getId().equals(ct)) {
+                return ct;
+            }
+        }
+
+        if (ct.contains(":")) {
+            ct = ct.substring(0, ct.indexOf(':'));
+            return normalizeContentType(ct);
+        }
+        if (!ct.contains("/")) {
+            for (String t : NNoteTypes.ALL_CONTENT_TYPES) {
+                if (t.endsWith("/" + ct)) {
+                    return t;
+                }
+            }
+            for (NNoteTemplate value : extra.values()) {
+                String t = value.getId();
+                if (t.endsWith("/" + ct)) {
+                    return t;
+                }
+            }
+        }
+        return NNoteTypes.UNSUPPORTED;
+    }
+
+    public String[] getEditorTypes(String contentType) {
+        return normalizeEditorTypes(contentType, null);
+    }
+
+    public String normalizeEditorType(String contentType, String editorType) {
+        return normalizeEditorTypes(contentType, editorType)[0];
+    }
+
+    public String[] normalizeEditorTypes(String contentType, String editorType) {
+        if (editorType == null) {
+            editorType = "";
+        }
+        editorType = editorType.trim().toLowerCase();
+        switch (normalizeContentType(contentType)) {
+            case HTML:
+            case NUTS_TEXT_FORMAT:
+            case MARKDOWN: {
+                if (editorType.isEmpty()) {
+                    return new String[]{NNoteTypes.EDITOR_WYSIWYG, NNoteTypes.EDITOR_SOURCE};
+                }
+                switch (editorType) {
+                    case NNoteTypes.EDITOR_WYSIWYG: {
+                        return new String[]{NNoteTypes.EDITOR_WYSIWYG};
+                    }
+                    case NNoteTypes.EDITOR_SOURCE: {
+                        return new String[]{NNoteTypes.EDITOR_SOURCE};
+                    }
+                    default: {
+                        return new String[]{NNoteTypes.EDITOR_WYSIWYG};
+                    }
+                }
+            }
+            case PLAIN:
+            case JAVA:
+            case C:
+            case CPP:
+            case JAVASCRIPT: {
+                return new String[]{NNoteTypes.EDITOR_SOURCE};
+            }
+            case NOTE_LIST: {
+                return new String[]{NNoteTypes.EDITOR_NOTE_LIST};
+            }
+            case OBJECT_LIST: {
+                return new String[]{NNoteTypes.EDITOR_OBJECT_LIST};
+            }
+            case STRING: {
+                return new String[]{NNoteTypes.EDITOR_STRING};
+            }
+            case PASSWORD: {
+                return new String[]{NNoteTypes.EDITOR_PASSWORD};
+            }
+            case FILE: {
+                return new String[]{NNoteTypes.EDITOR_FILE};
+            }
+            case URL: {
+                return new String[]{NNoteTypes.EDITOR_URL};
+            }
+            case NNOTE_DOCUMENT: {
+                return new String[]{NNoteTypes.EDITOR_NNOTE_DOCUMENT};
+            }
+            default: {
+                return new String[]{NNoteTypes.EDITOR_UNSUPPORTED};
+            }
+        }
+    }
+
+    public boolean isValidIcon(String icon) {
+        if (icon == null) {
+            return false;
+        }
+        return NNoteTypes.ALL_USER_ICONS.contains(icon);
+    }
 }

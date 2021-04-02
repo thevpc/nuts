@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.wysiwyg;
 
-import net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.wysiwyg.SourceEditorPaneExtension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -17,7 +16,8 @@ import javax.swing.JToolBar;
 import javax.swing.text.EditorKit;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.swing.core.swing.SwingApplicationsHelper;
-import net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes;
+import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
+import net.thevpc.nuts.toolbox.nnote.service.NNoteService;
 
 /**
  *
@@ -45,12 +45,12 @@ public abstract class AbstractSourceEditorPaneExtension implements SourceEditorP
     }
 
     public Action uninstallAction(Action a, Context context) {
-        SwingApplicationsHelper.unregisterAction(a, context.getApp());
+        SwingApplicationsHelper.unregisterAction(a, context.app());
         return a;
     }
     
     public Action prepareAction(String id, Action a, Context context) {
-        SwingApplicationsHelper.registerAction(a, "Action." + id, "$Action." + id + ".icon", context.getApp());
+        SwingApplicationsHelper.registerAction(a, "Action." + id, "$Action." + id + ".icon", context.app());
         context.add(a);
         return a;
     }
@@ -64,7 +64,7 @@ public abstract class AbstractSourceEditorPaneExtension implements SourceEditorP
                 if (ct == null) {
                     ct = "";
                 }
-                listener.onContentTypeChanged(NNoteTypes.normalizeContentType(ct), context);
+                listener.onContentTypeChanged(context.service().normalizeContentType(ct), context);
             }
         }
         );
@@ -79,11 +79,13 @@ public abstract class AbstractSourceEditorPaneExtension implements SourceEditorP
     public static class Context {
 
         private List<Action> actions = new ArrayList<>();
+        private NNoteGuiApp sapp;
         private Application app;
         private JEditorPane pane;
 
-        public Context(Application app, JEditorPane pane) {
-            this.app = app;
+        public Context(NNoteGuiApp sapp, JEditorPane pane) {
+            this.sapp = sapp;
+            this.app = sapp.app();
             this.pane = pane;
         }
 
@@ -91,8 +93,11 @@ public abstract class AbstractSourceEditorPaneExtension implements SourceEditorP
             return pane;
         }
 
-        public Application getApp() {
+        public Application app() {
             return app;
+        }
+        public NNoteService service() {
+            return sapp.service();
         }
 
         public void setApp(Application app) {

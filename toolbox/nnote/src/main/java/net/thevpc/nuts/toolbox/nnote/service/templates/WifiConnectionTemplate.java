@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.toolbox.nnote.gui.templates;
+package net.thevpc.nuts.toolbox.nnote.service.templates;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +16,7 @@ import net.thevpc.nuts.toolbox.nnote.model.NNoteFieldDescriptor;
 import net.thevpc.nuts.toolbox.nnote.model.NNote;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteObjectDescriptor;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteObjectFieldType;
+import net.thevpc.nuts.toolbox.nnote.service.NNoteService;
 import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
 
 /**
@@ -30,9 +31,9 @@ public class WifiConnectionTemplate implements NNoteTemplate {
     }
 
     @Override
-    public void prepare(NNote n, NNoteGuiApp sapp) {
+    public void prepare(NNote n, NNoteService service) {
         String prefix = "NNoteTypeFamily." + getId() + ".";
-        I18n i18n = sapp.app().i18n();
+        I18n i18n = service.i18n();
         NNoteObjectDocument doc = new NNoteObjectDocument().setDescriptor(new NNoteObjectDescriptor()
                 .addField(new NNoteFieldDescriptor().setName(i18n.getString(prefix + "title")).setType(NNoteObjectFieldType.TEXT))
                 .addField(new NNoteFieldDescriptor().setName(i18n.getString(prefix + "security")).setType(NNoteObjectFieldType.COMBOBOX)
@@ -48,10 +49,12 @@ public class WifiConnectionTemplate implements NNoteTemplate {
                 .addField(new NNoteFieldDescriptor().setName(i18n.getString(prefix + "gateway")).setType(NNoteObjectFieldType.TEXT))
                 .addField(new NNoteFieldDescriptor().setName(i18n.getString(prefix + "notes")).setType(NNoteObjectFieldType.TEXTAREA)));
         n.setContentType(NNoteTypes.OBJECT_LIST);
-        n.setContent(sapp.service().stringifyDescriptor(doc.setValues(new ArrayList<>(Arrays.asList(doc.getDescriptor().createObject())))));
-        if(OtherUtils.isBlank(n.getIcon())){
-            n.setIcon("wifi");
-        }
+        n.setContent(service.stringifyDescriptor(doc.setValues(new ArrayList<>(Arrays.asList(doc.getDescriptor().createObject())))));
+    }
+
+    @Override
+    public String getIcon() {
+        return "wifi";
     }
 
 }

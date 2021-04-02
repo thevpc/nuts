@@ -8,13 +8,12 @@ package net.thevpc.nuts.toolbox.nnote.gui.tree;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.font.TextAttribute;
-import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JTree;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import net.thevpc.echo.Application;
+import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes;
 import net.thevpc.nuts.toolbox.nnote.model.VNNote;
 import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
@@ -26,6 +25,7 @@ import sun.swing.DefaultLookup;
  */
 class SimpleDefaultTreeCellRendererImpl extends DefaultTreeCellRenderer {
 
+    private NNoteGuiApp sapp;
     private Application app;
     Font _font;
     Color _foreground;
@@ -36,8 +36,9 @@ class SimpleDefaultTreeCellRendererImpl extends DefaultTreeCellRenderer {
     Color _backgroundSelectionColor;
     Color _backgroundNonSelectionColor;
 
-    public SimpleDefaultTreeCellRendererImpl(Application app) {
-        this.app = app;
+    public SimpleDefaultTreeCellRendererImpl(NNoteGuiApp sapp) {
+        this.sapp = sapp;
+        this.app = sapp.app();
         _background = getBackground();
         _foreground = getForeground();
         _opaque = isOpaque();
@@ -102,7 +103,7 @@ class SimpleDefaultTreeCellRendererImpl extends DefaultTreeCellRenderer {
 
         if (value instanceof VNNote) {
             VNNote n = (VNNote) value;
-            String iconName = NNoteTypes.normalizeIcon(n.toNote(), n.getChildren().size() > 0, expanded);
+            String iconName = sapp.service().getNoteIcon(n.toNote(), n.getChildren().size() > 0, expanded);
             Icon icon = app.iconSet().icon(iconName).get();
             setIcon(icon);
         } else {

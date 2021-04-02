@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import net.thevpc.echo.Application;
+import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
 
 /**
  *
@@ -23,6 +24,7 @@ public class URLComponent extends JPanel implements FormComponent {
     public URLComponent() {
         super(new BorderLayout());
         add(jtf);
+        OtherUtils.installUndoRedoManager(jtf);
     }
 
     @Override

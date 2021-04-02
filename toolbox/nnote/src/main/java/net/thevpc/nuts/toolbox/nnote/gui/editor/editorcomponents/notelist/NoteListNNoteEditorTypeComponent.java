@@ -267,7 +267,7 @@ public class NoteListNNoteEditorTypeComponent extends JPanel implements NNoteEdi
             check.setBackground(b != null ? b : _background);
             b = OtherUtils.parseColor(value.getTitleForeground());
             check.setForeground(b != null ? b : _foreground);
-            String iconName = NNoteTypes.normalizeIcon(value.toNote(), value.getChildren().size() > 0, false);
+            String iconName = sapp.service().getNoteIcon(value.toNote(), value.getChildren().size() > 0, false);
             Icon icon = sapp.app().iconSet().icon(iconName).get();
             border.setIcon(icon);
             repaint();

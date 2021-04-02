@@ -18,11 +18,12 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.html.HTML;
 import net.thevpc.common.swing.JDropDownButton;
-import net.thevpc.echo.Application;
 import net.thevpc.echo.swing.core.swing.SwingApplicationsHelper;
 import net.thevpc.jeep.editor.JEditorPaneBuilder;
 import net.thevpc.nuts.toolbox.nnote.gui.util.CutomHTMLAction;
 import net.thevpc.common.swing.RectColorIcon;
+import net.thevpc.echo.Application;
+import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
 
 /**
  *
@@ -33,7 +34,7 @@ public class SourceEditorPanePanelHtmlExtension extends AbstractSourceEditorPane
     AbstractSourceEditorPaneExtension.Context context;
 
     @Override
-    public void uninstall(JEditorPaneBuilder editorBuilder, Application app) {
+    public void uninstall(JEditorPaneBuilder editorBuilder, NNoteGuiApp sapp) {
         if (context != null) {
             for (Action action : context.getActions()) {
                 uninstallAction(action, context);
@@ -42,11 +43,12 @@ public class SourceEditorPanePanelHtmlExtension extends AbstractSourceEditorPane
     }
 
     @Override
-    public void prepareEditor(JEditorPaneBuilder editorBuilder, boolean compactMode, Application app) {
+    public void prepareEditor(JEditorPaneBuilder editorBuilder, boolean compactMode, NNoteGuiApp sapp) {
         JEditorPane pane = editorBuilder.editor();
         JPopupMenu popup = pane.getComponentPopupMenu();
         JToolBar bar = compactMode ? null : new JToolBar();
-        context = new AbstractSourceEditorPaneExtension.Context(app, pane);
+        Application app=sapp.app();
+        context = new AbstractSourceEditorPaneExtension.Context(sapp, pane);
         addAction("font-bold", new StyledEditorKit.BoldAction(), bar, popup, context);
         addAction("font-italic", new StyledEditorKit.ItalicAction(), bar, popup, context);
         addAction("font-underline", new StyledEditorKit.UnderlineAction(), bar, popup, context);
@@ -61,7 +63,7 @@ public class SourceEditorPanePanelHtmlExtension extends AbstractSourceEditorPane
         addAction("insert-ol", new CutomHTMLAction("insert-ol", "<ol><li>item</li><li>item</li><li>item</li></ol>", HTML.Tag.P, HTML.Tag.OL), bar, null, context);
 
         JDropDownButton insertMenu = new JDropDownButton("");
-        SwingApplicationsHelper.registerButton(insertMenu, null, "insert-tag", app);
+        SwingApplicationsHelper.registerButton(insertMenu, null, "insert-tag", sapp.app());
         insertMenu.setQuickActionDelay(0);
         insertMenu.add(prepareAction("insert-hr", new CutomHTMLAction("insert-hr", "<hr>", HTML.Tag.P, HTML.Tag.HR), context));
         insertMenu.add(prepareAction("insert-break", new StyledEditorKit.InsertBreakAction(), context));

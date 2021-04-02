@@ -7,6 +7,7 @@ package net.thevpc.nuts.toolbox.nnote.util;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.font.TextAttribute;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,12 +15,29 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Map;
+import javax.swing.AbstractAction;
+import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoManager;
+import net.thevpc.common.swing.UndoRedoHelper;
+import net.thevpc.jeep.editor.JSyntaxDocument;
 
 /**
  *
  * @author vpc
  */
 public class OtherUtils {
+
+    public static void installUndoRedoManager(JTextComponent c) {
+        Document d = c.getDocument();
+        if (d instanceof JSyntaxDocument) {
+            UndoManager v = ((JSyntaxDocument) d).getUndoManager();
+            UndoRedoHelper.installUndoRedoManager(c, v);
+        } else {
+            UndoRedoHelper.installUndoRedoManager(c, new UndoManager());
+        }
+    }
 
     public static Font deriveFont(Font _font, boolean bold, boolean italic, boolean underline, boolean strike) {
         Font f = _font.deriveFont((bold ? Font.BOLD : 0) + (italic ? Font.ITALIC : 0));
