@@ -8,6 +8,7 @@ package net.thevpc.nuts.toolbox.nnote.gui.dialogs;
 import net.thevpc.nuts.toolbox.nnote.gui.util.dialog.OkCancelDialog;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
+import java.util.function.Consumer;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,36 +22,43 @@ import net.thevpc.nuts.toolbox.nnote.service.security.PasswordHandler;
  *
  * @author vpc
  */
-public class EnterPasswordDialog extends OkCancelDialog {
+public class EnterNewPasswordDialog extends OkCancelDialog {
 
-    private PasswordComponent passwordComponent;
-    private PasswordHandler ph;
+    private PasswordComponent passwordComponent1;
+    private PasswordComponent passwordComponent2;
 
     private boolean ok = false;
     private String path;
+    private PasswordHandler ph;
 
-    public EnterPasswordDialog(NNoteGuiApp sapp, String path, PasswordHandler ph) throws HeadlessException {
+    public EnterNewPasswordDialog(NNoteGuiApp sapp, String path, PasswordHandler ph) throws HeadlessException {
         super(sapp, "Message.password");
-        this.ph = ph;
-        passwordComponent = new PasswordComponent();
-        passwordComponent.install(sapp.app());
-        passwordComponent.setMinimumSize(new Dimension(50, 30));
-        GridBagLayoutSupport gbs = GridBagLayoutSupport.load(EnterPasswordDialog.class.getResource(
-                "/net/thevpc/nuts/toolbox/nnote/forms/EnterPassword.gbl-form"
+        this.ph=ph;
+        passwordComponent1 = new PasswordComponent();
+        passwordComponent1.install(sapp.app());
+        passwordComponent1.setMinimumSize(new Dimension(50, 30));
+        passwordComponent2 = new PasswordComponent();
+        passwordComponent2.install(sapp.app());
+        passwordComponent2.setMinimumSize(new Dimension(50, 30));
+        GridBagLayoutSupport gbs = GridBagLayoutSupport.load(EnterNewPasswordDialog.class.getResource(
+                "/net/thevpc/nuts/toolbox/nnote/forms/EnterNewPassword.gbl-form"
         ));
         gbs.bind("label", new JLabel(sapp.app().i18n().getString("Message.enter-password")));
         gbs.bind("file", new JLabel(path));
-        gbs.bind("pwd", passwordComponent);
+        gbs.bind("pwd1", passwordComponent1);
+        gbs.bind("pwd2", passwordComponent2);
 
         build(gbs.apply(new JPanel()), this::ok, this::cancel);
     }
 
     protected void install() {
-        passwordComponent.install(sapp.app());
+        passwordComponent1.install(sapp.app());
+        passwordComponent2.install(sapp.app());
     }
 
     protected void uninstall() {
-        passwordComponent.uninstall();
+        passwordComponent1.uninstall();
+        passwordComponent2.uninstall();
     }
 
     protected void ok() {
@@ -78,17 +86,19 @@ public class EnterPasswordDialog extends OkCancelDialog {
                 if (!ph.reTypePasswordOnError()) {
                     throw new CancelException();
                 }
+                //exHandler.accept(ex);
             }
         }
     }
 
     public String get() {
         if (ok) {
-            String s = passwordComponent.getContentString();
-            if (s != null && s.trim().length() > 0) {
-                return s;
+            String s1 = passwordComponent1.getContentString();
+            String s2 = passwordComponent2.getContentString();
+            if (s1 != null && s1.trim().length() > 0 && s1.equals(s2)) {
+                return s1;
             }
-            throw new IllegalArgumentException("missing password");
+            throw new IllegalArgumentException(sapp.app().i18n().getString("Message.passwordsDoNotMatch"));
         }
         return null;
     }

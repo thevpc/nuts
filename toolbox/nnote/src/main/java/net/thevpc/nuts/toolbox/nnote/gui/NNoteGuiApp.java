@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.toolbox.nnote.gui;
 
+import net.thevpc.nuts.toolbox.nnote.service.security.OpenWallet;
 import net.thevpc.nuts.toolbox.nnote.gui.util.NNoteError;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -18,8 +19,10 @@ import java.util.List;
 import java.util.Locale;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.JLabel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import net.thevpc.common.iconset.ResourcesIconSet;
 import net.thevpc.common.swing.DateTimeLabel;
@@ -34,6 +37,7 @@ import net.thevpc.echo.AppToolAction;
 import net.thevpc.echo.AppToolWindow;
 import net.thevpc.echo.AppToolWindowAnchor;
 import net.thevpc.echo.AppTools;
+import net.thevpc.echo.AppWindow;
 import net.thevpc.echo.AppWindowDisplayMode;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.swing.SwingApplications;
@@ -41,10 +45,14 @@ import net.thevpc.echo.swing.mydoggy.MyDoggyAppDockingWorkspace;
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.toolbox.nnote.NNoteSplashScreen;
 import net.thevpc.nuts.toolbox.nnote.gui.actions.NNoteAction;
+import net.thevpc.nuts.toolbox.nnote.gui.breadcrumb.NNodeBreadcrumb;
+import net.thevpc.nuts.toolbox.nnote.gui.dialogs.EnterNewPasswordDialog;
 import net.thevpc.nuts.toolbox.nnote.gui.dialogs.EnterPasswordDialog;
 import net.thevpc.nuts.toolbox.nnote.gui.search.SearchResultPanel;
+import net.thevpc.nuts.toolbox.nnote.gui.util.echoapp.AppDialog;
 import net.thevpc.nuts.toolbox.nnote.service.NNoteService;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteConfig;
+import net.thevpc.nuts.toolbox.nnote.service.security.PasswordHandler;
 import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
 import net.thevpc.swing.plaf.UIPlaf;
 import net.thevpc.swing.plaf.UIPlafManager;
@@ -65,6 +73,8 @@ public class NNoteGuiApp {
     private SearchResultPanel searchResultsTool;
     private AppToolWindow documentTool;
     private List<String> recentSearchQueries = new ArrayList<>();
+    private String currentFilePath;
+    private OpenWallet openWallet = new OpenWallet();
 
     public NNoteGuiApp(NutsApplicationContext appContext) {
         this.appContext = appContext;
@@ -80,33 +90,6 @@ public class NNoteGuiApp {
 
     public NNoteService service() {
         return service;
-    }
-
-    public void onChangePath(String newPath) {
-        if (newPath == null || newPath.length() == 0) {
-            newPath = "<" + app.i18n().getString("Message.noName") + ">";
-        } else {
-            recentFilesMenu.addFile(newPath);
-            config.addRecentFile(newPath);
-        }
-        app.mainWindow().get().title().set("N-Note: " + newPath);
-    }
-
-    public String getValidLastOpenPath() {
-        String p = config.getLastOpenPath();
-        if (!OtherUtils.isBlank(p)) {
-            File f = new File(p);
-            if (f.isDirectory()) {
-                return f.getPath();
-            }
-            if (f.isFile()) {
-                File parentFile = f.getParentFile();
-                if (parentFile != null) {
-                    return parentFile.getPath();
-                }
-            }
-        }
-        return service().getDefaultDocumentsFolder().getPath();
     }
 
     public void setLastOpenPath(String path) {
@@ -126,6 +109,36 @@ public class NNoteGuiApp {
             config.setLastOpenPath(null);
             saveConfig();
         }
+    }
+
+    public void onChangePath(String newPath) {
+        if (newPath == null || newPath.length() == 0) {
+            this.currentFilePath = null;
+            app.mainWindow().get().title().set("N-Note: " + "<" + app.i18n().getString("Message.noName") + ">");
+        } else {
+            recentFilesMenu.addFile(newPath);
+            config.addRecentFile(newPath);
+            this.currentFilePath = newPath;
+            app.mainWindow().get().title().set("N-Note: " + newPath);
+            setLastOpenPath(newPath);
+        }
+    }
+
+    public String getValidLastOpenPath() {
+        String p = config.getLastOpenPath();
+        if (!OtherUtils.isBlank(p)) {
+            File f = new File(p);
+            if (f.isDirectory()) {
+                return f.getPath();
+            }
+            if (f.isFile()) {
+                File parentFile = f.getParentFile();
+                if (parentFile != null) {
+                    return parentFile.getPath();
+                }
+            }
+        }
+        return service().getDefaultDocumentsFolder().getPath();
     }
 
     public void bindConfig() {
@@ -156,7 +169,7 @@ public class NNoteGuiApp {
         recentFilesMenu.addFileSelectedListener(new FileSelectedListener() {
             @Override
             public void fileSelected(RecentFileEvent event) {
-                tree.openDocument(new File(event.getFile()));
+                tree.openDocument(new File(event.getFile()), false);
             }
         });
     }
@@ -278,29 +291,45 @@ public class NNoteGuiApp {
 
         tools.addFolder("/mainWindow/menuBar/File");
 
-        tools.addAction(new NNoteAction("NewFile", this) {
+        AppToolAction newfileAction = tools.addAction(new NNoteAction("NewFile", this) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tree.openNewDocument(true);
+                tree.openNewDocument(false);
             }
         }, "/mainWindow/menuBar/File/NewFile", "/mainWindow/toolBar/Default/NewFile");
+//        newfileAction.mnemonic().set(KeyEvent.VK_N);
+//        newfileAction.accelerator().set("control N");
+
         NNoteSplashScreen.get().tic();
 
-        tools.addAction(new NNoteAction("OpenFile", this) {
+        AppToolAction openAction = tools.addAction(new NNoteAction("OpenFile", this) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tree.openDocument(true);
+                tree.openDocument(false);
             }
         }, "/mainWindow/menuBar/File/Open", "/mainWindow/toolBar/Default/Open");
+        openAction.mnemonic().set(KeyEvent.VK_O);
+        openAction.accelerator().set("control O");
+
+        AppToolAction reloadAction = tools.addAction(new NNoteAction("ReloadFile", this) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tree.reloadDocument(false);
+            }
+        }, "/mainWindow/menuBar/File/Reload", "/mainWindow/toolBar/Default/Reload");
+        reloadAction.mnemonic().set(KeyEvent.VK_R);
+        reloadAction.accelerator().set("control R");
 
         NNoteSplashScreen.get().tic();
-        tools.addAction(new NNoteAction("Save", this) {
+        AppToolAction saveAction = tools.addAction(new NNoteAction("Save", this) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 tree.saveDocument();
             }
         }, "/mainWindow/menuBar/File/Save", "/mainWindow/toolBar/Default/Save");
         NNoteSplashScreen.get().tic();
+        saveAction.mnemonic().set(KeyEvent.VK_S);
+        saveAction.accelerator().set("control S");
 
 //        tools.addAction(
 //                new NNoteAction("SaveAll", this) {
@@ -308,12 +337,22 @@ public class NNoteGuiApp {
 //            public void actionPerformed(ActionEvent e) {
 //            }
 //        },"/mainWindow/menuBar/File/SaveAll", "/mainWindow/toolBar/Default/SaveAll");
-        tools.addAction(new NNoteAction("SaveAs", this) {
+        AppToolAction saveAsAction = tools.addAction(new NNoteAction("SaveAs", this) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 tree.saveAsDocument();
             }
         }, "/mainWindow/menuBar/File/SaveAs"/*, "/mainWindow/toolBar/Default/SaveAs"*/);
+
+        tools.addAction(new NNoteAction("CloseDocument", this) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tree.openNewDocument(false); // close is same as new!!
+            }
+        }, "/mainWindow/menuBar/File/CloseDocument", "/mainWindow/toolBar/Default/CloseDocument");
+        NNoteSplashScreen.get().tic();
+        tools.addSeparator("/mainWindow/menuBar/File/Separator1");
+
         NNoteSplashScreen.get().tic();
         recentFilesMenu = new RecentFilesMenu(app.i18n().getString("Action.recentFiles"), new DefaultRecentFilesModel());
 
@@ -332,7 +371,8 @@ public class NNoteGuiApp {
 //        tools.addAction("/mainWindow/menuBar/File/Settings", "/mainWindow/toolBar/Default/Settings");
 //        tools.addSeparator("/mainWindow/menuBar/File/Separator3");
         NNoteSplashScreen.get().tic();
-        tools.addAction(new NNoteAction("Exit", this) {
+
+        AppToolAction exitAction = tools.addAction(new NNoteAction("Exit", this) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (tree.isModifiedDocument()) {
@@ -342,6 +382,8 @@ public class NNoteGuiApp {
             }
         },
                 "/mainWindow/menuBar/File/Exit");
+        exitAction.mnemonic().set(KeyEvent.VK_X);
+        exitAction.accelerator().set("control X");
 
         tools.addFolder("/mainWindow/menuBar/Edit");
         AppToolAction a = tools.addAction(new NNoteAction("Search", this) {
@@ -385,6 +427,11 @@ public class NNoteGuiApp {
             }
         },
                 "/mainWindow/menuBar/Help/About");
+
+        tools.addHorizontalGlue("/mainWindow/toolBar/Default/Glue");
+
+        tools.addCustomTool("/mainWindow/toolBar/Default/Glue", (c) -> new NNodeBreadcrumb(NNoteGuiApp.this));
+
         NNoteSplashScreen.get().tic();
         documentTool.active().set(true);
         applyConfigToUI();
@@ -395,6 +442,34 @@ public class NNoteGuiApp {
 //        folders.openDocument(service().createSampleDocumentNote());
         NNoteSplashScreen.get().tic();
         NNoteSplashScreen.get().closeSplash();
+        frame().getRootPane().registerKeyboardAction(
+                (e) -> {
+                    AppWindow w = app.mainWindow().get();
+                    AppWindowDisplayMode dm = w.displayMode().get();
+                    if (dm == null) {
+                        dm = AppWindowDisplayMode.NORMAL;
+                    }
+                    switch (dm) {
+                        case NORMAL: {
+                            w.displayMode().set(AppWindowDisplayMode.FULLSCREEN);
+                            break;
+                        }
+                        default: {
+                            w.displayMode().set(AppWindowDisplayMode.NORMAL);
+                            break;
+                        }
+                    }
+                },
+                KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.ALT_MASK + KeyEvent.SHIFT_MASK),
+                JComponent.WHEN_IN_FOCUSED_WINDOW
+        );
+        frame().getRootPane().registerKeyboardAction(
+                (e) -> {
+                    tree.onAddChild();
+                },
+                KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_MASK),
+                JComponent.WHEN_IN_FOCUSED_WINDOW
+        );
         app.waitFor();
     }
 
@@ -411,14 +486,20 @@ public class NNoteGuiApp {
     }
 
     public void showAbout() {
-        JOptionPane.showMessageDialog(frame(), "N-Note Application");
+        newDialog()
+                .setTitleId("Message.about")
+                .setContent(new JLabel(app.i18n().getString("Message.aboutText")))
+                .withOkOnlyButton(c -> c.closeDialog())
+                .build().setVisible(true);
     }
 
     public void showError(Exception e) {
         e.printStackTrace();
-        JOptionPane.showMessageDialog(
-                frame(), e.getMessage()
-        );
+        newDialog()
+                .setTitleId("Message.error")
+                .setContent(new JLabel(e.getMessage()))
+                .withOkOnlyButton(c -> c.closeDialog())
+                .build().setVisible(true);
     }
 
     public void showError(NNoteError e) {
@@ -429,9 +510,41 @@ public class NNoteGuiApp {
         }
     }
 
-    public String askForPassword(String path) {
-        EnterPasswordDialog d = new EnterPasswordDialog(this);
-        return d.showDialog(this::showError);
+    public PasswordHandler wallet() {
+        return new PasswordHandler() {
+            @Override
+            public String askForSavePassword(String path, String root) {
+                String enteredPassword = openWallet.get(root, path);
+                if (enteredPassword != null) {
+                    return enteredPassword;
+                }
+                EnterNewPasswordDialog d = new EnterNewPasswordDialog(NNoteGuiApp.this, path, this);
+                enteredPassword = d.showDialog();
+                openWallet.store(root, path, enteredPassword);
+                return enteredPassword;
+            }
+
+            @Override
+            public String askForLoadPassword(String path, String root) {
+                String enteredPassword = openWallet.get(root, path);
+                if (enteredPassword != null) {
+                    return enteredPassword;
+                }
+                EnterPasswordDialog d = new EnterPasswordDialog(NNoteGuiApp.this, path, this);
+                enteredPassword = d.showDialog();
+                openWallet.store(root, path, enteredPassword);
+                return enteredPassword;
+            }
+
+            @Override
+            public boolean reTypePasswordOnError() {
+                return "yes".equals(newDialog()
+                        .setTitleId("Message.invalidPassword.askRetype")
+                        .setContentTextId("Message.invalidPassword.askRetype")
+                        .withYesNoButtons(c -> c.closeDialog(), c -> c.closeDialog())
+                        .build().showDialog());
+            }
+        };
     }
 
     public NNoteConfig config() {
@@ -448,4 +561,13 @@ public class NNoteGuiApp {
             recentSearchQueries = new ArrayList<>(new LinkedHashSet<String>(recentSearchQueries));
         }
     }
+
+    public String getCurrentFilePath() {
+        return currentFilePath;
+    }
+
+    public AppDialog.Builder newDialog() {
+        return AppDialog.of(app());
+    }
+
 }

@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.toolbox.nnote.service.security;
 
+import java.util.function.Supplier;
 import net.thevpc.nuts.toolbox.nnote.model.CypherInfo;
 import net.thevpc.nuts.toolbox.nnote.model.NNote;
 
@@ -14,7 +15,7 @@ import net.thevpc.nuts.toolbox.nnote.model.NNote;
  */
 public interface NNoteObfuscator {
 
-    CypherInfo encrypt(NNote a, PasswordHandler handler);
+    CypherInfo encrypt(NNote a, Supplier<String> passwordSupplier);
 
-    NNote decrypt(CypherInfo cypherInfo, NNote original,PasswordHandler handler);
+    NNote decrypt(CypherInfo cypherInfo, NNote original,Supplier<String> passwordSupplier);
 }

@@ -13,15 +13,12 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.swing.DropMode;
-import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -34,6 +31,7 @@ import javax.swing.tree.TreePath;
 import net.thevpc.common.swing.ExtensionFileChooserFilter;
 import net.thevpc.common.swing.SwingUtilities3;
 import net.thevpc.common.swing.tree.TreeTransferHandler;
+import net.thevpc.common.swing.util.CancelException;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.swing.core.swing.SwingApplicationsHelper;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
@@ -398,44 +396,52 @@ public class NNoteDocumentTree extends JPanel {
         add(new JScrollPane(tree));
     }
 
-    public ReturnType closeDocument() {
+    public ReturnType trySaveChangesOrDiscard() {
         if (isModifiedDocument()) {
-            int s = JOptionPane.showConfirmDialog(sapp.frame(), sapp.app().i18n().getString("Message.askSaveDocument"));
-            if (s == JOptionPane.YES_OPTION) {
+            String s = sapp.newDialog()
+                    .setTitleId("Message.askSaveDocument")
+                    .setContentTextId("Message.askSaveDocument")
+                    .withYesNoButtons(c -> c.closeDialog(), c -> c.closeDialog())
+                    .build().showDialog();
+            
+            
+            if ("yes".equals(s)) {
                 return saveDocument();
-            } else if (s == JOptionPane.NO_OPTION) {
-                return openNewDocument(false);
+            } else if ("no".equals(s)) {
+                //DISCARD
+                return ReturnType.SUCCESS;
             } else {
                 return ReturnType.CANCEL;
             }
         }
-        openNewDocument(false);
         return ReturnType.SUCCESS;
     }
 
-    public ReturnType openNewDocument(boolean closeCurrent) {
-        if (!closeCurrent) {
-            openDocument(NNote.newDocument());
-            return ReturnType.SUCCESS;
-        } else {
-            ReturnType c = closeDocument();
-            if (c == ReturnType.SUCCESS) {
-                openDocument(new NNote().setContentType(NNoteTypes.NNOTE_DOCUMENT));
-                return ReturnType.SUCCESS;
-            }
-            return c;
-        }
+    public ReturnType closeDocument(boolean discardChanges) {
+        return openNode(NNote.newDocument(), discardChanges);
     }
 
-    public void openDocument(NNote note) {
+    public ReturnType openNewDocument(boolean discardChanges) {
+        return openNode(NNote.newDocument(), discardChanges);
+    }
+
+    private ReturnType openNode(NNote note, boolean discardChanges) {
+        if (!discardChanges) {
+            ReturnType s = trySaveChangesOrDiscard();
+            if (s == ReturnType.CANCEL || s == ReturnType.FAIL) {
+                return s;
+            }
+        }
         if (!NNoteTypes.NNOTE_DOCUMENT.equals(note.getContentType())) {
             throw new IllegalArgumentException("expected Document Note");
         }
-        sapp.onChangePath(note.getContent());
+
         SwingUtilities3.invokeLater(() -> {
             model.setRoot(VNNote.of(note));
             snapshotDocument();
+            sapp.onChangePath(note.getContent());
         });
+        return ReturnType.SUCCESS;
     }
 
     public void setSelectedNote(VNNote note) {
@@ -485,10 +491,24 @@ public class NNoteDocumentTree extends JPanel {
 //        System.out.println("snapshotted:" + lastSavedDocument);
     }
 
-    public ReturnType openDocument(File file) {
-        NNote n = sapp.service().loadDocument(file, sapp::askForPassword);
+    public ReturnType openDocument(File file, boolean discardChanges) {
+        if (!discardChanges) {
+            ReturnType s = trySaveChangesOrDiscard();
+            if (s == ReturnType.CANCEL || s == ReturnType.FAIL) {
+                return s;
+            }
+        }
+        NNote n = null;
+        try {
+            n = sapp.service().loadDocument(file, sapp.wallet());
+        } catch (CancelException ex) {
+            return ReturnType.CANCEL;
+        } catch (Exception ex) {
+            sapp.showError(ex);
+            return ReturnType.FAIL;
+        }
         if (n.error == null) {
-            openDocument(n);
+            openNode(n, true);
             return ReturnType.SUCCESS;
         } else {
             sapp.showError(n.error);
@@ -567,7 +587,7 @@ public class NNoteDocumentTree extends JPanel {
             File file = jfc.getSelectedFile();
             sapp.setLastOpenPath(file.getPath());
             if (file.getName().endsWith(".nnote")) {
-                NNote n = sapp.service().loadDocument(file, sapp::askForPassword);
+                NNote n = sapp.service().loadDocument(file, sapp.wallet());
                 for (NNote c : n.getChildren()) {
                     current.addChild(VNNote.of(c));
                 }
@@ -583,11 +603,27 @@ public class NNoteDocumentTree extends JPanel {
         }
     }
 
-    public ReturnType openDocument(boolean closeCurrent) {
-        if (closeCurrent) {
-            ReturnType c = closeDocument();
-            if (c != ReturnType.SUCCESS) {
-                return c;
+    public ReturnType reloadDocument(boolean discardChanges) {
+        if (!discardChanges) {
+            ReturnType s = trySaveChangesOrDiscard();
+            if (s == ReturnType.CANCEL || s == ReturnType.FAIL) {
+                return s;
+            }
+        }
+        String c = getSelectedNote().getContent();
+        if (c == null || c.length() == 0) {
+            //openNewDocument(false);
+            return ReturnType.CANCEL;
+        } else {
+            return openDocument(new File(c), true);
+        }
+    }
+
+    public ReturnType openDocument(boolean discardChanges) {
+        if (!discardChanges) {
+            ReturnType s = trySaveChangesOrDiscard();
+            if (s == ReturnType.CANCEL || s == ReturnType.FAIL) {
+                return s;
             }
         }
         JFileChooser jfc = new JFileChooser();
@@ -595,8 +631,7 @@ public class NNoteDocumentTree extends JPanel {
         jfc.addChoosableFileFilter(new ExtensionFileChooserFilter("nnote", sapp.app().i18n().getString("Message.nnoteDocumentFileFilter")));
         jfc.setAcceptAllFileFilterUsed(false);
         if (jfc.showOpenDialog(sapp.frame()) == JFileChooser.APPROVE_OPTION) {
-            sapp.setLastOpenPath(jfc.getSelectedFile().getPath());
-            return openDocument(jfc.getSelectedFile());
+            return openDocument(jfc.getSelectedFile(), true);
         } else {
             return ReturnType.CANCEL;
         }
@@ -634,7 +669,7 @@ public class NNoteDocumentTree extends JPanel {
                     canonicalPath = canonicalPath + ".nnote";
                 }
                 getDocument().setContent(canonicalPath);
-                sapp.service().saveDocument(getDocument().toNote(), sapp::askForPassword);
+                sapp.service().saveDocument(getDocument().toNote(), sapp.wallet());
                 sapp.onChangePath(canonicalPath);
                 snapshotDocument();
                 sapp.config().addRecentFile(canonicalPath);
@@ -658,7 +693,9 @@ public class NNoteDocumentTree extends JPanel {
         } else {
             try {
                 sapp.onChangePath(getDocument().getContent());
-                sapp.service().saveDocument(getDocument().toNote(), sapp::askForPassword);
+                if (sapp.service().saveDocument(getDocument().toNote(), sapp.wallet())) {
+                    snapshotDocument();
+                }
                 return ReturnType.SUCCESS;
             } catch (Exception ex) {
                 sapp.showError(ex);
@@ -673,8 +710,6 @@ public class NNoteDocumentTree extends JPanel {
 //        }
 //        return app.iconSet().icon(name).get();
 //    }
-    
-    
     public void updateTree() {
 //        model = new VNNoteTreeModel((VNNote) model.getRoot());
 //        tree = new JTree(model);

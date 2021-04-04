@@ -11,6 +11,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.function.Supplier;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import net.thevpc.common.swing.util.CancelException;
@@ -31,8 +32,8 @@ public class NNoteObfuscatorDefault implements NNoteObfuscator {
     }
 
     @Override
-    public CypherInfo encrypt(NNote a, PasswordHandler handler) {
-        String password = handler.askForPassword(null);
+    public CypherInfo encrypt(NNote a, Supplier<String> passwordSupplier) {
+        String password = passwordSupplier.get();
         if (password == null || password.length() == 0) {
             throw new CancelException();
         }
@@ -48,11 +49,11 @@ public class NNoteObfuscatorDefault implements NNoteObfuscator {
     }
 
     @Override
-    public NNote decrypt(CypherInfo cypherInfo, NNote original, PasswordHandler handler) {
+    public NNote decrypt(CypherInfo cypherInfo, NNote original, Supplier<String> passwordSupplier) {
         if (!ID.equals(cypherInfo.getAlgo())) {
             throw new IllegalArgumentException("unsupported algo: " + cypherInfo.getAlgo());
         }
-        String password = handler.askForPassword(null);
+        String password = passwordSupplier.get();
         if (password == null || password.length() == 0) {
             throw new CancelException();
         }

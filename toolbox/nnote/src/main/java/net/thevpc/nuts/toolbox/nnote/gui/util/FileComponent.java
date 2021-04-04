@@ -30,15 +30,15 @@ public class FileComponent extends JPanel {
     private List<FileFilter> fileFilters = new ArrayList<>();
 
     public FileComponent() {
-        JButton showPassword = new JButton("...");
-        showPassword.addActionListener((e)
+        show = new JButton("...");
+        show.addActionListener((e)
                 -> {
             onShowDialog();
         }
         );
         new GridBagLayoutSupport("[pwd-===][check] ; insets(2)")
                 .bind("pwd", textField)
-                .bind("check", showPassword)
+                .bind("check", show)
                 .apply(this);
     }
 

@@ -49,12 +49,12 @@ public class NNoteDocumentNNoteEditorTypeComponent extends JPanel implements NNo
             if (note.getContent() == null || note.getContent().length() == 0) {
                 error.setText("missing file");
             } else {
-                NNote o = sapp.service().loadDocument(new File(note.getContent()), sapp::askForPassword);
-                note.removeAllChildren();//TODO FIX ME
-                for (NNote c : o.getChildren()) {
-                    note.addChild(VNNote.of(c));
+                if (!note.isLoaded()) {
+                    NNote n = note.toNote();
+                    sapp.service().loadNode(n, sapp.wallet(), false, sapp.getCurrentFilePath());
+                    note.copyFrom(n);
                 }
-                error.setText(o.error == null ? "" : o.error.getEx().toString());
+                error.setText(note.error == null ? "" : note.error.getEx().toString());
             }
             setEditable(!note.isReadOnly());
         } catch (Exception ex) {

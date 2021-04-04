@@ -15,6 +15,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import net.thevpc.echo.Application;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes;
+import net.thevpc.nuts.toolbox.nnote.gui.util.GuiHelper;
 import net.thevpc.nuts.toolbox.nnote.model.VNNote;
 import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
 import sun.swing.DefaultLookup;
@@ -71,10 +72,10 @@ class SimpleDefaultTreeCellRendererImpl extends DefaultTreeCellRenderer {
         setOpaque(false);
         if (value instanceof VNNote) {
             VNNote n = (VNNote) value;
-            setFont(OtherUtils.deriveFont(_font, n.isTitleBold(), n.isTitleItalic(), n.isTitleUnderlined(), n.isTitleStriked()));
+            setFont(GuiHelper.deriveFont(_font, n.isTitleBold(), n.isTitleItalic(), n.isTitleUnderlined(), n.isTitleStriked()));
             if (sel) {
             } else {
-                Color b = OtherUtils.parseColor(n.getTitleBackground());
+                Color b = GuiHelper.parseColor(n.getTitleBackground());
                 if (b != null) {
 //                    setOpaque(true);
                     setBackgroundNonSelectionColor(b);
@@ -83,7 +84,7 @@ class SimpleDefaultTreeCellRendererImpl extends DefaultTreeCellRenderer {
                 }
             }
             {
-                Color b = OtherUtils.parseColor(n.getTitleForeground());
+                Color b = GuiHelper.parseColor(n.getTitleForeground());
                 if (b != null) {
                     setTextNonSelectionColor(b);
                     setTextSelectionColor(b);

@@ -3,12 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.wysiwyg;
+package net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.source;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JEditorPane;
 import javax.swing.JPopupMenu;
@@ -24,6 +27,24 @@ import net.thevpc.nuts.toolbox.nnote.service.NNoteService;
  * @author vpc
  */
 public abstract class AbstractSourceEditorPaneExtension implements SourceEditorPaneExtension {
+
+    public Action al(ActionListener a) {
+        return new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                a.actionPerformed(e);
+            }
+        };
+    }
+    public void addActionListener(String id, ActionListener a, JToolBar bar, JPopupMenu popup, Context context) {
+        Action pa = prepareAction(id, al(a), context);
+        if (bar != null) {
+            bar.add(pa);
+        }
+        if (popup != null) {
+            popup.add(pa);
+        }
+    }
 
     public void addAction(String id, Action a, JToolBar bar, JPopupMenu popup, Context context) {
         Action pa = prepareAction(id, a, context);

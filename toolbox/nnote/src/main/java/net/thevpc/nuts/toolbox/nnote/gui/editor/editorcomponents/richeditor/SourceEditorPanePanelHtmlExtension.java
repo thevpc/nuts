@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.wysiwyg;
+package net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.richeditor;
 
 import java.awt.Color;
 import java.util.LinkedHashMap;
@@ -14,16 +14,18 @@ import javax.swing.JEditorPane;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
-import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledEditorKit;
-import javax.swing.text.html.HTML;
 import net.thevpc.common.swing.JDropDownButton;
 import net.thevpc.echo.swing.core.swing.SwingApplicationsHelper;
 import net.thevpc.jeep.editor.JEditorPaneBuilder;
-import net.thevpc.nuts.toolbox.nnote.gui.util.CutomHTMLAction;
 import net.thevpc.common.swing.RectColorIcon;
 import net.thevpc.echo.Application;
+import net.thevpc.more.shef.AlignEnum;
+import net.thevpc.more.shef.BlocEnum;
+import net.thevpc.more.shef.InlineStyleEnum;
+import net.thevpc.more.shef.ShefHelper;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
+import net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.source.AbstractSourceEditorPaneExtension;
 
 /**
  *
@@ -44,34 +46,55 @@ public class SourceEditorPanePanelHtmlExtension extends AbstractSourceEditorPane
 
     @Override
     public void prepareEditor(JEditorPaneBuilder editorBuilder, boolean compactMode, NNoteGuiApp sapp) {
-        JEditorPane pane = editorBuilder.editor();
-        JPopupMenu popup = pane.getComponentPopupMenu();
+        JEditorPane editor = editorBuilder.editor();
+        JPopupMenu popup = editor.getComponentPopupMenu();
         JToolBar bar = compactMode ? null : new JToolBar();
-        Application app=sapp.app();
-        context = new AbstractSourceEditorPaneExtension.Context(sapp, pane);
-        addAction("font-bold", new StyledEditorKit.BoldAction(), bar, popup, context);
-        addAction("font-italic", new StyledEditorKit.ItalicAction(), bar, popup, context);
-        addAction("font-underline", new StyledEditorKit.UnderlineAction(), bar, popup, context);
+        Application app = sapp.app();
+        context = new AbstractSourceEditorPaneExtension.Context(sapp, editor);
+
+        JDropDownButton blocMenu = new JDropDownButton("");
+        SwingApplicationsHelper.registerButton(blocMenu, null, "insert-bloc", sapp.app());
+        blocMenu.setQuickActionDelay(0);
+        blocMenu.add(prepareAction("insert-h1", al((e) -> ShefHelper.runInsertBloc(editor, BlocEnum.H1)), context));
+        blocMenu.add(prepareAction("insert-h2", al((e) -> ShefHelper.runInsertBloc(editor, BlocEnum.H2)), context));
+        blocMenu.add(prepareAction("insert-h3", al((e) -> ShefHelper.runInsertBloc(editor, BlocEnum.H3)), context));
+        blocMenu.add(prepareAction("insert-h4", al((e) -> ShefHelper.runInsertBloc(editor, BlocEnum.H4)), context));
+        blocMenu.add(prepareAction("insert-h5", al((e) -> ShefHelper.runInsertBloc(editor, BlocEnum.H5)), context));
+        blocMenu.add(prepareAction("insert-h6", al((e) -> ShefHelper.runInsertBloc(editor, BlocEnum.H6)), context));
+        blocMenu.add(prepareAction("insert-pre", al((e) -> ShefHelper.runInsertBloc(editor, BlocEnum.PRE)), context));
+        blocMenu.add(prepareAction("insert-div", al((e) -> ShefHelper.runInsertBloc(editor, BlocEnum.DIV)), context));
+        blocMenu.add(prepareAction("insert-p", al((e) -> ShefHelper.runInsertBloc(editor, BlocEnum.P)), context));
+        blocMenu.add(prepareAction("insert-blockquote", al((e) -> ShefHelper.runInsertBloc(editor, BlocEnum.BLOCKQUOTE)), context));
+        blocMenu.add(prepareAction("insert-ol", al((e) -> ShefHelper.runInsertBloc(editor, BlocEnum.OL)), context));
+        blocMenu.add(prepareAction("insert-ul", al((e) -> ShefHelper.runInsertBloc(editor, BlocEnum.UL)), context));
+        if (bar != null) {
+            bar.add(blocMenu);
+        }
+
+        addActionListener("font-bold", (e) -> ShefHelper.runToggleInlineStyle(editor, InlineStyleEnum.BOLD), bar, popup, context);
+        addActionListener("font-italic", (e) -> ShefHelper.runToggleInlineStyle(editor, InlineStyleEnum.ITALIC), bar, popup, context);
+        addActionListener("font-underline", (e) -> ShefHelper.runToggleInlineStyle(editor, InlineStyleEnum.UNDERLINE), bar, popup, context);
+        addActionListener("font-strike", (e) -> ShefHelper.runToggleInlineStyle(editor, InlineStyleEnum.STRIKE), bar, popup, context);
+        addActionListener("font-sup", (e) -> ShefHelper.runToggleInlineStyle(editor, InlineStyleEnum.SUP), bar, popup, context);
+        addActionListener("font-sub", (e) -> ShefHelper.runToggleInlineStyle(editor, InlineStyleEnum.SUB), bar, popup, context);
+        addActionListener("font-strong", (e) -> ShefHelper.runToggleInlineStyle(editor, InlineStyleEnum.STRONG), bar, popup, context);
+        addActionListener("font-em", (e) -> ShefHelper.runToggleInlineStyle(editor, InlineStyleEnum.EM), bar, popup, context);
+        addActionListener("font-cite", (e) -> ShefHelper.runToggleInlineStyle(editor, InlineStyleEnum.CITE), bar, popup, context);
         addSeparator(bar, popup, context);
-        addAction("align-left", new StyledEditorKit.AlignmentAction("align-left", StyleConstants.ALIGN_LEFT), bar, popup, context);
-        addAction("align-center", new StyledEditorKit.AlignmentAction("align-center", StyleConstants.ALIGN_CENTER), bar, popup, context);
-        addAction("align-right", new StyledEditorKit.AlignmentAction("align-right", StyleConstants.ALIGN_RIGHT), bar, popup, context);
-        addAction("align-justify", new StyledEditorKit.AlignmentAction("align-justify", StyleConstants.ALIGN_JUSTIFIED), bar, popup, context);
+        addActionListener("align-left", (e) -> ShefHelper.runTextAlign(editor, AlignEnum.LEFT), bar, popup, context);
+        addActionListener("align-center", (e) -> ShefHelper.runTextAlign(editor, AlignEnum.CENTER), bar, popup, context);
+        addActionListener("align-right", (e) -> ShefHelper.runTextAlign(editor, AlignEnum.RIGHT), bar, popup, context);
+        addActionListener("align-justify", (e) -> ShefHelper.runTextAlign(editor, AlignEnum.JUSTIFY), bar, popup, context);
 
         addSeparator(bar, null, context);
-        addAction("insert-ul", new CutomHTMLAction("insert-ul", "<ul><li>item</li><li>item</li><li>item</li></ul>", HTML.Tag.P, HTML.Tag.UL), bar, null, context);
-        addAction("insert-ol", new CutomHTMLAction("insert-ol", "<ol><li>item</li><li>item</li><li>item</li></ol>", HTML.Tag.P, HTML.Tag.OL), bar, null, context);
+        addActionListener("insert-ul", (e) -> ShefHelper.runInsertBloc(editor, BlocEnum.UL), bar, null, context);
+        addActionListener("insert-ol", (e) -> ShefHelper.runInsertBloc(editor, BlocEnum.OL), bar, null, context);
 
         JDropDownButton insertMenu = new JDropDownButton("");
         SwingApplicationsHelper.registerButton(insertMenu, null, "insert-tag", sapp.app());
         insertMenu.setQuickActionDelay(0);
-        insertMenu.add(prepareAction("insert-hr", new CutomHTMLAction("insert-hr", "<hr>", HTML.Tag.P, HTML.Tag.HR), context));
+        insertMenu.add(prepareAction("insert-hr", al((e) -> ShefHelper.runInsertHorizontalRule(editor)), context));
         insertMenu.add(prepareAction("insert-break", new StyledEditorKit.InsertBreakAction(), context));
-        insertMenu.add(prepareAction("insert-tab", new StyledEditorKit.InsertTabAction(), context));
-        insertMenu.add(prepareAction("insert-h1", new CutomHTMLAction("insert-h1", "<h1></h1>", HTML.Tag.P, HTML.Tag.H1), context));
-        insertMenu.add(prepareAction("insert-h2", new CutomHTMLAction("insert-h2", "<h2></h2>", HTML.Tag.P, HTML.Tag.H2), context));
-        insertMenu.add(prepareAction("insert-h3", new CutomHTMLAction("insert-h3", "<h3></h3>", HTML.Tag.P, HTML.Tag.H3), context));
-        insertMenu.add(prepareAction("insert-h4", new CutomHTMLAction("insert-h4", "<h4></h4>", HTML.Tag.P, HTML.Tag.H4), context));
         if (bar != null) {
             bar.add(insertMenu);
         }
@@ -143,7 +166,7 @@ public class SourceEditorPanePanelHtmlExtension extends AbstractSourceEditorPane
         if (bar != null) {
             editorBuilder.header().add(bar);
         }
-        boolean isHtml = false;//"text/html".equals(contentType);
+        boolean isHtml = "text/html".equals(editor.getContentType());
         if (bar != null) {
             bar.setVisible(isHtml);
         }

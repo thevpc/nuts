@@ -35,6 +35,7 @@ import net.thevpc.nuts.toolbox.nnote.gui.util.PasswordComponent;
 import net.thevpc.nuts.toolbox.nnote.gui.util.SimpleTextComponent;
 import net.thevpc.nuts.toolbox.nnote.gui.util.TextAreaComponent;
 import net.thevpc.nuts.toolbox.nnote.gui.util.URLComponent;
+import net.thevpc.nuts.toolbox.nnote.gui.util.echoapp.AppDialog;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteObjectDocument;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteField;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteFieldDescriptor;
@@ -61,7 +62,7 @@ class NNoteFieldDescriptorPanel {
     private List<AbstractButton> buttons = new ArrayList<>();
 
     private JMenu changeTypeMenu;
-    private boolean editable=true;
+    private boolean editable = true;
 
     //        ButtonGroup bg;
     public NNoteFieldDescriptorPanel(NNoteGuiApp sapp, NNoteFieldDescriptor descr, NNoteObjectTracker objectTracker) {
@@ -99,7 +100,7 @@ class NNoteFieldDescriptorPanel {
         jPopupMenu.addSeparator();
         jPopupMenu.add(createAction("hideField", () -> onHideField()));
         jPopupMenu.add(createAction("unhideFields", () -> onUnhideFields()));
-        
+
         FormComponent comp = createFormComponent(descr.getType());
         comp.install(sapp.app());
         comp.setSelectValues(resolveValues(descr));
@@ -248,7 +249,7 @@ class NNoteFieldDescriptorPanel {
 
     public void onHideField() {
         if (document != null) {
-            if(field!=null){
+            if (field != null) {
                 field.setHidden(true);
             }
             callOnStructureChanged();
@@ -257,7 +258,7 @@ class NNoteFieldDescriptorPanel {
 
     public void onUnhideFields() {
         if (document != null) {
-            if(object!=null){
+            if (object != null) {
                 for (NNoteField f : object.getFields()) {
                     f.setHidden(false);
                 }
@@ -268,14 +269,7 @@ class NNoteFieldDescriptorPanel {
 
     public void onDescriptorEditValues() {
         if (document != null) {
-            String title = sapp.app().i18n().getString("Message.changeFieldValues");
-            String label = sapp.app().i18n().getString("Message.changeFieldValues.label");
-            JTextArea a = new JTextArea();
-            JScrollPane p = new JScrollPane(a);
-            p.setPreferredSize(new java.awt.Dimension(400, 300));
-            JPanel panel = new javax.swing.JPanel(new BorderLayout());
-            panel.add(new JLabel(label), BorderLayout.NORTH);
-            panel.add(p, BorderLayout.CENTER);
+            String oldValue = "";
             if (descr.getValues() != null) {
                 TreeSet<String> all = new TreeSet<>();
                 for (String s : descr.getValues()) {
@@ -285,14 +279,16 @@ class NNoteFieldDescriptorPanel {
                     s = s.trim();
                     all.add(s);
                 }
-                a.setText(String.join("\n", all));
+                oldValue = (String.join("\n", all));
             }
-            if (JOptionPane.showConfirmDialog(
-                    resolveAncestor(), panel, title, JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    null
-            ) == JOptionPane.OK_OPTION) {
-                document.updateFieldValues(descr.getName(), a.getText().split("\n"));
+            AppDialog.DialogResult s = sapp.newDialog()
+                    .setTitleId("Message.changeFieldValues")
+                    .setInputTextAreadContent("Message.changeFieldValues.label", oldValue)
+                    .withOkCancelButtons()
+                    .setPreferredSize(400, 300)
+                    .showInputDialog();
+            if (s.isButton("ok") && !s.isBlankValue()) {
+                document.updateFieldValues(descr.getName(), s.<String>getValue().split("\n"));
                 callOnStructureChanged();
             }
         }
@@ -304,21 +300,20 @@ class NNoteFieldDescriptorPanel {
 
     public void onDescriptorRename() {
         if (document != null) {
-            String title = sapp.app().i18n().getString("Message.renameField");
-            String label = sapp.app().i18n().getString("Message.renameField.label");
-            String n = (String) JOptionPane.showInputDialog(resolveAncestor(), title, label, JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    null,
-                    descr.getName()
-            );
-            if (n != null) {
-                n = n.trim();
-                if (n.length() > 0) {
-                    if (document != null) {
-                        document.renameField(descr.getName(), n);
-                    }
-                    callOnStructureChanged();
+            AppDialog.DialogResult r = sapp.newDialog()
+                    .withOkCancelButtons()
+                    .setTitleId("Message.renameField")
+                    .setInputTextFieldContent(
+                            "Message.renameField.label", descr.getName()
+                    )
+//                    .setPreferredSize(400, 200)
+                    .showInputDialog();
+            if (r.isButton("ok") && !r.isBlankValue()) {
+                String n = r.<String>getValue().trim();
+                if (document != null) {
+                    document.renameField(descr.getName(), n);
                 }
+                callOnStructureChanged();
             }
         }
     }
@@ -339,18 +334,22 @@ class NNoteFieldDescriptorPanel {
 
     public void onAddField() {
         if (document != null) {
-             String title = sapp.app().i18n().getString("Message.addField");
-            String label = sapp.app().i18n().getString("Message.addField.label");
-            String n = (String) JOptionPane.showInputDialog(resolveAncestor(), title, label, JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    null,
-                    descr.getName()
-            );
-            if (n != null) {
-                n = n.trim();
-                if (n.length() > 0) {
-                    document.addField(new NNoteFieldDescriptor().setName(n).setType(NNoteObjectFieldType.TEXT));
-                    callOnStructureChanged();
+            AppDialog.DialogResult r = sapp.newDialog()
+                    .withOkCancelButtons()
+                    .setTitleId("Message.addField")
+                    .setInputTextFieldContent(
+                            "Message.addField.label", ""
+                    )
+//                    .setPreferredSize(400, 200)
+                    .showInputDialog();
+            if ("ok".equals(r.getButtonId())) {
+                String n = r.getValue();
+                if (n != null) {
+                    n = n.trim();
+                    if (n.length() > 0) {
+                        document.addField(new NNoteFieldDescriptor().setName(n).setType(NNoteObjectFieldType.TEXT));
+                        callOnStructureChanged();
+                    }
                 }
             }
         }
@@ -409,5 +408,5 @@ class NNoteFieldDescriptorPanel {
     private FormComponent formComponent() {
         return (FormComponent) component;
     }
-    
+
 }

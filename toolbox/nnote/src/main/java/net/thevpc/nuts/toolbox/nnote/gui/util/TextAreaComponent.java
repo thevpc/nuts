@@ -28,7 +28,7 @@ public class TextAreaComponent extends JPanel implements FormComponent {
         add(new JScrollPane(jtf));
         setPreferredSize(new Dimension(200, 100));
         setMinimumSize(new Dimension(100, 100));
-        OtherUtils.installUndoRedoManager(jtf);
+        GuiHelper.installUndoRedoManager(jtf);
     }
 
     @Override

@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import net.thevpc.nuts.toolbox.nnote.gui.util.NNoteError;
 import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
 
 /**
@@ -33,6 +32,7 @@ public class VNNote {
     private String editorType;
     private String content;
     private boolean readOnly;
+    private transient boolean loaded;
     private Set<String> tags = new HashSet<String>();
     private Map<String, String> properties = new LinkedHashMap<String, String>();
     private List<VNNote> children = new ArrayList<>();
@@ -44,6 +44,7 @@ public class VNNote {
     private boolean titleStriked;
     private String titleForeground;
     private String titleBackground;
+    public transient NNoteError error;
 
     public static VNNote newDocument() {
         return of(NNote.newDocument());
@@ -102,6 +103,19 @@ public class VNNote {
             boolean old = this.readOnly;
             this.readOnly = value;
             fireChangeEvent(this, "readOnly", old, value);
+        }
+    }
+
+
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    public void setLoaded(boolean value) {
+        if (!Objects.equals(this.loaded, value)) {
+            boolean old = this.loaded;
+            this.loaded = value;
+            fireChangeEvent(this, "loaded", old, value);
         }
     }
 
@@ -249,6 +263,7 @@ public class VNNote {
         setCypherInfo(other.getCypherInfo());
         setProperties(other.getProperties() == null ? new LinkedHashMap<>() : new LinkedHashMap<>(other.getProperties()));
         setReadOnly(other.isReadOnly());
+        setLoaded(other.isLoaded());
 
         setTitleBackground(other.getTitleBackground());
         setTitleForeground(other.getTitleForeground());
@@ -261,6 +276,7 @@ public class VNNote {
         for (NNote nn : other.getChildren()) {
             newChildren.add(new VNNote().copyFrom(nn));
         }
+        this.error=other.error;
         setChildren(newChildren);
         return this;
     }
@@ -285,6 +301,7 @@ public class VNNote {
         n.setTitleItalic(isTitleItalic());
         n.setTitleUnderlined(isTitleUnderlined());
         n.setTitleStriked(isTitleStriked());
+        n.setLoaded(isLoaded());
 
         List<NNote> newChildren = new ArrayList<>();
         for (VNNote nn : getChildren()) {
@@ -292,6 +309,7 @@ public class VNNote {
         }
         n.setChildren(newChildren);
         n.setProperties(getProperties() == null ? new LinkedHashMap<>() : new LinkedHashMap<>(getProperties()));
+        n.error=this.error;
         return n;
     }
 

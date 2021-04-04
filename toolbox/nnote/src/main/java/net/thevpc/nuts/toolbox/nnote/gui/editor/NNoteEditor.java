@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.toolbox.nnote.gui.editor;
 
-import net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.wysiwyg.SourceEditorPanePanel;
+import net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.source.SourceEditorPanePanel;
 import net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.empty.EmpyNNodtEditorTypeComponent;
 import net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.unsupported.UnsupportedNNoteEditorTypeComponent;
 import java.awt.BorderLayout;
@@ -30,12 +30,12 @@ import net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.objectlist.NNot
 import net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.password.PasswordNNoteEditorTypeComponent;
 import net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.string.StringNNoteEditorTypeComponent;
 import net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.url.URLNNoteEditorTypeComponent;
-import net.thevpc.common.swing.JBreadCrumb;
 import net.thevpc.nuts.toolbox.nnote.gui.util.DefaultObjectListModel;
 import net.thevpc.common.swing.JTabbedButtons;
 import net.thevpc.common.swing.ObjectListModel;
 import net.thevpc.nuts.toolbox.nnote.model.VNNote;
 import net.thevpc.common.swing.ObjectListModelListener;
+import net.thevpc.nuts.toolbox.nnote.gui.editor.editorcomponents.richeditor.RichEditor;
 
 /**
  *
@@ -48,7 +48,6 @@ public class NNoteEditor extends JPanel {
     private VNNote currentNote;
     private JPanel container;
     private String editorTypeI18nPrefix = "EditorType";
-    private JBreadCrumb breadCrumb;
     private JTabbedButtons noteEditorsSelector /*{
         @Override
         protected void updateButton(JButton b, int pos, int size) {
@@ -76,27 +75,13 @@ public class NNoteEditor extends JPanel {
 //        add(container, BorderLayout.CENTER);
 
         if (!compactMode) {
-            breadCrumb = new JBreadCrumb();
             Box hb = Box.createHorizontalBox();
             noteEditorsSelector = new JTabbedButtons();
             editorsSelectorSuffix = Box.createHorizontalStrut(5);
             hb.add(noteEditorsSelector);
             hb.add(editorsSelectorSuffix);
             hb.add(Box.createHorizontalGlue());
-            if (breadCrumb != null) {
-                hb.add(breadCrumb);
-            }
             add(hb, BorderLayout.NORTH);
-            breadCrumb.addListener(new ObjectListModelListener() {
-                @Override
-                public void onSelected(Object component, int index) {
-                    if (component != currentNote) {
-                        for (NNoteEditorListener listener : listeners) {
-                            listener.onNavigateTo((VNNote) component);
-                        }
-                    }
-                }
-            });
             noteEditorsSelector.addListener(new ObjectListModelListener() {
                 @Override
                 public void onSelected(Object component, int index) {
@@ -107,20 +92,10 @@ public class NNoteEditor extends JPanel {
                     }
                 }
             });
-
         }
 
         components.put("empty", new EmpyNNodtEditorTypeComponent());
         components.put(NNoteTypes.EDITOR_UNSUPPORTED, new UnsupportedNNoteEditorTypeComponent());
-        components.put(NNoteTypes.EDITOR_WYSIWYG, new SourceEditorPanePanel(false, compactMode,sapp));//"HTML"
-        components.put(NNoteTypes.EDITOR_SOURCE, new SourceEditorPanePanel(true, compactMode,sapp));//"Source Code"
-        components.put(NNoteTypes.EDITOR_FILE, new FileNNoteEditorTypeComponent());
-        components.put(NNoteTypes.EDITOR_URL, new URLNNoteEditorTypeComponent());
-        components.put(NNoteTypes.EDITOR_PASSWORD, new PasswordNNoteEditorTypeComponent());
-        components.put(NNoteTypes.EDITOR_STRING, new StringNNoteEditorTypeComponent());
-        components.put(NNoteTypes.EDITOR_NNOTE_DOCUMENT, new NNoteDocumentNNoteEditorTypeComponent());
-        components.put(NNoteTypes.EDITOR_OBJECT_LIST, new NNoteObjectDocumentComponent(sapp));
-        components.put(NNoteTypes.EDITOR_NOTE_LIST, new NoteListNNoteEditorTypeComponent(sapp));
 
         for (Map.Entry<String, NNoteEditorTypeComponent> entry : components.entrySet()) {
             container.add(entry.getValue().component(), entry.getKey());
@@ -144,9 +119,40 @@ public class NNoteEditor extends JPanel {
         }
     }
 
+    public NNoteEditorTypeComponent createEditor(String name) {
+        switch (name) {
+//        components.put(NNoteTypes.EDITOR_WYSIWYG, new RichEditor(compactMode,sapp));//"HTML"
+            case NNoteTypes.EDITOR_WYSIWYG:
+                return new RichEditor(compactMode, sapp);
+            case NNoteTypes.EDITOR_SOURCE:
+                new SourceEditorPanePanel(true, compactMode, sapp);//"Source Code"
+            case NNoteTypes.EDITOR_FILE:
+                return new FileNNoteEditorTypeComponent();
+            case NNoteTypes.EDITOR_URL:
+                return new URLNNoteEditorTypeComponent();
+            case NNoteTypes.EDITOR_PASSWORD:
+                return new PasswordNNoteEditorTypeComponent();
+            case NNoteTypes.EDITOR_STRING:
+                return new StringNNoteEditorTypeComponent();
+            case NNoteTypes.EDITOR_NNOTE_DOCUMENT:
+                return new NNoteDocumentNNoteEditorTypeComponent();
+            case NNoteTypes.EDITOR_OBJECT_LIST:
+                return new NNoteObjectDocumentComponent(sapp);
+            case NNoteTypes.EDITOR_NOTE_LIST:
+                return new NoteListNNoteEditorTypeComponent(sapp);
+        }
+        return null;
+    }
+
     public String getEditorName(String name) {
         NNoteEditorTypeComponent n = components.get(name);
         if (n != null) {
+            return name;
+        }
+        NNoteEditorTypeComponent c = createEditor(name);
+        if (c != null) {
+            components.put(name, c);
+            container.add(c.component(), name);
             return name;
         }
         return NNoteTypes.EDITOR_UNSUPPORTED;
@@ -179,20 +185,14 @@ public class NNoteEditor extends JPanel {
         this.currentNote = note;
         if (note == null) {
             showEditor("empty");
-            if (breadCrumb != null) {
-                breadCrumb.setModel(null);
-            }
         } else {
-            if (breadCrumb != null) {
-                breadCrumb.setModel(createBreadCrumModel(note));
-            }
             String contentType = sapp.service().normalizeContentType(note.getContentType());
             String editorType = sapp.service().normalizeEditorType(contentType, note.getEditorType());
             String[] all = sapp.service().getEditorTypes(contentType);
             if (!compactMode) {
                 if (all.length == 0 || all.length == 1) {
-                    noteEditorsSelector.setVisible(false);
-                    editorsSelectorSuffix.setVisible(false);
+                    noteEditorsSelector.setVisible(true);
+                    editorsSelectorSuffix.setVisible(true);
                 } else {
                     noteEditorsSelector.setVisible(true);
                     editorsSelectorSuffix.setVisible(true);
@@ -202,18 +202,6 @@ public class NNoteEditor extends JPanel {
             getEditor(editorType).setNote(note, sapp);//TODO FIX ME
             showEditor(editorType);
         }
-    }
-
-    private ObjectListModel createBreadCrumModel(VNNote note) {
-        List<VNNote> bm = new ArrayList<>();
-        VNNote n = note;
-        while (n != null) {
-            bm.add(0, n);
-            n = n.getParent();
-        }
-        bm.remove(0);//remove root!
-        DefaultObjectListModel model = new DefaultObjectListModel(bm);
-        return model;
     }
 
     private class EditorOnLocalChangePropertyListenerImpl implements PropertyListener {
@@ -241,6 +229,5 @@ public class NNoteEditor extends JPanel {
             component.setEditable(editable);
         }
     }
-    
 
 }

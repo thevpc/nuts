@@ -16,7 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import net.thevpc.common.swing.GridBagLayoutSupport;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
-import net.thevpc.nuts.toolbox.nnote.gui.util.OkCancelAppDialog;
+import net.thevpc.nuts.toolbox.nnote.gui.util.dialog.OkCancelDialog;
 import net.thevpc.nuts.toolbox.nnote.model.VNNote;
 import net.thevpc.nuts.toolbox.nnote.service.search.VNNoteSearchResult;
 
@@ -24,7 +24,7 @@ import net.thevpc.nuts.toolbox.nnote.service.search.VNNoteSearchResult;
  *
  * @author vpc
  */
-public class SearchDialog extends OkCancelAppDialog {
+public class SearchDialog extends OkCancelDialog {
 
     private NNoteGuiApp sapp;
     private JLabel valueLabel;

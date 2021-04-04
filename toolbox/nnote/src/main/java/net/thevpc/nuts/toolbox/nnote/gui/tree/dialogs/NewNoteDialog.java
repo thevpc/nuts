@@ -32,7 +32,7 @@ import net.thevpc.common.swing.GridBagLayoutSupport;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteTemplate;
-import net.thevpc.nuts.toolbox.nnote.gui.util.OkCancelAppDialog;
+import net.thevpc.nuts.toolbox.nnote.gui.util.dialog.OkCancelDialog;
 import net.thevpc.nuts.toolbox.nnote.service.templates.EthernetConnectionTemplate;
 import net.thevpc.nuts.toolbox.nnote.service.templates.WifiConnectionTemplate;
 import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
@@ -47,7 +47,7 @@ import net.thevpc.nuts.toolbox.nnote.model.NNoteObjectDescriptor;
  *
  * @author vpc
  */
-public class NewNoteDialog extends OkCancelAppDialog {
+public class NewNoteDialog extends OkCancelDialog {
 
     private JTextField nameText;
     private JComboBox iconList;
@@ -275,7 +275,7 @@ public class NewNoteDialog extends OkCancelAppDialog {
                 if (z != null) {
                     z.prepare(n, sapp.service());
                 } else {
-                    n.setContentType(selectedContentTypeId = NNoteTypes.PLAIN);
+//                    n.setContentType(selectedContentTypeId = NNoteTypes.PLAIN);
                 }
             }
 

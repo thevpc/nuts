@@ -9,9 +9,7 @@ package net.thevpc.nuts.toolbox.nnote.service.security;
  *
  * @author vpc
  */
-public interface PasswordHandler {
+public interface PasswordHandler0 {
 
-    String askForSavePassword(String path,String root);
-    String askForLoadPassword(String path,String root);
-    boolean reTypePasswordOnError();
+    String askForPassword();
 }

@@ -29,6 +29,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import net.thevpc.common.i18n.I18n;
+import net.thevpc.common.swing.util.CancelException;
 import net.thevpc.echo.ItemPath;
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsContentType;
@@ -70,6 +71,8 @@ import net.thevpc.nuts.toolbox.nnote.service.search.DefaultVNoteSearchFilter;
 import net.thevpc.nuts.toolbox.nnote.service.search.VNNoteSearchResult;
 import net.thevpc.nuts.toolbox.nnote.service.search.VNoteSearchFilter;
 import net.thevpc.nuts.toolbox.nnote.service.search.strsearch.StringSearchResult;
+import net.thevpc.nuts.toolbox.nnote.service.security.InvalidSecretException;
+import net.thevpc.nuts.toolbox.nnote.service.security.PasswordHandler0;
 import net.thevpc.nuts.toolbox.nnote.service.templates.BankAccountTemplate;
 import net.thevpc.nuts.toolbox.nnote.service.templates.CreditCardAccountTemplate;
 import net.thevpc.nuts.toolbox.nnote.service.templates.UrlBookmarkNNoteTemplate;
@@ -118,32 +121,13 @@ public class NNoteService {
         return context;
     }
 
-    public NNote shrinkNote(NNote n) {
+    public NNote unloadNode(NNote n) {
+        n.setLoaded(false);
+        for (NNote c : n.getChildren()) {
+            unloadNode(c);
+        }
         if (NNoteTypes.NNOTE_DOCUMENT.equals(n.getContentType())) {
             n.getChildren().clear();
-        }
-        for (NNote c : n.getChildren()) {
-            shrinkNote(c);
-        }
-        return n;
-    }
-
-    public NNote expandNote(NNote n, PasswordHandler passwordHandler) {
-        if (NNoteTypes.NNOTE_DOCUMENT.equals(n.getContentType())) {
-            String c = n.getContent();
-            c = c == null ? "" : c.trim();
-            if (c.length() > 0) {
-                try {
-                    NNote p = loadDocument(new File(c), passwordHandler);
-                    n.getChildren().clear();
-                    n.getChildren().addAll(p.getChildren());
-                } catch (Exception ex) {
-                    n.error = new NNoteError(ex);
-                }
-            }
-        }
-        for (NNote c : n.getChildren()) {
-            expandNote(c, passwordHandler);
         }
         return n;
     }
@@ -153,7 +137,7 @@ public class NNoteService {
     }
 
     public NNote createSampleDocumentNote() {
-        NNote n = createDocumentNote();
+        NNote n = NNote.newDocument();
         for (String contentType : NNoteTypes.ALL_CONTENT_TYPES) {
             NNote cc = new NNote().setName(
                     i18n.getString("NNoteTypeFamily." + contentType)
@@ -216,10 +200,6 @@ public class NNoteService {
         n.getChildren().add(new NNote().setName("with-icon").setIcon("star")
         );
         return n;
-    }
-
-    public NNote createDocumentNote() {
-        return new NNote().setContentType(NNoteTypes.NNOTE_DOCUMENT);
     }
 
     public boolean isDocumentNote(NNote n) {
@@ -313,17 +293,29 @@ public class NNoteService {
 
     public boolean saveDocument(NNote n, PasswordHandler handler) {
         List<SaveError> errors = new ArrayList<>();
-        boolean b = saveDocument(n.copy(), ItemPath.of(), handler, errors);
+        boolean b = false;
+        String root = null;
+        if (NNoteTypes.NNOTE_DOCUMENT.equals(n.getContentType())) {
+            String c = n.getContent();
+            if (c != null && c.trim().length() > 0) {
+                root = c;
+            }
+        }
+        try {
+            b = saveDocument(n.copy(), ItemPath.of(), handler, errors, root);
+        } catch (CancelException ex) {
+            return false;
+        }
         if (errors.size() > 0) {
             throw new SaveException(errors, i18n);
         }
         return b;
     }
 
-    private boolean saveDocument(NNote n, ItemPath path, PasswordHandler passwordHandler, List<SaveError> errors) {
+    private boolean saveDocument(NNote n, ItemPath path, PasswordHandler passwordHandler, List<SaveError> errors, String root) {
         List<NNote> children = new ArrayList<>(n.getChildren());
         for (NNote c : children) {
-            saveDocument(c, path.child(String.valueOf(c.getName())), passwordHandler, errors);
+            saveDocument(c, path.child(String.valueOf(c.getName())), passwordHandler, errors, root);
         }
         boolean saved = false;
         if (NNoteTypes.NNOTE_DOCUMENT.equals(n.getContentType())) {
@@ -346,16 +338,12 @@ public class NNoteService {
                     }
                     n.setLastModified(now);
                     n.setContent(null);
+                    n.setLoaded(false);
                     CypherInfo cypherInfo = n.getCypherInfo();
                     NNoteObfuscator obs = resolveCypherImpl(cypherInfo == null ? null : cypherInfo.getAlgo());
                     if (obs != null) {
                         n.setCypherInfo(new CypherInfo(cypherInfo.getAlgo(), ""));
-                        CypherInfo ci = obs.encrypt(n, new PasswordHandler() {
-                            @Override
-                            public String askForPassword(String path) {
-                                return passwordHandler.askForPassword(f.getPath());
-                            }
-                        });
+                        CypherInfo ci = obs.encrypt(n, () -> passwordHandler.askForSavePassword(f.getPath(), root));
                         n.setCypherInfo(ci);
                         NNote n2 = new NNote();
                         n2.setContentType(NNoteTypes.NNOTE_DOCUMENT);
@@ -377,6 +365,8 @@ public class NNoteService {
 //                    if (cypherInfo != null && ((cypherInfo.getAlgo() == null) ||)
 
                     saved = true;
+                } catch (CancelException ex) {
+                    return false;
                 } catch (Exception ex) {
                     errors.add(new SaveError(n, path, ex));
                 }
@@ -385,7 +375,7 @@ public class NNoteService {
                 errors.add(new SaveError(n, path, new IOException("missing file path for " + n.getName())));
             }
             if (path.size() > 0) {
-                n.getChildren().clear();
+                unloadNode(n);
             }
         }
         return saved;
@@ -441,40 +431,96 @@ public class NNoteService {
         return Paths.get(getContext().getConfigFolder()).resolve("nnote.config");
     }
 
+    public NNote loadNode(NNote n, PasswordHandler passwordHandler, boolean transitive, String rootFilePath) {
+        if (!n.isLoaded()) {
+            if (NNoteTypes.NNOTE_DOCUMENT.equals(n.getContentType())) {
+                String nodePath = n.getContent();
+                nodePath = nodePath == null ? "" : nodePath.trim();
+                if (nodePath.length() > 0) {
+                    NNote rawNode = getContext().getWorkspace().formats().element()
+                            .setContentType(NutsContentType.JSON).setSession(context.getSession())
+                            .parse(new File(nodePath), NNote.class);
+                    n.copyFrom(rawNode);
+                    CypherInfo cypherInfo = n.getCypherInfo();
+                    NNoteObfuscator impl = resolveCypherImpl(cypherInfo == null ? null : cypherInfo.getAlgo());
+                    if (impl != null) {
+                        NNote a = null;
+                        while (true) {
+                            try {
+                                String c0 = nodePath;
+                                a = impl.decrypt(cypherInfo, n, () -> passwordHandler.askForLoadPassword(c0, rootFilePath));
+                                break;
+                            } catch (InvalidSecretException ex) {
+                                if (!passwordHandler.reTypePasswordOnError()) {
+                                    throw ex;
+                                }
+                            }
+                        }
+                        if (a != null) {
+                            a.setCypherInfo(new CypherInfo(cypherInfo.getAlgo(), ""));
+                        }
+                        n.copyFrom(a);
+                        n.setContent(nodePath);
+                    }
+                }
+            }
+            n.setLoaded(true);
+        }
+        if (transitive) {
+            for (NNote c : n.getChildren()) {
+                loadNode(c, passwordHandler, true, rootFilePath);
+            }
+        }
+        return n;
+    }
+
+//    public void loadNode(VNNote note, PasswordHandler passwordHandler, boolean loadAll) {
+//        if (!note.isLoaded()) {
+//            if (NNoteTypes.NNOTE_DOCUMENT.equals(note.getContentType())) {
+//                NNote o = loadDocument(new File(note.getContent()), passwordHandler, loadAll);
+//                note.removeAllChildren();//TODO FIX ME
+//                for (NNote c : o.getChildren()) {
+//                    note.addChild(VNNote.of(c));
+//                }
+//                if (o.error == null) {
+//                    note.setLoaded(true);
+//                }
+//                note.error = o.error;
+//                note.setLoaded(o.isLoaded());
+//            } else {
+//                note.setLoaded(true);
+//                if (loadAll) {
+//                    for (VNNote c : note.getChildren()) {
+//                        loadNode(c, passwordHandler, true);
+//                    }
+//                }
+//            }
+//        } else {
+//            if (loadAll) {
+//                for (VNNote c : note.getChildren()) {
+//                    loadNode(c, passwordHandler, true);
+//                }
+//            }
+//        }
+//    }
     public NNote loadDocument(File file, PasswordHandler passwordHandler) {
-        NNote n = getContext().getWorkspace().formats().element()
-                .setContentType(NutsContentType.JSON).setSession(context.getSession())
-                .parse(file, NNote.class);
+        return loadDocument(file, passwordHandler, false, file.getPath());
+    }
+
+    public NNote loadDocument(File file, PasswordHandler passwordHandler, boolean loadAll, String root) {
+//        NNote n = getContext().getWorkspace().formats().element()
+//                .setContentType(NutsContentType.JSON).setSession(context.getSession())
+//                .parse(file, NNote.class);
         try {
+            NNote n = NNote.newDocument(file.getPath());
+            loadNode(n, passwordHandler, loadAll, root);
             if (!NNoteTypes.NNOTE_DOCUMENT.equals(n.getContentType())) {
                 throw new IOException("Invalid content type. Expected " + NNoteTypes.NNOTE_DOCUMENT + ". got " + n.getContentType());
             }
-            CypherInfo cypherInfo = n.getCypherInfo();
-            NNoteObfuscator impl = resolveCypherImpl(cypherInfo == null ? null : cypherInfo.getAlgo());
-            if (impl != null) {
-                NNote a = impl.decrypt(cypherInfo, n, new PasswordHandler() {
-                    @Override
-                    public String askForPassword(String path) {
-                        String hint = file.getPath();
-                        return passwordHandler.askForPassword(path);
-                    }
-                });
-                a.setCypherInfo(new CypherInfo(cypherInfo.getAlgo(), ""));
-                a.setContent(file.getCanonicalPath());
-                n = a;
-            } else {
-                n.setContent(file.getCanonicalPath());
-            }
+            return n;
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        if (n.getChildren() == null) {
-            n.setChildren(new ArrayList<>());
-        }
-        for (NNote c : n.getChildren()) {
-            expandNote(c, passwordHandler);
-        }
-        return n;
     }
 
     private static void setLenientFeature(DocumentBuilderFactory dbFactory, String s, boolean b) {

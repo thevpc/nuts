@@ -24,7 +24,7 @@ public class SimpleTextComponent extends JPanel implements FormComponent {
     public SimpleTextComponent() {
         super(new BorderLayout());
         add(jtf);
-        OtherUtils.installUndoRedoManager(jtf);
+        GuiHelper.installUndoRedoManager(jtf);
     }
 
     @Override

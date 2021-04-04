@@ -23,7 +23,8 @@ import net.thevpc.common.swing.ColorChooserButton;
 import net.thevpc.common.swing.GridBagLayoutSupport;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteGuiApp;
-import net.thevpc.nuts.toolbox.nnote.gui.util.OkCancelAppDialog;
+import net.thevpc.nuts.toolbox.nnote.gui.util.GuiHelper;
+import net.thevpc.nuts.toolbox.nnote.gui.util.dialog.OkCancelDialog;
 import net.thevpc.nuts.toolbox.nnote.model.NNote;
 import net.thevpc.nuts.toolbox.nnote.model.VNNote;
 import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
@@ -32,7 +33,7 @@ import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
  *
  * @author vpc
  */
-public class EditNoteDialog extends OkCancelAppDialog {
+public class EditNoteDialog extends OkCancelDialog {
 
     private JTextField nameEditor;
     private JComboBox iconEditor;
@@ -92,8 +93,8 @@ public class EditNoteDialog extends OkCancelAppDialog {
             }
         }
         iconEditor.setSelectedItem(note.getIcon());
-        foregroundEditor.setColorValue(OtherUtils.parseColor(note.getTitleForeground()));
-        backgroundEditor.setColorValue(OtherUtils.parseColor(note.getTitleBackground()));
+        foregroundEditor.setColorValue(GuiHelper.parseColor(note.getTitleForeground()));
+        backgroundEditor.setColorValue(GuiHelper.parseColor(note.getTitleBackground()));
         foregroundEditor.setPreferredSize(new Dimension(20, 20));
         backgroundEditor.setPreferredSize(new Dimension(20, 20));
         boldEditor.setSelected(note.isTitleBold());
@@ -135,8 +136,8 @@ public class EditNoteDialog extends OkCancelAppDialog {
         NamedValue selectedIcon = (NamedValue) iconEditor.getSelectedItem();
         note.setIcon(selectedIcon != null ? selectedIcon.getId() : null);
         note.setReadOnly(readOnlyEditor.isSelected());
-        note.setTitleBackground(OtherUtils.formatColor(backgroundEditor.getColorValue()));
-        note.setTitleForeground(OtherUtils.formatColor(foregroundEditor.getColorValue()));
+        note.setTitleBackground(GuiHelper.formatColor(backgroundEditor.getColorValue()));
+        note.setTitleForeground(GuiHelper.formatColor(foregroundEditor.getColorValue()));
         note.setTitleBold(boldEditor.isSelected());
         note.setTitleItalic(italicEditor.isSelected());
         note.setTitleUnderlined(underlinedEditor.isSelected());

@@ -7,6 +7,7 @@ package net.thevpc.nuts.toolbox.nnote.model;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,9 +24,9 @@ import net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes;
 public class NNote implements Cloneable {
 
     public static NNote newDocument() {
-        return newDocument(null);
+        return newDocument(null).setLoaded(true);
     }
-    
+
     public static NNote newDocument(String path) {
         NNote n = new NNote();
         n.setName("nnote-document");
@@ -50,11 +51,12 @@ public class NNote implements Cloneable {
     private String editorType;
     private String content;
     private boolean readOnly;
-    public transient NNoteError error;
     private Set<String> tags = new HashSet<String>();
     private List<NNote> children = new ArrayList<>();
     private Map<String, String> properties = new LinkedHashMap<String, String>();
     private CypherInfo cypherInfo;
+    private transient boolean loaded;
+    public transient NNoteError error;
 
     public String getFolderIcon() {
         return folderIcon;
@@ -279,6 +281,15 @@ public class NNote implements Cloneable {
         this.readOnly = readOnly;
     }
 
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    public NNote setLoaded(boolean value) {
+        this.loaded = value;
+        return this;
+    }
+
     public NNote copy() {
         NNote n2;
         try {
@@ -345,7 +356,6 @@ public class NNote implements Cloneable {
     public void setTitleStriked(boolean titleStriked) {
         this.titleStriked = titleStriked;
     }
-    
 
     public String getTitleForeground() {
         return titleForeground;
@@ -361,6 +371,36 @@ public class NNote implements Cloneable {
 
     public void setTitleBackground(String titleBackground) {
         this.titleBackground = titleBackground;
+    }
+
+    public void copyFrom(NNote a) {
+        this.version = a.version;
+        this.creationTime = a.creationTime;
+        this.lastModified = a.lastModified;
+        this.name = a.name;
+        this.titleBold = a.titleBold;
+        this.titleItalic = a.titleItalic;
+        this.titleUnderlined = a.titleUnderlined;
+        this.titleStriked = a.titleStriked;
+        this.titleForeground = a.titleForeground;
+        this.titleBackground = a.titleBackground;
+        this.icon = a.icon;
+        this.folderIcon = a.folderIcon;
+        this.contentType = a.contentType;
+        this.editorType = a.editorType;
+        this.content = a.content;
+        this.readOnly = a.readOnly;
+        this.tags = new HashSet<String>(a.tags == null ? new HashSet<>() : a.tags);
+        this.children = new ArrayList<>();
+        this.properties = new LinkedHashMap<String, String>(a.properties == null ? new LinkedHashMap<>() : a.properties);
+        this.cypherInfo = a.cypherInfo == null ? null : a.cypherInfo.copy();
+        this.loaded = a.loaded;
+        this.error = a.error;
+        if (a.children != null) {
+            for (NNote c : a.children) {
+                this.children.add(c.copy());
+            }
+        }
     }
 
 }

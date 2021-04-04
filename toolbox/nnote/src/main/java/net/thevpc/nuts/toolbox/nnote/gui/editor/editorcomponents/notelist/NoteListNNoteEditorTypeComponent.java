@@ -27,6 +27,7 @@ import net.thevpc.echo.swing.core.swing.SwingApplicationsHelper;
 import net.thevpc.nuts.toolbox.nnote.gui.NNoteTypes;
 import net.thevpc.nuts.toolbox.nnote.gui.editor.NNoteEditorTypeComponent;
 import net.thevpc.nuts.toolbox.nnote.gui.tree.dialogs.EditNoteDialog;
+import net.thevpc.nuts.toolbox.nnote.gui.util.GuiHelper;
 import net.thevpc.nuts.toolbox.nnote.model.NNote;
 import net.thevpc.nuts.toolbox.nnote.model.NNoteListModel;
 import net.thevpc.nuts.toolbox.nnote.util.OtherUtils;
@@ -262,10 +263,10 @@ public class NoteListNNoteEditorTypeComponent extends JPanel implements NNoteEdi
             if (_background == null) {
                 _background = check.getBackground();
             }
-            check.setFont(OtherUtils.deriveFont(_font, value.isTitleBold(), value.isTitleItalic(), value.isTitleUnderlined(), value.isTitleStriked()));
-            Color b = OtherUtils.parseColor(value.getTitleBackground());
+            check.setFont(GuiHelper.deriveFont(_font, value.isTitleBold(), value.isTitleItalic(), value.isTitleUnderlined(), value.isTitleStriked()));
+            Color b = GuiHelper.parseColor(value.getTitleBackground());
             check.setBackground(b != null ? b : _background);
-            b = OtherUtils.parseColor(value.getTitleForeground());
+            b = GuiHelper.parseColor(value.getTitleForeground());
             check.setForeground(b != null ? b : _foreground);
             String iconName = sapp.service().getNoteIcon(value.toNote(), value.getChildren().size() > 0, false);
             Icon icon = sapp.app().iconSet().icon(iconName).get();
