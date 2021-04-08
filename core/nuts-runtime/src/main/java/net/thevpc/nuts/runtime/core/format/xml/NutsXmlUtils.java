@@ -270,7 +270,7 @@ public class NutsXmlUtils {
     private static void setLenientFeature(DocumentBuilderFactory dbFactory, String s, boolean b) {
         try {
             dbFactory.setFeature(s, b);
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             //
         }
     }
