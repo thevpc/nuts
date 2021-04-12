@@ -225,6 +225,12 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
+    public String getPackaging() {
+        String s = getProperties().get(NutsConstants.IdProperties.PACKAGING);
+        return CoreStringUtils.trimToNull(s);
+    }
+
+    @Override
     public String getOs() {
         String s = getProperties().get(NutsConstants.IdProperties.OS);
         return CoreStringUtils.trimToNull(s);

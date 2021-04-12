@@ -180,6 +180,12 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     }
 
     @Override
+    public String getPackaging() {
+        String s = getProperties().get(NutsConstants.IdProperties.PACKAGING);
+        return CoreStringUtils.trimToNull(s);
+    }
+
+    @Override
     public String getArch() {
         String s = getProperties().get(NutsConstants.IdProperties.ARCH);
         return CoreStringUtils.trimToNull(s);

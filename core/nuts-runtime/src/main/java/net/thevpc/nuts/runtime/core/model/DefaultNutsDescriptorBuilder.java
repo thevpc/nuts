@@ -756,6 +756,11 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
                 .setArtifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))
                 .setVersion(CoreNutsUtils.applyStringProperties(child.getVersion().getValue(), properties))
+                .setOs(CoreNutsUtils.applyStringProperties(child.getOs(), properties))
+                .setOsdist(CoreNutsUtils.applyStringProperties(child.getOsdist(), properties))
+                .setArch(CoreNutsUtils.applyStringProperties(child.getArch(), properties))
+                .setClassifier(CoreNutsUtils.applyStringProperties(child.getClassifier(), properties))
+                .setPackaging(CoreNutsUtils.applyStringProperties(child.getPackaging(), properties))
                 .setProperties(CoreNutsUtils.applyMapProperties(child.getProperties(), properties))
                 .build();
     }
@@ -773,6 +778,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 .setClassifier(CoreNutsUtils.applyStringProperties(child.getClassifier(), properties))
                 .setScope(CoreNutsUtils.applyStringProperties(child.getScope(), properties))
                 .setOptional(CoreNutsUtils.applyStringProperties(child.getOptional(), properties))
+                .setOs(CoreNutsUtils.applyStringProperties(child.getOs(), properties))
+                .setArch(CoreNutsUtils.applyStringProperties(child.getArch(), properties))
                 .setExclusions(exclusions)
                 .setProperties(CoreNutsUtils.applyStringProperties(child.getPropertiesQuery(), properties))
                 .build();

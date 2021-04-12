@@ -80,7 +80,7 @@ public enum NutsStoreLocation {
     /**
      * defines the base directory relative to which user binary non executable
      * files should be stored.
-     * Contains local libraries/nuts/packages.
+     * Contains local libraries/packages.
      */
     LIB,
 

@@ -193,6 +193,12 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
     String getClassifier();
 
     /**
+     * package packaging type
+     * @return packaging
+     */
+    String getPackaging();
+
+    /**
      * artifact version (never null)
      * @return artifact version (never null)
      */

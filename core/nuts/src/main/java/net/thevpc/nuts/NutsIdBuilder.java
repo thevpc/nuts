@@ -117,6 +117,12 @@ public interface NutsIdBuilder extends Serializable {
     String getClassifier();
 
     /**
+     * packaging
+     * @return packaging
+     */
+    String getPackaging();
+
+    /**
      * equivalent to {@code setFace(NutsConstants.QueryFaces.CONTENT)}
      * @return this instance
      */
