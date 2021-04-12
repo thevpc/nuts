@@ -33,7 +33,7 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     @Override
     public String getStoreLocation(NutsId id, NutsStoreLocation folderType) {
         checkSession();
-        return model.getStoreLocation(folderType,session);
+        return model.getStoreLocation(id,folderType,session);
     }
 
     @Override

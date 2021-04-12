@@ -702,7 +702,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         if (def == null) {
             return;
         }
-        NutsDependencyFilter ndf = dependency().filter().byScope(NutsDependencyScopePattern.RUN);
+        NutsDependencyFilter ndf = dependency().setSession(session).filter().byScope(NutsDependencyScopePattern.RUN);
         def.getContent();
         def.getEffectiveDescriptor();
         if (def.getInstallInformation() == null) {
@@ -710,8 +710,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         }
         boolean reinstall = false;
         if (session.isPlainTrace()) {
+            NutsIdManager vid = id().setSession(session);
             if (strategy0 == InstallStrategy0.UPDATE) {
-                session.out().println("update " + id().formatter(def.getId().getLongNameId()).format() + " ...");
+                session.out().println("update " + vid.formatter(def.getId().getLongNameId()).format() + " ...");
             } else if (strategy0 == InstallStrategy0.REQUIRE) {
                 reinstall = def.getInstallInformation().getInstallStatus().isRequired();
                 if (reinstall) {
@@ -722,9 +723,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             } else {
                 reinstall = def.getInstallInformation().getInstallStatus().isInstalled();
                 if (reinstall) {
-                    session.out().println("re-install " + id().formatter(def.getId().getLongNameId()).format() + " ...");
+                    session.out().println("re-install " + vid.formatter(def.getId().getLongNameId()).format() + " ...");
                 } else {
-                    session.out().println("install " + id().formatter(def.getId().getLongNameId()).format() + " ...");
+                    session.out().println("install " + vid.formatter(def.getId().getLongNameId()).format() + " ...");
                 }
             }
         }
