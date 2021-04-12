@@ -41,7 +41,8 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
         this.ws = ws;
 //        LOG = ws.log().of(DefaultNutsIOUncompressAction.class);
     }
-protected NutsLoggerOp _LOGOP(NutsSession session) {
+
+    protected NutsLoggerOp _LOGOP(NutsSession session) {
         return _LOG(session).with().session(session);
     }
 
@@ -51,6 +52,7 @@ protected NutsLoggerOp _LOGOP(NutsSession session) {
         }
         return LOG;
     }
+
     @Override
     public String getFormat() {
         return format;
@@ -147,7 +149,6 @@ protected NutsLoggerOp _LOGOP(NutsSession session) {
         checkSession();
         return ws.io().output().setSession(getSession());
     }
-
 
     @Override
     public NutsIOUncompressAction to(String target) {
@@ -279,13 +280,7 @@ protected NutsLoggerOp _LOGOP(NutsSession session) {
 //        } else {
         _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START).log("uncompress {0} to {1}", _source, target);
         Path folder = target.getPath();
-        if (!Files.exists(folder)) {
-            try {
-                Files.createDirectories(folder);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }
+        CoreIOUtils.mkdirs(folder);
 
         switch (format) {
             case "zip": {
@@ -342,14 +337,14 @@ protected NutsLoggerOp _LOGOP(NutsSession session) {
                         }
                         if (fileName.endsWith("/")) {
                             Path newFile = folder.resolve(fileName);
-                            Files.createDirectories(newFile);
+                            CoreIOUtils.mkdirs(newFile);
                         } else {
                             Path newFile = folder.resolve(fileName);
                             _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("file unzip : " + newFile);
                             //create all non exists folders
                             //else you will hit FileNotFoundException for compressed folder
                             if (newFile.getParent() != null) {
-                                Files.createDirectories(newFile.getParent());
+                                CoreIOUtils.mkdirs(newFile.getParent());
                             }
                             try (OutputStream fos = Files.newOutputStream(newFile)) {
                                 int len;
@@ -398,7 +393,7 @@ protected NutsLoggerOp _LOGOP(NutsSession session) {
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     if (newFile.getParent() != null) {
-                        Files.createDirectories(newFile.getParent());
+                        CoreIOUtils.mkdirs(newFile.getParent());
                     }
                     try (OutputStream fos = Files.newOutputStream(newFile)) {
                         int len;

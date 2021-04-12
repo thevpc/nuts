@@ -108,13 +108,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     @Override
     public void print(Path path) {
         checkSession();
-        try {
-            if (path.getParent() != null) {
-                Files.createDirectories(path.getParent());
-            }
-        } catch (IOException ex) {
-            throw new NutsIOException(getSession(), ex);
-        }
+                CoreIOUtils.mkdirs(path.getParent());
         try (Writer w = Files.newBufferedWriter(path)) {
             print(w);
         } catch (IOException ex) {

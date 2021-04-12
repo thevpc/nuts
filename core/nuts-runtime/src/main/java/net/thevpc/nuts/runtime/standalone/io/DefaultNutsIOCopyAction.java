@@ -386,7 +386,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     checkInterrupted();
                     f.doneFolders++;
-                    Files.createDirectories(transformPath(dir, srcBase, targetBase));
+                    CoreIOUtils.mkdirs(transformPath(dir, srcBase, targetBase));
                     m.onProgress(new DefaultNutsProgressEvent(srcBase, srcBase.toString(), f.doneFiles + f.doneFolders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, finalSession, false));
                     return FileVisitResult.CONTINUE;
                 }
@@ -499,7 +499,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     checkInterrupted();
                     f.doneFolders++;
-                    Files.createDirectories(transformPath(dir, srcBase, targetBase));
+                    CoreIOUtils.mkdirs(transformPath(dir, srcBase, targetBase));
                     return FileVisitResult.CONTINUE;
                 }
 

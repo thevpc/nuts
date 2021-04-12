@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
@@ -38,7 +39,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
     private NutsSession session;
     private boolean skipRoot;
     private NutsProgressFactory progressMonitorFactory;
-    private String format="zip";
+    private String format = "zip";
 
     public DefaultNutsIOCompressAction(NutsWorkspace ws) {
         this.ws = ws;
@@ -190,15 +191,15 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
     @Override
     public NutsIOCompressAction run() {
         checkSession();
-        switch (getFormat()){
+        switch (getFormat()) {
             case "zip":
             case "gzip":
-            case "gz":{
+            case "gz": {
                 runZip();
                 break;
             }
-            default:{
-                throw new NutsUnsupportedArgumentException(getSession(),"unsupported compression format "+getFormat());
+            default: {
+                throw new NutsUnsupportedArgumentException(getSession(), "unsupported compression format " + getFormat());
             }
         }
         return this;
@@ -211,15 +212,15 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
     public void runZip() {
         checkSession();
         if (sources.isEmpty()) {
-            throw new NutsIllegalArgumentException(getSession(),"missing source");
+            throw new NutsIllegalArgumentException(getSession(), "missing source");
         }
         if (target == null) {
-            throw new NutsIllegalArgumentException(getSession(),"missing target");
+            throw new NutsIllegalArgumentException(getSession(), "missing target");
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
             //how to monitor???
         }
-        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "compress {0} to {1}", sources, target);
+        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log("compress {0} to {1}", sources, target);
         try {
             OutputStream fW = null;
             ZipOutputStream zip = null;
@@ -231,9 +232,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                             .createTempFile("zip"));
                 }
                 Path path = this.target.getPath();
-                if (path.getParent() != null) {
-                    Files.createDirectories(path.getParent());
-                }
+                CoreIOUtils.mkdirs(path.getParent());
                 if (tempPath == null) {
                     fW = target.open();
                 } else {
@@ -276,7 +275,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
             }
         } catch (IOException ex) {
             LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
-                    .log( "error compressing {0} to {1} : {2}", 
+                    .log("error compressing {0} to {1} : {2}",
                             sources, target.getSource(), ex);
             throw new UncheckedIOException(ex);
         }
@@ -319,7 +318,6 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         return this;
     }
 
-
     //    private static void zipDir(String dirName, String nameZipFile) throws IOException {
 //        ZipOutputStream zip = null;
 //        FileOutputStream fW = null;
@@ -329,7 +327,6 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
 //        zip.close();
 //        fW.close();
 //    }
-
     @Override
     public boolean isSafe() {
         return safe;
@@ -412,6 +409,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
     }
 
     private static class Item {
+
         private Object o;
 
         public Item(Object value) {
@@ -510,7 +508,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
 
     @Override
     public NutsIOCompressAction setSkipRoot(boolean value) {
-        this.skipRoot=true;
+        this.skipRoot = true;
         return this;
     }
 
@@ -535,14 +533,14 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         if (CoreStringUtils.isBlank(format)) {
             format = "zip";
         }
-        switch (format){
+        switch (format) {
             case "zip":
             case "gzip":
-            case "gz":{
+            case "gz": {
                 this.format = format;
                 break;
             }
-            default:{
+            default: {
                 throw new NutsUnsupportedArgumentException(getSession(), "unsupported compression format " + format);
             }
         }

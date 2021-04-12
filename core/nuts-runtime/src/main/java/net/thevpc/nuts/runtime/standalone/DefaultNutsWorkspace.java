@@ -779,12 +779,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsInstallInformation newNutsInstallInformation = null;
         NutsInstalledRepository installedRepository = getInstalledRepository();
         NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
+        NutsWorkspaceConfigManager config = config().setSession(session);
         if (def.getPath() != null) {
             NutsExecutionContextBuilder cc = createExecutionContext()
                     .setTraceSession(traceSession.copy())
                     .setExecSession(session.copy())
                     .setDefinition(def).setArguments(args).setFailFast(true).setTemporary(false)
-                    .setExecutionType(config().options().getExecutionType());
+                    .setExecutionType(config.options().getExecutionType());
             NutsArtifactCall installer = def.getDescriptor().getInstaller();
             if (installer != null) {
                 cc.addExecutorArguments(installer.getArguments());
@@ -901,7 +902,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         }
 
         if (def.getType() == NutsIdType.EXTENSION) {
-            NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(config());
+            NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(config);
             NutsExtensionListHelper h = new NutsExtensionListHelper(wcfg.getModel().getStoredConfigBoot().getExtensions())
                     .save();
             h.add(def.getId());

@@ -301,7 +301,9 @@ public class CoreIOUtils {
     public static boolean mkdirs(Path p) {
         if (p != null) {
             try {
-                Files.createDirectories(p);
+                if (!Files.isDirectory(p)) {
+                    Files.createDirectories(p);
+                }
                 return true;
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -1401,7 +1403,7 @@ public class CoreIOUtils {
 
             final String s = UUID.randomUUID().toString();
             final Path outPath = urlContent.resolve(s + "~");
-            Files.createDirectories(urlContent);
+            CoreIOUtils.mkdirs(urlContent);
             final OutputStream p = Files.newOutputStream(outPath);
 
             long finalLastModified = lastModified;

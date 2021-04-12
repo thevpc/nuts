@@ -54,6 +54,7 @@ import java.util.logging.Level;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryConfigModel;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 /**
  * @author thevpc
@@ -177,7 +178,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             }
         } else {
             try {
-                Files.createDirectories(pp.getParent());
+                CoreIOUtils.mkdirs(pp.getParent());
                 Files.write(pp, version.trim().getBytes());
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);

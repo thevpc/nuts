@@ -39,6 +39,7 @@ import java.util.ListIterator;
 import net.thevpc.nuts.NutsCommandHistory;
 import net.thevpc.nuts.NutsCommandHistoryEntry;
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 /**
  *
@@ -113,15 +114,7 @@ public class NutsCommandHistoryImpl implements NutsCommandHistory {
     @Override
     public void save() {
         Path p = path.getParent();
-        if (p != null) {
-            if (!Files.exists(p)) {
-                try {
-                    Files.createDirectories(p);
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-        }
+        CoreIOUtils.mkdirs(p);
         try (OutputStream out = Files.newOutputStream(path)) {
             save(out);
         } catch (IOException ex) {

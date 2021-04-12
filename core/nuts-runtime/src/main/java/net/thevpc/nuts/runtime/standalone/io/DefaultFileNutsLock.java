@@ -8,8 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 public class DefaultFileNutsLock implements NutsLock {
+
     private static TimePeriod FIVE_MINUTES = new TimePeriod(5, TimeUnit.MINUTES);
     private Path path;
     private Object lockedObject;
@@ -55,7 +57,6 @@ public class DefaultFileNutsLock implements NutsLock {
         return !Files.exists(path);
     }
 
-
     @Override
     public synchronized void unlock() {
         try {
@@ -75,6 +76,7 @@ public class DefaultFileNutsLock implements NutsLock {
     }
 
     private class PollTime {
+
         long timeMs;
         long minTimeToSleep;
 
@@ -189,9 +191,7 @@ public class DefaultFileNutsLock implements NutsLock {
         try {
             if (!Files.exists(path)) {
                 Path p = path.getParent();
-                if (p != null) {
-                    Files.createDirectories(p);
-                }
+                CoreIOUtils.mkdirs(p);
                 Files.createFile(path);
                 return true;
             }

@@ -94,7 +94,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand addId(NutsId id) {
         if (id != null) {
-            addId(id.toString());
+            ids.add(id);
         }
         return this;
     }

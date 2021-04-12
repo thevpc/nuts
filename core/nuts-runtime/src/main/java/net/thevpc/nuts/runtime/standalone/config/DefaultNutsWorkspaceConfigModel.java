@@ -1167,8 +1167,8 @@ public class DefaultNutsWorkspaceConfigModel {
         _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
                 .log("erroneous workspace config file. Unable to load file {0} : {1}", new Object[]{file, ex});
         try {
-            Files.createDirectories(logError);
-        } catch (IOException ex1) {
+            CoreIOUtils.mkdirs(logError);
+        } catch (Exception ex1) {
             throw new UncheckedIOException("unable to log workspace error while loading config file " + file.toString() + " : " + ex1.toString(), new IOException(ex));
         }
         Path newfile = logError.resolve(fileName + ".json");
