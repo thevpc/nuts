@@ -33,13 +33,12 @@ import java.util.Objects;
 /**
  * Package installation status.
  */
-public class NutsInstallStatusFilter2 implements NutsInstallStatusFilter {
+public class NutsInstallStatusFilter2 extends AbstractInstallStatusFilter {
 
     private final int installed;
     private final int required;
     private final int obsolete;
     private final int defaultVersion;
-    private transient final NutsWorkspace ws;
 //    private static final NutsInstallStatusFilter2[] ALL=new NutsInstallStatusFilter2[256];
 //    static {
 //        for (int i = 0; i < 256; i++) {
@@ -67,8 +66,8 @@ public class NutsInstallStatusFilter2 implements NutsInstallStatusFilter {
 //    }
 
 
-    public NutsInstallStatusFilter2(NutsWorkspace ws, int installed, int required, int obsolete, int defaultVersion) {
-        this.ws = ws;
+    public NutsInstallStatusFilter2(NutsSession ws, int installed, int required, int obsolete, int defaultVersion) {
+        super(ws, NutsFilterOp.CUSTOM);
         this.installed = installed;
         this.required = required;
         this.obsolete = obsolete;
@@ -156,19 +155,12 @@ public class NutsInstallStatusFilter2 implements NutsInstallStatusFilter {
     }
 
     @Override
-    public NutsFilterOp getFilterOp() {
-        return NutsFilterOp.CUSTOM;
-    }
-
-    @Override
-    public NutsWorkspace getWorkspace() {
-        return ws;
-    }
-
-    @Override
-    public NutsFilter simplify() {
+    public NutsInstallStatusFilter simplify() {
         return this;
     }
+
+
+   
 
     @Override
     public NutsFilter[] getSubFilters() {
@@ -177,7 +169,7 @@ public class NutsInstallStatusFilter2 implements NutsInstallStatusFilter {
 
     @Override
     public int hashCode() {
-        return Objects.hash(installed, required, obsolete, defaultVersion, ws);
+        return Objects.hash(installed, required, obsolete, defaultVersion);
     }
 
     @Override
@@ -185,7 +177,8 @@ public class NutsInstallStatusFilter2 implements NutsInstallStatusFilter {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NutsInstallStatusFilter2 that = (NutsInstallStatusFilter2) o;
-        return installed == that.installed && required == that.required && obsolete == that.obsolete && defaultVersion == that.defaultVersion && Objects.equals(ws, that.ws);
+        return installed == that.installed && required == that.required && obsolete == that.obsolete && defaultVersion == that.defaultVersion 
+                ;
     }
 
     @Override

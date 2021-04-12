@@ -6,7 +6,6 @@ import net.thevpc.nuts.toolbox.njob.model.*;
 import net.thevpc.nuts.toolbox.njob.time.TimePeriod;
 import net.thevpc.nuts.toolbox.njob.time.TimePeriods;
 import net.thevpc.nuts.toolbox.njob.time.TimespanPattern;
-import net.thevpc.nuts.toolbox.njob.time.WeekDay;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -281,9 +280,9 @@ public class NTasksSubService {
     public boolean removeTask(String taskId) {
         long count = findAllTasks().filter(x -> taskId.equals(x.getParentTaskId())).count();
         if (count > 1) {
-            throw new NutsIllegalArgumentException(context.getWorkspace(), "Task is used in " + count + " tasks. It cannot be removed.");
+            throw new NutsIllegalArgumentException(context.getSession(), "Task is used in " + count + " tasks. It cannot be removed.");
         } else if (count > 0) {
-            throw new NutsIllegalArgumentException(context.getWorkspace(), "Task is used in one task. It cannot be removed.");
+            throw new NutsIllegalArgumentException(context.getSession(), "Task is used in one task. It cannot be removed.");
         }
         return dal.delete(NTask.class, taskId);
     }

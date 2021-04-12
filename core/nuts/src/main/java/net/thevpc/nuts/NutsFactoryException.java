@@ -38,58 +38,58 @@ public class NutsFactoryException extends NutsException {
 
     /**
      * Constructs a new NutsFactoryException exception
-     * @param workspace workspace
+     * @param session workspace
      */
-    public NutsFactoryException(NutsWorkspace workspace) {
-        super(workspace);
+    public NutsFactoryException(NutsSession session) {
+        super(session);
     }
 
     /**
      * Constructs a new NutsFactoryException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      */
-    public NutsFactoryException(NutsWorkspace workspace, String message) {
-        super(workspace, message);
+    public NutsFactoryException(NutsSession session, String message) {
+        super(session, message);
     }
 
     /**
      * Constructs a new NutsFactoryException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      * @param cause cause
      */
-    public NutsFactoryException(NutsWorkspace workspace, String message, Throwable cause) {
-        super(workspace, message, cause);
+    public NutsFactoryException(NutsSession session, String message, Throwable cause) {
+        super(session, message, cause);
     }
 
     /**
      * Constructs a new NutsFactoryException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param cause cause
      */
-    public NutsFactoryException(NutsWorkspace workspace, Throwable cause) {
-        super(workspace, cause);
+    public NutsFactoryException(NutsSession session, Throwable cause) {
+        super(session, cause);
     }
 
     /**
      * Constructs a new NutsFactoryException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param cause cause
      */
-    public NutsFactoryException(NutsWorkspace workspace, IOException cause) {
-        super(workspace, cause);
+    public NutsFactoryException(NutsSession session, IOException cause) {
+        super(session, cause);
     }
 
     /**
      * Constructs a new NutsFactoryException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      * @param cause cause cause
      * @param enableSuppression whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
-    public NutsFactoryException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace, message, cause, enableSuppression, writableStackTrace);
+    public NutsFactoryException(NutsSession session, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(session, message, cause, enableSuppression, writableStackTrace);
     }
 }

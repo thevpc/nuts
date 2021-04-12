@@ -7,17 +7,7 @@ package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
 
-import java.util.*;
-
-import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsAddUserCommand;
-import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsRemoveUserCommand;
-import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsUpdateUserCommand;
-import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepoConfigManager;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 /**
  *
@@ -25,181 +15,110 @@ import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
  */
 public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityManager {
 
-    private final NutsLogger LOG;
+    private DefaultNutsRepositorySecurityModel model;
+    private NutsSession session;
 
-    private final NutsRepository repo;
-    private final WrapperNutsAuthenticationAgent agent;
-    private final Map<String, NutsAuthorizations> authorizations = new HashMap<>();
-
-    public DefaultNutsRepositorySecurityManager(final NutsRepository repo) {
-        this.repo = repo;
-        this.agent = new WrapperNutsAuthenticationAgent(repo.getWorkspace(), ()->repo.env().toMap(), (x,s) -> getAuthenticationAgent(x, s));
-        this.repo.addRepositoryListener(new NutsRepositoryListener() {
-            @Override
-            public void onConfigurationChanged(NutsRepositoryEvent event) {
-                authorizations.clear();
-            }
-        });
-        LOG=repo.getWorkspace().log().of(DefaultNutsRepositorySecurityManager.class);
+    public DefaultNutsRepositorySecurityManager(DefaultNutsRepositorySecurityModel model) {
+        this.model = model;
     }
 
     @Override
-    public NutsRepositorySecurityManager checkAllowed(String right, String operationName, NutsSession session) {
-        session= NutsWorkspaceUtils.of(repo.getWorkspace()).validateSession(session);
-        if (!isAllowed(right, session)) {
-            if (CoreStringUtils.isBlank(operationName)) {
-                throw new NutsSecurityException(repo.getWorkspace(), right + " not allowed!");
-            } else {
-                throw new NutsSecurityException(repo.getWorkspace(), operationName + ": " + right + " not allowed!");
-            }
-        }
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsRepositorySecurityManager setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+
+    public DefaultNutsRepositorySecurityModel getModel() {
+        return model;
+    }
+
+    @Override
+    public NutsRepositorySecurityManager checkAllowed(String right, String operationName) {
+        checkSession(session);
+        model.checkAllowed(right, operationName, session);
+        return this;
+    }
+
+    private void checkSession(NutsSession session1) {
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session1);
+    }
+
+    @Override
+    public NutsAddUserCommand addUser(String name) {
+        checkSession(session);
+        return model.addUser(name, session);
+    }
+
+    @Override
+    public NutsUpdateUserCommand updateUser(String name) {
+        checkSession(session);
+        return model.updateUser(name, session).setSession(session);
+    }
+
+    @Override
+    public NutsRemoveUserCommand removeUser(String name) {
+        checkSession(session);
+        return model.removeUser(name, session).setSession(session);
+    }
+
+    @Override
+    public boolean isAllowed(String right) {
+        checkSession(session);
+        return model.isAllowed(right, session);
+    }
+
+    @Override
+    public NutsUser[] findUsers() {
+        checkSession(session);
+        return model.findUsers(session);
+    }
+
+    @Override
+    public NutsUser getEffectiveUser(String username) {
+        checkSession(session);
+        return model.getEffectiveUser(username, session);
+    }
+
+    @Override
+    public NutsAuthenticationAgent getAuthenticationAgent(String id) {
+        checkSession(session);
+        return model.getAuthenticationAgent(id, session);
+    }
+
+    @Override
+    public NutsRepositorySecurityManager setAuthenticationAgent(String authenticationAgent) {
+        checkSession(session);
+        model.setAuthenticationAgent(authenticationAgent, session);
         return this;
     }
 
     @Override
-    public NutsAddUserCommand addUser(String name, NutsSession session) {
-        return new DefaultNutsAddUserCommand(repo);
-    }
-
-    @Override
-    public NutsUpdateUserCommand updateUser(String name, NutsSession session) {
-        return new DefaultNutsUpdateUserCommand(repo);
-    }
-
-    @Override
-    public NutsRemoveUserCommand removeUser(String name, NutsSession session) {
-        return new DefaultNutsRemoveUserCommand(repo);
-    }
-
-    private NutsAuthorizations getAuthorizations(String n,NutsSession session) {
-        NutsAuthorizations aa = authorizations.get(n);
-        if (aa != null) {
-            return aa;
-        }
-        NutsUserConfig s = NutsRepositoryConfigManagerExt.of(repo.config()).getUser(n);
-        if (s != null) {
-            String[] rr = s.getPermissions();
-            aa = new NutsAuthorizations(Arrays.asList(rr == null ? new String[0] : rr));
-            authorizations.put(n, aa);
-        } else {
-            aa = new NutsAuthorizations(Collections.emptyList());
-        }
-        return aa;
-    }
-
-    @Override
-    public boolean isAllowed(String right, NutsSession session) {
-        if (!repo.getWorkspace().security().isSecure(session)) {
-            return true;
-        }
-        String name = repo.getWorkspace().security().getCurrentUsername(session);
-        if (NutsConstants.Users.ADMIN.equals(name)) {
-            return true;
-        }
-        Stack<String> items = new Stack<>();
-        Set<String> visitedGroups = new HashSet<>();
-        visitedGroups.add(name);
-        items.push(name);
-        while (!items.isEmpty()) {
-            String n = items.pop();
-            NutsAuthorizations s = getAuthorizations(n,session);
-            Boolean ea = s.explicitAccept(right);
-            if (ea != null) {
-                return ea;
-            }
-            NutsUserConfig uc = NutsRepositoryConfigManagerExt.of(repo.config()).getUser(n);
-            if (uc != null && uc.getGroups() != null) {
-                for (String g : uc.getGroups()) {
-                    if (!visitedGroups.contains(g)) {
-                        visitedGroups.add(g);
-                        items.push(g);
-                    }
-                }
-            }
-        }
-        return repo.getWorkspace().security().isAllowed(right, session);
-    }
-
-    @Override
-    public NutsUser[] findUsers(NutsSession session) {
-        List<NutsUser> all = new ArrayList<>();
-        for (NutsUserConfig secu : NutsRepositoryConfigManagerExt.of(repo.config()).getUsers()) {
-            all.add(getEffectiveUser(secu.getUser(), session));
-        }
-        return all.toArray(new NutsUser[0]);
-    }
-
-    @Override
-    public NutsUser getEffectiveUser(String username, NutsSession session) {
-        NutsUserConfig u = NutsRepositoryConfigManagerExt.of(repo.config()).getUser(username);
-        Stack<String> inherited = new Stack<>();
-        if (u != null) {
-            Stack<String> visited = new Stack<>();
-            visited.push(username);
-            Stack<String> curr = new Stack<>();
-            curr.addAll(Arrays.asList(u.getGroups()));
-            while (!curr.empty()) {
-                String s = curr.pop();
-                visited.add(s);
-                NutsUserConfig ss = NutsRepositoryConfigManagerExt.of(repo.config()).getUser(s);
-                if (ss != null) {
-                    inherited.addAll(Arrays.asList(ss.getPermissions()));
-                    for (String group : ss.getGroups()) {
-                        if (!visited.contains(group)) {
-                            curr.push(group);
-                        }
-                    }
-                }
-            }
-        }
-        return u == null ? null : new DefaultNutsUser(u, inherited.toArray(new String[0]));
-    }
-
-    @Override
-    public NutsAuthenticationAgent getAuthenticationAgent(String id, NutsSession session) {
-        id = CoreStringUtils.trim(id);
-        if (id.isEmpty()) {
-            id = ((DefaultNutsRepoConfigManager) repo.config())
-                    .getStoredConfig().getAuthenticationAgent();
-        }
-        NutsAuthenticationAgent a = NutsWorkspaceConfigManagerExt.of(repo.getWorkspace().config()).createAuthenticationAgent(id, session);
-        return a;
-    }
-
-    @Override
-    public NutsRepositorySecurityManager setAuthenticationAgent(String authenticationAgent, NutsUpdateOptions options) {
-        options= CoreNutsUtils.validate(options,repo.getWorkspace());
-        DefaultNutsRepoConfigManager cc = (DefaultNutsRepoConfigManager) repo.config();
-
-        if (NutsWorkspaceConfigManagerExt.of(repo.getWorkspace().config()).createAuthenticationAgent(authenticationAgent, options.getSession()) == null) {
-            throw new NutsIllegalArgumentException(repo.getWorkspace(), "unsupported Authentication Agent " + authenticationAgent);
-        }
-
-        NutsRepositoryConfig conf = cc.getStoredConfig();
-        if (!Objects.equals(conf.getAuthenticationAgent(), authenticationAgent)) {
-            conf.setAuthenticationAgent(authenticationAgent);
-            cc.fireConfigurationChanged("authentication-agent",options.getSession());
-        }
+    public NutsRepositorySecurityManager checkCredentials(char[] credentialsId, char[] password) throws NutsSecurityException {
+        checkSession(session);
+        model.checkCredentials(credentialsId, password, session);
         return this;
     }
 
     @Override
-    public void checkCredentials(char[] credentialsId, char[] password, NutsSession session) throws NutsSecurityException {
-        agent.checkCredentials(credentialsId, password, session);
+    public char[] getCredentials(char[] credentialsId) {
+        checkSession(session);
+        return model.getCredentials(credentialsId, session);
     }
 
     @Override
-    public char[] getCredentials(char[] credentialsId, NutsSession session) {
-        return agent.getCredentials(credentialsId, session);
+    public boolean removeCredentials(char[] credentialsId) {
+        checkSession(session);
+        return model.removeCredentials(credentialsId, session);
     }
 
     @Override
-    public boolean removeCredentials(char[] credentialsId, NutsSession session) {
-        return agent.removeCredentials(credentialsId, session);
-    }
-
-    @Override
-    public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, NutsSession session) {
-        return agent.createCredentials(credentials, allowRetrieve, credentialId, session);
+    public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId) {
+        checkSession(session);
+        return model.createCredentials(credentials, allowRetrieve, credentialId, session);
     }
 }

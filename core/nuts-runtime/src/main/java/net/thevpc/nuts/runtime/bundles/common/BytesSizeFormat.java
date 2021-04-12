@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.bundles.common;
 
 import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
@@ -85,9 +86,9 @@ public class BytesSizeFormat {
     private long high = TERA;
     private long low = BYTE;
     private int depth = Integer.MAX_VALUE;
-    private NutsWorkspace ws;
+    private NutsSession session;
 
-    public BytesSizeFormat(boolean leadingZeros, boolean intermediateZeros, boolean fixedLength, boolean binaryPrefix, long high, long low, int depth, NutsWorkspace ws) {
+    public BytesSizeFormat(boolean leadingZeros, boolean intermediateZeros, boolean fixedLength, boolean binaryPrefix, long high, long low, int depth, NutsSession session) {
         this.leadingZeros = leadingZeros;
         this.intermediateZeros = intermediateZeros;
         this.fixedLength = fixedLength;
@@ -95,7 +96,7 @@ public class BytesSizeFormat {
         this.high = high;
         this.low = low;
         this.depth = depth <= 0 ? Integer.MAX_VALUE : depth;
-        this.ws=ws;
+        this.session=session;
     }
 
 //    public BytesSizeFormat() {
@@ -164,10 +165,10 @@ public class BytesSizeFormat {
      * </pre>
      *
      * @param format size format
-     * @param ws workspace
+     * @param session session
      */
-    public BytesSizeFormat(String format, NutsWorkspace ws) {
-        this.ws=ws;
+    public BytesSizeFormat(String format, NutsSession session) {
+        this.session=session;
         leadingZeros = false;
         intermediateZeros = false;
         trailingZeros = false;
@@ -208,7 +209,7 @@ public class BytesSizeFormat {
                             depth = -1;
                         }
                         if (depth <= 0 || depth > 9) {
-                            throw new NutsIllegalArgumentException(ws, "invalid depth " + depth);
+                            throw new NutsIllegalArgumentException(session, "invalid depth " + depth);
                         }
                     }
                     case 'F': {
@@ -226,7 +227,7 @@ public class BytesSizeFormat {
                         break;
                     }
                     default: {
-                        throw new NutsIllegalArgumentException(ws, "unsupported " + c);
+                        throw new NutsIllegalArgumentException(session, "unsupported " + c);
                     }
                 }
             }

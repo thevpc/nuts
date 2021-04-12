@@ -12,11 +12,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NutsVersionFilterNone extends AbstractNutsFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter {
+public class NutsVersionFilterNone extends AbstractVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter {
 
     private NutsVersionFilter[] all;
 
-    public NutsVersionFilterNone(NutsWorkspace ws, NutsVersionFilter... all) {
+    public NutsVersionFilterNone(NutsSession ws, NutsVersionFilter... all) {
         super(ws, NutsFilterOp.NOT);
         List<NutsVersionFilter> valid = new ArrayList<>();
         if (all != null) {

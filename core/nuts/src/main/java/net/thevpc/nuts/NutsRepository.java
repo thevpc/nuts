@@ -126,15 +126,17 @@ public interface NutsRepository {
      * remove repository listener
      *
      * @param listener listener
+     * @return this
      */
-    void removeRepositoryListener(NutsRepositoryListener listener);
+    NutsRepository removeRepositoryListener(NutsRepositoryListener listener);
 
     /**
      * add repository listener
      *
      * @param listener listener
+     * @return this
      */
-    void addRepositoryListener(NutsRepositoryListener listener);
+    NutsRepository addRepositoryListener(NutsRepositoryListener listener);
 
     /**
      * Repository Listeners
@@ -152,14 +154,16 @@ public interface NutsRepository {
     /**
      * add listener to user properties
      * @param listener listener
+     * @return this
      */
-    void addUserPropertyListener(NutsMapListener<String, Object> listener);
+    NutsRepository addUserPropertyListener(NutsMapListener<String, Object> listener);
 
     /**
      * remove listener from user properties
      * @param listener listener
+     * @return this
      */
-    void removeUserPropertyListener(NutsMapListener<String, Object> listener);
+    NutsRepository removeUserPropertyListener(NutsMapListener<String, Object> listener);
 
     /**
      * return array of registered user properties listeners

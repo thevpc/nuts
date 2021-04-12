@@ -1,44 +1,60 @@
 package net.thevpc.nuts.runtime.standalone.repos;
 
-import net.thevpc.nuts.NutsRepository;
 import net.thevpc.nuts.NutsRepositoryEnvManager;
-import net.thevpc.nuts.NutsUpdateOptions;
 
 import java.util.Map;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsRepositoryEnvManager implements NutsRepositoryEnvManager {
-    private NutsRepository repo;
+    private DefaultNutsRepositoryEnvModel model;
+    private NutsSession session;
 
-    public DefaultNutsRepositoryEnvManager(NutsRepository repo) {
-        this.repo = repo;
+    public DefaultNutsRepositoryEnvManager(DefaultNutsRepositoryEnvModel model) {
+        this.model = model;
     }
 
     @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsRepositoryEnvManager setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+    
+
+    @Override
     public Map<String, String> toMap(boolean inherit) {
-        return getConfig0().getEnv(inherit);
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        return model.toMap(inherit,getSession());
     }
 
     @Override
     public String get(String key, String defaultValue, boolean inherit) {
-        return getConfig0().getEnv(key, defaultValue, inherit);
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        return model.get(key,defaultValue,inherit,getSession());
     }
 
     @Override
     public Map<String, String> toMap() {
-        return getConfig0().getEnv(true);
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        return model.toMap(getSession());
     }
 
     @Override
     public String get(String property, String defaultValue) {
-        return getConfig0().getEnv(property, defaultValue,true);
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        return model.get(property, defaultValue,getSession());
     }
 
     @Override
-    public void set(String property, String value, NutsUpdateOptions options) {
-        getConfig0().setEnv(property, value, options);
+    public NutsRepositoryEnvManager set(String property, String value) {
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        model.set(property, value,session);
+        return this;
     }
 
-    private DefaultNutsRepoConfigManager getConfig0() {
-        return (DefaultNutsRepoConfigManager) repo.config();
-    }
 }

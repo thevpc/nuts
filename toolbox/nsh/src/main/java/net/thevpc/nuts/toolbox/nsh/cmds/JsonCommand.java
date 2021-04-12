@@ -111,7 +111,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                     try {
                         resultDocument = documentFactory.newDocumentBuilder().newDocument();
                     } catch (ParserConfigurationException ex) {
-                        throw new NutsExecutionException(context.getWorkspace(), ex, 1);
+                        throw new NutsExecutionException(context.getSession(), ex, 1);
                     }
                     Element resultElement = resultDocument.createElement("result");
                     resultDocument.appendChild(resultElement);
@@ -124,7 +124,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                                 resultElement.appendChild(o);
                             }
                         } catch (XPathExpressionException ex) {
-                            throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 103);
+                            throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 103);
                         }
                     }
                     if (context.getSession().getOutputFormat(null) == null) {
@@ -173,7 +173,7 @@ public class JsonCommand extends SimpleNshBuiltin {
             if (file.isFile()) {
                 inputDocument = njson.parse(file, cls);
             } else {
-                throw new NutsExecutionException(context.getWorkspace(), "Invalid path " + path, 1);
+                throw new NutsExecutionException(context.getSession(), "Invalid path " + path, 1);
             }
         } else {
             StringBuilder sb = new StringBuilder();
@@ -183,7 +183,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                 try {
                     line = reader.readLine();
                 } catch (IOException ex) {
-                    throw new NutsExecutionException(context.getWorkspace(), "Broken Input", 2);
+                    throw new NutsExecutionException(context.getSession(), "Broken Input", 2);
                 }
                 if (line == null) {
                     inputDocument = njson.parse(new StringReader(sb.toString()), cls);

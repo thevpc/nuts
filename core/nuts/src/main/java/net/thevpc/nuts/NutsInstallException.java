@@ -37,21 +37,21 @@ public class NutsInstallException extends NutsInstallationException {
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id nuts id
      */
-    public NutsInstallException(NutsWorkspace workspace, NutsId id) {
-        this(workspace, id == null ? null : id.toString());
+    public NutsInstallException(NutsSession session, NutsId id) {
+        this(session, id == null ? null : id.toString());
     }
 
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id nuts id
      */
-    public NutsInstallException(NutsWorkspace workspace, String id) {
-        this(workspace, id, null, null);
+    public NutsInstallException(NutsSession session, String id) {
+        this(session, id, null, null);
     }
 
     /**
@@ -62,7 +62,7 @@ public class NutsInstallException extends NutsInstallationException {
      * @param msg message
      * @param ex exception
      */
-    public NutsInstallException(NutsWorkspace workspace, NutsId id, String msg, Exception ex) {
+    public NutsInstallException(NutsSession workspace, NutsId id, String msg, Exception ex) {
         this(workspace, id == null ? null : id.toString(), msg, ex);
     }
 
@@ -74,7 +74,7 @@ public class NutsInstallException extends NutsInstallationException {
      * @param msg message
      * @param ex exception
      */
-    public NutsInstallException(NutsWorkspace workspace, String id, String msg, Exception ex) {
+    public NutsInstallException(NutsSession workspace, String id, String msg, Exception ex) {
         super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "unable to install " + (id == null ? "<null>" : id) : msg, ex);
     }
 

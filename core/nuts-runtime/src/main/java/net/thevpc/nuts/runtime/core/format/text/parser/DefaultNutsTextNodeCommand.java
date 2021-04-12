@@ -26,12 +26,12 @@
  */
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalCommand;
 import net.thevpc.nuts.NutsTextNodeCommand;
 import net.thevpc.nuts.NutsTextNodeType;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.AnsiEscapeCommand;
-import net.thevpc.nuts.runtime.core.format.text.AnsiEscapeCommands;
 import net.thevpc.nuts.runtime.core.format.text.DefaultAnsiEscapeCommand;
 
 /**
@@ -41,7 +41,7 @@ public class DefaultNutsTextNodeCommand extends NutsTextNodeSpecialBase implemen
 
     private final NutsTerminalCommand command;
 
-    public DefaultNutsTextNodeCommand(NutsWorkspace ws, String start, NutsTerminalCommand command, String separator, String end) {
+    public DefaultNutsTextNodeCommand(NutsSession ws, String start, NutsTerminalCommand command, String separator, String end) {
         super(ws, start, command.getName(),
                 (command.getArgs() != null && command.getArgs().length() > 0 && (separator == null || separator.isEmpty())) ? " " : separator
                 , end);

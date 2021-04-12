@@ -60,12 +60,14 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 
     //@Override
     private DefaultNutsSearch build() {
+        checkSession();
+        NutsWorkspace ws=getSession().getWorkspace();
         HashSet<String> someIds = new HashSet<>();
         for (NutsId id : this.getIds()) {
             someIds.add(id.toString());
         }
         if (this.getIds().length == 0 && isCompanion()) {
-            someIds.addAll(ws.getCompanionIds().stream().map(NutsId::getShortName).collect(Collectors.toList()));
+            someIds.addAll(ws.getCompanionIds(session).stream().map(NutsId::getShortName).collect(Collectors.toList()));
         }
         if (this.getIds().length == 0 && isRuntime()) {
             someIds.add(NutsConstants.Ids.NUTS_RUNTIME);
@@ -188,7 +190,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 
         if (getInstallStatus() != null && this.getRepositories().length > 0) {
             for (NutsInstallStatus x : NutsInstallStatuses.ALL_DEPLOYED) {
-                if (getInstallStatus().acceptInstallStatus(x, getValidWorkspaceSession())) {
+                if (getInstallStatus().acceptInstallStatus(x, getSession())) {
                     searchInInstalled = true;
                     break;
                 }
@@ -199,12 +201,12 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             searchInOtherRepositories = true;
         } else if (getInstallStatus() != null && this.getRepositories().length == 0) {
             for (NutsInstallStatus x : NutsInstallStatuses.ALL_DEPLOYED) {
-                if (getInstallStatus().acceptInstallStatus(x, getValidWorkspaceSession())) {
+                if (getInstallStatus().acceptInstallStatus(x, getSession())) {
                     searchInInstalled = true;
                     break;
                 }
             }
-            if (getInstallStatus().acceptInstallStatus(NutsInstallStatuses.ALL_UNDEPLOYED, getValidWorkspaceSession())) {
+            if (getInstallStatus().acceptInstallStatus(NutsInstallStatuses.ALL_UNDEPLOYED, getSession())) {
                 searchInOtherRepositories = true;
             }
         } else if (getInstallStatus() == null && this.getRepositories().length == 0) {
@@ -215,7 +217,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 for (NutsFilter subFilter : _idFilter.getSubFilters()) {
                     if (subFilter instanceof NutsInstallStatusIdFilter) {
                         NutsInstallStatusFilter f = ((NutsInstallStatusIdFilter) subFilter).getInstallStatus();
-                        if (!f.acceptInstallStatus(NutsInstallStatuses.ALL_UNDEPLOYED, getValidWorkspaceSession())) {
+                        if (!f.acceptInstallStatus(NutsInstallStatuses.ALL_UNDEPLOYED, getSession())) {
                             searchInOtherRepositories = false;
                         }
                     }
@@ -237,7 +239,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 _idFilter, _descriptorFilter,
                 searchInInstalled,
                 searchInOtherRepositories,
-                getValidWorkspaceSession());
+                getSession());
     }
 
     //    private Collection<NutsId> applyPrintDecoratorCollectionOfNutsId(Collection<NutsId> curr, boolean print) {
@@ -289,7 +291,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             }, "latestAndDuplicate");
             return buildNutsCollectionSearchResult(nn, print);
         }
-        throw new NutsUnexpectedException(ws);
+        throw new NutsUnexpectedException(getSession());
     }
 
     private NutsCollectionResult<NutsDependency> applyVersionFlagFilters2(Iterator<NutsDependency> curr, boolean print) {
@@ -335,7 +337,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             }, "latestAndDuplicate");
             return buildNutsCollectionSearchResult(nn, print);
         }
-        throw new NutsUnexpectedException(ws);
+        throw new NutsUnexpectedException(getSession());
     }
 
     protected NutsCollectionResult<NutsDependency> getResultDependenciesBase(boolean print, boolean sort) {
@@ -462,7 +464,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
     }
 
     private NutsId[] findDependencies(List<NutsId> ids) {
-        NutsSession _session = this.getValidWorkspaceSession();
+        NutsSession _session = this.getSession();
         NutsDependencyFilter _dependencyFilter = ws.dependency().filter().byScope(getScope())
                 .and(ws.dependency().filter().byOptional(getOptional()))
                 .and(getDependencyFilter());
@@ -480,7 +482,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
     }
 
     private NutsDependency[] findDependencies2(List<NutsDependency> ids) {
-        NutsSession _session = this.getValidWorkspaceSession();
+        NutsSession _session = this.getSession();
         NutsDependencyFilter _dependencyFilter = ws.dependency().filter().byScope(getScope())
                 .and(ws.dependency().filter().byOptional(getOptional()))
                 .and(getDependencyFilter());
@@ -501,7 +503,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         List<Iterator<NutsId>> allResults = new ArrayList<>();
 
         NutsSession session = search.getSession();
-        session = NutsWorkspaceUtils.of(ws).validateSession(session);
+        NutsWorkspaceUtils.checkSession(ws, session);
         NutsIdFilter sIdFilter = search.getIdFilter();
         NutsRepositoryFilter sRepositoryFilter = search.getRepositoryFilter();
         NutsDescriptorFilter sDescriptorFilter = search.getDescriptorFilter();
@@ -512,6 +514,8 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 search.isSearchInOtherRepositories()
         );
         Set<NutsRepository> consideredRepos=new HashSet<>();
+        NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
+        NutsWorkspace ws=session.getWorkspace();
         if (regularIds.length > 0) {
             for (String id : regularIds) {
                 NutsId nutsId = ws.id().parser().parse(id);
@@ -524,7 +528,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             //check if it is already installed
                             List<NutsId> installedIds=Collections.emptyList();
                             if (!nutsId.getArtifactId().contains("*")) {
-                                NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(ws)
+                                NutsRepositorySPI repoSPI = wu
                                         .repoSPI(NutsWorkspaceExt.of(getWorkspace()).getInstalledRepository());
                                 Iterator<NutsId> it = repoSPI.search().setFetchMode(NutsFetchMode.LOCAL).setFilter(ws.filters().id().byName(
                                         nutsId.builder().setGroupId("*").build().toString()
@@ -551,12 +555,12 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         );
                         NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getProperties(),
                                 idFilter2, sDescriptorFilter, ws));
-                        for (NutsRepositoryAndFetchMode repoAndMode : NutsWorkspaceUtils.of(ws).filterRepositoryAndFetchModes(
+                        for (NutsRepositoryAndFetchMode repoAndMode : wu.filterRepositoryAndFetchModes(
                                 NutsRepositorySupportedAction.SEARCH, nutsId1, sRepositoryFilter, fetchMode, session,
                                 installedVsNonInstalledSearch
                         )) {
                             consideredRepos.add(repoAndMode.getRepository());
-                            NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(ws).repoSPI(repoAndMode.getRepository());
+                            NutsRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
                             idLookup.add(IteratorBuilder.ofLazyNamed("searchVersions("
                                     + repoAndMode.getRepository().getName() + ","
                                     + repoAndMode.getFetchMode() + "," + sRepositoryFilter + "," + finalSession + ")",
@@ -607,17 +611,16 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(null, sIdFilter, sDescriptorFilter, ws));
 
             List<Iterator<NutsId>> all = new ArrayList<>();
-            for (NutsRepositoryAndFetchMode repoAndMode : NutsWorkspaceUtils.of(ws).filterRepositoryAndFetchModes(
+            for (NutsRepositoryAndFetchMode repoAndMode : wu.filterRepositoryAndFetchModes(
                     NutsRepositorySupportedAction.SEARCH, null, sRepositoryFilter,
                     fetchMode, session,
                     installedVsNonInstalledSearch
             )) {
                 consideredRepos.add(repoAndMode.getRepository());
                 NutsSession finalSession1 = session;
-                all.add(
-                        IteratorBuilder.ofLazyNamed("search(" + repoAndMode.getRepository().getName() + ","
+                all.add(IteratorBuilder.ofLazyNamed("search(" + repoAndMode.getRepository().getName() + ","
                                 + repoAndMode.getFetchMode() + "," + sRepositoryFilter + "," + session + ")",
-                                () -> NutsWorkspaceUtils.of(ws).repoSPI(repoAndMode.getRepository()).search()
+                                () -> wu.repoSPI(repoAndMode.getRepository()).search()
                                         .setFilter(filter).setSession(finalSession1)
                                         .setFetchMode(repoAndMode.getFetchMode())
                                         .getResult()).safeIgnore().iterator()
@@ -635,7 +638,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
     public Iterator<NutsDependency> findIterator2(DefaultNutsSearch search) {
         List<Iterator<NutsDependency>> allResults = new ArrayList<>();
         NutsSession session = search.getSession();
-        session = NutsWorkspaceUtils.of(ws).validateSession(session);
+        NutsWorkspaceUtils.checkSession(ws, session);
         NutsIdFilter sIdFilter = search.getIdFilter();
         NutsRepositoryFilter sRepositoryFilter = search.getRepositoryFilter();
         NutsDescriptorFilter sDescriptorFilter = search.getDescriptorFilter();
@@ -645,6 +648,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 search.isSearchInInstalled(),
                 search.isSearchInOtherRepositories()
         );
+        NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
 
         if (regularIds.length > 0) {
             for (String id : regularIds) {
@@ -672,11 +676,11 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         );
                         NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getProperties(),
                                 idFilter2, sDescriptorFilter, ws));
-                        for (NutsRepositoryAndFetchMode repoAndMode : NutsWorkspaceUtils.of(ws).filterRepositoryAndFetchModes(
+                        for (NutsRepositoryAndFetchMode repoAndMode : wu.filterRepositoryAndFetchModes(
                                 NutsRepositorySupportedAction.SEARCH, nutsId1, sRepositoryFilter, fetchMode, session,
                                 installedVsNonInstalledSearch
                         )) {
-                            NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(ws).repoSPI(repoAndMode.getRepository());
+                            NutsRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
                             idLookup.add(
                                     IteratorBuilder.ofLazyNamed("searchVersions("
                                             + repoAndMode.getRepository().getName() + ","
@@ -731,16 +735,15 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(null, sIdFilter, sDescriptorFilter, ws));
 
             List<Iterator<NutsDependency>> all = new ArrayList<>();
-            for (NutsRepositoryAndFetchMode repoAndMode : NutsWorkspaceUtils.of(ws).filterRepositoryAndFetchModes(
+            for (NutsRepositoryAndFetchMode repoAndMode : wu.filterRepositoryAndFetchModes(
                     NutsRepositorySupportedAction.SEARCH, null, sRepositoryFilter,
                     fetchMode, session,
                     installedVsNonInstalledSearch
             )) {
                 NutsSession finalSession1 = session;
-                all.add(
-                        IteratorBuilder.ofLazyNamed("search(" + repoAndMode.getRepository().getName() + ","
+                all.add(IteratorBuilder.ofLazyNamed("search(" + repoAndMode.getRepository().getName() + ","
                                 + repoAndMode.getFetchMode() + "," + sRepositoryFilter + "," + session + ")",
-                                () -> CoreNutsUtils.itIdToDep(NutsWorkspaceUtils.of(ws).repoSPI(repoAndMode.getRepository()).search()
+                                () -> CoreNutsUtils.itIdToDep(wu.repoSPI(repoAndMode.getRepository()).search()
                                         .setFilter(filter).setSession(finalSession1)
                                         .setFetchMode(repoAndMode.getFetchMode())
                                         .getResult())

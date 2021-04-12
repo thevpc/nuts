@@ -233,7 +233,9 @@ public class NutsIdFormatHelper {
             }
             int z = 0;
             Stack<NutsRepository> stack = new Stack<>();
-            for (NutsRepository repository : session.getWorkspace().repos().getRepositories(session)) {
+            for (NutsRepository repository : session.getWorkspace().repos()
+                    .setSession(session)
+                    .getRepositories()) {
                 stack.push(repository);
             }
             while (!stack.isEmpty()) {
@@ -243,7 +245,9 @@ public class NutsIdFormatHelper {
                     z = n;
                 }
                 if (r.config().isSupportedMirroring()) {
-                    for (NutsRepository repository : r.config().getMirrors(session)) {
+                    for (NutsRepository repository : r.config()
+                            .setSession(session)
+                            .getMirrors()) {
                         stack.push(repository);
                     }
                 }
@@ -257,7 +261,7 @@ public class NutsIdFormatHelper {
             }
             int z = "anonymous".length();
             NutsWorkspaceConfigManagerExt wc = NutsWorkspaceConfigManagerExt.of(session.getWorkspace().config());
-            NutsUserConfig[] users = wc.getStoredConfigSecurity().getUsers();
+            NutsUserConfig[] users = wc.getModel().getStoredConfigSecurity().getUsers();
             if (users != null) {
                 for (NutsUserConfig user : users) {
                     String s = user.getUser();
@@ -267,13 +271,13 @@ public class NutsIdFormatHelper {
                 }
             }
             Stack<NutsRepository> stack = new Stack<>();
-            for (NutsRepository repository : session.getWorkspace().repos().getRepositories(session)) {
+            for (NutsRepository repository : session.getWorkspace().repos().getRepositories()) {
                 stack.push(repository);
             }
             while (!stack.isEmpty()) {
                 NutsRepository r = stack.pop();
                 NutsRepositoryConfigManagerExt rc = NutsRepositoryConfigManagerExt.of(r.config());
-                NutsUserConfig[] users1 = rc.getUsers();
+                NutsUserConfig[] users1 = rc.getModel().getUsers(session);
                 if (users1 != null) {
                     for (NutsUserConfig user : users1) {
                         String s = user.getUser();
@@ -283,7 +287,7 @@ public class NutsIdFormatHelper {
                     }
                 }
                 if (r.config().isSupportedMirroring()) {
-                    for (NutsRepository repository : r.config().getMirrors(session)) {
+                    for (NutsRepository repository : r.config().setSession(session).getMirrors()) {
                         stack.push(repository);
                     }
                 }
@@ -411,7 +415,9 @@ public class NutsIdFormatHelper {
                         rname = def.getRepositoryName();
                     }
                     if (def.getRepositoryUuid() != null) {
-                        NutsRepository r = ws.repos().findRepositoryById(def.getRepositoryUuid(), session.copy().setTransitive(false));
+                        NutsRepository r = ws.repos()
+                                .setSession(session.copy().setTransitive(false))
+                                .findRepositoryById(def.getRepositoryUuid());
                         if (r != null) {
                             rname = r.getName();
                         }
@@ -431,7 +437,9 @@ public class NutsIdFormatHelper {
                 }
                 if (ruuid == null && id != null) {
                     String p = id.getNamespace();
-                    NutsRepository r = ws.repos().findRepositoryByName(p, session.copy().setTransitive(false));
+                    NutsRepository r = ws.repos()
+                            .setSession(session.copy().setTransitive(false))
+                            .findRepositoryByName(p);
                     if (r != null) {
                         ruuid = r.getUuid();
                     }
@@ -550,7 +558,7 @@ public class NutsIdFormatHelper {
             }
 
             default: {
-                throw new NutsUnsupportedArgumentException(ws, String.valueOf(dp));
+                throw new NutsUnsupportedArgumentException(session, String.valueOf(dp));
             }
         }
     }

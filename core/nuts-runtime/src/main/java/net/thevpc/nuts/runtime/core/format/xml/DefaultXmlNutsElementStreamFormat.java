@@ -53,9 +53,9 @@ public class DefaultXmlNutsElementStreamFormat implements NutsElementStreamForma
         try {
             doc = NutsXmlUtils.createDocumentBuilder(false, session).parse(new InputSource(reader));
         } catch (SAXException ex) {
-            throw new NutsIOException(session.getWorkspace(), new IOException(ex));
+            throw new NutsIOException(session, new IOException(ex));
         } catch (IOException ex) {
-            throw new NutsIOException(session.getWorkspace(), ex);
+            throw new NutsIOException(session, ex);
         }
         return context.objectToElement(doc, Document.class);
     }
@@ -64,7 +64,7 @@ public class DefaultXmlNutsElementStreamFormat implements NutsElementStreamForma
     public void printElement(NutsElement value, PrintStream out, boolean compact, NutsElementFactoryContext context) {
         NutsSession session = context.getSession();
         Document doc = (Document) context.elementToObject(value, Document.class);
-        if (context.getWorkspace().io().term().isFormatted(out)) {
+        if (context.getWorkspace().term().setSession(session).isFormatted(out)) {
             ByteArrayPrintStream bos = new ByteArrayPrintStream();
             NutsXmlUtils.writeDocument(doc, new StreamResult(bos), compact, true, session);
             out.print(context.getWorkspace().formats().text().code("xml", bos.toString()));

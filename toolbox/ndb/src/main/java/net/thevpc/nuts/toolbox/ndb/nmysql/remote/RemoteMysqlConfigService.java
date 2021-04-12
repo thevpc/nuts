@@ -68,7 +68,7 @@ public class RemoteMysqlConfigService {
 
     public RemoteMysqlConfigService loadConfig() {
         if (name == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "missing config name", 2);
+            throw new NutsExecutionException(context.getSession(), "missing config name", 2);
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
@@ -111,7 +111,7 @@ public class RemoteMysqlConfigService {
                 case OPEN_OR_NULL:
                     return null;
                 case OPEN_OR_ERROR:
-                    throw new NutsIllegalArgumentException(context.getWorkspace(), "remote instance not found:" + dbName + "@" + getName());
+                    throw new NutsIllegalArgumentException(context.getSession(), "remote instance not found:" + dbName + "@" + getName());
                 case CREATE_OR_ERROR:
                 case OPEN_OR_CREATE: {
                     a = new RemoteMysqlDatabaseConfig();
@@ -119,13 +119,13 @@ public class RemoteMysqlConfigService {
                     return new RemoteMysqlDatabaseConfigService(dbName, a, this);
                 }
                 default: {
-                    throw new NutsIllegalArgumentException(context.getWorkspace(), "unexpected error");
+                    throw new NutsIllegalArgumentException(context.getSession(), "unexpected error");
                 }
             }
         }
         switch (action) {
             case CREATE_OR_ERROR: {
-                throw new NutsIllegalArgumentException(context.getWorkspace(), "remote instance not found:" + dbName + "@" + getName());
+                throw new NutsIllegalArgumentException(context.getSession(), "remote instance not found:" + dbName + "@" + getName());
             }
             case OPEN_OR_ERROR:
             case OPEN_OR_NULL:
@@ -133,7 +133,7 @@ public class RemoteMysqlConfigService {
                 return new RemoteMysqlDatabaseConfigService(dbName, a, this);
             }
             default: {
-                throw new NutsIllegalArgumentException(context.getWorkspace(), "unexpected error");
+                throw new NutsIllegalArgumentException(context.getSession(), "unexpected error");
             }
         }
     }

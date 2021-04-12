@@ -116,16 +116,15 @@ public class AdminServerRunnable implements NutsServer, Runnable {
                             try {
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
-                                    PrintStream eout = invokerWorkspace.io().createPrintStream(out, NutsTerminalMode.FORMATTED, session);
+                                    PrintStream eout = invokerWorkspace.io().createPrintStream(out, NutsTerminalMode.FORMATTED);
                                     NutsSession session = invokerWorkspace.createSession();
                                     session.setTerminal(
-                                            invokerWorkspace.io().term().createTerminal(
+                                            invokerWorkspace.term().createTerminal(
                                                     finalAccept.getInputStream(),
-                                                    eout,eout,
-                                                    session)
+                                                    eout,eout)
                                     );
                                     cli = new NutsJavaShell(invokerWorkspace, session,
-                                            invokerWorkspace.id().resolveId(AdminServerRunnable.class, session),
+                                            invokerWorkspace.id().setSession(session).resolveId(AdminServerRunnable.class),
                                             serverId,new String[0]);
                                     cli.getRootContext().builtins().unset("connect");
                                     cli.getRootContext().builtins().set(new StopServerBuiltin2(finalServerSocket));
@@ -185,7 +184,7 @@ public class AdminServerRunnable implements NutsServer, Runnable {
             try {
                 socket.close();
             } catch (IOException ex) {
-                throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
+                throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
             }
         }
     }

@@ -66,7 +66,7 @@ public class WindowsNdi extends BaseSystemNdi {
         try {
             NutsWorkspace ws = context.getWorkspace();
             if (apiVersion == null) {
-                throw new NutsIllegalArgumentException(context.getWorkspace(), "missing nuts-api version to link to");
+                throw new NutsIllegalArgumentException(context.getSession(), "missing nuts-api version to link to");
             }
             NutsId apiId = ws.getApiId().builder().setVersion(apiVersion).build();
             ws.fetch().setId(apiId).setFailFast(true).getResultDefinition();
@@ -163,7 +163,7 @@ public class WindowsNdi extends BaseSystemNdi {
                 }
             }
 
-            throw new NutsIllegalArgumentException(ws, "unsupported");
+            throw new NutsIllegalArgumentException(context.getSession(), "unsupported");
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }

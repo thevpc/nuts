@@ -40,57 +40,57 @@ public class NutsValidationException extends NutsException {
      * Constructs a new NutsValidationException exception
      * @param workspace workspace
      */
-    public NutsValidationException(NutsWorkspace workspace) {
+    public NutsValidationException(NutsSession workspace) {
         super(workspace, "Invalid value");
     }
 
     /**
      * Constructs a new NutsValidationException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      */
-    public NutsValidationException(NutsWorkspace workspace, String message) {
-        super(workspace, message);
+    public NutsValidationException(NutsSession session, String message) {
+        super(session, message);
     }
 
     /**
      * Constructs a new NutsValidationException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      * @param cause cause
      */
-    public NutsValidationException(NutsWorkspace workspace, String message, Throwable cause) {
-        super(workspace, message, cause);
+    public NutsValidationException(NutsSession session, String message, Throwable cause) {
+        super(session, message, cause);
     }
 
     /**
      * Constructs a new NutsValidationException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param cause cause
      */
-    public NutsValidationException(NutsWorkspace workspace, Throwable cause) {
-        super(workspace, cause);
+    public NutsValidationException(NutsSession session, Throwable cause) {
+        super(session, cause);
     }
 
     /**
      * Constructs a new NutsValidationException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param cause cause
      */
-    public NutsValidationException(NutsWorkspace workspace, IOException cause) {
-        super(workspace, cause);
+    public NutsValidationException(NutsSession session, IOException cause) {
+        super(session, cause);
     }
 
     /**
      * Constructs a new NutsValidationException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      * @param cause cause
      * @param enableSuppression whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
-    public NutsValidationException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace, message, cause, enableSuppression, writableStackTrace);
+    public NutsValidationException(NutsSession session, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(session, message, cause, enableSuppression, writableStackTrace);
     }
 
 }

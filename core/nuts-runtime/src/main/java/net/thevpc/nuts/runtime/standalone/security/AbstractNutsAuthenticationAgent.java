@@ -8,11 +8,10 @@ import java.util.Map;
 
 import net.thevpc.nuts.runtime.bundles.io.CoreSecurityUtils;
 
-public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsSessionAware {
+public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticationAgent {
 
     private final String name;
     private NutsWorkspace ws;
-    private NutsSession session;
     private int supportLevel;
 
     public AbstractNutsAuthenticationAgent(String name, int supportLevel) {
@@ -20,11 +19,11 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
         this.supportLevel = supportLevel;
     }
 
-    @Override
-    public void setSession(NutsSession session) {
-        this.session=session;
-        this.ws=session==null?null:session.getWorkspace();
-    }
+//    @Override
+//    public void setSession(NutsSession session) {
+//        this.session=session;
+//        this.ws=session==null?null:session.getWorkspace();
+//    }
 
     @Override
     public String getId() {
@@ -33,7 +32,7 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
 
     @Override
     public boolean removeCredentials(char[] credentialsId, Map<String, String> envProvider, NutsSession session) {
-        extractId(credentialsId);
+        extractId(credentialsId,session);
         return true;
     }
 
@@ -45,24 +44,24 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
     @Override
     public void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider, NutsSession session) {
         if (CoreStringUtils.isBlank(password)) {
-            throw new NutsSecurityException(ws, "missing old password");
+            throw new NutsSecurityException(session, "missing old password");
         }
-        CredentialsId iid = extractId(credentialsId);
+        CredentialsId iid = extractId(credentialsId,session);
         switch (iid.type) {
             case 'H': {
-                if (Arrays.equals(iid.value, hashChars(password, getPassphrase(envProvider)))) {
+                if (Arrays.equals(iid.value, hashChars(password, getPassphrase(envProvider), session))) {
                     return;
                 }
                 break;
             }
             case 'B': {
-                char[] encPwd = encryptChars(password, getPassphrase(envProvider));
+                char[] encPwd = encryptChars(password, getPassphrase(envProvider), session);
                 if (Arrays.equals(iid.value, encPwd)) {
                     return;
                 }
             }
         }
-        throw new NutsSecurityException(ws, "Invalid login or password");
+        throw new NutsSecurityException(session, "Invalid login or password");
     }
 
     private static class CredentialsId {
@@ -77,7 +76,7 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
 
     }
 
-    private CredentialsId extractId(char[] a) {
+    private CredentialsId extractId(char[] a,NutsSession session) {
         if (!CoreStringUtils.isBlank(a)) {
             char[] idc = (getId() + ":").toCharArray();
             if (a.length > idc.length + 1) {
@@ -95,17 +94,17 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
                 }
             }
         }
-        throw new NutsSecurityException(ws, "credential id must start with " + getId() + ":");
+        throw new NutsSecurityException(session, "credential id must start with " + getId() + ":");
     }
 
     @Override
     public char[] getCredentials(char[] credentialsId, Map<String, String> envProvider, NutsSession session) {
         //credentials are already encrypted with default passphrase!
-        CredentialsId validCredentialsId = extractId(credentialsId);
+        CredentialsId validCredentialsId = extractId(credentialsId,session);
         if (validCredentialsId.type == 'B') {
-            return decryptChars(validCredentialsId.value, getPassphrase(envProvider));
+            return decryptChars(validCredentialsId.value, getPassphrase(envProvider), session);
         }
-        throw new NutsSecurityException(ws, "credential is hashed and cannot be retrived");
+        throw new NutsSecurityException(session, "credential is hashed and cannot be retrived");
     }
 
     @Override
@@ -121,10 +120,10 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
             char[] val;
             char type;
             if (allowRetrieve) {
-                val = encryptChars(credentials, getPassphrase(envProvider));
+                val = encryptChars(credentials, getPassphrase(envProvider), session);
                 type = 'B';
             } else {
-                val = hashChars(credentials, getPassphrase(envProvider));
+                val = hashChars(credentials, getPassphrase(envProvider), session);
                 type = 'H';
             }
             String id = getId();
@@ -152,10 +151,10 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
         return defVal;
     }
 
-    protected abstract char[] decryptChars(char[] data, String passphrase);
+    protected abstract char[] decryptChars(char[] data, String passphrase, NutsSession session);
 
-    protected abstract char[] encryptChars(char[] data, String passphrase);
+    protected abstract char[] encryptChars(char[] data, String passphrase, NutsSession session);
 
-    protected abstract char[] hashChars(char[] data, String passphrase);
+    protected abstract char[] hashChars(char[] data, String passphrase, NutsSession session);
 
 }

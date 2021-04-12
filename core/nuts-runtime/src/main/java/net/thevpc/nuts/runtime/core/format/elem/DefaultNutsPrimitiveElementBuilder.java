@@ -60,7 +60,7 @@ public class DefaultNutsPrimitiveElementBuilder implements NutsPrimitiveElementB
     @Override
     public NutsPrimitiveElement buildString(String value) {
         if (value == null) {
-            throw new NullPointerException();
+            return buildNull();
         }
         return new DefaultNutsPrimitiveElement(NutsElementType.STRING, value);
     }
@@ -68,7 +68,7 @@ public class DefaultNutsPrimitiveElementBuilder implements NutsPrimitiveElementB
     @Override
     public NutsPrimitiveElement buildNumber(Number value) {
         if (value == null) {
-            throw new NullPointerException();
+            return buildNull();
         }
         switch (value.getClass().getName()) {
             case "java.lang.Byte":
@@ -120,7 +120,7 @@ public class DefaultNutsPrimitiveElementBuilder implements NutsPrimitiveElementB
     @Override
     public NutsPrimitiveElement buildNumber(String value) {
         if (value == null) {
-            throw new NullPointerException();
+            return buildNull();
         }
         if (value.indexOf('.') >= 0) {
             try {
@@ -150,7 +150,7 @@ public class DefaultNutsPrimitiveElementBuilder implements NutsPrimitiveElementB
 
             }
         }
-        throw new NutsParseException(session.getWorkspace(),"unable to parse number " + value);
+        throw new NutsParseException(session,"unable to parse number " + value);
     }
 
     @Override
@@ -176,7 +176,7 @@ public class DefaultNutsPrimitiveElementBuilder implements NutsPrimitiveElementB
     @Override
     public NutsPrimitiveElement buildInstant(Date value) {
         if (value == null) {
-            throw new NullPointerException();
+            return buildNull();
         }
         return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, value.toInstant());
     }
@@ -184,7 +184,7 @@ public class DefaultNutsPrimitiveElementBuilder implements NutsPrimitiveElementB
     @Override
     public NutsPrimitiveElement buildInstant(Instant value) {
         if (value == null) {
-            throw new NullPointerException();
+            return buildNull();
         }
         return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, value);
     }
@@ -192,7 +192,7 @@ public class DefaultNutsPrimitiveElementBuilder implements NutsPrimitiveElementB
     @Override
     public NutsPrimitiveElement buildInstant(String value) {
         if (value == null) {
-            throw new NullPointerException();
+            return buildNull();
         }
         return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, DefaultNutsPrimitiveElement.parseDate(value));
     }

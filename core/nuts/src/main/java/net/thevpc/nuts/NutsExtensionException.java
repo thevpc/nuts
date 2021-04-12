@@ -53,11 +53,11 @@ public abstract class NutsExtensionException extends NutsException {
      *         {@link #getCause()} method).  (A <tt>null</tt> value is
      *         permitted, and indicates that the cause is nonexistent or
      *         unknown.)
-     * @param workspace the workspace of this Nuts Exception
+     * @param session the workspace of this Nuts Exception
      * @param extensionId extension id
      */
-    public NutsExtensionException(NutsWorkspace workspace, String extensionId, String message, Throwable cause) {
-        super(workspace,
+    public NutsExtensionException(NutsSession session, String extensionId, String message, Throwable cause) {
+        super(session,
                 PrivateNutsUtils.isBlank(message)
                         ? ("extension " + (extensionId == null ? "<null>" : extensionId) + " has encountered problem") : message, cause);
         this.id = extensionId;

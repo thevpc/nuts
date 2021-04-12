@@ -55,13 +55,14 @@ public class DefaultNutsLogger implements NutsLogger {
     }
 
     public boolean isLoggable(Level level) {
-        if (isLoggable(level, workspace.log().getTermLevel())) {
+        NutsLogManager _log = workspace.log().setSession(getSession());
+        if (isLoggable(level, _log.getTermLevel())) {
             return true;
         }
-        if (isLoggable(level, workspace.log().getFileLevel())) {
+        if (isLoggable(level, _log.getFileLevel())) {
             return true;
         }
-        for (Handler handler : workspace.log().getHandlers()) {
+        for (Handler handler : _log.getHandlers()) {
             if (isLoggable(level, handler.getLevel())) {
                 return true;
             }
@@ -173,15 +174,15 @@ public class DefaultNutsLogger implements NutsLogger {
      */
     private void log0(LogRecord record) {
         DefaultNutsLogManager logManager = (DefaultNutsLogManager) workspace.log();
-        logManager.updateHandlers(record);
-        Handler ch = logManager.getTermHandler();
+        logManager.getModel().updateHandlers(record);
+        Handler ch = logManager.getModel().getTermHandler();
         if (ch != null) {
             if (ch.isLoggable(record)) {
                 if (suspendTerminalMode) {
                     suspendedTerminalRecords.add(record);
                     if (suspendedTerminalRecords.size() > suspendedMax) {
                         LogRecord r = suspendedTerminalRecords.removeFirst();
-                        logManager.updateTermHandler(r);
+                        logManager.getModel().updateTermHandler(r);
                         ch.publish(r);
                         ch.flush();
                     }
@@ -191,13 +192,13 @@ public class DefaultNutsLogger implements NutsLogger {
                 }
             }
         }
-        Handler fh = logManager.getFileHandler();
+        Handler fh = logManager.getModel().getFileHandler();
         if (fh != null) {
             if (fh.isLoggable(record)) {
                 fh.publish(record);
             }
         }
-        for (Handler handler : logManager.getHandlers()) {
+        for (Handler handler : logManager.getModel().getHandlers()) {
             if (handler.isLoggable(record)) {
                 handler.publish(record);
             }
@@ -205,14 +206,14 @@ public class DefaultNutsLogger implements NutsLogger {
         this.log.log(record);
     }
 
-    public void resumeTerminal() {
+    public void resumeTerminal(NutsSession session) {
         suspendTerminalMode = false;
-        DefaultNutsLogManager logManager = (DefaultNutsLogManager) workspace.log();
+        DefaultNutsLogManager logManager = (DefaultNutsLogManager) workspace.log().setSession(session);
         Handler ch = logManager.getTermHandler();
         for (Iterator<LogRecord> iterator = suspendedTerminalRecords.iterator(); iterator.hasNext(); ) {
             LogRecord r = iterator.next();
             iterator.remove();
-            logManager.updateHandlers(r);
+            logManager.getModel().updateHandlers(r);
             if (ch != null) {
                 ch.publish(r);
             }

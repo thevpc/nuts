@@ -24,10 +24,11 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
 
     @Override
     public PrintWriter getValidPrintWriter(Writer out) {
+        checkSession();
         return (out == null) ?
-                CoreIOUtils.toPrintWriter(getValidSession().getTerminal().getOut(), getValidSession())
+                CoreIOUtils.toPrintWriter(getSession().getTerminal().getOut(), getSession())
                 :
-                CoreIOUtils.toPrintWriter(out, getValidSession());
+                CoreIOUtils.toPrintWriter(out, getSession());
     }
 
     @Override
@@ -37,10 +38,11 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
 
     @Override
     public PrintStream getValidPrintStream(PrintStream out) {
+        checkSession();
         if (out == null) {
-            out = getValidSession().getTerminal().getOut();
+            out = getSession().getTerminal().getOut();
         }
-        return getWorkspace().io().term().prepare(out, getValidSession());
+        return getWorkspace().term().setSession(getSession()).prepare(out);
     }
 
     @Override
@@ -57,12 +59,14 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
 
     @Override
     public void print() {
-        print(getValidSession().getTerminal());
+        checkSession();
+        print(getSession().getTerminal());
     }
 
     @Override
     public void println() {
-        println(getValidSession().getTerminal());
+        checkSession();
+        println(getSession().getTerminal());
     }
 
     @Override
@@ -78,12 +82,13 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
 //    }
     @Override
     public void print(Writer out) {
+        checkSession();
         if (out == null) {
             PrintStream pout = getValidPrintStream();
             print(pout);
             pout.flush();
         } else {
-            PrintStream pout = CoreIOUtils.toPrintStream(out, getValidSession());
+            PrintStream pout = CoreIOUtils.toPrintStream(out, getSession());
             print(pout);
             pout.flush();
         }
@@ -91,7 +96,8 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
 
     @Override
     public void print(OutputStream out) {
-        PrintStream p = CoreIOUtils.toPrintStream(out, getValidSession());
+        checkSession();
+        PrintStream p = CoreIOUtils.toPrintStream(out, getSession());
         if (p == null) {
             p = getValidPrintStream();
         }
@@ -101,17 +107,18 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
 
     @Override
     public void print(Path path) {
+        checkSession();
         try {
             if (path.getParent() != null) {
                 Files.createDirectories(path.getParent());
             }
         } catch (IOException ex) {
-            throw new NutsIOException(getWorkspace(), ex);
+            throw new NutsIOException(getSession(), ex);
         }
         try (Writer w = Files.newBufferedWriter(path)) {
             print(w);
         } catch (IOException ex) {
-            throw new NutsIOException(getWorkspace(), ex);
+            throw new NutsIOException(getSession(), ex);
         }
     }
 
@@ -122,17 +129,19 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
 
     @Override
     public void print(NutsTerminal terminal) {
-        print(terminal == null ? getValidSession().getTerminal().out() : terminal.out());
+        checkSession();
+        print(terminal == null ? getSession().getTerminal().out() : terminal.out());
     }
 
     @Override
     public void println(Writer w) {
+        checkSession();
         if (w == null) {
             PrintStream pout = getValidPrintStream();
             println(pout);
             pout.flush();
         } else {
-            PrintStream pout = CoreIOUtils.toPrintStream(w, getValidSession());
+            PrintStream pout = CoreIOUtils.toPrintStream(w, getSession());
             println(pout);
             pout.flush();
         }
@@ -148,16 +157,18 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
 
     @Override
     public void println(Path path) {
+        checkSession();
         try (Writer w = Files.newBufferedWriter(path)) {
             println(w);
         } catch (IOException ex) {
-            throw new NutsIOException(getWorkspace(), ex);
+            throw new NutsIOException(getSession(), ex);
         }
     }
 
     @Override
     public void println(NutsTerminal terminal) {
-        println(terminal == null ? getValidSession().getTerminal().out() : terminal.out());
+        checkSession();
+        println(terminal == null ? getSession().getTerminal().out() : terminal.out());
     }
 
     @Override

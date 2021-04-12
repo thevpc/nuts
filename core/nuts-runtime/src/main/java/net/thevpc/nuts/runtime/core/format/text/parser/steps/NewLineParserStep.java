@@ -1,23 +1,20 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextNode;
-import net.thevpc.nuts.NutsTextNodeStyle;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class NewLineParserStep extends ParserStep {
 
     StringBuilder start = new StringBuilder();
-    private NutsWorkspace ws;
-    public NewLineParserStep(char c, NutsWorkspace ws) {
+    private NutsSession session;
+    public NewLineParserStep(char c, NutsSession ws) {
         start.append(c);
-        this.ws=ws;
+        this.session=ws;
     }
 
     @Override
@@ -25,10 +22,10 @@ public class NewLineParserStep extends ParserStep {
         if(c=='\n') {
             start.append(c);
         }else if(c=='#'){
-            state.applyAppendSibling(new PlainParserStep(start.toString(),state.isSpreadLine(),false,ws,state,null));
-            state.applyDropReplace(new StyledParserStep(c,true,ws,state));
+            state.applyAppendSibling(new PlainParserStep(start.toString(),state.isSpreadLine(),false,session.getWorkspace(),state,null));
+            state.applyDropReplace(new StyledParserStep(c,true,session.getWorkspace(),state));
         }else{
-            state.applyAppendSibling(new PlainParserStep('\n',false,ws,state,null));
+            state.applyAppendSibling(new PlainParserStep('\n',false,session.getWorkspace(),state,null));
             state.applyDrop();
             state.applyStart(c,state.isSpreadLine(),true);
         }
@@ -36,12 +33,12 @@ public class NewLineParserStep extends ParserStep {
 
     @Override
     public void appendChild(ParserStep tt) {
-        throw new NutsIllegalArgumentException(ws,"unsupported");
+        throw new NutsIllegalArgumentException(session,"unsupported");
     }
 
     @Override
     public NutsTextNode toNode() {
-        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
+        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.getWorkspace().formats().text();
         return factory0.plain(start.toString());
     }
 

@@ -47,59 +47,59 @@ public class NutsNotFoundException extends NutsException {
     /**
      * Constructs a new NutsNotFoundException exception
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id        artifact id
      */
-    public NutsNotFoundException(NutsWorkspace workspace, NutsId id) {
-        this(workspace, id == null ? null : id.toString());
+    public NutsNotFoundException(NutsSession session, NutsId id) {
+        this(session, id == null ? null : id.toString());
     }
 
     /**
      * Constructs a new NutsNotFoundException exception
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id        artifact id
      * @param cause     cause
      */
-    public NutsNotFoundException(NutsWorkspace workspace, NutsId id, Exception cause) {
-        this(workspace, id == null ? null : id.toString(), null, null, cause);
+    public NutsNotFoundException(NutsSession session, NutsId id, Exception cause) {
+        this(session, id == null ? null : id.toString(), null, null, cause);
     }
 
     /**
      * Constructs a new NutsNotFoundException exception
      *
-     * @param workspace workspace
+     * @param ns workspace
      * @param id        artifact id
      */
-    public NutsNotFoundException(NutsWorkspace workspace, String id) {
-        this(workspace, id, null, null, null);
+    public NutsNotFoundException(NutsSession ns, String id) {
+        this(ns, id, null, null, null);
     }
 
 
     /**
      * Constructs a new NutsNotFoundException exception
      *
-     * @param workspace workspace
-     * @param id        artifact id
-     * @param dependencies dependencies
-     * @param locations locations
-     * @param cause cause
-     */
-    public NutsNotFoundException(NutsWorkspace workspace, NutsId id, NutsIdInvalidDependency[] dependencies, NutsIdInvalidLocation[] locations, Exception cause) {
-        this(workspace, id == null ? null : id.toString(), dependencies, locations, cause);
-    }
-
-    /**
-     * Constructs a new NutsNotFoundException exception
-     *
-     * @param workspace workspace
+     * @param session workspace
      * @param id        artifact id
      * @param dependencies dependencies
      * @param locations locations
      * @param cause cause
      */
-    public NutsNotFoundException(NutsWorkspace workspace, String id, NutsIdInvalidDependency[] dependencies, NutsIdInvalidLocation[] locations, Exception cause) {
-        super(workspace, "artifact not found: " + (id == null ? "<null>" : id)
+    public NutsNotFoundException(NutsSession session, NutsId id, NutsIdInvalidDependency[] dependencies, NutsIdInvalidLocation[] locations, Exception cause) {
+        this(session, id == null ? null : id.toString(), dependencies, locations, cause);
+    }
+
+    /**
+     * Constructs a new NutsNotFoundException exception
+     *
+     * @param session workspace
+     * @param id        artifact id
+     * @param dependencies dependencies
+     * @param locations locations
+     * @param cause cause
+     */
+    public NutsNotFoundException(NutsSession session, String id, NutsIdInvalidDependency[] dependencies, NutsIdInvalidLocation[] locations, Exception cause) {
+        super(session, "artifact not found: " + (id == null ? "<null>" : id)
                         + dependenciesToString(dependencies)
                 , cause);
         this.id = id;
@@ -114,14 +114,14 @@ public class NutsNotFoundException extends NutsException {
     /**
      * Constructs a new NutsNotFoundException exception
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id        artifact id
      * @param message   message
      * @param cause     cause
      */
-    public NutsNotFoundException(NutsWorkspace workspace, String id, String message, Exception cause) {
+    public NutsNotFoundException(NutsSession session, String id, String message, Exception cause) {
         super(
-                workspace, PrivateNutsUtils.isBlank(message) ? "No such nuts : " + (id == null ? "<null>" : id) : message,
+                session, PrivateNutsUtils.isBlank(message) ? "No such nuts : " + (id == null ? "<null>" : id) : message,
                 cause);
         this.id = id;
     }
@@ -129,13 +129,13 @@ public class NutsNotFoundException extends NutsException {
     /**
      * Constructs a new NutsNotFoundException exception
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id        artifact id
      * @param message   message
      * @param cause     cause
      */
-    public NutsNotFoundException(NutsWorkspace workspace, NutsId id, String message, Exception cause) {
-        this(workspace, id == null ? null : id.toString(), message, cause);
+    public NutsNotFoundException(NutsSession session, NutsId id, String message, Exception cause) {
+        this(session, id == null ? null : id.toString(), message, cause);
     }
 
     protected static String dependenciesToString(NutsIdInvalidDependency[] dependencies) {

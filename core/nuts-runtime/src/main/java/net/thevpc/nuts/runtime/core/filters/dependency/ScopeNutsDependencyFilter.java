@@ -3,17 +3,15 @@ package net.thevpc.nuts.runtime.core.filters.dependency;
 import java.util.EnumSet;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
-import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 import java.util.Objects;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 
-public class ScopeNutsDependencyFilter extends AbstractNutsFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
+public class ScopeNutsDependencyFilter extends AbstractDependencyFilter{
 
     private EnumSet<NutsDependencyScope> scopes = EnumSet.noneOf(NutsDependencyScope.class);
 
-    public ScopeNutsDependencyFilter(NutsWorkspace ws, NutsDependencyScopePattern... scopes) {
+    public ScopeNutsDependencyFilter(NutsSession ws, NutsDependencyScopePattern... scopes) {
         super(ws, NutsFilterOp.CUSTOM);
         for (NutsDependencyScopePattern scope : scopes) {
             this.scopes.addAll(NutsDependencyScopes.expand(scope));

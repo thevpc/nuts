@@ -33,23 +33,23 @@ package net.thevpc.nuts;
 public class NutsLockBarrierException extends NutsLockException {
     /**
      * Constructs a new lock exception.
-     * @param workspace workspace
+     * @param session workspace
      * @param lockedObject locked Object
      * @param lockObject lock Object
      */
-    public NutsLockBarrierException(NutsWorkspace workspace, Object lockedObject, Object lockObject) {
-        this(workspace,null,lockedObject,lockObject);
+    public NutsLockBarrierException(NutsSession session, Object lockedObject, Object lockObject) {
+        this(session,null,lockedObject,lockObject);
     }
 
     /**
      * Constructs a new lock exception.
-     * @param workspace workspace
+     * @param session workspace
      * @param message message or null
      * @param lockedObject locked Object
      * @param lockObject lock Object
      */
-    public NutsLockBarrierException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject) {
-        super(workspace,
+    public NutsLockBarrierException(NutsSession session, String message, Object lockedObject, Object lockObject) {
+        super(session,
                 message == null ? ("item already locked" + lockedObject)
                         : message,lockedObject,lockObject
         );
@@ -57,14 +57,14 @@ public class NutsLockBarrierException extends NutsLockException {
 
     /**
      * Constructs a new lock exception.
-     * @param workspace workspace
+     * @param session workspace
      * @param message message or null
      * @param lockedObject locked Object
      * @param lockObject lock Object
      * @param cause cause
      */
-    public NutsLockBarrierException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject,Throwable cause) {
-        super(workspace,
+    public NutsLockBarrierException(NutsSession session, String message, Object lockedObject, Object lockObject,Throwable cause) {
+        super(session,
                 message == null ? ("item already locked" + lockedObject)
                         : message,lockObject,cause
         );

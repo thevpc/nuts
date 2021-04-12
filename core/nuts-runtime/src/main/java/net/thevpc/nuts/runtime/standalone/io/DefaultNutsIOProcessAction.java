@@ -9,8 +9,10 @@ import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 
 import java.io.File;
 import java.util.*;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
+
     private String processType;
     private NutsWorkspace ws;
     private NutsSession session;
@@ -18,6 +20,10 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
 
     public DefaultNutsIOProcessAction(NutsWorkspace ws) {
         this.ws = ws;
+    }
+
+    protected void checkSession() {
+        NutsWorkspaceUtils.checkSession(ws, session);
     }
 
     @Override
@@ -67,7 +73,7 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
         return setType(processType);
     }
 
-    private static String getJpsJavaHome(NutsWorkspace ws, String version) {
+    private static String getJpsJavaHome(NutsWorkspace ws, String version, NutsSession session) {
         List<String> detectedJavaHomes = new ArrayList<>();
         String jh = System.getProperty("java.home");
         detectedJavaHomes.add(jh);
@@ -75,11 +81,10 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
         if (v != null) {
             return v;
         }
-        NutsSession session = ws.createSession();
         NutsVersionFilter nvf = CoreStringUtils.isBlank(version) ? null : ws.version().parser().parse(version).filter();
-        NutsSdkLocation[] availableJava = ws.sdks().find("java",
-                java->"jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(ws.version().parser().parse(java.getVersion()), session)),
-                session);
+        NutsSdkLocation[] availableJava = ws.sdks().setSession(session).find("java",
+                java -> "jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(ws.version().parser().parse(java.getVersion()), session))
+        );
         for (NutsSdkLocation java : availableJava) {
             detectedJavaHomes.add(java.getPath());
             v = getJpsJavaHome(java.getPath());
@@ -87,11 +92,11 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
                 return v;
             }
         }
-        throw new NutsExecutionException(ws, "Unable to resolve a valid jdk installation. " +
-                "Either run nuts with a valid JDK/SDK (not JRE) or register a valid one using nadmin tool. " +
-                "All the followings are invalid : \n"
-                + String.join("\n", detectedJavaHomes)
-                , 10);
+        throw new NutsExecutionException(session, "Unable to resolve a valid jdk installation. "
+                + "Either run nuts with a valid JDK/SDK (not JRE) or register a valid one using nadmin tool. "
+                + "All the followings are invalid : \n"
+                + String.join("\n", detectedJavaHomes),
+                 10);
     }
 
     private static String getJpsJavaHome(String base) {
@@ -107,6 +112,7 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
 
     @Override
     public NutsResultList<NutsProcessInfo> getResultList() {
+        checkSession();
         String processType = CoreStringUtils.trim(getType());
         if (processType.toLowerCase().startsWith("java#")) {
             return getResultListJava(processType.substring("java#".length()));
@@ -114,30 +120,30 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
             return getResultListJava("");
         } else {
             if (isFailFast()) {
-                throw new NutsIllegalArgumentException(ws, "unsupported list processes of type : " + processType);
+                throw new NutsIllegalArgumentException(getSession(), "unsupported list processes of type : " + processType);
             }
-            return new NutsCollectionResult<>(ws, "process-" + processType, Collections.emptyList());
+            return new NutsCollectionResult<>(getSession(), "process-" + processType, Collections.emptyList());
         }
     }
 
     private NutsResultList<NutsProcessInfo> getResultListJava(String version) {
+        checkSession();
         Iterator<NutsProcessInfo> it = IteratorBuilder.ofLazy(() -> {
             String cmd = "jps";
             NutsExecCommand b = null;
             boolean mainArgs = true;
             boolean vmArgs = true;
-            String jdkHome = getJpsJavaHome(ws,version);
+            String jdkHome = getJpsJavaHome(ws, version, session);
             if (jdkHome != null) {
                 cmd = jdkHome + File.separator + "bin" + File.separator + cmd;
             }
-            b =ws.exec()
+            b = getSession().getWorkspace().exec()
                     .setExecutionType(NutsExecutionType.USER_CMD)
                     .addCommand(cmd)
                     .addCommand("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))
                     .setRedirectErrorStream(true)
                     .grabOutputString()
-                    .setFailFast(isFailFast())
-            ;
+                    .setFailFast(isFailFast());
             b.getResult();
             if (b.getResult() == 0) {
                 String out = b.getOutputString();
@@ -155,6 +161,6 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
                     pid, cls, null, args
             );
         }).build();
-        return new NutsCollectionResult<NutsProcessInfo>(ws, "process-" + getType(), it);
+        return new NutsCollectionResult<NutsProcessInfo>(getSession(), "process-" + getType(), it);
     }
 }

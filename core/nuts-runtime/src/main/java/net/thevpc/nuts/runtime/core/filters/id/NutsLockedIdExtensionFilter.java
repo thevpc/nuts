@@ -6,19 +6,18 @@
 package net.thevpc.nuts.runtime.core.filters.id;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
-import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import net.thevpc.nuts.runtime.core.filters.descriptor.AbstractDescriptorFilter;
 
 /**
  *
  * @author thevpc
  */
-public class NutsLockedIdExtensionFilter extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
+public class NutsLockedIdExtensionFilter extends AbstractDescriptorFilter{
     private NutsId[] lockedIds;
-    public NutsLockedIdExtensionFilter(NutsWorkspace ws, NutsId[] lockedIds) {
+    public NutsLockedIdExtensionFilter(NutsSession ws, NutsId[] lockedIds) {
         super(ws, NutsFilterOp.CUSTOM);
         this.lockedIds =lockedIds;
     }

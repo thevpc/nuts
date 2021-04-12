@@ -63,4 +63,8 @@ public interface NutsDependencyManager {
     NutsDependencyFilterManager filter();
 
     Set<NutsDependencyScope> toScopeSet(NutsDependencyScopePattern other);
+
+    NutsSession getSession();
+
+    NutsDependencyManager setSession(NutsSession session);
 }

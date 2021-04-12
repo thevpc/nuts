@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.core.app;
 
 import net.thevpc.nuts.NutsParseException;
-import net.thevpc.nuts.NutsWorkspace;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.thevpc.nuts.NutsSession;
 
 public class NutsCommandLineUtils {
     public static String escapeArguments(String[] args) {
@@ -53,7 +53,7 @@ public class NutsCommandLineUtils {
         return sb.toString();
     }
 
-    public static String[] parseCommandLine(NutsWorkspace ws, String commandLineString) {
+    public static String[] parseCommandLine(NutsSession session, String commandLineString) {
         if (commandLineString == null) {
             return new String[0];
         }
@@ -107,10 +107,10 @@ public class NutsCommandLineUtils {
                             break;
                         }
                         case '\'': {
-                            throw new NutsParseException(ws, "Illegal char " + c);
+                            throw new NutsParseException(session, "Illegal char " + c);
                         }
                         case '"': {
-                            throw new NutsParseException(ws, "Illegal char " + c);
+                            throw new NutsParseException(session, "Illegal char " + c);
                         }
                         case '\\': {
                             i++;
@@ -179,7 +179,7 @@ public class NutsCommandLineUtils {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new NutsParseException(ws, "Expected '");
+                throw new NutsParseException(session, "Expected '");
             }
         }
         return args.toArray(new String[0]);

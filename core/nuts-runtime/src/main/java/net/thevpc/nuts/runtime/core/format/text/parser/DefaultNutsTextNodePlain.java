@@ -26,9 +26,9 @@
 */
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextNodePlain;
 import net.thevpc.nuts.NutsTextNodeType;
-import net.thevpc.nuts.NutsWorkspace;
 
 /**
  * Created by vpc on 5/23/17.
@@ -37,7 +37,7 @@ public class DefaultNutsTextNodePlain extends AbstractNutsTextNode implements Nu
 
     private String text;
 
-    public DefaultNutsTextNodePlain(NutsWorkspace ws,String text) {
+    public DefaultNutsTextNodePlain(NutsSession ws,String text) {
         super(ws);
         this.text = text==null?"":text;
     }

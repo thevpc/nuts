@@ -46,11 +46,21 @@ import java.util.stream.Collectors;
  */
 public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
-    public final NutsLogger LOG;
+    private NutsLogger LOG;
 
     public DefaultNutsInstallCommand(NutsWorkspace ws) {
         super(ws);
-        LOG = ws.log().of(DefaultNutsInstallCommand.class);
+    }
+
+    protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
+    }
+
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = this.ws.log().setSession(session).of(DefaultNutsInstallCommand.class);
+        }
+        return LOG;
     }
 
     private NutsDefinition _loadIdContent(NutsId id, NutsId forId, NutsSession session, boolean includeDeps, InstallIdList loaded, NutsInstallStrategy installStrategy) {
@@ -133,16 +143,17 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         } else if (info.ignored) {
             return false;
         } else {
-            throw new NutsUnexpectedException(getWorkspace(), "unexpected");
+            throw new NutsUnexpectedException(getSession(), "unexpected");
         }
     }
 
     @Override
     public NutsResultList<NutsDefinition> getResult() {
+        checkSession();
         if (result == null) {
             run();
         }
-        return new NutsCollectionResult<NutsDefinition>(ws,
+        return new NutsCollectionResult<NutsDefinition>(getSession(),
                 ids.isEmpty() ? null : ids.keySet().toArray()[0].toString(),
                 Arrays.asList(result)
         );
@@ -151,17 +162,17 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
     @Override
     public NutsInstallCommand run() {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        NutsSession session = getValidWorkspaceSession();
+        NutsSession session = getSession();
         NutsSession searchSession = CoreNutsUtils.silent(session);
         PrintStream out = CoreIOUtils.resolveOut(session);
-        ws.security().checkAllowed(NutsConstants.Permissions.INSTALL, "install", session);
+        ws.security().setSession(getSession()).checkAllowed(NutsConstants.Permissions.INSTALL, "install");
 //        LinkedHashMap<NutsId, Boolean> allToInstall = new LinkedHashMap<>();
         InstallIdList list = new InstallIdList(NutsInstallStrategy.INSTALL);
         for (Map.Entry<NutsId, NutsInstallStrategy> idAndStrategy : this.getIdMap().entrySet()) {
             if (!list.isVisited(idAndStrategy.getKey())) {
                 List<NutsId> allIds = ws.search().addId(idAndStrategy.getKey()).setSession(searchSession).setLatest(true).getResultIds().list();
                 if (allIds.isEmpty()) {
-                    throw new NutsNotFoundException(ws, idAndStrategy.getKey());
+                    throw new NutsNotFoundException(getSession(), idAndStrategy.getKey());
                 }
                 for (NutsId id0 : allIds) {
                     list.addForInstall(id0, idAndStrategy.getValue(), false);
@@ -169,11 +180,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             }
         }
         if (this.isCompanions()) {
-            for (NutsId sid : ws.getCompanionIds()) {
+            for (NutsId sid : ws.getCompanionIds(session)) {
                 if (!list.isVisited(sid)) {
-                    List<NutsId> allIds = ws.search().addId(sid).setSession(searchSession).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().list();
+                    List<NutsId> allIds = ws.search().setSession(searchSession).addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().list();
                     if (allIds.isEmpty()) {
-                        throw new NutsNotFoundException(ws, sid);
+                        throw new NutsNotFoundException(getSession(), sid);
                     }
                     for (NutsId id0 : allIds) {
                         list.addForInstall(id0.builder().setNamespace(null).build(), this.getCompanions(), false);
@@ -248,7 +259,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         break;
                     }
                     default: {
-                        throw new NutsUnexpectedException(ws, "unsupported strategy " + strategy);
+                        throw new NutsUnexpectedException(getSession(), "unsupported strategy " + strategy);
                     }
                 }
             } else if (info.getOldInstallStatus().isObsolete()) {
@@ -282,7 +293,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         break;
                     }
                     default: {
-                        throw new NutsUnexpectedException(ws, "unsupported strategy " + strategy);
+                        throw new NutsUnexpectedException(getSession(), "unsupported strategy " + strategy);
                     }
                 }
             } else if (info.getOldInstallStatus().isInstalled()) {
@@ -310,7 +321,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         break;
                     }
                     default: {
-                        throw new NutsUnexpectedException(ws, "unsupported strategy " + strategy);
+                        throw new NutsUnexpectedException(getSession(), "unsupported strategy " + strategy);
                     }
                 }
             } else if (info.getOldInstallStatus().isRequired()) {
@@ -339,11 +350,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         break;
                     }
                     default: {
-                        throw new NutsUnexpectedException(ws, "unsupported strategy " + strategy);
+                        throw new NutsUnexpectedException(getSession(), "unsupported strategy " + strategy);
                     }
                 }
             } else {
-                throw new NutsUnexpectedException(ws, "unsupported status " + info.oldInstallStatus);
+                throw new NutsUnexpectedException(getSession(), "unsupported status " + info.oldInstallStatus);
             }
         }
         Map<String, List<InstallIdInfo>> error = list.infos().stream().filter(x -> x.doError != null).collect(Collectors.groupingBy(installIdInfo -> installIdInfo.doError));
@@ -358,11 +369,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format())
                         .collect(Collectors.joining(", ")));
             }
-            throw new NutsInstallException(getWorkspace(), "", sb.toString().trim(), null);
+            throw new NutsInstallException(getSession(), "", sb.toString().trim(), null);
         }
 
-        NutsFormatManager text = ws.formats();
-        if (getValidWorkspaceSession().isPlainTrace() || (!list.emptyCommand && getValidWorkspaceSession().getConfirm() == NutsConfirmationMode.ASK)) {
+        NutsFormatManager text = ws.formats().setSession(session);
+        if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NutsConfirmationMode.ASK)) {
             printList(out, text.text().builder().append("new", NutsTextNodeStyle.primary(2)),
                     text.text().builder().append("installed", NutsTextNodeStyle.primary(1)),
                     list.ids(x -> x.doInstall && !x.isAlreadyExists()));
@@ -393,12 +404,12 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                     list.ids(x -> x.ignored));
         }
         List<NutsId> nonIgnored = list.ids(x -> !x.ignored);
-        if (!nonIgnored.isEmpty() && !ws.io().term().getTerminal().ask().forBoolean("should we proceed?")
+        if (!nonIgnored.isEmpty() && !ws.term().setSession(getSession()).getTerminal().ask().forBoolean("should we proceed?")
                 .setDefaultValue(true)
                 .setSession(session)
                 .setCancelMessage("installation cancelled : %s ", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")))
                 .getBooleanValue()) {
-            throw new NutsUserCancelException(ws, "installation cancelled: " + nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")));
+            throw new NutsUserCancelException(getSession(), "installation cancelled: " + nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")));
         }
 //        List<String> cmdArgs = new ArrayList<>(Arrays.asList(this.getArgs()));
 //        if (session.isForce()) {
@@ -418,10 +429,10 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                             resultList.add(info.definition);
                         }
                     } catch (RuntimeException ex) {
-                        LOG.with().error(ex).verb(NutsLogVerb.WARNING).level(Level.FINE).formatted().log("failed to install {0}", info.id);
+                        _LOGOP(session).error(ex).verb(NutsLogVerb.WARNING).level(Level.FINE).formatted().log("failed to install {0}", info.id);
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
-                            if (!ws.io().term().getTerminal().ask()
+                            if (!ws.term().setSession(getSession()).getTerminal().ask()
                                     .forBoolean("```error failed to install``` %s and its dependencies... Continue installation?",info.id)
                                     .setDefaultValue(true)
                                     .setSession(session).getBooleanValue()) {
@@ -442,14 +453,14 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             failed = failedList.toArray(new NutsId[0]);
         }
         if (list.emptyCommand) {
-            throw new NutsExecutionException(ws, "missing components to install", 1);
+            throw new NutsExecutionException(getSession(), "missing components to install", 1);
         }
         return this;
     }
 
     private void printList(PrintStream out, NutsString kind, NutsString action, List<NutsId> all) {
         if (all.size() > 0) {
-
+            NutsWorkspace ws=getSession().getWorkspace();
             NutsTextNodeBuilder msg = ws.formats().text().builder();
             msg.append("the following ")
                     .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))

@@ -11,11 +11,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NutsIdFilterNone extends AbstractNutsFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
+public class NutsIdFilterNone extends AbstractIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
 
     private NutsIdFilter[] children;
 
-    public NutsIdFilterNone(NutsWorkspace ws, NutsIdFilter... all) {
+    public NutsIdFilterNone(NutsSession ws, NutsIdFilter... all) {
         super(ws, NutsFilterOp.NOT);
         List<NutsIdFilter> valid = new ArrayList<>();
         if (all != null) {

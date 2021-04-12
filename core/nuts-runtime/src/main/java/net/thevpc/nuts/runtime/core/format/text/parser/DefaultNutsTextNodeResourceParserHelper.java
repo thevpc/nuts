@@ -12,27 +12,27 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 public class DefaultNutsTextNodeResourceParserHelper {
+
     private NutsTextNodeParser parser;
-    private NutsWorkspace ws;
+    private NutsSession session;
     private NutsWorkspaceVarExpansionFunction pathExpansionConverter;
 
-    public DefaultNutsTextNodeResourceParserHelper(NutsTextNodeParser parser, NutsWorkspace ws) {
+    public DefaultNutsTextNodeResourceParserHelper(NutsTextNodeParser parser, NutsSession session) {
         this.parser = parser;
-        this.ws = ws;
-        pathExpansionConverter = new NutsWorkspaceVarExpansionFunction(ws);
+        this.session = session;
+        pathExpansionConverter = new NutsWorkspaceVarExpansionFunction(session.getWorkspace());
     }
 
     public NutsTextNode parseResource(String resourceName, NutsTextFormatLoader loader) {
-        if(loader==null){
-            throw new NutsIllegalArgumentException(ws,"missing loader");
+        if (loader == null) {
+            throw new NutsIllegalArgumentException(session, "missing loader");
         }
         Reader reader = loader.forPath(resourceName);
-        if(reader==null){
+        if (reader == null) {
             return null;
         }
-        return parseResource(resourceName,reader,loader);
+        return parseResource(resourceName, reader, loader);
     }
-
 
     public NutsTextFormatLoader createClassPathLoader(ClassLoader loader) {
         return new NutsTextFormatLoaderClassPath(loader);
@@ -43,18 +43,17 @@ public class DefaultNutsTextNodeResourceParserHelper {
     }
 
     public NutsTextNode parseResource(String resourceName, Reader reader, NutsTextFormatLoader loader) {
-        if(loader==null){
-            throw new NutsIllegalArgumentException(ws,"missing loader");
+        if (loader == null) {
+            throw new NutsIllegalArgumentException(session, "missing loader");
         }
-        if(reader==null) {
+        if (reader == null) {
             reader = loader.forPath(resourceName);
         }
-        if(reader==null){
+        if (reader == null) {
             return null;
         }
-        return processHelp(CoreIOUtils.loadString(reader, true),loader,true,null);
+        return processHelp(CoreIOUtils.loadString(reader, true), loader, true, null);
     }
-
 
 //    private String loadHelp(String urlPath, ClassLoader clazz, boolean err, boolean vars, String defaultValue) {
 //        return loadHelp(urlPath, clazz, err, 36, vars, defaultValue);
@@ -101,7 +100,6 @@ public class DefaultNutsTextNodeResourceParserHelper {
 //    private String loadHelp(Reader is, ClassLoader classLoader, boolean err, int depth, boolean vars, String anchor) {
 //        return processHelp(CoreIOUtils.loadString(is, true), classLoader, err, depth, vars, anchor);
 //    }
-
     private NutsTextNode processHelp(String s, NutsTextFormatLoader classLoader, boolean vars, String anchor) {
 
         StringBuilder sb = new StringBuilder();
@@ -115,11 +113,11 @@ public class DefaultNutsTextNodeResourceParserHelper {
                     } else if (e.startsWith("#!include<") && e.trim().endsWith(">")) {
                         e = e.trim();
                         e = e.substring("#!include<".length(), e.length() - 1);
-                        NutsTextNode other=null;
+                        NutsTextNode other = null;
                         try {
                             other = parseResource(e, classLoader);
-                        }catch (Throwable t){
-                            other=ws.formats().text().
+                        } catch (Throwable t) {
+                            other = session.getWorkspace().formats().text().
                                     builder().append("NOT FOUND", NutsTextNodeStyle.error())
                                     .append(" <" + e + ">").toNode();
                         }
@@ -134,7 +132,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
         if (vars) {
             help = StringPlaceHolderParser.replaceDollarPlaceHolders(help, pathExpansionConverter);
         }
-        NutsTextNodeParser p = new DefaultNutsTextNodeParser(ws);
+        NutsTextNodeParser p = new DefaultNutsTextNodeParser(session);
         NutsTextNode node = p.parse(new StringReader(help));
         if (anchor != null) {
             List<NutsTextNode> ok = new ArrayList<>();
@@ -151,7 +149,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
                 }
             }
             if (start) {
-                node = ws.formats().text().list(ok);
+                node = session.getWorkspace().formats().text().list(ok);
             }
             return node;
         }
@@ -159,6 +157,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
     }
 
     private static class NutsTextFormatLoaderClassPath implements NutsTextFormatLoader {
+
         private final ClassLoader loader;
 
         public NutsTextFormatLoaderClassPath(ClassLoader loader) {
@@ -167,17 +166,17 @@ public class DefaultNutsTextNodeResourceParserHelper {
 
         @Override
         public Reader forPath(String path) {
-            ClassLoader classLoader= loader;
+            ClassLoader classLoader = loader;
             if (classLoader == null) {
                 classLoader = Thread.currentThread().getContextClassLoader();
             }
             URL r = classLoader.getResource(path);
-            if(r==null){
-                if(path.length()>0 && path.startsWith("/")){
-                    r=classLoader.getResource(path.substring(1));
+            if (r == null) {
+                if (path.length() > 0 && path.startsWith("/")) {
+                    r = classLoader.getResource(path.substring(1));
                 }
             }
-            if(r==null){
+            if (r == null) {
                 return null;
             }
             try {
@@ -189,6 +188,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
     }
 
     private static class NutsTextFormatLoaderFile implements NutsTextFormatLoader {
+
         private final File root;
 
         public NutsTextFormatLoaderFile(File root) {
@@ -197,8 +197,8 @@ public class DefaultNutsTextNodeResourceParserHelper {
 
         @Override
         public Reader forPath(String path) {
-            File r = root==null?new File(path):new File(root,path);
-            if(!r.isFile()){
+            File r = root == null ? new File(path) : new File(root, path);
+            if (!r.isFile()) {
                 return null;
             }
             try {
@@ -209,7 +209,6 @@ public class DefaultNutsTextNodeResourceParserHelper {
         }
     }
 
-
 //    public String loadFormattedString(Reader is, ClassLoader classLoader) {
 //        return loadHelp(is, classLoader, true, 36, true, null);
 //    }
@@ -217,5 +216,4 @@ public class DefaultNutsTextNodeResourceParserHelper {
 //    public String loadFormattedString(String resourcePath, ClassLoader classLoader, String defaultValue) {
 //        return loadHelp(resourcePath, classLoader, false, true, defaultValue);
 //    }
-
 }

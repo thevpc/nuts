@@ -54,15 +54,15 @@ public class DefaultNshExecutionContext implements NshExecutionContext {
                     showHelp();
                     cmd.skipAll();
                 }
-                throw new NutsExecutionException(shellContext.getWorkspace(), "Help", 0);
+                throw new NutsExecutionException(shellContext.getSession(), "Help", 0);
             }
             case "--version": {
                 cmd.skip();
                 if (cmd.isExecMode()) {
-                    out().printf("%s%n", getWorkspace().id().resolveId(getClass(), getSession()).getVersion().toString());
+                    out().printf("%s%n", getWorkspace().id().setSession(getSession()).resolveId(getClass()).getVersion().toString());
                     cmd.skipAll();
                 }
-                throw new NutsExecutionException(shellContext.getWorkspace(), "Help", 0);
+                throw new NutsExecutionException(shellContext.getSession(), "Help", 0);
             }
             default: {
                 if (getSession() != null && getSession().configureFirst(cmd)) {

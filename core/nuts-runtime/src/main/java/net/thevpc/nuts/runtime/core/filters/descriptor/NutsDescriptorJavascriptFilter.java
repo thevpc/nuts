@@ -27,28 +27,26 @@
 package net.thevpc.nuts.runtime.core.filters.descriptor;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.common.JavascriptHelper;
-import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 import java.util.Objects;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class NutsDescriptorJavascriptFilter extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
+public class NutsDescriptorJavascriptFilter extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
 
     private String code;
 
-    public static NutsDescriptorFilter valueOf(String value, NutsWorkspace ws) {
+    public static NutsDescriptorFilter valueOf(String value, NutsSession ws) {
         if (CoreStringUtils.isBlank(value)) {
-            return ws.descriptor().filter().always();
+            return ws.getWorkspace().descriptor().filter().always();
         }
         return new NutsDescriptorJavascriptFilter(ws,value);
     }
 
-    public NutsDescriptorJavascriptFilter(NutsWorkspace ws,String code) {
+    public NutsDescriptorJavascriptFilter(NutsSession ws,String code) {
         super(ws, NutsFilterOp.CUSTOM);
         this.code = code;
     }

@@ -28,11 +28,11 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
     @Override
     public NutsUpdateStatisticsCommand run() {
         boolean processed = false;
-        NutsSession session = getValidWorkspaceSession();
+        NutsSession session = getSession();
         for (String repository : getRepositrories()) {
             processed = true;
-            NutsRepository repo = ws.repos().getRepository(repository, session);
-            NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(ws).repoSPI(repo);
+            NutsRepository repo = getSession().getWorkspace().repos().getRepository(repository);
+            NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo);
             repoSPI.updateStatistics()
                     .setSession(session)
 //                    .setFetchMode(NutsFetchMode.LOCAL)
@@ -41,10 +41,10 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
         for (Path repositoryPath : getPaths()) {
             processed = true;
             if (repositoryPath == null) {
-                throw new NutsIllegalArgumentException(ws, "missing location " + repositoryPath);
+                throw new NutsIllegalArgumentException(getSession(), "missing location " + repositoryPath);
             }
             if (!Files.isDirectory(repositoryPath)) {
-                throw new NutsIllegalArgumentException(ws, "expected folder at location " + repositoryPath);
+                throw new NutsIllegalArgumentException(getSession(), "expected folder at location " + repositoryPath);
             }
             File[] mavenRepoRootFiles = repositoryPath.toFile().listFiles(x
                     -> x.getName().equals("index.html")
@@ -58,7 +58,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
                     || x.getName().equals("project-summary.html")
             );
             if (mavenRepoRootFiles != null && mavenRepoRootFiles.length > 3) {
-                new MavenRepositoryFolderHelper(null, ws, repositoryPath).reindexFolder(getSession());
+                new MavenRepositoryFolderHelper(null, getSession(), repositoryPath).reindexFolder(getSession());
                 if (session.isPlainTrace()) {
                     session.getTerminal().out().printf("[%s] updated maven index %s%n", getWorkspace().locations().getWorkspaceLocation(), repositoryPath);
                 }
@@ -67,9 +67,9 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
                         -> x.getName().equals("nuts-repository.json")
                 );
                 if (nutsRepoRootFiles != null && nutsRepoRootFiles.length > 0) {
-                    new NutsRepositoryFolderHelper(null, ws, repositoryPath,false).reindexFolder();
+                    new NutsRepositoryFolderHelper(null, ws, repositoryPath,false).reindexFolder(session);
                 } else {
-                    throw new NutsIllegalArgumentException(ws, "unsupported repository Folder");
+                    throw new NutsIllegalArgumentException(getSession(), "unsupported repository Folder");
                 }
                 if (session.isPlainTrace()) {
                     session.out().printf("[%s] updated stats %s%n", getWorkspace().locations().getWorkspaceLocation(), repositoryPath);
@@ -81,11 +81,11 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
             if (session.isPlainTrace()) {
                 session.out().printf("%s updating workspace stats%n", factory.styled(getWorkspace().locations().getWorkspaceLocation(),NutsTextNodeStyle.path()));
             }
-            for (NutsRepository repo : getWorkspace().repos().getRepositories(session)) {
+            for (NutsRepository repo : getSession().getWorkspace().repos().getRepositories()) {
                 if (session.isPlainTrace()) {
                     session.out().printf("%s updating stats %s%n", factory.styled(getWorkspace().locations().getWorkspaceLocation(),NutsTextNodeStyle.path()), repo);
                 }
-                NutsWorkspaceUtils.of(ws).repoSPI(repo).updateStatistics()
+                NutsWorkspaceUtils.of(session).repoSPI(repo).updateStatistics()
                         .setSession(session)
 //                        .setFetchMode(NutsFetchMode.LOCAL)
                         .run();
@@ -97,7 +97,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
     @Override
     public void add(String repo) {
         if (repo == null) {
-            throw new NutsIllegalArgumentException(getWorkspace(), "missing repo or path");
+            throw new NutsIllegalArgumentException(getSession(), "missing repo or path");
         }
         if (repo.equals(".") || repo.equals("..") || repo.contains("/") || repo.contains("\\")) {
             addPath(Paths.get(repo));

@@ -8,6 +8,7 @@ import java.util.Arrays;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
@@ -70,16 +71,10 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         return this;
     }
 
-    private NutsSession getValidSession() {
-        if (session == null) {
-            session = ws.createSession();
-        }
-        return session;
-    }
-
     private T execute() {
+        checkSession();
         if (!traceConfirmation && (this.getValueType().equals(Boolean.class) || this.getValueType().equals(Boolean.TYPE))) {
-            switch (getValidSession().getConfirm()) {
+            switch (getSession().getConfirm()) {
                 case YES: {
                     return (T) Boolean.TRUE;
                 }
@@ -89,26 +84,26 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 case ERROR: {
                     if(cancelMessage!=null){
                         ByteArrayPrintStream os = new ByteArrayPrintStream();
-                        PrintStream os2 = ws.io().term().prepare(os, session);
+                        PrintStream os2 = ws.term().setSession(getSession()).prepare(os);
                         os2.printf(message, this.getCancelMessage());
                         os2.flush();
-                        throw new NutsUserCancelException(ws, os.toString());
+                        throw new NutsUserCancelException(getSession(), os.toString());
                     }else {
                         ByteArrayPrintStream os = new ByteArrayPrintStream();
-                        PrintStream os2 = ws.io().term().prepare(os, session);
+                        PrintStream os2 = ws.term().setSession(getSession()).prepare(os);
                         os2.printf(message, this.getCancelMessageParameters());
                         os2.flush();
-                        throw new NutsUserCancelException(ws, "cancelled : " + os.toString());
+                        throw new NutsUserCancelException(getSession(), "cancelled : " + os.toString());
                     }
                 }
             }
         }
-        if (!getValidSession().isPlainOut()) {
+        if (!getSession().isPlainOut()) {
             ByteArrayPrintStream os = new ByteArrayPrintStream();
-            PrintStream os2 = ws.io().term().prepare(os, session);
+            PrintStream os2 = ws.term().setSession(getSession()).prepare(os);
             os2.printf(message, this.getMessageParameters());
             os2.flush();
-            throw new NutsExecutionException(ws, "Unable to switch to interactive mode for non plain text output format. "
+            throw new NutsExecutionException(getSession(), "unable to switch to interactive mode for non plain text output format. "
                     + "You need to provide default response (-y|-n) for question : " + os.toString(), 243);
         }
         String message = this.getMessage();
@@ -118,11 +113,11 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         boolean extraInfo = false;
         NutsQuestionParser<T> p = this.getParser();
         if (p == null) {
-            p = new DefaultNutsResponseParser<>(ws, this.getValueType());
+            p = new DefaultNutsResponseParser<>(getSession(), this.getValueType());
         }
         NutsQuestionFormat<T> ff = this.getFormat();
         if (ff == null) {
-            ff = new DefaultNutsQuestionFormat<>(ws);
+            ff = new DefaultNutsQuestionFormat<>(getSession());
         }
         Object[] _acceptedValues = this.getAcceptedValues();
         if (_acceptedValues == null) {
@@ -173,24 +168,24 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             }
 
             out.flush();
-            switch (getValidSession().getConfirm()) {
+            switch (getSession().getConfirm()) {
                 case ERROR: {
                     out.flush();
                     out.println(" : cancel");
-                    throw new NutsUserCancelException(ws);
+                    throw new NutsUserCancelException(getSession());
                 }
             }
             if (this.getValueType().equals(Boolean.class) || this.getValueType().equals(Boolean.TYPE)) {
-                switch (getValidSession().getConfirm()) {
+                switch (getSession().getConfirm()) {
                     case YES: {
                         out.flush();
                         out.println(" : yes");
-                        throw new NutsUserCancelException(ws);
+                        throw new NutsUserCancelException(getSession());
                     }
                     case NO: {
                         out.flush();
                         out.println(" : no");
-                        throw new NutsUserCancelException(ws);
+                        throw new NutsUserCancelException(getSession());
                     }
                 }
             }
@@ -205,7 +200,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                     v = terminal.readPassword(" ");
                 }
                 if (Arrays.equals("cancel!".toCharArray(), v)) {
-                    throw new NutsUserCancelException(ws);
+                    throw new NutsUserCancelException(getSession());
                 }
                 try {
                     if (this.validator != null) {
@@ -454,5 +449,9 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             this.cancelMessageParameters=params==null?new Object[0] : params;
         }
         return this;
+    }
+
+    private void checkSession() {
+        NutsWorkspaceUtils.checkSession(ws, session);
     }
 }

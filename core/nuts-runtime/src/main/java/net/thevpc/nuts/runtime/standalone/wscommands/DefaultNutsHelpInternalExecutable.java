@@ -108,7 +108,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                 break;
             }
             default: {
-                throw new NutsUnsupportedOperationException(getSession().getWorkspace(), "Unsupported format " + outputFormat);
+                throw new NutsUnsupportedOperationException(getSession(), "Unsupported format " + outputFormat);
             }
         }
 

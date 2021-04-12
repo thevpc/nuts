@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.standalone.repos;
 
 import net.thevpc.nuts.*;
@@ -56,11 +54,11 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     protected final NutsRepositoryFolderHelper cache;
     private final NutsRepositoryMirroringHelper mirroring;
 
-    public NutsCachedRepository(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
-        super(options, workspace, parent, speed, supportedMirroring, repositoryType);
+    public NutsCachedRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
+        super(options, session, parent, speed, supportedMirroring, repositoryType);
         LOG = workspace.log().of(DefaultNutsRepoConfigManager.class);
-        cache = new NutsRepositoryFolderHelper(this, workspace, Paths.get(config().getStoreLocation(NutsStoreLocation.CACHE)),true);
-        lib = new NutsRepositoryFolderHelper(this, workspace, Paths.get(config().getStoreLocation(NutsStoreLocation.LIB)),false);
+        cache = new NutsRepositoryFolderHelper(this, workspace, Paths.get(config().setSession(session).getStoreLocation(NutsStoreLocation.CACHE)), true);
+        lib = new NutsRepositoryFolderHelper(this, workspace, Paths.get(config().setSession(session).getStoreLocation(NutsStoreLocation.LIB)), false);
         mirroring = new NutsRepositoryMirroringHelper(this, cache);
     }
 
@@ -93,7 +91,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                     }
                     return SuccessFailResult.success(success);
                 } else {
-                    return SuccessFailResult.fail(new NutsNotFoundException(session.getWorkspace(), id));
+                    return SuccessFailResult.fail(new NutsNotFoundException(session, id));
                 }
             } catch (RuntimeException ex) {
                 return SuccessFailResult.fail(ex);
@@ -153,7 +151,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
             //ignore....
         } catch (Exception ex) {
             //ignore....
-            LOG.with().session(session).level(Level.SEVERE).error(ex).log("search latest versions error : {0}",ex);
+            LOG.with().session(session).level(Level.SEVERE).error(ex).log("search latest versions error : {0}", ex);
         }
         if (p != null) {
             li.add(p);
@@ -180,7 +178,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         NutsContent c = null;
         SuccessFailResult<NutsContent, RuntimeException> res = workspace.concurrent().lock().source(id.builder().setFaceContent().build()).call(() -> {
             if (cache.isWriteEnabled()) {
-                Path cachePath = cache.getLongNameIdLocalFile(id);
+                Path cachePath = cache.getLongNameIdLocalFile(id, session);
                 NutsContent c2 = fetchContentCore(id, descriptor, cachePath.toString(), fetchMode, session);
                 if (c2 != null) {
                     String localPath2 = localPath;
@@ -195,7 +193,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                     }
                     return SuccessFailResult.success(new NutsDefaultContent(localPath2.toString(), true, false));
                 } else {
-                    return SuccessFailResult.fail(new NutsNotFoundException(session.getWorkspace(), id));
+                    return SuccessFailResult.fail(new NutsNotFoundException(session, id));
                 }
             } else {
                 NutsContent c2 = null;
@@ -210,7 +208,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 } else if (impl2Ex != null) {
                     return SuccessFailResult.fail(impl2Ex);
                 } else {
-                    return SuccessFailResult.fail(new NutsNotFoundException(session.getWorkspace(), id));
+                    return SuccessFailResult.fail(new NutsNotFoundException(session, id));
                 }
             }
         });
@@ -230,15 +228,15 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
             if (res.getFail() instanceof NutsNotFoundException) {
                 throw res.getFail();
             }
-            throw new NutsNotFoundException(getWorkspace(), id, res.getFail());
+            throw new NutsNotFoundException(session, id, res.getFail());
         }
         if (mirrorsEx != null) {
             if (mirrorsEx instanceof NutsNotFoundException) {
                 throw mirrorsEx;
             }
-            throw new NutsNotFoundException(getWorkspace(), id, mirrorsEx);
+            throw new NutsNotFoundException(session, id, mirrorsEx);
         }
-        throw new NutsNotFoundException(getWorkspace(), id);
+        throw new NutsNotFoundException(session, id);
     }
 
     protected boolean isAllowedOverrideNut(NutsId id) {
@@ -283,7 +281,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         } catch (NutsNotFoundException ex) {
             //ignore error
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.SEVERE).error(ex).log("search versions error : {0}",ex);
+            LOG.with().session(session).level(Level.SEVERE).error(ex).log("search versions error : {0}", ex);
             //ignore....
         }
         Iterator<NutsId> namedNutIdIterator = IteratorBuilder.ofList(all).distinct(NutsId::getLongName).build();
@@ -314,7 +312,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
             } catch (NutsNotFoundException | NutsFetchModeNotSupportedException ex) {
                 //ignore
             } catch (Exception ex) {
-                LOG.with().session(session).level(Level.SEVERE).error(ex).log("search latest versions error : {0}",ex);
+                LOG.with().session(session).level(Level.SEVERE).error(ex).log("search latest versions error : {0}", ex);
                 //ignore....
             }
             return mirroring.searchLatestVersion(bestId, id, filter, fetchMode, session);
@@ -327,9 +325,9 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         return new AbstractNutsUpdateRepositoryStatisticsCommand(this) {
             @Override
             public NutsUpdateRepositoryStatisticsCommand run() {
-                lib.reindexFolder();
+                lib.reindexFolder(getSession());
                 if (cache.isWriteEnabled()) {
-                    cache.reindexFolder();
+                    cache.reindexFolder(getSession());
                 }
                 updateStatistics2(getSession());
                 return this;
@@ -362,7 +360,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     }
 
     public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode, NutsSession session) {
-        String groups = config().getGroups();
+        String groups = config().setSession(session).getGroups();
         if (CoreStringUtils.isBlank(groups)) {
             return true;
         }
@@ -370,7 +368,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     }
 
     @Override
-    public boolean isAcceptFetchMode(NutsFetchMode mode) {
+    public boolean isAcceptFetchMode(NutsFetchMode mode, NutsSession session) {
         return true;
     }
 }

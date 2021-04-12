@@ -98,4 +98,7 @@ public interface NutsCommandLineManager {
     
     NutsCommandHistoryBuilder createHistory();
 
+    NutsSession getSession();
+
+    NutsCommandLineManager setSession(NutsSession session);
 }

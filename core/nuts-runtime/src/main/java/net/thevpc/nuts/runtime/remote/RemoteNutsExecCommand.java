@@ -50,11 +50,11 @@ public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
         } catch (Exception ex) {
             String p = getExtraErrorMessage();
             if (p != null) {
-                result = new NutsExecutionException(ws,
+                result = new NutsExecutionException(session,
                         "execution failed with code " + 244 + " and message : " + p,
                         ex, 244);
             } else {
-                result = new NutsExecutionException(ws, ex, 244);
+                result = new NutsExecutionException(session, ex, 244);
             }
         }
         executed = true;

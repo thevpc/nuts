@@ -15,11 +15,11 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
 
     @Override
     public NutsUndeployCommand run() {
-        NutsWorkspaceUtils.of(ws).checkReadOnly();
+        NutsWorkspaceUtils.of(getSession()).checkReadOnly();
         if (ids.isEmpty()) {
-            throw new NutsExecutionException(ws, "No component to undeploy", 1);
+            throw new NutsExecutionException(getSession(), "No component to undeploy", 1);
         }
-        NutsSession searchSession = CoreNutsUtils.silent(getValidWorkspaceSession());
+        NutsSession searchSession = CoreNutsUtils.silent(getSession());
         for (NutsId id : ids) {
             NutsDefinition p = ws.search()
                     .setSession(searchSession
@@ -35,16 +35,16 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
                     .setDistinct(true)
                     .setFailFast(true)
                     .getResultDefinitions().required();
-            NutsRepository repository1 = ws.repos().getRepository(p.getRepositoryUuid(), session);
-            NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(ws).repoSPI(repository1);
+            NutsRepository repository1 = ws.repos().setSession(getSession()).getRepository(p.getRepositoryUuid());
+            NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(getSession()).repoSPI(repository1);
             repoSPI.undeploy()
-                    .setId(p.getId()).setSession(getValidWorkspaceSession())
+                    .setId(p.getId()).setSession(getSession())
 //                    .setFetchMode(NutsFetchMode.LOCAL)
                     .run();
             addResult(id);
         }
-        if (getValidWorkspaceSession().isTrace()) {
-            getValidWorkspaceSession().formatObject(result).println();
+        if (getSession().isTrace()) {
+            getSession().formatObject(result).println();
         }
         return this;
     }

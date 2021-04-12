@@ -48,4 +48,8 @@ public interface NutsWorkspaceAppsManager {
      * @return exec entries action
      */
     NutsExecutionEntryAction execEntries();
+
+    NutsSession getSession();
+
+    NutsWorkspaceAppsManager setSession(NutsSession session);
 }

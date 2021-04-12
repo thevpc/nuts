@@ -45,11 +45,11 @@ public final class JavaExecutorOptions {
         if (tempId) {
             descriptor = def.getDescriptor();
             if (!CoreNutsUtils.isEffectiveId(id)) {
-                throw new NutsException(getWorkspace(), "id should be effective : " + id);
+                throw new NutsException(session, "id should be effective : " + id);
             }
             id = descriptor.getId();
         } else {
-            descriptor = NutsWorkspaceUtils.of(getWorkspace()).getEffectiveDescriptor(def);
+            descriptor = NutsWorkspaceUtils.of(getSession()).getEffectiveDescriptor(def);
             if (!CoreNutsUtils.isEffectiveId(id)) {
                 id = descriptor.getId();
             }
@@ -150,7 +150,7 @@ public final class JavaExecutorOptions {
                 }
             }
         } else {
-            javaHome = NutsJavaSdkUtils.of(session.getWorkspace()).resolveJavaCommandByHome(getJavaHome());
+            javaHome = NutsJavaSdkUtils.of(session.getWorkspace()).resolveJavaCommandByHome(getJavaHome(), session);
         }
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
@@ -190,7 +190,7 @@ public final class JavaExecutorOptions {
                 }
             }
             if (this.excludeBase) {
-                throw new NutsIllegalArgumentException(getWorkspace(), "cannot exclude base with jar modifier");
+                throw new NutsIllegalArgumentException(session, "cannot exclude base with jar modifier");
             }
         } else {
             if (mainClass == null) {
@@ -214,7 +214,7 @@ public final class JavaExecutorOptions {
                 }
             }
             if (mainClass == null) {
-                throw new NutsIllegalArgumentException(getWorkspace(), "missing Main Class for " + id);
+                throw new NutsIllegalArgumentException(session, "missing Main Class for " + id);
             }
             boolean baseDetected = false;
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
@@ -235,7 +235,7 @@ public final class JavaExecutorOptions {
             }
             if (!isExcludeBase() && !baseDetected) {
                 if (path == null) {
-                    throw new NutsIllegalArgumentException(getWorkspace(), "missing Path for " + id);
+                    throw new NutsIllegalArgumentException(session, "missing Path for " + id);
                 }
                 currentCP.add(0, NutsClassLoaderNodeUtils.definitionToClassLoaderNode(def, session));
 //                nutsPath.add(0, nutsIdFormat.value(id).format());
@@ -248,13 +248,13 @@ public final class JavaExecutorOptions {
                 List<String> possibleClasses = StringTokenizerUtils.split(getMainClass(), ":");
                 switch (possibleClasses.size()) {
                     case 0:
-                        throw new NutsIllegalArgumentException(getWorkspace(), "missing Main-Class in Manifest for " + id);
+                        throw new NutsIllegalArgumentException(session, "missing Main-Class in Manifest for " + id);
                     case 1:
                         //
                         break;
                     default: {
                         if (!session.isPlainOut()) {
-                            throw new NutsExecutionException(getWorkspace(), "multiple runnable classes detected : " + possibleClasses, 102);
+                            throw new NutsExecutionException(session, "multiple runnable classes detected : " + possibleClasses, 102);
                         }
                         NutsFormatManager text = getWorkspace().formats();
                         NutsTextNodeBuilder msgString = text.text().builder();
@@ -295,7 +295,7 @@ public final class JavaExecutorOptions {
                                             }
                                         }
                                     }
-                                    throw new NutsValidationException(getWorkspace());
+                                    throw new NutsValidationException(session);
                                 }).getValue();
                         break;
                     }

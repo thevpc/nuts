@@ -135,19 +135,19 @@ public interface NutsRepositorySPI {
      */
     NutsUpdateRepositoryStatisticsCommand updateStatistics();
 
-    /**
-     * remove repository listener
-     *
-     * @param listener listener
-     */
-    void removeRepositoryListener(NutsRepositoryListener listener);
-
-    /**
-     * add repository listener
-     *
-     * @param listener listener
-     */
-    void addRepositoryListener(NutsRepositoryListener listener);
+//    /**
+//     * remove repository listener
+//     *
+//     * @param listener listener
+//     */
+//    void removeRepositoryListener(NutsRepositoryListener listener);
+//
+//    /**
+//     * add repository listener
+//     *
+//     * @param listener listener
+//     */
+//    void addRepositoryListener(NutsRepositoryListener listener);
 
     /**
      * Repository Listeners
@@ -162,17 +162,17 @@ public interface NutsRepositorySPI {
      */
     Map<String, Object> getUserProperties();
 
-    /**
-     * add listener to user properties
-     * @param listener listener
-     */
-    void addUserPropertyListener(NutsMapListener<String, Object> listener);
-
-    /**
-     * remove listener from user properties
-     * @param listener listener
-     */
-    void removeUserPropertyListener(NutsMapListener<String, Object> listener);
+//    /**
+//     * add listener to user properties
+//     * @param listener listener
+//     */
+//    NutsRepository addUserPropertyListener(NutsMapListener<String, Object> listener);
+//
+//    /**
+//     * remove listener from user properties
+//     * @param listener listener
+//     */
+//    NutsRepository removeUserPropertyListener(NutsMapListener<String, Object> listener);
 
     /**
      * return array of registered user properties listeners
@@ -198,5 +198,5 @@ public interface NutsRepositorySPI {
      * @param mode fetch mode
      * @return true if fetch mode is accepted
      */
-    boolean isAcceptFetchMode(NutsFetchMode mode);
+    boolean isAcceptFetchMode(NutsFetchMode mode, NutsSession session);
 }

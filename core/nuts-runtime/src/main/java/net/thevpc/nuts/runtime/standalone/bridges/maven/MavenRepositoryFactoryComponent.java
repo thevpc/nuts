@@ -57,17 +57,17 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
     }
 
     @Override
-    public NutsRepository create(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
+    public NutsRepository create(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         final NutsRepositoryConfig config = options.getConfig();
         String type = config.getType();
         if (type == null) {
             return null;
         }
         if (CoreIOUtils.isPathHttp(config.getLocation())) {
-            return (new MavenRemoteRepository(options, workspace, parentRepository, type));
+            return (new MavenRemoteRepository(options, session, parentRepository, type));
         }
         if (CoreIOUtils.isPathFile(config.getLocation())) {
-            return new MavenFolderRepository(options, workspace, parentRepository);
+            return new MavenFolderRepository(options, session, parentRepository);
         }
         return null;
     }

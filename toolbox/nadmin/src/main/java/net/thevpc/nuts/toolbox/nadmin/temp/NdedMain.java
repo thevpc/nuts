@@ -215,7 +215,7 @@ public class NdedMain  {
                 //
             }
             if (confirm("abort?")) {
-                throw new NutsExecutionException(context.getWorkspace(), "cancelled", 1);
+                throw new NutsExecutionException(context.getSession(), "cancelled", 1);
             }
         }
         String path = b.getId().getGroupId().replace('.', '/')
@@ -244,7 +244,7 @@ public class NdedMain  {
             }
         }
         if (!confirm("confirm ?")) {
-            throw new NutsUserCancelException(context.getWorkspace());
+            throw new NutsUserCancelException(context.getSession());
         }
         NutsDescriptorFormat nutsDescriptorFormat = context.getWorkspace().descriptor().formatter(desc);
         nutsDescriptorFormat.print(file);

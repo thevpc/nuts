@@ -4,9 +4,11 @@ import net.thevpc.nuts.*;
 
 public abstract class NutsTypedFiltersParser<T extends NutsFilter> extends AbstractFilterParser2<T> {
     protected NutsWorkspace ws;
-    public NutsTypedFiltersParser(String str, NutsWorkspace ws) {
+    protected NutsSession session;
+    public NutsTypedFiltersParser(String str, NutsSession session) {
         super(str==null?"":str);
-        this.ws=ws;
+        this.session=session;
+        this.ws=session.getWorkspace();
         addBoolOps();
     }
 

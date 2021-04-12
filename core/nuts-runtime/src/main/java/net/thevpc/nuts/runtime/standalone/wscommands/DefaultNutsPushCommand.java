@@ -28,7 +28,6 @@ package net.thevpc.nuts.runtime.standalone.wscommands;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.AbstractDefaultNutsPushCommand;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 
 import java.util.LinkedHashMap;
@@ -62,34 +61,35 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
 
     @Override
     public NutsPushCommand run() {
-        NutsSession session = this.getValidWorkspaceSession();
+        NutsSession session = this.getSession();
         NutsRepositoryFilter repositoryFilter = null;
         Map<NutsId, NutsDefinition> toProcess = new LinkedHashMap<>();
         for (NutsId id : this.getIds()) {
             if (CoreStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
-                throw new NutsIllegalArgumentException(ws, "invalid Version " + id.getVersion());
+                throw new NutsIllegalArgumentException(getSession(), "invalid Version " + id.getVersion());
             }
             NutsDefinition file = ws.fetch().setId(id).setSession(session.copy().setTransitive(false)).setContent(true).getResultDefinition();
             if (file == null) {
-                throw new NutsIllegalArgumentException(ws, "nothing to push");
+                throw new NutsIllegalArgumentException(getSession(), "nothing to push");
             }
             toProcess.put(id, file);
         }
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         if (toProcess.isEmpty()) {
-            throw new NutsIllegalArgumentException(ws, "missing component to push");
+            throw new NutsIllegalArgumentException(getSession(), "missing component to push");
         }
         for (Map.Entry<NutsId, NutsDefinition> entry : toProcess.entrySet()) {
             NutsId id = entry.getKey();
             NutsDefinition file = entry.getValue();
             NutsFetchMode fetchMode = this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE;
+            NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
             if (CoreStringUtils.isBlank(this.getRepository())) {
                 Set<String> errors = new LinkedHashSet<>();
                 //TODO : CHECK ME, why offline?
                 boolean ok = false;
-                for (NutsRepository repo : NutsWorkspaceUtils.of(ws).filterRepositoriesDeploy(file.getId(), repositoryFilter, session)) {
+                for (NutsRepository repo : wu.filterRepositoriesDeploy(file.getId(), repositoryFilter)) {
                     NutsDescriptor descr = null;
-                    NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(ws).repoSPI(repo);
+                    NutsRepositorySPI repoSPI = wu.repoSPI(repo);
                     try {
                         descr = repoSPI.fetchDescriptor().setSession(session).setFetchMode(fetchMode).setId(file.getId()).getResult();
                     } catch (Exception e) {
@@ -115,17 +115,17 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                     }
                 }
                 if (!ok) {
-                    throw new NutsRepositoryNotFoundException(ws, this.getRepository() + " : " + String.join("\n", errors));
+                    throw new NutsRepositoryNotFoundException(getSession(), this.getRepository() + " : " + String.join("\n", errors));
                 }
             } else {
-                NutsRepository repo = ws.repos().getRepository(this.getRepository(), session);
+                NutsRepository repo = ws.repos().setSession(session).getRepository(this.getRepository());
                 if (!repo.config().isEnabled()) {
-                    throw new NutsIllegalArgumentException(ws, "repository " + repo.getName() + " is disabled");
+                    throw new NutsIllegalArgumentException(getSession(), "repository " + repo.getName() + " is disabled");
                 }
                 NutsId effId = ws.config().createContentFaceId(id.builder().setProperties("").build(), file.getDescriptor())
 //                        .setAlternative(CoreStringUtils.trim(file.getDescriptor().getAlternative()))
                         ;
-                NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(ws).repoSPI(repo);
+                NutsRepositorySPI repoSPI = wu.repoSPI(repo);
                 repoSPI.deploy().setSession(session)
                         .setId(effId)
                         .setContent(file.getPath())

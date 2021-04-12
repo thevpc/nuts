@@ -111,8 +111,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private final NutsElementMapper F_COLLECTION = new NutsElementFactoryCollection();
     private final NutsElementMapper F_MAP = new NutsElementFactoryMap();
 
-    public DefaultNutsElementFactoryService(NutsWorkspace ws) {
-        typesRepository = NutsWorkspaceUtils.of(ws).getReflectRepository();
+    public DefaultNutsElementFactoryService(NutsWorkspace ws,NutsSession session) {
+        typesRepository = NutsWorkspaceUtils.of(session).getReflectRepository();
         addDefaultFactory(Boolean.class, F_BOOLEANS);
         addDefaultFactory(boolean.class, F_BOOLEANS);
         addDefaultFactory(byte.class, F_NUMBERS);
@@ -288,7 +288,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                     m.put(k, v);
                 }
             }
-            return new DefaultNutsObjectElement(m, context.getWorkspace());
+            return new DefaultNutsObjectElement(m, context.getSession().getWorkspace());
         }
 
         public Map fillObject(NutsElement o, Map all, Type elemType1, Type elemType2, Type to, NutsElementFactoryContext context) {
@@ -657,7 +657,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement createElement(NutsDefinition o, Type typeOfSrc, NutsElementFactoryContext context) {
-            DefaultNutsDefinition dd = (o instanceof DefaultNutsDefinition) ? (DefaultNutsDefinition) o : new DefaultNutsDefinition(o, context.getWorkspace());
+            DefaultNutsDefinition dd = (o instanceof DefaultNutsDefinition) ? (DefaultNutsDefinition) o : new DefaultNutsDefinition(o, context.getSession());
             return context.defaultObjectToElement(dd, null);
         }
 
@@ -711,7 +711,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsId createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            return context.getWorkspace().id().parser().parse(o.asPrimitive().getString());
+            return context.getSession().getWorkspace().id().parser().parse(o.asPrimitive().getString());
         }
 
     }
@@ -725,7 +725,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsVersion createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            return context.getWorkspace().version().parser().parse(o.asPrimitive().getString());
+            return context.getSession().getWorkspace().version().parser().parse(o.asPrimitive().getString());
         }
 
     }
@@ -760,14 +760,15 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement createElement(NutsDescriptor o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.defaultObjectToElement(context.getWorkspace().descriptor().descriptorBuilder().set(o), null
+            return context.defaultObjectToElement(
+                    context.getSession().getWorkspace().descriptor().descriptorBuilder().set(o), null
             );
         }
 
         @Override
         public NutsDescriptor createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             DefaultNutsDescriptorBuilder builder = (DefaultNutsDescriptorBuilder) context.defaultElementToObject(o, DefaultNutsDescriptorBuilder.class);
-            return context.getWorkspace().descriptor().descriptorBuilder().set(builder).build();
+            return context.getSession().getWorkspace().descriptor().descriptorBuilder().set(builder).build();
         }
 
     }
@@ -801,20 +802,20 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public NutsElement createElement(NutsDependency o, Type typeOfSrc, NutsElementFactoryContext context) {
             if (o.getExclusions().length == 0) {
                 //use compact form
-                return context.defaultObjectToElement(context.getWorkspace().dependency().formatter(o)
+                return context.defaultObjectToElement(context.getSession().getWorkspace().dependency().formatter(o)
                         .setNtf(false)
                         .format(), null);
             }
-            return context.defaultObjectToElement(context.getWorkspace().dependency().builder().set(o), null);
+            return context.defaultObjectToElement(context.getSession().getWorkspace().dependency().builder().set(o), null);
         }
 
         @Override
         public NutsDependency createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             if (o.type() == NutsElementType.STRING) {
-                return context.getWorkspace().dependency().parser().setLenient(false).parseDependency(o.asPrimitive().getString());
+                return context.getSession().getWorkspace().dependency().parser().setLenient(false).parseDependency(o.asPrimitive().getString());
             }
             DefaultNutsDependencyBuilder builder = (DefaultNutsDependencyBuilder) context.defaultElementToObject(o, DefaultNutsDependencyBuilder.class);
-            return context.getWorkspace().dependency().builder().set(builder).build();
+            return context.getSession().getWorkspace().dependency().builder().set(builder).build();
         }
 
     }

@@ -39,7 +39,7 @@ public class DefaultNutsTextNodeStyled extends AbstractNutsTextNode implements N
     private NutsTextNodeStyles textStyles;
     private boolean completed;
 
-    public DefaultNutsTextNodeStyled(NutsWorkspace ws,String start, String end, NutsTextNode child, boolean completed, NutsTextNodeStyles textStyle) {
+    public DefaultNutsTextNodeStyled(NutsSession ws,String start, String end, NutsTextNode child, boolean completed, NutsTextNodeStyles textStyle) {
         super(ws);
         this.start = start;
         this.end = end;

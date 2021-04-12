@@ -41,20 +41,20 @@ public class NutsNotExecutableException extends NutsExecutionException {
 
     /**
      * Constructs a new NutsNotExecutableException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param id artifact id
      */
-    public NutsNotExecutableException(NutsWorkspace workspace, NutsId id) {
-        this(workspace, id == null ? null : id.toString());
+    public NutsNotExecutableException(NutsSession session, NutsId id) {
+        this(session, id == null ? null : id.toString());
     }
 
     /**
      * Constructs a new NutsNotExecutableException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param id artifact id
      */
-    public NutsNotExecutableException(NutsWorkspace workspace, String id) {
-        super(workspace, "not executable " + (id == null ? "<null>" : id), -1);
+    public NutsNotExecutableException(NutsSession session, String id) {
+        super(session, "not executable " + (id == null ? "<null>" : id), -1);
         this.id = id;
     }
 

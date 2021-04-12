@@ -29,7 +29,6 @@ import net.thevpc.nuts.runtime.bundles.mvn.*;
 import net.thevpc.nuts.runtime.core.repos.RepoDefinitionResolver;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsDependencyBuilder;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
 import net.thevpc.nuts.NutsLogVerb;
@@ -248,7 +247,7 @@ public class MavenUtils {
             long time = System.currentTimeMillis() - startTime;
             LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).time(time).formatted()
                     .log("caching pom file {0}", urlDesc);
-            throw new NutsParseException(ws, "error Parsing " + urlDesc, e);
+            throw new NutsParseException(session, "error Parsing " + urlDesc, e);
         }
     }
 
@@ -273,7 +272,7 @@ public class MavenUtils {
                 return nutsDescriptor;
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session.getWorkspace(), ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -307,7 +306,7 @@ public class MavenUtils {
                         } catch (NutsException ex) {
                             throw ex;
                         } catch (Exception ex) {
-                            throw new NutsNotFoundException(ws, nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, ex);
+                            throw new NutsNotFoundException(session, nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, ex);
                         }
                         parentId = parentDescriptor.getId();
                     }
@@ -346,7 +345,7 @@ public class MavenUtils {
                             } catch (NutsException ex) {
                                 throw ex;
                             } catch (Exception ex) {
-                                throw new NutsNotFoundException(ws, nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + pid, ex);
+                                throw new NutsNotFoundException(session, nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + pid, ex);
                             }
                         }
                         done.add(pid.getShortName());
@@ -362,7 +361,7 @@ public class MavenUtils {
                         }
                     }
                     if (CoreNutsUtils.containsVars(thisId)) {
-                        throw new NutsNotFoundException(ws, nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, null);
+                        throw new NutsNotFoundException(session, nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, null);
                     }
                     nutsDescriptor = nutsDescriptor.builder().setId(thisId).build();
                 }
@@ -384,9 +383,9 @@ public class MavenUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session.getWorkspace(), ex);
+            throw new NutsIOException(session, ex);
         } catch (Exception ex) {
-            throw new NutsParseException(ws, "error Parsing " + urlDesc, ex);
+            throw new NutsParseException(session, "error Parsing " + urlDesc, ex);
         }
         return nutsDescriptor;
     }
@@ -421,7 +420,7 @@ public class MavenUtils {
     }
 
     public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath, NutsRepositorySelector[] bootRepositories, NutsSession session) {
-        session = NutsWorkspaceUtils.of(ws).validateSession(session);
+        NutsWorkspaceUtils.checkSession(ws, session);
         DepsAndRepos depsAndRepos = null;
 //        if (!NO_M2) {
         File mavenNutsCorePom = new File(System.getProperty("user.home"), (".m2/repository/" + urlPath).replace("/", File.separator));
@@ -450,7 +449,7 @@ public class MavenUtils {
         InputStream xml = null;
         try {
             if (CoreIOUtils.isPathHttp(url)) {
-                xml = NutsWorkspaceUtils.of(ws).openURL(url);
+                xml = NutsWorkspaceUtils.of(session).openURL(url);
             } else {
                 File file = new File(url);
                 if (file.isFile()) {
@@ -498,25 +497,25 @@ public class MavenUtils {
                                 }
                             }
                             if (CoreStringUtils.isBlank(groupId)) {
-                                throw new NutsIllegalArgumentException(ws, "unexpected empty groupId");
+                                throw new NutsIllegalArgumentException(session, "unexpected empty groupId");
                             } else if (groupId.contains("$")) {
-                                throw new NutsIllegalArgumentException(ws, "unexpected maven variable in groupId=" + groupId);
+                                throw new NutsIllegalArgumentException(session, "unexpected maven variable in groupId=" + groupId);
                             }
                             if (CoreStringUtils.isBlank(artifactId)) {
-                                throw new NutsIllegalArgumentException(ws, "unexpected empty artifactId");
+                                throw new NutsIllegalArgumentException(session, "unexpected empty artifactId");
                             } else if (artifactId.contains("$")) {
-                                throw new NutsIllegalArgumentException(ws, "unexpected maven variable in artifactId=" + artifactId);
+                                throw new NutsIllegalArgumentException(session, "unexpected maven variable in artifactId=" + artifactId);
                             }
                             if (CoreStringUtils.isBlank(version)) {
-                                throw new NutsIllegalArgumentException(ws, "unexpected empty artifactId");
+                                throw new NutsIllegalArgumentException(session, "unexpected empty artifactId");
                             } else if (version.contains("$")) {
-                                throw new NutsIllegalArgumentException(ws, "unexpected maven variable in artifactId=" + version);
+                                throw new NutsIllegalArgumentException(session, "unexpected maven variable in artifactId=" + version);
                             }
                             //this is maven dependency, using "compile"
                             if (CoreStringUtils.isBlank(scope) || scope.equals("compile")) {
                                 depsAndRepos.deps.add(groupId + ":" + artifactId + "#" + version);
                             } else if (version.contains("$")) {
-                                throw new NutsIllegalArgumentException(ws, "unexpected maven variable in artifactId=" + version);
+                                throw new NutsIllegalArgumentException(session, "unexpected maven variable in artifactId=" + version);
                             }
                         }
                     }
@@ -608,7 +607,7 @@ public class MavenUtils {
                 DocumentBuilderFactory factory
                         = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = factory.newDocumentBuilder();
-                Document doc = builder.parse(NutsWorkspaceUtils.of(ws).openURL(runtimeMetadata));
+                Document doc = builder.parse(NutsWorkspaceUtils.of(session).openURL(runtimeMetadata));
                 Element c = doc.getDocumentElement();
                 for (int i = 0; i < c.getChildNodes().getLength(); i++) {
                     if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("versioning")) {
@@ -691,7 +690,7 @@ public class MavenUtils {
 
         @Override
         public InputStream openStream(URL url) {
-            return NutsWorkspaceUtils.of(session.getWorkspace()).openURL(url);
+            return NutsWorkspaceUtils.of(session).openURL(url);
         }
     }
 }

@@ -35,18 +35,18 @@ public class NutsReadOnlyException extends NutsException {
 
     /**
      * Constructs a new NutsReadOnlyException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param location location
      */
-    public NutsReadOnlyException(NutsWorkspace workspace, String location) {
-        super(workspace, "cannot update readonly workspace " + location);
+    public NutsReadOnlyException(NutsSession session, String location) {
+        super(session, "cannot update readonly workspace " + location);
     }
 
     /**
      * Constructs a new NutsReadOnlyException exception
-     * @param workspace workspace
+     * @param session workspace
      */
-    public NutsReadOnlyException(NutsWorkspace workspace) {
-        this(workspace, workspace == null ? null : workspace.locations().getWorkspaceLocation().toString());
+    public NutsReadOnlyException(NutsSession session) {
+        this(session, session == null ? null : session.getWorkspace().locations().getWorkspaceLocation().toString());
     }
 }

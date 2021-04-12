@@ -146,7 +146,7 @@ public class WorkspaceService {
         }
 
         if (count == 0) {
-            throw new NutsExecutionException(context.getWorkspace(), "missing projects", 1);
+            throw new NutsExecutionException(context.getSession(), "missing projects", 1);
         }
     }
 

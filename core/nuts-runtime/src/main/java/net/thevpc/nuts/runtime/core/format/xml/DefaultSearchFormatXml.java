@@ -41,24 +41,25 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     @Override
     public void start() {
         NutsTextNodeBuilder builder = getWorkspace().formats().text().builder();
+        NutsSession session = getSession();
 
-        builder.append(codeFormat.tokenToNode("<?", "separator"));
-        builder.append(codeFormat.tokenToNode("xml", "name"));
-
-        builder.append(" ");
-        builder.append(codeFormat.tokenToNode("version", "attribute"));
-        builder.append(codeFormat.tokenToNode("=", "separator"));
-        builder.append(codeFormat.tokenToNode("\"1.0\"", "string"));
+        builder.append(codeFormat.tokenToNode("<?", "separator", session));
+        builder.append(codeFormat.tokenToNode("xml", "name", session));
 
         builder.append(" ");
-        builder.append(codeFormat.tokenToNode("encoding", "attribute"));
-        builder.append(codeFormat.tokenToNode("=", "separator"));
-        builder.append(codeFormat.tokenToNode("?>", "separator"));
+        builder.append(codeFormat.tokenToNode("version", "attribute", session));
+        builder.append(codeFormat.tokenToNode("=", "separator", session));
+        builder.append(codeFormat.tokenToNode("\"1.0\"", "string", session));
+
+        builder.append(" ");
+        builder.append(codeFormat.tokenToNode("encoding", "attribute", session));
+        builder.append(codeFormat.tokenToNode("=", "separator", session));
+        builder.append(codeFormat.tokenToNode("?>", "separator", session));
         builder.append("\n");
 
-        builder.append(codeFormat.tokenToNode("<", "separator"));
-        builder.append(codeFormat.tokenToNode(rootName, "name"));
-        builder.append(codeFormat.tokenToNode(">", "separator"));
+        builder.append(codeFormat.tokenToNode("<", "separator", session));
+        builder.append(codeFormat.tokenToNode(rootName, "name", session));
+        builder.append(codeFormat.tokenToNode(">", "separator", session));
 
         getWriter().println(builder.toString());
     }
@@ -76,16 +77,17 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
         doc.appendChild(xmlElement);
         NutsXmlUtils.writeDocument(doc, new javax.xml.transform.stream.StreamResult(pw), compact, false, getSession());
         pw.flush();
-        getWriter().print(codeFormat.textToNode(bos.toString()));
+        getWriter().print(codeFormat.textToNode(bos.toString(), getSession()));
     }
 
     @Override
     public void complete(long count) {
         NutsTextNodeBuilder builder = getWorkspace().formats().text().builder();
 
-        builder.append(codeFormat.tokenToNode("</", "separator"));
-        builder.append(codeFormat.tokenToNode(rootName, "name"));
-        builder.append(codeFormat.tokenToNode(">", "separator"));
+        NutsSession session = getSession();
+        builder.append(codeFormat.tokenToNode("</", "separator", session));
+        builder.append(codeFormat.tokenToNode(rootName, "name", session));
+        builder.append(codeFormat.tokenToNode(">", "separator", session));
 
         getWriter().println(builder.toString());
         getWriter().flush();

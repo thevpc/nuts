@@ -18,7 +18,7 @@ public class ArchetypeNAdminSubCommand extends AbstractNAdminSubCommand {
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.next("list archetypes", "la") != null) {
             if (cmdLine.isExecMode()) {
-                context.getSession().formatObject(context.getWorkspace().config().getAvailableArchetypes(context.getSession()))
+                context.getSession().formatObject(context.getWorkspace().config().getAvailableArchetypes())
                         .println();
             }
             return true;

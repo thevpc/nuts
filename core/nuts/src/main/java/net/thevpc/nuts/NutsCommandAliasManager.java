@@ -33,15 +33,15 @@ import java.util.List;
  */
 public interface NutsCommandAliasManager {
 
-    NutsCommandAliasFactoryConfig[] getFactories(NutsSession session);
+    NutsCommandAliasFactoryConfig[] getFactories();
 
-    void addFactory(NutsCommandAliasFactoryConfig commandFactory, NutsAddOptions options);
+    void addFactory(NutsCommandAliasFactoryConfig commandFactory);
 
-    boolean removeFactory(String name, NutsRemoveOptions options);
+    boolean removeFactory(String name);
 
-    boolean add(NutsCommandAliasConfig command, NutsAddOptions options);
+    boolean add(NutsCommandAliasConfig command);
 
-    boolean remove(String name, NutsRemoveOptions options);
+    boolean remove(String name);
 
     /**
      * return alias definition for given name id and owner.
@@ -49,15 +49,17 @@ public interface NutsCommandAliasManager {
      * @param name     alias name, not null
      * @param forId    if not null, the alias name should resolve to the given id
      * @param forOwner if not null, the alias name should resolve to the owner
-     * @param session  session
      * @return alias definition or null
      */
-    NutsWorkspaceCommandAlias find(String name, NutsId forId, NutsId forOwner, NutsSession session);
+    NutsWorkspaceCommandAlias find(String name, NutsId forId, NutsId forOwner);
 
-    NutsWorkspaceCommandAlias find(String name, NutsSession session);
+    NutsWorkspaceCommandAlias find(String name);
 
-    List<NutsWorkspaceCommandAlias> findAll(NutsSession session);
+    List<NutsWorkspaceCommandAlias> findAll();
 
-    List<NutsWorkspaceCommandAlias> findByOwner(NutsId id, NutsSession session);
+    List<NutsWorkspaceCommandAlias> findByOwner(NutsId id);
 
+    NutsSession getSession();
+
+    NutsCommandAliasManager setSession(NutsSession session);
 }

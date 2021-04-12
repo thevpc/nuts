@@ -3,28 +3,25 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts;
-
 
 /**
  * @author thevpc
@@ -33,16 +30,6 @@ package net.thevpc.nuts;
  */
 public interface NutsRepositoryConfigManager {
 
-    String getUuid();
-
-    /**
-     * name is the name attributed by the containing workspace. It is defined in
-     * NutsRepositoryRef
-     *
-     * @return local name
-     */
-    String getName();
-
     /**
      * global name is independent from workspace
      *
@@ -50,28 +37,23 @@ public interface NutsRepositoryConfigManager {
      */
     String getGlobalName();
 
-
-
     NutsRepositoryRef getRepositoryRef();
-    
+
     String getType();
 
     String getGroups();
 
     int getSpeed();
 
-    int getSpeed(NutsSession session);
-
-
     boolean isTemporary();
 
-    boolean isIndexSubscribed(NutsSession session);
+    boolean isIndexSubscribed();
 
     /**
      * return repository configured location as string
      *
      * @param expand when true, location will be expanded (~ and $ params will
-     *               be expanded)
+     * be expanded)
      * @return repository location
      */
     String getLocation(boolean expand);
@@ -80,51 +62,50 @@ public interface NutsRepositoryConfigManager {
 
     String getStoreLocation(NutsStoreLocation folderType);
 
-    NutsRepositoryConfigManager setIndexEnabled(boolean enabled, NutsUpdateOptions options);
+    NutsRepositoryConfigManager setIndexEnabled(boolean enabled);
 
     boolean isIndexEnabled();
 
-    NutsRepositoryConfigManager setMirrorEnabled(String repoName, boolean enabled, NutsUpdateOptions options);
+    NutsRepositoryConfigManager setMirrorEnabled(String repoName, boolean enabled);
 
     int getDeployOrder();
 
-    NutsRepositoryConfigManager setEnabled(boolean enabled, NutsUpdateOptions options);
+    NutsRepositoryConfigManager setEnabled(boolean enabled);
 
-    NutsRepositoryConfigManager setTemporary(boolean enabled, NutsUpdateOptions options);
+    NutsRepositoryConfigManager setTemporary(boolean enabled);
 
     boolean isEnabled();
 
-    NutsRepositoryConfigManager subscribeIndex(NutsSession session);
+    NutsRepositoryConfigManager subscribeIndex();
 
-    NutsRepositoryConfigManager unsubscribeIndex(NutsSession session);
-
+    NutsRepositoryConfigManager unsubscribeIndex();
 
     boolean isSupportedMirroring();
 
-    NutsRepository findMirrorById(String repositoryNameOrId, NutsSession session);
+    NutsRepository findMirrorById(String repositoryNameOrId);
 
-    NutsRepository findMirrorByName(String repositoryNameOrId, NutsSession session);
+    NutsRepository findMirrorByName(String repositoryNameOrId);
 
-    NutsRepository[] getMirrors(NutsSession session);
+    NutsRepository[] getMirrors();
 
     /**
-     * search for (or throw error) a repository with the given repository name or id.
+     * search for (or throw error) a repository with the given repository name
+     * or id.
      *
      * @param repositoryIdOrName repository name or id
-     * @param session session
      * @return found repository or throw an exception
      * @throws NutsRepositoryNotFoundException if not found
      */
-    NutsRepository getMirror(String repositoryIdOrName, NutsSession session);
+    NutsRepository getMirror(String repositoryIdOrName);
 
     /**
-     * search for (or return null) a repository with the given repository name or id.
+     * search for (or return null) a repository with the given repository name
+     * or id.
      *
      * @param repositoryIdOrName repository name or id
-     * @param session session
      * @return found repository or return null
      */
-    NutsRepository findMirror(String repositoryIdOrName, NutsSession session);
+    NutsRepository findMirror(String repositoryIdOrName);
 
     /**
      * add new repository
@@ -136,10 +117,13 @@ public interface NutsRepositoryConfigManager {
 
     /**
      * @param repositoryId repository id pr id
-     * @param options      remove options
      * @return {@code this} instance
      */
-    NutsRepositoryConfigManager removeMirror(String repositoryId, NutsRemoveOptions options);
+    NutsRepositoryConfigManager removeMirror(String repositoryId);
 
     NutsStoreLocationStrategy getStoreLocationStrategy();
+
+    public NutsSession getSession();
+
+    public NutsRepositoryConfigManager setSession(NutsSession session);
 }

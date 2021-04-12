@@ -26,8 +26,8 @@
 */
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextNode;
-import net.thevpc.nuts.NutsWorkspace;
 
 /**
  * Created by vpc on 5/23/17.
@@ -39,7 +39,7 @@ public abstract class NutsTextNodeSpecialBase extends AbstractNutsTextNode imple
     private final String separator;
     private final String end;
 
-    public NutsTextNodeSpecialBase(NutsWorkspace ws,String start, String kind, String separator, String end) {
+    public NutsTextNodeSpecialBase(NutsSession ws,String start, String kind, String separator, String end) {
         super(ws);
         this.start=start==null?"":start;
         this.end=end==null?"":end;

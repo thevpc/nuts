@@ -38,7 +38,7 @@ import java.util.function.Function;
  */
 public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
-    private transient NutsWorkspace ws;
+    private transient NutsSession session;
     private String namespace;
     private String groupId;
     private String artifactId;
@@ -59,12 +59,12 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         return false;
     });
 
-    public DefaultNutsIdBuilder(NutsWorkspace ws) {
-        this.ws=ws;
+    public DefaultNutsIdBuilder(NutsSession session) {
+        this.session=session;
     }
 
-    public DefaultNutsIdBuilder(NutsId id,NutsWorkspace ws) {
-        this.ws=ws;
+    public DefaultNutsIdBuilder(NutsId id,NutsSession session) {
+        this.session=session;
         setNamespace(id.getNamespace());
         setGroupId(id.getGroupId());
         setArtifactId(id.getArtifactId());
@@ -72,12 +72,12 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         setProperties(id.getPropertiesQuery());
     }
 
-    public DefaultNutsIdBuilder(String namespace, String groupId, String artifactId, NutsVersion version, String propertiesQuery,NutsWorkspace ws) {
-        this.ws=ws;
+    public DefaultNutsIdBuilder(String namespace, String groupId, String artifactId, NutsVersion version, String propertiesQuery,NutsSession session) {
+        this.session=session;
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
-        this.version = version == null ? ws.version().parser().parse("") : version;
+        this.version = version == null ? session.getWorkspace().version().parser().parse("") : version;
         this.propertiesQuery.setProperties(propertiesQuery);
     }
 
@@ -133,13 +133,13 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder setVersion(NutsVersion value) {
-        this.version = value == null ? ws.version().parser().parse("") : value;
+        this.version = value == null ? session.getWorkspace().version().parser().parse("") : value;
         return this;
     }
 
     @Override
     public NutsIdBuilder setVersion(String value) {
-        this.version = ws.version().parser().parse(value);
+        this.version = session.getWorkspace().version().parser().parse(value);
         return this;
     }
 
@@ -403,7 +403,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     public NutsIdBuilder omitImportedGroupId() {
         String g = getGroupId();
         if(g!=null && g.length()>0){
-            if(ws.imports().isImportedGroupId(g)){
+            if(session.getWorkspace().imports().isImportedGroupId(g)){
                 setGroupId(null);
             }
         }
@@ -413,7 +413,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     @Override
     public NutsId build() {
         return new DefaultNutsId(
-                namespace, groupId, artifactId, version == null ? null : version.getValue(), propertiesQuery.getPropertiesQuery(),ws
+                namespace, groupId, artifactId, version == null ? null : version.getValue(), propertiesQuery.getPropertiesQuery(),session
         );
     }
 

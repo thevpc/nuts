@@ -89,7 +89,7 @@ public class ZipCommand extends AbstractNshBuiltin {
         try {
             ZipUtils.zip(outZip.getPath(), new ZipOptions(), files.toArray(new String[0]));
         } catch (IOException ex) {
-            throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
+            throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
         }
     }
 }

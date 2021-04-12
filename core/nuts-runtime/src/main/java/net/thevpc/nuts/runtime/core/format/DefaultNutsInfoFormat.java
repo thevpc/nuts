@@ -36,17 +36,6 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     @Override
-    public NutsInfoFormat showRepositories() {
-        showRepositories(true);
-        return this;
-    }
-
-    @Override
-    public NutsInfoFormat showRepositories(boolean enable) {
-        return setShowRepositories(enable);
-    }
-
-    @Override
     public NutsInfoFormat setShowRepositories(boolean enable) {
         this.showRepositories = true;
         return this;
@@ -90,6 +79,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
 
     @Override
     public void print(PrintStream w) {
+        checkSession();
         List<String> args = new ArrayList<>();
         args.add("--escape-text=false");
         if (isFancy()) {
@@ -113,7 +103,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 result = v;
             } else {
                 if (!isLenient()) {
-                    throw new NutsIllegalArgumentException(getWorkspace(), "property not found : " + key);
+                    throw new NutsIllegalArgumentException(getSession(), "property not found : " + key);
                 }
             }
         } else {
@@ -125,12 +115,12 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                     e.put(request, t.get(request));
                 } else {
                     if (!isLenient()) {
-                        throw new NutsIllegalArgumentException(getWorkspace(), "property not found : " + request);
+                        throw new NutsIllegalArgumentException(getSession(), "property not found : " + request);
                     }
                 }
             }
         }
-        getValidSession().formatObject(result).configure(true, args.toArray(new String[0])).print(w);
+        getSession().formatObject(result).configure(true, args.toArray(new String[0])).print(w);
     }
 
     @Override
@@ -174,7 +164,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             case "-p":
             case "--path": {
                 cmdLine.skip();
-                if(enabled) {
+                if (enabled) {
                     requests.add("nuts-workspace");
                     for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
                         requests.add("nuts-workspace-" + folderType.id());
@@ -187,7 +177,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             case "-e":
             case "--env": {
                 cmdLine.skip();
-                if(enabled) {
+                if (enabled) {
                     requests.add("platform");
                     requests.add("java-version");
                     requests.add("java-home");
@@ -204,7 +194,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             case "-c":
             case "--cmd": {
                 cmdLine.skip();
-                if(enabled) {
+                if (enabled) {
                     requests.add("command-line-long");
                     requests.add("command-line-short");
                     requests.add("inherited");
@@ -216,14 +206,14 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             case "-g":
             case "--get": {
                 String r = cmdLine.nextString().getStringValue();
-                if(enabled) {
+                if (enabled) {
                     requests.add(r);
                 }
                 while (true) {
                     NutsArgument p = cmdLine.peek();
                     if (p != null && !p.isOption()) {
                         cmdLine.skip();
-                        if(enabled) {
+                        if (enabled) {
                             requests.add(p.getString());
                         }
                     } else {
@@ -233,7 +223,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 return true;
             }
             default: {
-                if (getValidSession().configureFirst(cmdLine)) {
+                if (getSession().configureFirst(cmdLine)) {
                     return true;
                 }
             }
@@ -258,7 +248,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         Set<String> extraKeys = new TreeSet<>();
         extraKeys = new TreeSet(extraProperties.keySet());
 
-        props.put("name", stringValue(rt.getName()));
+        props.put("name", stringValue(ws.getName()));
         props.put("nuts-api-version", stringValue(ws.getApiVersion()));
         NutsIdFormat idFormat = ws.id().formatter();
         props.put("nuts-api-id", idFormat.value(ws.getApiId()).format());
@@ -280,7 +270,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         }
 
         props.put("nuts-runtime-path", stringValue(String.join(";", runtimeClassPath)));
-        props.put("nuts-workspace-id", stringValue(rt.getUuid()));
+        props.put("nuts-workspace-id", stringValue(ws.getUuid()));
         props.put("nuts-store-layout", stringValue(ws.locations().getStoreLocationLayout()));
         props.put("nuts-store-strategy", stringValue(ws.locations().getStoreLocationStrategy()));
         props.put("nuts-repo-store-strategy", stringValue(ws.locations().getRepositoryStoreLocationStrategy()));
@@ -290,7 +280,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             props.put("nuts-workspace-" + folderType.id(), stringValue(ws.locations().getStoreLocation(folderType).toString()));
         }
         props.put("nuts-open-mode", stringValue(options.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
-        props.put("nuts-secure", (ws.security().isSecure(getValidSession())));
+        props.put("nuts-secure", (ws.security().setSession(getSession()).isSecure()));
         props.put("nuts-gui", options.isGui());
         props.put("nuts-inherited", options.isInherited());
         props.put("nuts-recover", options.isRecover());
@@ -304,7 +294,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("java-version", stringValue(System.getProperty("java.version")));
         props.put("platform", idFormat.value(ws.env().getPlatform()).format());
         props.put("java-home", stringValue(System.getProperty("java.home")));
-        props.put("java-executable", stringValue(NutsJavaSdkUtils.of(ws).resolveJavaCommandByHome(null)));
+        props.put("java-executable", stringValue(NutsJavaSdkUtils.of(ws).resolveJavaCommandByHome(null, getSession())));
         props.put("java-classpath", stringValue(System.getProperty("java.class.path")));
         props.put("java-library-path", stringValue(System.getProperty("java.library.path")));
         props.put("os-name", ws.env().getOs().toString());
@@ -324,14 +314,14 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("creation-started", stringValue(Instant.ofEpochMilli(ws.config().getCreationStartTimeMillis())));
         props.put("creation-finished", stringValue(Instant.ofEpochMilli(ws.config().getCreationFinishTimeMillis())));
         props.put("creation-within", CoreTimeUtils.formatPeriodMilli(ws.config().getCreationTimeMillis()).trim());
-        props.put("repositories-count", (ws.repos().getRepositories(getValidSession()).length));
+        props.put("repositories-count", (ws.repos().setSession(getSession()).getRepositories().length));
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));
         }
         if (deep) {
             Map<String, Object> repositories = new LinkedHashMap<>();
             props.put("repos", repositories);
-            for (NutsRepository repository : ws.repos().getRepositories(getValidSession())) {
+            for (NutsRepository repository : ws.repos().setSession(getSession()).getRepositories()) {
                 repositories.put(repository.getName(), buildRepoRepoMap(repository, deep, prefix));
             }
         }
@@ -343,12 +333,12 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         FilteredMap props = new FilteredMap(filter);
         props.put(key(prefix, "name"), stringValue(repo.getName()));
         props.put(key(prefix, "global-name"), repo.config().getGlobalName());
-        props.put(key(prefix, "uuid"), stringValue(repo.config().getUuid()));
+        props.put(key(prefix, "uuid"), stringValue(repo.getUuid()));
         props.put(key(prefix, "type"), repo.config().getType());
         props.put(key(prefix, "speed"), (repo.config().getSpeed()));
         props.put(key(prefix, "enabled"), (repo.config().isEnabled()));
         props.put(key(prefix, "index-enabled"), (repo.config().isIndexEnabled()));
-        props.put(key(prefix, "index-subscribed"), (repo.config().isIndexSubscribed(getSession())));
+        props.put(key(prefix, "index-subscribed"), (repo.config().setSession(getSession()).isIndexSubscribed()));
         props.put(key(prefix, "location"), repo.config().getLocation(false));
         if (repo.config().getLocation(false) != null) {
             props.put(key(prefix, "location-expanded"), repo.config().getLocation(true));
@@ -361,13 +351,19 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         }
         props.put(key(prefix, "supported-mirroring"), (repo.config().isSupportedMirroring()));
         if (repo.config().isSupportedMirroring()) {
-            props.put(key(prefix, "mirrors-count"), ((!repo.config().isSupportedMirroring()) ? 0 : repo.config().getMirrors(getValidSession()).length));
+            props.put(key(prefix, "mirrors-count"), ((!repo.config()
+                    .setSession(getSession())
+                    .isSupportedMirroring()) ? 0 : repo.config()
+                                    .setSession(getSession())
+                                    .getMirrors().length));
         }
         if (deep) {
             if (repo.config().isSupportedMirroring()) {
                 Map<String, Object> mirrors = new LinkedHashMap<>();
                 props.put("mirrors", mirrors);
-                for (NutsRepository mirror : repo.config().getMirrors(getValidSession())) {
+                for (NutsRepository mirror : repo.config()
+                        .setSession(getSession())
+                        .getMirrors()) {
                     mirrors.put(mirror.getName(), buildRepoRepoMap(mirror, deep, null));
                 }
             }
@@ -389,6 +385,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     private static class FilteredMap {
+
         private Predicate<String> filter;
         private LinkedHashMap<String, Object> data = new LinkedHashMap<>();
 

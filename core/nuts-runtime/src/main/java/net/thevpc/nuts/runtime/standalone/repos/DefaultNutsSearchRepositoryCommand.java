@@ -32,9 +32,9 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
 
     @Override
     public NutsSearchRepositoryCommand run() {
-        NutsSession session = getValidWorkspaceSession();
-        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession(session);
-        getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_DESC, "search", session);
+        NutsSession session = getSession();
+        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(),session);
+        getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.FETCH_DESC, "search");
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
         xrepo.checkAllowedFetch(null, session);
         try {

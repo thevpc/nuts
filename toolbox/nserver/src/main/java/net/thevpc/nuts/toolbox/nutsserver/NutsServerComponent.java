@@ -25,8 +25,8 @@
 */
 package net.thevpc.nuts.toolbox.nutsserver;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.NutsSingleton;
 
 /**
@@ -37,11 +37,11 @@ public interface NutsServerComponent extends NutsComponent<ServerConfig> {
 
     /**
      *
-     * @param workspace invoker workspace. Note that a workspace may run a
+     * @param session invoker workspace session. Note that a workspace may run a
      * server on another workspace (because server implementation may be
      * workspace dependent
      * @param config server configuration
      * @return started server instance
      */
-    NutsServer start(NutsWorkspace workspace, ServerConfig config);
+    NutsServer start(NutsSession session, ServerConfig config);
 }

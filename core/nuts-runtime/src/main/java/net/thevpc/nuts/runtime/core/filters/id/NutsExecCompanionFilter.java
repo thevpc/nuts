@@ -6,21 +6,20 @@
 package net.thevpc.nuts.runtime.core.filters.id;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
-import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import net.thevpc.nuts.runtime.core.filters.descriptor.AbstractDescriptorFilter;
 
 /**
  *
  * @author thevpc
  */
-public class NutsExecCompanionFilter extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
+public class NutsExecCompanionFilter extends AbstractDescriptorFilter{
     private NutsId apiId;
     private Set<String> companions;
-    public NutsExecCompanionFilter(NutsWorkspace ws, NutsId apiId, String[] shortIds) {
+    public NutsExecCompanionFilter(NutsSession ws, NutsId apiId, String[] shortIds) {
         super(ws, NutsFilterOp.CUSTOM);
         this.apiId=apiId;
         this.companions=new HashSet<>(Arrays.asList(shortIds));

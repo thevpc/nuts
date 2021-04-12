@@ -33,38 +33,38 @@ public class NutsIOCopyValidationException extends NutsIOException {
 
     /**
      * Constructs a new Validation Exception
-     * @param workspace workspace
+     * @param session workspace
      */
-    public NutsIOCopyValidationException(NutsWorkspace workspace) {
-        super(workspace);
+    public NutsIOCopyValidationException(NutsSession session) {
+        super(session);
     }
 
     /**
      * Constructs a new Validation Exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      */
-    public NutsIOCopyValidationException(NutsWorkspace workspace,String message) {
-        super(workspace,message);
+    public NutsIOCopyValidationException(NutsSession session,String message) {
+        super(session,message);
     }
 
     /**
      * Constructs a new Validation Exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      * @param cause cause
      */
-    public NutsIOCopyValidationException(NutsWorkspace workspace,String message, Throwable cause) {
-        super(workspace,message, cause);
+    public NutsIOCopyValidationException(NutsSession session,String message, Throwable cause) {
+        super(session,message, cause);
     }
 
     /**
      * Constructs a new Validation Exception
-     * @param workspace workspace
+     * @param session workspace
      * @param cause cause
      */
-    public NutsIOCopyValidationException(NutsWorkspace workspace,Throwable cause) {
-        super(workspace,cause);
+    public NutsIOCopyValidationException(NutsSession session,Throwable cause) {
+        super(session,cause);
     }
 
 }

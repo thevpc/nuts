@@ -30,6 +30,7 @@ package net.thevpc.nuts;
  * @category Base
  */
 public interface NutsIdFilterManager extends NutsTypedFilters<NutsIdFilter> {
+    NutsIdFilterManager setSession(NutsSession session);
     NutsIdFilter byExpression(String expression);
 
     NutsIdFilter byDefaultVersion(Boolean defaultVersion);

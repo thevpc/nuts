@@ -33,7 +33,8 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
     @Override
     public NutsUninstallCommand addId(NutsId id) {
         if (id == null) {
-            throw new NutsNotFoundException(ws, id);
+            checkSession();
+            throw new NutsNotFoundException(getSession(), id);
         } else {
             ids.add(id);
         }

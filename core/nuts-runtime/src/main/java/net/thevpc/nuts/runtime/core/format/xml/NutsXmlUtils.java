@@ -26,11 +26,7 @@
 package net.thevpc.nuts.runtime.core.format.xml;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.Writer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -44,9 +40,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import net.thevpc.nuts.*;
 
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ErrorHandler;
@@ -242,7 +236,7 @@ public class NutsXmlUtils {
         try {
             b = documentFactory.newDocumentBuilder();
         } catch (ParserConfigurationException ex) {
-            throw new NutsIOException(session.getWorkspace(),ex);
+            throw new NutsIOException(session,ex);
         }
 
         b.setErrorHandler(new ErrorHandler() {
@@ -302,7 +296,7 @@ public class NutsXmlUtils {
         try {
             transformer = transformerFactory.newTransformer();
         } catch (TransformerConfigurationException ex) {
-            throw new NutsIOException(session.getWorkspace(),ex);
+            throw new NutsIOException(session,ex);
         }
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         if (!compact) {
@@ -318,7 +312,7 @@ public class NutsXmlUtils {
         try {
             transformer.transform(domSource, writer);
         } catch (TransformerException ex) {
-            throw new NutsIOException(session.getWorkspace(),ex);
+            throw new NutsIOException(session,ex);
         }
     }
 }

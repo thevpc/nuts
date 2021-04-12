@@ -43,6 +43,7 @@ import net.thevpc.nuts.runtime.bundles.reflect.ReflectConfigurationBuilder;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectPropertyAccessStrategy;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectPropertyDefaultValueStrategy;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectRepository;
+import net.thevpc.nuts.runtime.core.AbstractNutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
@@ -52,32 +53,39 @@ import net.thevpc.nuts.spi.NutsRepositorySPI;
  */
 public class NutsWorkspaceUtils {
 
-    private final NutsLogger LOG;
+    private NutsLogger LOG;
 
     private NutsWorkspace ws;
+    private NutsSession session;
 
-    public static NutsWorkspaceUtils of(NutsWorkspace ws) {
+    public static NutsWorkspaceUtils of(NutsSession ws) {
         return new NutsWorkspaceUtils(ws);
-//        NutsWorkspaceUtils wp = (NutsWorkspaceUtils) ws.env().getProperty(NutsWorkspaceUtils.class.getName());
-//        if (wp == null) {
-//            wp = new NutsWorkspaceUtils(ws);
-//            ws.env().setProperty(NutsWorkspaceUtils.class.getName(), wp,new NutsUpdateOptions(ws.createSession()));
-//        }
-//        return wp;
     }
 
-    private NutsWorkspaceUtils(NutsWorkspace ws) {
-        this.ws = ws;
-        LOG = ws.log().of(NutsWorkspaceUtils.class);
+    private NutsWorkspaceUtils(NutsSession session) {
+        this.session = session;
+        this.ws = session.getWorkspace();
+//        LOG = ws.log().of(NutsWorkspaceUtils.class);
+    }
+
+    protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
+    }
+
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = this.ws.log().setSession(session).of(NutsWorkspaceUtils.class);
+        }
+        return LOG;
     }
 
     public NutsRepositorySPI repoSPI(NutsRepository repo) {
-        DefaultNutsRepositoryManager repos = (DefaultNutsRepositoryManager) ws.repos();
-        return repos.toRepositorySPI(repo);
+        DefaultNutsRepositoryManager repos = (DefaultNutsRepositoryManager) ws.repos().setSession(session);
+        return repos.getModel().toRepositorySPI(repo);
     }
 
     public ReflectRepository getReflectRepository() {
-        return ws.env().getOrCreateProperty(ReflectRepository.class,
+        return ws.env().setSession(session).getOrCreateProperty(ReflectRepository.class,
                 () -> new DefaultReflectRepository(ReflectConfigurationBuilder.create()
                         .setPropertyAccessStrategy(ReflectPropertyAccessStrategy.FIELD)
                         .setPropertyDefaultValueStrategy(ReflectPropertyDefaultValueStrategy.PROPERTY_DEFAULT)
@@ -86,13 +94,13 @@ public class NutsWorkspaceUtils {
 
     public NutsId createSdkId(String type, String version) {
         if (CoreStringUtils.isBlank(type)) {
-            throw new NutsException(ws, "missing sdk type");
+            throw new NutsException(session, "missing sdk type");
         }
         if (CoreStringUtils.isBlank(version)) {
-            throw new NutsException(ws, "missing version");
+            throw new NutsException(session, "missing version");
         }
         if ("java".equalsIgnoreCase(type)) {
-            return NutsJavaSdkUtils.of(ws).createJdkId(version);
+            return NutsJavaSdkUtils.of(ws).createJdkId(version, session);
         } else {
             return ws.id().builder().setArtifactId(type)
                     .setVersion(version)
@@ -101,8 +109,8 @@ public class NutsWorkspaceUtils {
     }
 
     public void checkReadOnly() {
-        if (ws.config().isReadOnly()) {
-            throw new NutsReadOnlyException(ws, ws.locations().getWorkspaceLocation().toString());
+        if (session.getWorkspace().config().isReadOnly()) {
+            throw new NutsReadOnlyException(session, session.getWorkspace().locations().getWorkspaceLocation());
         }
     }
 
@@ -146,10 +154,10 @@ public class NutsWorkspaceUtils {
         return id;
     }
 
-    public List<NutsRepository> _getEnabledRepositories(NutsRepositoryFilter repositoryFilter, NutsSession session) {
+    public List<NutsRepository> _getEnabledRepositories(NutsRepositoryFilter repositoryFilter) {
         List<NutsRepository> repos = new ArrayList<>();
         List<NutsRepository> subrepos = new ArrayList<>();
-        for (NutsRepository repository : ws.repos().getRepositories(session)) {
+        for (NutsRepository repository : ws.repos().setSession(session).getRepositories()) {
             boolean ok = false;
             if (repository.config().isEnabled()) {
                 if (repositoryFilter == null || repositoryFilter.acceptRepository(repository)) {
@@ -167,8 +175,8 @@ public class NutsWorkspaceUtils {
         return repos;
     }
 
-    public List<NutsRepository> filterRepositoriesDeploy(NutsId id, NutsRepositoryFilter repositoryFilter, NutsSession session) {
-        return filterRepositories(NutsRepositorySupportedAction.DEPLOY, id, repositoryFilter, NutsFetchMode.LOCAL, session, new InstalledVsNonInstalledSearch(
+    public List<NutsRepository> filterRepositoriesDeploy(NutsId id, NutsRepositoryFilter repositoryFilter) {
+        return filterRepositories(NutsRepositorySupportedAction.DEPLOY, id, repositoryFilter, NutsFetchMode.LOCAL, new InstalledVsNonInstalledSearch(
                 false,
                 true
         ));
@@ -179,8 +187,7 @@ public class NutsWorkspaceUtils {
             NutsSession session, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
         List<NutsRepositoryAndFetchMode> ok = new ArrayList<>();
         for (NutsFetchMode nutsFetchMode : fetchStrategy) {
-            for (NutsRepository nutsRepositoryAndFetchMode : filterRepositories(
-                    fmode, id, repositoryFilter, nutsFetchMode, session, installedVsNonInstalledSearch
+            for (NutsRepository nutsRepositoryAndFetchMode : filterRepositories(fmode, id, repositoryFilter, nutsFetchMode, installedVsNonInstalledSearch
             )) {
                 ok.add(new NutsRepositoryAndFetchMode(nutsRepositoryAndFetchMode, nutsFetchMode));
             }
@@ -188,17 +195,17 @@ public class NutsWorkspaceUtils {
         return ok;
     }
 
-    private List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchMode mode, NutsSession session, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
-        return filterRepositories(fmode, id, repositoryFilter, true, null, mode, session, installedVsNonInstalledSearch);
+    private List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchMode mode, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
+        return filterRepositories(fmode, id, repositoryFilter, true, null, mode, installedVsNonInstalledSearch);
     }
 
-    private List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsSession session, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
+    private List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
         List<RepoAndLevel> repos2 = new ArrayList<>();
         //        List<Integer> reposLevels = new ArrayList<>();
         if (installedVsNonInstalledSearch.isSearchInOtherRepositories()) {
-            for (NutsRepository repository : ws.repos().getRepositories(session)) {
+            for (NutsRepository repository : ws.repos().setSession(session).getRepositories()) {
                 if (repository.isEnabled()
-                        && repoSPI(repository).isAcceptFetchMode(mode)
+                        && repoSPI(repository).isAcceptFetchMode(mode, session)
                         && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))) {
                     int t = 0;
                     int d = 0;
@@ -206,13 +213,13 @@ public class NutsWorkspaceUtils {
                         try {
                             d = CoreNutsUtils.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive(), session);
                         } catch (Exception ex) {
-                            LOG.with().session(session).level(Level.FINE).error(ex).log("unable to resolve support deploy level for : {0}", repository.getName());
+                            _LOGOP(session).level(Level.FINE).error(ex).log("unable to resolve support deploy level for : {0}", repository.getName());
                         }
                     }
                     try {
                         t = CoreNutsUtils.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive(), session);
                     } catch (Exception ex) {
-                        LOG.with().session(session).level(Level.FINE).error(ex).log("unable to resolve support speed level for : {0}", repository.getName());
+                        _LOGOP(session).level(Level.FINE).error(ex).log("unable to resolve support speed level for : {0}", repository.getName());
                     }
                     if (t > 0) {
                         repos2.add(new RepoAndLevel(repository, d, t, postComp));
@@ -235,29 +242,29 @@ public class NutsWorkspaceUtils {
 
     public void checkSimpleNameNutsId(NutsId id) {
         if (id == null) {
-            throw new NutsIllegalArgumentException(ws, "missing id");
+            throw new NutsIllegalArgumentException(session, "missing id");
         }
         if (CoreStringUtils.isBlank(id.getGroupId())) {
-            throw new NutsIllegalArgumentException(ws, "missing group for " + id);
+            throw new NutsIllegalArgumentException(session, "missing group for " + id);
         }
         if (CoreStringUtils.isBlank(id.getArtifactId())) {
-            throw new NutsIllegalArgumentException(ws, "missing name for " + id);
+            throw new NutsIllegalArgumentException(session, "missing name for " + id);
         }
     }
 
-    public void checkLongNameNutsId(NutsId id) {
+    public void checkLongNameNutsId(NutsId id, NutsSession session) {
         checkSimpleNameNutsId(id);
         if (CoreStringUtils.isBlank(id.getVersion().toString())) {
-            throw new NutsIllegalArgumentException(ws, "missing version for " + id);
+            throw new NutsIllegalArgumentException(session, "missing version for " + id);
         }
     }
 
-    public void validateRepositoryName(String repositoryName, Set<String> registered) {
+    public void validateRepositoryName(String repositoryName, Set<String> registered, NutsSession session) {
         if (!repositoryName.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
-            throw new NutsIllegalArgumentException(ws, "Invalid repository id " + repositoryName);
+            throw new NutsIllegalArgumentException(session, "Invalid repository id " + repositoryName);
         }
         if (registered.contains(repositoryName)) {
-            throw new NutsRepositoryAlreadyRegisteredException(ws, repositoryName);
+            throw new NutsRepositoryAlreadyRegisteredException(session, repositoryName);
         }
     }
 
@@ -301,12 +308,6 @@ public class NutsWorkspaceUtils {
 //        }
 //        return null;
 //    }
-    public void checkSession(NutsSession session) {
-        if (session == null) {
-            throw new NutsIllegalArgumentException(ws, "missing Session");
-        }
-    }
-
     private static class RepoAndLevel implements Comparable<RepoAndLevel> {
 
         NutsRepository r;
@@ -372,22 +373,41 @@ public class NutsWorkspaceUtils {
         return d;
     }
 
+    /**
+     * used only for exceptions and logger when a session is not available
+     *
+     * @param ws ws
+     * @return default session
+     */
+    public static NutsSession defaultSession(NutsWorkspace ws) {
+        return ((NutsWorkspaceExt) ws).defaultSession();
+    }
+
+    public static void checkSession(NutsWorkspace ws, NutsSession session) {
+        if (session == null) {
+            throw new NutsIllegalArgumentException(defaultSession(ws), "missing session");
+        }
+        if (!Objects.equals(session.getWorkspace().getUuid(),ws.getUuid())) {
+            throw new NutsIllegalArgumentException(defaultSession(ws), "invalid session");
+        }
+    }
+
     public static void checkNutsIdBase(NutsWorkspace ws, NutsId id) {
         if (id == null) {
-            throw new NutsIllegalArgumentException(ws, "missing id");
+            throw new NutsIllegalArgumentException(defaultSession(ws), "missing id");
         }
         if (CoreStringUtils.isBlank(id.getGroupId())) {
-            throw new NutsIllegalArgumentException(ws, "missing group for " + id);
+            throw new NutsIllegalArgumentException(defaultSession(ws), "missing group for " + id);
         }
         if (CoreStringUtils.isBlank(id.getArtifactId())) {
-            throw new NutsIllegalArgumentException(ws, "missing name for " + id);
+            throw new NutsIllegalArgumentException(defaultSession(ws), "missing name for " + id);
         }
     }
 
     public void checkNutsId(NutsId id) {
         checkNutsIdBase(ws, id);
         if (id.getVersion().isBlank()) {
-            throw new NutsIllegalArgumentException(ws, "missing name for " + id);
+            throw new NutsIllegalArgumentException(defaultSession(ws), "missing name for " + id);
         }
     }
 
@@ -404,9 +424,7 @@ public class NutsWorkspaceUtils {
         }
 
         public void fireOnInstall(NutsInstallEvent event) {
-            if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("installed {0}", event.getDefinition().getId());
-            }
+            u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("installed {0}", event.getDefinition().getId());
             for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
                 listener.onInstall(event);
             }
@@ -416,9 +434,7 @@ public class NutsWorkspaceUtils {
         }
 
         public void fireOnRequire(NutsInstallEvent event) {
-            if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("required {0}", event.getDefinition().getId());
-            }
+            u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("required {0}", event.getDefinition().getId());
             for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
                 listener.onRequire(event);
             }
@@ -428,12 +444,12 @@ public class NutsWorkspaceUtils {
         }
 
         public void fireOnUpdate(NutsUpdateEvent event) {
-            if (u.LOG.isLoggable(Level.FINEST)) {
+            if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
                 if (event.getOldValue() == null) {
-                    u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
+                    u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
                             .log("updated {0}", event.getNewValue().getId());
                 } else {
-                    u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
+                    u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
                             .log("updated {0} (old is {1})",
                                     event.getOldValue().getId().getLongNameId(),
                                     event.getNewValue().getId().getLongNameId());
@@ -448,8 +464,8 @@ public class NutsWorkspaceUtils {
         }
 
         public void fireOnUninstall(NutsInstallEvent event) {
-            if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
+            if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
                         .log("uninstalled {0}", event.getDefinition().getId());
             }
             for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
@@ -461,8 +477,8 @@ public class NutsWorkspaceUtils {
         }
 
         public void fireOnAddRepository(NutsWorkspaceEvent event) {
-            if (u.LOG.isLoggable(Level.CONFIG)) {
-                u.LOG.with().session(event.getSession()).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted()
+            if (u._LOG(event.getSession()).isLoggable(Level.CONFIG)) {
+                u._LOGOP(event.getSession()).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted()
                         .log("added repo ##{0}##", event.getRepository().getName());
             }
 
@@ -475,8 +491,8 @@ public class NutsWorkspaceUtils {
         }
 
         public void fireOnRemoveRepository(NutsWorkspaceEvent event) {
-            if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
+            if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
                         .log("removed repo ##{0}##", event.getRepository().getName());
             }
             for (NutsWorkspaceListener listener : u.ws.events().getWorkspaceListeners()) {
@@ -489,12 +505,12 @@ public class NutsWorkspaceUtils {
 
     }
 
-    public void traceMessage(NutsFetchStrategy fetchMode, NutsId id, NutsLogVerb tracePhase, String message, long startTime, NutsSession session) {
-        if (LOG.isLoggable(Level.FINEST)) {
+    public void traceMessage(NutsFetchStrategy fetchMode, NutsId id, NutsLogVerb tracePhase, String message, long startTime) {
+        if (_LOG(session).isLoggable(Level.FINEST)) {
 
             long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
             String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
-            LOG.with().session(session).level(Level.FINEST)
+            _LOGOP(session).level(Level.FINEST)
                     .verb(tracePhase).formatted().time(time)
                     .log("{0}{1} {2}",
                             fetchString,
@@ -511,7 +527,7 @@ public class NutsWorkspaceUtils {
         PrintStream out = null;
         PrintStream err = null;
         InputStream in = null;
-        ProcessBuilder2 pb = new ProcessBuilder2(ws);
+        ProcessBuilder2 pb = new ProcessBuilder2(session);
         pb.setCommand(args)
                 .setEnv(env)
                 .setDirectory(directory == null ? null : directory.toFile())
@@ -520,18 +536,18 @@ public class NutsWorkspaceUtils {
         if (!inheritSystemIO) {
             if (inputFile == null) {
                 in = execTerminal.in();
-                if (ws.io().term().getSystemTerminal().isStandardInputStream(in)) {
+                if (ws.term().setSession(session).getSystemTerminal().isStandardInputStream(in)) {
                     in = null;
                 }
             }
             if (outputFile == null) {
                 out = execTerminal.out();
-                if (ws.io().term().getSystemTerminal().isStandardOutputStream(out)) {
+                if (ws.term().setSession(session).getSystemTerminal().isStandardOutputStream(out)) {
                     out = null;
                 }
             }
             err = execTerminal.err();
-            if (ws.io().term().getSystemTerminal().isStandardErrorStream(err)) {
+            if (ws.term().setSession(session).getSystemTerminal().isStandardErrorStream(err)) {
                 err = null;
             }
             CoreIOUtils.clearMonitor(out, ws);
@@ -559,14 +575,14 @@ public class NutsWorkspaceUtils {
             }
         }
 
-        if (LOG.isLoggable(Level.FINE)) {
-            LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] {0}",
+        if (_LOG(session).isLoggable(Level.FINEST)) {
+            _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] {0}",
                     ws.formats().text().code("sh",
                             pb.getCommandString()
                     ));
         }
         if (showCommand || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
-            if (ws.io().term().isFormatted(prepareTerminal.out())) {
+            if (ws.term().setSession(session).isFormatted(prepareTerminal.out())) {
                 prepareTerminal.out().printf("%s ", ws.formats().text().styled("[exec]", NutsTextNodeStyle.primary(4)));
                 prepareTerminal.out().println(ws.formats().text().code("sh", pb.getCommandString()));
             } else {
@@ -574,7 +590,7 @@ public class NutsWorkspaceUtils {
                 prepareTerminal.out().printf("%s%n", pb.getCommandString());
             }
         }
-        return new CoreIOUtils.ProcessExecHelper(pb, ws, out == null ? execTerminal.out() : out);
+        return new CoreIOUtils.ProcessExecHelper(pb, session, out == null ? execTerminal.out() : out);
     }
 
     public CoreIOUtils.ProcessExecHelper execAndWait(NutsDefinition nutMainFile,
@@ -694,12 +710,12 @@ public class NutsWorkspaceUtils {
                 prepareSession);
     }
 
-    public NutsExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName, NutsSession session) {
+    public NutsExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName) {
         CorePlatformUtils.MainClassType mainClass = null;
         try {
             mainClass = CorePlatformUtils.getMainClassType(classStream);
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.FINE).error(ex).log("invalid file format {0}", sourceName);
+            _LOGOP(session).level(Level.FINE).error(ex).log("invalid file format {0}", sourceName);
         }
         if (mainClass != null) {
             return new DefaultNutsExecutionEntry(
@@ -711,7 +727,7 @@ public class NutsWorkspaceUtils {
         return null;
     }
 
-    public NutsExecutionEntry[] parseJarExecutionEntries(InputStream jarStream, String sourceName, NutsSession session) {
+    public NutsExecutionEntry[] parseJarExecutionEntries(InputStream jarStream, String sourceName) {
         if (!(jarStream instanceof BufferedInputStream)) {
             jarStream = new BufferedInputStream(jarStream);
         }
@@ -728,7 +744,7 @@ public class NutsWorkspaceUtils {
                 @Override
                 public boolean visit(String path, InputStream inputStream) throws IOException {
                     if (path.endsWith(".class")) {
-                        NutsExecutionEntry mainClass = parseClassExecutionEntry(inputStream, path, session);
+                        NutsExecutionEntry mainClass = parseClassExecutionEntry(inputStream, path);
                         if (mainClass != null) {
                             classes.add(mainClass);
                         }
@@ -763,7 +779,7 @@ public class NutsWorkspaceUtils {
             }
         }
         if (defaultEntry != null && !defaultFound) {
-            LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("invalid default entry " + defaultEntry + " in " + sourceName);
+            _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("invalid default entry " + defaultEntry + " in " + sourceName);
 //            entries.add(new DefaultNutsExecutionEntry(defaultEntry, true, false));
         }
         return entries.toArray(new NutsExecutionEntry[0]);

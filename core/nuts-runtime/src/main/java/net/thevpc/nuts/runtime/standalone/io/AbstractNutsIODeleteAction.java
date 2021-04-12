@@ -7,6 +7,7 @@ import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.File;
 import java.nio.file.Path;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public abstract class AbstractNutsIODeleteAction implements NutsIODeleteAction {
     private NutsWorkspace ws;
@@ -16,6 +17,10 @@ public abstract class AbstractNutsIODeleteAction implements NutsIODeleteAction {
 
     public AbstractNutsIODeleteAction(NutsWorkspace ws) {
         this.ws = ws;
+    }
+
+    protected void checkSession() {
+        NutsWorkspaceUtils.checkSession(ws, session);
     }
 
     @Override
@@ -40,6 +45,7 @@ public abstract class AbstractNutsIODeleteAction implements NutsIODeleteAction {
 
     @Override
     public NutsIODeleteAction setTarget(Object target) {
+        NutsWorkspaceUtils.checkSession(ws, session);
         if (target == null) {
             this.target = null;
             return this;
@@ -50,7 +56,7 @@ public abstract class AbstractNutsIODeleteAction implements NutsIODeleteAction {
         if (target instanceof Path) {
             return setTarget((Path) target);
         }
-        throw new NutsException(ws, "Unsupported Delete " + target);
+        throw new NutsException(session, "Unsupported Delete " + target);
     }
 
     @Override

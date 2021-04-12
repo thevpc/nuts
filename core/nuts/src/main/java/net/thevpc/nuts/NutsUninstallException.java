@@ -37,44 +37,44 @@ public class NutsUninstallException extends NutsInstallationException {
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id nuts id
      */
-    public NutsUninstallException(NutsWorkspace workspace, NutsId id) {
-        this(workspace, id == null ? null : id.toString());
+    public NutsUninstallException(NutsSession session, NutsId id) {
+        this(session, id == null ? null : id.toString());
     }
 
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id nuts id
      */
-    public NutsUninstallException(NutsWorkspace workspace, String id) {
-        this(workspace, id, null, null);
+    public NutsUninstallException(NutsSession session, String id) {
+        this(session, id, null, null);
     }
 
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id nuts id
      * @param msg message
      * @param ex exception
      */
-    public NutsUninstallException(NutsWorkspace workspace, NutsId id, String msg, Exception ex) {
-        this(workspace, id == null ? null : id.toString(), msg, ex);
+    public NutsUninstallException(NutsSession session, NutsId id, String msg, Exception ex) {
+        this(session, id == null ? null : id.toString(), msg, ex);
     }
 
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id nuts id
      * @param msg message
      * @param ex exception
      */
-    public NutsUninstallException(NutsWorkspace workspace, String id, String msg, Exception ex) {
-        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "unable to uninstall " + (id == null ? "<null>" : id) : msg, ex);
+    public NutsUninstallException(NutsSession session, String id, String msg, Exception ex) {
+        super(session, id, PrivateNutsUtils.isBlank(msg) ? "unable to uninstall " + (id == null ? "<null>" : id) : msg, ex);
     }
 }

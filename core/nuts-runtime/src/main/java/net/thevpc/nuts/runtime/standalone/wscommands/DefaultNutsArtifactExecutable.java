@@ -111,7 +111,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
                 NutsInstallStatus st = traceSession.getWorkspace().fetch().setSession(traceSession.copy().setFetchStrategy(NutsFetchStrategy.OFFLINE))
                         .setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
                 if ((st.isObsolete() || st.isNonDeployed()) && !optional) {
-                    throw new NutsUnexpectedException(execSession.getWorkspace(), "unresolved dependency " + dependency + " has status " + st);
+                    throw new NutsUnexpectedException(execSession, "unresolved dependency " + dependency + " has status " + st);
                 }
             }
         }
@@ -121,7 +121,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
     @Override
     public void dryExecute() {
         if (autoInstall && !def.getInstallInformation().getInstallStatus().isInstalled()) {
-            execSession.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName, execSession);
+            execSession.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
             PrintStream out = execSession.out();
             out.printf("[dry] ==install== %s%n", def.getId().getLongName());
         }

@@ -62,7 +62,7 @@ public class NutsLogRichFormatter extends Formatter {
         if (record instanceof NutsLogRecord) {
             NutsLogRecord wRecord = (NutsLogRecord) record;
             NutsTextFormatStyle style = wRecord.getFormatStyle();
-            NutsFormatManager tf = wRecord.getWorkspace().formats();
+            NutsFormatManager tf = wRecord.getWorkspace().formats().setSession(wRecord.getSession());
 
             NutsTextNodeBuilder sb = tf.text().builder();
             NutsTextManager ff = tf.text();

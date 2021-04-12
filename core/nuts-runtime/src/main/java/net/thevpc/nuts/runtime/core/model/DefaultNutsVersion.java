@@ -42,23 +42,23 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     private static final long serialVersionUID = 1L;
 //    public static final NutsVersion EMPTY = new DefaultNutsVersion("");
     private VersionParts parts;
-    private transient NutsWorkspace ws;
-    public static NutsVersion valueOf(String value, NutsWorkspace ws) {
+    private transient NutsSession session;
+    public static NutsVersion valueOf(String value, NutsSession session) {
         value = CoreStringUtils.trim(value);
         if (value.isEmpty()) {
-            return new DefaultNutsVersion("",ws);
+            return new DefaultNutsVersion("",session);
         }
-        return new DefaultNutsVersion(value,ws);
+        return new DefaultNutsVersion(value,session);
     }
 
-    private DefaultNutsVersion(String expression,NutsWorkspace ws) {
+    private DefaultNutsVersion(String expression,NutsSession session) {
         super(CoreStringUtils.trim(expression));
-        this.ws=ws;
+        this.session=session;
     }
 
     @Override
     public NutsFormat formatter() {
-        return ws.version().formatter().setVersion(this);
+        return session.getWorkspace().version().formatter().setVersion(this);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
 
     @Override
     public NutsVersionFilter filter() {
-        return DefaultNutsVersionFilter.parse(expression);
+        return DefaultNutsVersionFilter.parse(expression, session);
     }
 
     @Override
@@ -163,7 +163,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
 
     @Override
     public NutsVersion inc(int position, int amount) {
-        return new DefaultNutsVersion(incVersion(getValue(), position, amount),ws);
+        return new DefaultNutsVersion(incVersion(getValue(), position, amount),session);
     }
 
     @Override
@@ -196,7 +196,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
         if (CoreStringUtils.isBlank(expression)) {
             return true;
         }
-        return DefaultNutsVersionFilter.parse(expression).acceptVersion(this, null);
+        return DefaultNutsVersionFilter.parse(expression,session).acceptVersion(this, session);
     }
 
     public static boolean versionMatches(String version, String pattern) {

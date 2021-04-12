@@ -21,7 +21,7 @@ public class NAdminMain extends NutsApplication {
     public List<NAdminSubCommand> getSubCommands() {
         if (subCommands == null) {
             subCommands = new ArrayList<>(
-                    applicationContext.getWorkspace().extensions().createAllSupported(NAdminSubCommand.class, this, applicationContext.getSession())
+                    applicationContext.getWorkspace().extensions().createAllSupported(NAdminSubCommand.class, this)
             );
         }
         return subCommands;
@@ -47,10 +47,12 @@ public class NAdminMain extends NutsApplication {
         if (applicationContext.getSession().isPlainTrace()) {
             applicationContext.getSession().out().println("looking for java installations in default locations...");
         }
-        NutsSdkLocation[] found = ws.sdks().searchSystem("java", applicationContext.getSession().copy().setTrace(false));
+        NutsSdkLocation[] found = ws.sdks()
+                .setSession(applicationContext.getSession().copy().setTrace(false))
+                .searchSystem("java");
         int someAdded = 0;
         for (NutsSdkLocation java : found) {
-            if (ws.sdks().add(java, new NutsAddOptions().setSession(applicationContext.getSession()))) {
+            if (ws.sdks().add(java)) {
                 someAdded++;
             }
         }
@@ -66,7 +68,7 @@ public class NAdminMain extends NutsApplication {
             applicationContext.getSession().out().println("you can always add another installation manually using 'nadmin add java' command.");
         }
         if (!ws.config().isReadOnly()) {
-            ws.config().save(applicationContext.getSession());
+            ws.config().save();
         }
 
         List<String> args = new ArrayList<>();
@@ -74,7 +76,7 @@ public class NAdminMain extends NutsApplication {
         LinkedHashSet<String> companions = new LinkedHashSet<>();
         companions.add("net.thevpc.nuts:nuts");
         companions.add("net.thevpc.nuts.toolbox:nadmin");
-        companions.addAll(applicationContext.getWorkspace().getCompanionIds().stream().map(NutsId::getShortName).collect(Collectors.toList()));
+        companions.addAll(applicationContext.getWorkspace().getCompanionIds(applicationContext.getSession()).stream().map(NutsId::getShortName).collect(Collectors.toList()));
         args.addAll(companions);
         applicationContext.getSession().setConfirm(NutsConfirmationMode.YES);
 
@@ -98,17 +100,17 @@ public class NAdminMain extends NutsApplication {
             }
         }
         NutsWorkspace ws = applicationContext.getWorkspace();
-        for (NutsSdkLocation java : ws.sdks().searchSystem("java", applicationContext.getSession())) {
-            ws.sdks().add(java, new NutsAddOptions().setSession(applicationContext.getSession()));
+        for (NutsSdkLocation java : ws.sdks().searchSystem("java")) {
+            ws.sdks().add(java);
         }
-        ws.config().save(applicationContext.getSession());
+        ws.config().save();
 
         List<String> args = new ArrayList<>();
         args.addAll(Arrays.asList("add", "script", "--ignore-unsupported-os", "--embedded"));
         LinkedHashSet<String> companions = new LinkedHashSet<>();
         companions.add("net.thevpc.nuts:nuts");
         companions.add("net.thevpc.nuts.toolbox:nadmin");
-        companions.addAll(applicationContext.getWorkspace().getCompanionIds().stream().map(NutsId::getShortName).collect(Collectors.toList()));
+        companions.addAll(applicationContext.getWorkspace().getCompanionIds(applicationContext.getSession()).stream().map(NutsId::getShortName).collect(Collectors.toList()));
         args.addAll(companions);
         applicationContext.getSession().setConfirm(NutsConfirmationMode.YES);
         run(applicationContext.getSession(), args.toArray(new String[0]));
@@ -119,8 +121,7 @@ public class NAdminMain extends NutsApplication {
         this.applicationContext = applicationContext;
         applicationContext.getWorkspace().extensions().discoverTypes(
                 applicationContext.getAppId(),
-                Thread.currentThread().getContextClassLoader(),
-                applicationContext.getSession());
+                Thread.currentThread().getContextClassLoader());
 
         Boolean autoSave = true;
         NutsCommandLine cmdLine = applicationContext.getCommandLine();
@@ -149,7 +150,7 @@ public class NAdminMain extends NutsApplication {
                     PrintStream out = applicationContext.getSession().err();
                     out.printf("Unexpected %s%n", cmdLine.peek());
                     out.printf("type for more help : nadmin -h%n");
-                    throw new NutsExecutionException(applicationContext.getWorkspace(), "Unexpected " + cmdLine.peek(), 1);
+                    throw new NutsExecutionException(applicationContext.getSession(), "Unexpected " + cmdLine.peek(), 1);
                 }
                 break;
             }
@@ -158,7 +159,7 @@ public class NAdminMain extends NutsApplication {
             PrintStream out = applicationContext.getSession().err();
             out.printf("missing nadmin command%n");
             out.printf("type for more help : nadmin -h%n");
-            throw new NutsExecutionException(applicationContext.getWorkspace(), "missing nadmin command", 1);
+            throw new NutsExecutionException(applicationContext.getSession(), "missing nadmin command", 1);
         }
     }
 

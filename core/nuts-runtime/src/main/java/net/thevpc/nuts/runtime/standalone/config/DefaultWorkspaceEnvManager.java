@@ -1,346 +1,192 @@
 package net.thevpc.nuts.runtime.standalone.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
-import net.thevpc.nuts.runtime.core.common.DefaultObservableMap;
-import net.thevpc.nuts.runtime.core.common.ObservableMap;
-import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
-
-import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultWorkspaceEnvManager implements NutsWorkspaceEnvManager {
 
-    private NutsWorkspace ws;
-    private Map<String, String> options = new LinkedHashMap<>();
-    protected ObservableMap<String, Object> userProperties;
-    private NutsId platform;
-    private NutsId os;
-    private NutsOsFamily osFamily;
-    private NutsId arch;
-    private NutsId osdist;
-    private NutsArchFamily archFamily = NutsArchFamily.getArchFamily();
+    private DefaultWorkspaceEnvManagerModel model;
+    private NutsSession session;
 
-    public DefaultWorkspaceEnvManager(NutsWorkspace ws, NutsWorkspaceOptions options) {
-        this.ws = ws;
-        userProperties = new DefaultObservableMap<>();
-        String[] properties = options.getProperties();
-        if (properties != null) {
-            for (String property : properties) {
-                if (property != null) {
-                    DefaultNutsArgument a = new DefaultNutsArgument(property);
-                    String key = a.getStringKey();
-                    String value = a.getStringValue();
-                    this.options.put(key, value == null ? "" : value);
-                }
-            }
-        }
+    public DefaultWorkspaceEnvManager(DefaultWorkspaceEnvManagerModel model) {
+        this.model = model;
     }
 
     NutsWorkspaceConfigMain getStoreModelMain() {
-        return ((DefaultNutsWorkspaceConfigManager) ws.config()).getStoreModelMain();
+        checkSession();
+        return model.getStoreModelMain();
     }
 
     @Override
     public Map<String, String> getEnvMap() {
-        Map<String, String> p = new LinkedHashMap<>();
-        if (getStoreModelMain().getEnv() != null) {
-            p.putAll(getStoreModelMain().getEnv());
-        }
-        p.putAll(options);
-        return p;
+        checkSession();
+        return model.getEnvMap();
     }
 
     @Override
     public String getOption(String property) {
-        return getOption(property, null);
+        checkSession();
+        return model.getOption(property);
     }
 
     @Override
     public String getEnv(String property) {
-        return getEnv(property, null);
+        checkSession();
+        return model.getOption(property);
     }
 
     @Override
     public Integer getEnvAsInt(String property, Integer defaultValue) {
-        String t = getEnv(property);
-        try {
-            return Integer.parseInt(t);
-        } catch (Exception ex) {
-            return defaultValue;
-        }
+        checkSession();
+        return model.getEnvAsInt(property, defaultValue);
     }
 
     @Override
     public Integer getOptionAsInt(String property, Integer defaultValue) {
-        String t = getOption(property);
-        try {
-            return Integer.parseInt(t);
-        } catch (Exception ex) {
-            return defaultValue;
-        }
+        checkSession();
+        return model.getOptionAsInt(property, defaultValue);
     }
 
     @Override
     public Boolean getEnvAsBoolean(String property, Boolean defaultValue) {
-        String t = getEnv(property);
-        if (t != null) {
-            try {
-                return CoreBooleanUtils.parseBoolean(t, false, false);
-            } catch (Exception ex) {
-                //
-            }
-        }
-        return defaultValue;
+        checkSession();
+        return model.getEnvAsBoolean(property, defaultValue);
     }
 
     @Override
     public Boolean getOptionAsBoolean(String property, Boolean defaultValue) {
-        String t = getOption(property);
-        if (t != null) {
-            try {
-                return CoreBooleanUtils.parseBoolean(t, true, false);
-            } catch (Exception ex) {
-                //
-            }
-        }
-        return defaultValue;
+        checkSession();
+        return model.getOptionAsBoolean(property, defaultValue);
     }
 
     @Override
     public String getOption(String property, String defaultValue) {
-        if (options.containsKey(property)) {
-            return options.get(property);
-        }
-        return defaultValue;
+        checkSession();
+        return model.getOption(property, defaultValue);
     }
 
     @Override
     public String getEnv(String property, String defaultValue) {
-        if (options.containsKey(property)) {
-            return options.get(property);
-        }
-        Map<String, String> env = getStoreModelMain().getEnv();
-        if (env == null) {
-            return defaultValue;
-        }
-        String o = env.get(property);
-        if (CoreStringUtils.isBlank(o)) {
-            return defaultValue;
-        }
-        return o;
+        checkSession();
+        return model.getEnv(property, defaultValue);
     }
 
     @Override
-    public NutsWorkspaceEnvManager setEnv(String property, String value, NutsUpdateOptions options) {
-        Map<String, String> env = getStoreModelMain().getEnv();
-        options = CoreNutsUtils.validate(options, ws);
-        if (CoreStringUtils.isBlank(value)) {
-            if (env != null && env.containsKey(property)) {
-                env.remove(property);
-                NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("env", options.getSession(), ConfigEventType.MAIN);
-            }
-        } else {
-            if (env == null) {
-                env = new LinkedHashMap<>();
-                getStoreModelMain().setEnv(env);
-            }
-            String old = env.get(property);
-            if (!value.equals(old)) {
-                env.put(property, value);
-                NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("env", options.getSession(), ConfigEventType.MAIN);
-            }
-        }
+    public NutsWorkspaceEnvManager setEnv(String property, String value) {
+        checkSession();
+        model.setEnv(property, value, session);
         return this;
     }
 
-    private DefaultNutsWorkspaceCurrentConfig current() {
-        return NutsWorkspaceConfigManagerExt.of(ws.config()).current();
-    }
-
-//    @Override
-//    public NutsOsFamily getOsFamily() {
-//        return current().getOsFamily();
-//    }
-//    @Override
-//    public NutsId getPlatform() {
-//        return current().getPlatform();
-//    }
-//
-//    @Override
-//    public NutsId getOs() {
-//        return current().getOs();
-//    }
-//
-//    @Override
-//    public NutsId getOsDist() {
-//        return current().getOsDist();
-//    }
-//    @Override
-//    public NutsId getArch() {
-//        return current().getArch();
-//    }
-    private static NutsOsFamily getPlatformOsFamily0() {
-        String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
-        if (property.startsWith("linux")) {
-            return NutsOsFamily.LINUX;
-        }
-        if (property.startsWith("win")) {
-            return NutsOsFamily.WINDOWS;
-        }
-        if (property.startsWith("mac")) {
-            return NutsOsFamily.MACOS;
-        }
-        if (property.startsWith("sunos")) {
-            return NutsOsFamily.UNIX;
-        }
-        if (property.startsWith("freebsd")) {
-            return NutsOsFamily.UNIX;
-        }
-        return NutsOsFamily.UNKNOWN;
+    private void checkSession() {
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
     }
 
     @Override
     public NutsId getArch() {
-        if (arch == null) {
-            arch = ws.id().parser().parse(System.getProperty("os.arch"));
-        }
-        return arch;
+//        checkSession();
+        return model.getArch();
     }
 
     @Override
     public NutsArchFamily getArchFamily() {
-        return archFamily;
+//        checkSession();
+        return model.getArchFamily();
     }
 
     @Override
     public NutsOsFamily getOsFamily() {
-        if (osFamily == null) {
-            osFamily = getPlatformOsFamily0();
-        }
-        return osFamily;
+//        checkSession();
+        return model.getOsFamily();
     }
 
     @Override
     public NutsId getOs() {
-        if (os == null) {
-            os = ws.id().parser().parse(CorePlatformUtils.getPlatformOs(ws));
-        }
-        return os;
+//        checkSession();
+        return model.getOs();
     }
 
+    @Override
     public NutsId getPlatform() {
-        if (platform == null) {
-            platform = NutsWorkspaceConfigManagerExt.of(ws.config())
-                    .createSdkId("java", System.getProperty("java.version"));
-        }
-        return platform;
+//        checkSession();
+        return model.getPlatform(session);
     }
 
     public NutsId getOsDist() {
-        if (osdist == null) {
-            String platformOsDist = CorePlatformUtils.getPlatformOsDist(ws);
-            if (platformOsDist == null) {
-                platformOsDist = "default";
-            }
-            osdist = ws.id().parser().parse(platformOsDist);
-        }
-        return osdist;
+//        checkSession();
+        return model.getOsDist();
     }
 
     @Override
     public Map<String, Object> getProperties() {
-        return userProperties;
+        checkSession();
+        return model.getProperties();
     }
 
     @Override
     public Object getProperty(String property, Object defaultValue) {
-        Object v = userProperties.get(property);
-        if (v != null) {
-            return v;
-        }
-        return defaultValue;
+        checkSession();
+        return model.getProperty(property, defaultValue);
     }
 
     @Override
     public Integer getPropertyAsInt(String property, Integer defaultValue) {
-        Object t = getProperty(property, null);
-        try {
-            if (t instanceof Number) {
-                return ((Number) t).intValue();
-            }
-            if (t instanceof CharSequence) {
-                return Integer.parseInt(t.toString());
-            }
-        } catch (Exception ex) {
-            //
-        }
-        return defaultValue;
+        checkSession();
+        return model.getPropertyAsInt(property, defaultValue);
     }
 
     @Override
     public String getPropertyAsString(String property, String defaultValue) {
-        Object t = getProperty(property, null);
-        if (t != null) {
-            return t.toString();
-        }
-        return defaultValue;
+        checkSession();
+        return model.getPropertyAsString(property, defaultValue);
     }
 
     @Override
     public Boolean getPropertyAsBoolean(String property, Boolean defaultValue) {
-        Object t = getProperty(property, null);
-        try {
-            if (t instanceof Boolean) {
-                return ((Boolean) t).booleanValue();
-            }
-            if (t instanceof Number) {
-                return ((Number) t).doubleValue() != 0;
-            }
-            if (t instanceof CharSequence) {
-                return CoreBooleanUtils.parseBoolean(t.toString(), false, false);
-            }
-        } catch (Exception ex) {
-            //
-        }
-        return defaultValue;
+        checkSession();
+        return model.getPropertyAsBoolean(property, defaultValue);
     }
 
     @Override
     public Object getProperty(String property) {
-        return getProperty(property, null);
+        checkSession();
+        return model.getProperty(property);
     }
 
     @Override
     public <T> T getOrCreateProperty(Class<T> property, Supplier<T> supplier) {
-        return getOrCreateProperty(property.getName(), supplier);
+        checkSession();
+        return model.getOrCreateProperty(property, supplier);
     }
 
     @Override
     public <T> T getOrCreateProperty(String property, Supplier<T> supplier) {
-        T o = (T) getProperty(property);
-        if (o != null) {
-            return o;
-        }
-        o = supplier.get();
-        setProperty(property, o);
-        return o;
+        checkSession();
+        return model.getOrCreateProperty(property, supplier);
     }
 
     @Override
     public NutsWorkspaceEnvManager setProperty(String property, Object value) {
-        if (value == null) {
-            userProperties.remove(property);
-        } else {
-            userProperties.put(property, value);
-        }
+        checkSession();
+        model.setProperty(property, value);
         return this;
     }
+
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsWorkspaceEnvManager setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+
+    public DefaultWorkspaceEnvManagerModel getModel() {
+        return model;
+    }
+
 }

@@ -2,12 +2,12 @@ package net.thevpc.nuts.runtime.bundles.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
+import net.thevpc.nuts.runtime.core.filters.id.AbstractIdFilter;
 
-public class NutsInstallStatusIdFilter extends AbstractNutsFilter implements NutsIdFilter {
+public class NutsInstallStatusIdFilter extends AbstractIdFilter {
     private NutsInstallStatusFilter installStatus;
 
-    public NutsInstallStatusIdFilter(NutsWorkspace ws, NutsInstallStatusFilter installStatus) {
+    public NutsInstallStatusIdFilter(NutsSession ws, NutsInstallStatusFilter installStatus) {
         super(ws, NutsFilterOp.CUSTOM);
         this.installStatus = installStatus;
     }
@@ -35,7 +35,7 @@ public class NutsInstallStatusIdFilter extends AbstractNutsFilter implements Nut
     }
 
     @Override
-    public NutsFilter simplify() {
+    public NutsIdFilter simplify() {
         return this;
     }
 

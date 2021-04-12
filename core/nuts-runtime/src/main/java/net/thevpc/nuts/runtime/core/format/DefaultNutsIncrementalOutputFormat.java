@@ -35,6 +35,7 @@ import net.thevpc.nuts.runtime.core.format.tree.DefaultSearchFormatTree;
 import net.thevpc.nuts.runtime.core.format.xml.DefaultSearchFormatXml;
 import net.thevpc.nuts.runtime.core.format.props.DefaultSearchFormatProps;
 import net.thevpc.nuts.NutsIterableFormat;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  *
@@ -48,30 +49,31 @@ public class DefaultNutsIncrementalOutputFormat extends NutsIncrementalOutputFor
 
     @Override
     public NutsIterableFormat getEffectiveFormat() {
+        checkSession();
         NutsContentType outputFormat = getOutputFormat();
         NutsIterableFormat old = super.getFormat();
         if (old == null || old.getOutputFormat() != outputFormat) {
             switch (outputFormat) {
                 case JSON: {
-                    return setFormat(new DefaultSearchFormatJson(getValidSession(), getValidOut(),getDisplayOptions()));
+                    return setFormat(new DefaultSearchFormatJson(getSession(), getValidOut(),getDisplayOptions()));
                 }
                 case XML: {
-                    return setFormat(new DefaultSearchFormatXml(getValidSession(), getValidOut(),getDisplayOptions()));
+                    return setFormat(new DefaultSearchFormatXml(getSession(), getValidOut(),getDisplayOptions()));
                 }
                 case PLAIN: {
-                    return setFormat(new DefaultSearchFormatPlain(getValidSession(), getValidOut(),getDisplayOptions()));
+                    return setFormat(new DefaultSearchFormatPlain(getSession(), getValidOut(),getDisplayOptions()));
                 }
                 case PROPS: {
-                    return setFormat(new DefaultSearchFormatProps(getValidSession(), getValidOut(),getDisplayOptions()));
+                    return setFormat(new DefaultSearchFormatProps(getSession(), getValidOut(),getDisplayOptions()));
                 }
                 case TABLE: {
-                    return setFormat(new DefaultSearchFormatTable(getValidSession(), getValidOut(),getDisplayOptions()));
+                    return setFormat(new DefaultSearchFormatTable(getSession(), getValidOut(),getDisplayOptions()));
                 }
                 case TREE: {
-                    return setFormat(new DefaultSearchFormatTree(getValidSession(), getValidOut(),getDisplayOptions()));
+                    return setFormat(new DefaultSearchFormatTree(getSession(), getValidOut(),getDisplayOptions()));
                 }
                 default: {
-                    throw new NutsUnsupportedArgumentException(getWorkspace(), "Unsupproted " + outputFormat);
+                    throw new NutsUnsupportedArgumentException(getSession(), "Unsupproted " + outputFormat);
                 }
             }
         }

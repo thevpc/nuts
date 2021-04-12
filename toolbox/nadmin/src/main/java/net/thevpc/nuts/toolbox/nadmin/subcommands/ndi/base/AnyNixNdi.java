@@ -191,7 +191,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                                     response = defaultValue;
                                 }
                                 if (response == null) {
-                                    throw new NutsValidationException(ws, "Sorry... but you need to type 'ok', 'why' or 'cancel'");
+                                    throw new NutsValidationException(context.getSession(), "Sorry... but you need to type 'ok', 'why' or 'cancel'");
                                 }
                                 String r = response.toString();
                                 if ("ok".equalsIgnoreCase(r)) {
@@ -205,11 +205,11 @@ public class AnyNixNdi extends BaseSystemNdi {
                                     out.printf("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :%n", factory.styled(getBashrcName(),NutsTextNodeStyle.path()));
                                     out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
                                     out.printf(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)%n", factory.styled(". ~/" + getBashrcName(),NutsTextNodeStyle.path()));
-                                    throw new NutsValidationException(ws, "Try again...'");
+                                    throw new NutsValidationException(context.getSession(), "Try again...'");
                                 } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
-                                    throw new NutsUserCancelException(ws);
+                                    throw new NutsUserCancelException(context.getSession());
                                 } else {
-                                    throw new NutsValidationException(ws, "Sorry... but you need to type 'ok', 'why' or 'cancel'");
+                                    throw new NutsValidationException(context.getSession(), "Sorry... but you need to type 'ok', 'why' or 'cancel'");
                                 }
                             }
                         })

@@ -37,89 +37,89 @@ public class NutsIllegalArgumentException extends NutsException {
     /**
      * Constructs a new NutsIllegalArgumentException exception
      *
-     * @param workspace workspace
+     * @param session workspace
      */
-    public NutsIllegalArgumentException(NutsWorkspace workspace) {
-        super(workspace);
+    public NutsIllegalArgumentException(NutsSession session) {
+        super(session);
     }
 
     /**
      * Constructs a new NutsIllegalArgumentException exception
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      */
-    public NutsIllegalArgumentException(NutsWorkspace workspace, NutsString message) {
-        super(workspace, message);
+    public NutsIllegalArgumentException(NutsSession session, NutsString message) {
+        super(session, message);
     }
 
     /**
      * Constructs a new NutsIllegalArgumentException exception
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      */
-    public NutsIllegalArgumentException(NutsWorkspace workspace, NutsMessage message) {
-        super(workspace, message);
+    public NutsIllegalArgumentException(NutsSession session, NutsMessage message) {
+        super(session, message);
     }
 
     /**
      * Constructs a new NutsIllegalArgumentException exception
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      */
-    public NutsIllegalArgumentException(NutsWorkspace workspace, String message) {
-        super(workspace, message);
+    public NutsIllegalArgumentException(NutsSession session, String message) {
+        super(session, message);
     }
 
     /**
      * Constructs a new NutsIllegalArgumentException exception
      *
-     * @param workspace workspace
-     * @param message message
-     * @param cause cause
-     */
-    public NutsIllegalArgumentException(NutsWorkspace workspace, NutsString message, Throwable cause) {
-        super(workspace, message, cause);
-    }
-
-    /**
-     * Constructs a new NutsIllegalArgumentException exception
-     *
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      * @param cause cause
      */
-    public NutsIllegalArgumentException(NutsWorkspace workspace, NutsMessage message, Throwable cause) {
-        super(workspace, message, cause);
+    public NutsIllegalArgumentException(NutsSession session, NutsString message, Throwable cause) {
+        super(session, message, cause);
     }
 
     /**
      * Constructs a new NutsIllegalArgumentException exception
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      * @param cause cause
      */
-    public NutsIllegalArgumentException(NutsWorkspace workspace, String message, Throwable cause) {
-        super(workspace, message, cause);
+    public NutsIllegalArgumentException(NutsSession session, NutsMessage message, Throwable cause) {
+        super(session, message, cause);
     }
 
     /**
      * Constructs a new NutsIllegalArgumentException exception
      *
-     * @param workspace workspace
+     * @param session workspace
+     * @param message message
      * @param cause cause
      */
-    public NutsIllegalArgumentException(NutsWorkspace workspace, Throwable cause) {
-        super(workspace, cause);
+    public NutsIllegalArgumentException(NutsSession session, String message, Throwable cause) {
+        super(session, message, cause);
     }
 
     /**
      * Constructs a new NutsIllegalArgumentException exception
      *
-     * @param workspace workspace
+     * @param session workspace
+     * @param cause cause
+     */
+    public NutsIllegalArgumentException(NutsSession session, Throwable cause) {
+        super(session, cause);
+    }
+
+    /**
+     * Constructs a new NutsIllegalArgumentException exception
+     *
+     * @param session workspace
      * @param message message
      * @param cause cause
      * @param enableSuppression whether or not suppression is enabled or
@@ -127,7 +127,7 @@ public class NutsIllegalArgumentException extends NutsException {
      * @param writableStackTrace whether or not the stack trace should be
      * writable
      */
-    public NutsIllegalArgumentException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace, message, cause, enableSuppression, writableStackTrace);
+    public NutsIllegalArgumentException(NutsSession session, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(session, message, cause, enableSuppression, writableStackTrace);
     }
 }

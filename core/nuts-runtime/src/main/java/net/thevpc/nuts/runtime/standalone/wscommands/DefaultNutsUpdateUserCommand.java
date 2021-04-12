@@ -3,27 +3,25 @@
  *            Nuts : Network Updatable Things Service
  *                  (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  *
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
@@ -33,6 +31,9 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsUpdateUserCommand;
 
 import java.util.*;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryConfigModel;
+import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigModel;
+import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepositoryConfigModel;
 
 /**
  *
@@ -40,7 +41,6 @@ import java.util.*;
  * @since 0.5.4
  */
 public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand {
-
 
     public DefaultNutsUpdateUserCommand(NutsWorkspace ws) {
         super(ws);
@@ -52,48 +52,51 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
 
     @Override
     public NutsUpdateUserCommand run() {
+        checkSession();
+        NutsWorkspaceSecurityManager sec = ws.security().setSession(session);
         if (!CoreStringUtils.isBlank(getCredentials())) {
-            ws.security().checkAllowed(NutsConstants.Permissions.SET_PASSWORD, "set-user-credentials", session);
-            String currentLogin = ws.security().getCurrentUsername(session);
+            sec.checkAllowed(NutsConstants.Permissions.SET_PASSWORD, "set-user-credentials");
+            String currentLogin = sec.getCurrentUsername();
             if (CoreStringUtils.isBlank(login)) {
                 if (!NutsConstants.Users.ANONYMOUS.equals(currentLogin)) {
                     login = currentLogin;
                 } else {
-                    throw new NutsIllegalArgumentException(ws, "not logged in");
+                    throw new NutsIllegalArgumentException(getSession(), "not logged in");
                 }
             }
-            NutsSession session = getValidWorkspaceSession();
             if (repo != null) {
-                NutsUserConfig u = NutsRepositoryConfigManagerExt.of(repo.config()).getUser(login);
+                NutsRepositoryConfigModel rconf = NutsRepositoryConfigManagerExt.of(repo.config()).getModel();
+                NutsUserConfig u = rconf.getUser(login, getSession());
                 if (u == null) {
-                    throw new NutsIllegalArgumentException(ws, "no such user " + login);
+                    throw new NutsIllegalArgumentException(getSession(), "no such user " + login);
                 }
                 fillNutsUserConfig(u);
 
-                NutsRepositoryConfigManagerExt.of(repo.config()).setUser(u, new NutsUpdateOptions().setSession(session));
+                rconf.setUser(u, session);
 
             } else {
-
-                NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(login, session);
+                DefaultNutsWorkspaceConfigModel wconf = NutsWorkspaceConfigManagerExt.of(ws.config()).getModel();
+                NutsUserConfig u = wconf.getUser(login, getSession());
                 if (u == null) {
-                    throw new NutsIllegalArgumentException(ws, "no such user " + login);
+                    throw new NutsIllegalArgumentException(getSession(), "no such user " + login);
                 }
 
                 fillNutsUserConfig(u);
-                NutsWorkspaceConfigManagerExt.of(ws.config()).setUser(u, new NutsUpdateOptions().setSession(session));
+                wconf.setUser(u, session);
             }
         }
         return this;
     }
 
     protected void fillNutsUserConfig(NutsUserConfig u) {
-        String currentLogin = ws.security().getCurrentUsername(session);
+        NutsWorkspaceSecurityManager wsec = ws.security().setSession(session);
+        String currentLogin = wsec.getCurrentUsername();
         if (!currentLogin.equals(login)) {
-            repo.security().checkAllowed(NutsConstants.Permissions.ADMIN, "set-user-credentials", session);
+            repo.security().setSession(session).checkAllowed(NutsConstants.Permissions.ADMIN, "set-user-credentials");
         }
-        if (!ws.security().isAllowed(NutsConstants.Permissions.ADMIN, session)) {
-            ws.security().checkCredentials(u.getCredentials().toCharArray(),
-                    getOldCredentials(), session);
+        if (!wsec.isAllowed(NutsConstants.Permissions.ADMIN)) {
+            wsec.checkCredentials(u.getCredentials().toCharArray(),
+                    getOldCredentials());
 //
 //            if (CoreStringUtils.isEmpty(password)) {
 //                throw new NutsSecurityException("missing old password");
@@ -104,10 +107,10 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
 //            }
         }
         if (getCredentials() != null) {
-            u.setCredentials(CoreStringUtils.chrToStr(ws.security().createCredentials(getCredentials(), false, CoreStringUtils.strToChr(u.getCredentials()), session)));
+            u.setCredentials(CoreStringUtils.chrToStr(wsec.createCredentials(getCredentials(), false, CoreStringUtils.strToChr(u.getCredentials()))));
         }
         if (getRemoteCredentials() != null) {
-            u.setRemoteCredentials(CoreStringUtils.chrToStr(ws.security().createCredentials(getRemoteCredentials(), true, CoreStringUtils.strToChr(u.getRemoteCredentials()), session)));
+            u.setRemoteCredentials(CoreStringUtils.chrToStr(wsec.createCredentials(getRemoteCredentials(), true, CoreStringUtils.strToChr(u.getRemoteCredentials()))));
         }
 
         if (resetGroups) {
@@ -116,19 +119,17 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
         if (resetPermissions) {
             u.setPermissions(new String[0]);
         }
-        LinkedHashSet<String> g=new LinkedHashSet<>(u.getGroups()==null?new ArrayList<>():Arrays.asList(u.getGroups()));
+        LinkedHashSet<String> g = new LinkedHashSet<>(u.getGroups() == null ? new ArrayList<>() : Arrays.asList(u.getGroups()));
         g.addAll(groups);
         for (String group : rm_groups) {
             g.remove(group);
         }
         u.setGroups(g.toArray(new String[0]));
 
-        LinkedHashSet<String> r=new LinkedHashSet<>(u.getPermissions()==null?new ArrayList<>():Arrays.asList(u.getPermissions()));
+        LinkedHashSet<String> r = new LinkedHashSet<>(u.getPermissions() == null ? new ArrayList<>() : Arrays.asList(u.getPermissions()));
         for (String group : permissions) {
-            if (
-                    NutsConstants.Permissions.ALL.contains(group.toLowerCase())
-                    ||NutsConstants.Permissions.ALL.contains("!"+group.toLowerCase())
-            ) {
+            if (NutsConstants.Permissions.ALL.contains(group.toLowerCase())
+                    || NutsConstants.Permissions.ALL.contains("!" + group.toLowerCase())) {
                 r.add(group);
             }
         }

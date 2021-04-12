@@ -1,8 +1,6 @@
 package net.thevpc.nuts.runtime.core.filters.repository;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
-import net.thevpc.nuts.runtime.core.util.Simplifiable;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 import java.util.ArrayList;
@@ -10,11 +8,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NutsRepositoryFilterOr extends AbstractNutsFilter implements NutsRepositoryFilter, Simplifiable<NutsRepositoryFilter> {
+public class NutsRepositoryFilterOr extends AbstractRepositoryFilter{
 
     private NutsRepositoryFilter[] all;
 
-    public NutsRepositoryFilterOr(NutsWorkspace ws, NutsRepositoryFilter... all) {
+    public NutsRepositoryFilterOr(NutsSession ws, NutsRepositoryFilter... all) {
         super(ws, NutsFilterOp.OR);
         List<NutsRepositoryFilter> valid = new ArrayList<>();
         if (all != null) {

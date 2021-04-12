@@ -80,7 +80,7 @@ public class WgetCommand extends SimpleNshBuiltin {
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
-            throw new NutsExecutionException(context.getWorkspace(), "wget: Missing Files", 2);
+            throw new NutsExecutionException(context.getSession(), "wget: Missing Files", 2);
         }
         for (String file : options.files) {
             download(file, options.outputDocument, context.getExecutionContext());
@@ -93,7 +93,7 @@ public class WgetCommand extends SimpleNshBuiltin {
         try {
             url = new URL(path);
         } catch (MalformedURLException ex) {
-            throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
+            throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
         }
         String urlName = URLUtils.getURLName(url);
         if (!StringUtils.isBlank(output2)) {

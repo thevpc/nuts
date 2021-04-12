@@ -9,7 +9,6 @@ import net.thevpc.nuts.*;
 
 import java.util.Objects;
 
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
@@ -17,12 +16,12 @@ import net.thevpc.nuts.runtime.core.util.Simplifiable;
  *
  * @author thevpc
  */
-public class NutstVersionIdFilter extends AbstractNutsFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> {
+public class NutstVersionIdFilter extends AbstractIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> {
 
     private final NutsVersionFilter filter;
 
-    public NutstVersionIdFilter(NutsVersionFilter filter) {
-        super(filter.getWorkspace(), NutsFilterOp.CONVERT);
+    public NutstVersionIdFilter(NutsVersionFilter filter, NutsSession session) {
+        super(session, NutsFilterOp.CONVERT);
         this.filter = filter;
     }
 
@@ -73,7 +72,7 @@ public class NutstVersionIdFilter extends AbstractNutsFilter implements NutsIdFi
         if (f2 == filter) {
             return this;
         }
-        return new NutstVersionIdFilter(f2);
+        return new NutstVersionIdFilter(f2,getSession());
     }
 
     @Override

@@ -27,7 +27,6 @@
 package net.thevpc.nuts.runtime.core.filters.descriptor;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.filters.id.NutsScriptAwareIdFilter;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
@@ -37,12 +36,12 @@ import java.util.Objects;
  *
  * @author thevpc
  */
-public class NutsDescriptorFilterById extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
+public class NutsDescriptorFilterById extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
 
     private NutsIdFilter id;
 
-    public NutsDescriptorFilterById(NutsIdFilter id) {
-        super(id.getWorkspace(), NutsFilterOp.CONVERT);
+    public NutsDescriptorFilterById(NutsIdFilter id,NutsSession session) {
+        super(session, NutsFilterOp.CONVERT);
         this.id = id;
     }
 
@@ -62,7 +61,7 @@ public class NutsDescriptorFilterById extends AbstractNutsFilter implements Nuts
                 if (id2 == null) {
                     return null;
                 }
-                return new NutsDescriptorFilterById(id2);
+                return new NutsDescriptorFilterById(id2,getSession());
             }
         }
         return this;

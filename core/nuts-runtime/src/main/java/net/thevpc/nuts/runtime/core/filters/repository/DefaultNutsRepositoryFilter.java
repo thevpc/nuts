@@ -14,14 +14,15 @@ import net.thevpc.nuts.runtime.core.util.Simplifiable;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
 
-public class DefaultNutsRepositoryFilter extends AbstractNutsFilter implements NutsRepositoryFilter, Simplifiable<NutsRepositoryFilter> {
+public class DefaultNutsRepositoryFilter extends AbstractRepositoryFilter{
 
     private final Set<String> exactRepos;
     private final Set<Pattern> wildcardRepos;
 
-    public DefaultNutsRepositoryFilter(NutsWorkspace ws,Collection<String> exactRepos) {
+    public DefaultNutsRepositoryFilter(NutsSession ws,Collection<String> exactRepos) {
         super(ws, NutsFilterOp.CUSTOM);
         this.exactRepos = new HashSet<>();
         this.wildcardRepos = new HashSet<>();

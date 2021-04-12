@@ -6,6 +6,7 @@ package net.thevpc.nuts;
 public interface NutsTextNodeCode extends NutsTextNode{
     /**
      * return a parsed instance of this code
+     * @param  session session
      * @return return
      */
     NutsTextNode parse(NutsSession session);

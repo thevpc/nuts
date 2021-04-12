@@ -47,6 +47,7 @@ import net.thevpc.common.io.IOUtils;
 import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.*;
+import net.thevpc.nuts.NutsSession;
 
 //        import org.apache.tomcat.util.http.fileupload.FileUploadBase.FileUploadIOException;
 //        import org.apache.tomcat.util.http.fileupload.util.Closeable;
@@ -297,16 +298,17 @@ public class MultipartStream2 {
      * @param bufSize The size of the buffer to be used, in bytes.
      * @param pNotifier The notifier, which is used for calling the progress
      * listener, if any.
+     * @param session session
      * @throws IllegalArgumentException If the buffer size is too small
      * @since 1.3.1
      */
     public MultipartStream2(InputStream input,
                             byte[] boundary,
                             int bufSize,
-                            ProgressNotifier pNotifier, NutsWorkspace ws) {
+                            ProgressNotifier pNotifier, NutsSession session) {
 
         if (boundary == null) {
-            throw new NutsIllegalArgumentException(ws, "boundary may not be null");
+            throw new NutsIllegalArgumentException(session, "boundary may not be null");
         }
         // We prepend CR/LF to the boundary to chop trailing CR/LF from
         // body-data tokens.
@@ -347,8 +349,8 @@ public class MultipartStream2 {
      */
     MultipartStream2(InputStream input,
             byte[] boundary,
-            ProgressNotifier pNotifier,NutsWorkspace ws) {
-        this(input, boundary, DEFAULT_BUFSIZE, pNotifier,ws);
+            ProgressNotifier pNotifier,NutsSession session) {
+        this(input, boundary, DEFAULT_BUFSIZE, pNotifier,session);
     }
 
     // --------------------------------------------------------- Public methods
@@ -569,7 +571,7 @@ public class MultipartStream2 {
      * Arbitrary large amounts of data can be processed by this method using a
      * constant size buffer. (see {@link
      * #MultipartStream2(InputStream, byte[], int,
-     * MultipartStream2.ProgressNotifier,NutsWorkspace) constructor}).
+     * MultipartStream2.ProgressNotifier,NutsSession) constructor}).
      *
      * @param output The <code>Stream</code> to write data into. May be null, in
      * which case this method is equivalent to {@link #discardBodyData()}.

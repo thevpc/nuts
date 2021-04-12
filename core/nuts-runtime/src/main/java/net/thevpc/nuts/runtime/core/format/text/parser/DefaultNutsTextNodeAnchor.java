@@ -27,9 +27,9 @@
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextNodeAnchor;
 import net.thevpc.nuts.NutsTextNodeType;
-import net.thevpc.nuts.NutsWorkspace;
 
 /**
  * Created by vpc on 5/23/17.
@@ -37,7 +37,7 @@ import net.thevpc.nuts.NutsWorkspace;
 public class DefaultNutsTextNodeAnchor extends NutsTextNodeSpecialBase implements NutsTextNodeAnchor {
     private String value;
 
-    public DefaultNutsTextNodeAnchor(NutsWorkspace ws,String start, String separator, String end, String value) {
+    public DefaultNutsTextNodeAnchor(NutsSession ws,String start, String separator, String end, String value) {
         super(ws,start, "anchor", separator, end);
         this.value = value;
     }

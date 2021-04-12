@@ -118,7 +118,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getWorkspace(), e.type().name());
+                throw new NutsUnsupportedArgumentException(getSession(), e.type().name());
             }
         }
     }
@@ -179,6 +179,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
 
     @Override
     public void print(PrintStream w) {
+        checkSession();
         PrintStream out = getValidPrintStream(w);
         Map<Object, Object> mm;
         Map model = buildModel();
@@ -306,7 +307,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
 
     private NutsString stringValue(Object o) {
         if (escapeText) {
-            return CoreCommonUtils.stringValueFormatted(o, escapeText, getValidSession());
+            return CoreCommonUtils.stringValueFormatted(o, escapeText, getSession());
         } else {
             return getWorkspace().formats().text().plain(String.valueOf(o));
         }

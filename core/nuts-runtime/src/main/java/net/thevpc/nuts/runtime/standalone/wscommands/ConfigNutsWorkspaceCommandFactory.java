@@ -15,15 +15,26 @@ import java.util.logging.Level;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.config.ConfigEventType;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 
-    private final NutsLogger LOG;
+    private NutsLogger LOG;
     private NutsWorkspace ws;
 
     public ConfigNutsWorkspaceCommandFactory(NutsWorkspace ws) {
         this.ws = ws;
-        LOG = ws.log().of(ConfigNutsWorkspaceCommandFactory.class);
+    }
+
+     protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
+    }
+
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = this.ws.log().setSession(session).of(ConfigNutsWorkspaceCommandFactory.class);
+        }
+        return LOG;
     }
 
     @Override
@@ -45,24 +56,28 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
         return Integer.MAX_VALUE;
     }
 
-    public void uninstallCommand(String name, NutsRemoveOptions options) {
-        options = CoreNutsUtils.validate(options, ws);
+    public void uninstallCommand(String name, NutsSession session) {
+        checkSession(session);
+//        options = CoreNutsUtils.validate(options, ws);
         Path file = getStoreLocation().resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (Files.exists(file)) {
             try {
                 Files.delete(file);
-                NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), ConfigEventType.MAIN);
+                NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().fireConfigurationChanged("command", session, ConfigEventType.MAIN);
             } catch (IOException ex) {
-                throw new NutsIOException(ws,ex);
+                throw new NutsIOException(session,ex);
             }
         }
     }
 
-    public void installCommand(NutsCommandAliasConfig command, NutsAddOptions options) {
-        options = CoreNutsUtils.validate(options, ws);
+    protected void checkSession(NutsSession session) {
+        NutsWorkspaceUtils.checkSession(ws, session);
+    }
+
+    public void installCommand(NutsCommandAliasConfig command, NutsSession session) {
         Path path = getStoreLocation().resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
-        ws.formats().element().setContentType(NutsContentType.JSON).setValue(command).setSession(options.getSession()).print(path);
-        NutsWorkspaceConfigManagerExt.of(ws.config()).fireConfigurationChanged("command", options.getSession(), ConfigEventType.MAIN);
+        ws.formats().element().setContentType(NutsContentType.JSON).setValue(command).setSession(session).print(path);
+        NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().fireConfigurationChanged("command", session, ConfigEventType.MAIN);
     }
 
     @Override
@@ -88,10 +103,11 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     public List<NutsCommandAliasConfig> findCommands(Predicate<NutsCommandAliasConfig> filter, NutsSession session) {
+        checkSession(session);
         List<NutsCommandAliasConfig> all = new ArrayList<>();
         try {
             if (!Files.isDirectory(getStoreLocation())) {
-                LOG.with().session(session).level(Level.SEVERE).log("Unable to locate commands. Invalid store locate {0}", getStoreLocation());
+                _LOGOP(session).level(Level.SEVERE).log("Unable to locate commands. Invalid store locate {0}", getStoreLocation());
                 return all;
             }
             Files.list(getStoreLocation()).forEach(file -> {
@@ -101,7 +117,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
                     try {
                         c = ws.formats().element().setContentType(NutsContentType.JSON).parse(file, NutsCommandAliasConfig.class);
                     } catch (Exception ex) {
-                        LOG.with().session(session).level(Level.FINE).error(ex).log("unable to parse {0}", file);
+                        _LOGOP(session).level(Level.FINE).error(ex).log("unable to parse {0}", file);
                         //
                     }
                     if (c != null) {
@@ -113,7 +129,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
                 }
             });
         } catch (IOException ex) {
-            throw new NutsIOException(ws,ex);
+            throw new NutsIOException(session,ex);
         }
         return all;
     }

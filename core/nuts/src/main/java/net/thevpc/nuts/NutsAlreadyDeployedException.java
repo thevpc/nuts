@@ -38,45 +38,45 @@ public class NutsAlreadyDeployedException extends NutsInstallationException {
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id nuts id
      */
-    public NutsAlreadyDeployedException(NutsWorkspace workspace, NutsId id) {
-        this(workspace, id == null ? null : id.toString());
+    public NutsAlreadyDeployedException(NutsSession session, NutsId id) {
+        this(session, id == null ? null : id.toString());
     }
 
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id nuts id
      */
-    public NutsAlreadyDeployedException(NutsWorkspace workspace, String id) {
-        this(workspace, id, null, null);
+    public NutsAlreadyDeployedException(NutsSession session, String id) {
+        this(session, id, null, null);
     }
 
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id nuts id
      * @param msg message
      * @param ex exception
      */
-    public NutsAlreadyDeployedException(NutsWorkspace workspace, NutsId id, String msg, Exception ex) {
-        this(workspace, id == null ? null : id.toString(), msg, ex);
+    public NutsAlreadyDeployedException(NutsSession session, NutsId id, String msg, Exception ex) {
+        this(session, id == null ? null : id.toString(), msg, ex);
     }
 
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id nuts id
      * @param msg message
      * @param cause cuse
      */
-    public NutsAlreadyDeployedException(NutsWorkspace workspace, String id, String msg, Exception cause) {
-        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "already deployed " + (id == null ? "<null>" : id) : msg, cause);
+    public NutsAlreadyDeployedException(NutsSession session, String id, String msg, Exception cause) {
+        super(session, id, PrivateNutsUtils.isBlank(msg) ? "already deployed " + (id == null ? "<null>" : id) : msg, cause);
     }
 
 }

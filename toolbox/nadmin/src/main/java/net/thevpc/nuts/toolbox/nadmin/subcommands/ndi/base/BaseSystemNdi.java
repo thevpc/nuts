@@ -57,7 +57,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public WorkspaceAndApiVersion persistConfig(NutsWorkspaceBootConfig bootConfig, String apiVersion, String preferredName, NutsSession session) {
         NutsWorkspace ws = context.getWorkspace();
         if (session == null) {
-            throw new NutsIllegalArgumentException(ws, "missing session");
+            throw new NutsIllegalArgumentException(session, "missing session");
         }
         if (apiVersion == null) {
             if (bootConfig == null) {
@@ -79,7 +79,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     throw new UncheckedIOException(e);
                 }
                 if (_latestVersion == null) {
-                    throw new NutsIllegalArgumentException(context.getWorkspace(), "missing nuts-api version to link to");
+                    throw new NutsIllegalArgumentException(session, "missing nuts-api version to link to");
                 }
                 apiVersion = _latestVersion.toString();
             }
@@ -130,7 +130,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             for (String id : idsToInstall) {
                 NutsId nid = ws.id().parser().parse(id);
                 if (nid == null) {
-                    throw new NutsExecutionException(ws, "unable to create script for " + id + " : invalid id", 100);
+                    throw new NutsExecutionException(context.getSession(), "unable to create script for " + id + " : invalid id", 100);
                 }
                 if (!nid.getVersion().isBlank()) {
                     includeEnv = true;
@@ -168,7 +168,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                             )
                     );
                 } catch (UncheckedIOException e) {
-                    throw new NutsExecutionException(ws, "unable to add script for " + id + " : " + e.toString(), e);
+                    throw new NutsExecutionException(context.getSession(), "unable to add script for " + id + " : " + e.toString(), e);
                 }
             }
             if (!bootAlreadyProcessed && !nonNutsIds.isEmpty()) {
@@ -181,7 +181,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 try {
                     NutsId nid = ws.id().parser().parse(id);
                     if (nid == null) {
-                        throw new NutsExecutionException(ws, "unable to create script for " + id + " : invalid id", 100);
+                        throw new NutsExecutionException(context.getSession(), "unable to create script for " + id + " : invalid id", 100);
                     }
                     result.addAll(
                             createNutsScript(
@@ -197,7 +197,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                             )
                     );
                 } catch (UncheckedIOException e) {
-                    throw new NutsExecutionException(ws, "unable to add script for " + id + " : " + e.toString(), e);
+                    throw new NutsExecutionException(context.getSession(), "unable to add script for " + id + " : " + e.toString(), e);
                 }
             }
             configurePath(context.getSession(), persistentConfig);
@@ -303,9 +303,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public void addNutsWorkspaceScript(String preferredScriptName, String switchWorkspaceLocation, String apiVersion) {
         NutsWorkspaceBootConfig bootconfig = null;
         if (switchWorkspaceLocation != null) {
-            bootconfig = context.getWorkspace().config().loadBootConfig(switchWorkspaceLocation, false, true, context.getSession());
+            bootconfig = context.getWorkspace().config().loadBootConfig(switchWorkspaceLocation, false, true);
             if (bootconfig == null) {
-                throw new NutsIllegalArgumentException(context.getWorkspace(), "invalid workspace: " + switchWorkspaceLocation);
+                throw new NutsIllegalArgumentException(context.getSession(), "invalid workspace: " + switchWorkspaceLocation);
             }
         }
         WorkspaceAndApiVersion v = persistConfig(bootconfig, apiVersion, preferredScriptName, context.getSession());
@@ -318,9 +318,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public void switchWorkspace(String switchWorkspaceLocation, String apiVersion) {
         NutsWorkspaceBootConfig bootconfig = null;
         if (switchWorkspaceLocation != null) {
-            bootconfig = context.getWorkspace().config().loadBootConfig(switchWorkspaceLocation, false, true, context.getSession());
+            bootconfig = context.getWorkspace().config().loadBootConfig(switchWorkspaceLocation, false, true);
             if (bootconfig == null) {
-                throw new NutsIllegalArgumentException(context.getWorkspace(), "invalid workspace: " + switchWorkspaceLocation);
+                throw new NutsIllegalArgumentException(context.getSession(), "invalid workspace: " + switchWorkspaceLocation);
             }
         }
         WorkspaceAndApiVersion v = persistConfig(bootconfig, apiVersion, null, context.getSession());

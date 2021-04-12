@@ -79,4 +79,8 @@ public interface NutsFormatManager {
 
     NutsTextManager text();
 
+
+    NutsSession getSession();
+
+    NutsFormatManager setSession(NutsSession session);
 }

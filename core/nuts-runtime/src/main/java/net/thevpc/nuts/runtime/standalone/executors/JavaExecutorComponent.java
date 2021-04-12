@@ -351,7 +351,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             DefaultNutsClassLoader classLoader = null;
             Throwable th = null;
             try {
-                classLoader = ((DefaultNutsWorkspaceExtensionManager) getSession().getWorkspace().extensions()).getNutsURLClassLoader(
+                classLoader = ((DefaultNutsWorkspaceExtensionManager) getSession().getWorkspace().extensions()).getModel().getNutsURLClassLoader(
                         def.getId().toString(),
                         null//getSession().getWorkspace().config().getBootClassLoader()
                 );
@@ -372,11 +372,11 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             }
             if (th != null) {
                 if (!(th instanceof NutsExecutionException)) {
-                    throw new NutsExecutionException(getSession().getWorkspace(), "error executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
+                    throw new NutsExecutionException(getSession(), "error executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
                 }
                 NutsExecutionException nex = (NutsExecutionException) th;
                 if (nex.getExitCode() != 0) {
-                    throw new NutsExecutionException(getSession().getWorkspace(), "error executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
+                    throw new NutsExecutionException(getSession(), "error executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
                 }
             }
             return 0;
@@ -487,7 +487,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 }
             }
             String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
-            NutsWorkspaceUtils.of(executionContext.getWorkspace()).execAndWait(def,
+            NutsWorkspaceUtils.of(executionContext.getTraceSession()).execAndWait(def,
                     executionContext.getTraceSession(),
                     execSession,
                     executionContext.getExecutorProperties(),
@@ -521,7 +521,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 }
             }
             String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
-            return NutsWorkspaceUtils.of(executionContext.getWorkspace()).execAndWait(def,
+            return NutsWorkspaceUtils.of(executionContext.getTraceSession()).execAndWait(def,
                     executionContext.getTraceSession(),
                     execSession,
                     executionContext.getExecutorProperties(),

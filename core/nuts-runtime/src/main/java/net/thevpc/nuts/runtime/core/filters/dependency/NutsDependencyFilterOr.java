@@ -1,18 +1,17 @@
 package net.thevpc.nuts.runtime.core.filters.dependency;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class NutsDependencyFilterOr extends AbstractNutsFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
+public class NutsDependencyFilterOr extends AbstractDependencyFilter{
 
     private final NutsDependencyFilter[] all;
 
-    public NutsDependencyFilterOr(NutsWorkspace ws, NutsDependencyFilter... all) {
+    public NutsDependencyFilterOr(NutsSession ws, NutsDependencyFilter... all) {
         super(ws,NutsFilterOp.OR);
         this.all = all;
     }

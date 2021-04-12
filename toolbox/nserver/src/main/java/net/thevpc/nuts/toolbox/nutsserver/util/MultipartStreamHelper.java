@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.Iterator;
+import net.thevpc.nuts.NutsSession;
 
 /**
  * Created by vpc on 1/23/17.
@@ -44,18 +45,18 @@ import java.util.Iterator;
 public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
 
     private MultipartStream2 stream;
-    private NutsWorkspace ws;
+    private NutsSession session;
 
     public MultipartStreamHelper(InputStream input,
-            String contentType,NutsWorkspace ws) {
-        this.ws=ws;
+            String contentType,NutsSession session) {
+        this.session=session;
         stream = new MultipartStream2(
-                input, resolveBoundaryFromContentType(contentType,ws), MultipartStream2.DEFAULT_BUFSIZE,
-                null,ws
+                input, resolveBoundaryFromContentType(contentType,session), MultipartStream2.DEFAULT_BUFSIZE,
+                null,session
         );
     }
 
-    private static byte[] resolveBoundaryFromContentType(String contentType,NutsWorkspace ws) {
+    private static byte[] resolveBoundaryFromContentType(String contentType,NutsSession session) {
         //multipart/form-data; boundary=1597f5e92b6
         for (String s : contentType.split(";")) {
             s = s.trim();
@@ -63,7 +64,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                 return s.substring("boundary=".length()).getBytes();
             }
         }
-        throw new NutsIllegalArgumentException(ws, "invalid boundary");
+        throw new NutsIllegalArgumentException(session, "invalid boundary");
     }
 
     public Iterator<ItemStreamInfo> iterator() {
@@ -101,7 +102,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                                 }
                                 return itemInputStream.read();
                             }
-                        },ws
+                        },session
                         );
                     }
                 }
@@ -127,7 +128,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
             } catch (RuntimeException e) {
                 throw e;
             } catch (Exception e) {
-                throw new NutsException(ws, e);
+                throw new NutsException(session, e);
             }
         }
 

@@ -198,7 +198,7 @@ public class DerbyService {
         try {
             Files.createDirectories(derbyDataHomeRoot);
         } catch (IOException ex) {
-            throw new NutsExecutionException(ws, 1);
+            throw new NutsExecutionException(appContext.getSession(), 1);
         }
         Path derbyBinHome = Paths.get(ws.locations().getStoreLocation(appContext.getAppId(), NutsStoreLocation.APPS)).resolve(currentDerbyVersion);
         Path derbyLibHome = derbyBinHome.resolve("lib");
@@ -214,7 +214,7 @@ public class DerbyService {
                         .replace("${{DB_PATH}}", derbyDataHomeRoot.toString());
                 Files.write(policy, permissions.getBytes());
             } catch (IOException ex) {
-                throw new NutsExecutionException(ws, 1);
+                throw new NutsExecutionException(appContext.getSession(), 1);
             }
         }
         //use named jar because derby does test upon jar names at runtime (what a shame !!!)

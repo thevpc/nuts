@@ -50,27 +50,30 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
     }
 
     @Override
-    public void initialize(NutsSession session) {
+    public void initializeWorkspace(NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) ws.config();
         Map<String,String> defaults=new HashMap<>();
         defaults.put("maven-local", null);
         defaults.put("maven-central", null);
         defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
-        NutsRepositorySelector[] br = rm.resolveBootRepositoriesList().resolveSelectors(defaults);
+        NutsRepositorySelector[] br = rm.getModel().resolveBootRepositoriesList().resolveSelectors(defaults);
+            NutsRepositoryManager repos = ws.repos().setSession(session);
         for (NutsRepositorySelector s : br) {
-            ws.repos().addRepository(s.toString(),session);
+            repos.addRepository(s.toString());
         }
+        NutsWorkspaceSecurityManager sec = session.getWorkspace().security().setSession(session);
 
         //has read rights
-        session.getWorkspace().security().addUser("guest", session).setCredentials("user".toCharArray()).addPermissions(
+        sec.addUser("guest").setCredentials("user".toCharArray()).addPermissions(
                 NutsConstants.Permissions.FETCH_DESC,
                 NutsConstants.Permissions.FETCH_CONTENT,
                 NutsConstants.Permissions.DEPLOY
         ).run();
 
         //has write rights
-        session.getWorkspace().security().addUser("contributor", session).setCredentials("user".toCharArray()).addPermissions(
+        sec = session.getWorkspace().security().setSession(session);
+        sec.addUser("contributor").setCredentials("user".toCharArray()).addPermissions(
                 NutsConstants.Permissions.FETCH_DESC,
                 NutsConstants.Permissions.FETCH_CONTENT,
                 NutsConstants.Permissions.DEPLOY,

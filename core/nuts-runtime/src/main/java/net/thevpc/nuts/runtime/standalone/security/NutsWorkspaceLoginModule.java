@@ -39,6 +39,8 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import java.io.IOException;
 import java.util.Map;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class NutsWorkspaceLoginModule implements LoginModule {
 
@@ -97,12 +99,16 @@ public class NutsWorkspaceLoginModule implements LoginModule {
                 this.login = name;
                 return true;
             }
+            NutsSession defaultSession = NutsWorkspaceUtils.defaultSession(workspace);
 
-            NutsUserConfig registeredUser = NutsWorkspaceConfigManagerExt.of(workspace.config()).getUser(name, workspace.createSession());
+            NutsUserConfig registeredUser = NutsWorkspaceConfigManagerExt.of(workspace.config())
+                    .getModel()
+                    .getUser(name, defaultSession);
             if (registeredUser != null) {
                 try {
-                    workspace.security().checkCredentials(registeredUser.getCredentials().toCharArray(),
-                            password, workspace.createSession());
+                    workspace.security()
+                            .setSession(defaultSession)
+                            .checkCredentials(registeredUser.getCredentials().toCharArray(),password);
                     this.login = name;
                     return true;
                 } catch (Exception ex) {

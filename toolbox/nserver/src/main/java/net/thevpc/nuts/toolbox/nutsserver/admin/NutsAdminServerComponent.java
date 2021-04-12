@@ -51,12 +51,12 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         return (c == null || c instanceof AdminServerConfig) ? DEFAULT_SUPPORT : NO_SUPPORT;
     }
 
-    public NutsServer start(NutsWorkspace invokerWorkspace, ServerConfig config) {
+    public NutsServer start(NutsSession invokerWorkspace, ServerConfig config) {
         AdminServerConfig httpConfig = (AdminServerConfig) config;
         if (invokerWorkspace == null) {
             throw new NutsIllegalArgumentException(invokerWorkspace, "missing workspace");
         }
-        NutsSession session = invokerWorkspace.createSession();
+        NutsSession session = invokerWorkspace;
         String serverId = httpConfig.getServerId();
         InetAddress address = httpConfig.getAddress();
         int port = httpConfig.getPort();
@@ -92,8 +92,8 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         PrintStream out = session.out();
         NutsTextManager factory = session.getWorkspace().formats().text();
         out.printf("Nuts Admin Service '%s' running %s at %s\n", serverId, factory.styled("telnet nsh",NutsTextNodeStyle.primary(1)), inetSocketAddress);
-        out.printf("Serving workspace : %s\n", invokerWorkspace.locations().getWorkspaceLocation());
-        AdminServerRunnable myNutsServer = new AdminServerRunnable(serverId, port, backlog, address, executor, invokerWorkspace, session);
+        out.printf("Serving workspace : %s\n", invokerWorkspace.getWorkspace().locations().getWorkspaceLocation());
+        AdminServerRunnable myNutsServer = new AdminServerRunnable(serverId, port, backlog, address, executor, invokerWorkspace.getWorkspace(), session);
 
         executor.execute(myNutsServer);
         return myNutsServer;

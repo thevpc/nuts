@@ -46,13 +46,15 @@ public class DefaultNutsId implements NutsId {
     private final NutsVersion version;
     private final String properties;
     private transient NutsWorkspace ws;
+    private transient NutsSession session;
 
-    public DefaultNutsId(String namespace, String groupId, String artifactId, String version, Map<String, String> properties,NutsWorkspace ws) {
-        this(namespace, groupId, artifactId, ws.version().parser().parse(version), properties,ws);
+    public DefaultNutsId(String namespace, String groupId, String artifactId, String version, Map<String, String> properties,NutsSession session) {
+        this(namespace, groupId, artifactId, session.getWorkspace().version().parser().parse(version), properties,session);
     }
 
-    protected DefaultNutsId(String namespace, String groupId, String artifactId, NutsVersion version, Map<String, String> properties,NutsWorkspace ws) {
-        this.ws = ws;
+    protected DefaultNutsId(String namespace, String groupId, String artifactId, NutsVersion version, Map<String, String> properties,NutsSession session) {
+        this.ws = session.getWorkspace();
+        this.session = session;
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
@@ -60,8 +62,9 @@ public class DefaultNutsId implements NutsId {
         this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
     }
 
-    protected DefaultNutsId(String namespace, String groupId, String artifactId, NutsVersion version, String properties,NutsWorkspace ws) {
-        this.ws = ws;
+    protected DefaultNutsId(String namespace, String groupId, String artifactId, NutsVersion version, String properties,NutsSession session) {
+        this.ws = session.getWorkspace();
+        this.session = session;
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
@@ -69,12 +72,13 @@ public class DefaultNutsId implements NutsId {
         this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
     }
 
-    public DefaultNutsId(String groupId, String artifactId, String version,NutsWorkspace ws) {
-        this(null, groupId, artifactId, version, (String) null,ws);
+    public DefaultNutsId(String groupId, String artifactId, String version,NutsSession session) {
+        this(null, groupId, artifactId, version, (String) null,session);
     }
 
-    public DefaultNutsId(String namespace, String groupId, String artifactId, String version, String properties,NutsWorkspace ws) {
-        this.ws = ws;
+    public DefaultNutsId(String namespace, String groupId, String artifactId, String version, String properties,NutsSession session) {
+        this.ws = session.getWorkspace();
+        this.session = session;
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
@@ -266,12 +270,12 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsId getShortNameId() {
-        return new DefaultNutsId(null, groupId, artifactId, (NutsVersion) null, "",ws);
+        return new DefaultNutsId(null, groupId, artifactId, (NutsVersion) null, "",session);
     }
 
     @Override
     public NutsId getLongNameId() {
-        return new DefaultNutsId(null, groupId, artifactId, version, "",ws);
+        return new DefaultNutsId(null, groupId, artifactId, version, "",session);
     }
 
     @Override
@@ -394,7 +398,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsIdBuilder builder() {
-        return new DefaultNutsIdBuilder(this,ws);
+        return new DefaultNutsIdBuilder(this,session);
     }
 
     @Override

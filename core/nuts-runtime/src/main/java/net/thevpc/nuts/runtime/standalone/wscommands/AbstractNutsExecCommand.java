@@ -256,6 +256,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public String getOutputString() {
+        checkSession();
         if (!executed) {
             run();
         }
@@ -263,19 +264,21 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         if (o instanceof SPrintStream) {
             return o.toString();
         }
-        throw new NutsIllegalArgumentException(ws, "no buffer was configured; should call grabOutputString");
+        throw new NutsIllegalArgumentException(getSession(), "no buffer was configured; should call grabOutputString");
     }
 
     public String getOutputString0() {
+        checkSession();
         PrintStream o = getOut();
         if (o instanceof SPrintStream) {
             return o.toString();
         }
-        throw new NutsIllegalArgumentException(ws, "no buffer was configured; should call grabOutputString");
+        throw new NutsIllegalArgumentException(getSession(), "no buffer was configured; should call grabOutputString");
     }
 
     @Override
     public String getErrorString() {
+        checkSession();
         if (!executed) {
             run();
         }
@@ -286,7 +289,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         if (o instanceof SPrintStream) {
             return o.toString();
         }
-        throw new NutsIllegalArgumentException(ws, "no buffer was configured; should call grabErrorString");
+        throw new NutsIllegalArgumentException(getSession(), "no buffer was configured; should call grabErrorString");
     }
 
 //    @Override
@@ -295,7 +298,8 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 //    }
     @Override
     public NutsExecCommand setOut(PrintStream out) {
-        this.out = (out == null ? null : ws.io().createPrintStream(out, NutsTerminalMode.FORMATTED, session));
+        checkSession();
+        this.out = (out == null ? null : ws.io().setSession(session).createPrintStream(out, NutsTerminalMode.FORMATTED));
         return this;
     }
 
@@ -305,7 +309,8 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 //    }
     @Override
     public NutsExecCommand setErr(PrintStream err) {
-        this.err = (err == null ? null : ws.io().createPrintStream(err, NutsTerminalMode.FORMATTED, session));
+        checkSession();
+        this.err = (err == null ? null : ws.io().setSession(session).createPrintStream(err, NutsTerminalMode.FORMATTED));
         return this;
     }
 
@@ -727,6 +732,5 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         this.redirectInpuFile = redirectInpuFile;
         return this;
     }
-    
 
 }

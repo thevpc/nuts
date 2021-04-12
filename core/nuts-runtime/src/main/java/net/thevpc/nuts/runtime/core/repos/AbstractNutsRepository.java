@@ -34,6 +34,10 @@ import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.nio.file.Paths;
 import java.util.*;
+import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepoConfigManager;
+import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepositoryEnvModel;
+import net.thevpc.nuts.runtime.standalone.security.DefaultNutsRepositorySecurityManager;
+import net.thevpc.nuts.runtime.standalone.security.DefaultNutsRepositorySecurityModel;
 
 /**
  * Created by vpc on 1/18/17.
@@ -46,20 +50,22 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     protected Map<String, String> extensions = new HashMap<>();
     protected NutsRepository parentRepository;
     protected NutsWorkspace workspace;
-    protected NutsRepositorySecurityManager securityManager;
-    protected NutsRepositoryConfigManager configManager;
+    protected DefaultNutsRepositorySecurityModel securityModel;
+    protected NutsRepositoryConfigModel configModel;
     protected ObservableMap<String, Object> userProperties;
     protected boolean enabled = true;
-    protected DefaultNutsRepositoryEnvManager env;
+    protected DefaultNutsRepositoryEnvModel envModel;
+    protected NutsSession initSession;
 
     public AbstractNutsRepository() {
         userProperties = new DefaultObservableMap<>();
-        env=new DefaultNutsRepositoryEnvManager(this);
+        envModel=new DefaultNutsRepositoryEnvModel(this);
+        securityModel=new DefaultNutsRepositorySecurityModel(this);
     }
 
     @Override
     public NutsRepositoryEnvManager env() {
-        return env;
+        return new DefaultNutsRepositoryEnvManager(envModel);
     }
 
     @Override
@@ -69,12 +75,12 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
 
     @Override
     public String getUuid() {
-        return config().getUuid();
+        return configModel.getUuid();
     }
 
     @Override
     public String getName() {
-        return config().getName();
+        return configModel.getName();
     }
 
     @Override
@@ -89,24 +95,26 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
 
     @Override
     public NutsRepositoryConfigManager config() {
-        return configManager;
+        return new DefaultNutsRepoConfigManager(configModel);
     }
 
     @Override
     public NutsRepositorySecurityManager security() {
-        return securityManager;
+        return new DefaultNutsRepositorySecurityManager(securityModel);
     }
 
     @Override
-    public void removeRepositoryListener(NutsRepositoryListener listener) {
+    public NutsRepository removeRepositoryListener(NutsRepositoryListener listener) {
         repositoryListeners.add(listener);
+        return this;
     }
 
     @Override
-    public void addRepositoryListener(NutsRepositoryListener listener) {
+    public NutsRepository addRepositoryListener(NutsRepositoryListener listener) {
         if (listener != null) {
             repositoryListeners.add(listener);
         }
+        return this;
     }
 
     @Override
@@ -120,13 +128,15 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     @Override
-    public void addUserPropertyListener(NutsMapListener<String, Object> listener) {
+    public NutsRepository addUserPropertyListener(NutsMapListener<String, Object> listener) {
         userProperties.addListener(listener);
+        return this;
     }
 
     @Override
-    public void removeUserPropertyListener(NutsMapListener<String, Object> listener) {
+    public NutsRepository removeUserPropertyListener(NutsMapListener<String, Object> listener) {
         userProperties.removeListener(listener);
+        return this;
     }
 
     @Override
@@ -170,18 +180,18 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         return a.toString();
     }
 
-    protected String getIdExtension(NutsId id) {
-        return getWorkspace().locations().getDefaultIdExtension(id);
+    protected String getIdExtension(NutsId id, NutsSession session) {
+        return getWorkspace().locations().setSession(session).getDefaultIdExtension(id);
     }
 
-    public String getIdBasedir(NutsId id) {
-        return getWorkspace().locations().getDefaultIdBasedir(id);
+    public String getIdBasedir(NutsId id, NutsSession session) {
+        return getWorkspace().locations().setSession(session).getDefaultIdBasedir(id);
     }
 
-    public String getIdFilename(NutsId id) {
+    public String getIdFilename(NutsId id, NutsSession session) {
         //return getWorkspace().locations().getDefaultIdFilename(id);
         String classifier = "";
-        String ext = getIdExtension(id);
+        String ext = getIdExtension(id, session);
         if (!ext.equals(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
             String c = id.getClassifier();
             if (!CoreStringUtils.isBlank(c)) {
@@ -189,11 +199,5 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
             }
         }
         return id.getArtifactId() + "-" + id.getVersion().getValue() + classifier + ext;
-    }
-
-    protected void checkSession(NutsSession session) {
-        if (session == null) {
-            throw new NutsIllegalArgumentException(workspace, "missing session");
-        }
     }
 }

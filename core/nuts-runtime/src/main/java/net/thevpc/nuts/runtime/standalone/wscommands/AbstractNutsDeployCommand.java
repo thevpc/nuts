@@ -200,12 +200,12 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         if (result == null) {
             result = new ArrayList<>();
         }
+        checkSession();
         result.add(nid);
-        if (getValidWorkspaceSession().isPlainTrace()) {
-            getValidWorkspaceSession().getTerminal().out().printf("Nuts %s deployed successfully to %s%n",
+        if (getSession().isPlainTrace()) {
+            getSession().getTerminal().out().printf("Nuts %s deployed successfully to %s%n",
                     nid,
-                    ws.formats().text().styled(toRepository == null ? "<default-repo>" : toRepository,NutsTextNodeStyle.primary(3))
-
+                    ws.formats().text().styled(toRepository == null ? "<default-repo>" : toRepository, NutsTextNodeStyle.primary(3))
             );
         }
     }
@@ -323,7 +323,8 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
                         this.setDescSha1(new String(Files.readAllBytes(Paths.get(val))));
                     }
                 } catch (IOException ex) {
-                    throw new NutsIOException(ws,ex);
+                    checkSession();
+                    throw new NutsIOException(getSession(), ex);
                 }
                 return true;
             }
@@ -341,7 +342,8 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
                         this.setSha1(new String(Files.readAllBytes(Paths.get(val))));
                     }
                 } catch (IOException ex) {
-                    throw new NutsIOException(ws,ex);
+                    checkSession();
+                    throw new NutsIOException(getSession(), ex);
                 }
                 return true;
             }

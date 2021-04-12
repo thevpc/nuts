@@ -13,13 +13,13 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
 
     NutsFormatManager text1;
     private List<NutsTextNode> all = new ArrayList<>();
-    private NutsWorkspace ws;
+    private NutsSession session;
     private NutsTextNodeWriteConfiguration writeConfiguration;
     private NutsTextStyleGenerator styleGenerator;
 
-    public DefaultNutsTextNodeBuilder(NutsWorkspace ws) {
-        text1 = ws.formats();
-        this.ws = ws;
+    public DefaultNutsTextNodeBuilder(NutsSession session) {
+        this.session = session;
+        text1 = session.getWorkspace().formats();
     }
 
     @Override
@@ -90,16 +90,16 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
 
     @Override
     public NutsTextNodeBuilder append(Object text, NutsTextNodeStyle style) {
-        return append(text,NutsTextNodeStyles.of(style));
+        return append(text, NutsTextNodeStyles.of(style));
     }
-    
+
     @Override
     public NutsTextNodeBuilder append(Object text, NutsTextNodeStyles styles) {
         if (text != null) {
             if (styles.size() == 0) {
-                all.add(ws.formats().text().nodeFor(text));
+                all.add(session.getWorkspace().formats().text().nodeFor(text));
             } else {
-                all.add(text1.text().styled(ws.formats().text().nodeFor(text), styles));
+                all.add(text1.text().styled(session.getWorkspace().formats().text().nodeFor(text), styles));
             }
         }
         return this;
@@ -108,7 +108,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
     @Override
     public NutsTextNodeBuilder append(Object node) {
         if (node != null) {
-            return append(ws.formats().text().nodeFor(node));
+            return append(session.getWorkspace().formats().text().nodeFor(node));
         }
         return this;
     }
@@ -183,15 +183,15 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
 
     @Override
     public NutsTextNodeParser parser() {
-        return new DefaultNutsTextNodeParser(ws);
+        return new DefaultNutsTextNodeParser(session);
     }
 
     @Override
     public NutsString immutable() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        NutsTextNodeWriterStringer ss = new NutsTextNodeWriterStringer(out, ws);
+        NutsTextNodeWriterStringer ss = new NutsTextNodeWriterStringer(out, session.getWorkspace());
         ss.writeNode(build(), getConfiguration());
-        return new NutsImmutableString(ws, out.toString());
+        return new NutsImmutableString(session.getWorkspace(), out.toString());
     }
 
     @Override

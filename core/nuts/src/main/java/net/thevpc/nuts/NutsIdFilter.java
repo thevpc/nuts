@@ -47,16 +47,11 @@ public interface NutsIdFilter extends NutsArtifactFilter {
         return acceptId(sid.getId(session), session);
     }
 
-    default NutsIdFilter or(NutsIdFilter other) {
-        return or((NutsFilter)other).to(NutsIdFilter.class);
-    }
+    NutsIdFilter or(NutsIdFilter other) ;
 
-    default NutsIdFilter and(NutsIdFilter other) {
-        return and((NutsFilter)other).to(NutsIdFilter.class);
-    }
+    NutsIdFilter and(NutsIdFilter other) ;
 
-    default NutsIdFilter neg() {
-        return NutsArtifactFilter.super.neg().to(NutsIdFilter.class);
-    }
+    @Override
+    NutsIdFilter neg();
 
 }

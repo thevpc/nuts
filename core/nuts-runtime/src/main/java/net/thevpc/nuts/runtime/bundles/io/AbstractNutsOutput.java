@@ -8,6 +8,7 @@ import net.thevpc.nuts.NutsWorkspace;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import net.thevpc.nuts.NutsSession;
 
 public abstract class AbstractNutsOutput implements NutsOutput {
 
@@ -16,9 +17,9 @@ public abstract class AbstractNutsOutput implements NutsOutput {
     private boolean url;
     private String name;
     private String typeName;
-    private NutsWorkspace ws;
+    private NutsSession ws;
 
-    public AbstractNutsOutput(Object value, boolean path, boolean url, String name, String typeName,NutsWorkspace ws) {
+    public AbstractNutsOutput(Object value, boolean path, boolean url, String name, String typeName,NutsSession ws) {
         this.value = value;
         this.path = path;
         this.url = url;

@@ -44,7 +44,6 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
         this.session = session;
         this.workspace = session == null ? null : session.getWorkspace();
         if (workspace != null) {
-            LOG = ((DefaultNutsWorkspace) workspace).LOG;
 //        LOG=workspace.log().of(DefaultNutsSystemTerminalBase.class);
             NutsTerminalMode terminalMode = options.getTerminalMode();
             if (terminalMode == null) {
@@ -63,15 +62,22 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
             } else {
                 setOutMode(terminalMode);
                 setErrMode(terminalMode);
-                NutsIOManager ioManager = workspace.io();
-                this.out = ioManager.createPrintStream(CoreIOUtils.out(workspace), terminalMode, session);
-                this.err = ioManager.createPrintStream(CoreIOUtils.err(workspace), terminalMode, session);//.setColor(NutsPrintStream.RED);
+                NutsIOManager ioManager = workspace.io().setSession(session);
+                this.out = ioManager.createPrintStream(CoreIOUtils.out(workspace), terminalMode);
+                this.err = ioManager.createPrintStream(CoreIOUtils.err(workspace), terminalMode);//.setColor(NutsPrintStream.RED);
                 this.in = CoreIOUtils.in(workspace);
             }
             this.scanner = new Scanner(this.in);
         } else {
             //on uninstall do nothing
         }
+    }
+
+    private NutsLogger _LOG() {
+        if (LOG == null && session != null) {
+            LOG = workspace.log().setSession(session).of(NutsSystemTerminalBase.class);
+        }
+        return LOG;
     }
 
     @Override
@@ -84,8 +90,8 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
         if (mode == null) {
             mode = NutsTerminalMode.FORMATTED;
         }
-        if (LOG != null) {
-            LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Out mode : {0}",
+        if (_LOG() != null) {
+            _LOG().with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Out mode : {0}",
                     workspace.formats().text().styled(mode.id(), NutsTextNodeStyle.primary(1))
             );
         }
@@ -98,8 +104,8 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
         if (mode == null) {
             mode = NutsTerminalMode.FORMATTED;
         }
-        if (LOG != null) {
-            LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Err mode : {0}",
+        if (_LOG() != null) {
+            _LOG().with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Err mode : {0}",
                     workspace.formats().text().styled(mode.id(), NutsTextNodeStyle.primary(1))
             );
         }
@@ -206,6 +212,5 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
     public NutsSystemTerminalBase setCommandReadHighlighter(NutsCommandReadHighlighter commandReadHighlighter) {
         return this;
     }
-    
 
 }

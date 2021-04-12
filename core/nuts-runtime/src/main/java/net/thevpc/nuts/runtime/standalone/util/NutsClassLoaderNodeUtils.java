@@ -27,9 +27,7 @@ import java.net.URL;
 import java.util.Arrays;
 import net.thevpc.nuts.NutsClassLoaderNode;
 import net.thevpc.nuts.NutsDefinition;
-import net.thevpc.nuts.NutsDependencyScopePattern;
 import net.thevpc.nuts.NutsDependencyTreeNode;
-import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.NutsNotFoundException;
 import net.thevpc.nuts.NutsSession;
@@ -47,7 +45,7 @@ public final class NutsClassLoaderNodeUtils {
         if (def.getContent() == null
                 || def.getContent().getURL() == null
                 || def.getDependencies() == null) {
-            throw new NutsIllegalArgumentException(session.getWorkspace(), "definition must provide content and dependencies");
+            throw new NutsIllegalArgumentException(session, "definition must provide content and dependencies");
         }
         return new NutsClassLoaderNode(
                 def.getId().toString(),
@@ -63,7 +61,7 @@ public final class NutsClassLoaderNodeUtils {
                 .setSession(session)
                 .getResultContent().getURL();
         if (url == null) {
-            throw new NutsNotFoundException(session.getWorkspace(), d.getDependency().toId());
+            throw new NutsNotFoundException(session, d.getDependency().toId());
         }
         return new NutsClassLoaderNode(
                 d.getDependency().toId().toString(), url, true,

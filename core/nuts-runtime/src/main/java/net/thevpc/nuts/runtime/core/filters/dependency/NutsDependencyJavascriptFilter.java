@@ -27,30 +27,28 @@
 package net.thevpc.nuts.runtime.core.filters.dependency;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.common.JavascriptHelper;
-import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 import java.util.Objects;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class NutsDependencyJavascriptFilter extends AbstractNutsFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter>, JsNutsDependencyFilter {
+public class NutsDependencyJavascriptFilter extends AbstractDependencyFilter implements JsNutsDependencyFilter {
 
 //    private static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("sample", "sample", "sample", "sample", "sample");
 
     private String code;
 
-    public static NutsDependencyJavascriptFilter valueOf(String value, NutsWorkspace ws) {
+    public static NutsDependencyJavascriptFilter valueOf(String value, NutsSession ws) {
         if (CoreStringUtils.isBlank(value)) {
             return null;
         }
         return new NutsDependencyJavascriptFilter(ws,value);
     }
 
-    public NutsDependencyJavascriptFilter(NutsWorkspace ws,String code) {
+    public NutsDependencyJavascriptFilter(NutsSession ws,String code) {
         super(ws, NutsFilterOp.CUSTOM);
         this.code = code;
         //check if valid

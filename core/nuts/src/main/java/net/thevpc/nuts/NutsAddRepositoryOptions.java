@@ -81,10 +81,6 @@ public class NutsAddRepositoryOptions implements Serializable {
      */
     private int deployOrder;
 
-    /**
-     * current session
-     */
-    private NutsSession session;
 
     /**
      * repository config information
@@ -115,7 +111,6 @@ public class NutsAddRepositoryOptions implements Serializable {
 //        this.proxy = other.proxy;
         this.temporary = other.temporary;
         this.deployOrder = other.deployOrder;
-        this.session = other.session;
         this.order = other.order;
         this.repositoryModel = other.repositoryModel;
     }
@@ -135,26 +130,6 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     public NutsAddRepositoryOptions setOrder(int order) {
         this.order = order;
-        return this;
-    }
-
-    /**
-     * current session
-     *
-     * @return current session
-     */
-    public NutsSession getSession() {
-        return session;
-    }
-
-    /**
-     * current session
-     *
-     * @param value new value
-     * @return {@code this} instance
-     */
-    public NutsAddRepositoryOptions setSession(NutsSession value) {
-        this.session = value;
         return this;
     }
 
@@ -363,7 +338,6 @@ public class NutsAddRepositoryOptions implements Serializable {
                 && deployOrder == that.deployOrder
                 && Objects.equals(name, that.name)
                 && Objects.equals(location, that.location)
-                && Objects.equals(session, that.session)
                 && Objects.equals(config, that.config);
     }
 
@@ -371,7 +345,7 @@ public class NutsAddRepositoryOptions implements Serializable {
     public int hashCode() {
         return Objects.hash(name, location, enabled, failSafe, create //                , proxy
                 ,
-                 temporary, deployOrder, session, config);
+                 temporary, deployOrder, config);
     }
 
     @Override
@@ -385,7 +359,6 @@ public class NutsAddRepositoryOptions implements Serializable {
                 + //                ", proxy=" + proxy +
                 ", temporary=" + temporary
                 + ", deployOrder=" + deployOrder
-                + ", session=" + session
                 + ", config=" + config
                 + '}';
     }

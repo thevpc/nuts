@@ -36,13 +36,13 @@ public abstract class NutsWorkspaceException extends NutsException {
 
     /**
      * Constructs a new NutsWorkspaceException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      * @param ex exception
      */
-    public NutsWorkspaceException(NutsWorkspace workspace, String message, Throwable ex) {
-        super(workspace,
+    public NutsWorkspaceException(NutsSession session, String message, Throwable ex) {
+        super(session,
                 PrivateNutsUtils.isBlank(message)
-                ? ("workspace " + (workspace == null ? "<null>" : workspace.getName()) + " has encountered problem") : message, ex);
+                ? ("workspace " + (session == null ? "<null>" : session.getWorkspace().getName()) + " has encountered problem") : message, ex);
     }
 }

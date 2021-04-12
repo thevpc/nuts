@@ -52,8 +52,8 @@ public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployReposi
 
     @Override
     public NutsDeployRepositoryCommand run() {
-        NutsSession session = getValidWorkspaceSession();
-        getRepo().security().checkAllowed(NutsConstants.Permissions.DEPLOY, "deploy", session);
+        NutsSession session = getSession();
+        getRepo().security().setSession(getSession()).checkAllowed(NutsConstants.Permissions.DEPLOY, "deploy");
         checkParameters();
         try {
             NutsRepositoryExt xrepo = NutsRepositoryExt.of(repo);

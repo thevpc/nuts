@@ -3,26 +3,24 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
@@ -68,7 +66,8 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     @Override
     public NutsPushCommand addId(NutsId id) {
         if (id == null) {
-            throw new NutsNotFoundException(ws, id);
+            checkSession();
+            throw new NutsNotFoundException(getSession(), id);
         } else {
             ids.add(id);
         }
@@ -114,7 +113,8 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     @Override
     public NutsPushCommand addLockedId(NutsId id) {
         if (id == null) {
-            throw new NutsNotFoundException(ws, id);
+            checkSession();
+            throw new NutsNotFoundException(getSession(), id);
         } else {
             if (lockedIds == null) {
                 lockedIds = new ArrayList<>();
@@ -323,7 +323,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
             case "-repository":
             case "--from": {
                 String val = cmdLine.nextString().getStringValue();
-                if(enabled) {
+                if (enabled) {
                     setRepository(val);
                 }
                 return true;
@@ -331,7 +331,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
             case "-g":
             case "--args": {
                 cmdLine.skip();
-                if(enabled) {
+                if (enabled) {
                     this.addArgs(cmdLine.toStringArray());
                 }
                 cmdLine.skipAll();

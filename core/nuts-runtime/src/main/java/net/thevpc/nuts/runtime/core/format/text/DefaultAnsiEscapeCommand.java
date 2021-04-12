@@ -28,7 +28,6 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalCommand;
-import net.thevpc.nuts.NutsUpdateOptions;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiStyleStyleApplierResolver;
 import net.thevpc.nuts.runtime.core.format.text.renderer.ansi.AnsiStyle;

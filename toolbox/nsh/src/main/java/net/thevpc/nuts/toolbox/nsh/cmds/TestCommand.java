@@ -175,7 +175,7 @@ public class TestCommand extends AbstractNshBuiltin {
         NutsCommandLine commandLine = context.getWorkspace().commandLine().create(args)
                 .setCommandName("test");
         if (commandLine.isEmpty()) {
-            throw new NutsExecutionException(context.getWorkspace(),"result=" + 1, 1);
+            throw new NutsExecutionException(context.getSession(),"result=" + 1, 1);
         }
         if (args.length > 0) {
             Stack<String> operators = new Stack<>();
@@ -225,7 +225,7 @@ public class TestCommand extends AbstractNshBuiltin {
             }
             int result = operands.pop().eval(context);
             if (result != 0) {
-                throw new NutsExecutionException(context.getWorkspace(), "result=" + result, result);
+                throw new NutsExecutionException(context.getSession(), "result=" + result, result);
             }
         }
     }

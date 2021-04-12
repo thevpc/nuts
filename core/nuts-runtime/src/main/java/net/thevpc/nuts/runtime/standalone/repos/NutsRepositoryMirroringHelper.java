@@ -47,8 +47,8 @@ public class NutsRepositoryMirroringHelper {
         }
         List<Iterator<NutsId>> list = new ArrayList<>();
         list.add(namedNutIdIterator);
-        if (repo.config().isSupportedMirroring()) {
-            for (NutsRepository repo : repo.config().getMirrors(session)) {
+        if (repo.config().setSession(session).isSupportedMirroring()) {
+            for (NutsRepository repo : repo.config().setSession(session).getMirrors()) {
                 int sup = 0;
                 try {
                     sup = CoreNutsUtils.getSupportSpeedLevel(repo, NutsRepositorySupportedAction.SEARCH, id, fetchMode, session.isTransitive(),session);
@@ -56,7 +56,7 @@ public class NutsRepositoryMirroringHelper {
                     //                errors.append(CoreStringUtils.exceptionToString(ex)).append("\n");
                 }
                 if (sup > 0) {
-                    NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(getWorkspace()).repoSPI(repo);
+                    NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo);
                     list.add(IteratorUtils.safeIgnore(new LazyIterator<NutsId>() {
                         @Override
                         public Iterator<NutsId> iterator() {
@@ -72,11 +72,12 @@ public class NutsRepositoryMirroringHelper {
     }
 
     protected NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
-        Path cacheContent = cache.getLongNameIdLocalFile(id);
-        if (session.isTransitive() && repo.config().isSupportedMirroring()) {
-            for (NutsRepository mirror : repo.config().getMirrors(session)) {
+        Path cacheContent = cache.getLongNameIdLocalFile(id, session);
+        NutsRepositoryConfigManager rconfig = repo.config().setSession(session);
+        if (session.isTransitive() && rconfig.isSupportedMirroring()) {
+            for (NutsRepository mirror : rconfig.setSession(session).getMirrors()) {
                 try {
-                    NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(getWorkspace()).repoSPI(mirror);
+                    NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(mirror);
                     NutsContent c = repoSPI.fetchContent().setId(id).setDescriptor(descriptor).setLocalPath(cacheContent.toString()).setSession(session)
                             .setFetchMode(fetchMode)
                             .getResult();
@@ -101,18 +102,19 @@ public class NutsRepositoryMirroringHelper {
         return repo.getWorkspace();
     }
 
-    protected String getIdFilename(NutsId id) {
-        return NutsRepositoryExt.of(repo).getIdFilename(id);
+    protected String getIdFilename(NutsId id, NutsSession session) {
+        return NutsRepositoryExt.of(repo).getIdFilename(id,session);
     }
 
     protected NutsDescriptor fetchDescriptorImplInMirrors(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
-        String idFilename = getIdFilename(id);
-        Path versionFolder = cache.getLongNameIdLocalFolder(id);
-        if (session.isTransitive() && repo.config().isSupportedMirroring()) {
-            for (NutsRepository remote : repo.config().getMirrors(session)) {
+        String idFilename = getIdFilename(id, session);
+        Path versionFolder = cache.getLongNameIdLocalFolder(id, session);
+        NutsRepositoryConfigManager rconf = repo.config().setSession(session);
+        if (session.isTransitive() && rconf.isSupportedMirroring()) {
+            for (NutsRepository remote : rconf.getMirrors()) {
                 NutsDescriptor nutsDescriptor = null;
                 try {
-                    NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(getWorkspace()).repoSPI(remote);
+                    NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(remote);
                     nutsDescriptor = repoSPI.fetchDescriptor().setId(id).setSession(session).setFetchMode(fetchMode).getResult();
                 } catch (Exception ex) {
                     //ignore
@@ -126,7 +128,7 @@ public class NutsRepositoryMirroringHelper {
 //                    } else {
 //                        goodFile = versionFolder.resolve(CoreStringUtils.trim(a)).resolve(idFilename);
 //                    }
-                    getWorkspace().descriptor().formatter(nutsDescriptor).print(goodFile);
+                    getWorkspace().descriptor().setSession(session).formatter(nutsDescriptor).print(goodFile);
                     return nutsDescriptor;
                 }
             }
@@ -135,13 +137,14 @@ public class NutsRepositoryMirroringHelper {
     }
 
     public Iterator<NutsId> search(Iterator<NutsId> li, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
-        if (!session.isTransitive() || !repo.config().isSupportedMirroring()) {
+        NutsRepositoryConfigManager rconfig = repo.config().setSession(session);
+        if (!session.isTransitive() || !rconfig.isSupportedMirroring()) {
             return li;
         }
         List<Iterator<NutsId>> all = new ArrayList<>();
         all.add(li);
-        for (NutsRepository remote : repo.config().getMirrors(session)) {
-            NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(getWorkspace()).repoSPI(remote);
+        for (NutsRepository remote : rconfig.setSession(session).getMirrors()) {
+            NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(remote);
             all.add(IteratorUtils.safeIgnore(new LazyIterator<NutsId>() {
 
                 @Override
@@ -157,32 +160,32 @@ public class NutsRepositoryMirroringHelper {
 
     public void push(NutsPushRepositoryCommand cmd) {
         NutsSession session = cmd.getSession();
-        NutsWorkspaceUtils.of(getWorkspace()).checkSession( session);
+        NutsWorkspaceUtils.checkSession(getWorkspace(),session);
         NutsId id = cmd.getId();
         String repository = cmd.getRepository();
         NutsSession nonTransitiveSession = session.copy().setTransitive(false);
-        NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(getWorkspace()).repoSPI(repo);
+        NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo);
         NutsDescriptor desc = repoSPI.fetchDescriptor().setId(id).setSession(nonTransitiveSession).setFetchMode(NutsFetchMode.LOCAL).getResult();
         NutsContent local = repoSPI.fetchContent().setId(id).setSession(nonTransitiveSession).setFetchMode(NutsFetchMode.LOCAL).getResult();
         if (local == null) {
-            throw new NutsNotFoundException(repo.getWorkspace(), id);
+            throw new NutsNotFoundException(session, id);
         }
-        if (!repo.config().isSupportedMirroring()) {
-            throw new NutsRepositoryNotFoundException(repo.getWorkspace(), "Not Repo for pushing " + id);
+        if (!repo.config().setSession(session).isSupportedMirroring()) {
+            throw new NutsRepositoryNotFoundException(session, "Not Repo for pushing " + id);
         }
-        NutsRepository repo = null;
+        NutsRepository repo = this.repo;
         if (CoreStringUtils.isBlank(repository)) {
             List<NutsRepository> all = new ArrayList<>();
-            for (NutsRepository remote : repo.config().getMirrors(session)) {
+            for (NutsRepository remote : repo.config().setSession(session).getMirrors()) {
                 int lvl = CoreNutsUtils.getSupportSpeedLevel(remote,NutsRepositorySupportedAction.DEPLOY, id, NutsFetchMode.LOCAL, false,session);
                 if (lvl > 0) {
                     all.add(remote);
                 }
             }
             if (all.isEmpty()) {
-                throw new NutsRepositoryNotFoundException(repo.getWorkspace(), "Not Repo for pushing " + id);
+                throw new NutsRepositoryNotFoundException(session, "Not Repo for pushing " + id);
             } else if (all.size() > 1) {
-                throw new NutsPushException(repo.getWorkspace(), id,
+                throw new NutsPushException(session, id,
                         "Unable to perform push for " + id + ". Alteast Two Repositories ("
                         + all.stream().map(NutsRepository::getName).collect(Collectors.joining(","))
                         + ") provides the same nuts " + id
@@ -190,7 +193,7 @@ public class NutsRepositoryMirroringHelper {
             }
             repo = all.get(0);
         } else {
-            repo = this.repo.config().getMirror(repository, session.copy().setTransitive(false));
+            repo = this.repo.config().setSession(session.copy().setTransitive(false)).getMirror(repository);
         }
         if (repo != null) {
             NutsId effId = getWorkspace().config().createContentFaceId(id.builder().setProperties("").build(), desc)
@@ -206,16 +209,17 @@ public class NutsRepositoryMirroringHelper {
                     .run();
             NutsRepositoryUtils.of(repo).events().fireOnPush(new DefaultNutsContentEvent(local.getLocation(), dep, session, repo));
         } else {
-            throw new NutsRepositoryNotFoundException(repo.getWorkspace(), repository);
+            throw new NutsRepositoryNotFoundException(session, repository);
         }
     }
 
     public NutsId searchLatestVersion(NutsId bestId, NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
-        if (session.isTransitive() && repo.config().isSupportedMirroring()) {
-            for (NutsRepository remote : repo.config().getMirrors(session)) {
+        NutsRepositoryConfigManager rconfig = repo.config().setSession(session);
+        if (session.isTransitive() && rconfig.isSupportedMirroring()) {
+            for (NutsRepository remote : rconfig.setSession(session).getMirrors()) {
                 NutsDescriptor nutsDescriptor = null;
                 try {
-                    NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(getWorkspace()).repoSPI(remote);
+                    NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(remote);
                     nutsDescriptor = repoSPI.fetchDescriptor().setId(id).setSession(session).setFetchMode(fetchMode).getResult();
                 } catch (Exception ex) {
                     //ignore
@@ -225,7 +229,7 @@ public class NutsRepositoryMirroringHelper {
 //                        NutsId id2 = C                                oreNutsUtils.createComponentFaceId(getWorkspace().resolveEffectiveId(nutsDescriptor,session),nutsDescriptor,null);
                         NutsWorkspaceExt dws = NutsWorkspaceExt.of(getWorkspace());
                         NutsId id2 = dws.resolveEffectiveId(nutsDescriptor, session).builder().setFaceDescriptor().build();
-                        Path localNutFile = cache.getLongNameIdLocalFile(id2);
+                        Path localNutFile = cache.getLongNameIdLocalFile(id2, session);
                         getWorkspace().descriptor().formatter(nutsDescriptor).print(localNutFile);
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                             bestId = id2;

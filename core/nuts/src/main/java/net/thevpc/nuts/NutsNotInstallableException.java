@@ -36,41 +36,41 @@ public class NutsNotInstallableException extends NutsInstallationException {
 
     /**
      * Constructs a new NutsNotInstallableException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param id artifact
      */
-    public NutsNotInstallableException(NutsWorkspace workspace, NutsId id) {
-        this(workspace, id == null ? null : id.toString());
+    public NutsNotInstallableException(NutsSession session, NutsId id) {
+        this(session, id == null ? null : id.toString());
     }
 
     /**
      * Constructs a new NutsNotInstallableException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param id artifact
      */
-    public NutsNotInstallableException(NutsWorkspace workspace, String id) {
-        this(workspace, id, null, null);
+    public NutsNotInstallableException(NutsSession session, String id) {
+        this(session, id, null, null);
     }
 
     /**
      * Constructs a new NutsNotInstallableException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param id artifact
      * @param msg message
      * @param ex exception
      */
-    public NutsNotInstallableException(NutsWorkspace workspace, NutsId id, String msg, Exception ex) {
-        this(workspace, id == null ? null : id.toString(), msg, ex);
+    public NutsNotInstallableException(NutsSession session, NutsId id, String msg, Exception ex) {
+        this(session, id == null ? null : id.toString(), msg, ex);
     }
 
     /**
      * Constructs a new NutsNotInstallableException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param id artifact
      * @param msg message
      * @param ex exception
      */
-    public NutsNotInstallableException(NutsWorkspace workspace, String id, String msg, Exception ex) {
-        super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "not installed " + (id == null ? "<null>" : id) : msg, ex);
+    public NutsNotInstallableException(NutsSession session, String id, String msg, Exception ex) {
+        super(session, id, PrivateNutsUtils.isBlank(msg) ? "not installed " + (id == null ? "<null>" : id) : msg, ex);
     }
 }

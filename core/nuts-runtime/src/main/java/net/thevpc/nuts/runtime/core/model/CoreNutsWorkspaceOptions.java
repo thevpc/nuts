@@ -358,10 +358,10 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      */
     private String theme;
 
-    private NutsWorkspace ws = null;
+    private NutsSession session = null;
 
-    public CoreNutsWorkspaceOptions(NutsWorkspace ws) {
-        this.ws = ws;
+    public CoreNutsWorkspaceOptions(NutsSession session) {
+        this.session = session;
     }
 
     /**
@@ -446,12 +446,12 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
 
     @Override
     public NutsWorkspaceOptionsBuilder parseCommandLine(String commandLine) {
-        return parseArguments(ws.commandLine().parse(commandLine).toStringArray());
+        return parseArguments(session.getWorkspace().commandLine().parse(commandLine).toStringArray());
     }
 
     @Override
     public NutsWorkspaceOptionsBuilder parseArguments(String[] args) {
-        CoreNutsArgumentsParser.parseNutsArguments(ws, args, this);
+        CoreNutsArgumentsParser.parseNutsArguments(session, args, this);
         return this;
     }
 
@@ -1086,7 +1086,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
 
     @Override
     public NutsWorkspaceOptionsFormat format() {
-        return new CoreNutsWorkspaceOptionsFormat(ws, this);
+        return new CoreNutsWorkspaceOptionsFormat(session.getWorkspace(), this);
     }
 
     @Override

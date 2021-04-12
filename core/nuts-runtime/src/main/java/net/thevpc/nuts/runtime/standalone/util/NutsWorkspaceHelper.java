@@ -47,7 +47,7 @@ public class NutsWorkspaceHelper {
         if (parent.config().isSupportedMirroring()) {
             List<NutsRepository> subrepos = new ArrayList<>();
             boolean ok = false;
-            for (NutsRepository repository : parent.config().getMirrors(session)) {
+            for (NutsRepository repository : parent.config().setSession(session).getMirrors()) {
                 if (repository.config().isEnabled()) {
                     if (repositoryFilter == null || repositoryFilter.acceptRepository(repository)) {
                         repos.add(repository);

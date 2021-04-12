@@ -1,85 +1,102 @@
 package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.common.ObservableMap;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DefaultNutsWorkspaceEventManager implements NutsWorkspaceEventManager {
-    private NutsWorkspace ws;
-    protected final List<NutsWorkspaceListener> workspaceListeners = new ArrayList<>();
-    protected final List<NutsInstallListener> installListeners = new ArrayList<>();
-    protected final List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
 
-    public DefaultNutsWorkspaceEventManager(NutsWorkspace ws) {
-        this.ws = ws;
+    private DefaultNutsWorkspaceEventModel model;
+    private NutsSession session;
+
+    public DefaultNutsWorkspaceEventManager(DefaultNutsWorkspaceEventModel model) {
+        this.model = model;
+    }
+
+    public DefaultNutsWorkspaceEventModel getModel() {
+        return model;
+    }
+
+    public void setModel(DefaultNutsWorkspaceEventModel model) {
+        this.model = model;
     }
 
     @Override
-    public void removeRepositoryListener(NutsRepositoryListener listener) {
-        repositoryListeners.add(listener);
+    public NutsSession getSession() {
+        return session;
     }
 
     @Override
-    public void addRepositoryListener(NutsRepositoryListener listener) {
-        if (listener != null) {
-            repositoryListeners.add(listener);
-        }
+    public NutsWorkspaceEventManager setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceEventManager removeRepositoryListener(NutsRepositoryListener listener) {
+        model.removeRepositoryListener(listener);
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceEventManager addRepositoryListener(NutsRepositoryListener listener) {
+        model.addRepositoryListener(listener);
+        return this;
     }
 
     @Override
     public NutsRepositoryListener[] getRepositoryListeners() {
-        return repositoryListeners.toArray(new NutsRepositoryListener[0]);
+        return model.getRepositoryListeners();
     }
 
     @Override
-    public void addUserPropertyListener(NutsMapListener<String, Object> listener) {
-        ((ObservableMap<String, Object>)ws.env().getProperties()).addListener(listener);
+    public NutsWorkspaceEventManager addUserPropertyListener(NutsMapListener<String, Object> listener) {
+        model.addUserPropertyListener(listener);
+        return this;
     }
 
     @Override
-    public void removeUserPropertyListener(NutsMapListener<String, Object> listener) {
-        ((ObservableMap<String, Object>)ws.env().getProperties()).removeListener(listener);
+    public NutsWorkspaceEventManager removeUserPropertyListener(NutsMapListener<String, Object> listener) {
+        model.removeUserPropertyListener(listener);
+        return this;
     }
 
     @Override
     public NutsMapListener<String, Object>[] getUserPropertyListeners() {
-        return ((ObservableMap<String, Object>)ws.env().getProperties()).getListeners();
+        return model.getUserPropertyListeners();
     }
 
     @Override
-    public void removeWorkspaceListener(NutsWorkspaceListener listener) {
-        workspaceListeners.add(listener);
+    public NutsWorkspaceEventManager removeWorkspaceListener(NutsWorkspaceListener listener) {
+        model.removeWorkspaceListener(listener);
+        return this;
     }
 
     @Override
-    public void addWorkspaceListener(NutsWorkspaceListener listener) {
-        if (listener != null) {
-            workspaceListeners.add(listener);
-        }
+    public NutsWorkspaceEventManager addWorkspaceListener(NutsWorkspaceListener listener) {
+        model.addWorkspaceListener(listener);
+        return this;
     }
 
     @Override
     public NutsWorkspaceListener[] getWorkspaceListeners() {
-        return workspaceListeners.toArray(new NutsWorkspaceListener[0]);
+        return model.getWorkspaceListeners();
     }
 
     @Override
-    public void removeInstallListener(NutsInstallListener listener) {
-        installListeners.remove(listener);
+    public NutsWorkspaceEventManager removeInstallListener(NutsInstallListener listener) {
+        model.removeInstallListener(listener);
+        return this;
     }
 
     @Override
-    public void addInstallListener(NutsInstallListener listener) {
-        if (listener != null) {
-            installListeners.add(listener);
-        }
+    public NutsWorkspaceEventManager addInstallListener(NutsInstallListener listener) {
+        model.addInstallListener(listener);
+        return this;
     }
 
     @Override
     public NutsInstallListener[] getInstallListeners() {
-        return installListeners.toArray(new NutsInstallListener[0]);
+        return model.getInstallListeners();
     }
 
+    
 }

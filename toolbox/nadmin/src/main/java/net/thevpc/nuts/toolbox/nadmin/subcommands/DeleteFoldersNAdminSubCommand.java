@@ -77,7 +77,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
         }
-        for (NutsRepository repository : context.getWorkspace().repos().getRepositories(context.getSession())) {
+        for (NutsRepository repository : context.getWorkspace().repos().getRepositories()) {
             deleteRepoFolder(repository, context, folder, force);
         }
     }
@@ -105,7 +105,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
             }
         }
         if (repository.config().isSupportedMirroring()) {
-            for (NutsRepository subRepository : repository.config().getMirrors(context.getSession())) {
+            for (NutsRepository subRepository : repository.config().getMirrors()) {
                 deleteRepoCache(subRepository, context, force);
             }
         }
@@ -123,7 +123,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
                     throw new UncheckedIOException(ex);
                 }
             }
-            for (NutsRepository repository : context.getWorkspace().repos().getRepositories(context.getSession())) {
+            for (NutsRepository repository : context.getWorkspace().repos().getRepositories()) {
                 deleteRepoCache(repository, context, force);
             }
         }
@@ -149,7 +149,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
             }
         }
         if (repository.config().isSupportedMirroring()) {
-            for (NutsRepository mirror : repository.config().getMirrors(context.getSession())) {
+            for (NutsRepository mirror : repository.config().getMirrors()) {
                 deleteRepoCache(mirror, context, force);
             }
         }

@@ -411,14 +411,14 @@ public class CorePlatformUtils {
         return new NutsException(null, ex);
     }
 
-    public static NutsException toNutsException(Throwable ex, NutsWorkspace ws) {
+    public static NutsException toNutsException(Throwable ex, NutsSession ws) {
         if (ex instanceof NutsException) {
             return (NutsException) ex;
         }
         return new NutsException(ws, ex);
     }
 
-    public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader, NutsWorkspace ws) {
+    public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader, NutsSession ws) {
         Ref<T> ref = new Ref<>();
         Thread thread = new Thread(() -> {
             try {

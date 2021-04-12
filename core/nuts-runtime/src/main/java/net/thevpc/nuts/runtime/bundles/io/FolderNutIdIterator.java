@@ -71,11 +71,11 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
     private int maxDepth;
     private Path rootFolder;
 
-    public FolderNutIdIterator(NutsWorkspace workspace, String repository, Path folder, NutsIdFilter filter, NutsSession session, FolderNutIdIteratorModel model, int maxDepth) {
+    public FolderNutIdIterator(String repository, Path folder, NutsIdFilter filter, NutsSession session, FolderNutIdIteratorModel model, int maxDepth) {
         this.repository = repository;
         this.session = session;
         this.filter = filter;
-        this.workspace = workspace;
+        this.workspace = session.getWorkspace();
         this.model = model;
         this.maxDepth = maxDepth;
         if (folder == null) {
@@ -164,7 +164,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         if (last != null) {
             model.undeploy(last, session);
         }
-        throw new NutsUnsupportedOperationException(workspace, "Unsupported Remove");
+        throw new NutsUnsupportedOperationException(session, "Unsupported Remove");
     }
 
     public long getVisitedFoldersCount() {

@@ -65,7 +65,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private NutsDependency[] standardDependencies;
     private Map<String, String> properties;
 
-    public DefaultNutsDescriptor(NutsDescriptor d,NutsWorkspace ws) {
+    public DefaultNutsDescriptor(NutsDescriptor d,NutsSession session) {
         this(
                 d.getId(),
 //                d.getAlternative(),
@@ -87,7 +87,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 d.getLocations(),
                 d.getProperties(),
                 d.getClassifierMappings(),
-                ws
+                session
         );
     }
 
@@ -97,13 +97,13 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                                  String[] arch, String[] os, String[] osdist, String[] platform,
                                  NutsDependency[] dependencies,
                                  NutsDependency[] standardDependencies,
-                                 NutsIdLocation[] locations, Map<String, String> properties, NutsClassifierMapping[] classifierMappings,NutsWorkspace ws) {
-        super(ws);
+                                 NutsIdLocation[] locations, Map<String, String> properties, NutsClassifierMapping[] classifierMappings,NutsSession session) {
+        super(session);
         if (id == null) {
-            throw new NutsIllegalArgumentException(ws, "missing id");
+            throw new NutsIllegalArgumentException(session, "missing id");
         }
         if (!id.getProperties().isEmpty()) {
-            throw new NutsIllegalArgumentException(ws, "id should not have query defined in descriptors");
+            throw new NutsIllegalArgumentException(session, "id should not have query defined in descriptors");
         }
         this.id = id;
 //        this.alternative = CoreStringUtils.trimToNull(alternative);

@@ -37,8 +37,8 @@ public class NutsFolderRepository extends NutsCachedRepository {
 
     public final NutsLogger LOG;
 
-    public NutsFolderRepository(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options, workspace, parentRepository, SPEED_FASTER, true, NutsConstants.RepoTypes.NUTS);
+    public NutsFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
+        super(options, session, parentRepository, SPEED_FASTER, true, NutsConstants.RepoTypes.NUTS);
         LOG=workspace.log().of(NutsFolderRepository.class);
         extensions.put("src", "-src.zip");
     }
@@ -51,19 +51,19 @@ public class NutsFolderRepository extends NutsCachedRepository {
     @Override
     public NutsDescriptor fetchDescriptorCore(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode == NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
+            throw new NutsNotFoundException(session, id,new NutsFetchModeNotSupportedException(session,this,fetchMode,id.toString(),null));
         }
         NutsId id2 = id.builder().setFaceDescriptor().build();
-        throw new NutsNotFoundException(getWorkspace(), id,new IOException("artifact descriptor not found : "+lib.getGoodPath(id2)));
+        throw new NutsNotFoundException(session, id,new IOException("artifact descriptor not found : "+lib.getGoodPath(id2, session)));
     }
 
     @Override
     public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode == NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
+            throw new NutsNotFoundException(session, id,new NutsFetchModeNotSupportedException(session,this,fetchMode,id.toString(),null));
         }
         NutsId id2 = id.builder().setFaceContent().build();
-        throw new NutsNotFoundException(getWorkspace(), id,new IOException("file not found : "+lib.getGoodPath(id2)));
+        throw new NutsNotFoundException(session, id,new IOException("file not found : "+lib.getGoodPath(id2, session)));
     }
 
     @Override
@@ -86,7 +86,7 @@ public class NutsFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public boolean isAcceptFetchMode(NutsFetchMode mode) {
+    public boolean isAcceptFetchMode(NutsFetchMode mode, NutsSession session) {
         return mode==NutsFetchMode.LOCAL;
     }
 }

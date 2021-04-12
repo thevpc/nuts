@@ -45,6 +45,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
     public void runAddScript(NutsCommandLine commandLine, NutsApplicationContext context) {
         ArrayList<String> idsToInstall = new ArrayList<>();
         NutsWorkspace ws = context.getWorkspace();
+        NutsSession session = context.getSession();
         ArrayList<String> executorOptions = new ArrayList<>();
         NutsExecutionType execType = null;
         boolean fetch = false;
@@ -82,7 +83,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
             } else if ((a = commandLine.nextString("-X", "--exec-options")) != null) {
                 executorOptions.add(a.getStringValue());
             } else if ((a = commandLine.nextString("-i", "--installed")) != null) {
-                context.getSession().setConfirm(NutsConfirmationMode.YES);
+                session.setConfirm(NutsConfirmationMode.YES);
                 for (NutsId resultId : ws.search().setInstallStatus(
                         ws.filters().installStatus().byInstalled(true)
                 ).getResultIds()) {
@@ -90,8 +91,8 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                     missingAnyArgument = false;
                 }
             } else if ((a = commandLine.nextString("-c", "--companions")) != null) {
-                context.getSession().setConfirm(NutsConfirmationMode.YES);
-                for (NutsId companion : ws.getCompanionIds()) {
+                session.setConfirm(NutsConfirmationMode.YES);
+                for (NutsId companion : ws.getCompanionIds(session)) {
                     idsToInstall.add(ws.search().addId(companion).setLatest(true).getResultIds().required().getLongName());
                     missingAnyArgument = false;
                 }
@@ -131,7 +132,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NutsExecutionException(ws, "platform not supported : " + ws.env().getOs(), 2);
+                throw new NutsExecutionException(session, "platform not supported : " + ws.env().getOs(), 2);
             }
             if (!idsToInstall.isEmpty()) {
                 printResults(context, ndi.createNutsScript(idsToInstall, switchWorkspaceLocation, linkName, persistentConfig, executorOptions, env, fetch, execType, context));
@@ -171,7 +172,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NutsExecutionException(ws, "platform not supported : " + ws.env().getOs(), 2);
+                throw new NutsExecutionException(context.getSession(), "platform not supported : " + ws.env().getOs(), 2);
             }
             boolean subTrace = context.getSession().isTrace();
             if (!context.getSession().isPlainTrace()) {
@@ -185,7 +186,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                                 context.getSession().copy().setTrace(subTrace)
                         );
                     } catch (UncheckedIOException e) {
-                        throw new NutsExecutionException(ws, "Unable to run script " + id + " : " + e.toString(), e);
+                        throw new NutsExecutionException(context.getSession(), "Unable to run script " + id + " : " + e.toString(), e);
                     }
                 }
             }
@@ -229,7 +230,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NutsExecutionException(ws, "platform not supported : " + ws.env().getOs(), 2);
+                throw new NutsExecutionException(context.getSession(), "platform not supported : " + ws.env().getOs(), 2);
             }
             if (switchWorkspaceLocation != null || switchWorkspaceApi != null) {
                 ndi.switchWorkspace(switchWorkspaceLocation, switchWorkspaceApi);

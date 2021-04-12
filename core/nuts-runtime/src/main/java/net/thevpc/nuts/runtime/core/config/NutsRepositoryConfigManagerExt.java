@@ -6,8 +6,8 @@
 package net.thevpc.nuts.runtime.core.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryConfigModel;
 
-import java.nio.file.Path;
 
 /**
  *
@@ -19,23 +19,25 @@ public interface NutsRepositoryConfigManagerExt {
         return ((NutsRepositoryConfigManagerExt) o);
     }
 
-    NutsRepositoryConfigManager removeUser(String userId, NutsRemoveOptions options);
-
-    NutsRepositoryConfigManager setUser(NutsUserConfig user, NutsUpdateOptions options);
-
-    NutsUserConfig getUser(String userId);
-
-    NutsUserConfig[] getUsers();
-
-    ////    @Override
-    //    public NutsRepositoryRef[] getMirrorRefs() {
-    //        return configMirrorRefs.values().toArray(new NutsRepositoryRef[0]);
-    //    }
-    boolean save(boolean force, NutsSession session);
-
-    void save(NutsSession session);
-
-    Path getTempMirrorsRoot();
-
-    Path getMirrorsRoot();
+    
+    NutsRepositoryConfigModel getModel();
+//    NutsRepositoryConfigManager removeUser(String userId, NutsRemoveOptions options);
+//
+//    NutsRepositoryConfigManager setUser(NutsUserConfig user, NutsUpdateOptions options);
+//
+//    NutsUserConfig getUser(String userId);
+//
+//    NutsUserConfig[] getUsers();
+//
+//    ////    @Override
+//    //    public NutsRepositoryRef[] getMirrorRefs() {
+//    //        return configMirrorRefs.values().toArray(new NutsRepositoryRef[0]);
+//    //    }
+//    boolean save(boolean force, NutsSession session);
+//
+//    void save(NutsSession session);
+//
+//    Path getTempMirrorsRoot();
+//
+//    Path getMirrorsRoot();
 }

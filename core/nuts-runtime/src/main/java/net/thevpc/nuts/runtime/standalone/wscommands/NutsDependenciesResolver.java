@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.core.model.DefaultNutsDependencyTreeNode;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class NutsDependenciesResolver {
 
@@ -44,8 +45,9 @@ public class NutsDependenciesResolver {
     }
 
     public NutsDependenciesResolver addRootDefinition(NutsDependency dependency, NutsDefinition def) {
+        
         if (dependency == null) {
-            throw new NutsIllegalArgumentException(session.getWorkspace(), "missing dependency");
+            throw new NutsIllegalArgumentException(session, "missing dependency");
         }
         if (def == null) {
             NutsWorkspace ws = session.getWorkspace();
@@ -58,7 +60,7 @@ public class NutsDependenciesResolver {
                     .setLatest(true).getResultDefinitions().required();
         }
         if (!def.isSetEffectiveDescriptor()) {
-            throw new NutsIllegalArgumentException(session.getWorkspace(), "expected an effective definition for " + def.getId());
+            throw new NutsIllegalArgumentException(session, "expected an effective definition for " + def.getId());
         }
         defs.add(new NutsDependencyTreeNodeBuild(null, def, dependency, dependency, 0));
         return this;
@@ -311,7 +313,7 @@ public class NutsDependenciesResolver {
             if (effDescriptor == null) {
                 effDescriptor = def.getEffectiveDescriptor();
                 if (effDescriptor == null) {
-                    throw new NutsIllegalArgumentException(session.getWorkspace(), "expected an effective definition for " + def.getId());
+                    throw new NutsIllegalArgumentException(session, "expected an effective definition for " + def.getId());
                 }
             }
             return effDescriptor;

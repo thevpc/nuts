@@ -553,7 +553,7 @@ final class PrivateNutsUtils {
                 if ("a".equalsIgnoreCase(line) || "all".equalsIgnoreCase(line)) {
                     refForceAll.setForce(true);
                 } else if ("c".equalsIgnoreCase(line)) {
-                    throw new NutsUserCancelException(session.getWorkspace());
+                    throw new NutsUserCancelException(session);
                 } else if (!PrivateNutsUtils.parseBoolean(line, false, false)) {
                     refForceAll.ignore(directory);
                     return 0;

@@ -54,4 +54,8 @@ public interface NutsOutputAction {
     NutsOutputAction setName(String name);
 
     NutsOutputAction setTypeName(String typeName);
+
+    NutsSession getSession();
+
+    NutsOutputAction setSession(NutsSession session);
 }

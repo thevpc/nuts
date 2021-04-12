@@ -1,61 +1,87 @@
 package net.thevpc.nuts.runtime.core.filters.version;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.DefaultNutsFilterManager;
 import net.thevpc.nuts.runtime.core.filters.InternalNutsTypedFilters;
-import net.thevpc.nuts.runtime.core.filters.dependency.NutsDependencyFilterAnd;
-import net.thevpc.nuts.runtime.core.filters.installstatus.NutsInstallStatusFilterParser;
-import net.thevpc.nuts.runtime.core.filters.version.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.List;
+import net.thevpc.nuts.runtime.core.filters.DefaultNutsFilterModel;
 
 public class InternalNutsVersionFilterManager extends InternalNutsTypedFilters<NutsVersionFilter> implements NutsVersionFilterManager {
-    private final DefaultNutsFilterManager defaultNutsFilterManager;
-    private NutsVersionFilterTrue nutsVersionFilterTrue;
-    private NutsVersionFilterFalse nutsVersionFilterFalse;
 
-    public InternalNutsVersionFilterManager(DefaultNutsFilterManager defaultNutsFilterManager) {
-        super(defaultNutsFilterManager, NutsVersionFilter.class);
-        this.defaultNutsFilterManager = defaultNutsFilterManager;
+//    private static class LocalModel {
+//
+//        private NutsVersionFilterTrue nutsVersionFilterTrue;
+//        private NutsVersionFilterFalse nutsVersionFilterFalse;
+//        private NutsWorkspace ws;
+//
+//        public LocalModel(NutsWorkspace ws) {
+//            this.ws = ws;
+//        }
+//        
+//        public NutsVersionFilter always() {
+//            if (nutsVersionFilterTrue == null) {
+//                nutsVersionFilterTrue = new NutsVersionFilterTrue(ws);
+//            }
+//            return nutsVersionFilterTrue;
+//        }
+//
+//        public NutsVersionFilter never() {
+//            if (nutsVersionFilterFalse == null) {
+//                nutsVersionFilterFalse = new NutsVersionFilterFalse(ws);
+//            }
+//            return nutsVersionFilterFalse;
+//        }
+//
+//    }
+//    private final LocalModel localModel;
+
+    public InternalNutsVersionFilterManager(DefaultNutsFilterModel model) {
+        super(model, NutsVersionFilter.class);
+//        localModel = model.getShared(LocalModel.class, () -> new LocalModel(ws));
+    }
+
+    @Override
+    public NutsVersionFilterManager setSession(NutsSession session) {
+        super.setSession(session);
+        return this;
     }
 
     public NutsVersionFilter byValue(String version) {
-        return DefaultNutsVersionFilter.parse(version, ws);
+        checkSession();
+        return DefaultNutsVersionFilter.parse(version, getSession());
     }
 
     @Override
     public NutsVersionFilter always() {
-        if (nutsVersionFilterTrue == null) {
-            nutsVersionFilterTrue = new NutsVersionFilterTrue(ws);
-        }
-        return nutsVersionFilterTrue;
+        checkSession();
+        return new NutsVersionFilterTrue(getSession());
     }
 
     @Override
     public NutsVersionFilter never() {
-        if (nutsVersionFilterFalse == null) {
-            nutsVersionFilterFalse = new NutsVersionFilterFalse(ws);
-        }
-        return nutsVersionFilterFalse;
+        checkSession();
+        return new NutsVersionFilterFalse(getSession());
     }
 
     @Override
     public NutsVersionFilter not(NutsFilter other) {
-        return new NutsVersionFilterNone(ws, (NutsVersionFilter) other);
+        checkSession();
+        return new NutsVersionFilterNone(getSession(), (NutsVersionFilter) other);
     }
-
 
     @Override
     public NutsVersionFilter byExpression(String expression) {
+        checkSession();
         if (CoreStringUtils.isBlank(expression)) {
             return always();
         }
-        return NutsVersionJavascriptFilter.valueOf(expression, ws);
+        return NutsVersionJavascriptFilter.valueOf(expression, getSession());
     }
 
     @Override
     public NutsVersionFilter as(NutsFilter a) {
+        checkSession();
         if (a instanceof NutsVersionFilter) {
             return (NutsVersionFilter) a;
         }
@@ -64,18 +90,20 @@ public class InternalNutsVersionFilterManager extends InternalNutsTypedFilters<N
 
     @Override
     public NutsVersionFilter from(NutsFilter a) {
+        checkSession();
         if (a == null) {
             return null;
         }
         NutsVersionFilter t = as(a);
         if (t == null) {
-            throw new NutsIllegalArgumentException(ws, "not a VersionFilter");
+            throw new NutsIllegalArgumentException(getSession(), "not a VersionFilter");
         }
         return t;
     }
 
     @Override
     public NutsVersionFilter all(NutsFilter... others) {
+        checkSession();
         List<NutsVersionFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
@@ -83,11 +111,12 @@ public class InternalNutsVersionFilterManager extends InternalNutsTypedFilters<N
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NutsVersionFilterAnd(ws, all.toArray(new NutsVersionFilter[0]));
+        return new NutsVersionFilterAnd(getSession(), all.toArray(new NutsVersionFilter[0]));
     }
 
     @Override
     public NutsVersionFilter any(NutsFilter... others) {
+        checkSession();
         List<NutsVersionFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
@@ -95,20 +124,22 @@ public class InternalNutsVersionFilterManager extends InternalNutsTypedFilters<N
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NutsVersionFilterOr(ws, all.toArray(new NutsVersionFilter[0]));
+        return new NutsVersionFilterOr(getSession(), all.toArray(new NutsVersionFilter[0]));
     }
 
     @Override
     public NutsVersionFilter none(NutsFilter... others) {
+        checkSession();
         List<NutsVersionFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
         }
-        return new NutsVersionFilterNone(ws, all.toArray(new NutsVersionFilter[0]));
+        return new NutsVersionFilterNone(getSession(), all.toArray(new NutsVersionFilter[0]));
     }
 
     @Override
     public NutsVersionFilter parse(String expression) {
-        return new NutsVersionFilterParser(expression, ws).parse();
+        checkSession();
+        return new NutsVersionFilterParser(expression, getSession()).parse();
     }
 }

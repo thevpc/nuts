@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsUnsupportedArgumentException;
 import net.thevpc.nuts.runtime.core.commands.ws.AbstractNutsResultList;
 import net.thevpc.nuts.runtime.core.util.CoreCollectionUtils;
@@ -33,13 +33,13 @@ public class NutsCollectionResult<T> extends AbstractNutsResultList<T> {
     private final Object o;
     private final char type;
 
-    public NutsCollectionResult(NutsWorkspace ws, String nutsBase) {
+    public NutsCollectionResult(NutsSession ws, String nutsBase) {
         super(ws, nutsBase);
         this.o = null;
         this.type = 'n';
     }
 
-    public NutsCollectionResult(NutsWorkspace ws, String nutsBase, Iterator<T> o) {
+    public NutsCollectionResult(NutsSession ws, String nutsBase, Iterator<T> o) {
         super(ws, nutsBase);
         if (o == null) {
             this.o = null;
@@ -50,7 +50,7 @@ public class NutsCollectionResult<T> extends AbstractNutsResultList<T> {
         }
     }
 
-    public NutsCollectionResult(NutsWorkspace ws, String nutsBase, Collection<T> o) {
+    public NutsCollectionResult(NutsSession ws, String nutsBase, Collection<T> o) {
         super(ws, nutsBase);
         if (o == null) {
             this.o = null;
@@ -61,7 +61,7 @@ public class NutsCollectionResult<T> extends AbstractNutsResultList<T> {
         }
     }
 
-    public NutsCollectionResult(NutsWorkspace ws, String nutsBase, List<T> o) {
+    public NutsCollectionResult(NutsSession ws, String nutsBase, List<T> o) {
         super(ws, nutsBase);
         if (o == null) {
             this.o = null;
@@ -84,7 +84,7 @@ public class NutsCollectionResult<T> extends AbstractNutsResultList<T> {
             case 'c':
                 return new ArrayList<>((Collection<T>) o);
         }
-        throw new NutsUnsupportedArgumentException(ws, "Illegal type " + type);
+        throw new NutsUnsupportedArgumentException(session, "Illegal type " + type);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class NutsCollectionResult<T> extends AbstractNutsResultList<T> {
             case 'c':
                 return ((Collection<T>) o).iterator();
         }
-        throw new NutsUnsupportedArgumentException(ws, "Illegal type " + type);
+        throw new NutsUnsupportedArgumentException(session, "Illegal type " + type);
     }
 
     @Override
@@ -114,7 +114,7 @@ public class NutsCollectionResult<T> extends AbstractNutsResultList<T> {
             case 'c':
                 return ((Collection<T>) o).stream();
         }
-        throw new NutsUnsupportedArgumentException(ws, "Illegal type " + type);
+        throw new NutsUnsupportedArgumentException(session, "Illegal type " + type);
     }
 
     @Override

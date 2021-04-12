@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  *
@@ -35,6 +36,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
     protected void showDefaultHelp() {
         session.out().println(getHelpText());
     }
+
 
     @Override
     public String getHelpText() {

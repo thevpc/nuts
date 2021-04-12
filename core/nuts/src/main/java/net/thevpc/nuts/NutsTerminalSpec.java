@@ -52,8 +52,4 @@ public interface NutsTerminalSpec extends Serializable {
     NutsTerminalSpec putAll(Map<String, Object> other);
 
     Map<String, Object> getProperties();
-
-    NutsSession getSession();
-
-    NutsTerminalSpec setSession(NutsSession session);
 }

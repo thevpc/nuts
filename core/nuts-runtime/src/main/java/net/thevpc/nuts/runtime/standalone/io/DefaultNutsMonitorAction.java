@@ -21,13 +21,14 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  * @author thevpc
  */
 public class DefaultNutsMonitorAction implements NutsMonitorAction {
 
-    private final NutsLogger LOG;
+//    private final NutsLogger LOG;
     private final NutsWorkspace ws;
     private String sourceTypeName;
     private String sourceKind;
@@ -41,7 +42,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
 
     public DefaultNutsMonitorAction(NutsWorkspace ws) {
         this.ws = ws;
-        LOG = ws.log().of(DefaultNutsMonitorAction.class);
+//        LOG = ws.log().of(DefaultNutsMonitorAction.class);
     }
 
     @Override
@@ -125,27 +126,28 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
 
     @Override
     public InputStream create() {
+        checkSession();
         if (source == null || sourceKind == null) {
-            throw new NutsIllegalArgumentException(ws, "missing Source");
+            throw new NutsIllegalArgumentException(getSession(), "missing Source");
         }
         switch (sourceKind) {
             case "inputSource": {
-                return monitorInputStream(((NutsInput) source), sourceOrigin, sourceName, session).open();
+                return monitorInputStream(((NutsInput) source), sourceOrigin, sourceName).open();
             }
             case "stream": {
-                return monitorInputStream((InputStream) source,sourceOrigin, length, sourceName, session);
+                return monitorInputStream((InputStream) source,sourceOrigin, length, sourceName);
             }
             case "string": {
-                return monitorInputStream((String) source, sourceOrigin, sourceName, session);
+                return monitorInputStream((String) source, sourceOrigin, sourceName);
             }
             case "path": {
-                return monitorInputStream(((Path) source).toString(), sourceOrigin, sourceName, session);
+                return monitorInputStream(((Path) source).toString(), sourceOrigin, sourceName);
             }
             case "file": {
-                return monitorInputStream(((File) source).getPath(), sourceOrigin, sourceName, session);
+                return monitorInputStream(((File) source).getPath(), sourceOrigin, sourceName);
             }
             default:
-                throw new NutsUnsupportedArgumentException(ws, sourceKind);
+                throw new NutsUnsupportedArgumentException(getSession(), sourceKind);
         }
     }
 
@@ -162,7 +164,8 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
 
     @Override
     public NutsInput createSource() {
-        NutsInput base = ws.io().input().of(source);
+        checkSession();
+        NutsInput base = getSession().getWorkspace().io().input().of(source);
         boolean isPath=false;
         boolean isUrl=false;
         isPath=base.isPath();
@@ -177,177 +180,33 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             sourceName0=((NutsInput) getOrigin()).getName();
         }
         if(sourceKind0.equalsIgnoreCase("inputSource")){
-            return monitorInputStream(((NutsInput) source), sourceOrigin, sourceName, session);
+            return monitorInputStream(((NutsInput) source), sourceOrigin, sourceName);
         }
         switch (sourceKind0) {
             case "string": {
-                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0,ws) {
-                    @Override
-                    public InputStream open() {
-                        return monitorInputStream((String) source, sourceOrigin, sourceName, session);
-                    }
-
-                    @Override
-                    public String toString() {
-                        return (String) source;
-                    }
-                    @Override
-                    public long length() {
-                        return base.length();
-                    }
-
-                    @Override
-                    public String getContentType() {
-                        return null;
-                    }
-
-                    @Override
-                    public String getContentEncoding() {
-                        return null;
-                    }
-
-                    @Override
-                    public Instant getLastModified() {
-                        return null;
-                    }
-                };
+                return new InputFromString(sourceName0,base,isPath,isUrl,sourceTypeName0,getSession(), base);
             }
             case "path": {
-                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0,ws) {
-                    @Override
-                    public InputStream open() {
-                        return monitorInputStream(((Path) source).toString(), sourceOrigin, sourceName, session);
-                    }
-
-                    @Override
-                    public String toString() {
-                        return ((Path) source).toString();
-                    }
-                    @Override
-                    public long length() {
-                        return base.length();
-                    }
-
-                    @Override
-                    public String getContentType() {
-                        return null;
-                    }
-
-                    @Override
-                    public String getContentEncoding() {
-                        return null;
-                    }
-
-                    @Override
-                    public Instant getLastModified() {
-                        FileTime r = null;
-                        try {
-                            r = Files.getLastModifiedTime(getPath());
-                            if(r!=null){
-                                return r.toInstant();
-                            }
-                        } catch (IOException e) {
-                            //
-                        }
-                        return null;
-                    }
-                };
+                return new InputFromPath(sourceName0,base,isPath,isUrl,sourceTypeName0,getSession(), base);
             }
             case "file": {
-                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0,ws) {
-                    @Override
-                    public InputStream open() {
-                        return monitorInputStream(((File) source).getPath(), sourceOrigin, sourceName, session);
-                    }
-
-                    @Override
-                    public String toString() {
-                        return ((File) source).getPath();
-                    }
-                    @Override
-                    public long length() {
-                        return base.length();
-                    }
-
-                    @Override
-                    public String getContentType() {
-                        return null;
-                    }
-
-                    @Override
-                    public String getContentEncoding() {
-                        return null;
-                    }
-
-                    @Override
-                    public Path getPath() {
-                        return ((File) source).toPath();
-                    }
-
-                    @Override
-                    public Instant getLastModified() {
-                        FileTime r = null;
-                        try {
-                            r = Files.getLastModifiedTime(getPath());
-                            if(r!=null){
-                                return r.toInstant();
-                            }
-                        } catch (IOException e) {
-                            //
-                        }
-                        return null;
-                    }
-                };
+                return new InputFromFile(sourceName0,base,isPath,isUrl,sourceTypeName0,getSession(), base);
             }
             case "stream": {
-                return new CoreIOUtils.AbstractItem(sourceName0,base,isPath,isUrl,sourceTypeName0,ws) {
-                    @Override
-                    public InputStream open() {
-                        return monitorInputStream((InputStream) source,sourceOrigin, length, sourceName, session);
-                    }
-
-                    @Override
-                    public String toString() {
-                        return ((InputStream) source).toString();
-                    }
-                    @Override
-                    public long length() {
-                        return base.length();
-                    }
-
-                    @Override
-                    public String getContentType() {
-                        return null;
-                    }
-
-                    @Override
-                    public String getContentEncoding() {
-                        return null;
-                    }
-
-                    @Override
-                    public Instant getLastModified() {
-                        return null;
-                    }
-                };
+                return new InputFromStream(sourceName0,base,isPath,isUrl,sourceTypeName0,getSession(), base);
             }
             default:
-                throw new NutsUnsupportedArgumentException(ws, sourceKind);
+                throw new NutsUnsupportedArgumentException(getSession(), sourceKind);
         }
     }
 
-    public InputStream monitorInputStream(String path, Object source, String sourceName, NutsSession session) {
-        if (session == null) {
-            session = ws.createSession();
-        }
+    public InputStream monitorInputStream(String path, Object source, String sourceName) {
+        checkSession();
         if (CoreStringUtils.isBlank(path)) {
             throw new UncheckedIOException(new IOException("missing path"));
         }
         if (CoreStringUtils.isBlank(sourceName)) {
             sourceName = String.valueOf(path);
-        }
-        if (session == null) {
-            session = ws.createSession();
         }
         NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, path, source, session, isLogProgress(),getProgressFactory());
         boolean verboseMode
@@ -358,7 +217,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             if (verboseMode && monitor != null) {
                 monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, null, session, true));
             }
-            stream = ws.io().input().setTypeName(getSourceTypeName()).of(path);
+            stream = getSession().getWorkspace().io().input().setTypeName(getSourceTypeName()).of(path);
             size = stream.length();
         } catch (UncheckedIOException|NutsIOException e) {
             if (verboseMode && monitor != null) {
@@ -386,18 +245,13 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
 
     }
 
-    public NutsInput monitorInputStream(NutsInput inputSource, Object source, String sourceName, NutsSession session) {
-        if (session == null) {
-            session = ws.createSession();
-        }
+    public NutsInput monitorInputStream(NutsInput inputSource, Object source, String sourceName) {
+        checkSession();
         if (inputSource==null) {
             throw new UncheckedIOException(new IOException("missing inputSource"));
         }
         if (CoreStringUtils.isBlank(sourceName)) {
             sourceName = inputSource.getName();
-        }
-        if (session == null) {
-            session = ws.createSession();
         }
         NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, inputSource, source, session, isLogProgress(),getProgressFactory());
         boolean verboseMode
@@ -434,18 +288,16 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         if(sourceTypeName==null){
             sourceTypeName=inputSource.getTypeName();
         }
-        return ws.io().input()
+        return getSession().getWorkspace().io().input()
                 .setTypeName(sourceTypeName)
                 .of(CoreIOUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsInputStreamProgressMonitorAdapter(ws, monitor, inputSource.toString()), session))
                 ;
 
     }
 
-    public InputStream monitorInputStream(InputStream stream,Object sourceOrigin, long length, String name, NutsSession session) {
+    public InputStream monitorInputStream(InputStream stream, Object sourceOrigin, long length, String name) {
+        checkSession();
         if (length > 0) {
-            if (session == null) {
-                session = ws.createSession();
-            }
             NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, stream, sourceOrigin, session, isLogProgress(), getProgressFactory());
             if (m == null) {
                 return stream;
@@ -453,9 +305,6 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             return CoreIOUtils.monitor(stream, sourceOrigin, (name == null ? "Stream" : name), length, m, session);
         } else {
             if (stream instanceof InputStreamMetadataAware) {
-                if (session == null) {
-                    session = ws.createSession();
-                }
                 NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, stream, sourceOrigin, session, isLogProgress(), getProgressFactory());
                 if (m == null) {
                     return stream;
@@ -526,6 +375,193 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     public NutsMonitorAction setProgressMonitor(NutsProgressMonitor value) {
         this.progressFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
         return this;
+    }
+
+    protected void checkSession() {
+        NutsWorkspaceUtils.checkSession(ws, session);
+    }
+
+    private class InputFromStream extends CoreIOUtils.AbstractItem {
+
+        private final NutsInput base;
+
+        public InputFromStream(String string, Object o, boolean bln, boolean bln1, String string1, NutsSession ns, NutsInput base) {
+            super(string, o, bln, bln1, string1, ns);
+            this.base = base;
+        }
+
+        @Override
+        public InputStream open() {
+            return monitorInputStream((InputStream) source,sourceOrigin, length, sourceName);
+        }
+
+        @Override
+        public String toString() {
+            return ((InputStream) source).toString();
+        }
+
+        @Override
+        public long length() {
+            return base.length();
+        }
+
+        @Override
+        public String getContentType() {
+            return null;
+        }
+
+        @Override
+        public String getContentEncoding() {
+            return null;
+        }
+
+        @Override
+        public Instant getLastModified() {
+            return null;
+        }
+    }
+
+    private class InputFromFile extends CoreIOUtils.AbstractItem {
+
+        private final NutsInput base;
+
+        public InputFromFile(String string, Object o, boolean bln, boolean bln1, String string1, NutsSession ns, NutsInput base) {
+            super(string, o, bln, bln1, string1, ns);
+            this.base = base;
+        }
+
+        @Override
+        public InputStream open() {
+            return monitorInputStream(((File) source).getPath(), sourceOrigin, sourceName);
+        }
+
+        @Override
+        public String toString() {
+            return ((File) source).getPath();
+        }
+
+        @Override
+        public long length() {
+            return base.length();
+        }
+
+        @Override
+        public String getContentType() {
+            return null;
+        }
+
+        @Override
+        public String getContentEncoding() {
+            return null;
+        }
+
+        @Override
+        public Path getPath() {
+            return ((File) source).toPath();
+        }
+
+        @Override
+        public Instant getLastModified() {
+            FileTime r = null;
+            try {
+                r = Files.getLastModifiedTime(getPath());
+                if(r!=null){
+                    return r.toInstant();
+                }
+            } catch (IOException e) {
+                //
+            }
+            return null;
+        }
+    }
+
+    private class InputFromPath extends CoreIOUtils.AbstractItem {
+
+        private final NutsInput base;
+
+        public InputFromPath(String string, Object o, boolean bln, boolean bln1, String string1, NutsSession ns, NutsInput base) {
+            super(string, o, bln, bln1, string1, ns);
+            this.base = base;
+        }
+
+        @Override
+        public InputStream open() {
+            return monitorInputStream(((Path) source).toString(), sourceOrigin, sourceName);
+        }
+
+        @Override
+        public String toString() {
+            return ((Path) source).toString();
+        }
+
+        @Override
+        public long length() {
+            return base.length();
+        }
+
+        @Override
+        public String getContentType() {
+            return null;
+        }
+
+        @Override
+        public String getContentEncoding() {
+            return null;
+        }
+
+        @Override
+        public Instant getLastModified() {
+            FileTime r = null;
+            try {
+                r = Files.getLastModifiedTime(getPath());
+                if(r!=null){
+                    return r.toInstant();
+                }
+            } catch (IOException e) {
+                //
+            }
+            return null;
+        }
+    }
+
+    private class InputFromString extends CoreIOUtils.AbstractItem {
+
+        private final NutsInput base;
+
+        public InputFromString(String string, Object o, boolean bln, boolean bln1, String string1, NutsSession ns, NutsInput base) {
+            super(string, o, bln, bln1, string1, ns);
+            this.base = base;
+        }
+
+        @Override
+        public InputStream open() {
+            return monitorInputStream((String) source, sourceOrigin, sourceName);
+        }
+
+        @Override
+        public String toString() {
+            return (String) source;
+        }
+
+        @Override
+        public long length() {
+            return base.length();
+        }
+
+        @Override
+        public String getContentType() {
+            return null;
+        }
+
+        @Override
+        public String getContentEncoding() {
+            return null;
+        }
+
+        @Override
+        public Instant getLastModified() {
+            return null;
+        }
     }
 
 }

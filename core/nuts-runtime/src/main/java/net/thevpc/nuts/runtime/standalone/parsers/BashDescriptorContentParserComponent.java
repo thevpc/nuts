@@ -94,7 +94,7 @@ public class BashDescriptorContentParserComponent implements NutsDescriptorConte
             String name = null;
             List<NutsDependency> deps = new ArrayList<NutsDependency>();
             List<NutsId> arch = new ArrayList<NutsId>();
-            JsonStringBuffer comment = new JsonStringBuffer(ws);
+            JsonStringBuffer comment = new JsonStringBuffer(session);
             String sheban = "";
             boolean start = false;
             while ((line = r.readLine()) != null) {

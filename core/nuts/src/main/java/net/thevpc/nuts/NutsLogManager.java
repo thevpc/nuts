@@ -43,14 +43,16 @@ public interface NutsLogManager {
     /**
      * remove the given handler
      * @param handler handler to remove
+     * @return this
      */
-    void removeHandler(Handler handler);
+    NutsLogManager removeHandler(Handler handler);
 
     /**
      * add the given handler
      * @param handler handler to add
+     * @return this
      */
-    void addHandler(Handler handler);
+    NutsLogManager addHandler(Handler handler);
 
     /**
      * terminal handler
@@ -87,9 +89,9 @@ public interface NutsLogManager {
     /**
      * set terminal logger level
      * @param level new level
-     * @param options update options
+     * @return this
      */
-    void setTermLevel(Level level, NutsUpdateOptions options);
+    NutsLogManager setTermLevel(Level level);
 
     /**
      * return file logger level
@@ -100,7 +102,12 @@ public interface NutsLogManager {
     /**
      * set file logger level
      * @param level new level
-     * @param options update options
+     * @return this
      */
-    void setFileLevel(Level level, NutsUpdateOptions options);
+    NutsLogManager setFileLevel(Level level);
+
+
+    NutsSession getSession();
+
+    NutsLogManager setSession(NutsSession session);
 }

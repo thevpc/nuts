@@ -63,7 +63,8 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     private String[] resolveUserOrRootCommand() {
         if (root) {
-            NutsSession session = NutsWorkspaceUtils.of(execSession.getWorkspace()).validateSession(execCommand.getSession());
+            NutsSession session = execCommand.getSession();
+            NutsWorkspaceUtils.checkSession(execSession.getWorkspace(), session);
             switch (session.getWorkspace().env().getOsFamily()) {
                 case LINUX:
                 case UNIX:
@@ -87,7 +88,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
                     return a.toArray(new String[0]);
                 }
                 default: {
-                    throw new NutsExecutionException(session.getWorkspace(), "ROOT_CMD: unsupported Platform " + session.getWorkspace().env().getOsFamily(), 12);
+                    throw new NutsExecutionException(session, "ROOT_CMD: unsupported Platform " + session.getWorkspace().env().getOsFamily(), 12);
                 }
             }
         } else {
@@ -101,7 +102,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         if (env1 != null) {
             e2 = new HashMap<>((Map) env1);
         }
-        return NutsWorkspaceUtils.of(execSession.getWorkspace()).execAndWait(
+        return NutsWorkspaceUtils.of(traceSession).execAndWait(
                 resolveUserOrRootCommand(), e2, CoreIOUtils.toPath(execCommand.getDirectory()),
                 traceSession.getTerminal(),
                 execSession.getTerminal(), showCommand, true, execCommand.getSleepMillis(),

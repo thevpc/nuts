@@ -34,8 +34,8 @@ import java.util.Map;
  */
 public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
 
-    public DelegateNutsDescriptor(NutsWorkspace ws) {
-        super(ws);
+    public DelegateNutsDescriptor(NutsSession session) {
+        super(session);
     }
 
     protected abstract NutsDescriptor getBase();

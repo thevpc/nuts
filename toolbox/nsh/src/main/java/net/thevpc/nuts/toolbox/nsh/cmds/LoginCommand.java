@@ -80,7 +80,7 @@ public class LoginCommand extends SimpleNshBuiltin {
     @Override
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
-        context.getWorkspace().security().login(options.login, options.password, context.getSession());
+        context.getWorkspace().security().login(options.login, options.password);
     }
 
 }

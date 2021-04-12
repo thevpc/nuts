@@ -19,14 +19,16 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
     protected NutsWorkspace ws;
     protected NutsSession session;
     private final String commandName;
-    protected final NutsLogger LOG;
-    private NutsSession validSession;
-    private boolean sessionCopy = false;
+//    protected final NutsLogger LOG;
 
     public NutsWorkspaceCommandBase(NutsWorkspace ws, String commandName) {
         this.ws = ws;
         this.commandName = commandName;
-        LOG = ws.log().of(getClass());
+//        LOG = ws.log().of(getClass());
+    }
+    
+    protected void checkSession(){
+        NutsWorkspaceUtils.checkSession(ws, getSession());
     }
 
     public String getCommandName() {
@@ -40,23 +42,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
         }
         return (T) this;
     }
-    public NutsSession getValidWorkspaceSessionCopy() {
-        NutsSession s = getValidWorkspaceSession();
-        if (!sessionCopy) {
-            s = validSession = s.copy();
-            sessionCopy = true;
-        }
-        return s;
-    }
-
-    public NutsSession getValidWorkspaceSession() {
-        if (validSession == null) {
-            validSession = NutsWorkspaceUtils.of(getWorkspace()).validateSession(getSession());
-            sessionCopy = true;
-        }
-        return validSession;
-    }
-
+    
     @Override
     public NutsSession getSession() {
         return session;
@@ -98,6 +84,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
+        checkSession();
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
@@ -105,7 +92,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
 //        switch (a.getStringKey()) {
 //        }
 
-        if (getValidWorkspaceSession().configureFirst(cmdLine)) {
+        if (getSession().configureFirst(cmdLine)) {
             return true;
         }
         return false;
@@ -137,5 +124,6 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
     public boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
         return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
     }
+
 
 }

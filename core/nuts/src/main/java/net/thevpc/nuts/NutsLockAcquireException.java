@@ -33,23 +33,23 @@ package net.thevpc.nuts;
 public class NutsLockAcquireException extends NutsLockException {
     /**
      * Constructs a new ock exception.
-     * @param workspace workspace
+     * @param session workspace
      * @param lockedObject locked object
      * @param lockObject lock Object
      */
-    public NutsLockAcquireException(NutsWorkspace workspace, Object lockedObject, Object lockObject) {
-        this(workspace,null,lockedObject,lockObject);
+    public NutsLockAcquireException(NutsSession session, Object lockedObject, Object lockObject) {
+        this(session,null,lockedObject,lockObject);
     }
 
     /**
      * Constructs a new ock exception.
-     * @param workspace workspace
+     * @param session workspace
      * @param message message or null
      * @param lockedObject locked Object
      * @param lockObject lock Object
      */
-    public NutsLockAcquireException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject) {
-        super(workspace,
+    public NutsLockAcquireException(NutsSession session, String message, Object lockedObject, Object lockObject) {
+        super(session,
                 message == null ? ("unable to acquire lock for " + lockedObject)
                         : message,lockedObject,lockObject
         );
@@ -57,14 +57,14 @@ public class NutsLockAcquireException extends NutsLockException {
 
     /**
      * Constructs a new ock exception.
-     * @param workspace workspace
+     * @param session workspace
      * @param message message or null
      * @param lockedObject locked Object
      * @param lockObject lock Object
      * @param cause cause
      */
-    public NutsLockAcquireException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject,Throwable cause) {
-        super(workspace,
+    public NutsLockAcquireException(NutsSession session, String message, Object lockedObject, Object lockObject,Throwable cause) {
+        super(session,
                 message == null ? ("unable to acquire lock for " + lockedObject)
                         : message,lockObject,cause
         );

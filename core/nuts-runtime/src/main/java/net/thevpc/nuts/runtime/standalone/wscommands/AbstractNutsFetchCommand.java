@@ -33,7 +33,8 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
     @Override
     public NutsFetchCommand setId(NutsId id) {
         if (id == null) {
-            throw new NutsParseException(ws, "Invalid Id format : null");
+            checkSession();
+            throw new NutsParseException(session, "Invalid Id format : null");
         }
         this.id = id;
         return this;

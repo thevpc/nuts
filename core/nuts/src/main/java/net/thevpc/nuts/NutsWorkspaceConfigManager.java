@@ -28,7 +28,6 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.spi.NutsIndexStoreFactory;
 
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.Set;
 
 /**
@@ -37,11 +36,6 @@ import java.util.Set;
  * @since 0.5.4
  */
 public interface NutsWorkspaceConfigManager {
-
-    String getName();
-
-    String getUuid();
-
 
     NutsWorkspaceStoredConfig stored();
 
@@ -57,14 +51,13 @@ public interface NutsWorkspaceConfigManager {
      * was detected in config file
      *
      * @param force   when true, save will always be performed
-     * @param session session
      * @return true if the save action was applied
      */
-    boolean save(boolean force, NutsSession session);
+    boolean save(boolean force);
 
-    void save(NutsSession session);
+    boolean save();
 
-    NutsWorkspaceBootConfig loadBootConfig(String path, boolean global, boolean followLinks, NutsSession session);
+    NutsWorkspaceBootConfig loadBootConfig(String path, boolean global, boolean followLinks);
 
     NutsWorkspaceOptionsBuilder optionsBuilder();
 
@@ -76,15 +69,15 @@ public interface NutsWorkspaceConfigManager {
 
     NutsId createContentFaceId(NutsId id, NutsDescriptor desc);
 
-    NutsWorkspaceListManager createWorkspaceListManager(String name, NutsSession session);
+    NutsWorkspaceListManager createWorkspaceListManager(String name);
 
-    boolean isSupportedRepositoryType(String repositoryType, NutsSession session);
+    boolean isSupportedRepositoryType(String repositoryType);
 
-    NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session);
+    NutsAddRepositoryOptions[] getDefaultRepositories();
 
-    Set<String> getAvailableArchetypes(NutsSession session);
+    Set<String> getAvailableArchetypes();
 
-    String resolveRepositoryPath(String repositoryLocation, NutsSession session);
+    String resolveRepositoryPath(String repositoryLocation);
 
     NutsIndexStoreFactory getIndexStoreClientFactory();
 
@@ -101,6 +94,10 @@ public interface NutsWorkspaceConfigManager {
     long getCreationFinishTimeMillis();
 
     long getCreationTimeMillis();
+
+    NutsSession getSession();
+
+    NutsWorkspaceConfigManager setSession(NutsSession session);
 
 
 }

@@ -41,63 +41,63 @@ public class NutsPushException extends NutsException {
 
     /**
      * Constructs a new NutsPushException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param id artifact id
      */
-    public NutsPushException(NutsWorkspace workspace, String id) {
-        this(workspace, id, null, null);
+    public NutsPushException(NutsSession session, String id) {
+        this(session, id, null, null);
     }
 
     /**
      * Constructs a new NutsPushException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param id artifact id
      * @param message message
      */
-    public NutsPushException(NutsWorkspace workspace, String id, String message) {
-        this(workspace, id, message, null);
+    public NutsPushException(NutsSession session, String id, String message) {
+        this(session, id, message, null);
     }
 
     /**
      * Constructs a new NutsPushException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param id artifact id
      * @param message message
      * @param cause cause
      */
-    public NutsPushException(NutsWorkspace workspace, String id, String message, Throwable cause) {
-        super(workspace, message == null ? ("unable to push " + id) : message, cause);
+    public NutsPushException(NutsSession session, String id, String message, Throwable cause) {
+        super(session, message == null ? ("unable to push " + id) : message, cause);
         this.id = id == null ? "<null>" : id;
     }
 
     /**
      * Constructs a new NutsPushException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param id artifact id
      */
-    public NutsPushException(NutsWorkspace workspace, NutsId id) {
-        this(workspace, id, null, null);
+    public NutsPushException(NutsSession session, NutsId id) {
+        this(session, id, null, null);
     }
 
     /**
      * Constructs a new NutsPushException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param id artifact id
      * @param message message
      */
-    public NutsPushException(NutsWorkspace workspace, NutsId id, String message) {
-        this(workspace, id, message, null);
+    public NutsPushException(NutsSession session, NutsId id, String message) {
+        this(session, id, message, null);
     }
 
     /**
      * Constructs a new NutsPushException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param id artifact id
      * @param message message
      * @param cause cause
      */
-    public NutsPushException(NutsWorkspace workspace, NutsId id, String message, Throwable cause) {
-        this(workspace, id == null ? null : id.toString(), message, cause);
+    public NutsPushException(NutsSession session, NutsId id, String message, Throwable cause) {
+        this(session, id == null ? null : id.toString(), message, cause);
     }
 
     /**

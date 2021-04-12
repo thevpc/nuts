@@ -50,7 +50,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     private String arch;
     private String classifier;
     private NutsId[] exclusions=new NutsId[0];
-    private transient NutsWorkspace ws;
+    private transient NutsSession session;
     private transient QueryStringParser propertiesQuery = new QueryStringParser(true, (name, value) -> {
         if (name != null) {
             switch (name) {
@@ -94,8 +94,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     public DefaultNutsDependencyBuilder() {
         //for serialization
     }
-    public DefaultNutsDependencyBuilder(NutsWorkspace ws) {
-        this.ws=ws;
+    public DefaultNutsDependencyBuilder(NutsSession session) {
+        this.session=session;
     }
 
     @Override
@@ -118,13 +118,13 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setVersion(NutsVersion version) {
-        this.version = version == null ? ws.version().parser().parse("") : version;
+        this.version = version == null ? session.getWorkspace().version().parser().parse("") : version;
         return this;
     }
 
     @Override
     public NutsDependencyBuilder setVersion(String classifier) {
-        this.version = ws.version().parser().parse(classifier);
+        this.version = session.getWorkspace().version().parser().parse(classifier);
         return this;
     }
 
@@ -288,7 +288,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsId getId() {
-        return ws.id().builder()
+        return session.getWorkspace().id().builder()
                 .setNamespace(getNamespace())
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
@@ -344,7 +344,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
                 getExclusions(),
                 getOs(),
                 getArch(),
-                getPropertiesQuery(),ws
+                getPropertiesQuery(),session
         );
     }
 
@@ -394,7 +394,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             exclusions = "";
         }
         List<NutsId> ids = new ArrayList<>();
-        NutsIdParser parser = ws.id().parser();
+        NutsIdParser parser = session.getWorkspace().id().parser();
         for (String s : exclusions.split(";")) {
             ids.add(parser.parse(s.trim()));
         }

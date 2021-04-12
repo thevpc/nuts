@@ -90,7 +90,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         NutsWorkspace ws = execSession.getWorkspace();
         try (final CharacterizedExecFile c = characterizeForExec(ws.io().input().of(cmdName), traceSession, executorOptions)) {
             if (c.descriptor == null) {
-                throw new NutsNotFoundException(ws, "", "unable to resolve a valid descriptor for " + cmdName, null);
+                throw new NutsNotFoundException(execSession, "", "unable to resolve a valid descriptor for " + cmdName, null);
             }
             String tempFolder = ws.io().tmp()
                     .setSession(traceSession)
@@ -104,7 +104,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     c.descriptor,
                     new NutsDefaultContent(c.getContentLocation(), false, c.temps.size() > 0),
                     DefaultNutsInstallInfo.notInstalled(_id),
-                    idType, null, ws
+                    idType, null, traceSession
             );
             try {
                 execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(),
@@ -128,7 +128,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             c.contentFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, session);
             Path fileSource = c.contentFile.getPath();
             if (!Files.exists(fileSource)) {
-                throw new NutsIllegalArgumentException(ws, "file does not exists " + fileSource);
+                throw new NutsIllegalArgumentException(session, "file does not exists " + fileSource);
             }
             if (Files.isDirectory(fileSource)) {
                 Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
@@ -144,7 +144,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         c.contentFile = ws.io().input().setMultiRead(true).of(zipFilePath);
                         c.addTemp(zipFilePath);
                     } else {
-                        throw new NutsIllegalArgumentException(ws, "invalid nuts folder source. expected 'zip' ext in descriptor");
+                        throw new NutsIllegalArgumentException(session, "invalid nuts folder source. expected 'zip' ext in descriptor");
                     }
                 }
             } else if (Files.isRegularFile(fileSource)) {
@@ -192,7 +192,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         }
                     }
                     if (c.contentFile == null) {
-                        throw new NutsIllegalArgumentException(ws, "unable to locale component for " + c.baseFile);
+                        throw new NutsIllegalArgumentException(session, "unable to locale component for " + c.baseFile);
                     }
                 } else {
                     c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
@@ -204,7 +204,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     }
                 }
             } else {
-                throw new NutsIllegalArgumentException(ws, "path does not denote a valid file or folder " + c.baseFile);
+                throw new NutsIllegalArgumentException(session, "path does not denote a valid file or folder " + c.baseFile);
             }
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

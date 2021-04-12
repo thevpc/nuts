@@ -49,7 +49,8 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     @Override
     public NutsUpdateCommand addId(NutsId id) {
         if (id == null) {
-            throw new NutsNotFoundException(ws, id);
+            checkSession();
+            throw new NutsNotFoundException(getSession(), id);
         } else {
             ids.add(id);
         }
@@ -292,11 +293,12 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsWorkspaceUpdateResult getResult() {
+        checkSession();
         if (result == null) {
             checkUpdates();
         }
         if (result == null) {
-            throw new NutsUnexpectedException(ws);
+            throw new NutsUnexpectedException(getSession());
         }
         return result;
     }
@@ -365,7 +367,6 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     public NutsUpdateCommand installed(boolean enable) {
         return setInstalled(enable);
     }
-
 
     @Override
     public NutsUpdateCommand setAll() {

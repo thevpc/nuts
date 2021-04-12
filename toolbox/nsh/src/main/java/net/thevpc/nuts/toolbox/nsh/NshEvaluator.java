@@ -48,9 +48,7 @@ public class NshEvaluator extends DefaultJShellEvaluator implements JShellEvalua
         NutsShellContext ncontext = (NutsShellContext) (context.getShellContext());
         try {
             out = new PipedOutputStream();
-            nout = ncontext.getWorkspace().io().createPrintStream(out, NutsTerminalMode.FORMATTED,
-                    ((NutsShellContext) context.getShellContext()).getSession()
-            );
+            nout = ncontext.getWorkspace().io().createPrintStream(out, NutsTerminalMode.FORMATTED);
             in = new PipedInputStream(out, 1024);
             in2 = (in instanceof JavaShellNonBlockingInputStream) ? (JavaShellNonBlockingInputStream) in : new JavaShellNonBlockingInputStreamAdapter("jpipe-" + right.toString(), in);
         } catch (IOException ex) {
@@ -104,7 +102,7 @@ public class NshEvaluator extends DefaultJShellEvaluator implements JShellEvalua
         c2.getSession().setLogLevel(Level.OFF);
         c2.getSession().setTrace(false);
         PrintStream p = new PrintStream(out);
-        NutsSessionTerminal terminal = c2.getWorkspace().io().term().createTerminal(new ByteArrayInputStream(new byte[0]), p, p, c2.getSession());
+        NutsSessionTerminal terminal = c2.getWorkspace().term().createTerminal(new ByteArrayInputStream(new byte[0]), p, p);
         terminal.setOutMode(NutsTerminalMode.FILTERED);
         c2.getSession().setTerminal(terminal);
         try {

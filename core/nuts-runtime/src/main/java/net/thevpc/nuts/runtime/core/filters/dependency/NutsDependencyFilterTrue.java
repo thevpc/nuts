@@ -1,12 +1,11 @@
 package net.thevpc.nuts.runtime.core.filters.dependency;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
-public final class NutsDependencyFilterTrue extends AbstractNutsFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
+public final class NutsDependencyFilterTrue extends AbstractDependencyFilter{
 
-    public NutsDependencyFilterTrue(NutsWorkspace ws) {
+    public NutsDependencyFilterTrue(NutsSession ws) {
         super(ws, NutsFilterOp.TRUE);
     }
 

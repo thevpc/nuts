@@ -18,29 +18,39 @@ import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  * @author thevpc
  */
 public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 
-    private final NutsLogger LOG;
+    private NutsLogger LOG;
 
     private boolean skipRoot = false;
     private boolean safe = true;
     private boolean logProgress = false;
     private String format = "zip";
+    private NutsWorkspace ws;
     private NutsInput source;
     private NutsOutput target;
-    private DefaultNutsIOManager iom;
     private NutsSession session;
     private NutsProgressFactory progressMonitorFactory;
 
-    public DefaultNutsIOUncompressAction(DefaultNutsIOManager iom) {
-        this.iom = iom;
-        LOG = iom.getWorkspace().log().of(DefaultNutsIOUncompressAction.class);
+    public DefaultNutsIOUncompressAction(NutsWorkspace ws) {
+        this.ws = ws;
+//        LOG = ws.log().of(DefaultNutsIOUncompressAction.class);
+    }
+protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
     }
 
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = this.ws.log().setSession(session).of(DefaultNutsIOUncompressAction.class);
+        }
+        return LOG;
+    }
     @Override
     public String getFormat() {
         return format;
@@ -48,18 +58,19 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 
     @Override
     public NutsIOUncompressAction setFormat(String format) {
+        checkSession();
         if (CoreStringUtils.isBlank(format)) {
             format = "zip";
         }
-        switch (format){
+        switch (format) {
             case "zip":
             case "gzip":
-            case "gz":{
+            case "gz": {
                 this.format = format;
                 break;
             }
-            default:{
-                throw new NutsUnsupportedArgumentException(iom.getWorkspace(), "unsupported compression format " + format);
+            default: {
+                throw new NutsUnsupportedArgumentException(getSession(), "unsupported compression format " + format);
             }
         }
         return this;
@@ -70,80 +81,95 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
         return source;
     }
 
+    protected void checkSession() {
+        NutsWorkspaceUtils.checkSession(ws, session);
+    }
+
+    private NutsInputAction _input() {
+        checkSession();
+        return ws.io().input().setSession(getSession());
+    }
+
     @Override
     public NutsIOUncompressAction setSource(InputStream source) {
-        this.source = iom.input().of(source);
+        this.source = _input().of(source);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setSource(File source) {
-        this.source = iom.input().of(source);
+        this.source = _input().of(source);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setSource(Path source) {
-        this.source = iom.input().of(source);
+        this.source = _input().of(source);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setSource(URL source) {
-        this.source = iom.input().of(source);
+        this.source = _input().of(source);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setTarget(Path target) {
-        this.target = iom.output().of(target);
+        this.target = _output().of(target);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setTarget(String target) {
-        this.target = iom.output().of(target);
+        this.target = _output().of(target);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setTarget(File target) {
-        this.target = iom.output().of(target);
+        this.target = _output().of(target);
         return this;
     }
 
     public DefaultNutsIOUncompressAction setSource(Object source) {
-        this.source = iom.input().of(source);
+        this.source = _input().of(source);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction from(String source) {
-        this.source = iom.input().of(source);
+        this.source = _input().of(source);
         return this;
     }
 
+    protected NutsOutputAction _output() {
+        checkSession();
+        return ws.io().output().setSession(getSession());
+    }
+
+
     @Override
     public NutsIOUncompressAction to(String target) {
-        this.target = iom.output().of(target);
+        this.target = _output().of(target);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction from(Object source) {
-        this.source = iom.input().of(source);
+        this.source = _input().of(source);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction to(Object target) {
-        this.target = iom.output().of(target);
+        this.target = _output().of(target);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction to(NutsOutput target) {
-        this.target = iom.output().of(target);
+        this.target = _output().of(target);
         return this;
     }
 
@@ -154,13 +180,13 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 
     //    @Override
     public DefaultNutsIOUncompressAction setTarget(Object target) {
-        this.target = iom.output().of(target);
+        this.target = _output().of(target);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setTarget(NutsOutput target) {
-        this.target = iom.output().of(target);
+        this.target = _output().of(target);
         return this;
     }
 
@@ -229,19 +255,20 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 
     @Override
     public NutsIOUncompressAction run() {
+        checkSession();
         String format = getFormat();
-        if(CoreStringUtils.isBlank(format)){
-            format="zip";
+        if (CoreStringUtils.isBlank(format)) {
+            format = "zip";
         }
         NutsInput _source = source;
         if (_source == null) {
-            throw new NutsIllegalArgumentException(iom.getWorkspace(),"missing source");
+            throw new NutsIllegalArgumentException(getSession(), "missing source");
         }
         if (target == null) {
-            throw new NutsIllegalArgumentException(iom.getWorkspace(),"missing target");
+            throw new NutsIllegalArgumentException(getSession(), "missing target");
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
-            _source = iom.monitor().setSource(_source).setSession(session)
+            _source = ws.io().monitor().setSource(_source).setSession(session)
                     .setProgressFactory(getProgressMonitorFactory())
                     .setLogProgress(isLogProgress())
                     .createSource();
@@ -250,7 +277,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 //        if (!path.toLowerCase().startsWith("file://")) {
 //            LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
 //        } else {
-        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "uncompress {0} to {1}", _source, target);
+        _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START).log("uncompress {0} to {1}", _source, target);
         Path folder = target.getPath();
         if (!Files.exists(folder)) {
             try {
@@ -260,26 +287,25 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
             }
         }
 
-        switch (format){
-            case "zip":
-            {
+        switch (format) {
+            case "zip": {
                 runZip();
                 break;
             }
             case "gzip":
-            case "gz":
-            {
+            case "gz": {
                 runGZip();
                 break;
             }
-            default:{
-                throw new NutsUnsupportedArgumentException(iom.getWorkspace(),"unsupported format "+ format);
+            default: {
+                throw new NutsUnsupportedArgumentException(getSession(), "unsupported format " + format);
             }
         }
         return this;
     }
 
-    private void runZip(){
+    private void runZip() {
+        checkSession();
         NutsInput _source = source;
 //        }
         try {
@@ -319,7 +345,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
                             Files.createDirectories(newFile);
                         } else {
                             Path newFile = folder.resolve(fileName);
-                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "file unzip : " + newFile);
+                            _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("file unzip : " + newFile);
                             //create all non exists folders
                             //else you will hit FileNotFoundException for compressed folder
                             if (newFile.getParent() != null) {
@@ -340,13 +366,13 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
                 _in.close();
             }
         } catch (IOException ex) {
-            LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log( "error uncompressing {0} to {1} : {2}", 
+            _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log("error uncompressing {0} to {1} : {2}",
                     _source.getSource(), target.getSource(), ex);
             throw new UncheckedIOException(ex);
         }
     }
 
-    private void runGZip(){
+    private void runGZip() {
         NutsInput _source = source;
         try {
             String baseName = _source.getName();
@@ -359,16 +385,16 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
             InputStream _in = _source.open();
             try {
                 try (GZIPInputStream zis = new GZIPInputStream(_in)) {
-                    String n= CoreIOUtils.getURLName(baseName==null?"":baseName);
-                    if(n.endsWith(".gz")){
-                        n=n.substring(0,n.length()-3);
+                    String n = CoreIOUtils.getURLName(baseName == null ? "" : baseName);
+                    if (n.endsWith(".gz")) {
+                        n = n.substring(0, n.length() - 3);
                     }
-                    if(n.isEmpty()){
-                        n="data";
+                    if (n.isEmpty()) {
+                        n = "data";
                     }
                     //get the zipped file list entry
                     Path newFile = folder.resolve(n);
-                    LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "file unzip : " + newFile);
+                    _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("file unzip : " + newFile);
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     if (newFile.getParent() != null) {
@@ -385,8 +411,8 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
                 _in.close();
             }
         } catch (IOException ex) {
-            LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
-                    .log( "error uncompressing {0} to {1} : {2}", _source.getSource(), 
+            _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
+                    .log("error uncompressing {0} to {1} : {2}", _source.getSource(),
                             target.getSource(), ex);
             throw new UncheckedIOException(ex);
         }

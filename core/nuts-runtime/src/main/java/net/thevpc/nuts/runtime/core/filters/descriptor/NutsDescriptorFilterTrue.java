@@ -26,15 +26,13 @@
 package net.thevpc.nuts.runtime.core.filters.descriptor;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
-import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsDescriptorFilterTrue extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
+public class NutsDescriptorFilterTrue extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
 
-    public NutsDescriptorFilterTrue(NutsWorkspace ws) {
+    public NutsDescriptorFilterTrue(NutsSession ws) {
         super(ws, NutsFilterOp.TRUE);
     }
 

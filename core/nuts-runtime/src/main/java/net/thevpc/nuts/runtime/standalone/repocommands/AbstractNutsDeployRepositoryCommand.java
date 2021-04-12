@@ -109,29 +109,30 @@ public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepository
     }
 
     protected void checkParameters() {
-        NutsSession session = getValidWorkspaceSession();
-        getRepo().security().checkAllowed(NutsConstants.Permissions.DEPLOY, "deploy", session);
+        checkSession();
+        NutsSession session = getSession();
+        getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.DEPLOY, "deploy");
         if (this.getId() == null) {
-            throw new NutsIllegalArgumentException(repo.getWorkspace(), "missing Id");
+            throw new NutsIllegalArgumentException(session, "missing Id");
         }
         if (this.getContent() == null) {
-            throw new NutsIllegalArgumentException(repo.getWorkspace(), "missing Content");
+            throw new NutsIllegalArgumentException(session, "missing Content");
         }
         if (this.getDescriptor() == null) {
-            throw new NutsIllegalArgumentException(repo.getWorkspace(), "missing Descriptor");
+            throw new NutsIllegalArgumentException(session, "missing Descriptor");
         }
         if (CoreStringUtils.isBlank(this.getId().getGroupId())) {
-            throw new NutsIllegalArgumentException(repo.getWorkspace(), "empty group");
+            throw new NutsIllegalArgumentException(session, "empty group");
         }
         if (CoreStringUtils.isBlank(this.getId().getArtifactId())) {
-            throw new NutsIllegalArgumentException(repo.getWorkspace(), "empty name");
+            throw new NutsIllegalArgumentException(session, "empty name");
         }
         if ((this.getId().getVersion().isBlank())) {
-            throw new NutsIllegalArgumentException(repo.getWorkspace(), "empty version");
+            throw new NutsIllegalArgumentException(session, "empty version");
         }
         if ("RELEASE".equals(this.getId().getVersion().getValue())
                 || NutsConstants.Versions.LATEST.equals(this.getId().getVersion().getValue())) {
-            throw new NutsIllegalArgumentException(repo.getWorkspace(), "invalid version " + this.getId().getVersion());
+            throw new NutsIllegalArgumentException(session, "invalid version " + this.getId().getVersion());
         }
     }
 

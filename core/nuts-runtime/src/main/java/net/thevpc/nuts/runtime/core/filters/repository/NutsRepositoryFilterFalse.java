@@ -28,15 +28,13 @@ package net.thevpc.nuts.runtime.core.filters.repository;
 import net.thevpc.nuts.NutsFilterOp;
 import net.thevpc.nuts.NutsRepository;
 import net.thevpc.nuts.NutsRepositoryFilter;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
-import net.thevpc.nuts.runtime.core.util.Simplifiable;
+import net.thevpc.nuts.NutsSession;
 
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsRepositoryFilterFalse extends AbstractNutsFilter implements NutsRepositoryFilter, Simplifiable<NutsRepositoryFilter> {
-    public NutsRepositoryFilterFalse(NutsWorkspace ws) {
+public class NutsRepositoryFilterFalse extends AbstractRepositoryFilter{
+    public NutsRepositoryFilterFalse(NutsSession ws) {
         super(ws, NutsFilterOp.FALSE);
     }
 

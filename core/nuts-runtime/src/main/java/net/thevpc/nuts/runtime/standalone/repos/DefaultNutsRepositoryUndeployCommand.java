@@ -35,9 +35,9 @@ public class DefaultNutsRepositoryUndeployCommand extends AbstractNutsRepository
 
     @Override
     public NutsRepositoryUndeployCommand run() {
-        NutsSession session = getValidWorkspaceSession();
-        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession(session);
-        getRepo().security().checkAllowed(NutsConstants.Permissions.UNDEPLOY, "undeploy", session);
+        NutsSession session = getSession();
+        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(),session);
+        getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.UNDEPLOY, "undeploy");
         try {
             NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
             xrepo.undeployImpl(this);

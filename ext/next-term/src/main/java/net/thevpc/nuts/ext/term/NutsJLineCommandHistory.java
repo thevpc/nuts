@@ -29,6 +29,7 @@ import net.thevpc.nuts.NutsCommandHistory;
 import net.thevpc.nuts.NutsCommandHistoryEntry;
 import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import static net.thevpc.nuts.ext.term.NutsJLineHistory.DEFAULT_HISTORY_FILE_SIZE;
 import static net.thevpc.nuts.ext.term.NutsJLineHistory.DEFAULT_HISTORY_SIZE;
@@ -54,10 +55,10 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
     private int lastLoaded = 0;
     private int nbEntriesInFile = 0;
     private int offset = 0;
-    private NutsWorkspace ws;
+    private NutsSession session;
 
-    public NutsJLineCommandHistory(NutsWorkspace ws) {
-        this.ws = ws;
+    public NutsJLineCommandHistory(NutsSession session) {
+        this.session = session;
     }
 
     private void internalClear() {
@@ -98,7 +99,7 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
                     public void accept(String l) {
                         int idx = l.indexOf(':');
                         if (idx < 0) {
-                            throw new NutsExecutionException(ws, "Bad history file syntax! "
+                            throw new NutsExecutionException(session, "Bad history file syntax! "
                                     + "The history file may be an older history: "
                                     + "please remove it or use a different history file.", 2);
                         }
@@ -111,7 +112,7 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
                 nbEntriesInFile = lastLoaded;
                 maybeResize();
             } catch (Exception ex) {
-                throw new NutsIOException(ws,ex);
+                throw new NutsIOException(session,ex);
             }
         }
     }

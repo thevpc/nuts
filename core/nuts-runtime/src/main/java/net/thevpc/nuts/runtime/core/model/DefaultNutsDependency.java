@@ -48,21 +48,21 @@ public class DefaultNutsDependency implements NutsDependency {
     private final String arch;
     private final NutsId[] exclusions;
     private final String properties;
-    private transient final NutsWorkspace ws;
+    private transient final NutsSession session;
 
     public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
             String os, String arch,
-            Map<String, String> properties, NutsWorkspace ws) {
+            Map<String, String> properties, NutsSession ws) {
         this(namespace, groupId, artifactId, classifier, version, scope, optional, exclusions, os, arch, QueryStringParser.formatSortedPropertiesQuery(properties), ws);
     }
 
     public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
             String os, String arch,
-            String properties, NutsWorkspace ws) {
+            String properties, NutsSession session) {
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
-        this.version = version == null ? ws.version().parser().parse("") : version;
+        this.version = version == null ? session.getWorkspace().version().parser().parse("") : version;
         this.classifier = CoreStringUtils.trimToNull(classifier);
         this.scope = NutsDependencyScopes.normalizeScope(scope);
         
@@ -77,7 +77,7 @@ public class DefaultNutsDependency implements NutsDependency {
         this.os = CoreStringUtils.trimToNull(os);
         this.arch = CoreStringUtils.trimToNull(arch);
         this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
-        this.ws = ws;
+        this.session = session;
     }
 
     @Override
@@ -120,7 +120,7 @@ public class DefaultNutsDependency implements NutsDependency {
             }
             m.put(NutsConstants.IdProperties.EXCLUSIONS, String.join(",", ex));
         }
-        return ws.id().builder()
+        return session.getWorkspace().id().builder()
                 .setNamespace(getNamespace())
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
@@ -241,7 +241,7 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public NutsDependencyBuilder builder() {
-        return new DefaultNutsDependencyBuilder(ws).set(this);
+        return new DefaultNutsDependencyBuilder(session).set(this);
     }
 
     @Override
@@ -256,6 +256,6 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public NutsFormat formatter() {
-        return ws.dependency().formatter().setValue(this);
+        return session.getWorkspace().dependency().formatter().setValue(this);
     }
 }

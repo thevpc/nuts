@@ -6,19 +6,18 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 
-public class NutsDependencyScopeFilter extends AbstractNutsFilter implements NutsDependencyFilter {
+public class NutsDependencyScopeFilter extends AbstractDependencyFilter {
 
     private EnumSet<NutsDependencyScope> scope=EnumSet.noneOf(NutsDependencyScope.class);
 
-    public NutsDependencyScopeFilter(NutsWorkspace ws) {
+    public NutsDependencyScopeFilter(NutsSession ws) {
         super(ws,NutsFilterOp.CUSTOM);
     }
 
-    private NutsDependencyScopeFilter(NutsWorkspace ws,Collection<NutsDependencyScope> scope) {
+    private NutsDependencyScopeFilter(NutsSession ws,Collection<NutsDependencyScope> scope) {
         super(ws,NutsFilterOp.CUSTOM);
         this.scope = EnumSet.copyOf(scope);
     }
@@ -26,7 +25,7 @@ public class NutsDependencyScopeFilter extends AbstractNutsFilter implements Nut
     public NutsDependencyScopeFilter add(Collection<NutsDependencyScope> scope) {
         EnumSet<NutsDependencyScope> s2 = EnumSet.copyOf(this.scope);
         s2.addAll(scope);
-        return new NutsDependencyScopeFilter(getWorkspace(),s2);
+        return new NutsDependencyScopeFilter(getSession(),s2);
     }
 
     public NutsDependencyScopeFilter addScopePatterns(Collection<NutsDependencyScopePattern> scope) {
@@ -34,7 +33,7 @@ public class NutsDependencyScopeFilter extends AbstractNutsFilter implements Nut
         for (NutsDependencyScopePattern ss : scope) {
             s2.addAll(NutsDependencyScopes.expand(ss));
         }
-        return new NutsDependencyScopeFilter(getWorkspace(),s2);
+        return new NutsDependencyScopeFilter(getSession(),s2);
     }
 
     @Override
@@ -48,7 +47,7 @@ public class NutsDependencyScopeFilter extends AbstractNutsFilter implements Nut
     }
 
     @Override
-    public NutsFilter simplify() {
+    public NutsDependencyFilter simplify() {
         return scope.isEmpty()?getWorkspace().filters().dependency().always() : this;
     }
 }

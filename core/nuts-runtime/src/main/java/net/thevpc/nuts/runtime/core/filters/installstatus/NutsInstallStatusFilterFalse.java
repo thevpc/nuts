@@ -1,13 +1,11 @@
 package net.thevpc.nuts.runtime.core.filters.installstatus;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.filters.id.NutsScriptAwareIdFilter;
-import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
-public class NutsInstallStatusFilterFalse extends AbstractNutsFilter implements NutsInstallStatusFilter, Simplifiable<NutsInstallStatusFilter>, NutsScriptAwareIdFilter {
+public class NutsInstallStatusFilterFalse extends AbstractInstallStatusFilter implements NutsScriptAwareIdFilter {
 
-    public NutsInstallStatusFilterFalse(NutsWorkspace ws) {
+    public NutsInstallStatusFilterFalse(NutsSession ws) {
         super(ws, NutsFilterOp.FALSE);
     }
 

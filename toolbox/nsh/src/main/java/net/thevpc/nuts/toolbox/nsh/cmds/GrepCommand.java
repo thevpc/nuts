@@ -100,7 +100,7 @@ public class GrepCommand extends AbstractNshBuiltin {
             files.add(null);
         }
         if (expression == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "missing Expression", 2);
+            throw new NutsExecutionException(context.getSession(), "missing Expression", 2);
         }
         String baseExpr = options.regexp ? ("^" + simpexpToRegexp(expression, false) + "$") : expression;
         if (options.word) {
@@ -166,7 +166,7 @@ public class GrepCommand extends AbstractNshBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
+            throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
         }
     }
 

@@ -38,6 +38,7 @@ import java.util.logging.Filter;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.core.format.CustomNutsIncrementalOutputFormat;
+import net.thevpc.nuts.runtime.core.sessionaware.NutsWorkspaceSessionAwareImpl;
 
 /**
  * Created by vpc on 2/1/17.
@@ -76,12 +77,12 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private String locale;
 
     public DefaultNutsSession(NutsWorkspace ws) {
-        this.ws = ws;
-        copyFrom(ws.config().options());
+        this.ws = new NutsWorkspaceSessionAwareImpl(this,ws);
+        copyFrom(this.ws.config().options());
     }
 
     public DefaultNutsSession(NutsWorkspace ws, NutsWorkspaceOptions options) {
-        this.ws = ws;
+        this.ws = new NutsWorkspaceSessionAwareImpl(this,ws);
         copyFrom(options);
     }
 
@@ -168,7 +169,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             }
             return cloned;
         } catch (CloneNotSupportedException e) {
-            throw new NutsUnsupportedOperationException(ws, e);
+            throw new NutsUnsupportedOperationException(this, e);
         }
     }
 
@@ -253,7 +254,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 }
             }
             if (!ok) {
-                throw new NutsIllegalArgumentException(ws, "unsupported Listener " + listener.getClass().getName() + " : " + listener);
+                throw new NutsIllegalArgumentException(this, "unsupported Listener " + listener.getClass().getName() + " : " + listener);
             }
         }
         return this;
@@ -1053,7 +1054,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public NutsSession sendTerminalCommand(NutsTerminalCommand command) {
-        getWorkspace().io().term().sendTerminalCommand(out(), command);
+        getWorkspace().term().sendTerminalCommand(out(), command);
         return this;
     }
 

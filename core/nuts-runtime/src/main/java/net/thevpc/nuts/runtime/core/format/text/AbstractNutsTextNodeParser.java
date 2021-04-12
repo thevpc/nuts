@@ -7,16 +7,19 @@ import java.io.*;
 
 public abstract class AbstractNutsTextNodeParser implements NutsTextNodeParser {
     protected int bufferSize=4096;
-    protected NutsWorkspace ws;
+    protected NutsSession session;
     protected DefaultNutsTextNodeResourceParserHelper rp;
 
-    public AbstractNutsTextNodeParser(NutsWorkspace ws) {
-        this.ws = ws;
-        rp=new DefaultNutsTextNodeResourceParserHelper(this, ws);
+    public AbstractNutsTextNodeParser(NutsSession session) {
+        this.session = session;
+        rp=new DefaultNutsTextNodeResourceParserHelper(this, session);
     }
 
     public NutsWorkspace getWorkspace() {
-        return ws;
+        return session.getWorkspace();
+    }
+    public NutsSession getSession() {
+        return session;
     }
 
     @Override
@@ -47,14 +50,14 @@ public abstract class AbstractNutsTextNodeParser implements NutsTextNodeParser {
 
     @Override
     public NutsTextNode parse(InputStream in) {
-        NutsTextNodeCollector doc = new NutsTextNodeCollector(ws);
+        NutsTextNodeCollector doc = new NutsTextNodeCollector(session.getWorkspace());
         parse(in, doc);
         return doc.getRootOrNull();
     }
 
     @Override
     public NutsTextNode parse(Reader in) {
-        NutsTextNodeCollector doc = new NutsTextNodeCollector(ws);
+        NutsTextNodeCollector doc = new NutsTextNodeCollector(session.getWorkspace());
         parse(in, doc);
         return doc.getRootOrNull();
     }
@@ -76,49 +79,49 @@ public abstract class AbstractNutsTextNodeParser implements NutsTextNodeParser {
 
     @Override
     public NutsTextNode parseIncremental(byte[] buf) {
-        NutsTextNodeCollector doc = new NutsTextNodeCollector(ws);
+        NutsTextNodeCollector doc = new NutsTextNodeCollector(session.getWorkspace());
         parseIncremental(buf, 0, buf.length, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NutsTextNode parseIncremental(char[] buf) {
-        NutsTextNodeCollector doc = new NutsTextNodeCollector(ws);
+        NutsTextNodeCollector doc = new NutsTextNodeCollector(session.getWorkspace());
         parseIncremental(new String(buf), doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NutsTextNode parseIncremental(String buf) {
-        NutsTextNodeCollector doc = new NutsTextNodeCollector(ws);
+        NutsTextNodeCollector doc = new NutsTextNodeCollector(session.getWorkspace());
         parseIncremental(buf.getBytes(), doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NutsTextNode parseIncremental(char buf) {
-        NutsTextNodeCollector doc = new NutsTextNodeCollector(ws);
+        NutsTextNodeCollector doc = new NutsTextNodeCollector(session.getWorkspace());
         parseIncremental(buf, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NutsTextNode parseIncremental(byte[] buf, int off, int len) {
-        NutsTextNodeCollector doc = new NutsTextNodeCollector(ws);
+        NutsTextNodeCollector doc = new NutsTextNodeCollector(session.getWorkspace());
         parseIncremental(buf,off,len, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NutsTextNode parseIncremental(char[] buf, int off, int len) {
-        NutsTextNodeCollector doc = new NutsTextNodeCollector(ws);
+        NutsTextNodeCollector doc = new NutsTextNodeCollector(session.getWorkspace());
         parseIncremental(buf,off,len, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NutsTextNode parseRemaining() {
-        NutsTextNodeCollector doc = new NutsTextNodeCollector(ws);
+        NutsTextNodeCollector doc = new NutsTextNodeCollector(session.getWorkspace());
         parseRemaining(doc);
         return doc.getRootOrNull();
     }

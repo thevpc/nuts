@@ -30,7 +30,6 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsTextNodeCode;
 import net.thevpc.nuts.NutsTextNodeType;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
 import net.thevpc.nuts.NutsCodeFormat;
 import net.thevpc.nuts.NutsSession;
@@ -42,7 +41,7 @@ public class DefaultNutsTextNodeCode extends NutsTextNodeSpecialBase implements 
 
     private final String text;
 
-    public DefaultNutsTextNodeCode(NutsWorkspace ws, String start, String kind, String separator, String end, String text) {
+    public DefaultNutsTextNodeCode(NutsSession ws, String start, String kind, String separator, String end, String text) {
         super(ws,start, kind,
                 (kind != null && kind.length() > 0
                         &&
@@ -57,7 +56,7 @@ public class DefaultNutsTextNodeCode extends NutsTextNodeSpecialBase implements 
         NutsCodeFormat t = ((DefaultNutsTextManager) getWorkspace().formats().text())
                 .setSession(session)
                 .resolveBlocTextFormatter(getKind());
-        return t.textToNode(text);
+        return t.textToNode(text, session);
     }
 
     @Override

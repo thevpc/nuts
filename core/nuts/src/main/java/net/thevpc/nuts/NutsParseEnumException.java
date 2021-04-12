@@ -36,23 +36,23 @@ public class NutsParseEnumException extends NutsException {
 
     /**
      * create new instance of NutsUnexpectedEnumException
-     * @param workspace workspace
+     * @param session workspace
      * @param enumType enumeration instance (cannot be null)
      * @param invalidValue invalid value
      */
-    public NutsParseEnumException(NutsWorkspace workspace, String invalidValue, Class<? extends Enum> enumType) {
-        this(workspace,null,invalidValue, enumType);
+    public NutsParseEnumException(NutsSession session, String invalidValue, Class<? extends Enum> enumType) {
+        this(session,null,invalidValue, enumType);
     }
 
     /**
      * create new instance of NutsUnexpectedEnumException
-     * @param workspace workspace
+     * @param session workspace
      * @param enumType enumeration instance (cannot be null)
      * @param invalidValue invalid value
      * @param message message
      */
-    public NutsParseEnumException(NutsWorkspace workspace, String message, String invalidValue, Class<? extends Enum> enumType) {
-        super(workspace,
+    public NutsParseEnumException(NutsSession session, String message, String invalidValue, Class<? extends Enum> enumType) {
+        super(session,
                 message == null ? (
                         "invalid value " + invalidValue + " of type " + enumType.getName())
                         : message

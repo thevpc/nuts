@@ -122,7 +122,7 @@ public class RemoteMysqlDatabaseConfigService {
                 try {
                     Files.createDirectories(Paths.get(localPath).getParent());
                 } catch (IOException e) {
-                    throw new NutsIOException(context.getWorkspace(),e);
+                    throw new NutsIOException(context.getSession(),e);
                 }
             }
             context.getWorkspace().exec().embedded()
@@ -175,11 +175,11 @@ public class RemoteMysqlDatabaseConfigService {
             localPath = loc.backup(localPath).path;
         } else {
             if (StringUtils.isBlank(localPath)) {
-                throw new NutsExecutionException(context.getWorkspace(), "missing local path", 2);
+                throw new NutsExecutionException(context.getSession(), "missing local path", 2);
             }
         }
         if (!new File(localPath).isFile()) {
-            throw new NutsExecutionException(context.getWorkspace(), "invalid local path " + localPath, 2);
+            throw new NutsExecutionException(context.getSession(), "invalid local path " + localPath, 2);
         }
         RemoteMysqlDatabaseConfig cconfig = getConfig();
         String remoteTempPath = null;
@@ -187,7 +187,7 @@ public class RemoteMysqlDatabaseConfigService {
         final String searchResultString = execRemoteNuts("search --no-color --json net.thevpc.nuts.toolbox:nmysql --display temp-folder --installed --first");
         List<Map> result = this.context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(new StringReader(searchResultString), List.class);
         if (result.isEmpty()) {
-            throw new NutsIllegalArgumentException(context.getWorkspace(),"Mysql is not installed on the remote machine");
+            throw new NutsIllegalArgumentException(context.getSession(),"Mysql is not installed on the remote machine");
         }
         remoteTempPath = (String) result.get(0).get("temp-folder");
 

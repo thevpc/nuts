@@ -206,13 +206,13 @@ public class PropsCommand extends AbstractNshBuiltin {
             }
         } while (commandLine.hasNext());
         if (o.sourceType != SourceType.FILE && o.sourceFile != null) {
-            throw new NutsExecutionException(context.getWorkspace(), "props: Should not use file with --system flag", 2);
+            throw new NutsExecutionException(context.getSession(), "props: Should not use file with --system flag", 2);
         }
         if (o.sourceType == SourceType.FILE && o.sourceFile == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "props: Missing file", 3);
+            throw new NutsExecutionException(context.getSession(), "props: Missing file", 3);
         }
         if (o.action == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "props: Missing action", 4);
+            throw new NutsExecutionException(context.getSession(), "props: Missing action", 4);
         }
         switch (o.action) {
             case "get": {
@@ -227,7 +227,7 @@ public class PropsCommand extends AbstractNshBuiltin {
                     }
                     storeProperties(p,o,context);
                 } catch (Exception ex) {
-                    throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
+                    throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
                 }
                 return;
             }
@@ -236,7 +236,7 @@ public class PropsCommand extends AbstractNshBuiltin {
                 return;
             }
             default: {
-                throw new NutsExecutionException(context.getWorkspace(), "props: Unsupported action " + o.action, 2);
+                throw new NutsExecutionException(context.getSession(), "props: Unsupported action " + o.action, 2);
             }
         }
     }
@@ -273,7 +273,7 @@ public class PropsCommand extends AbstractNshBuiltin {
         } else if (file.toLowerCase().endsWith(".xml")) {
             return Format.XML;
         }
-        throw new NutsExecutionException(context.getWorkspace(), "Unknown file format " + file, 2);
+        throw new NutsExecutionException(context.getSession(), "Unknown file format " + file, 2);
     }
 
     private Map<String,String> readProperties(Options o, NshExecutionContext context) {
@@ -301,7 +301,7 @@ public class PropsCommand extends AbstractNshBuiltin {
                 }
             }
         } catch (Exception ex) {
-            throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
+            throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
         }
         return p;
     }

@@ -42,26 +42,26 @@ public abstract class NutsInstallationException extends NutsException {
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id nuts id
      * @param msg message
      * @param ex exception
      */
-    public NutsInstallationException(NutsWorkspace workspace, String id, String msg, Exception ex) {
-        super(workspace, PrivateNutsUtils.isBlank(msg) ? "failed to install " + (id == null ? "<null>" : id) : msg,ex);
+    public NutsInstallationException(NutsSession session, String id, String msg, Exception ex) {
+        super(session, PrivateNutsUtils.isBlank(msg) ? "failed to install " + (id == null ? "<null>" : id) : msg,ex);
         this.id = id;
     }
 
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id nuts id
      * @param msg message
      * @param ex exception
      */
-    public NutsInstallationException(NutsWorkspace workspace, NutsId id, String msg, Exception ex) {
-        this(workspace, id == null ? null : id.toString(), msg, ex);
+    public NutsInstallationException(NutsSession session, NutsId id, String msg, Exception ex) {
+        this(session, id == null ? null : id.toString(), msg, ex);
     }
 
     /**

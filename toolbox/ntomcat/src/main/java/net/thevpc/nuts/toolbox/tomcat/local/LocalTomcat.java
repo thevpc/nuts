@@ -100,11 +100,11 @@ public class LocalTomcat {
                         ps(cmdLine);
                         return;
                     default:
-                        throw new NutsExecutionException(context.getWorkspace(), "Unsupported action " + a.getString(), 1);
+                        throw new NutsExecutionException(context.getSession(), "Unsupported action " + a.getString(), 1);
                 }
             }
         }
-        throw new NutsExecutionException(context.getWorkspace(), "missing tomcat action. Type: nuts tomcat --help", 1);
+        throw new NutsExecutionException(context.getSession(), "missing tomcat action. Type: nuts tomcat --help", 1);
     }
 
     public void list(NutsCommandLine args) {
@@ -423,7 +423,7 @@ public class LocalTomcat {
             context.configureLast(args);
         }
         if (!c.stop()) {
-            throw new NutsExecutionException(context.getWorkspace(), "Unable to stop", 1);
+            throw new NutsExecutionException(context.getSession(), "Unable to stop", 1);
         }
     }
     public NutsString getBracketsPrefix(String str) {
@@ -487,10 +487,10 @@ public class LocalTomcat {
             }
         }
         if (app == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "tomcat install: Missing Application", 2);
+            throw new NutsExecutionException(context.getSession(), "tomcat install: Missing Application", 2);
         }
         if (file == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "tomcat install: Missing File", 2);
+            throw new NutsExecutionException(context.getSession(), "tomcat install: Missing File", 2);
         }
         app.install(version, file, true);
     }
@@ -755,7 +755,7 @@ public class LocalTomcat {
             }
         }
         if (file == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "tomcat deploy: Missing File", 2);
+            throw new NutsExecutionException(context.getSession(), "tomcat deploy: Missing File", 2);
         }
         LocalTomcatConfigService c = openTomcatConfig(instance, NutsOpenMode.OPEN_OR_ERROR);
         c.deployFile(Paths.get(file), contextName, domain);
@@ -901,10 +901,10 @@ public class LocalTomcat {
             LocalTomcatDomainConfigService d = u.getDomain(strings[1], null);
             LocalTomcatAppConfigService a = u.getApp(strings[1], null);
             if (d != null && a != null) {
-                throw new NutsExecutionException(context.getWorkspace(), "Ambiguous name " + name + ". Could be either domain or app", 3);
+                throw new NutsExecutionException(context.getSession(), "Ambiguous name " + name + ". Could be either domain or app", 3);
             }
             if (d == null && a == null) {
-                throw new NutsExecutionException(context.getWorkspace(), "Unknown name " + name + ". it is no domain nor app", 3);
+                throw new NutsExecutionException(context.getSession(), "Unknown name " + name + ". it is no domain nor app", 3);
             }
             if (d != null) {
                 return d;

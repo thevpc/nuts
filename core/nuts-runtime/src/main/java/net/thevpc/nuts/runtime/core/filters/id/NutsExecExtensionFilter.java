@@ -6,17 +6,16 @@
 package net.thevpc.nuts.runtime.core.filters.id;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
+import net.thevpc.nuts.runtime.core.filters.descriptor.AbstractDescriptorFilter;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
-import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 /**
  *
  * @author thevpc
  */
-public class NutsExecExtensionFilter extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
+public class NutsExecExtensionFilter extends AbstractDescriptorFilter {
     private NutsId apiId;
-    public NutsExecExtensionFilter(NutsWorkspace ws, NutsId apiId) {
+    public NutsExecExtensionFilter(NutsSession ws, NutsId apiId) {
         super(ws, NutsFilterOp.CUSTOM);
         this.apiId=apiId;
     }

@@ -12,10 +12,7 @@ import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,13 +63,14 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
     private String getFormattedPrimitiveValue(NutsElement value) {
         switch (value.type()) {
             default: {
-                throw new NutsUnsupportedArgumentException(getWorkspace(), value.type().toString());
+                throw new NutsUnsupportedArgumentException(getSession(), value.type().toString());
             }
         }
     }
 
     @Override
     public void print(PrintStream w) {
+        checkSession();
         Object value = getValue();
         if (value instanceof NutsTableModel) {
             getWorkspace().formats().table().setModel(((NutsTableModel) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
@@ -81,12 +79,12 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
 //        } else if (value instanceof Map) {
 //            ws.props().setModel(((Map) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof org.w3c.dom.Document) {
-            NutsXmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w), false, true, getValidSession());
+            NutsXmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w), false, true, getSession());
         } else if (value instanceof org.w3c.dom.Element) {
             Element elem = (org.w3c.dom.Element) value;
             Document doc = NutsXmlUtils.createDocument(getSession());
             doc.appendChild(doc.importNode(elem, true));
-            NutsXmlUtils.writeDocument(doc, new StreamResult(w), false, false, getValidSession());
+            NutsXmlUtils.writeDocument(doc, new StreamResult(w), false, false, getSession());
         } else {
             printElement(w, getWorkspace().formats().element()
                     .setSession(getSession())
@@ -134,7 +132,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getWorkspace(), value.type().toString());
+                throw new NutsUnsupportedArgumentException(getSession(), value.type().toString());
             }
         }
     }

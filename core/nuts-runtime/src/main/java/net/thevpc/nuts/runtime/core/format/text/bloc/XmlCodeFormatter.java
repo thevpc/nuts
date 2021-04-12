@@ -12,6 +12,7 @@ import java.util.List;
 import net.thevpc.nuts.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsCodeFormat;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.NutsTextManager;
 
@@ -31,7 +32,8 @@ public class XmlCodeFormatter implements NutsCodeFormat {
         return "xml".equals(s) ? NutsComponent.DEFAULT_SUPPORT : NutsComponent.NO_SUPPORT;
     }
 
-    public NutsTextNode tokenToNode(String text, String nodeType) {
+    public NutsTextNode tokenToNode(String text, String nodeType,NutsSession session) {
+        factory.setSession(session);
         switch (CoreStringUtils.trim(nodeType).toLowerCase()) {
             case "name":
                 return formatNodeName(text);
@@ -64,7 +66,8 @@ public class XmlCodeFormatter implements NutsCodeFormat {
     }
 
     @Override
-    public NutsTextNode textToNode(String text) {
+    public NutsTextNode textToNode(String text, NutsSession session) {
+        factory.setSession(session);
         StreamTokenizerExt st = new StreamTokenizerExt(new StringReader(text));
         st.xmlComments(true);
         st.doNotParseNumbers();

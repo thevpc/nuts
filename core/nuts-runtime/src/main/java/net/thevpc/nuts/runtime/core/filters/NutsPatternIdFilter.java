@@ -14,13 +14,14 @@ import java.util.regex.Pattern;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
+import net.thevpc.nuts.runtime.core.filters.id.AbstractIdFilter;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
  *
  * @author thevpc
  */
-public class NutsPatternIdFilter extends AbstractNutsFilter implements NutsIdFilter {
+public class NutsPatternIdFilter extends AbstractIdFilter implements NutsIdFilter {
 
     private NutsId id;
     private Pattern g;
@@ -30,7 +31,7 @@ public class NutsPatternIdFilter extends AbstractNutsFilter implements NutsIdFil
     private Map<String, String> qm;
     private List<Predicate<Map<String, String>>> q = new ArrayList<>();
 
-    public NutsPatternIdFilter(NutsWorkspace ws, NutsId id) {
+    public NutsPatternIdFilter(NutsSession ws, NutsId id) {
         super(ws, NutsFilterOp.CUSTOM);
         this.id = id;
         this.wildcard = containsWildcad(id.toString());

@@ -38,6 +38,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
 import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  * Created by vpc on 1/18/17.
@@ -49,11 +50,10 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
 
     private final NutsLogger LOG;
 
-    public AbstractNutsRepositoryBase(NutsAddRepositoryOptions options,
-            NutsWorkspace workspace, NutsRepository parentRepository,
-            int speed, boolean supportedMirroring, String repositoryType) {
-        LOG = workspace.log().of(AbstractNutsRepositoryBase.class);
-        init(options, workspace, parentRepository, speed, supportedMirroring, repositoryType);
+    public AbstractNutsRepositoryBase(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository, int speed, boolean supportedMirroring, String repositoryType) {
+        this.initSession=session;
+        LOG = session.getWorkspace().log().of(AbstractNutsRepositoryBase.class);
+        init(options, session, parentRepository, speed, supportedMirroring, repositoryType);
     }
 
     @Override
@@ -61,17 +61,14 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         return nutsIndexStore;
     }
 
-    protected void init(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
+    protected void init(NutsAddRepositoryOptions options, NutsSession initSession, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
         NutsRepositoryConfig optionsConfig = options.getConfig();
 
-        this.workspace = workspace;
+        this.workspace = initSession.getWorkspace();
         this.parentRepository = parent;
-        securityManager = new DefaultNutsRepositorySecurityManager(this);
-        if (options.getSession() == null) {
-            options.setSession(workspace.createSession());
-        }
-        this.configManager = new DefaultNutsRepoConfigManager(this, options, speed, supportedMirroring, repositoryType);
-        this.nutsIndexStore = workspace.config().getIndexStoreClientFactory().createIndexStore(this);
+//        NutsWorkspaceUtils.checkSession(workspace, session);
+        this.configModel = new DefaultNutsRepositoryConfigModel(this, options, initSession,speed, supportedMirroring, repositoryType);
+        this.nutsIndexStore = initSession.getWorkspace().config().getIndexStoreClientFactory().createIndexStore(this);
         setEnabled(options.isEnabled());
     }
 
@@ -170,21 +167,21 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         return getWorkspace().locations().getDefaultIdContentExtension(packaging);
     }
 
-    protected String getIdExtension(NutsId id) {
+    protected String getIdExtension(NutsId id, NutsSession session) {
         return getWorkspace().locations().getDefaultIdExtension(id);
     }
 
     @Override
-    public String getIdBasedir(NutsId id) {
-        return getWorkspace().locations().getDefaultIdBasedir(id);
+    public String getIdBasedir(NutsId id, NutsSession session) {
+        return getWorkspace().locations().setSession(session).getDefaultIdBasedir(id);
     }
 
-    protected String getIdRemotePath(NutsId id) {
-        return CoreIOUtils.buildUrl(config().getLocation(true), getIdRelativePath(id));
+    protected String getIdRemotePath(NutsId id, NutsSession session) {
+        return CoreIOUtils.buildUrl(config().setSession(session).getLocation(true), getIdRelativePath(id, session));
     }
 
-    protected String getIdRelativePath(NutsId id) {
-        return getIdBasedir(id) + "/" + getIdFilename(id);
+    protected String getIdRelativePath(NutsId id, NutsSession session) {
+        return getIdBasedir(id, session) + "/" + getIdFilename(id, session);
     }
 
     @Override

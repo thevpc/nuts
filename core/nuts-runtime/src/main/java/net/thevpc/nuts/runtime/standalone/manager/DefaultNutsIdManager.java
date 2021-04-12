@@ -6,17 +6,31 @@ import net.thevpc.nuts.runtime.bundles.mvn.PomId;
 import net.thevpc.nuts.runtime.core.format.DefaultNutsIdFormat;
 import net.thevpc.nuts.runtime.core.parser.DefaultNutsIdParser;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsIdManager implements NutsIdManager {
+
     private NutsWorkspace ws;
+    private NutsSession session;
 
     public DefaultNutsIdManager(NutsWorkspace ws) {
         this.ws = ws;
     }
 
     @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsIdManager setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+
+    @Override
     public NutsIdFormat formatter() {
-        return new DefaultNutsIdFormat(ws);
+        return new DefaultNutsIdFormat(ws).setSession(getSession());
     }
 
     @Override
@@ -26,16 +40,17 @@ public class DefaultNutsIdManager implements NutsIdManager {
 
     @Override
     public NutsIdFilterManager filter() {
-        return ws.filters().id();
+        return ws.filters().id().setSession(getSession());
     }
 
     @Override
     public NutsIdBuilder builder() {
-        return new DefaultNutsIdBuilder(ws);
+        checkSession();
+        return new DefaultNutsIdBuilder(getSession());
     }
 
     @Override
-    public NutsId resolveId(Class clazz, NutsSession session) {
+    public NutsId resolveId(Class clazz) {
         PomId u = MavenUtils.createPomIdResolver(session).resolvePomId(clazz, null, session);
         if (u == null) {
             return null;
@@ -44,8 +59,8 @@ public class DefaultNutsIdManager implements NutsIdManager {
     }
 
     @Override
-    public NutsId[] resolveIds(Class clazz, NutsSession session) {
-        PomId[] u = MavenUtils.createPomIdResolver(session).resolvePomIds(clazz,session);
+    public NutsId[] resolveIds(Class clazz) {
+        PomId[] u = MavenUtils.createPomIdResolver(session).resolvePomIds(clazz, session);
         NutsId[] all = new NutsId[u.length];
         NutsIdParser parser = parser();
         for (int i = 0; i < all.length; i++) {
@@ -54,9 +69,15 @@ public class DefaultNutsIdManager implements NutsIdManager {
         return all;
     }
 
+    protected void checkSession() {
+        NutsWorkspaceUtils.checkSession(ws, session);
+    }
+
+
     @Override
     public NutsIdParser parser() {
-        return new DefaultNutsIdParser(getWorkspace());
+        checkSession();
+        return new DefaultNutsIdParser(getSession());
     }
 
     public NutsWorkspace getWorkspace() {

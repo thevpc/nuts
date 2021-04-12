@@ -47,7 +47,7 @@ public class DefaultNutsTextFormatTheme implements NutsTextFormatTheme {
     }
 
     @Override
-    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyles styles) {
+    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyles styles, NutsSession session) {
         NutsTextNodeStyles ret = NutsTextNodeStyles.NONE;
         if (styles != null) {
             for (NutsTextNodeStyle style : styles) {

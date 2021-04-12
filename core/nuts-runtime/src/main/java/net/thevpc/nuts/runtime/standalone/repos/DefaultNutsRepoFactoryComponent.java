@@ -120,7 +120,7 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
     }
 
     @Override
-    public NutsRepository create(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
+    public NutsRepository create(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         NutsRepositoryConfig config = options.getConfig();
         if (CoreStringUtils.isBlank(config.getType())) {
             if (CoreStringUtils.isBlank(config.getLocation())) {
@@ -129,14 +129,14 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
         }
         if (NutsConstants.RepoTypes.NUTS.equals(config.getType())) {
             if (CoreStringUtils.isBlank(config.getLocation()) || CoreIOUtils.isPathFile(config.getLocation())) {
-                return new NutsFolderRepository(options, workspace, parentRepository);
+                return new NutsFolderRepository(options, session, parentRepository);
             }
             if (CoreIOUtils.isPathURL(config.getLocation())) {
-                return (new NutsHttpFolderRepository(options, workspace, parentRepository));
+                return (new NutsHttpFolderRepository(options, session, parentRepository));
             }
         }
         if ("nuts:api".equals(config.getType()) && CoreIOUtils.isPathHttp(config.getLocation())) {
-            return (new NutsHttpSrvRepository(options, workspace, parentRepository));
+            return (new NutsHttpSrvRepository(options, session, parentRepository));
         }
         return null;
     }

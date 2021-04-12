@@ -1,21 +1,19 @@
 package net.thevpc.nuts.runtime.core.filters.descriptor;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NutsDescriptorFilterNone extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
+public class NutsDescriptorFilterNone extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
 
     private NutsDescriptorFilter[] all;
 
-    public NutsDescriptorFilterNone(NutsWorkspace ws, NutsDescriptorFilter... all) {
+    public NutsDescriptorFilterNone(NutsSession ws, NutsDescriptorFilter... all) {
         super(ws, NutsFilterOp.NOT);
         List<NutsDescriptorFilter> valid = new ArrayList<>();
         if (all != null) {

@@ -33,6 +33,7 @@ import java.nio.file.Path;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.runtime.core.format.plain.NutsObjectFormatPlain;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  *
@@ -51,7 +52,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     public NutsObjectFormat setSession(NutsSession session) {
         super.setSession(session);
         if (base != null) {
-            base.setSession(getValidSession());
+            base.setSession(getSession());
         }
         return this;
     }
@@ -66,9 +67,10 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     }
 
     public NutsContentType getOutputFormat() {
-        NutsContentType t = getValidSession().getOutputFormat();
+        checkSession();
+        NutsContentType t = getSession().getOutputFormat();
         t=t == null ? NutsContentType.PLAIN : t;
-        if(getValidSession().isBot()){
+        if(getSession().isBot()){
             switch(t){
                 case PLAIN:{
                     return NutsContentType.PROPS;
@@ -84,38 +86,40 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     }
 
     public NutsObjectFormat getBase() {
+        checkSession();
         NutsContentType nextOutputFormat = getOutputFormat();
         if (base == null || this.outputFormat != nextOutputFormat) {
             this.outputFormat = nextOutputFormat;
             base = createObjectFormat();
             base.setValue(getValue());
-            base.setSession(getValidSession());
+            base.setSession(getSession());
             base.configure(true, getWorkspace().config().options().getOutputFormatOptions());
-            base.configure(true, getValidSession().getOutputFormatOptions());
+            base.configure(true, getSession().getOutputFormatOptions());
         }
         return base;
     }
 
     public NutsObjectFormat createObjectFormat() {
+        checkSession();
         switch (getOutputFormat()) {
             case XML:
             case JSON:{
-                return getWorkspace().formats().element().setSession(getValidSession()).setContentType(getOutputFormat());
+                return getWorkspace().formats().element().setSession(getSession()).setContentType(getOutputFormat());
             }
             case PROPS: {
-                return getWorkspace().formats().props();
+                return getWorkspace().formats().props().setSession(getSession());
             }
             case TREE: {
-                return getWorkspace().formats().tree();
+                return getWorkspace().formats().tree().setSession(getSession());
             }
             case PLAIN: {
-                return new NutsObjectFormatPlain(getWorkspace());
+                return new NutsObjectFormatPlain(getWorkspace()).setSession(getSession());
             }
             case TABLE: {
-                return getWorkspace().formats().table();
+                return getWorkspace().formats().table().setSession(getSession());
             }
         }
-        throw new NutsException(getWorkspace(), "Unsupported");
+        throw new NutsException(getSession(), "Unsupported");
     }
 
     @Override

@@ -147,7 +147,7 @@ public class NutsHttpServlet extends HttpServlet {
                         .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
                         .setArchetype("server")
         );
-        DefaultNutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(workspace);
+        DefaultNutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(workspace.createSession());
         if (workspaces.isEmpty()) {
             String wl = workspaceLocation == null ? "" : workspaceLocation;
             workspaces.put("", wl);

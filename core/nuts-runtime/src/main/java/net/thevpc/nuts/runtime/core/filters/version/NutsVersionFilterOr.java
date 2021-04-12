@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.core.filters.id.NutsScriptAwareIdFilter;
 
-public class NutsVersionFilterOr extends AbstractNutsFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter {
+public class NutsVersionFilterOr extends AbstractVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter {
 
     private NutsVersionFilter[] all;
 
-    public NutsVersionFilterOr(NutsWorkspace ws, NutsVersionFilter... all) {
+    public NutsVersionFilterOr(NutsSession ws, NutsVersionFilter... all) {
         super(ws, NutsFilterOp.OR);
         List<NutsVersionFilter> valid = new ArrayList<>();
         if (all != null) {

@@ -27,30 +27,30 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
         } else if (cmdLine.next("clear imports", "ci") != null) {
             cmdLine.setCommandName("config clear imports").unexpectedArgument();
             if (cmdLine.isExecMode()) {
-                context.getWorkspace().imports().removeAll(new NutsRemoveOptions().setSession(context.getSession()));
-                context.getWorkspace().config().save(context.getSession());
+                context.getWorkspace().imports().removeAll();
+                context.getWorkspace().config().save();
             }
             return true;
         } else if (cmdLine.next("import", "ia") != null) {
             do {
                 String a = cmdLine.required().nextNonOption(commandLineFormat.createName("import")).getString();
                 if (cmdLine.isExecMode()) {
-                    context.getWorkspace().imports().add(new String[]{a},new NutsAddOptions().setSession(context.getSession()));
+                    context.getWorkspace().imports().add(new String[]{a});
                 }
             } while (cmdLine.hasNext());
             if (cmdLine.isExecMode()) {
-                context.getWorkspace().config().save(context.getSession());
+                context.getWorkspace().config().save();
             }
             return true;
         } else if (cmdLine.next("unimport", "ir") != null) {
             while (cmdLine.hasNext()) {
                 String ii = cmdLine.required().nextNonOption(commandLineFormat.createName("import")).getString();
                 if (cmdLine.isExecMode()) {
-                    context.getWorkspace().imports().remove(new String[]{ii}, new NutsRemoveOptions().setSession(context.getSession()));
+                    context.getWorkspace().imports().remove(new String[]{ii});
                 }
             }
             if (cmdLine.isExecMode()) {
-                context.getWorkspace().config().save(context.getSession());
+                context.getWorkspace().config().save();
             }
             return true;
         }

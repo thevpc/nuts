@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.NutsTypedFiltersParser;
 
 public class NutsDependencyFilterParser extends NutsTypedFiltersParser<NutsDependencyFilter> {
-    public NutsDependencyFilterParser(String str, NutsWorkspace ws) {
+    public NutsDependencyFilterParser(String str, NutsSession ws) {
         super(str,ws);
     }
 

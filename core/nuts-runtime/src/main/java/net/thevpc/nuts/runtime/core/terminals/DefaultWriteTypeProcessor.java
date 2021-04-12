@@ -26,7 +26,7 @@ public class DefaultWriteTypeProcessor {
 
     public DefaultWriteTypeProcessor ask(String m, Object... p) {
         if (m == null) {
-            throw new NutsIllegalArgumentException(session.getWorkspace(),"missing ask message");
+            throw new NutsIllegalArgumentException(session,"missing ask message");
         }
         this.askMessage = m;
         this.askMessageParams = p;
@@ -35,11 +35,11 @@ public class DefaultWriteTypeProcessor {
 
     public DefaultWriteTypeProcessor withLog(NutsLogger log, String m, Object... p) {
         if (log == null) {
-            throw new NutsIllegalArgumentException(session.getWorkspace(),"missing ask log");
+            throw new NutsIllegalArgumentException(session,"missing ask log");
         }
         this.log = log;
         if (m == null) {
-            throw new NutsIllegalArgumentException(session.getWorkspace(),"missing log message");
+            throw new NutsIllegalArgumentException(session,"missing log message");
         }
         this.logMessage = m;
         this.logMessageParams = p;
@@ -48,7 +48,7 @@ public class DefaultWriteTypeProcessor {
 
     public DefaultWriteTypeProcessor onError(Supplier<RuntimeException> error) {
         if (error == null) {
-            throw new NutsIllegalArgumentException(session.getWorkspace(),"missing error handler");
+            throw new NutsIllegalArgumentException(session,"missing error handler");
         }
         this.error = error;
         return this;
@@ -56,7 +56,7 @@ public class DefaultWriteTypeProcessor {
 
     private String getAskMessage() {
         if (askMessage == null) {
-            throw new NutsIllegalArgumentException(session.getWorkspace(),"missing ask message");
+            throw new NutsIllegalArgumentException(session,"missing ask message");
         }
         return askMessage;
     }
@@ -67,7 +67,7 @@ public class DefaultWriteTypeProcessor {
 
     private String getLogMessage() {
         if (logMessage == null) {
-            throw new NutsIllegalArgumentException(session.getWorkspace(),"missing log message");
+            throw new NutsIllegalArgumentException(session,"missing log message");
         }
         return logMessage;
     }
@@ -78,14 +78,14 @@ public class DefaultWriteTypeProcessor {
 
     private Supplier<RuntimeException> getError() {
         if (error == null) {
-            throw new NutsIllegalArgumentException(session.getWorkspace(),"missing error handler");
+            throw new NutsIllegalArgumentException(session,"missing error handler");
         }
         return error;
     }
 
     private NutsLogger getLog() {
         if (log == null) {
-            throw new NutsIllegalArgumentException(session.getWorkspace(),"missing log");
+            throw new NutsIllegalArgumentException(session,"missing log");
         }
         return log;
     }

@@ -44,7 +44,7 @@ public class Test07_ColorfulStream {
         NutsWorkspace ws = Nuts.openWorkspace();
         {
             NutsSession session = ws.createSession();
-            NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(s));
+            NutsTextNode node = new DefaultNutsTextNodeParser(session).parse(new StringReader(s));
             NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, session)
                     .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
             w.writeNode(node);

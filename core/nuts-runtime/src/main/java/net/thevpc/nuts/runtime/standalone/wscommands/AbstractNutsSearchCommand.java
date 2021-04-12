@@ -32,7 +32,6 @@ import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.format.NutsIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.util.NutsCollectionResult;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.iter.NamedIterator;
@@ -85,8 +84,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsSearchCommand addId(String id) {
+        checkSession();
         if (!CoreStringUtils.isBlank(id)) {
-            ids.add(ws.id().parser().setLenient(false).parse(id));
+            ids.add(getSession().getWorkspace().id().parser().setLenient(false).parse(id));
         }
         return this;
     }
@@ -101,10 +101,11 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsSearchCommand addIds(String... values) {
+        checkSession();
         if (values != null) {
             for (String s : values) {
                 if (!CoreStringUtils.isBlank(s)) {
-                    ids.add(ws.id().parser().setLenient(false).parse(s));
+                    ids.add(getSession().getWorkspace().id().parser().setLenient(false).parse(s));
                 }
             }
         }
@@ -125,7 +126,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsSearchCommand removeId(String id) {
-        ids.remove(ws.id().parser().parse(id));
+        checkSession();
+        ids.remove(getSession().getWorkspace().id().parser().parse(id));
         return this;
     }
 
@@ -253,10 +255,11 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsSearchCommand addLockedIds(String... values) {
+        checkSession();
         if (values != null) {
             for (String s : values) {
                 if (!CoreStringUtils.isBlank(s)) {
-                    lockedIds.add(ws.id().parser().setLenient(false).parse(s));
+                    lockedIds.add(getSession().getWorkspace().id().parser().setLenient(false).parse(s));
                 }
             }
         }
@@ -365,14 +368,16 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsSearchCommand removeLockedId(String id) {
-        lockedIds.remove(ws.id().parser().parse(id));
+        checkSession();
+        lockedIds.remove(getSession().getWorkspace().id().parser().parse(id));
         return this;
     }
 
     @Override
     public NutsSearchCommand addLockedId(String id) {
+        checkSession();
         if (!CoreStringUtils.isBlank(id)) {
-            lockedIds.add(ws.id().parser().setLenient(false).parse(id));
+            lockedIds.add(getSession().getWorkspace().id().parser().setLenient(false).parse(id));
         }
         return this;
     }
@@ -384,7 +389,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsSearchCommand setRepository(String filter) {
-        this.repositoryFilter = ws.repos().filter().byName(filter);
+        checkSession();
+        this.repositoryFilter = getSession().getWorkspace().repos().filter().byName(filter);
         return this;
     }
 
@@ -479,7 +485,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsSearchCommand setDescriptorFilter(String filter) {
-        this.descriptorFilter = ws.descriptor().filter().byExpression(filter);
+        checkSession();
+        this.descriptorFilter = getSession().getWorkspace().descriptor().filter().byExpression(filter);
         return this;
     }
 
@@ -496,7 +503,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsSearchCommand setIdFilter(String filter) {
-        this.idFilter = ws.id().filter().byExpression(filter);
+        checkSession();
+        this.idFilter = getSession().getWorkspace().id().filter().byExpression(filter);
         return this;
     }
 
@@ -586,8 +594,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsFetchCommand toFetch() {
+        checkSession();
         NutsFetchCommand t = new DefaultNutsFetchCommand(ws).copyFromDefaultNutsQueryBaseOptions(this)
-                .setSession(getValidWorkspaceSession());
+                .setSession(getSession());
         if (getDisplayOptions().isRequireDefinition()) {
             t.setContent(true);
         }
@@ -601,6 +610,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public ClassLoader getResultClassLoader(ClassLoader parent) {
+        checkSession();
         List<NutsDefinition> nutsDefinitions = getResultDefinitions().list();
         URL[] allURLs = new URL[nutsDefinitions.size()];
         NutsId[] allIds = new NutsId[nutsDefinitions.size()];
@@ -608,9 +618,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             allURLs[i] = nutsDefinitions.get(i).getURL();
             allIds[i] = nutsDefinitions.get(i).getId();
         }
-        DefaultNutsClassLoader cl=((DefaultNutsWorkspaceExtensionManager) ws.extensions()).getNutsURLClassLoader("SEARCH-" + UUID.randomUUID().toString(), parent);
+        DefaultNutsClassLoader cl = ((DefaultNutsWorkspaceExtensionManager) getSession().getWorkspace().extensions()).getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID().toString(), parent);
         for (NutsDefinition def : nutsDefinitions) {
-            cl.add(NutsClassLoaderNodeUtils.definitionToClassLoaderNode(def, getValidWorkspaceSession()));
+            cl.add(NutsClassLoaderNodeUtils.definitionToClassLoaderNode(def, getSession()));
         }
         return cl;
     }
@@ -837,7 +847,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--deployed": {
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
-                    this.setInstallStatus(ws.filters().installStatus().byDeployed(b.getBooleanValue()));
+                    checkSession();
+                    this.setInstallStatus(getSession().getWorkspace().filters().installStatus().byDeployed(b.getBooleanValue()));
                 }
                 return true;
             }
@@ -845,8 +856,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--installed": {
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
+                    checkSession();
                     this.setInstallStatus(
-                            ws.filters().installStatus().byInstalled(b.getBooleanValue())
+                            getSession().getWorkspace().filters().installStatus().byInstalled(b.getBooleanValue())
                     );
                 }
                 return true;
@@ -854,21 +866,24 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--required": {
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
-                    this.setInstallStatus(ws.filters().installStatus().byRequired(b.getBooleanValue()));
+                    checkSession();
+                    this.setInstallStatus(getSession().getWorkspace().filters().installStatus().byRequired(b.getBooleanValue()));
                 }
                 return true;
             }
             case "--obsolete": {
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
-                    this.setInstallStatus(ws.filters().installStatus().byObsolete(b.getBooleanValue()));
+                    checkSession();
+                    this.setInstallStatus(getSession().getWorkspace().filters().installStatus().byObsolete(b.getBooleanValue()));
                 }
                 return true;
             }
             case "--status": {
                 NutsArgument aa = cmdLine.nextString();
                 if (enabled) {
-                    this.setInstallStatus(ws.filters().installStatus().parse(aa.getStringValue()));
+                    checkSession();
+                    this.setInstallStatus(getSession().getWorkspace().filters().installStatus().parse(aa.getStringValue()));
                 }
                 return true;
             }
@@ -1132,8 +1147,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsResultList<String> getResultStoreLocations(NutsStoreLocation location) {
+        checkSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionsBase(false, false, false, false).iterator())
-                .map(x -> ws.locations().getStoreLocation(x.getId(), location))
+                .map(x -> getSession().getWorkspace().locations().getStoreLocation(x.getId(), location))
                 .notNull());
     }
 
@@ -1165,10 +1181,11 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsResultList<NutsExecutionEntry> getResultExecutionEntries() {
+        checkSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionsBase(false, false, true, isEffective()).iterator())
                 .mapMulti(x
                         -> (x.getContent() == null || x.getContent().getPath() == null) ? Collections.emptyList()
-                : Arrays.asList(ws.apps().execEntries().setSession(getValidWorkspaceSession()).parse(x.getContent().getPath()))));
+                : Arrays.asList(getSession().getWorkspace().apps().execEntries().setSession(getSession()).parse(x.getContent().getPath()))));
     }
 
     @Override
@@ -1209,9 +1226,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 //            );
 //        }
         if (print) {
-            o = NutsWorkspaceUtils.of(ws).decoratePrint(o, getSearchSession(), getDisplayOptions());
+            o = NutsWorkspaceUtils.of(getSearchSession()).decoratePrint(o, getSearchSession(), getDisplayOptions());
         }
-        return new NutsCollectionResult(ws, resolveFindIdBase(), o);
+        return new NutsCollectionResult(ss, resolveFindIdBase(), o);
     }
 
     protected String resolveFindIdBase() {
@@ -1228,7 +1245,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     protected NutsResultList<NutsDefinition> getResultDefinitionsBase(boolean print, boolean sort, boolean content, boolean effective) {
-        return new NutsDefinitionNutsResult(ws, resolveFindIdBase(), print, sort, content, effective);
+        checkSession();
+        return new NutsDefinitionNutsResult(getSession(), resolveFindIdBase(), print, sort, content, effective);
     }
 
     protected abstract NutsCollectionResult<NutsId> getResultIdsBase(boolean print, boolean sort);
@@ -1243,7 +1261,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     protected NutsSession getSearchSession() {
-        return getValidWorkspaceSession();
+        return getSession();
     }
 
     protected class NutsDefinitionNutsResult extends AbstractNutsResultList<NutsDefinition> {
@@ -1253,7 +1271,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         private final boolean content;
         private final boolean effective;
 
-        public NutsDefinitionNutsResult(NutsWorkspace ws, String nutsBase, boolean print,
+        public NutsDefinitionNutsResult(NutsSession ws, String nutsBase, boolean print,
                 boolean sort, boolean content, boolean effective
         ) {
             super(ws, nutsBase);
@@ -1287,17 +1305,18 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
         @Override
         public Iterator<NutsDefinition> iterator() {
+            checkSession();
             Iterator<NutsId> base = getResultIdsBase(false, sort).iterator();
-            NutsFetchCommand fetch = toFetch().setContent(content).setEffective(effective).setSession(getValidWorkspaceSession());
-            NutsFetchCommand ofetch = toFetch().setContent(content).setEffective(effective).setSession(getValidWorkspaceSession().copy().setFetchStrategy(NutsFetchStrategy.OFFLINE));
+            NutsFetchCommand fetch = toFetch().setContent(content).setEffective(effective).setSession(getSession());
+            NutsFetchCommand ofetch = toFetch().setContent(content).setEffective(effective).setSession(getSession().copy().setFetchStrategy(NutsFetchStrategy.OFFLINE));
             //fetch.getSession().setTrace(false);
-            final boolean hasRemote = getValidWorkspaceSession().getFetchStrategy() == null || Arrays.stream(getValidWorkspaceSession().getFetchStrategy().modes()).anyMatch(x -> x == NutsFetchMode.REMOTE);
+            final boolean hasRemote = getSession().getFetchStrategy() == null || Arrays.stream(getSession().getFetchStrategy().modes()).anyMatch(x -> x == NutsFetchMode.REMOTE);
             Iterator<NutsDefinition> ii = new NamedIterator<NutsDefinition>("Id->Definition") {
                 private NutsDefinition n = null;
 
                 @Override
                 public boolean hasNext() {
-                     while (base.hasNext()) {
+                    while (base.hasNext()) {
                         NutsId next = base.next();
                         NutsDefinition d = null;
                         if (content) {
@@ -1326,13 +1345,13 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             if (!print) {
                 return ii;
             }
-            return NutsWorkspaceUtils.of(ws).decoratePrint(ii, getSearchSession(), getDisplayOptions());
+            return NutsWorkspaceUtils.of(session).decoratePrint(ii, getSearchSession(), getDisplayOptions());
         }
 
     }
 
     protected Iterator<NutsId> applyPrintDecoratorIterOfNutsId(Iterator<NutsId> curr, boolean print) {
-        return print ? NutsWorkspaceUtils.of(ws).decoratePrint(curr, getSearchSession(), getDisplayOptions()) : curr;
+        return print ? NutsWorkspaceUtils.of(getSearchSession()).decoratePrint(curr, getSearchSession(), getDisplayOptions()) : curr;
     }
 
 }

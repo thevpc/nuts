@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.core.repos;
 
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsRepository;
+import net.thevpc.nuts.NutsSession;
 
 /**
  *
@@ -18,7 +19,7 @@ public interface NutsRepositoryExt0 {
         return (NutsRepositoryExt0) repo;
     }
 
-    String getIdBasedir(NutsId id);
+    String getIdBasedir(NutsId id, NutsSession session);
 
-    String getIdFilename(NutsId id);
+    String getIdFilename(NutsId id, NutsSession session);
 }

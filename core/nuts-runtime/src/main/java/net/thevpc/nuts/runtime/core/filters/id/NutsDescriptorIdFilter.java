@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenRepositoryFolderHelper;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
@@ -20,13 +19,13 @@ import net.thevpc.nuts.runtime.core.util.Simplifiable;
  *
  * @author thevpc
  */
-public class NutsDescriptorIdFilter extends AbstractNutsFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> {
+public class NutsDescriptorIdFilter extends AbstractIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> {
 
     private NutsLogger LOG;
     private final NutsDescriptorFilter filter;
 
-    public NutsDescriptorIdFilter(NutsDescriptorFilter filter) {
-        super(filter.getWorkspace(), NutsFilterOp.CONVERT);
+    public NutsDescriptorIdFilter(NutsDescriptorFilter filter,NutsSession session) {
+        super(session, NutsFilterOp.CONVERT);
         this.filter = filter;
     }
 
@@ -108,7 +107,7 @@ public class NutsDescriptorIdFilter extends AbstractNutsFilter implements NutsId
         if (f2 == filter) {
             return this;
         }
-        return new NutsDescriptorIdFilter(f2);
+        return new NutsDescriptorIdFilter(f2,getSession());
     }
 
     @Override

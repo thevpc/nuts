@@ -37,11 +37,11 @@ public class NutsRepositoryNotFoundException extends NutsRepositoryException {
 
     /**
      * Constructs a new NutsRepositoryNotFoundException exception
-     * @param workspace  workspace
+     * @param session  workspace
      * @param repository repository
      */
-    public NutsRepositoryNotFoundException(NutsWorkspace workspace, String repository) {
-        super(workspace, repository, "no such repository " + (repository == null ? "<null>" : repository), null);
+    public NutsRepositoryNotFoundException(NutsSession session, String repository) {
+        super(session, repository, "no such repository " + (repository == null ? "<null>" : repository), null);
     }
 
 }

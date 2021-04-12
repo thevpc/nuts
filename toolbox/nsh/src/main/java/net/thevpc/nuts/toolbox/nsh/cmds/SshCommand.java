@@ -91,10 +91,10 @@ public class SshCommand extends AbstractNshBuiltin {
             }
         }
         if (o.address == null) {
-            throw new NutsExecutionException(context.getWorkspace(), "missing ssh address", 2);
+            throw new NutsExecutionException(context.getSession(), "missing ssh address", 2);
         }
         if (o.cmd.isEmpty()) {
-            throw new NutsExecutionException(context.getWorkspace(), "missing ssh command. Interactive ssh is not yet supported!", 2);
+            throw new NutsExecutionException(context.getSession(), "missing ssh command. Interactive ssh is not yet supported!", 2);
         }
         final NutsWorkspace ws = context.getWorkspace();
         ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(context.getSession());
@@ -136,7 +136,7 @@ public class SshCommand extends AbstractNshBuiltin {
                     if (!nutsCommandFound) {
                         Path from = ws.search().addId(ws.getApiId()).getResultDefinitions().required().getPath();
                         if (from == null) {
-                            throw new NutsExecutionException(context.getWorkspace(), "Unable to resolve Nuts Jar File", 2);
+                            throw new NutsExecutionException(context.getSession(), "Unable to resolve Nuts Jar File", 2);
                         } else {
                             context.out().printf("Detected nuts.jar location : %s\n", from);
                             String bootApiFileName = "nuts-" + ws.getApiId() + ".jar";
@@ -148,7 +148,7 @@ public class SshCommand extends AbstractNshBuiltin {
                                 javaCmd = ("java");
                             }
                             if (sshSession.exec(javaCmd, "-jar", workspace + "/" + bootApiFileName, "-y", "install", "nadmin", "--yes") != 0) {
-                                throw new NutsExecutionException(context.getWorkspace(), "install remote nuts failed", 2);
+                                throw new NutsExecutionException(context.getSession(), "install remote nuts failed", 2);
                             }
                         }
                     }

@@ -32,6 +32,7 @@ import java.util.Collection;
  * @category Base
  */
 public interface NutsDependencyFilterManager extends NutsTypedFilters<NutsDependencyFilter>{
+    NutsDependencyFilterManager setSession(NutsSession session);
     NutsDependencyFilter byScope(NutsDependencyScopePattern scope);
     NutsDependencyFilter byScope(NutsDependencyScope scope);
 

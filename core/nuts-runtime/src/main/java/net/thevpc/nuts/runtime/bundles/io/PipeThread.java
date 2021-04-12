@@ -31,6 +31,7 @@ import net.thevpc.nuts.NutsWorkspace;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Level;
+import net.thevpc.nuts.NutsSession;
 
 public class PipeThread extends Thread implements StopMonitor {
 
@@ -40,13 +41,13 @@ public class PipeThread extends Thread implements StopMonitor {
     private long pipedBytesCount = 0;
     private boolean requestStop = false;
     private boolean stopped = false;
-    private NutsWorkspace ws;
+    private NutsSession session;
 
-    public PipeThread(String name, NonBlockingInputStream in, OutputStream out, NutsWorkspace ws) {
+    public PipeThread(String name, NonBlockingInputStream in, OutputStream out, NutsSession session) {
         super(name);
         this.in = in;
         this.out = out;
-        this.ws = ws;
+        this.session = session;
     }
 
     @Override
@@ -61,7 +62,7 @@ public class PipeThread extends Thread implements StopMonitor {
                 try {
                     lock.wait();
                 } catch (InterruptedException e) {
-                    ws.log().of(PipeThread.class).with().session(ws.createSession())
+                    session.getWorkspace().log().of(PipeThread.class).with()
                             .error(e)
                             .level(Level.FINEST)
                             .verb(NutsLogVerb.WARNING)
@@ -92,7 +93,7 @@ public class PipeThread extends Thread implements StopMonitor {
                 }
             }
         } catch (IOException e) {
-            ws.log().of(PipeThread.class).with().session(ws.createSession())
+            session.getWorkspace().log().of(PipeThread.class).with()
                     .error(e)
                     .level(Level.FINEST)
                     .verb(NutsLogVerb.WARNING)

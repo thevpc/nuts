@@ -53,35 +53,35 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     protected boolean expandSimpleOptions = true;
     protected Set<String> specialSimpleOptions = new HashSet<>();
     protected String commandName;
-    protected NutsWorkspace ws;
+    protected NutsSession session;
     private int wordIndex = 0;
     private NutsCommandAutoComplete autoComplete;
     private char eq = '=';
 
     //Constructors
-    public DefaultNutsCommandLine(NutsWorkspace workspace) {
-        this.ws = workspace;
+    public DefaultNutsCommandLine(NutsSession session) {
+        this.session = session;
     }
 
     public DefaultNutsCommandLine(NutsApplicationContext context) {
-        this.ws = context.getWorkspace();
+        this.session = context.getSession();
         setArguments(context.getArguments());
         setAutoComplete(context.getAutoComplete());
     }
 
-    public DefaultNutsCommandLine(NutsWorkspace workspace, String[] args, NutsCommandAutoComplete autoComplete) {
-        this.ws = workspace;
+    public DefaultNutsCommandLine(NutsSession session, String[] args, NutsCommandAutoComplete autoComplete) {
+        this.session = session;
         setArguments(args);
         setAutoComplete(autoComplete);
     }
 
-    public DefaultNutsCommandLine(NutsWorkspace workspace, String[] args) {
-        this.ws = workspace;
+    public DefaultNutsCommandLine(NutsSession session, String[] args) {
+        this.session = session;
         setArguments(args);
     }
 
-    public DefaultNutsCommandLine(NutsWorkspace workspace, List<String> args, NutsCommandAutoComplete autoComplete) {
-        this.ws = workspace;
+    public DefaultNutsCommandLine(NutsSession session, List<String> args, NutsCommandAutoComplete autoComplete) {
+        this.session = session;
         setArguments(args);
         setAutoComplete(autoComplete);
     }
@@ -91,7 +91,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     public NutsWorkspace getWorkspace() {
-        return ws;
+        return session.getWorkspace();
     }
 
     @Override
@@ -185,7 +185,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 skipAll();
                 return this;
             }
-            NutsTextNodeBuilder m = ws.formats().text().builder();
+            NutsTextNodeBuilder m = getWorkspace().formats().text().builder();
             m.append("unexpected argument ").append(highlightText(String.valueOf(peek())));
             if (errorMessage != null && errorMessage.textLength() > 0) {
                 m.append(" , ").append(errorMessage);
@@ -197,12 +197,12 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine unexpectedArgument(NutsMessage errorMessage) {
-        return unexpectedArgument(ws.formats().text().nodeFor(errorMessage));
+        return unexpectedArgument(getWorkspace().formats().text().nodeFor(errorMessage));
     }
 
     @Override
     public NutsCommandLine unexpectedArgument(String errorMessage) {
-        return unexpectedArgument(ws.formats().text().nodeFor(errorMessage));
+        return unexpectedArgument(getWorkspace().formats().text().nodeFor(errorMessage));
     }
 
     @Override
@@ -217,12 +217,12 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine required(String errorMessage) {
-        return required(ws.formats().text().nodeFor(errorMessage));
+        return required(getWorkspace().formats().text().nodeFor(errorMessage));
     }
 
     @Override
     public NutsCommandLine required(NutsMessage errorMessage) {
-        return required(ws.formats().text().nodeFor(errorMessage));
+        return required(getWorkspace().formats().text().nodeFor(errorMessage));
     }
 
     @Override
@@ -233,7 +233,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 return this;
             }
             throwError((errorMessage == null || errorMessage.isEmpty())
-                    ? ws.formats().text().nodeFor("missing arguments")
+                    ? getWorkspace().formats().text().nodeFor("missing arguments")
                     : errorMessage
             );
         }
@@ -353,8 +353,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                             }
                         }
                         default: {
-                            throwError(
-                                    ws.formats().text().builder().append("unsupported ")
+                            throwError(getWorkspace().formats().text().builder().append("unsupported ")
                                             .append(highlightText(String.valueOf(expectValue)))
                                             .build()
                             );
@@ -615,7 +614,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     public NutsCommandLine parseLine(String commandLine) {
-        setArguments(NutsCommandLineUtils.parseCommandLine(getWorkspace(), commandLine));
+        setArguments(NutsCommandLineUtils.parseCommandLine(session, commandLine));
         return this;
     }
 
@@ -637,17 +636,17 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public void throwError(NutsMessage message) {
-        throwError(ws.formats().text().nodeFor(message));
+        throwError(getWorkspace().formats().text().nodeFor(message));
     }
 
     @Override
     public void throwError(NutsString message) {
-        NutsTextNodeBuilder m = ws.formats().text().builder();
+        NutsTextNodeBuilder m = getWorkspace().formats().text().builder();
         if (!CoreStringUtils.isBlank(commandName)) {
             m.append(commandName).append(" : ");
         }
         m.append(message);
-        throw new NutsIllegalArgumentException(getWorkspace(), m.build().immutable());
+        throw new NutsIllegalArgumentException(session, m.build().immutable());
     }
 
     @Override
@@ -657,7 +656,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             m.append(commandName).append(" : ");
         }
         m.append(message);
-        throw new NutsIllegalArgumentException(getWorkspace(), m.toString());
+        throw new NutsIllegalArgumentException(session, m.toString());
     }
 
     public void process(NutsCommandLineConfigurable defaultConfigurable, NutsCommandLineProcessor commandLineProcessor) {
@@ -676,7 +675,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 //reference equality!
                 if (next == a) {
                     //was not consumed!
-                    throw new NutsIllegalArgumentException(getWorkspace(),
+                    throw new NutsIllegalArgumentException(session,
                             (a.isOption() ? "nextOption" : "nextNonOption")
                             + " must consume the option: " + a);
                 }
@@ -745,13 +744,11 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 return null;//return new Argument("");
             }
             if (hasNext() && (!forceNonOption || !peek().isOption())) {
-                throwError(
-                        ws.formats().text().builder().append("unexpected option ").append(highlightText(String.valueOf(peek())))
+                throwError(getWorkspace().formats().text().builder().append("unexpected option ").append(highlightText(String.valueOf(peek())))
                                 .build()
                 );
             }
-            throwError(
-                    ws.formats().text().builder().append("missing argument ").append(highlightText((name == null ? "value" : name.getName())))
+            throwError(getWorkspace().formats().text().builder().append("missing argument ").append(highlightText((name == null ? "value" : name.getName())))
                             .build()
             );
         }
@@ -893,7 +890,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     public NutsCommandLine copy() {
-        DefaultNutsCommandLine c = new DefaultNutsCommandLine(getWorkspace(), toStringArray(), autoComplete);
+        DefaultNutsCommandLine c = new DefaultNutsCommandLine(session, toStringArray(), autoComplete);
         c.eq = this.eq;
         c.commandName = this.commandName;
         return c;
@@ -930,6 +927,6 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsFormat formatter() {
-        return ws.commandLine().formatter().setValue(this);
+        return getWorkspace().commandLine().formatter().setValue(this);
     }
 }

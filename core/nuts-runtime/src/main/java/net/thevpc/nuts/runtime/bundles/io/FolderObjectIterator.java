@@ -159,7 +159,7 @@ public class FolderObjectIterator<T> implements Iterator<T> {
         if (last != null) {
             model.remove(last, lastPath, session);
         } else {
-            throw new NutsUnsupportedOperationException(session.getWorkspace(), "Unsupported Remove");
+            throw new NutsUnsupportedOperationException(session, "Unsupported Remove");
         }
     }
 

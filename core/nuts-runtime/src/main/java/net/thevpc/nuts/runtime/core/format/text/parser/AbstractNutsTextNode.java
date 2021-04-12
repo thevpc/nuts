@@ -1,17 +1,24 @@
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsWorkspace;
 
 public abstract class AbstractNutsTextNode implements NutsTextNode {
-    private NutsWorkspace ws;
-    public AbstractNutsTextNode(NutsWorkspace ws) {
-        this.ws=ws;
+
+    private NutsSession session;
+
+    public AbstractNutsTextNode(NutsSession session) {
+        this.session = session;
+    }
+
+    public NutsSession getSession() {
+        return session;
     }
 
     protected NutsWorkspace getWorkspace() {
-        return ws;
+        return session.getWorkspace();
     }
 
     @Override
@@ -21,7 +28,7 @@ public abstract class AbstractNutsTextNode implements NutsTextNode {
 
     @Override
     public NutsString immutable() {
-        return ws.formats().text().builder().append(this).immutable();
+        return session.getWorkspace().formats().text().builder().append(this).immutable();
     }
 
     @Override

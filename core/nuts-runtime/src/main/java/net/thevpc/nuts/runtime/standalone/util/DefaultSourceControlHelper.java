@@ -34,10 +34,10 @@ public class DefaultSourceControlHelper {
 
     //    @Override
     public NutsId commit(Path folder, NutsSession session) {
-        session = NutsWorkspaceUtils.of(ws).validateSession(session);
-        ws.security().checkAllowed(NutsConstants.Permissions.DEPLOY, "commit", session);
+        NutsWorkspaceUtils.checkSession(ws, session);
+        ws.security().setSession(session).checkAllowed(NutsConstants.Permissions.DEPLOY, "commit");
         if (folder == null || !Files.isDirectory(folder)) {
-            throw new NutsIllegalArgumentException(ws, "not a directory " + folder);
+            throw new NutsIllegalArgumentException(session, "not a directory " + folder);
         }
 
         Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
@@ -63,7 +63,7 @@ public class DefaultSourceControlHelper {
             CoreIOUtils.delete(session, folder);
             return newId;
         } else {
-            throw new NutsUnsupportedOperationException(ws, "commit not supported");
+            throw new NutsUnsupportedOperationException(session, "commit not supported");
         }
     }
 
@@ -74,8 +74,8 @@ public class DefaultSourceControlHelper {
 
     //    @Override
     public NutsDefinition checkout(NutsId id, Path folder, NutsSession session) {
-        session = NutsWorkspaceUtils.of(ws).validateSession(session);
-        ws.security().checkAllowed(NutsConstants.Permissions.INSTALL, "checkout", session);
+        NutsWorkspaceUtils.checkSession(ws, session);
+        ws.security().setSession(session).checkAllowed(NutsConstants.Permissions.INSTALL, "checkout");
         NutsDefinition nutToInstall = ws.fetch().setId(id).setSession(session).setOptional(false).setDependencies(true).getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
@@ -103,10 +103,10 @@ public class DefaultSourceControlHelper {
                             false,
                             false),
                     null,
-                    idType, null,ws
+                    idType, null,session
             );
         } else {
-            throw new NutsUnsupportedOperationException(ws, "Checkout not supported");
+            throw new NutsUnsupportedOperationException(session, "Checkout not supported");
         }
     }
 }

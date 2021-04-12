@@ -73,19 +73,6 @@ public interface NutsInfoFormat extends NutsFormat {
     NutsInfoFormat addProperties(Map<String, String> customProperties);
 
     /**
-     * enable display of all repositories information
-     * @return {@code this} instance
-     */
-    NutsInfoFormat showRepositories();
-
-    /**
-     * enable or disable display of all repositories information
-     * @param enable if true enable
-     * @return {@code this} instance
-     */
-    NutsInfoFormat showRepositories(boolean enable);
-
-    /**
      * enable or disable display of all repositories information
      * @param enable if true enable
      * @return {@code this} instance

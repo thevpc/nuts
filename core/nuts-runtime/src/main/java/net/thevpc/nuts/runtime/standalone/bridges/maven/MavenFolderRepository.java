@@ -27,7 +27,6 @@ package net.thevpc.nuts.runtime.standalone.bridges.maven;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.bundles.io.FolderNutIdIterator;
 
@@ -53,8 +52,8 @@ public class MavenFolderRepository extends NutsCachedRepository {
     protected final NutsLogger LOG;
     private final AbstractMavenRepositoryHelper helper = new AbstractMavenRepositoryHelper(this) {
         @Override
-        protected String getIdPath(NutsId id) {
-            return getLocationAsPath().resolve(CoreIOUtils.syspath(getIdRelativePath(id))).toString();
+        protected String getIdPath(NutsId id, NutsSession session) {
+            return getLocationAsPath(session).resolve(CoreIOUtils.syspath(getIdRelativePath(id, session))).toString();
         }
 
         @Override
@@ -72,13 +71,13 @@ public class MavenFolderRepository extends NutsCachedRepository {
             try {
                 stream.close();
             } catch (IOException e) {
-                throw new NutsIOException(getWorkspace(),e);
+                throw new NutsIOException(session,e);
             }
         }
     };
 
-    public MavenFolderRepository(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options, workspace, parentRepository, SPEED_FASTER, false, NutsConstants.RepoTypes.MAVEN);
+    public MavenFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
+        super(options, session, parentRepository, SPEED_FASTER, false, NutsConstants.RepoTypes.MAVEN);
         LOG=workspace.log().of(MavenFolderRepository.class);
         if (options.getConfig().getStoreLocationStrategy() != NutsStoreLocationStrategy.STANDALONE) {
             cache.setWriteEnabled(false);
@@ -86,18 +85,18 @@ public class MavenFolderRepository extends NutsCachedRepository {
         }
     }
 
-    private Path getLocationAsPath() {
-        return Paths.get(config().getLocation(true));
+    private Path getLocationAsPath(NutsSession session) {
+        return Paths.get(config().setSession(session).getLocation(true));
     }
 
 //    @Override
 //    public Path getComponentsLocation() {
 //        return null;
 //    }
-    public Path getIdFile(NutsId id) {
-        String p = getIdRelativePath(id);
+    public Path getIdFile(NutsId id, NutsSession session) {
+        String p = getIdRelativePath(id, session);
         if (p != null) {
-            return getLocationAsPath().resolve(p);
+            return getLocationAsPath(session).resolve(p);
         }
         return null;
     }
@@ -105,7 +104,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     @Override
     public NutsDescriptor fetchDescriptorCore(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode == NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
+            throw new NutsNotFoundException(session, id,new NutsFetchModeNotSupportedException(session,this,fetchMode,id.toString(),null));
         }
         return helper.fetchDescriptorImpl(id, fetchMode, session);
     }
@@ -113,14 +112,14 @@ public class MavenFolderRepository extends NutsCachedRepository {
     @Override
     public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode == NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(getWorkspace(), id,new NutsFetchModeNotSupportedException(getWorkspace(),this,fetchMode,id.toString(),null));
+            throw new NutsNotFoundException(session, id,new NutsFetchModeNotSupportedException(session,this,fetchMode,id.toString(),null));
         }
-        Path f = getIdFile(id);
+        Path f = getIdFile(id, session);
         if(f==null){
-            throw new NutsNotFoundException(getWorkspace(), id,new RuntimeException("Invalid id"));
+            throw new NutsNotFoundException(session, id,new RuntimeException("Invalid id"));
         }
         if(!Files.exists(f)){
-            throw new NutsNotFoundException(getWorkspace(), id,new IOException("File not found : "+f));
+            throw new NutsNotFoundException(session, id,new IOException("File not found : "+f));
         }
         if (localPath == null) {
             return new NutsDefaultContent(f.toString(), true, false);
@@ -132,9 +131,9 @@ public class MavenFolderRepository extends NutsCachedRepository {
         }
     }
 
-    protected Path getLocalGroupAndArtifactFile(NutsId id) {
-        NutsWorkspaceUtils.of(getWorkspace()).checkSimpleNameNutsId(id);
-        Path groupFolder = getLocationAsPath().resolve(id.getGroupId().replace('.', File.separatorChar));
+    protected Path getLocalGroupAndArtifactFile(NutsId id, NutsSession session) {
+        NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
+        Path groupFolder = getLocationAsPath(session).resolve(id.getGroupId().replace('.', File.separatorChar));
         return groupFolder.resolve(id.getArtifactId());
     }
 
@@ -145,7 +144,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 //        StringBuilder errors = new StringBuilder();
         if (fetchMode != NutsFetchMode.REMOTE) {
             if (id.getVersion().isSingleValue()) {
-                Path f = getIdFile(id.builder().setFaceDescriptor().build());
+                Path f = getIdFile(id.builder().setFaceDescriptor().build(), session);
                 if (f != null && Files.exists(f)) {
                     NutsDescriptor d = null;
                     try {
@@ -163,7 +162,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
                 return null;
             }
             try {
-                namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id),
+                namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id, session),
                         getWorkspace().id().filter().nonnull(idFilter).and(
                                 getWorkspace().id().filter().byName(id.getShortName())
                         ),
@@ -182,13 +181,13 @@ public class MavenFolderRepository extends NutsCachedRepository {
     @Override
     public NutsId searchLatestVersionCore(NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
         if (id.getVersion().isBlank() && filter == null) {
-            Path file = getLocalGroupAndArtifactFile(id);
+            Path file = getLocalGroupAndArtifactFile(id, session);
             NutsId bestId = null;
             if (Files.isDirectory(file)) {
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(file, CoreIOUtils.DIR_FILTER)) {
                     for (Path versionPath : stream) {
                         NutsId id2 = id.builder().setVersion(versionPath.getFileName().toString()).build();
-                        String fn = getIdFilename(id2.builder().setFaceDescriptor().build());
+                        String fn = getIdFilename(id2.builder().setFaceDescriptor().build(), session);
                         if (Files.exists(versionPath.resolve(fn))) {
                             if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                                 bestId = id2;
@@ -208,7 +207,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
         if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
             return null;//IteratorUtils.emptyIterator();
         }
-        return new FolderNutIdIterator(getWorkspace(), getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
+        return new FolderNutIdIterator(getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsSession session) {
                 MavenFolderRepository.this.undeploy().setId(id).setSession(session)
@@ -231,7 +230,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     @Override
     public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
-            Path locationFolder = getLocationAsPath();
+            Path locationFolder = getLocationAsPath(session);
             List<Iterator<NutsId>> list = new ArrayList<>();
 
             for (String root : roots) {
@@ -274,32 +273,32 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    throw new NutsIOException(getWorkspace(),"updateStatistics Not supported.");
+                    throw new NutsIOException(session,"updateStatistics Not supported.");
                 }
 
                 @Override
                 public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    throw new NutsIOException(getWorkspace(),"updateStatistics Not supported.");
+                    throw new NutsIOException(session,"updateStatistics Not supported.");
                 }
 
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    throw new NutsIOException(getWorkspace(),"updateStatistics Not supported.");
+                    throw new NutsIOException(session,"updateStatistics Not supported.");
                 }
             }
             );
         } catch (IOException ex) {
-            throw new NutsIOException(getWorkspace(),ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
     @Override
-    protected String getIdExtension(NutsId id) {
-        return helper.getIdExtension(id);
+    protected String getIdExtension(NutsId id, NutsSession session) {
+        return helper.getIdExtension(id,session);
     }
 
     @Override
-    public boolean isAcceptFetchMode(NutsFetchMode mode) {
+    public boolean isAcceptFetchMode(NutsFetchMode mode, NutsSession session) {
         return mode==NutsFetchMode.LOCAL;
     }
 }

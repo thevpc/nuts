@@ -34,6 +34,7 @@ import java.security.NoSuchAlgorithmException;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  *
@@ -138,8 +139,9 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
 
     @Override
     public NutsIOHashAction writeHash(OutputStream out) {
+        checkSession();
         if (type == null || value == null) {
-            throw new NutsIllegalArgumentException(ws, "missing Source");
+            throw new NutsIllegalArgumentException(getSession(), "missing Source");
         }
         switch (type) {
             case "stream": {
@@ -177,7 +179,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
                 }
             }
             default: {
-                throw new NutsUnsupportedArgumentException(ws, "Unsupported type " + type);
+                throw new NutsUnsupportedArgumentException(getSession(), "Unsupported type " + type);
             }
         }
     }
@@ -185,7 +187,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
     @Override
     public byte[] computeBytes() {
         if (type == null || value == null) {
-            throw new NutsIllegalArgumentException(ws, "missing Source");
+            throw new NutsIllegalArgumentException(getSession(), "missing Source");
         }
         switch (type) {
             case "stream": {
@@ -215,9 +217,12 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
                 }
             }
             default: {
-                throw new NutsUnsupportedArgumentException(ws, "Unsupported type " + type);
+                throw new NutsUnsupportedArgumentException(getSession(), "Unsupported type " + type);
             }
         }
     }
 
+    protected void checkSession() {
+        NutsWorkspaceUtils.checkSession(ws, session);
+    }
 }

@@ -56,8 +56,10 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
     NutsId getApiId();
 
     NutsId getRuntimeId();
+    
+    String getLocation();
 
-    Set<NutsId> getCompanionIds();
+    Set<NutsId> getCompanionIds(NutsSession session);
 
     //COMMANDS
 
@@ -161,6 +163,8 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
     ///////////////////// factory
     NutsSession createSession();
 
-
+    NutsBootManager boot();
+    
+    NutsTerminalManager term();
 
 }

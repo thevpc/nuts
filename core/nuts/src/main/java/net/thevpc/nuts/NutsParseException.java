@@ -36,49 +36,49 @@ public class NutsParseException extends NutsException {
 
     /**
      * Constructs a new NutsParseException exception
-     * @param workspace workspace
+     * @param session workspace
      */
-    public NutsParseException(NutsWorkspace workspace) {
-        super(workspace);
+    public NutsParseException(NutsSession session) {
+        super(session);
     }
 
     /**
      * Constructs a new NutsParseException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      */
-    public NutsParseException(NutsWorkspace workspace, String message) {
-        super(workspace, message);
+    public NutsParseException(NutsSession session, String message) {
+        super(session, message);
     }
 
     /**
      * Constructs a new NutsParseException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      * @param cause cause
      */
-    public NutsParseException(NutsWorkspace workspace, String message, Throwable cause) {
-        super(workspace, message, cause);
+    public NutsParseException(NutsSession session, String message, Throwable cause) {
+        super(session, message, cause);
     }
 
     /**
      * Constructs a new NutsParseException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param cause cause
      */
-    public NutsParseException(NutsWorkspace workspace, Throwable cause) {
-        super(workspace, cause);
+    public NutsParseException(NutsSession session, Throwable cause) {
+        super(session, cause);
     }
 
     /**
      * Constructs a new NutsParseException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      * @param cause cause
      * @param enableSuppression whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
-    public NutsParseException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace, message, cause, enableSuppression, writableStackTrace);
+    public NutsParseException(NutsSession session, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(session, message, cause, enableSuppression, writableStackTrace);
     }
 }

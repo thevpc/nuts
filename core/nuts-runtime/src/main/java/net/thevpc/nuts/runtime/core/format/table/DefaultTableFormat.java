@@ -159,7 +159,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     public NutsTableFormat setBorder(String borderName) {
         NutsTableBordersFormat n = parseTableBorders(borderName);
         if (n == null) {
-            throw new NutsIllegalArgumentException(getWorkspace(), "unsupported border. use one of : " + getAvailableTableBorders());
+            throw new NutsIllegalArgumentException(getSession(), "unsupported border. use one of : " + getAvailableTableBorders());
         }
         setBorder(n);
         return this;
@@ -181,7 +181,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         try {
             w.flush();
         } catch (IOException ex) {
-            throw new NutsIOException(getWorkspace(), ex);
+            throw new NutsIOException(getSession(), ex);
         }
         return new String(out.toByteArray());
     }
@@ -284,7 +284,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         List<DefaultCell> cells = new ArrayList<>();
     }
 
-    public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsFormatManager tf, NutsWorkspace ws) {
+    public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsFormatManager tf, NutsSession session) {
         int length = tf.text().parse(sb.toString()).textLength();
         switch (a) {
             case FIRST: {
@@ -339,7 +339,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(ws, String.valueOf(a));
+                throw new NutsUnsupportedArgumentException(session, String.valueOf(a));
             }
         }
     }
@@ -354,9 +354,11 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         NutsPositionType valign;
         NutsPositionType halign;
         NutsWorkspace ws;
+        NutsSession session;
 
-        private RenderedCell(NutsWorkspace ws) {
-            this.ws = ws;
+        private RenderedCell(NutsSession session) {
+            this.session = session;
+            this.ws = session.getWorkspace();
         }
 
         public RenderedCell(int c, int r, Object o, String str, NutsTableCellFormat formatter, NutsPositionType valign, NutsPositionType halign, NutsFormatManager metrics, NutsWorkspace ws) {
@@ -416,7 +418,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 }
                 rendered0[i] = sb.toString().toCharArray();
             }
-            RenderedCell c = new RenderedCell(ws);
+            RenderedCell c = new RenderedCell(session);
             c.rendered = rendered0;
             c.columns = columns + other.columns;
             c.rows = rendered0.length;
@@ -448,7 +450,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 }
                 rendered0[i + rendered.length] = sb.toString().toCharArray();
             }
-            RenderedCell c = new RenderedCell(ws);
+            RenderedCell c = new RenderedCell(session);
             c.rendered = rendered0;
             c.columns = columns + other.columns;
             c.rows = rendered0.length;
@@ -462,7 +464,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     rendered0[row + r][col + c] = other.rendered[r][c];
                 }
             }
-            RenderedCell c = new RenderedCell(ws);
+            RenderedCell c = new RenderedCell(session);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -474,7 +476,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             for (int i = 0; i < rendered0.length; i++) {
                 System.arraycopy(rendered[i + row], col, rendered0[i], 0, toCol - col);
             }
-            RenderedCell c = new RenderedCell(ws);
+            RenderedCell c = new RenderedCell(session);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -494,7 +496,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                                 int x = columns - min;
                                 StringBuilder s = new StringBuilder();
                                 s.append(chars);
-                                formatAndHorizontalAlign(s, halign, columns, metrics, ws);
+                                formatAndHorizontalAlign(s, halign, columns, metrics, session);
                                 rendered0[i] = s.toString().toCharArray();
                             } else {
                                 rendered0[i] = rendered[i];
@@ -518,7 +520,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                                 int x = columns - min;
                                 StringBuilder s = new StringBuilder();
                                 s.append(chars);
-                                formatAndHorizontalAlign(s, halign, columns, metrics, ws);
+                                formatAndHorizontalAlign(s, halign, columns, metrics, session);
                                 rendered0[i] = s.toString().toCharArray();
                             } else {
                                 rendered0[i] = rendered[i];
@@ -538,7 +540,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                                 int x = columns - min;
                                 StringBuilder s = new StringBuilder();
                                 s.append(chars);
-                                formatAndHorizontalAlign(s, halign, columns, metrics, ws);
+                                formatAndHorizontalAlign(s, halign, columns, metrics, session);
                                 rendered0[i] = s.toString().toCharArray();
                             } else {
                                 rendered0[i] = rendered[i];
@@ -559,7 +561,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
 //                    Arrays.fill(rendered0[i],0,columns,' ');
 //                }
 //            }
-            RenderedCell c = new RenderedCell(ws);
+            RenderedCell c = new RenderedCell(session);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -573,7 +575,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 rendered0[i] = new char[rendered[i].length];
                 System.arraycopy(rendered[i], 0, rendered0[i], 0, rendered[i].length);
             }
-            RenderedCell c = new RenderedCell(ws);
+            RenderedCell c = new RenderedCell(session);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -964,7 +966,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 return model;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getWorkspace(), "Unsupported " + elem.type());
+                throw new NutsUnsupportedArgumentException(getSession(), "Unsupported " + elem.type());
             }
         }
     }
@@ -1320,6 +1322,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     private NutsString formatObject(Object any) {
-        return CoreCommonUtils.stringValueFormatted(any, false, getValidSession());
+        checkSession();
+        return CoreCommonUtils.stringValueFormatted(any, false, getSession());
     }
 }

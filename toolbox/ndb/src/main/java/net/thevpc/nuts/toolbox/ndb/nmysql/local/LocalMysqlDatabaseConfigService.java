@@ -70,7 +70,7 @@ public class LocalMysqlDatabaseConfigService {
         }
         path= Paths.get(path).toAbsolutePath().normalize().toString();
         String password = getConfig().getPassword();
-        char[] credentials = context.getWorkspace().security().getCredentials(password.toCharArray(), context.getSession());
+        char[] credentials = context.getWorkspace().security().getCredentials(password.toCharArray());
         password = new String(credentials);
         if (path.endsWith(".sql")) {
             if (context.getSession().isPlainTrace()) {
@@ -96,7 +96,7 @@ public class LocalMysqlDatabaseConfigService {
                 if (new File(path).exists()) {
                     new File(path).delete();
                 }
-                throw new NutsExecutionException(context.getWorkspace(), cmd.getOutputString(), 2);
+                throw new NutsExecutionException(context.getSession(), cmd.getOutputString(), 2);
             }
         } else {
             if (context.getSession().isPlainTrace()) {
@@ -135,7 +135,7 @@ public class LocalMysqlDatabaseConfigService {
                 if (new File(path).exists()) {
                     new File(path).delete();
                 }
-                throw new NutsExecutionException(context.getWorkspace(), cmd.getOutputString(), 2);
+                throw new NutsExecutionException(context.getSession(), cmd.getOutputString(), 2);
             }
         }
     }
@@ -144,7 +144,7 @@ public class LocalMysqlDatabaseConfigService {
 //        if(!path.endsWith(".sql") && !path.endsWith(".sql.zip") && !path.endsWith(".zip")){
 //            path=path+
 //        }
-        char[] password = context.getWorkspace().security().getCredentials(getConfig().getPassword().toCharArray(),context.getSession());
+        char[] password = context.getWorkspace().security().getCredentials(getConfig().getPassword().toCharArray());
 
         if (path.endsWith(".sql")) {
             if (context.getSession().isPlainTrace()) {

@@ -43,17 +43,22 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
 
     @Override
     public NutsDescriptor parse(URL url) {
+        checkSession();
         try {
-            try (InputStream is = NutsWorkspaceUtils.of(ws).openURL(url)) {
+            try (InputStream is = NutsWorkspaceUtils.of(getSession()).openURL(url)) {
                 return parse(is, true);
             } catch (NutsException ex) {
                 throw ex;
             } catch (RuntimeException ex) {
-                throw new NutsParseException(getWorkspace(), "unable to parse url " + url, ex);
+                throw new NutsParseException(getSession(), "unable to parse url " + url, ex);
             }
         } catch (IOException ex) {
-            throw new NutsParseException(getWorkspace(), "unable to parse url " + url, ex);
+            throw new NutsParseException(getSession(), "unable to parse url " + url, ex);
         }
+    }
+
+    private void checkSession() {
+        NutsWorkspaceUtils.checkSession(getWorkspace(), getSession());
     }
 
     @Override
@@ -63,15 +68,16 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
 
     @Override
     public NutsDescriptor parse(Path path) {
+        checkSession();
         if (!Files.exists(path)) {
-            throw new NutsNotFoundException(getWorkspace(), "at file " + path);
+            throw new NutsNotFoundException(getSession(), "at file " + path);
         }
         try {
             return parse(Files.newInputStream(path), true);
         } catch (NutsException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NutsParseException(getWorkspace(), "Unable to parse file " + path, ex);
+            throw new NutsParseException(getSession(), "Unable to parse file " + path, ex);
         }
     }
 

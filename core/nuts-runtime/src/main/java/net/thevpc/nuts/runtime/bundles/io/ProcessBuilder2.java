@@ -46,10 +46,10 @@ public class ProcessBuilder2 {
     private boolean failFast;
     private Process proc;
     private long sleepMillis = 1000;
-    private NutsWorkspace ws;
+    private NutsSession session;
 
-    public ProcessBuilder2(NutsWorkspace ws) {
-        this.ws = ws;
+    public ProcessBuilder2(NutsSession session) {
+        this.session = session;
     }
 
     public long getSleepMillis() {
@@ -149,7 +149,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setIn(InputStream in) {
         if (baseIO) {
-            throw new NutsIllegalArgumentException(ws, "already used base IO redirection");
+            throw new NutsIllegalArgumentException(session, "already used base IO redirection");
         }
         this.in = in;
         return this;
@@ -174,7 +174,7 @@ public class ProcessBuilder2 {
         if (o instanceof SPrintStream) {
             return ((SPrintStream) o).getStringBuffer();
         }
-        throw new NutsIllegalArgumentException(ws, "no buffer was configured; should call setOutString");
+        throw new NutsIllegalArgumentException(session, "no buffer was configured; should call setOutString");
     }
 
     public String getErrorString() {
@@ -185,12 +185,12 @@ public class ProcessBuilder2 {
         if (o instanceof SPrintStream) {
             return ((SPrintStream) o).getStringBuffer();
         }
-        throw new NutsIllegalArgumentException(ws, "no buffer was configured; should call setErrString");
+        throw new NutsIllegalArgumentException(session,  "no buffer was configured; should call setErrString");
     }
 
     public ProcessBuilder2 setOutput(PrintStream out) {
         if (baseIO) {
-            throw new IllegalArgumentException("already used base IO redirection");
+            throw new NutsIllegalArgumentException(session, "already used base IO redirection");
         }
         this.out = out;
         return this;
@@ -202,7 +202,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setErr(PrintStream err) {
         if (baseIO) {
-            throw new NutsIllegalArgumentException(ws, "already used base IO redirection");
+            throw new NutsIllegalArgumentException(session, "already used base IO redirection");
         }
         this.err = err;
         return this;
@@ -306,17 +306,17 @@ public class ProcessBuilder2 {
             if (isFailFast()) {
                 if (base.redirectErrorStream()) {
                     if (isGrabOutputString()) {
-                        throw new NutsExecutionException(ws, "execution failed with code " + result + " and message : " + getOutputString(), result);
+                        throw new NutsExecutionException(session, "execution failed with code " + result + " and message : " + getOutputString(), result);
                     }
                 } else {
                     if (isGrabErrorString()) {
-                        throw new NutsExecutionException(ws, "execution failed with code " + result + " and message : " + getErrorString(), result);
+                        throw new NutsExecutionException(session, "execution failed with code " + result + " and message : " + getErrorString(), result);
                     }
                     if (isGrabOutputString()) {
-                        throw new NutsExecutionException(ws, "execution failed with code " + result + " and message : " + getOutputString(), result);
+                        throw new NutsExecutionException(session, "execution failed with code " + result + " and message : " + getOutputString(), result);
                     }
                 }
-                throw new NutsExecutionException(ws, "execution failed with code " + result, result);
+                throw new NutsExecutionException(session, "execution failed with code " + result, result);
             }
         }
     }
@@ -884,14 +884,14 @@ public class ProcessBuilder2 {
     }
 
     private PipeThread pipe(String name, final NonBlockingInputStream in, final OutputStream out) {
-        PipeThread p = new PipeThread(name, in, out,ws);
+        PipeThread p = new PipeThread(name, in, out,session);
         p.start();
         return p;
     }
 
     @Override
     public String toString() {
-        return "ProcessBuilder2{" + "command=" + command + ", env=" + env + ", directory=" + directory + ", base=" + base + ", in=" + in + ", out=" + out + ", err=" + err + ", result=" + result + ", baseIO=" + baseIO + ", failFast=" + failFast + ", proc=" + proc + ", sleepMillis=" + sleepMillis + ", ws=" + ws + '}';
+        return "ProcessBuilder2{" + "command=" + command + ", env=" + env + ", directory=" + directory + ", base=" + base + ", in=" + in + ", out=" + out + ", err=" + err + ", result=" + result + ", baseIO=" + baseIO + ", failFast=" + failFast + ", proc=" + proc + ", sleepMillis=" + sleepMillis + ", session=" + session + '}';
     }
 
 }

@@ -27,21 +27,21 @@ package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.NutsDescriptor;
 import net.thevpc.nuts.NutsDescriptorBuilder;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsSession;
 
 /**
  * Created by vpc on 2/19/17.
  */
 public abstract class AbstractNutsDescriptor implements NutsDescriptor {
-    protected transient NutsWorkspace ws;
+    protected transient NutsSession session;
 
-    public AbstractNutsDescriptor(NutsWorkspace ws) {
-        this.ws = ws;
+    public AbstractNutsDescriptor(NutsSession session) {
+        this.session = session;
     }
 
     @Override
     public NutsDescriptorBuilder builder() {
-        return ws.descriptor().descriptorBuilder().set(this);
+        return session.getWorkspace().descriptor().descriptorBuilder().set(this);
     }
 
 }

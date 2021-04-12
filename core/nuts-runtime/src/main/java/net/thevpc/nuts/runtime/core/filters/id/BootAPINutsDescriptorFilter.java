@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.core.filters.id;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
+import net.thevpc.nuts.runtime.core.filters.descriptor.AbstractDescriptorFilter;
 
-public class BootAPINutsDescriptorFilter extends AbstractNutsFilter implements NutsDescriptorFilter {
+public class BootAPINutsDescriptorFilter extends AbstractDescriptorFilter {
 
     private final NutsVersion bootApiVersion;
 
-    public BootAPINutsDescriptorFilter(NutsWorkspace ws, NutsVersion bootApiVersion) {
+    public BootAPINutsDescriptorFilter(NutsSession ws, NutsVersion bootApiVersion) {
         super(ws, NutsFilterOp.CUSTOM);
         this.bootApiVersion = bootApiVersion;
     }
@@ -28,11 +28,11 @@ public class BootAPINutsDescriptorFilter extends AbstractNutsFilter implements N
 
     @Override
     public String toString() {
-        return "BootAPI(" +bootApiVersion +')';
+        return "BootAPI(" + bootApiVersion + ')';
     }
 
     @Override
-    public NutsFilter simplify() {
+    public NutsDescriptorFilter simplify() {
         return this;
     }
 }

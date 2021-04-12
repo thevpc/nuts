@@ -36,53 +36,53 @@ public class NutsSecurityException extends SecurityException {
     /**
      * workspace
      */
-    private NutsWorkspace workspace;
+    private final NutsSession session;
 
     /**
      * Constructs a <code>NutsSecurityException</code> with the specified
      * parameters.
      *
-     * @param   workspace workspace
+     * @param   session session
      */
-    public NutsSecurityException(NutsWorkspace workspace) {
-        this.workspace = workspace;
+    public NutsSecurityException(NutsSession session) {
+        this.session = session;
     }
 
     /**
      * Constructs a <code>NutsSecurityException</code> with the specified
      * parameters.
      *
-     * @param   workspace workspace
+     * @param   session session
      * @param   message   the detail message.
      */
-    public NutsSecurityException(NutsWorkspace workspace, String message) {
+    public NutsSecurityException(NutsSession session, String message) {
         super(message);
-        this.workspace = workspace;
+        this.session = session;
     }
 
     /**
      * Constructs a <code>NutsSecurityException</code> with the specified
      * parameters.
      *
-     * @param   workspace workspace
+     * @param   session session
      * @param   message message
      * @param   cause cause
      */
-    public NutsSecurityException(NutsWorkspace workspace, String message, Throwable cause) {
+    public NutsSecurityException(NutsSession session, String message, Throwable cause) {
         super(message, cause);
-        this.workspace = workspace;
+        this.session = session;
     }
 
     /**
      * Constructs a <code>NutsSecurityException</code> with the specified
      * parameters.
      *
-     * @param   workspace workspace
+     * @param   session session
      * @param   cause cause
      */
-    public NutsSecurityException(NutsWorkspace workspace, Throwable cause) {
+    public NutsSecurityException(NutsSession session, Throwable cause) {
         super(cause);
-        this.workspace = workspace;
+        this.session = session;
     }
 
     /**
@@ -90,6 +90,11 @@ public class NutsSecurityException extends SecurityException {
      * @return current workspace
      */
     public NutsWorkspace getWorkspace() {
-        return workspace;
+        return session.getWorkspace();
     }
+
+    public NutsSession getSession() {
+        return session;
+    }
+    
 }

@@ -38,21 +38,21 @@ public class NutsAlreadyInstalledException extends NutsInstallationException {
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id nuts id
      */
-    public NutsAlreadyInstalledException(NutsWorkspace workspace, NutsId id) {
-        this(workspace, id == null ? null : id.toString());
+    public NutsAlreadyInstalledException(NutsSession session, NutsId id) {
+        this(session, id == null ? null : id.toString());
     }
 
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param id nuts id
      */
-    public NutsAlreadyInstalledException(NutsWorkspace workspace, String id) {
-        this(workspace, id, null, null);
+    public NutsAlreadyInstalledException(NutsSession session, String id) {
+        this(session, id, null, null);
     }
 
     /**
@@ -63,7 +63,7 @@ public class NutsAlreadyInstalledException extends NutsInstallationException {
      * @param message message
      * @param cause exception
      */
-    public NutsAlreadyInstalledException(NutsWorkspace workspace, NutsId id, String message, Exception cause) {
+    public NutsAlreadyInstalledException(NutsSession workspace, NutsId id, String message, Exception cause) {
         this(workspace, id == null ? null : id.toString(), message, cause);
     }
 
@@ -75,7 +75,7 @@ public class NutsAlreadyInstalledException extends NutsInstallationException {
      * @param msg message
      * @param cause exception
      */
-    public NutsAlreadyInstalledException(NutsWorkspace workspace, String id, String msg, Exception cause) {
+    public NutsAlreadyInstalledException(NutsSession workspace, String id, String msg, Exception cause) {
         super(workspace, id, PrivateNutsUtils.isBlank(msg) ? "already installed " + (id == null ? "<null>" : id) : msg, cause);
     }
 

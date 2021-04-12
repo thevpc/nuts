@@ -53,24 +53,24 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
     @Override
     public NutsFetchContentRepositoryCommand run() {
         NutsRepository repo = getRepo();
-        NutsSession session = getValidWorkspaceSession();
-        NutsWorkspaceUtils.of(repo.getWorkspace()).checkSession(session);
+        NutsSession session = getSession();
+        NutsWorkspaceUtils.checkSession(repo.getWorkspace(),session);
         NutsDescriptor descriptor0 = descriptor;
         if (descriptor0 == null) {
-            NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(getRepo().getWorkspace()).repoSPI(repo);
+            NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo);
             descriptor0 = repoSPI.fetchDescriptor().setId(id).setSession(session)
                     .setFetchMode(getFetchMode())
                     .getResult();
         }
         id = id.builder().setFaceContent().build();
-        repo.security().checkAllowed(NutsConstants.Permissions.FETCH_CONTENT, "fetch-content", session);
+        repo.security().setSession(getSession()).checkAllowed(NutsConstants.Permissions.FETCH_CONTENT, "fetch-content");
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(repo);
         xrepo.checkAllowedFetch(id, session);
         long startTime = System.currentTimeMillis();
         try {
             NutsContent f = xrepo.fetchContentImpl(id, descriptor0, localPath, getFetchMode(), session);
             if (f == null) {
-                throw new NutsNotFoundException(repo.getWorkspace(), id);
+                throw new NutsNotFoundException(getSession(), id);
             }
             CoreNutsUtils.traceMessage(LOG, Level.FINER, repo.getName(), session, getFetchMode(), id.getLongNameId(), NutsLogVerb.SUCCESS, "fetch component", startTime, null);
             result = f;

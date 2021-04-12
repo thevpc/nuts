@@ -83,7 +83,7 @@ public class NutsJavaShell extends JShell {
         }
 
         if (this.appId == null) {
-            this.appId = getWorkspace().id().resolveId(NutsJavaShell.class, session);
+            this.appId = getWorkspace().id().setSession(session).resolveId(NutsJavaShell.class);
         }
         if (this.appId == null) {
             throw new IllegalArgumentException("unable to resolve application id");
@@ -101,7 +101,7 @@ public class NutsJavaShell extends JShell {
         NutsSupportLevelContext<NutsJavaShell> constraints = new NutsDefaultSupportLevelContext<>(session, this);
 
         for (NshBuiltin command : this.appContext.getWorkspace().extensions().
-                createServiceLoader(NshBuiltin.class, NutsJavaShell.class, NshBuiltin.class.getClassLoader(), session)
+                createServiceLoader(NshBuiltin.class, NutsJavaShell.class, NshBuiltin.class.getClassLoader())
                 .loadAll(this)) {
             NshBuiltin old = (NshBuiltin) _rootContext.builtins().find(command.getName());
             if (old != null && old.getSupportLevel(constraints) >= command.getSupportLevel(constraints)) {
@@ -135,7 +135,7 @@ public class NutsJavaShell extends JShell {
     private static String resolveServiceName(NutsApplicationContext appContext, String serviceName, NutsId appId) {
         if ((serviceName == null || serviceName.trim().isEmpty())) {
             if (appId == null) {
-                appId = appContext.getWorkspace().id().resolveId(NutsJavaShell.class, appContext.getSession());
+                appId = appContext.getWorkspace().id().setSession(appContext.getSession()).resolveId(NutsJavaShell.class);
             }
             serviceName = appId.getArtifactId();
         }
@@ -188,9 +188,9 @@ public class NutsJavaShell extends JShell {
         } catch (NutsExecutionException ex) {
             throw ex;
         } catch (JShellException ex) {
-            throw new NutsExecutionException(appContext.getWorkspace(), ex.getMessage(), ex, ex.getResult());
+            throw new NutsExecutionException(appContext.getSession(), ex.getMessage(), ex, ex.getResult());
         } catch (Exception ex) {
-            throw new NutsExecutionException(appContext.getWorkspace(), ex.getMessage(), ex, 100);
+            throw new NutsExecutionException(appContext.getSession(), ex.getMessage(), ex, 100);
         }
     }
 
@@ -212,8 +212,8 @@ public class NutsJavaShell extends JShell {
 
     @Override
     protected void executeInteractive(JShellFileContext context) {
-        appContext.getWorkspace().io().term().enableRichTerm(appContext.getSession());
-        appContext.getWorkspace().io().term().getSystemTerminal()
+        appContext.getWorkspace().term().enableRichTerm();
+        appContext.getWorkspace().term().getSystemTerminal()
                 .setCommandAutoCompleteResolver(new NshAutoCompleter())
                 .setCommandHistory(
                         appContext.getWorkspace().commandLine().createHistory()
@@ -231,7 +231,7 @@ public class NutsJavaShell extends JShell {
 
     @Override
     protected void onQuit(JShellQuitException q) {
-        throw new NutsExecutionException(getWorkspace(), q.getMessage(), q.getResult());
+        throw new NutsExecutionException(getSession(), q.getMessage(), q.getResult());
     }
 
     @Override
@@ -240,7 +240,7 @@ public class NutsJavaShell extends JShell {
 //        String wss = ws == null ? "" : new File(getRootContext().getAbsolutePath(ws.config().getWorkspaceLocation().toString())).getName();
         String login = null;
         if (ws != null) {
-            login = ws.security().getCurrentUsername(((NutsShellContext) context.getShellContext()).getSession());
+            login = ws.security().getCurrentUsername();
         }
         String prompt = ((login != null && login.length() > 0 && !"anonymous".equals(login)) ? (login + "@") : "");//+ wss;
         if (!StringUtils.isBlank(getRootContext().getServiceName())) {

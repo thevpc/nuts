@@ -589,8 +589,8 @@ public class CoreNutsUtils {
         return session.isTrace() ? session.copy().setTrace(false) : session;
     }
 
-    public static String tracePlainNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
-        NutsIdFormat idFormat = ws.id().formatter();
+    public static String tracePlainNutsDefinition(NutsSession session, NutsDefinition id) {
+        NutsIdFormat idFormat = session.getWorkspace().id().formatter();
         return idFormat.value(id.getId()).format();
     }
 
@@ -599,9 +599,9 @@ public class CoreNutsUtils {
         return idFormat.value(id.getId()).toString();
     }
 
-    public static Map<String, Object> traceJsonNutsDefinition(NutsWorkspace ws, NutsDefinition def) {
+    public static Map<String, Object> traceJsonNutsDefinition(NutsSession session, NutsDefinition def) {
         Map<String, Object> x = new LinkedHashMap<>();
-        x.put("id", tracePlainNutsDefinition(ws, def));
+        x.put("id", tracePlainNutsDefinition(session, def));
         if (def.getContent() != null) {
             if (def.getContent().getPath() != null) {
                 x.put("path", def.getContent().getPath().toString());
@@ -624,9 +624,9 @@ public class CoreNutsUtils {
             x.put("repository-uuid", def.getRepositoryUuid());
         }
         if (def.getDescriptor() != null) {
-            x.put("descriptor", ws.descriptor().formatter().value(def.getDescriptor()).format());
-            x.put("effective-descriptor", ws.descriptor().formatter(
-                    NutsWorkspaceUtils.of(ws).getEffectiveDescriptor(def)
+            x.put("descriptor", session.getWorkspace().descriptor().formatter().value(def.getDescriptor()).format());
+            x.put("effective-descriptor", session.getWorkspace().descriptor().formatter(
+                    NutsWorkspaceUtils.of(session).getEffectiveDescriptor(def)
             ).format());
         }
         return x;
@@ -791,7 +791,7 @@ public class CoreNutsUtils {
         }
     }
 
-    public static void checkId_GN(NutsId id, NutsWorkspace ws) {
+    public static void checkId_GN(NutsId id, NutsSession ws) {
         if (id == null) {
             throw new NutsElementNotFoundException(ws, "missing id");
         }
@@ -800,7 +800,7 @@ public class CoreNutsUtils {
         }
     }
 
-    public static void checkId_GNV(NutsId id, NutsWorkspace ws) {
+    public static void checkId_GNV(NutsId id, NutsSession ws) {
         if (id == null) {
             throw new NutsElementNotFoundException(ws, "missing id");
         }
@@ -849,65 +849,65 @@ public class CoreNutsUtils {
         }
     }
 
-    public static NutsUpdateOptions validate(NutsUpdateOptions o, NutsWorkspace ws) {
-        if (o == null) {
-            o = new NutsUpdateOptions();
-        }
-        if (o.getSession() == null) {
-            o.setSession(ws.createSession());
-        } else {
-            NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
-        }
-        return o;
-    }
+//    public static NutsUpdateOptions validate(NutsUpdateOptions o, NutsWorkspace ws) {
+//        if (o == null) {
+//            o = new NutsUpdateOptions();
+//        }
+//        if (o.getSession() == null) {
+//            o.setSession(ws.createSession());
+//        } else {
+//            NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
+//        }
+//        return o;
+//    }
 
-    public static NutsAddOptions validate(NutsAddOptions o, NutsWorkspace ws) {
-        if (o == null) {
-            o = new NutsAddOptions();
-        }
-        if (o.getSession() == null) {
-            o.setSession(ws.createSession());
-        } else {
-            NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
-        }
-        return o;
-    }
+//    public static NutsAddOptions validate(NutsAddOptions o, NutsWorkspace ws) {
+//        if (o == null) {
+//            o = new NutsAddOptions();
+//        }
+//        if (o.getSession() == null) {
+//            o.setSession(ws.createSession());
+//        } else {
+//            NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
+//        }
+//        return o;
+//    }
 
-    public static NutsRemoveOptions validate(NutsRemoveOptions o, NutsWorkspace ws) {
-        if (o == null) {
-            o = new NutsRemoveOptions();
-        }
-        if (o.getSession() == null) {
-            o.setSession(ws.createSession());
-        } else {
-            NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
-        }
-        return o;
-    }
+//    public static NutsRemoveOptions validate(NutsRemoveOptions o, NutsWorkspace ws) {
+//        if (o == null) {
+//            o = new NutsRemoveOptions();
+//        }
+//        if (o.getSession() == null) {
+//            o.setSession(ws.createSession());
+//        } else {
+//            NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
+//        }
+//        return o;
+//    }
 
-    public static NutsAddOptions toAddOptions(NutsUpdateOptions o) {
-        return new NutsAddOptions().setSession(o.getSession());
-    }
-
-    public static NutsRemoveOptions toRemoveOptions(NutsUpdateOptions o) {
-        return new NutsRemoveOptions().setSession(o.getSession());
-    }
-
-    public static NutsUpdateOptions toUpdateOptions(NutsAddOptions o) {
-        return new NutsUpdateOptions().setSession(o.getSession());
-    }
-
-    public static NutsUpdateOptions toUpdateOptions(NutsRemoveOptions o) {
-        return new NutsUpdateOptions().setSession(o.getSession());
-    }
-
-    public static NutsRemoveOptions toRemoveOptions(NutsAddOptions o) {
-        return new NutsRemoveOptions().setSession(o.getSession());
-    }
-
-    public static NutsRemoveOptions toRemoveOptions(NutsRemoveOptions o) {
-        return new NutsRemoveOptions().setSession(o.getSession());
-    }
+//    public static NutsAddOptions toAddOptions(NutsUpdateOptions o) {
+//        return new NutsAddOptions().setSession(o.getSession());
+//    }
+//
+//    public static NutsRemoveOptions toRemoveOptions(NutsUpdateOptions o) {
+//        return new NutsRemoveOptions().setSession(o.getSession());
+//    }
+//
+//    public static NutsUpdateOptions toUpdateOptions(NutsAddOptions o) {
+//        return new NutsUpdateOptions().setSession(o.getSession());
+//    }
+//
+//    public static NutsUpdateOptions toUpdateOptions(NutsRemoveOptions o) {
+//        return new NutsUpdateOptions().setSession(o.getSession());
+//    }
+//
+//    public static NutsRemoveOptions toRemoveOptions(NutsAddOptions o) {
+//        return new NutsRemoveOptions().setSession(o.getSession());
+//    }
+//
+//    public static NutsRemoveOptions toRemoveOptions(NutsRemoveOptions o) {
+//        return new NutsRemoveOptions().setSession(o.getSession());
+//    }
 
     public static String idToPath(NutsId id) {
         return id.getGroupId().replace('.', '/') + "/"
@@ -1026,7 +1026,9 @@ public class CoreNutsUtils {
             }
         }
         if (transitive) {
-            for (NutsRepository remote : repository.config().getMirrors(session)) {
+            for (NutsRepository remote : repository.config()
+                    .setSession(session)
+                    .getMirrors()) {
                 int r = getSupportSpeedLevel(remote, supportedAction, id, mode, transitive, session);
                 if (r > 0) {
                     result += 1.0 / r;
@@ -1056,7 +1058,9 @@ public class CoreNutsUtils {
             }
         }
         if (transitive) {
-            for (NutsRepository remote : repository.config().getMirrors(session)) {
+            for (NutsRepository remote : repository.config()
+                    .setSession(session)
+                    .getMirrors()) {
                 int r = getSupportSpeedLevel(remote, supportedAction, id, mode, transitive, session);
                 if (r > 0) {
                     result += r;
@@ -1101,7 +1105,7 @@ public class CoreNutsUtils {
         }
     }
 
-    public static String[] parseCommandLineArray(String commandLineString, NutsWorkspace ws) {
+    public static String[] parseCommandLineArray(String commandLineString, NutsSession ws) {
         if (commandLineString == null) {
             return new String[0];
         }

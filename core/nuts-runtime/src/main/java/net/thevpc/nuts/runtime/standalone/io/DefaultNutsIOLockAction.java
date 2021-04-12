@@ -16,15 +16,16 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
 
     @Override
     public void run(Runnable runnable, long time, TimeUnit unit) {
+        checkSession();
         NutsLock lock = create();
         boolean b = false;
         try {
             b = lock.tryLock(time, unit);
         } catch (InterruptedException e) {
-            throw new NutsLockAcquireException(getWs(), null, getResource(), lock);
+            throw new NutsLockAcquireException(getSession(), null, getResource(), lock);
         }
         if (!b) {
-            throw new NutsLockAcquireException(getWs(), null, getResource(), lock);
+            throw new NutsLockAcquireException(getSession(), null, getResource(), lock);
         }
         try {
             runnable.run();
@@ -32,7 +33,7 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
             if (e instanceof NutsException) {
                 throw (NutsException) e;
             }
-            throw new NutsException(getWs(), e);
+            throw new NutsException(getSession(), e);
         } finally {
             lock.unlock();
         }
@@ -40,15 +41,16 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
 
     @Override
     public <T> T call(Callable<T> runnable, long time, TimeUnit unit) {
+        checkSession();
         NutsLock lock = create();
         boolean b = false;
         try {
             b = lock.tryLock(time, unit);
         } catch (InterruptedException e) {
-            throw new NutsLockAcquireException(getWs(), null, getResource(), lock);
+            throw new NutsLockAcquireException(getSession(), null, getResource(), lock);
         }
         if (!b) {
-            throw new NutsLockAcquireException(getWs(), null, getResource(), lock);
+            throw new NutsLockAcquireException(getSession(), null, getResource(), lock);
         }
         T value = null;
         try {
@@ -57,7 +59,7 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
             if (e instanceof NutsException) {
                 throw (NutsException) e;
             }
-            throw new NutsException(getWs(), e);
+            throw new NutsException(getSession(), e);
         } finally {
             lock.unlock();
         }
@@ -66,9 +68,10 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
 
     @Override
     public <T> T call(Callable<T> runnable) {
+        checkSession();
         NutsLock lock = create();
         if (!lock.tryLock()) {
-            throw new NutsLockAcquireException(getWs(), null, getResource(), lock);
+            throw new NutsLockAcquireException(getSession(), null, getResource(), lock);
         }
         T value = null;
         try {
@@ -77,7 +80,7 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
             if (e instanceof NutsException) {
                 throw (NutsException) e;
             }
-            throw new NutsException(getWs(), e);
+            throw new NutsException(getSession(), e);
         } finally {
             lock.unlock();
         }
@@ -86,9 +89,10 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
 
     @Override
     public void run(Runnable runnable) {
+        checkSession();
         NutsLock lock = create();
         if (!lock.tryLock()) {
-            throw new NutsLockAcquireException(getWs(), null, getResource(), lock);
+            throw new NutsLockAcquireException(getSession(), null, getResource(), lock);
         }
         try {
             runnable.run();
@@ -96,7 +100,7 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
             if (e instanceof NutsException) {
                 throw (NutsException) e;
             }
-            throw new NutsException(getWs(), e);
+            throw new NutsException(getSession(), e);
         } finally {
             lock.unlock();
         }
@@ -104,25 +108,26 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
 
     @Override
     public NutsLock create() {
+        checkSession();
         Object s = getSource();
         Object lr = getResource();
         Path lrPath = null;
         if (lr == null) {
             if (s == null) {
-                throw new NutsLockException(getWs(), "Unsupported lock for null", null, null);
+                throw new NutsLockException(getSession(), "Unsupported lock for null", null, null);
             }
             Path p = toPath(s);
             if (p == null) {
-                throw new NutsLockException(getWs(), "Unsupported lock for " + s.getClass().getName(), null, s);
+                throw new NutsLockException(getSession(), "Unsupported lock for " + s.getClass().getName(), null, s);
             }
             lrPath = p.resolveSibling(p.getFileName().toString() + ".lock");
         } else {
             lrPath = toPath(lr);
             if (lrPath == null) {
-                throw new NutsLockException(getWs(), "Unsupported lock " + lr.getClass().getName(), lr, s);
+                throw new NutsLockException(getSession(), "Unsupported lock " + lr.getClass().getName(), lr, s);
             }
         }
-        return new DefaultFileNutsLock(lrPath, s, getWs());
+        return new DefaultFileNutsLock(lrPath, s, getSession());
     }
 
     private Path toPath(Object lockedObject) {
@@ -132,7 +137,7 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
             if (CoreStringUtils.isBlank(face)) {
                 face = "content";
             }
-            return Paths.get(getWs().locations().getStoreLocation((NutsId) lockedObject, NutsStoreLocation.RUN)).resolve("lock-" + face + ".lock");
+            return Paths.get(getWs().locations().setSession(getSession()).getStoreLocation((NutsId) lockedObject, NutsStoreLocation.RUN)).resolve("lock-" + face + ".lock");
         } else if (lockedObject instanceof Path) {
             return (Path) lockedObject;
         } else if (lockedObject instanceof File) {
@@ -142,4 +147,5 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
         }
         return null;
     }
+
 }

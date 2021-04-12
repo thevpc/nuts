@@ -28,8 +28,6 @@ package net.thevpc.nuts.runtime.core.filters.descriptor;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
-import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 import java.util.Objects;
 
@@ -38,11 +36,11 @@ import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsDescriptorFilterPlatform extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
+public class NutsDescriptorFilterPlatform extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
 
     private final String platform;
 
-    public NutsDescriptorFilterPlatform(NutsWorkspace ws, String packaging) {
+    public NutsDescriptorFilterPlatform(NutsSession ws, String packaging) {
         super(ws, NutsFilterOp.CUSTOM);
         this.platform = packaging;
     }

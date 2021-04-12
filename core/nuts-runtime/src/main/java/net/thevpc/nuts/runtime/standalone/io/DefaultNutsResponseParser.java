@@ -6,11 +6,11 @@ import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
 public class DefaultNutsResponseParser<T> implements NutsQuestionParser<T> {
 
 //    public static final NutsResponseFormat INSTANCE = new DefaultNutsResponseFormat();
-    private final NutsWorkspace ws;
+    private final NutsSession session;
     private final Class<T> type;
 
-    public DefaultNutsResponseParser(NutsWorkspace ws, Class<T> type) {
-        this.ws = ws;
+    public DefaultNutsResponseParser(NutsSession session, Class<T> type) {
+        this.session = session;
         this.type = type;
     }
 
@@ -20,7 +20,7 @@ public class DefaultNutsResponseParser<T> implements NutsQuestionParser<T> {
             response = defaultValue;
         }
         if ("cancel!".equals(response)) {
-            throw new NutsUserCancelException(ws);
+            throw new NutsUserCancelException(session);
         }
         if (response == null) {
             return null;
@@ -72,13 +72,13 @@ public class DefaultNutsResponseParser<T> implements NutsQuestionParser<T> {
                 String sReponse = response.toString();
                 NutsArgument a = new DefaultNutsArgument(sReponse);
                 if (!a.isBoolean()) {
-                    throw new NutsIllegalArgumentException(ws, "invalid response " + sReponse);
+                    throw new NutsIllegalArgumentException(session, "invalid response " + sReponse);
                 }
                 return (T) (Object) a.getBoolean();
             }
 
             default: {
-                throw new NutsUnsupportedArgumentException(ws, "unsupported type " + type.getName());
+                throw new NutsUnsupportedArgumentException(session, "unsupported type " + type.getName());
             }
         }
     }

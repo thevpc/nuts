@@ -50,26 +50,27 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
     }
 
     @Override
-    public void initialize(NutsSession session) {
+    public void initializeWorkspace(NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
-        DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) ws.config();
+        DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) ws.config().setSession(session);
         LinkedHashMap<String, NutsAddRepositoryOptions> def = new LinkedHashMap<>();
         Map<String, String> defaults = new HashMap<>();
-        for (NutsAddRepositoryOptions d : rm.getDefaultRepositories(session)) {
+        for (NutsAddRepositoryOptions d : rm.getDefaultRepositories()) {
             if (d.getConfig() != null) {
-                def.put(ws.io().expandPath(d.getConfig().getLocation(), null), d.setSession(session));
+                def.put(ws.io().expandPath(d.getConfig().getLocation(), null), d);
             } else {
-                def.put(ws.io().expandPath(d.getLocation(), null), d.setSession(session));
+                def.put(ws.io().expandPath(d.getLocation(), null), d);
             }
             defaults.put(d.getName(), null);
         }
         defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
-        NutsRepositorySelector[] br = rm.resolveBootRepositoriesList().resolveSelectors(defaults);
+        NutsRepositorySelector[] br = rm.getModel().resolveBootRepositoriesList().resolveSelectors(defaults);
 
         for (NutsRepositorySelector s : br) {
             NutsAddRepositoryOptions oo = RepoDefinitionResolver.createRepositoryOptions(s, false, session);
-            oo.setSession(session);
-            String sloc = ws.io().expandPath(oo
+            String sloc = ws.io()
+                    .setSession(session)
+                    .expandPath(oo
                     .getConfig().getLocation(), null);
             if (def.containsKey(sloc)) {
                 ws.repos().addRepository(def.get(sloc));
@@ -83,18 +84,19 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         for (NutsAddRepositoryOptions d : def.values()) {
             ws.repos().addRepository(d);
         }
-        ws.imports().add(new String[]{
+        ws.imports().setSession(session).add(new String[]{
             "net.thevpc.nuts.toolbox",
             "net.thevpc"
-        }, new NutsAddOptions().setSession(session));
+        });
 
-        ws.security().updateUser(NutsConstants.Users.ANONYMOUS, session)
+        ws.security().setSession(session).updateUser(NutsConstants.Users.ANONYMOUS)
                 .resetPermissions()
                 //.addRights(NutsConstants.Rights.FETCH_DESC, NutsConstants.Rights.FETCH_CONTENT)
                 .run();
 
         //has read rights
-        ws.security().addUser("user", session).setCredentials("user".toCharArray()).addPermissions(
+        ws.security().setSession(session).addUser("user")
+                .setCredentials("user".toCharArray()).addPermissions(
                 NutsConstants.Permissions.FETCH_DESC,
                 NutsConstants.Permissions.FETCH_CONTENT,
                 NutsConstants.Permissions.DEPLOY,

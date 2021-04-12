@@ -67,17 +67,17 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     private List<NutsDependency> dependencies=new ArrayList<>(); //defaults to empty;
     private List<NutsDependency> standardDependencies=new ArrayList<>(); //defaults to empty;
     private Map<String, String> properties=new HashMap<>(); //defaults to empty;
-    private transient NutsWorkspace ws;
+    private transient NutsSession session;
 
     public DefaultNutsDescriptorBuilder() {
     }
     
-    public DefaultNutsDescriptorBuilder(NutsWorkspace ws) {
-        this.ws=ws;
+    public DefaultNutsDescriptorBuilder(NutsSession session) {
+        this.session=session;
     }
 
-    public DefaultNutsDescriptorBuilder(NutsDescriptor other,NutsWorkspace ws) {
-        this.ws=ws;
+    public DefaultNutsDescriptorBuilder(NutsDescriptor other,NutsSession session) {
+        this.session=session;
         set(other);
     }
 
@@ -163,7 +163,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setId(String id) {
-        this.id = ws.id().parser().setLenient(false).parse(id);
+        this.id = session.getWorkspace().id().parser().setLenient(false).parse(id);
         return this;
     }
 
@@ -449,7 +449,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 //                getExt(),
                 getExecutor(), getInstaller(),
                 getName(), getDescription(), getArch(), getOs(), getOsdist(), getPlatform(), getDependencies(), getStandardDependencies(),
-                getLocations(), getProperties(), getClassifierMappings(),ws
+                getLocations(), getProperties(), getClassifierMappings(),session
         );
     }
 
@@ -652,7 +652,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         LinkedHashSet<String> n_osdist = new LinkedHashSet<>();
         LinkedHashSet<String> n_platform = new LinkedHashSet<>();
         for (NutsDescriptor parentDescriptor : parentDescriptors) {
-            n_id = CoreNutsUtils.applyNutsIdInheritance(n_id, parentDescriptor.getId(),ws);
+            n_id = CoreNutsUtils.applyNutsIdInheritance(n_id, parentDescriptor.getId(),session.getWorkspace());
             if (!n_executable && parentDescriptor.isExecutable()) {
                 n_executable = true;
             }
@@ -751,7 +751,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     private NutsId applyNutsIdProperties(NutsId child, Function<String, String> properties) {
-        return ws.id().builder()
+        return session.getWorkspace().id().builder()
                 .setNamespace(CoreNutsUtils.applyStringProperties(child.getNamespace(), properties))
                 .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
                 .setArtifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))
@@ -765,11 +765,11 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         for (int i = 0; i < exclusions.length; i++) {
             exclusions[i] = applyNutsIdProperties(exclusions[i], properties);
         }
-        return ws.dependency().builder()
+        return session.getWorkspace().dependency().builder()
                 .setNamespace(CoreNutsUtils.applyStringProperties(child.getNamespace(), properties))
                 .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
                 .setArtifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))
-                .setVersion(CoreNutsUtils.applyStringProperties(child.getVersion(), properties,ws))
+                .setVersion(CoreNutsUtils.applyStringProperties(child.getVersion(), properties,session.getWorkspace()))
                 .setClassifier(CoreNutsUtils.applyStringProperties(child.getClassifier(), properties))
                 .setScope(CoreNutsUtils.applyStringProperties(child.getScope(), properties))
                 .setOptional(CoreNutsUtils.applyStringProperties(child.getOptional(), properties))

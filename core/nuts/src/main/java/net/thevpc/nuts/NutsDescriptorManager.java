@@ -66,4 +66,7 @@ public interface NutsDescriptorManager {
 
     NutsDescriptorFilterManager filter();
 
+    NutsSession getSession();
+
+    NutsDescriptorManager setSession(NutsSession session);
 }

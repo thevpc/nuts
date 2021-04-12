@@ -33,23 +33,23 @@ package net.thevpc.nuts;
 public class NutsLockReleaseException extends NutsLockException {
     /**
      * Constructs a new ock exception.
-     * @param workspace workspace
+     * @param session workspace
      * @param lockedObject locked Object
      * @param lockObject lock Object
      */
-    public NutsLockReleaseException(NutsWorkspace workspace, Object lockedObject, Object lockObject) {
-        this(workspace,null,lockedObject,lockObject);
+    public NutsLockReleaseException(NutsSession session, Object lockedObject, Object lockObject) {
+        this(session,null,lockedObject,lockObject);
     }
 
     /**
      * Constructs a new ock exception.
-     * @param workspace workspace
+     * @param session workspace
      * @param message message or null
      * @param lockedObject locked Object
      * @param lockObject lock Object
      */
-    public NutsLockReleaseException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject) {
-        super(workspace,
+    public NutsLockReleaseException(NutsSession session, String message, Object lockedObject, Object lockObject) {
+        super(session,
                 message == null ? ("unable to release lock for " + lockedObject)
                         : message,lockedObject,lockObject
         );
@@ -57,14 +57,14 @@ public class NutsLockReleaseException extends NutsLockException {
 
     /**
      * Constructs a new ock exception.
-     * @param workspace workspace
+     * @param session workspace
      * @param message message or null
      * @param lockedObject locked Object
      * @param lockObject lock Object
      * @param cause cause
      */
-    public NutsLockReleaseException(NutsWorkspace workspace, String message, Object lockedObject, Object lockObject,Throwable cause) {
-        super(workspace,
+    public NutsLockReleaseException(NutsSession session, String message, Object lockedObject, Object lockObject,Throwable cause) {
+        super(session,
                 message == null ? ("unable to release lock for " + lockedObject)
                         : message,lockObject,cause
         );

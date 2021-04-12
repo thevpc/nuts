@@ -108,7 +108,7 @@ public class UnzipCommand extends SimpleNshBuiltin {
                     ZipUtils.unzip(file.getPath(), dir, new UnzipOptions().setSkipRoot(options.skipRoot));
                 }
             } catch (UncheckedIOException| NutsIOException ex) {
-                throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 1);
+                throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 1);
             }
         }
     }

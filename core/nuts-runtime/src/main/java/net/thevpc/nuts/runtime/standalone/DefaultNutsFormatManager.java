@@ -1,41 +1,35 @@
 package net.thevpc.nuts.runtime.standalone;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.DefaultNutsIncrementalOutputFormat;
 import net.thevpc.nuts.runtime.core.format.DefaultNutsObjectFormat;
 //import net.thevpc.nuts.runtime.core.format.DefaultNutsStringFormat;
 import net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElementFormat;
-import net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElementFormatHelper;
 import net.thevpc.nuts.runtime.core.format.tree.DefaultTreeFormat;
 import net.thevpc.nuts.runtime.core.format.props.DefaultPropertiesFormat;
 import net.thevpc.nuts.runtime.core.format.table.DefaultTableFormat;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
-import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManagerShared;
-import net.thevpc.nuts.runtime.core.format.text.bloc.HadraBlocTextFormatter;
-import net.thevpc.nuts.runtime.core.format.text.bloc.JavaBlocTextFormatter;
-import net.thevpc.nuts.runtime.core.format.text.bloc.JsonCodeFormatter;
-import net.thevpc.nuts.runtime.core.format.text.bloc.PlainBlocTextFormatter;
-import net.thevpc.nuts.runtime.core.format.text.bloc.ShellBlocTextFormatter;
-import net.thevpc.nuts.runtime.core.format.text.bloc.XmlCodeFormatter;
-import net.thevpc.nuts.runtime.core.format.text.stylethemes.DefaultNutsTextFormatTheme;
-import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextFormatPropertiesTheme;
-import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextFormatThemeWrapper;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManagerModel;
 
 public class DefaultNutsFormatManager implements NutsFormatManager {
 
     private NutsWorkspace ws;
-    private DefaultNutsElementFormatHelper defaultNutsElementFormatHelper;
-    private DefaultNutsTextManagerShared defaultNutsTextManagerShared;
+    private NutsSession session;
+    private DefaultNutsTextManagerModel model;
 
-    public DefaultNutsFormatManager(NutsWorkspace ws, NutsWorkspaceInitInformation info) {
+    public DefaultNutsFormatManager(NutsWorkspace ws, DefaultNutsTextManagerModel model) {
         this.ws = ws;
-        defaultNutsTextManagerShared=new DefaultNutsTextManagerShared(ws, info);
+        this.model = model;
     }
 
+    public NutsSession getSession() {
+        return session;
+    }
+
+    public NutsFormatManager setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
 
 //    @Override
 //    public NutsJsonFormat json() {
@@ -48,10 +42,7 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
 //    }
     @Override
     public NutsElementFormat element() {
-        if (defaultNutsElementFormatHelper == null) {
-            defaultNutsElementFormatHelper = new DefaultNutsElementFormatHelper(ws);
-        }
-        return new DefaultNutsElementFormat(defaultNutsElementFormatHelper);
+        return new DefaultNutsElementFormat(model).setSession(getSession());
     }
 //
 //    @Override
@@ -61,34 +52,32 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
 
     @Override
     public NutsTreeFormat tree() {
-        return new DefaultTreeFormat(ws);
+        return new DefaultTreeFormat(ws).setSession(getSession());
     }
 
     @Override
     public NutsTableFormat table() {
-        return new DefaultTableFormat(ws);
+        return new DefaultTableFormat(ws).setSession(getSession());
     }
 
     @Override
     public NutsPropertiesFormat props() {
-        return new DefaultPropertiesFormat(ws);
+        return new DefaultPropertiesFormat(ws).setSession(getSession());
     }
 
     @Override
     public NutsObjectFormat object() {
-        return new DefaultNutsObjectFormat(ws);
+        return new DefaultNutsObjectFormat(ws).setSession(getSession());
     }
 
     @Override
     public NutsIterableOutput iter() {
-        return new DefaultNutsIncrementalOutputFormat(ws);
+        return new DefaultNutsIncrementalOutputFormat(ws).setSession(getSession());
     }
-
 
     @Override
     public NutsTextManager text() {
-        return new DefaultNutsTextManager(ws, defaultNutsTextManagerShared);
+        return new DefaultNutsTextManager(ws, model).setSession(getSession());
     }
 
-    
 }

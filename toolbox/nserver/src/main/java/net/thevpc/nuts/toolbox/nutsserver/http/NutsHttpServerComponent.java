@@ -69,14 +69,14 @@ public class NutsHttpServerComponent implements NutsServerComponent {
     }
 
     @Override
-    public NutsServer start(NutsWorkspace invokerWorkspace, ServerConfig config) {
+    public NutsServer start(NutsSession invokerWorkspace, ServerConfig config) {
         NutsHttpServerConfig httpConfig = (NutsHttpServerConfig) config;
         Map<String, NutsWorkspace> workspaces = httpConfig.getWorkspaces();
         if (invokerWorkspace == null) {
             throw new NutsIllegalArgumentException(invokerWorkspace, "missing workspace");
         }
         if (workspaces.isEmpty()) {
-            workspaces.put("", invokerWorkspace);
+            workspaces.put("", invokerWorkspace.getWorkspace());
         }
         String serverId = httpConfig.getServerId();
         InetAddress address = httpConfig.getAddress();
@@ -99,7 +99,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
 
             serverId = serverName;//+ "-" + new File(workspace.getWorkspaceLocation()).getName();
         }
-        NutsSession session=invokerWorkspace.createSession();
+        NutsSession session=invokerWorkspace;
         this.facade = new NutsHttpServletFacade(serverId, workspaces);
         if (port <= 0) {
             port = NutsServerConstants.DEFAULT_HTTP_SERVER_PORT;

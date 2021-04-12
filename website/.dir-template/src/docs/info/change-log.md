@@ -20,6 +20,7 @@ Starred releases are most stable ones.
 ### nuts 0.8.1.0
 - ```2020/11/22 	nuts 0.8.1.0 (*)``` released [download nuts-0.8.1.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar)
 - WARNING: API has evolved with multiple incompatibilities with previous versions  
+- CHANGED: [api]   session is from now on mandatory to perform any operation. A simple way to make it simple to use is to get a "session aware" workspace with session.getWorkspace()
 - ADDED  : [api]  added support for Yaml with minimal implementation
 - ADDED  : [api]  element now supports complex keys in Map Entries (Objects)
 - ADDED  : [api][cmdline] added support for History and implemented in JLine extension

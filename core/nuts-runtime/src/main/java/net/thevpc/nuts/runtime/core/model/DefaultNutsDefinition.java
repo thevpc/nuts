@@ -47,12 +47,12 @@ public class DefaultNutsDefinition implements NutsDefinition {
     private NutsDescriptor effectiveDescriptor;
     private NutsIdType type;
     private NutsId apiId = null;
-    private transient NutsWorkspace ws;
+    private transient NutsSession session;
 
     public DefaultNutsDefinition() {
     }
 
-    public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInformation install, NutsIdType type, NutsId apiId, NutsWorkspace ws) {
+    public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInformation install, NutsIdType type, NutsId apiId, NutsSession session) {
         this.descriptor = descriptor;
         this.content = content;
         this.id = id;
@@ -61,10 +61,10 @@ public class DefaultNutsDefinition implements NutsDefinition {
         this.repositoryName = repoName;
         this.type = type == null ? NutsIdType.REGULAR : type;
         this.apiId = apiId;
-        this.ws = ws;
+        this.session = session;
     }
 
-    public DefaultNutsDefinition(NutsDefinition other, NutsWorkspace ws) {
+    public DefaultNutsDefinition(NutsDefinition other, NutsSession session) {
         if (other != null) {
             this.descriptor = other.getDescriptor();
             this.id = other.getId();
@@ -78,7 +78,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
             this.type = other.getType() == null ? NutsIdType.REGULAR : other.getType();
             this.apiId = other.getApiId();
         }
-        this.ws = ws;
+        this.session = session;
     }
 
     @Override
@@ -133,7 +133,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     }
 
     public DefaultNutsDefinition copy() {
-        return new DefaultNutsDefinition(this, ws);
+        return new DefaultNutsDefinition(this, session);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     @Override
     public NutsDescriptor getEffectiveDescriptor() {
         if (!isSetEffectiveDescriptor()) {
-            throw new NutsElementNotFoundException(ws, "Unable to get effectiveDescriptor. You need to call search.setEffective(...) first.");
+            throw new NutsElementNotFoundException(session, "unable to get effectiveDescriptor. You need to call search.setEffective(...) first.");
         }
         return effectiveDescriptor;
     }
@@ -182,7 +182,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     @Override
     public NutsDependencies getDependencies() {
         if (!isSetDependencies()) {
-            throw new NutsElementNotFoundException(ws, "unable to get dependencies. You need to call search.setDependencies(...) first.");
+            throw new NutsElementNotFoundException(session, "unable to get dependencies. You need to call search.setDependencies(...) first.");
         }
         return this.dependencies;
     }

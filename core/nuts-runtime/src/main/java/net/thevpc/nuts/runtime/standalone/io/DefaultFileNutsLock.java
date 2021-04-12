@@ -13,16 +13,16 @@ public class DefaultFileNutsLock implements NutsLock {
     private static TimePeriod FIVE_MINUTES = new TimePeriod(5, TimeUnit.MINUTES);
     private Path path;
     private Object lockedObject;
-    private NutsWorkspace ws;
+    private NutsSession session;
 
-    public DefaultFileNutsLock(Path path, Object lockedObject, NutsWorkspace ws) {
+    public DefaultFileNutsLock(Path path, Object lockedObject, NutsSession session) {
         this.path = path;
         this.lockedObject = lockedObject;
-        this.ws = ws;
+        this.session = session;
     }
 
     public TimePeriod getDefaultTimePeriod() {
-        TimePeriod tp = TimePeriod.parse(ws.env().getEnv("DEFAULT_LOCK_PERIOD", null), true, TimeUnit.SECONDS);
+        TimePeriod tp = TimePeriod.parse(session.getWorkspace().env().getEnv("DEFAULT_LOCK_PERIOD", null), true, TimeUnit.SECONDS);
         if (tp == null) {
             return FIVE_MINUTES;
         }
@@ -33,7 +33,7 @@ public class DefaultFileNutsLock implements NutsLock {
     public void lockInterruptibly() throws InterruptedException {
         TimePeriod tp = getDefaultTimePeriod();
         if (!tryLockInterruptibly(tp.getUnitCount(), tp.getUnit())) {
-            throw new NutsLockAcquireException(ws, null, lockedObject, this, null);
+            throw new NutsLockAcquireException(session, null, lockedObject, this, null);
         }
     }
 
@@ -41,13 +41,13 @@ public class DefaultFileNutsLock implements NutsLock {
     public synchronized void lock() {
         TimePeriod tp = getDefaultTimePeriod();
         if (!tryLock(tp.getUnitCount(), tp.getUnit())) {
-            throw new NutsLockAcquireException(ws, null, lockedObject, this, null);
+            throw new NutsLockAcquireException(session, null, lockedObject, this, null);
         }
     }
 
     public void checkFree() {
         if (!isFree()) {
-            throw new NutsLockBarrierException(ws, null, lockedObject, this);
+            throw new NutsLockBarrierException(session, null, lockedObject, this);
         }
     }
 
@@ -61,7 +61,7 @@ public class DefaultFileNutsLock implements NutsLock {
         try {
             Files.delete(path);
         } catch (IOException ex) {
-            throw new NutsLockReleaseException(ws, null, lockedObject, this, ex);
+            throw new NutsLockReleaseException(session, null, lockedObject, this, ex);
         }
     }
 
@@ -136,7 +136,7 @@ public class DefaultFileNutsLock implements NutsLock {
     @Override
     public synchronized boolean tryLock(long time, TimeUnit unit) {
         if (unit == null) {
-            throw new NutsIllegalArgumentException(ws, "missing unit");
+            throw new NutsIllegalArgumentException(session, "missing unit");
         }
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(time, unit);
@@ -158,7 +158,7 @@ public class DefaultFileNutsLock implements NutsLock {
 
     public synchronized boolean tryLockInterruptibly(long time, TimeUnit unit) throws InterruptedException {
         if (unit == null) {
-            throw new NutsIllegalArgumentException(ws, "missing unit");
+            throw new NutsIllegalArgumentException(session, "missing unit");
         }
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(time, unit);
@@ -203,6 +203,6 @@ public class DefaultFileNutsLock implements NutsLock {
 
     @Override
     public Condition newCondition() {
-        throw new NutsUnsupportedOperationException(ws, "Unsupported Lock.newCondition");
+        throw new NutsUnsupportedOperationException(session, "Unsupported Lock.newCondition");
     }
 }

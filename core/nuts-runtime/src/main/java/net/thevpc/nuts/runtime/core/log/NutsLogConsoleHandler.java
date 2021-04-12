@@ -8,8 +8,10 @@ import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.StreamHandler;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class NutsLogConsoleHandler extends StreamHandler {
+
     private OutputStream out;
 
     public NutsLogConsoleHandler(PrintStream out, boolean closeable) {
@@ -38,8 +40,10 @@ public class NutsLogConsoleHandler extends StreamHandler {
         if (record instanceof NutsLogRecord) {
             NutsLogRecord rr = (NutsLogRecord) record;
             NutsWorkspace ws = rr.getWorkspace();
-            NutsIOManager io = ws.io();
-            NutsTerminalManager tf = io == null ? null : io.term();
+            NutsTerminalManager tf = ws.term().setSession(
+                    rr.getSession() == null ? NutsWorkspaceUtils.defaultSession(ws) : rr.getSession()
+            );
+            
             if (tf != null && tf.isFormatted(out)) {
                 if (!rr.isFormatted()) {
                     record = ((NutsLogRecord) record).escape();
@@ -67,7 +71,7 @@ public class NutsLogConsoleHandler extends StreamHandler {
         if (record instanceof NutsLogRecord) {
             NutsSession session = ((NutsLogRecord) record).getSession();
             if (session != null) {
-                if(session.isBot()){
+                if (session.isBot()) {
                     return false;
                 }
                 NutsLogConfig logConfig = session.getWorkspace().config().options().getLogConfig();

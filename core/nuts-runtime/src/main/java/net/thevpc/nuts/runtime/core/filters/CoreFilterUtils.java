@@ -38,12 +38,12 @@ import java.util.function.Predicate;
  */
 public class CoreFilterUtils {
 
-    public static NutsIdFilter idFilterOf(NutsDescriptorFilter other) {
-        if (other == null) {
-            return null;
-        }
-        return new NutsDescriptorIdFilter(other);
-    }
+//    public static NutsIdFilter idFilterOf(NutsDescriptorFilter other) {
+//        if (other == null) {
+//            return null;
+//        }
+//        return new NutsDescriptorIdFilter(other);
+//    }
 
 //    public static NutsIdFilter idFilterOf(NutsVersionFilter other) {
 //        return new NutstVersionIdFilter(other);

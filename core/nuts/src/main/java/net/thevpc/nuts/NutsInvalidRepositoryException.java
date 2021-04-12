@@ -36,12 +36,12 @@ public class NutsInvalidRepositoryException extends NutsRepositoryException {
 
     /**
      * Constructs a new NutsInvalidRepositoryException exception
-     * @param workspace  workspace
+     * @param session  workspace
      * @param repository repository
      * @param message message
      */
-    public NutsInvalidRepositoryException(NutsWorkspace workspace, String repository, String message) {
-        super(workspace, repository, "invalid repository " + (repository == null ? "<null>" : repository) + " : " + message, null);
+    public NutsInvalidRepositoryException(NutsSession session, String repository, String message) {
+        super(session, repository, "invalid repository " + (repository == null ? "<null>" : repository) + " : " + message, null);
     }
 
 }

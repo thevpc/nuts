@@ -13,21 +13,25 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsOutputAction implements NutsOutputAction {
+
     private NutsWorkspace ws;
     private String name;
     private String typeName;
+    private NutsSession session;
 
     public DefaultNutsOutputAction(NutsWorkspace ws) {
         this.ws = ws;
     }
 
-    private static NutsOutput createOutputTarget(OutputStream target, String name, String typeName, NutsWorkspace ws) {
+    private static NutsOutput createOutputTarget(OutputStream target, String name, String typeName, NutsSession ws) {
         if (target == null) {
             return null;
         }
-        return new AbstractNutsOutput(target, false, false, name, typeName,ws) {
+        return new AbstractNutsOutput(target, false, false, name, typeName, ws) {
             @Override
             public OutputStream open() {
                 return (OutputStream) getSource();
@@ -49,7 +53,7 @@ public class DefaultNutsOutputAction implements NutsOutputAction {
         };
     }
 
-    private static NutsOutput createOutputTarget(String target, String name, String typeName, NutsWorkspace ws) {
+    private static NutsOutput createOutputTarget(String target, String name, String typeName, NutsSession ws) {
         if (target == null) {
             return null;
         }
@@ -60,7 +64,7 @@ public class DefaultNutsOutputAction implements NutsOutputAction {
             //
         }
         if (basePath != null) {
-            return createOutputTarget(basePath,name,typeName,ws);
+            return createOutputTarget(basePath, name, typeName, ws);
         }
 
         try {
@@ -69,7 +73,7 @@ public class DefaultNutsOutputAction implements NutsOutputAction {
             //
         }
         if (basePath != null) {
-            return createOutputTarget(target,name,typeName, ws);
+            return createOutputTarget(target, name, typeName, ws);
         }
 
         URL baseURL = null;
@@ -79,19 +83,19 @@ public class DefaultNutsOutputAction implements NutsOutputAction {
             //
         }
         if (baseURL != null) {
-            return createOutputTarget(baseURL,name,typeName,ws);
+            return createOutputTarget(baseURL, name, typeName, ws);
         }
         throw new NutsUnsupportedArgumentException(ws, "Unsupported source : " + target);
     }
 
-    private static NutsOutput createOutputTarget(URL baseURL, String name, String typeName, NutsWorkspace ws) {
+    private static NutsOutput createOutputTarget(URL baseURL, String name, String typeName, NutsSession ws) {
         if (baseURL == null) {
             return null;
         }
 
-        if(baseURL.getProtocol().equals("file")) {
+        if (baseURL.getProtocol().equals("file")) {
             try {
-                return createOutputTarget(Paths.get(baseURL.toURI()),name,typeName,ws);
+                return createOutputTarget(Paths.get(baseURL.toURI()), name, typeName, ws);
             } catch (URISyntaxException ex) {
                 throw new UncheckedIOException(new IOException(ex));
             }
@@ -99,11 +103,11 @@ public class DefaultNutsOutputAction implements NutsOutputAction {
         throw new NutsUnsupportedArgumentException(ws, "unsupported source : " + baseURL);
     }
 
-    private static AbstractNutsOutput createOutputTarget(Path target, String name, String typeName, NutsWorkspace ws) {
+    private static AbstractNutsOutput createOutputTarget(Path target, String name, String typeName, NutsSession ws) {
         if (target == null) {
             return null;
         }
-        return new AbstractNutsOutput(target, true, true, name==null?target.getFileName().toString():name, typeName,ws) {
+        return new AbstractNutsOutput(target, true, true, name == null ? target.getFileName().toString() : name, typeName, ws) {
             @Override
             public Path getPath() {
                 return (Path) getSource();
@@ -140,11 +144,11 @@ public class DefaultNutsOutputAction implements NutsOutputAction {
         };
     }
 
-    private static AbstractNutsOutput createOutputTarget(File target, String name, String typeName, NutsWorkspace ws) {
+    private static AbstractNutsOutput createOutputTarget(File target, String name, String typeName, NutsSession ws) {
         if (target == null) {
             return null;
         }
-        return new AbstractNutsOutput(target, true,false,name==null?target.getName():name,typeName,ws) {
+        return new AbstractNutsOutput(target, true, false, name == null ? target.getName() : name, typeName, ws) {
             @Override
             public Path getPath() {
                 return ((File) getSource()).toPath();
@@ -181,9 +185,9 @@ public class DefaultNutsOutputAction implements NutsOutputAction {
         };
     }
 
-
     @Override
     public NutsOutput of(Object source) {
+        checkSession();
         if (source == null) {
             return null;
         } else if (source instanceof NutsOutput) {
@@ -199,13 +203,14 @@ public class DefaultNutsOutputAction implements NutsOutputAction {
         } else if (source instanceof String) {
             return of((String) source);
         } else {
-            throw new NutsUnsupportedArgumentException(ws, "unsupported type " + source.getClass().getName());
+            throw new NutsUnsupportedArgumentException(session, "unsupported type " + source.getClass().getName());
         }
     }
 
     @Override
     public NutsOutput of(String resource) {
-        NutsOutput v = createOutputTarget(resource, getName(), getTypeName(), ws);
+        checkSession();
+        NutsOutput v = createOutputTarget(resource, getName(), getTypeName(), session);
         v = toMulti(v);
         return v;
     }
@@ -216,28 +221,32 @@ public class DefaultNutsOutputAction implements NutsOutputAction {
 
     @Override
     public NutsOutput of(OutputStream stream) {
-        NutsOutput v = createOutputTarget(stream, getName(), getTypeName(),ws);
+        checkSession();
+        NutsOutput v = createOutputTarget(stream, getName(), getTypeName(), session);
         v = toMulti(v);
         return v;
     }
 
     @Override
     public NutsOutput of(URL stream) {
-        NutsOutput v = createOutputTarget(stream, getName(), getTypeName(),ws);
+        checkSession();
+        NutsOutput v = createOutputTarget(stream, getName(), getTypeName(), session);
         v = toMulti(v);
         return v;
     }
 
     @Override
     public NutsOutput of(File stream) {
-        NutsOutput v = createOutputTarget(stream, getName(), getTypeName(),ws);
+        checkSession();
+        NutsOutput v = createOutputTarget(stream, getName(), getTypeName(), session);
         v = toMulti(v);
         return v;
     }
 
     @Override
     public NutsOutput of(Path stream) {
-        NutsOutput v = createOutputTarget(stream, getName(), getTypeName(),ws);
+        checkSession();
+        NutsOutput v = createOutputTarget(stream, getName(), getTypeName(), session);
         v = toMulti(v);
         return v;
     }
@@ -264,4 +273,18 @@ public class DefaultNutsOutputAction implements NutsOutputAction {
         return this;
     }
 
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsOutputAction setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+
+    protected void checkSession() {
+        NutsWorkspaceUtils.checkSession(ws, session);
+    }
 }

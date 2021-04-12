@@ -50,13 +50,12 @@ public class RepositoryNonOption extends DefaultNonOption {
         NutsRepository repository=context.get(NutsRepository.class);
         if(repository!=null){
             if (repository.config().isSupportedMirroring()) {
-                for (NutsRepository repo : repository.config().getMirrors(context.getSession())) {
+                for (NutsRepository repo : repository.config().setSession(context.getSession()).getMirrors()) {
                     all.add(c.createCandidate(repo.getName()).build());
                 }
             }
         }else{
-            NutsSession session = context.getWorkspace().createSession();
-            for (NutsRepository repo : context.getWorkspace().repos().getRepositories(session)) {
+            for (NutsRepository repo : context.getWorkspace().repos().setSession(context.getSession()).getRepositories()) {
                 all.add(c.createCandidate(repo.getName()).build());
             }
 

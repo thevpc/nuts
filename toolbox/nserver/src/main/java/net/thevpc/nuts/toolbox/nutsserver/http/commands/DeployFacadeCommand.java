@@ -27,7 +27,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
             context.sendError(400, "invalid JShellCommandNode arguments : " + getName() + " . invalid format.");
             return;
         }
-        MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary,context.getWorkspace());
+        MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary,context.getSession());
         NutsDescriptor descriptor = null;
         String receivedContentHash = null;
         InputStream content = null;

@@ -9,8 +9,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutionContextBuilder;
 
-import java.util.Set;
-
 /**
  * @author thevpc
  */
@@ -49,7 +47,8 @@ public interface NutsWorkspaceExt {
      * false
      *
      * @param session session
-     * @return true when runtime extension is required for running this workspace
+     * @return true when runtime extension is required for running this
+     * workspace
      */
     boolean requiresRuntimeExtension(NutsSession session);
 
@@ -64,4 +63,7 @@ public interface NutsWorkspaceExt {
 
     @Deprecated
     void deployBoot(NutsSession session, NutsId def, boolean withDependencies);
+
+    NutsSession defaultSession();
+
 }

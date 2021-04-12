@@ -80,7 +80,7 @@ public class RmCommand extends SimpleNshBuiltin {
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.files.size() < 1) {
-            throw new NutsExecutionException(context.getWorkspace(), "missing parameters", 2);
+            throw new NutsExecutionException(context.getSession(), "missing parameters", 2);
         }
         ShellHelper.WsSshListener listener = options.verbose ? new ShellHelper.WsSshListener(context.getSession()) : null;
         for (XFile p : options.files) {
@@ -90,7 +90,7 @@ public class RmCommand extends SimpleNshBuiltin {
             try {
                 p.rm(options.R);
             } catch (IOException ex) {
-                throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
+                throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
             }
         }
     }

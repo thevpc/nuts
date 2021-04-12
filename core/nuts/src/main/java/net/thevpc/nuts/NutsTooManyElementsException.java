@@ -38,59 +38,59 @@ public class NutsTooManyElementsException extends NutsException {
 
     /**
      * Constructs a new NutsTooManyElementsException exception
-     * @param workspace workspace
+     * @param session workspace
      */
-    public NutsTooManyElementsException(NutsWorkspace workspace) {
-        this(workspace, "Too many Elements");
+    public NutsTooManyElementsException(NutsSession session) {
+        this(session, "Too many Elements");
     }
 
     /**
      * Constructs a new NutsTooManyElementsException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      */
-    public NutsTooManyElementsException(NutsWorkspace workspace, String message) {
-        super(workspace, message);
+    public NutsTooManyElementsException(NutsSession session, String message) {
+        super(session, message);
     }
 
     /**
      * Constructs a new NutsTooManyElementsException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      * @param cause cause
      */
-    public NutsTooManyElementsException(NutsWorkspace workspace, String message, Throwable cause) {
-        super(workspace, message, cause);
+    public NutsTooManyElementsException(NutsSession session, String message, Throwable cause) {
+        super(session, message, cause);
     }
 
     /**
      * Constructs a new NutsTooManyElementsException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param cause cause
      */
-    public NutsTooManyElementsException(NutsWorkspace workspace, Throwable cause) {
-        super(workspace, cause);
+    public NutsTooManyElementsException(NutsSession session, Throwable cause) {
+        super(session, cause);
     }
 
     /**
      * Constructs a new NutsTooManyElementsException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param cause cause
      */
-    public NutsTooManyElementsException(NutsWorkspace workspace, IOException cause) {
-        super(workspace, cause);
+    public NutsTooManyElementsException(NutsSession session, IOException cause) {
+        super(session, cause);
     }
 
     /**
      * Constructs a new NutsTooManyElementsException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      * @param cause cause
      * @param enableSuppression whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
-    public NutsTooManyElementsException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace, message, cause, enableSuppression, writableStackTrace);
+    public NutsTooManyElementsException(NutsSession session, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(session, message, cause, enableSuppression, writableStackTrace);
     }
 
 }

@@ -40,9 +40,8 @@ public class NutsIndexSubscriberListManager {
     private Path getConfigFile(NutsSession session) {
         return Paths.get(this.defaultWorkspace
                 .locations()
-                .getStoreLocation(
-                        this.defaultWorkspace
-                                .id().resolveId(NutsIndexSubscriberListManager.class, session),
+                .getStoreLocation(this.defaultWorkspace
+                                .id().setSession(session).resolveId(NutsIndexSubscriberListManager.class),
                         NutsStoreLocation.CONFIG)).resolve(
                         name + "-nuts-subscriber-list.json");
     }
@@ -88,7 +87,7 @@ public class NutsIndexSubscriberListManager {
     }
 
     private String getRepositoryNameFromUuid(String repositoryUuid) {
-        NutsRepository[] repositories = defaultWorkspace.repos().getRepositories(defaultWorkspace.createSession());
+        NutsRepository[] repositories = defaultWorkspace.repos().getRepositories();
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 return repository.getName();

@@ -45,8 +45,23 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 //                startTimeMillis
 //        );
 //    }
-    public DefaultNutsApplicationContext(NutsWorkspace workspace, NutsSession session,String[] args, Class appClass, String storeId, long startTimeMillis) {
+    public DefaultNutsApplicationContext(NutsWorkspace workspace, NutsSession session, String[] args, Class appClass, String storeId, long startTimeMillis) {
         this.startTimeMillis = startTimeMillis <= 0 ? System.currentTimeMillis() : startTimeMillis;
+        if (workspace == null && session == null) {
+            throw new IllegalArgumentException("missing workpace and/or session");
+        } else if (workspace != null) {
+            if (session == null) {
+                this.session = workspace.createSession();
+            } else {
+                NutsWorkspaceUtils.checkSession(workspace, session);
+                this.session = session.copy();
+            }
+            this.workspace = this.session.getWorkspace();
+        } else {
+            this.session = session;
+            this.workspace = session.getWorkspace(); //get a worspace session aware!
+        }
+        session = this.session;//will be used later
         int wordIndex = -1;
         if (args.length > 0 && args[0].startsWith("--nuts-exec-mode=")) {
             NutsCommandLine execModeCommand = workspace.commandLine().parse(args[0].substring(args[0].indexOf('=') + 1));
@@ -84,7 +99,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                         break;
                     }
                     default: {
-                        throw new NutsExecutionException(workspace, "Unsupported nuts-exec-mode : " + args[0], 205);
+                        throw new NutsExecutionException(session, "Unsupported nuts-exec-mode : " + args[0], 205);
                     }
                 }
             }
@@ -94,25 +109,24 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         if (_appId != null) {
             //("=== Inherited "+_appId);
         } else {
-            _appId = workspace.id().resolveId(appClass, session);
+            _appId = workspace.id().setSession(session).resolveId(appClass);
         }
         if (_appId == null) {
-            throw new NutsExecutionException(workspace, "invalid Nuts Application (" + appClass.getName() + "). Id cannot be resolved", 203);
+            throw new NutsExecutionException(session, "invalid Nuts Application (" + appClass.getName() + "). Id cannot be resolved", 203);
         }
-        this.workspace = (workspace);
         this.args = (args);
         this.appId = (_appId);
         this.appClass = appClass;
         //always copy the session to bind to appId
-        this.session = session==null? workspace.createSession():NutsWorkspaceUtils.of(workspace).validateSession(session.copy());
         this.session.setAppId(appId);
-        NutsWorkspaceConfigManager cfg = workspace.config();
+//        NutsWorkspaceConfigManager cfg = workspace.config();
+        NutsWorkspaceLocationManager locations = workspace.locations().setSession(session);
         for (NutsStoreLocation folder : NutsStoreLocation.values()) {
-            setFolder(folder, workspace.locations().getStoreLocation(this.appId, folder));
-            setSharedFolder(folder, workspace.locations().getStoreLocation(this.appId.builder().setVersion("SHARED").build(), folder));
+            setFolder(folder, locations.getStoreLocation(this.appId, folder));
+            setSharedFolder(folder, locations.getStoreLocation(this.appId.builder().setVersion("SHARED").build(), folder));
         }
         if (mode == NutsApplicationMode.AUTO_COMPLETE) {
-            this.workspace.io().term().getSystemTerminal().setMode(NutsTerminalMode.FILTERED);
+            this.workspace.term().setSession(session).getSystemTerminal().setMode(NutsTerminalMode.FILTERED);
             if (wordIndex < 0) {
                 wordIndex = args.length;
             }
@@ -186,15 +200,14 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         switch (a.getStringKey()) {
             case "-?":
             case "-h":
-            case "--help":
-                {
+            case "--help": {
                 cmd.skip();
                 if (enabled) {
                     if (cmd.isExecMode()) {
                         printHelp();
                     }
                     cmd.skipAll();
-                    throw new NutsExecutionException(workspace, "Help", 0);
+                    throw new NutsExecutionException(session, "Help", 0);
                 }
                 break;
             }
@@ -205,7 +218,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     case UPDATE: {
                         if (enabled) {
                             cmd.skip();
-                            throw new NutsExecutionException(workspace, "skip-event", 0);
+                            throw new NutsExecutionException(session, "skip-event", 0);
                         }
                     }
                 }
@@ -215,10 +228,10 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                 cmd.skip();
                 if (enabled) {
                     if (cmd.isExecMode()) {
-                        getSession().out().printf("%s%n", getWorkspace().id().resolveId(getClass(), session).getVersion().toString());
+                        getSession().out().printf("%s%n", getWorkspace().id().setSession(session).resolveId(getClass()).getVersion().toString());
                         cmd.skipAll();
                     }
-                    throw new NutsExecutionException(workspace, "Version", 0);
+                    throw new NutsExecutionException(session, "Version", 0);
                 }
                 return true;
             }
@@ -315,21 +328,21 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public String getVersionFolderFolder(NutsStoreLocation location, String version) {
-        if(version==null
+        if (version == null
                 || version.isEmpty()
                 || version.equalsIgnoreCase("current")
-                || version.equals(getAppId().getVersion().getValue())){
+                || version.equals(getAppId().getVersion().getValue())) {
             return getFolder(location);
         }
-        if(appVersionStoreLocationSupplier !=null){
-            String r = appVersionStoreLocationSupplier.getStoreLocation(location,version);
-            if(r!=null) {
+        if (appVersionStoreLocationSupplier != null) {
+            String r = appVersionStoreLocationSupplier.getStoreLocation(location, version);
+            if (r != null) {
                 return r;
             }
         }
         return workspace.locations().getStoreLocation(
-                this.getAppId().builder().setVersion(version).build()
-                , location);
+                this.getAppId().builder().setVersion(version).build(),
+                location);
     }
 
     public NutsApplicationContext setFolder(NutsStoreLocation location, String folder) {
@@ -411,7 +424,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public NutsCommandLine getCommandLine() {
-        return workspace.commandLine()
+        return workspace.commandLine().setSession(getSession())
                 .create(getArguments())
                 .setCommandName(getAppId().getArtifactId())
                 .setAutoComplete(getAutoComplete());
@@ -478,7 +491,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             NutsArgumentCandidate c = super.addCandidatesImpl(value);
             String v = value.getValue();
             if (v == null) {
-                throw new NutsExecutionException(getWorkspace(), "candidate cannot be null", 2);
+                throw new NutsExecutionException(session, "candidate cannot be null", 2);
             }
             String d = value.getDisplay();
             if (Objects.equals(v, d) || d == null) {
@@ -491,7 +504,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
         @Override
         public String getLine() {
-            return new DefaultNutsCommandLine(getWorkspace()).setArguments(getWords()).toString();
+            return new DefaultNutsCommandLine(getSession()).setArguments(getWords()).toString();
         }
 
         @Override

@@ -34,20 +34,20 @@ public class NVersionMain extends NutsApplication {
         try {
             Path p = Paths.get(filePath);
             if (!Files.exists(p)) {
-                throw new NutsExecutionException(context.getWorkspace(), "nversion: file does not exist: " + filePath, 2);
+                throw new NutsExecutionException(context.getSession(), "nversion: file does not exist: " + filePath, 2);
             }
             if (!Files.isDirectory(p)) {
-                throw new NutsExecutionException(context.getWorkspace(), "nversion: unsupported directory: " + filePath, 2);
+                throw new NutsExecutionException(context.getSession(), "nversion: unsupported directory: " + filePath, 2);
             }
             if (!Files.isDirectory(p)) {
-                throw new NutsExecutionException(context.getWorkspace(), "nversion: unsupported file: " + filePath, 2);
+                throw new NutsExecutionException(context.getSession(), "nversion: unsupported file: " + filePath, 2);
             }
         } catch (NutsExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
             //
         }
-        throw new NutsExecutionException(context.getWorkspace(), "nversion: unsupported path: " + filePath, 2);
+        throw new NutsExecutionException(context.getSession(), "nversion: unsupported path: " + filePath, 2);
     }
 
     @Override
@@ -107,20 +107,20 @@ public class NVersionMain extends NutsApplication {
                     processed++;
                     value = detectVersions(context.getWorkspace().io().expandPath(arg), context, ws);
                 } catch (IOException e) {
-                    throw new NutsExecutionException(context.getWorkspace(), e, 2);
+                    throw new NutsExecutionException(context.getSession(), e, 2);
                 }
                 if (!value.isEmpty()) {
                     results.put(arg, value);
                 }
             }
             if (processed == 0) {
-                throw new NutsExecutionException(context.getWorkspace(), "nversion: Missing file", 2);
+                throw new NutsExecutionException(context.getSession(), "nversion: Missing file", 2);
             }
             if (table && all) {
-                throw new NutsExecutionException(context.getWorkspace(), "nversion: Options conflict --table --all", 1);
+                throw new NutsExecutionException(context.getSession(), "nversion: Options conflict --table --all", 1);
             }
             if (table && longFormat) {
-                throw new NutsExecutionException(context.getWorkspace(), "nversion: Options conflict --table --long", 1);
+                throw new NutsExecutionException(context.getSession(), "nversion: Options conflict --table --long", 1);
             }
 
             PrintStream out = context.getSession().out();
@@ -202,7 +202,7 @@ public class NVersionMain extends NutsApplication {
                 }
             }
             if (!unsupportedFileTypes.isEmpty()) {
-                throw new NutsExecutionException(context.getWorkspace(), "nversion: unsupported file types " + unsupportedFileTypes, 3);
+                throw new NutsExecutionException(context.getSession(), "nversion: unsupported file types " + unsupportedFileTypes, 3);
             }
         }
     }

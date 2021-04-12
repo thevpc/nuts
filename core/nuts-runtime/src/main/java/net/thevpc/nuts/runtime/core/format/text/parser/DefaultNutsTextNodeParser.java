@@ -18,7 +18,7 @@ import java.io.StringReader;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.thevpc.nuts.runtime.bundles.collections.EvictingCharQueue;
+import net.thevpc.nuts.NutsSession;
 
 /**
  * @author thevpc
@@ -29,8 +29,8 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
 
     private State state = new State();
 
-    public DefaultNutsTextNodeParser(NutsWorkspace ws) {
-        super(ws);
+    public DefaultNutsTextNodeParser(NutsSession session) {
+        super(session);
     }
 
     /**
@@ -260,7 +260,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
     public String filterText(String text) {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            NutsTextNodeWriterStringer s = new NutsTextNodeWriterStringer(out, ws);
+            NutsTextNodeWriterStringer s = new NutsTextNodeWriterStringer(out, getSession().getWorkspace());
             s.writeNode(this.parse(new StringReader(text)), new NutsTextNodeWriteConfiguration().setFiltered(true));
             s.flush();
             return out.toString();
@@ -310,7 +310,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         private boolean lineStart = true;
 
         public State() {
-            statusStack.push(new RootParserStep(true, ws));
+            statusStack.push(new RootParserStep(true, getSession().getWorkspace()));
         }
 
         public boolean isLineStart() {
@@ -398,11 +398,11 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         public void applyStart(char c, boolean spreadLines, boolean lineStart) {
             switch (c) {
                 case '`': {
-                    this.applyPush(new AntiQuote3ParserStep(c, spreadLines, ws));
+                    this.applyPush(new AntiQuote3ParserStep(c, spreadLines, getSession().getWorkspace()));
                     break;
                 }
                 case '#': {
-                    this.applyPush(new StyledParserStep(c, lineStart, ws, state()));
+                    this.applyPush(new StyledParserStep(c, lineStart, getSession().getWorkspace(), state()));
                     break;
                 }
                 case 'ø': {
@@ -411,7 +411,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
                 }
                 case '\n':
                 case '\r': {
-                    this.applyPush(new NewLineParserStep(c, ws));
+                    this.applyPush(new NewLineParserStep(c, getSession()));
                     if (lineMode) {
                         forceEnding();
                     }
@@ -420,7 +420,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
                 default: {
                     State state = state();
 //                    state.setLineStart(lineStart);
-                    this.applyPush(new PlainParserStep(c, lineStart, ws, state, null));
+                    this.applyPush(new PlainParserStep(c, lineStart, getSession().getWorkspace(), state, null));
                 }
             }
         }
@@ -524,7 +524,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             statusStack.clear();
             lineMode = false;
             lineStart = true;
-            statusStack.push(new RootParserStep(true, ws));
+            statusStack.push(new RootParserStep(true, getSession().getWorkspace()));
         }
     }
 

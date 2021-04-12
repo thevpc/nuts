@@ -36,20 +36,20 @@ public class NutsRepositoryAlreadyRegisteredException extends NutsRepositoryExce
 
     /**
      * Constructs a new NutsNotInstalledException exception
-     * @param workspace  workspace
+     * @param session  workspace
      * @param repository repository
      */
-    public NutsRepositoryAlreadyRegisteredException(NutsWorkspace workspace, String repository) {
-        super(workspace, repository,"repository already registered " + (repository == null ? "<null>" : repository),null);
+    public NutsRepositoryAlreadyRegisteredException(NutsSession session, String repository) {
+        super(session, repository,"repository already registered " + (repository == null ? "<null>" : repository),null);
     }
 
     /**
      * Constructs a new NutsNotInstalledException exception
-     * @param workspace  workspace
+     * @param session  workspace
      * @param repository repository
      * @param err error
      */
-    public NutsRepositoryAlreadyRegisteredException(NutsWorkspace workspace, String repository, Throwable err) {
-        super(workspace, repository,"repository already registered " + (repository == null ? "<null>" : repository), err);
+    public NutsRepositoryAlreadyRegisteredException(NutsSession session, String repository, Throwable err) {
+        super(session, repository,"repository already registered " + (repository == null ? "<null>" : repository), err);
     }
 }

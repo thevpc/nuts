@@ -77,7 +77,7 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
                     bytes = CoreIOUtils.loadByteArray(is, 1024 * 1024 * 10, true);
                 }
             } catch (IOException e) {
-                throw new NutsIOException(getWorkspace(),e);
+                throw new NutsIOException(session,e);
             }
         }
         return new NamedByteArrayInputStream(bytes, file.getName());

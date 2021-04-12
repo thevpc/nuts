@@ -9,8 +9,8 @@ public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
     private NutsRepositoryModel base;
     private int mode;
 
-    public NutsSimpleRepositoryWrapper(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, NutsRepositoryModel base) {
-        super(options, workspace, parent,
+    public NutsSimpleRepositoryWrapper(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parent, NutsRepositoryModel base) {
+        super(options, session, parent,
                 base.getSpeed(),
                 (base.getMode() & NutsRepositoryModel.MIRRORING) != 0,
                 base.getRepositoryType()
@@ -64,7 +64,7 @@ public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
     }
 
     @Override
-    public boolean isAcceptFetchMode(NutsFetchMode mode) {
+    public boolean isAcceptFetchMode(NutsFetchMode mode, NutsSession session) {
         return base.isAcceptFetchMode(mode);
     }
 

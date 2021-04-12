@@ -125,7 +125,7 @@ public class CatCommand extends SimpleNshBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
+            throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
         }
     }
 
@@ -136,7 +136,7 @@ public class CatCommand extends SimpleNshBuiltin {
         } else {
             out = new PrintStream(os);
         }
-        out = context.getWorkspace().io().term().prepare(out, context.getSession());
+        out = context.getWorkspace().term().prepare(out);
         try {
             //do not close!!
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));

@@ -15,10 +15,11 @@ import java.time.Instant;
 import java.util.*;
 import net.thevpc.nuts.NutsCommandHistory;
 import net.thevpc.nuts.NutsCommandHistoryEntry;
+import net.thevpc.nuts.NutsSession;
 
 class NutsJLineHistory implements History {
 
-    private NutsWorkspace ws;
+    private NutsSession session;
     public static final int DEFAULT_HISTORY_SIZE = 500;
     public static final int DEFAULT_HISTORY_FILE_SIZE = 10000;
 
@@ -27,10 +28,10 @@ class NutsJLineHistory implements History {
     private int index = 0;
     private LineReader reader;
 
-    public NutsJLineHistory(LineReader reader, NutsWorkspace workspace, NutsJLineTerminal terminal) {
-        this.ws = workspace;
+    public NutsJLineHistory(LineReader reader, NutsSession session, NutsJLineTerminal terminal) {
+        this.session = session;
         this.terminal = terminal;
-        defaultHistory = new NutsJLineCommandHistory(workspace);
+        defaultHistory = new NutsJLineCommandHistory(session);
         attach(reader);
     }
 

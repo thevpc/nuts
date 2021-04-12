@@ -92,7 +92,8 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     @Override
     public NutsInstallCommand addId(NutsId id) {
         if (id == null) {
-            throw new NutsNotFoundException(ws, id);
+            checkSession();
+            throw new NutsNotFoundException(session, id);
         } else {
             ids.put(id,getStrategy());
         }

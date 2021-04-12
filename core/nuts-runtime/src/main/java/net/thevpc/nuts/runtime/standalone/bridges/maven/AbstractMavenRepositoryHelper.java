@@ -35,6 +35,7 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  * Created by vpc on 2/20/17.
@@ -49,15 +50,15 @@ public abstract class AbstractMavenRepositoryHelper {
         LOG=repository.getWorkspace().log().of(AbstractMavenRepositoryHelper.class);
     }
 
-    protected abstract String getIdPath(NutsId id);
+    protected abstract String getIdPath(NutsId id, NutsSession session);
 
     protected NutsInput getStream(NutsId id, String typeName, NutsSession session) {
-        String url = getIdPath(id);
+        String url = getIdPath(id, session);
         return openStream(id, url, id, typeName, session);
     }
 
     protected String getStreamAsString(NutsId id, String typeName, NutsSession session) {
-        String url = getIdPath(id);
+        String url = getIdPath(id, session);
         return CoreIOUtils.loadString(openStream(id, url, id, typeName, session).open(), true);
     }
 
@@ -101,7 +102,12 @@ public abstract class AbstractMavenRepositoryHelper {
 
     protected abstract NutsInput openStream(NutsId id, String path, Object source, String typeName, NutsSession session);
 
+    private void checkSession(NutsSession session) {
+        NutsWorkspaceUtils.checkSession(repository.getWorkspace(), session);
+    }
+
     public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
+        checkSession(session);
         NutsInput stream = null;
         try {
             NutsDescriptor nutsDescriptor = null;
@@ -112,7 +118,7 @@ public abstract class AbstractMavenRepositoryHelper {
                 stream = getStream(idDesc, "artifact descriptor", session);
                 bytes = CoreIOUtils.loadByteArray(stream.open(), true);
                 name = stream.getName();
-                nutsDescriptor = MavenUtils.of(session).parsePomXml(new NamedByteArrayInputStream(bytes, name), fetchMode, getIdPath(id), repository, session);
+                nutsDescriptor = MavenUtils.of(session).parsePomXml(new NamedByteArrayInputStream(bytes, name), fetchMode, getIdPath(id, session), repository, session);
             } finally {
                 if (stream != null) {
                     stream.close();
@@ -121,11 +127,12 @@ public abstract class AbstractMavenRepositoryHelper {
             checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(), new NamedByteArrayInputStream(bytes,name), "artifact descriptor", session);
             return nutsDescriptor;
         } catch (IOException|UncheckedIOException|NutsIOException ex) {
-            throw new NutsNotFoundException(repository.getWorkspace(), id, ex);
+            throw new NutsNotFoundException(session, id, ex);
         }
     }
 
-    protected String getIdExtension(NutsId id) {
+    protected String getIdExtension(NutsId id,NutsSession session) {
+        checkSession(session);
         Map<String, String> q = id.getProperties();
         String f = CoreStringUtils.trim(q.get(NutsConstants.IdProperties.FACE));
         switch (f) {
@@ -139,14 +146,14 @@ public abstract class AbstractMavenRepositoryHelper {
                 return ".catalog";
             }
             case NutsConstants.QueryFaces.CONTENT_HASH: {
-                return getIdExtension(id.builder().setFaceContent().build()) + ".sha1";
+                return getIdExtension(id.builder().setFaceContent().build(),session) + ".sha1";
             }
             case NutsConstants.QueryFaces.CONTENT: {
                 String packaging = q.get(NutsConstants.IdProperties.PACKAGING);
                 return repository.getWorkspace().locations().getDefaultIdContentExtension(packaging);
             }
             default: {
-                throw new NutsUnsupportedArgumentException(repository.getWorkspace(), "unsupported fact " + f);
+                throw new NutsUnsupportedArgumentException(session, "unsupported fact " + f);
             }
         }
     }

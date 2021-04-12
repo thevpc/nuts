@@ -31,8 +31,8 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
     }
 
     @Override
-    public NutsTextNode tokenToNode(String text, String nodeType) {
-        return factory.plain(text);
+    public NutsTextNode tokenToNode(String text, String nodeType,NutsSession session) {
+        return factory.setSession(session).plain(text);
     }
     
 
@@ -43,8 +43,8 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
     }
 
     @Override
-    public NutsTextNode textToNode(String text) {
-        NutsTextManager factory = ws.formats().text();
+    public NutsTextNode textToNode(String text, NutsSession session) {
+        factory.setSession(session);
         List<NutsTextNode> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
         while (ar.hasNext()) {
@@ -70,11 +70,11 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
                     break;
                 }
                 case '\'': {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readJSSimpleQuotes(ws, ar)));
+                    all.addAll(Arrays.asList(StringReaderExtUtils.readJSSimpleQuotes(session, ar)));
                     break;
                 }
                 case '"': {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readJSDoubleQuotesString(ws, ar)));
+                    all.addAll(Arrays.asList(StringReaderExtUtils.readJSDoubleQuotesString(session, ar)));
                     break;
                 }
                 case '0':
@@ -87,12 +87,12 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
                 case '7':
                 case '8':
                 case '9': {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readNumber(ws, ar)));
+                    all.addAll(Arrays.asList(StringReaderExtUtils.readNumber(session, ar)));
                     break;
                 }
                 case '.':
                 case '-': {
-                    NutsTextNode[] d = StringReaderExtUtils.readNumber(ws, ar);
+                    NutsTextNode[] d = StringReaderExtUtils.readNumber(session, ar);
                     if (d != null) {
                         all.addAll(Arrays.asList(d));
                     } else {
@@ -102,9 +102,9 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
                 }
                 case '/': {
                     if (ar.peekChars("//")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(ws, ar)));
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(session, ar)));
                     } else if (ar.peekChars("/*")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(ws, ar)));
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session, ar)));
                     } else {
                         all.add(factory.styled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
                     }
@@ -112,9 +112,9 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
                 }
                 default: {
                     if (Character.isWhitespace(ar.peekChar())) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(ws, ar)));
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session, ar)));
                     } else {
-                        NutsTextNode[] d = StringReaderExtUtils.readJSIdentifier(ws, ar);
+                        NutsTextNode[] d = StringReaderExtUtils.readJSIdentifier(session, ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].getType() == NutsTextNodeType.PLAIN) {
                                 String txt = ((NutsTextNodePlain) d[0]).getText();

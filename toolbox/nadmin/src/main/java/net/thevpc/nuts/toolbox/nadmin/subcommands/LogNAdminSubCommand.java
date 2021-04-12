@@ -18,49 +18,48 @@ public class LogNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
-        NutsUpdateOptions updateOptions = new NutsUpdateOptions().setSession(context.getSession());
         if (cmdLine.next("set loglevel", "sll") != null) {
 //            NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
             NutsLogManager lm=context.getWorkspace().log();
             if (cmdLine.next("verbose", "finest") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.FINEST, updateOptions);
+                    lm.setTermLevel(Level.FINEST);
                 }
             } else if (cmdLine.next("fine") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.FINE, updateOptions);
+                    lm.setTermLevel(Level.FINE);
                 }
             } else if (cmdLine.next("finer") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.FINER, updateOptions);
+                    lm.setTermLevel(Level.FINER);
                 }
             } else if (cmdLine.next("info") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.INFO, updateOptions);
+                    lm.setTermLevel(Level.INFO);
                 }
             } else if (cmdLine.next("warning") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.WARNING, updateOptions);
+                    lm.setTermLevel(Level.WARNING);
                 }
             } else if (cmdLine.next("severe", "error") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.SEVERE, updateOptions);
+                    lm.setTermLevel(Level.SEVERE);
                 }
             } else if (cmdLine.next("config") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.CONFIG, updateOptions);
+                    lm.setTermLevel(Level.CONFIG);
                 }
             } else if (cmdLine.next("off") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.OFF, updateOptions);
+                    lm.setTermLevel(Level.OFF);
                 }
             } else if (cmdLine.next("all") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.ALL, updateOptions);
+                    lm.setTermLevel(Level.ALL);
                 }
             } else {
                 if (cmdLine.isExecMode()) {
-                    throw new NutsIllegalArgumentException(context.getWorkspace(), "invalid loglevel");
+                    throw new NutsIllegalArgumentException(context.getSession(), "invalid loglevel");
                 }
             }
             cmdLine.setCommandName("config log").unexpectedArgument();

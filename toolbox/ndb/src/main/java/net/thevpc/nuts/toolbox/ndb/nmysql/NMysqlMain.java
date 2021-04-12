@@ -448,7 +448,7 @@ public class NMysqlMain implements NdbSupport {
                                                     NutsTextNodeStyle.primary(3))
                                     )
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(service.getContext().getWorkspace(), "already exists " + name, 2);
+                                throw new NutsExecutionException(service.getContext().getSession(), "already exists " + name, 2);
                             }
                         }
                     } else {
@@ -457,18 +457,18 @@ public class NMysqlMain implements NdbSupport {
                             if (!service.getContext().getSession().getTerminal().ask()
                                     .forBoolean("already exists %s. override?",factory.styled(name.toString(),NutsTextNodeStyle.primary(3)))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(service.getContext().getWorkspace(), "already exists " + name, 2);
+                                throw new NutsExecutionException(service.getContext().getSession(), "already exists " + name, 2);
                             }
                         }
                     }
                 } else {
                     if (name.getDatabaseName().isEmpty()) {
                         if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(service.getContext().getWorkspace(), "not found " + name, 2);
+                            throw new NutsExecutionException(service.getContext().getSession(), "not found " + name, 2);
                         }
                     } else {
                         if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(service.getContext().getWorkspace(), "not found  " + name, 2);
+                            throw new NutsExecutionException(service.getContext().getSession(), "not found  " + name, 2);
                         }
                     }
                 }
@@ -539,7 +539,7 @@ public class NMysqlMain implements NdbSupport {
                         someUpdates = true;
                         r.getConfig().setPassword(
                                 new String(service.getContext().getWorkspace().security().createCredentials(password.toCharArray(), true,
-                                        null, service.getContext().getSession()))
+                                        null))
                         );
                     }
                     if (add && dbname == null) {
@@ -553,19 +553,18 @@ public class NMysqlMain implements NdbSupport {
                         r.getConfig().setPassword(
                                 new String(service.getContext().getWorkspace().security()
                                         .createCredentials(service.getContext().getSession().getTerminal().readPassword("Password"), true,
-                                                null,
-                                                service.getContext().getSession())
+                                                null)
                                 )
                         );
                     }
                     if (r.getConfig().getUser() == null) {
-                        throw new NutsExecutionException(service.getContext().getWorkspace(), "missing --user", 2);
+                        throw new NutsExecutionException(service.getContext().getSession(), "missing --user", 2);
                     }
                     if (r.getConfig().getPassword() == null) {
-                        throw new NutsExecutionException(service.getContext().getWorkspace(), "missing --password", 2);
+                        throw new NutsExecutionException(service.getContext().getSession(), "missing --password", 2);
                     }
                     if (r.getConfig().getDatabaseName() == null) {
-                        throw new NutsExecutionException(service.getContext().getWorkspace(), "missing --name", 2);
+                        throw new NutsExecutionException(service.getContext().getSession(), "missing --name", 2);
                     }
                     if (someUpdates && service.getContext().getSession().isPlainTrace()) {
                         if (add) {
@@ -590,7 +589,7 @@ public class NMysqlMain implements NdbSupport {
                     }
                 }
                 if (!someUpdates) {
-                    throw new NutsExecutionException(service.getContext().getWorkspace(), "nothing to save", 2);
+                    throw new NutsExecutionException(service.getContext().getSession(), "nothing to save", 2);
                 }
 
                 c.saveConfig();
@@ -615,7 +614,7 @@ public class NMysqlMain implements NdbSupport {
                             if (!service.getContext().getSession().getTerminal().ask()
                                     .forBoolean("already exists %s. override?", factory.styled(name.toString(),NutsTextNodeStyle.primary(3)))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(service.getContext().getWorkspace(), "already exists " + name, 2);
+                                throw new NutsExecutionException(service.getContext().getSession(), "already exists " + name, 2);
                             }
                         }
                     } else {
@@ -624,18 +623,18 @@ public class NMysqlMain implements NdbSupport {
                             if (!service.getContext().getSession().getTerminal().ask()
                                     .forBoolean("already exists %s. override?", factory.styled(name.toString(),NutsTextNodeStyle.primary(3)))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(service.getContext().getWorkspace(), "already exists " + name, 2);
+                                throw new NutsExecutionException(service.getContext().getSession(), "already exists " + name, 2);
                             }
                         }
                     }
                 } else {
                     if (name.getDatabaseName().isEmpty()) {
                         if (c.getDatabase(name.getDatabaseName(),NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(service.getContext().getWorkspace(), "not found " + name, 2);
+                            throw new NutsExecutionException(service.getContext().getSession(), "not found " + name, 2);
                         }
                     } else {
                         if (c.getDatabase(name.getDatabaseName(),NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(service.getContext().getWorkspace(), "not found  " + name, 2);
+                            throw new NutsExecutionException(service.getContext().getSession(), "not found  " + name, 2);
                         }
                     }
                 }
@@ -700,7 +699,7 @@ public class NMysqlMain implements NdbSupport {
                     }
                 }
                 if (!someUpdates) {
-                    throw new NutsExecutionException(service.getContext().getWorkspace(), "nothing to save", 2);
+                    throw new NutsExecutionException(service.getContext().getSession(), "nothing to save", 2);
                 }
 
                 c.saveConfig();

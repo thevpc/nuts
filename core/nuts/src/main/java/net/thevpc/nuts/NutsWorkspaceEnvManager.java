@@ -46,10 +46,10 @@ public interface NutsWorkspaceEnvManager {
      *
      * @param property property
      * @param value value
-     * @param options options
+//     * @param options options
      * @return {@code this} instance
      */
-    NutsWorkspaceEnvManager setEnv(String property, String value, NutsUpdateOptions options);
+    NutsWorkspaceEnvManager setEnv(String property, String value);
 
     /**
      * @since 0.8.1
@@ -127,5 +127,9 @@ public interface NutsWorkspaceEnvManager {
     Boolean getOptionAsBoolean(String property, Boolean defaultValue);
 
     Integer getOptionAsInt(String property, Integer defaultValue);
+
+    NutsSession getSession();
+
+    NutsWorkspaceEnvManager setSession(NutsSession session);
 
 }

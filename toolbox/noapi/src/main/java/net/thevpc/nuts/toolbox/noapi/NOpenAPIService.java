@@ -73,7 +73,7 @@ public class NOpenAPIService {
                 new File(temp).delete();
             }
         } else {
-            throw new NutsIllegalArgumentException(appContext.getWorkspace(), "unsupported");
+            throw new NutsIllegalArgumentException(appContext.getSession(), "unsupported");
         }
     }
 

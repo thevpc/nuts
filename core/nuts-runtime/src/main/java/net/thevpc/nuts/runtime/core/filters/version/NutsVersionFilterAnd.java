@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.core.filters.version;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
@@ -12,11 +11,11 @@ import java.util.stream.Collectors;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.filters.id.NutsScriptAwareIdFilter;
 
-public class NutsVersionFilterAnd extends AbstractNutsFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter {
+public class NutsVersionFilterAnd extends AbstractVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter {
 
     private NutsVersionFilter[] all;
 
-    public NutsVersionFilterAnd(NutsWorkspace ws, NutsVersionFilter... all) {
+    public NutsVersionFilterAnd(NutsSession ws, NutsVersionFilter... all) {
         super(ws, NutsFilterOp.AND);
         List<NutsVersionFilter> valid = new ArrayList<>();
         if (all != null) {

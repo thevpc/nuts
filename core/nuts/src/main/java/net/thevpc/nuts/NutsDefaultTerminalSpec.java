@@ -38,7 +38,6 @@ import java.util.Objects;
 public class NutsDefaultTerminalSpec implements NutsTerminalSpec {
     private Boolean autoComplete;
     private NutsTerminalBase parent;
-    private NutsSession session;
     private final Map<String,Object> other=new HashMap<>();
 
     @Override
@@ -101,22 +100,11 @@ public class NutsDefaultTerminalSpec implements NutsTerminalSpec {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NutsDefaultTerminalSpec that = (NutsDefaultTerminalSpec) o;
-        return Objects.equals(autoComplete, that.autoComplete) && Objects.equals(parent, that.parent) && Objects.equals(session, that.session) && Objects.equals(other, that.other);
+        return Objects.equals(autoComplete, that.autoComplete) && Objects.equals(parent, that.parent) && Objects.equals(other, that.other);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(autoComplete, parent, session, other);
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NutsDefaultTerminalSpec setSession(NutsSession session) {
-        this.session = session;
-        return this;
+        return Objects.hash(autoComplete, parent, other);
     }
 }

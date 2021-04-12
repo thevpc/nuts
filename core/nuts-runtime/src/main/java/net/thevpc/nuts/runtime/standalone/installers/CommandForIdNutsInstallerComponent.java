@@ -52,11 +52,11 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
 
     @Override
     public void install(NutsExecutionContext executionContext) {
-        NutsWorkspaceUtils.of(executionContext.getWorkspace()).checkReadOnly();
+        NutsWorkspaceUtils.of(executionContext.getTraceSession()).checkReadOnly();
 //        NutsId id = executionContext.getDefinition().getId();
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
-            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition(), executionContext.getWorkspace())
+            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition(), executionContext.getTraceSession())
                     .setInstallInformation(
                             new DefaultNutsInstallInfo(executionContext.getDefinition().getInstallInformation())
                                     .setInstallStatus(
@@ -78,11 +78,11 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
 
     @Override
     public void update(NutsExecutionContext executionContext) {
-        NutsWorkspaceUtils.of(executionContext.getWorkspace()).checkReadOnly();
+        NutsWorkspaceUtils.of(executionContext.getTraceSession()).checkReadOnly();
 //        NutsId id = executionContext.getDefinition().getId();
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
-            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition(), executionContext.getWorkspace())
+            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition(), executionContext.getTraceSession())
                     .setInstallInformation(
                             new DefaultNutsInstallInfo(executionContext.getDefinition().getInstallInformation())
                                     .setInstallStatus(
@@ -102,7 +102,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
     public void uninstall(NutsExecutionContext executionContext, boolean deleteData) {
         NutsSession session = executionContext.getExecSession();
         NutsWorkspace ws = executionContext.getWorkspace();
-        NutsWorkspaceUtils.of(executionContext.getWorkspace()).checkReadOnly();
+        NutsWorkspaceUtils.of(executionContext.getTraceSession()).checkReadOnly();
         NutsId id = executionContext.getDefinition().getId();
         if ("jar".equals(executionContext.getDefinition().getDescriptor().getPackaging())) {
             NutsExecutionEntry[] executionEntries = ws.apps().execEntries().parse(executionContext.getDefinition().getPath());

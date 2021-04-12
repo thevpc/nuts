@@ -47,7 +47,7 @@ public class Test13_Color {
         TestUtils.println((systemMode==null?"default":systemMode==NutsTerminalMode.INHERITED?"raw":systemMode.id())
                 +"->"+(sessionMode==null?"default":sessionMode==NutsTerminalMode.INHERITED?"raw":sessionMode.id()));
         if(systemMode!=null) {
-            ws.io().term().getSystemTerminal().setMode(systemMode);
+            ws.term().getSystemTerminal().setMode(systemMode);
         }
         NutsSession session = ws.createSession();
         if(sessionMode!=null) {

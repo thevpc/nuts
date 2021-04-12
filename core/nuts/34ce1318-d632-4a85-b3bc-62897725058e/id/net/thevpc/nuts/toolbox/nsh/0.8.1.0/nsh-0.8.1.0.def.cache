@@ -1,0 +1,37 @@
+{
+  "id": "maven-local://net.thevpc.nuts.toolbox:nsh#0.8.1.0",
+  "descriptor": {
+    "id": "net.thevpc.nuts.toolbox:nsh#0.8.1.0",
+    "packaging": "jar",
+    "executable": true,
+    "nutsApplication": true,
+    "name": "nsh",
+    "description": "Nuts bash shell companion",
+    "platform": [
+      "java"
+    ],
+    "dependencies": [
+      "net.thevpc:jshell#0.8.1",
+      "net.thevpc.nuts:nuts#0.8.1",
+      "net.thevpc.common:thevpc-common-strings#1.2.19",
+      "net.thevpc.common:thevpc-common-utils#1.23.1",
+      "net.thevpc.common:thevpc-common-mvn#1.1.2",
+      "net.thevpc.common:thevpc-common-xfile#1.0.0",
+      "net.thevpc.common:thevpc-common-io-compress#1.3.13",
+      "org.jline:jline#3.5.2",
+      "net.thevpc.common:thevpc-common-ssh#1.1.7",
+      "org.junit.jupiter:junit-jupiter-api#5.5.0?scope=test_api"
+    ],
+    "properties": {
+      "project.build.sourceEncoding": "UTF-8",
+      "maven.compiler.target": "1.8",
+      "maven.compiler.source": "1.8",
+      "github.global.server": "github",
+      "nuts.application": "true"
+    }
+  },
+  "repositoryUuid": "34ce1318-d632-4a85-b3bc-62897725058e",
+  "repositoryName": "maven-local",
+  "type": "COMPANION",
+  "apiId": "net.thevpc.nuts:nuts#0.8.1"
+}

@@ -37,22 +37,22 @@ public class NutsUnsupportedEnumException extends NutsException {
     /**
      * create new instance of NutsUnexpectedEnumException
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param enumValue enumeration instance (cannot be null)
      */
-    public NutsUnsupportedEnumException(NutsWorkspace workspace, Enum enumValue) {
-        this(workspace, null, enumValue);
+    public NutsUnsupportedEnumException(NutsSession session, Enum enumValue) {
+        this(session, null, enumValue);
     }
 
     /**
      * create new instance of NutsUnexpectedEnumException
      *
-     * @param workspace workspace
+     * @param session workspace
      * @param enumValue enumeration instance (cannot be null)
      * @param message   message
      */
-    public NutsUnsupportedEnumException(NutsWorkspace workspace, String message, Enum enumValue) {
-        super(workspace,
+    public NutsUnsupportedEnumException(NutsSession session, String message, Enum enumValue) {
+        super(session,
                 message != null ? message : (
                         "unexpected/unsupported enum " + enumValue + " of type " + enumValue.getClass().getName())
         );
@@ -62,13 +62,13 @@ public class NutsUnsupportedEnumException extends NutsException {
     /**
      * create new instance of NutsUnexpectedEnumException
      *
-     * @param workspace   workspace
+     * @param session   workspace
      * @param enumValue   enumeration instance (cannot be null)
      * @param stringValue invalid value
      * @param message message
      */
-    public NutsUnsupportedEnumException(NutsWorkspace workspace, String message, String stringValue, Enum enumValue) {
-        super(workspace,
+    public NutsUnsupportedEnumException(NutsSession session, String message, String stringValue, Enum enumValue) {
+        super(session,
                 message == null ? (
                         "unexpected/unsupported value " + stringValue + " of type " + enumValue.getClass().getName())
                         : message

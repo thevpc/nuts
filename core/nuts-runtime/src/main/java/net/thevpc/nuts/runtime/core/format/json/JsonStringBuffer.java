@@ -26,17 +26,17 @@
 */
 package net.thevpc.nuts.runtime.core.format.json;
 
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsSession;
 
 public class JsonStringBuffer {
 
     private final StringBuilder sb = new StringBuilder();
     private final JsonStatus status;
-    private final NutsWorkspace ws;
+    private final NutsSession session;
 
-    public JsonStringBuffer(NutsWorkspace ws) {
-        this.ws = ws;
-        status = new JsonStatus(ws);
+    public JsonStringBuffer(NutsSession session) {
+        this.session = session;
+        status = new JsonStatus(session);
     }
 
     public boolean append(String line) {

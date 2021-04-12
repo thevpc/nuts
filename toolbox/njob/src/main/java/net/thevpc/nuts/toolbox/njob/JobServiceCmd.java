@@ -195,7 +195,7 @@ public class JobServiceCmd {
             case 5:
                 return ws.formats().text().styled(x, NutsTextNodeStyle.primary(5));
         }
-        throw new NutsIllegalArgumentException(ws, "Invalid index " + index);
+        throw new NutsIllegalArgumentException(context.getSession(), "Invalid index " + index);
     }
 
     protected NutsString getFlagString(NFlag x) {
@@ -287,8 +287,8 @@ public class JobServiceCmd {
 
     public void runInteractive(NutsCommandLine cmdLine) {
         NutsSession session = context.getSession();
-        context.getWorkspace().io().term().enableRichTerm(context.getSession());
-        context.getWorkspace().io().term().getSystemTerminal()
+        context.getWorkspace().term().enableRichTerm();
+        context.getWorkspace().term().getSystemTerminal()
                 .setCommandAutoCompleteResolver(new JobAutoCompleter())
                 .setCommandHistory(
                         context.getWorkspace().commandLine().createHistory()

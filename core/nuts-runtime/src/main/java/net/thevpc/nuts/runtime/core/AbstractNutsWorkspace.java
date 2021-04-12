@@ -24,193 +24,36 @@
 package net.thevpc.nuts.runtime.core;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.*;
-import net.thevpc.nuts.runtime.standalone.manager.DefaultNutsDependencyManager;
-import net.thevpc.nuts.runtime.standalone.manager.DefaultNutsDescriptorManager;
-import net.thevpc.nuts.runtime.standalone.manager.DefaultNutsIdManager;
-import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsUpdateStatisticsCommand;
-import net.thevpc.nuts.runtime.core.app.DefaultNutsCommandLineManager;
-import net.thevpc.nuts.runtime.core.app.DefaultNutsWorkspaceLocationManager;
-import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
-import net.thevpc.nuts.runtime.core.format.DefaultNutsInfoFormat;
-import net.thevpc.nuts.runtime.standalone.manager.DefaultNutsVersionManager;
 
 /**
  * Created by vpc on 1/6/17.
  */
 public abstract class AbstractNutsWorkspace implements NutsWorkspace {
 
-    protected NutsIOManager ioManager;
     protected boolean initializing;
-    protected NutsWorkspaceSecurityManager securityManager;
-    protected NutsFilterManager filters;
-    protected NutsWorkspaceConfigManagerExt configManager;
-    protected NutsRepositoryManager repositoryManager;
-    protected DefaultNutsWorkspaceExtensionManager extensionManager;
-    protected DefaultNutsWorkspaceEventManager events;
-    private DefaultNutsIdManager defaultNutsIdManager;
-    private DefaultNutsVersionManager defaultVersionManager;
-    private DefaultNutsDescriptorManager defaultDescriptorManager;
-    private DefaultNutsDependencyManager defaultDependencyManager;
-    private DefaultNutsFormatManager formatManager;
-    private DefaultNutsConcurrentManager concurrent;
-    private DefaultNutsWorkspaceAppsManager apps;
-    private DefaultNutsCommandLineManager defaultNutsCommandLineManager;
-    private NutsWorkspaceLocationManager locationManager;
     protected NutsSession bootSession;
+    protected NutsSession initSession;
 
-    public AbstractNutsWorkspace(NutsWorkspaceInitInformation info) {
-        defaultNutsIdManager = new DefaultNutsIdManager(this);
-        defaultVersionManager = new DefaultNutsVersionManager(this);
-        defaultDescriptorManager = new DefaultNutsDescriptorManager(this);
-        defaultDependencyManager = new DefaultNutsDependencyManager(this);
-        formatManager = new DefaultNutsFormatManager(this, info);
-        concurrent = new DefaultNutsConcurrentManager(this);
-        apps = new DefaultNutsWorkspaceAppsManager(this);
-        defaultNutsCommandLineManager = new DefaultNutsCommandLineManager(this);
-        locationManager = new DefaultNutsWorkspaceLocationManager(this, info);
+    public AbstractNutsWorkspace() {
     }
 
-    @Override
-    public NutsWorkspaceLocationManager locations() {
-        return locationManager;
+    protected NutsSession bootSession() {
+        return bootSession;
     }
 
-    @Override
-    public NutsWorkspaceAppsManager apps() {
-        return apps;
-    }
-
-    @Override
-    public String getUuid() {
-        return config().getUuid();
-    }
-
-    @Override
-    public String getName() {
-        return config().getName();
-    }
-
-    @Override
-    public NutsUpdateStatisticsCommand updateStatistics() {
-        return new DefaultNutsUpdateStatisticsCommand(this);
-    }
-
-    @Override
-    public NutsWorkspaceExtensionManager extensions() {
-        return extensionManager;
-    }
-
-    @Override
-    public NutsWorkspaceConfigManager config() {
-        return configManager;
-    }
-
-    @Override
-    public NutsRepositoryManager repos() {
-        return repositoryManager;
-    }
-
-    @Override
-    public NutsWorkspaceSecurityManager security() {
-        return securityManager;
-    }
-
-    @Override
-    public NutsIOManager io() {
-        return ioManager;
+    public NutsSession defaultSession() {
+        if (initSession != null) {
+            return initSession;
+        }
+        return bootSession();
     }
 
     @Override
     public NutsSession createSession() {
         NutsSession nutsSession = new DefaultNutsSession(this);
-        nutsSession.setTerminal(io().term().createTerminal(bootSession));
-        nutsSession.setExpireTime(config().options().getExpireTime());
+        nutsSession.setTerminal(term().setSession(defaultSession()).createTerminal());
+        nutsSession.setExpireTime(config().setSession(defaultSession()).options().getExpireTime());
         return nutsSession;
-    }
-
-    @Override
-    public NutsWorkspaceEventManager events() {
-        if (events == null) {
-            events = new DefaultNutsWorkspaceEventManager(this);
-        }
-        return events;
-    }
-
-    @Override
-    public NutsCommandLineManager commandLine() {
-        return defaultNutsCommandLineManager;
-    }
-
-    @Override
-    public NutsIdManager id() {
-        return defaultNutsIdManager;
-    }
-
-    @Override
-    public NutsVersionManager version() {
-        return defaultVersionManager;
-    }
-
-    @Override
-    public NutsInfoFormat info() {
-        return new DefaultNutsInfoFormat(this);
-    }
-
-    @Override
-    public NutsDescriptorManager descriptor() {
-        return defaultDescriptorManager;
-    }
-
-    @Override
-    public NutsDependencyManager dependency() {
-        return defaultDependencyManager;
-    }
-
-    @Override
-    public NutsFormatManager formats() {
-        return formatManager;
-    }
-
-    @Override
-    public NutsConcurrentManager concurrent() {
-        return concurrent;
-    }
-
-    @Override
-    public String getApiVersion() {
-        return NutsWorkspaceConfigManagerExt.of(config()).getApiVersion();
-    }
-
-    @Override
-    public NutsId getApiId() {
-        return NutsWorkspaceConfigManagerExt.of(config()).getApiId();
-    }
-
-    @Override
-    public NutsId getRuntimeId() {
-        return NutsWorkspaceConfigManagerExt.of(config()).getRuntimeId();
-    }
-
-    @Override
-    public NutsSdkManager sdks() {
-        return NutsWorkspaceConfigManagerExt.of(config()).sdks();
-    }
-
-    @Override
-    public NutsImportManager imports() {
-        return NutsWorkspaceConfigManagerExt.of(config()).imports();
-    }
-
-    @Override
-    public NutsCommandAliasManager aliases() {
-        return NutsWorkspaceConfigManagerExt.of(config()).aliases();
-    }
-
-    @Override
-    public NutsWorkspaceEnvManager env() {
-        return NutsWorkspaceConfigManagerExt.of(config()).env();
     }
 
     public boolean isInitializing() {
@@ -225,7 +68,7 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     @Override
     public String toString() {
         return "NutsWorkspace{"
-                + configManager
+                + getName()
                 + '}';
     }
 

@@ -33,6 +33,9 @@ package net.thevpc.nuts;
  * @since 0.8.0
  */
 public interface NutsTypedFilters<T extends NutsFilter> {
+    NutsSession getSession();
+    
+    NutsTypedFilters setSession(NutsSession session);
 
     T nonnull(NutsFilter filter);
 

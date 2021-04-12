@@ -123,7 +123,7 @@ public class DocusaurusCtrl {
             try {
                 Files.write(base.resolve("sidebars.js"),s.getBytes());
             } catch (IOException e) {
-                throw new NutsIOException(appContext.getWorkspace(),e.getMessage());
+                throw new NutsIOException(appContext.getSession(),e.getMessage());
             }
 //            System.out.println(s);
         }
@@ -394,13 +394,11 @@ public class DocusaurusCtrl {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             PrintStream out1 = new PrintStream(out);
             shell.getSession().setTerminal(
-                    shell.getWorkspace().io().term()
+                    shell.getWorkspace().term()
                             .createTerminal(
                                     new ByteArrayInputStream(new byte[0]),
                                     out1,
-                                    out1,
-                                    shell.getSession()
-                            )
+                                    out1)
             );
             JShellFileContext ctx = shell.createSourceFileContext(
                     shell.getRootContext(),

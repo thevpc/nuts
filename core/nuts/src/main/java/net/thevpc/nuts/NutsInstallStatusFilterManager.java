@@ -29,6 +29,8 @@ package net.thevpc.nuts;
  */
 public interface NutsInstallStatusFilterManager extends NutsTypedFilters<NutsInstallStatusFilter> {
 
+    NutsInstallStatusFilterManager setSession(NutsSession session);
+
     NutsInstallStatusFilter byInstalled(boolean value);
 
     NutsInstallStatusFilter byRequired(boolean value);

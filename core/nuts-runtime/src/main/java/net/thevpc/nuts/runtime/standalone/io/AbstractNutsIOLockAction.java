@@ -6,6 +6,7 @@ import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.File;
 import java.nio.file.Path;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public abstract class AbstractNutsIOLockAction implements NutsIOLockAction {
     private NutsWorkspace ws;
@@ -15,6 +16,10 @@ public abstract class AbstractNutsIOLockAction implements NutsIOLockAction {
 
     public AbstractNutsIOLockAction(NutsWorkspace ws) {
         this.ws = ws;
+    }
+
+    protected void checkSession() {
+        NutsWorkspaceUtils.checkSession(ws, getSession());
     }
 
     @Override

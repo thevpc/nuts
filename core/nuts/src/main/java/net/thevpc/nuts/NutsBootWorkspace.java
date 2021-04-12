@@ -1100,7 +1100,7 @@ public final class NutsBootWorkspace {
 
         NutsSession session = workspace.createSession();
         if (LOG2 == null) {
-            LOG2 = workspace.log().of(NutsBootWorkspace.class);
+            LOG2 = workspace.log().setSession(session).of(NutsBootWorkspace.class);
         }
         NutsLoggerOp logOp = LOG2.with().session(session).level(Level.CONFIG);
         logOp.verb(NutsLogVerb.SUCCESS).log("running workspace in {0} mode", getWorkspaceRunModeString());

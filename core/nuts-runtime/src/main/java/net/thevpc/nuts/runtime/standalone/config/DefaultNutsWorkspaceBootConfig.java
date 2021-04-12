@@ -37,7 +37,7 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
 
     private List<Extension> extensions;
 
-    public DefaultNutsWorkspaceBootConfig(NutsWorkspace ws, String bootPath, String effectiveWorkspace, String effectiveWorkspaceName, boolean immediateLocation, NutsWorkspaceConfigBoot bootModel) {
+    public DefaultNutsWorkspaceBootConfig(NutsSession session, String bootPath, String effectiveWorkspace, String effectiveWorkspaceName, boolean immediateLocation, NutsWorkspaceConfigBoot bootModel) {
         this.bootPath = bootPath;
         this.effectiveWorkspace = effectiveWorkspace;
         this.immediateLocation = immediateLocation;
@@ -58,7 +58,7 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
             homes[type.ordinal()] = Nuts.getPlatformHomeFolder(storeLocationLayout, type, homeLocations,
                     global, name);
             if (CoreStringUtils.isBlank(homes[type.ordinal()])) {
-                throw new NutsIllegalArgumentException(ws, "missing Home for " + type.id());
+                throw new NutsIllegalArgumentException(session, "missing Home for " + type.id());
             }
         }
         if (storeLocationStrategy == null) {

@@ -1,21 +1,22 @@
 package net.thevpc.nuts.runtime.core.parser;
 
 import net.thevpc.nuts.NutsParseException;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsVersion;
 import net.thevpc.nuts.NutsVersionParser;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 
 public class DefaultNutsVersionParser implements NutsVersionParser {
-    private NutsWorkspace ws;
+    private NutsSession session;
     private boolean lenient=true;
 
-    public DefaultNutsVersionParser(NutsWorkspace ws) {
-        this.ws = ws;
+    public DefaultNutsVersionParser(NutsSession session) {
+        this.session = session;
     }
 
     public NutsWorkspace getWs() {
-        return ws;
+        return session.getWorkspace();
     }
 
     @Override
@@ -31,9 +32,9 @@ public class DefaultNutsVersionParser implements NutsVersionParser {
 
     @Override
     public NutsVersion parse(String version) {
-        NutsVersion v = DefaultNutsVersion.valueOf(version,ws);
+        NutsVersion v = DefaultNutsVersion.valueOf(version,session);
         if(v==null && !isLenient()){
-            throw new NutsParseException(ws, "Invalid version format : " + version);
+            throw new NutsParseException(session, "Invalid version format : " + version);
         }
         return v;
     }

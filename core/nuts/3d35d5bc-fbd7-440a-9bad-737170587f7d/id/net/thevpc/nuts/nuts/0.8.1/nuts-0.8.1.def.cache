@@ -1,0 +1,25 @@
+{
+  "id": "maven-local://net.thevpc.nuts:nuts#0.8.1",
+  "descriptor": {
+    "id": "net.thevpc.nuts:nuts#0.8.1",
+    "packaging": "jar",
+    "executable": true,
+    "name": "nuts",
+    "description": "Network Updatable Things Services Bootstrap",
+    "platform": [
+      "java"
+    ],
+    "dependencies": [
+      "org.junit.jupiter:junit-jupiter-api#5.5.0?scope=test_api"
+    ],
+    "properties": {
+      "project.build.sourceEncoding": "UTF-8",
+      "maven.compiler.target": "1.8",
+      "maven.compiler.source": "1.8",
+      "github.global.server": "github"
+    }
+  },
+  "repositoryUuid": "3d35d5bc-fbd7-440a-9bad-737170587f7d",
+  "repositoryName": "maven-local",
+  "type": "API"
+}

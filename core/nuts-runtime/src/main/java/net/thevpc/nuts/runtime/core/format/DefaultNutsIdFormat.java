@@ -198,6 +198,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 
     @Override
     public String format() {
+        checkSession();
         if (id == null) {
             return "<null>";
         }
@@ -216,7 +217,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
         id = idBuilder.build();
 //        NutsTextFormatManager tf = getWorkspace().formats().text();
-        NutsTextNodeBuilder sb = getWorkspace().formats().text().builder();
+        NutsTextNodeBuilder sb = getSession().getWorkspace().formats().text().builder();
         if (!isOmitNamespace()) {
             if (!CoreStringUtils.isBlank(id.getNamespace())) {
                 sb.append(id.getNamespace() + "://", NutsTextNodeStyle.pale());
@@ -225,7 +226,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         if (!isOmitGroupId()) {
             if (!CoreStringUtils.isBlank(id.getGroupId())) {
                 boolean importedGroup2 = "net.thevpc.nuts".equals(id.getGroupId());
-                boolean importedGroup = getWorkspace().imports().getAll().contains(id.getGroupId());
+                boolean importedGroup = getSession().getWorkspace().imports().getAll().contains(id.getGroupId());
                 if (!(importedGroup && isOmitImportedGroupId())) {
                     if (importedGroup || importedGroup2) {
                         sb.append(id.getGroupId(), NutsTextNodeStyle.pale());

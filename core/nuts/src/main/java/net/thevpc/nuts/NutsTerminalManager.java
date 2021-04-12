@@ -44,7 +44,7 @@ public interface NutsTerminalManager {
      */
     NutsSystemTerminal getSystemTerminal();
 
-    NutsTerminalManager enableRichTerm(NutsSession session);
+    NutsTerminalManager enableRichTerm();
 
     NutsSystemTerminal createSystemTerminal(NutsTerminalSpec spec);
 
@@ -52,10 +52,9 @@ public interface NutsTerminalManager {
      * update workspace wide system terminal
      *
      * @param terminal system terminal
-     * @param session session
      * @return {@code this} instance
      */
-    NutsTerminalManager setSystemTerminal(NutsSystemTerminalBase terminal, NutsSession session);
+    NutsTerminalManager setSystemTerminal(NutsSystemTerminalBase terminal);
 
     /**
      * return workspace default terminal
@@ -68,58 +67,52 @@ public interface NutsTerminalManager {
      * update workspace wide terminal
      *
      * @param terminal terminal
-     * @param session session
      * @return {@code this} instance
      */
-    NutsTerminalManager setTerminal(NutsSessionTerminal terminal, NutsSession session);
+    NutsTerminalManager setTerminal(NutsSessionTerminal terminal);
 
     /**
      * return new terminal bound to system terminal
      *
      * @return new terminal
-     * @param session session
      */
-    NutsSessionTerminal createTerminal(NutsSession session);
+    NutsSessionTerminal createTerminal();
 
     /**
      * return new terminal
      * @param in in
      * @param out out
      * @param err err
-     * @param session session
      * @return new terminal
      */
-    NutsSessionTerminal createTerminal(InputStream in, PrintStream out, PrintStream err, NutsSession session);
+    NutsSessionTerminal createTerminal(InputStream in, PrintStream out, PrintStream err);
 
 
     /**
      * return new terminal bound to the given {@code parent}
      *
      * @param parent parent terminal or null
-     * @param session session
      * @return new terminal
      */
-    NutsSessionTerminal createTerminal(NutsTerminalBase parent, NutsSession session);
+    NutsSessionTerminal createTerminal(NutsTerminalBase parent);
 
     /**
      * prepare PrintStream to handle NutsImmutableString aware format pattern. If the instance
      * already supports Nuts specific pattern it will be returned unmodified.
      *
      * @param out PrintStream to check
-     * @param session session
      * @return NutsImmutableString pattern format capable PrintStream
      */
-    PrintStream prepare(PrintStream out, NutsSession session);
+    PrintStream prepare(PrintStream out);
 
     /**
      * prepare PrintWriter to handle %N (escape) format pattern. If the instance
      * already supports Nuts specific pattern it will be returned unmodified.
      *
      * @param out PrintWriter to check
-     * @param session session
      * @return %N pattern format capable PrintWriter
      */
-    PrintWriter prepare(PrintWriter out, NutsSession session);
+    PrintWriter prepare(PrintWriter out);
 
     /**
      * true if the stream is not null and could be resolved as Formatted Output
@@ -148,4 +141,11 @@ public interface NutsTerminalManager {
      * @return this instance
      */
     NutsTerminalManager sendTerminalCommand(OutputStream out, NutsTerminalCommand command);
+    
+    
+    
+    NutsTerminalManager setSession(NutsSession session);
+
+    NutsSession getSession() ;
+    
 }

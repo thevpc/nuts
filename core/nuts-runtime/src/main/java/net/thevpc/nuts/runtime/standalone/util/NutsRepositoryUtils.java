@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class NutsRepositoryUtils {
-    private final NutsLogger LOG;
+    private NutsLogger LOG;
 
     private NutsRepository repo;
 
@@ -24,14 +24,26 @@ public class NutsRepositoryUtils {
 
     private NutsRepositoryUtils(NutsRepository repo) {
         this.repo = repo;
-        LOG=repo.getWorkspace().log().of(NutsRepositoryUtils.class);
+//        LOG=repo.getWorkspace().log().of(.class);
     }
 
-    public Events events(){
+    protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
+    }
+
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = this.repo.getWorkspace().log().setSession(session).of(NutsRepositoryUtils.class);
+        }
+        return LOG;
+    }
+
+    public Events events() {
         return new Events(this);
     }
 
-    public static class Events{
+    public static class Events {
+
         private NutsRepositoryUtils u;
 
         public Events(NutsRepositoryUtils u) {
@@ -69,8 +81,8 @@ public class NutsRepositoryUtils {
         }
 
         public void fireOnAddRepository(NutsRepositoryEvent event) {
-            if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log( "{0} add    repo {1}", CoreStringUtils.alignLeft(u.repo.getName(), 20), event
+            if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("{0} add    repo {1}", CoreStringUtils.alignLeft(u.repo.getName(), 20), event
                         .getRepository().getName());
             }
             for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {
@@ -85,9 +97,9 @@ public class NutsRepositoryUtils {
         }
 
         public void fireOnRemoveRepository(NutsRepositoryEvent event) {
-            if (u.LOG.isLoggable(Level.FINEST)) {
-                u.LOG.with().session(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(u.repo.getName(), 20), event
-                        .getRepository().getName()});
+            if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(u.repo.getName(), 20), event
+                    .getRepository().getName()});
             }
             for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {
 //            if (event == null) {

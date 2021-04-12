@@ -28,7 +28,7 @@ public class NAdminUtils {
         showRepo(context, repository, prefix);
         String prefix1 = prefix + "  ";
         if (repository.config().isSupportedMirroring()) {
-            for (NutsRepository c : repository.config().getMirrors(context.getSession())) {
+            for (NutsRepository c : repository.config().getMirrors()) {
                 showRepoTree(context, c, prefix1);
             }
         }

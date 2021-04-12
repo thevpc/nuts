@@ -7,11 +7,11 @@ import java.util.regex.Pattern;
 
 public class DefaultNutsIdParser implements NutsIdParser {
     public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}*-]+|<main>)://)?([a-zA-Z0-9_.${}*-]+)(:([a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
-    private NutsWorkspace ws;
+    private NutsSession session;
     private boolean lenient = true;
 
-    public DefaultNutsIdParser(NutsWorkspace ws) {
-        this.ws = ws;
+    public DefaultNutsIdParser(NutsSession session) {
+        this.session = session;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class DefaultNutsIdParser implements NutsIdParser {
         if (nutsId != null) {
             Matcher m = NUTS_ID_PATTERN.matcher(nutsId);
             if (m.find()) {
-                NutsIdBuilder builder = ws.id().builder();
+                NutsIdBuilder builder = session.getWorkspace().id().builder();
                 builder.setNamespace(m.group(2));
                 String group = m.group(3);
                 String artifact = m.group(5);
@@ -54,7 +54,7 @@ public class DefaultNutsIdParser implements NutsIdParser {
             }
         }
         if (!isLenient()) {
-            throw new NutsParseException(ws, "invalid id format : " + nutsId);
+            throw new NutsParseException(session, "invalid id format : " + nutsId);
         }
         return null;
     }

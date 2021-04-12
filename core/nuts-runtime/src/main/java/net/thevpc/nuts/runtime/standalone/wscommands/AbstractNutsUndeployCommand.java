@@ -83,7 +83,8 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
             result = new ArrayList<>();
         }
         result.add(id);
-        NutsSession session = getValidWorkspaceSession();
+        checkSession();
+        NutsSession session = getSession();
         if (session.isTrace()) {
             if (session.getOutputFormat() == null || session.getOutputFormat() == NutsContentType.PLAIN) {
                 if (session.getOutputFormat() == null || session.getOutputFormat() == NutsContentType.PLAIN) {

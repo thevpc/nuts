@@ -128,7 +128,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
     private AttributedString toAttributedString(NutsTextNode n, NutsTextNodeStyles styles) {
         switch (n.getType()) {
             case PLAIN: {
-                styles=workspace.formats().text().getTheme().toBasicStyles(styles);
+                styles=workspace.formats().text().getTheme().toBasicStyles(styles, session);
                 NutsTextNodePlain p = (NutsTextNodePlain) n;
                 if (styles.isNone()) {
                     return new AttributedString(p.getText());
@@ -271,20 +271,20 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
             reader.unsetOpt(LineReader.Option.INSERT_TAB);
             reader.setVariable(LineReader.HISTORY_FILE, Paths.get(workspace.locations().getWorkspaceLocation()).resolve("history").normalize().toFile());
             if (reader instanceof LineReaderImpl) {
-                ((LineReaderImpl) reader).setHistory(new NutsJLineHistory(reader, workspace, this));
+                ((LineReaderImpl) reader).setHistory(new NutsJLineHistory(reader, session, this));
             }
-            this.out = workspace.io().createPrintStream(
+            this.out = workspace.io().setSession(session).createPrintStream(
                     new TransparentPrintStream(
                             new PrintStream(reader.getTerminal().output(), true),
                             System.out
                     ),
-                    NutsTerminalMode.FORMATTED, session);
-            this.err = workspace.io().createPrintStream(
+                    NutsTerminalMode.FORMATTED);
+            this.err = workspace.io().setSession(session).createPrintStream(
                     new TransparentPrintStream(
                             new PrintStream(reader.getTerminal().output(), true),
                             System.err
                     ),
-                    NutsTerminalMode.FORMATTED, session);//.setColor(NutsPrintStream.RED);
+                    NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
             this.in = new TransparentInputStream(reader.getTerminal().input(), System.in);
         } else {
             try {

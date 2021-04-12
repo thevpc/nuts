@@ -40,6 +40,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
+        checkSession();
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
@@ -63,7 +64,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
                 return true;
             }
             default: {
-                if (getValidSession().configureFirst(cmdLine)) {
+                if (getSession().configureFirst(cmdLine)) {
                     return true;
                 }
             }
@@ -93,6 +94,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
 
     @Override
     public void print(PrintStream out) {
+        checkSession();
         NutsContentType outputFormat = getSession()==null?NutsContentType.PLAIN:getSession().getOutputFormat();
         if(outputFormat==NutsContentType.PLAIN) {
             if (isWorkspaceVersion()) {
@@ -102,9 +104,9 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
             }
         }else{
             if (isWorkspaceVersion()) {
-                getValidSession().formatObject(buildProps()).print(out);
+                getSession().formatObject(buildProps()).print(out);
             } else {
-                getValidSession().formatObject(getVersion()).print(out);
+                getSession().formatObject(getVersion()).print(out);
             }
         }
     }

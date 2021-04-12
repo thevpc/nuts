@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.thevpc.nuts.NutsSession;
 
 /**
  *
@@ -43,9 +44,11 @@ public class DefaultNutsWorkspaceServerManager implements NutsWorkspaceServerMan
 
     private Map<String, NutsServer> servers = new HashMap<>();
     private final NutsWorkspace ws;
+    private final NutsSession session;
 
-    public DefaultNutsWorkspaceServerManager(final NutsWorkspace ws) {
-        this.ws = ws;
+    public DefaultNutsWorkspaceServerManager(final NutsSession session) {
+        this.session = session;
+        this.ws = session.getWorkspace();
     }
 
     @Override
@@ -53,12 +56,12 @@ public class DefaultNutsWorkspaceServerManager implements NutsWorkspaceServerMan
         if (serverConfig == null) {
             serverConfig = new NutsHttpServerConfig();
         }
-        NutsServerComponent server = ws.extensions().createServiceLoader(NutsServerComponent.class, ServerConfig.class, NutsServerComponent.class.getClassLoader(), ws.createSession())
+        NutsServerComponent server = ws.extensions().createServiceLoader(NutsServerComponent.class, ServerConfig.class, NutsServerComponent.class.getClassLoader())
                 .loadBest(serverConfig);
         if (server == null) {
-            throw new NutsIllegalArgumentException(ws, "not server extensions are registered.");
+            throw new NutsIllegalArgumentException(session, "not server extensions are registered.");
         }
-        NutsServer s = server.start(ws/*.self()*/, serverConfig);
+        NutsServer s = server.start(ws.createSession()/*.self()*/, serverConfig);
         if (servers.get(s.getServerId()) != null) {
             servers.get(s.getServerId()).stop();
         }
@@ -70,7 +73,7 @@ public class DefaultNutsWorkspaceServerManager implements NutsWorkspaceServerMan
     public NutsServer getServer(String serverId) {
         NutsServer nutsServer = servers.get(serverId);
         if (nutsServer == null) {
-            throw new NutsIllegalArgumentException(ws, "server not found " + serverId);
+            throw new NutsIllegalArgumentException(session, "server not found " + serverId);
         }
         return nutsServer;
     }

@@ -39,13 +39,13 @@ import java.util.Set;
  */
 public interface NutsWorkspaceExtensionManager {
 
-    boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl, NutsSession session);
+    boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl);
 
-    Set<Class> discoverTypes(NutsId id,ClassLoader classLoader, NutsSession session);
+    Set<Class> discoverTypes(NutsId id,ClassLoader classLoader);
 
-    <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, NutsSession session);
+    <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType);
 
-    <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader, NutsSession session);
+    <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader);
 
     /**
      * create supported extension implementation or return null.
@@ -53,10 +53,9 @@ public interface NutsWorkspaceExtensionManager {
      * @param <V> extension context type
      * @param type extension type
      * @param supportCriteria context
-     * @param session session
      * @return valid instance or null if no extension implementation was found
      */
-    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, NutsSession session);
+    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria);
 
     /**
      * create supported extension implementation or return null.
@@ -66,46 +65,48 @@ public interface NutsWorkspaceExtensionManager {
      * @param supportCriteria context
      * @param constructorParameterTypes constructor Parameter Types
      * @param constructorParameters constructor Parameters
-     * @param session session
      * @return valid instance or null if no extension implementation was found
      */
-    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters, NutsSession session);
+    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters);
 
-    <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria, NutsSession session);
+    <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria);
 
-    <T> List<T> createAll(Class<T> type, NutsSession session);
+    <T> List<T> createAll(Class<T> type);
 
 //    Set<Class> getExtensionPoints(NutsSession session);
 
 
-    Set<Class> getExtensionTypes(Class extensionPoint, NutsSession session);
+    Set<Class> getExtensionTypes(Class extensionPoint);
 
-    List<Object> getExtensionObjects(Class extensionPoint, NutsSession session);
+    List<Object> getExtensionObjects(Class extensionPoint);
 
-    boolean isRegisteredType(Class extensionPointType, String name, NutsSession session);
+    boolean isRegisteredType(Class extensionPointType, String name);
 
-    boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl, NutsSession session);
+    boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl);
 
-    <T> boolean registerInstance(Class<T> extensionPoint, T implementation, NutsSession session);
+    <T> boolean registerInstance(Class<T> extensionPoint, T implementation);
 
-    boolean registerType(Class extensionPointType, Class extensionType, NutsId source,NutsSession session);
+    boolean registerType(Class extensionPointType, Class extensionType, NutsId source);
 
-    boolean isRegisteredType(Class extensionPointType, Class extensionType, NutsSession session);
+    boolean isRegisteredType(Class extensionPointType, Class extensionType);
 
-    boolean isLoadedExtensions(NutsId id, NutsSession session);
+    boolean isLoadedExtensions(NutsId id);
 
-    List<NutsId> getLoadedExtensions(NutsSession session);
+    List<NutsId> getLoadedExtensions();
 
-    NutsWorkspaceExtensionManager loadExtension(NutsId extension, NutsSession session);
+    NutsWorkspaceExtensionManager loadExtension(NutsId extension);
 
-    NutsWorkspaceExtensionManager unloadExtension(NutsId extension, NutsSession session);
+    NutsWorkspaceExtensionManager unloadExtension(NutsId extension);
 
     /**
      * return loaded extensions
      *
      * @return extension ids
-     * @param session session
      */
-    List<NutsId> getConfigExtensions(NutsSession session);
+    List<NutsId> getConfigExtensions();
+
+    NutsSession getSession();
+
+    NutsWorkspaceExtensionManager setSession(NutsSession session);
 
 }

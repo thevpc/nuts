@@ -33,38 +33,38 @@ public class NutsIOException extends NutsException {
 
     /**
      * Constructs a new Validation Exception
-     * @param workspace workspace
+     * @param session workspace
      */
-    public NutsIOException(NutsWorkspace workspace) {
-        super(workspace);
+    public NutsIOException(NutsSession session) {
+        super(session);
     }
 
     /**
      * Constructs a new Validation Exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      */
-    public NutsIOException(NutsWorkspace workspace, String message) {
-        super(workspace,message);
+    public NutsIOException(NutsSession session, String message) {
+        super(session,message);
     }
 
     /**
      * Constructs a new Validation Exception
-     * @param workspace workspace
+     * @param session workspace
      * @param message message
      * @param cause cause
      */
-    public NutsIOException(NutsWorkspace workspace, String message, Throwable cause) {
-        super(workspace,message, cause);
+    public NutsIOException(NutsSession session, String message, Throwable cause) {
+        super(session,message, cause);
     }
 
     /**
      * Constructs a new Validation Exception
-     * @param workspace workspace
+     * @param session workspace
      * @param cause cause
      */
-    public NutsIOException(NutsWorkspace workspace, Throwable cause) {
-        super(workspace,cause);
+    public NutsIOException(NutsSession session, Throwable cause) {
+        super(session,cause);
     }
 
 }

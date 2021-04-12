@@ -62,4 +62,8 @@ public interface NutsInputAction {
     NutsInputAction setMultiRead(boolean value);
 
     boolean isMultiRead();
+
+    NutsSession getSession();
+
+    NutsInputAction setSession(NutsSession session);
 }

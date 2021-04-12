@@ -74,13 +74,13 @@ public class TailCommand extends AbstractNshBuiltin {
             }
         }
         if (files.isEmpty()) {
-            throw new NutsExecutionException(context.getWorkspace(), "Not yet supported", 2);
+            throw new NutsExecutionException(context.getSession(), "Not yet supported", 2);
         }
         for (String file : files) {
             try {
                 TextFiles.tail(TextFiles.create(file), options.max, out);
             } catch (IOException ex) {
-                throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
+                throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
             }
         }
     }

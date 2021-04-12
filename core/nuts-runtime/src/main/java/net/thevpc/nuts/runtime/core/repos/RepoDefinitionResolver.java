@@ -26,7 +26,6 @@ public class RepoDefinitionResolver {
                         .setDeployOrder(10)
                         .setFailSafe(false)
                         .setCreate(true)
-                        .setSession(session)
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
@@ -47,7 +46,6 @@ public class RepoDefinitionResolver {
 //                                        + "/" + NutsConstants.Names.DEFAULT_REPOSITORY_NAME
 //                                ))
                         .setFailSafe(true).setCreate(true)
-                        .setSession(session)
                         .setOrder(NutsAddRepositoryOptions.ORDER_SYSTEM_LOCAL)
                         .setConfig(
                                 new NutsRepositoryConfig()
@@ -69,7 +67,6 @@ public class RepoDefinitionResolver {
             case "maven-local": {
                 return new NutsAddRepositoryOptions().setName("maven-local")
                         .setFailSafe(false).setCreate(true).setOrder(NutsAddRepositoryOptions.ORDER_USER_LOCAL)
-                        .setSession(session)
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation(System.getProperty("user.home") + CoreIOUtils.syspath("/.m2/repository")).setType(NutsConstants.RepoTypes.MAVEN)
@@ -81,7 +78,6 @@ public class RepoDefinitionResolver {
                 return new NutsAddRepositoryOptions().setName("maven-central")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
-                        .setSession(session)
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation("https://repo.maven.apache.org/maven2")
@@ -92,7 +88,6 @@ public class RepoDefinitionResolver {
                 return new NutsAddRepositoryOptions().setName("jcenter")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
-                        .setSession(session)
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation("https://jcenter.bintray.com")
@@ -103,7 +98,6 @@ public class RepoDefinitionResolver {
                 return new NutsAddRepositoryOptions().setName("jboss")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
-                        .setSession(session)
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation("https://repository.jboss.org/nexus/content/repositories/releases")
@@ -114,7 +108,6 @@ public class RepoDefinitionResolver {
                 return new NutsAddRepositoryOptions().setName("clojars")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
-                        .setSession(session)
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation("https://repo.clojars.org")
@@ -125,7 +118,6 @@ public class RepoDefinitionResolver {
                 return new NutsAddRepositoryOptions().setName("atlassian")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
-                        .setSession(session)
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation("https://packages.atlassian.com/maven/public")
@@ -136,7 +128,6 @@ public class RepoDefinitionResolver {
                 return new NutsAddRepositoryOptions().setName("atlassian-atlassian")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
-                        .setSession(session)
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation("https://packages.atlassian.com/maven/public-snapshot")
@@ -147,7 +138,6 @@ public class RepoDefinitionResolver {
                 return new NutsAddRepositoryOptions().setName("oracle")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
-                        .setSession(session)
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation("https://maven.oracle.com")
@@ -158,7 +148,6 @@ public class RepoDefinitionResolver {
                 return new NutsAddRepositoryOptions().setName("google")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
-                        .setSession(session)
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation("maven+dirlist+https://maven.google.com")
@@ -170,7 +159,6 @@ public class RepoDefinitionResolver {
                 return new NutsAddRepositoryOptions().setName("spring")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
-                        .setSession(session)
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation("https://repo.spring.io/release")
@@ -182,7 +170,6 @@ public class RepoDefinitionResolver {
                 return new NutsAddRepositoryOptions().setName("vpc-public-maven")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
-                        .setSession(session)
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation("https://raw.githubusercontent.com/thevpc/vpc-public-maven/master")
@@ -194,7 +181,6 @@ public class RepoDefinitionResolver {
                 return new NutsAddRepositoryOptions().setName("vpc-public-nuts")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
-                        .setSession(session)
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation("https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master")
@@ -233,7 +219,6 @@ public class RepoDefinitionResolver {
                                 ? NutsAddRepositoryOptions.ORDER_USER_LOCAL
                                 : NutsAddRepositoryOptions.ORDER_USER_REMOTE
                         )
-                        .setSession(session)
                         .setConfig(new NutsRepositoryConfig()
                                 .setLocation(ppath)
                         );

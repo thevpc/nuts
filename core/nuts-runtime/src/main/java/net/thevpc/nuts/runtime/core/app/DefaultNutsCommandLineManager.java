@@ -1,23 +1,31 @@
 package net.thevpc.nuts.runtime.core.app;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.time.Instant;
-import java.util.ArrayList;
 import net.thevpc.nuts.NutsDefaultArgumentCandidate;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.List;
-import java.util.ListIterator;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
 
     private NutsWorkspace ws;
+    private NutsSession session;
 
     public DefaultNutsCommandLineManager(NutsWorkspace ws) {
         this.ws = ws;
     }
+
+    public NutsSession getSession() {
+        return session;
+    }
+
+    public NutsCommandLineManager setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+    
+    
 
     public NutsWorkspace getWorkspace() {
         return ws;
@@ -30,42 +38,52 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
 
     @Override
     public NutsCommandLineFormat formatter() {
-        return new DefaultNutsCommandLineFormat(getWorkspace());
+        return new DefaultNutsCommandLineFormat(getWorkspace()).setSession(session);
     }
 
     @Override
     public NutsCommandLine parse(String line) {
-        return new DefaultNutsCommandLine(getWorkspace(), NutsCommandLineUtils.parseCommandLine(getWorkspace(), line));
+        checkSession();
+        return new DefaultNutsCommandLine(getSession(), NutsCommandLineUtils.parseCommandLine(getSession(), line));
+    }
+
+    protected void checkSession() {
+        NutsWorkspaceUtils.checkSession(ws, session);
     }
 
     @Override
     public NutsCommandLine create(String... args) {
-        return new DefaultNutsCommandLine(getWorkspace(), args);
+        checkSession();
+        return new DefaultNutsCommandLine(getSession(), args);
     }
 
     @Override
     public NutsCommandLine create(List<String> args) {
-
-        return new DefaultNutsCommandLine(getWorkspace(), args, null);
+        checkSession();
+        return new DefaultNutsCommandLine(getSession(), args, null);
     }
 
     @Override
     public NutsArgumentCandidateBuilder createCandidate() {
+        checkSession();
         return new DefaultNutsArgumentCandidateBuilder();
     }
 
     @Override
     public NutsArgument createArgument(String argument) {
+        checkSession();
         return Factory.createArgument0(getWorkspace(), argument, '=');
     }
 
     @Override
     public NutsArgumentName createName(String type, String label) {
+        checkSession();
         return Factory.createName0(ws.createSession(), type, label);
     }
 
     @Override
     public NutsArgumentName createName(String type) {
+        checkSession();
         return createName(type, type);
     }
 

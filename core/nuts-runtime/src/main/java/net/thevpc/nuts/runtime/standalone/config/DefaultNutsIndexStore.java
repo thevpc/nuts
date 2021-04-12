@@ -80,7 +80,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
         return IteratorUtils.supplier(
                 () -> {
                     if (isInaccessible()) {
-                        throw new NutsIndexerNotAccessibleException(session.getWorkspace());
+                        throw new NutsIndexerNotAccessibleException(session);
 //                        return IteratorUtils.emptyIterator();
                     }
                     String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "?repositoryUuid=" + getRepository().getUuid();
@@ -94,7 +94,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                                 .iterator();
                     } catch (UncheckedIOException|NutsIOException e) {
                         setInaccessible();
-                        throw new NutsIndexerNotAccessibleException(session.getWorkspace());
+                        throw new NutsIndexerNotAccessibleException(session);
 //                        return IteratorUtils.emptyIterator();
                     }
                 },
@@ -158,7 +158,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                     URL);
             clientFacade.open();
         } catch (UncheckedIOException|NutsIOException e) {
-            throw new NutsUnsupportedOperationException(getRepository().getWorkspace(), "Unable to subscribe for repository" + getRepository().getName(), e);
+            throw new NutsUnsupportedOperationException(session, "Unable to subscribe for repository" + getRepository().getName(), e);
         }
         return this;
     }
@@ -173,7 +173,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                     URL);
             clientFacade.open();
         } catch (UncheckedIOException|NutsIOException e) {
-            throw new NutsUnsupportedOperationException(getRepository().getWorkspace(), "Unable to unsubscribe for repository" + getRepository().getName(), e);
+            throw new NutsUnsupportedOperationException(session, "Unable to unsubscribe for repository" + getRepository().getName(), e);
         }
         return this;
     }

@@ -33,12 +33,13 @@ public class DefaultNutsIODeleteAction extends AbstractNutsIODeleteAction {
 
     @Override
     public NutsIODeleteAction run() {
+        checkSession();
         Path t = CoreIOUtils.toPath(getTarget());
         if (t == null) {
             if (getTarget() == null) {
-                throw new NutsException(getWs(), "missing target to delete");
+                throw new NutsException(getSession(), "missing target to delete");
             }
-            throw new NutsException(getWs(), "unsupported target to delete");
+            throw new NutsException(getSession(), "unsupported target to delete");
         }
         if (!Files.exists(t)) {
             grabException(new FileNotFoundException(t.toString()));

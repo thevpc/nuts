@@ -4,7 +4,7 @@ public interface NutsCodeFormat {
 
     public int getSupportLevel(NutsSupportLevelContext<String> criteria);
 
-    NutsTextNode textToNode(String text);
+    NutsTextNode textToNode(String text, NutsSession session);
 
-    NutsTextNode tokenToNode(String text, String tokenType);
+    NutsTextNode tokenToNode(String text, String tokenType, NutsSession session);
 }

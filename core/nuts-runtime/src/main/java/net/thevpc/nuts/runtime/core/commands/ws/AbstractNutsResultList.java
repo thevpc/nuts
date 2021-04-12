@@ -36,6 +36,7 @@ import java.util.stream.StreamSupport;
 import net.thevpc.nuts.NutsNotFoundException;
 import net.thevpc.nuts.NutsTooManyElementsException;
 import net.thevpc.nuts.NutsResultList;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 
 /**
@@ -46,10 +47,10 @@ import net.thevpc.nuts.NutsWorkspace;
 public abstract class AbstractNutsResultList<T> implements NutsResultList<T> {
 
     private String nutsBase;
-    protected NutsWorkspace ws;
+    protected NutsSession session;
 
-    public AbstractNutsResultList(NutsWorkspace ws, String nutsBase) {
-        this.ws = ws;
+    public AbstractNutsResultList(NutsSession session, String nutsBase) {
+        this.session = session;
         this.nutsBase = nutsBase;
     }
 
@@ -59,7 +60,7 @@ public abstract class AbstractNutsResultList<T> implements NutsResultList<T> {
         if (it.hasNext()) {
             return it.next();
         }
-        throw new NutsNotFoundException(ws, nutsBase);
+        throw new NutsNotFoundException(session, nutsBase);
     }
 
     @Override
@@ -77,11 +78,11 @@ public abstract class AbstractNutsResultList<T> implements NutsResultList<T> {
         if (it.hasNext()) {
             T t = it.next();
             if (it.hasNext()) {
-                throw new NutsTooManyElementsException(ws, nutsBase);
+                throw new NutsTooManyElementsException(session, nutsBase);
             }
             return t;
         } else {
-            throw new NutsNotFoundException(ws, nutsBase);
+            throw new NutsNotFoundException(session, nutsBase);
         }
     }
 

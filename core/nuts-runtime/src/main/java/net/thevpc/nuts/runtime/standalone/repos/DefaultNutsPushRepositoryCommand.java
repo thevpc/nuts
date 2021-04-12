@@ -33,9 +33,9 @@ public class DefaultNutsPushRepositoryCommand extends AbstractNutsPushRepository
 
     @Override
     public NutsPushRepositoryCommand run() {
-        NutsSession session = getValidWorkspaceSession();
-        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession(session);
-        getRepo().security().checkAllowed(NutsConstants.Permissions.PUSH, "push", session);
+        NutsSession session = getSession();
+        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(),session);
+        getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.PUSH, "push");
         try {
             NutsRepositoryExt.of(getRepo()).pushImpl(this);
             if (LOG.isLoggable(Level.FINEST)) {

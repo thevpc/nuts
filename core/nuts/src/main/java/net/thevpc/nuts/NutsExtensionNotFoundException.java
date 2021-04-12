@@ -46,12 +46,12 @@ public class NutsExtensionNotFoundException extends NutsExtensionException {
 
     /**
      * Constructs a new NutsExtensionNotFoundException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param missingType missing type
      * @param extensionName extension name
      */
-    public NutsExtensionNotFoundException(NutsWorkspace workspace, Class missingType, String extensionName) {
-        super(workspace, null, "extension " + extensionName + " could not found: type " + missingType.getName() + " could not be wired.", null);
+    public NutsExtensionNotFoundException(NutsSession session, Class missingType, String extensionName) {
+        super(session, null, "extension " + extensionName + " could not found: type " + missingType.getName() + " could not be wired.", null);
         this.missingType = missingType;
         this.extensionName = extensionName;
     }

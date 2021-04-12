@@ -38,4 +38,7 @@ public interface NutsVersionManager {
 
     NutsVersionFilterManager filter();
 
+    NutsSession getSession();
+
+    NutsVersionManager setSession(NutsSession session);
 }

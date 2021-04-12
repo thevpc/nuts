@@ -35,12 +35,12 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
 
     @Override
     public NutsSearchVersionsRepositoryCommand run() {
-        NutsSession session = getValidWorkspaceSession();
-        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSession(session);
+        NutsSession session = getSession();
+        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(),session);
         //id = id.builder().setFaceContent().build();
-        getRepo().security().checkAllowed(NutsConstants.Permissions.FETCH_DESC, "find-versions", session);
+        getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.FETCH_DESC, "find-versions");
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
-        NutsWorkspaceUtils.of(getRepo().getWorkspace()).checkSimpleNameNutsId(id);
+        NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
         xrepo.checkAllowedFetch(id, session);
         try {
             List<Iterator<NutsId>> resultList = new ArrayList<>();

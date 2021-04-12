@@ -51,6 +51,10 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
         displayOptions = new NutsFetchDisplayOptions(ws);
     }
 
+    protected void checkSession(){
+        NutsWorkspaceUtils.checkSession(getWorkspace(), getSession());
+    }
+    
     public NutsFetchDisplayOptions getDisplayOptions() {
         return displayOptions;
     }
@@ -95,8 +99,9 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
     }
 
     public PrintStream getValidOut() {
+        checkSession();
         if (out == null) {
-            out = NutsWorkspaceUtils.of(ws).validateSession( getValidSession()).getTerminal().getOut();
+            out = getSession().getTerminal().getOut();
         }
 //        this.out = ws.io().getTerminalFormat().prepare(out);
         return out;
@@ -200,21 +205,16 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
 //    }
 
     public PrintStream getValidPrintStream(PrintStream out) {
+        checkSession();
         if (out == null) {
-            out = getValidSession().getTerminal().getOut();
+            out = getSession().getTerminal().getOut();
         }
-        return ws.io().term().prepare(out, session);
+        return ws.term().setSession(getSession()).prepare(out);
     }
+
 
     public PrintStream getValidPrintStream() {
         return getValidPrintStream(null);
-    }
-
-    public NutsSession getValidSession() {
-        if (session == null) {
-            session = ws.createSession();
-        }
-        return session;
     }
 
     public NutsSession getSession() {
@@ -229,7 +229,8 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
     }
 
     public NutsContentType getOutputFormat() {
-        NutsContentType format = getValidSession().getOutputFormat();
+        checkSession();
+        NutsContentType format = getSession().getOutputFormat();
         return format == null ? NutsContentType.PLAIN : format;
     }
 

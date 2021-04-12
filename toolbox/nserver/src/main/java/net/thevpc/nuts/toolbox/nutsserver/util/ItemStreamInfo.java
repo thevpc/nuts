@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.thevpc.nuts.NutsSession;
 
 /**
  * Created by vpc on 1/23/17.
@@ -45,11 +46,11 @@ public class ItemStreamInfo {
 
     private Map<String, List<String>> headers = new HashMap<>();
     private InputStream content;
-    private NutsWorkspace ws;
+    private NutsSession session;
 
-    public ItemStreamInfo(InputStream header, InputStream content,NutsWorkspace ws) throws IOException {
+    public ItemStreamInfo(InputStream header, InputStream content,NutsSession ws) throws IOException {
         this.content = content;
-        this.ws = ws;
+        this.session = ws;
         BufferedReader r = new BufferedReader(new InputStreamReader(header));
         String line = null;
         while ((line = r.readLine()) != null) {
@@ -95,7 +96,7 @@ public class ItemStreamInfo {
                 return substring;
             }
         }
-        throw new NutsIllegalArgumentException(ws, "invalid boundary");
+        throw new NutsIllegalArgumentException(session, "invalid boundary");
     }
 
 //    private static class ErrInputStream extends InputStream {

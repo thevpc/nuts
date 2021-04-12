@@ -55,7 +55,7 @@ public class DefaultTempAction implements NutsTempAction {
         if (repositoryId == null) {
             rootFolder = Paths.get(ws.locations().getStoreLocation(NutsStoreLocation.TEMP)).toFile();
         } else {
-            repositoryById = ws.repos().getRepository(repositoryId, session);
+            repositoryById = ws.repos().setSession(session).getRepository(repositoryId);
             rootFolder = Paths.get(repositoryById.config().getStoreLocation(NutsStoreLocation.TEMP)).toFile();
         }
         NutsId appId = session.getAppId();
@@ -113,12 +113,12 @@ public class DefaultTempAction implements NutsTempAction {
                     //
                 }
             }
-            throw new NutsIOException(ws,"could not create temp directory: " + rootFolder + File.separator + prefix + "*" + ext);
+            throw new NutsIOException(session,"could not create temp directory: " + rootFolder + File.separator + prefix + "*" + ext);
         } else {
             try {
                 return File.createTempFile(prefix.toString(), ext.toString(), rootFolder).toPath().toString();
             } catch (IOException e) {
-                throw new NutsIOException(ws,e);
+                throw new NutsIOException(session,e);
             }
         }
     }

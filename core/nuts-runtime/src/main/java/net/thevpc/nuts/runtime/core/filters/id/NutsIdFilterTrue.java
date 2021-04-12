@@ -4,9 +4,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
-public class NutsIdFilterTrue extends AbstractNutsFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
+public class NutsIdFilterTrue extends AbstractIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
 
-    public NutsIdFilterTrue(NutsWorkspace ws) {
+    public NutsIdFilterTrue(NutsSession ws) {
         super(ws, NutsFilterOp.TRUE);
     }
 

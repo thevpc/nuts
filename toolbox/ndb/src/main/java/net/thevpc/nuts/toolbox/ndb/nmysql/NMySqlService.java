@@ -57,7 +57,7 @@ public class NMySqlService {
         LocalMysqlConfigService t = new LocalMysqlConfigService(name, context);
         if (t.existsConfig()) {
             if(action==NutsOpenMode.CREATE_OR_ERROR){
-                throw new NutsIllegalArgumentException(context.getWorkspace(),"local mysql config already exist: " + name);
+                throw new NutsIllegalArgumentException(context.getSession(),"local mysql config already exist: " + name);
             }
             t.loadConfig();
         } else {
@@ -67,7 +67,7 @@ public class NMySqlService {
                     break;
                 }
                 case OPEN_OR_ERROR:{
-                    throw new NutsIllegalArgumentException(context.getWorkspace(),"no such local mysql config: " + name);
+                    throw new NutsIllegalArgumentException(context.getSession(),"no such local mysql config: " + name);
                 }
                 case OPEN_OR_NULL:{
                     t=null;
@@ -82,7 +82,7 @@ public class NMySqlService {
         RemoteMysqlConfigService t = new RemoteMysqlConfigService(name, context);
         if (t.existsConfig()) {
             if(action==NutsOpenMode.CREATE_OR_ERROR){
-                throw new NutsIllegalArgumentException(context.getWorkspace(),"remote mysql config already exist: " + name);
+                throw new NutsIllegalArgumentException(context.getSession(),"remote mysql config already exist: " + name);
             }
             t.loadConfig();
         } else {
@@ -92,7 +92,7 @@ public class NMySqlService {
                      break;
                 }
                 case OPEN_OR_ERROR:{
-                    throw new NutsIllegalArgumentException(context.getWorkspace(),"no such remote mysql config: " + name);
+                    throw new NutsIllegalArgumentException(context.getSession(),"no such remote mysql config: " + name);
                 }
                 case OPEN_OR_NULL:{
                     t=null;

@@ -77,7 +77,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * <br>
      * <strong>option-type :</strong> create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
-     * @return orkspace archetype to consider when creating a new workspace.
+     * @return workspace archetype to consider when creating a new workspace.
      */
     String getArchetype();
 
@@ -98,10 +98,10 @@ public interface NutsWorkspaceOptions extends Serializable {
     NutsConfirmationMode getConfirm();
 
     /**
-     * if true no real execution, wil dry exec (execute without side effect).
+     * if true no real execution, with dry exec (execute without side effect).
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
-     * @return if true no real execution, wil dry exec (execute without side effect).
+     * @return if true no real execution, with dry exec (execute without side effect).
      */
     boolean isDry();
 

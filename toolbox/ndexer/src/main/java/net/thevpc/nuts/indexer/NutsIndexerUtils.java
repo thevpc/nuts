@@ -19,7 +19,7 @@ public class NutsIndexerUtils {
         String m = (String) ws.env().getProperty(k);
         if (m == null) {
             m = ws.locations()
-                    .getStoreLocation(ws.id().resolveId(NutsIndexerUtils.class, session),
+                    .getStoreLocation(ws.id().setSession(session).resolveId(NutsIndexerUtils.class),
                             NutsStoreLocation.CACHE) + File.separator + entity;
             ws.env().setProperty(k, m);
         }
@@ -39,7 +39,7 @@ public class NutsIndexerUtils {
         NutsWorkspace ws = repository.getWorkspace();
         if (level == 0) {
             entity.put("mirrors", Arrays.toString(
-                    Arrays.stream(repository.config().getMirrors(session))
+                    Arrays.stream(repository.config().setSession(session).getMirrors())
                             .map(nutsRepository -> mapToJson(nutsRepositoryToMap(nutsRepository, level + 1, session), ws))
                             .toArray()));
             entity.put("parents", mapToJson(nutsRepositoryToMap(repository.getParentRepository(), level + 1, session), ws));

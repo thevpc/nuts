@@ -24,9 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.executors;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
-import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsExecutionContext;
 import net.thevpc.nuts.NutsExecutorComponent;
 
 import javax.tools.JavaCompiler;
@@ -83,7 +81,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         );
         JavaExecutorComponent cc = new JavaExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
-        d = new DefaultNutsDefinition(d, ws);
+        d = new DefaultNutsDefinition(d, executionContext.getTraceSession());
         ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
                 folder,
                 false,
@@ -120,11 +118,11 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
                 .createTempFolder("jj"));
         int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
         if (res != 0) {
-            throw new NutsExecutionException(ws, "compilation failed", res);
+            throw new NutsExecutionException(executionContext.getTraceSession(), "compilation failed", res);
         }
         JavaExecutorComponent cc = new JavaExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
-        d = new DefaultNutsDefinition(d, ws);
+        d = new DefaultNutsDefinition(d, executionContext.getTraceSession());
         ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
                 folder.toString(),
                 false,

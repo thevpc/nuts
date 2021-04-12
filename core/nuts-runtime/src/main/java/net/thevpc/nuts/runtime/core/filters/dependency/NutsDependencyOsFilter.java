@@ -7,22 +7,21 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 
-public class NutsDependencyOsFilter extends AbstractNutsFilter implements NutsDependencyFilter {
+public class NutsDependencyOsFilter extends AbstractDependencyFilter  {
 
     private Set<NutsOsFamily> os = EnumSet.noneOf(NutsOsFamily.class);
 
-    public NutsDependencyOsFilter(NutsWorkspace ws) {
+    public NutsDependencyOsFilter(NutsSession ws) {
         super(ws, NutsFilterOp.CUSTOM);
     }
 
-    private NutsDependencyOsFilter(NutsWorkspace ws, Collection<NutsOsFamily> os) {
+    private NutsDependencyOsFilter(NutsSession ws, Collection<NutsOsFamily> os) {
         super(ws, NutsFilterOp.CUSTOM);
         this.os = EnumSet.copyOf(os);
     }
 
-    public NutsDependencyOsFilter(NutsWorkspace ws, String os) {
+    public NutsDependencyOsFilter(NutsSession ws, String os) {
         super(ws, NutsFilterOp.CUSTOM);
         this.os = EnumSet.noneOf(NutsOsFamily.class);
         for (String e : os.split("[,; ]")) {
@@ -35,7 +34,7 @@ public class NutsDependencyOsFilter extends AbstractNutsFilter implements NutsDe
     public NutsDependencyOsFilter add(Collection<NutsOsFamily> os) {
         EnumSet<NutsOsFamily> s2 = EnumSet.copyOf(this.os);
         s2.addAll(os);
-        return new NutsDependencyOsFilter(getWorkspace(), s2);
+        return new NutsDependencyOsFilter(getSession(), s2);
     }
 
     @Override
@@ -61,7 +60,7 @@ public class NutsDependencyOsFilter extends AbstractNutsFilter implements NutsDe
     }
 
     @Override
-    public NutsFilter simplify() {
+    public NutsDependencyFilter simplify() {
         return os.isEmpty() ? getWorkspace().filters().dependency().always() : this;
     }
 }

@@ -41,24 +41,24 @@ public class NutsExtensionAlreadyRegisteredException extends NutsExtensionExcept
 
     /**
      * Constructs a new NutsExtensionAlreadyRegisteredException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param id artifact id
      * @param installed installed id
      */
-    public NutsExtensionAlreadyRegisteredException(NutsWorkspace workspace, String id, String installed) {
-        super(workspace, id, "extension already registered " + (id == null ? "<null>" + " as " + installed : id), null);
+    public NutsExtensionAlreadyRegisteredException(NutsSession session, String id, String installed) {
+        super(session, id, "extension already registered " + (id == null ? "<null>" + " as " + installed : id), null);
         this.installed = installed;
     }
 
     /**
      * Constructs a new NutsExtensionAlreadyRegisteredException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param id artifact id
      * @param installed installed id
      * @param cause cause
      */
-    public NutsExtensionAlreadyRegisteredException(NutsWorkspace workspace, String id, String installed, Throwable cause) {
-        super(workspace, id, "extension already registered " + (id == null ? "<null>" : id) + " as " + installed, cause);
+    public NutsExtensionAlreadyRegisteredException(NutsSession session, String id, String installed, Throwable cause) {
+        super(session, id, "extension already registered " + (id == null ? "<null>" : id) + " as " + installed, cause);
         this.installed = installed;
     }
 

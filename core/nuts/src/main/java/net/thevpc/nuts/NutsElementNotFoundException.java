@@ -37,22 +37,22 @@ public class NutsElementNotFoundException extends NutsException {
      * Constructs a new runtime exception with {@code null} as its
      * detail message.  The cause is not initialized, and may subsequently be
      * initialized by a call to {@link #initCause}.
-     * @param workspace the workspace of this Nuts Exception
+     * @param session the workspace of this Nuts Exception
      */
-    public NutsElementNotFoundException(NutsWorkspace workspace) {
-        super(workspace);
+    public NutsElementNotFoundException(NutsSession session) {
+        super(session);
     }
 
     /** Constructs a new runtime exception with the specified detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      *
-     * @param workspace the workspace of this Nuts Exception
+     * @param session the workspace of this Nuts Exception
      * @param   message   the detail message. The detail message is saved for
      *          later retrieval by the {@link #getMessage()} method.
      */
-    public NutsElementNotFoundException(NutsWorkspace workspace, String message) {
-        super(workspace, message);
+    public NutsElementNotFoundException(NutsSession session, String message) {
+        super(session, message);
     }
 
     /**
@@ -69,10 +69,10 @@ public class NutsElementNotFoundException extends NutsException {
      *         {@link #getCause()} method).  (A <tt>null</tt> value is
      *         permitted, and indicates that the cause is nonexistent or
      *         unknown.)
-     * @param workspace the workspace of this Nuts Exception
+     * @param session the workspace of this Nuts Exception
      */
-    public NutsElementNotFoundException(NutsWorkspace workspace, String message, Throwable cause) {
-        super(workspace, message, cause);
+    public NutsElementNotFoundException(NutsSession session, String message, Throwable cause) {
+        super(session, message, cause);
     }
 
     /**
@@ -86,10 +86,10 @@ public class NutsElementNotFoundException extends NutsException {
      *         {@link #getCause()} method).  (A <tt>null</tt> value is
      *         permitted, and indicates that the cause is nonexistent or
      *         unknown.)
-     * @param workspace the workspace of this Nuts Exception
+     * @param session the workspace of this Nuts Exception
      */
-    public NutsElementNotFoundException(NutsWorkspace workspace, Throwable cause) {
-        super(workspace, cause);
+    public NutsElementNotFoundException(NutsSession session, Throwable cause) {
+        super(session, cause);
     }
 
     /**
@@ -104,9 +104,9 @@ public class NutsElementNotFoundException extends NutsException {
      *                          or disabled
      * @param writableStackTrace whether or not the stack trace should
      *                           be writable
-     * @param workspace the workspace of this Nuts Exception
+     * @param session the workspace of this Nuts Exception
      */
-    public NutsElementNotFoundException(NutsWorkspace workspace, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(workspace, message, cause, enableSuppression, writableStackTrace);
+    public NutsElementNotFoundException(NutsSession session, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(session, message, cause, enableSuppression, writableStackTrace);
     }
 }

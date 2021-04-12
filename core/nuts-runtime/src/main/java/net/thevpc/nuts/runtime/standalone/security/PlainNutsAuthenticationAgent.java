@@ -7,10 +7,9 @@ import java.util.Arrays;
 import java.util.Map;
 
 @NutsSingleton
-public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, NutsSessionAware {
+public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent {
 
     private NutsWorkspace ws;
-    private NutsSession session;
 
     @Override
     public String getId() {
@@ -18,14 +17,8 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
     }
 
     @Override
-    public void setSession(NutsSession session) {
-        this.session=session;
-        this.ws=session==null?null:session.getWorkspace();
-    }
-
-    @Override
     public boolean removeCredentials(char[] credentialsId, Map<String, String> envProvider, NutsSession session) {
-        extractId(credentialsId);
+        extractId(credentialsId,session);
         return true;
     }
 
@@ -37,16 +30,16 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
     @Override
     public void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider, NutsSession session) {
         if (CoreStringUtils.isBlank(password)) {
-            throw new NutsSecurityException(ws, "missing old password");
+            throw new NutsSecurityException(session, "missing old password");
         }
-        char[] iid = extractId(credentialsId);
+        char[] iid = extractId(credentialsId,session);
         if (Arrays.equals(iid, password)) {
             return;
         }
-        throw new NutsSecurityException(ws, "invalid login or password");
+        throw new NutsSecurityException(session, "invalid login or password");
     }
 
-    private char[] extractId(char[] a) {
+    private char[] extractId(char[] a,NutsSession session) {
         if (!CoreStringUtils.isBlank(a)) {
             char[] idc = (getId()+":").toCharArray();
             if (a.length > idc.length + 1) {
@@ -62,12 +55,12 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent, Nu
                 }
             }
         }
-        throw new NutsSecurityException(ws, "credential id must start with " + getId() + ":");
+        throw new NutsSecurityException(session, "credential id must start with " + getId() + ":");
     }
 
     @Override
     public char[] getCredentials(char[] credentialsId, Map<String, String> envProvider, NutsSession session) {
-        return extractId(credentialsId);
+        return extractId(credentialsId,session);
     }
 
     @Override

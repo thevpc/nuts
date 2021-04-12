@@ -11,12 +11,12 @@ import net.thevpc.nuts.runtime.bundles.parsers.StringMapParser;
 
 public class DefaultNutsDependencyParser implements NutsDependencyParser {
     private static final StringMapParser QPARSER = new StringMapParser("=","&");
-    private NutsWorkspace ws;
+    private NutsSession session;
     private boolean lenient=false;
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
 
-    public DefaultNutsDependencyParser(NutsWorkspace ws) {
-        this.ws = ws;
+    public DefaultNutsDependencyParser(NutsSession session) {
+        this.session = session;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
                 name = group;
                 group = null;
             }
-            return ws.dependency().builder()
+            return session.getWorkspace().dependency().builder()
                     .setNamespace(protocol)
                     .setGroupId(group)
                     .setArtifactId(name)
@@ -56,7 +56,7 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
                     .build();
         }
         if (!isLenient()) {
-            throw new NutsParseException(ws, "invalid dependency format : " + dependency);
+            throw new NutsParseException(session, "invalid dependency format : " + dependency);
         }
         return null;
     }

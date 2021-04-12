@@ -56,7 +56,7 @@ public class FalseCommand extends SimpleNshBuiltin {
     @Override
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         //do nothing, return true
-        throw new NutsExecutionException(context.getWorkspace(), 1);
+        throw new NutsExecutionException(context.getSession(), 1);
     }
 
 }

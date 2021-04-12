@@ -91,7 +91,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
                 return false;
             }
             formattedLine.append(p);
-            BytesSizeFormat mf = new BytesSizeFormat("BTD1F", event.getWorkspace());
+            BytesSizeFormat mf = new BytesSizeFormat("BTD1F", event.getSession());
 
             formattedLine.append(" ").append(escapeText(terminalFormat,String.format("%6s", df.format(percent)))).append("% ");
             formattedLine.append(" ##:config:").append(escapeText(terminalFormat,mf.format(partialSpeed))).append("/s##");

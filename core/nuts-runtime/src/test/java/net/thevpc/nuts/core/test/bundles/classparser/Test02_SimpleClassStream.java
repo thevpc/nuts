@@ -106,7 +106,7 @@ public class Test02_SimpleClassStream {
     private static void parseJarFile(Path file, NutsSession session) throws IOException {
         TestUtils.println("parse jar " + file + " ... ");
         try (InputStream in = Files.newInputStream(file)) {
-            TestUtils.println("parse jar " + file + " :: " + Arrays.asList(NutsWorkspaceUtils.of(session.getWorkspace()).parseJarExecutionEntries(in, file.toString(), session)));
+            TestUtils.println("parse jar " + file + " :: " + Arrays.asList(NutsWorkspaceUtils.of(session).parseJarExecutionEntries(in, file.toString())));
         }
     }
 

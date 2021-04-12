@@ -29,8 +29,8 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
             this.session = session;
             this.ws = session==null?null:session.getWorkspace();
             if(this.ws!=null) {
-                this.out.session = this;
-                this.err.session = this;
+                this.out.sessionTerm = this;
+                this.err.sessionTerm = this;
             }
         }
     }
@@ -263,7 +263,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
         PrintStream formatted;
         PrintStream filtered;
         boolean typeOut;
-        DefaultNutsSessionTerminal session;
+        DefaultNutsSessionTerminal sessionTerm;
 
         public OutInfo(boolean out) {
             this.typeOut = out;
@@ -295,10 +295,10 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
             if (_out != null) {
                 return _out;
             }
-            if (session.parent != null) {
-                return typeOut ? session.parent.getOut() : session.parent.getErr();
+            if (sessionTerm.parent != null) {
+                return typeOut ? sessionTerm.parent.getOut() : sessionTerm.parent.getErr();
             }
-            _out = typeOut ? CoreIOUtils.out(session.ws) : CoreIOUtils.err(session.ws);
+            _out = typeOut ? CoreIOUtils.out(sessionTerm.ws) : CoreIOUtils.err(sessionTerm.ws);
             if (_out != null) {
                 return _out;
             }
@@ -312,7 +312,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
             }
             if (formatted == null || baseOld != b) {
                 baseOld = b;
-                formatted = session.ws.io().createPrintStream(b, NutsTerminalMode.FORMATTED, session.session);
+                formatted = sessionTerm.ws.io().setSession(sessionTerm.session).createPrintStream(b, NutsTerminalMode.FORMATTED);
             }
             return formatted;
         }
@@ -324,7 +324,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
             }
             if (filtered == null || baseOld != b) {
                 baseOld = b;
-                filtered = session.ws.io().createPrintStream(b, NutsTerminalMode.FILTERED, session.session);
+                filtered = sessionTerm.ws.io().setSession(sessionTerm.session).createPrintStream(b, NutsTerminalMode.FILTERED);
             }
             return filtered;
         }

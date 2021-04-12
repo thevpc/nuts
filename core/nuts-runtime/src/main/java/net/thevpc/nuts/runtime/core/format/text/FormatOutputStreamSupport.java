@@ -28,7 +28,7 @@ public class FormatOutputStreamSupport {
     public FormatOutputStreamSupport(OutputStream rawOutput, FormattedPrintStreamRenderer renderer, NutsSession session) {
         this.session=session;
         this.ws=session.getWorkspace();
-        this.parser = new DefaultNutsTextNodeParser(ws);
+        this.parser = new DefaultNutsTextNodeParser(session);
         this.nodeWriter = new NutsTextNodeWriterRenderer(rawOutput,renderer,session)
         .setWriteConfiguration(writeConfiguration.setFiltered(false));
     }
@@ -38,7 +38,7 @@ public class FormatOutputStreamSupport {
     }
 
     public FormatOutputStreamSupport setParser(NutsTextNodeParser parser) {
-        this.parser = parser == null ? new DefaultNutsTextNodeParser(ws) : parser;
+        this.parser = parser == null ? new DefaultNutsTextNodeParser(session) : parser;
         return this;
     }
 

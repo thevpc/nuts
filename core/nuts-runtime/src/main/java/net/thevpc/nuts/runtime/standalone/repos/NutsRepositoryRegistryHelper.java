@@ -55,11 +55,11 @@ public class NutsRepositoryRegistryHelper {
                 .toArray(NutsRepositoryRef[]::new);
     }
 
-    public void addRepository(NutsRepository repository) {
+    public void addRepository(NutsRepository repository, NutsSession session) {
         if (repository == null) {
             return;
         }
-        NutsRepositoryRef repositoryRef=repository.config().getRepositoryRef();
+        NutsRepositoryRef repositoryRef=repository.config().setSession(session).getRepositoryRef();
         String uuid = repository.getUuid();
         String name = repository.getName();
         if (name == null) {
@@ -69,15 +69,15 @@ public class NutsRepositoryRegistryHelper {
         if (uuid != null) {
             ii = repositoriesByUuid.get(uuid);
             if (ii != null) {
-                throw new NutsIllegalArgumentException(ws, "repository with the same uuid already exists " + ii.repo.getUuid() + "/" + ii.repo.getName());
+                throw new NutsIllegalArgumentException(session, "repository with the same uuid already exists " + ii.repo.getUuid() + "/" + ii.repo.getName());
             }
         }
         ii = repositoriesByName.get(name);
         if (ii != null) {
-            throw new NutsIllegalArgumentException(ws, "repository with the same name already exists " + ii.repo.getUuid() + "/" + ii.repo.getName());
+            throw new NutsIllegalArgumentException(session, "repository with the same name already exists " + ii.repo.getUuid() + "/" + ii.repo.getName());
         }
         if (!name.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
-            throw new NutsIllegalArgumentException(ws, "invalid repository name " + name);
+            throw new NutsIllegalArgumentException(session, "invalid repository name " + name);
         }
         RepoAndRef rr = new RepoAndRef(repository);
         rr.ref = repositoryRef;

@@ -7,41 +7,62 @@ import net.thevpc.nuts.runtime.core.parser.DefaultNutsDependencyParser;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 
 import java.util.Set;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsDependencyManager implements NutsDependencyManager {
+
     private NutsWorkspace workspace;
+
+    private NutsSession session;
 
     public DefaultNutsDependencyManager(NutsWorkspace workspace) {
         this.workspace = workspace;
+    }
+
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsDependencyManager setSession(NutsSession session) {
+        this.session = session;
+        return this;
     }
 
     public NutsWorkspace getWorkspace() {
         return workspace;
     }
 
+    protected void checkSession() {
+        NutsWorkspaceUtils.checkSession(workspace, session);
+    }
+
     @Override
     public NutsDependencyParser parser() {
-        return new DefaultNutsDependencyParser(workspace);
+        checkSession();
+        return new DefaultNutsDependencyParser(getSession());
     }
 
     @Override
     public NutsDependencyBuilder builder() {
-        return new DefaultNutsDependencyBuilder(getWorkspace());
+        checkSession();
+        return new DefaultNutsDependencyBuilder(getSession());
     }
 
     @Override
     public NutsDependencyFormat formatter() {
-        return new DefaultNutsDependencyFormat(getWorkspace());
+        return new DefaultNutsDependencyFormat(getWorkspace()).setSession(getSession());
     }
 
     @Override
     public NutsDependencyFormat formatter(NutsDependency dependency) {
-        return formatter().setValue(dependency);
+        return formatter().setValue(dependency).setSession(getSession());
     }
 
     @Override
     public NutsDependencyFilterManager filter() {
-        return getWorkspace().filters().dependency();
+        return getWorkspace().filters().dependency().setSession(getSession());
     }
 
     @Override

@@ -52,9 +52,9 @@ public class DefaultNutsExecutionEntryAction implements NutsExecutionEntryAction
     @Override
     public NutsExecutionEntry[] parse(InputStream inputStream, String type, String sourceName) {
         if ("java".equals(type)) {
-            return NutsWorkspaceUtils.of(ws).parseJarExecutionEntries(inputStream, sourceName, getSession());
+            return NutsWorkspaceUtils.of(getSession()).parseJarExecutionEntries(inputStream, sourceName);
         } else if ("class".equals(type)) {
-            NutsExecutionEntry u = NutsWorkspaceUtils.of(ws).parseClassExecutionEntry(inputStream, sourceName, getSession());
+            NutsExecutionEntry u = NutsWorkspaceUtils.of(getSession()).parseClassExecutionEntry(inputStream, sourceName);
             return u == null ? new NutsExecutionEntry[0] : new NutsExecutionEntry[]{u};
         }
         return new NutsExecutionEntry[0];

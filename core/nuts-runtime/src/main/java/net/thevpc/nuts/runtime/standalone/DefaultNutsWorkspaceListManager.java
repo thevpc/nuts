@@ -51,9 +51,8 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
     private Path getConfigFile(NutsSession session) {
         return Paths.get(this.defaultWorkspace
                 .locations()
-                .getStoreLocation(
-                        this.defaultWorkspace
-                                .id().resolveId(DefaultNutsWorkspaceListManager.class, session),
+                .getStoreLocation(this.defaultWorkspace
+                                .id().setSession(session).resolveId(DefaultNutsWorkspaceListManager.class),
                         NutsStoreLocation.CONFIG))
                 .resolve(name + "-nuts-workspace-list.json");
     }

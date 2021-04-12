@@ -27,11 +27,11 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsTextNodeList;
 import net.thevpc.nuts.NutsTextNodeType;
-import net.thevpc.nuts.NutsWorkspace;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import net.thevpc.nuts.NutsSession;
 
 /**
  * Created by vpc on 5/23/17.
@@ -40,7 +40,7 @@ public class DefaultNutsTextNodeList extends AbstractNutsTextNode implements Nut
 
     private List<NutsTextNode> children = new ArrayList<NutsTextNode>();
 
-    public DefaultNutsTextNodeList(NutsWorkspace ws, NutsTextNode... children) {
+    public DefaultNutsTextNodeList(NutsSession ws, NutsTextNode... children) {
         super(ws);
         if (children != null) {
             for (NutsTextNode c : children) {
@@ -54,7 +54,7 @@ public class DefaultNutsTextNodeList extends AbstractNutsTextNode implements Nut
     @Override
     public NutsTextNode simplify() {
         if (isEmpty()) {
-            return new DefaultNutsTextNodePlain(getWorkspace(), "");
+            return new DefaultNutsTextNodePlain(getSession(), "");
         }
         if (size() == 1) {
             return get(0);

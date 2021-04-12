@@ -38,7 +38,7 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
     }
 
     public BytesSizeFormat mf(NutsProgressEvent event) {
-        return new BytesSizeFormat("BTD1F",event.getWorkspace());
+        return new BytesSizeFormat("BTD1F",event.getSession());
     }
 
     @Override

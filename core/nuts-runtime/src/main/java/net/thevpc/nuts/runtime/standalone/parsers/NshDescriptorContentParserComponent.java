@@ -90,7 +90,7 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
             r = new BufferedReader(new InputStreamReader(file));
             String line = null;
             boolean firstLine = true;
-            JsonStringBuffer comment = new JsonStringBuffer(session.getWorkspace());
+            JsonStringBuffer comment = new JsonStringBuffer(session);
             String sheban = "";
             boolean start = false;
             while ((line = r.readLine()) != null) {

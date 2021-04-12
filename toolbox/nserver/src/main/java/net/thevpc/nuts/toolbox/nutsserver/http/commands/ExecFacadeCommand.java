@@ -54,7 +54,7 @@ public class ExecFacadeCommand extends AbstractFacadeCommand {
 
         NutsSession session = ws.createSession();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        session.getTerminal().setOut(ws.io().createPrintStream(out, NutsTerminalMode.FILTERED, session));
+        session.getTerminal().setOut(ws.io().createPrintStream(out, NutsTerminalMode.FILTERED));
         session.getTerminal().setIn(new ByteArrayInputStream(new byte[0]));
 
         int result = ws.exec()

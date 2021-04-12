@@ -30,13 +30,13 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
 
     @Override
     public void start() {
-        getWriter().println(codeFormat.tokenToNode("[", "separator"));
+        getWriter().println(codeFormat.tokenToNode("[", "separator", getSession()));
         getWriter().flush();
     }
 
     @Override
     public void complete(long count) {
-        getWriter().println(codeFormat.tokenToNode("]", "separator"));
+        getWriter().println(codeFormat.tokenToNode("]", "separator", getSession()));
         getWriter().flush();
     }
 
@@ -72,7 +72,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         String json = getWorkspace().formats().element()
                 .setSession(getSession())
                 .setContentType(NutsContentType.JSON).setValue(object).setCompact(isCompact()).format();
-        getWriter().printf("%s%n", codeFormat.textToNode(json));
+        getWriter().printf("%s%n", codeFormat.textToNode(json, getSession()));
         getWriter().flush();
     }
 

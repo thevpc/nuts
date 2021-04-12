@@ -6,8 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.repocommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositoryCommand;
 
 /**
@@ -20,14 +20,16 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
     private NutsSession session;
     private NutsFetchMode fetchMode = NutsFetchMode.LOCAL;
     private String commandName;
-    private NutsSession validSession;
-    private boolean sessionCopy = false;
 
     public NutsRepositoryCommandBase(NutsRepository repo, String commandName) {
         this.repo = repo;
         this.commandName = commandName;
     }
 
+    protected void checkSession(){
+        NutsWorkspaceUtils.checkSession(repo.getWorkspace(), getSession());
+    }
+    
     public String getCommandName() {
         return commandName;
     }
@@ -55,22 +57,6 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
 
     }
 
-    public NutsSession getValidWorkspaceSessionCopy() {
-        NutsSession s = getValidWorkspaceSession();
-        if (!sessionCopy) {
-            s = validSession = s.copy();
-            sessionCopy = true;
-        }
-        return s;
-    }
-
-    public NutsSession getValidWorkspaceSession() {
-        if (validSession == null) {
-            validSession = NutsWorkspaceUtils.of(getRepo().getWorkspace()).validateSession(getSession());
-            sessionCopy = true;
-        }
-        return validSession;
-    }
 
     public NutsFetchMode getFetchMode() {
         return fetchMode;
@@ -115,6 +101,7 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
+        checkSession();
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
@@ -122,7 +109,7 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
 //        switch (a.getStringKey()) {
 //        }
 
-        if (getValidWorkspaceSessionCopy().configureFirst(cmdLine)) {
+        if (getSession().configureFirst(cmdLine)) {
             return true;
         }
         return false;

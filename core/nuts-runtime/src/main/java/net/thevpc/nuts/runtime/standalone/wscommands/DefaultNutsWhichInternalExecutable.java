@@ -55,7 +55,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
             }
         }
         if (commands.isEmpty()) {
-            throw new NutsIllegalArgumentException(ws, "which: missing commands");
+            throw new NutsIllegalArgumentException(getSession(), "which: missing commands");
         }
         NutsTextManager factory = ws.formats().text();
         for (String arg : this.args) {
@@ -76,13 +76,13 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                                 factory.styled(arg, NutsTextNodeStyle.primary(4)),
                                 factory.styled("nuts alias", NutsTextNodeStyle.primary(6)),
                                 p.getId(),
-                                ws.commandLine().create(ws.aliases().find(p.getName(), getSession()).getCommand())
+                                ws.commandLine().create(ws.aliases().find(p.getName()).getCommand())
                         );
                         break;
                     }
                     case ARTIFACT: {
                         if (p.getId() == null) {
-                            throw new NutsNotFoundException(ws, arg);
+                            throw new NutsNotFoundException( getSession(), arg);
                         }
                         out.printf("%s : %s %s%n",
                                 factory.styled(arg, NutsTextNodeStyle.primary(4)),

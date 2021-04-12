@@ -87,11 +87,12 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
 
     @Override
     public NutsTreeModel getModel() {
+        checkSession();
         if(tree instanceof NutsElementTreeModel){
             return (NutsTreeModel) tree;
         }
         NutsElement elem = getWorkspace().formats().element().setSession(getSession()).convert(tree, NutsElement.class);
-        return new NutsElementTreeModel(getWorkspace(), rootName, elem, getValidSession()) {
+        return new NutsElementTreeModel(getWorkspace(), rootName, elem, getSession()) {
             @Override
             protected NutsString[] getMultilineArray(NutsString key, NutsElement value) {
                 return DefaultTreeFormat.this.getMultilineArray(key, value);

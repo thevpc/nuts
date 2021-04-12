@@ -39,7 +39,8 @@ public class NutsSubscriptionController {
     public ResponseEntity<Void> subscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         NutsWorkspace workspace = workspacePool.openWorkspace(workspaceLocation);
-        NutsRepository[] repositories = workspace.repos().getRepositories(workspace.createSession());
+        workspace=workspace.createSession().getWorkspace();
+        NutsRepository[] repositories = workspace.repos().getRepositories();
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.subscribe(repositoryUuid,
@@ -55,7 +56,8 @@ public class NutsSubscriptionController {
     public ResponseEntity<Void> unsubscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         NutsWorkspace workspace = workspacePool.openWorkspace(workspaceLocation);
-        NutsRepository[] repositories = workspace.repos().getRepositories(workspace.createSession());
+        workspace=workspace.createSession().getWorkspace();
+        NutsRepository[] repositories = workspace.repos().getRepositories();
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.unsubscribe(repositoryUuid,
@@ -72,7 +74,8 @@ public class NutsSubscriptionController {
             @RequestParam("repositoryUuid") String repositoryUuid) {
         System.out.println(workspaceLocation + " " + repositoryUuid);
         NutsWorkspace workspace = workspacePool.openWorkspace(workspaceLocation);
-        NutsRepository[] repositories = workspace.repos().getRepositories(workspace.createSession());
+        workspace=workspace.createSession().getWorkspace();
+        NutsRepository[] repositories = workspace.repos().getRepositories();
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 boolean subscribed = this.subscriberManager.isSubscribed(repositoryUuid,

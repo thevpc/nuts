@@ -40,15 +40,15 @@ public class NutsFetchModeNotSupportedException extends NutsException {
 
     /**
      * Constructs a new NutsFetchModeNotSupportedException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param repo repository
      * @param fetchMode fetch mode
      * @param id artifact id
      * @param message message
      * @param cause cause
      */
-    public NutsFetchModeNotSupportedException(NutsWorkspace workspace, NutsRepository repo, NutsFetchMode fetchMode, String id, String message, Exception cause) {
-        super(workspace, PrivateNutsUtils.isBlank(message) ? ("unsupported fetch mode " + fetchMode.id()) : message, cause);
+    public NutsFetchModeNotSupportedException(NutsSession session, NutsRepository repo, NutsFetchMode fetchMode, String id, String message, Exception cause) {
+        super(session, PrivateNutsUtils.isBlank(message) ? ("unsupported fetch mode " + fetchMode.id()) : message, cause);
         this.id = id;
         this.repositoryName = repo == null ? null : repo.getName();
         this.repositoryUuid = repo == null ? null : repo.getUuid();
@@ -57,14 +57,14 @@ public class NutsFetchModeNotSupportedException extends NutsException {
 
     /**
      * Constructs a new NutsFetchModeNotSupportedException exception
-     * @param workspace workspace
+     * @param session workspace
      * @param repo repository
      * @param fetchMode fetch mode
      * @param id artifact id
      * @param message message
      */
-    public NutsFetchModeNotSupportedException(NutsWorkspace workspace, NutsRepository repo, NutsFetchMode fetchMode, String id, String message) {
-        super(workspace, PrivateNutsUtils.isBlank(message) ? ("unsupported fetch mode " + fetchMode.id()) : message);
+    public NutsFetchModeNotSupportedException(NutsSession session, NutsRepository repo, NutsFetchMode fetchMode, String id, String message) {
+        super(session, PrivateNutsUtils.isBlank(message) ? ("unsupported fetch mode " + fetchMode.id()) : message);
         this.id = id;
         this.repositoryName = repo == null ? null : repo.getName();
         this.repositoryUuid = repo == null ? null : repo.getUuid();

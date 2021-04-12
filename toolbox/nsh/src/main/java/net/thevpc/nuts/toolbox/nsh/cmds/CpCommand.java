@@ -104,12 +104,12 @@ public class CpCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         for (String value : options.files) {
             if (StringUtils.isBlank(value)) {
-                throw new NutsExecutionException(context.getWorkspace(), "Empty File Path", 2);
+                throw new NutsExecutionException(context.getSession(), "Empty File Path", 2);
             }
             options.xfiles.add(XFile.of(value.contains("://") ? value : context.getWorkspace().io().expandPath(value)));
         }
         if (options.xfiles.size() < 2) {
-            throw new NutsExecutionException(context.getWorkspace(), "missing parameters", 2);
+            throw new NutsExecutionException(context.getSession(), "missing parameters", 2);
         }
 
         options.sshlistener = new ShellHelper.WsSshListener(context.getSession());
@@ -188,7 +188,7 @@ public class CpCommand extends SimpleNshBuiltin {
                 throw new UncheckedIOException(ex);
             }
         } else {
-            throw new NutsIllegalArgumentException(context.getWorkspace(), "cp: unsupported protocols " + from + "->" + to);
+            throw new NutsIllegalArgumentException(context.getSession(), "cp: unsupported protocols " + from + "->" + to);
         }
     }
 

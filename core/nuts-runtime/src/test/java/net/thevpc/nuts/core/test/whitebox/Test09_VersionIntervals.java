@@ -29,7 +29,6 @@ import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsVersionFilter;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.core.filters.version.DefaultNutsVersionFilter;
 import org.junit.jupiter.api.*;
 
@@ -52,7 +51,8 @@ public class Test09_VersionIntervals {
     }
 
     private void check(String a, String b) {
-        NutsVersionFilter u = DefaultNutsVersionFilter.parse(a);
+        NutsWorkspace ws = Nuts.openWorkspace();
+        NutsVersionFilter u = DefaultNutsVersionFilter.parse(a,ws.createSession());
         String b2 = u.toString();
         Assertions.assertEquals(b, b2);
         TestUtils.println(a + " ==> " + b);

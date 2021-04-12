@@ -7,12 +7,25 @@ import net.thevpc.nuts.runtime.core.model.DefaultNutsDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsIdLocationBuilder;
 import net.thevpc.nuts.runtime.core.format.DefaultNutsDescriptorFormat;
 import net.thevpc.nuts.runtime.core.parser.DefaultNutsDescriptorParser;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsDescriptorManager implements NutsDescriptorManager {
     private NutsWorkspace workspace;
 
-    public DefaultNutsDescriptorManager(NutsWorkspace workspace) {
+        private NutsSession session;
+public DefaultNutsDescriptorManager(NutsWorkspace workspace) {
         this.workspace = workspace;
+    }
+
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsDescriptorManager setSession(NutsSession session) {
+        this.session = session;
+        return this;
     }
 
     public NutsWorkspace getWorkspace() {
@@ -24,9 +37,15 @@ public class DefaultNutsDescriptorManager implements NutsDescriptorManager {
         return new DefaultNutsDescriptorParser(workspace);
     }
 
+
+    protected void checkSession() {
+        NutsWorkspaceUtils.checkSession(workspace, session);
+    }
+
     @Override
     public NutsDescriptorBuilder descriptorBuilder() {
-        return new DefaultNutsDescriptorBuilder(workspace);
+        checkSession();
+        return new DefaultNutsDescriptorBuilder(getSession());
     }
 
     @Override
@@ -46,7 +65,7 @@ public class DefaultNutsDescriptorManager implements NutsDescriptorManager {
 
     @Override
     public NutsDescriptorFormat formatter() {
-        return new DefaultNutsDescriptorFormat(getWorkspace());
+        return new DefaultNutsDescriptorFormat(getWorkspace()).setSession(getSession());
     }
 
     @Override
@@ -56,6 +75,6 @@ public class DefaultNutsDescriptorManager implements NutsDescriptorManager {
 
     @Override
     public NutsDescriptorFilterManager filter() {
-        return getWorkspace().filters().descriptor();
+        return getWorkspace().filters().descriptor().setSession(getSession());
     }
 }

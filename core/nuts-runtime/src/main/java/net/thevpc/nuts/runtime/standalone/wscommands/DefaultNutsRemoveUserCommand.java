@@ -11,7 +11,6 @@ import net.thevpc.nuts.NutsRepository;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsRemoveUserCommand;
 
 /**
  *
@@ -31,9 +30,9 @@ public class DefaultNutsRemoveUserCommand extends AbstractNutsRemoveUserCommand 
     @Override
     public NutsRemoveUserCommand run() {
         if (repo != null) {
-            NutsRepositoryConfigManagerExt.of(repo.config()).removeUser(login, new NutsRemoveOptions().setSession(getValidWorkspaceSession()));
+            NutsRepositoryConfigManagerExt.of(repo.config()).getModel().removeUser(login, getSession());
         } else {
-            NutsWorkspaceConfigManagerExt.of(ws.config()).removeUser(login, new NutsRemoveOptions().setSession(getValidWorkspaceSession()));
+            NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().removeUser(login, getSession());
         }
         return this;
     }

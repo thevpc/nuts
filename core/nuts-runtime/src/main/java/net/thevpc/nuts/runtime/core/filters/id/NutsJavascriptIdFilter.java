@@ -27,7 +27,6 @@
 package net.thevpc.nuts.runtime.core.filters.id;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.common.JavascriptHelper;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
@@ -38,21 +37,21 @@ import java.util.Set;
 /**
  * Created by vpc on 1/7/17.
  */
-public class NutsJavascriptIdFilter extends AbstractNutsFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
+public class NutsJavascriptIdFilter extends AbstractIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
 
 //    private static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("sample", "sample", "sample", "sample", "sample");
 
     private String code;
 
-    public static NutsIdFilter valueOf(String value, NutsWorkspace ws) {
+    public static NutsIdFilter valueOf(String value, NutsSession ws) {
         if (CoreStringUtils.isBlank(value)) {
-            return ws.id().filter().always();
+            return ws.getWorkspace().id().filter().always();
         }
         return new NutsJavascriptIdFilter(ws,value);
     }
 
 
-    public NutsJavascriptIdFilter(NutsWorkspace ws,String code) {
+    public NutsJavascriptIdFilter(NutsSession ws,String code) {
         super(ws, NutsFilterOp.CUSTOM);
         this.code = code;
     }

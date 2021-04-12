@@ -443,7 +443,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                         applicationContext.getWorkspace().formats().text().styled(p.getPath(),NutsTextNodeStyle.path()))
                         .setDefaultValue(false)
                         .getBooleanValue()) {
-                    throw new NutsUserCancelException(getWorkspace());
+                    throw new NutsUserCancelException(getSession());
                 }
             }
         }
@@ -457,7 +457,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-        throw new NutsIllegalArgumentException(getWorkspace(), "pom project not found");
+        throw new NutsIllegalArgumentException(getSession(), "pom project not found");
     }
 
     public String getProjectName() {

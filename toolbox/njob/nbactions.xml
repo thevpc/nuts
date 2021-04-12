@@ -10,8 +10,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Dnuts.debug=true -classpath %classpath net.thevpc.nuts.toolbox.njob.NJobMain process-file
-                README.md.pre</exec.args>
+            <exec.args>-Dnuts.debug=true -classpath %classpath net.thevpc.nuts.toolbox.njob.NJobMain</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir>/data/public/git/nuts/</exec.workingdir>
         </properties>
@@ -26,8 +25,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Dnuts.debug=true -classpath
-                %classpath net.thevpc.nuts.toolbox.njob.NJobMain process-file README.md.pre</exec.args>
+            <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Dnuts.debug=true -classpath %classpath net.thevpc.nuts.toolbox.njob.NJobMain</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
             <exec.workingdir>/data/public/git/nuts/</exec.workingdir>
@@ -43,8 +41,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Dnuts.debug=true -classpath %classpath net.thevpc.nuts.toolbox.njob.NJobMain process-file
-                README.md.pre</exec.args>
+            <exec.args>-Dnuts.debug=true -classpath %classpath net.thevpc.nuts.toolbox.njob.NJobMain</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir>/data/public/git/nuts/</exec.workingdir>
         </properties>

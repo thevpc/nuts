@@ -34,7 +34,6 @@ import java.util.logging.Level;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.filters.NutsSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
  * Created by vpc on 2/21/17.
@@ -60,7 +59,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
         this.repository = repository;
         this.strategy = strategy;
         if(strategy!=RemoteRepoApi.DIR_LIST && strategy!=RemoteRepoApi.DIR_TEXT){
-            throw new NutsUnexpectedException(workspace,"unexpected strategy "+strategy);
+            throw new NutsUnexpectedException(session,"unexpected strategy "+strategy);
         }
         this.session = session;
         this.filter = filter;
@@ -154,7 +153,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
         if (last != null) {
             model.undeploy(last, session);
         }
-        throw new NutsUnsupportedOperationException(workspace, "Unsupported Remove");
+        throw new NutsUnsupportedOperationException(session, "unsupported Remove");
     }
 
     public long getVisitedFoldersCount() {

@@ -94,7 +94,7 @@ public class MkdirCommand extends SimpleNshBuiltin {
             try {
                 v.mkdir(options.p);
             } catch (IOException ex) {
-                throw new NutsExecutionException(context.getWorkspace(), ex.getMessage(), ex, 100);
+                throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
             }
         }
     }

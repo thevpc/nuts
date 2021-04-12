@@ -123,10 +123,10 @@ public class JavascriptHelper {
             }
         }
         if (code == null) {
-            throw new NutsIllegalArgumentException(session.getWorkspace(), "illegal js filter : empty content");
+            throw new NutsIllegalArgumentException(session, "illegal js filter : empty content");
         }
         if (!code.contains("return")) {
-            throw new NutsIllegalArgumentException(session.getWorkspace(), "js filter must contain a return clause");
+            throw new NutsIllegalArgumentException(session, "js filter must contain a return clause");
         }
         try {
             engine = createScriptEngine();
@@ -143,7 +143,7 @@ public class JavascriptHelper {
             }
             engine.put("util", util);
         } catch (ScriptException e) {
-            throw new NutsParseException(session.getWorkspace(), e);
+            throw new NutsParseException(session, e);
         }
     }
 
@@ -180,7 +180,7 @@ public class JavascriptHelper {
         try {
             return Boolean.TRUE.equals(engine.eval("accept(x);"));
         } catch (ScriptException e) {
-            throw new NutsParseException(session.getWorkspace(), e);
+            throw new NutsParseException(session, e);
         }
     }
 }

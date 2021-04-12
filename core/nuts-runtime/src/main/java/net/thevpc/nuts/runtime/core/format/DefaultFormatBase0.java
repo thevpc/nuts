@@ -15,6 +15,7 @@ import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  *
@@ -31,15 +32,19 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
         this.name = name;
     }
 
+    protected void checkSession() {
+        NutsWorkspaceUtils.checkSession(getWorkspace(), getSession());
+    }
+
     public NutsWorkspace getWorkspace() {
         return workspace;
     }
 
     public PrintWriter getValidPrintWriter(Writer out) {
-        return (out == null) ?
-                CoreIOUtils.toPrintWriter(getValidSession().getTerminal().getOut(), getValidSession())
-                :
-                CoreIOUtils.toPrintWriter(out, getValidSession());
+        checkSession();
+        return (out == null)
+                ? CoreIOUtils.toPrintWriter(getSession().getTerminal().getOut(), getSession())
+                : CoreIOUtils.toPrintWriter(out, getSession());
     }
 
     public PrintWriter getValidPrintWriter() {
@@ -47,21 +52,15 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
     }
 
     public PrintStream getValidPrintStream(PrintStream out) {
+        checkSession();
         if (out == null) {
-            out = getValidSession().getTerminal().getOut();
+            out = getSession().getTerminal().getOut();
         }
-        return getWorkspace().io().term().prepare(out, session);
+        return getWorkspace().term().setSession(getSession()).prepare(out);
     }
 
     public PrintStream getValidPrintStream() {
         return getValidPrintStream(null);
-    }
-
-    public NutsSession getValidSession() {
-        if (session == null) {
-            session = getWorkspace().createSession();
-        }
-        return session;
     }
 
     public NutsSession getSession() {
@@ -80,7 +79,8 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...)
+     * }
      * to help return a more specific return type;
      *
      * @param args argument to configure with

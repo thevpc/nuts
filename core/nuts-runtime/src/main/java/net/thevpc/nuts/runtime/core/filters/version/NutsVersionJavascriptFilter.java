@@ -36,19 +36,19 @@ import java.util.Objects;
 /**
  * Created by vpc on 1/7/17.
  */
-public class NutsVersionJavascriptFilter extends AbstractNutsFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, JsNutsVersionFilter {
+public class NutsVersionJavascriptFilter extends AbstractVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, JsNutsVersionFilter {
 
     private String code;
     private JavascriptHelper engineHelper;
 
-    public static NutsVersionFilter valueOf(String value, NutsWorkspace ws) {
+    public static NutsVersionFilter valueOf(String value, NutsSession session) {
         if (CoreStringUtils.isBlank(value)) {
-            return ws.version().filter().always();
+            return session.getWorkspace().version().filter().always();
         }
-        return new NutsVersionJavascriptFilter(ws,value);
+        return new NutsVersionJavascriptFilter(session,value);
     }
 
-    public NutsVersionJavascriptFilter(NutsWorkspace ws,String code) {
+    public NutsVersionJavascriptFilter(NutsSession ws,String code) {
         super(ws, NutsFilterOp.CUSTOM);
         this.code = code;
         //check if valid

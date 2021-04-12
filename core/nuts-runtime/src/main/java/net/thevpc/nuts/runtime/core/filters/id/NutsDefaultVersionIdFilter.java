@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.core.filters.id;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import java.util.Objects;
 
@@ -16,11 +15,11 @@ import net.thevpc.nuts.runtime.core.util.Simplifiable;
  *
  * @author thevpc
  */
-public class NutsDefaultVersionIdFilter extends AbstractNutsFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> {
+public class NutsDefaultVersionIdFilter extends AbstractIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> {
 
     private final Boolean defaultVersion;
 
-    public NutsDefaultVersionIdFilter(NutsWorkspace ws, Boolean defaultVersion) {
+    public NutsDefaultVersionIdFilter(NutsSession ws, Boolean defaultVersion) {
         super(ws, NutsFilterOp.CUSTOM);
         this.defaultVersion = defaultVersion;
     }

@@ -58,7 +58,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             loopGard--;
         }
         if (rawOutput0 instanceof NutsOutputStreamTransparentAdapter) {
-            throw new NutsIllegalArgumentException(ws, "invalid rawOutput");
+            throw new NutsIllegalArgumentException(session, "invalid rawOutput");
         }
     }
 
@@ -122,7 +122,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             case STYLED: {
                 DefaultNutsTextNodeStyled s = (DefaultNutsTextNodeStyled) node;
                 NutsTextNodeStyles styles = s.getStyles();
-                NutsTextNodeStyles format = ws.formats().text().getTheme().toBasicStyles(styles);
+                NutsTextNodeStyles format = ws.formats().text().getTheme().toBasicStyles(styles, session);
                 AnsiEscapeCommand[] s2 = _appendFormats(formats, format);
                 writeNode(s2, s.getChild(), ctx);
                 break;
@@ -130,8 +130,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             case TITLE: {
                 DefaultNutsTextNodeTitle s = (DefaultNutsTextNodeTitle) node;
                 DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
-                AnsiEscapeCommand[] s2 = _appendFormats(formats, ws.formats().text().getTheme().toBasicStyles(
-                        NutsTextNodeStyles.of(NutsTextNodeStyle.title(s.getLevel()))
+                AnsiEscapeCommand[] s2 = _appendFormats(formats, ws.formats().text().getTheme().toBasicStyles(NutsTextNodeStyles.of(NutsTextNodeStyle.title(s.getLevel())), session
                 ));
                 if (ctx.isTitleNumberEnabled()) {
                     NutsTitleNumberSequence seq = ctx.getTitleNumberSequence();

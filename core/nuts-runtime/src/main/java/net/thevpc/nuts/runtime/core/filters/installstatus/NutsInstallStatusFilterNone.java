@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.core.filters.installstatus;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
@@ -10,11 +9,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NutsInstallStatusFilterNone extends AbstractNutsFilter implements NutsInstallStatusFilter, Simplifiable<NutsInstallStatusFilter>{
+public class NutsInstallStatusFilterNone extends AbstractInstallStatusFilter{
 
     private NutsInstallStatusFilter[] all;
 
-    public NutsInstallStatusFilterNone(NutsWorkspace ws, NutsInstallStatusFilter... all) {
+    public NutsInstallStatusFilterNone(NutsSession ws, NutsInstallStatusFilter... all) {
         super(ws, NutsFilterOp.NOT);
         List<NutsInstallStatusFilter> valid = new ArrayList<>();
         if (all != null) {

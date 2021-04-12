@@ -50,7 +50,6 @@ import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.bundles.mvn.MavenMetadataParser;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.bundles.io.FolderNutIdIterator;
 import net.thevpc.nuts.runtime.bundles.mvn.MavenMetadata;
@@ -66,18 +65,18 @@ public class MavenRepositoryFolderHelper {
     private NutsWorkspace ws;
     private Path rootPath;
 
-    public MavenRepositoryFolderHelper(NutsRepository repo, NutsWorkspace ws, Path rootPath) {
+    public MavenRepositoryFolderHelper(NutsRepository repo, NutsSession session, Path rootPath) {
         this.repo = repo;
-        this.ws = ws != null ? ws : repo == null ? null : repo.getWorkspace();
-        if(repo==null && ws==null){
-            throw new NutsIllegalArgumentException(this.ws,"both workspace and repo are null");
+        this.ws = session != null ? session.getWorkspace() : repo == null ? null : repo.getWorkspace();
+        if(repo==null && session==null){
+            throw new NutsIllegalArgumentException(session,"both workspace and repo are null");
         }
         this.rootPath = rootPath;
         LOG=this.ws.log().of(MavenRepositoryFolderHelper.class);
     }
 
     public Path getIdLocalFile(NutsId id, NutsSession session) {
-        return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id))
+        return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id, session))
                 .resolve(ws.locations().getDefaultIdFilename(id));
     }
 
@@ -97,11 +96,11 @@ public class MavenRepositoryFolderHelper {
         if (repo == null) {
             return ws.locations().getDefaultIdFilename(id);
         }
-        return NutsRepositoryExt.of(repo).getIdFilename(id);
+        return NutsRepositoryExt.of(repo).getIdFilename(id,session);
     }
 
-    public Path getLocalGroupAndArtifactFile(NutsId id) {
-        NutsWorkspaceUtils.of(getWorkspace()).checkSimpleNameNutsId(id);
+    public Path getLocalGroupAndArtifactFile(NutsId id, NutsSession session) {
+        NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
         Path groupFolder = getStoreLocation().resolve(id.getGroupId().replace('.', File.separatorChar));
         return groupFolder.resolve(id.getArtifactId());
     }
@@ -115,7 +114,7 @@ public class MavenRepositoryFolderHelper {
             }
             return null;
         }
-        return searchInFolder(getLocalGroupAndArtifactFile(id), filter,
+        return searchInFolder(getLocalGroupAndArtifactFile(id, session), filter,
                 deep ? Integer.MAX_VALUE : 1,
                 session);
     }
@@ -126,7 +125,7 @@ public class MavenRepositoryFolderHelper {
             //            return IteratorUtils.emptyIterator();
             return null;
         }
-        return new FolderNutIdIterator(getWorkspace(), repo == null ? null : repo.getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
+        return new FolderNutIdIterator(repo == null ? null : repo.getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsSession session) {
                 throw new IllegalArgumentException("Unsupported");
@@ -150,7 +149,7 @@ public class MavenRepositoryFolderHelper {
 
     public NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsSession session) {
         NutsId bestId = null;
-        File file = getLocalGroupAndArtifactFile(id).toFile();
+        File file = getLocalGroupAndArtifactFile(id, session).toFile();
         if (file.exists()) {
             File[] versionFolders = file.listFiles(new FileFilter() {
                 @Override
@@ -294,14 +293,14 @@ public class MavenRepositoryFolderHelper {
                                 p.println(file);
                             }
                         } catch (FileNotFoundException e) {
-                            throw new NutsIOException(getWorkspace(),e);
+                            throw new NutsIOException(session,e);
                         }
                     }
                     return FileVisitResult.CONTINUE;
                 }
             });
         } catch (IOException ex) {
-            throw new NutsIOException(getWorkspace(),ex);
+            throw new NutsIOException(session,ex);
         }
 
     }

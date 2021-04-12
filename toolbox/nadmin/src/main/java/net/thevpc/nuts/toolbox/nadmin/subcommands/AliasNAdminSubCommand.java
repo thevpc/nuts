@@ -79,7 +79,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                List<NutsWorkspaceCommandAlias> r = context.getWorkspace().aliases().findAll(context.getSession())
+                List<NutsWorkspaceCommandAlias> r = context.getWorkspace().aliases().findAll()
                         .stream()
                         .filter(new Predicate<NutsWorkspaceCommandAlias>() {
                             @Override
@@ -112,7 +112,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                                                     NutsWorkspaceCommandAlias::getName,
                                                     x -> context.getWorkspace().commandLine().create(x.getCommand()).toString(),
                                                     (x, y) -> {
-                                                        throw new NutsIllegalArgumentException(context.getWorkspace(),"duplicate " + x);
+                                                        throw new NutsIllegalArgumentException(context.getSession(),"duplicate " + x);
                                                     },
                                                     //preserve order
                                                     LinkedHashMap::new
@@ -128,10 +128,9 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
         } else if (cmdLine.next("remove alias") != null) {
             if (cmdLine.isExecMode()) {
                 while (cmdLine.hasNext()) {
-                    context.getWorkspace().aliases().remove(cmdLine.next().toString(), new NutsRemoveOptions()
-                            .setSession(context.getSession()));
+                    context.getWorkspace().aliases().remove(cmdLine.next().toString());
                 }
-                context.getWorkspace().config().save(context.getSession());
+                context.getWorkspace().config().save();
             }
             return true;
         } else if (cmdLine.next("add alias") != null) {
@@ -163,14 +162,15 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                     cmdLine.required();
                 }
                 for (AliasInfo value : toAdd.values()) {
-                    context.getWorkspace().aliases().add(
+                    context.getWorkspace().aliases()
+                            .add(
                             new NutsCommandAliasConfig()
                                     .setCommand(context.getWorkspace().commandLine().parse(value.command).toStringArray())
                                     .setName(value.name)
-                                    .setExecutorOptions(context.getWorkspace().commandLine().parse(value.executionOptions).toStringArray()),
-                             new NutsAddOptions().setSession(context.getSession()));
+                                    .setExecutorOptions(context.getWorkspace().commandLine().parse(value.executionOptions).toStringArray())
+                             );
                 }
-                context.getWorkspace().config().save(context.getSession());
+                context.getWorkspace().config().save();
             }
             return true;
         }

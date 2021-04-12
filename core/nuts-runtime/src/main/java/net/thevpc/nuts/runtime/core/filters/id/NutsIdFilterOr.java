@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
-public class NutsIdFilterOr extends AbstractNutsFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
+public class NutsIdFilterOr extends AbstractIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
 
     private final NutsIdFilter[] children;
 
-    public NutsIdFilterOr(NutsWorkspace ws, NutsIdFilter... all) {
+    public NutsIdFilterOr(NutsSession ws, NutsIdFilter... all) {
         super(ws, NutsFilterOp.OR);
         List<NutsIdFilter> valid = new ArrayList<>();
         if (all != null) {

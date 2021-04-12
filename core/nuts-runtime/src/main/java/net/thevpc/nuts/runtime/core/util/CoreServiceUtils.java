@@ -35,6 +35,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import net.thevpc.nuts.NutsException;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
@@ -105,7 +106,7 @@ public final class CoreServiceUtils {
         return names;
     }
 
-    public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader, NutsWorkspace ws) {
+    public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader, NutsSession ws) {
         String fullName = "META-INF/services/" + service.getName();
         Enumeration<URL> configs;
         LinkedHashSet<String> names = new LinkedHashSet<>();

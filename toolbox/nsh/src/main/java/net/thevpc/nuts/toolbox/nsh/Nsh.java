@@ -60,14 +60,14 @@ public class Nsh extends NutsApplication {
         for (JShellBuiltin command : commands) {
             if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
                 //avoid recursive definition!
-                if (ws.aliases().add(new NutsCommandAliasConfig()
+                if (ws.aliases()
+                        .setSession(sessionCopy.setConfirm(NutsConfirmationMode.YES).setTrace(false))
+                        .add(new NutsCommandAliasConfig()
                                 .setFactoryId("nsh")
                                 .setName(command.getName())
                                 .setCommand(nshIdStr, "-c", command.getName())
                                 .setOwner(applicationContext.getAppId())
-                                .setHelpCommand(nshIdStr, "-c", "help", "--ntf", command.getName()),
-                        new NutsAddOptions()
-                                .setSession(sessionCopy.setConfirm(NutsConfirmationMode.YES).setTrace(false))
+                                .setHelpCommand(nshIdStr, "-c", "help", "--ntf", command.getName())
                 )) {
                     reinstalled.add(command.getName());
                 } else {
@@ -101,7 +101,7 @@ public class Nsh extends NutsApplication {
                 );
             }
         }
-        cfg.save(false, session);
+        cfg.save(false);
     }
 
     @Override
@@ -118,13 +118,13 @@ public class Nsh extends NutsApplication {
         try {
             NutsWorkspace ws = applicationContext.getWorkspace();
             try {
-                ws.aliases().removeFactory("nsh", null);
+                ws.aliases().removeFactory("nsh");
             } catch (Exception notFound) {
                 //ignore!
             }
-            for (NutsWorkspaceCommandAlias command : ws.aliases().findByOwner(applicationContext.getAppId(), applicationContext.getSession())) {
+            for (NutsWorkspaceCommandAlias command : ws.aliases().findByOwner(applicationContext.getAppId())) {
                 try {
-                    ws.aliases().remove(command.getName(), new NutsRemoveOptions());
+                    ws.aliases().remove(command.getName());
                 } catch (Exception ex) {
                     if (applicationContext.getSession().isPlainTrace()) {
                         NutsTextManager factory = ws.formats().text();
