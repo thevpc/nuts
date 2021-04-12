@@ -33,11 +33,15 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
 
     @Override
     public NutsUndeployCommand addId(String id) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         return addId(CoreStringUtils.isBlank(id) ? null : ws.id().parser().setLenient(false).parse(id));
     }
 
     @Override
     public NutsUndeployCommand addIds(String... values) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         if (values != null) {
             for (String s : values) {
                 if (!CoreStringUtils.isBlank(s)) {
@@ -117,7 +121,7 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
         if (a == null) {
             return false;
         }
-        boolean enabled=a.isEnabled();
+        boolean enabled = a.isEnabled();
         switch (a.getStringKey()) {
             case "--offline": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();

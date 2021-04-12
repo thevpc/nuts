@@ -41,7 +41,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public NutsExecCommandFormat format() {
-        return new DefaultNutsExecCommandFormat(ws).setValue(this);
+        return (NutsExecCommandFormat) new DefaultNutsExecCommandFormat(ws).setValue(this).setSession(getSession());
     }
 
     @Override
@@ -299,7 +299,8 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     @Override
     public NutsExecCommand setOut(PrintStream out) {
         checkSession();
-        this.out = (out == null ? null : ws.io().setSession(session).createPrintStream(out, NutsTerminalMode.FORMATTED));
+        NutsWorkspace ws = getSession().getWorkspace();
+        this.out = (out == null ? null : ws.io().createPrintStream(out, NutsTerminalMode.FORMATTED));
         return this;
     }
 
@@ -310,7 +311,8 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     @Override
     public NutsExecCommand setErr(PrintStream err) {
         checkSession();
-        this.err = (err == null ? null : ws.io().setSession(session).createPrintStream(err, NutsTerminalMode.FORMATTED));
+        NutsWorkspace ws = getSession().getWorkspace();
+        this.err = (err == null ? null : ws.io().createPrintStream(err, NutsTerminalMode.FORMATTED));
         return this;
     }
 

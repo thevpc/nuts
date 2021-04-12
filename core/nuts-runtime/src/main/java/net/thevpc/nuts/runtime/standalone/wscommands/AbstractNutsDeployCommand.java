@@ -197,6 +197,8 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     }
 
     protected void addResult(NutsId nid) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         if (result == null) {
             result = new ArrayList<>();
         }
@@ -212,6 +214,8 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsDeployCommand addIds(String... values) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         if (values != null) {
             for (String s : values) {
                 if (!CoreStringUtils.isBlank(s)) {
@@ -258,12 +262,16 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsDeployCommand removeId(String id) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         ids.remove(ws.id().parser().parse(id));
         return this;
     }
 
     @Override
     public NutsDeployCommand addId(String id) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         if (!CoreStringUtils.isBlank(id)) {
             ids.add(ws.id().parser().setLenient(false).parse(id));
         }

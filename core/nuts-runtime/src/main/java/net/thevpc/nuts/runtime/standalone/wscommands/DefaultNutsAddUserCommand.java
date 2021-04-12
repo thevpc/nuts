@@ -47,22 +47,23 @@ public class DefaultNutsAddUserCommand extends AbstractNutsAddUserCommand {
     @Override
     public NutsAddUserCommand run() {
         if (CoreStringUtils.isBlank(getUsername())) {
-            throw new NutsIllegalArgumentException( getSession(), "invalid user");
+            throw new NutsIllegalArgumentException(getSession(), "invalid user");
         }
         checkSession();
         if (repo != null) {
             NutsRepositorySecurityManager sec = repo.security().setSession(session);
             NutsUserConfig security = new NutsUserConfig(getUsername(),
                     CoreStringUtils.chrToStr(sec
-                            
                             .createCredentials(getCredentials(), false, null)),
                     getGroups(), getPermissions());
             security.setRemoteIdentity(getRemoteIdentity());
             security.setRemoteCredentials(CoreStringUtils.chrToStr(sec.createCredentials(getRemoteCredentials(), true, null)));
             NutsRepositoryConfigManagerExt.of(repo.config())
                     .getModel()
-                    .setUser(security,  getSession());
+                    .setUser(security, getSession());
         } else {
+            checkSession();
+            NutsWorkspace ws = getSession().getWorkspace();
             NutsWorkspaceSecurityManager sec = ws.security().setSession(session);
             NutsUserConfig security = new NutsUserConfig(getUsername(),
                     CoreStringUtils.chrToStr(sec.createCredentials(getCredentials(), false, null)),
@@ -74,6 +75,5 @@ public class DefaultNutsAddUserCommand extends AbstractNutsAddUserCommand {
         }
         return this;
     }
-
 
 }

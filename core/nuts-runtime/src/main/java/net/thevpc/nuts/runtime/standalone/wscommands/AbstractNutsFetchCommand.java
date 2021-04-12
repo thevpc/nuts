@@ -6,6 +6,7 @@ import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsQueryBaseOptions;
 import java.util.*;
 
 public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFetchCommand> implements NutsFetchCommand {
+
     private NutsId id;
     protected Boolean installedOrNot;
 
@@ -16,6 +17,8 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
 
     @Override
     public NutsFetchCommand setId(String id) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         this.id = ws.id().parser().setLenient(false).parse(id);
         return this;
     }
@@ -75,7 +78,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
     }
 
     public NutsFetchCommand setInstalled(Boolean enable) {
-        installedOrNot=enable;
+        installedOrNot = enable;
         return this;
     }
 
@@ -94,11 +97,11 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
         if (a == null) {
             return false;
         }
-        boolean enabled=a.isEnabled();
+        boolean enabled = a.isEnabled();
         switch (a.getStringKey()) {
             case "--not-installed": {
                 cmdLine.skip();
-                if(enabled) {
+                if (enabled) {
                     this.notInstalled();
                 }
                 return true;
@@ -106,7 +109,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
             case "-i":
             case "--installed": {
                 cmdLine.skip();
-                if(enabled) {
+                if (enabled) {
                     this.installed();
                 }
                 return true;
@@ -122,19 +125,19 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"{" +
-                "failFast=" + isFailFast() +
-                ", optional=" + getOptional() +
-                ", scope=" + getScope() +
-                ", content=" + isContent() +
-                ", inlineDependencies=" + isInlineDependencies() +
-                ", dependencies=" + isDependencies() +
-                ", effective=" + isEffective() +
-                ", location=" + getLocation() +
-                ", repos=" + Arrays.toString(getRepositories()) +
-                ", displayOptions=" + getDisplayOptions() +
-                ", id=" + getId() +
-                ", session=" + getSession() +
-                '}';
+        return getClass().getSimpleName() + "{"
+                + "failFast=" + isFailFast()
+                + ", optional=" + getOptional()
+                + ", scope=" + getScope()
+                + ", content=" + isContent()
+                + ", inlineDependencies=" + isInlineDependencies()
+                + ", dependencies=" + isDependencies()
+                + ", effective=" + isEffective()
+                + ", location=" + getLocation()
+                + ", repos=" + Arrays.toString(getRepositories())
+                + ", displayOptions=" + getDisplayOptions()
+                + ", id=" + getId()
+                + ", session=" + getSession()
+                + '}';
     }
 }

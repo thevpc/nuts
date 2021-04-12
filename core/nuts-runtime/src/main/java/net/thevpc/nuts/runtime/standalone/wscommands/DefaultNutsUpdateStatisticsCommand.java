@@ -29,13 +29,15 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
     public NutsUpdateStatisticsCommand run() {
         boolean processed = false;
         NutsSession session = getSession();
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         for (String repository : getRepositrories()) {
             processed = true;
             NutsRepository repo = getSession().getWorkspace().repos().getRepository(repository);
             NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo);
             repoSPI.updateStatistics()
                     .setSession(session)
-//                    .setFetchMode(NutsFetchMode.LOCAL)
+                    //                    .setFetchMode(NutsFetchMode.LOCAL)
                     .run();
         }
         for (Path repositoryPath : getPaths()) {
@@ -67,7 +69,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
                         -> x.getName().equals("nuts-repository.json")
                 );
                 if (nutsRepoRootFiles != null && nutsRepoRootFiles.length > 0) {
-                    new NutsRepositoryFolderHelper(null, ws, repositoryPath,false).reindexFolder(session);
+                    new NutsRepositoryFolderHelper(null, ws, repositoryPath, false).reindexFolder(session);
                 } else {
                     throw new NutsIllegalArgumentException(getSession(), "unsupported repository Folder");
                 }
@@ -79,15 +81,15 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
         NutsTextManager factory = getWorkspace().formats().text();
         if (!processed) {
             if (session.isPlainTrace()) {
-                session.out().printf("%s updating workspace stats%n", factory.styled(getWorkspace().locations().getWorkspaceLocation(),NutsTextNodeStyle.path()));
+                session.out().printf("%s updating workspace stats%n", factory.styled(getWorkspace().locations().getWorkspaceLocation(), NutsTextNodeStyle.path()));
             }
             for (NutsRepository repo : getSession().getWorkspace().repos().getRepositories()) {
                 if (session.isPlainTrace()) {
-                    session.out().printf("%s updating stats %s%n", factory.styled(getWorkspace().locations().getWorkspaceLocation(),NutsTextNodeStyle.path()), repo);
+                    session.out().printf("%s updating stats %s%n", factory.styled(getWorkspace().locations().getWorkspaceLocation(), NutsTextNodeStyle.path()), repo);
                 }
                 NutsWorkspaceUtils.of(session).repoSPI(repo).updateStatistics()
                         .setSession(session)
-//                        .setFetchMode(NutsFetchMode.LOCAL)
+                        //                        .setFetchMode(NutsFetchMode.LOCAL)
                         .run();
             }
         }

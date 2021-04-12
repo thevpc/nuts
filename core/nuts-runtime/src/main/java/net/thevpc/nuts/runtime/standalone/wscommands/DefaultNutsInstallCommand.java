@@ -3,25 +3,23 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
@@ -82,6 +80,8 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             }
         }
         NutsSession ss = CoreNutsUtils.silent(session).copy();
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         def.definition = ws.fetch().setId(id).setSession(ss)
                 .setOptional(false)
                 .setContent(true)
@@ -120,6 +120,8 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             cmdArgs.add(0, "--trace");
         }
 
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         InstallIdInfo info = list.get(id);
         if (info.doInstall) {
@@ -161,6 +163,8 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
     @Override
     public NutsInstallCommand run() {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsSession session = getSession();
         NutsSession searchSession = CoreNutsUtils.silent(session);
@@ -218,13 +222,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 //            boolean _installed = installStatus.contains(NutsInstallStatus.INSTALLED);
 //            boolean _defVer = dws.getInstalledRepository().isDefaultVersion(nid, session);
 
-
 //            if (defsToInstallForced.containsKey(nid)) {
 //                _installed = true;
 //            }
 //            boolean nForced = session.isForce() || nutsIdBooleanEntry.getValue();
             //must load dependencies because will be run later!!
-
             NutsInstallStrategy strategy = getStrategy();
             if (strategy == null) {
                 strategy = NutsInstallStrategy.DEFAULT;
@@ -363,8 +365,8 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             for (Map.Entry<String, List<InstallIdInfo>> stringListEntry : error.entrySet()) {
                 out.println("the following " + (stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
                         + stringListEntry.getValue().stream().map(x -> x.id)
-                        .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format())
-                        .collect(Collectors.joining(", ")));
+                                .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format())
+                                .collect(Collectors.joining(", ")));
                 sb.append("\n" + "the following ").append(stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is").append(" cannot be installed (").append(stringListEntry.getKey()).append(") : ").append(stringListEntry.getValue().stream().map(x -> x.id)
                         .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format())
                         .collect(Collectors.joining(", ")));
@@ -433,14 +435,14 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
                             if (!ws.term().setSession(getSession()).getTerminal().ask()
-                                    .forBoolean("```error failed to install``` %s and its dependencies... Continue installation?",info.id)
+                                    .forBoolean("```error failed to install``` %s and its dependencies... Continue installation?", info.id)
                                     .setDefaultValue(true)
                                     .setSession(session).getBooleanValue()) {
-                                session.out().printf("%s ```error installation cancelled with error:``` %s%n", info.id,ex);
+                                session.out().printf("%s ```error installation cancelled with error:``` %s%n", info.id, ex);
                                 result = new NutsDefinition[0];
                                 return this;
                             } else {
-                                session.out().printf("%s ```error installation cancelled with error:``` %s%n", info.id,ex);
+                                session.out().printf("%s ```error installation cancelled with error:``` %s%n", info.id, ex);
                             }
                         } else {
                             throw ex;
@@ -460,17 +462,17 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
     private void printList(PrintStream out, NutsString kind, NutsString action, List<NutsId> all) {
         if (all.size() > 0) {
-            NutsWorkspace ws=getSession().getWorkspace();
+            NutsWorkspace ws = getSession().getWorkspace();
             NutsTextNodeBuilder msg = ws.formats().text().builder();
             msg.append("the following ")
                     .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
                     .append(" going to be ").append(action).append(" : ")
                     .appendJoined(
                             ws.formats().text().plain(", "),
-                            all.stream().map(x ->
-                                    ws.formats().text().nodeFor(
-                                            x.builder().omitImportedGroupId().build()
-                                    )
+                            all.stream().map(x
+                                    -> ws.formats().text().nodeFor(
+                                    x.builder().omitImportedGroupId().build()
+                            )
                             ).collect(Collectors.toList())
                     );
             out.println(msg);
@@ -478,6 +480,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
     }
 
     private static class InstallIdInfo {
+
         boolean extra;
         String sid;
         NutsId id;
@@ -504,7 +507,6 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 //            }
 //            return true;
 //        }
-
         public boolean isAlreadyRequired() {
             return oldInstallStatus.isRequired();
         }
@@ -515,8 +517,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
         public boolean isAlreadyExists() {
             return oldInstallStatus.isInstalled()
-                    || oldInstallStatus.isRequired()
-                    ;
+                    || oldInstallStatus.isRequired();
         }
 
         public NutsInstallStatus getOldInstallStatus() {
@@ -525,6 +526,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
     }
 
     private static class InstallIdList {
+
         boolean emptyCommand = true;
         NutsInstallStrategy defaultStrategy;
         Map<String, InstallIdInfo> visited = new LinkedHashMap<>();

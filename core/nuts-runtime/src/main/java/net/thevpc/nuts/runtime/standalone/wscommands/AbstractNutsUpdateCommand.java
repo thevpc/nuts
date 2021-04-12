@@ -43,6 +43,8 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsUpdateCommand addId(String id) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         return addId(id == null ? null : ws.id().parser().parse(id));
     }
 
@@ -83,6 +85,8 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsUpdateCommand removeId(String id) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         return removeId(ws.id().parser().parse(id));
     }
 
@@ -404,6 +408,8 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsUpdateCommand addLockedId(String id) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         if (!CoreStringUtils.isBlank(id)) {
             lockedIds.add(ws.id().parser().setLenient(false).parse(id));
         }

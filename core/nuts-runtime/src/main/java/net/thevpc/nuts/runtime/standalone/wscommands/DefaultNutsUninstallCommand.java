@@ -36,6 +36,8 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
     public NutsUninstallCommand run() {
         checkSession();
         NutsWorkspaceUtils.of(getSession()).checkReadOnly();
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsSession session = this.getSession();
         ws.security().setSession(getSession()).checkAllowed(NutsConstants.Permissions.UNINSTALL, "uninstall");

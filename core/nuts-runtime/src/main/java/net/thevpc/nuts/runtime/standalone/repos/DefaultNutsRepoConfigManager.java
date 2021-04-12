@@ -79,7 +79,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     @Override
     public String getStoreLocation(NutsStoreLocation folderType) {
         checkSession();
-        return getModel().getUuid();
+        return getModel().getStoreLocation(folderType,session);
     }
 
 //    @Override

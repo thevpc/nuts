@@ -27,6 +27,8 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
 
     @Override
     public NutsUninstallCommand addId(String id) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         return addId(id == null ? null : ws.id().parser().parse(id));
     }
 
@@ -67,6 +69,8 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
 
     @Override
     public NutsUninstallCommand removeId(String id) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         return removeId(ws.id().parser().parse(id));
     }
 
@@ -123,7 +127,6 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
         return ids == null ? new NutsId[0] : ids.toArray(new NutsId[0]);
     }
 
-
     @Override
     public boolean isErase() {
         return erase;
@@ -141,7 +144,7 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
         if (a == null) {
             return false;
         }
-        boolean enabled=a.isEnabled();
+        boolean enabled = a.isEnabled();
         switch (a.getStringKey()) {
             case "-e":
             case "--erase": {

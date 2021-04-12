@@ -19,6 +19,8 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
         if (ids.isEmpty()) {
             throw new NutsExecutionException(getSession(), "No component to undeploy", 1);
         }
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         NutsSession searchSession = CoreNutsUtils.silent(getSession());
         for (NutsId id : ids) {
             NutsDefinition p = ws.search()
@@ -30,7 +32,7 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
                     .addRepositories(getRepository())
                     //skip 'installed' repository
                     .setRepositoryFilter(
-                                    ws.repos().filter().byName(DefaultNutsInstalledRepository.INSTALLED_REPO_UUID).neg()
+                            ws.repos().filter().byName(DefaultNutsInstalledRepository.INSTALLED_REPO_UUID).neg()
                     )
                     .setDistinct(true)
                     .setFailFast(true)
@@ -39,7 +41,7 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
             NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(getSession()).repoSPI(repository1);
             repoSPI.undeploy()
                     .setId(p.getId()).setSession(getSession())
-//                    .setFetchMode(NutsFetchMode.LOCAL)
+                    //                    .setFetchMode(NutsFetchMode.LOCAL)
                     .run();
             addResult(id);
         }

@@ -114,17 +114,17 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
         Path lrPath = null;
         if (lr == null) {
             if (s == null) {
-                throw new NutsLockException(getSession(), "Unsupported lock for null", null, null);
+                throw new NutsLockException(getSession(), "unsupported lock for null", null, null);
             }
             Path p = toPath(s);
             if (p == null) {
-                throw new NutsLockException(getSession(), "Unsupported lock for " + s.getClass().getName(), null, s);
+                throw new NutsLockException(getSession(), "unsupported lock for " + s.getClass().getName(), null, s);
             }
             lrPath = p.resolveSibling(p.getFileName().toString() + ".lock");
         } else {
             lrPath = toPath(lr);
             if (lrPath == null) {
-                throw new NutsLockException(getSession(), "Unsupported lock " + lr.getClass().getName(), lr, s);
+                throw new NutsLockException(getSession(), "unsupported lock " + lr.getClass().getName(), lr, s);
             }
         }
         return new DefaultFileNutsLock(lrPath, s, getSession());

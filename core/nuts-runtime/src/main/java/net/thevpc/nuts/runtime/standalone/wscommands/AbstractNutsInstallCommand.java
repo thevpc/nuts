@@ -3,27 +3,25 @@
  *            Nuts : Network Updatable Things Service
  *                  (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  *
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
@@ -41,20 +39,20 @@ import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
  */
 public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInstallCommand> implements NutsInstallCommand {
 
-
     protected boolean defaultVersion = true;
     protected NutsInstallStrategy companions;
     protected NutsInstallStrategy installed;
     protected NutsInstallStrategy strategy = NutsInstallStrategy.DEFAULT;
     protected List<String> args;
-    protected List<ConditionalArguments> conditionalArguments=new ArrayList<>();
-    protected final Map<NutsId,NutsInstallStrategy> ids = new LinkedHashMap<>();
+    protected List<ConditionalArguments> conditionalArguments = new ArrayList<>();
+    protected final Map<NutsId, NutsInstallStrategy> ids = new LinkedHashMap<>();
     protected NutsDefinition[] result;
     protected NutsId[] failed;
 
-    protected static class ConditionalArguments{
+    protected static class ConditionalArguments {
+
         Predicate<NutsDefinition> predicate;
-        List<String> args=new ArrayList<>();
+        List<String> args = new ArrayList<>();
 
         public ConditionalArguments(Predicate<NutsDefinition> predicate, List<String> args) {
             this.predicate = predicate;
@@ -86,6 +84,8 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
 
     @Override
     public NutsInstallCommand addId(String id) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         return addId(id == null ? null : ws.id().parser().parse(id));
     }
 
@@ -95,7 +95,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
             checkSession();
             throw new NutsNotFoundException(session, id);
         } else {
-            ids.put(id,getStrategy());
+            ids.put(id, getStrategy());
         }
         return this;
     }
@@ -126,6 +126,8 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
 
     @Override
     public NutsInstallCommand removeId(String id) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         if (id != null) {
             this.ids.remove(ws.id().parser().parse(id));
         }
@@ -174,7 +176,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
 
     @Override
     public NutsInstallCommand addConditionalArgs(Predicate<NutsDefinition> definition, String... args) {
-        conditionalArguments.add(new ConditionalArguments(definition,Arrays.asList(args)));
+        conditionalArguments.add(new ConditionalArguments(definition, Arrays.asList(args)));
         return this;
     }
 
@@ -200,19 +202,18 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     }
 
     @Override
-    public Map<NutsId,NutsInstallStrategy> getIdMap() {
+    public Map<NutsId, NutsInstallStrategy> getIdMap() {
         return ids == null ? new LinkedHashMap<>() : new LinkedHashMap<>(ids);
     }
 
-
     @Override
     public boolean isCompanions() {
-        return companions!=null;
+        return companions != null;
     }
 
     @Override
     public NutsInstallCommand setCompanions(boolean value) {
-        this.companions = value?getStrategy():null;
+        this.companions = value ? getStrategy() : null;
         return this;
     }
 
@@ -223,12 +224,12 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
 
     @Override
     public boolean isInstalled() {
-        return installed!=null;
+        return installed != null;
     }
 
     @Override
     public NutsInstallCommand setInstalled(boolean value) {
-        this.installed = value?getStrategy() : null;
+        this.installed = value ? getStrategy() : null;
         return this;
     }
 
@@ -300,10 +301,10 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
 
     @Override
     public NutsInstallCommand setStrategy(NutsInstallStrategy value) {
-        if(value==null){
-            value=NutsInstallStrategy.DEFAULT;
+        if (value == null) {
+            value = NutsInstallStrategy.DEFAULT;
         }
-        this.strategy=value;
+        this.strategy = value;
         return this;
     }
 
@@ -318,7 +319,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
         if (a == null) {
             return false;
         }
-        boolean enabled=a.isEnabled();
+        boolean enabled = a.isEnabled();
         switch (a.getStringKey()) {
             case "-c":
             case "--companions": {
@@ -340,7 +341,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
             case "--strategy": {
                 String val = cmdLine.nextString().getString();
                 if (enabled) {
-                    this.setStrategy(CoreEnumUtils.parseEnumString(val,NutsInstallStrategy.class,false));
+                    this.setStrategy(CoreEnumUtils.parseEnumString(val, NutsInstallStrategy.class, false));
                 }
                 return true;
             }

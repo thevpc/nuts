@@ -3,26 +3,24 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
@@ -54,13 +52,14 @@ import net.thevpc.nuts.spi.NutsRepositorySPI;
  */
 public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
 
-
     public DefaultNutsPushCommand(NutsWorkspace ws) {
         super(ws);
     }
 
     @Override
     public NutsPushCommand run() {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         NutsSession session = this.getSession();
         NutsRepositoryFilter repositoryFilter = null;
         Map<NutsId, NutsDefinition> toProcess = new LinkedHashMap<>();
@@ -104,7 +103,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                                     .setRepository(getRepository())
                                     .setArgs(args.toArray(new String[0]))
                                     .setSession(session)
-//                                    .setFetchMode(fetchMode)
+                                    //                                    .setFetchMode(fetchMode)
                                     .run();
                             ok = true;
                             break;
@@ -122,17 +121,16 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                 if (!repo.config().isEnabled()) {
                     throw new NutsIllegalArgumentException(getSession(), "repository " + repo.getName() + " is disabled");
                 }
-                NutsId effId = ws.config().createContentFaceId(id.builder().setProperties("").build(), file.getDescriptor())
-//                        .setAlternative(CoreStringUtils.trim(file.getDescriptor().getAlternative()))
+                NutsId effId = ws.config().createContentFaceId(id.builder().setProperties("").build(), file.getDescriptor()) //                        .setAlternative(CoreStringUtils.trim(file.getDescriptor().getAlternative()))
                         ;
                 NutsRepositorySPI repoSPI = wu.repoSPI(repo);
                 repoSPI.deploy().setSession(session)
                         .setId(effId)
                         .setContent(file.getPath())
                         .setDescriptor(file.getDescriptor())
-//                        .setFetchMode(fetchMode)
-//                        .setOffline(this.isOffline())
-//                        .setTransitive(true)
+                        //                        .setFetchMode(fetchMode)
+                        //                        .setOffline(this.isOffline())
+                        //                        .setTransitive(true)
                         .run();
             }
         }

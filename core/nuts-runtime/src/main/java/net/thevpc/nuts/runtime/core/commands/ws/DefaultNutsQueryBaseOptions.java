@@ -385,6 +385,8 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 
 //    @Override
     public T setDependencyFilter(String filter) {
+        checkSession();
+        NutsWorkspace ws=getSession().getWorkspace();
         this.dependencyFilter = ws.dependency().filter().byExpression(filter);
         return (T)this;
     }

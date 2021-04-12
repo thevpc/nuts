@@ -130,6 +130,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     }
 
     private Set<NutsId> getRegularIds() {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         HashSet<String> extensions = new HashSet<>();
         for (NutsId object : getSession().getWorkspace().extensions().getConfigExtensions()) {
             extensions.add(object.getShortName());
@@ -196,6 +198,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     public NutsUpdateCommand checkFixes() {
         resultFixes = null;
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsInstalledRepository ir = dws.getInstalledRepository();
         NutsSession session = NutsWorkspaceUtils.of(getSession()).validateSession(this.getSession());
@@ -225,6 +229,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             checkFixes();
             traceFixes();
         }
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
 //        NutsWorkspaceCurrentConfig actualBootConfig = ws.config().current();
 //        NutsWorkspaceCurrentConfig jsonBootConfig = getConfigManager().getBootContext();
@@ -312,6 +318,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     }
 
     protected void traceUpdates(NutsWorkspaceUpdateResult result) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         if (getSession().isPlainTrace()) {
             PrintStream out = CoreIOUtils.resolveOut(getSession());
             NutsUpdateResult[] updates = result.getAllUpdates();
@@ -362,13 +370,13 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             se.addScopes(scopes.toArray(new NutsDependencyScope[0]));
         }
         se.setOptional(isOptional() ? null : false)
-                .setSession(se.getSession().copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
-                ;
+                .setSession(se.getSession().copy().setFetchStrategy(NutsFetchStrategy.ONLINE));
         return se;
     }
 
     protected NutsUpdateResult checkRegularUpdate(NutsId id) {
         checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         NutsSession session = getSession();
         NutsSession searchSession = CoreNutsUtils.silent(session);
         NutsVersion version = id.getVersion();
@@ -447,6 +455,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     }
 
     private NutsFetchCommand fetch0() {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         return ws.fetch().setContent(true).setEffective(true);
     }
 
@@ -462,6 +472,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     }
 
     private void applyResult(NutsWorkspaceUpdateResult result) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         applyFixes();
         NutsUpdateResult apiUpdate = result.getApi();
         NutsUpdateResult runtimeUpdate = result.getRuntime();
@@ -534,6 +546,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     }
 
     private void traceSingleUpdate(NutsUpdateResult r) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         NutsId id = r.getId();
         NutsDefinition d0 = r.getLocal();
         NutsDefinition d1 = r.getAvailable();
@@ -570,6 +584,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     public NutsUpdateResult checkCoreUpdate(NutsId id, String bootApiVersion, NutsSession session, String type) {
         //disable trace so that search do not write to stream
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         session = NutsWorkspaceUtils.of(session).validateSilentSession(session);
         NutsId oldId = null;
         NutsDefinition oldFile = null;
@@ -700,6 +716,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     }
 
     private void applyRegularUpdate(DefaultNutsUpdateResult r) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         if (r.isUpdateApplied()) {
             return;
         }

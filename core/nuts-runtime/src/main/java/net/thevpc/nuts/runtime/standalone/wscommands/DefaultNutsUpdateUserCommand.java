@@ -53,6 +53,7 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
     @Override
     public NutsUpdateUserCommand run() {
         checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         NutsWorkspaceSecurityManager sec = ws.security().setSession(session);
         if (!CoreStringUtils.isBlank(getCredentials())) {
             sec.checkAllowed(NutsConstants.Permissions.SET_PASSWORD, "set-user-credentials");
@@ -89,6 +90,8 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
     }
 
     protected void fillNutsUserConfig(NutsUserConfig u) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         NutsWorkspaceSecurityManager wsec = ws.security().setSession(session);
         String currentLogin = wsec.getCurrentUsername();
         if (!currentLogin.equals(login)) {
