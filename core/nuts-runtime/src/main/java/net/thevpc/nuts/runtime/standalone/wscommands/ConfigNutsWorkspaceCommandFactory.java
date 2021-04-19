@@ -47,8 +47,9 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
         return "default";
     }
 
-    public Path getStoreLocation() {
-        return Paths.get(ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS));
+    public Path getStoreLocation(NutsSession session) {
+        checkSession(session);
+        return Paths.get(ws.locations().setSession(session).getStoreLocation(ws.getApiId(), NutsStoreLocation.APPS));
     }
 
     @Override
@@ -59,7 +60,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     public void uninstallCommand(String name, NutsSession session) {
         checkSession(session);
 //        options = CoreNutsUtils.validate(options, ws);
-        Path file = getStoreLocation().resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
+        Path file = getStoreLocation(session).resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (Files.exists(file)) {
             try {
                 Files.delete(file);
@@ -75,14 +76,16 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     public void installCommand(NutsCommandAliasConfig command, NutsSession session) {
-        Path path = getStoreLocation().resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
+        checkSession(session);
+        Path path = getStoreLocation(session).resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         ws.formats().element().setContentType(NutsContentType.JSON).setValue(command).setSession(session).print(path);
         NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().fireConfigurationChanged("command", session, ConfigEventType.MAIN);
     }
 
     @Override
     public NutsCommandAliasConfig findCommand(String name, NutsSession session) {
-        Path file = getStoreLocation().resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
+        checkSession(session);
+        Path file = getStoreLocation(session).resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (Files.exists(file)) {
             NutsCommandAliasConfig c = ws.formats().element().setContentType(NutsContentType.JSON).parse(file, NutsCommandAliasConfig.class);
             if (c != null) {
@@ -106,11 +109,12 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
         checkSession(session);
         List<NutsCommandAliasConfig> all = new ArrayList<>();
         try {
-            if (!Files.isDirectory(getStoreLocation())) {
-                _LOGOP(session).level(Level.SEVERE).log("Unable to locate commands. Invalid store locate {0}", getStoreLocation());
+            Path storeLocation = getStoreLocation(session);
+            if (!Files.isDirectory(storeLocation)) {
+                _LOGOP(session).level(Level.SEVERE).log("unable to locate commands. Invalid store locate {0}", storeLocation);
                 return all;
             }
-            Files.list(getStoreLocation()).forEach(file -> {
+            Files.list(storeLocation).forEach(file -> {
                 String fileName = file.getFileName().toString();
                 if (file.getFileName().toString().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)) {
                     NutsCommandAliasConfig c = null;
