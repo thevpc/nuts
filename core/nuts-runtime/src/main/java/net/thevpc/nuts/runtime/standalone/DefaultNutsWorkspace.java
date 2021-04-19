@@ -497,7 +497,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         d.getConfig().setName(CoreStringUtils.isBlank(n) ? ruuid : n);
                         d.getConfig().setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                     }
-                    repos().addRepository(d);
+                    repos().setSession(defaultSession()).addRepository(d);
                 }
             }
 

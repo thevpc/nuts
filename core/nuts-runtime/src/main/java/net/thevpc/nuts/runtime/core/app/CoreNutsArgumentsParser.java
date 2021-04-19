@@ -634,6 +634,7 @@ public final class CoreNutsArgumentsParser {
 
                     case "--repository":
                     case "--repositories":
+                    case "--repo":
                     case "--repos":
                     case "-r": {
                         a = cmdLine.nextString();

@@ -23,6 +23,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.archetypes;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.repos.RepoDefinitionResolver;
@@ -65,7 +66,6 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         }
         defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
         NutsRepositorySelector[] br = rm.getModel().resolveBootRepositoriesList().resolveSelectors(defaults);
-
         for (NutsRepositorySelector s : br) {
             NutsAddRepositoryOptions oo = RepoDefinitionResolver.createRepositoryOptions(s, false, session);
             String sloc = ws.io()
@@ -76,14 +76,14 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
                 ws.repos().addRepository(def.get(sloc));
                 def.remove(sloc);
             } else {
-                ws.repos().addRepository(oo.setTemporary(
-                        !defaults.containsKey(oo.getName())
-                ));
+                ws.repos().addRepository(oo
+                        //.setTemporary(!defaults.containsKey(oo.getName()))
+                );
             }
         }
-        for (NutsAddRepositoryOptions d : def.values()) {
-            ws.repos().addRepository(d);
-        }
+//        for (NutsAddRepositoryOptions d : def.values()) {
+//            ws.repos().addRepository(d);
+//        }
         ws.imports().setSession(session).add(new String[]{
             "net.thevpc.nuts.toolbox",
             "net.thevpc"
