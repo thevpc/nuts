@@ -10,18 +10,13 @@ import java.io.PrintStream;
 public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandLineFormat> implements NutsCommandLineFormat {
 
     private NutsCommandLine value;
-    private boolean ntf = true;
 
     public DefaultNutsCommandLineFormat(NutsWorkspace ws) {
         super(ws, "commandline");
     }
 
-    public boolean isNtf() {
-        return ntf;
-    }
-
     public NutsCommandLineFormat setNtf(boolean ntf) {
-        this.ntf = ntf;
+        super.setNtf(ntf);
         return this;
     }
 

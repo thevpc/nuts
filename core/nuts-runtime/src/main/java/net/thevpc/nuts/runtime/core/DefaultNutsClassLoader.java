@@ -95,6 +95,11 @@ public class DefaultNutsClassLoader extends URLClassLoader {
             }
             return true;
         } else {
+            if (deep) {
+                for (NutsClassLoaderNode dependency : node.getDependencies()) {
+                    add(dependency, true);
+                }
+            }
             return false;
         }
     }

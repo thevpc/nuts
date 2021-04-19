@@ -64,7 +64,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         session = this.session;//will be used later
         int wordIndex = -1;
         if (args.length > 0 && args[0].startsWith("--nuts-exec-mode=")) {
-            NutsCommandLine execModeCommand = workspace.commandLine().parse(args[0].substring(args[0].indexOf('=') + 1));
+            NutsCommandLine execModeCommand = this.workspace.commandLine().parse(args[0].substring(args[0].indexOf('=') + 1));
             if (execModeCommand.hasNext()) {
                 NutsArgument a = execModeCommand.next();
                 switch (a.getStringKey()) {
@@ -92,7 +92,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     case "update": {
                         mode = NutsApplicationMode.UPDATE;
                         if (execModeCommand.hasNext()) {
-                            appPreviousVersion = workspace.version().parser().parse(execModeCommand.next().getString());
+                            appPreviousVersion = this.workspace.version().parser().parse(execModeCommand.next().getString());
                         }
                         modeArgs = execModeCommand.toStringArray();
                         execModeCommand.skipAll();
@@ -109,7 +109,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         if (_appId != null) {
             //("=== Inherited "+_appId);
         } else {
-            _appId = workspace.id().setSession(session).resolveId(appClass);
+            _appId = this.workspace.id().setSession(session).resolveId(appClass);
         }
         if (_appId == null) {
             throw new NutsExecutionException(session, "invalid Nuts Application (" + appClass.getName() + "). Id cannot be resolved", 203);
@@ -120,7 +120,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         //always copy the session to bind to appId
         this.session.setAppId(appId);
 //        NutsWorkspaceConfigManager cfg = workspace.config();
-        NutsWorkspaceLocationManager locations = workspace.locations().setSession(session);
+        NutsWorkspaceLocationManager locations = this.workspace.locations().setSession(session);
         for (NutsStoreLocation folder : NutsStoreLocation.values()) {
             setFolder(folder, locations.getStoreLocation(this.appId, folder));
             setSharedFolder(folder, locations.getStoreLocation(this.appId.builder().setVersion("SHARED").build(), folder));
@@ -174,7 +174,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     public final NutsApplicationContext configure(boolean skipUnsupported, String... args) {
         NutsId appId = getAppId();
         String appName = appId == null ? "app" : appId.getArtifactId();
-        return NutsConfigurableHelper.configure(this, workspace, skipUnsupported, args, appName);
+        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, args, appName);
     }
 
     /**
@@ -187,7 +187,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
      */
     @Override
     public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, workspace, skipUnsupported, commandLine);
+        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
     }
 
     @Override

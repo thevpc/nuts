@@ -275,11 +275,6 @@ public interface NutsDependencyFormat extends NutsFormat {
     @Override
     NutsDependencyFormat configure(boolean skipUnsupported, String... args);
 
-    /**
-     * true when Nuts Text Format is used for formatting (default)
-     * @return true when Nuts Text Format is used for formatting (default)
-     */
-    boolean isNtf() ;
 
     NutsDependencyFormat setNtf(boolean ntf);
 }

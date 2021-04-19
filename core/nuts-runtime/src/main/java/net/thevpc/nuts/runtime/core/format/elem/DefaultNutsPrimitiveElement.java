@@ -30,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Objects;
 import net.thevpc.nuts.NutsPrimitiveElement;
+import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
@@ -57,11 +58,33 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
         return value;
     }
 
+//    @Override
+//    public NutsString getNutsString() {
+//        return (NutsString)value;
+//    }
+
+    
     @Override
     public String getString() {
         return value == null ? null : value.toString();
     }
 
+    @Override
+    public boolean isEmpty() {
+        switch (type()) {
+            case NULL: {
+                return true;
+            }
+            case STRING:
+//            case NUTS_STRING: 
+            {
+                return toString().isEmpty();
+            }
+        }
+        return false;
+    }
+
+    
     @Override
     public Number getNumber() {
         if (value == null) {
@@ -497,6 +520,8 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
                 return "null";
             case STRING:
                 return CoreStringUtils.dblQuote(getString());
+//            case NUTS_STRING:
+//                return CoreStringUtils.dblQuote(getNutsString().toString());
             case BOOLEAN:
                 return String.valueOf(getBoolean());
             case INTEGER:

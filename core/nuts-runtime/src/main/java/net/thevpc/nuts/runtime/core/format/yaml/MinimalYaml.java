@@ -341,7 +341,7 @@ public class MinimalYaml implements NutsElementStreamFormat {
                 String postComment = readComments();
                 skipWhiteSpace();
 
-                return builder().forPrimitive().buildString(sb.toString());
+                return builder().forString(sb.toString());
             } else {
                 StringBuilder sb = new StringBuilder();
                 boolean str = false;
@@ -369,33 +369,34 @@ public class MinimalYaml implements NutsElementStreamFormat {
                 skipWhiteSpace();
                 String trimmed = sb.toString().trim();
                 if (!str && sb.length() > 0) {
-                    if (dot || E) {
-                        try {
-                            double d = Double.parseDouble(trimmed);
-                            return builder().forPrimitive().buildDouble(d);
-                        } catch (Exception e) {
-                            //any error
-                        }
-                    } else {
-                        try {
-                            int d = Integer.parseInt(trimmed);
-                            return builder().forPrimitive().buildInt(d);
-                        } catch (Exception e) {
-                            long d = Integer.parseInt(trimmed);
-                            return builder().forPrimitive().buildLong(d);
-                        }
-                    }
+                    return builder().forNumber(trimmed);
+//                    if (dot || E) {
+//                        try {
+//                            double d = Double.parseDouble(trimmed);
+//                            return builder().forPrimitive().buildDouble(d);
+//                        } catch (Exception e) {
+//                            //any error
+//                        }
+//                    } else {
+//                        try {
+//                            int d = Integer.parseInt(trimmed);
+//                            return builder().forInt(d);
+//                        } catch (Exception e) {
+//                            long d = Integer.parseInt(trimmed);
+//                            return builder().forLong(d);
+//                        }
+//                    }
                 }
                 if (sb.length() == 0) {
                     return null;
                 }
                 switch (trimmed) {
                     case "true":
-                        return builder().forPrimitive().buildTrue();
+                        return builder().forTrue();
                     case "false":
-                        return builder().forPrimitive().buildFalse();
+                        return builder().forFalse();
                 }
-                return builder().forPrimitive().buildString(trimmed);
+                return builder().forString(trimmed);
             }
         }
 
@@ -480,7 +481,7 @@ public class MinimalYaml implements NutsElementStreamFormat {
                             NutsElement li = readElement(newIndent);
                             return Node.forArrayElement(li);
                         } else {
-                            return Node.forArrayElement(builder().forPrimitive().buildString(""));
+                            return Node.forArrayElement(builder().forString(""));
                         }
                     } else {
                         readerReset();
@@ -513,7 +514,7 @@ public class MinimalYaml implements NutsElementStreamFormat {
                         readNewLine();
                         skipWhiteSpace();
                         NutsElement v = readNode(indent, true).getElement();
-                        return Node.forObjectElement(builder().forEntry().set(li,v).build());
+                        return Node.forObjectElement(builder().forEntry(li,v));
                     } else if (current == '\n' || current == ';') {
                         readNewLine();
                         int newIndent = peekIndent();
@@ -528,7 +529,7 @@ public class MinimalYaml implements NutsElementStreamFormat {
                             readNewLine();
                             skipWhiteSpace();
                             NutsElement v = readNode(newIndent, true).getElement();
-                            return Node.forObjectElement(builder().forEntry().set(li,v).build());
+                            return Node.forObjectElement(builder().forEntry(li,v));
                         } else {
                             NutsElement li = readNode(indent, true).getElement();
                             skipWhiteSpace();
@@ -539,7 +540,7 @@ public class MinimalYaml implements NutsElementStreamFormat {
                             readNewLine();
                             skipWhiteSpace();
                             NutsElement v = readNode(indent, true).getElement();
-                            return Node.forObjectElement(builder().forEntry().set(li,v).build());
+                            return Node.forObjectElement(builder().forEntry(li,v));
                         }
                     } else {
                         readerReset();
@@ -561,14 +562,14 @@ public class MinimalYaml implements NutsElementStreamFormat {
                             if (newIndent > indent) {
                                 skipWhiteSpace();
                                 NutsElement v = readElement(newIndent);
-                                return Node.forObjectElement(builder().forEntry().set(li,v).build());
+                                return Node.forObjectElement(builder().forEntry(li,v));
                             } else {
-                                return Node.forObjectElement(builder().forEntry().set(li,builder().forPrimitive().buildString("")).build());
+                                return Node.forObjectElement(builder().forEntry(li,builder().forString("")));
                             }
                         } else {
                             Node n = readNode(indent, true);
                             NutsElement v = n.getElement();
-                            return Node.forObjectElement(builder().forEntry().set(li,v).build());
+                            return Node.forObjectElement(builder().forEntry(li,v));
                         }
                     }
                     return Node.forLiteral(li);

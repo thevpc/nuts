@@ -414,7 +414,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
      */
     @Override
     public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
+        return NutsConfigurableHelper.configure(this, this, skipUnsupported, commandLine);
     }
 
     /**
@@ -428,7 +428,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
      */
     @Override
     public Object configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, "nuts-session");
+        return NutsConfigurableHelper.configure(this, this, skipUnsupported, args, "nuts-session");
     }
 
     @Override

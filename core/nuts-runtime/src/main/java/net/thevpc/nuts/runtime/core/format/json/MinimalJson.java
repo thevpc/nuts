@@ -88,7 +88,9 @@ public class MinimalJson implements NutsElementStreamFormat {
                 break;
             }
             case INSTANT:
-            case STRING: {
+            case STRING: 
+//            case NUTS_STRING: 
+            {
                 StringBuilder sb = new StringBuilder("\"");
                 final String str = data.asPrimitive().getString();
                 char[] chars = str.toCharArray();
@@ -268,15 +270,15 @@ public class MinimalJson implements NutsElementStreamFormat {
             switch (current) {
                 case 'n': {
                     readTerminal("null");
-                    return builder().forPrimitive().buildNull();
+                    return builder().forNull();
                 }
                 case 't': {
                     readTerminal("true");
-                    return builder().forPrimitive().buildTrue();
+                    return builder().forTrue();
                 }
                 case 'f': {
                     readTerminal("false");
-                    return builder().forPrimitive().buildFalse();
+                    return builder().forFalse();
                 }
                 case '0':
                 case '1':
@@ -363,7 +365,7 @@ public class MinimalJson implements NutsElementStreamFormat {
         }
 
         private NutsElement readJsonString() {
-            return builder().forPrimitive().buildString(readStringLiteral());
+            return builder().forString(readStringLiteral());
         }
 
         private String readStringLiteral() {
@@ -451,7 +453,7 @@ public class MinimalJson implements NutsElementStreamFormat {
                     }
                 }
             }
-            return builder().forPrimitive().buildNumber(sb.toString());
+            return builder().forNumber(sb.toString());
         }
 
         private boolean readChar(char ch) {

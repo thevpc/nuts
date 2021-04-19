@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.core.format.elem;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElementFormat;
 import net.thevpc.nuts.NutsSession;
@@ -63,6 +64,23 @@ public class DefaultNutsElementFactoryContext implements NutsElementFactoryConte
     public Map<String, Object> getProperties() {
         return properties;
     }
+
+    @Override
+    public Predicate<Type> getDestructTypeFilter() {
+        return base.getDestructTypeFilter();
+    }
+    
+
+    @Override
+    public Object defaultDestruct(Object o, Type expectedType) {
+        return base.getElementFactoryService().defaultDestruct(o, expectedType, this);
+    }
+
+    @Override
+    public Object destruct(Object o, Type expectedType) {
+        return base.getElementFactoryService().destruct(o, expectedType, this);
+    }
+    
 
     @Override
     public NutsElement objectToElement(Object o, Type expectedType) {

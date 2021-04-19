@@ -69,4 +69,5 @@ public interface NutsObjectFormat extends NutsFormat {
     @Override
     NutsObjectFormat configure(boolean skipUnsupported, String... args);
 
+    NutsObjectFormat setNtf(boolean ntf);
 }

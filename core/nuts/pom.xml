@@ -53,12 +53,6 @@
         <github.global.server>github</github.global.server>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.5.0</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
     <distributionManagement>
         <snapshotRepository>

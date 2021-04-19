@@ -5,6 +5,7 @@ import net.thevpc.nuts.NutsConcurrentManager;
 import java.util.concurrent.ExecutorService;
 import net.thevpc.nuts.NutsIOLockAction;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsConcurrentManager implements NutsConcurrentManager {
 
@@ -24,13 +25,18 @@ public class DefaultNutsConcurrentManager implements NutsConcurrentManager {
         return this;
     }
 
+    protected void checkSession() {
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), getSession());
+    }
+
     @Override
     public ExecutorService executorService() {
-        return model.executorService();
+        checkSession();
+        return model.executorService(getSession());
     }
 
     public NutsIOLockAction lock() {
-        return model.lock().setSession(session);
+        return model.lock().setSession(getSession());
     }
 
 }

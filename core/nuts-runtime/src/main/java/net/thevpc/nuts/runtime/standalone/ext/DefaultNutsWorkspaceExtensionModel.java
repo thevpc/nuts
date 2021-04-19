@@ -185,7 +185,7 @@ public class DefaultNutsWorkspaceExtensionModel  {
                     bootClassLoader,
                     session);
         }
-        this.workspaceExtensionsClassLoader = new DefaultNutsClassLoader("workspaceExtensionsClassLoader", ws, bootClassLoader);
+        this.workspaceExtensionsClassLoader = new DefaultNutsClassLoader("workspaceExtensionsClassLoader", session.getWorkspace(), bootClassLoader);
     }
 
 //    public void registerType(RegInfo regInfo, NutsSession session) {
@@ -710,11 +710,11 @@ public class DefaultNutsWorkspaceExtensionModel  {
         return configExt().getModel().getStoredConfigBoot();
     }
 
-    public synchronized DefaultNutsClassLoader getNutsURLClassLoader(String name, ClassLoader parent) {
+    public synchronized DefaultNutsClassLoader getNutsURLClassLoader(String name, ClassLoader parent, NutsSession session) {
         if (parent == null) {
             parent = workspaceExtensionsClassLoader;
         }
-        return new DefaultNutsClassLoader(name, ws, parent);
+        return new DefaultNutsClassLoader(name, session.getWorkspace(), parent);
 //        NutsURLClassLoaderKey k = new NutsURLClassLoaderKey(urls, parent);
 //        DefaultNutsClassLoader v = cachedClassLoaders.get(k);
 //        if (v == null) {

@@ -418,6 +418,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     .setEnv(env)
                     .setExecutorProperties(execProps)
                     .setCwd(dir)
+                    .setWorkspace(traceSession.getWorkspace())
                     .setTraceSession(traceSession)
                     .setExecSession(execSession)
                     .setFailFast(failFast)

@@ -18,7 +18,6 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     private boolean highlightImportedGroup;
     private boolean highlightScope;
     private boolean highlightOptional;
-    private boolean ntf = true;
     private Set<String> omittedProperties = new HashSet<>();
     private NutsId id;
 
@@ -26,12 +25,8 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         super(ws, "id-format");
     }
 
-    public boolean isNtf() {
-        return ntf;
-    }
-
     public NutsIdFormat setNtf(boolean ntf) {
-        this.ntf = ntf;
+        super.setNtf(ntf);
         return this;
     }
 

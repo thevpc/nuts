@@ -61,6 +61,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         lib = new NutsRepositoryFolderHelper(this, workspace, Paths.get(config().setSession(session).getStoreLocation(NutsStoreLocation.LIB)), false);
         mirroring = new NutsRepositoryMirroringHelper(this, cache);
     }
+    
 
     @Override
     public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
@@ -78,7 +79,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         }
         RuntimeException mirrorsEx = null;
 
-        SuccessFailResult<NutsDescriptor, RuntimeException> res = workspace.concurrent().lock().source(id.builder().setFaceDescriptor().build()).call(() -> {
+        SuccessFailResult<NutsDescriptor, RuntimeException> res = session.getWorkspace().concurrent().lock().source(id.builder().setFaceDescriptor().build()).call(() -> {
             try {
                 NutsDescriptor success = fetchDescriptorCore(id, fetchMode, session);
                 if (success != null) {
@@ -176,7 +177,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
         RuntimeException mirrorsEx = null;
         NutsContent c = null;
-        SuccessFailResult<NutsContent, RuntimeException> res = workspace.concurrent().lock().source(id.builder().setFaceContent().build()).call(() -> {
+        SuccessFailResult<NutsContent, RuntimeException> res = session.getWorkspace().concurrent().lock().source(id.builder().setFaceContent().build()).call(() -> {
             if (cache.isWriteEnabled()) {
                 Path cachePath = cache.getLongNameIdLocalFile(id, session);
                 NutsContent c2 = fetchContentCore(id, descriptor, cachePath.toString(), fetchMode, session);

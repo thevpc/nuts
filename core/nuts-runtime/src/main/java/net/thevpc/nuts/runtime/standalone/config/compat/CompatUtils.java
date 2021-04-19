@@ -123,6 +123,7 @@ public class CompatUtils {
                         r.getPackaging(),
                         r.getPriority()
                 );
+                r2.setConfigVersion(r.getConfigVersion());
                 list.add(r2);
             }
         }

@@ -51,7 +51,7 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
             eb.set("descriptorFilter", ws.formats().element().convertToElement(getDescriptorFilter()));
         }
         if (getInstallStatus() != null) {
-            eb.set("installStatus", e.forPrimitive().buildString(getInstallStatus().toString()));
+            eb.set("installStatus", e.forString(getInstallStatus().toString()));
         }
 
         return getWorkspace().remoteCall(
@@ -82,7 +82,7 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
             eb.set("descriptorFilter", ws.formats().element().convertToElement(getDescriptorFilter()));
         }
         if (getInstallStatus() != null) {
-            eb.set("installStatus", e.forPrimitive().buildString(getInstallStatus().toString()));
+            eb.set("installStatus", e.forString(getInstallStatus().toString()));
         }
 
         return getWorkspace().remoteCall(

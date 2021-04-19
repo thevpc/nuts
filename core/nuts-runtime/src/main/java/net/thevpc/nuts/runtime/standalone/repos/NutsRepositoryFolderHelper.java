@@ -392,7 +392,7 @@ public class NutsRepositoryFolderHelper {
         NutsWorkspace ws2 = session.getWorkspace();
         return ws2.concurrent().lock().source(descFile).call(() -> {
 
-            ws2.descriptor().formatter(desc).print(descFile);
+            ws2.descriptor().formatter(desc).setNtf(false).print(descFile);
             ws2.io().copy().setSession(session)
                     .from(
                             ws2.io().input().setName("sha1(" + desc.getId() + ")")

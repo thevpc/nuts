@@ -544,7 +544,10 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                 nutsId2.addAll(installedIds);
                             } else {
                                 for (String aImport : ws.imports().getAll()) {
+                                    //example import(net.thevpc),search(pnote) ==>net.thevpc:pnote
                                     nutsId2.add(nutsId.builder().setGroupId(aImport).build());
+                                    //example import(net.thevpc),search(pnote) ==>net.thevpc.pnote:pnote
+                                    nutsId2.add(nutsId.builder().setGroupId(aImport + "." + nutsId.getArtifactId()).build());
                                 }
                             }
                         }
@@ -560,10 +563,11 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         );
                         NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getProperties(),
                                 idFilter2, sDescriptorFilter, ws));
-                        for (NutsRepositoryAndFetchMode repoAndMode : wu.filterRepositoryAndFetchModes(
+                        List<NutsRepositoryAndFetchMode> repositoryAndFetchModes = wu.filterRepositoryAndFetchModes(
                                 NutsRepositorySupportedAction.SEARCH, nutsId1, sRepositoryFilter, fetchMode, session,
                                 installedVsNonInstalledSearch
-                        )) {
+                        );
+                        for (NutsRepositoryAndFetchMode repoAndMode : repositoryAndFetchModes) {
                             consideredRepos.add(repoAndMode.getRepository());
                             NutsRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
                             idLookup.add(IteratorBuilder.ofLazyNamed("searchVersions("

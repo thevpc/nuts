@@ -123,7 +123,7 @@ public class ClassReflectType implements ReflectType {
                 //must reeavliuate for parent classes
                 ReflectPropertyAccessStrategy _propertyAccessStrategy = repo.getConfiguration().getAccessStrategy(parent);
                 ReflectPropertyDefaultValueStrategy _propertyDefaultValueStrategy = repo.getConfiguration().getDefaultValueStrategy(parent);
-                fillFields(clazz, fieldAllProperties, cleanInstance, ambiguousWrites, _propertyAccessStrategy, _propertyDefaultValueStrategy);
+                fillFields(parent, fieldAllProperties, cleanInstance, ambiguousWrites, _propertyAccessStrategy, _propertyDefaultValueStrategy);
                 parent = parent.getSuperclass();
             }
             this.direct = declaredProperties;

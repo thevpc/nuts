@@ -105,7 +105,27 @@ public enum NutsDependencyScopePattern {
     /**
      * all dependencies (no restriction)
      */
-    ALL;
+    ALL,
+    
+    
+    
+    /**
+     * equivalent to maven's test
+     */
+    TEST_API,
+    /**
+     * equivalent to maven's test
+     */
+    TEST_IMPLEMENTATION,
+    /**
+     * dependencies needed for test execution
+     */
+    TEST_SYSTEM,
+    /**
+     * dependencies needed for test execution
+     */
+    TEST_OTHER;
+    ;
 
     /**
      * lower-cased identifier for the enum entry

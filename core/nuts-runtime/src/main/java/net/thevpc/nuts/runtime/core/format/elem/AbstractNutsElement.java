@@ -29,6 +29,7 @@ import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsArrayElement;
 import net.thevpc.nuts.NutsObjectElement;
 import net.thevpc.nuts.NutsPrimitiveElement;
+import net.thevpc.nuts.NutsString;
 
 /**
  *
@@ -92,6 +93,11 @@ public abstract class AbstractNutsElement implements NutsElement {
         return false;
     }
 
+//    @Override
+//    public NutsString asNutsString() {
+//        return asPrimitive().getNutsString();
+//    }
+
     @Override
     public String asString() {
         return asPrimitive().getString();
@@ -149,6 +155,12 @@ public abstract class AbstractNutsElement implements NutsElement {
         NutsElementType t = type();
         return t == NutsElementType.STRING;
     }
+
+//    @Override
+//    public boolean isNutsString() {
+//        NutsElementType t = type();
+//        return t == NutsElementType.NUTS_STRING;
+//    }
 
     @Override
     public boolean isInt() {

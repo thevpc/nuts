@@ -205,7 +205,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.FIRST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().parse(s).textLength()));
+                    line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().setSession(getSession()).parse(s).textLength()));
                 }
                 line.write(getSeparator(Separator.FIRST_ROW_END));
 
@@ -227,7 +227,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                             DefaultCell cell = cells.get(i);
                             String B = getSeparator(Separator.MIDDLE_ROW_LINE);
                             String s = cell.rendered.toString();
-                            line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().parse(s).textLength()));
+                            line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().setSession(getSession()).parse(s).textLength()));
                         }
                         line.write(getSeparator(Separator.MIDDLE_ROW_END));
 
@@ -269,7 +269,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.LAST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().parse(s).textLength()));
+                    line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().setSession(getSession()).parse(s).textLength()));
                 }
                 line.write(getSeparator(Separator.LAST_ROW_END));
             }
@@ -285,7 +285,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsFormatManager tf, NutsSession session) {
-        int length = tf.text().parse(sb.toString()).textLength();
+        int length = tf.text().setSession(session).parse(sb.toString()).textLength();
         switch (a) {
             case FIRST: {
 //                if (sb.length() > length) {
@@ -361,10 +361,11 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             this.ws = session.getWorkspace();
         }
 
-        public RenderedCell(int c, int r, Object o, String str, NutsTableCellFormat formatter, NutsPositionType valign, NutsPositionType halign, NutsFormatManager metrics, NutsWorkspace ws) {
-            this.ws = ws;
+        public RenderedCell(int c, int r, Object o, String str, NutsTableCellFormat formatter, NutsPositionType valign, NutsPositionType halign, NutsSession session) {
+            this.session = session;
+            this.ws = session.getWorkspace();
             this.formatter = formatter;
-            this.metrics = metrics;
+            this.metrics = session.getWorkspace().formats().setSession(session);
             this.valign = valign;
             this.halign = halign;
             if (str == null) {
@@ -395,7 +396,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         }
 
         public int len(String other) {
-            return metrics.text().parse(other).textLength();
+            return metrics.text().setSession(session).parse(other).textLength();
         }
 
         public RenderedCell appendHorizontally(RenderedCell other) {
@@ -786,7 +787,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                         formatter,
                         formatter.getVerticalAlign(r0, c0, cvalue, session),
                         formatter.getHorizontalAlign(r0, c0, cvalue, session),
-                        getWorkspace().formats(), session.getWorkspace()
+                        session
                 ));
                 cell.cw = cell.getRendered().columns;
                 cell.ch = cell.getRendered().rows;
@@ -904,22 +905,23 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             return (NutsTableModel) o;
         }
         if (!(o instanceof NutsElement)) {
-            return createTableModel(_elems().convert(o, NutsElement.class));
+            return createTableModel(_elems().convertToElement(o));
         }
         NutsElement elem = (NutsElement) o;
         switch (elem.type()) {
             case BOOLEAN:
             case INSTANT:
             case STRING:
+//            case NUTS_STRING:
             case INTEGER:
             case FLOAT:
             case NULL: {
                 List<NutsElement> a = new ArrayList<>();
                 a.add(elem);
-                return createTableModel(_elems().convert(a, NutsElement.class));
+                return createTableModel(_elems().convertToElement(a));
             }
             case OBJECT: {
-                return createTableModel(_elems().convert(elem.asObject().children(), NutsElement.class));
+                return createTableModel(_elems().convertToElement(elem.asObject().children()));
             }
             case ARRAY: {
                 NutsMutableTableModel model = createModel();
@@ -936,7 +938,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                             for (NutsElementEntry vv : elem2.asObject().children()) {
                                 NutsElement k = vv.getKey();
                                 if (!k.isString()) {
-                                    k = _elems().forPrimitive().buildString(
+                                    k = _elems().forString(
                                             k.toString()
                                     );
                                 }
@@ -977,7 +979,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 for (NutsElementEntry nutsNamedValue : value.asObject().children()) {
                     NutsElement k = nutsNamedValue.getKey();
                     if (!k.isString()) {
-                        k = _elems().forPrimitive().buildString(
+                        k = _elems().forString(
                                 k.toString()
                         );
                     }

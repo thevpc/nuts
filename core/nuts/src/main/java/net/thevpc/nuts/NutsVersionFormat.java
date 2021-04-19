@@ -71,4 +71,7 @@ public interface NutsVersionFormat extends NutsFormat {
      */
     boolean isWorkspaceVersion();
 
+
+    @Override
+    public NutsVersionFormat setNtf(boolean ntf);
 }

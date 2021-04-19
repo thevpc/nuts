@@ -98,4 +98,6 @@ public interface NutsInfoFormat extends NutsFormat {
      */
     boolean isFancy();
 
+    @Override
+    NutsInfoFormat setNtf(boolean ntf);
 }

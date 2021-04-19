@@ -20,11 +20,11 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
             String wsURL = config().options().getWorkspace();
             byte[] result = cli.request("nuts/ws:"+wsURL, json.getBytes());
             NutsObjectElement resultObject = e.parse(result, NutsObjectElement.class);
-            NutsPrimitiveElementBuilder prv = formats().element().setSession(session).forPrimitive();
-            boolean success = resultObject.get(prv.buildString("success")
+            NutsElementFormat prv = formats().element().setSession(session);
+            boolean success = resultObject.get(prv.forString("success")
                     ).asPrimitive().getBoolean();
             if (success) {
-                return resultObject.get(prv.buildString("body"));
+                return resultObject.get(prv.forString("body"));
             } else {
                 //TODO mush deserialize exception
                 throw new NutsException(session, "unable to call " + commandName);
@@ -37,8 +37,8 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
         return e.forObject()
                 .set(
                         "cmd",
-                        e.forPrimitive().buildString(commandName))
-                .set("id", e.forPrimitive().buildString(callId))
+                        e.forString(commandName))
+                .set("id", e.forString(callId))
                 .set("body", body).build();
     }
 

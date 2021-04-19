@@ -20,7 +20,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
 
     public final NutsTreeNodeFormat TO_STRING_FORMATTER = new NutsTreeNodeFormat() {
         @Override
-        public NutsString format(Object o, int depth) {
+        public NutsString format(Object o, int depth, NutsSession session) {
             return getWorkspace().formats().text().builder().append(o).immutable();
         }
     };
@@ -30,6 +30,18 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     private boolean omitRoot = false;
     private boolean infinite = false;
     private boolean omitEmptyRoot = true;
+    private XNodeFormatter xNodeFormatter = new XNodeFormatter() {
+        @Override
+        public NutsString[] getMultilineArray(NutsString key, Object value, NutsSession session) {
+            return DefaultTreeFormat.this.getMultilineArray(key, value);
+        }
+
+        @Override
+        public NutsString stringValue(Object o, NutsSession session) {
+            return getNodeFormat().format(o, -1, session);
+        }
+        
+    };
 
     public DefaultTreeFormat(NutsWorkspace ws) {
         super(ws, "tree-format");
@@ -88,21 +100,31 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     @Override
     public NutsTreeModel getModel() {
         checkSession();
-        if(tree instanceof NutsElementTreeModel){
+        if (tree instanceof NutsTreeModel) {
+//        if(tree instanceof NutsTreeModel){
             return (NutsTreeModel) tree;
         }
-        NutsElement elem = getWorkspace().formats().element().setSession(getSession()).convert(tree, NutsElement.class);
-        return new NutsElementTreeModel(getWorkspace(), rootName, elem, getSession()) {
-            @Override
-            protected NutsString[] getMultilineArray(NutsString key, NutsElement value) {
-                return DefaultTreeFormat.this.getMultilineArray(key, value);
-            }
-        };
+        Object destructredObject = getWorkspace().formats().element().setSession(getSession())
+                .setNtf(true)
+                .setDestructTypeFilter(x -> {
+                    if (x instanceof Class) {
+                        Class c = (Class) x;
+                        return !(NutsId.class.isAssignableFrom(c)
+                                || NutsDependency.class.isAssignableFrom(c)
+                                || NutsString.class.isAssignableFrom(c) //                                || NutsFormattable.class.isAssignableFrom(c)
+                                );
+                    }
+                    return false;
+                })
+                .destruct(tree);
+        return new NutsElementTreeModel(
+                XNode.root(destructredObject, rootName, getSession(), xNodeFormatter)
+        );
     }
 
     @Override
     public NutsObjectFormat setValue(Object value) {
-        this.tree=value;
+        this.tree = value;
         return this;
     }
 
@@ -140,9 +162,9 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     @Override
     public String toString() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
-        PrintStream out = CoreIOUtils.toPrintStream(b,getSession());
+        PrintStream out = CoreIOUtils.toPrintStream(b, getSession());
         NutsTreeModel tree = getModel();
-        print(tree,"", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0,false);
+        print(tree, "", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0, false);
         out.flush();
         return b.toString();
     }
@@ -150,20 +172,21 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     @Override
     public void print(PrintStream out) {
         NutsTreeModel tree = getModel();
-        print(tree,"", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0,false);
+        print(tree, "", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0, false);
         out.flush();
     }
 
-    private boolean print(NutsTreeModel tree,String prefix, NutsPositionType type, Object o, PrintStream out, boolean hideRoot, int depth,boolean prefixNewLine) {
+    private boolean print(NutsTreeModel tree, String prefix, NutsPositionType type, Object o, PrintStream out, boolean hideRoot, int depth, boolean prefixNewLine) {
+        checkSession();
         if (!hideRoot) {
-            if(prefixNewLine){
+            if (prefixNewLine) {
                 out.println();
             }
             out.print(prefix);
             out.print(linkFormatter.formatMain(type));
-            out.print(formatter.format(o, depth));
+            out.print(formatter.format(o, depth, getSession()));
             out.flush();
-            prefixNewLine=true;
+            prefixNewLine = true;
         }
         List<Object> children = tree.getChildren(o);
         if (children == null) {
@@ -177,20 +200,21 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         while (childrenIter.hasNext()) {
             Object c = last;
             last = childrenIter.next();
-            prefixNewLine|=print(tree,prefix + linkFormatter.formatChild(type), NutsPositionType.CENTER, c, out, false, depth + 1,prefixNewLine);
+            prefixNewLine |= print(tree, prefix + linkFormatter.formatChild(type), NutsPositionType.CENTER, c, out, false, depth + 1, prefixNewLine);
         }
         if (last != null) {
-            prefixNewLine|=print(tree,prefix + linkFormatter.formatChild(type), (infinite && "".equals(prefix)) ? NutsPositionType.CENTER : NutsPositionType.LAST, last, out, false, depth + 1,prefixNewLine);
+            prefixNewLine |= print(tree, prefix + linkFormatter.formatChild(type), (infinite && "".equals(prefix)) ? NutsPositionType.CENTER : NutsPositionType.LAST, last, out, false, depth + 1, prefixNewLine);
         }
         return prefixNewLine;
     }
 
-    private void print(NutsTreeModel tree,String prefix, NutsPositionType type, Object o, PrintWriter out, boolean hideRoot, int depth) {
+    private void print(NutsTreeModel tree, String prefix, NutsPositionType type, Object o, PrintWriter out, boolean hideRoot, int depth) {
+        checkSession();
         boolean skipNewLine = true;
         if (!hideRoot) {
             out.print(prefix);
             out.print(linkFormatter.formatMain(type));
-            out.print(formatter.format(o, depth));
+            out.print(formatter.format(o, depth, getSession()));
             skipNewLine = false;
             out.flush();
         }
@@ -211,7 +235,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
             } else {
                 out.println();
             }
-            print(tree,prefix + linkFormatter.formatChild(type), NutsPositionType.CENTER, c, out, false, depth + 1);
+            print(tree, prefix + linkFormatter.formatChild(type), NutsPositionType.CENTER, c, out, false, depth + 1);
         }
         if (last != null) {
             if (skipNewLine) {
@@ -219,7 +243,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
             } else {
                 out.println();
             }
-            print(tree,prefix + linkFormatter.formatChild(type), (infinite && "".equals(prefix)) ? NutsPositionType.CENTER : NutsPositionType.LAST, last, out, false, depth + 1);
+            print(tree, prefix + linkFormatter.formatChild(type), (infinite && "".equals(prefix)) ? NutsPositionType.CENTER : NutsPositionType.LAST, last, out, false, depth + 1);
         }
         out.flush();
     }
@@ -234,7 +258,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         switch (a.getStringKey()) {
             case "--border": {
                 a = cmdLine.nextString("--border");
-                if(enabled) {
+                if (enabled) {
                     switch (a.getArgumentValue().getStringKey()) {
                         case "simple": {
                             setLinkFormat(LINK_ASCII_FORMATTER);
@@ -250,21 +274,21 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
             }
             case "--omit-root": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if(enabled) {
+                if (enabled) {
                     setOmitRoot(val);
                 }
                 return true;
             }
             case "--infinite": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if(enabled) {
+                if (enabled) {
                     this.infinite = val;
                 }
                 return true;
             }
             case DefaultPropertiesFormat.OPTION_MULTILINE_PROPERTY: {
                 NutsArgument i = cmdLine.nextString();
-                if(enabled) {
+                if (enabled) {
                     addMultilineProperty(i.getStringKey(), i.getStringValue());
                 }
                 return true;
@@ -355,10 +379,12 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
             return p;
         }
     }
+
     public DefaultTreeFormat addMultilineProperty(String property, String separator) {
         multilineProperties.put(property, separator);
         return this;
     }
+
     private NutsString[] getMultilineArray(NutsString key, Object value) {
         String sep = getMultilineSeparator(key);
         if (sep == null) {
@@ -368,7 +394,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         if (vv.length == 0 || vv.length == 1) {
             return null;
         }
-        return Arrays.stream(vv).map(x->getWorkspace().formats().text().nodeFor(x)).toArray(NutsString[]::new);
+        return Arrays.stream(vv).map(x -> getWorkspace().formats().text().nodeFor(x)).toArray(NutsString[]::new);
     }
 
     private String getMultilineSeparator(NutsString key) {

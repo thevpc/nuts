@@ -74,7 +74,7 @@ public interface NutsRepositoryConfigModel {
 
     int getSpeed(NutsSession session);
 
-    String getStoreLocation(NutsSession session);
+    String getStoreLocation();
 
     String getStoreLocation(NutsStoreLocation folderType,NutsSession session);
 

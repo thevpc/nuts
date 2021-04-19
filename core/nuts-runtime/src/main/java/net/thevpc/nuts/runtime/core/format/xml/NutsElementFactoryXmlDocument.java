@@ -38,12 +38,24 @@ import net.thevpc.nuts.runtime.core.format.elem.NutsElementMapper;
 public class NutsElementFactoryXmlDocument implements NutsElementMapper {
 
     @Override
+    public Object destruct(Object o, Type typeOfSrc, NutsElementFactoryContext context) {
+        Document doc = (Document) o;
+        Element e = doc.getDocumentElement();
+        Object x = NutsElementFactoryXmlElement.runWithDoc(context,
+                () -> context.destruct(e, Element.class),
+                doc);
+        return x;
+    }
+    
+
+    @Override
     public NutsElement createElement(Object o, Type typeOfSrc, NutsElementFactoryContext context) {
         Document doc = (Document) o;
         Element e = doc.getDocumentElement();
-        return NutsElementFactoryXmlElement.runWithDoc(context,
+        NutsElement x = NutsElementFactoryXmlElement.runWithDoc(context,
                 () -> context.objectToElement(e, Element.class),
                 doc);
+        return x;
     }
 
     @Override

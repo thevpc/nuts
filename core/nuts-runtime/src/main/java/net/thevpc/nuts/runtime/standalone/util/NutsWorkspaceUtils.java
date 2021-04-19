@@ -205,6 +205,7 @@ public class NutsWorkspaceUtils {
         if (installedVsNonInstalledSearch.isSearchInOtherRepositories()) {
             for (NutsRepository repository : ws.repos().setSession(session).getRepositories()) {
                 if (repository.isEnabled()
+                        && repository.isAvailable()
                         && repoSPI(repository).isAcceptFetchMode(mode, session)
                         && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))) {
                     int t = 0;
@@ -376,7 +377,7 @@ public class NutsWorkspaceUtils {
     /**
      * used only for exceptions and logger when a session is not available
      *
-     * @param ws ws
+     * @param ws workspace
      * @return default session
      */
     public static NutsSession defaultSession(NutsWorkspace ws) {
@@ -387,7 +388,7 @@ public class NutsWorkspaceUtils {
         if (session == null) {
             throw new NutsIllegalArgumentException(defaultSession(ws), "missing session");
         }
-        if (!Objects.equals(session.getWorkspace().getUuid(),ws.getUuid())) {
+        if (!Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {
             throw new NutsIllegalArgumentException(defaultSession(ws), "invalid session");
         }
     }

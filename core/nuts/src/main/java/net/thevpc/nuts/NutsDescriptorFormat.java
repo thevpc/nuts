@@ -84,7 +84,5 @@ public interface NutsDescriptorFormat extends NutsFormat {
     @Override
     NutsDescriptorFormat configure(boolean skipUnsupported, String... args);
 
-    boolean isNtf();
-
     NutsDescriptorFormat setNtf(boolean ntf);
 }

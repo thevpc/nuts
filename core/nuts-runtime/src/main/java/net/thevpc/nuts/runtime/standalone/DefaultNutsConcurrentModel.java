@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import net.thevpc.nuts.NutsSession;
 
 public class DefaultNutsConcurrentModel {
     private NutsWorkspace workspace;
@@ -20,11 +21,11 @@ public class DefaultNutsConcurrentModel {
         return workspace;
     }
 
-    public ExecutorService executorService() {
+    public ExecutorService executorService(NutsSession session) {
         if (executorService == null) {
             synchronized (this) {
                 if (executorService == null) {
-                    executorService = workspace.config().options().getExecutorService();
+                    executorService = workspace.config().setSession(session).options().getExecutorService();
                     if (executorService == null) {
                         ThreadPoolExecutor executorService2 = (ThreadPoolExecutor) Executors.newCachedThreadPool(CoreNutsUtils.nutsDefaultThreadFactory);
                         executorService2.setKeepAliveTime(60, TimeUnit.SECONDS);

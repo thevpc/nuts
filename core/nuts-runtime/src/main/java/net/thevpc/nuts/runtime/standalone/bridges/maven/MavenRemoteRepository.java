@@ -69,7 +69,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         @Override
         protected NutsInput openStream(NutsId id, String path, Object source, String typeName, NutsSession session) {
             SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(path),session);
-            return getWorkspace().io().monitor().setSource(path).setOrigin(source).setSession(session).setSourceTypeName(typeName).createSource();
+            return session.getWorkspace().io().monitor().setSource(path).setOrigin(source).setSession(session).setSourceTypeName(typeName).createSource();
         }
 
     };
@@ -99,7 +99,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 
     protected MavenRemoteRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository, String repoType) {
         super(options, session, parentRepository, SPEED_SLOW, false, repoType);
-        LOG=workspace.log().of(MavenRemoteRepository.class);
+        LOG=session.getWorkspace().log().of(MavenRemoteRepository.class);
         switch (repoType){
             case "maven":{
                 this.findApi=RemoteRepoApi.MAVEN;
@@ -144,7 +144,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             String groupId = id.getGroupId();
             String artifactId = id.getArtifactId();
             List<NutsId> ret = new ArrayList<>();
-            String metadataURL = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + id.getVersion().toString() + "/"
+            String metadataURL = CoreIOUtils.buildUrl(config().setSession(session).getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + id.getVersion().toString() + "/"
                     + getIdFilename(id.builder().setFaceDescriptor().build(), session)
             );
 
@@ -156,8 +156,8 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             }
             return ret.iterator();
         }
-        NutsIdFilter filter2 = getWorkspace().id().filter().nonnull(idFilter).and(
-                getWorkspace().id().filter().byName(id.getShortName())
+        NutsIdFilter filter2 = session.getWorkspace().id().filter().nonnull(idFilter).and(
+                session.getWorkspace().id().filter().byName(id.getShortName())
         );
         switch (versionApi) {
             case DEFAULT:
@@ -206,9 +206,9 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             } catch (UncheckedIOException|NutsIOException ex) {
                 throw new NutsNotFoundException(session, id, ex);
             }
-            List<Map<String, Object>> info = getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(new InputStreamReader(metadataStream), List.class);
+            List<Map<String, Object>> info = session.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(new InputStreamReader(metadataStream), List.class);
             if (info != null) {
-                NutsIdManager idMan = workspace.id();
+                NutsIdManager idMan = session.getWorkspace().id();
                 for (Map<String, Object> version : info) {
                     if ("dir".equals(version.get("type"))) {
                         String versionName = (String) version.get("name");
@@ -257,7 +257,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             }
             MavenMetadata info = MavenUtils.of(session).parseMavenMetaData(metadataStream,session);
             if (info != null) {
-                NutsIdManager idMan = workspace.id();
+                NutsIdManager idMan = session.getWorkspace().id();
                 for (String version : info.getVersions()) {
                     final NutsId nutsId = id.builder().setVersion(version).build();
 
@@ -317,11 +317,11 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         List<NutsId> ret = new ArrayList<>();
-        String foldersFileUrl = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId);
+        String foldersFileUrl = CoreIOUtils.buildUrl(config().setSession(session).getLocation(true), groupId.replace('.', '/') + "/" + artifactId);
         FilesFoldersApi.Item[] all =FilesFoldersApi.getDirItems(true, false,versionApi, foldersFileUrl, session);
 
         if (all != null) {
-            NutsIdManager idMan = workspace.id();
+            NutsIdManager idMan = session.getWorkspace().id();
             for (FilesFoldersApi.Item version : all) {
                 final NutsId nutsId = id.builder().setVersion(version.getName()).build();
 
@@ -341,6 +341,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         if (fetchMode != NutsFetchMode.REMOTE) {
             return null;
         }
+        NutsRepositoryConfigManager config = config().setSession(session);
         switch (findApi) {
             case DEFAULT:
             case DIR_TEXT:
@@ -350,9 +351,9 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(root),session);
                     if(root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);
-                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), name, filter, RemoteRepoApi.DIR_TEXT, session, Integer.MAX_VALUE, findModel));
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config.getLocation(true), name, filter, RemoteRepoApi.DIR_TEXT, session, Integer.MAX_VALUE, findModel));
                     }else{
-                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), root, filter, RemoteRepoApi.DIR_TEXT, session, 2, findModel));
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config.getLocation(true), root, filter, RemoteRepoApi.DIR_TEXT, session, 2, findModel));
                     }
                 }
                 return IteratorUtils.concat(li);
@@ -363,22 +364,22 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(root),session);
                     if(root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);
-                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), name, filter, RemoteRepoApi.DIR_LIST, session, Integer.MAX_VALUE, findModel));
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config.getLocation(true), name, filter, RemoteRepoApi.DIR_LIST, session, Integer.MAX_VALUE, findModel));
                     }else{
-                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config().getLocation(true), root, filter, RemoteRepoApi.DIR_LIST, session, 2, findModel));
+                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config.getLocation(true), root, filter, RemoteRepoApi.DIR_LIST, session, 2, findModel));
                     }
                 }
                 return IteratorUtils.concat(li);
             }
             case MAVEN: {
                 // this will find only in archetype, not in full index....
-                String url = CoreIOUtils.buildUrl(config().getLocation(true), "/archetype-catalog.xml");
+                String url = CoreIOUtils.buildUrl(config.getLocation(true), "/archetype-catalog.xml");
                 try {
                     NutsInput s = CoreIOUtils.getCachedUrlWithSHA1(getWorkspace(), url, "archetype-catalog.xml",
                             true,
                             session
                             );
-                    final InputStream is = getWorkspace().io().monitor().setSource(s.open()).setSession(session).create();
+                    final InputStream is = session.getWorkspace().io().monitor().setSource(s.open()).setSession(session).create();
                     return MavenUtils.of(session)
                             .createArchetypeCatalogIterator(is, filter, true,session);
                 } catch (UncheckedIOException ex) {
@@ -395,11 +396,11 @@ public class MavenRemoteRepository extends NutsCachedRepository {
     }
 
     private NutsRepository getLocalMavenRepo(NutsSession session) {
-        for (NutsRepository nutsRepository : getWorkspace().repos().setSession(session).getRepositories()) {
+        for (NutsRepository nutsRepository : session.getWorkspace().repos().setSession(session).getRepositories()) {
             if (nutsRepository.getRepositoryType().equals(NutsConstants.RepoTypes.MAVEN)
                     && nutsRepository.config().getLocation(true) != null
                     && nutsRepository.config().getLocation(true).equals(
-                    Paths.get(getWorkspace().io().expandPath("~/.m2")).toString()
+                    Paths.get(session.getWorkspace().io().expandPath("~/.m2")).toString()
                     )) {
                 return nutsRepository;
             }
@@ -430,6 +431,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         if (wrapper == null) {
             wrapper = getWrapper();
         }
+        NutsWorkspace ws = session.getWorkspace();
         if (wrapper != null && wrapper.get(id, config().getLocation(true), session)) {
             NutsRepository repo = getLocalMavenRepo(session);
             if (repo != null) {
@@ -449,11 +451,11 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 if (localPath == null) {
                     return new NutsDefaultContent(content.toString(), true, false);
                 } else {
-                    String tempFile = getWorkspace().io().tmp()
+                    String tempFile = ws.io().tmp()
                             .setSession(session)
                             .setRepositoryId(getUuid())
                             .createTempFile(content.getFileName().toString());
-                    getWorkspace().io().copy()
+                    ws.io().copy()
                             .setSession(session)
                             .from(content).to(tempFile).setSafe(true).run();
                     return new NutsDefaultContent(tempFile, true, false);
@@ -462,12 +464,12 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         }
         if (localPath == null) {
             String p = helper.getIdPath(id, session);
-            String tempFile = getWorkspace().io().tmp()
+            String tempFile = ws.io().tmp()
                     .setSession(session)
                     .setRepositoryId(getUuid())
                     .createTempFile(new File(p).getName());
             try {
-                getWorkspace().io().copy()
+                ws.io().copy()
                         .setSession(session)
                         .from(helper.getStream(id, "artifact content", session)).to(tempFile).setValidator(new NutsIOCopyValidator() {
                     @Override
@@ -481,7 +483,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             return new NutsDefaultContent(tempFile, false, true);
         } else {
             try {
-                getWorkspace().io().copy()
+                ws.io().copy()
                         .setSession(session)
                         .from(helper.getStream(id, "artifact content", session)).to(localPath).setValidator(new NutsIOCopyValidator() {
                     @Override

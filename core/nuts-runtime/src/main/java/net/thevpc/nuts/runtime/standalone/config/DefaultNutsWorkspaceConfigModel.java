@@ -147,7 +147,7 @@ public class DefaultNutsWorkspaceConfigModel {
         if (force || storeModelBootChanged) {
 
             Path file = Paths.get(ws.locations().getWorkspaceLocation()).resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
-            storeModelBoot.setConfigVersion(current().getApiVersion());
+            storeModelBoot.setConfigVersion(DefaultNutsWorkspace.VERSION_WS_CONFIG_BOOT);
             if (storeModelBoot.getExtensions() != null) {
                 for (NutsWorkspaceConfigBoot.ExtensionConfig extension : storeModelBoot.getExtensions()) {
                     //inherited

@@ -384,6 +384,13 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         return this;
     }
 
+    @Override
+    public NutsInfoFormat setNtf(boolean ntf) {
+        super.setNtf(ntf);
+        return this;
+    }
+    
+
     private static class FilteredMap {
 
         private Predicate<String> filter;

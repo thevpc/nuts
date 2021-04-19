@@ -19,18 +19,13 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     private boolean highlightOptional;
     private NutsDependency value;
     private Set<String> queryPropertiesOmitted = new HashSet<>();
-    private boolean ntf=true;
 
     public DefaultNutsDependencyFormat(NutsWorkspace ws) {
-        super(ws, "id-format");
-    }
-
-    public boolean isNtf() {
-        return ntf;
+        super(ws, "dependency-format");
     }
 
     public NutsDependencyFormat setNtf(boolean ntf) {
-        this.ntf = ntf;
+        super.setNtf(ntf);
         return this;
     }
 
@@ -142,7 +137,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
                 }
             }
         }
-        NutsIdFormat id1 = getWorkspace().id().formatter();
+        NutsIdFormat id1 = getWorkspace().id().formatter().setSession(getSession());
         for (String omitQueryProperty : getOmitQueryProperties()) {
             id1.omitProperty(omitQueryProperty);
         }

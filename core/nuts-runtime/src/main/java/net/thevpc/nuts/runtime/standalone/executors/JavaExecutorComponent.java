@@ -354,6 +354,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 classLoader = ((DefaultNutsWorkspaceExtensionManager) getSession().getWorkspace().extensions()).getModel().getNutsURLClassLoader(
                         def.getId().toString(),
                         null//getSession().getWorkspace().config().getBootClassLoader()
+                        ,getSession()
                 );
                 for (NutsClassLoaderNode n : joptions.getClassPath()) {
                     classLoader.add(n);

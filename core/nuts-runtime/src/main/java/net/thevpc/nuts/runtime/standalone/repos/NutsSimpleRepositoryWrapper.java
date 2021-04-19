@@ -22,7 +22,7 @@ public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
         cache.setWriteEnabled((this.mode & NutsRepositoryModel.CACHE_WRITE) != 0);
         this.base = base;
     }
-
+    
     public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
         return base.searchVersions(id, idFilter, fetchMode, this, session);
     }

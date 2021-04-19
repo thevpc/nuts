@@ -23,9 +23,10 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
  */
 public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurable {
 
-    private NutsWorkspace workspace;
+    private final NutsWorkspace workspace;
     private NutsSession session;
-    private String name;
+    private final String name;
+    private boolean ntf=false;
 
     public DefaultFormatBase0(NutsWorkspace workspace, String name) {
         this.workspace = workspace;
@@ -68,7 +69,7 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
     }
 
     public T setSession(NutsSession session) {
-        //should copy because will chage outputformat
+        //should copy because will change outputformat
         this.session = session == null ? null : session.copy();
         return (T) this;
     }
@@ -88,7 +89,7 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
      */
     @Override
     public T configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, getWorkspace(), skipUnsupported, args, getName());
+        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, args, getName());
     }
 
     /**
@@ -101,7 +102,17 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
      */
     @Override
     public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, getWorkspace(), skipUnsupported, commandLine);
+        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
     }
 
+    public boolean isNtf() {
+        return ntf;
+    }
+
+    public T setNtf(boolean ntf) {
+        this.ntf = ntf;
+        return (T)this;
+    }
+
+    
 }

@@ -72,15 +72,15 @@ public class GsonItemSerializeManager implements NutsElementStreamFormat {
         NutsWorkspace ws = context.getWorkspace();
         NutsElementFormat element = ws.formats().element().setSession(context.getSession());
         if (je.isJsonNull()) {
-            return element.forPrimitive().buildNull();
+            return element.forNull();
         } else if (je.isJsonPrimitive()) {
             JsonPrimitive jr = je.getAsJsonPrimitive();
             if (jr.isString()) {
-                return element.forPrimitive().buildString(jr.getAsString());
+                return element.forString(jr.getAsString());
             } else if (jr.isNumber()) {
-                return element.forPrimitive().buildNumber(jr.getAsNumber());
+                return element.forNumber(jr.getAsNumber());
             } else if (jr.isBoolean()) {
-                return element.forPrimitive().buildBoolean(jr.getAsBoolean());
+                return element.forBoolean(jr.getAsBoolean());
             } else {
                 throw new IllegalArgumentException("unsupported");
             }
@@ -148,6 +148,9 @@ public class GsonItemSerializeManager implements NutsElementStreamFormat {
             case STRING: {
                 return new JsonPrimitive(((NutsPrimitiveElement) o).getString());
             }
+//            case NUTS_STRING: {
+//                return new JsonPrimitive(((NutsPrimitiveElement) o).getString());
+//            }
             case INSTANT: {
                 return new JsonPrimitive(((NutsPrimitiveElement) o).getString());
             }
@@ -189,7 +192,9 @@ public class GsonItemSerializeManager implements NutsElementStreamFormat {
     public boolean isSimpleObject(NutsObjectElement obj) {
         Set<String> keys = new HashSet<>();
         for (NutsElementEntry attribute : obj.children()) {
-            if (attribute.getKey().type() != NutsElementType.STRING) {
+            if (attribute.getKey().type() != NutsElementType.STRING 
+//                    && attribute.getKey().type() != NutsElementType.NUTS_STRING
+                    ) {
                 return false;
             }
             final String k = attribute.getKey().asPrimitive().getString();

@@ -82,13 +82,13 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                     return (T) Boolean.FALSE;
                 }
                 case ERROR: {
-                    if(cancelMessage!=null){
+                    if (cancelMessage != null) {
                         ByteArrayPrintStream os = new ByteArrayPrintStream();
                         PrintStream os2 = ws.term().setSession(getSession()).prepare(os);
                         os2.printf(message, this.getCancelMessage());
                         os2.flush();
                         throw new NutsUserCancelException(getSession(), os.toString());
-                    }else {
+                    } else {
                         ByteArrayPrintStream os = new ByteArrayPrintStream();
                         PrintStream os2 = ws.term().setSession(getSession()).prepare(os);
                         os2.printf(message, this.getCancelMessageParameters());
@@ -121,7 +121,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         }
         Object[] _acceptedValues = this.getAcceptedValues();
         if (_acceptedValues == null) {
-            _acceptedValues = ff.getDefaultValues(this.getValueType(),this);
+            _acceptedValues = ff.getDefaultValues(this.getValueType(), this);
         }
         if (_acceptedValues == null) {
             _acceptedValues = new Object[0];
@@ -136,15 +136,15 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 } else {
                     out.print(", ");
                 }
-                out.printf("default is %s", ws.formats().text().styled(ff.format(this.getDefaultValue(),this),NutsTextNodeStyle.primary(1)));
+                out.printf("default is %s", ws.formats().text().styled(ff.format(this.getDefaultValue(), this), NutsTextNodeStyle.primary(1)));
             }
-            if(getHintMessage()!=null){
-                if(getHintMessage().length()>0) {
+            if (getHintMessage() != null) {
+                if (getHintMessage().length() > 0) {
                     out.print(" \\(");
                     out.printf(getHintMessage(), getHintMessageParameters());
                     out.print("\\)");
                 }
-            }else{
+            } else {
                 if (_acceptedValues.length > 0) {
                     if (first) {
                         first = false;
@@ -158,9 +158,9 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                         if (i > 0) {
                             sb.append(", ");
                         }
-                        sb.append(ff.format(acceptedValue,this));
+                        sb.append(ff.format(acceptedValue, this));
                     }
-                    out.printf("accepts %s", ws.formats().text().styled(sb.toString(),NutsTextNodeStyle.primary(4)));
+                    out.printf("accepts %s", ws.formats().text().styled(sb.toString(), NutsTextNodeStyle.primary(4)));
                 }
                 if (!first) {
                     out.print("\\)");
@@ -223,7 +223,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                     v = terminal.readLine(" ? : ");
                 }
                 try {
-                    T parsed = (T) p.parse(v, (T) this.getDefaultValue(),this);
+                    T parsed = (T) p.parse(v, (T) this.getDefaultValue(), this);
                     if (this.validator != null) {
                         parsed = this.validator.validate(parsed, this);
                     }
@@ -302,7 +302,6 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         return hintMessageParameters;
     }
 
-
     @Override
     public NutsQuestion<T> setMessage(String message, Object... messageParameters) {
         this.message = message;
@@ -310,14 +309,12 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         return this;
     }
 
-
     @Override
     public NutsQuestion<T> setHintMessage(String message, Object... messageParameters) {
         this.hintMessage = message;
         this.hintMessageParameters = messageParameters;
         return this;
     }
-
 
     @Override
     public Object[] getAcceptedValues() {
@@ -376,7 +373,8 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...)
+     * }
      * to help return a more specific return type;
      *
      * @param args argument to configure with
@@ -384,7 +382,8 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
      */
     @Override
     public final NutsQuestion<T> configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, "question");
+        checkSession();
+        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, args, "question");
     }
 
     /**
@@ -397,7 +396,8 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
      */
     @Override
     public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
+        checkSession();
+        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
     }
 
     @Override
@@ -409,7 +409,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         switch (a.getStringKey()) {
             case "trace-confirmation": {
                 boolean val = cmd.nextBoolean().getBooleanValue();
-                if(a.isEnabled()) {
+                if (a.isEnabled()) {
                     this.traceConfirmation = val;
                 }
                 break;
@@ -441,12 +441,12 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
     @Override
     public NutsQuestion<T> setCancelMessage(String message, Object... params) {
-        if(message==null){
-            this.cancelMessage=null;
-            this.cancelMessageParameters=null;
-        }else{
-            this.cancelMessage=message;
-            this.cancelMessageParameters=params==null?new Object[0] : params;
+        if (message == null) {
+            this.cancelMessage = null;
+            this.cancelMessageParameters = null;
+        } else {
+            this.cancelMessage = message;
+            this.cancelMessageParameters = params == null ? new Object[0] : params;
         }
         return this;
     }

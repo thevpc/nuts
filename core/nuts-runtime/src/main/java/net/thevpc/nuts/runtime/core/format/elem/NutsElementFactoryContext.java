@@ -25,6 +25,7 @@ package net.thevpc.nuts.runtime.core.format.elem;
 
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.function.Predicate;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElementFormat;
 import net.thevpc.nuts.NutsSession;
@@ -38,6 +39,8 @@ public interface NutsElementFactoryContext {
 
     NutsSession getSession();
 
+    Predicate<Type> getDestructTypeFilter();
+
     NutsWorkspace getWorkspace();
 
     NutsElementFormat element();
@@ -46,7 +49,11 @@ public interface NutsElementFactoryContext {
 
     NutsElement defaultObjectToElement(Object o, Type expectedType);
 
+    Object defaultDestruct(Object o, Type expectedType);
+
     NutsElement objectToElement(Object o, Type expectedType);
+
+    Object destruct(Object o, Type expectedType);
 
     <T> T elementToObject(NutsElement o, Class<T> type);
 

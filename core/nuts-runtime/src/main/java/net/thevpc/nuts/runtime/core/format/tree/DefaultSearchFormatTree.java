@@ -6,14 +6,15 @@
 package net.thevpc.nuts.runtime.core.format.tree;
 
 import java.io.PrintStream;
+import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.NutsIdFormatHelper;
 import net.thevpc.nuts.runtime.core.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
+import sun.java2d.pipe.SpanShapeRenderer.Simple;
 
 /**
  * @author thevpc
@@ -21,6 +22,20 @@ import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
 
     private Object lastObject;
+    NutsTreeNodeFormat nutsTreeNodeFormat = new NutsTreeNodeFormat() {
+        @Override
+        public NutsString format(Object o, int depth, NutsSession session) {
+            NutsIdFormatHelper fid = NutsIdFormatHelper.of(o, getSession());
+            if (fid != null) {
+                return fid.getSingleColumnRow(getDisplayOptions());
+            } else {
+                if (o instanceof XNode) {
+                    return ((XNode) o).toNutsString();
+                }
+                return getSession().getWorkspace().formats().text().builder().append(o).immutable();
+            }
+        }
+    };
 
     public DefaultSearchFormatTree(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsContentType.TREE, options);
@@ -55,81 +70,69 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
     }
 
     public void formatElement(Object object, long index, boolean last) {
-        NutsTreeFormat tree = getWorkspace().formats().tree();
+        NutsTreeFormat tree = getWorkspace().formats().tree().setSession(getSession());
         List<String> options = new ArrayList<>();
         options.add("--omit-root");
         if (!last) {
             options.add("--infinite");
         }
+        
         tree.configure(false, options.toArray(new String[0]));
-        tree.setNodeFormat(new NutsTreeNodeFormat() {
-            @Override
-            public NutsString format(Object o, int depth) {
-                NutsIdFormatHelper fid = NutsIdFormatHelper.of(o, getSession());
-                if (fid != null) {
-                    return format(fid);
-                } else {
-                    return getWorkspace().formats().text().builder().append(o).immutable();
-                }
-            }
-
-            public NutsString format(NutsIdFormatHelper id) {
-                return id.getSingleColumnRow(getDisplayOptions());
-            }
-        });
-        tree.setValue(new SearchResultTreeModel(object));
+        tree.setNodeFormat(nutsTreeNodeFormat);
+        //the object must be second level (not root)
+        tree.setValue(new AbstractMap.SimpleEntry<Object, Object>("ROOT",object));
         tree.println(getWriter());
         getWriter().flush();
     }
 
-    private static class SearchResultTreeModel implements NutsTreeModel {
-
-        private final Object object;
-
-        public SearchResultTreeModel(Object object) {
-            this.object = object;
-        }
-
-        @Override
-        public Object getRoot() {
-            return null;
-        }
-
-        @Override
-        public List getChildren(Object o) {
-            if (o == null) {
-                return Arrays.asList(object);
-            } else if (o instanceof NutsDefinition) {
-                NutsDefinition d = (NutsDefinition) o;
-                NutsDependencyTreeNode[] z = null;
-                try {
-                    z = d.getDependencies().nodes().toArray(new NutsDependencyTreeNode[0]);
-                } catch (NutsElementNotFoundException ex) {
-                    //this exception will be raised if dependencyNodes(...) was not called.
-                    //so we will ignore dependencies.
-                }
-                if (z != null) {
-                    return Arrays.asList(z);
-                }
-                NutsDependencies dz = null;
-                try {
-                    dz = d.getDependencies();
-                } catch (NutsElementNotFoundException ex) {
-                    //this exception will be raised if dependencies(...) was not called.
-                    //so we will ignore dependencies.
-                }
-                if (dz != null) {
-                    return dz.all();
-                }
-                return null;
-            } else if (o instanceof NutsDependencyTreeNode) {
-                NutsDependencyTreeNode[] z = ((NutsDependencyTreeNode) o).getChildren();
-                if (z == null) {
-                    return null;
-                }
-                return Arrays.asList(z);
-            }
-            return null;
-        }
-    }
+//    private static class SearchResultTreeModel implements NutsTreeModel {
+//
+//        private final Object object;
+//
+//        public SearchResultTreeModel(Object object) {
+//            this.object = object;
+//        }
+//
+//        @Override
+//        public Object getRoot() {
+//            return null;
+//        }
+//
+//        @Override
+//        public List getChildren(Object o) {
+//            if (o == null) {
+//                return Arrays.asList(object);
+//            } else if (o instanceof NutsDefinition) {
+//                NutsDefinition d = (NutsDefinition) o;
+//                NutsDependencyTreeNode[] z = null;
+//                try {
+//                    z = d.getDependencies().nodes().toArray(new NutsDependencyTreeNode[0]);
+//                } catch (NutsElementNotFoundException ex) {
+//                    //this exception will be raised if dependencyNodes(...) was not called.
+//                    //so we will ignore dependencies.
+//                }
+//                if (z != null) {
+//                    return Arrays.asList(z);
+//                }
+//                NutsDependencies dz = null;
+//                try {
+//                    dz = d.getDependencies();
+//                } catch (NutsElementNotFoundException ex) {
+//                    //this exception will be raised if dependencies(...) was not called.
+//                    //so we will ignore dependencies.
+//                }
+//                if (dz != null) {
+//                    return dz.immediate();
+//                }
+//                return null;
+//            } else if (o instanceof NutsDependencyTreeNode) {
+//                NutsDependencyTreeNode[] z = ((NutsDependencyTreeNode) o).getChildren();
+//                if (z == null) {
+//                    return null;
+//                }
+//                return Arrays.asList(z);
+//            }
+//            return null;
+//        }
+//    }
 }

@@ -618,7 +618,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             allURLs[i] = nutsDefinitions.get(i).getURL();
             allIds[i] = nutsDefinitions.get(i).getId();
         }
-        DefaultNutsClassLoader cl = ((DefaultNutsWorkspaceExtensionManager) getSession().getWorkspace().extensions()).getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID().toString(), parent);
+        DefaultNutsClassLoader cl = ((DefaultNutsWorkspaceExtensionManager) getSession().getWorkspace().extensions())
+                .getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID().toString(), parent, getSession());
         for (NutsDefinition def : nutsDefinitions) {
             cl.add(NutsClassLoaderNodeUtils.definitionToClassLoaderNode(def, getSession()));
         }
@@ -935,132 +936,183 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 + '}';
     }
 
+    private Object dependenciesToElement(NutsDependencyTreeNode d) {
+        NutsId id
+                = //                getSearchSession().getWorkspace().formats().text().parse(d.getDependency().formatter().setSession(getSearchSession()).setNtf(false).format())
+                d.getDependency().toId();
+        if (d.isPartial()) {
+            id = id.builder().setProperty("partial", "true").build();
+        }
+        List<Object> li = Arrays.asList(d.getChildren()).stream().map(x -> dependenciesToElement(x)).collect(Collectors.toList());
+        if (li.isEmpty()) {
+            return id;
+        }
+        Map<Object, Object> o = new HashMap<>();
+        o.put(id, li);
+        return o;
+    }
+
     @Override
     public NutsSearchCommand run() {
+        checkSession();
         NutsDisplayProperty[] a = getDisplayOptions().getDisplayProperties();
         NutsResultList r = null;
-        if (a.length == 0) {
-            r = getResultIds();
-        } else if (a.length == 1) {
-            //optimized case
-            switch (a[0]) {
-                case ARCH: {
-                    r = getResultArchs();
+        if (isDependencies() && !isInlineDependencies()) {
+            List<NutsDependencyTreeNode> treeNodes = getResultDefinitionsBase(false, isSorted(), isContent(), isEffective()).stream()
+                    .flatMap(x -> x.getDependencies().nodes().stream()).collect(Collectors.toList());
+            List<Object> simpleObjects = treeNodes.stream()
+                    .map(x -> dependenciesToElement(x)).collect(Collectors.toList());
+
+            Iterator<Object> it = simpleObjects.iterator();
+            NutsContentType of = getSearchSession().getOutputFormat();
+            if (of == null) {
+                of = NutsContentType.TREE;
+            }
+            switch (of) {
+                case JSON:
+                case TSON:
+                case XML:
+                case YAML:
+                case TREE: {
+                    it = NutsWorkspaceUtils.of(getSearchSession()).decoratePrint(it, getSearchSession(), getDisplayOptions());
+                    while (it.hasNext()) {
+                        it.next();
+                    }
                     break;
                 }
-                case FILE: {
-                    r = getResultPaths();
-                    break;
-                }
-                case FILE_NAME: {
-                    r = getResultPathNames();
-                    break;
-                }
-                case NAME: {
-                    r = getResultNames();
-                    break;
-                }
-                case PACKAGING: {
-                    r = getResultPackagings();
-                    break;
-                }
-                case PLATFORM: {
-                    r = getResultPlatforms();
-                    break;
-                }
-                case EXEC_ENTRY: {
-                    r = getResultExecutionEntries();
-                    break;
-                }
-                case OS: {
-                    r = getResultOses();
-                    break;
-                }
-                case OSDIST: {
-                    r = getResultOsdists();
-                    break;
-                }
-                case ID: {
-                    r = getResultIds();
-                    break;
-                }
-                case INSTALL_DATE: {
-                    r = getResultInstallDates();
-                    break;
-                }
-                case INSTALL_USER: {
-                    r = getResultInstallUsers();
-                    break;
-                }
-                case INSTALL_FOLDER: {
-                    r = getResultInstallFolders();
-                    break;
-                }
-                case APPS_FOLDER: {
-                    r = getResultStoreLocations(NutsStoreLocation.APPS);
-                    break;
-                }
-                case CACHE_FOLDER: {
-                    r = getResultStoreLocations(NutsStoreLocation.CACHE);
-                    break;
-                }
-                case CONFIG_FOLDER: {
-                    r = getResultStoreLocations(NutsStoreLocation.CONFIG);
-                    break;
-                }
-                case LIB_FOLDER: {
-                    r = getResultStoreLocations(NutsStoreLocation.LIB);
-                    break;
-                }
-                case LOG_FOLDER: {
-                    r = getResultStoreLocations(NutsStoreLocation.LOG);
-                    break;
-                }
-                case TEMP_FOLDER: {
-                    r = getResultStoreLocations(NutsStoreLocation.TEMP);
-                    break;
-                }
-                case VAR_LOCATION: {
-                    r = getResultStoreLocations(NutsStoreLocation.VAR);
-                    break;
-                }
-                case STATUS: {
-                    r = getResultStatuses();
+                default: {
+                    it = NutsWorkspaceUtils.of(getSearchSession()).decoratePrint(it, getSearchSession(), getDisplayOptions());
+                    while (it.hasNext()) {
+                        it.next();
+                    }
                     break;
                 }
             }
-        }
-        if (r == null) {
-            //this is custom case
-            boolean _content = isContent();
-            boolean _effective = isEffective();
-            for (NutsDisplayProperty display : getDisplayOptions().getDisplayProperties()) {
-                switch (display) {
-                    case NAME:
-                    case ARCH:
-                    case PACKAGING:
-                    case PLATFORM:
-                    case OS:
-                    case OSDIST: {
+            return this;
+        } else {
+            if (a.length == 0) {
+                r = getResultIds();
+            } else if (a.length == 1) {
+                //optimized case
+                switch (a[0]) {
+                    case ARCH: {
+                        r = getResultArchs();
                         break;
                     }
-                    case FILE:
-                    case FILE_NAME:
+                    case FILE: {
+                        r = getResultPaths();
+                        break;
+                    }
+                    case FILE_NAME: {
+                        r = getResultPathNames();
+                        break;
+                    }
+                    case NAME: {
+                        r = getResultNames();
+                        break;
+                    }
+                    case PACKAGING: {
+                        r = getResultPackagings();
+                        break;
+                    }
+                    case PLATFORM: {
+                        r = getResultPlatforms();
+                        break;
+                    }
                     case EXEC_ENTRY: {
-//                        _content = true;
+                        r = getResultExecutionEntries();
                         break;
                     }
-                    case INSTALL_DATE:
+                    case OS: {
+                        r = getResultOses();
+                        break;
+                    }
+                    case OSDIST: {
+                        r = getResultOsdists();
+                        break;
+                    }
+                    case ID: {
+                        r = getResultIds();
+                        break;
+                    }
+                    case INSTALL_DATE: {
+                        r = getResultInstallDates();
+                        break;
+                    }
                     case INSTALL_USER: {
+                        r = getResultInstallUsers();
+                        break;
+                    }
+                    case INSTALL_FOLDER: {
+                        r = getResultInstallFolders();
+                        break;
+                    }
+                    case APPS_FOLDER: {
+                        r = getResultStoreLocations(NutsStoreLocation.APPS);
+                        break;
+                    }
+                    case CACHE_FOLDER: {
+                        r = getResultStoreLocations(NutsStoreLocation.CACHE);
+                        break;
+                    }
+                    case CONFIG_FOLDER: {
+                        r = getResultStoreLocations(NutsStoreLocation.CONFIG);
+                        break;
+                    }
+                    case LIB_FOLDER: {
+                        r = getResultStoreLocations(NutsStoreLocation.LIB);
+                        break;
+                    }
+                    case LOG_FOLDER: {
+                        r = getResultStoreLocations(NutsStoreLocation.LOG);
+                        break;
+                    }
+                    case TEMP_FOLDER: {
+                        r = getResultStoreLocations(NutsStoreLocation.TEMP);
+                        break;
+                    }
+                    case VAR_LOCATION: {
+                        r = getResultStoreLocations(NutsStoreLocation.VAR);
                         break;
                     }
                     case STATUS: {
-//                        _content = true;
+                        r = getResultStatuses();
                         break;
                     }
                 }
             }
-            r = getResultDefinitionsBase(isPrintResult(), isSorted(), _content, _effective);
+            if (r == null) {
+                //this is custom case
+                boolean _content = isContent();
+                boolean _effective = isEffective();
+                for (NutsDisplayProperty display : getDisplayOptions().getDisplayProperties()) {
+                    switch (display) {
+                        case NAME:
+                        case ARCH:
+                        case PACKAGING:
+                        case PLATFORM:
+                        case OS:
+                        case OSDIST: {
+                            break;
+                        }
+                        case FILE:
+                        case FILE_NAME:
+                        case EXEC_ENTRY: {
+//                        _content = true;
+                            break;
+                        }
+                        case INSTALL_DATE:
+                        case INSTALL_USER: {
+                            break;
+                        }
+                        case STATUS: {
+//                        _content = true;
+                            break;
+                        }
+                    }
+                }
+                r = getResultDefinitionsBase(isPrintResult(), isSorted(), _content, _effective);
+            }
         }
         for (Object any : r) {
             //just iterator over
@@ -1322,7 +1374,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                         if (content) {
                             d = fetch.setId(next).getResultDefinition();
                         } else {
-                            //load descriptor
+                            //load descriptor TODO
                             if (hasRemote) {
                                 fetch.setId(next).getResultDescriptor();
                             }

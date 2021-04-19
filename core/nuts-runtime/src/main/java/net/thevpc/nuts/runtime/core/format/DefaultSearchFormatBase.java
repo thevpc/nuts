@@ -70,7 +70,7 @@ public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
      */
     @Override
     public boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, session.getWorkspace(), skipUnsupported, commandLine);
+        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
     }
 
     /**
@@ -83,7 +83,7 @@ public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
      */
     @Override
     public NutsIterableFormat configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, session.getWorkspace(), skipUnsupported, args, "search-" + getOutputFormat().id());
+        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, args, "search-" + getOutputFormat().id());
     }
 
     public NutsWorkspace getWorkspace() {

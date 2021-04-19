@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeResourceParserHelper;
 
 import java.io.*;
+import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodePlain;
 
 public abstract class AbstractNutsTextNodeParser implements NutsTextNodeParser {
     protected int bufferSize=4096;
@@ -52,14 +53,14 @@ public abstract class AbstractNutsTextNodeParser implements NutsTextNodeParser {
     public NutsTextNode parse(InputStream in) {
         NutsTextNodeCollector doc = new NutsTextNodeCollector(session.getWorkspace());
         parse(in, doc);
-        return doc.getRootOrNull();
+        return doc.getRootOrEmpty();
     }
 
     @Override
     public NutsTextNode parse(Reader in) {
         NutsTextNodeCollector doc = new NutsTextNodeCollector(session.getWorkspace());
         parse(in, doc);
-        return doc.getRootOrNull();
+        return doc.getRootOrEmpty();
     }
 
     @Override

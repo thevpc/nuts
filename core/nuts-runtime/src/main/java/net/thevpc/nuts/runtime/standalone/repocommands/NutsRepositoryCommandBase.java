@@ -26,10 +26,10 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
         this.commandName = commandName;
     }
 
-    protected void checkSession(){
+    protected void checkSession() {
         NutsWorkspaceUtils.checkSession(repo.getWorkspace(), getSession());
     }
-    
+
     public String getCommandName() {
         return commandName;
     }
@@ -57,7 +57,6 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
 
     }
 
-
     public NutsFetchMode getFetchMode() {
         return fetchMode;
     }
@@ -68,14 +67,14 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
         return (T) this;
     }
 
-
     protected NutsRepository getRepo() {
         return repo;
     }
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...)
+     * }
      * to help return a more specific return type;
      *
      * @param args argument to configure with
@@ -83,20 +82,22 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
      */
     @Override
     public T configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, getRepo().getWorkspace(), skipUnsupported, args, getCommandName());
+        checkSession();
+        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, args, getCommandName());
     }
 
     /**
      * configure the current command with the given arguments.
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     *                        silently
-     * @param commandLine     arguments to configure with
+     * silently
+     * @param commandLine arguments to configure with
      * @return {@code this} instance
      */
     @Override
     public boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, getRepo().getWorkspace(), skipUnsupported, commandLine);
+        checkSession();
+        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
     }
 
     @Override

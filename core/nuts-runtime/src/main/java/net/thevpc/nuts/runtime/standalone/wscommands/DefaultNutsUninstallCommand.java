@@ -71,6 +71,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                         .setArguments(getArgs())
                         .setExecSession(session)
                         .setTraceSession(session)
+                        .setWorkspace(session.getWorkspace())
                         .setFailFast(true)
                         .setTemporary(false)
                         .setExecutionType(ws.config().options().getExecutionType())

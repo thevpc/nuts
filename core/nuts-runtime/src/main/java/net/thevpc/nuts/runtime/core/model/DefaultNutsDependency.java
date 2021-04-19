@@ -255,7 +255,7 @@ public class DefaultNutsDependency implements NutsDependency {
     }
 
     @Override
-    public NutsFormat formatter() {
+    public NutsDependencyFormat formatter() {
         return session.getWorkspace().dependency().formatter().setValue(this);
     }
 }

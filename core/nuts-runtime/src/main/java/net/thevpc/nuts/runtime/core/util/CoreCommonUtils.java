@@ -3,27 +3,25 @@
  *            Nuts : Network Updatable Things Service
  *                  (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  *
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.*;
@@ -39,29 +37,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 public class CoreCommonUtils {
-
-
-    
-
-    
 
     public static NutsString stringValueFormatted(Object o, boolean escapeString, NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
         NutsFormatManager txt = ws.formats();
         if (o == null) {
-            return txt.text().plain("");
+            return txt.text().blank();
+        }
+        if (o instanceof NutsFormattable) {
+            return txt.text().nodeFor(o);
         }
         if (o instanceof NutsPrimitiveElement) {
             o = ((NutsPrimitiveElement) o).getValue();
         } else if (o instanceof NutsArrayElement) {
             o = ((NutsArrayElement) o).children();
         } else if (o instanceof NutsObjectElement) {
-            Collection<NutsElementEntry> c= ((NutsObjectElement) o).children();
+            Collection<NutsElementEntry> c = ((NutsObjectElement) o).children();
             Object[] a = c.toArray();
             if (a.length == 0) {
-                return txt.text().plain("");
+                return txt.text().blank();
             }
             if (a.length == 1) {
                 return txt.text().plain(stringValue(a[0]));
@@ -72,9 +67,8 @@ public class CoreCommonUtils {
                             txt.text().plain(", "),
                             c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())
                     )
-                    .append("}")
-            ;
-            
+                    .append("}");
+
         } else if (o instanceof NutsElementEntry) {
             NutsElementEntry ne = (NutsElementEntry) o;
             NutsTextNodeBuilder sb = ws.formats().text().builder();
@@ -83,8 +77,10 @@ public class CoreCommonUtils {
             if (ne.getValue().type() == NutsElementType.STRING) {
                 sb.append(
                         txt.text().nodeFor(
-                        CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session).toString())
+                                CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session).toString())
                         ));
+//            } else if (ne.getValue().type() == NutsElementType.NUTS_STRING) {
+//                sb.append(ne.getValue().asNutsString());
             } else {
                 sb.append(stringValueFormatted(ne.getValue(), escapeString, session));
             }
@@ -94,12 +90,15 @@ public class CoreCommonUtils {
             NutsTextNodeBuilder sb = ws.formats().text().builder();
             sb.append(stringValueFormatted(ne.getKey(), escapeString, session));
             sb.append("=");
-            if (ne.getValue() instanceof String || (ne.getValue() instanceof NutsPrimitiveElement && ((NutsPrimitiveElement) ne.getValue()).type() == NutsElementType.STRING)) {
+            if (ne.getValue() instanceof String
+                    || (ne.getValue() instanceof NutsElement && ((NutsElement) ne.getValue()).isString())) {
                 sb.append(
                         txt.text().nodeFor(
-                        CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session).toString())
+                                CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session).toString())
                         )
                 );
+//            } else if (ne.getValue() instanceof NutsElement && ((NutsElement) ne.getValue()).isNutsString()) {
+//                sb.append(((NutsElement) ne.getValue()).asNutsString());
             } else {
                 sb.append(stringValueFormatted(ne.getValue(), escapeString, session));
             }
@@ -131,14 +130,11 @@ public class CoreCommonUtils {
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Date) o).toInstant())
             );
         }
-        if (o instanceof NutsFormattable) {
-            return txt.text().nodeFor(o);
-        }
         if (o instanceof Collection) {
             Collection c = ((Collection) o);
             Object[] a = c.toArray();
             if (a.length == 0) {
-                return txt.text().plain("");
+                return txt.text().blank();
             }
             if (a.length == 1) {
                 return txt.text().plain(stringValue(a[0]));
@@ -150,8 +146,7 @@ public class CoreCommonUtils {
                             txt.text().plain(", "),
                             ll
                     )
-                    .append("]")
-                    ;
+                    .append("]");
         }
         if (o instanceof Map) {
             Map c = ((Map) o);
@@ -169,8 +164,7 @@ public class CoreCommonUtils {
                             txt.text().plain(", "),
                             ll
                     )
-                    .append("}")
-                    ;
+                    .append("}");
         }
         if (o.getClass().isArray()) {
             int len = Array.getLength(o);
@@ -190,8 +184,7 @@ public class CoreCommonUtils {
                             txt.text().plain(", "),
                             all
                     )
-                    .append("]")
-                    ;
+                    .append("]");
 
         }
 //        if (o instanceof Iterable) {

@@ -53,9 +53,9 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 
     public NutsHttpSrvRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         super(options, session, parentRepository, SPEED_SLOW, false, "nuts:api");
-        LOG=workspace.log().of(NutsHttpSrvRepository.class);
+        LOG=session.getWorkspace().log().of(NutsHttpSrvRepository.class);
         try {
-            remoteId = workspace.id().parser().setLenient(false).parse((options.getLocation() + "/version"));
+            remoteId = session.getWorkspace().id().parser().setLenient(false).parse((options.getLocation() + "/version"));
         } catch (Exception ex) {
             LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.FAIL).log( "unable to initialize Repository NutsId for repository {0}", options.getLocation());
         }
@@ -68,7 +68,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     public NutsId getRemoteId(NutsSession session) {
         if (remoteId == null) {
             try {
-                remoteId = workspace.id().parser().setLenient(false).parse( httpGetString(getUrl("/version"),session));
+                remoteId = session.getWorkspace().id().parser().setLenient(false).parse( httpGetString(getUrl("/version"),session));
             } catch (Exception ex) {
                 LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.FAIL).log("unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
             }

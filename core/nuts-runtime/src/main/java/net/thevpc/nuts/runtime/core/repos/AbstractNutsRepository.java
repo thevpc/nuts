@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.core.repos;
 
 import net.thevpc.nuts.*;
@@ -34,6 +32,7 @@ import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.nio.file.Paths;
 import java.util.*;
+import net.thevpc.nuts.runtime.core.util.CachedValue;
 import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepoConfigManager;
 import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepositoryEnvModel;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsRepositorySecurityManager;
@@ -56,11 +55,29 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     protected boolean enabled = true;
     protected DefaultNutsRepositoryEnvModel envModel;
     protected NutsSession initSession;
+    protected CachedValue<Boolean> available = new CachedValue<>(() -> isAvailableImpl(), 30);
 
     public AbstractNutsRepository() {
         userProperties = new DefaultObservableMap<>();
-        envModel=new DefaultNutsRepositoryEnvModel(this);
-        securityModel=new DefaultNutsRepositorySecurityModel(this);
+        envModel = new DefaultNutsRepositoryEnvModel(this);
+        securityModel = new DefaultNutsRepositorySecurityModel(this);
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return isAvailable(false);
+    }
+
+    @Override
+    public boolean isAvailable(boolean force) {
+        if (force) {
+            return available.update();
+        }
+        return available.getValue();
+    }
+
+    protected boolean isAvailableImpl() {
+        return true;
     }
 
     @Override

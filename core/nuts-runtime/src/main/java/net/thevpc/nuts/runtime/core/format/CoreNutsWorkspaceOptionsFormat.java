@@ -194,7 +194,6 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
             fillOption("--progress", "-P", options.getProgressOptions(), arguments, false);
             fillOption("--skip-companions", "-k", options.isSkipCompanions(), false, arguments, false);
             fillOption("--skip-welcome", "-K", options.isSkipWelcome(), false, arguments, false);
-            fillOption("--out-line-prefix", null, options.isSkipWelcome(), false, arguments, false);
             fillOption("--skip-boot", "-Q", options.isSkipBoot(), false, arguments, false);
             fillOption("--cached", null, options.isCached(), true, arguments, false);
             fillOption("--indexed", null, options.isIndexed(), true, arguments, false);
@@ -214,14 +213,16 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                 fillOption("--expire", "-N",
                         options.getExpireTime() == null ? null : options.getExpireTime().toString(),
                         arguments, false);
-                if (options.getOutLinePrefix() != null && Objects.equals(options.getOutLinePrefix(), options.getErrLinePrefix())) {
+                if (options.getOutLinePrefix() != null
+                        && Objects.equals(options.getOutLinePrefix(), options.getErrLinePrefix())
+                        && options.getOutLinePrefix().length() > 0) {
                     fillOption("--line-prefix", null, options.getOutLinePrefix(), arguments, false);
                 } else {
-                    if (options.getOutLinePrefix() != null) {
+                    if (options.getOutLinePrefix() != null && options.getOutLinePrefix().length() > 0) {
                         fillOption("--out-line-prefix", null, options.getOutLinePrefix(), arguments, false);
                     }
-                    if (options.getErrLinePrefix() != null) {
-                        fillOption("--err-line-prefix", null, options.getOutLinePrefix(), arguments, false);
+                    if (options.getErrLinePrefix() != null && options.getErrLinePrefix().length() > 0) {
+                        fillOption("--err-line-prefix", null, options.getErrLinePrefix(), arguments, false);
                     }
                 }
             }

@@ -28,8 +28,8 @@ package net.thevpc.nuts.runtime.standalone.util;
 import java.util.Arrays;
 
 import net.thevpc.nuts.NutsCommandLineConfigurable;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsSession;
 
 /**
  *
@@ -43,19 +43,19 @@ public class NutsConfigurableHelper {
      * to help return a more specific return type;
      *
      * @param c argument configurable
-     * @param ws workspace
+     * @param session workspace
      * @param skipUnsupported skipUnsupported
      * @param args argument to configure with
      * @param commandName commandName
      * @param <T> {@code this} Type
      * @return {@code this} instance
      */
-    public static <T> T configure(NutsCommandLineConfigurable c, NutsWorkspace ws, boolean skipUnsupported, String[] args, String commandName) {
-        c.configure(skipUnsupported, ws.commandLine().create(args).setCommandName(commandName));
+    public static <T> T configure(NutsCommandLineConfigurable c, NutsSession session, boolean skipUnsupported, String[] args, String commandName) {
+        c.configure(skipUnsupported, session.getWorkspace().commandLine().create(args).setCommandName(commandName));
         return (T) c;
     }
 
-    public static boolean configure(NutsCommandLineConfigurable c, NutsWorkspace ws, boolean skipUnsupported, NutsCommandLine commandLine) {
+    public static boolean configure(NutsCommandLineConfigurable c, NutsSession session, boolean skipUnsupported, NutsCommandLine commandLine) {
         boolean conf = false;
         int maxLoops = 1000;
         boolean robustMode = false;

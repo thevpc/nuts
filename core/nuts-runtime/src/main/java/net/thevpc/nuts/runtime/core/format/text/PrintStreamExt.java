@@ -9,7 +9,7 @@ import java.util.Locale;
 public class PrintStreamExt extends PrintStream implements ExtendedFormatAware, NutsSessionAware {
     private OutputStream out;
     private boolean autoFlash2;
-    private NutsWorkspace ws;
+//    private NutsWorkspace ws;
     private NutsSession session;
 
     public PrintStreamExt(OutputStream out) {
@@ -82,7 +82,7 @@ public class PrintStreamExt extends PrintStream implements ExtendedFormatAware, 
     @Override
     public void setSession(NutsSession session) {
         this.session=session;
-        this.ws=session==null?null:session.getWorkspace();
+//        this.ws=session==null?null:session.getWorkspace();
     }
 
     @Override

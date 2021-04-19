@@ -72,7 +72,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 
     public NutsHttpFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         super(options, session, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
-        LOG = workspace.log().of(NutsHttpFolderRepository.class);
+        LOG = session.getWorkspace().log().of(NutsHttpFolderRepository.class);
     }
 
     private boolean isDescFile0(String pathname) {

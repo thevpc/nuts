@@ -45,6 +45,7 @@ public class NutsFormatUtils {
             case INTEGER:
             case FLOAT:
             case STRING:
+//            case NUTS_STRING:
             case NULL:
             {
                 dest.put(prefix, stringValue(value.asPrimitive().getValue()));

@@ -3,35 +3,36 @@
  *            Nuts : Network Updatable Things Service
  *                  (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  *
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts;
-
 
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.util.Date;
+import java.util.function.Predicate;
 
 /**
  * Class responsible of manipulating {@link NutsElement} type. It help parsing
@@ -45,14 +46,16 @@ public interface NutsElementFormat extends NutsObjectFormat {
 
     /**
      * return parse content type
+     *
      * @return content type
      * @since 0.8.1
      */
     NutsContentType getContentType();
 
     /**
-     * set the parse content type. defaults to JSON.
-     * Non structured content types are not allowed.
+     * set the parse content type. defaults to JSON. Non structured content
+     * types are not allowed.
+     *
      * @param contentType contentType
      * @return {@code this} instance
      * @since 0.8.1
@@ -89,15 +92,12 @@ public interface NutsElementFormat extends NutsObjectFormat {
 
     /**
      * compile pathExpression into a valid NutsElementPath that helps filtering
-     * elements tree.
-     * JSONPath expressions refer to a JSON structure the same way as XPath expression are used with XML documents. 
-     * JSONPath expressions can use the dot notation and/or bracket  notations
-     *  .store.book[0].title
-     *  The trailing root is not necessary : 
-     *  .store.book[0].title
-     *  You can also use  bracket notation
-     *  store['book'][0].title
-     *  for input paths.
+     * elements tree. JSONPath expressions refer to a JSON structure the same
+     * way as XPath expression are used with XML documents. JSONPath expressions
+     * can use the dot notation and/or bracket notations .store.book[0].title
+     * The trailing root is not necessary : .store.book[0].title You can also
+     * use bracket notation store['book'][0].title for input paths.
+     *
      * @param pathExpression element path expression
      * @return Element Path filter
      */
@@ -118,12 +118,14 @@ public interface NutsElementFormat extends NutsObjectFormat {
 
     /**
      * true is compact json flag is armed
+     *
      * @return true is compact json flag is armed
      */
     boolean isCompact();
 
     /**
      * enable compact json
+     *
      * @param compact true to enable compact mode
      * @return {@code this} instance
      */
@@ -131,6 +133,7 @@ public interface NutsElementFormat extends NutsObjectFormat {
 
     /**
      * parse url as a valid object of the given type
+     *
      * @param url source url
      * @param clazz target type
      * @param <T> target type
@@ -140,6 +143,7 @@ public interface NutsElementFormat extends NutsObjectFormat {
 
     /**
      * parse inputStream as a valid object of the given type
+     *
      * @param inputStream source inputStream
      * @param clazz target type
      * @param <T> target type
@@ -149,6 +153,7 @@ public interface NutsElementFormat extends NutsObjectFormat {
 
     /**
      * parse inputStream as a valid object of the given type
+     *
      * @param string source as json string
      * @param clazz target type
      * @param <T> target type
@@ -158,6 +163,7 @@ public interface NutsElementFormat extends NutsObjectFormat {
 
     /**
      * parse bytes as a valid object of the given type
+     *
      * @param bytes source bytes
      * @param clazz target type
      * @param <T> target type
@@ -167,6 +173,7 @@ public interface NutsElementFormat extends NutsObjectFormat {
 
     /**
      * parse reader as a valid object of the given type
+     *
      * @param reader source reader
      * @param clazz target type
      * @param <T> target type
@@ -176,6 +183,7 @@ public interface NutsElementFormat extends NutsObjectFormat {
 
     /**
      * parse file as a valid object of the given type
+     *
      * @param file source url
      * @param clazz target type
      * @param <T> target type
@@ -185,7 +193,8 @@ public interface NutsElementFormat extends NutsObjectFormat {
 
     /**
      * parse file as a valid object of the given type
-     * @param file source url
+     *
+     * @param file source URL
      * @param clazz target type
      * @param <T> target type
      * @return new instance of the given class
@@ -203,17 +212,32 @@ public interface NutsElementFormat extends NutsObjectFormat {
      */
     <T> T convert(Object any, Class<T> to);
 
+    /**
+     * destruct an object is to convert it to a simple object composed only of :
+     * <ul>
+     * <li>boxed primitives</li>
+     * <li>simple objects like String,Date,Instant and Path</li>
+     * <li>Map</li>
+     * <li>Map.Entry</li>
+     * <li>List</li>
+     * </ul>
+     *
+     * @param any object
+     * @return destructed object
+     */
+    Object destruct(Object any);
+
     NutsElement convertToElement(Object any);
 
-    NutsElementEntryBuilder forEntry();
+//    NutsElementEntryBuilder forEntry();
+    NutsElementEntry forEntry(NutsElement key, NutsElement value);
 
-    /**
-     * create object element builder (mutable)
-     *
-     * @return primitive builder
-     */
-    NutsPrimitiveElementBuilder forPrimitive();
-    
+//    /**
+//     * create object element builder (mutable)
+//     *
+//     * @return primitive builder
+//     */
+//    NutsPrimitiveElementBuilder forPrimitive();
     /**
      * create object element builder (mutable)
      *
@@ -228,4 +252,47 @@ public interface NutsElementFormat extends NutsObjectFormat {
      */
     NutsArrayElementBuilder forArray();
 
+    @Override
+    public NutsElementFormat setNtf(boolean ntf);
+
+    //    public NutsPrimitiveElement forNutsString(NutsString str) {
+    //        return str == null ? DefaultNutsPrimitiveElementBuilder.NULL : new DefaultNutsPrimitiveElement(NutsElementType.NUTS_STRING, str);
+    //    }
+    NutsPrimitiveElement forBoolean(String value);
+
+    NutsPrimitiveElement forBoolean(boolean value);
+
+    NutsPrimitiveElement forString(String str);
+
+    NutsPrimitiveElement forTrue();
+
+    NutsPrimitiveElement forFalse();
+
+    NutsPrimitiveElement forInstant(Instant instant);
+
+    NutsPrimitiveElement forFloat(Float value);
+
+    NutsPrimitiveElement forInt(Integer value);
+
+    NutsPrimitiveElement forLong(Long value);
+
+    NutsPrimitiveElement forNull();
+
+    NutsPrimitiveElement forNumber(String value);
+
+    NutsPrimitiveElement forInstant(Date value);
+
+    NutsPrimitiveElement forInstant(String value);
+
+    NutsPrimitiveElement forByte(Byte value);
+
+    NutsPrimitiveElement forDouble(Double value);
+
+    NutsPrimitiveElement forFloat(Short value);
+
+    NutsPrimitiveElement forNumber(Number value);
+
+    Predicate<Type> getDestructTypeFilter();
+
+    NutsElementFormat setDestructTypeFilter(Predicate<Type> destructTypeFilter);
 }

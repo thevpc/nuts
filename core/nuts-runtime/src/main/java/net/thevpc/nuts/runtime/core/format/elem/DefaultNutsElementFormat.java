@@ -4,25 +4,35 @@ import net.thevpc.nuts.*;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.util.Date;
+import java.util.function.Predicate;
 
 import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManagerModel;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementFormat> implements NutsElementFormat {
+    public static final NutsPrimitiveElement NULL = new DefaultNutsPrimitiveElement(NutsElementType.NULL, null);
+    public static final NutsPrimitiveElement TRUE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, true);
+    public static final NutsPrimitiveElement FALSE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, false);
 
     private Object value;
     private NutsContentType contentType = NutsContentType.JSON;
     private boolean compact;
-    private final DefaultNutsTextManagerModel helper;
+    private final DefaultNutsTextManagerModel model;
+    private Predicate<Type> destructTypeFilter;
 
-    public DefaultNutsElementFormat(DefaultNutsTextManagerModel helper) {
-        super(helper.getWorkspace(), "element-format");
-        this.helper = helper;
+    public DefaultNutsElementFormat(DefaultNutsTextManagerModel model) {
+        super(model.getWorkspace(), "element-format");
+        this.model = model;
     }
 
     @Override
@@ -132,13 +142,13 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         checkSession();
         switch (contentType) {
             case JSON: {
-                return helper.getJsonMan(getSession());
+                return model.getJsonMan(getSession());
             }
             case YAML: {
-                return helper.getYamlMan(getSession());
+                return model.getYamlMan(getSession());
             }
             case XML: {
-                return helper.getXmlMan(getSession());
+                return model.getXmlMan(getSession());
             }
             case TSON: {
                 throw new IllegalArgumentException("tson not supported yet");
@@ -232,10 +242,10 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     private void print(PrintStream out, NutsElementStreamFormat format) {
         checkSession();
         NutsElement elem = convertToElement(value);
-        if (getWorkspace().term().setSession(getSession()).isFormatted(out)) {
+        if (getSession().getWorkspace().term().setSession(getSession()).isFormatted(out)) {
             ByteArrayPrintStream bos = new ByteArrayPrintStream();
             format.printElement(elem, bos, compact, createFactoryContext());
-            out.print(getWorkspace().formats().text().code(getContentType().id(), bos.toString()));
+            out.print(getSession().getWorkspace().formats().text().code(getContentType().id(), bos.toString()));
         } else {
             format.printElement(elem, out, compact, createFactoryContext());
         }
@@ -252,6 +262,11 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 //        return convert(o, NutsElement.class);
 //    }
     @Override
+    public Object destruct(Object any) {
+        return createFactoryContext().destruct(any, null);
+    }
+
+    @Override
     public NutsElement convertToElement(Object o) {
         return createFactoryContext().objectToElement(o, null);
     }
@@ -260,15 +275,23 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         return createFactoryContext().elementToObject(o, type);
     }
 
-    @Override
-    public NutsElementEntryBuilder forEntry() {
-        return new DefaultNutsElementEntryBuilder(getSession());
-    }
+//    @Override
+//    public NutsElementEntryBuilder forEntry() {
+//        return new DefaultNutsElementEntryBuilder(getSession());
+//    }
 
     @Override
-    public NutsPrimitiveElementBuilder forPrimitive() {
-        return new DefaultNutsPrimitiveElementBuilder(getSession());
+    public NutsElementEntry forEntry(NutsElement key, NutsElement value) {
+        return new DefaultNutsElementEntry(
+                key == null ? forNull() : key,
+                value == null ? forNull() : value
+        );
     }
+
+//    @Override
+//    public NutsPrimitiveElementBuilder forPrimitive() {
+//        return new DefaultNutsPrimitiveElementBuilder(getSession());
+//    }
 
     @Override
     public NutsObjectElementBuilder forObject() {
@@ -281,26 +304,162 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     }
 
     public NutsElementFactoryService getElementFactoryService() {
-        return helper.getElementFactoryService(getSession());
+        return model.getElementFactoryService(getSession());
     }
 
     public NutsPrimitiveElement forString(String str) {
-        return str == null ? DefaultNutsPrimitiveElementBuilder.NULL : new DefaultNutsPrimitiveElement(NutsElementType.STRING, str);
+        return str == null ? NULL : new DefaultNutsPrimitiveElement(NutsElementType.STRING, str);
     }
 
-//    @Override
+//    public NutsPrimitiveElement forNutsString(NutsString str) {
+//        return str == null ? DefaultNutsPrimitiveElementBuilder.NULL : new DefaultNutsPrimitiveElement(NutsElementType.NUTS_STRING, str);
+//    }
+    @Override
     public NutsPrimitiveElement forBoolean(boolean value) {
-        return value ? DefaultNutsPrimitiveElementBuilder.TRUE : DefaultNutsPrimitiveElementBuilder.FALSE;
+        return value ? TRUE : FALSE;
     }
 
-//    @Override
+    @Override
+    public NutsPrimitiveElement forBoolean(String value) {
+        return CoreBooleanUtils.parseBoolean(value, false, false) ? TRUE : FALSE;
+    }
+
+    @Override
     public NutsPrimitiveElement forTrue() {
-        return DefaultNutsPrimitiveElementBuilder.TRUE;
+        return TRUE;
     }
 
-//    @Override
+    @Override
+    public NutsPrimitiveElement forNull() {
+        return NULL;
+    }
+
+    @Override
+    public NutsPrimitiveElement forInstant(Instant instant) {
+        return instant == null ? NULL : new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, instant);
+    }
+
+    @Override
+    public NutsPrimitiveElement forByte(Byte value) {
+        return value == null ? NULL : new DefaultNutsPrimitiveElement(NutsElementType.BYTE, value);
+    }
+
+    @Override
+    public NutsPrimitiveElement forInt(Integer value) {
+        return value == null ? NULL : new DefaultNutsPrimitiveElement(NutsElementType.INTEGER, value);
+    }
+
+    @Override
+    public NutsPrimitiveElement forLong(Long value) {
+        return value == null ? NULL : new DefaultNutsPrimitiveElement(NutsElementType.LONG, value);
+    }
+
+    @Override
+    public NutsPrimitiveElement forDouble(Double value) {
+        return value == null ? NULL : new DefaultNutsPrimitiveElement(NutsElementType.DOUBLE, value);
+    }
+
+    @Override
+    public NutsPrimitiveElement forFloat(Float value) {
+        return value == null ? NULL : new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value);
+    }
+
+    @Override
+    public NutsPrimitiveElement forFloat(Short value) {
+        return value == null ? NULL : new DefaultNutsPrimitiveElement(NutsElementType.SHORT, value);
+    }
+
+    @Override
+    public NutsPrimitiveElement forNumber(Number value) {
+        if (value == null) {
+            return forNull();
+        }
+        switch (value.getClass().getName()) {
+            case "java.lang.Byte":
+                return new DefaultNutsPrimitiveElement(NutsElementType.BYTE, value);
+            case "java.lang.Short":
+                return new DefaultNutsPrimitiveElement(NutsElementType.SHORT, value);
+            case "java.lang.Integer":
+                return new DefaultNutsPrimitiveElement(NutsElementType.INTEGER, value);
+            case "java.lang.Long":
+                return new DefaultNutsPrimitiveElement(NutsElementType.LONG, value);
+            case "java.math.BigInteger":
+                return new DefaultNutsPrimitiveElement(NutsElementType.BIG_INTEGER, value);
+            case "java.lang.float":
+                return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value);
+            case "java.lang.Double":
+                return new DefaultNutsPrimitiveElement(NutsElementType.DOUBLE, value);
+            case "java.math.BigDecimal":
+                return new DefaultNutsPrimitiveElement(NutsElementType.BIG_DECIMAL, value);
+        }
+        // ???
+        return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value);
+    }
+
+    @Override
     public NutsPrimitiveElement forFalse() {
-        return DefaultNutsPrimitiveElementBuilder.FALSE;
+        return FALSE;
     }
 
+    public Predicate<Type> getDestructTypeFilter() {
+        return destructTypeFilter;
+    }
+
+    public NutsElementFormat setDestructTypeFilter(Predicate<Type> destructTypeFilter) {
+        this.destructTypeFilter = destructTypeFilter;
+        return this;
+    }
+
+    @Override
+    public NutsPrimitiveElement forNumber(String value) {
+        checkSession();
+        if (value == null) {
+            return forNull();
+        }
+        if (value.indexOf('.') >= 0) {
+            try {
+                return forNumber(Double.parseDouble(value));
+            } catch (Exception ex) {
+
+            }
+            try {
+                return forNumber(new BigDecimal(value));
+            } catch (Exception ex) {
+
+            }
+        } else {
+            try {
+                return forNumber(Integer.parseInt(value));
+            } catch (Exception ex) {
+
+            }
+            try {
+                return forNumber(Long.parseLong(value));
+            } catch (Exception ex) {
+
+            }
+            try {
+                return forNumber(new BigInteger(value));
+            } catch (Exception ex) {
+
+            }
+        }
+        throw new NutsParseException(getSession(), "unable to parse number " + value);
+    }
+
+    @Override
+    public NutsPrimitiveElement forInstant(Date value) {
+        if (value == null) {
+            return forNull();
+        }
+        return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, value.toInstant());
+    }
+
+    @Override
+    public NutsPrimitiveElement forInstant(String value) {
+        if (value == null) {
+            return forNull();
+        }
+        return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, DefaultNutsPrimitiveElement.parseDate(value));
+    }
 }

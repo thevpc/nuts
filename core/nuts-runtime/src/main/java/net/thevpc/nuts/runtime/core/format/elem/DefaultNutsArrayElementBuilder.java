@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.thevpc.nuts.NutsElementFormat;
-import net.thevpc.nuts.NutsPrimitiveElementBuilder;
+//import net.thevpc.nuts.NutsPrimitiveElementBuilder;
 import net.thevpc.nuts.NutsSession;
 
 /**
@@ -69,7 +69,7 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
     @Override
     public NutsArrayElementBuilder addAll(NutsArrayElement value) {
         if (value == null) {
-            add(_primitive().buildNull());
+            add(_elements().forNull());
         } else {
             for (NutsElement child : value.children()) {
                 add(child);
@@ -89,7 +89,7 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
     @Override
     public NutsArrayElementBuilder addAll(NutsArrayElementBuilder value) {
         if (value == null) {
-            add(_primitive().buildNull());
+            add(_elements().forNull());
         } else {
             for (NutsElement child : value.children()) {
                 add(child);
@@ -211,47 +211,47 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
 
     @Override
     public NutsArrayElementBuilder add(int value) {
-        return add(_primitive().buildInt(value));
+        return add(_elements().forInt(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(long value) {
-        return add(_primitive().buildLong(value));
+        return add(_elements().forLong(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(double value) {
-        return add(_primitive().buildDouble(value));
+        return add(_elements().forDouble(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(float value) {
-        return add(_primitive().buildFloat(value));
+        return add(_elements().forFloat(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(byte value) {
-        return add(_primitive().buildByte(value));
+        return add(_elements().forByte(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(boolean value) {
-        return add(_primitive().buildBoolean(value));
+        return add(_elements().forBoolean(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(char value) {
-        return add(_primitive().buildChar(value));
+        return add(_elements().forString(String.valueOf(value)));
     }
 
     @Override
     public NutsArrayElementBuilder add(Number value) {
-        return add(value == null ? _primitive().buildNull() : _primitive().buildNumber(value));
+        return add(_elements().forNumber(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(String value) {
-        return add(value == null ? _primitive().buildNull() : _primitive().buildString(value));
+        return add(_elements().forString(value));
     }
 
     @Override
@@ -266,7 +266,7 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
 
     private NutsElement denull(NutsElement e) {
         if (e == null) {
-            return _primitive().buildNull();
+            return _elements().forNull();
         }
         return e;
     }
@@ -274,9 +274,9 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
     private NutsElementFormat _elements() {
         return session.getWorkspace().formats().element().setSession(session);
     }
-
-    private NutsPrimitiveElementBuilder _primitive() {
-        return _elements().forPrimitive();
-    }
+//
+//    private NutsPrimitiveElementBuilder _primitive() {
+//        return _elements().forPrimitive();
+//    }
 
 }

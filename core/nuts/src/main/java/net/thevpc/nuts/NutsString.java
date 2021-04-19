@@ -27,7 +27,6 @@
 package net.thevpc.nuts;
 
 import java.io.PrintStream;
-import java.io.StringReader;
 
 /**
  * @category Base

@@ -25,6 +25,8 @@
 */
 package net.thevpc.nuts;
 
+import java.time.Instant;
+
 /**
  * Configurable interface define a extensible way to configure nuts commands
  * and objects using simple argument line options.

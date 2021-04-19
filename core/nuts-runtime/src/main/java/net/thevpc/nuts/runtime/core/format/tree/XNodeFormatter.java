@@ -21,22 +21,24 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.core.format.elem;
+package net.thevpc.nuts.runtime.core.format.tree;
 
-import java.lang.reflect.Type;
-import net.thevpc.nuts.NutsElement;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsString;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 
 /**
  *
- * @author thevpc
- * @since 0.8.1
+ * @author vpc
  */
-public interface NutsElementMapper<T> {
+interface XNodeFormatter {
 
-    Object destruct(T src, Type typeOfSrc, NutsElementFactoryContext context);
+    default NutsString[] getMultilineArray(NutsString key, Object value, NutsSession session) {
+        return null;
+    }
+
+    default NutsString stringValue(Object o, NutsSession session) {
+        return CoreCommonUtils.stringValueFormatted(o, false, session);
+    }
     
-    NutsElement createElement(T src, Type typeOfSrc, NutsElementFactoryContext context);
-
-    T createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context);
-
 }

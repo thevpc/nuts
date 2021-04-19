@@ -163,7 +163,7 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
     public NutsDescriptorFilter byExtension(String targetApiVersion) {
         checkSession();
         return new NutsExecExtensionFilter(getSession(),
-                targetApiVersion == null ? null : ws.id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build()
+                targetApiVersion == null ? null : getSession().getWorkspace().id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build()
         );
     }
 
@@ -171,7 +171,7 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
     public NutsDescriptorFilter byRuntime(String targetApiVersion) {
         checkSession();
         return new NutsExecRuntimeFilter(getSession(),
-                targetApiVersion == null ? null : ws.id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build(),
+                targetApiVersion == null ? null : getSession().getWorkspace().id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build(),
                 false
         );
     }

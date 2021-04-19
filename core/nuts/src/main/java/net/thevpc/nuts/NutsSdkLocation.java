@@ -47,12 +47,12 @@ public class NutsSdkLocation extends NutsConfigItem {
     /**
      * default constructor
      * @param id id
-     * @param product sdk product. In java this is Oracle JDK or OpenJDK.
-     * @param name sdk name
-     * @param path sdk path
-     * @param version sdk version
-     * @param packaging sdk packaging. for Java SDK this is room to set JRE or JDK.
-     * @param priority sdk priority
+     * @param product SDK product. In java this is Oracle JDK or OpenJDK.
+     * @param name SDK name
+     * @param path SDK path
+     * @param version SDK version
+     * @param packaging SDK packaging. for Java SDK this is room to set JRE or JDK.
+     * @param priority SDK priority
      */
     public NutsSdkLocation(NutsId id, String product, String name, String path, String version, String packaging,int priority) {
         this.id = id;
@@ -78,7 +78,7 @@ public class NutsSdkLocation extends NutsConfigItem {
     }
 
     /**
-     * sdk product. In java this is
+     * SDK product. In java this is
      * Oracle JDK or OpenJDK.
      *
      * @return product name
@@ -88,8 +88,8 @@ public class NutsSdkLocation extends NutsConfigItem {
     }
 
     /**
-     * sdk version
-     * @return sdk version
+     * SDK version
+     * @return SDK version
      */
     public String getVersion() {
         return version;

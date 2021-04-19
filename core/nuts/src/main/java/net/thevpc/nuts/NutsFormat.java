@@ -176,4 +176,12 @@ public interface NutsFormat extends NutsCommandLineConfigurable {
      */
     @Override
     NutsFormat configure(boolean skipUnsupported, String... args);
+
+    /**
+     * true when Nuts Text Format is used for formatting (default)
+     * @return true when Nuts Text Format is used for formatting (default)
+     */
+    boolean isNtf() ;
+
+    NutsFormat setNtf(boolean ntf);
 }

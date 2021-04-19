@@ -50,6 +50,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -111,7 +112,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private final NutsElementMapper F_COLLECTION = new NutsElementFactoryCollection();
     private final NutsElementMapper F_MAP = new NutsElementFactoryMap();
 
-    public DefaultNutsElementFactoryService(NutsWorkspace ws,NutsSession session) {
+    public DefaultNutsElementFactoryService(NutsWorkspace ws, NutsSession session) {
         typesRepository = NutsWorkspaceUtils.of(session).getReflectRepository();
         addDefaultFactory(Boolean.class, F_BOOLEANS);
         addDefaultFactory(boolean.class, F_BOOLEANS);
@@ -179,7 +180,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         factories.put(cls, instance);
     }
 
-    public NutsElementMapper getElementFactory(Type type, boolean defaultOnly) {
+    public NutsElementMapper getMapper(Type type, boolean defaultOnly) {
         if (type == null) {
             return F_NULL;
         }
@@ -204,51 +205,78 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         throw new IllegalArgumentException("Unable to find serialization factory for " + type);
     }
 
-    @Override
-    public Object createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
+    protected Object createObject(NutsElement o, Type to, NutsElementFactoryContext context,boolean defaultOnly) {
         if (o == null || o.type() == NutsElementType.NULL) {
             return F_NULL.createObject(o, to, context);
         }
-        NutsElementMapper f = getElementFactory(to, false);
+        NutsElementMapper f = getMapper(to, defaultOnly);
         return f.createObject(o, to, context);
+    }
+
+    @Override
+    public Object createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
+        return createObject(o, to, context,false);
     }
 
     @Override
     public Object defaultCreateObject(NutsElement o, Type to, NutsElementFactoryContext context) {
-        if (o == null || o.type() == NutsElementType.NULL) {
-            return F_NULL.createElement(null, to, context);
-        }
-        NutsElementMapper f = getElementFactory(to, true);
-        return f.createObject(o, to, context);
+        return createObject(o, to, context,true);
     }
 
-    @Override
-    public NutsElement createElement(Object o, Type expectedType, NutsElementFactoryContext context) {
+    protected Object destruct(Object o, Type expectedType, NutsElementFactoryContext context,boolean defaultOnly) {
         if (o == null) {
-            return context.element().forPrimitive().buildNull();
+            return null;
         }
         if (expectedType == null) {
             expectedType = o.getClass();
         }
-        NutsElementMapper ff = getElementFactory(expectedType, false);
-        if (ff == null) {
-            ff = getElementFactory(expectedType, false);
+        if(context.getDestructTypeFilter()!=null){
+            if(!context.getDestructTypeFilter().test(o.getClass())){
+                return o;
+            }
         }
-        return ff.createElement(o, expectedType, context);
+        return getMapper(expectedType, defaultOnly).destruct(o, expectedType, context);
+    }
+    
+    @Override
+    public Object destruct(Object o, Type expectedType, NutsElementFactoryContext context) {
+        return destruct(o, expectedType, context,false);
+    }
+
+    @Override
+    public Object defaultDestruct(Object o, Type expectedType, NutsElementFactoryContext context) {
+        return destruct(o, expectedType, context,true);
+    }
+
+    protected NutsElement createElement(Object o, Type expectedType, NutsElementFactoryContext context,boolean defaultOnly) {
+        if (o == null) {
+            return context.element().forNull();
+        }
+        if (expectedType == null) {
+            expectedType = o.getClass();
+        }
+        return getMapper(expectedType, defaultOnly).createElement(o, expectedType, context);
+    }
+
+    @Override
+    public NutsElement createElement(Object o, Type expectedType, NutsElementFactoryContext context) {
+        return createElement(o, expectedType, context,false);
     }
 
     @Override
     public NutsElement defaultCreateElement(Object o, Type expectedType, NutsElementFactoryContext context) {
-        if (expectedType == null && o != null) {
-            expectedType = o.getClass();
-        }
-        if (o == null) {
-            return context.element().forPrimitive().buildNull();
-        }
-        return getElementFactory(expectedType, true).createElement(o, o.getClass(), context);
+        return createElement(o, expectedType, context,true);
     }
 
     private static class NutsElementFactoryNamedElement implements NutsElementMapper<NutsElementEntry> {
+
+        @Override
+        public Object destruct(NutsElementEntry src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return new AbstractMap.SimpleEntry<Object, Object>(
+                    context.defaultDestruct(src.getKey(), NutsElement.class),
+                    context.defaultDestruct(src.getValue(), NutsElement.class)
+            );
+        }
 
         @Override
         public NutsElement createElement(NutsElementEntry o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -277,6 +305,21 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private class NutsElementFactoryMap implements NutsElementMapper<Map> {
 
         @Override
+        public Object destruct(Map src, Type typeOfSrc, NutsElementFactoryContext context) {
+            Map je = (Map) src;
+            Map<Object, Object> m = new LinkedHashMap<>();
+            if (je != null) {
+                for (Object e0 : je.entrySet()) {
+                    Map.Entry e = (Map.Entry) e0;
+                    Object k = context.defaultDestruct(e.getKey(), null);
+                    Object v = context.defaultDestruct(e.getValue(), null);
+                    m.put(k, v);
+                }
+            }
+            return m;
+        }
+
+        @Override
         public NutsElement createElement(Map o, Type typeOfSrc, NutsElementFactoryContext context) {
             Map je = (Map) o;
             Map<NutsElement, NutsElement> m = new LinkedHashMap<>();
@@ -301,8 +344,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             } else if (o.type() == NutsElementType.ARRAY) {
                 for (NutsElement ee : o.asArray().children()) {
                     NutsObjectElement kv = ee.asObject();
-                    NutsElement k = kv.get(context.element().forPrimitive().buildString("key"));
-                    NutsElement v = kv.get(context.element().forPrimitive().buildString("value"));
+                    NutsElement k = kv.get(context.element().forString("key"));
+                    NutsElement v = kv.get(context.element().forString("value"));
                     all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
                 }
             } else {
@@ -361,23 +404,38 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
 
         @Override
+        public Object destruct(Map.Entry src, Type typeOfSrc, NutsElementFactoryContext context) {
+            Map.Entry je = (Map.Entry) src;
+            return new AbstractMap.SimpleEntry<>(
+                    context.destruct(je.getKey(), null),
+                    context.destruct(je.getValue(), null)
+            );
+        }
+
+        @Override
         public Map.Entry createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
             if (to instanceof ParameterizedType) {
                 Type[] kvt = ((ParameterizedType) to).getActualTypeArguments();
                 return new AbstractMap.SimpleEntry(
-                        context.elementToObject(o.asObject().get(context.element().forPrimitive().buildString("key")), kvt[0]),
-                        context.elementToObject(o.asObject().get(context.element().forPrimitive().buildString("value")), kvt[0])
+                        context.elementToObject(o.asObject().get(context.element().forString("key")), kvt[0]),
+                        context.elementToObject(o.asObject().get(context.element().forString("value")), kvt[0])
                 );
             }
             return new AbstractMap.SimpleEntry(
-                    context.elementToObject(o.asObject().get(context.element().forPrimitive().buildString("key")), Object.class),
-                    context.elementToObject(o.asObject().get(context.element().forPrimitive().buildString("value")), Object.class)
+                    context.elementToObject(o.asObject().get(context.element().forString("key")), Object.class),
+                    context.elementToObject(o.asObject().get(context.element().forString("value")), Object.class)
             );
         }
 
     }
 
     private class NutsElementFactoryCollection implements NutsElementMapper {
+
+        @Override
+        public Object destruct(Object src, Type typeOfSrc, NutsElementFactoryContext context) {
+            Collection<Object> coll = (Collection) src;
+            return coll.stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
+        }
 
         @Override
         public NutsElement createElement(Object o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -446,6 +504,16 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryIterator implements NutsElementMapper<Iterator> {
 
         @Override
+        public Object destruct(Iterator o, Type typeOfSrc, NutsElementFactoryContext context) {
+            Iterator nl = (Iterator) o;
+            List<Object> values = new ArrayList<>();
+            while (nl.hasNext()) {
+                values.add(context.destruct(nl.next(), null));
+            }
+            return values;
+        }
+
+        @Override
         public NutsElement createElement(Iterator o, Type typeOfSrc, NutsElementFactoryContext context) {
             Iterator nl = (Iterator) o;
             List<NutsElement> values = new ArrayList<>();
@@ -466,8 +534,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryInstant implements NutsElementMapper<Instant> {
 
         @Override
+        public Object destruct(Instant src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return src;
+        }
+
+        @Override
         public NutsElement createElement(Instant o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.element().forPrimitive().buildInstant((Instant) o);
+            return context.element().forInstant((Instant) o);
         }
 
         @Override
@@ -493,8 +566,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryUtilDate implements NutsElementMapper<java.util.Date> {
 
         @Override
+        public Object destruct(Date src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return src;
+        }
+
+        @Override
         public NutsElement createElement(java.util.Date o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.element().forPrimitive().buildInstant(o.toInstant());
+            return context.element().forInstant(o.toInstant());
         }
 
         @Override
@@ -507,8 +585,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryNumber implements NutsElementMapper<Number> {
 
         @Override
+        public Object destruct(Number src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return src;
+        }
+
+        @Override
         public NutsElement createElement(Number o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.element().forPrimitive().buildNumber((Number) o);
+            return context.element().forNumber((Number) o);
         }
 
         @Override
@@ -545,8 +628,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryBoolean implements NutsElementMapper<Boolean> {
 
         @Override
+        public Object destruct(Boolean src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return src;
+        }
+
+        @Override
         public NutsElement createElement(Boolean o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.element().forPrimitive().buildBoolean((Boolean) o);
+            return context.element().forBoolean((Boolean) o);
         }
 
         @Override
@@ -564,8 +652,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryEnum implements NutsElementMapper<Enum> {
 
         @Override
+        public Object destruct(Enum src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return src;
+        }
+
+        @Override
         public NutsElement createElement(Enum o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.element().forPrimitive().buildString(String.valueOf(o));
+            return context.element().forString(String.valueOf(o));
         }
 
         @Override
@@ -590,8 +683,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryChar implements NutsElementMapper<Character> {
 
         @Override
+        public Object destruct(Character src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return src;
+        }
+
+        @Override
         public NutsElement createElement(Character o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.element().forPrimitive().buildString(String.valueOf(o));
+            return context.element().forString(String.valueOf(o));
         }
 
         @Override
@@ -606,8 +704,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryString implements NutsElementMapper<String> {
 
         @Override
+        public Object destruct(String src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return src;
+        }
+
+        @Override
         public NutsElement createElement(String o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.element().forPrimitive().buildString(String.valueOf(o));
+            return context.element().forString(String.valueOf(o));
         }
 
         @Override
@@ -619,8 +722,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryNull implements NutsElementMapper<Object> {
 
         @Override
+        public Object destruct(Object src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return null;
+        }
+
+        @Override
         public NutsElement createElement(Object o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.element().forPrimitive().buildNull();
+            return context.element().forNull();
         }
 
         @Override
@@ -656,6 +764,12 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryNutsDefinition implements NutsElementMapper<NutsDefinition> {
 
         @Override
+        public Object destruct(NutsDefinition src, Type typeOfSrc, NutsElementFactoryContext context) {
+            DefaultNutsDefinition dd = (src instanceof DefaultNutsDefinition) ? (DefaultNutsDefinition) src : new DefaultNutsDefinition(src, context.getSession());
+            return context.defaultDestruct(dd, null);
+        }
+
+        @Override
         public NutsElement createElement(NutsDefinition o, Type typeOfSrc, NutsElementFactoryContext context) {
             DefaultNutsDefinition dd = (o instanceof DefaultNutsDefinition) ? (DefaultNutsDefinition) o : new DefaultNutsDefinition(o, context.getSession());
             return context.defaultObjectToElement(dd, null);
@@ -668,6 +782,12 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     }
 
     private static class NutsElementFactoryNutsClassifierMapping implements NutsElementMapper<NutsClassifierMapping> {
+
+        @Override
+        public Object destruct(NutsClassifierMapping src, Type typeOfSrc, NutsElementFactoryContext context) {
+            DefaultNutsClassifierMapping dd = (src instanceof DefaultNutsClassifierMapping) ? (DefaultNutsClassifierMapping) src : new DefaultNutsClassifierMapping(src);
+            return context.defaultDestruct(dd, null);
+        }
 
         @Override
         public NutsElement createElement(NutsClassifierMapping o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -684,6 +804,12 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryNutsArtifactCall implements NutsElementMapper<NutsArtifactCall> {
 
         @Override
+        public Object destruct(NutsArtifactCall o, Type typeOfSrc, NutsElementFactoryContext context) {
+            DefaultNutsArtifactCall dd = (o instanceof DefaultNutsArtifactCall) ? (DefaultNutsArtifactCall) o : new DefaultNutsArtifactCall(o);
+            return context.defaultDestruct(dd, null);
+        }
+
+        @Override
         public NutsElement createElement(NutsArtifactCall o, Type typeOfSrc, NutsElementFactoryContext context) {
             DefaultNutsArtifactCall dd = (o instanceof DefaultNutsArtifactCall) ? (DefaultNutsArtifactCall) o : new DefaultNutsArtifactCall(o);
             return context.defaultObjectToElement(dd, null);
@@ -692,11 +818,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsArtifactCall createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             NutsObjectElement object = o.asObject();
-            NutsId id = (NutsId) context.elementToObject(object.get(context.element().forPrimitive().buildString("id")), NutsId.class);
-            String[] arguments = (String[]) context.elementToObject(object.get(context.element().forPrimitive().buildString("arguments")), String[].class);
+            NutsId id = (NutsId) context.elementToObject(object.get(context.element().forString("id")), NutsId.class);
+            String[] arguments = (String[]) context.elementToObject(object.get(context.element().forString("arguments")), String[].class);
             Map<String, String> properties = (Map<String, String>) context
-                    .elementToObject(object.get(context.element().forPrimitive()
-                            .buildString("properties")), ReflectUtils.createParametrizedType(Map.class, String.class, String.class));
+                    .elementToObject(object.get(context.element().
+                            forString("properties")), ReflectUtils.createParametrizedType(Map.class, String.class, String.class));
 
             return new DefaultNutsArtifactCall(id, arguments, properties);
         }
@@ -705,8 +831,25 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryNutsId implements NutsElementMapper<NutsId> {
 
         @Override
+        public Object destruct(NutsId o, Type typeOfSrc, NutsElementFactoryContext context) {
+            if (context.element().isNtf()) {
+                return context.getSession().getWorkspace().id().formatter(o).setNtf(true).format();
+            } else {
+                return o.toString();
+            }
+        }
+
+        @Override
         public NutsElement createElement(NutsId o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.defaultObjectToElement(o.toString(), null);
+            if (context.element().isNtf()) {
+//                NutsWorkspace ws = context.getSession().getWorkspace();
+//                NutsTextNode n = ws.formats().text().nodeFor(ws.id().formatter(o).setNtf(true).format());
+//                return ws.formats().element().forPrimitive().buildNutsString(n);
+                NutsWorkspace ws = context.getSession().getWorkspace();
+                return ws.formats().element().forString(ws.id().formatter(o).setNtf(true).format());
+            } else {
+                return context.defaultObjectToElement(o.toString(), null);
+            }
         }
 
         @Override
@@ -719,8 +862,25 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryNutsVersion implements NutsElementMapper<NutsVersion> {
 
         @Override
+        public Object destruct(NutsVersion src, Type typeOfSrc, NutsElementFactoryContext context) {
+            if (context.element().isNtf()) {
+                NutsWorkspace ws = context.getSession().getWorkspace();
+                return ws.version().formatter(src).setNtf(true).format();
+            } else {
+                return src.toString();
+            }
+        }
+
+        @Override
         public NutsElement createElement(NutsVersion o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.defaultObjectToElement(o.toString(), null);
+            if (context.element().isNtf()) {
+                NutsWorkspace ws = context.getSession().getWorkspace();
+//                NutsTextNode n = ws.formats().text().nodeFor(ws.version().formatter(o).setNtf(true).format());
+//                return ws.formats().element().forPrimitive().buildNutsString(n);
+                return ws.formats().element().forString(ws.version().formatter(o).setNtf(true).format());
+            } else {
+                return context.defaultObjectToElement(o.toString(), null);
+            }
         }
 
         @Override
@@ -733,8 +893,21 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryPath implements NutsElementMapper<Path> {
 
         @Override
+        public Object destruct(Path src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return src;
+        }
+
+        @Override
         public NutsElement createElement(Path o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.defaultObjectToElement(o.toString(), null);
+            if (context.element().isNtf()) {
+                NutsWorkspace ws = context.getSession().getWorkspace();
+//                NutsTextNode n = ws.formats().text().styled(o.toString(), NutsTextNodeStyle.path());
+//                return ws.formats().element().forPrimitive().buildNutsString(n);
+                NutsTextNode n = ws.formats().text().styled(o.toString(), NutsTextNodeStyle.path());
+                return ws.formats().element().forString(n.toString());
+            } else {
+                return context.defaultObjectToElement(o.toString(), null);
+            }
         }
 
         @Override
@@ -746,8 +919,21 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryFile implements NutsElementMapper<File> {
 
         @Override
+        public Object destruct(File src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return src;
+        }
+
+        @Override
         public NutsElement createElement(File o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.defaultObjectToElement(o.toString(), null);
+            if (context.element().isNtf()) {
+                NutsWorkspace ws = context.getSession().getWorkspace();
+//                NutsTextNode n = ws.formats().text().styled(o.toString(), NutsTextNodeStyle.path());
+//                return ws.formats().element().forPrimitive().buildNutsString(n);
+                NutsTextNode n = ws.formats().text().styled(o.toString(), NutsTextNodeStyle.path());
+                return ws.formats().element().forString(n.toString());
+            } else {
+                return context.defaultObjectToElement(o.toString(), null);
+            }
         }
 
         @Override
@@ -757,6 +943,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     }
 
     private static class NutsElementFactoryNutsDescriptor implements NutsElementMapper<NutsDescriptor> {
+
+        @Override
+        public Object destruct(NutsDescriptor src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return context.defaultDestruct(
+                    context.getSession().getWorkspace().descriptor().descriptorBuilder().set(src), null
+            );
+        }
 
         @Override
         public NutsElement createElement(NutsDescriptor o, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -776,6 +969,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryNutsSdkLocation implements NutsElementMapper<NutsSdkLocation> {
 
         @Override
+        public Object destruct(NutsSdkLocation src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return context.defaultDestruct(src, null);
+        }
+
+        @Override
         public NutsElement createElement(NutsSdkLocation o, Type typeOfSrc, NutsElementFactoryContext context) {
             return context.defaultObjectToElement(o, null);
         }
@@ -783,14 +981,14 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsSdkLocation createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             NutsObjectElement obj = o.asObject();
-            NutsPrimitiveElementBuilder _prm = context.element().forPrimitive();
-            NutsId id = context.elementToObject(obj.get(_prm.buildString("id")), NutsId.class);
-            String product = context.elementToObject(obj.get(_prm.buildString("product")), String.class);
-            String name = context.elementToObject(obj.get(_prm.buildString("name")), String.class);
-            String path = context.elementToObject(obj.get(_prm.buildString("path")), String.class);
-            String version = context.elementToObject(obj.get(_prm.buildString("version")), String.class);
-            String packaging = context.elementToObject(obj.get(_prm.buildString("packaging")), String.class);
-            int priority = context.elementToObject(obj.get(_prm.buildString("priority")), int.class);
+            NutsElementFormat _prm = context.element();
+            NutsId id = context.elementToObject(obj.get(_prm.forString("id")), NutsId.class);
+            String product = context.elementToObject(obj.get(_prm.forString("product")), String.class);
+            String name = context.elementToObject(obj.get(_prm.forString("name")), String.class);
+            String path = context.elementToObject(obj.get(_prm.forString("path")), String.class);
+            String version = context.elementToObject(obj.get(_prm.forString("version")), String.class);
+            String packaging = context.elementToObject(obj.get(_prm.forString("packaging")), String.class);
+            int priority = context.elementToObject(obj.get(_prm.forString("priority")), int.class);
             return new NutsSdkLocation(id, product, name, path, version, packaging, priority);
         }
 
@@ -799,12 +997,43 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryNutsDependency implements NutsElementMapper<NutsDependency> {
 
         @Override
+        public Object destruct(NutsDependency o, Type typeOfSrc, NutsElementFactoryContext context) {
+            if (o.getExclusions().length == 0) {
+                //use compact form
+                if (context.element().isNtf()) {
+                    NutsWorkspace ws = context.getSession().getWorkspace();
+//                    NutsTextNode n = ws.formats().text().parse(
+//                            ws.dependency().formatter().setNtf(true).setValue(o).format()
+//                    );
+//                    return ws.formats().element().forPrimitive().buildNutsString(n);
+                    return ws.dependency().formatter().setNtf(true).setValue(o).format();
+                } else {
+
+                    return context.defaultDestruct(context.getSession().getWorkspace().dependency().formatter(o)
+                            .setNtf(context.element().isNtf())
+                            .format(), null);
+                }
+            }
+            return context.defaultDestruct(context.getSession().getWorkspace().dependency().builder().set(o), null);
+        }
+
+        @Override
         public NutsElement createElement(NutsDependency o, Type typeOfSrc, NutsElementFactoryContext context) {
             if (o.getExclusions().length == 0) {
                 //use compact form
-                return context.defaultObjectToElement(context.getSession().getWorkspace().dependency().formatter(o)
-                        .setNtf(false)
-                        .format(), null);
+                if (context.element().isNtf()) {
+                    NutsWorkspace ws = context.getSession().getWorkspace();
+//                    NutsTextNode n = ws.formats().text().parse(
+//                            ws.dependency().formatter().setNtf(true).setValue(o).format()
+//                    );
+//                    return ws.formats().element().forPrimitive().buildNutsString(n);
+                    return ws.formats().element().forString(ws.dependency().formatter().setNtf(true).setValue(o).format());
+                } else {
+
+                    return context.defaultObjectToElement(context.getSession().getWorkspace().dependency().formatter(o)
+                            .setNtf(context.element().isNtf())
+                            .format(), null);
+                }
             }
             return context.defaultObjectToElement(context.getSession().getWorkspace().dependency().builder().set(o), null);
         }
@@ -823,9 +1052,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static class NutsElementFactoryNutsIdLocation implements NutsElementMapper<NutsIdLocation> {
 
         @Override
+        public Object destruct(NutsIdLocation src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return context.defaultDestruct(new DefaultNutsIdLocationBuilder().set(src), null);
+        }
+
+        @Override
         public NutsElement createElement(NutsIdLocation o, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.defaultObjectToElement(new DefaultNutsIdLocationBuilder().set(o), null
-            );
+            return context.defaultObjectToElement(new DefaultNutsIdLocationBuilder().set(o), null);
         }
 
         @Override
@@ -837,6 +1070,19 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     }
 
     private class NutsElemenSerializationAdapterObjReflect implements NutsElementMapper<Object> {
+
+        @Override
+        public Object destruct(Object src, Type typeOfSrc, NutsElementFactoryContext context) {
+            ReflectType m = typesRepository.getType(typeOfSrc);
+            Map<String, Object> obj = new LinkedHashMap<>();
+            for (ReflectProperty property : m.getProperties()) {
+                final Object v = property.read(src);
+                if (!property.isDefaultValue(v)) {
+                    obj.put(property.getName(), context.destruct(v, null));
+                }
+            }
+            return obj;
+        }
 
         @Override
         public NutsElement createElement(Object src, Type typeOfSrc, NutsElementFactoryContext context) {
@@ -856,15 +1102,15 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             Class c = ReflectUtils.getRawClass(typeOfResult);
             int mod = c.getModifiers();
             if (Modifier.isAbstract(mod)) {
-                throw new IllegalArgumentException("cannot instantate abstract class " + typeOfResult);
+                throw new IllegalArgumentException("cannot instantiate abstract class " + typeOfResult);
             }
             ReflectType m = typesRepository.getType(typeOfResult);
             Object instance = m.newInstance();
             NutsObjectElement eobj = o.asObject();
-            NutsPrimitiveElementBuilder prv = context.element().forPrimitive();
+            NutsElementFormat prv = context.element();
             for (ReflectProperty property : m.getProperties()) {
                 if (property.isWrite()) {
-                    NutsElement v = eobj.get(prv.buildString(property.getName()));
+                    NutsElement v = eobj.get(prv.forString(property.getName()));
                     if (v != null) {
                         property.write(instance, context.elementToObject(v, property.getPropertyType()));
                     }
@@ -950,11 +1196,21 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             return _createArray1(src, context);
         }
 
+        @Override
+        public Object destruct(Object src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return _destructArray1(src, context);
+        }
+
     }
 
     private static class NutsElementFactoryPrimitiveBooleanArray implements NutsElementMapper<boolean[]> {
 
         public NutsElementFactoryPrimitiveBooleanArray() {
+        }
+
+        @Override
+        public Object destruct(boolean[] src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return _destructArray1(src, context);
         }
 
         @Override
@@ -984,6 +1240,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
 
         @Override
+        public Object destruct(byte[] src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return _destructArray1(src, context);
+        }
+
+        @Override
         public byte[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             NutsArrayElement earr = o.asArray();
             byte[] arr = new byte[earr.size()];
@@ -1005,6 +1266,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
 
         @Override
+        public Object destruct(short[] src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return _destructArray1(src, context);
+        }
+
+        @Override
         public short[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             NutsArrayElement earr = o.asArray();
             short[] arr = new short[earr.size()];
@@ -1021,8 +1287,13 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
 
         @Override
+        public Object destruct(char[] src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return _destructArray1(src, context);
+        }
+
+        @Override
         public NutsElement createElement(char[] src, Type typeOfSrc, NutsElementFactoryContext context) {
-            return context.element().forPrimitive().buildString(new String(src));
+            return context.element().forString(new String(src));
         }
 
         @Override
@@ -1041,6 +1312,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsElement createElement(int[] src, Type typeOfSrc, NutsElementFactoryContext context) {
             return _createArray1(src, context);
+        }
+
+        @Override
+        public Object destruct(int[] src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return _destructArray1(src, context);
         }
 
         @Override
@@ -1065,6 +1341,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
 
         @Override
+        public Object destruct(long[] src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return _destructArray1(src, context);
+        }
+
+        @Override
         public long[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             NutsArrayElement earr = o.asArray();
             long[] arr = new long[earr.size()];
@@ -1083,6 +1364,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsElement createElement(float[] src, Type typeOfSrc, NutsElementFactoryContext context) {
             return _createArray1(src, context);
+        }
+
+        @Override
+        public Object destruct(float[] src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return _destructArray1(src, context);
         }
 
         @Override
@@ -1107,6 +1393,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
 
         @Override
+        public Object destruct(double[] src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return _destructArray1(src, context);
+        }
+
+        @Override
         public double[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             NutsArrayElement earr = o.asArray();
             double[] arr = new double[earr.size()];
@@ -1128,6 +1419,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
 
         @Override
+        public Object destruct(Object[] src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return _destructArray1(src, context);
+        }
+
+        @Override
         public Object[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             NutsArrayElement earr = o.asArray();
             Object[] arr = new Object[earr.size()];
@@ -1144,6 +1440,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
 
         @Override
+        public Object destruct(NutsPrimitiveElement src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return src.getValue();
+        }
+
+        @Override
         public NutsElement createElement(NutsPrimitiveElement src, Type typeOfSrc, NutsElementFactoryContext context) {
             return src;
         }
@@ -1153,13 +1454,18 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             if (o.type().isPrimitive()) {
                 return o.asPrimitive();
             }
-            return context.element().forPrimitive().buildString(o.toString());
+            return context.element().forString(o.toString());
         }
     }
 
     private static class NutsElementFactoryNutsArrayElement implements NutsElementMapper<NutsArrayElement> {
 
         public NutsElementFactoryNutsArrayElement() {
+        }
+
+        @Override
+        public Object destruct(NutsArrayElement src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return src.children().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
         }
 
         @Override
@@ -1182,6 +1488,31 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
 
         @Override
+        public Object destruct(NutsObjectElement src, Type typeOfSrc, NutsElementFactoryContext context) {
+            Set<Object> visited = new HashSet<>();
+            boolean map = true;
+            List<Map.Entry<Object, Object>> all = new ArrayList<>();
+            for (NutsElementEntry nutsElementEntry : src.children()) {
+                Object k = context.defaultDestruct(nutsElementEntry.getKey(), null);
+                Object v = context.defaultDestruct(nutsElementEntry.getValue(), null);
+                if (map && visited.contains(k)) {
+                    map = false;
+                } else {
+                    visited.add(k);
+                }
+                all.add(new AbstractMap.SimpleEntry<>(k, v));
+            }
+            if (map) {
+                LinkedHashMap<Object, Object> m = new LinkedHashMap<>();
+                for (Map.Entry<Object, Object> entry : all) {
+                    m.put(entry.getKey(), entry.getValue());
+                }
+                return m;
+            }
+            return all;
+        }
+
+        @Override
         public NutsElement createElement(NutsObjectElement src, Type typeOfSrc, NutsElementFactoryContext context) {
             return src;
         }
@@ -1201,6 +1532,19 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
 
         @Override
+        public Object destruct(NutsElement src, Type typeOfSrc, NutsElementFactoryContext context) {
+            switch (src.type()) {
+                case ARRAY:
+                    return context.objectToElement(src, NutsArrayElement.class);
+                case OBJECT:
+                    return context.objectToElement(src, NutsObjectElement.class);
+                default: {
+                    return context.objectToElement(src, NutsPrimitiveElement.class);
+                }
+            }
+        }
+
+        @Override
         public NutsElement createElement(NutsElement src, Type typeOfSrc, NutsElementFactoryContext context) {
             return src;
         }
@@ -1208,6 +1552,19 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsElement createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
             return o;
+        }
+    }
+
+    private static List<Object> _destructArray1(Object array, NutsElementFactoryContext context) {
+        if (array.getClass().getComponentType().isPrimitive()) {
+            List<Object> preloaded = new ArrayList<>();
+            int length = Array.getLength(array);
+            for (int i = 0; i < length; i++) {
+                preloaded.add(context.destruct(Array.get(array, i), null));
+            }
+            return preloaded;
+        } else {
+            return Arrays.stream((Object[]) array).map(x -> context.objectToElement(x, null)).collect(Collectors.toList());
         }
     }
 

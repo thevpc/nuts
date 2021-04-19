@@ -88,14 +88,16 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
         } else {
             printElement(w, getWorkspace().formats().element()
                     .setSession(getSession())
-                    .convert(value, NutsElement.class));
+                    .convertToElement(value));
         }
     }
 
     public void printElement(PrintStream w, NutsElement value) {
         PrintStream out = getValidPrintStream(w);
         switch (value.type()) {
-            case STRING: {
+//            case NUTS_STRING: 
+            case STRING: 
+            {
                 out.print(value.asPrimitive().getString());
                 out.flush();
                 break;

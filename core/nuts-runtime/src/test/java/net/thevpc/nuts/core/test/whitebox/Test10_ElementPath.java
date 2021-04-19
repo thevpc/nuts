@@ -55,18 +55,18 @@ public class Test10_ElementPath {
                         .add(
                                 e.forObject().set("first",
                                         e.forObject()
-                                                .set("name", e.forPrimitive().buildString("first name"))
-                                                .set("valid", e.forPrimitive().buildFalse())
+                                                .set("name", e.forString("first name"))
+                                                .set("valid", e.forFalse())
                                                 .set("children",
                                                         e.forArray().add(
                                                                 e.forObject()
-                                                                        .set("path", e.forPrimitive().buildString("path1"))
-                                                                        .set("color", e.forPrimitive().buildString("red"))
+                                                                        .set("path", e.forString("path1"))
+                                                                        .set("color", e.forString("red"))
                                                         .build())
                                                                 .add(
                                                                         e.forObject()
-                                                                                .set("path", e.forPrimitive().buildString("path2"))
-                                                                                .set("color", e.forPrimitive().buildString("green"))
+                                                                                .set("path", e.forString("path2"))
+                                                                                .set("color", e.forString("green"))
                                                                         .build()
                                                                 ).build()
                                                 )
@@ -75,19 +75,19 @@ public class Test10_ElementPath {
                                 .build()
                         ).add(e.forObject().set("second",
                                 e.forObject()
-                                        .set("name", e.forPrimitive().buildString("second name"))
-                                        .set("valid", e.forPrimitive().buildFalse())
+                                        .set("name", e.forString("second name"))
+                                        .set("valid", e.forFalse())
                                         .set("children",
                                                 e.forArray().add(
                                                         e.forObject()
-                                                                .set("path", e.forPrimitive().buildString("path3"))
-                                                                .set("color", e.forPrimitive().buildString("yellow"))
+                                                                .set("path", e.forString("path3"))
+                                                                .set("color", e.forString("yellow"))
                                                         .build()
                                                 )
                                                         .add(
                                                                 e.forObject()
-                                                                        .set("path", e.forPrimitive().buildString("path4"))
-                                                                        .set("color", e.forPrimitive().buildString("magenta"))
+                                                                        .set("path", e.forString("path4"))
+                                                                        .set("color", e.forString("magenta"))
                                                                 .build()
                                                         ).build()
                                         )

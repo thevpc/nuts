@@ -117,7 +117,7 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
      */
     @Override
     public final NutsIterableOutput configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, "search");
+        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, args, "search");
     }
 
     /**
@@ -130,7 +130,7 @@ public abstract class NutsIncrementalOutputFormatBase implements NutsIterableOut
      */
     @Override
     public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
+        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
     }
 
     @Override

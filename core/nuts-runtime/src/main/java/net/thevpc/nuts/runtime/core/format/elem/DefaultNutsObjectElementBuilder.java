@@ -58,7 +58,7 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
 
     @Override
     public NutsElement get(String s) {
-        return values.get(_primitive().buildBoolean(s));
+        return values.get(_elements().forBoolean(s));
     }
 
     @Override
@@ -68,33 +68,33 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
 
     @Override
     public NutsObjectElementBuilder set(String name, NutsElement value) {
-        values.put(_primitive().buildString(name), denull(value));
+        values.put(_elements().forString(name), denull(value));
         return this;
     }
 
     @Override
     public NutsObjectElementBuilder set(String name, boolean value) {
-        return set(_primitive().buildString(name), _primitive().buildBoolean(value));
+        return set(_elements().forString(name), _elements().forBoolean(value));
     }
 
     @Override
     public NutsObjectElementBuilder set(String name, int value) {
-        return set(_primitive().buildString(name), _primitive().buildInt(value));
+        return set(_elements().forString(name), _elements().forInt(value));
     }
 
     @Override
     public NutsObjectElementBuilder set(String name, double value) {
-        return set(_primitive().buildString(name), _primitive().buildDouble(value));
+        return set(_elements().forString(name), _elements().forDouble(value));
     }
 
     @Override
     public NutsObjectElementBuilder set(String name, String value) {
-        return set(_primitive().buildString(name), _primitive().buildString(value));
+        return set(_elements().forString(name), _elements().forString(value));
     }
 
     @Override
     public NutsObjectElementBuilder remove(String name) {
-        NutsElement v = name==null?_primitive().buildNull():_primitive().buildString(name);
+        NutsElement v = name==null?_elements().forNull():_elements().forString(name);
         values.remove(v);
         return this;
     }
@@ -113,22 +113,22 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
 
     @Override
     public NutsObjectElementBuilder set(NutsElement name, boolean value) {
-        return set(name, _primitive().buildBoolean(value));
+        return set(name, _elements().forBoolean(value));
     }
 
     @Override
     public NutsObjectElementBuilder set(NutsElement name, int value) {
-        return set(name, _primitive().buildInt(value));
+        return set(name, _elements().forInt(value));
     }
 
     @Override
     public NutsObjectElementBuilder set(NutsElement name, double value) {
-        return set(name, _primitive().buildDouble(value));
+        return set(name, _elements().forDouble(value));
     }
 
     @Override
     public NutsObjectElementBuilder set(NutsElement name, String value) {
-        return set(name, _primitive().buildString(value));
+        return set(name, _elements().forString(value));
     }
 
     @Override
@@ -201,12 +201,12 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
 
     private NutsElement denull(NutsElement e) {
         if (e == null) {
-            return _primitive().buildNull();
+            return _elements().forNull();
         }
         return e;
     }
 
-    private NutsPrimitiveElementBuilder _primitive() {
-        return session.getWorkspace().formats().element().setSession(session).forPrimitive();
+    private NutsElementFormat _elements() {
+        return session.getWorkspace().formats().element().setSession(session);
     }
 }

@@ -41,5 +41,5 @@ public interface NutsTreeNodeFormat {
      * @param depth tree node depth
      * @return string representation
      */
-    NutsString format(Object object, int depth);
+    NutsString format(Object object, int depth, NutsSession session);
 }

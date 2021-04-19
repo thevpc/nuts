@@ -8,18 +8,13 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
 
     private boolean compact;
     private NutsDescriptor desc;
-    private boolean ntf = false;
 
     public DefaultNutsDescriptorFormat(NutsWorkspace ws) {
         super(ws, "descriptor-format");
     }
 
-    public boolean isNtf() {
-        return ntf;
-    }
-
     public NutsDescriptorFormat setNtf(boolean ntf) {
-        this.ntf = ntf;
+        super.setNtf(ntf);
         return this;
     }
 
@@ -64,17 +59,18 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
 
     @Override
     public void print(PrintStream out) {
+        checkSession();
         if (isNtf()) {
             ByteArrayOutputStream os=new ByteArrayOutputStream();
-            getWorkspace()
-                    .formats().element().setSession(getSession()).setContentType(NutsContentType.JSON)
+            getSession().getWorkspace()
+                    .formats().element().setNtf(true).setContentType(NutsContentType.JSON)
                     .setValue(desc).setCompact(isCompact())
                     .print(os);
-            NutsTextNodeCode r = getWorkspace().formats().text().code("json", os.toString());
+            NutsTextNodeCode r = getSession().getWorkspace().formats().text().code("json", os.toString());
             out.print(r);
         } else {
-            getWorkspace()
-                    .formats().element().setSession(getSession()).setContentType(NutsContentType.JSON)
+            getSession().getWorkspace()
+                    .formats().element().setNtf(false).setContentType(NutsContentType.JSON)
                     .setValue(desc).setCompact(isCompact())
                     .print(out);
         }

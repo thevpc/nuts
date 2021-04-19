@@ -111,6 +111,13 @@ public interface NutsPrimitiveElement extends NutsElement {
      */
     long getLong();
 
+//    /**
+//     * value as Nuts String.
+//     *
+//     * @return value as Nuts String
+//     */
+//    NutsString getNutsString();
+
     /**
      * value as any java string. Best effort is applied to convert to this type.
      *

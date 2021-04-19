@@ -32,6 +32,10 @@ import net.thevpc.nuts.NutsElement;
  */
 public interface NutsElementFactoryService {
 
+    Object defaultDestruct(Object o, Type expectedType, NutsElementFactoryContext context);
+
+    Object destruct(Object o, Type expectedType, NutsElementFactoryContext context);
+
     NutsElement defaultCreateElement(Object o, Type expectedType, NutsElementFactoryContext context);
 
     NutsElement createElement(Object o, Type expectedType, NutsElementFactoryContext context);

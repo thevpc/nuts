@@ -120,7 +120,10 @@ public class DefaultNutsTextManager implements NutsTextManager {
         NutsTextManager txt = getSession().getWorkspace().formats().text();
         for (int i = 0; i < args2.length; i++) {
             Object a = params[i];
-            if (a instanceof Number || a instanceof Date || a instanceof Temporal) {
+            if (a==null) {
+                //do nothing, support format pattern
+                args2[i] = null;
+            }else if (a instanceof Number || a instanceof Date || a instanceof Temporal) {
                 //do nothing, support format pattern
                 args2[i] = a;
             } else {

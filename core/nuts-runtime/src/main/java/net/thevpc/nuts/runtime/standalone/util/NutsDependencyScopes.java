@@ -3,26 +3,24 @@
  *            Nuts : Network Updatable Things Service
  *                  (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.standalone.util;
 
 import java.util.Arrays;
@@ -36,7 +34,6 @@ import net.thevpc.nuts.NutsDependencyFilter;
 import net.thevpc.nuts.NutsDependencyScope;
 import net.thevpc.nuts.NutsDependencyScopePattern;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 
 /**
@@ -44,7 +41,8 @@ import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
  * @author thevpc
  */
 public class NutsDependencyScopes {
-    private static final Logger LOG=Logger.getLogger(NutsDependencyScopes.class.getName());
+
+    private static final Logger LOG = Logger.getLogger(NutsDependencyScopes.class.getName());
 
     public static final NutsDependencyFilter SCOPE_RUN(NutsWorkspace ws) {
         return (NutsDependencyFilter) ws.dependency().filter().byScope(NutsDependencyScopePattern.RUN).and(
@@ -52,36 +50,6 @@ public class NutsDependencyScopes {
         );
     }
 //    public static final NutsDependencyFilter SCOPE_TEST = CoreFilterUtils.And(new ScopeNutsDependencyFilter(NutsDependencyScopePattern.TEST), CoreNutsUtils.NON_OPTIONAL);
-
-    public static String normalizeScope(String s1) {
-        if (s1 == null) {
-            s1 = "";
-        }
-        s1 = s1.toLowerCase().trim();
-        if (s1.isEmpty()) {
-            s1 = NutsDependencyScope.API.id();
-        }
-        s1=s1.replace('-','_');
-        switch (s1){
-            case "test":
-            case "testcompile":
-            case "test_compile":
-                return NutsDependencyScope.TEST_API.id();
-            case "testruntime":
-            case "test_runtime":
-                return NutsDependencyScope.TEST_RUNTIME.id();
-            case "testsystem":
-            case "test_system":
-                return NutsDependencyScope.TEST_SYSTEM.id();
-            case "testprovided":
-            case "test_provided":
-            case "testcompileonly":
-            case "test_compile_only":
-                return NutsDependencyScope.TEST_PROVIDED.id();
-            case "compile":return NutsDependencyScope.API.id();
-        }
-        return s1;
-    }
 
     public static int compareScopes(String s1, String s2) {
         int x = getScopesPriority(s1);
@@ -106,53 +74,53 @@ public class NutsDependencyScopes {
     }
 
     public static boolean isCompileScope(String scope) {
-        if(scope==null){
+        if (scope == null) {
             return true;
         }
         NutsDependencyScope r = parseScope(scope, true);
-        return r!=null && r.isCompile();
+        return r != null && r.isCompile();
     }
 
     public static int getScopesPriority(String s1) {
         NutsDependencyScope r = parseScope(s1, true);
-        if(r==null){
+        if (r == null) {
             return -1;
         }
-        switch (r){
-            case IMPLEMENTATION:{
+        switch (r) {
+            case IMPLEMENTATION: {
                 return 26;
             }
-            case API:{
+            case API: {
                 return 25;
             }
-            case RUNTIME:{
+            case RUNTIME: {
                 return 24;
             }
-            case PROVIDED:{
+            case PROVIDED: {
                 return 23;
             }
-            case SYSTEM:{
+            case SYSTEM: {
                 return 22;
             }
-            case OTHER:{
+            case OTHER: {
                 return 21;
             }
-            case TEST_IMPLEMENTATION:{
+            case TEST_IMPLEMENTATION: {
                 return 16;
             }
-            case TEST_API:{
+            case TEST_API: {
                 return 15;
             }
-            case TEST_RUNTIME:{
+            case TEST_RUNTIME: {
                 return 14;
             }
-            case TEST_PROVIDED:{
+            case TEST_PROVIDED: {
                 return 13;
             }
-            case TEST_SYSTEM:{
+            case TEST_SYSTEM: {
                 return 12;
             }
-            case TEST_OTHER:{
+            case TEST_OTHER: {
                 return 11;
             }
             case IMPORT: {
@@ -223,13 +191,12 @@ public class NutsDependencyScopes {
     }
 
     public static EnumSet<NutsDependencyScope> expand(NutsDependencyScopePattern other) {
-        if(other == null){
+        if (other == null) {
             return EnumSet.noneOf(NutsDependencyScope.class);
         }
         EnumSet<NutsDependencyScope> v = EnumSet.noneOf(NutsDependencyScope.class);
         switch (other) {
-            case RUN:
-            {
+            case RUN: {
                 v.add(NutsDependencyScope.API);
                 v.add(NutsDependencyScope.IMPLEMENTATION);
                 v.add(NutsDependencyScope.SYSTEM);
@@ -242,8 +209,7 @@ public class NutsDependencyScopes {
                 v.add(NutsDependencyScope.TEST_RUNTIME);
                 break;
             }
-            case COMPILE:
-            {
+            case COMPILE: {
                 v.add(NutsDependencyScope.API);
                 v.add(NutsDependencyScope.IMPLEMENTATION);
                 v.add(NutsDependencyScope.SYSTEM);
@@ -268,112 +234,123 @@ public class NutsDependencyScopes {
                 v.add(NutsDependencyScope.OTHER);
                 break;
             }
-            case API:{
+            case API: {
                 v.add(NutsDependencyScope.API);
             }
-            case IMPORT:{
+            case IMPORT: {
                 v.add(NutsDependencyScope.IMPORT);
             }
-            case IMPLEMENTATION:{
+            case IMPLEMENTATION: {
                 v.add(NutsDependencyScope.IMPLEMENTATION);
             }
-            case PROVIDED:{
+            case PROVIDED: {
                 v.add(NutsDependencyScope.PROVIDED);
             }
-            case RUNTIME:{
+            case RUNTIME: {
                 v.add(NutsDependencyScope.RUNTIME);
             }
-            case SYSTEM:{
+            case SYSTEM: {
                 v.add(NutsDependencyScope.SYSTEM);
             }
-            case TEST_COMPILE:{
+            case TEST_COMPILE: {
                 v.add(NutsDependencyScope.TEST_API);
             }
-            case TEST_PROVIDED:{
+            case TEST_PROVIDED: {
                 v.add(NutsDependencyScope.TEST_PROVIDED);
             }
-            case TEST_RUNTIME:{
+            case TEST_RUNTIME: {
                 v.add(NutsDependencyScope.TEST_RUNTIME);
             }
-            case OTHER:{
+            case TEST_SYSTEM: {
+                v.add(NutsDependencyScope.TEST_SYSTEM);
+            }
+            case TEST_API: {
+                v.add(NutsDependencyScope.TEST_API);
+            }
+            case TEST_IMPLEMENTATION: {
+                v.add(NutsDependencyScope.TEST_IMPLEMENTATION);
+            }
+            case TEST_OTHER: {
+                v.add(NutsDependencyScope.TEST_OTHER);
+            }
+            case OTHER: {
                 v.add(NutsDependencyScope.OTHER);
             }
-            default:{
-                throw new IllegalArgumentException("Unsupported "+other);
+            default: {
+                throw new IllegalArgumentException("unsupported scope pattern " + other);
             }
         }
         return v;
     }
 
+    public static String normalizeScope(String s1) {
+        if (s1 == null) {
+            s1 = "";
+        }
+        s1 = s1.toLowerCase().trim();
+        if (s1.isEmpty()) {
+            return NutsDependencyScope.API.id();
+        }
+        s1 = s1.replace('-', '_');
+        switch (s1) {
+            case "compileonly": //gradle
+            case "compile-only": //gradle
+                return NutsDependencyScope.PROVIDED.id();
+            case "test"://maven
+            case "testcompile"://gradle
+            case "test_compile":
+            case "testapi":
+            case "test_api":
+                return NutsDependencyScope.TEST_API.id();
+            case "testruntime":
+            case "test_runtime":
+                return NutsDependencyScope.TEST_RUNTIME.id();
+            case "testsystem":
+            case "test_system":
+                return NutsDependencyScope.TEST_SYSTEM.id();
+            case "testprovided":
+            case "test_provided":
+            case "testcompileonly":
+            case "test_compile_only":
+                return NutsDependencyScope.TEST_PROVIDED.id();
+            case "compile":
+                return NutsDependencyScope.API.id();
+        }
+        return s1;
+    }
+
     /**
-     * parse string to a valid NutsDependencyScopePattern or NutsDependencyScope.OTHER
+     * parse string to a valid NutsDependencyScopePattern or
+     * NutsDependencyScope.OTHER
+     *
      * @param value string to parse
      * @return valid NutsDependencyScopePattern instance
      */
     public static NutsDependencyScope parseDependencyScope(String value) {
-        if (value == null) {
-            value = "";
-        }
-        value = value.trim().toLowerCase();
-        switch (value) {
-            case "":
-            case "compile": //maven
-                return NutsDependencyScope.API;
-            case "compileonly": //gradle
-            case "compile-only": //gradle
-                return NutsDependencyScope.PROVIDED;
-            case "test": //maven
-            case "testcompile": //gradle
-                return NutsDependencyScope.TEST_API;
-            case "testruntime": //gradle
-                return NutsDependencyScope.TEST_RUNTIME;
-            case "testcompileonly": //gradle
-                return NutsDependencyScope.TEST_PROVIDED;
-        }
+        value=normalizeScope(value);
         try {
-            String enumString = value.toUpperCase().replace('-', '_');
+            String enumString = value.toUpperCase();
             return NutsDependencyScope.valueOf(enumString);
-        }catch (Exception ex){
-            LOG.log(Level.FINE,"unable to parse NutsDependencyScope : "+value,ex);
+        } catch (Exception ex) {
+            LOG.log(Level.FINE, "unable to parse NutsDependencyScope : " + value, ex);
         }
         return NutsDependencyScope.OTHER;
     }
 
     /**
-     * parse string to a valid NutsDependencyScopePattern or NutsDependencyScope.OTHER
+     * parse string to a valid NutsDependencyScopePattern or
+     * NutsDependencyScope.OTHER
+     *
      * @param value string to parse
      * @return valid NutsDependencyScopePattern instance
      */
     public static NutsDependencyScopePattern parseDependencyScopePattern(String value) {
-        if (value == null) {
-            value = "";
-        }
-        value = value.trim().toLowerCase();
-        value=value.replace('-', '_');
-        switch (value) {
-            case "":
-            case "compile": //maven
-                return NutsDependencyScopePattern.API;
-            case "compileonly": //gradle
-            case "compile_only": //gradle
-                return NutsDependencyScopePattern.PROVIDED;
-            case "test": //maven
-                return NutsDependencyScopePattern.TEST_COMPILE;
-            case "testcompile": //gradle
-            case "test_compile": //gradle
-                return NutsDependencyScopePattern.TEST_COMPILE;
-            case "testruntime": //gradle
-            case "test_runtime": //gradle
-                return NutsDependencyScopePattern.TEST_RUNTIME;
-            case "testcompileonly": //gradle
-            case "test_compile_only": //gradle
-                return NutsDependencyScopePattern.TEST_PROVIDED;
-        }
+        value=normalizeScope(value);
         try {
-            String enumString = value.toUpperCase().replace('-', '_');
+            String enumString = value.toUpperCase();
             return NutsDependencyScopePattern.valueOf(enumString);
-        }catch (Exception ex){
-            LOG.log(Level.FINE,"unable to parse NutsDependencyScope : "+value,ex);
+        } catch (Exception ex) {
+            LOG.log(Level.FINE, "unable to parse NutsDependencyScope : " + value, ex);
         }
         return NutsDependencyScopePattern.OTHER;
     }

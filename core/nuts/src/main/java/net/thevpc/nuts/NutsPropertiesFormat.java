@@ -107,4 +107,8 @@ public interface NutsPropertiesFormat extends NutsObjectFormat {
      */
     @Override
     NutsPropertiesFormat configure(boolean skipUnsupported, String... args);
+
+    @Override
+    public NutsPropertiesFormat setNtf(boolean ntf);
+
 }

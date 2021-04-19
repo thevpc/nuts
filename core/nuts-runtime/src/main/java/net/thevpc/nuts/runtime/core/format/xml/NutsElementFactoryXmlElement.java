@@ -27,7 +27,14 @@ import java.io.File;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.function.Supplier;
 import net.thevpc.nuts.NutsArrayElementBuilder;
@@ -47,7 +54,7 @@ import net.thevpc.nuts.runtime.core.format.elem.NutsElementMapper;
 import net.thevpc.nuts.NutsElementEntry;
 import net.thevpc.nuts.NutsElementFormat;
 import net.thevpc.nuts.NutsElementType;
-import net.thevpc.nuts.NutsPrimitiveElementBuilder;
+import net.thevpc.nuts.NutsString;
 
 /**
  *
@@ -123,6 +130,16 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
                 }
                 return e;
             }
+//            case NUTS_STRING: {
+//                Element e = doc.createElement("nuts-string");
+//                final String s = elem.asPrimitive().getString();
+//                if (isComplexString(s)) {
+//                    e.setTextContent(s);
+//                } else {
+//                    e.setAttribute("value", s);
+//                }
+//                return e;
+//            }
             case BOOLEAN: {
                 return doc.createElement(String.valueOf(elem.asPrimitive().getBoolean()));
             }
@@ -178,7 +195,8 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
                 for (NutsElementEntry ne : elem.asObject().children()) {
                     final NutsElementType kt = ne.getKey().type();
                     boolean complexKey = kt == NutsElementType.ARRAY || kt == NutsElementType.OBJECT
-                            || kt == NutsElementType.STRING && isComplexString(ne.getKey().asPrimitive().getString());
+                            || (kt == NutsElementType.STRING && isComplexString(ne.getKey().asPrimitive().getString())) //                            || (kt == NutsElementType.NUTS_STRING && isComplexString(ne.getKey().asPrimitive().getString()))
+                            ;
                     if (complexKey) {
                         Element entry = doc.createElement("entry");
                         Element ek = (Element) createObject(ne.getKey(), NutsElement.class, context);
@@ -233,12 +251,11 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
     }
 
     public NutsElement createElement(String type, String value, NutsElementFactoryContext context) {
-        NutsPrimitiveElementBuilder forPrimitive = context.getWorkspace().formats().element()
-                .setSession(context.getSession())
-                .forPrimitive();
+        NutsElementFormat f = context.getWorkspace().formats().element()
+                .setSession(context.getSession());
         switch (type) {
             case "null": {
-                return forPrimitive.buildNull();
+                return f.forNull();
             }
             case "number": {
                 return context.objectToElement(value, Number.class);
@@ -247,10 +264,10 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
                 return context.objectToElement(value, Boolean.class);
             }
             case "true": {
-                return forPrimitive.buildTrue();
+                return f.forTrue();
             }
             case "false": {
-                return forPrimitive.buildTrue();
+                return f.forTrue();
             }
             case "byte": {
                 return context.objectToElement(value, Byte.class);
@@ -275,6 +292,9 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
             }
             case "string": {
                 return context.objectToElement(value, String.class);
+            }
+            case "nuts-string": {
+                return context.objectToElement(value, NutsString.class);
             }
             case "instant": {
                 return context.objectToElement(value, Instant.class);
@@ -336,6 +356,105 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
     }
 
     @Override
+    public Object destruct(Node node, Type typeOfSrc, NutsElementFactoryContext context) {
+        if (node instanceof Attr) {
+            Attr at = (Attr) node;
+
+            return new AbstractMap.SimpleEntry<String, Object>(at.getName(),
+                    context.destruct(at.getValue(), String.class)
+            );
+        }
+        if (node instanceof CDATASection) {
+            CDATASection d = (CDATASection) node;
+            return d.getWholeText();
+        }
+        if (node instanceof Text) {
+            Text d = (Text) node;
+            return d.getWholeText();
+        }
+        Element element = (Element) node;
+        NodeInfo ni = new NodeInfo(element);
+        switch (ni.type) {
+            case "object": {
+                Set<Object> visited = new HashSet<>();
+                boolean map = true;
+                List<Map.Entry<Object, Object>> all = new ArrayList<>();
+                NamedNodeMap attrs = element.getAttributes();
+                for (int i = 0; i < attrs.getLength(); i++) {
+                    Attr n = (Attr) attrs.item(i);
+                    Object k = n.getName();
+                    Object v = n.getValue();
+                    if (map && visited.contains(k)) {
+                        map = false;
+                    } else {
+                        visited.add(k);
+                    }
+                    all.add(new AbstractMap.SimpleEntry<>(k, v));
+                }
+                if (map) {
+                    LinkedHashMap<Object, Object> m = new LinkedHashMap<>();
+                    for (Map.Entry<Object, Object> entry : all) {
+                        m.put(entry.getKey(), entry.getValue());
+                    }
+                    return m;
+                }
+                return all;
+            }
+            case "array": {
+                List<Object> obj = new ArrayList<Object>();
+                NodeList attrs = element.getChildNodes();
+                for (int i = 0; i < attrs.getLength(); i++) {
+                    Node n = (Node) attrs.item(i);
+                    obj.add(createElement(n, typeOfSrc, context));
+                }
+                return obj;
+            }
+            case "boolean": {
+                return context.destruct(resolveValue(element), Boolean.class);
+            }
+            case "byte": {
+                return context.destruct(resolveValue(element), Byte.class);
+            }
+            case "short": {
+                return context.destruct(resolveValue(element), Short.class);
+            }
+            case "int": {
+                return context.destruct(resolveValue(element), Integer.class);
+            }
+            case "long": {
+                return context.destruct(resolveValue(element), Long.class);
+            }
+            case "float": {
+                return context.destruct(resolveValue(element), Float.class);
+            }
+            case "double": {
+                return context.destruct(resolveValue(element), Double.class);
+            }
+            case "char": {
+                return context.destruct(resolveValue(element), Character.class);
+            }
+            case "string": {
+                return context.destruct(resolveValue(element), String.class);
+            }
+            case "instant": {
+                return context.destruct(resolveValue(element), Instant.class);
+            }
+            case "date": {
+                return context.destruct(resolveValue(element), Date.class);
+            }
+            case "file": {
+                return context.destruct(resolveValue(element), File.class);
+            }
+            case "path": {
+                return context.destruct(resolveValue(element), Path.class);
+            }
+            default: {
+                throw new IllegalArgumentException("unsupported");
+            }
+        }
+    }
+
+    @Override
     public NutsElement createElement(Node node, Type typeOfSrc, NutsElementFactoryContext context) {
         NutsElementFormat elements = context.getWorkspace().formats().element().setSession(context.getSession());
         if (node instanceof Attr) {
@@ -344,11 +463,11 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
         }
         if (node instanceof CDATASection) {
             CDATASection d = (CDATASection) node;
-            return elements.forPrimitive().buildString(d.getWholeText());
+            return elements.forString(d.getWholeText());
         }
         if (node instanceof Text) {
             Text d = (Text) node;
-            return elements.forPrimitive().buildString(d.getWholeText());
+            return elements.forString(d.getWholeText());
         }
         Element element = (Element) node;
         NodeInfo ni = new NodeInfo(element);

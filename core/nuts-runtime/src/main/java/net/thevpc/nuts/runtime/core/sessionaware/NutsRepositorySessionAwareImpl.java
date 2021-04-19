@@ -306,5 +306,16 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository , NutsRepo
         return repoExt().getIdFilename(id, session);
     }
 
+    @Override
+    public boolean isAvailable() {
+        return repo.isAvailable();
+    }
+
+    @Override
+    public boolean isAvailable(boolean force) {
+        return repo.isAvailable(force);
+    }
+
+    
     
 }

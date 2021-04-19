@@ -109,7 +109,8 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
      */
     @Override
     public T configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, args, getCommandName());
+        checkSession();
+        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, args, getCommandName());
     }
 
     /**
@@ -122,7 +123,8 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
      */
     @Override
     public boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, ws, skipUnsupported, commandLine);
+        checkSession();
+        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
     }
 
 

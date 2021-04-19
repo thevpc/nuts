@@ -28,7 +28,6 @@ import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.core.repos.AbstractNutsRepository;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.repocommands.AbstractNutsUpdateRepositoryStatisticsCommand;
-import net.thevpc.nuts.runtime.standalone.security.DefaultNutsRepositorySecurityManager;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
@@ -38,7 +37,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
 import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 
 /**
  * Created by vpc on 1/18/17.
@@ -83,13 +82,13 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
 
     @Override
     public String toString() {
-        NutsRepositoryConfigManager c = config();
+        NutsRepositoryConfigManagerExt c = NutsRepositoryConfigManagerExt.of(config());
         String name = getName();
         String storePath = null;
         String loc = config().getLocation(false);
         String impl = getClass().getSimpleName();
         if (c != null) {
-            storePath = Paths.get(c.getStoreLocation()).toAbsolutePath().toString();
+            storePath = Paths.get(c.getModel().getStoreLocation()).toAbsolutePath().toString();
         }
         LinkedHashMap<String, String> a = new LinkedHashMap<>();
         if (name != null) {
@@ -116,9 +115,9 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
 
     @Override
     public NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
-        Iterator<NutsId> allVersions = searchVersions().setId(id).setFilter(filter)
+        Iterator<NutsId> allVersions = searchVersions().setSession(session).setId(id).setFilter(filter)
                 .setFetchMode(fetchMode)
-                .setSession(session).getResult();
+                .getResult();
         NutsId a = null;
         while (allVersions.hasNext()) {
             NutsId next = allVersions.next();
@@ -163,17 +162,17 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         return new DefaultNutsRepositoryUndeployCommand(this);
     }
 
-    protected String getIdComponentExtension(String packaging) {
-        return getWorkspace().locations().getDefaultIdContentExtension(packaging);
+    protected String getIdComponentExtension(String packaging, NutsSession session) {
+        return session.getWorkspace().locations().getDefaultIdContentExtension(packaging);
     }
 
     protected String getIdExtension(NutsId id, NutsSession session) {
-        return getWorkspace().locations().getDefaultIdExtension(id);
+        return session.getWorkspace().locations().getDefaultIdExtension(id);
     }
 
     @Override
     public String getIdBasedir(NutsId id, NutsSession session) {
-        return getWorkspace().locations().setSession(session).getDefaultIdBasedir(id);
+        return session.getWorkspace().locations().setSession(session).getDefaultIdBasedir(id);
     }
 
     protected String getIdRemotePath(NutsId id, NutsSession session) {

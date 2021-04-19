@@ -68,7 +68,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
         fillMap(getWorkspace().formats().element()
                 .setSession(getSession())
-                .convert(value, NutsElement.class), map, rootName);
+                .convertToElement(value), map, rootName);
         return map;
     }
 
@@ -107,7 +107,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
                     if (!k.isString()) {
                         k = getSession().getWorkspace().formats().element()
                                 .setSession(getSession())
-                                .forPrimitive().buildString(
+                                .forString(
                                 k.toString()
                         );
                     }
@@ -258,7 +258,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     private void printKeyValue(PrintStream out, NutsString prefix, int len, String fancySep, NutsString key, NutsString value) {
         NutsFormatManager txt = getWorkspace().formats();
         if (prefix == null) {
-            prefix = txt.text().plain("");
+            prefix = txt.text().blank();
         }
         NutsString formattedKey = compact ? key
                 : txt.text().builder().append(key).append(CoreStringUtils.fillString(' ', len - key.textLength()));

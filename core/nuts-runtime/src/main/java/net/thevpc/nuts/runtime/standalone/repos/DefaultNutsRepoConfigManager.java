@@ -67,7 +67,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     @Override
     public String getStoreLocation() {
         checkSession();
-        return getModel().getStoreLocation(session);
+        return getModel().getStoreLocation();
     }
 
     @Override

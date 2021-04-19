@@ -65,6 +65,7 @@ public class NutsIdFormatHelper {
     char status_o;
     //    String display;
     boolean built = false;
+    boolean ntf = true;
 
     public static NutsIdFormatHelper of(Object object, NutsSession session) {
         if (object instanceof NutsId) {
@@ -348,7 +349,7 @@ public class NutsIdFormatHelper {
         }
         switch (dp) {
             case ID: {
-                return txt.text().parse(oo.getIdFormat().value(id).format());
+                return txt.text().parse(oo.getIdFormat().value(id).setNtf(ntf).format());
             }
             case STATUS: {
                 return getFormattedStatusString();

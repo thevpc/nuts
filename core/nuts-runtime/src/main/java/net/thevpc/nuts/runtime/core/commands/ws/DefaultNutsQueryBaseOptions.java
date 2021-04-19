@@ -45,7 +45,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 //    private Boolean cached = true;
 //    private Boolean indexed = null;
 //    private NutsFetchStrategy fetchStrategy = null;
-
     public DefaultNutsQueryBaseOptions(NutsWorkspace ws, String name) {
         super(ws, name);
 //        this.session=ws.createSession();
@@ -173,7 +172,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         return (T) this;
     }
 
-
     //@Override
     public boolean isEffective() {
         return effective;
@@ -184,7 +182,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         this.effective = includeEffectiveDesc;
         return (T) this;
     }
-
 
     //@Override
     public boolean isInlineDependencies() {
@@ -197,7 +194,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         return (T) this;
     }
 
-
     public boolean isDependencies() {
         return dependencies;
     }
@@ -207,7 +203,6 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         dependencies = include;
         return (T) this;
     }
-
 
     //@Override
     public Path getLocation() {
@@ -309,12 +304,14 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 return true;
             }
             case "--scope": {
-                NutsDependencyScope val = CoreEnumUtils.parseEnumString(cmdLine.nextString().getStringValue(), NutsDependencyScope.class, false);
+                String s = cmdLine.nextString().getStringValue();
                 if (enabled) {
-                    this.addScope(val);
+                    NutsDependencyScopePattern p = NutsDependencyScopes.parseDependencyScopePattern(s);
+                    this.addScope(p);
                 }
                 return true;
             }
+
 //            case "-i":
 //            case "--installed":
 //            {
@@ -345,7 +342,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             }
             case "--location": {
                 String location = cmdLine.nextString().getStringValue();
-                if(enabled) {
+                if (enabled) {
                     this.setLocation(CoreStringUtils.isBlank(location) ? null : Paths.get(location));
                 }
                 return true;
@@ -356,26 +353,26 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "failFast=" + failFast +
-                ", optional=" + optional +
-                ", scope=" + scope +
-                ", content=" + content +
-                ", dependencyFilter=" + dependencyFilter +
-                ", inlineDependencies=" + inlineDependencies +
-                ", dependencies=" + dependencies +
-                ", effective=" + effective +
-                ", location=" + location +
-                ", repos=" + repos +
-                ", displayOptions=" + displayOptions +
-                ", session=" + getSession() +
-                ')';
+        return getClass().getSimpleName() + "("
+                + "failFast=" + failFast
+                + ", optional=" + optional
+                + ", scope=" + scope
+                + ", content=" + content
+                + ", dependencyFilter=" + dependencyFilter
+                + ", inlineDependencies=" + inlineDependencies
+                + ", dependencies=" + dependencies
+                + ", effective=" + effective
+                + ", location=" + location
+                + ", repos=" + repos
+                + ", displayOptions=" + displayOptions
+                + ", session=" + getSession()
+                + ')';
     }
 
 //    @Override
     public T setDependencyFilter(NutsDependencyFilter filter) {
         this.dependencyFilter = filter;
-        return (T)this;
+        return (T) this;
     }
 
 //    @Override
@@ -386,8 +383,8 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 //    @Override
     public T setDependencyFilter(String filter) {
         checkSession();
-        NutsWorkspace ws=getSession().getWorkspace();
+        NutsWorkspace ws = getSession().getWorkspace();
         this.dependencyFilter = ws.dependency().filter().byExpression(filter);
-        return (T)this;
+        return (T) this;
     }
 }

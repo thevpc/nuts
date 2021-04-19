@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.standalone.bridges.maven;
 
 import net.thevpc.nuts.*;
@@ -42,12 +40,23 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
  */
 public abstract class AbstractMavenRepositoryHelper {
 
-    private final NutsLogger LOG;
+    private NutsLogger LOG;
     private NutsRepository repository;
 
     public AbstractMavenRepositoryHelper(NutsRepository repository) {
         this.repository = repository;
-        LOG=repository.getWorkspace().log().of(AbstractMavenRepositoryHelper.class);
+//        LOG=repository.getWorkspace().log().of(AbstractMavenRepositoryHelper.class);
+    }
+
+    protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
+    }
+
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = this.repository.getWorkspace().log().setSession(session).of(AbstractMavenRepositoryHelper.class);
+        }
+        return LOG;
     }
 
     protected abstract String getIdPath(NutsId id, NutsSession session);
@@ -69,15 +78,15 @@ public abstract class AbstractMavenRepositoryHelper {
                 break;
             }
             default: {
-                LOG.with().session(session).level(Level.SEVERE).error(new IllegalArgumentException("unsupported Hash Type "+id.getFace())).log("[BUG] Unsupported Hash Type {0}", id.getFace());
+                _LOGOP(session).level(Level.SEVERE).error(new IllegalArgumentException("unsupported Hash Type " + id.getFace())).log("[BUG] Unsupported Hash Type {0}", id.getFace());
                 throw new IOException("unsupported hash type " + id.getFace());
             }
         }
         try {
-            String rhash=null;
+            String rhash = null;
             try {
                 rhash = getStreamSHA1(id, session, typeName);
-            }catch (UncheckedIOException|NutsIOException ex){
+            } catch (UncheckedIOException | NutsIOException ex) {
                 //sha is not provided... so do not check anything!
                 return;
             }
@@ -91,7 +100,7 @@ public abstract class AbstractMavenRepositoryHelper {
     }
 
     protected String getStreamSHA1(NutsId id, NutsSession session, String typeName) {
-        String hash = getStreamAsString(id, typeName+" SHA1", session).toUpperCase();
+        String hash = getStreamAsString(id, typeName + " SHA1", session).toUpperCase();
         for (String s : hash.split("[ \n\r]")) {
             if (s.length() > 0) {
                 return s;
@@ -112,7 +121,7 @@ public abstract class AbstractMavenRepositoryHelper {
         try {
             NutsDescriptor nutsDescriptor = null;
             byte[] bytes = null;
-            String name=null;
+            String name = null;
             NutsId idDesc = id.builder().setFaceDescriptor().build();
             try {
                 stream = getStream(idDesc, "artifact descriptor", session);
@@ -124,14 +133,14 @@ public abstract class AbstractMavenRepositoryHelper {
                     stream.close();
                 }
             }
-            checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(), new NamedByteArrayInputStream(bytes,name), "artifact descriptor", session);
+            checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(), new NamedByteArrayInputStream(bytes, name), "artifact descriptor", session);
             return nutsDescriptor;
-        } catch (IOException|UncheckedIOException|NutsIOException ex) {
+        } catch (IOException | UncheckedIOException | NutsIOException ex) {
             throw new NutsNotFoundException(session, id, ex);
         }
     }
 
-    protected String getIdExtension(NutsId id,NutsSession session) {
+    protected String getIdExtension(NutsId id, NutsSession session) {
         checkSession(session);
         Map<String, String> q = id.getProperties();
         String f = CoreStringUtils.trim(q.get(NutsConstants.IdProperties.FACE));
@@ -146,11 +155,11 @@ public abstract class AbstractMavenRepositoryHelper {
                 return ".catalog";
             }
             case NutsConstants.QueryFaces.CONTENT_HASH: {
-                return getIdExtension(id.builder().setFaceContent().build(),session) + ".sha1";
+                return getIdExtension(id.builder().setFaceContent().build(), session) + ".sha1";
             }
             case NutsConstants.QueryFaces.CONTENT: {
                 String packaging = q.get(NutsConstants.IdProperties.PACKAGING);
-                return repository.getWorkspace().locations().getDefaultIdContentExtension(packaging);
+                return session.getWorkspace().locations().getDefaultIdContentExtension(packaging);
             }
             default: {
                 throw new NutsUnsupportedArgumentException(session, "unsupported fact " + f);

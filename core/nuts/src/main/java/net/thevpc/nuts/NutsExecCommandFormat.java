@@ -148,6 +148,8 @@ public interface NutsExecCommandFormat extends NutsFormat {
      */
     NutsExecCommandFormat setEnvReplacer(Function<EnvEntry, String> replacer);
 
+
+    NutsExecCommandFormat setNtf(boolean ntf);
     /**
      * env entry
      * @category Format

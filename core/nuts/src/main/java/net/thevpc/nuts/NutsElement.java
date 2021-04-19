@@ -73,6 +73,8 @@ public interface NutsElement {
 
     public boolean isString();
 
+//    public boolean isNutsString();
+
     public boolean isByte();
 
     public boolean isInt();
@@ -92,7 +94,11 @@ public interface NutsElement {
     public boolean isInstant();
 
     String asString();
-    
+
+    public boolean isEmpty();
+
+//    NutsString asNutsString();
+
     boolean asBoolean();
 
     byte asByte();
@@ -108,6 +114,6 @@ public interface NutsElement {
     long asLong();
 
     short asShort();
-    
+
     
 }

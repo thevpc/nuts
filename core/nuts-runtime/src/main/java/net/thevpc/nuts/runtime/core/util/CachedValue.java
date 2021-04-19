@@ -61,7 +61,7 @@ public class CachedValue<T> {
         }
     }
 
-    public void update() {
+    public T update() {
         updating = true;
         try {
             long now = System.currentTimeMillis();
@@ -76,6 +76,7 @@ public class CachedValue<T> {
         } finally {
             updating = false;
         }
+        return lastValue;
     }
 
     public boolean tryUpdate() {

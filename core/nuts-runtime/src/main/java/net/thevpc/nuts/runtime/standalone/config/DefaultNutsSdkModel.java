@@ -73,8 +73,8 @@ public class DefaultNutsSdkModel {
                             location.getId().getShortName(),
                             location.getPackaging(),
                             location.getProduct(),
-                            workspace.formats().text().builder().append(location.getVersion(), NutsTextNodeStyle.version()),
-                            workspace.formats().text().builder().append(location.getPath(), NutsTextNodeStyle.path())
+                            session.getWorkspace().formats().text().builder().append(location.getVersion(), NutsTextNodeStyle.version()),
+                            session.getWorkspace().formats().text().builder().append(location.getPath(), NutsTextNodeStyle.path())
                     );
                 }
                 NutsWorkspaceConfigManagerExt.of(workspace.config())
@@ -99,7 +99,7 @@ public class DefaultNutsSdkModel {
             List<NutsSdkLocation> list = getSdk().get(location.getProduct());
             if (list != null) {
                 if (list.remove(location)) {
-                    NutsWorkspaceConfigManagerExt.of(workspace.config())
+                    NutsWorkspaceConfigManagerExt.of(session.getWorkspace().config())
                             .getModel()
                             .fireConfigurationChanged("sdk", session, ConfigEventType.MAIN);
                     return true;
@@ -147,7 +147,7 @@ public class DefaultNutsSdkModel {
 
     public NutsSdkLocation findByVersion(String type, NutsVersionFilter javaVersionFilter, final NutsSession session) {
         return findOne(type,
-                location -> javaVersionFilter == null || javaVersionFilter.acceptVersion(workspace.version().parser().parse(location.getVersion()), session),
+                location -> javaVersionFilter == null || javaVersionFilter.acceptVersion(session.getWorkspace().version().parser().parse(location.getVersion()), session),
                  session);
     }
 
@@ -232,7 +232,7 @@ public class DefaultNutsSdkModel {
             }
         }
         if (!ret.isEmpty()) {
-            ret.sort(new NutsSdkLocationSelectComparator(workspace));
+            ret.sort(new NutsSdkLocationSelectComparator(session.getWorkspace()));
         }
         return ret.toArray(new NutsSdkLocation[0]);
     }

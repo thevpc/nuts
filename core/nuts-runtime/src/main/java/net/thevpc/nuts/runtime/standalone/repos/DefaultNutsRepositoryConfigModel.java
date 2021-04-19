@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryConfigModel;
+import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 
 public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigModel{
 
@@ -187,7 +188,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     }
 
     @Override
-    public String getStoreLocation(NutsSession session) {
+    public String getStoreLocation() {
         return storeLocation;
     }
 
@@ -211,7 +212,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                 n = folderType.toString().toLowerCase();
                 n = n.trim();
             }
-            return Paths.get(getStoreLocation(session)).resolve(n).toString();
+            return Paths.get(getStoreLocation()).resolve(n).toString();
         } else {
             switch (getStoreLocationStrategy(session)) {
                 case STANDALONE: {
@@ -219,7 +220,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                         n = folderType.toString().toLowerCase();
                     }
                     n = n.trim();
-                    return Paths.get(getStoreLocation(session)).resolve(n).toString();
+                    return Paths.get(getStoreLocation()).resolve(n).toString();
                 }
                 case EXPLODED: {
                     Path storeLocation = Paths.get(repository.getWorkspace().locations().getStoreLocation(folderType));
@@ -228,7 +229,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
                 }
                 default: {
-                    throw new NutsIllegalArgumentException(session, "unsupported strategy type " + getStoreLocation(session));
+                    throw new NutsIllegalArgumentException(session, "unsupported strategy type " + getStoreLocation());
                 }
             }
         }
@@ -380,28 +381,28 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         if (force || (!repository.getWorkspace().config().isReadOnly() && isConfigurationChanged())) {
             NutsWorkspaceUtils.of(session).checkReadOnly();
             repository.security().setSession(session).checkAllowed(NutsConstants.Permissions.SAVE, "save");
-            Path file = Paths.get(getStoreLocation(session)).resolve(NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
+            Path file = Paths.get(getStoreLocation()).resolve(NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
             boolean created = false;
             if (!Files.exists(file)) {
                 created = true;
             }
-            CoreIOUtils.mkdirs(Paths.get(getStoreLocation(session)));
-            config.setConfigVersion(repository.getWorkspace().getApiVersion());
+            CoreIOUtils.mkdirs(Paths.get(getStoreLocation()));
+            config.setConfigVersion(DefaultNutsWorkspace.VERSION_REPOSITORY_CONFIG);
             if (config.getEnv() != null && config.getEnv().isEmpty()) {
                 config.setEnv(null);
             }
             config.setMirrors(Arrays.asList(repositoryRegistryHelper.getRepositoryRefs()));
             config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
-            if (CoreStringUtils.isBlank(config.getConfigVersion())) {
-                config.setConfigVersion(repository.getWorkspace().getApiVersion());
-            }
+//            if (CoreStringUtils.isBlank(config.getConfigVersion())) {
+//                config.setConfigVersion(repository.getWorkspace().getApiVersion());
+//            }
             repository.getWorkspace().formats().element().setSession(session).setContentType(NutsContentType.JSON).setValue(config).print(file);
             configurationChanged = false;
             if (LOG.isLoggable(Level.CONFIG)) {
                 if (created) {
-                    LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(CoreStringUtils.alignLeft(repository.getName(), 20) + " created repository " + repository.getName() + " at " + getStoreLocation(session));
+                    LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(CoreStringUtils.alignLeft(repository.getName(), 20) + " created repository " + repository.getName() + " at " + getStoreLocation());
                 } else {
-                    LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(CoreStringUtils.alignLeft(repository.getName(), 20) + " updated repository " + repository.getName() + " at " + getStoreLocation(session));
+                    LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(CoreStringUtils.alignLeft(repository.getName(), 20) + " updated repository " + repository.getName() + " at " + getStoreLocation());
                 }
             }
             ok = true;
@@ -619,12 +620,12 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
     @Override
     public Path getTempMirrorsRoot(NutsSession session) {
-        return Paths.get(getStoreLocation(session)).resolve(NutsConstants.Folders.REPOSITORIES);
+        return Paths.get(getStoreLocation()).resolve(NutsConstants.Folders.REPOSITORIES);
     }
 
     @Override
     public Path getMirrorsRoot(NutsSession session) {
-        return Paths.get(getStoreLocation(session)).resolve(NutsConstants.Folders.REPOSITORIES);
+        return Paths.get(getStoreLocation()).resolve(NutsConstants.Folders.REPOSITORIES);
     }
 
     public NutsRepositoryConfig getStoredConfig(NutsSession session) {

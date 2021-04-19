@@ -78,6 +78,9 @@ public interface NutsTableFormat extends NutsObjectFormat {
 
     NutsTableFormat setModel(NutsTableModel model);
 
+    @Override
+    public NutsTableFormat setNtf(boolean ntf);
+
     /**
      * @category Format
      */

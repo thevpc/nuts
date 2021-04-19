@@ -134,16 +134,19 @@ public interface NutsDependency extends Serializable, NutsFormattable{
     NutsId[] getExclusions();
 
     /**
-     * properties in the url query form
-     * @return properties in the url query form.
+     * properties in the URL query form
+     * @return properties in the URL query form.
      * @since 0.5.7
      */
     String getPropertiesQuery();
 
     /**
-     * properties in the url query form
-     * @return properties in the url query form.
+     * properties in the URL query form
+     * @return properties in the URL query form.
      * @since 0.5.7
      */
     Map<String, String> getProperties();
+    
+    @Override
+    NutsDependencyFormat formatter();
 }

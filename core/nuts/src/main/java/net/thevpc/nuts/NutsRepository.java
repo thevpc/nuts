@@ -93,8 +93,8 @@ public interface NutsRepository {
     String getName();
 
     /**
-     * env
-     * @return env
+     * ENV
+     * @return ENV
      */
     NutsRepositoryEnvManager env();
 
@@ -170,6 +170,19 @@ public interface NutsRepository {
      * @return array of registered user properties listeners
      */
     NutsMapListener<String, Object>[] getUserPropertyListeners();
+
+    /**
+     * available if local and the folder exists or remote and could ping the repository
+     * @return true if config is enabled and runtime is enabled
+     */
+    boolean isAvailable() ;
+
+    /**
+     * available if local and the folder exists or remote and could ping the repository
+     * @param force when force, check immediate availability and do not rely on cache
+     * @return true if config is enabled and runtime is enabled
+     */
+    boolean isAvailable(boolean force) ;
 
     /**
      * enabled if config is enabled and runtime is enabled
